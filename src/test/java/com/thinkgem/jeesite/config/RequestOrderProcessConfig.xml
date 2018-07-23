@@ -19,7 +19,7 @@
     <process>
         <name>待采销部经理审批</name>
         <code>3</code>
-        <roleEnNameEnum>MARKETING_MANAGER</roleEnNameEnum>
+        <roleEnNameEnum>MARKETINGMANAGER</roleEnNameEnum>
         <passCode>4</passCode>
         <rejectCode>-1</rejectCode>
     </process>

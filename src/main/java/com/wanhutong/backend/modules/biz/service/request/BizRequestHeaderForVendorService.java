@@ -21,9 +21,11 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
@@ -195,7 +197,13 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		if (id == null){
 			bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 		}
-		Integer processId=saveCommonProcess(bizRequestHeader);
+		Integer processId = 0;
+		if (ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+			processId = saveCommonProcess(bizRequestHeader);
+		}
+		if (ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+			processId = saveVendCommonProcess(bizRequestHeader);
+		}
 
 		this.updateProcessId(bizRequestHeader.getId(),processId);
 
@@ -270,6 +278,45 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 					phone.append(u.getMobile()).append(",");
 				}
 			}
+
+		if (StringUtils.isNotBlank(phone.toString())) {
+			AliyunSmsClient.getInstance().sendSMS(
+					SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+					phone.toString(),
+					ImmutableMap.of("order","备货清单", "orderNum", bizRequestHeader.getReqNo()));
+		}
+
+
+		return commonProcessEntity.getId();
+	}
+
+	public Integer  saveVendCommonProcess(BizRequestHeader bizRequestHeader){
+
+		VendorRequestOrderProcessConfig vendorRequestOrderProcessConfig = ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get();
+		VendorRequestOrderProcessConfig.RequestOrderProcess purchaseOrderProcess = vendorRequestOrderProcessConfig.processMap.get(vendorRequestOrderProcessConfig.getDefaultProcessId());
+		CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+		commonProcessEntity.setObjectId(bizRequestHeader.getId().toString());
+		commonProcessEntity.setObjectName(BizRequestHeaderForVendorService.DATABASE_TABLE_NAME);
+		commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+		commonProcessService.save(commonProcessEntity);
+
+		/*String desc = purchaseOrderProcess.getName();
+		Integer bizStatus = ReqHeaderStatusEnum.getEnum(desc).getState();
+		bizOrderStatusService.insertAfterBizStatusChangedNew(bizStatus, BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());*/
+		StringBuilder phone = new StringBuilder();
+		User user=UserUtils.getUser();
+		if (CollectionUtils.isNotEmpty(purchaseOrderProcess.getRoleEnNameEnum())) {
+			for (String roleEnNameEnum:purchaseOrderProcess.getRoleEnNameEnum()) {
+				User sendUser=new User(systemService.getRoleByEnname(roleEnNameEnum.toLowerCase()));
+				sendUser.setCent(user.getCompany());
+				List<User> userList = systemService.findUser(sendUser);
+				if (CollectionUtils.isNotEmpty(userList)) {
+					for (User u : userList) {
+						phone.append(u.getMobile()).append(",");
+					}
+				}
+			}
+		}
 
 		if (StringUtils.isNotBlank(phone.toString())) {
 			AliyunSmsClient.getInstance().sendSMS(
@@ -401,7 +448,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 
 
 	/**
-	 *
+	 *属于采购中心备货
 	 * @param reqHeaderId
 	 * @param currentType
 	 * @param auditType
@@ -421,8 +468,8 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 			logger.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", reqHeaderId, currentType);
 			return "操作失败,当前审核状态异常!";
 		}
-
 		RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
+
 		// 当前流程
 		RequestOrderProcessConfig.RequestOrderProcess currentProcess = requestOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
 		// 下一流程
@@ -430,7 +477,6 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		if (nextProcess == null) {
 			return "操作失败,当前流程已经结束!";
 		}
-
 		User user = UserUtils.getUser();
 		RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
 		Role role = new Role();
@@ -478,7 +524,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		StringBuilder phone = new StringBuilder();
 
 		User sendUser=new User(systemService.getRoleByEnname(nextProcess.getRoleEnNameEnum()==null?"":nextProcess.getRoleEnNameEnum().toLowerCase()));
-	//	sendUser.setCent(UserUtils.getUser().getCompany());
+		//	sendUser.setCent(UserUtils.getUser().getCompany());
 		List<User> userList = systemService.findUser(sendUser);
 		if (CollectionUtils.isNotEmpty(userList)) {
 			for (User u : userList) {
@@ -496,6 +542,102 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		return "ok";
 	}
 
+	/**
+	 *属于供应商备货
+	 * @param reqHeaderId
+	 * @param currentType
+	 * @param auditType
+	 * @param description
+	 * @return
+	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public String vendAudit(Integer reqHeaderId, String currentType, int auditType, String description) {
+		BizRequestHeader bizRequestHeader = this.get(reqHeaderId);
+		CommonProcessEntity cureentProcessEntity  = bizRequestHeader.getCommonProcess();
+
+		if (cureentProcessEntity == null) {
+			return "操作失败,当前订单无审核状态!";
+		}
+		cureentProcessEntity = commonProcessService.get(bizRequestHeader.getCommonProcess().getId());
+		if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
+			logger.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", reqHeaderId, currentType);
+			return "操作失败,当前审核状态异常!";
+		}
+		VendorRequestOrderProcessConfig vendorRequestOrderProcessConfig = ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get();
+		// 当前流程
+		VendorRequestOrderProcessConfig.RequestOrderProcess vendCurrentProcess = vendorRequestOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
+		// 下一流程
+		VendorRequestOrderProcessConfig.RequestOrderProcess vendNextProcess = vendorRequestOrderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? vendCurrentProcess.getPassCode() : vendCurrentProcess.getRejectCode());
+		if (vendNextProcess == null) {
+			return "操作失败,当前流程已经结束!";
+		}
+		User user = UserUtils.getUser();
+		for (String s:vendCurrentProcess.getRoleEnNameEnum()) {
+			RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(s);
+			Role role = new Role();
+			role.setEnname(roleEnNameEnum.getState());
+			if (!user.isAdmin() && !user.getRoleList().contains(role)) {
+				return "操作失败,该用户没有权限!";
+			}
+
+			if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
+				return "请输入驳回理由!";
+			}
+		}
+		cureentProcessEntity.setBizStatus(auditType);
+		cureentProcessEntity.setProcessor(user.getId().toString());
+		cureentProcessEntity.setDescription(description);
+		commonProcessService.save(cureentProcessEntity);
+
+		/*String currentDesc = vendCurrentProcess.getName();
+		Integer currentBizStatus = ReqHeaderStatusEnum.getEnum(currentDesc).getState();
+		bizOrderStatusService.insertAfterBizStatusChangedNew(currentBizStatus, BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());*/
+
+
+		CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+		nextProcessEntity.setObjectId(bizRequestHeader.getId().toString());
+		nextProcessEntity.setObjectName(BizRequestHeaderForVendorService.DATABASE_TABLE_NAME);
+		nextProcessEntity.setType(String.valueOf(vendNextProcess.getCode()));
+		nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+
+		if(nextProcessEntity.getType().equals(vendorRequestOrderProcessConfig.getAutProcessId().toString())){
+			Integer bizStatus = bizRequestHeader.getBizStatus();
+			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());
+			saveRequestHeader(bizRequestHeader);
+			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+			}
+		}
+		commonProcessService.save(nextProcessEntity);
+
+		/*String nextDesc = vendCurrentProcess.getName();
+		Integer nextBizStatus = ReqHeaderStatusEnum.getEnum(currentDesc).getState();
+		bizOrderStatusService.insertAfterBizStatusChangedNew(nextBizStatus, BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());*/
+
+		this.updateProcessId(reqHeaderId, nextProcessEntity.getId());
+
+		StringBuilder phone = new StringBuilder();
+
+		if (CollectionUtils.isNotEmpty(vendNextProcess.getRoleEnNameEnum())) {
+			for (String s : vendNextProcess.getRoleEnNameEnum()) {
+				List<User> userList = systemService.findUser( new User(systemService.getRoleByEnname(s.toLowerCase())));
+				if (CollectionUtils.isNotEmpty(userList)) {
+					for (User u : userList) {
+						phone.append(u.getMobile()).append(",");
+					}
+				}
+			}
+		}
+		if (StringUtils.isNotBlank(phone.toString())) {
+			AliyunSmsClient.getInstance().sendSMS(
+					SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+					phone.toString(),
+					ImmutableMap.of("order","备货清单", "orderNum", bizRequestHeader.getReqNo()));
+		}
+
+
+		return "ok";
+	}
 	/**
 	 * 更新流程ID
 	 * @param headerId

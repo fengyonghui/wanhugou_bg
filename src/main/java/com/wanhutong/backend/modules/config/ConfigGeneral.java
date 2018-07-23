@@ -6,6 +6,7 @@ import com.wanhutong.backend.modules.config.parse.PhoneConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.SystemConfig;
+import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -48,8 +49,8 @@ public abstract class ConfigGeneral {
 	public static final ConfigWrapper<RequestOrderProcessConfig> REQUEST_ORDER_PROCESS_CONFIG = new ConfigWrapper<RequestOrderProcessConfig>(
 			"RequestOrderProcessConfig.xml",new RequestOrderProcessConfig());
 
-	public static final ConfigWrapper<RequestOrderProcessConfig> VENDOR_REQUEST_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
-			"VendorRequestOrderProcessConfig.xml",new RequestOrderProcessConfig());
+	public static final ConfigWrapper<VendorRequestOrderProcessConfig> VENDOR_REQUEST_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
+			"VendorRequestOrderProcessConfig.xml",new VendorRequestOrderProcessConfig());
 
 	public static final ConfigWrapper<PaymentOrderProcessConfig> PAYMENT_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
 			"PaymentOrderProcessConfig.xml",new PaymentOrderProcessConfig());
