@@ -77,11 +77,10 @@ public class LoginController extends BaseController{
 //		view += "jar:file:/D:/GitHub/jeesite/src/main/webapp/WEB-INF/lib/jeesite.jar!";
 //		view += "/"+getClass().getName().replaceAll("\\.", "/").replace(getClass().getSimpleName(), "")+"view/sysLogin";
 //		view += ".jsp";
+
 		if ("mobile".equalsIgnoreCase(version) || WebUtils.isTrue(request, FormAuthenticationFilter.DEFAULT_MOBILE_PARAM)) {
-			request.getSession().invalidate();
-			return "redirect:/static/mobile/html/login.html";
+			return "mobile/modules/sys/sysLogin";
 		}
-		request.getSession().invalidate();
 		return "modules/sys/sysLogin";
 	}
 
@@ -129,10 +128,13 @@ public class LoginController extends BaseController{
 		
 		// 验证失败清空验证码
 		request.getSession().setAttribute(ValidateCodeServlet.VALIDATE_CODE, IdGen.uuid());
-		
-		// 如果是手机登录，则返回JSON字符串
 
-		return mobile ? renderString(response, model) : "modules/sys/sysLogin";
+		// 如果是手机登录，则返回JSON字符串
+		if (mobile) {
+			return renderString(response, model);
+		}
+
+		return "modules/sys/sysLogin";
 	}
 
 	/**
