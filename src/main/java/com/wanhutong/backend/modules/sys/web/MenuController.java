@@ -67,7 +67,6 @@ public class MenuController extends BaseController {
 	 * @param parentId
 	 * @return
 	 */
-	@RequiresPermissions("sys:menu:view")
 	@RequestMapping(value = {"listData"})
 	@ResponseBody
 	public String listData(HttpServletRequest request, @RequestParam(value = "parentId", required = false, defaultValue = "1")Integer parentId) {
