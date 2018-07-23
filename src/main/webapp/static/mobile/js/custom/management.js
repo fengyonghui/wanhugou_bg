@@ -72,7 +72,18 @@
 
         hrefHtml: function() {
 			var _this = this;
-		
+		/*用户信息*/
+			$('.mui-bar').on('click','.mui-icon-bars',function(){
+            	var url = $(this).attr('url');
+				var purchId = $(this).attr('purchId');
+				GHUTILS.OPENPAGE({
+						url: "../../mobile/html/user.html",
+						extras: {
+							purchId:purchId,
+						}
+					})
+			})
+		/*采购单管理*/
             $('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');
 				var purchId = $(this).attr('purchId');
@@ -81,6 +92,21 @@
                 }else if(purchId==132) {
                 	GHUTILS.OPENPAGE({
 						url: "../../mobile/html/purchase.html",
+						extras: {
+								purchId:purchId,
+						}
+					})
+                }
+			})
+        /*备货单管理*/
+            $('#menuMaget').on('click','.childMenu',function(){
+            	var url = $(this).attr('url');
+				var purchId = $(this).attr('purchId');
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(purchId==229) {
+                	GHUTILS.OPENPAGE({
+						url: "../../mobile/html/inventoryMagmetHtml/inventoryList.html",
 						extras: {
 								purchId:purchId,
 						}

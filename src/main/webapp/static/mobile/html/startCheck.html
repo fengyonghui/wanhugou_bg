@@ -10,7 +10,7 @@
  			.mui-content div.content_part li {padding: 0;list-style: none;}
 			.mui-content div.ctn_li_h li {height: 30px;}
 			.mui-input-row label {padding: 14px 14px;}
-			#lastPayDate {text-indent: 10px;}
+			#lastDate {text-indent: 10px;}
 			.app_p20 button {margin-left: 20%;background-color: #0d84f2;}
 			#searchIfrom {position: absolute;height: 300px;width: 240px;left: 50%;margin-left: -120px;top: 10%;z-index: 2;background-color: #f9f9f9;border: 1px solid #40ABE9;}
 			#searchTxt {padding: 8px 15px;}
@@ -158,20 +158,20 @@
 			    <div class="mui-input-row" id="showMoney">
 				    <div class="mui-input-row">
 				        <label>最后付款时间：</label>
-				        <input id="lastPayDate" type="date" name="" />
+				        <input id="lastDate" type="date" name="" />
 				        <font>*</font>
 				    </div>
 				    <div class="mui-input-row">
 				        <label>申请金额：</label>
-				        <input type="text" class="mui-input-clear" id="totalMoney">
+				        <input id="totalMoney" type="text" class="mui-input-clear">
 				        <font>*</font>
 				    </div>
 			    </div>
+		    </form>
 				<div class="app_p20">
 				    <button id='checkBtn' type="submit" class="mui-btn mui-btn-blue">开启审核</button>
 					<button id='rejectBtn' type="submit" class="mui-btn mui-btn-blue">驳回</button>
 				</div>
- 			</form>
 		</div>	
 	<div class="clear"></div>
 

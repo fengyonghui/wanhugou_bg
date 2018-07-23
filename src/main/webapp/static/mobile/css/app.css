@@ -1403,3 +1403,6 @@ border-right: 1px solid #fff;border-top: 1px solid #fff;}
 .step_num {text-align: center;color: #007aff;}
 .step_item {border: 1px #3daae9 solid;margin: 15px 15px;}
 .oneBtn {left: 50%;margin-left: -41px;}
+.position_Re {position: relative;}
+.position_Ab {position: absolute;}
+.font-color {color: #40ABE9;}

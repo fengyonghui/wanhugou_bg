@@ -23,122 +23,28 @@
 			//下拉刷新
 			$('.listBlue').dropload({
 				scrollArea: window,
-//				domUp: {
-//					domClass: 'dropload-up',
-//					domRefresh: '<div class="dropload-refresh">↓下拉刷新容</div>',
-//					domUpdate: '<div class="dropload-update">↑释放更新内容</div>',
-//					domLoad: '<div class="dropload-load"><span class="loading"></span>刷新中...</div>'
-//				},
 				domDown: {
 					domClass: 'dropload-down',
 					domRefresh: '<div class="dropload-refresh">↑上拉加载更多内容</div>',
 					domLoad: '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
 					domNoData: '<div class="dropload-noData">暂无更多内容</div>'
 				},
-//				loadUpFn: function(me) {
-//					$.ajax({
-//						type: 'GET',
-//						url: '/a/biz/po/bizPoHeader/listData4Mobile',
-//						data: {
-//							//parentId:957,
-//							parentId: _this.userInfo.purchId,
-//							pageNo: 1
-//						},
-//						dataType: 'json',
-//						success: function(res) {
-//							var pHtmlList = '';
-//							$.each(res.data.resultList, function(i, item) {
-//								console.log(item)
-//								var startBtn = '';
-//								var classBtn = '';
-//								var payBtn = '';
-//								/*有没有开启审核*/
-//								if(item.process) {
-//									startBtn = '审核'
-//									classBtn = 'shenHe'
-//								} else {
-//									startBtn = '开启审核'
-//									classBtn = 'startShenhe'
-//								}
-//								if(item.process) {
-//									var code = item.process.purchaseOrderProcess.code;
-//								}
-//								var bizStatus = item.bizStatus;
-//								var payment = item.currentPaymentId;
-//								/*审核流程*/
-//								if(code == 7 || code == -1) {
-//									startBtn = ''
-//								}
-//								var applyStatus = item.process.bizStatus;
-//								/*有没有申请支付单*/
-//								if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
-//									payBtn = '申请付款';
-//								} else {
-//									payBtn = ''
-//								}
-//								pHtmlList += '<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">' +
-//									'<div class="mui-input-row">' +
-//									'<label>采购单号:</label>' +
-//									'<input id="orderNum" name="orderNum" type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.orderNum + ' ">' +
-//									'</div>' +
-//									'<div class="mui-input-row">' +
-//									'<label>供应商:</label>' +
-//									'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.vendOffice + ' ">' +
-//									'</div>' +
-//									'<div class="mui-input-row">' +
-//									'<label>订单状态:</label>' +
-//									'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.bizStatus + ' ">' +
-//									'</div>' +
-//									'<div class="app_font_cl content_part mui-row app_text_center">' +
-//									'<div class="mui-col-xs-3">' +
-//									'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
-//									'</div>' +
-//									'<div class="mui-col-xs-3 ApplyPayListBtn">' +
-//									'<li class="mui-table-view-cell paying" listId="' + item.id + '" poId="' + item.id + '">' + payBtn + '</li>' +
-//									'</div>' +
-//									'<div class="mui-col-xs-4 payListBtn" listId="' + item.id + '">' +
-//									'<li class="mui-table-view-cell">支付申请列表</li>' +
-//									'</div>' +
-//									'<div class="mui-col-xs-2 detailBtn" listId="' + item.id + '">' +
-//									'<li class="mui-table-view-cell">详情</li>' +
-//									'</div>' +
-//									'</div>' +
-//									'</div>'
-//							});
-//							// 为了测试，延迟1秒加载
-//							setTimeout(function() {
-//								$('.listBlue').html(pHtmlList);
-//								// 每次数据加载完，必须重置
-//								me.resetload();
-//								// 重置页数，重新获取loadDownFn的数据
-//								page = 0;
-//								// 解锁loadDownFn里锁定的情况
-//								me.unlock();
-//								me.noData(false);
-//							}, 1000);
-//						},
-//						error: function(xhr, type) {
-//							alert('Ajax error!!');
-//							// 即使加载出错，也得重置
-//							me.resetload();
-//						}
-//					});
-//				},
 				loadDownFn: function(me) {
 				    page++;
 					// 拼接HTML
 					var pHtmlList = '';
 					$.ajax({
 						type: 'GET',
-						url: '/a/biz/po/bizPoHeader/listData4Mobile',
+						url: '/a/biz/po/bizPoHeader/listData4Mobile?page2='+page+'&size='+size,
 						data: {
-							parentId: _this.userInfo.purchId,
+							parentId: _this.userInfo.poId,
 							pageNo: page
 						},
 						dataType: 'json',
 						success: function(res) {
 							var arrLen = res.data.resultList.length;
-							console.log()
+							var dataRow = res.data.roleSet;
+							console.log(res)
 							if(arrLen > 0) {
 								$.each(res.data.resultList, function(i, item) {
 									console.log(item)
@@ -147,21 +53,26 @@
 									var payBtn = '';
 									/*有没有开启审核*/
 									if(item.process) {
-										startBtn = '审核'
-										classBtn = 'shenHe'
+										var code = item.process.purchaseOrderProcess.code;
+										if(item.process.purchaseOrderProcess.roleEnNameEnum) {
+											var DataRoleGener = item.process.purchaseOrderProcess.roleEnNameEnum;
+											var fileRoleData =  dataRow.filter(v => DataRoleGener.includes(v));
+											if(item.process && fileRoleData.length>0) {
+												startBtn = '审核'
+												classBtn = 'shenHe'
+											}
+										}else {
+											startBtn = ''
+										}
 									} else {
 										startBtn = '开启审核'
 										classBtn = 'startShenhe'
 									}
-									if(item.process) {
-										var code = item.process.purchaseOrderProcess.code;
-									}
+									
 									var bizStatus = item.bizStatus;
 									var payment = item.currentPaymentId;
 									/*审核流程*/
-									if(code == 7 || code == -1) {
-										startBtn = ''
-									}
+									
 									var applyStatus = item.process.bizStatus;
 									/*有没有申请支付单*/
 									if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
