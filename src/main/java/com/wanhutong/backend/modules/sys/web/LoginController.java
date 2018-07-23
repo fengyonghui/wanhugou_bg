@@ -168,24 +168,6 @@ public class LoginController extends BaseController{
 			}
 			return "redirect:" + adminPath + "/login";
 		}
-		
-//		// 登录成功后，获取上次登录的当前站点ID
-//		UserUtils.putCache("siteId", StringUtils.toLong(CookieUtils.getCookie(request, "siteId")));
-
-//		System.out.println("==========================a");
-//		try {
-//			byte[] bytes = com.wanhutong.backend.common.utils.FileUtils.readFileToByteArray(
-//					com.wanhutong.backend.common.utils.FileUtils.getFile("c:\\sxt.dmp"));
-//			UserUtils.getSession().setAttribute("kkk", bytes);
-//			UserUtils.getSession().setAttribute("kkk2", bytes);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-////		for (int i=0; i<1000000; i++){
-////			//UserUtils.getSession().setAttribute("a", "a");
-////			request.getSession().setAttribute("aaa", "aa");
-////		}
-//		System.out.println("==========================b");
 		return "modules/sys/sysIndex";
 	}
 	
