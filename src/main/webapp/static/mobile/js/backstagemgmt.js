@@ -31,7 +31,7 @@
                     url: "/a/getUser",
                     dataType: "json",
                     success: function(res){
-						console.log(res)
+//						console.log(res)
 						$('#userName').html('您好 ! '+ res.data.name)
                     }
                 });
@@ -47,10 +47,10 @@
                     data: {parentId:1},
                     dataType: "json",
                     success: function(res){
-						console.log(res)
+//						console.log(res)
                         var htmlList = '';
                         $.each(res.data, function(i, item) {
-                            console.log(item)
+//                          console.log(item)
                             htmlList += '<li class="mui-table-view-cell mui-col-xs-4  text-align-center app_pl0 app_border_rb app_prot0"  idData="'+item.id +'" url="'+item.url +'">' +
                                 '<div>' +
                                 '<div class="app_icon_myt0 app_color_myt0 app_pt10 app_f30"></div>' +

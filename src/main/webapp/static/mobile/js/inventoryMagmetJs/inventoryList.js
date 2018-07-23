@@ -39,7 +39,7 @@
 						type: 'GET',
 						url: '/a/biz/request/bizRequestHeader/list4Mobile?page2='+page+'&size='+size,
 						data: {
-							parentId: _this.userInfo.poId,
+							parentId: _this.userInfo.purchId,
 							pageNo: page
 						},
 						dataType: 'json',
