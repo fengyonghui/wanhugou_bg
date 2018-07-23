@@ -299,7 +299,7 @@
 					if(res.ret==true){
 						//$('#mask').hide()
 						GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchaseMagmetHtml/purchase.html",
+						url: "../../html/purchaseMagmetHtml/purchase.html",
 						extras: {
 							key:res.key,
 							}
@@ -309,7 +309,6 @@
 			});
 		},
 		psyRejectData:function(rejectTxt,num) {
-			var _this = this;
 			var codeId = $(this).attr('codeId');
 			var applyPayId = $(this).attr('applyPayId');//得到支付单id
 			//$('#mask').show()
@@ -329,7 +328,7 @@
 					if(res.ret==true){
 						//$('#mask').hide()
 						GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchaseMagmetHtml/purchase.html",
+						url: "../../html/purchaseMagmetHtml/purchase.html",
 						extras: {
 							key:res.key,
 							}
@@ -340,7 +339,6 @@
 			
 		},
 		formatDateTime: function(unix) {
-			var _this = this;
 			var now = new Date(parseInt(unix) * 1);
 			now = now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
 			if(now.indexOf("下午") > 0) {

@@ -119,7 +119,6 @@
            // $('#addCheckMen').html(pHtmlList)
 		},
 		formatDateTime: function(unix) {
-        	var _this = this;
 
     		var now = new Date(parseInt(unix) * 1);
 	        now =  now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");

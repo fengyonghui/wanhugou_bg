@@ -153,7 +153,7 @@
 						alert('操作成功!')
 						//$('#mask').hide()
 						GHUTILS.OPENPAGE({
-							url: "../../mobile/html/purchaseMagmetHtml/purchase.html",
+							url: "../../html/purchaseMagmetHtml/purchase.html",
 							extras: {
 								key: res.key,
 							}
@@ -183,7 +183,7 @@
 						alert('操作成功!')
 						//$('#mask').hide()
 						GHUTILS.OPENPAGE({
-							url: "../../mobile/html/purchaseMagmetHtml/purchase.html",
+							url: "../../html/purchaseMagmetHtml/purchase.html",
 							extras: {
 								key: res.key,
 							}
@@ -214,7 +214,6 @@
 			return time
 		},
 		formatDateTime: function(unix) {
-			var _this = this;
 
 			var now = new Date(parseInt(unix) * 1);
 			now = now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");

@@ -139,7 +139,6 @@
 		//
 		//		},
 		hrefHtml: function() {
-			var _this = this;
 			/*申请付款*/
 			//$('.listBlue').on('tap', function() {
 			$('.listBlue').on('tap', '.paying', function() {
@@ -149,7 +148,7 @@
 						mui.toast('子菜单不存在')
 					} else if(poId == poId) {
 						GHUTILS.OPENPAGE({
-							url: "../../mobile/html/purchaseMagmetHtml/applyPay.html",
+							url: "../../html/purchaseMagmetHtml/applyPay.html",
 							extras: {
 								poId: poId,
 							}
@@ -165,7 +164,7 @@
 						mui.toast('子菜单不存在')
 					} else if(listId == listId) {
 						GHUTILS.OPENPAGE({
-							url: "../../mobile/html/purchaseMagmetHtml/ApplyPayList.html",
+							url: "../../html/purchaseMagmetHtml/ApplyPayList.html",
 							extras: {
 								poId: poId,
 								listId: listId,
@@ -181,7 +180,7 @@
 						mui.toast('子菜单不存在')
 					} else if(listId == listId) {
 						GHUTILS.OPENPAGE({
-							url: "../../mobile/html/purchaseMagmetHtml/details.html",
+							url: "../../html/purchaseMagmetHtml/details.html",
 							extras: {
 								listId: listId,
 							}
@@ -197,7 +196,7 @@
 					mui.toast('子菜单不存在')
 				} else if(listId == listId) {
 					GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchaseMagmetHtml/check.html",
+						url: "../../html/purchaseMagmetHtml/check.html",
 						extras: {
 							listId: listId,
 							codeId: codeId,
@@ -213,7 +212,7 @@
 					mui.toast('子菜单不存在')
 				} else if(listId == listId) {
 					GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchaseMagmetHtml/startCheck.html",
+						url: "../../html/purchaseMagmetHtml/startCheck.html",
 						extras: {
 							listId: listId,
 						}
@@ -231,7 +230,6 @@
 			})
 		},
 		formatDateTime: function(unix) {
-			var _this = this;
 			var now = new Date(parseInt(unix) * 1);
 			now = now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
 			if(now.indexOf("下午") > 0) {

@@ -126,7 +126,7 @@
 							alert('操作成功!')
 							//$('#mask').hide()
 							GHUTILS.OPENPAGE({
-							url: "../../mobile/html/purchaseMagmetHtml/purchase.html",
+							url: "../../html/purchaseMagmetHtml/purchase.html",
 							extras: {
 								poId:_this.userInfo.poId,
 								}

@@ -200,7 +200,7 @@
 						alert('操作成功!')
 						//$('#mask').hide()
 						GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchaseMagmetHtml/purchase.html",
+						url: "../../html/purchaseMagmetHtml/purchase.html",
 						extras: {
 							key:res.key,
 							codeId:codeId,
@@ -232,7 +232,7 @@
 						alert('操作成功!')
 						//$('#mask').hide()
 						GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchase.html",
+						url: "../../html/purchase.html",
 						extras: {
 							key:res.key,
 							}
@@ -245,7 +245,6 @@
 		},
 		
 		formatDateTime: function(unix) {
-        	var _this = this;
 
     		var now = new Date(parseInt(unix) * 1);
 	        now =  now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
