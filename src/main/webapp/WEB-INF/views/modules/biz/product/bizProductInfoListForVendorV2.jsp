@@ -148,10 +148,10 @@
 						${bizProductInfo.bizVarietyInfo.user.name}
 				</td>
 				<td>
-					点击量
+						${bizProductInfo.prodVice}
 				</td>
 				<td>
-					订单量
+						${bizProductInfo.orderCount}
 				</td>
 				<td>
 					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:check">
