@@ -8,7 +8,7 @@
 		a.object_id AS "objectId",
 		a.original_num AS "originalNum",
 		a.scheduling_num AS "schedulingNum",
-		a.complete_num AS "completeNum",
+		/*a.complete_num AS "completeNum",*/
 		a.status AS "delFlag",
 		a.create_id AS "createBy",
 		a.create_time AS "createDate",
@@ -39,7 +39,12 @@
 	<select id="findList" resultType="BizSchedulingPlan">
 		SELECT 
 			<include refid="bizSchedulingPlanColumns"/>
+			,bcp.id AS "completePalnList.id"
+			,bcp.scheduling_id AS "completePalnList.scheduling_id"
+			,bcp.complete_num AS "completePalnList.complete_num"
+			,bcp.plan_date AS "completePalnList.plan_date"
 		FROM biz_scheduling_plan a
+		  LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = a.id
 		<include refid="bizSchedulingPlanJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
@@ -53,6 +58,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				GROUP  BY a.id
 			</otherwise>
 		</choose>
 	</select>
@@ -83,9 +89,9 @@
 			<if test="schedulingNum !=null and schedulingNum !=''">
 				scheduling_num,
 			</if>
-			<if test="completeNum !=null and completeNum !=''">
-				complete_num,
-			</if>
+			<!--<if test="completeNum !=null and completeNum !=''">-->
+				<!--complete_num,-->
+			<!--</if>-->
 			status,
 			create_id,
 			create_time,
@@ -100,9 +106,9 @@
 			<if test="schedulingNum !=null and schedulingNum !=''">
 				#{schedulingNum},
 			</if>
-			<if test="completeNum !=null and completeNum !=''">
-				#{completeNum},
-			</if>
+			<!--<if test="completeNum !=null and completeNum !=''">-->
+				<!--#{completeNum},-->
+			<!--</if>-->
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -118,7 +124,7 @@
 			object_id = #{objectId},
 			original_num = #{originalNum},
 			scheduling_num = #{schedulingNum},
-			complete_num = #{completeNum},
+			<!--complete_num = #{completeNum},-->
 			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},

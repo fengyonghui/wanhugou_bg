@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.po.BizCompletePalnDao">
+    
+	<sql id="bizCompletePalnColumns">
+		a.id AS "id",
+		a.scheduling_id AS "schedulingId",
+		a.complete_num AS "completeNum",
+		a.plan_date AS "planDate",
+		a.status AS "status",
+		a.create_id AS "createBy",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizCompletePalnJoins">
+	</sql>
+    
+	<select id="get" resultType="BizCompletePaln">
+		SELECT 
+			<include refid="bizCompletePalnColumns"/>
+		FROM biz_complete_paln a
+		<include refid="bizCompletePalnJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizCompletePaln">
+		SELECT 
+			<include refid="bizCompletePalnColumns"/>
+		FROM biz_complete_paln a
+		<include refid="bizCompletePalnJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="schedulingId != null and schedulingId != ''">
+				AND a.scheduling_id = #{schedulingId}
+			</if>
+			<if test="planDate != null and planDate != ''">
+				AND a.plan_date = #{planDate}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizCompletePaln">
+		SELECT 
+			<include refid="bizCompletePalnColumns"/>
+		FROM biz_complete_paln a
+		<include refid="bizCompletePalnJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_complete_paln(
+			id,
+			scheduling_id,
+			complete_num,
+			plan_date,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{schedulingId},
+			#{completeNum},
+			#{planDate},
+			#{status},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_complete_paln SET 	
+			scheduling_id = #{schedulingId},
+			complete_num = #{completeNum},
+			plan_date = #{planDate},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_complete_paln SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
