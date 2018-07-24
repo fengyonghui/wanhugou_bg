@@ -98,6 +98,9 @@
 				<th>最低售价</th>
 				<th>最高售价</th>
 				<th>审核状态</th>
+				<th>品类主管</th>
+				<th>点击量</th>
+				<th>订单量</th>
 
 				<shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -140,6 +143,15 @@
 					<c:if test="${bizProductInfo.bizStatus == 1}">未审核</c:if>
 					<c:if test="${bizProductInfo.bizStatus == 2}">审核通过</c:if>
 					<c:if test="${bizProductInfo.bizStatus == 3}">审核失败</c:if>
+				</td>
+				<td>
+						${bizProductInfo.bizVarietyInfo.user.name}
+				</td>
+				<td>
+					点击量
+				</td>
+				<td>
+					订单量
 				</td>
 				<td>
 					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:check">
