@@ -32,6 +32,10 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	 * 采购订单表Entity
 	 */
 	private BizPoDetail bizPoDetail;
+	/**
+	 * 该排产相关的总确认数
+	 */
+	private Integer sumCompleteNum;
 	
 	public BizSchedulingPlan() {
 		super();
@@ -89,5 +93,13 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 
 	public void setCompletePalnList(List<BizCompletePaln> completePalnList) {
 		this.completePalnList = completePalnList;
+	}
+
+	public Integer getSumCompleteNum() {
+		return sumCompleteNum;
+	}
+
+	public void setSumCompleteNum(Integer sumCompleteNum) {
+		this.sumCompleteNum = sumCompleteNum;
 	}
 }

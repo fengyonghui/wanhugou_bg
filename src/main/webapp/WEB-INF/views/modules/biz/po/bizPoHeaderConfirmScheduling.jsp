@@ -27,14 +27,14 @@
             //     cols: [0]
             //     // rows:[0,2]
             // });
-            <%--var schedulingPlanList = JSON.parse('${schedulingPlanList}');--%>
-            <%--var jsonLength = schedulingPlanList.length;--%>
-            <%--if(jsonLength == 0) {--%>
-                <%--$("#batchSubmit").hide();--%>
-            <%--} else {--%>
-                <%--var id = '${bizPoHeader.id}'--%>
-                <%--checkResult(id);--%>
-            <%--}--%>
+            var schedulingPlanList = JSON.parse('${schedulingPlanList}');
+            var jsonLength = schedulingPlanList.length;
+            if(jsonLength == 0) {
+                $("#batchSubmit").hide();
+            } else {
+                var id = '${bizPoHeader.id}'
+                checkResult(id);
+            }
         });
 
         <%--/**--%>
@@ -44,37 +44,61 @@
         function batchUpdate() {
             var schedulingPlanList = JSON.parse('${schedulingPlanList}');
             var params = new Array();
+            var count = 0;
             for(var index in schedulingPlanList) {
-                var planId = schedulingPlanList[index];
-                var entity = {};
+                var id = schedulingPlanList[index];
 
-                var detailId = $(eval("detailId_" + planId)).text();
-                var originalNum = $(eval("originalNum_" + planId)).text();
-                var schedulingNum = $(eval("schedulingNum_" + planId)).text();
-                var sumCompleteNum = $(eval("sumCompleteNum_" + planId)).text();
-                var completeNum = $(eval("completeNum_" + planId)).val();
-                var standard = schedulingNum - sumCompleteNum;
-                if (parseInt(completeNum) <0 || parseInt(completeNum) >  parseInt(standard)){
-                    alert("确认排产量数据不正确，请重新输入！")
-                    return false;
+                var divArray = $("[name='" + id + "']");
+                for(i=0;i<divArray.length;i++){
+                    var div = divArray[i];
+                    var jqDiv = $(div);
+                    var date = jqDiv.find("[name='" + id + "_date']").val();
+                    var value = jqDiv.find("[name='" + id + "_value']").val();
+                    if(date == null || date == ""){
+                        alert("排产日期不能为空!")
+                        return false;
+                    }
+                    var reg= /^[1-9]+[0-9]*]*$/;
+                    if(value == null || value == "" || !reg.test(value)){
+                        alert("确认值输入不正确!")
+                        return false;
+                    }
+                    var entity = {};
+                    entity.schedulingId = id;
+                    entity.planDate=date;
+                    entity.completeNum=value;
+                    params[count]=entity;
+                    count++;
                 }
-                var schedulingPlanId = $(eval("schedulingPlanId_" + planId)).text();
-                completeNum =  parseInt(completeNum) + parseInt(sumCompleteNum);
 
 
-                //alert("detailId="+ detailId + "/r/n" + "ordQty=" + ordQty + "sumSchedulingNum="+ sumSchedulingNum + "/r/n" + "schedulingNum="+ schedulingNum + "/r/n");
-                entity.id = planId;
-                entity.objectId = detailId;
-                entity.originalNum = originalNum;
-                entity.schedulingNum = schedulingNum;
-                entity.completeNum = completeNum;
-                params[index] = entity;
+//                var detailId = $(eval("detailId_" + planId)).text();
+//                var originalNum = $(eval("originalNum_" + planId)).text();
+//                var schedulingNum = $(eval("schedulingNum_" + planId)).text();
+//                var sumCompleteNum = $(eval("sumCompleteNum_" + planId)).text();
+//                var completeNum = $(eval("completeNum_" + planId)).val();
+//                var standard = schedulingNum - sumCompleteNum;
+//                if (parseInt(completeNum) <0 || parseInt(completeNum) >  parseInt(standard)){
+//                    alert("确认排产量数据不正确，请重新输入！")
+//                    return false;
+//                }
+//                var schedulingPlanId = $(eval("schedulingPlanId_" + planId)).text();
+//                completeNum =  parseInt(completeNum) + parseInt(sumCompleteNum);
+//
+//
+//                //alert("detailId="+ detailId + "/r/n" + "ordQty=" + ordQty + "sumSchedulingNum="+ sumSchedulingNum + "/r/n" + "schedulingNum="+ schedulingNum + "/r/n");
+//                entity.id = planId;
+//                entity.objectId = detailId;
+//                entity.originalNum = originalNum;
+//                entity.schedulingNum = schedulingNum;
+//                entity.completeNum = completeNum;
+//                params[index] = entity;
             }
 
             if(confirm("确定执行批量确认吗？")) {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
-                    url: '${ctx}/biz/po/bizPoHeader/batchUpdateSchedulingPlan',
+                    url: '${ctx}/biz/po/bizPoHeader/saveCompletePlan',
                     contentType: 'application/json',
                     data:JSON.stringify(params),
                     datatype:"json",
@@ -122,25 +146,25 @@
             <%--}--%>
         <%--}--%>
 
-        <%--function checkResult(id) {--%>
-            <%--$.ajax({--%>
-                <%--url: '${ctx}/biz/po/bizPoHeader/checkResult',--%>
-                <%--contentType: 'application/json',--%>
-                <%--data: {"id": id},--%>
-                <%--type: 'get',--%>
-                <%--dataType:'json',--%>
-                <%--success: function (result) {--%>
-                    <%--var toalSchedulingNum = result['toalSchedulingNum'];--%>
-                    <%--var toalCompleteNum = result['toalCompleteNum'];--%>
-                    <%--if (toalSchedulingNum != null && toalCompleteNum != null && toalSchedulingNum == toalCompleteNum) {--%>
-                        <%--$("#batchSubmit").hide();--%>
-                    <%--}--%>
-                <%--},--%>
-                <%--error: function (error) {--%>
-                    <%--console.info(error);--%>
-                <%--}--%>
-            <%--});--%>
-        <%--}--%>
+        function checkResult(id) {
+            $.ajax({
+                url: '${ctx}/biz/po/bizPoHeader/checkResult',
+                contentType: 'application/json',
+                data: {"id": id},
+                type: 'get',
+                dataType:'json',
+                success: function (result) {
+                    var toalSchedulingNum = result['toalSchedulingNum'];
+                    var toalCompleteNum = result['toalCompleteNum'];
+                    if (toalSchedulingNum != null && toalCompleteNum != null && toalSchedulingNum == toalCompleteNum) {
+                        $("#batchSubmit").hide();
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
         function saveComplete(id) {
             var divArray = $("[name='" + id + "']");
             var params = new Array();
@@ -313,10 +337,10 @@
                             <div class="control-group">
                                 <label>排产日期：</label>
                                 <input name="planDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-                                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+                                       value="<fmt:formatDate value="${completePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"/>
                                 &nbsp;&nbsp;
                                 <label>排产数量：</label>
-                                <form:input path="" id="" htmlEscape="false" maxlength="30" class="input-medium"/>
+                                <input name="completeNum" readonly="readonly" value="${completePaln.completeNum}" class="input-medium" type="text" value="" maxlength="30" />
                             </div>
                         </td>
                     </tr>
@@ -326,7 +350,7 @@
                             <div class="control-group">
                                 <input class="btn" type="button" value="添加排产计划" onclick="addSchedulingComplete(${schedulingPlan.id})"/>
                                 &nbsp;&nbsp;
-                                <input id="batchSubmit" class="btn btn-primary" type="button" onclick="saveComplete(${schedulingPlan.id})" value="保存"/>&nbsp;
+                                <input id="saveSubmit" class="btn btn-primary" type="button" onclick="saveComplete(${schedulingPlan.id})" value="保存"/>&nbsp;
                             </div>
                         </td>
                     </tr>
@@ -353,7 +377,7 @@
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
         <c:if test="${roleFlag != false}">
             <c:if test="${bizPoHeader.poDetailList!=null}">
-                <%--<input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchUpdate()" value="保存"/>&nbsp;--%>
+                <input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchUpdate()" value="保存"/>&nbsp;
             </c:if>
         </c:if>
     </div>

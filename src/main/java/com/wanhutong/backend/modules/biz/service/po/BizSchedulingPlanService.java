@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.po;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,5 +58,10 @@ public class BizSchedulingPlanService extends CrudService<BizSchedulingPlanDao, 
 	@Transactional(readOnly = false)
 	public List<Integer> getSchedulingPlanIdListByPoId(BizPoHeader poHeader){
 		return bizSchedulingPlanDao.getSchedulingPlanIdListByPoId(poHeader);
+	}
+
+	@Transactional(readOnly = false)
+	public List<BizSchedulingPlan> findAllList(BizSchedulingPlan bizSchedulingPlan){
+		return bizSchedulingPlanDao.findAllList(bizSchedulingPlan);
 	}
 }

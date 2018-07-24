@@ -177,8 +177,9 @@ public class BizPoHeaderController extends BaseController {
 
                 BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
                 bizSchedulingPlan.setBizPoDetail(poDetail);
-                List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findList(bizSchedulingPlan);
+                //List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findList(bizSchedulingPlan);
                 //schedulingPlanList.sort(Comparator.comparing(BizSchedulingPlan::getUpdateDate));
+                List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findAllList(bizSchedulingPlan);
                 poDetail.setSchedulingPlanList(schedulingPlanList);
                 BizPoDetail poDetailTemp = bizPoDetailService.getsumSchedulingNum(poDetail.getId());
                 if (poDetailTemp != null){
@@ -963,6 +964,11 @@ public class BizPoHeaderController extends BaseController {
             JSONArray json = JSONArray.fromObject(list);
             model.addAttribute("schedulingPlanList", json);
 
+            List<BizPoDetail> poDetailList = bizPoHeader.getPoDetailList();
+            if (poDetailList != null) {
+
+            }
+
             forwardPage = "modules/biz/po/bizPoHeaderConfirmScheduling";
         } else {
             forwardPage = "modules/biz/po/bizPoHeaderScheduling";
@@ -1010,7 +1016,7 @@ public class BizPoHeaderController extends BaseController {
         //List<BizPoHeaderSchedulingDto> dtoList = JsonUtil.parseArray(params, new TypeReference<List<BizPoHeaderSchedulingDto>>(){});
         List<BizCompletePalnDto> dtoList = JsonUtil.parseArray(params, new TypeReference<List<BizCompletePalnDto>>(){});
         boolean boo = false;
-        SimpleDateFormat sdf = new SimpleDateFormat( " yyyy-MM-dd HH:mm:ss" );
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (int i=0; i<dtoList.size(); i++) {
             BizCompletePalnDto dto = dtoList.get(i);
             BizCompletePaln completePaln = new BizCompletePaln();

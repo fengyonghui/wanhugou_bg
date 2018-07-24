@@ -20,7 +20,11 @@ public class BizCompletePaln extends DataEntity<BizCompletePaln> {
 	private Integer schedulingId;		// 排产ID
 	private Integer completeNum;		// 完成排产数量
 	private Date planDate;		// 排产日期
-	private Integer status;		// 记录状态 1: active ； 0：inactive
+
+	/**
+	 * 排产计划enity
+	 */
+	private BizSchedulingPlan schedulingPlan;
 
 	
 	public BizCompletePaln() {
@@ -31,7 +35,6 @@ public class BizCompletePaln extends DataEntity<BizCompletePaln> {
 		super(id);
 	}
 
-	@NotNull(message="排产ID不能为空")
 	public Integer getSchedulingId() {
 		return schedulingId;
 	}
@@ -39,8 +42,7 @@ public class BizCompletePaln extends DataEntity<BizCompletePaln> {
 	public void setSchedulingId(Integer schedulingId) {
 		this.schedulingId = schedulingId;
 	}
-	
-	@NotNull(message="完成排产数量不能为空")
+
 	public Integer getCompleteNum() {
 		return completeNum;
 	}
@@ -48,8 +50,7 @@ public class BizCompletePaln extends DataEntity<BizCompletePaln> {
 	public void setCompleteNum(Integer completeNum) {
 		this.completeNum = completeNum;
 	}
-	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
 	public Date getPlanDate() {
 		return planDate;
 	}
@@ -57,14 +58,5 @@ public class BizCompletePaln extends DataEntity<BizCompletePaln> {
 	public void setPlanDate(Date planDate) {
 		this.planDate = planDate;
 	}
-	
-	@NotNull(message="记录状态 1: active ； 0：inactive不能为空")
-	public Integer getStatus() {
-		return status;
-	}
 
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
-	
 }

@@ -7,7 +7,7 @@
 		a.scheduling_id AS "schedulingId",
 		a.complete_num AS "completeNum",
 		a.plan_date AS "planDate",
-		a.status AS "status",
+		a.status AS "delFlag",
 		a.create_id AS "createBy",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
@@ -35,6 +35,9 @@
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="schedulingId != null and schedulingId != ''">
 				AND a.scheduling_id = #{schedulingId}
+			</if>
+			<if test="schedulingPlan != null and schedulingPlan.id != null and schedulingPlan.id != ''">
+				AND a.scheduling_id = #{schedulingPlan.id}
 			</if>
 			<if test="planDate != null and planDate != ''">
 				AND a.plan_date = #{planDate}
@@ -83,7 +86,7 @@
 			#{schedulingId},
 			#{completeNum},
 			#{planDate},
-			#{status},
+			#{delFlag},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},

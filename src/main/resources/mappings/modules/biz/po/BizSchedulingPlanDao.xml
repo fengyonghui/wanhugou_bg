@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.po.BizSchedulingPlanDao">
+	<resultMap id="schedulingPlanResult" type="BizSchedulingPlan">
+		<id property="id" column="id"/>
+		<result property="objectName" column="objectName"/>
+		<result property="objectId" column="objectId"/>
+		<result property="originalNum" column="originalNum"/>
+		<result property="schedulingNum" column="schedulingNum"/>
+		<result property="totalExp" column="totalExp"/>
+
+		<collection property="completePalnList" ofType="BizCompletePaln">
+			<id property="id" column="completePalnList.id" />
+			<result property="schedulingId" column="completePalnList.schedulingId" />
+			<result property="completeNum" column="completePalnList.completeNum" />
+			<result property="planDate" column="completePalnList.planDate" />
+		</collection>
+	</resultMap>
+
     
 	<sql id="bizSchedulingPlanColumns">
 		a.id AS "id",
@@ -36,13 +52,13 @@
 		WHERE a.object_id = #{objectId}
 	</select>
 	
-	<select id="findList" resultType="BizSchedulingPlan">
+	<select id="findList" resultMap="schedulingPlanResult">
 		SELECT 
 			<include refid="bizSchedulingPlanColumns"/>
 			,bcp.id AS "completePalnList.id"
-			,bcp.scheduling_id AS "completePalnList.scheduling_id"
-			,bcp.complete_num AS "completePalnList.complete_num"
-			,bcp.plan_date AS "completePalnList.plan_date"
+			,bcp.scheduling_id AS "completePalnList.schedulingId"
+			,bcp.complete_num AS "completePalnList.completeNum"
+			,bcp.plan_date AS "completePalnList.planDate"
 		FROM biz_scheduling_plan a
 		  LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = a.id
 		<include refid="bizSchedulingPlanJoins"/>
@@ -62,15 +78,24 @@
 			</otherwise>
 		</choose>
 	</select>
-	
-	<select id="findAllList" resultType="BizSchedulingPlan">
-		SELECT 
-			<include refid="bizSchedulingPlanColumns"/>
+
+	<select id="findAllList" resultMap="schedulingPlanResult">
+		SELECT
+		<include refid="bizSchedulingPlanColumns"/>
+		,bcp.id AS "completePalnList.id"
+		,bcp.scheduling_id AS "completePalnList.schedulingId"
+		,bcp.complete_num AS "completePalnList.completeNum"
+		,bcp.plan_date AS "completePalnList.planDate"
 		FROM biz_scheduling_plan a
+		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = a.id
 		<include refid="bizSchedulingPlanJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-		</where>		
+			<if test="bizPoDetail!=null and bizPoDetail.id!=null and bizPoDetail.id!=''">
+				AND a.object_name = "biz_po_detail"
+				AND a.object_id = #{bizPoDetail.id}
+			</if>
+		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
