@@ -284,7 +284,7 @@
 			#{fromOffice.id},
 			#{toOffice.id},
 			#{fromType},
-			#{bizVendInfo.office.id}
+			#{bizVendInfo.office.id},
 			#{recvEta},
 			<if test="totalDetail!=null">
 				#{totalDetail},

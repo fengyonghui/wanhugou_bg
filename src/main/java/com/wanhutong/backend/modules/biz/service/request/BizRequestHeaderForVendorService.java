@@ -201,7 +201,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		if (ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
 			processId = saveCommonProcess(bizRequestHeader);
 		}
-		if (ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+		if (ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
 			processId = saveVendCommonProcess(bizRequestHeader);
 		}
 

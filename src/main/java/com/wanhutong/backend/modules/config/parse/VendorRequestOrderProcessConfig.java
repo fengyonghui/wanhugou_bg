@@ -68,7 +68,7 @@ public class VendorRequestOrderProcessConfig extends ConfigGeneral {
      * 取当前状态拒绝后的状态
      *
      * @param currentEnum 当前状态
-     * @return 通过后的状态
+     * @return 拒绝后的状态
      */
     public RequestOrderProcess getRejectProcess(RequestOrderProcess currentEnum) {
         return processMap.get(currentEnum.getRejectCode());

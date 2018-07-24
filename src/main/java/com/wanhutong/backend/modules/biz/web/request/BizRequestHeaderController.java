@@ -32,7 +32,9 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -114,6 +116,7 @@ public class BizRequestHeaderController extends BaseController {
 		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
 		model.addAttribute("varietyInfoList", varietyInfoList);
 		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
+		model.addAttribute("vendAuditStatus",ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
 		return "modules/biz/request/bizRequestHeaderList";
 	}
@@ -136,6 +139,7 @@ public class BizRequestHeaderController extends BaseController {
 		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
 		resultMap.put("varietyInfoList", varietyInfoList);
 		resultMap.put("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
+		resultMap.put("vendAuditStatus",ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
 		return JsonUtil.generateData(resultMap, null);
 	}
@@ -173,9 +177,13 @@ public class BizRequestHeaderController extends BaseController {
 			}
 		}
 
-		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+			model.addAttribute("requestOrderProcess", requestOrderProcess);
+		}else if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+			VendorRequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+					ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
 		}
 
@@ -248,9 +256,13 @@ public class BizRequestHeaderController extends BaseController {
 			}
 		}
 
-		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+			resultMap.put("requestOrderProcess", requestOrderProcess);
+		} else if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+			VendorRequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+					ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			resultMap.put("requestOrderProcess", requestOrderProcess);
 		}
 

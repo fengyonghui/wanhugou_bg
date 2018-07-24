@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -61,6 +62,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 备货清单Controller
@@ -113,6 +115,18 @@ public class BizRequestHeaderForVendorController extends BaseController {
         model.addAttribute("page", page);
         //品类名称
 		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
+		User user = UserUtils.getUser();
+		List<Role> roleList = user.getRoleList();
+		Set<String> roleSet = Sets.newHashSet();
+		if (CollectionUtils.isNotEmpty(roleList)) {
+			for (Role r : roleList) {
+				RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+				if (parse != null) {
+					roleSet.add(parse.name());
+				}
+			}
+		}
+		model.addAttribute("roleSet",roleSet);
 		model.addAttribute("varietyInfoList", varietyInfoList);
 		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 

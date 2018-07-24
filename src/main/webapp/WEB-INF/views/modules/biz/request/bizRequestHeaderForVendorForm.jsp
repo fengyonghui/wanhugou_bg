@@ -22,7 +22,7 @@
 		$(document).ready(function() {
 			//$("#name").focus();
 			var str=$("#str").val();
-            if ($("#id").val() == null || $("#fromType").val() == 1) {
+            if ($("#id").val() == '' || $("#fromType").val() == 1) {
                 $("#fromType1").prop("checked","checked");
             } else {
                 $("#fromType2").prop("checked","checked");
@@ -31,6 +31,11 @@
                 $("#vendor").removeAttr("style");
                 deleteStyle();
             }
+            if (str == 'audit') {
+                $("input[name='fromType']").each(function () {
+					$(this).attr("disabled","disabled");
+                });
+			}
 			if(str=='detail'){
 			   $("#inputForm").find("input[type!='button']").attr("disabled","disabled") ;
 			   $("#fromOfficeButton").hide();
@@ -288,9 +293,6 @@
 
 	</script>
 	<script type="text/javascript">
-		$.ready(function () {
-
-        });
 		function deleteStyle() {
             $("#remark").removeAttr("style");
             $("#cardNumber").removeAttr("style");

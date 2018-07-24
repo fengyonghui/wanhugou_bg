@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.ReqFromTypeEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
@@ -231,7 +232,12 @@
 						${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
 
 				</td>
-				<td>   ${requestHeader.commonProcess.requestOrderProcess.name}</td>
+				<c:if test="${requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type}">
+					<td>${requestHeader.commonProcess.requestOrderProcess.name}</td>
+				</c:if>
+				<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">
+					<td>${requestHeader.commonProcess.vendRequestOrderProcess.name}</td>
+				</c:if>
 				<td>
 					<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
@@ -284,11 +290,23 @@
 				</shiro:hasPermission>
 
 					<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-					<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum) && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
+						<c:if test="${(fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin()) && requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
 							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
 							}">
-						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
-					</c:if>
+							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
+						</c:if>
+						<%--<c:forEach items="${requestHeader.commonProcess.vendorRequestOrderProcess.roleEnNameEnum}" var="roleEnNameEnum">--%>
+							<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin()) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'
+								&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus
+								}">
+								<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
+							</c:if>
+						<%--</c:forEach>--%>
+					<%--<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum) && requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'--%>
+							<%--&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus--%>
+							<%--}">--%>
+						<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>--%>
+					<%--</c:if>--%>
 				</shiro:hasPermission>
 
 				</td></shiro:hasPermission>
