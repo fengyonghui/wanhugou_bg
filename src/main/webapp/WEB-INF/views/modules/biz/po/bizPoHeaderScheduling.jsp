@@ -27,6 +27,13 @@
                 cols: [0]
                 // rows:[0,2]
             });
+            var poDetailList = '${bizPoHeader.poDetailList.size()}';
+            if(poDetailList == 0) {
+                $("#batchSubmit").hide();
+            } else {
+                var id = '${bizPoHeader.id}'
+                checkResult(id);
+            }
         });
 
         //批量排产
@@ -86,7 +93,7 @@
                 $.ajax({
                     url: '${ctx}/biz/po/bizPoHeader/saveSchedulingPlan',
                     contentType: 'application/json',
-                    data: {"detailId": detailId, "ordQty": ordQty, "schedulingNum": schedulingNum, "completeNum": 0},
+                    data: {"detailId": detailId, "ordQty": ordQty, "schedulingNum": schedulingNum},
                     type: 'get',
                     success: function (result) {
                         if(result == true) {
@@ -98,6 +105,26 @@
                     }
                 });
             }
+        }
+
+        function checkResult(id) {
+            $.ajax({
+                url: '${ctx}/biz/po/bizPoHeader/checkResult',
+                contentType: 'application/json',
+                data: {"id": id},
+                type: 'get',
+                dataType:'json',
+                success: function (result) {
+                    var totalOrdQty = result['totalOrdQty'];
+                    var toalSchedulingNum = result['toalSchedulingNum'];
+                    if (totalOrdQty != null && toalSchedulingNum != null && totalOrdQty == toalSchedulingNum) {
+                        $("#batchSubmit").hide();
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
         }
     </script>
 </head>
@@ -187,7 +214,7 @@
                                 <input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${poDetail.id}')" value="保存"/>&nbsp;
                             </c:when>
                             <c:otherwise>
-                                <input id="addScheduling_alert" class="btn btn-primary" type="button" disabled="true" value="排产完成"/>&nbsp;
+                                <span style="color:red; ">已排产完成</span>
                             </c:otherwise>
                         </c:choose>
                     </td>
