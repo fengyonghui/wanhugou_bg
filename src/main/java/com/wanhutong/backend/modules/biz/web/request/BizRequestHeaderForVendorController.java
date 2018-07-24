@@ -32,6 +32,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
@@ -164,7 +165,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
 		}
 		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
-			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+			VendorRequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
 		}
@@ -459,7 +460,12 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequestMapping(value = "audit")
 	@ResponseBody
 	public String audit(int id, String currentType, int auditType, String description) {
-		return bizRequestHeaderForVendorService.audit(id, currentType, auditType, description);
+		BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(id);
+		if (ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+			return bizRequestHeaderForVendorService.vendAudit(id, currentType, auditType, description);
+		}else {
+			return bizRequestHeaderForVendorService.audit(id, currentType, auditType, description);
+		}
 	}
 
 	/**
@@ -473,6 +479,9 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	public BizVendInfo selectVendInfo(Integer vendorId) {
 
 		BizVendInfo bizVendInfo = bizVendInfoService.get(vendorId);
+		if (bizVendInfo == null) {
+			return null;
+		}
 		CommonImg compactImg = new CommonImg();
 		compactImg.setImgType(ImgEnum.VEND_COMPACT.getCode());
 		compactImg.setObjectId(vendorId);

@@ -303,6 +303,9 @@
 				type:"post",
 				url:"${ctx}/biz/request/bizRequestHeaderForVendor/selectVendInfo?vendorId="+officeId,
 				success:function (data) {
+				    if (data == null) {
+				        return false;
+                    }
                     $("#cardNumberInput").val(data.cardNumber);
                     $("#payeeInput").val(data.payee);
                     $("#bankNameInput").val(data.bankName);

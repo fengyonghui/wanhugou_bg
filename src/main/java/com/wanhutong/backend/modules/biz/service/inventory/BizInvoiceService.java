@@ -161,9 +161,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         Double valuePrice = 0.0;
 //        List<BizRequestHeader> requestHeaderList = bizInvoice.getRequestHeaderList();
         if (StringUtils.isNotBlank(orderHeaders)) {
-            boolean ordFlag = true;
             String[] orders = orderHeaders.split(",");
             for (int a = 0; a < orders.length; a++) {
+                boolean ordFlag = true;
                 String[] oheaders = orders[a].split("#");
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(Integer.parseInt(oheaders[0]));
                 //加入中间表关联关系

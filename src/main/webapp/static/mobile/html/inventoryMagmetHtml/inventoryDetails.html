@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>详情</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/app.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-content div.content_part li {
+				padding: 0;
+				list-style: none;
+			}
+			
+			.mui-content div.ctn_li_h li {
+				height: 30px;
+			}
+			
+			.mui-input-row label {
+				padding: 14px 14px;
+			}
+			
+			#Date {
+				text-indent: 30px;
+			}
+			
+			.sucessColor {
+				color: #40ABE9;
+			}
+			#commodity {font-size: 13px;}
+			#commodity div.mui-input-row>input {
+				padding: 0;
+			}
+			#commodity div.mui-input-row>label {
+				padding: 0;
+			}
+			.photoParent {width: 15%;height: 220px;}
+			.photoParent img {top: 50%;margin-top: -8px;width: 50px;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">详情</p>
+		</header>
+		<div class="mui-content mui-input-group">
+			<div class="mui-input-row">
+				<label>备货清单编号：</label>
+				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>采购中心：</label>
+				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>应付金额：</label>
+				<input type="text" class="mui-input-clear" id="inPototal" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>已收保证金：</label>
+				<input type="text" class="mui-input-clear" id="inMoneyReceive" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>保证金比例：</label>
+				<input type="text" class="mui-input-clear" id="inMarginLevel" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>期望收货时间：</label>
+				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
+			</div>
+			<div class="mui-input-row">
+				<div class="labelLf">备货商品：</div>
+				<ul id="commodityMenu" class="mui-table-view">
+					<li class="mui-table-view-cell mui-media">
+						<!--产品图片-->
+						<div class="photoParent mui-pull-left position_Re">
+							<img class="position_Ab" src="../images/shuijiao.jpg">
+						</div>
+						<!--产品信息-->
+						<div id="commodity" class="mui-media-body">
+							<div class="mui-input-row">
+								<label>品牌名称：</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+							<div class="mui-input-row">
+								<label>供应商：</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+							<div class="mui-input-row">
+								<label>商品名称：</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+							<div class="mui-input-row">
+								<label>商品编码：</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+							<div class="mui-input-row">
+								<label>商品货号：</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+							<div class="mui-input-row">
+								<label>价格：</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+							<div class="mui-input-row">
+								<label>申报数量：</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+							<div class="mui-input-row">
+								<label>仓库名称：</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+							<div class="mui-input-row">
+								<label>库存数量：</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+							<div class="mui-input-row">
+								<label>商品总库存数量：</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+							<!--<div class="mui-input-row">
+								<label>已收货数量：</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>-->
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="mui-input-row">
+				<label>备注：</label>
+				<textarea id="inPoRemark" name="" rows="" cols="" disabled></textarea>
+			</div>
+			<div class="mui-input-row">
+				<label>业务状态：</label>
+				<input type="text" class="mui-input-clear" id="inPoDizstatus" disabled>
+			</div>
+			<!--审批流程块 有的话显示-->
+			<div class="mui-input-row">
+				<div class="labelLf">状态流程：</div>
+				<ul class="" id="inCheckAddMenu">
+					
+				</ul>
+			</div>
+			
+		</div>
+		<input id="inStatus" name="inStatus" type="hidden" />
+		<div class="clear"></div>
+
+		<script src="../../js/component/mui.min.js"></script>
+		<script src="../../js/component/zepto.min.js"></script>
+		<script src="../../js/component/GHutils.js"></script>
+		<script src="../../js/inventoryMagmetJs/inventoryDetails.js"></script>
+	</body>
+
+</html>

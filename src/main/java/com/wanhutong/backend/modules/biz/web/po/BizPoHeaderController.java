@@ -3,13 +3,16 @@
  */
 package com.wanhutong.backend.modules.biz.web.po;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -53,8 +56,12 @@ import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -295,6 +302,60 @@ public class BizPoHeaderController extends BaseController {
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:view")
+    @RequestMapping(value = {"listData4Mobile"})
+    @ResponseBody
+    public String listData4Mobile(BizPoHeader bizPoHeader, @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo, HttpServletRequest request, HttpServletResponse response) {
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (roleList.contains(role)) {
+            bizPoHeader.setVendOffice(user.getCompany());
+        }
+        Page<BizPoHeader> bizPoHeaderPage = new Page<>(request, response);
+        bizPoHeaderPage.setPageNo(pageNo);
+        Page<BizPoHeader> page = bizPoHeaderService.findPage(bizPoHeaderPage, bizPoHeader);
+        Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
+            }
+        }
+
+        List<PurchaseOrderProcessConfig.PurchaseOrderProcess> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+
+        List<Map<String, Object>> resultList = Lists.newArrayList();
+        List<BizPoHeader> list = page.getList();
+        page.setList(null);
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.forEach(o -> {
+                Map<String, Object> data = Maps.newHashMap();
+                data.put("id", o.getId());
+                data.put("orderNum", o.getOrderNum() == null ? StringUtils.EMPTY : o.getOrderNum());
+                data.put("vendOffice", o.getVendOffice().getName() == null ? StringUtils.EMPTY : o.getVendOffice().getName());
+                data.put("process",  o.getCommonProcess() == null ? StringUtils.EMPTY : o.getCommonProcess());
+                data.put("currentPaymentId",  o.getCurrentPaymentId() == null ? StringUtils.EMPTY : o.getCurrentPaymentId());
+                data.put("bizStatus",  DictUtils.getDictLabel(String.valueOf(o.getBizStatus()), "biz_po_status", "未知类型"));
+                data.put("payTotal",  o.getPayTotal());
+                data.put("totalDetail",  o.getTotalDetail());
+                data.put("totalExp",  o.getTotalDetail());
+                resultList.add(data);
+            });
+        }
+        Map<String, Object> resultMap = Maps.newHashMap();
+        resultMap.put("roleSet", roleSet);
+        resultMap.put("processList", processList);
+        resultMap.put("roleEnNameSet", roleEnNameSet);
+        resultMap.put("page", page);
+        resultMap.put("resultList", resultList);
+        resultMap.put("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
+        return JsonUtil.generateData(resultMap, request.getParameter("callback"));
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = "form")
     public String form(BizPoHeader bizPoHeader, Model model, String prewStatus, String type) {
         if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null && bizPoHeader.getDeliveryOffice().getId() != 0) {
@@ -365,26 +426,129 @@ public class BizPoHeaderController extends BaseController {
         return "modules/biz/po/bizPoHeaderForm";
     }
 
+    @RequiresPermissions("biz:po:bizPoHeader:view")
+    @RequestMapping(value = "form4Mobile")
+    @ResponseBody
+    public String form4Mobile(HttpServletRequest request, BizPoHeader bizPoHeader, Model model, String prewStatus, String type) {
+        if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null && bizPoHeader.getDeliveryOffice().getId() != 0) {
+            Office office = officeService.get(bizPoHeader.getDeliveryOffice().getId());
+            if ("8".equals(office.getType())) {
+                bizPoHeader.setDeliveryStatus(0);
+            } else {
+                bizPoHeader.setDeliveryStatus(1);
+            }
+        }
+
+        if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
+            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+        }
+
+        if (bizPoHeader.getVendOffice() != null && bizPoHeader.getVendOffice().getBizVendInfo() != null) {
+            CommonImg compactImg = new CommonImg();
+            compactImg.setImgType(ImgEnum.VEND_COMPACT.getCode());
+            compactImg.setObjectId(bizPoHeader.getVendOffice().getId());
+            compactImg.setObjectName(VEND_IMG_TABLE_NAME);
+            List<CommonImg> compactImgList = commonImgService.findList(compactImg);
+            model.addAttribute("compactImgList", compactImgList);
+
+            CommonImg identityCardImg = new CommonImg();
+            identityCardImg.setImgType(ImgEnum.VEND_IDENTITY_CARD.getCode());
+            identityCardImg.setObjectId(bizPoHeader.getVendOffice().getId());
+            identityCardImg.setObjectName(VEND_IMG_TABLE_NAME);
+            List<CommonImg> identityCardImgList = commonImgService.findList(identityCardImg);
+            model.addAttribute("identityCardImgList", identityCardImgList);
+
+        }
+
+        List<Role> roleList = UserUtils.getUser().getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+            }
+        }
+
+        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+        bizPoOrderReq.setPoHeader(bizPoHeader);
+        List<BizPoOrderReq> bizPoOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
+        if (CollectionUtils.isNotEmpty(bizPoOrderReqs)) {
+            bizPoOrderReq = bizPoOrderReqs.get(0);
+        }
+        BizOrderHeader bizOrderHeader = null;
+        if (bizPoOrderReq != null) {
+            bizOrderHeader = bizOrderHeaderService.get(bizPoOrderReq.getSoId());
+        }
+
+        if (bizOrderHeader != null && 6 == bizOrderHeader.getOrderType()) {
+            CommonImg commonImg = new CommonImg();
+            commonImg.setObjectId(bizOrderHeader.getId());
+            commonImg.setObjectName(ImgEnum.ORDER_SKU_PHOTO.getTableName());
+            commonImg.setImgType(ImgEnum.ORDER_SKU_PHOTO.getCode());
+            List<CommonImg> photoOrderImgList = commonImgService.findList(commonImg);
+            model.addAttribute("photoOrderImgList", photoOrderImgList);
+        }
+
+
+        Map<String, Object> resultMap = Maps.newHashMap();
+        resultMap.put("roleSet", roleSet);
+
+        Map<String, Object> bizPoHeaderMap = Maps.newHashMap();
+        bizPoHeaderMap.put("id", bizPoHeader.getId());
+        bizPoHeaderMap.put("orderNumber", bizPoHeader.getOrderNum());
+        bizPoHeaderMap.put("totalDetail", bizPoHeader.getTotalDetail());
+        bizPoHeaderMap.put("total", bizPoHeader.getTotalDetail() + bizPoHeader.getTotalExp() + bizPoHeader.getFreight());
+        bizPoHeaderMap.put("lastPayDate", bizPoHeader.getLastPayDate());
+        bizPoHeaderMap.put("deliveryStatus", bizPoHeader.getDeliveryStatus());
+        bizPoHeaderMap.put("deliveryOffice", bizPoHeader.getDeliveryOffice());
+        bizPoHeaderMap.put("remark", bizPoHeader.getRemark());
+        bizPoHeaderMap.put("bizStatus", DictUtils.getDictLabel(String.valueOf(bizPoHeader.getBizStatus()), "biz_po_status", "未知类型"));
+        bizPoHeaderMap.put("vendOffice", bizPoHeader.getVendOffice());
+        bizPoHeaderMap.put("process", bizPoHeader.getCommonProcess());
+        bizPoHeaderMap.put("commonProcessList", bizPoHeader.getCommonProcessList());
+
+        Map<String, Object> bizOrderHeaderMap = Maps.newHashMap();
+        bizOrderHeaderMap.put("id",bizOrderHeader == null ? StringUtils.EMPTY : bizOrderHeader.getId());
+        bizOrderHeaderMap.put("orderNumber", bizOrderHeader == null ? StringUtils.EMPTY :bizOrderHeader.getOrderNum());
+
+        resultMap.put("bizPoHeader", bizPoHeaderMap);
+        resultMap.put("bizOrderHeader", bizOrderHeaderMap);
+        resultMap.put("type", type);
+        resultMap.put("prewStatus", prewStatus);
+        return JsonUtil.generateData(resultMap, request.getParameter("callback"));
+    }
+
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "audit")
     @ResponseBody
-    public String audit(int id, String currentType, int auditType, String description) {
-        return bizPoHeaderService.auditPo(id, currentType, auditType, description);
+    public String audit(HttpServletRequest request, int id, String currentType, int auditType, String description) {
+        Pair<Boolean, String> result = bizPoHeaderService.auditPo(id, currentType, auditType, description);
+        if (result.getLeft()) {
+            return JsonUtil.generateData(result, request.getParameter("callback"));
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
     }
 
     @RequiresPermissions("biz:po:bizpopaymentorder:bizPoPaymentOrder:audit")
     @RequestMapping(value = "auditPay")
     @ResponseBody
-    public String auditPay(int id, String currentType, int auditType, String description, BigDecimal money) {
-        return bizPoHeaderService.auditPay(id, currentType, auditType, description, money);
+    public String auditPay(HttpServletRequest request, int id, String currentType, int auditType, String description, BigDecimal money) {
+        Pair<Boolean, String> result = bizPoHeaderService.auditPay(id, currentType, auditType, description, money);
+        if (result.getLeft()) {
+            return JsonUtil.generateData(result, request.getParameter("callback"));
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
     }
 
 
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "save")
-    public String save(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
+    public String save(HttpServletResponse response, HttpServletRequest request,
+                       BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes,
+                       String prewStatus, String type, String version) {
         if ("audit".equalsIgnoreCase(type)) {
-            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader);
+            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
             addMessage(redirectAttributes, msg);
             return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
         }
@@ -393,8 +557,8 @@ public class BizPoHeaderController extends BaseController {
             return form(bizPoHeader, model, prewStatus, null);
         }
 
-        Set<Integer> poIdSet= bizPoHeaderService.findPrewPoHeader(bizPoHeader);
-        if(poIdSet.size()==1){
+        Set<Integer> poIdSet = bizPoHeaderService.findPrewPoHeader(bizPoHeader);
+        if (poIdSet.size() == 1) {
             addMessage(redirectAttributes, "prew".equals(prewStatus) ? "采购订单预览信息" : "保存采购订单成功");
             return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/form/?id=" + poIdSet.iterator().next() + "&prewStatus=" + prewStatus;
         }
@@ -418,6 +582,11 @@ public class BizPoHeaderController extends BaseController {
         }
 
         addMessage(redirectAttributes, "prew".equals(prewStatus) ? "采购订单预览信息" : "保存采购订单成功");
+
+        if ("mobile".equalsIgnoreCase(version)) {
+            return renderString(response, JsonUtil.generateData("操作成功", request.getParameter("callback")), "application/json");
+        }
+
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/form/?id=" + bizPoHeader.getId() + "&prewStatus=" + prewStatus;
     }
 
@@ -484,7 +653,7 @@ public class BizPoHeaderController extends BaseController {
     @RequestMapping(value = "savePoHeader")
     public String savePoHeader(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
         if ("createPay".equalsIgnoreCase(type)) {
-            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader);
+            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
             addMessage(redirectAttributes, msg);
             return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
         }
@@ -497,6 +666,17 @@ public class BizPoHeaderController extends BaseController {
 
         addMessage(redirectAttributes, "保存采购订单成功");
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "createPay4Mobile")
+    @ResponseBody
+    public String createPay4Mobile(HttpServletRequest request, int id, BigDecimal planPay, Date deadline) {
+        Pair<Boolean, String> result = bizPoHeaderService.genPaymentOrder(id, planPay, deadline);
+        if (result.getLeft()) {
+            return JsonUtil.generateData(result, request.getParameter("callback"));
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:edit")
@@ -517,12 +697,17 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "startAudit")
     @ResponseBody
-    public String startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, @RequestParam(defaultValue = "1") Integer auditType, String desc) {
-        return bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
+    public String startAudit(HttpServletRequest request, int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, @RequestParam(defaultValue = "1") Integer auditType, String desc) {
+        Pair<Boolean, String> result = bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
+        if (result.getLeft()) {
+            return JsonUtil.generateData(result, request.getParameter("callback"));
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
     }
 
     /**
      * 采购单导出
+     *
      * @param bizPoHeader
      * @param request
      * @param response

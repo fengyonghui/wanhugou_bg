@@ -69,7 +69,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:userSale:view")
-    @RequestMapping(value = {"userSale", ""})
+    @RequestMapping(value = {"userSale"})
     public String userSale(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("purchasingList", bizStatisticsDayService.getBizPurchasingList("8"));
@@ -84,7 +84,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:userSale:view")
-    @RequestMapping(value = {"userSaleData", ""})
+    @RequestMapping(value = {"userSaleData"})
     @ResponseBody
     public String userSaleData(HttpServletRequest request, String day, Integer purchasingId, String usName) {
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsDayService.userSaleStatisticData(day, purchasingId);
@@ -167,7 +167,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:userSale:view")
-    @RequestMapping(value = {"userSaleDataDownload", ""})
+    @RequestMapping(value = {"userSaleDataDownload"})
     public void userSaleDataDownload(HttpServletRequest request,
                                      HttpServletResponse response,
                                      String imgUrl,
@@ -247,7 +247,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"user", ""})
+    @RequestMapping(value = {"user"})
     public String user(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
@@ -261,7 +261,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"userData", ""})
+    @RequestMapping(value = {"userData"})
     @ResponseBody
     public String userData(HttpServletRequest request, String month) {
         List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsDayService.userStatisticData(month);
@@ -291,7 +291,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"userDataDownload", ""})
+    @RequestMapping(value = {"userDataDownload"})
     @ResponseBody
     public void userDataDownload(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -360,7 +360,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:product:view")
-    @RequestMapping(value = {"product", ""})
+    @RequestMapping(value = {"product"})
     public String product(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("varietyList", bizStatisticsDayService.getBizVarietyInfoList());
@@ -376,7 +376,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:product:view")
-    @RequestMapping(value = {"productData", ""})
+    @RequestMapping(value = {"productData"})
     @ResponseBody
     public String product(HttpServletRequest request, String month, Integer variId, int dataType, Integer purchasingId) {
         List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsDayService.productStatisticData(month, variId, purchasingId);
@@ -419,7 +419,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:product:view")
-    @RequestMapping(value = {"productDataDownload", ""})
+    @RequestMapping(value = {"productDataDownload"})
     public void productDataDownload(HttpServletRequest request,
                                       HttpServletResponse response,
                                       String month,
@@ -490,7 +490,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:order:view")
-    @RequestMapping(value = {"order", ""})
+    @RequestMapping(value = {"order"})
     public String order(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("adminPath", adminPath);
@@ -507,7 +507,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return 订单相关统计数据
      */
     @RequiresPermissions("biz:statistics:order:view")
-    @RequestMapping(value = {"orderData", ""})
+    @RequestMapping(value = {"orderData"})
     @ResponseBody
     public String orderData(HttpServletRequest request, String month, String lineChartType, String barChartType, String centerType) {
         return JSONObject.fromObject(getOrderData(month, lineChartType, barChartType, centerType)).toString();
@@ -836,7 +836,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:userSale:view")
-    @RequestMapping(value = {"userSaleDataTable", ""})
+    @RequestMapping(value = {"userSaleDataTable"})
     public String userSaleDataTable(HttpServletRequest request, String day, Integer purchasingId, String usName) {
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsDayService.userSaleStatisticData(day, purchasingId);
         request.setAttribute("adminPath", adminPath);
@@ -853,7 +853,7 @@ public class BizStatisticsDayController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"customTable", ""})
+    @RequestMapping(value = {"customTable"})
     public String customTable(HttpServletRequest request, String day) {
         List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsDayService.userStatisticData(day);
         request.setAttribute("dataList", bizProductStatisticsDtos);
