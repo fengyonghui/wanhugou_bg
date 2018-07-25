@@ -21,7 +21,7 @@
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/request/bizRequestHeader/form4Mobile",
-                data: {id:650},
+                data: {id:735},
                 dataType: "json",
                 success: function(res){
 					console.log(res)
@@ -52,15 +52,6 @@
 					$('#inMoneyReceive').val()
 					$('#inMarginLevel').val()
 					$('#inPoLastDa').val(_this.formatDateTime(res.data.entity.recvEta))
-					
-					
-//					$('#inPoordNum').val(res.data.entity.reqNo)
-					
-					
-					
-					
-					
-					
 					_this.commodityHtml(res.data)
 					_this.statusListHtml(res.data)
                 }
@@ -76,7 +67,7 @@
 				
 				var checkBizStatus = '';
 				if(item.bizStatus==0) {
-					checkBizStatus = ''
+					checkBizStatus = '未审核'
 				}
 				
 				
@@ -91,14 +82,14 @@
 					'<div class="step_num_txt">'+
 						'<div class="mui-input-row">'+
 							'<label>处理人:</label>'+
-					        '<textarea name="" rows="" cols="" disabled>'+  +'</textarea>'+
+					        '<textarea name="" rows="" cols="" disabled>'+ item.createBy.name +'</textarea>'+
 					    '</div>'+
 						'<br />'+
 						'<div class="mui-input-row">'+
 					        '<label>状态:</label>'+
-					        '<input type="text" value="'+  +'" class="mui-input-clear" disabled>'+
+					        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
 					    	'<label>时间:</label>'+
-					        '<input type="text" value=" '+  +' " class="mui-input-clear" disabled>'+
+					        '<input type="text" value=" '+ _this.formatDateTime（item.createDate) +' " class="mui-input-clear" disabled>'+
 					    '</div>'+
 					'</div>'+
 				'</li>'

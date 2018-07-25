@@ -54,8 +54,10 @@
 									var startBtn = '';
 									var classBtn = '';
 									var payBtn = '';
+									var processName = '';
 									/*有没有开启审核*/
 									if(item.process) {
+										processName = item.process.purchaseOrderProcess.name
 										var code = item.process.purchaseOrderProcess.code;
 										if(item.process.purchaseOrderProcess.roleEnNameEnum) {
 											var DataRoleGener = item.process.purchaseOrderProcess.roleEnNameEnum;
@@ -95,6 +97,10 @@
 										'<div class="mui-input-row">' +
 										'<label>订单状态:</label>' +
 										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.bizStatus + ' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+										'<label>审核状态:</label>' +
+										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + processName + ' ">' +
 										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
 										'<div class="mui-col-xs-3">' +

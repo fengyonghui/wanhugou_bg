@@ -184,7 +184,7 @@
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
-						url: "../../html/purchaseMagmetHtml/inSearch.html",
+						url: "../../html/inventoryMagmetHtml/inSearch.html",
 						extras:{
 							purchId:_this.userInfo.purchId
 						}
