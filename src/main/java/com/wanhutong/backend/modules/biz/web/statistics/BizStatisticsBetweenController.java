@@ -1943,4 +1943,33 @@ public class BizStatisticsBetweenController extends BaseController {
 
         return "modules/biz/statistics/bizStatisticsInputOutputBetweenTables";
     }
+
+//    /**
+//     * sku订单
+//     *
+//     * @param request
+//     * @return
+//     */
+//    @RequiresPermissions("biz:statistics:product:view")
+//    @RequestMapping(value = {"product"})
+//    public String sku(HttpServletRequest request) {
+//        request.setAttribute("adminPath", adminPath);
+//        request.setAttribute("varietyList", bizStatisticsBetweenService.getBizVarietyInfoList());
+//        request.setAttribute("purchasingList", bizStatisticsBetweenService.getBizPurchasingList("8"));
+//        Calendar cal = Calendar.getInstance();
+//        //获取本周一的日期
+//        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+//        cal.add(Calendar.DAY_OF_MONTH, -7);
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+//        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
+//        cal.add(Calendar.DAY_OF_MONTH, 6);
+//        request.setAttribute("endDate", simpleDateFormat.format(cal.getTime()));
+//        return "modules/biz/statistics/bizStatisticsProductBetween";
+//    }
+//
+
+
+
+
+
 }
