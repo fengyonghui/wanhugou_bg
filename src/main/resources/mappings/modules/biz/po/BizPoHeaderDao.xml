@@ -67,6 +67,28 @@
 	<select id="findList" resultType="BizPoHeader">
 		SELECT
 			<include refid="bizPoHeaderColumns"/>
+			,(SELECT SUM(bpd.ord_qty)
+				FROM biz_po_header bph
+				LEFT JOIN biz_po_detail bpd ON bpd.order_id = bph.id
+				WHERE bph.id = a.id
+				) AS "totalOrdQty"
+				, (SELECT
+				SUM(bsp.scheduling_num)
+				FROM biz_po_header bph
+				LEFT JOIN biz_po_detail bpd ON bpd.order_id = bph.id
+				LEFT JOIN biz_scheduling_plan bsp
+				ON bsp.object_id = bpd.id
+				AND bsp.object_name = 'biz_po_detail'
+				WHERE bph.status = 1
+				AND bph.id = a.id) AS "toalSchedulingNum"
+				,(SELECT
+				SUM(bcp.complete_num)
+				FROM biz_po_header bph
+				LEFT JOIN biz_po_detail bpd ON bpd.order_id = bph.id
+				LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bpd.id AND bsp.object_name = 'biz_po_detail'
+				LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id
+				WHERE bph.status = 1
+				AND bph.id = a.id) AS "toalCompleteNum"
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
 		LEFT JOIN biz_po_payment_order ppo ON ppo.po_header_id = a.id
@@ -364,4 +386,26 @@
 		group by bpd.sku_no
 	</select>
 
+	<select id="getTotalNum" resultType="BizPoHeader" parameterType="Integer">
+		select
+		  (select
+		  sum(bpd.ord_qty)
+		  from biz_po_header bph
+		  left join biz_po_detail bpd on bpd.order_id=bph.id
+		  where bph.id = #{id}) as "totalOrdQty",
+		  (select
+		  sum(bsp.scheduling_num)
+		  from biz_po_header bph
+		  left join biz_po_detail bpd on bpd.order_id=bph.id
+      	  left join biz_scheduling_plan bsp on bsp.object_id = bpd.id and bsp.object_name = 'biz_po_detail'
+		  where bph.id = #{id}) as "toalSchedulingNum",
+		  sum(bcp.complete_num) as "toalCompleteNum"
+		from biz_po_header a
+		left join biz_po_detail bpd on bpd.order_id = a.id
+		left join biz_scheduling_plan bsp on bsp.object_id = bpd.id and bsp.object_name = 'biz_po_detail'
+		left join biz_complete_paln bcp on bcp.scheduling_id = bsp.id
+		where
+		  a.status=1
+		and a.id =#{id}
+	</select>
 </mapper>
