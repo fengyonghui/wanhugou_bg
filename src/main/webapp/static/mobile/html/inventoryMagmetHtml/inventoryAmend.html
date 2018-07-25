@@ -96,6 +96,13 @@
 			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 68px;}
 			.mui-input-row font {color:red;position: absolute;right: 60px;top: 30%;}
 			.addBtnClass {padding: 0;}
+			.pre {
+				margin-bottom: 0;
+				padding-left: 0;
+				float: right;
+				width: 67%;
+			}
+			.secStyle {margin: 5px 0;}
 		</style>
 	</head>
 
@@ -268,8 +275,13 @@
 			</div>
 			<div class="mui-input-row">
 				<label>业务状态：</label>
-				<input type="text" class="mui-input-clear" id="inPoDizstatus">
-				<font>*</font>
+				<div class="pre">
+					<select class="secStyle" name="" id="input_div_check">
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
 			</div>
 			<div class="saveBtn">
 				<button id="" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>

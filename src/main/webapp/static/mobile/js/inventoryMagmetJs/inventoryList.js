@@ -231,7 +231,7 @@
 				})
 			}),
 		/*取消*/
-            $('#invetyAddBtn').on('tap','.inCancelBtn',function(){
+            $('content').on('tap','.inCancelBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
                 if(url) {
@@ -245,25 +245,23 @@
 					})
                 }
 			})
-            /*付款*/
-            $('#invetyAddBtn').on('tap','.inPayBtn',function(){
+        /*付款*/
+            $('content').on('tap','.inPayBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
-				var codeId = $(this).attr('codeId');
                 if(url) {
                 	mui.toast('子菜单不存在')
                 }else if(inListId==inListId) {
                 	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/check.html",
+						url: "../../html/inventoryMagmetHtml/inPay.html",
 						extras: {
 								inListId:inListId,
-								codeId:codeId,
 						}
 					})
                 }
 			})
-           /* 审核*/
-            $('#invetyAddBtn').on('tap','.inCheckBtn',function(){
+        /* 审核*/
+            $('content').on('tap','.inCheckBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
                 if(url) {
