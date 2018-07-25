@@ -76,17 +76,6 @@
 						})
 					}
 				})
-				/*用户信息*/
-				$('.mui-bar').on('click','.mui-icon-bars',function(){
-	            	var url = $(this).attr('url');
-					var purchId = $(this).attr('purchId');
-					GHUTILS.OPENPAGE({
-						url: "../html/user.html",
-						extras: {
-							purchId:purchId,
-						}
-					})
-				})
 			},
 			userComfirDialig: function() {
 				document.getElementById("appQuit").addEventListener('tap', function() {

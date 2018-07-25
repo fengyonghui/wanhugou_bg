@@ -51,7 +51,7 @@
                    $('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
                    $('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
 /*最后付款时间*/ 	   $('#PoLastDa').val(_this.formatDateTime(res.data.bizPoHeader.lastPayDate))
-				   $('#planPayDetails').val(res.data.bizPoHeader.total)
+//				   $('#planPayDetails').val(res.data.bizPoHeader.total)
 //                   $('#nowDateDetails').val(_this.formatDateTime(res.data.bizPoHeader.lastPayDate))
 					_this.processHtml(res.data)              
                 }
