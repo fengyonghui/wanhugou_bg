@@ -12,6 +12,7 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializerProvider;
+import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,4 +159,21 @@ public class JsonUtil {
         }
         return sw.toString();
     }
+
+    /**
+     * 将json array反序列化为对象
+     *
+     * @param json
+     * @param jsonTypeReference
+     * @return
+     */
+    public static <T> T parseArray(String json, TypeReference<T> jsonTypeReference) {
+        try {
+            return (T) objectMapper.readValue(json, jsonTypeReference);
+        } catch (Exception e) {
+            LOGGER.error("decode(String, JsonTypeReference<T>)", e);
+        }
+        return null;
+    }
+
 }

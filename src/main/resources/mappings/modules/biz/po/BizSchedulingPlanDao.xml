@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.po.BizSchedulingPlanDao">
+	<resultMap id="schedulingPlanResult" type="BizSchedulingPlan">
+		<id property="id" column="id"/>
+		<result property="objectName" column="objectName"/>
+		<result property="objectId" column="objectId"/>
+		<result property="originalNum" column="originalNum"/>
+		<result property="schedulingNum" column="schedulingNum"/>
+		<result property="totalExp" column="totalExp"/>
+		<result property="sumCompleteNum" column="sumCompleteNum"/>
+
+		<collection property="completePalnList" ofType="BizCompletePaln">
+			<id property="id" column="completePalnList.id" />
+			<result property="schedulingId" column="completePalnList.schedulingId" />
+			<result property="completeNum" column="completePalnList.completeNum" />
+			<result property="planDate" column="completePalnList.planDate" />
+		</collection>
+	</resultMap>
+
     
 	<sql id="bizSchedulingPlanColumns">
 		a.id AS "id",
@@ -8,7 +25,7 @@
 		a.object_id AS "objectId",
 		a.original_num AS "originalNum",
 		a.scheduling_num AS "schedulingNum",
-		a.complete_num AS "completeNum",
+		/*a.complete_num AS "completeNum",*/
 		a.status AS "delFlag",
 		a.create_id AS "createBy",
 		a.create_time AS "createDate",
@@ -36,14 +53,20 @@
 		WHERE a.object_id = #{objectId}
 	</select>
 	
-	<select id="findList" resultType="BizSchedulingPlan">
+	<select id="findList" resultMap="schedulingPlanResult">
 		SELECT 
 			<include refid="bizSchedulingPlanColumns"/>
+			,bcp.id AS "completePalnList.id"
+			,bcp.scheduling_id AS "completePalnList.schedulingId"
+			,bcp.complete_num AS "completePalnList.completeNum"
+			,bcp.plan_date AS "completePalnList.planDate"
 		FROM biz_scheduling_plan a
+		  LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = a.id
 		<include refid="bizSchedulingPlanJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="bizPoDetail!=null and bizPoDetail.id!=null and bizPoDetail.id!=''">
+				AND a.object_name = "biz_po_detail"
 				AND a.object_id = #{bizPoDetail.id}
 			</if>
 		</where>
@@ -52,18 +75,35 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				GROUP  BY a.id
 			</otherwise>
 		</choose>
 	</select>
-	
-	<select id="findAllList" resultType="BizSchedulingPlan">
-		SELECT 
-			<include refid="bizSchedulingPlanColumns"/>
+
+	<select id="findAllList" resultMap="schedulingPlanResult">
+		SELECT
+		<include refid="bizSchedulingPlanColumns"/>
+		,bcp.id AS "completePalnList.id"
+		,bcp.scheduling_id AS "completePalnList.schedulingId"
+		,bcp.complete_num AS "completePalnList.completeNum"
+		,bcp.plan_date AS "completePalnList.planDate"
+		,(select
+		sum(bcpl.complete_num)
+		FROM biz_scheduling_plan bsp
+		LEFT JOIN biz_complete_paln bcpl ON bcpl.scheduling_id = bsp.id
+		where bsp.object_id = #{bizPoDetail.id}
+		and bcpl.scheduling_id = bcp.scheduling_id
+		) as "sumCompleteNum"
 		FROM biz_scheduling_plan a
+		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = a.id
 		<include refid="bizSchedulingPlanJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-		</where>		
+			<if test="bizPoDetail!=null and bizPoDetail.id!=null and bizPoDetail.id!=''">
+				AND a.object_name = "biz_po_detail"
+				AND a.object_id = #{bizPoDetail.id}
+			</if>
+		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -82,9 +122,9 @@
 			<if test="schedulingNum !=null and schedulingNum !=''">
 				scheduling_num,
 			</if>
-			<if test="completeNum !=null and completeNum !=''">
-				complete_num,
-			</if>
+			<!--<if test="completeNum !=null and completeNum !=''">-->
+				<!--complete_num,-->
+			<!--</if>-->
 			status,
 			create_id,
 			create_time,
@@ -99,9 +139,9 @@
 			<if test="schedulingNum !=null and schedulingNum !=''">
 				#{schedulingNum},
 			</if>
-			<if test="completeNum !=null and completeNum !=''">
-				#{completeNum},
-			</if>
+			<!--<if test="completeNum !=null and completeNum !=''">-->
+				<!--#{completeNum},-->
+			<!--</if>-->
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -117,10 +157,10 @@
 			object_id = #{objectId},
 			original_num = #{originalNum},
 			scheduling_num = #{schedulingNum},
-			complete_num = #{completeNum},
+			<!--complete_num = #{completeNum},-->
 			create_time = #{createDate},
 			u_version = #{uVersion},
-			update_id = #{updateBy},
+			update_id = #{updateBy.id},
 			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
@@ -130,5 +170,16 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<select id="getSchedulingPlanIdListByPoId" resultType="Integer" parameterType="com.wanhutong.backend.modules.biz.entity.po.BizPoHeader">
+		SELECT
+			a.id
+		FROM biz_scheduling_plan a
+		left join biz_po_detail bpd on a.object_id = bpd.id
+		left join biz_po_header bph on bph.id = bpd.order_id
+		left join biz_sku_info bsi on bsi.id = bpd.sku_no
+		left join biz_product_info bpi on bpi.id = bsi.prod_id
+		WHERE bph.id = #{id}
+	</select>
 	
 </mapper>
