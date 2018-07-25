@@ -66,6 +66,15 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private SkuProd skuProd;
 
+	/**
+	 * 浏览量
+	 */
+	private Integer viewCount;
+	/**
+	 * 订单量
+	 */
+	private Integer orderCount;
+
 	private String itemNo;
 	private String itemNoComplete;
 	private String imgPhotosSorts;		//主图顺序
@@ -108,7 +117,6 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	 * */
 	private User user;
 	private Integer prodVice;//点击量
-	private Integer orderCount;//下单量
 	private String skuItemNo;//商品货号
 
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
@@ -596,5 +604,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setBannerVideo(String bannerVideo) {
 		this.bannerVideo = bannerVideo;
+	}
+
+	public Integer getViewCount() {
+		return viewCount;
+	}
+
+	public void setViewCount(Integer viewCount) {
+		this.viewCount = viewCount;
 	}
 }

@@ -19,8 +19,10 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
@@ -383,8 +385,18 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	@Transactional(readOnly = false)
 	public Page<BizSkuInfo> findPageForSkuInfo(Page<BizSkuInfo> page, BizSkuInfo bizSkuInfo) {
 		User user = UserUtils.getUser();
-		bizSkuInfo.getSqlMap().put("chat", BaseService.dataScopeFilter(user, "s", "su"));
+
 		bizSkuInfo.setPage(page);
+
+		List<Role> roleList = user.getRoleList();
+		Role role = new Role();
+		role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+		if (roleList.contains(role)) {
+			bizSkuInfo.setVendorId(user.getCompany().getId().toString());
+		}else {
+			bizSkuInfo.getSqlMap().put("chat", BaseService.dataScopeFilter(user, "s", "su"));
+		}
+
 		page.setList(bizSkuInfoDao.findPageForSkuInfo(bizSkuInfo));
 		return page;
 	}
