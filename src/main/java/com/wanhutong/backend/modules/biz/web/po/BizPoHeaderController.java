@@ -1023,12 +1023,10 @@ public class BizPoHeaderController extends BaseController {
             schedulingPlan.setSchedulingNum(dto.getSchedulingNum());
             try {
                 bizSchedulingPlanService.save(schedulingPlan);
+                boo = true;
             } catch (Exception e) {
                 boo = false;
                 logger.error(e.getMessage());
-            }
-            if ((i+1)==dtoList.size()){
-                boo = true;
             }
         }
         return boo;
@@ -1048,12 +1046,10 @@ public class BizPoHeaderController extends BaseController {
             completePaln.setCompleteNum(dto.getCompleteNum());
             try {
                 bizCompletePalnService.save(completePaln);
+                boo = true;
             } catch (Exception e) {
                 boo = false;
                 logger.error(e.getMessage());
-            }
-            if ((i+1)==dtoList.size()){
-                boo = true;
             }
         }
         return boo;
