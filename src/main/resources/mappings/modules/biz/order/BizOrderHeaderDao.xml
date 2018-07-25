@@ -1244,6 +1244,57 @@
 		LIMIT 10
 	</select>
 
+	<select id="skuTendencyDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
+		SELECT DISTINCT
+		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
+		pi.id                                        AS productId,
+		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count,
+		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount,
+		<if test="timeType == 'year'">
+			date_format(oh.create_time, '%Y-%m') AS createTime
+		</if>
+		<if test="timeType != 'year'">
+			date_format(oh.create_time, '%Y-%m-%d') AS createTime
+		</if>
+		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
+		WHERE oh.id = od.order_id
+		and si.id = od.sku_id
+		and si.prod_id = pi.id
+		<if test="variId != null and variId != 0">
+			and pi.vari_id = #{variId}
+		</if>
+		and oh.order_type = 1
+		AND NOT EXISTS(
+		select 1
+		from sys_test_account ta
+		where oh.cust_id = ta.object_id
+		and oh.status = 1
+		and ccc.status = 1
+		and ta.object_name = 'sys_office'
+		)
+		and ccc.cust_id = oh.cust_id
+		and oh.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and si.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and pi.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and ss.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and ss.sku_id = si.id
+		AND oh.create_time BETWEEN #{startDate} AND #{endDate}
+		<if test="purchasingId != null and purchasingId != 0">
+			AND ccc.center_id = #{purchasingId}
+		</if>
+		GROUP BY createTime, skuId
+		<choose>
+			<when test="type !=null and type != null and type == 'click'">
+				ORDER BY clickCount DESC
+			</when>
+			<otherwise>
+				ORDER BY count DESC
+			</otherwise>
+		</choose>
+		LIMIT 10
+	</select>
+
 	<select id="getUserStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
 		SELECT s.name,count(1) as count
 		FROM biz_custom_center_consultant c, sys_office s

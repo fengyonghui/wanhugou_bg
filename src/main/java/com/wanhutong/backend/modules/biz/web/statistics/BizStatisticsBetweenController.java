@@ -1944,30 +1944,74 @@ public class BizStatisticsBetweenController extends BaseController {
         return "modules/biz/statistics/bizStatisticsInputOutputBetweenTables";
     }
 
-//    /**
-//     * sku订单
-//     *
-//     * @param request
-//     * @return
-//     */
-//    @RequiresPermissions("biz:statistics:product:view")
-//    @RequestMapping(value = {"product"})
-//    public String sku(HttpServletRequest request) {
-//        request.setAttribute("adminPath", adminPath);
-//        request.setAttribute("varietyList", bizStatisticsBetweenService.getBizVarietyInfoList());
-//        request.setAttribute("purchasingList", bizStatisticsBetweenService.getBizPurchasingList("8"));
-//        Calendar cal = Calendar.getInstance();
-//        //获取本周一的日期
-//        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-//        cal.add(Calendar.DAY_OF_MONTH, -7);
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
-//        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
-//        cal.add(Calendar.DAY_OF_MONTH, 6);
-//        request.setAttribute("endDate", simpleDateFormat.format(cal.getTime()));
-//        return "modules/biz/statistics/bizStatisticsProductBetween";
-//    }
-//
+    /**
+     * sku订单
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:product:view")
+    @RequestMapping(value = {"skuTendency"})
+    public String skuTendency(HttpServletRequest request) {
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("varietyList", bizStatisticsBetweenService.getBizVarietyInfoList());
+        request.setAttribute("purchasingList", bizStatisticsBetweenService.getBizPurchasingList("8"));
+        Calendar cal = Calendar.getInstance();
+        //获取本周一的日期
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        cal.add(Calendar.DAY_OF_MONTH, -7);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
+        cal.add(Calendar.DAY_OF_MONTH, 6);
+        request.setAttribute("endDate", simpleDateFormat.format(cal.getTime()));
+        return "modules/biz/statistics/bizStatisticsSkuTendencyBetween";
+    }
 
+    /**
+     * 商品趋势相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:product:view")
+    @RequestMapping(value = {"skuTendencyData"})
+    @ResponseBody
+    public String skuTendencyData(HttpServletRequest request, String startDate, String endDate, Integer variId, Integer dataType, Integer purchasingId) {
+        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
+            return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
+        }
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.skuTendencyData(startDate, endDate, variId, purchasingId);
+        List<String> nameList = Lists.newArrayList();
+
+        List<Object> seriesDataList = Lists.newArrayList();
+        List<Object> allList = Lists.newArrayList();
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        bizProductStatisticsDtos.forEach(o -> {
+            switch (OrderStatisticsDataTypeEnum.parse(dataType)) {
+                case SALEROOM:
+                    seriesDataList.add(o.getTotalMoney());
+                    break;
+                case ORDER_COUNT:
+                    seriesDataList.add(o.getCount());
+                    break;
+                default:
+                    break;
+            }
+            nameList.add(o.getName().concat("-").concat(o.getItemNo()));
+            allList.add(o.getVendorName().concat("-").concat(o.getItemNo()).concat("-").concat(o.getCount()+"").concat("-")
+                    .concat(o.getTotalMoney()+"").concat("-").concat(o.getClickCount()+""));
+        });
+        echartsSeriesDto.setName("商品销量");
+        echartsSeriesDto.setData(seriesDataList);
+        echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("seriesList", echartsSeriesDto);
+        paramMap.put("nameList", nameList);
+        paramMap.put("AllList", allList);
+        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
+        return JSONObject.fromObject(paramMap).toString();
+    }
 
 
 

@@ -74,6 +74,17 @@ public class BizStatisticsBetweenService {
         return bizOrderHeaderDao.getProductStatisticDataBetween(startDate, endDate + " 23:59:59", variId, purchasingId);
     }
 
+    /**
+     * 根据月份取产品统计相关数据
+     *
+     * @param startDate 开始时间
+     * @param endDate 开始时间
+     * @return 根据不同产品分类的统计数据
+     */
+    public List<BizProductStatisticsDto> skuTendencyData (String startDate, String endDate, Integer variId, Integer purchasingId) {
+        return bizOrderHeaderDao.skuTendencyDataBetween(startDate, endDate + " 23:59:59", variId, purchasingId);
+    }
+
 
     /**
      * 根据月份取订单统计相关数据
