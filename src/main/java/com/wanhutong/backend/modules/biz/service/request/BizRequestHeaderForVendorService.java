@@ -706,4 +706,13 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		return bizOrderHeaderDao.findOrderForVendReq(skuIdList, centId);
 	}
 
+	/**
+	 * 该备货单下所有商品的总采购数量，总排产数量，总已确认排产数
+	 * @param id
+	 * @return
+	 */
+	public BizRequestHeader getTotalNum(Integer id){
+		return bizRequestHeaderForVendorDao.getTotalNum(id);
+	}
+
 }

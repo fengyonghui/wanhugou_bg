@@ -32,10 +32,4 @@ public interface BizRequestHeaderDao extends CrudDao<BizRequestHeader> {
      */
     int updateREStatus(@Param("id")int id, @Param("status") Integer status);
 
-    /**
-     * 该备货单下所有商品的总采购数量，总排产数量，总已确认排产数
-     * @param id
-     * @return
-     */
-    BizRequestHeader getTotalNum(@Param("id") Integer id);
 }

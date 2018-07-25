@@ -19,6 +19,11 @@
 	<script type="text/javascript">
         var skuInfoId="";
 		$(document).ready(function() {
+            if ($("#id").val() == null || $("#fromType").val() == 1) {
+                $("#fromType1").prop("checked","checked");
+            } else {
+                $("#fromType2").prop("checked","checked");
+            }
             $("#fromOfficeButton").hide();
             var officeId = $("#officeId").val();
             $.ajax({
@@ -41,23 +46,13 @@
                 }
             });
 
-
-			//$("#name").focus();
-			// var str=$("#str").val();
-            // if ($("#id").val() == null || $("#fromType").val() == 1) {
-             //    $("#fromType1").prop("checked","checked");
-            // } else {
-             //    $("#fromType2").prop("checked","checked");
-            // }
-            // if ($("#vendId").val() != "") {
-             //    $("#vendor").removeAttr("style");
-            // }
-			// if(str=='detail'){
-			//    $("#inputForm").find("input[type!='button']").attr("disabled","disabled") ;
-            //
-			// }
-            // var id=$("#id").val();
-
+            var reqDetailList = '${reqDetailList.size()}';
+            if(reqDetailList == 0) {
+                $("#batchSubmit").hide();
+            } else {
+                var id = '${bizRequestHeader.id}'
+                checkResult(id);
+            }
 
         });
 
@@ -142,7 +137,7 @@
                     type: 'post',
                     success: function (result) {
                         if(result == true) {
-                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${bizRequestHeader.id};
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/sche~duling?id="+${bizRequestHeader.id};
                         }
                     },
                     error: function (error) {
@@ -152,6 +147,25 @@
             }
         }
 
+        function checkResult(id) {
+            $.ajax({
+                url: '${ctx}/biz/request/bizRequestHeaderForVendor/checkResult',
+                contentType: 'application/json',
+                data: {"id": id},
+                type: 'get',
+                dataType:'json',
+                success: function (result) {
+                    var totalOrdQty = result['totalOrdQty'];
+                    var toalSchedulingNum = result['toalSchedulingNum'];
+                    if (totalOrdQty != null && toalSchedulingNum != null && totalOrdQty == toalSchedulingNum) {
+                        $("#batchSubmit").hide();
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
 
 	</script>
 	<script type="text/javascript">
@@ -369,10 +383,11 @@
 		</div>
 
 		<div class="form-actions">
+			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
+			&nbsp;&nbsp;
 			<c:if test="${reqDetailList!=null}">
 				<input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;
 			</c:if>
-			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 		</div>
 	</form:form>
 	<%--<form:form id="searchForm" modelAttribute="bizSkuInfo" >--%>

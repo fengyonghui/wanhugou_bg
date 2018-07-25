@@ -624,7 +624,19 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 		User userAdmin = UserUtils.getUser();
 		//渠道部角色
+		Boolean roleFlag = false;
 		List<Role> roleList = userAdmin.getRoleList();
+		//判断当前用户是否为供应商
+		if (roleList != null) {
+			for (Role role : roleList) {
+				String roleName = role.getName();
+				if (RoleEnNameEnum.SUPPLY_CHAIN.getDesc().equals(roleName)) {
+					roleFlag = true;
+				}
+			}
+		}
+		model.addAttribute("roleFlag", roleFlag);
+
 		String roleName = null;
 		if (CollectionUtils.isNotEmpty(roleList)) {
 			for (Role role : roleList) {
@@ -652,6 +664,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			forwardPage = "modules/biz/request/bizRequestHeaderForVendorScheduling";
 		}
 
+		model.addAttribute("roleFlag", roleFlag);
 		return forwardPage;
 	}
 
@@ -726,7 +739,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequestMapping(value = "checkResult")
 	@ResponseBody
 	public String checkResult(HttpServletRequest request, Integer id) {
-		BizRequestHeader bizRequestHeader = bizRequestHeaderService.getTotalNum(id);
+		BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.getTotalNum(id);
 		Map resultMap = new HashMap();
 		resultMap.put("totalOrdQty", bizRequestHeader.getTotalOrdQty());
 		resultMap.put("toalSchedulingNum", bizRequestHeader.getToalSchedulingNum());

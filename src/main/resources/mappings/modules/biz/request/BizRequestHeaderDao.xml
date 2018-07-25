@@ -351,24 +351,5 @@
 		WHERE id = #{id}
 	</update>
 
-	<select id="getTotalNum" resultType="BizRequestHeader" parameterType="Integer">
-		(select
-		  sum(brd.req_qty)
-		  from biz_request_header brh
-		  left join biz_request_detail brd on brd.header_id=brh.id
-		  where brh.id = #{id}) as "totalOrdQty",
-		  (select
-		  sum(bsp.scheduling_num)
-		  from biz_request_header brh
-		  left join biz_request_detail brd on brd.header_id=brh.id
-      	  left join biz_scheduling_plan bsp on bsp.object_id = brd.id and bsp.object_name = 'biz_request_detail'
-		  where bph.id = #{id}) as "toalSchedulingNum",
-		  sum(bcp.complete_num) as "toalCompleteNum"
-		from biz_request_header a
-		left join biz_request_detail brd on brd.header_id = a.id
-		left join biz_scheduling_plan bsp on bsp.object_id = brd.id and bsp.object_name = 'biz_request_detail'
-		left join biz_complete_paln bcp on bcp.scheduling_id = bsp.id
-		a.status=1
-		and a.id =#{id}
-	</select>
+
 </mapper>

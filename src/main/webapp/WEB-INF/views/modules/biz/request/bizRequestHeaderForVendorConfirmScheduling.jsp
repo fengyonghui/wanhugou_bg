@@ -32,7 +32,7 @@
             if(jsonLength == 0) {
                 $("#batchSubmit").hide();
             } else {
-                var id = '${bizPoHeader.id}'
+                var id = '${bizRequestHeader.id}'
                 checkResult(id);
             }
         });
@@ -111,7 +111,7 @@
 
         function checkResult(id) {
             $.ajax({
-                url: '${ctx}/biz/po/bizPoHeader/checkResult',
+                url: '${ctx}/biz/request/bizRequestHeaderForVendor/checkResult',
                 contentType: 'application/json',
                 data: {"id": id},
                 type: 'get',
@@ -320,7 +320,9 @@
                                 <div class="control-group">
                                     <input class="btn" type="button" value="添加排产计划" onclick="addSchedulingComplete(${schedulingPlan.id})"/>
                                     &nbsp;&nbsp;
-                                    <input id="saveSubmit" class="btn btn-primary" type="button" onclick="saveComplete(${schedulingPlan.id})" value="保存"/>&nbsp;
+                                    <c:if test="${roleFlag == false}">
+                                        <input id="saveSubmit" class="btn btn-primary" type="button" onclick="saveComplete(${schedulingPlan.id})" value="保存"/>&nbsp;
+                                    </c:if>
                                 </div>
                             </c:otherwise>
                         </c:choose>
@@ -352,7 +354,7 @@
 
     <div class="form-actions">
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
-        <c:if test="${roleFlag != false}">
+        <c:if test="${roleFlag == false}">
             <c:if test="${reqDetailList!=null}">
                 <input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;
             </c:if>

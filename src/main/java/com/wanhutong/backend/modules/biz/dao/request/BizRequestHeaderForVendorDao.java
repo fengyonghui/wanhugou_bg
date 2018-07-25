@@ -27,4 +27,11 @@ public interface BizRequestHeaderForVendorDao extends CrudDao<BizRequestHeader> 
 
     Integer findSellCount( @Param("centId") Integer centId, @Param("skuId") Integer skuId);
 
+    /**
+     * 该备货单下所有商品的总采购数量，总排产数量，总已确认排产数
+     * @param id
+     * @return
+     */
+    BizRequestHeader getTotalNum(@Param("id") Integer id);
+
 }

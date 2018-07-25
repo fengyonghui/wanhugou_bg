@@ -66,7 +66,29 @@
 			<include refid="bizRequestHeaderColumns"/>,
 			pi.vendor_name AS "name",
 			bvi.id as "varietyInfo.id",
-			bvi.name as "varietyInfo.name"
+			bvi.name as "varietyInfo.name",
+			(SELECT SUM(brd.req_qty)
+			FROM biz_request_header brh
+			LEFT JOIN biz_request_detail brd ON brd.header_id = brh.id
+			WHERE brh.id = a.id
+			) AS "totalOrdQty"
+			, (SELECT
+			SUM(bsp.scheduling_num)
+			FROM biz_request_header brh
+			LEFT JOIN biz_request_detail brd ON brd.header_id = brh.id
+			LEFT JOIN biz_scheduling_plan bsp
+			ON bsp.object_id = brd.id
+			AND bsp.object_name = 'biz_request_detail'
+			WHERE brh.status = 1
+			AND brh.id = a.id) AS "toalSchedulingNum"
+			,(SELECT
+			SUM(bcp.complete_num)
+			FROM biz_request_header brh
+			LEFT JOIN biz_request_detail brd ON brd.header_id = brh.id
+			LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = brd.id AND bsp.object_name = 'biz_request_detail'
+			LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id
+			WHERE brh.status = 1
+			AND brh.id = a.id) AS "toalCompleteNum"
 		FROM biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
 		LEFT JOIN biz_sku_info bsi on brd.sku_id = bsi.id
@@ -363,6 +385,29 @@
 		LEFT JOIN biz_sku_info bsi ON bsi.id = boss.sku_id
 		WHERE boss.center_id = #{centId}
 		AND bsi.id = #{skuId}
+	</select>
+
+	<select id="getTotalNum" resultType="BizRequestHeader" parameterType="Integer">
+		SELECT
+		(select
+		sum(brd.req_qty)
+		from biz_request_header brh
+		left join biz_request_detail brd on brd.header_id=brh.id
+		where brh.id = #{id}) as "totalOrdQty",
+		(select
+		sum(bsp.scheduling_num)
+		from biz_request_header brh
+		left join biz_request_detail brd on brd.header_id=brh.id
+		left join biz_scheduling_plan bsp on bsp.object_id = brd.id and bsp.object_name = 'biz_request_detail'
+		where brh.id = #{id}) as "toalSchedulingNum",
+		sum(bcp.complete_num) as "toalCompleteNum"
+		from biz_request_header a
+		left join biz_request_detail brd on brd.header_id = a.id
+		left join biz_scheduling_plan bsp on bsp.object_id = brd.id and bsp.object_name = 'biz_request_detail'
+		left join biz_complete_paln bcp on bcp.scheduling_id = bsp.id
+		WHERE
+		a.status=1
+		and a.id =#{id}
 	</select>
 
 </mapper>
