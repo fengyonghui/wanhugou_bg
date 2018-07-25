@@ -58,7 +58,7 @@
                         alert("排产日期不能为空!")
                         return false;
                     }
-                    var reg= /^[1-9]+[0-9]*]*$/;
+                    var reg= /^[0-9]+[0-9]*]*$/;
                     if(value == null || value == "" || !reg.test(value)){
                         alert("确认值输入不正确!")
                         return false;
@@ -141,7 +141,7 @@
                     alert("排产日期不能为空!")
                     return false;
                 }
-                var reg= /^[1-9]+[0-9]*]*$/;
+                var reg= /^[0-9]+[0-9]*]*$/;
                 if(value == null || value == "" || !reg.test(value)){
                     alert("确认值输入不正确!")
                     return false;
