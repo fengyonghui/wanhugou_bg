@@ -396,7 +396,7 @@
 								_this.hrefHtml()
 								
 							}else{
-								$('.listBlue').append('<h1>暂无数据</h1>');
+								$('.listBlue').append('<p class="noneTxt">暂无数据</p>');
 							}
 								
 							

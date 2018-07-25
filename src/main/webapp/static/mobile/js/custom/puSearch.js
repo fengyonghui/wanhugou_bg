@@ -45,14 +45,23 @@
 			$(newinput).on('focus', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
+				$('#hideSpan').show()
 			})
 			$(newinput).on('keyup', function() {
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
+			
+			$('#hideSpan').on('click', function() {
+				$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).hide()
+				$('#hideSpan').hide()
+			})
+
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid')
 				$(newinput).val($(this).text())
 				$(input_div).hide()
+				$('#hideSpan').hide()
 			})
 
 		},
