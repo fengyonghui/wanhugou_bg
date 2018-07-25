@@ -3,9 +3,11 @@
  */
 package com.wanhutong.backend.modules.biz.service.inventory;
 
-import java.util.List;
-
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.modules.biz.dao.inventory.BizInventoryInfoDao;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
@@ -13,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.dao.inventory.BizInventoryInfoDao;
+import java.util.List;
 
 /**
  * 仓库信息表Service
@@ -35,7 +34,11 @@ public class BizInventoryInfoService extends CrudService<BizInventoryInfoDao, Bi
 	}
 	
 	public List<BizInventoryInfo> findList(BizInventoryInfo bizInventoryInfo) {
-        return super.findList(bizInventoryInfo);
+		User user =UserUtils.getUser();
+		if (!user.isAdmin()) {
+			bizInventoryInfo.getSqlMap().put("inventory", BaseService.dataScopeFilter(user, "o", "su"));
+		}
+		return super.findList(bizInventoryInfo);
 	}
 	
 	public Page<BizInventoryInfo> findPage(Page<BizInventoryInfo> page, BizInventoryInfo bizInventoryInfo) {
