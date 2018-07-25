@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -1953,17 +1954,14 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequiresPermissions("biz:statistics:product:view")
     @RequestMapping(value = {"skuTendency"})
     public String skuTendency(HttpServletRequest request) {
-        request.setAttribute("adminPath", adminPath);
         request.setAttribute("varietyList", bizStatisticsBetweenService.getBizVarietyInfoList());
         request.setAttribute("purchasingList", bizStatisticsBetweenService.getBizPurchasingList("8"));
         Calendar cal = Calendar.getInstance();
         //获取本周一的日期
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         cal.add(Calendar.DAY_OF_MONTH, -7);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.YEAR_MONTH_PARAM_DATE_FORMAT);
         request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
-        cal.add(Calendar.DAY_OF_MONTH, 6);
-        request.setAttribute("endDate", simpleDateFormat.format(cal.getTime()));
         return "modules/biz/statistics/bizStatisticsSkuTendencyBetween";
     }
 
@@ -1976,41 +1974,192 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequiresPermissions("biz:statistics:product:view")
     @RequestMapping(value = {"skuTendencyData"})
     @ResponseBody
-    public String skuTendencyData(HttpServletRequest request, String startDate, String endDate, Integer variId, Integer dataType, Integer purchasingId) {
-        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
+    public String skuTendencyData(HttpServletRequest request, String startDate, String endDate, Integer variId, Integer purchasingId, Integer dataType, String timeType) {
+        if (StringUtils.isBlank(startDate)) {
             return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
         }
-        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.skuTendencyData(startDate, endDate, variId, purchasingId);
-        List<String> nameList = Lists.newArrayList();
 
-        List<Object> seriesDataList = Lists.newArrayList();
-        List<Object> allList = Lists.newArrayList();
-        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
-        bizProductStatisticsDtos.forEach(o -> {
-            switch (OrderStatisticsDataTypeEnum.parse(dataType)) {
-                case SALEROOM:
-                    seriesDataList.add(o.getTotalMoney());
-                    break;
-                case ORDER_COUNT:
-                    seriesDataList.add(o.getCount());
-                    break;
-                default:
-                    break;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat simpleDateFormatDay = new SimpleDateFormat("yyyy-MM-dd");
+        String startDateMonth = startDate;
+        if (StringUtils.isNotBlank(startDate)) {
+            startDate = startDate + "-01";
+        }
+        if (StringUtils.isNotBlank(endDate)) {
+            endDate = endDate + "-01";
+        }
+
+        if (StringUtils.isBlank(endDate)) {
+            endDate = simpleDateFormatDay.format(new Date());
+        }
+
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.skuTendencyData(startDate, endDate, variId, purchasingId, dataType, timeType);
+
+        Map<String, List<BizProductStatisticsDto>> skuMap = Maps.newHashMap();
+        Set<String> allList = Sets.newHashSet();
+        for (BizProductStatisticsDto b : bizProductStatisticsDtos) {
+            List<BizProductStatisticsDto> dtos = skuMap.putIfAbsent(b.getName() + b.getSkuId(), Lists.newArrayList(b));
+            if (dtos != null) {
+                dtos.add(b);
             }
-            nameList.add(o.getName().concat("-").concat(o.getItemNo()));
-            allList.add(o.getVendorName().concat("-").concat(o.getItemNo()).concat("-").concat(o.getCount()+"").concat("-")
-                    .concat(o.getTotalMoney()+"").concat("-").concat(o.getClickCount()+""));
-        });
-        echartsSeriesDto.setName("商品销量");
-        echartsSeriesDto.setData(seriesDataList);
-        echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+            allList.add(b.getName() + b.getSkuId());
+        }
+
+        List<EchartsSeriesDto> resultData = Lists.newArrayList();
+
+        Set<String> daySet = Sets.newLinkedHashSet();
+
+        try {
+            Date parseDate = simpleDateFormat.parse(startDateMonth);
+            Calendar c = Calendar.getInstance();
+            c.setTime(parseDate);
+            while (simpleDateFormat.format(c.getTime()).equals(startDateMonth)
+                    || "year".equalsIgnoreCase(timeType) && c.getTime().getTime() < System.currentTimeMillis()
+                    ) {
+                if ("year".equalsIgnoreCase(timeType)) {
+                    daySet.add(simpleDateFormat.format(c.getTime()));
+                    c.add(Calendar.MONTH, 1);
+                }else {
+                    daySet.add(simpleDateFormatDay.format(c.getTime()));
+                    c.add(Calendar.DAY_OF_MONTH, 1);
+                }
+            }
+
+
+            for (Map.Entry<String, List<BizProductStatisticsDto>> me : skuMap.entrySet()) {
+                EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+                echartsSeriesDto.setName(me.getKey());
+                echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+                List<Object> seriesDataList = Lists.newArrayList();
+
+                    daySet.forEach(o -> {
+                        Object value = 0;
+                        for (BizProductStatisticsDto b : me.getValue()) {
+                            if (b.getCreateTime().equals(o)) {
+                                switch (OrderStatisticsDataTypeEnum.parse(dataType)) {
+                                    case CLICK:
+                                        value = b.getClickCount();
+                                        break;
+                                    case ORDER_COUNT:
+                                        value = b.getCount();
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        seriesDataList.add(value);
+                    });
+
+                echartsSeriesDto.setData(seriesDataList);
+                resultData.add(echartsSeriesDto);
+            }
+        } catch (Exception e) {
+            LOGGER.error("generate data error", e);
+        }
+
 
         Map<String, Object> paramMap = Maps.newHashMap();
-        paramMap.put("seriesList", echartsSeriesDto);
-        paramMap.put("nameList", nameList);
-        paramMap.put("AllList", allList);
-        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
+        paramMap.put("seriesList",  resultData);
+        paramMap.put("nameList", daySet);
+        paramMap.put("allList", allList);
+        paramMap.put("ret", CollectionUtils.isNotEmpty(resultData));
         return JSONObject.fromObject(paramMap).toString();
+    }
+
+
+    /**
+     * 商品趋势相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:product:view")
+    @RequestMapping(value = {"skuTendencyDownload"})
+    public void skuTendencyDownload(HttpServletResponse response, HttpServletRequest request, String startDate, String endDate,
+                                    Integer variId, Integer purchasingId, Integer dataType, String timeType, String imgUrl
+    ) throws IOException {
+        if (StringUtils.isBlank(startDate)) {
+            return;
+        }
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat simpleDateFormatDay = new SimpleDateFormat("yyyy-MM-dd");
+        String startDateMonth = startDate;
+        if (StringUtils.isNotBlank(startDate)) {
+            startDate = startDate + "-01";
+        }
+        if (StringUtils.isNotBlank(endDate)) {
+            endDate = endDate + "-01";
+        }
+
+        if (StringUtils.isBlank(endDate)) {
+            endDate = simpleDateFormatDay.format(new Date());
+        }
+
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.skuTendencyData(startDate, endDate, variId, purchasingId, dataType, timeType);
+
+        String fileName = "产品趋势统计.xls";
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFSheet sheet = wb.createSheet();
+        sheet.autoSizeColumn(1, true);
+
+        int rowIndex = 0;
+        HSSFRow header = sheet.createRow(rowIndex);
+        rowIndex++;
+        HSSFCell hCell = header.createCell(0);
+        hCell.setCellValue("产品名称");
+        HSSFCell hCell1 = header.createCell(1);
+        hCell1.setCellValue("销售额");
+        HSSFCell hCell2 = header.createCell(2);
+        hCell2.setCellValue("订单量");
+        HSSFCell hCell3 = header.createCell(3);
+        hCell3.setCellValue("点击量");
+        HSSFCell hCell4 = header.createCell(4);
+        hCell4.setCellValue("SKU ID");
+
+
+        for (BizProductStatisticsDto o : bizProductStatisticsDtos) {
+            HSSFRow row = sheet.createRow(rowIndex);
+            rowIndex++;
+            HSSFCell cell = row.createCell(0);
+            cell.setCellValue(o.getName().concat("-").concat(o.getItemNo()));
+            HSSFCell cell1 = row.createCell(1);
+            cell1.setCellValue(o.getTotalMoney().toString());
+            HSSFCell cell2 = row.createCell(2);
+            cell2.setCellValue(o.getCount());
+            HSSFCell cell3 = row.createCell(3);
+            cell3.setCellValue(o.getClickCount());
+            HSSFCell cell4 = row.createCell(4);
+            cell4.setCellValue(o.getSkuId());
+        }
+
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        BASE64Decoder decoder = new BASE64Decoder();
+
+        try {
+            String[] url = imgUrl.split(",");
+            String u = url[1];
+            //Base64解码
+            byte[] buffer = decoder.decodeBuffer(u);
+            //生成图片
+            outStream.write(buffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        HSSFPatriarch patri = sheet.createDrawingPatriarch();
+        HSSFClientAnchor anchor = new HSSFClientAnchor(5, 5, 5, 5,
+                (short) 1, 16, (short) 20, 45);
+        patri.createPicture(anchor, wb.addPicture(
+                outStream.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG));
+
+
+        response.setContentType("application/msexcel;charset=utf-8");
+        response.setHeader("content-disposition", "attachment;filename="
+                + URLEncoder.encode(fileName, "UTF-8"));
+        wb.write(response.getOutputStream());
     }
 
 

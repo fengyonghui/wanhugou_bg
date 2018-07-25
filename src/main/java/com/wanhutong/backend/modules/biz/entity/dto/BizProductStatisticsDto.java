@@ -1,6 +1,7 @@
 package com.wanhutong.backend.modules.biz.entity.dto;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 产品统计数据Dto
@@ -49,6 +50,11 @@ public class BizProductStatisticsDto {
      * 销售额
      */
     private BigDecimal totalMoney;
+
+    /**
+     * 创建时间
+     */
+    private String createTime;
 
 
     public BigDecimal getTotalMoney() {
@@ -129,5 +135,13 @@ public class BizProductStatisticsDto {
 
     public void setMonthDate(String monthDate) {
         this.monthDate = monthDate;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }

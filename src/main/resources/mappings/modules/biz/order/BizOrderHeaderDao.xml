@@ -1285,7 +1285,7 @@
 		</if>
 		GROUP BY createTime, skuId
 		<choose>
-			<when test="type !=null and type != null and type == 'click'">
+			<when test="type !=null and type != null and type == '7'">
 				ORDER BY clickCount DESC
 			</when>
 			<otherwise>

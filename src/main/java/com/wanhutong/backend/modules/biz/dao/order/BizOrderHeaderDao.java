@@ -148,7 +148,8 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      */
     List<BizProductStatisticsDto> skuTendencyDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate,
                                                          @Param("variId") Integer variId, @Param("purchasingId") Integer purchasingId,
-                                                         @Param("type") Integer type
+                                                         @Param("type") Integer type,
+                                                         @Param("timeType") String timeType
                                                         );
 
     /**
