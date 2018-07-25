@@ -65,6 +65,7 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	private String str;
 	private String vendorName;		//供应商名称
+	private String vendorId;		//供应商ID
 	private BizVarietyInfo variety;		//品类
 
 	private int sign;//sku删除返回的标志
@@ -422,5 +423,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setOrderCreatEndTime(Date orderCreatEndTime) {
 		this.orderCreatEndTime = orderCreatEndTime;
+	}
+
+	public String getVendorId() {
+		return vendorId;
+	}
+
+	public void setVendorId(String vendorId) {
+		this.vendorId = vendorId;
 	}
 }
