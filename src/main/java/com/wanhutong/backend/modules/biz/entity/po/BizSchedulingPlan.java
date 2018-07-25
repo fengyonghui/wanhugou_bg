@@ -38,6 +38,11 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	 */
 	private Integer sumCompleteNum;
 
+    /**
+     * 确认排产list
+     */
+    private List<BizCompletePaln> completePalnList;
+
 	public BizSchedulingPlan() {
 		super();
 	}
