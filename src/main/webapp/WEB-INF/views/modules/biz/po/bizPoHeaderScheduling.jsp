@@ -48,7 +48,8 @@
                 var schedulingNum = $(eval("schedulingNum_" + (i+1))).val();
                 var sumSchedulingNum = $(eval("sumSchedulingNum_" + (i+1))).text();
                 var standard = ordQty - sumSchedulingNum;
-                if (parseInt(schedulingNum) < 0 || (parseInt(schedulingNum) > parseInt(standard))){
+                var reg= /^[1-9]+[0-9]*]*$/;
+                if (parseInt(schedulingNum) < 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
                     alert("排产量数值设置不正确，请重新输入")
                     return false;
                 }
@@ -84,7 +85,8 @@
             var schedulingNum = $(eval("schedulingNum_" + index)).val();
             var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
             var standard = ordQty - sumSchedulingNum;
-            if (parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard))){
+            var reg= /^[1-9]+[0-9]*]*$/;
+            if (parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
                 alert("排产量数值设置不正确，请重新输入")
                 return false;
             }
@@ -229,7 +231,7 @@
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
         &nbsp;&nbsp;
         <c:if test="${bizPoHeader.poDetailList!=null}">
-            <input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="保存"/>&nbsp;
+            <input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;
         </c:if>
     </div>
 </form:form>
