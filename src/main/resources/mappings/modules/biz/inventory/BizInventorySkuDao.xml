@@ -67,12 +67,12 @@
 		WHERE
 		bsgr.biz_status = 1
 		AND bsgr.order_id = 0
-		AND bis.id = a.id) AS "sendGoodsNum",
+		AND bis.id = a.id and bsgr.status=1) AS "sendGoodsNum",
 		(SELECT sum(bcgr.receive_num)
 		FROM biz_collect_goods_record bcgr
 		LEFT JOIN biz_inventory_sku bis ON bis.inv_id = bcgr.inv_id AND bis.sku_id = bcgr.sku_id
 		WHERE
-		bis.id = a.id) AS "inWarehouse"
+		bis.id = a.id and bcgr.status=1) AS "inWarehouse"
 		FROM biz_inventory_sku a
 		<include refid="bizInventorySkuJoins"/>
 		<where>
