@@ -9,6 +9,8 @@ import javax.validation.constraints.NotNull;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.util.List;
+
 /**
  * 排产计划Entity
  * @author 王冰洋
@@ -31,7 +33,11 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	 * 备货清单详细信息Entity
 	 */
 	private BizRequestDetail bizRequestDetail;
-	
+	/**
+	 * 该排产相关的总确认数
+	 */
+	private Integer sumCompleteNum;
+
 	public BizSchedulingPlan() {
 		super();
 	}
@@ -96,5 +102,21 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 
 	public void setBizRequestDetail(BizRequestDetail bizRequestDetail) {
 		this.bizRequestDetail = bizRequestDetail;
+	}
+
+	public List<BizCompletePaln> getCompletePalnList() {
+		return completePalnList;
+	}
+
+	public void setCompletePalnList(List<BizCompletePaln> completePalnList) {
+		this.completePalnList = completePalnList;
+	}
+
+	public Integer getSumCompleteNum() {
+		return sumCompleteNum;
+	}
+
+	public void setSumCompleteNum(Integer sumCompleteNum) {
+		this.sumCompleteNum = sumCompleteNum;
 	}
 }

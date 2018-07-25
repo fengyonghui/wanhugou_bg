@@ -130,7 +130,7 @@
 												'<li class="mui-table-view-cell">添加</li>' +
 											'</div>'+
 											'<div class="mui-col-xs-2 inDetailBtn">' +
-												'<li class="mui-table-view-cell"  inListId="'+ item.id +'">详情</li>' +
+												'<li class="mui-table-view-cell" inListId="'+ item.id +'">详情</li>' +
 											'</div>' +
 											'<div class="mui-col-xs-2 inAmendBtn">' +
 												'<li class="mui-table-view-cell paying" inListId="'+ item.id +'" poId="'+ item.id +'">修改</li>' +

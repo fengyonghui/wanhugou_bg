@@ -143,7 +143,7 @@
 					id: _this.userInfo.listId,
 					prew: _this.prew,
 					prewPayTotal: totalMoney,
-					prewPayDeadline: _this.dataNew(lastDate),
+					prewPayDeadline: lastDate,
 					desc: inText
 				},
 				dataType: "json",
@@ -206,13 +206,13 @@
 				}
 			})
 		},
-		dataNew: function(str) {
-			var _this = this;
-			Data = str.replace(/-/g, '/');
-			var date = new Date(Data);
-			var time = date.getTime();
-			return time
-		},
+//		dataNew: function(str) {
+//			var _this = this;
+//			Data = str.replace(/-/g, '/');
+//			var date = new Date(Data);
+//			var time = date.getTime();
+//			return time
+//		},
 		formatDateTime: function(unix) {
 
 			var now = new Date(parseInt(unix) * 1);

@@ -131,7 +131,7 @@
 			processor = #{processor},
 			description = #{description},
 			type = #{type},
-			create_time = #{createTime}
+			update_time = NOW()
 		WHERE id = #{id}
 	</update>
 	
