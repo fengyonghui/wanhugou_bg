@@ -91,7 +91,7 @@
 										varietyInfoName = ''
 									}
 									var checkStatus = '';
-									if(item.commonProcess) {
+									if(item.commonProcess.requestOrderProcess) {
 										checkStatus = item.commonProcess.requestOrderProcess.name
 									}else {
 										checkStatus = ''
@@ -171,26 +171,37 @@
 				},
 				threshold: 50
 			});
-			
 		},
 		//		getKey: function() {
 		//
 		//		},
 		inHrefHtml: function() {
 			var _this = this;
-		/*备货单添加*/
-			$('.content').on('tap', '.inAddBtn', function() {
+			/*查询*/
+			$('.header').on('tap', '#searchBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(poId == poId) {
+				} else {
 					GHUTILS.OPENPAGE({
-						url: "../../mobile/html/inventoryMagmetHtml/inventoryAddList.html",
-						extras: {
-							poId: poId,
+						url: "../../html/purchaseMagmetHtml/inSearch.html",
+						extras:{
+							purchId:_this.userInfo.purchId
 						}
+						
 					})
 				}
+					
+			}),
+		/*备货单添加*/
+			$('.content').on('tap','.inAddBtn', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../html/inventoryMagmetHtml/inventoryAddList.html",
+					extras: {
+						
+					}
+				})
 			}),
 		/*详情*/
 			$('.content').on('tap', '.inDetailBtn', function() {

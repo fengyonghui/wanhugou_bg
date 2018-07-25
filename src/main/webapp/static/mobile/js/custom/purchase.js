@@ -7,11 +7,14 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			this.pageInit(); //页面初始化
-			this.btnshow()
-			//this.getData()
-			//			this.getKey()
+			
+//			this.btnshow()
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
+			if(this.userInfo.isFunc){
+				this.seachFunc()
+			}else{
+				this.pageInit(); //页面初始化
+			}
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
@@ -44,7 +47,7 @@
 						success: function(res) {
 							var arrLen = res.data.resultList.length;
 							var dataRow = res.data.roleSet;
-//							console.log(res)
+							console.log(res)
 							if(arrLen > 0) {
 								$.each(res.data.resultList, function(i, item) {
 //									console.log(item)
@@ -125,7 +128,7 @@
 							}, 1000);
 						},
 						error: function(xhr, type) {
-							alert('Ajax error!222222');
+							alert('Ajax error!');
 							// 即使加载出错，也得重置
 							me.resetload();
 						}
@@ -135,58 +138,71 @@
 			});
 			
 		},
-		//		getKey: function() {
-		//
-		//		},
 		hrefHtml: function() {
+			var _this = this;
+			/*查询*/
+			$('.header').on('tap', '#search_btn', function() {
+				var url = $(this).attr('url');
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else {
+					GHUTILS.OPENPAGE({
+						url: "../../html/purchaseMagmetHtml/puSearch.html",
+						extras:{
+							purchId:_this.userInfo.purchId
+						}
+						
+					})
+				}
+					
+			}),
 			/*申请付款*/
-			//$('.listBlue').on('tap', function() {
 			$('.listBlue').on('tap', '.paying', function() {
-					var url = $(this).attr('url');
-					var poId = $(this).attr('poId');
-					if(url) {
-						mui.toast('子菜单不存在')
-					} else if(poId == poId) {
-						GHUTILS.OPENPAGE({
-							url: "../../html/purchaseMagmetHtml/applyPay.html",
-							extras: {
-								poId: poId,
-							}
-						})
-					}
-				}),
-				/*支付单列表*/
-				$('.listBlue').on('tap', '.payListBtn', function() {
-					var url = $(this).attr('url');
-					var listId = $(this).attr('listId');
-					var poId = $(this).attr('poId');
-					if(url) {
-						mui.toast('子菜单不存在')
-					} else if(listId == listId) {
-						GHUTILS.OPENPAGE({
-							url: "../../html/purchaseMagmetHtml/ApplyPayList.html",
-							extras: {
-								poId: poId,
-								listId: listId,
-							}
-						})
-					}
-				}),
-				/*详情*/
-				$('.listBlue').on('tap', '.detailBtn', function() {
-					var url = $(this).attr('url');
-					var listId = $(this).attr('listId');
-					if(url) {
-						mui.toast('子菜单不存在')
-					} else if(listId == listId) {
-						GHUTILS.OPENPAGE({
-							url: "../../html/purchaseMagmetHtml/details.html",
-							extras: {
-								listId: listId,
-							}
-						})
-					}
-				})
+				var url = $(this).attr('url');
+				var poId = $(this).attr('poId');
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(poId == poId) {
+					GHUTILS.OPENPAGE({
+						url: "../../html/purchaseMagmetHtml/applyPay.html",
+						extras: {
+							poId: poId,
+						}
+					})
+				}
+			}),
+			/*支付单列表*/
+			$('.listBlue').on('tap', '.payListBtn', function() {
+				var url = $(this).attr('url');
+				var listId = $(this).attr('listId');
+				var poId = $(this).attr('poId');
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(listId == listId) {
+					GHUTILS.OPENPAGE({
+						url: "../../html/purchaseMagmetHtml/ApplyPayList.html",
+						extras: {
+							poId: poId,
+							listId: listId,
+						}
+					})
+				}
+			}),
+			/*详情*/
+			$('.listBlue').on('tap', '.detailBtn', function() {
+				var url = $(this).attr('url');
+				var listId = $(this).attr('listId');
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(listId == listId) {
+					GHUTILS.OPENPAGE({
+						url: "../../html/purchaseMagmetHtml/details.html",
+						extras: {
+							listId: listId,
+						}
+					})
+				}
+			})
 			//审核
 			$('.listBlue').on('click', '.shenHe', function() {
 				var url = $(this).attr('url');
@@ -221,14 +237,14 @@
 			})
 		},
 		//		
-		btnshow: function() {
-			$('#search_btn').on('tap', function() {
-				mui('.mui-off-canvas-wrap').offCanvas().toggle()
-			})
-			$('.closeBtn').on('tap', function() {
-				mui('.mui-off-canvas-wrap').offCanvas().toggle()
-			})
-		},
+//		btnshow: function() {
+//			$('#search_btn').on('tap', function() {
+//				mui('.mui-off-canvas-wrap').offCanvas().toggle()
+//			})
+//			$('.closeBtn').on('tap', function() {
+//				mui('.mui-off-canvas-wrap').offCanvas().toggle()
+//			})
+//		},
 		formatDateTime: function(unix) {
 			var now = new Date(parseInt(unix) * 1);
 			now = now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
@@ -282,6 +298,111 @@
 				now = now.replace("-"); //  2014-7-6 07:17:43
 			}
 			return now;
+		},
+		seachFunc:function(){
+			var _this = this;
+					// 拼接HTML
+					var pHtmlList = '';
+					$.ajax({
+						type: 'GET',
+						url: '/a/biz/po/bizPoHeader/listData4Mobile',
+						data: {
+						//	parentId: _this.userInfo.purchId,
+							pageNo: 1,
+							orderNum:_this.userInfo.orderNum,
+							num:_this.userInfo.num,
+							'vendOffice.id':_this.userInfo.vendOffice,
+							'commonProcess.type':_this.userInfo.commonProcess,
+							
+							
+							
+						},
+						dataType: 'json',
+						success: function(res) {
+							var arrLen = res.data.resultList.length;
+							var dataRow = res.data.roleSet;
+//							console.log(res)
+							if(arrLen > 0) {
+								$.each(res.data.resultList, function(i, item) {
+//									console.log(item)
+									var startBtn = '';
+									var classBtn = '';
+									var payBtn = '';
+									var processName = '';
+									/*有没有开启审核*/
+									if(item.process) {
+										processName = item.process.purchaseOrderProcess.name
+										var code = item.process.purchaseOrderProcess.code;
+										if(item.process.purchaseOrderProcess.roleEnNameEnum) {
+											var DataRoleGener = item.process.purchaseOrderProcess.roleEnNameEnum;
+											var fileRoleData =  dataRow.filter(v => DataRoleGener.includes(v));
+											if(item.process && fileRoleData.length>0) {
+												startBtn = '审核'
+												classBtn = 'shenHe'
+											}
+										}else {
+											startBtn = ''
+										}
+									} else {
+										startBtn = '开启审核'
+										classBtn = 'startShenhe'
+									}
+									
+									var bizStatus = item.bizStatus;
+									var payment = item.currentPaymentId;
+									/*审核流程*/
+									
+									var applyStatus = item.process.bizStatus;
+									/*有没有申请支付单*/
+									if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
+										payBtn = '申请付款';
+									} else {
+										payBtn = ''
+									}
+									pHtmlList += '<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">' +
+										'<div class="mui-input-row">' +
+										'<label>采购单号:</label>' +
+										'<input id="orderNum" name="orderNum" type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.orderNum + ' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+										'<label>供应商:</label>' +
+										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.vendOffice + ' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+										'<label>订单状态:</label>' +
+										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.bizStatus + ' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+										'<label>审核状态:</label>' +
+										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + processName + ' ">' +
+										'</div>' +
+										'<div class="app_font_cl content_part mui-row app_text_center">' +
+										'<div class="mui-col-xs-3">' +
+										'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
+										'</div>' +
+										'<div class="mui-col-xs-3 ApplyPayListBtn">' +
+										'<li class="mui-table-view-cell paying" listId="' + item.id + '" poId="' + item.id + '">' + payBtn + '</li>' +
+										'</div>' +
+										'<div class="mui-col-xs-4 payListBtn" listId="' + item.id + '">' +
+										'<li class="mui-table-view-cell">支付申请列表</li>' +
+										'</div>' +
+										'<div class="mui-col-xs-2 detailBtn" listId="' + item.id + '">' +
+										'<li class="mui-table-view-cell">详情</li>' +
+										'</div>' +
+										'</div>' +
+										'</div>'
+								});
+								$('.listBlue').append(pHtmlList);
+								_this.hrefHtml()
+								
+							}else{
+								$('.listBlue').append('<h1>暂无数据</h1>');
+							}
+								
+							
+						}
+					});
+				
 		}
 	}
 	$(function() {
