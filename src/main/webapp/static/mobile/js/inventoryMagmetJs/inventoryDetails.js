@@ -44,7 +44,10 @@
 						bizstatusTxt = "收货完成"
 					}else if(bizstatus==35) {
 						bizstatusTxt = "关闭"
+					}else {
+						bizstatusTxt = '未知类型'
 					}
+					
 					$('#inPoDizstatus').val(bizstatusTxt)
 					$('#inPoordNum').val(res.data.entity.reqNo)
 					$('#inOrordNum').val(res.data.entity.fromOffice.name)
@@ -69,13 +72,6 @@
 				if(item.bizStatus==0) {
 					checkBizStatus = '未审核'
 				}
-				
-				
-				
-				
-				
-				
-				
 				var step = i + 1;
 				pHtmlList +='<li id="procList" class="step_item">'+
 					'<div class="step_num">'+ step +' </div>'+
@@ -89,7 +85,7 @@
 					        '<label>状态:</label>'+
 					        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
 					    	'<label>时间:</label>'+
-					        '<input type="text" value=" '+ _this.formatDateTime（item.createDate) +' " class="mui-input-clear" disabled>'+
+					        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
 					    '</div>'+
 					'</div>'+
 				'</li>'

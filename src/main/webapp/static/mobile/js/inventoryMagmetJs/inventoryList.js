@@ -72,6 +72,8 @@
 										bizstatusTxt = "收货完成"
 									}else if(bizstatus==35) {
 										bizstatusTxt = "关闭"
+									}else {
+										bizstatusTxt = '未知类型'
 									}
 								/*付款按钮*/
 									var inPayBtn = '';
@@ -219,21 +221,14 @@
 				}
 			}),
 		/*修改*/
-            $('#invetyAddBtn').on('tap','.inAmendBtn',function(){
-            	var url = $(this).attr('url');
-				var inListId = $(this).attr('inListId');
-				var poId = $(this).attr('poId');
-                if(url) {
-                	mui.toast('子菜单不存在')
-                }else if(inListId==inListId) {
-                	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/inventoryMagmetHtml/inventoryAmend.html",
-						extras: {
-								poId:poId,
-								inListId:inListId,
-						}
-					})
-                }
+            $('.content').on('tap','.inAmendBtn', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../html/inventoryMagmetHtml/inventoryAmend.html",
+					extras: {
+						
+					}
+				})
 			}),
 		/*取消*/
             $('#invetyAddBtn').on('tap','.inCancelBtn',function(){

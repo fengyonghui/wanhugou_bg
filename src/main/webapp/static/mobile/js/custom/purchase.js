@@ -50,7 +50,7 @@
 							console.log(res)
 							if(arrLen > 0) {
 								$.each(res.data.resultList, function(i, item) {
-//									console.log(item)
+									console.log(item)
 									var startBtn = '';
 									var classBtn = '';
 									var payBtn = '';
@@ -62,7 +62,7 @@
 										if(item.process.purchaseOrderProcess.roleEnNameEnum) {
 											var DataRoleGener = item.process.purchaseOrderProcess.roleEnNameEnum;
 											var fileRoleData =  dataRow.filter(v => DataRoleGener.includes(v));
-											if(item.process && fileRoleData.length>0) {
+											if(item.process && fileRoleData.length>0 || dataRow[0]== 'DEPT' && code != 7 && code != -1) {
 												startBtn = '审核'
 												classBtn = 'shenHe'
 											}
