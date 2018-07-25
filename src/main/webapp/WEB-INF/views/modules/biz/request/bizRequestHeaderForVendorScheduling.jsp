@@ -19,289 +19,12 @@
 	<script type="text/javascript">
         var skuInfoId="";
 		$(document).ready(function() {
-			//$("#name").focus();
-			var str=$("#str").val();
-            if ($("#id").val() == null || $("#fromType").val() == 1) {
-                $("#fromType1").prop("checked","checked");
-            } else {
-                $("#fromType2").prop("checked","checked");
-            }
-            if ($("#vendId").val() != "") {
-                $("#vendor").removeAttr("style");
-                deleteStyle();
-            }
-			if(str=='detail'){
-			   $("#inputForm").find("input[type!='button']").attr("disabled","disabled") ;
-			   $("#fromOfficeButton").hide();
-			}
-			$("#inputForm").validate({
-				submitHandler: function(form){
-                    $("input[name='reqQtys']").each(function () {
-                        if($(this).val()==''){
-                            $(this).val(0)
-						}
-                    });
-					loading('正在提交，请稍等...');
-
-					form.submit();
-				},
-				errorContainer: "#messageBox",
-				errorPlacement: function(error, element) {
-					$("#messageBox").text("输入有误，请先更正。");
-					if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
-						error.appendTo(element.parent().parent());
-					} else {
-						error.insertAfter(element);
-					}
-				}
-			});
-
-            var id=$("#id").val();
-
-			$("#searchData").click(function () {
-                var officeId = $("#officeId").val();
-                if ($("#fromType2").prop("checked") == true && officeId == "") {
-					alert("请先选择供应商");
-					return false;
-				}
-                var prodBrandName=$("#prodBrandName").val();
-                $("#prodBrandNameCopy").val(prodBrandName);
-                var skuName=$("#skuName").val();
-                $("#skuNameCopy").val(skuName);
-                var skuCode =$("#skuCode").val();
-                $("#skuCodeCopy").val(skuCode);
-                var itemNo = $("#itemNo").val();
-                $("#itemNoCopy").val(itemNo);
-                $.ajax({
-                    type:"post",
-                    url:"${ctx}/biz/sku/bizSkuInfo/findSkuList?productInfo.office.id="+officeId,
-                    data:$('#searchForm').serialize(),
-                    success:function (result) {
-                        if(id==''){
-                            $("#prodInfo2").empty();
-                        }
-                        var data = JSON.parse(result).data;
-                        $.each(data,function (keys,skuInfoList) {
-                            var prodKeys= keys.split(",");
-                            var prodId= prodKeys[0];
-                            if($("#prodInfo").children("."+prodId).length>0){
-                            	return;
-							}
-//                            var prodName= prodKeys[1];
-                            var prodUrl= prodKeys[2];
-//                            var cateName= prodKeys[3];
-//                            var prodCode= prodKeys[4];
-//                            var prodOfficeName= prodKeys[5];
-                            var  brandName=prodKeys[6];
-                            var flag=true;
-                            var tr_tds="";
-                            var t=0;
-                            $.each(skuInfoList,function (index,skuInfo) {
-                                skuInfoId+=","+skuInfo.id;
-                                tr_tds+= "<tr class='"+prodId+"'>";
-								if(flag){
-                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img src='"+prodUrl+"' width='100' height='100' ></td>" +
-
-                                    "<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
-								}
-                                //tr_tds+= "<td><a href="+ "'${ctx}/sys/office/supplierForm?id=" + skuInfo.productInfo.office.id + "&gysFlag=onlySelect'>"+ skuInfo.productInfo.office.name + "</a></td>";
-                                tr_tds+= "<td>"+ skuInfo.productInfo.office.name + "</td>";
-                                tr_tds+= "<td>" + skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
-								if(flag){
-
-                                    tr_tds+= "<td id='td_"+prodId+"' rowspan='"+skuInfoList.length+"'>" +
-                                    "<a href='#' onclick=\"addItem('"+prodId+"')\">增加</a>" +
-                                    "</td>";
-								}
-                         		tr_tds+="</tr>";
-                           		if(skuInfoList.length>1){
-                           		    flag=false;
-								}
-                            });
-                            t++;
-                            $("#prodInfo2").append(tr_tds);
-
-                        });
-                        var s=skuInfoId.indexOf(",");
-                        if(s==0){
-                            skuInfoId=skuInfoId.substring(1);
-						}
-
-                    }
-                })
-            });
-
-            $("#updateMoney").click(function () {
-                updateMoney();
-            });
-
-        });
-		function removeItem(obj) {
-            $("#td_"+obj).html("<a href='#' onclick=\"addItem('"+obj+"')\">增加</a>");
-
-            $("#prodInfo2").append($("."+obj));
-            $.each(skuInfoId.split(","), function(i,val){
-                $("#prodInfo2").find($("#skuId_"+val)).removeAttr("name");
-                $("#prodInfo2").find($("#skuQty_"+val)).removeAttr("name");
-            });
-
-        }
-        function addItem(obj) {
-		   $("#td_"+obj).html("<a href='#' onclick=\"removeItem('"+obj+"')\">移除</a>");
-			var trHtml=$("."+obj);
-           $("#prodInfo").append(trHtml);
-            console.info(skuInfoId);
-            $.each(skuInfoId.split(","), function(i,val){
-                $("#prodInfo").find($("#skuId_"+val)).attr("name","skuInfoIds");
-                $("#prodInfo").find($("#skuQty_"+val)).attr("name","reqQtys");
-            });
-        }
-        function delItem(obj) {
-		    if(confirm("您确认删除此条信息吗？")){
-                $.ajax({
-                type:"post",
-                url:"${ctx}/biz/request/bizRequestDetail/delItem",
-                data:{id:obj},
-                success:function (data) {
-					if(data=='ok'){
-						alert("删除成功！");
-					$("#"+obj).remove();
-                	}
-                }
-                })
-			}
-
-        }
-        function checkInfo(obj,val) {
-        	var valNmu = $(obj).attr("findg");
-            var html = "<div style='padding:10px;'>输入驳回原因：<input type='text' id='remark2' name='remarkReject' value=''/>"+
-            		"<span class='help-inline'><font color='red'>*</font></span></div>";
-            var submit = function (v, h, f) {
-                if (f.yourname == '') {
-                    $.jBox.tip("请输入您的驳回原因", 'error', { focusId: "partNo" }); // 关闭设置 partNo 为焦点
-                    return false;
-                }
-                if($("#remark2").val()!=null && $("#remark2").val()!=""){
-					if (v === 'ok') {
-						$.ajax({
-							type:"post",
-							url:"${ctx}/biz/request/bizRequestHeaderForVendor/saveInfo",
-							data:{checkStatus:obj,id:$("#id").val(),remark:$("#remark").val(),remarkReject:$("#remark2").val()},
-							success:function (data) {
-								if(data){
-									alert(val+"成功！");
-									window.location.href="${ctx}/biz/request/bizRequestHeaderForVendor";
-								}
-							}
-						})
-					}
-					return true;
-                }else{
-                	alert(val+"内容不能为空!");
-                	checkInfo(obj,val);
-                }
-            };
-            $.jBox(html, { title: "驳回原因", submit: submit });
-        }
-        function checkInfo2(obj,val) {
-			$.ajax({
-				type:"post",
-				url:"${ctx}/biz/request/bizRequestHeaderForVendor/saveInfo",
-				data:{checkStatus:obj,id:$("#id").val(),remarkReject:"adopt"},
-				success:function (data) {
-					if(data){
-						alert(val+"成功！");
-						window.location.href="${ctx}/biz/request/bizRequestHeaderForVendor";
-					}
-				}
-			})
-        }
-        function updateMoney() {
-            if(confirm("确定修改价钱吗？")){
-                var skuPrice=$("#skuPrice").val();
-                $.ajax({
-                    type:"post",
-                    url:" ${ctx}/biz/request/bizRequestDetail/saveRequestDetail",
-                    data:{detailId:$("#detailId").val(),money:skuPrice},
-                    success:function(flag){
-                        if(flag=="ok"){
-                            alert(" 修改成功 ");
-
-                        }else{
-                            alert(" 修改失败 ");
-                        }
-                    }
-                });
-            }
-        }
-
-        function checkPass() {
-            top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
-                if(v=="ok"){
-                    audit(1, '');
-                }
-            },{buttonsFocus:1});
-        }
-        function checkReject() {
-            top.$.jBox.confirm("确认驳回该流程吗？","系统提示",function(v,h,f){
-                if(v=="ok"){
-                    var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
-                    var submit = function (v, h, f) {
-                        if ($String.isNullOrBlank(f.description)) {
-                            jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                            return false;
-                        }
-                        audit(2, f.description);
-                        return true;
-                    };
-
-                    jBox(html, {
-                        title: "请输入驳回理由:", submit: submit, loaded: function (h) {
-                        }
-                    });
-                }
-            },{buttonsFocus:1});
-        }
-
-        function audit(auditType, description) {
-            var id = $("#id").val();
-            var currentType = $("#currentType").val();
-            $.ajax({
-                url: '${ctx}/biz/request/bizRequestHeaderForVendor/audit',
-                contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
-                type: 'get',
-                success: function (result) {
-                    if(result == 'ok') {
-                        alert("操作成功！");
-                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
-                    }else {
-                        alert("操作失败！");
-					}
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-        }
-
-	</script>
-	<script type="text/javascript">
-		$.ready(function () {
-
-        });
-		function deleteStyle() {
-            $("#remark").removeAttr("style");
-            $("#cardNumber").removeAttr("style");
-            $("#payee").removeAttr("style");
-            $("#bankName").removeAttr("style");
-            $("#compact").removeAttr("style");
-            $("#identityCard").removeAttr("style");
+            $("#fromOfficeButton").hide();
             var officeId = $("#officeId").val();
             $.ajax({
-				type:"post",
-				url:"${ctx}/biz/request/bizRequestHeaderForVendor/selectVendInfo?vendorId="+officeId,
-				success:function (data) {
+                type:"post",
+                url:"${ctx}/biz/request/bizRequestHeaderForVendor/selectVendInfo?vendorId="+officeId,
+                success:function (data) {
                     $("#cardNumberInput").val(data.cardNumber);
                     $("#payeeInput").val(data.payee);
                     $("#bankNameInput").val(data.bankName);
@@ -315,29 +38,124 @@
                             $("#identityCards").append("<a href=\"" + identity.imgServer + identity.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + identity.imgServer + identity.imgPath + "\"></a>");
                         });
                     }
-                    $("#remark").val(data.remark);
                 }
-			});
-        }
-        function deleteVendorStyle() {
-            $("#vendor").removeAttr("style");
-		}
-		function addAllStyle() {
-		    $("#remark").prop("style","display:none");
-			$("#vendor").prop("style","display:none");
-            $("#cardNumber").prop("style","display:none");
-            $("#payee").prop("style","display:none");
-            $("#bankName").prop("style","display:none");
-            $("#compact").prop("style","display:none");
-            $("#identityCard").prop("style","display:none");
-        }
+            });
+
+
+			//$("#name").focus();
+			// var str=$("#str").val();
+            // if ($("#id").val() == null || $("#fromType").val() == 1) {
+             //    $("#fromType1").prop("checked","checked");
+            // } else {
+             //    $("#fromType2").prop("checked","checked");
+            // }
+            // if ($("#vendId").val() != "") {
+             //    $("#vendor").removeAttr("style");
+            // }
+			// if(str=='detail'){
+			//    $("#inputForm").find("input[type!='button']").attr("disabled","disabled") ;
+            //
+			// }
+            // var id=$("#id").val();
+
+
+        });
+
         function selectRemark() {
-		    if ($("#remarkInput").val() == "") {
+            if ($("#remarkInput").val() == "") {
                 alert("该厂商没有退换货流程");
-			} else {
+            } else {
                 alert($("#remarkInput").val());
-			}
+            }
         }
+
+        //增加排产
+        function addSchedulingCheck(index, detailId) {
+            var reqQty = $(eval("reqQty_" + index)).val();
+            var schedulingNum = $(eval("schedulingNum_" + index)).val();
+            var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
+            var standard = reqQty - sumSchedulingNum;
+            // alert("reqQty=" + reqQty + "\r\n" +
+            //     "schedulingNum=" + schedulingNum + "\r\n" +
+            //     "sumSchedulingNum=" + sumSchedulingNum + "\r\n" +
+            //     "standard=" + standard)
+            var reg= /^[0-9]+[0-9]*]*$/;
+            if (parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
+                alert("排产量数值设置不正确，请重新输入")
+                return false;
+            }
+            if(confirm("确定添加排产量为" + schedulingNum + "的排产吗？")){
+                $Mask.AddLogo("正在加载");
+                $.ajax({
+                    url: '${ctx}/biz/request/bizRequestHeaderForVendor/saveSchedulingPlan',
+                    contentType: 'application/json',
+                    data: {"detailId": detailId, "reqQty": reqQty, "schedulingNum": schedulingNum},
+                    type: 'get',
+                    success: function (result) {
+                        if(result == true) {
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${bizRequestHeader.id};
+                        }
+                    },
+                    error: function (error) {
+                        console.info(error);
+                    }
+                });
+            }
+        }
+
+        //批量排产
+        function batchSave() {
+            var requestDetailList = '${reqDetailList.size()}';
+            var params = new Array()
+            for (var i=0; i<requestDetailList;i++) {
+                var entity = {};
+                var detailId = $(eval("detailId_" + (i+1))).text();
+                var reqQty = $(eval("reqQty_" + (i+1))).val();
+                var schedulingNum = $(eval("schedulingNum_" + (i+1))).val();
+                var sumSchedulingNum = $(eval("sumSchedulingNum_" + (i+1))).text();
+                var standard = reqQty - sumSchedulingNum;
+                console.log("detailId=" + detailId + "\r\n" +
+					"reqQty=" + reqQty + "\r\n" +
+                    "schedulingNum=" + schedulingNum + "\r\n" +
+                    "sumSchedulingNum=" + sumSchedulingNum + "\r\n" +
+                    "standard=" + reqQty)
+                var reg= /^[0-9]+[0-9]*]*$/;
+                console.log(!reg.test(parseInt(schedulingNum)))
+                console.log("schedulingNum=" + schedulingNum + "\r\n" + "standard=" + standard)
+                if (parseInt(schedulingNum) < 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
+                    alert("排产量数值设置不正确，请重新输入")
+                    return false;
+                }
+                entity.objectId = detailId;
+                entity.originalNum = reqQty;
+                entity.schedulingNum = schedulingNum;
+                entity.completeNum = 0;
+                params[i] = entity;
+            }
+            if(confirm("确定执行批量排产吗？")){
+                $Mask.AddLogo("正在加载");
+                $.ajax({
+                    url: '${ctx}/biz/request/bizRequestHeaderForVendor/batchSaveSchedulingPlan',
+                    contentType: 'application/json',
+                    data:JSON.stringify(params),
+                    datatype:"json",
+                    type: 'post',
+                    success: function (result) {
+                        if(result == true) {
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${bizRequestHeader.id};
+                        }
+                    },
+                    error: function (error) {
+                        console.info(error);
+                    }
+                });
+            }
+        }
+
+
+	</script>
+	<script type="text/javascript">
+
 	</script>
 </head>
 <body>
@@ -373,59 +191,59 @@
 		<div class="control-group">
 			<label class="control-label">备货方：</label>
 			<div class="controls">
-				<input id="fromType1" type="radio" name="fromType" value="1" checked onclick="addAllStyle()"/>采购中心备货
-				<input id="fromType2" type="radio" name="fromType" value="2" onclick="deleteVendorStyle()"/>供应商备货
+				<input id="fromType1" type="radio" name="fromType" value="1" disabled="disabled" checked onclick="addAllStyle()"/>采购中心备货
+				<input id="fromType2" type="radio" name="fromType" value="2" disabled="disabled" onclick="deleteVendorStyle()"/>供应商备货
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
-				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
+				<sys:treeselect id="fromOffice" name="fromOffice.id" disabled="disabled" value="${entity.fromOffice.id}" labelName="fromOffice.name"
 								labelValue="${entity.fromOffice.name}"  notAllowSelectParent="true"
 								title="采购中心" isAll="false"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
 				</sys:treeselect>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div id="vendor" class="control-group" style="display: none">
+		<div id="vendor" class="control-group">
 			<label class="control-label">供应商：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="bizVendInfo.office.id" value="${entity.bizVendInfo.office.id}" labelName="bizVendInfo.office.name"
 								labelValue="${entity.bizVendInfo.vendName}" notAllowSelectParent="true"
 								title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium required"
-								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息" onchange="deleteStyle()"/>
+								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
 				<span class="help-inline"><font color="red">*</font> </span>
-				<a href="#" id="remark" onclick="selectRemark()" style="display: none">《厂家退换货流程》</a>
+				<a href="#" id="remark" onclick="selectRemark()">《厂家退换货流程》</a>
 			</div>
 		</div>
-		<div id="cardNumber" class="control-group" style="display: none">
+		<div id="cardNumber" class="control-group">
 			<label class="control-label">供应商卡号：</label>
 			<div class="controls">
 				<input id="cardNumberInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
 							class="input-xlarge "/>
 			</div>
 		</div>
-		<div id="payee" class="control-group" style="display: none">
+		<div id="payee" class="control-group">
 			<label class="control-label">供应商收款人：</label>
 			<div class="controls">
 				<input id="payeeInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
 							class="input-xlarge "/>
 			</div>
 		</div>
-		<div id="bankName" class="control-group" style="display: none">
+		<div id="bankName" class="control-group">
 			<label class="control-label">供应商开户行：</label>
 			<div class="controls">
 				<input id="bankNameInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
 							class="input-xlarge "/>
 			</div>
 		</div>
-		<div id="compact" class="control-group" style="display: none">
+		<div id="compact" class="control-group" >
 			<label class="control-label">供应商合同：</label>
 			<div id="compactImgs" class="controls">
 
 			</div>
 		</div>
-		<div id="identityCard" class="control-group" style="display: none">
+		<div id="identityCard" class="control-group" >
 			<label class="control-label">供应商身份证：</label>
 			<div id="identityCards" class="controls">
 
@@ -467,14 +285,16 @@
 							<th>采购数量</th>
 						</c:if>
 					</c:if>
-					<th>排产数</th>
-					<th>剩余排产数</th>
+					<th>已排产数量</th>
+					<th>待排产数量</th>
+					<th>操作</th>
 				</tr>
 				</thead>
 				<tbody id="prodInfo">
 				<c:if test="${reqDetailList!=null}">
-					<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
+					<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="state">
 						<tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
+							<td id="detailId_${state.index+1}" style="display: none">${reqDetail.id}</td>
 							<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}" width="100" height="100" /></td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 							<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
@@ -484,26 +304,13 @@
 							<td>${reqDetail.skuInfo.itemNo}</td>
 							<%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
 							<td style="white-space: nowrap">
-								<%--<c:choose>--%>
-									<%--<c:when test="${flag &&entity.str!='detail'&& entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">--%>
-									<%--<span style="float: left">--%>
-										<%--<input type="text"  class="input-mini" id="skuPrice" value="${reqDetail.unitPrice}"/>--%>
-										<%--<a href="#"  id="updateMoney" class="icon-ok-circle"></a>--%>
-									<%--</span>--%>
-										<%--<input type="hidden"  id="detailId" value="${reqDetail.id}"/>--%>
-									<%--</c:when>--%>
-									<%--<c:otherwise>--%>
-										<%--${reqDetail.unitPrice}--%>
-									<%--</c:otherwise>--%>
-								<%--</c:choose>--%>
-
 									${reqDetail.unitPrice}
 							</td>
 							<td>
 								<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
 								<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
 								<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>
-								<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>
+								<input id="reqQty_${state.index+1}" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 							</td>
 
 							<td>
@@ -533,9 +340,24 @@
 									<td>${reqDetail.reqQty}</td>
 								</c:if>
 							</c:if>
+							<td id="sumSchedulingNum_${state.index+1}">${reqDetail.sumSchedulingNum}</td>
+							<td>
+								<input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}"
+									   htmlEscape="false" maxlength="30" class="input-xlarge "/>
+							</td>
+							<td>
+								<c:choose>
+									<c:when test="${reqDetail.reqQty != reqDetail.sumSchedulingNum}">
+										<input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${reqDetail.id}')" value="保存"/>&nbsp;
+									</c:when>
+									<c:otherwise>
+										<span style="color:red; ">已排产完成</span>
+									</c:otherwise>
+								</c:choose>
+							</td>
 						</tr>
-						<c:if test="${reqStatus.last}">
-							<c:set var="aa" value="${reqStatus.index}" scope="page"/>
+						<c:if test="${state.last}">
+							<c:set var="aa" value="${state.index}" scope="page"/>
 						</c:if>
 
 					</c:forEach>
@@ -547,23 +369,21 @@
 		</div>
 
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
-				<c:if test="${entity.str!='detail' && entity.str!='audit'}">
-					<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
-				</c:if>
-			</shiro:hasPermission>
+			<c:if test="${reqDetailList!=null}">
+				<input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;
+			</c:if>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 		</div>
 	</form:form>
-	<form:form id="searchForm" modelAttribute="bizSkuInfo" >
-		<%--<form:hidden id="productNameCopy" path="productInfo.name"/>--%>
-		<%--<form:hidden id="prodCodeCopy" path="productInfo.prodCode"/>--%>
-		<form:hidden id="prodBrandNameCopy" path="productInfo.brandName"/>
-		<form:hidden id="skuNameCopy" path="name"/>
-		<form:hidden id="skuCodeCopy" path="partNo"/>
-		<form:hidden id="itemNoCopy" path="itemNo"/>
-		<input type="hidden" name="skuType" value="${SkuTypeEnum.OWN_PRODUCT.code}"/>
-		<%--<form:hidden id="skuTypeCopy" path="skuType"/>--%>
-	</form:form>
+	<%--<form:form id="searchForm" modelAttribute="bizSkuInfo" >--%>
+		<%--&lt;%&ndash;<form:hidden id="productNameCopy" path="productInfo.name"/>&ndash;%&gt;--%>
+		<%--&lt;%&ndash;<form:hidden id="prodCodeCopy" path="productInfo.prodCode"/>&ndash;%&gt;--%>
+		<%--<form:hidden id="prodBrandNameCopy" path="productInfo.brandName"/>--%>
+		<%--<form:hidden id="skuNameCopy" path="name"/>--%>
+		<%--<form:hidden id="skuCodeCopy" path="partNo"/>--%>
+		<%--<form:hidden id="itemNoCopy" path="itemNo"/>--%>
+		<%--<input type="hidden" name="skuType" value="${SkuTypeEnum.OWN_PRODUCT.code}"/>--%>
+		<%--&lt;%&ndash;<form:hidden id="skuTypeCopy" path="skuType"/>&ndash;%&gt;--%>
+	<%--</form:form>--%>
 </body>
 </html>

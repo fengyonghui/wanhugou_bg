@@ -59,7 +59,7 @@
                         return false;
                     }
                     var reg= /^[0-9]+[0-9]*]*$/;
-                    if(value == null || value == "" || !reg.test(value)){
+                    if(value == null || value == "" || parseInt(value)<=0 || !reg.test(value)){
                         alert("确认值输入不正确!")
                         return false;
                     }
@@ -99,7 +99,7 @@
                     type: 'post',
                     success: function (result) {
                         if(result == true) {
-                            window.location.href = "${ctx}/biz/po/bizPoHeader/scheduling?id="+${bizPoHeader.id}  + "&forward=confirmScheduling";
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${bizRequestHeader.id}  + "&forward=confirmScheduling";
                         }
                     },
                     error: function (error) {
@@ -142,7 +142,7 @@
                     return false;
                 }
                 var reg= /^[0-9]+[0-9]*]*$/;
-                if(value == null || value == "" || !reg.test(value)){
+                if(value == null || value == "" || parseInt(value)<=0 || !reg.test(value)){
                     alert("确认值输入不正确!")
                     return false;
                 }
@@ -174,7 +174,7 @@
                     type: 'post',
                     success: function (result) {
                         if(result == true) {
-                            window.location.href = "${ctx}/biz/po/bizPoHeader/scheduling?id="+${bizPoHeader.id}  + "&forward=confirmScheduling";
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${bizRequestHeader.id} + "&forward=confirmScheduling";
                         }
                     },
                     error: function (error) {
@@ -201,82 +201,103 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
-    <li class="active">
-        <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">采购订单
-            <shiro:hasPermission name="biz:po:bizPoHeader:edit">${not empty bizPoHeader.id?'修改':'添加'}</shiro:hasPermission>
-            <shiro:lacksPermission name="biz:po:bizPoHeader:edit">查看</shiro:lacksPermission></a>
-    </li>
+    <li><a href="${ctx}/biz/request/bizRequestHeaderForVendor/">备货清单列表</a></li>
+    <li class="active"><a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizRequestHeader.id}">备货清单<shiro:hasPermission name="biz:request:bizRequestHeader:edit">${not empty bizRequestHeader.str?'详情':(not empty bizRequestHeader.id?'修改':'添加')}</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission></a></li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizPoHeader" action=""
+<form:form id="inputForm" modelAttribute="bizRequestHeader" action=""
            method="post" class="form-horizontal">
     <form:hidden path="id" id="id"/>
-    <form:hidden path="bizPoPaymentOrder.id" id="paymentOrderId"/>
-    <input id="prew" type="hidden" value="${prewStatus}"/>
-    <input id="type" type="hidden" value="${type}"/>
-    <sys:message content="${message}"/>
-    <input type="hidden" name="vendOffice.id" value="${vendorId}">
-    <input id="str" type="hidden" value="${bizPoHeader.str}"/>
-    <input id="deliveryStatus" type="hidden" value="${bizPoHeader.deliveryStatus}"/>
-    <c:if test="${bizPoHeader.id!=null}">
-        <div class="control-group">
-            <label class="control-label">采购单编号：</label>
-            <div class="controls">
-                <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
-            </div>
-        </div>
-    </c:if>
-
-    <c:if test="${bizOrderHeader.orderType != 6}" >
     <table id="contentTable" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
             <th>产品图片</th>
             <th>品牌名称</th>
+            <th>供应商</th>
             <th>商品名称</th>
+            <th>商品编码</th>
             <th>商品货号</th>
-            <c:if test="${bizPoHeader.id!=null}">
-                <th>所属单号</th>
+                <%--<th>商品属性</th>--%>
+            <th>价格</th>
+            <th>申报数量</th>
+            <th>总金额</th>
+            <c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
+                <th>仓库名称</th>
+                <th>库存数量</th>
+                <th>销售量</th>
+                <c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
+                    <th>商品总库存数量</th>
+                </c:if>
+
             </c:if>
-            <th>原始数量</th>
+            <c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
+                <th>已收货数量</th>
+            </c:if>
+            <c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
+                <%--该备货单已生成采购单就显示--%>
+                <c:if test="${empty bizRequestHeader.poSource}">
+                    <th>已生成的采购单</th>
+                    <th>采购数量</th>
+                </c:if>
+            </c:if>
             <th>排产数量</th>
-            <th>工厂价</th>
         </tr>
         </thead>
         <tbody id="prodInfo">
-        <c:if test="${bizPoHeader.poDetailList!=null}">
-            <c:forEach items="${bizPoHeader.poDetailList}" var="poDetail">
-                <c:forEach items="${poDetail.schedulingPlanList}" var="schedulingPlan">
-                    <tr>
-                        <td id="schedulingPlanId_${schedulingPlan.id}" style="display: none">${schedulingPlan.id}</td>
-                        <td id="detailId_${schedulingPlan.id}" style="display: none">${poDetail.id}</td>
-                        <td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>
-                        <td>${poDetail.skuInfo.productInfo.brandName}</td>
-                        <td>${poDetail.skuInfo.name}</td>
-                        <td>${poDetail.skuInfo.itemNo}</td>
-                        <c:if test="${bizPoHeader.id!=null}">
+        <c:if test="${reqDetailList!=null}">
+            <c:forEach items="${reqDetailList}" var="reqDetail" varStatus="state">
+                <c:forEach items="${reqDetail.schedulingPlanList}" var="schedulingPlan">
+                    <td id="detailId_${state.index+1}" style="display: none">${reqDetail.id}</td>
+                    <td><img src="${reqDetail.skuInfo.productInfo.imgUrl}" width="100" height="100" /></td>
+                    <td>${reqDetail.skuInfo.productInfo.brandName}</td>
+                    <td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
+                            ${reqDetail.skuInfo.productInfo.office.name}</a></td>
+                    <td>${reqDetail.skuInfo.name}</td>
+                    <td>${reqDetail.skuInfo.partNo}</td>
+                    <td>${reqDetail.skuInfo.itemNo}</td>
+                        <%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
+                    <td style="white-space: nowrap">
+                            ${reqDetail.unitPrice}
+                    </td>
+                    <td>
+                        <input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
+                        <input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
+                        <input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>
+                        <input id="reqQty_${schedulingPlan.id}" name='reqQtys' readonly="readonly" value="${schedulingPlan.originalNum}" class="input-mini" type='text'/>
+                    </td>
+
+                    <td>
+                            ${reqDetail.unitPrice * reqDetail.reqQty}
+                    </td>
+
+                    <c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
+                        <td>${reqDetail.invName}</td>
+                        <td>${reqDetail.skuInvQty}</td>
+                        <td>${reqDetail.sellCount}</td>
+                        <c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
                             <td>
-                                <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}" var="orderNumStr"
-                                           varStatus="orderStatus">
-                                <c:if test="${orderNumStr.soType==1}">
-                                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
-                                    </c:if>
-                                    <c:if test="${orderNumStr.soType==2}">
-                                    <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
-                                        </c:if>
-                                            ${orderNumStr.orderNumStr}
-                                    </a>
-                                    </c:forEach>
+                                <a href="${ctx}/biz/inventory/bizInventorySku?skuInfo.id=${reqDetail.skuInfo.id}&reqSource=request_Inv">
+                                        ${reqDetail.invenSkuOrd}</a>
                             </td>
                         </c:if>
-                        <td id="originalNum_${schedulingPlan.id}" >${schedulingPlan.originalNum}</td>
-                        <td id="schedulingNum_${schedulingPlan.id}" >${schedulingPlan.schedulingNum}</td>
-                        <td>${poDetail.unitPrice}</td>
-                    </tr>
-                    <c:forEach items="${schedulingPlan.completePalnList}" var="completePaln">
+                    </c:if>
+
+                    <c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
+                        <td>${reqDetail.recvQty}</td>
+                    </c:if>
+
+                    <c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
+                        <%--该备货单已生成采购单就显示--%>
+                        <c:if test="${reqDetail.bizPoHeader!=null}">
+                            <td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}">${reqDetail.bizPoHeader.orderNum}</a></td>
+                            <td>${reqDetail.reqQty}</td>
+                        </c:if>
+                    </c:if>
+                    <td id="schedulingNum_${schedulingPlan.id}">${schedulingPlan.schedulingNum}</td>
+                </tr>
+                <c:forEach items="${schedulingPlan.completePalnList}" var="completePaln">
                     <tr>
-                        <td colspan="8">
+                        <td colspan="10">
                             <div class="control-group">
                                 <label>排产日期：</label>
                                 <input name="planDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
@@ -287,11 +308,11 @@
                             </div>
                         </td>
                     </tr>
-                    </c:forEach>
-                    <tr>
-                        <td id="sumCompleteNum_${schedulingPlan.id}" style="display: none">${schedulingPlan.sumCompleteNum}</td>
-                        <td colspan="8">
-                            <c:choose>
+                </c:forEach>
+                <tr>
+                    <td id="sumCompleteNum_${schedulingPlan.id}" style="display: none">${schedulingPlan.sumCompleteNum}</td>
+                    <td colspan="10">
+                        <c:choose>
                             <c:when test="${schedulingPlan.schedulingNum == schedulingPlan.sumCompleteNum}">
                                 <%--<span style="color:red; ">已全部确认</span>--%>
                             </c:when>
@@ -302,34 +323,37 @@
                                     <input id="saveSubmit" class="btn btn-primary" type="button" onclick="saveComplete(${schedulingPlan.id})" value="保存"/>&nbsp;
                                 </div>
                             </c:otherwise>
-                            </c:choose>
-                        </td>
-                    </tr>
-                    <c:if test="${schedulingPlan.schedulingNum != schedulingPlan.sumCompleteNum}">
+                        </c:choose>
+                    </td>
+                </tr>
+                <c:if test="${schedulingPlan.schedulingNum != schedulingPlan.sumCompleteNum}">
                     <tr>
-                        <td colspan="8" id="${schedulingPlan.id}">
+                        <td colspan="10" id="${schedulingPlan.id}">
                             <div class="control-group" name="${schedulingPlan.id}">
                                 <label>排产日期：</label>
                                 <input name="${schedulingPlan.id}_date" type="text" maxlength="20" class="input-medium Wdate"
-                                      value="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+                                       value="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
                                 &nbsp;&nbsp;
                                 <label>排产数量：</label>
                                 <input name="${schedulingPlan.id}_value" class="input-medium" type="text" value="" maxlength="30" />
                             </div>
                         </td>
                     </tr>
-                    </c:if>
+                </c:if>
+                <c:if test="${state.last}">
+                    <c:set var="aa" value="${state.index}" scope="page"/>
+                </c:if>
                 </c:forEach>
             </c:forEach>
+            <input id="aaId" value="${aa}" type="hidden"/>
         </c:if>
         </tbody>
     </table>
-    </c:if>
 
     <div class="form-actions">
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
         <c:if test="${roleFlag != false}">
-            <c:if test="${bizPoHeader.poDetailList!=null}">
+            <c:if test="${reqDetailList!=null}">
                 <input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;
             </c:if>
         </c:if>

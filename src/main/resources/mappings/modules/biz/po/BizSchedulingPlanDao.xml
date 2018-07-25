@@ -91,7 +91,13 @@
 		sum(bcpl.complete_num)
 		FROM biz_scheduling_plan bsp
 		LEFT JOIN biz_complete_paln bcpl ON bcpl.scheduling_id = bsp.id
-		where bsp.object_id = #{bizPoDetail.id}
+		where bsp.object_id =
+        <if test="bizPoDetail!=null and bizPoDetail.id!=null and bizPoDetail.id!=''">
+            #{bizPoDetail.id}
+        </if>
+        <if test="bizRequestDetail!=null and bizRequestDetail.id!=null and bizRequestDetail.id!=''">
+            #{bizRequestDetail.id}
+        </if>
 		and bcpl.scheduling_id = bcp.scheduling_id
 		) as "sumCompleteNum"
 		FROM biz_scheduling_plan a
@@ -103,6 +109,10 @@
 				AND a.object_name = "biz_po_detail"
 				AND a.object_id = #{bizPoDetail.id}
 			</if>
+            <if test="bizRequestDetail!=null and bizRequestDetail.id!=null and bizRequestDetail.id!=''">
+                AND a.object_name = "biz_request_detail"
+                AND a.object_id = #{bizRequestDetail.id}
+            </if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -180,6 +190,15 @@
 		left join biz_sku_info bsi on bsi.id = bpd.sku_no
 		left join biz_product_info bpi on bpi.id = bsi.prod_id
 		WHERE bph.id = #{id}
+	</select>
+
+	<select id="getSchedulingPlanIdListByRequestId" resultType="Integer" parameterType="com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader">
+		SELECT
+		a.id
+		FROM biz_scheduling_plan a
+		left join biz_request_detail brd on brd.id= a.object_id
+		left join biz_request_header brh on brh.id = brd.header_id
+		WHERE brh.id = #{id}
 	</select>
 	
 </mapper>

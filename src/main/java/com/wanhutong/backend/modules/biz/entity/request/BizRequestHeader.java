@@ -115,6 +115,19 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 */
 	private BizVendInfo bizVendInfo;
 
+	/**
+	 * 该采购单下所有商品的总采购数量
+	 */
+	private Integer totalOrdQty;
+	/**
+	 * 该采购单下所有商品的总排产数量
+	 */
+	private Integer toalSchedulingNum;
+	/**
+	 * 该采购单下所有商品的总已确认排产数
+	 */
+	private Integer toalCompleteNum;
+
 	public BizRequestHeader() {
 		super();
 	}
@@ -492,5 +505,29 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setBizVendInfo(BizVendInfo bizVendInfo) {
 		this.bizVendInfo = bizVendInfo;
+	}
+
+	public Integer getTotalOrdQty() {
+		return totalOrdQty;
+	}
+
+	public void setTotalOrdQty(Integer totalOrdQty) {
+		this.totalOrdQty = totalOrdQty;
+	}
+
+	public Integer getToalSchedulingNum() {
+		return toalSchedulingNum;
+	}
+
+	public void setToalSchedulingNum(Integer toalSchedulingNum) {
+		this.toalSchedulingNum = toalSchedulingNum;
+	}
+
+	public Integer getToalCompleteNum() {
+		return toalCompleteNum;
+	}
+
+	public void setToalCompleteNum(Integer toalCompleteNum) {
+		this.toalCompleteNum = toalCompleteNum;
 	}
 }

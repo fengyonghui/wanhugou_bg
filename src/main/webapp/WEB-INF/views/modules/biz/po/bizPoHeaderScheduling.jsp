@@ -48,7 +48,9 @@
                 var schedulingNum = $(eval("schedulingNum_" + (i+1))).val();
                 var sumSchedulingNum = $(eval("sumSchedulingNum_" + (i+1))).text();
                 var standard = ordQty - sumSchedulingNum;
-                var reg= /^[1-9]+[0-9]*]*$/;
+                var reg= /^[0-9]+[0-9]*]*$/;
+                console.log(!reg.test(parseInt(schedulingNum)))
+                console.log("schedulingNum=" + schedulingNum + "\r\n" + "standard=" + standard)
                 if (parseInt(schedulingNum) < 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
                     alert("排产量数值设置不正确，请重新输入")
                     return false;
@@ -85,7 +87,7 @@
             var schedulingNum = $(eval("schedulingNum_" + index)).val();
             var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
             var standard = ordQty - sumSchedulingNum;
-            var reg= /^[1-9]+[0-9]*]*$/;
+            var reg= /^[0-9]+[0-9]*]*$/;
             if (parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
                 alert("排产量数值设置不正确，请重新输入")
                 return false;

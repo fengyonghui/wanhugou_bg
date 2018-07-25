@@ -283,7 +283,13 @@
 					</c:if>
 
                     <c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">
-                        <a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}&str=detail">排产</a>
+                        <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}">排产</a>
+                        </shiro:hasPermission>
+						<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}&forward=confirmScheduling">确认排产</a>
+						</shiro:hasPermission>
+
                     </c:if>
 
 				</shiro:hasPermission>

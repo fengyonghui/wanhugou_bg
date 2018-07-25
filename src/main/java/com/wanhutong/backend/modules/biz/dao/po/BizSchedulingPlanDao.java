@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -30,4 +31,6 @@ public interface BizSchedulingPlanDao extends CrudDao<BizSchedulingPlan> {
     List<Integer> getSchedulingPlanIdListByPoId(BizPoHeader bizPoHeader);
 
     List<BizSchedulingPlan> findAllList(BizSchedulingPlan bizSchedulingPlan);
+
+    List<Integer> getSchedulingPlanIdListByRequestId(BizRequestHeader bizRequestHeader);
 }

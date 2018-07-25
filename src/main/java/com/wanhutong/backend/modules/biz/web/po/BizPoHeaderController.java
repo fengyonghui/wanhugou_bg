@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.sun.xml.internal.ws.util.Pool;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -960,12 +961,7 @@ public class BizPoHeaderController extends BaseController {
             List<Integer> list = bizSchedulingPlanService.getSchedulingPlanIdListByPoId(bizPoHeader);
             JSONArray json = JSONArray.fromObject(list);
             model.addAttribute("schedulingPlanList", json);
-
             List<BizPoDetail> poDetailList = bizPoHeader.getPoDetailList();
-            if (poDetailList != null) {
-
-            }
-
             forwardPage = "modules/biz/po/bizPoHeaderConfirmScheduling";
         } else {
             forwardPage = "modules/biz/po/bizPoHeaderScheduling";
@@ -1023,12 +1019,10 @@ public class BizPoHeaderController extends BaseController {
             schedulingPlan.setSchedulingNum(dto.getSchedulingNum());
             try {
                 bizSchedulingPlanService.save(schedulingPlan);
+                boo = true;
             } catch (Exception e) {
                 boo = false;
                 logger.error(e.getMessage());
-            }
-            if ((i+1)==dtoList.size()){
-                boo = true;
             }
         }
         return boo;
@@ -1048,12 +1042,10 @@ public class BizPoHeaderController extends BaseController {
             completePaln.setCompleteNum(dto.getCompleteNum());
             try {
                 bizCompletePalnService.save(completePaln);
+                boo = true;
             } catch (Exception e) {
                 boo = false;
                 logger.error(e.getMessage());
-            }
-            if ((i+1)==dtoList.size()){
-                boo = true;
             }
         }
         return boo;

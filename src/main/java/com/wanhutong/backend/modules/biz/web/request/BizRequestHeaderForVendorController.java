@@ -8,14 +8,19 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.dto.BizCompletePalnDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizPoHeaderSchedulingDto;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
+import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
+import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -25,9 +30,12 @@ import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
+import com.wanhutong.backend.modules.biz.service.po.BizCompletePalnService;
+import com.wanhutong.backend.modules.biz.service.po.BizSchedulingPlanService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
@@ -43,13 +51,17 @@ import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -57,8 +69,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,12 +106,40 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	private CommonImgService commonImgService;
 	@Autowired
 	private BizVendInfoService bizVendInfoService;
+	@Autowired
+	private BizSchedulingPlanService bizSchedulingPlanService;
+	@Autowired
+	private BizCompletePalnService bizCompletePalnService;
+	@Autowired
+	private BizRequestHeaderService bizRequestHeaderService;
+
+	public static final String REQUEST_DETAIL_TABLE_NAME = "biz_request_detail";
 
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
 		BizRequestHeader entity = null;
 		if (id!=null){
 			entity = bizRequestHeaderForVendorService.get(id);
+
+			BizRequestDetail bizRequestDetail = new BizRequestDetail();
+			bizRequestDetail.setRequestHeader(entity);
+			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+			List<BizRequestDetail> requestDetails = Lists.newArrayList();
+			for (BizRequestDetail requestDetail : requestDetailList) {
+
+				BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
+				bizSchedulingPlan.setBizRequestDetail(requestDetail);
+				List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findAllList(bizSchedulingPlan);
+				requestDetail.setSchedulingPlanList(schedulingPlanList);
+
+				BizRequestDetail requestDetailTemp = bizRequestDetailService.getsumSchedulingNum(requestDetail.getId());
+				if (requestDetailTemp != null) {
+					requestDetail.setSumSchedulingNum(requestDetailTemp.getSumSchedulingNum());
+					requestDetail.setSumCompleteNum(requestDetailTemp.getSumCompleteNum());
+				}
+				requestDetails.add(requestDetail);
+			}
+			entity.setRequestDetailList(requestDetails);
 		}
 		if (entity == null){
 			entity = new BizRequestHeader();
@@ -508,7 +551,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "scheduling")
-	public String scheduling(BizRequestHeader bizRequestHeader, Model model) {
+	public String scheduling(HttpServletRequest request, BizRequestHeader bizRequestHeader, Model model) {
 		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
 		if (bizRequestHeader.getId() != null) {
 			BizRequestDetail bizRequestDetail = new BizRequestDetail();
@@ -537,6 +580,18 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 				requestDetail.setSkuInfo(skuInfo);
 				requestDetail.setSellCount(findSellCount(requestDetail));
+
+				BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
+				bizSchedulingPlan.setBizRequestDetail(requestDetail);
+				List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findAllList(bizSchedulingPlan);
+				requestDetail.setSchedulingPlanList(schedulingPlanList);
+
+				BizRequestDetail requestDetailTemp = bizRequestDetailService.getsumSchedulingNum(requestDetail.getId());
+				if (requestDetailTemp != null) {
+					requestDetail.setSumSchedulingNum(requestDetailTemp.getSumSchedulingNum());
+					requestDetail.setSumCompleteNum(requestDetailTemp.getSumCompleteNum());
+				}
+
 				reqDetailList.add(requestDetail);
 			}
 			List<BizOrderHeader> orderHeaderList = bizRequestHeaderForVendorService.findOrderForVendReq(skuIdList, bizRequestHeader.getFromOffice().getId());
@@ -580,9 +635,103 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		}
 		model.addAttribute("roleChanne", roleName);
 
+		//bizRequestHeader.setStr("");
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
 		model.addAttribute("bizSkuInfo", new BizSkuInfo());
-		return "modules/biz/request/bizRequestHeaderForVendorScheduling";
+
+		String forward = request.getParameter("forward");
+		String forwardPage = "";
+		if ("confirmScheduling".equals(forward)) {
+			List<Integer> list = bizSchedulingPlanService.getSchedulingPlanIdListByRequestId(bizRequestHeader);
+			JSONArray json = JSONArray.fromObject(list);
+			model.addAttribute("schedulingPlanList", json);
+			List<BizRequestDetail> poDetailList = bizRequestHeader.getRequestDetailList();
+			forwardPage = "modules/biz/request/bizRequestHeaderForVendorConfirmScheduling";
+		} else {
+			forwardPage = "modules/biz/request/bizRequestHeaderForVendorScheduling";
+		}
+
+		return forwardPage;
+	}
+
+	@RequestMapping(value = "saveSchedulingPlan")
+	@ResponseBody
+	public boolean saveSchedulingPlan(HttpServletRequest request, Integer detailId, Integer reqQty, Integer schedulingNum) {
+		BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
+		schedulingPlan.setObjectName(REQUEST_DETAIL_TABLE_NAME);
+		schedulingPlan.setObjectId(String.valueOf(detailId));
+		schedulingPlan.setOriginalNum(reqQty);
+		schedulingPlan.setSchedulingNum(schedulingNum);
+		boolean boo = false;
+		try {
+			bizSchedulingPlanService.save(schedulingPlan);
+			boo = true;
+		} catch (Exception e) {
+			boo = false;
+			logger.error(e.getMessage());
+		}
+		return boo;
+	}
+
+	@RequestMapping(value = "batchSaveSchedulingPlan")
+	@ResponseBody
+	public boolean batchSaveSchedulingPlan(HttpServletRequest request, @RequestBody String params) throws IOException {
+		List<BizPoHeaderSchedulingDto> dtoList = JsonUtil.parseArray(params, new TypeReference<List<BizPoHeaderSchedulingDto>>(){});
+		boolean boo = false;
+		for (int i=0; i<dtoList.size(); i++) {
+			BizPoHeaderSchedulingDto dto = dtoList.get(i);
+			if (dto.getSchedulingNum() == 0) {
+				continue;
+			}
+			BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
+			schedulingPlan.setObjectName(REQUEST_DETAIL_TABLE_NAME);
+			schedulingPlan.setObjectId(String.valueOf(dto.getObjectId()));
+			schedulingPlan.setOriginalNum(dto.getOriginalNum());
+			schedulingPlan.setSchedulingNum(dto.getSchedulingNum());
+			try {
+				bizSchedulingPlanService.save(schedulingPlan);
+				boo = true;
+			} catch (Exception e) {
+				boo = false;
+				logger.error(e.getMessage());
+			}
+		}
+		return boo;
+	}
+
+	@RequestMapping(value = "saveCompletePlan")
+	@ResponseBody
+	public boolean saveCompletePlan(HttpServletRequest request, @RequestBody String params) throws IOException, ParseException {
+		List<BizCompletePalnDto> dtoList = JsonUtil.parseArray(params, new TypeReference<List<BizCompletePalnDto>>(){});
+		boolean boo = false;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		for (int i=0; i<dtoList.size(); i++) {
+			BizCompletePalnDto dto = dtoList.get(i);
+			BizCompletePaln completePaln = new BizCompletePaln();
+			completePaln.setSchedulingId(dto.getSchedulingId());
+			completePaln.setPlanDate(sdf.parse(dto.getPlanDate()));
+			completePaln.setCompleteNum(dto.getCompleteNum());
+			try {
+				bizCompletePalnService.save(completePaln);
+				boo = true;
+			} catch (Exception e) {
+				boo = false;
+				logger.error(e.getMessage());
+			}
+		}
+		return boo;
+	}
+
+	@RequestMapping(value = "checkResult")
+	@ResponseBody
+	public String checkResult(HttpServletRequest request, Integer id) {
+		BizRequestHeader bizRequestHeader = bizRequestHeaderService.getTotalNum(id);
+		Map resultMap = new HashMap();
+		resultMap.put("totalOrdQty", bizRequestHeader.getTotalOrdQty());
+		resultMap.put("toalSchedulingNum", bizRequestHeader.getToalSchedulingNum());
+		resultMap.put("toalCompleteNum", bizRequestHeader.getToalCompleteNum());
+
+		return JSONObject.fromObject(resultMap).toString();
 	}
 }

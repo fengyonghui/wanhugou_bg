@@ -543,4 +543,13 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	public void cancel(int id) {
 		dao.updateREStatus(id, ReqHeaderStatusEnum.CLOSE.getState());
 	}
+
+	/**
+	 * 该备货单下所有商品的总采购数量，总排产数量，总已确认排产数
+	 * @param id
+	 * @return
+	 */
+	public BizRequestHeader getTotalNum(Integer id){
+		return bizRequestHeaderDao.getTotalNum(id);
+	}
 }
