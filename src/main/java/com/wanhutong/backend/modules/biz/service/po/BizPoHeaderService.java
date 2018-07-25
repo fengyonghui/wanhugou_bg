@@ -93,6 +93,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     private BizOrderStatusService bizOrderStatusService;
     @Autowired
     private SystemService systemService;
+    @Autowired
+    private BizPoHeaderDao bizPoHeaderDao;
 
 
     /**
@@ -973,5 +975,14 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      */
     public List<BizOrderStatisticsDto> vendorSkuPrice(String startDate, String endDate, Integer officeId) {
         return dao.vendorSkuPrice(startDate, endDate + " 23:59:59", officeId);
+    }
+
+    /**
+     * 该采购单下所有商品的总采购数量，总排产数量，总已确认排产数
+     * @param id
+     * @return
+     */
+    public BizPoHeader getTotalNum(Integer id){
+        return bizPoHeaderDao.getTotalNum(id);
     }
 }

@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.util.List;
+
 /**
  * 排产计划Entity
  * @author 王冰洋
@@ -20,11 +22,20 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	private String objectId;		// 表ID
 	private Integer originalNum;		// 单子原始数量
 	private Integer schedulingNum;		// 排产数量
-	private Integer completeNum;		// 已完成数量
+//	private Integer completeNum;		// 已完成数量
+
+	/**
+	 * 确认排产list
+	 */
+	private List<BizCompletePaln> completePalnList;
 	/**
 	 * 采购订单表Entity
 	 */
 	private BizPoDetail bizPoDetail;
+	/**
+	 * 该排产相关的总确认数
+	 */
+	private Integer sumCompleteNum;
 	
 	public BizSchedulingPlan() {
 		super();
@@ -68,19 +79,27 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 		this.schedulingNum = schedulingNum;
 	}
 
-	public Integer getCompleteNum() {
-		return completeNum;
-	}
-
-	public void setCompleteNum(Integer completeNum) {
-		this.completeNum = completeNum;
-	}
-
 	public BizPoDetail getBizPoDetail() {
 		return bizPoDetail;
 	}
 
 	public void setBizPoDetail(BizPoDetail bizPoDetail) {
 		this.bizPoDetail = bizPoDetail;
+	}
+
+	public List<BizCompletePaln> getCompletePalnList() {
+		return completePalnList;
+	}
+
+	public void setCompletePalnList(List<BizCompletePaln> completePalnList) {
+		this.completePalnList = completePalnList;
+	}
+
+	public Integer getSumCompleteNum() {
+		return sumCompleteNum;
+	}
+
+	public void setSumCompleteNum(Integer sumCompleteNum) {
+		this.sumCompleteNum = sumCompleteNum;
 	}
 }
