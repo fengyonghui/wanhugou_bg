@@ -310,10 +310,10 @@
                     <c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">
 					<c:if test="${requestHeader.bizStatus > ReqHeaderStatusEnum.ALL_PAY.state}">
 					<c:if test="${requestHeader.totalOrdQty != null && requestHeader.totalOrdQty != 0}">
-                        <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+                        <shiro:hasPermission name="biz:request:bizPoHeader:addScheduling">
                             <a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}">排产</a>
                         </shiro:hasPermission>
-						<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+						<shiro:hasPermission name="biz:request:bizPoHeader:confirmScheduling">
 							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}&forward=confirmScheduling">确认排产</a>
 						</shiro:hasPermission>
 					</c:if>
