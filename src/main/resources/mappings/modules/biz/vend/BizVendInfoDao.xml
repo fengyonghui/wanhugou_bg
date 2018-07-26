@@ -19,7 +19,8 @@
 		a.create_time AS "createDate",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		o1.name AS "office.name"
+		o1.name AS "office.name",
+		a.remark AS "remarks"
 	</sql>
 	
 	<sql id="bizVendInfoJoins">
@@ -99,7 +100,8 @@
 			update_time,
 			card_number,
 			bank_name,
-			payee
+			payee,
+			remark
 		) VALUES (
 			#{office.id},
 			#{vendName},
@@ -114,7 +116,8 @@
 			#{updateDate},
 			#{cardNumber},
 			#{bankName},
-			#{payee}
+			#{payee},
+			#{remarks}
 		)
 	</insert>
 	
@@ -130,7 +133,8 @@
 			audit_status = #{auditStatus},
 			card_number = #{cardNumber},
 			bank_name = #{bankName},
-			payee = #{payee}
+			payee = #{payee},
+			remark = #{remarks}
 		WHERE office_id = #{office.id}
 	</update>
 
