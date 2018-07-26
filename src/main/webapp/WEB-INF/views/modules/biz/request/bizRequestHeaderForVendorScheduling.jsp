@@ -137,7 +137,7 @@
                     type: 'post',
                     success: function (result) {
                         if(result == true) {
-                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/sche~duling?id="+${bizRequestHeader.id};
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${bizRequestHeader.id};
                         }
                     },
                     error: function (error) {
