@@ -14,17 +14,22 @@ import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
@@ -39,10 +44,14 @@ import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -58,6 +67,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BizRequestHeaderForVendorService extends CrudService<BizRequestHeaderForVendorDao, BizRequestHeader> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BizRequestHeaderForVendorService.class);
 	/**
 	 * 默认表名
 	 */
@@ -78,6 +88,8 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 	private SystemService systemService;
 	@Resource
 	private BizOrderHeaderDao bizOrderHeaderDao;
+	@Resource
+    private BizPoPaymentOrderService bizPoPaymentOrderService;
 
 	@Resource
 	private BizOrderStatusService bizOrderStatusService;
@@ -572,27 +584,26 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 			return "操作失败,当前流程已经结束!";
 		}
 		User user = UserUtils.getUser();
+		boolean hasRole = false;
 		for (String s:vendCurrentProcess.getRoleEnNameEnum()) {
 			RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(s);
 			Role role = new Role();
 			role.setEnname(roleEnNameEnum.getState());
-			if (!user.isAdmin() && !user.getRoleList().contains(role)) {
-				return "操作失败,该用户没有权限!";
+			if (user.getRoleList().contains(role)) {
+				hasRole = true;
+				break;
 			}
-
 			if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
 				return "请输入驳回理由!";
 			}
+		}
+		if (!user.isAdmin() && !hasRole) {
+			return "操作失败,该用户没有权限!";
 		}
 		cureentProcessEntity.setBizStatus(auditType);
 		cureentProcessEntity.setProcessor(user.getId().toString());
 		cureentProcessEntity.setDescription(description);
 		commonProcessService.save(cureentProcessEntity);
-
-		/*String currentDesc = vendCurrentProcess.getName();
-		Integer currentBizStatus = ReqHeaderStatusEnum.getEnum(currentDesc).getState();
-		bizOrderStatusService.insertAfterBizStatusChangedNew(currentBizStatus, BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());*/
-
 
 		CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
 		nextProcessEntity.setObjectId(bizRequestHeader.getId().toString());
@@ -618,9 +629,9 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 
 		StringBuilder phone = new StringBuilder();
 
-		if (CollectionUtils.isNotEmpty(vendNextProcess.getRoleEnNameEnum())) {
-			for (String s : vendNextProcess.getRoleEnNameEnum()) {
-				List<User> userList = systemService.findUser( new User(systemService.getRoleByEnname(s.toLowerCase())));
+		for (String s : vendNextProcess.getRoleEnNameEnum()) {
+			if (!"".equals(s)) {
+				List<User> userList = systemService.findUser(new User(systemService.getRoleByEnname(s.toLowerCase())));
 				if (CollectionUtils.isNotEmpty(userList)) {
 					for (User u : userList) {
 						phone.append(u.getMobile()).append(",");
@@ -705,5 +716,129 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 	public List<BizOrderHeader> findOrderForVendReq(List<Integer> skuIdList, Integer centId) {
 		return bizOrderHeaderDao.findOrderForVendReq(skuIdList, centId);
 	}
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public int incrPayTotal(int id, BigDecimal payTotal) {
+        return dao.incrPayTotal(id, payTotal);
+    }
+
+    /**
+     * 生成支付申请单
+     *
+     * @param bizRequestHeader
+     * @return
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Pair<Boolean, String> genPaymentOrder(BizRequestHeader bizRequestHeader) {
+        if (bizRequestHeader.getBizPoPaymentOrder() != null && bizRequestHeader.getBizPoPaymentOrder().getId() != null && bizRequestHeader.getBizPoPaymentOrder().getId() != 0) {
+            return Pair.of(Boolean.FALSE, "操作失败,该订单已经有正在申请的支付单!");
+        }
+        PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
+        PaymentOrderProcessConfig.Process purchaseOrderProcess = null;
+        if (paymentOrderProcessConfig.getDefaultBaseMoney().compareTo(bizRequestHeader.getPlanPay()) > 0) {
+            purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getPayProcessId());
+        } else {
+            purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getDefaultProcessId());
+        }
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(bizRequestHeader.getId().toString());
+        commonProcessEntity.setObjectName(BizPoPaymentOrderService.DATABASE_TABLE_NAME);
+        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+        commonProcessService.save(commonProcessEntity);
+
+        BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+        bizPoPaymentOrder.setPoHeaderId(bizRequestHeader.getId());
+        bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
+        bizPoPaymentOrder.setTotal(bizRequestHeader.getPlanPay());
+        bizPoPaymentOrder.setDeadline(bizRequestHeader.getPayDeadline());
+        bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
+        bizPoPaymentOrder.setType(PoPayMentOrderTypeEnum.REQ_TYPE.getType());
+        bizPoPaymentOrderService.save(bizPoPaymentOrder);
+
+        bizRequestHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
+        this.updatePaymentOrderId(bizRequestHeader.getId(), bizPoPaymentOrder.getId());
+        return Pair.of(Boolean.TRUE, "操作成功!");
+    }
+
+    /**
+     * 开始审核流程
+     *
+     * @return
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Pair<Boolean, String> startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, int auditType, String desc) {
+        VendorRequestOrderProcessConfig vendorRequestOrderProcessConfig = ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get();
+        BizRequestHeader bizRequestHeader = this.get(id);
+        if (bizRequestHeader == null) {
+            LOGGER.error("start audit error [{}]", id);
+            return Pair.of(Boolean.FALSE,   "操作失败!参数错误[id]");
+        }
+
+        if (prew) {
+            bizRequestHeader.setPayDeadline(prewPayDeadline);
+            bizRequestHeader.setPlanPay(prewPayTotal);
+            this.genPaymentOrder(bizRequestHeader);
+        }
+        Byte bizStatus = bizRequestHeader.getBizStatus().byteValue();
+        this.updateBizStatus(bizRequestHeader.getId(), ReqHeaderStatusEnum.PROCESS.getState());
+        if (!bizStatus.equals(bizRequestHeader.getBizStatus().byteValue())) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+        }
+        this.updateProcessToInit(bizRequestHeader);
+        auditRe(id, String.valueOf(vendorRequestOrderProcessConfig.getDefaultProcessId()), auditType, desc);
+        return Pair.of(Boolean.TRUE,   "操作成功!");
+    }
+
+    /**
+     * 审批RE
+     *
+     * @param id
+     * @param currentType
+     * @param auditType
+     * @param description
+     * @return
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Pair<Boolean, String> auditRe(int id, String currentType, int auditType, String description) {
+//        BizRequestHeader bizRequestHeader = this.get(id);
+//        CommonProcessEntity cureentProcessEntity = bizRequestHeader.getCommonProcess();
+		String s = vendAudit(id, currentType, auditType, description);
+		if ("ok".equals(s)) {
+			return Pair.of(Boolean.TRUE, "操作成功!");
+		} else if ("操作失败,该用户没有权限!".equals(s)){
+			return Pair.of(Boolean.FALSE, "操作失败,该用户没有权限!");
+		} else if ("请输入驳回理由!".equals(s)) {
+			return Pair.of(Boolean.FALSE, "请输入驳回理由!");
+		} else if ("操作失败,当前审核状态异常!".equals(s)){
+			return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常!");
+		} else {
+			return Pair.of(Boolean.FALSE, "操作失败,当前流程已经结束!");
+		}
+    }
+
+    private void updateProcessToInit(BizRequestHeader bizRequestHeader) {
+        VendorRequestOrderProcessConfig vendorRequestOrderProcessConfig = ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get();
+		VendorRequestOrderProcessConfig.RequestOrderProcess currentProcess = vendorRequestOrderProcessConfig.processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+		VendorRequestOrderProcessConfig.RequestOrderProcess requestOrderProcess = vendorRequestOrderProcessConfig.processMap.get(currentProcess.getPassCode());
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(bizRequestHeader.getId().toString());
+        commonProcessEntity.setObjectName(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc());
+        commonProcessEntity.setType(String.valueOf(requestOrderProcess.getCode()));
+        commonProcessService.save(commonProcessEntity);
+
+        this.updateProcessId(bizRequestHeader.getId(), commonProcessEntity.getId());
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public int updatePaymentOrderId(Integer id, Integer paymentId) {
+        return dao.updatePaymentOrderId(id, paymentId);
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public int updateBizStatus(Integer id, Integer status) {
+        return dao.updateBizStatus(id, status);
+    }
 
 }

@@ -4,11 +4,13 @@
 package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
@@ -45,6 +47,8 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +62,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -105,7 +111,30 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		}
 		return entity;
 	}
-	
+
+	@RequiresPermissions("biz:request:bizRequestHeader:view")
+	@RequestMapping(value = {"list4Mobile"})
+	@ResponseBody
+	public String list4Mobile(BizRequestHeader bizRequestHeader,
+							  @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
+							  HttpServletRequest request, HttpServletResponse response) {
+		String dataFrom = "biz_request_bizRequestHeader";
+		bizRequestHeader.setDataFrom(dataFrom);
+
+		Page<BizRequestHeader> bizPoHeaderPage = new Page<>(request, response);
+		bizPoHeaderPage.setPageNo(pageNo);
+		Page<BizRequestHeader> page = bizRequestHeaderForVendorService.findPage(bizPoHeaderPage, bizRequestHeader);
+		Map<String, Object> resultMap = Maps.newHashMap();
+		resultMap.put("page", page);
+		//品类名称
+		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
+		resultMap.put("varietyInfoList", varietyInfoList);
+		resultMap.put("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
+		resultMap.put("vendAuditStatus",ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
+
+		return JsonUtil.generateData(resultMap, null);
+	}
+
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -129,7 +158,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		model.addAttribute("roleSet",roleSet);
 		model.addAttribute("varietyInfoList", varietyInfoList);
 		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
-
+		model.addAttribute("vendAuditStatus",ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 		return "modules/biz/request/bizRequestHeaderForVendorList";
 	}
 
@@ -216,6 +245,84 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		model.addAttribute("reqDetailList", reqDetailList);
 		model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		return "modules/biz/request/bizRequestHeaderForVendorForm";
+	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:request:bizRequestHeader:view")
+	@RequestMapping(value = "form4Mobile")
+	public String form4Mobile(BizRequestHeader bizRequestHeader) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
+		if (bizRequestHeader.getId() != null) {
+			BizRequestDetail bizRequestDetail = new BizRequestDetail();
+			bizRequestDetail.setRequestHeader(bizRequestHeader);
+			if (!bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.CLOSE.getState()) && bizRequestHeader.getBizStatus() >= ReqHeaderStatusEnum.PURCHASING.getState()) {
+				/* 查询已生成的采购单 标识*/
+				bizRequestDetail.setPoheaderSource("poHeader");
+			}
+			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
+			BizInventorySku bizInventorySku = new BizInventorySku();
+			for (BizRequestDetail requestDetail : requestDetailList) {
+				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
+				List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
+				if (CollectionUtils.isNotEmpty(list)) {
+					//已有的库存数量
+					bizRequestHeader.setInvenSource("inventorySku");
+					requestDetail.setInvenSkuOrd(list.size());
+				}
+				if (requestDetail.getBizPoHeader() == null) {
+					bizRequestHeader.setPoSource("poHeaderSource");
+				}
+				BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+				requestDetail.setSkuInfo(skuInfo);
+				reqDetailList.add(requestDetail);
+			}
+			if (requestDetailList.size() == 0) {
+				bizRequestHeader.setPoSource("poHeaderSource");
+			}
+		}
+
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+			resultMap.put("requestOrderProcess", requestOrderProcess);
+		} else if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+			VendorRequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+					ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+			resultMap.put("requestOrderProcess", requestOrderProcess);
+		}
+
+		if (bizRequestHeader.getId() != null && bizRequestHeader.getId() != 0) {
+			BizOrderStatus bizOrderStatus = new BizOrderStatus();
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			bizOrderHeader.setId(bizRequestHeader.getId());
+			bizOrderStatus.setOrderHeader(bizOrderHeader);
+			bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
+			List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
+			statusList.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
+
+			Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
+
+			resultMap.put("statusList", statusList);
+			resultMap.put("statusMap", statusMap);
+		}
+
+		User userAdmin = UserUtils.getUser();
+		//渠道部角色
+		List<Role> roleList = userAdmin.getRoleList();
+		String roleName = null;
+		if (CollectionUtils.isNotEmpty(roleList)) {
+			for (Role role : roleList) {
+				if (role.getEnname().equals(RoleEnNameEnum.CHANNEL_MANAGER.getState()) || userAdmin.isAdmin() ) {
+					roleName = "channeOk";
+				}
+			}
+		}
+
+		resultMap.put("roleChanne", roleName);
+		resultMap.put("entity", bizRequestHeader);
+		resultMap.put("reqDetailList", reqDetailList);
+		return JsonUtil.generateData(resultMap, null);
 	}
 
 	@ResponseBody
@@ -335,12 +442,59 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	}
 
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
+	@RequestMapping(value = "delete4Mobile")
+	@ResponseBody
+	public String delete4Mobile(int id) {
+		BizRequestHeader bizRequestHeader = new BizRequestHeader();
+		bizRequestHeader.setId(id);
+		bizRequestHeader.setDelFlag(BizRequestHeader.DEL_FLAG_DELETE);
+		bizRequestHeaderForVendorService.delete(bizRequestHeader);
+		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
+	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "recovery")
 	public String recovery(BizRequestHeader bizRequestHeader, RedirectAttributes redirectAttributes) {
 		bizRequestHeader.setDelFlag(BizRequestHeader.DEL_FLAG_NORMAL);
 		bizRequestHeaderForVendorService.delete(bizRequestHeader);
 		addMessage(redirectAttributes, "删除备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeaderForVendor/?repage";
+	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:edit")
+	@RequestMapping(value = "recovery4Mobile")
+	public String recovery4Mobile(int id) {
+		BizRequestHeader bizRequestHeader = new BizRequestHeader();
+		bizRequestHeader.setId(id);
+		bizRequestHeader.setDelFlag(BizRequestHeader.DEL_FLAG_NORMAL);
+		bizRequestHeaderForVendorService.delete(bizRequestHeader);
+		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
+	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:audit")
+	@RequestMapping(value = "startAudit")
+	@ResponseBody
+	public String startAudit(HttpServletRequest request, int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, @RequestParam(defaultValue = "1") Integer auditType, String desc) {
+		Pair<Boolean, String> result = bizRequestHeaderForVendorService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
+		if (result.getLeft()) {
+			return JsonUtil.generateData(result, request.getParameter("callback"));
+		}
+		return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
+	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:createPayOrder")
+	@RequestMapping(value = "saveRequest")
+	public String saveRequest(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes, String type) {
+		if ("createPay".equalsIgnoreCase(type)) {
+			String msg = bizRequestHeaderForVendorService.genPaymentOrder(bizRequestHeader).getRight();
+			addMessage(redirectAttributes, msg);
+			return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";
+		}
+		if (!beanValidator(model, bizRequestHeader)) {
+			return form(bizRequestHeader, model);
+		}
+		addMessage(redirectAttributes, "保存备货单成功");
+		return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";
 	}
 
 	/**

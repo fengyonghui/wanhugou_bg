@@ -8,8 +8,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
+import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,6 +47,10 @@ public class BizPoPaymentOrderController extends BaseController {
 	private BizPoPaymentOrderService bizPoPaymentOrderService;
 	@Autowired
 	private BizPoHeaderService bizPoHeaderService;
+	@Autowired
+	private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
 	
 	@ModelAttribute
 	public BizPoPaymentOrder get(@RequestParam(required=false) Integer id) {
@@ -57,10 +67,17 @@ public class BizPoPaymentOrderController extends BaseController {
 	@RequiresPermissions("biz:po:bizPoPaymentOrder:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizPoPaymentOrder bizPoPaymentOrder, HttpServletRequest request, HttpServletResponse response, Model model, Integer poId) {
+		if (bizPoPaymentOrder.getType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
+			BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(poId);
+			model.addAttribute("bizRequestHeader",bizRequestHeader);
+		} else if (bizPoPaymentOrder.getType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
+			bizOrderHeaderService.get(poId);
+		} else {
+			BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
+			model.addAttribute("bizPoHeader", bizPoHeader);
+		}
 		bizPoPaymentOrder.setPoHeaderId(poId);
-		BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
-		Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder); 
-		model.addAttribute("bizPoHeader", bizPoHeader);
+		Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
 		model.addAttribute("page", page);
 		return "modules/biz/po/bizPoPaymentOrderList";
 	}

@@ -23,6 +23,7 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
+		a.current_payment_id AS "bizPoPaymentOrder.id",
 		suu.name AS "updateBy.name",
 		su.name AS "createBy.name",
 		a.update_time AS "updateDate",
@@ -50,6 +51,7 @@
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
 		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
 		LEFT JOIN  common_process process on process.id = a.process_id
+		LEFT JOIN biz_po_payment_order bppo ON bppo.id = a.current_payment_id
 	</sql>
     
 	<select id="get" resultType="BizRequestHeader">
@@ -269,6 +271,9 @@
 		<if test="bizStatus!=null">
 			biz_status,
 		</if>
+		<if test="currentPaymentId != null">
+			current_payment_id,
+		</if>
 			status,
 			create_id,
 			create_time,
@@ -295,6 +300,9 @@
 			#{remark},
 		<if test="bizStatus!=null">
 			#{bizStatus},
+		</if>
+		<if test="currentPaymentId != null">
+			#{currentPaymentId},
 		</if>
 			#{delFlag},
 			#{createBy.id},
@@ -327,6 +335,9 @@
 			remark = #{remark},
 		<if test="bizStatus!=null">
 			biz_status = #{bizStatus},
+		</if>
+		<if test="currentPaymentId != null">
+			current_payment_id = #{currentPaymentId},
 		</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
@@ -364,5 +375,23 @@
 		WHERE boss.center_id = #{centId}
 		AND bsi.id = #{skuId}
 	</select>
+
+	<update id="incrPayTotal">
+		UPDATE biz_request_header SET
+		recv_total  = (recv_total + #{payTotal})
+		WHERE id = #{id}
+	</update>
+
+	<update id="updatePaymentOrderId">
+		UPDATE biz_request_header SET
+		current_payment_id = #{paymentId}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateBizStatus">
+		UPDATE biz_request_header SET
+		biz_status = #{status}
+		WHERE id = #{id}
+	</update>
 
 </mapper>

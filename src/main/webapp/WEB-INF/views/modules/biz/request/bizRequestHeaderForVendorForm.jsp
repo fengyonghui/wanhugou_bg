@@ -291,6 +291,24 @@
             });
         }
 
+        function saveMon(type) {
+            if (type == 'createPay') {
+                var payTotal = $("#payTotal").val();
+                var payDeadline = $("#payDeadline").val();
+                if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
+                    alert("请输入申请金额!");
+                    return false;
+                }
+                if ($String.isNullOrBlank(payDeadline)) {
+                    alert("请选择本次申请付款时间!");
+                    return false;
+                }
+            }
+
+            $("#inputForm").attr("action", "${ctx}/biz/request/bizRequestHeaderForVendor/saveRequest?type=" + type);
+            $("#inputForm").submit();
+        }
+
 	</script>
 	<script type="text/javascript">
 		function deleteStyle() {
@@ -353,6 +371,7 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<form:hidden path="bizPoPaymentOrder.id" id="paymentOrderId"/>
 		<input id="str" type="hidden"  value="${entity.str}"/>
 		<input id="fromType" type="hidden" value="${entity.fromType}"/>
 		<input id="vendId" type="hidden" value="${entity.bizVendInfo.office.id}"/>
@@ -437,6 +456,78 @@
 
 			</div>
 		</div>
+		<c:if test="${entity.bizPoPaymentOrder.id != null || entity.str == 'createPay'}">
+			<div class="control-group">
+				<label class="control-label">申请金额：</label>
+				<div class="controls">
+					<input id="payTotal" name="planPay" type="text"
+						   <c:if test="${entity.str == 'audit' || entiry.str == 'pay'}">readonly</c:if>
+						   value="${entity.bizPoPaymentOrder.id != null ?
+                           entity.bizPoPaymentOrder.total : (entity.totalDetail-entity.recvTotal)}"
+						   htmlEscape="false" maxlength="30" class="input-xlarge"/>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">本次申请付款时间：</label>
+				<div class="controls">
+					<input name="payDeadline" id="payDeadline" type="text" readonly="readonly" maxlength="20"
+						   class="input-medium Wdate required"
+						   value="<fmt:formatDate value="${entity.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+							<c:if test="${entity.str == 'createPay'}"> onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"</c:if>
+						   placeholder="必填！"/>
+				</div>
+			</div>
+		</c:if>
+		<c:if test="${entity.str == 'startAudit'}">
+			<div class="control-group">
+				<label class="control-label">是否同时提交支付申请：</label>
+				<div class="controls">
+					<input name="meanwhilePayOrder" id="meanwhilePayOrderRadioFalse" type="radio" onclick="showTimeTotal(false);" checked/>否
+					<input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" />是
+				</div>
+			</div>
+			<div class="control-group prewTimeTotal" style="display: none;">
+				<label class="control-label">最后付款时间：</label>
+				<div class="controls">
+					<input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"
+						   class="input-medium Wdate required"
+						   value="<fmt:formatDate value="${entity.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
+						   placeholder="必填！"/>
+				</div>
+			</div>
+			<div class="control-group prewTimeTotal" style="display: none;">
+				<label class="control-label">申请金额：</label>
+				<div class="controls">
+					<input name="prewPayTotal" id="prewPayTotal" type="text"
+						   value="${entity.bizPoPaymentOrder.id != null ?
+                           entity.bizPoPaymentOrder.total : (entity.totalDetail-entity.recvTotal)}"
+						   maxlength="20" placeholder="必填！"/>
+				</div>
+			</div>
+		</c:if>
+		<c:if test="${entity.str == 'pay'}">
+			<div class="control-group">
+				<label class="control-label">实际付款金额：</label>
+				<div class="controls">
+					<input id="truePayTotal" name="payTotal" type="text"
+						   value="${entity.bizPoPaymentOrder.payTotal}"
+						   htmlEscape="false" maxlength="30" class="input-xlarge "/>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">上传付款凭证：
+					<p style="opacity: 0.5;">点击图片删除</p>
+				</label>
+
+				<div class="controls">
+					<input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" multiple="multiple" id="payImg"/>
+				</div>
+				<div id="payImgDiv">
+					<img src="${entity.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
+				</div>
+			</div>
+		</c:if>
 		<c:if test="${entity.str=='detail'}">
 			<div class="control-group">
 				<label class="control-label">应付金额：</label>
@@ -738,12 +829,23 @@
 
 		<div class="form-actions">
 
-			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
-
+			<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
+				<c:if test="${entity.str == 'startAudit'}">
+					<input id="btnSubmit" type="button" onclick="startAudit()" class="btn btn-primary" value="审核通过"/>
+					<input id="btnSubmit" type="button" onclick="startRejectAudit()" class="btn btn-primary" value="驳回"/>
+				</c:if>
 				<c:if test="${entity.str == 'audit'}">
 					<input id="btnSubmit" type="button" onclick="checkPass()" class="btn btn-primary" value="审核通过"/>
 					<input id="btnSubmit" type="button" onclick="checkReject()" class="btn btn-primary" value="审核驳回"/>
 				</c:if>
+				<c:if test="${entity.str == 'pay'}">
+					<input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
+				</c:if>
+				<c:if test="${entity.str == 'createPay'}">
+					<input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>
+				</c:if>
+			</shiro:hasPermission>
+			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
 
 				<%--<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.APPROVE.state}">--%>
 					<%--<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;--%>
@@ -775,5 +877,213 @@
 		<input type="hidden" name="skuType" value="${SkuTypeEnum.OWN_PRODUCT.code}"/>
 		<%--<form:hidden id="skuTypeCopy" path="skuType"/>--%>
 	</form:form>
+<script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+    function startAudit() {
+        var prew = false;
+        var prewPayTotal = $("#prewPayTotal").val();
+        var prewPayDeadline = $("#prewPayDeadline").val();
+        if ($("#meanwhilePayOrderRadioTrue").attr("checked") == "checked") {
+            if ($String.isNullOrBlank(prewPayTotal)) {
+                alert("请输入申请金额");
+                return false;
+            }
+            if ($String.isNullOrBlank(prewPayDeadline)) {
+                alert("请选择日期");
+                return false;
+            }
+            prew = true;
+        }
+        var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+        var submit = function (v, h, f) {
+            if ($String.isNullOrBlank(f.description)) {
+                jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                return false;
+            }
+            top.$.jBox.confirm("确认开始后续审核流程吗？", "系统提示", function (v1, h1, f1) {
+                if (v1 == "ok") {
+                    var id = $("#id").val();
+                    $.ajax({
+                        url: '${ctx}/biz/request/bizRequestHeaderForVendor/startAudit',
+                        contentType: 'application/json',
+                        data: {
+                            "id": id,
+                            "prew": prew,
+                            "prewPayTotal": prewPayTotal,
+                            "prewPayDeadline": prewPayDeadline,
+                            "desc": f.description
+                        },
+                        type: 'get',
+                        success: function (result) {
+                            result = JSON.parse(result);
+                            if(result.ret == true || result.ret == 'true') {
+                                alert('操作成功!');
+                                window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
+                            }else {
+                                alert(result.errmsg);
+                            }
+                        },
+                        error: function (error) {
+                            console.info(error);
+                        }
+                    });
+                }
+            }, {buttonsFocus: 1});
+            return true;
+        };
+
+        jBox(html, {
+            title: "请输入通过理由:", submit: submit, loaded: function (h) {
+            }
+        });
+
+
+    }
+
+    function startRejectAudit() {
+        top.$.jBox.confirm("确认驳回流程吗？","系统提示",function(v,h,f){
+            if(v=="ok"){
+                var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
+                var submit = function (v, h, f) {
+                    if ($String.isNullOrBlank(f.description)) {
+                        jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                        return false;
+                    }
+                    var id = $("#id").val();
+                    var prew = false;
+                    $.ajax({
+                        url: '${ctx}/biz/request/bizRequestHeaderForVendor/startAudit',
+                        contentType: 'application/json',
+                        data: {"id": id, "prew":prew,  "auditType":2, "desc": f.description},
+                        type: 'get',
+                        success: function (result) {
+                            alert(result);
+                            if(result == '操作成功!') {
+                                window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
+                            }
+                        },
+                        error: function (error) {
+                            console.info(error);
+                        }
+                    });
+                    return true;
+                };
+
+                jBox(html, {
+                    title: "请输入驳回理由:", submit: submit, loaded: function (h) {
+                    }
+                });
+            }
+        },{buttonsFocus:1});
+    }
+
+    function showTimeTotal(show) {
+        if (show) {
+            $(".prewTimeTotal").show();
+            return;
+        }
+        $(".prewTimeTotal").hide();
+    }
+
+    function pay() {
+        var id = $("#id").val();
+        var paymentOrderId = $("#paymentOrderId").val();
+        var payTotal = $("#truePayTotal").val();
+
+        var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
+        var img = "";
+        for (var i = 0; i < mainImg.length; i ++) {
+            img += $(mainImg[i]).attr("src") + ",";
+        }
+
+        if ($String.isNullOrBlank(payTotal)) {
+            alert("错误提示:请输入支付金额");
+            return false;
+        }
+        if ($String.isNullOrBlank(img)) {
+            alert("错误提示:请上传支付凭证");
+            return false;
+        }
+
+        $.ajax({
+            url: '${ctx}/biz/po/bizPoHeader/payOrder',
+            contentType: 'application/json',
+            data: {"poHeaderId": null,"reqHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img},
+            type: 'get',
+            success: function (result) {
+                alert(result);
+                if(result == '操作成功!') {
+                    window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
+                }
+            },
+            error: function (error) {
+                console.info(error);
+            }
+        });
+
+    }
+
+    function submitPic(id, multiple){
+        var f = $("#" + id).val();
+        if(f==null||f==""){
+            alert("错误提示:上传文件不能为空,请重新选择文件");
+            return false;
+        }else{
+            var extname = f.substring(f.lastIndexOf(".")+1,f.length);
+            extname = extname.toLowerCase();//处理了大小写
+            if(extname!= "jpeg"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png"){
+                $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
+                return false;
+            }
+        }
+        var file = document.getElementById(id).files;
+        var size = file[0].size;
+        if(size>2097152){
+            alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
+            return false;
+        }
+        ajaxFileUploadPic(id, multiple);
+    }
+
+    function ajaxFileUploadPic(id, multiple) {
+        $.ajaxFileUpload({
+            url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
+            secureuri : false, //一般设置为false
+            fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
+            type : 'POST',
+            dataType : 'text', //返回值类型 一般设置为json
+            success : function(data, status) {
+                //服务器成功响应处理函数
+                var msg = data.substring(data.indexOf("{"), data.indexOf("}")+1);
+                var msgJSON = JSON.parse(msg);
+                var imgList = msgJSON.imgList;
+                var imgDiv = $("#" + id + "Div");
+                var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
+                if (imgList && imgList.length > 0 && multiple) {
+                    for (var i = 0; i < imgList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                    }
+                }else if (imgList && imgList.length > 0 && !multiple) {
+                    imgDiv.empty();
+                    for (var i = 0; i < imgList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                    }
+                }else {
+                    var img = $("#" + id + "Img");
+                    img.attr("src", msgJSON.fullName);
+                }
+            },
+            error : function(data, status, e) {
+                //服务器响应失败处理函数
+                console.info(data);
+                console.info(status);
+                console.info(e);
+                alert("上传失败");
+            }
+        });
+        return false;
+    }
+</script>
 </body>
 </html>

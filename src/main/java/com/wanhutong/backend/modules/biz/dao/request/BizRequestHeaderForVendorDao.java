@@ -9,6 +9,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -26,5 +27,11 @@ public interface BizRequestHeaderForVendorDao extends CrudDao<BizRequestHeader> 
     List<BizRequestHeader>findListForPoHeader(BizRequestHeader bizRequestHeader);
 
     Integer findSellCount( @Param("centId") Integer centId, @Param("skuId") Integer skuId);
+
+    int incrPayTotal(@Param("id")int id, @Param("payTotal")BigDecimal payTotal);
+
+    int updatePaymentOrderId(@Param("id") Integer id, @Param("paymentId")Integer paymentId);
+
+    int updateBizStatus(@Param("id") Integer id,@Param("status") Integer status);
 
 }

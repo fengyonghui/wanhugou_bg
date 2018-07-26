@@ -690,8 +690,8 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "payOrder")
     @ResponseBody
-    public String payOrder(RedirectAttributes redirectAttributes, Integer poHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
-        return bizPoHeaderService.payOrder(poHeaderId, paymentOrderId, payTotal, img);
+    public String payOrder(RedirectAttributes redirectAttributes, Integer poHeaderId,@RequestParam(required = false) Integer reqHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
+        return bizPoHeaderService.payOrder(poHeaderId,reqHeaderId, paymentOrderId, payTotal, img);
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:audit")

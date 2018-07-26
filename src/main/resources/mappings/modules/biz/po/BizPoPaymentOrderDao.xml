@@ -48,6 +48,7 @@
 	<sql id="bizPoPaymentOrderColumns">
 		a.id AS "id",
 		a.po_header_id AS "poHeaderId",
+		a.type AS "type",
 		a.total AS "total",
 		a.pay_total AS "payTotal",
 		a.img AS "img",
@@ -94,6 +95,9 @@
 			<if test="total != null and total != ''">
 				AND a.total = #{total}
 			</if>
+			<if test="type != null">
+				AND a.type = #{type}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -125,12 +129,18 @@
 		INSERT INTO biz_po_payment_order(
 			id,
 			po_header_id,
+			<if test="type != null">
+				type,
+			</if>
 			total,
 			deadline,
 			process_id
 		) VALUES (
 			#{id},
 			#{poHeaderId},
+		<if test="type != null">
+			#{type},
+		</if>
 			#{total},
 			#{deadline},
 			#{processId}
@@ -140,6 +150,9 @@
 	<update id="update">
 		UPDATE biz_po_payment_order SET 	
 			po_header_id = #{poHeaderId},
+			<if test="type != null">
+				type = #{type},
+			</if>
 			total = #{total},
 			deadline = #{deadline},
 			pay_total = #{payTotal},

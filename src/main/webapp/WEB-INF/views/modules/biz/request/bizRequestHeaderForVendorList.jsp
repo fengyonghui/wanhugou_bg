@@ -2,6 +2,7 @@
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqFromTypeEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
@@ -288,25 +289,34 @@
 					</c:if>
 
 				</shiro:hasPermission>
-
-					<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-						<c:if test="${(fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin()) && requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
-							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
-							}">
-							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
-						</c:if>
-						<%--<c:forEach items="${requestHeader.commonProcess.vendorRequestOrderProcess.roleEnNameEnum}" var="roleEnNameEnum">--%>
-							<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin()) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'
-								&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus
-								}">
-								<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
-							</c:if>
-						<%--</c:forEach>--%>
-					<%--<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum) && requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'--%>
-							<%--&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus--%>
-							<%--}">--%>
-						<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>--%>
-					<%--</c:if>--%>
+				<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">
+					<c:if test="${requestHeader.bizPoPaymentOrder.id == null
+						&& requestHeader.commonProcess.vendRequestOrderProcess.name == '审批完成'
+						&& fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型') != '全部支付'
+						&& requestHeader.recvTotal < requestHeader.totalDetail
+						}">
+						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=createPay">申请付款</a>
+					</c:if>
+				</shiro:hasPermission>
+				<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
+					<c:if test="${(fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
+						&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
+						}">
+						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
+					</c:if>${requestHeader.bizStatus}
+					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'
+						&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus
+						}">
+						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
+					</c:if>
+					<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.id}&type=${PoPayMentOrderTypeEnum.REQ_TYPE.type}">支付申请列表</a>
+				</shiro:hasPermission>
+				<shiro:hasPermission name="biz:request:bizRequestHeader:startAudit">
+					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'
+						&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus
+						}">
+					<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=startAudit">审核</a>
+					</c:if>
 				</shiro:hasPermission>
 
 				</td></shiro:hasPermission>

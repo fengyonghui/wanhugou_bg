@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.entity.request;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
@@ -13,6 +14,8 @@ import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -114,6 +117,23 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 供应商拓展信息
 	 */
 	private BizVendInfo bizVendInfo;
+	/**
+	 * 申请支付金额
+	 */
+	private BigDecimal planPay;
+
+	/**
+	 * 付款时间
+	 */
+	private Date payDeadline;
+	/**
+	 * 当前支付单ID
+	 */
+	private Integer currentPaymentId;
+	/**
+	 * 支付单
+	 */
+	private BizPoPaymentOrder bizPoPaymentOrder;
 
 	public BizRequestHeader() {
 		super();
@@ -492,5 +512,37 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setBizVendInfo(BizVendInfo bizVendInfo) {
 		this.bizVendInfo = bizVendInfo;
+	}
+
+	public BigDecimal getPlanPay() {
+		return planPay;
+	}
+
+	public void setPlanPay(BigDecimal planPay) {
+		this.planPay = planPay;
+	}
+
+	public BizPoPaymentOrder getBizPoPaymentOrder() {
+		return bizPoPaymentOrder;
+	}
+
+	public void setBizPoPaymentOrder(BizPoPaymentOrder bizPoPaymentOrder) {
+		this.bizPoPaymentOrder = bizPoPaymentOrder;
+	}
+
+	public Date getPayDeadline() {
+		return payDeadline;
+	}
+
+	public void setPayDeadline(Date payDeadline) {
+		this.payDeadline = payDeadline;
+	}
+
+	public Integer getCurrentPaymentId() {
+		return currentPaymentId;
+	}
+
+	public void setCurrentPaymentId(Integer currentPaymentId) {
+		this.currentPaymentId = currentPaymentId;
 	}
 }
