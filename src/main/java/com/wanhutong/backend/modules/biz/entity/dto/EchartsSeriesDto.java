@@ -109,7 +109,7 @@ public class EchartsSeriesDto {
      */
     public enum  SeriesTypeEnum{
         BAR("bar","柱状图"),
-        LINE("line","拆线图"),
+        LINE("line","折线图"),
         ;
 
         SeriesTypeEnum(String code, String desc) {

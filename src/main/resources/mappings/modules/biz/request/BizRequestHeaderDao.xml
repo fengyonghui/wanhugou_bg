@@ -44,7 +44,7 @@
 		LEFT JOIN sys_office sot ON sot.id=a.to_id
 		LEFT JOIN sys_user su ON su.id=a.create_id
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
-		LEFT JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
+		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
 		LEFT JOIN  common_process process on process.id = a.process_id
 	</sql>
     
@@ -350,4 +350,6 @@
 		biz_status  = #{status}
 		WHERE id = #{id}
 	</update>
+
+
 </mapper>

@@ -27,11 +27,22 @@
 			}
 			$("#inputForm").validate({
 				submitHandler: function(form){
+				    var prodInfo=$("#prodInfo").find("tr");
+				    if(prodInfo.length<0){
+				       alert("请选择商品") ;
+				       return;
+					}
+					var req=0;
                     $("input[name='reqQtys']").each(function () {
                         if($(this).val()==''){
-                            $(this).val(0)
+                            $(this).val(0);
 						}
+						req+=$(this).val();
                     });
+                    if(req==0){
+                        alert("请输入数量");
+                        return;
+					}
 					loading('正在提交，请稍等...');
 
 					form.submit();

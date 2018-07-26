@@ -3,10 +3,13 @@
  */
 package com.wanhutong.backend.modules.biz.entity.po;
 
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+
+import java.util.List;
 
 /**
  * 排产计划Entity
@@ -25,7 +28,21 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	 * 采购订单表Entity
 	 */
 	private BizPoDetail bizPoDetail;
-	
+
+	/**
+	 * 备货清单详细信息Entity
+	 */
+	private BizRequestDetail bizRequestDetail;
+	/**
+	 * 该排产相关的总确认数
+	 */
+	private Integer sumCompleteNum;
+
+    /**
+     * 确认排产list
+     */
+    private List<BizCompletePaln> completePalnList;
+
 	public BizSchedulingPlan() {
 		super();
 	}
@@ -82,5 +99,29 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 
 	public void setBizPoDetail(BizPoDetail bizPoDetail) {
 		this.bizPoDetail = bizPoDetail;
+	}
+
+	public BizRequestDetail getBizRequestDetail() {
+		return bizRequestDetail;
+	}
+
+	public void setBizRequestDetail(BizRequestDetail bizRequestDetail) {
+		this.bizRequestDetail = bizRequestDetail;
+	}
+
+	public List<BizCompletePaln> getCompletePalnList() {
+		return completePalnList;
+	}
+
+	public void setCompletePalnList(List<BizCompletePaln> completePalnList) {
+		this.completePalnList = completePalnList;
+	}
+
+	public Integer getSumCompleteNum() {
+		return sumCompleteNum;
+	}
+
+	public void setSumCompleteNum(Integer sumCompleteNum) {
+		this.sumCompleteNum = sumCompleteNum;
 	}
 }

@@ -16,6 +16,7 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdViewLog;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
@@ -88,6 +89,8 @@ public class BizProductInfoForVendorV2Service extends CrudService<BizProductInfo
     private AttributeValueV2Service attributeValueV2Service;
     @Resource
     private BizSkuInfoForVendorService bizSkuInfoForVendorService;
+    @Resource
+    private BizProdViewLogService bizProdViewLogService;
 
 
     /**
@@ -113,7 +116,24 @@ public class BizProductInfoForVendorV2Service extends CrudService<BizProductInfo
 
     @Override
     public Page<BizProductInfo> findPage(Page<BizProductInfo> page, BizProductInfo bizProductInfo) {
-        return super.findPage(page, bizProductInfo);
+        page = super.findPage(page, bizProductInfo);
+        List<BizProductInfo> list = page.getList();
+
+        BizProdViewLog prodViewLog = new BizProdViewLog();
+        for (int i = 0; i < list.size(); i ++) {
+            prodViewLog.setProductInfo(list.get(i));
+            List<BizProdViewLog> prodView = bizProdViewLogService.findProdView(prodViewLog);
+
+            list.get(i).setOrderCount(prodView.size());
+            if(prodView.size()!=0){
+                list.get(i).setProdVice(prodView.get(0).getProdChick());
+                list.get(i).setSkuItemNo(prodView.get(0).getSkuItemNo());
+            }else{
+                list.get(i).setProdVice(0);
+            }
+        }
+
+        return page;
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)

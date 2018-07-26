@@ -72,6 +72,8 @@
 										bizstatusTxt = "收货完成"
 									}else if(bizstatus==35) {
 										bizstatusTxt = "关闭"
+									}else {
+										bizstatusTxt = '未知类型'
 									}
 								/*付款按钮*/
 									var inPayBtn = '';
@@ -91,7 +93,7 @@
 										varietyInfoName = ''
 									}
 									var checkStatus = '';
-									if(item.commonProcess) {
+									if(item.commonProcess.requestOrderProcess) {
 										checkStatus = item.commonProcess.requestOrderProcess.name
 									}else {
 										checkStatus = ''
@@ -130,7 +132,7 @@
 												'<li class="mui-table-view-cell">添加</li>' +
 											'</div>'+
 											'<div class="mui-col-xs-2 inDetailBtn">' +
-												'<li class="mui-table-view-cell"  inListId="'+ item.id +'">详情</li>' +
+												'<li class="mui-table-view-cell" inListId="'+ item.id +'">详情</li>' +
 											'</div>' +
 											'<div class="mui-col-xs-2 inAmendBtn">' +
 												'<li class="mui-table-view-cell paying" inListId="'+ item.id +'" poId="'+ item.id +'">修改</li>' +
@@ -171,26 +173,37 @@
 				},
 				threshold: 50
 			});
-			
 		},
 		//		getKey: function() {
 		//
 		//		},
 		inHrefHtml: function() {
 			var _this = this;
-		/*备货单添加*/
-			$('.content').on('tap', '.inAddBtn', function() {
+			/*查询*/
+			$('.header').on('tap', '#searchBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(poId == poId) {
+				} else {
 					GHUTILS.OPENPAGE({
-						url: "../../mobile/html/inventoryMagmetHtml/inventoryAddList.html",
-						extras: {
-							poId: poId,
+						url: "../../html/inventoryMagmetHtml/inSearch.html",
+						extras:{
+							purchId:_this.userInfo.purchId
 						}
+						
 					})
 				}
+					
+			}),
+		/*备货单添加*/
+			$('.content').on('tap','.inAddBtn', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../html/inventoryMagmetHtml/inventoryAddList.html",
+					extras: {
+						
+					}
+				})
 			}),
 		/*详情*/
 			$('.content').on('tap', '.inDetailBtn', function() {
@@ -208,24 +221,17 @@
 				}
 			}),
 		/*修改*/
-            $('#invetyAddBtn').on('tap','.inAmendBtn',function(){
-            	var url = $(this).attr('url');
-				var inListId = $(this).attr('inListId');
-				var poId = $(this).attr('poId');
-                if(url) {
-                	mui.toast('子菜单不存在')
-                }else if(inListId==inListId) {
-                	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/inventoryMagmetHtml/inventoryAmend.html",
-						extras: {
-								poId:poId,
-								inListId:inListId,
-						}
-					})
-                }
+            $('.content').on('tap','.inAmendBtn', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../html/inventoryMagmetHtml/inventoryAmend.html",
+					extras: {
+						
+					}
+				})
 			}),
 		/*取消*/
-            $('#invetyAddBtn').on('tap','.inCancelBtn',function(){
+            $('content').on('tap','.inCancelBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
                 if(url) {
@@ -239,25 +245,23 @@
 					})
                 }
 			})
-            /*付款*/
-            $('#invetyAddBtn').on('tap','.inPayBtn',function(){
+        /*付款*/
+            $('content').on('tap','.inPayBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
-				var codeId = $(this).attr('codeId');
                 if(url) {
                 	mui.toast('子菜单不存在')
                 }else if(inListId==inListId) {
                 	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/check.html",
+						url: "../../html/inventoryMagmetHtml/inPay.html",
 						extras: {
 								inListId:inListId,
-								codeId:codeId,
 						}
 					})
                 }
 			})
-           /* 审核*/
-            $('#invetyAddBtn').on('tap','.inCheckBtn',function(){
+        /* 审核*/
+            $('content').on('tap','.inCheckBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
                 if(url) {

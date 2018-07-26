@@ -117,7 +117,7 @@
 					data: {
 						id:_this.userInfo.poId,
 						planPay:$('#planPay').val(),
-						deadline:_this.dataNew($('#nowDate').val())
+						deadline:$('#nowDate').val()
 					},
 					dataType: "json",
 					success: function(res) {
@@ -138,13 +138,13 @@
 				
 			})
 		},
-		dataNew:function(str){
-			var _this = this;
-			Data = str.replace(/-/g,'/');
-			var date = new Date(Data);
-			var time = date.getTime();
-			return time
-		},
+//		dataNew:function(str){
+//			var _this = this;
+//			Data = str.replace(/-/g,'/');
+//			var date = new Date(Data);
+//			var time = date.getTime();
+//			return time
+//		},
 		formatDateTime: function(unix) {
         	var _this = this;
 

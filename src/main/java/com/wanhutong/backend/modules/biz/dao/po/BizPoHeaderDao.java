@@ -46,4 +46,11 @@ public interface BizPoHeaderDao extends CrudDao<BizPoHeader> {
      * @return
      */
     List<BizOrderStatisticsDto> vendorSkuPrice(@Param("startDate")String startDate, @Param("endDate")String endDate, @Param("officeId")Integer officeId);
+
+    /**
+     * 该采购单下所有商品的总采购数量，总排产数量，总已确认排产数
+     * @param id
+     * @return
+     */
+    BizPoHeader getTotalNum(@Param("id") Integer id);
 }

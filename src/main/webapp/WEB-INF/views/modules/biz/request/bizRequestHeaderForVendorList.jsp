@@ -3,6 +3,7 @@
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqFromTypeEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.BizOrderSchedulingEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
@@ -189,6 +190,7 @@
 				<th>备注</th>
 				<th>业务状态</th>
 				<th>审核状态</th>
+				<th>排产状态</th>
 				<th>下单时间</th>
 				<th>品类名称</th>
 				<th>申请人</th>
@@ -239,6 +241,28 @@
 				<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">
 					<td>${requestHeader.commonProcess.vendRequestOrderProcess.name}</td>
 				</c:if>
+				<td>
+					<c:choose>
+					<c:when test="${requestHeader.fromType != ReqFromTypeEnum.VENDOR_TYPE.type || requestHeader.bizStatus <= ReqHeaderStatusEnum.ALL_PAY.state || requestHeader.totalOrdQty == null || requestHeader.totalOrdQty == 0}">
+						<%--${BizOrderSchedulingEnum.UNABLE_SCHEDULING.desc}--%>
+					</c:when>
+					<c:otherwise>
+					<c:choose>
+					<c:when test="${requestHeader.toalSchedulingNum == null || requestHeader.toalSchedulingNum == 0}">
+						${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}
+					</c:when>
+					<c:otherwise>
+					<c:if test="${requestHeader.totalOrdQty != requestHeader.toalSchedulingNum}">
+						${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}
+					</c:if>
+					<c:if test="${requestHeader.totalOrdQty == requestHeader.toalSchedulingNum}">
+						${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}
+					</c:if>
+					</c:otherwise>
+					</c:choose>
+					</c:otherwise>
+					</c:choose>
+				</td>
 				<td>
 					<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
@@ -318,6 +342,14 @@
 					<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=startAudit">审核</a>
 					</c:if>
 				</shiro:hasPermission>
+                <c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus >= ReqHeaderStatusEnum.VEND_ALL_PAY}">
+                    <shiro:hasPermission name="biz:request:bizPoHeader:addScheduling">
+                        <a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}">排产</a>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="biz:request:bizPoHeader:confirmScheduling">
+                        <a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}&forward=confirmScheduling">确认排产</a>
+                    </shiro:hasPermission>
+                </c:if>
 
 				</td></shiro:hasPermission>
 			</tr>

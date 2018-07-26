@@ -543,4 +543,5 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	public void cancel(int id) {
 		dao.updateREStatus(id, ReqHeaderStatusEnum.CLOSE.getState());
 	}
+
 }
