@@ -95,6 +95,14 @@
 			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 68px;}
 			.mui-input-row font {color:red;position: absolute;right: 60px;top: 30%;}
 			.addBtnClass {padding: 0;}
+			.pre {
+				margin-bottom: 0;
+				padding-left: 0;
+				float: right;
+				width: 67%;
+			}
+			.secStyle {margin: 5px 0;}
+			#hideSpanAdd {position: absolute;right: 77px;top: 49px;border: 1px solid rgb(204, 204, 204);border-left: none;display: none;}
 		</style>
 	</head>
 
@@ -106,7 +114,15 @@
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
 				<label>采购中心：</label>
-				<input type="text" class="mui-input-clear" id="inAddOrordNum">
+				<div class="pre">
+					<input class="newinput" type="text" placeholder="请选择供应商">
+					<span class="mui-icon mui-icon-closeempty" id="hideSpanAdd"></span>
+					<div class="input_div" style="display: none;">
+						
+					</div>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
 				<font>*</font>
 			</div>
 			<div class="mui-input-row">
@@ -262,8 +278,13 @@
 			</div>
 			<div class="mui-input-row">
 				<label>业务状态：</label>
-				<input type="text" class="mui-input-clear" id="inPoDizstatus">
-				<font>*</font>
+				<div class="pre">
+					<select class="secStyle" name="" id="input_div_Add">
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
 			</div>
 			<div class="saveBtn">
 				<button id="" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>

@@ -39,7 +39,6 @@
 						type: 'GET',
 						url: '/a/biz/request/bizRequestHeader/list4Mobile?page2='+page+'&size='+size,
 						data: {
-							parentId: _this.userInfo.purchId,
 							pageNo: page
 						},
 						dataType: 'json',
@@ -76,14 +75,14 @@
 										bizstatusTxt = '未知类型'
 									}
 								/*付款按钮*/
-									var inPayBtn = '';
-									var inCancelBtn = '';
+									var inPay = '';
+									var inCancel = '';
 									if(bizstatus==35) {
-										inPayBtn = ''
-										inCancelBtn = ''
+										inPay = ''
+										inCancel = ''
 									}else {
-										inPayBtn = '付款'
-										inCancelBtn = '取消'
+										inPay = '付款'
+										inCancel = '取消'
 									}
 								/*品类名称*/	
 									var varietyInfoName = '';
@@ -135,13 +134,13 @@
 												'<li class="mui-table-view-cell" inListId="'+ item.id +'">详情</li>' +
 											'</div>' +
 											'<div class="mui-col-xs-2 inAmendBtn">' +
-												'<li class="mui-table-view-cell paying" inListId="'+ item.id +'" poId="'+ item.id +'">修改</li>' +
+												'<li class="mui-table-view-cell" inListId="'+ item.id +'" poId="'+ item.id +'">修改</li>' +
 											'</div>' +
-											'<div class="mui-col-xs-2" inListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell"> '+inCancelBtn+'</li>' +
+											'<div class="mui-col-xs-2 inCancelBtn" inListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell"> '+inCancel+'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2" inListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+inPayBtn+'</li>' +
+											'<div class="mui-col-xs-2 inPayBtn">' +
+												'<li class="mui-table-view-cell" inListId="'+ item.id +'">'+inPay+'</li>' +
 											'</div>'+
 											'<div class="mui-col-xs-2" inListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+inCheckBtn+'</li>' +
@@ -173,6 +172,7 @@
 				},
 				threshold: 50
 			});
+			_this.comfirDialig()
 		},
 		//		getKey: function() {
 		//
@@ -206,7 +206,7 @@
 				})
 			}),
 		/*详情*/
-			$('.content').on('tap', '.inDetailBtn', function() {
+			$('.listBlue').on('tap', '.inDetailBtn', function() {
 				var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
 				if(url) {
@@ -230,38 +230,19 @@
 					}
 				})
 			}),
-		/*取消*/
-            $('content').on('tap','.inCancelBtn',function(){
-            	var url = $(this).attr('url');
-				var inListId = $(this).attr('inListId');
-                if(url) {
-                	mui.toast('子菜单不存在')
-                }else if(inListId==inListId) {
-                	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/details.html",
-						extras: {
-								inListId:inListId,
-						}
-					})
-                }
-			})
         /*付款*/
-            $('content').on('tap','.inPayBtn',function(){
+            $('.content').on('tap','.inPayBtn',function(){
             	var url = $(this).attr('url');
-				var inListId = $(this).attr('inListId');
-                if(url) {
-                	mui.toast('子菜单不存在')
-                }else if(inListId==inListId) {
-                	GHUTILS.OPENPAGE({
-						url: "../../html/inventoryMagmetHtml/inPay.html",
-						extras: {
-								inListId:inListId,
-						}
-					})
-                }
+            	var inListId = $(this).attr(inListId);
+            	GHUTILS.OPENPAGE({
+					url: "../../html/inventoryMagmetHtml/inPay.html",
+					extras: {
+						inListId:inListId,	
+					}
+				})
 			})
         /* 审核*/
-            $('content').on('tap','.inCheckBtn',function(){
+            $('.content').on('tap','.inCheckBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
                 if(url) {
@@ -276,14 +257,32 @@
                 }
 			})
         },
-		//		
-		btnshow: function() {
-			$('#search_btn').on('tap', function() {
-				mui('.mui-off-canvas-wrap').offCanvas().toggle()
-			})
-			$('.closeBtn').on('tap', function() {
-				mui('.mui-off-canvas-wrap').offCanvas().toggle()
-			})
+    /*取消*/
+        comfirDialig: function() {
+			var _this = this;
+			var inCancelBtn = document.getElementByClass("inCancelBtn");
+			document.getElementByClass("inCancelBtn").addEventListener('tap', function() {
+				var btnArray = ['取消', '确定'];
+				mui.confirm('您确认取消该备货单吗？', '系统提示！', btnArray, function(choice) {
+					if(choice.index == 1) {
+						_this.cancelMenu()
+					}else {
+						
+					}
+				})	
+			})	
+		},		
+        cancelMenu: function() {
+			var inListId = $(this).attr('inListId');
+            $.ajax({
+                type: "GET",
+                url: "/a/biz/request/bizRequestHeader/cancel",
+                data: {id:inListId},
+                dataType: "json",
+                success: function(res){
+                	alert('操作成功！')
+                }
+            })
 		},
 		formatDateTime: function(unix) {
 			var _this = this;

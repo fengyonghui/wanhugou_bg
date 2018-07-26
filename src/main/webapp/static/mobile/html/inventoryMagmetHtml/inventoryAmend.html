@@ -103,6 +103,7 @@
 				width: 67%;
 			}
 			.secStyle {margin: 5px 0;}
+			#hideSpanAmend {position: absolute;right: 77px;top: 49px;border: 1px solid rgb(204, 204, 204);border-left: none;display: none;}
 		</style>
 	</head>
 
@@ -119,7 +120,15 @@
 			</div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
-				<input type="text" class="mui-input-clear" id="inAddOrordNum">
+				<div class="pre">
+					<input class="newinput" type="text" placeholder="请选择供应商">
+					<span class="mui-icon mui-icon-closeempty" id="hideSpanAmend"></span>
+					<div class="input_div" style="display: none;">
+						
+					</div>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
 				<font>*</font>
 			</div>
 			<div class="mui-input-row">
@@ -276,7 +285,7 @@
 			<div class="mui-input-row">
 				<label>业务状态：</label>
 				<div class="pre">
-					<select class="secStyle" name="" id="input_div_check">
+					<select class="secStyle" name="" id="input_div_Amend">
 						<option value=""></option>
 					</select>
 					<input class="savedata" type="hidden" value=''>

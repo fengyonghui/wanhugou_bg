@@ -3,150 +3,123 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+		this.datagood = [];
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			this.pageInit(); //页面初始化
-			this.getData();//获取数据
-			
-			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
+			this.hrefHtml('.newinput', '.input_div', );
+			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
+			this.pageInit(); //页面初始化
 		},
 		pageInit: function() {
 			var _this = this;
+			
 		},
 		getData: function() {
 			var _this = this;
-			$.ajax({
-                type: "GET",
-                url: "/a/biz/request/bizRequestHeader/form4Mobile",
-                data: {id:110},
-                dataType: "json",
-                success: function(res){
-					console.log(res)
-					_this.commodityHtml(res.data)
-                }
-            });
+			$('#puSearchBtn').on('tap', function() {
+				var options = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"))
+				console.log(options)
+				GHUTILS.OPENPAGE({
+					url: "../../html/purchaseMagmetHtml/purchase.html",
+					extras: {
+						orderNum: $('.ordNum').val(),
+						num: $('.detaNum').val(),
+						vendOffice: $('.hasoid').attr('id'),
+						commonProcess: options.val(),
+						isFunc: true
+					}
+				})
+			})
 		},
-		commodityHtml: function(data) {
+		hrefHtml: function(newinput, input_div) {
 			var _this = this;
-			console.log(data)
-			var commodityHtmlList = '';
-			$.each(data.bizPoHeader.commonProcessList, function(i, item) {
-				console.log(item)
-				pHtmlList +='<li class="mui-table-view-cell mui-media">'+
-//		产品图片
-					'<div class="photoParent mui-pull-left position_Re">'+
-						'<img class="position_Ab" src="../images/shuijiao.jpg">'+
-					'</div>'+
-//		产品信息
-					'<div id="addCommodity" class="mui-media-body">'+
-						'<div class="mui-input-row">'+
-							'<label>品牌名称：</label>'+
-							'<input type="text" class="mui-input-clear" id="" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>供应商：</label>'+
-							'<input type="text" class="mui-input-clear" id="" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>商品名称：</label>'+
-							'<input type="text" class="mui-input-clear" id="" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>商品编码：</label>'+
-							'<input type="text" class="mui-input-clear" id="" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>商品货号：</label>'+
-							'<input type="text" class="mui-input-clear" id="" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>价格：</label>'+
-							'<input type="text" class="mui-input-clear" id="" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>申报数量：</label>'+
-							'<input type="text" class="mui-input-clear" id="" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>仓库名称：</label>'+
-							'<input type="text" class="mui-input-clear" id="" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>库存数量：</label>'+
-							'<input type="text" class="mui-input-clear" id="" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>商品总库存数量：</label>'+
-							'<input type="text" class="mui-input-clear" id="" disabled>'+
-						'</div>'+
-//						'<div class="mui-input-row">'+
-//							'<label>已收货数量：</label>'+
-//							'<input type="text" class="mui-input-clear" id="" disabled>'+
-//						'</div>'+
-					'</div>'+
-				'</li>'
-				
-			});
-			$("#addCommodityMenu").html(commodityHtml)
-		},
-		formatDateTime: function(unix) {
-        	var _this = this;
+			_this.ajaxGoodList()
+			_this.ajaxCheckStatus()
 
-    		var now = new Date(parseInt(unix) * 1);
-	        now =  now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
-	        if(now.indexOf("下午") > 0) {
-	            if (now.length == 18) {
-	                var temp1 = now.substring(0, now.indexOf("下午"));   //2014/7/6
-	                var temp2 = now.substring(now.indexOf("下午") + 2, now.length);  // 5:17:43
-	                var temp3 = temp2.substring(0, 1);    //  5
-	                var temp4 = parseInt(temp3); // 5
-	                temp4 = 12 + temp4;  // 17
-	                var temp5 = temp4 + temp2.substring(1, temp2.length); // 17:17:43
-//	                now = temp1 + temp5; // 2014/7/6 17:17:43
-//	                now = now.replace("/", "-"); //  2014-7/6 17:17:43
-	                now = now.replace("-"); //  2014-7-6 17:17:43
-	            }else {
-	                var temp1 = now.substring(0, now.indexOf("下午"));   //2014/7/6
-	                var temp2 = now.substring(now.indexOf("下午") + 2, now.length);  // 5:17:43
-	                var temp3 = temp2.substring(0, 2);    //  5
-	                if (temp3 == 12){
-	                    temp3 -= 12;
-	                }
-	                var temp4 = parseInt(temp3); // 5
-	                temp4 = 12 + temp4;  // 17
-	                var temp5 = temp4 + temp2.substring(2, temp2.length); // 17:17:43
-//	                now = temp1 + temp5; // 2014/7/6 17:17:43
-//	                now = now.replace("/", "-"); //  2014-7/6 17:17:43
-	                now = now.replace("-"); //  2014-7-6 17:17:43
-	            }
-	        }else {
-	            var temp1 = now.substring(0,now.indexOf("上午"));   //2014/7/6
-	            var temp2 = now.substring(now.indexOf("上午")+2,now.length);  // 5:17:43
-	            var temp3 = temp2.substring(0,1);    //  5
-	            var index = 1;
-	            var temp4 = parseInt(temp3); // 5
-	            if(temp4 == 0 ) {   //  00
-	                temp4 = "0"+temp4;
-	            }else if(temp4 == 1) {  // 10  11  12
-	                index = 2;
-	                var tempIndex = temp2.substring(1,2);
-	                if(tempIndex != ":") {
-	                    temp4 = temp4 + "" + tempIndex;
-	                }else { // 01
-	                    temp4 = "0"+temp4;
-	                }
-	            }else {  // 02 03 ... 09
-	                temp4 = "0"+temp4;
-	            }
-	            var temp5 = temp4 + temp2.substring(index,temp2.length); // 07:17:43
-//	            now = temp1 + temp5; // 2014/7/6 07:17:43
-//	            now = now.replace("/","-"); //  2014-7/6 07:17:43
-	            now = now.replace("-"); //  2014-7-6 07:17:43
-	        }
-	        return now;
+			$(newinput).on('focus', function() {
+				$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).show()
+				$('#hideSpanAdd').show()
+			})
+			$(newinput).on('keyup', function() {
+				_this.rendHtml(_this.datagood,$(this).val())
+			})
+			
+			$('#hideSpanAdd').on('click', function() {
+				$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).hide()
+				$('#hideSpanAdd').hide()
+			})
+
+			$(input_div).on('click', '.soption', function() {
+				$(this).addClass('hasoid')
+				$(newinput).val($(this).text())
+				$(input_div).hide()
+				$('#hideSpanAdd').hide()
+			})
+
+		},
+		rendHtml: function(data, key) {
+			var _this = this;
+			var reult = [];
+			var htmlList=''
+				$.each(data, function(i, item) {
+					if(item.name.indexOf(key) > -1) {
+						reult.push(item)
+
+					}
+				})
+			$.each(reult, function(i, item) {
+				console.log(item)
+				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
+			});
+			$('.input_div').html(htmlList)
+
+		},
+		ajaxGoodList: function() {
+			var _this = this;
+			var htmlList = ''
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/office/queryTreeList',
+				data: {
+					type: 7
+				},
+				dataType: 'json',
+				success: function(res) {
+					_this.datagood = res
+					console.log(res)
+					$.each(res, function(i, item) {
+						console.log(item)
+						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
+					});
+					$('.input_div').html(htmlList)
+				}
+			});
+
+		},
+		ajaxCheckStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">全部</option>';
+			var htmlCheck = ''
+			$.ajax({
+				type: 'GET',
+				url: '/a/biz/po/bizPoHeader/listData4Mobile',
+				data: {},
+				dataType: 'json',
+				success: function(res) {
+					console.log(res)
+					$.each(res.data.processList, function(i, item) {
+						console.log(item)
+						htmlCheck += '<option class="soption" value="' + item.code + '" roleEnNameEnum="' + item.roleEnNameEnum + '" passCode="' + item.passCode + '" rejectCode="' + item.rejectCode + '">' + item.name + '</option>'
+					});
+					$('#input_div_check').html(optHtml+htmlCheck)
+					_this.getData()
+				}
+			});
 		}
 	}
 	$(function() {

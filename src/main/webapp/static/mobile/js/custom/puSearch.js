@@ -63,7 +63,6 @@
 				$(input_div).hide()
 				$('#hideSpan').hide()
 			})
-
 		},
 		rendHtml: function(data, key) {
 			var _this = this;

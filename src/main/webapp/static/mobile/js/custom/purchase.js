@@ -8,7 +8,6 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			
-//			this.btnshow()
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			if(this.userInfo.isFunc){
 				this.seachFunc()
@@ -242,15 +241,6 @@
 				}
 			})
 		},
-		//		
-//		btnshow: function() {
-//			$('#search_btn').on('tap', function() {
-//				mui('.mui-off-canvas-wrap').offCanvas().toggle()
-//			})
-//			$('.closeBtn').on('tap', function() {
-//				mui('.mui-off-canvas-wrap').offCanvas().toggle()
-//			})
-//		},
 		formatDateTime: function(unix) {
 			var now = new Date(parseInt(unix) * 1);
 			now = now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
