@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.category;
 
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -19,6 +20,10 @@ public class BizVarietyInfo extends DataEntity<BizVarietyInfo> {
 	private String name;		// name
 	private String code;		// code
 	private String description;		// 分类描述
+	/**
+	 * 品类主管
+	 */
+	private User user;
 
 	
 	public BizVarietyInfo() {
@@ -63,5 +68,13 @@ public class BizVarietyInfo extends DataEntity<BizVarietyInfo> {
 
 	public void setBizCatelogInfo(BizCatelogInfo bizCatelogInfo) {
 		this.bizCatelogInfo = bizCatelogInfo;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 }
