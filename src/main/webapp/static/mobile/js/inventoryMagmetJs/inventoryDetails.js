@@ -21,7 +21,7 @@
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/request/bizRequestHeader/form4Mobile",
-                data: {id:735},
+                data: {id:_this.userInfo.inListId},
                 dataType: "json",
                 success: function(res){
 					console.log(res)

@@ -9,7 +9,7 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
-			this.btnshow()
+//			this.btnshow()
 			//this.getData()
 			//			this.getKey()
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
@@ -84,6 +84,7 @@
 										inPay = '付款'
 										inCancel = '取消'
 									}
+									var inCheck = '';
 								/*品类名称*/	
 									var varietyInfoName = '';
 									if(item.varietyInfo.name) {
@@ -130,20 +131,20 @@
 											'<div class="mui-col-xs-2 inAddBtn">' +
 												'<li class="mui-table-view-cell">添加</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2 inDetailBtn">' +
-												'<li class="mui-table-view-cell" inListId="'+ item.id +'">详情</li>' +
+											'<div class="mui-col-xs-2 inDetailBtn" inListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell" >详情</li>' +
 											'</div>' +
-											'<div class="mui-col-xs-2 inAmendBtn">' +
-												'<li class="mui-table-view-cell" inListId="'+ item.id +'" poId="'+ item.id +'">修改</li>' +
+											'<div class="mui-col-xs-2 inAmendBtn" inListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell" poId="'+ item.id +'">修改</li>' +
 											'</div>' +
 											'<div class="mui-col-xs-2 inCancelBtn" inListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell"> '+inCancel+'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2 inPayBtn">' +
-												'<li class="mui-table-view-cell" inListId="'+ item.id +'">'+inPay+'</li>' +
+											'<div class="mui-col-xs-2 inPayBtn"  inListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+inPay+'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2" inListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+inCheckBtn+'</li>' +
+											'<div class="mui-col-xs-2 inCheckBtn" inListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ inCheck +'</li>' +
 											'</div>'+
 										'</div>' +
 									'</div>'
@@ -172,7 +173,7 @@
 				},
 				threshold: 50
 			});
-			_this.comfirDialig()
+//			_this.comfirDialig()
 		},
 		//		getKey: function() {
 		//
@@ -231,16 +232,20 @@
 				})
 			}),
         /*付款*/
-            $('.content').on('tap','.inPayBtn',function(){
-            	var url = $(this).attr('url');
-            	var inListId = $(this).attr(inListId);
-            	GHUTILS.OPENPAGE({
-					url: "../../html/inventoryMagmetHtml/inPay.html",
-					extras: {
-						inListId:inListId,	
+	       $('.listBlue').on('tap', '.inPayBtn', function() {
+					var url = $(this).attr('url');
+					var inListId = $(this).attr('inListId');
+					if(url) {
+						mui.toast('子菜单不存在')
+					} else if(inListId == inListId) {
+						GHUTILS.OPENPAGE({
+							url: "../../html/inventoryMagmetHtml/inPay.html",
+							extras: {
+								inListId: inListId,
+							}
+						})
 					}
-				})
-			})
+				}),
         /* 审核*/
             $('.content').on('tap','.inCheckBtn',function(){
             	var url = $(this).attr('url');

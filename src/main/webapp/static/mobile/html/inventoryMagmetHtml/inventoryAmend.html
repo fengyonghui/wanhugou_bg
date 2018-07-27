@@ -72,13 +72,9 @@
 				top: 6px;
 			}
 			
-			.mui-bar-nav~.mui-content {
-				background-color: #efeff4;
-			}
-			
-			.mui-input-group .mui-input-row {
+			/*.mui-input-group .mui-input-row {
 				border-radius: none;
-			}
+			}*/
 			
 			.mui-input-row>ul>li {
 				border-bottom: 1px solid #40ABE9;
@@ -93,24 +89,83 @@
 				width: 80%;
 				margin: 5px auto;
 			}
-			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 68px;}
-			.mui-input-row font {color:red;position: absolute;right: 60px;top: 30%;}
-			.addBtnClass {padding: 0;}
+			
+			.mui-input-row font {
+				color: red;
+				position: absolute;
+				right: 60px;
+				top: 30%;
+			}
+			
+			.addBtnClass {
+				padding: 0;
+				font-size: 15px;
+			}
+			
 			.pre {
 				margin-bottom: 0;
 				padding-left: 0;
 				float: right;
 				width: 67%;
 			}
-			.secStyle {margin: 5px 0;}
-			#hideSpanAmend {position: absolute;right: 77px;top: 49px;border: 1px solid rgb(204, 204, 204);border-left: none;display: none;}
+			
+			.mui-content div.mui-row li {
+				padding: 5px;
+				list-style: none;
+				height: 30px;
+			}
+			
+			.secStyle {
+				margin: 5px 0;
+			}
+			
+			.inputClassAdd {
+				font-size: 10px;
+			}
+			
+			.inputClassAdd>label {
+				padding: 0;
+			}
+			
+			.inputClassAdd>input {
+				padding: 0;
+				font-size: 10px;
+			}
+			
+			#hideSpanAdd {
+				position: absolute;
+				right: 77px;
+				top: 49px;
+				border: 1px solid rgb(204, 204, 204);
+				border-left: none;
+				display: none;
+			}
+			
+			.details {
+				width: 90%;
+				float: right;
+			}
+			
+			.detailsChoice {
+				float: left;
+			}
+			
+			.mui-table-view-cell {
+				border-bottom: 1px solid #efeff4;
+			}
+			
+			.mui-input-row .mui-input-clear~.mui-icon-clear {
+				right: 5px;
+				top: -6px;
+			}
+			
 		</style>
 	</head>
 
 	<body>
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
-			<p class="app_cf app_nav_text_center">备货单修改</p>
+			<p class="app_cf app_nav_text_center">备货单添加</p>
 		</header>
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
@@ -124,160 +179,144 @@
 					<input class="newinput" type="text" placeholder="请选择供应商">
 					<span class="mui-icon mui-icon-closeempty" id="hideSpanAmend"></span>
 					<div class="input_div" style="display: none;">
-						
+
 					</div>
 					<input class="savedata" type="hidden" value=''>
 					<div style="clear:both"></div>
 				</div>
 				<font>*</font>
 			</div>
+
 			<div class="mui-input-row">
-				<label>期望收货时间：</label>
-				<input type="date" class="mui-input-clear" id="inAddPoLastDa">
+				<label>收货时间：</label>
+				<input type="date" class="mui-input-clear" id="inAmendPoLastDa">
 				<font>*</font>
 			</div>
 			<div class="mui-input-row app_mb10">
 				<label>选择商品：</label>
-				<input type="text" class="mui-input-clear" id="inAddPoLastDa" placeholder="请输入商品货号">
+				<input type="text" class="mui-input-clear" id="inAmendPoLastDa" placeholder="请输入商品货号">
 				<button id="comChoiceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">查询</button>
-				<div class="mui-input-row">
-					<ul id="choiceCommodityMenu" class="mui-table-view">
-						<li class="mui-table-view-cell mui-media">
-							<!--产品图片-->
-							<div class="photoTop mui-pull-left position_Re">
-								<img class="position_Ab" src="../images/shuijiao.jpg">
-							</div>
-							<!--产品信息-->
-							<div id="addCommodity" class="mui-media-body">
-								<div class="mui-input-row">
-									<label>品牌名称：</label>
+			</div>
+			<div class="mui-row border-btm5">
+				<div class="mui-row mui-checkbox mui-left">
+				    <input style="top: 30px;" name="" type="checkbox">
+				</div>
+				<div class="mui-row">
+					<div class="mui-row">
+						<div class="mui-col-sm-2 mui-col-xs-2"></div>
+						<div class="mui-col-sm-10 mui-col-xs-10">
+							<li class="mui-table-view-cell">
+								<div class="mui-input-row inputClassAdd">
+									<label>商品名称:</label>
 									<input type="text" class="mui-input-clear" id="" disabled>
 								</div>
-								<div class="mui-input-row">
-									<label>供应商：</label>
+							</li>
+						</div>
+					</div>
+					<div class="mui-row">
+						<div class="mui-col-sm-2 mui-col-xs-2"></div>
+						<div class="mui-col-sm-5 mui-col-xs-5">
+							<li class="mui-table-view-cell">
+								<div class="mui-input-row inputClassAdd">
+									<label>品牌名称:</label>
 									<input type="text" class="mui-input-clear" id="" disabled>
 								</div>
-								<div class="mui-input-row">
-									<label>商品名称：</label>
+							</li>
+						</div>
+						<div class="mui-col-sm-5 mui-col-xs-5">
+							<li class="mui-table-view-cell">
+								<div class="mui-input-row inputClassAdd">
+									<label>工厂价:</label>
 									<input type="text" class="mui-input-clear" id="" disabled>
 								</div>
-								<div class="mui-input-row">
-									<label>商品编码：</label>
+							</li>
+						</div>
+					</div>
+					<div class="mui-row">
+						<div class="mui-col-sm-2 mui-col-xs-2"></div>
+						<div class="mui-col-sm-5 mui-col-xs-5">
+							<li class="mui-table-view-cell">
+								<div class="mui-input-row inputClassAdd">
+									<label>商品货号:</label>
 									<input type="text" class="mui-input-clear" id="" disabled>
 								</div>
-								<div class="mui-input-row">
-									<label>商品货号：</label>
-									<input type="text" class="mui-input-clear" id="" disabled>
+							</li>
+						</div>
+						<div class="mui-col-sm-5 mui-col-xs-5">
+							<li class="mui-table-view-cell">
+								<div class="mui-input-row inputClassAdd">
+									<label>申报数量:</label>
+									<input type="text" class="mui-input-clear" placeholder="请输入申报数量" id="">
 								</div>
-								<div class="mui-input-row">
-									<label>工厂价：</label>
-									<input type="text" class="mui-input-clear" id="" disabled>
-								</div>
-								<div class="mui-input-row">
-									<label>申报数量：</label>
-									<input type="text" class="mui-input-clear" id="">
-								</div>
+							</li>
+						</div>
+					</div>
 
-							</div>
-						</li>
-						<li class="mui-table-view-cell mui-media">
-							<!--产品图片-->
-							<div class="photoTop mui-pull-left position_Re">
-								<img class="position_Ab" src="../images/shuijiao.jpg">
-							</div>
-							<!--产品信息-->
-							<div id="addCommodity" class="mui-media-body">
-								<div class="mui-input-row">
-									<label>品牌名称：</label>
-									<input type="text" class="mui-input-clear" id="" disabled>
-								</div>
-								<div class="mui-input-row">
-									<label>供应商：</label>
-									<input type="text" class="mui-input-clear" id="" disabled>
-								</div>
-								<div class="mui-input-row">
-									<label>商品名称：</label>
-									<input type="text" class="mui-input-clear" id="" disabled>
-								</div>
-								<div class="mui-input-row">
-									<label>商品编码：</label>
-									<input type="text" class="mui-input-clear" id="" disabled>
-								</div>
-								<div class="mui-input-row">
-									<label>商品货号：</label>
-									<input type="text" class="mui-input-clear" id="" disabled>
-								</div>
-								<div class="mui-input-row">
-									<label>工厂价：</label>
-									<input type="text" class="mui-input-clear" id="" disabled>
-								</div>
-								<div class="mui-input-row">
-									<label>申报数量：</label>
-									<input type="text" class="mui-input-clear" id="">
-								</div>
-
-							</div>
-						</li>
-					</ul>
 				</div>
 				<div class="addBtn">
 					<button id="" type="submit" class="addBtnClass app_btn_search mui-btn-blue mui-btn-block">添加</button>
 				</div>
 			</div>
-			<div class="mui-input-row">
+
+			<div class="mui-row">
 				<div class="labelLf">备货商品：</div>
-				<ul id="addCommodityMenu" class="mui-table-view">
-					<li class="mui-table-view-cell mui-media">
-						<!--产品图片-->
-						<div class="photoParent mui-pull-left position_Re">
-							<img class="position_Ab" src="../images/shuijiao.jpg">
-						</div>
-						<!--产品信息-->
-						<div id="addCommodity" class="mui-media-body">
-							<div class="mui-input-row">
-								<label>品牌名称：</label>
-								<input type="text" class="mui-input-clear" id="" disabled>
-							</div>
-							<div class="mui-input-row">
-								<label>供应商：</label>
-								<input type="text" class="mui-input-clear" id="" disabled>
-							</div>
-							<div class="mui-input-row">
-								<label>商品名称：</label>
-								<input type="text" class="mui-input-clear" id="" disabled>
-							</div>
-							<div class="mui-input-row">
-								<label>商品编码：</label>
-								<input type="text" class="mui-input-clear" id="" disabled>
-							</div>
-							<div class="mui-input-row">
-								<label>商品货号：</label>
-								<input type="text" class="mui-input-clear" id="" disabled>
-							</div>
-							<div class="mui-input-row">
-								<label>价格：</label>
-								<input type="text" class="mui-input-clear" id="" disabled>
-							</div>
-							<div class="mui-input-row">
-								<label>申报数量：</label>
-								<input type="text" class="mui-input-clear" id="" disabled>
-							</div>
-							<div class="mui-input-row">
-								<label>仓库名称：</label>
-								<input type="text" class="mui-input-clear" id="" disabled>
-							</div>
-							<div class="mui-input-row">
-								<label>库存数量：</label>
-								<input type="text" class="mui-input-clear" id="" disabled>
-							</div>
-							<div class="mui-input-row">
-								<label>商品总库存数量：</label>
-								<input type="text" class="mui-input-clear" id="" disabled>
-							</div>
-						</div>
-					</li>
-				</ul>
 			</div>
+
+			<div class="mui-row border-btm5">
+				<div class="mui-row">
+					<div class="mui-col-sm-2 mui-col-xs-2"></div>
+					<div class="mui-col-sm-10 mui-col-xs-10">
+						<li class="mui-table-view-cell">
+							<div class="mui-input-row inputClassAdd">
+								<label>商品名称:</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+						</li>
+					</div>
+				</div>
+				<div class="mui-row">
+					<div class="mui-col-sm-2 mui-col-xs-2"></div>
+					<div class="mui-col-sm-5 mui-col-xs-5">
+						<li class="mui-table-view-cell">
+							<div class="mui-input-row inputClassAdd">
+								<label>品牌名称:</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+						</li>
+					</div>
+					<div class="mui-col-sm-5 mui-col-xs-5">
+						<li class="mui-table-view-cell">
+							<div class="mui-input-row inputClassAdd">
+								<label>工厂价:</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+						</li>
+					</div>
+				</div>
+				<div class="mui-row">
+					<div class="mui-col-sm-2 mui-col-xs-2"></div>
+					<div class="mui-col-sm-5 mui-col-xs-5">
+						<li class="mui-table-view-cell">
+							<div class="mui-input-row inputClassAdd">
+								<label>商品货号:</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+						</li>
+					</div>
+					<div class="mui-col-sm-5 mui-col-xs-5">
+						<li class="mui-table-view-cell">
+							<div class="mui-input-row inputClassAdd">
+								<label>申报数量:</label>
+								<input type="text" class="mui-input-clear" id="" disabled>
+							</div>
+						</li>
+					</div>
+				</div>
+				<div class="addBtn">
+					<button id="" type="submit" class="addBtnClass app_btn_search mui-btn-blue mui-btn-block">移除</button>
+				</div>
+			</div>
+
 			<div class="mui-input-row">
 				<label>备注：</label>
 				<textarea id="inPoRemark" name="" rows="" cols=""></textarea>
@@ -285,7 +324,7 @@
 			<div class="mui-input-row">
 				<label>业务状态：</label>
 				<div class="pre">
-					<select class="secStyle" name="" id="input_div_Amend">
+					<select class="secStyle" name="" id="input_div_Add">
 						<option value=""></option>
 					</select>
 					<input class="savedata" type="hidden" value=''>
@@ -302,7 +341,11 @@
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/inventoryMagmetJs/inventoryDetails.js"></script>
+		<script src="../../js/inventoryMagmetJs/inventoryAmend.js"></script>
 	</body>
 
 </html>
+
+
+
+

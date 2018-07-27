@@ -4,6 +4,7 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.datagood = [];
+		this.selectOpen = false
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -23,19 +24,34 @@
 			$('#puSearchBtn').on('tap', function() {
 				var options = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"))
 				console.log(options)
-				GHUTILS.OPENPAGE({
-					url: "../../html/purchaseMagmetHtml/purchase.html",
-					extras: {
-						orderNum: $('.ordNum').val(),
-						num: $('.detaNum').val(),
-						vendOffice: $('.hasoid').attr('id'),
-						commonProcess: options.val(),
-						isFunc: true
-					}
-
-				})
+				if(_this.selectOpen){
+						if($('.hasoid').attr('id')){
+							_this.sureSelect(options)
+						}else{
+							mui.toast('请选择匹配的选项')
+						}
+					
+				}else{
+					_this.sureSelect(options)
+					
+				}
+				
 
 			})
+		},
+		sureSelect:function(options){
+			var _this = this;
+				_this.selectOpen = false
+			GHUTILS.OPENPAGE({
+						url: "../../html/purchaseMagmetHtml/purchase.html",
+						extras: {
+							orderNum: $('.ordNum').val(),
+							num: $('.detaNum').val(),
+							vendOffice: $('.hasoid').attr('id'),
+							commonProcess: options.val(),
+							isFunc: true
+						}
+					})
 		},
 		hrefHtml: function(newinput, input_div) {
 			var _this = this;
@@ -43,11 +59,17 @@
 			_this.ajaxCheckStatus()
 
 			$(newinput).on('focus', function() {
-				$(input_div).find('hasoid').removeClass('hasoid')
+				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
 				$('#hideSpan').show()
 			})
 			$(newinput).on('keyup', function() {
+				if($(this).val()==''){
+					_this.selectOpen = false
+				}else{
+					_this.selectOpen = true
+				}
+				
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
 			
@@ -58,10 +80,11 @@
 			})
 
 			$(input_div).on('click', '.soption', function() {
-				$(this).addClass('hasoid')
+				$(this).addClass('hasoid').siblings().removeClass('hasoid')
 				$(newinput).val($(this).text())
 				$(input_div).hide()
 				$('#hideSpan').hide()
+				_this.selectOpen = true
 			})
 		},
 		rendHtml: function(data, key) {

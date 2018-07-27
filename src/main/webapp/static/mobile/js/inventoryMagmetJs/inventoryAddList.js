@@ -84,9 +84,12 @@
 			var htmlList = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/sys/office/queryTreeList',
+				url: '/sys/office/queryTreeList',
 				data: {
-					type: 7
+					type: 8,
+					customerTypeTen: 10,
+					customerTypeEleven: 11,
+					source: officeConnIndex
 				},
 				dataType: 'json',
 				success: function(res) {
