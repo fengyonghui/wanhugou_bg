@@ -86,7 +86,7 @@
 		) VALUES (
 			#{id},
 			#{requestHeader.id},
-			#{vendor.id},
+			#{bizVendInfo.office.id},
 			#{bizPoPaymentOrder.id},
 			#{balanceTotal},
 			#{delFlag},
@@ -101,7 +101,7 @@
 	<update id="update">
 		UPDATE biz_request_expand SET 	
 			request_id = #{requestHeader.id},
-			vend_id = #{vendor.id},
+			vend_id = #{bizVendInfo.office.id},
 			current_payment_id = #{bizPoPaymentOrder.id},
 			balance_total = #{balanceTotal},
 			u_version = #{uVersion},

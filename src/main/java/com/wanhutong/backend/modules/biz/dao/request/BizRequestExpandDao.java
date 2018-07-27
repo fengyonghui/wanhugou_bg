@@ -22,7 +22,7 @@ public interface BizRequestExpandDao extends CrudDao<BizRequestExpand> {
 
     int updatePaymentOrderId(@Param("id") Integer id, @Param("paymentId")Integer paymentId);
 
-    int getIdByRequestHeaderId(@Param("requestId") Integer requestId);
+    Integer getIdByRequestHeaderId(@Param("requestId") Integer requestId);
 
 
 	

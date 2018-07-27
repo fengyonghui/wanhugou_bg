@@ -267,8 +267,8 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 			}
 			bizRequestHeader.setTotalDetail(totalDetail);
 			super.save(bizRequestHeader);
-			int reqExpandId = bizRequestExpandDao.getIdByRequestHeaderId(bizRequestHeader.getId());
-			if (reqExpandId != 0) {
+			Integer reqExpandId = bizRequestExpandDao.getIdByRequestHeaderId(bizRequestHeader.getId());
+			if (reqExpandId == null) {
 				BizRequestExpand bizRequestExpand = new BizRequestExpand();
 				bizRequestExpand.setRequestHeader(bizRequestHeader);
 				bizRequestExpand.setBizVendInfo(bizRequestHeader.getBizVendInfo());
