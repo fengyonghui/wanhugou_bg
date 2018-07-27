@@ -77,21 +77,21 @@
                     _this.getData()
                 }
             });
-        }
-	}
-	$(function() {
-            //业务状态select初始化
-            var bizStatusSelect = $("#bizStatusSelect");
-            var bizStatusOptionHtml = '<select class="secStyle" name="" id="bizStatusShow">' +
-                '<option value="">请选择</option>';
-
-            $.each(bizStatusDesc, function(i, item) {
-                bizStatusOptionHtml += '<option value="' + item.value + '">' + item.label + '</option>'
-            });
-            bizStatusOptionHtml += '</select><input class="savedata" type="hidden" value="" />' +
-                '<div style="clear:both"></div>';
-            bizStatusSelect.append(bizStatusOptionHtml);
         },
+
+//	$(function() {
+//          //业务状态select初始化
+//          var bizStatusSelect = $("#bizStatusSelect");
+//          var bizStatusOptionHtml = '<select class="secStyle" name="" id="bizStatusShow">' +
+//              '<option value="">请选择</option>';
+//
+//          $.each(bizStatusDesc, function(i, item) {
+//              bizStatusOptionHtml += '<option value="' + item.value + '">' + item.label + '</option>'
+//          });
+//          bizStatusOptionHtml += '</select><input class="savedata" type="hidden" value="" />' +
+//              '<div style="clear:both"></div>';
+//          bizStatusSelect.append(bizStatusOptionHtml);
+//      },
         getData: function() {
             var _this = this;
             $.ajax({
