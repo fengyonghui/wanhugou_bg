@@ -86,7 +86,7 @@
 				type: 'GET',
 				url: '/a/sys/office/queryTreeList',
 				data: {
-					type: 7
+					type: 8
 				},
 				dataType: 'json',
 				success: function(res) {
@@ -104,19 +104,19 @@
 		ajaxCheckStatus: function() {
 			var _this = this;
 			var optHtml ='<option value="">全部</option>';
-			var htmlCheck = ''
+			var htmlStatusAmend = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/po/bizPoHeader/listData4Mobile',
-				data: {},
+				url: '/a/sys/dict/listData',
+				data: {type:'biz_req_status'},
 				dataType: 'json',
 				success: function(res) {
 					console.log(res)
-					$.each(res.data.processList, function(i, item) {
+					$.each(res, function(i, item) {
 						console.log(item)
-						htmlCheck += '<option class="soption" value="' + item.code + '" roleEnNameEnum="' + item.roleEnNameEnum + '" passCode="' + item.passCode + '" rejectCode="' + item.rejectCode + '">' + item.name + '</option>'
+						htmlStatusAmend += '<option class="soption" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort + '">' + item.label + '</option>'
 					});
-					$('#input_div_check').html(optHtml+htmlCheck)
+					$('#input_div_Amend').html(optHtml+htmlStatusAmend)
 					_this.getData()
 				}
 			});

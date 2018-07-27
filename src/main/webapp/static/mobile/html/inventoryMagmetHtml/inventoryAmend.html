@@ -8,6 +8,73 @@
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
 		<style type="text/css">
+			.pre {
+				margin-bottom: 0;
+				padding-left: 0;
+				float: right;
+				width: 67%;
+			}
+			
+			#select {
+				top: 6px;
+				height: 50px;
+				width: 100%;
+			}
+			
+			.selectStyle {
+				margin: 0;
+			}
+			
+			.puSearchBtn {
+				margin: 60px auto;
+				width: 80%;
+			}
+			
+			.suppChoice {
+				padding: 5px;
+			}
+			
+			#inputselect {
+				width: 80%;
+				height: 50px;
+				position: relative;
+				top: -50px;
+				padding: 0;
+			}
+			
+			.newinput {
+				width: 150px;
+				padding: 2px 0px 2px 0px;
+				margin-bottom: -1px;
+				background: url(./thumb.jpg) no-repeat scroll right center;
+				border: 1px solid #ccc;
+				box-shadow: 0 1px 0 0 #eee inset;
+				cursor: default;
+			}
+			
+			.newinput:focus {
+				cursor: text;
+			}
+			
+			.input_div {
+				width: 150px;
+				border: 1px solid #ddd;
+				border-bottom: none;
+				border-radius: 0 0 3px 3px;
+				display: none;
+			}
+			
+			.soption {
+				display: block;
+				padding: 2px 5px;
+			}
+			
+			.soption:hover {
+				background: #f9f9f9;
+				border-top: 1px dotted #ddd;
+				border-bottom: 1px dotted #ddd;
+				padding: 1px 5px;
+			}
 			.mui-content div.content_part li {
 				padding: 0;
 				list-style: none;
@@ -71,11 +138,6 @@
 				right: 10px;
 				top: 6px;
 			}
-			
-			/*.mui-input-group .mui-input-row {
-				border-radius: none;
-			}*/
-			
 			.mui-input-row>ul>li {
 				border-bottom: 1px solid #40ABE9;
 			}
@@ -102,13 +164,6 @@
 				font-size: 15px;
 			}
 			
-			.pre {
-				margin-bottom: 0;
-				padding-left: 0;
-				float: right;
-				width: 67%;
-			}
-			
 			.mui-content div.mui-row li {
 				padding: 5px;
 				list-style: none;
@@ -119,20 +174,20 @@
 				margin: 5px 0;
 			}
 			
-			.inputClassAdd {
+			.inputClass {
 				font-size: 10px;
 			}
 			
-			.inputClassAdd>label {
+			.inputClass>label {
 				padding: 0;
 			}
 			
-			.inputClassAdd>input {
+			.inputClass>input {
 				padding: 0;
 				font-size: 10px;
 			}
 			
-			#hideSpanAdd {
+			#hideSpanAmend {
 				position: absolute;
 				right: 77px;
 				top: 49px;
@@ -169,14 +224,14 @@
 		</header>
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
-				<label>备货清单编号：</label>
+				<label>清单编号：</label>
 				<input type="text" class="mui-input-clear" id="" disabled>
 				<font>*</font>
 			</div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
 				<div class="pre">
-					<input class="newinput" type="text" placeholder="请选择供应商">
+					<input class="newinput" type="text" placeholder="请选择采购中心">
 					<span class="mui-icon mui-icon-closeempty" id="hideSpanAmend"></span>
 					<div class="input_div" style="display: none;">
 
@@ -206,7 +261,7 @@
 						<div class="mui-col-sm-2 mui-col-xs-2"></div>
 						<div class="mui-col-sm-10 mui-col-xs-10">
 							<li class="mui-table-view-cell">
-								<div class="mui-input-row inputClassAdd">
+								<div class="mui-input-row inputClass">
 									<label>商品名称:</label>
 									<input type="text" class="mui-input-clear" id="" disabled>
 								</div>
@@ -217,7 +272,7 @@
 						<div class="mui-col-sm-2 mui-col-xs-2"></div>
 						<div class="mui-col-sm-5 mui-col-xs-5">
 							<li class="mui-table-view-cell">
-								<div class="mui-input-row inputClassAdd">
+								<div class="mui-input-row inputClass">
 									<label>品牌名称:</label>
 									<input type="text" class="mui-input-clear" id="" disabled>
 								</div>
@@ -225,7 +280,7 @@
 						</div>
 						<div class="mui-col-sm-5 mui-col-xs-5">
 							<li class="mui-table-view-cell">
-								<div class="mui-input-row inputClassAdd">
+								<div class="mui-input-row inputClass">
 									<label>工厂价:</label>
 									<input type="text" class="mui-input-clear" id="" disabled>
 								</div>
@@ -236,7 +291,7 @@
 						<div class="mui-col-sm-2 mui-col-xs-2"></div>
 						<div class="mui-col-sm-5 mui-col-xs-5">
 							<li class="mui-table-view-cell">
-								<div class="mui-input-row inputClassAdd">
+								<div class="mui-input-row inputClass">
 									<label>商品货号:</label>
 									<input type="text" class="mui-input-clear" id="" disabled>
 								</div>
@@ -244,7 +299,7 @@
 						</div>
 						<div class="mui-col-sm-5 mui-col-xs-5">
 							<li class="mui-table-view-cell">
-								<div class="mui-input-row inputClassAdd">
+								<div class="mui-input-row inputClass">
 									<label>申报数量:</label>
 									<input type="text" class="mui-input-clear" placeholder="请输入申报数量" id="">
 								</div>
@@ -267,7 +322,7 @@
 					<div class="mui-col-sm-2 mui-col-xs-2"></div>
 					<div class="mui-col-sm-10 mui-col-xs-10">
 						<li class="mui-table-view-cell">
-							<div class="mui-input-row inputClassAdd">
+							<div class="mui-input-row inputClass">
 								<label>商品名称:</label>
 								<input type="text" class="mui-input-clear" id="" disabled>
 							</div>
@@ -278,7 +333,7 @@
 					<div class="mui-col-sm-2 mui-col-xs-2"></div>
 					<div class="mui-col-sm-5 mui-col-xs-5">
 						<li class="mui-table-view-cell">
-							<div class="mui-input-row inputClassAdd">
+							<div class="mui-input-row inputClass">
 								<label>品牌名称:</label>
 								<input type="text" class="mui-input-clear" id="" disabled>
 							</div>
@@ -286,7 +341,7 @@
 					</div>
 					<div class="mui-col-sm-5 mui-col-xs-5">
 						<li class="mui-table-view-cell">
-							<div class="mui-input-row inputClassAdd">
+							<div class="mui-input-row inputClass">
 								<label>工厂价:</label>
 								<input type="text" class="mui-input-clear" id="" disabled>
 							</div>
@@ -297,7 +352,7 @@
 					<div class="mui-col-sm-2 mui-col-xs-2"></div>
 					<div class="mui-col-sm-5 mui-col-xs-5">
 						<li class="mui-table-view-cell">
-							<div class="mui-input-row inputClassAdd">
+							<div class="mui-input-row inputClass">
 								<label>商品货号:</label>
 								<input type="text" class="mui-input-clear" id="" disabled>
 							</div>
@@ -305,7 +360,7 @@
 					</div>
 					<div class="mui-col-sm-5 mui-col-xs-5">
 						<li class="mui-table-view-cell">
-							<div class="mui-input-row inputClassAdd">
+							<div class="mui-input-row inputClass">
 								<label>申报数量:</label>
 								<input type="text" class="mui-input-clear" id="" disabled>
 							</div>
@@ -324,7 +379,7 @@
 			<div class="mui-input-row">
 				<label>业务状态：</label>
 				<div class="pre">
-					<select class="secStyle" name="" id="input_div_Add">
+					<select class="secStyle" name="" id="input_div_Amend">
 						<option value=""></option>
 					</select>
 					<input class="savedata" type="hidden" value=''>

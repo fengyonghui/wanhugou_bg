@@ -13,43 +13,45 @@
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
+//			this.ajaxGoodName()
 		},
 		pageInit: function() {
 			var _this = this;
 			
-
 		},
 		getData: function() {
 			var _this = this;
-			$('#puSearchBtn').on('tap', function() {
-				var options = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"))
-//				console.log(options)
+			$('#inSearchBtn').on('tap', function() {
+				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"))
+//				var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"))
+				console.log(optionsBusiness)
+//				console.log(optionsClass)
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
-							_this.sureSelect(options)
+							_this.sureSelect(optionsBusiness)
 						}else{
 							mui.toast('请选择匹配的选项')
 						}
 					
 				}else{
-					_this.sureSelect(options)
+					_this.sureSelect(optionsBusiness)
 					
 				}
 				
 
 			})
 		},
-		sureSelect:function(options){
+		sureSelect:function(optionsBusiness){
 			var _this = this;
 				_this.selectOpen = false
 			GHUTILS.OPENPAGE({
-						url: "../../html/purchaseMagmetHtml/purchase.html",
-						extras: {
-							orderNum: $('.ordNum').val(),
-							num: $('.detaNum').val(),
-							vendOffice: $('.hasoid').attr('id'),
-							commonProcess: options.val(),
-							isFunc: true
+					url: "../../html/inventoryMagmetHtml/inventoryList.html",
+					extras: {
+						reqNo: $('.inOrdNum').val(),
+						name: $('.inReqNum').val(),
+						fromOffice: $('.hasoid').attr('id'),
+						bizStatus: optionsBusiness.val(),
+						isFunc: true
 						}
 					})
 		},
@@ -61,7 +63,7 @@
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
-				$('#hideSpan').show()
+				$('#inHideSpan').show()
 			})
 			$(newinput).on('keyup', function() {
 				if($(this).val()==''){
@@ -73,17 +75,17 @@
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
 			
-			$('#hideSpan').on('click', function() {
+			$('#inHideSpan').on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
-				$('#hideSpan').hide()
+				$('#inHideSpan').hide()
 			})
 
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
 				$(newinput).val($(this).text())
 				$(input_div).hide()
-				$('#hideSpan').hide()
+				$('#inHideSpan').hide()
 				_this.selectOpen = true
 			})
 		},
@@ -111,7 +113,7 @@
 				type: 'GET',
 				url: '/a/sys/office/queryTreeList',
 				data: {
-					type: 7
+					type: 8
 				},
 				dataType: 'json',
 				success: function(res) {
@@ -124,27 +126,54 @@
 					$('.input_div').html(htmlList)
 				}
 			});
+
 		},
 		ajaxCheckStatus: function() {
 			var _this = this;
 			var optHtml ='<option value="">全部</option>';
-			var htmlCheck = ''
+			var htmlBusiness = ''
+//			var htmlClass = '';
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/po/bizPoHeader/listData4Mobile',
+				url: '/a/sys/dict/listData',
+				data: {type:'biz_req_status'},
+				dataType: 'json',
+				success: function(res) {
+					console.log(res)
+					$.each(res, function(i, item) {
+						console.log(item)
+						htmlBusiness += '<option class="soption" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort + '">' + item.label + '</option>'
+						
+//						htmlClass += '<option class="soption" value="' + item.code + '" roleEnNameEnum="' + item.roleEnNameEnum + '" passCode="' + item.passCode + '" rejectCode="' + item.rejectCode + '">' + item.name + '</option>'
+					});
+					$('#input_div_business').html(optHtml+htmlBusiness)
+//					$('#input_div_class').html(optHtml+htmlClass)
+					_this.getData()
+				}
+			});
+		},
+		ajaxGoodName: function() {
+			var _this = this;
+			var optHtml ='<option value="">全部</option>';
+			var htmlClass = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/biz/request/bizRequestHeader/list4Mobile',
 				data: {},
 				dataType: 'json',
 				success: function(res) {
 					console.log(res)
-					$.each(res.data.processList, function(i, item) {
+					$.each(res, function(i, item) {
 						console.log(item)
-						htmlCheck += '<option class="soption" value="' + item.code + '" roleEnNameEnum="' + item.roleEnNameEnum + '" passCode="' + item.passCode + '" rejectCode="' + item.rejectCode + '">' + item.name + '</option>'
+						htmlClass += '<option class="soption" value="' + item.code + '" roleEnNameEnum="' + item.roleEnNameEnum + '" passCode="' + item.passCode + '" rejectCode="' + item.rejectCode + '">' + item.name + '</option>'
 					});
-					$('#input_div_check').html(optHtml+htmlCheck)
+					$('#input_div_class').html(optHtml+htmlClass)
 					_this.getData()
 				}
 			});
-		}
+
+		},
+		
 	}
 	$(function() {
 

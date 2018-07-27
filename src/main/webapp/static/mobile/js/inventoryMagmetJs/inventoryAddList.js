@@ -4,6 +4,7 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.datagood = [];
+		this.selectOpen = false
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -19,20 +20,37 @@
 		},
 		getData: function() {
 			var _this = this;
-			$('#puSearchBtn').on('tap', function() {
+			$('#inSaveBtn').on('tap', function() {
 				var options = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"))
 				console.log(options)
-				GHUTILS.OPENPAGE({
-					url: "../../html/purchaseMagmetHtml/purchase.html",
-					extras: {
-						orderNum: $('.ordNum').val(),
-						num: $('.detaNum').val(),
-						vendOffice: $('.hasoid').attr('id'),
-						commonProcess: options.val(),
-						isFunc: true
-					}
-				})
+				if(_this.selectOpen){
+						if($('.hasoid').attr('id')){
+							_this.sureSelect(options)
+						}else{
+							mui.toast('请选择匹配的选项')
+						}
+					
+				}else{
+					_this.sureSelect(options)
+					
+				}
+				
+
 			})
+		},
+		sureSelect:function(options){
+			var _this = this;
+				_this.selectOpen = false
+			GHUTILS.OPENPAGE({
+						url: "../../html/inventoryMagmetHtml/inventoryList.html",
+						extras: {
+							orderNum: $('.ordNum').val(),
+							num: $('.detaNum').val(),
+							vendOffice: $('.hasoid').attr('id'),
+							commonProcess: options.val(),
+							isFunc: true
+						}
+					})
 		},
 		hrefHtml: function(newinput, input_div) {
 			var _this = this;
@@ -40,11 +58,17 @@
 			_this.ajaxCheckStatus()
 
 			$(newinput).on('focus', function() {
-				$(input_div).find('hasoid').removeClass('hasoid')
+				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
 				$('#hideSpanAdd').show()
 			})
 			$(newinput).on('keyup', function() {
+				if($(this).val()==''){
+					_this.selectOpen = false
+				}else{
+					_this.selectOpen = true
+				}
+				
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
 			
@@ -55,12 +79,12 @@
 			})
 
 			$(input_div).on('click', '.soption', function() {
-				$(this).addClass('hasoid')
+				$(this).addClass('hasoid').siblings().removeClass('hasoid')
 				$(newinput).val($(this).text())
 				$(input_div).hide()
 				$('#hideSpanAdd').hide()
+				_this.selectOpen = true
 			})
-
 		},
 		rendHtml: function(data, key) {
 			var _this = this;
@@ -84,12 +108,9 @@
 			var htmlList = ''
 			$.ajax({
 				type: 'GET',
-				url: '/sys/office/queryTreeList',
+				url: '/a/sys/office/queryTreeList',
 				data: {
-					type: 8,
-					customerTypeTen: 10,
-					customerTypeEleven: 11,
-					source: officeConnIndex
+					type: 8
 				},
 				dataType: 'json',
 				success: function(res) {
@@ -107,19 +128,19 @@
 		ajaxCheckStatus: function() {
 			var _this = this;
 			var optHtml ='<option value="">全部</option>';
-			var htmlCheck = ''
+			var htmlStatusAdd = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/po/bizPoHeader/listData4Mobile',
-				data: {},
+				url: '/a/sys/dict/listData',
+				data: {type:'biz_req_status'},
 				dataType: 'json',
 				success: function(res) {
 					console.log(res)
-					$.each(res.data.processList, function(i, item) {
+					$.each(res, function(i, item) {
 						console.log(item)
-						htmlCheck += '<option class="soption" value="' + item.code + '" roleEnNameEnum="' + item.roleEnNameEnum + '" passCode="' + item.passCode + '" rejectCode="' + item.rejectCode + '">' + item.name + '</option>'
+						htmlStatusAdd += '<option class="soption" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort + '">' + item.label + '</option>'
 					});
-					$('#input_div_check').html(optHtml+htmlCheck)
+					$('#input_div_Add').html(optHtml+htmlStatusAdd)
 					_this.getData()
 				}
 			});
