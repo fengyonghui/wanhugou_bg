@@ -87,6 +87,12 @@ public class Office extends TreeEntity<Office> {
 	private String province;
 
 	/**
+	 * 供应商office Id
+	 *
+	 */
+	private Integer vendorId;
+
+	/**
 	 * 供应商
 	 */
 	private User user;
@@ -401,5 +407,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setShelfInfoUser(User shelfInfoUser) {
 		this.shelfInfoUser = shelfInfoUser;
+	}
+
+	public Integer getVendorId() {
+		return vendorId;
+	}
+
+	public void setVendorId(Integer vendorId) {
+		this.vendorId = vendorId;
 	}
 }

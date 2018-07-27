@@ -284,7 +284,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     }
 
     @Override
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void save(Office office) {
         super.save(office);
         //保存供应商经营品类
@@ -307,6 +307,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
             bizVendInfo.setCardNumber(office.getBizVendInfo().getCardNumber());
             bizVendInfo.setCode(office.getCode());
             bizVendInfo.setAuditStatus(BizVendInfo.AuditStatus.UNAUDITED.getStatus());
+            bizVendInfo.setRemarks(office.getBizVendInfo().getRemarks());
             bizVendInfoService.save(bizVendInfo);
         }
 
