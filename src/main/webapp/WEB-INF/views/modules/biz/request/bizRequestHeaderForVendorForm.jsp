@@ -31,7 +31,7 @@
                 $("#vendor").removeAttr("style");
                 deleteStyle();
             }
-            if (str == 'audit') {
+            if (str == 'audit' || str == 'startAudit' || str == 'pay' || str =='createPay') {
                 $("input[name='fromType']").each(function () {
 					$(this).attr("disabled","disabled");
                 });
@@ -463,7 +463,7 @@
 					<input id="payTotal" name="planPay" type="text"
 						   <c:if test="${entity.str == 'audit' || entiry.str == 'pay'}">readonly</c:if>
 						   value="${entity.bizPoPaymentOrder.id != null ?
-                           entity.bizPoPaymentOrder.total : (entity.totalDetail-entity.recvTotal)}"
+                           entity.bizPoPaymentOrder.total : (entity.totalDetail-entity.balanceTotal)}"
 						   htmlEscape="false" maxlength="30" class="input-xlarge"/>
 				</div>
 			</div>
@@ -501,7 +501,7 @@
 				<div class="controls">
 					<input name="prewPayTotal" id="prewPayTotal" type="text"
 						   value="${entity.bizPoPaymentOrder.id != null ?
-                           entity.bizPoPaymentOrder.total : (entity.totalDetail-entity.recvTotal)}"
+                           entity.bizPoPaymentOrder.total : (entity.totalDetail-entity.balanceTotal)}"
 						   maxlength="20" placeholder="必填！"/>
 				</div>
 			</div>

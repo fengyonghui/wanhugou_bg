@@ -70,7 +70,7 @@
 
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/biz/request/bizRequestHeader/findByRequest",
+                    url:"${ctx}/biz/request/bizRequestHeaderForVendor/findByRequest",
                     data:$('#searchForm').serialize(),
                     success:function (data) {
                         if ($("#id").val() == '') {

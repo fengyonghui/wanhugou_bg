@@ -12,6 +12,7 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,8 +57,9 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	}
 
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
 	public void save(BizInventorySku bizInventorySku) {
+		bizInventorySku.setSkuType(InventorySkuTypeEnum.CENTER_TYPE.getType());
 		if (bizInventorySku.getStockQty()<0){
 			return;
 		}

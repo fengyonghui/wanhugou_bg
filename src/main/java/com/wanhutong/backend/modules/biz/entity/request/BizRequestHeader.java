@@ -148,6 +148,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 */
 	private Integer toalCompleteNum;
 
+	/**
+	 * 与供应商结算的金额
+	 */
+	private BigDecimal balanceTotal;
+
 	public BizRequestHeader() {
 		super();
 	}
@@ -581,5 +586,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setToalCompleteNum(Integer toalCompleteNum) {
 		this.toalCompleteNum = toalCompleteNum;
+	}
+
+	public BigDecimal getBalanceTotal() {
+		return balanceTotal;
+	}
+
+	public void setBalanceTotal(BigDecimal balanceTotal) {
+		this.balanceTotal = balanceTotal;
 	}
 }

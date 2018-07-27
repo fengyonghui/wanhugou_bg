@@ -31,6 +31,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.web.po.BizPoHeaderController;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -193,6 +194,7 @@ public class BizRequestOrderController extends BaseController {
     private Page<BizRequestHeader> findBizRequestV2(BizRequestHeader bizRequestHeader,HttpServletRequest request, HttpServletResponse response) {
         bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
         bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+        bizRequestHeader.setFromType(ReqFromTypeEnum.CENTER_TYPE.getType());
         Page<BizRequestHeader> requestHeaderList = bizRequestHeaderService.pageFindListV2(new Page<BizRequestHeader>(request, response), bizRequestHeader);
 
         return requestHeaderList;

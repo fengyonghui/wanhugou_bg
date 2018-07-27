@@ -98,7 +98,7 @@
 	<div ><input type="button" class="btn" onclick="window.history.go(-1);" value="返回"/></div>
 	<div class="pagination">${page}</div>
 	<script type="text/javascript">
-            function checkPass(id, currentType, money) {
+            function checkPass(id, currentType, money,type) {
                 var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
                 var submit = function (v, h, f) {
                     if ($String.isNullOrBlank(f.description)) {
@@ -107,7 +107,7 @@
                     }
                     top.$.jBox.confirm("确认审核通过吗？", "系统提示", function (v1, h1, f1) {
                         if (v1 == "ok") {
-                            audit(1, f.description, id, currentType, money);
+                            audit(1, f.description, id, currentType, money,type);
                         }
                     }, {buttonsFocus: 1});
                     return true;
@@ -120,7 +120,7 @@
 
             }
 
-            function checkReject(id, currentType, money) {
+            function checkReject(id, currentType, money,type) {
                 var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
                 var submit = function (v, h, f) {
                     if ($String.isNullOrBlank(f.description)) {
@@ -129,7 +129,7 @@
                     }
                     top.$.jBox.confirm("确认驳回该流程吗？", "系统提示", function (v1, h1, f1) {
                         if (v1 == "ok") {
-                            audit(2, f.description, id, currentType, money);
+                            audit(2, f.description, id, currentType, money,type);
                         }
                     }, {buttonsFocus: 1});
                     return true;
@@ -142,7 +142,7 @@
 
             }
 
-            function audit(auditType, description, id, currentType, money) {
+            function audit(auditType, description, id, currentType, money,type) {
                 $.ajax({
                     url: '${ctx}/biz/po/bizPoHeader/auditPay',
                     contentType: 'application/json',
@@ -152,7 +152,12 @@
                         result = JSON.parse(result);
                         if(result.ret == true || result.ret == 'true') {
                             alert('操作成功!');
+                            if (type == ${PoPayMentOrderTypeEnum.PO_TYPE.type}) {
                             window.location.href = "${ctx}/biz/po/bizPoHeader";
+							}
+							if (type == ${PoPayMentOrderTypeEnum.REQ_TYPE.type}) {
+                                window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"
+                            }
                         }else {
                             alert(result.errmsg);
                         }

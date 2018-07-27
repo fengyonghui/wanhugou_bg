@@ -235,12 +235,14 @@
 						${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
 
 				</td>
-				<c:if test="${requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type}">
-					<td>${requestHeader.commonProcess.requestOrderProcess.name}</td>
-				</c:if>
-				<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">
-					<td>${requestHeader.commonProcess.vendRequestOrderProcess.name}</td>
-				</c:if>
+				<td>
+					<c:if test="${requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type}">
+						${requestHeader.commonProcess.requestOrderProcess.name}
+					</c:if>
+					<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">
+						${requestHeader.commonProcess.vendRequestOrderProcess.name}
+					</c:if>
+				</td>
 				<td>
 					<c:choose>
 					<c:when test="${requestHeader.fromType != ReqFromTypeEnum.VENDOR_TYPE.type || requestHeader.bizStatus <= ReqHeaderStatusEnum.ALL_PAY.state || requestHeader.totalOrdQty == null || requestHeader.totalOrdQty == 0}">
@@ -316,8 +318,8 @@
 				<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">
 					<c:if test="${requestHeader.bizPoPaymentOrder.id == null
 						&& requestHeader.commonProcess.vendRequestOrderProcess.name == '审批完成'
-						&& fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型') != '全部支付'
-						&& requestHeader.recvTotal < requestHeader.totalDetail
+						&& fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型') != '结算完成'
+						&& requestHeader.balanceTotal < requestHeader.totalDetail
 						}">
 						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=createPay">申请付款</a>
 					</c:if>
@@ -327,22 +329,25 @@
 						&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
 						}">
 						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
-					</c:if>${requestHeader.bizStatus}
-					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'
+					</c:if>
+					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.EXAMINE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'
 						&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus
+						&& !(fn:containsIgnoreCase(fns:getUser().roleList, RoleEnNameEnum.MARKETINGMANAGER.state))
 						}">
 						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
 					</c:if>
-					<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.id}&type=${PoPayMentOrderTypeEnum.REQ_TYPE.type}">支付申请列表</a>
+					<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">
+						<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.id}&type=${PoPayMentOrderTypeEnum.REQ_TYPE.type}">支付申请列表</a>
+					</c:if>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:request:bizRequestHeader:startAudit">
-					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'
+					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.EXAMINE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'
 						&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus
 						}">
 					<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=startAudit">审核</a>
 					</c:if>
 				</shiro:hasPermission>
-                <c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus >= ReqHeaderStatusEnum.VEND_ALL_PAY}">
+                <c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus >= ReqHeaderStatusEnum.EXAMINE.state}">
                     <shiro:hasPermission name="biz:request:bizPoHeader:addScheduling">
                         <a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}">排产</a>
                     </shiro:hasPermission>

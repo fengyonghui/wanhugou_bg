@@ -371,7 +371,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "findByRequest")
 	public List<BizRequestHeader> findByRequest(BizRequestHeader bizRequestHeader) {
-		bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+		bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.EXAMINE.getState().byteValue());
 		bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
 		List<BizRequestHeader> list= bizRequestHeaderForVendorService.findList(bizRequestHeader);
 		List<BizRequestHeader> bizRequestHeaderList=Lists.newArrayList();
@@ -392,7 +392,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			for (BizRequestDetail requestDetail:requestDetailList){
 				bizPoOrderReq.setSoLineNo(requestDetail.getLineNo());
 				List<BizPoOrderReq> poOrderReqList= bizPoOrderReqService.findList(bizPoOrderReq);
-				if(poOrderReqList!=null && poOrderReqList.size()>0){
+				if(poOrderReqList!=null && poOrderReqList.size()>0 || ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader1.getFromType())){
 					BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 					skuInfo.setVendorName(requestDetail.getSkuInfo().getVendorName());
 					requestDetail.setSkuInfo(skuInfo);

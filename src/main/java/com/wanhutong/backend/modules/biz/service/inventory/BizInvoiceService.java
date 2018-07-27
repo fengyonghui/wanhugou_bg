@@ -401,30 +401,32 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         continue;
                     }
                     //获取备货单相应的采购单详情,累计采购单单个商品的供货数
-                    BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
-                    BizPoHeader poHeader = null;
-                    BizPoDetail bizPoDetail = new BizPoDetail();
-                    BizPoDetail poDetail = null;
-                    BizRequestDetail bizReqDetail = new BizRequestDetail();
-                    bizReqDetail.setSkuInfo(bizSkuInfo);
-                    bizPoOrderReq.setRequestDetail(bizReqDetail);
-                    bizPoOrderReq.setRequestHeader(requestHeader);
-                    bizPoOrderReq.setSoType((Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())));
-                    List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
-                    if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
-                        poHeader = bizPoOrderReqList.get(0).getPoHeader();
+                    if (ReqFromTypeEnum.CENTER_TYPE.getType().equals(requestHeader.getFromType())) {
+                        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                        BizPoHeader poHeader = null;
+                        BizPoDetail bizPoDetail = new BizPoDetail();
+                        BizPoDetail poDetail = null;
+                        BizRequestDetail bizReqDetail = new BizRequestDetail();
+                        bizReqDetail.setSkuInfo(bizSkuInfo);
+                        bizPoOrderReq.setRequestDetail(bizReqDetail);
+                        bizPoOrderReq.setRequestHeader(requestHeader);
+                        bizPoOrderReq.setSoType((Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())));
+                        List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+                        if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
+                            poHeader = bizPoOrderReqList.get(0).getPoHeader();
+                        }
+                        bizPoDetail.setPoHeader(poHeader);
+                        bizPoDetail.setSkuInfo(bizSkuInfo);
+                        List<BizPoDetail> bizPoDetailList = bizPoDetailService.findList(bizPoDetail);
+                        if (bizPoDetailList != null && bizPoDetailList.size() > 0) {
+                            poDetail = bizPoDetailList.get(0);
+                        }
+                        if (poDetail.getSendQty() + sendNum != poDetail.getOrdQty()) {
+                            flagPo = false;
+                        }
+                        poDetail.setSendQty(poDetail.getSendQty() + sendNum);
+                        bizPoDetailService.save(poDetail);
                     }
-                    bizPoDetail.setPoHeader(poHeader);
-                    bizPoDetail.setSkuInfo(bizSkuInfo);
-                    List<BizPoDetail> bizPoDetailList = bizPoDetailService.findList(bizPoDetail);
-                    if (bizPoDetailList != null && bizPoDetailList.size() > 0) {
-                        poDetail = bizPoDetailList.get(0);
-                    }
-                    if (poDetail.getSendQty() + sendNum != poDetail.getOrdQty()) {
-                        flagPo = false;
-                    }
-                    poDetail.setSendQty(poDetail.getSendQty() + sendNum);
-                    bizPoDetailService.save(poDetail);
                     //累计备货单供货数量
                     requestDetail.setSendQty(sendQty + sendNum);
                     bizRequestDetailService.save(requestDetail);
@@ -464,7 +466,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     }
                 }
                 //更改采购单状态,已完成（5）
-                if (flagPo) {
+                if (flagPo && ReqFromTypeEnum.CENTER_TYPE.getType().equals(requestHeader.getFromType())) {
                     BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
                     BizPoOrderReq por = null;
                     bizPoOrderReq.setRequestHeader(requestHeader);

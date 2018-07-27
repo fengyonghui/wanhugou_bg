@@ -11,6 +11,7 @@ import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
+import com.wanhutong.backend.modules.biz.dao.request.BizRequestExpandDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
@@ -98,6 +99,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     private SystemService systemService;
     @Autowired
     private BizPoHeaderDao bizPoHeaderDao;
+    @Autowired
+    private BizRequestExpandDao bizRequestExpandDao;
 
 
     /**
@@ -616,7 +619,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         }
         cureentProcessEntity = commonProcessService.get(cureentProcessEntity.getId());
         if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
-            LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching bizPoPaymentOrder.type [{}][{}][{}]", id, currentType, bizPoPaymentOrder.getType());
+            LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}][{}]", id, currentType, bizPoPaymentOrder.getType());
             return Pair.of(Boolean.FALSE,   "操作失败,当前审核状态异常!");
         }
 
@@ -821,12 +824,12 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         } else {
             BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(reqHeaderId);
             Integer bizStatus = bizRequestHeader.getBizStatus();
-            bizRequestHeader.setBizStatus(BigDecimal.valueOf(bizRequestHeader.getRecvTotal()).add(payTotal).compareTo(BigDecimal.valueOf(bizRequestHeader.getTotalDetail())) >= 0 ? ReqHeaderStatusEnum.VEND_ALL_PAY.getState() : ReqHeaderStatusEnum.VEND_INITIAL_PAY.getState());
+            bizRequestHeader.setBizStatus(bizRequestHeader.getBalanceTotal().add(payTotal).compareTo(BigDecimal.valueOf(bizRequestHeader.getTotalDetail())) >= 0 ? ReqHeaderStatusEnum.VEND_ALL_PAY.getState() : ReqHeaderStatusEnum.VEND_INITIAL_PAY.getState());
             bizRequestHeaderForVendorService.saveRequestHeader(bizRequestHeader);
             if (!bizStatus.equals(bizRequestHeader.getBizStatus())) {
                 bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(),BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(),bizRequestHeader.getId());
             }
-            bizRequestHeaderForVendorService.incrPayTotal(bizRequestHeader.getId(), payTotal);
+            bizRequestExpandDao.incrPayTotal(bizRequestExpandDao.getIdByRequestHeaderId(bizRequestHeader.getId()), payTotal);
         }
 
         return "操作成功!";

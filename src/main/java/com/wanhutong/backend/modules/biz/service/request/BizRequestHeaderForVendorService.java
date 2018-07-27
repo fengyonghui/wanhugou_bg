@@ -12,11 +12,13 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.dao.request.BizRequestExpandDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestExpand;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
@@ -90,6 +92,10 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 	private BizOrderHeaderDao bizOrderHeaderDao;
 	@Resource
     private BizPoPaymentOrderService bizPoPaymentOrderService;
+	@Resource
+	private BizRequestExpandDao bizRequestExpandDao;
+	@Resource
+	private BizRequestExpandService bizRequestExpandService;
 
 	@Resource
 	private BizOrderStatusService bizOrderStatusService;
@@ -103,14 +109,14 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 	public List<BizRequestHeader> findList(BizRequestHeader bizRequestHeader) {
 		User user = UserUtils.getUser();
 		boolean oflag = false;
-		boolean flag=false;
+		/*boolean flag=false;
 		if(user.getRoleList()!=null){
 			for(Role role:user.getRoleList()){
 				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
-					flag=true;
+					flag = true;
 				}
 			}
-		}
+		}*/
 		if (UserUtils.getOfficeList() != null){
 			for (Office office:UserUtils.getOfficeList()){
 				if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
@@ -118,16 +124,10 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 				}
 			}
 		}
-		if (user.isAdmin()) {
-			return super.findList(bizRequestHeader);
-		} else {
-			if(oflag){
-
-			}else {
-				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
-			}
-			return super.findList(bizRequestHeader);
+		if (!user.isAdmin() && !oflag) {
+            bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
 		}
+		return super.findList(bizRequestHeader);
 	}
 
 	public Page<BizRequestHeader> findPageForSendGoods(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
@@ -148,17 +148,13 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 				}
 			}
 		}
-		if (user.isAdmin()) {
-			return super.findPage(page,bizRequestHeader);
-		} else {
-			if(oflag){
-
-			}else {
+		if (!user.isAdmin()) {
+			if(!oflag) {
 				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
 			}
-			return super.findPage(page,bizRequestHeader);
 		}
-	}
+        return super.findPage(page,bizRequestHeader);
+    }
 
 	@Override
 	public Page<BizRequestHeader> findPage(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
@@ -177,15 +173,23 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 			bizRequestHeader.setStartDate("'"+f.format(yesterday)+"'");
 		}
 		User user = UserUtils.getUser();
-        Office office = officeService.get(user.getCompany().getId());
-        if (user.isAdmin()) {
-			return super.findPage(page, bizRequestHeader);
-		} else {
+		boolean sflag = false;
+        for (Role role : user.getRoleList()) {
+            if (RoleEnNameEnum.SUPPLY_CHAIN.getState().equals(role.getEnname())) {
+                sflag = true;
+            }
+        }
+        if (!user.isAdmin()) {
         	bizRequestHeader.setDataStatus("filter");
-			bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
-			return super.findPage(page, bizRequestHeader);
+            if (sflag) {
+                bizRequestHeader.setVendorId(user.getCompany().getId());
+                bizRequestHeader.getSqlMap().put("request",BaseService.dataScopeFilter(user,"sv","su"));
+            } else {
+                bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
+            }
 		}
-	}
+        return super.findPage(page, bizRequestHeader);
+    }
 
 	@Override
 	@Transactional(readOnly = false)
@@ -263,6 +267,18 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 			}
 			bizRequestHeader.setTotalDetail(totalDetail);
 			super.save(bizRequestHeader);
+			int reqExpandId = bizRequestExpandDao.getIdByRequestHeaderId(bizRequestHeader.getId());
+			if (reqExpandId != 0) {
+				BizRequestExpand bizRequestExpand = new BizRequestExpand();
+				bizRequestExpand.setRequestHeader(bizRequestHeader);
+				bizRequestExpand.setBizVendInfo(bizRequestHeader.getBizVendInfo());
+				bizRequestExpandService.save(bizRequestExpand);
+			} else {
+				BizRequestExpand bizRequestExpand = bizRequestExpandService.get(reqExpandId);
+				bizRequestExpand.setRequestHeader(bizRequestHeader);
+				bizRequestExpand.setBizVendInfo(bizRequestHeader.getBizVendInfo());
+				bizRequestExpandService.save(bizRequestExpand);
+			}
 		}
 	}
 
@@ -575,6 +591,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 			logger.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", reqHeaderId, currentType);
 			return "操作失败,当前审核状态异常!";
 		}
+		RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
 		VendorRequestOrderProcessConfig vendorRequestOrderProcessConfig = ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get();
 		// 当前流程
 		VendorRequestOrderProcessConfig.RequestOrderProcess vendCurrentProcess = vendorRequestOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
@@ -611,10 +628,23 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		nextProcessEntity.setType(String.valueOf(vendNextProcess.getCode()));
 		nextProcessEntity.setPrevId(cureentProcessEntity.getId());
 
-		if(nextProcessEntity.getType().equals(vendorRequestOrderProcessConfig.getAutProcessId().toString())){
+		if(nextProcessEntity.getType().equals(requestOrderProcessConfig.getAutProcessId().toString())){
 			Integer bizStatus = bizRequestHeader.getBizStatus();
-			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());
-			saveRequestHeader(bizRequestHeader);
+			updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.APPROVE.getState());
+			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+			}
+		}
+		if (cureentProcessEntity.getType().equals(requestOrderProcessConfig.getAutProcessId().toString())) {
+			Integer bizStatus = bizRequestHeader.getBizStatus();
+			updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.PROCESS.getState());
+			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+			}
+		}
+		if (nextProcessEntity.getType().equals(vendorRequestOrderProcessConfig.getAutProcessId().toString())) {
+			Integer bizStatus =  bizRequestHeader.getBizStatus();
+			updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.EXAMINE.getState());
 			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
 				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 			}
@@ -719,7 +749,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public int incrPayTotal(int id, BigDecimal payTotal) {
-        return dao.incrPayTotal(id, payTotal);
+        return bizRequestExpandDao.incrPayTotal(id, payTotal);
     }
 
     /**
@@ -757,7 +787,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
         bizRequestHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
-        this.updatePaymentOrderId(bizRequestHeader.getId(), bizPoPaymentOrder.getId());
+        this.updatePaymentOrderId(bizRequestExpandDao.getIdByRequestHeaderId(bizRequestHeader.getId()), bizPoPaymentOrder.getId());
         return Pair.of(Boolean.TRUE, "操作成功!");
     }
 
@@ -833,7 +863,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public int updatePaymentOrderId(Integer id, Integer paymentId) {
-        return dao.updatePaymentOrderId(id, paymentId);
+        return bizRequestExpandDao.updatePaymentOrderId(id, paymentId);
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)

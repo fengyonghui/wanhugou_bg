@@ -9,7 +9,7 @@
 		a.from_id AS "fromOffice.id",
 		a.to_id AS "toOffice.id",
 		a.from_type AS "fromType",
-		a.vend_id AS "bizVendInfo.office.id",
+		bre.vend_id AS "bizVendInfo.office.id",
 		vend.vend_name AS "bizVendInfo.vendName",
 		so.name AS "fromOffice.name",
 		sot.name AS "toOffice.name",
@@ -23,7 +23,8 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.current_payment_id AS "bizPoPaymentOrder.id",
+		bre.current_payment_id AS "bizPoPaymentOrder.id",
+		bre.balance_total AS "balanceTotal",
 		suu.name AS "updateBy.name",
 		su.name AS "createBy.name",
 		a.update_time AS "updateDate",
@@ -44,14 +45,15 @@
 	</sql>
 	
 	<sql id="bizRequestHeaderJoins">
-		LEFT JOIN biz_vend_info vend ON vend.office_id = a.vend_id
+		LEFT JOIN biz_request_expand bre ON bre.request_id = a.id
+		LEFT JOIN biz_vend_info vend ON vend.office_id = bre.vend_id
 		LEFT JOIN sys_office so ON so.id=a.from_id
 		LEFT JOIN sys_office sot ON sot.id=a.to_id
 		LEFT JOIN sys_user su ON su.id=a.create_id
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
 		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
 		LEFT JOIN  common_process process on process.id = a.process_id
-		LEFT JOIN biz_po_payment_order bppo ON bppo.id = a.current_payment_id
+		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bre.current_payment_id
 	</sql>
     
 	<select id="get" resultType="BizRequestHeader">
@@ -195,6 +197,9 @@
 			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
+			<if test="fromType != null">
+				AND a.from_type = #{fromType}
+			</if>
 			<if test="reqNo != null and reqNo != ''">
 				AND a.req_no
 				LIKE
@@ -280,7 +285,6 @@
 			from_id,
 			to_id,
 			from_type,
-			vend_id,
 			recv_eta,
 		<if test="totalDetail!=null">
 			total_detail,
@@ -288,13 +292,9 @@
 		<if test="recvTotal!=null">
 			recv_total,
 		</if>
-
 			remark,
 		<if test="bizStatus!=null">
 			biz_status,
-		</if>
-		<if test="currentPaymentId != null">
-			current_payment_id,
 		</if>
 			status,
 			create_id,
@@ -311,7 +311,6 @@
 			#{fromOffice.id},
 			#{toOffice.id},
 			#{fromType},
-			#{bizVendInfo.office.id},
 			#{recvEta},
 			<if test="totalDetail!=null">
 				#{totalDetail},
@@ -322,9 +321,6 @@
 			#{remark},
 		<if test="bizStatus!=null">
 			#{bizStatus},
-		</if>
-		<if test="currentPaymentId != null">
-			#{currentPaymentId},
 		</if>
 			#{delFlag},
 			#{createBy.id},
@@ -346,7 +342,6 @@
 			from_id = #{fromOffice.id},
 			to_id = #{toOffice.id},
 			from_type = #{fromType},
-			vend_id = #{bizVendInfo.office.id},
 			recv_eta = #{recvEta},
 			<if test="totalDetail!=null">
 				total_detail = #{totalDetail},
@@ -357,9 +352,6 @@
 			remark = #{remark},
 		<if test="bizStatus!=null">
 			biz_status = #{bizStatus},
-		</if>
-		<if test="currentPaymentId != null">
-			current_payment_id = #{currentPaymentId},
 		</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
@@ -423,7 +415,7 @@
 
 	<update id="incrPayTotal">
 		UPDATE biz_request_header SET
-		recv_total  = (recv_total + #{payTotal})
+		balance_total  = (balance_total + #{payTotal})
 		WHERE id = #{id}
 	</update>
 

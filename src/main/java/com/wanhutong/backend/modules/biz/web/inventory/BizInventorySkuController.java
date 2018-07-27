@@ -184,6 +184,8 @@ public class BizInventorySkuController extends BaseController {
                 BizInventorySku bizInventorySku = new BizInventorySku();
                 bizInventorySku.setInvInfo(inventoryInfo);
                 bizInventorySku.setSkuInfo(bizSkuInfo);
+//                bizInventorySku.setSkuType();
+//                bizInventorySku.setVendor();
                 List<BizInventorySku> invSkuList = bizInventorySkuService.findList(bizInventorySku);
                 if (invSkuList != null && invSkuList.size() > 0) {
                     flag = "true";
@@ -277,7 +279,7 @@ public class BizInventorySkuController extends BaseController {
                     bizInventoryViewLog.setNowStockQty(bizInventorySku.getStockQty());
                     bizInventorySkuService.save(bizInventorySku);
                 } else {
-                    if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
+                    if (StringUtils.isNotBlank(bizInventorySkus.getCustomerIds())) {
                         only.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
                     }
                     bizInventoryViewLog.setStockQty(0);

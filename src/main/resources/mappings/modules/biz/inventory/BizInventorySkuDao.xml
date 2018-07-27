@@ -21,6 +21,8 @@
 		a.trans_in_qty AS "transInQty",
 		a.trans_out_qty AS "transOutQty",
 		a.cust_id AS "cust.id",
+		a.sku_type AS "skuType",
+		a.vend_id AS "vendor.id",
 		cust.name AS "cust.name",
 		s.id AS "customer.id",
 		s.name AS "customer.name",
@@ -82,6 +84,12 @@
 			</if>
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				AND a.inv_id = #{invInfo.id}
+			</if>
+			<if test="skuType != null and skuType != ''">
+				AND a.skuType = #{skuType}
+			</if>
+			<if test="vendor != null and vendor.id != null and vendor.id != ''">
+				AND a.vend_id = #{vendor.id}
 			</if>
 			<if test="invInfo != null and invInfo.customer!= null and invInfo.customer.id !=null and invInfo.customer.id != ''">
 				AND i.cust_id = #{invInfo.customer.id}
@@ -174,6 +182,8 @@
 		WHERE a.sku_id = #{skuInfo.id}
 		AND a.inv_id = #{invInfo.id}
 		AND a.inv_type = #{invType}
+		AND a.sku_type = #{skuType}
+		AND a.vend_id = #{vendor.id}
 	</select>
 
 	<!--查询采购中心库存总数-->
@@ -214,6 +224,10 @@
 			<if test="cust!=null and cust.id!=null and cust.id!=''">
 				cust_id,
 			</if>
+			<if test="skuType != null and skuType != ''">
+				sku_type,
+			</if>
+			vend_id,
 			status,
 			create_id,
 			create_time,
@@ -238,6 +252,10 @@
 			<if test="cust!=null and cust.id!=null and cust.id!=''">
 				#{cust.id},
 			</if>
+			<if test="skuType != null and skuType != ''">
+				#{skuType},
+			</if>
+			#{vendor.id},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -265,6 +283,10 @@
 			<if test="cust!=null and cust.id!=null and cust.id!=''">
 				cust_id = #{cust.id},
 			</if>
+			<if test="skuType != null and skuType != ''">
+				sku_type = #{skuType},
+			</if>
+			vend_id = #{vendor.id},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate},
