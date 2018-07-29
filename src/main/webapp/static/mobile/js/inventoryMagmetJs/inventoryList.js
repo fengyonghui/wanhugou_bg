@@ -89,14 +89,14 @@
 									}
 								/*付款按钮*/
 									var inPay = '';
-									var inCancel = '';
-									if(bizstatus==7 || bizstatus==35) {
-										inPay = '付款'
-									}else {
+									if(bizstatus==35) {
 										inPay = ''
+									}else {
+										inPay = '付款'
 									}
 								/*取消按钮*/	
-									if(bizstatus==40) {
+								var inCancel = '';
+									if(bizstatus==35) {
 										inCancel = ''
 									}else {
 										inCancel = '取消'
@@ -282,51 +282,31 @@
                 if(url) {
                 	mui.toast('子菜单不存在')
                 }else if(inListId==inListId) {
-                	 $.ajax({
-		                type: "GET",
-		                url: "/a/biz/request/bizRequestHeader/cancel",
-		                data: {id:inListId},
-		                dataType: "json",
-		                success: function(res){
-		                	alert('操作成功！')
-		                	GHUTILS.OPENPAGE({
-								url: "../../html/inventoryMagmetHtml/inventoryList.html",
-								extras: {
-										inListId:inListId,
-								}
-							})
-		                }
-		            })
+                	var btnArray = ['取消', '确定'];
+					mui.confirm('您确认取消该备货单吗？', '系统提示！', btnArray, function(choice) {
+						if(choice.index == 1) {
+							$.ajax({
+				                type: "GET",
+				                url: "/a/biz/request/bizRequestHeader/cancel",
+				                data: {id:inListId},
+				                dataType: "json",
+				                success: function(res){
+				                	alert('操作成功！')
+				                	GHUTILS.OPENPAGE({
+										url: "../../html/inventoryMagmetHtml/inventoryList.html",
+										extras: {
+												inListId:inListId,
+										}
+									})
+			                	}
+			            	})
+						}else {
+							
+						}
+					})	
                 }
 			})
         },
-    /*取消*/
-//      comfirDialig: function() {
-//			var _this = this;
-//			var inCancelBtn = document.getElementByClass("inCancelBtn");
-//			document.getElementByClass("inCancelBtn").addEventListener('tap', function() {
-//				var btnArray = ['取消', '确定'];
-//				mui.confirm('您确认取消该备货单吗？', '系统提示！', btnArray, function(choice) {
-//					if(choice.index == 1) {
-//						_this.cancelMenu()
-//					}else {
-//						
-//					}
-//				})	
-//			})	
-//		},		
-//      cancelMenu: function() {
-//			var inListId = $(this).attr('inListId');
-//          $.ajax({
-//              type: "GET",
-//              url: "/a/biz/request/bizRequestHeader/cancel",
-//              data: {id:inListId},
-//              dataType: "json",
-//              success: function(res){
-//              	alert('操作成功！')
-//              }
-//          })
-//		},
 		formatDateTime: function(unix) {
 			var _this = this;
 			var now = new Date(parseInt(unix) * 1);

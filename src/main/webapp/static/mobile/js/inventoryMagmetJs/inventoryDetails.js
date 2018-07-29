@@ -30,8 +30,17 @@
 					var bizstatusTxt = '';
 					if(bizstatus==0) {
 						bizstatusTxt = "未审核"
+						inCheckBtn = "审核"
+					}else if(bizstatus==1) {
+						bizstatusTxt = "首付支付"
+					}else if(bizstatus==2) {
+						bizstatusTxt = "全部支付"
 					}else if(bizstatus==5) {
 						bizstatusTxt = "审核通过"
+					}else if(bizstatus==6) {
+						bizstatusTxt = "审批中"
+					}else if(bizstatus==7) {
+						bizstatusTxt = "审批完成"
 					}else if(bizstatus==10) {
 						bizstatusTxt = "采购中"
 					}else if(bizstatus==15) {
@@ -43,7 +52,11 @@
 					}else if(bizstatus==30) {
 						bizstatusTxt = "收货完成"
 					}else if(bizstatus==35) {
-						bizstatusTxt = "关闭"
+						bizstatusTxt = "部分结算"
+					}else if(bizstatus==37) {
+						bizstatusTxt = "结算完成"
+					}else if(bizstatus==40) {
+						bizstatusTxt = "取消"
 					}else {
 						bizstatusTxt = '未知类型'
 					}
