@@ -127,7 +127,7 @@
 		},
 		ajaxCheckStatus: function() {
 			var _this = this;
-			var optHtml ='<option value="">全部</option>';
+			var optHtml ='<option value="">请选择</option>';
 			var htmlStatusAdd = ''
 			$.ajax({
 				type: 'GET',

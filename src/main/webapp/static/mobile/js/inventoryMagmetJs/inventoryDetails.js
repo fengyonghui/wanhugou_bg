@@ -73,7 +73,7 @@
 					checkBizStatus = '未审核'
 				}
 				var step = i + 1;
-				pHtmlList +='<li id="procList" class="step_item">'+
+				pHtmlList +='<li class="step_item">'+
 					'<div class="step_num">'+ step +' </div>'+
 					'<div class="step_num_txt">'+
 						'<div class="mui-input-row">'+
@@ -104,7 +104,7 @@
 						'<img class="position_Ab" src="'+item.skuInfo.productInfo.imgUrl+'">'+
 					'</div>'+
 //		产品信息
-					'<div id="commodity" class="mui-media-body">'+
+					'<div class="mui-media-body commodity">'+
 						'<div class="mui-input-row">'+
 							'<label>品牌名称：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled>'+

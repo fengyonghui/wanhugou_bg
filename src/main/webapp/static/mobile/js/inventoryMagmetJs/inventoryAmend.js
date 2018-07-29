@@ -36,6 +36,23 @@
         pageInit: function() {
             var _this = this;
 		},
+		rendHtml: function(data, key) {
+			var _this = this;
+			var reult = [];
+			var htmlList=''
+				$.each(data, function(i, item) {
+					if(item.name.indexOf(key) > -1) {
+						reult.push(item)
+
+					}
+				})
+			$.each(reult, function(i, item) {
+				console.log(item)
+				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
+			});
+			$('.input_div').html(htmlList)
+
+		},
         ajaxGoodList: function() {
             var _this = this;
             var htmlList = ''
@@ -182,8 +199,8 @@
                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
                     '<li class="mui-table-view-cell">' +
                     '<div class="mui-input-row inputClassAdd">' +
-                    '<label>商品名称:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.name + '" disabled></div></li></div></div>' +
+                    '<label class="commodityName">商品名称:</label>' +
+                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div></div>' +
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
@@ -246,8 +263,8 @@
                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
                     '<li class="mui-table-view-cell">' +
                     '<div class="mui-input-row inputClassAdd">' +
-                    '<label>商品名称:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.name + '" disabled></div></li></div></div>' +
+                    '<label class="commodityName">商品名称:</label>' +
+                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div></div>' +
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
