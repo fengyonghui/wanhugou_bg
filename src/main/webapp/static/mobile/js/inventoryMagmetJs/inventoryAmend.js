@@ -97,7 +97,6 @@
                 success: function(res) {
                     console.log(res)
                     $.each(res, function(i, item) {
-                        console.log(item)
                         htmlStatusAmend += '<option class="soption" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort +  '" value="' + item.value + '">' + item.label + '</option>'
                     });
                     $('#inputDivAmend').html(optHtml+htmlStatusAmend)
@@ -140,12 +139,10 @@
 
                     /*业务状态*/
                     var bizstatus = res.data.entity.bizStatus;
-                    $('#inputDivAmend  option[value="' + bizstatus + '"]').attr("selected", true)
+                    $('#inputDivAmend  option[value="' + bizstatus + '"]').attr("selected",true)
                     _this.commodityHtml(res.data)
                     _this.statusListHtml(res.data)
-
                     _this.searchSkuHtml()
-
                     _this.saveDetail();
 
                 }
@@ -369,8 +366,8 @@
                                         '<div class="mui-col-sm-10 mui-col-xs-10">' +
                                         '<li class="mui-table-view-cell">' +
                                         '<div class="mui-input-row inputClassAdd">' +
-                                        '<label>商品名称:</label>' +
-                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.name + '" disabled>' +
+                                        '<label class="commodityName">商品名称:</label>' +
+                                        '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.name + '" disabled>' +
                                         '</div></li></div></div>' +
                                         '<div class="mui-row">' +
                                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
