@@ -403,6 +403,11 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public String audit(Integer reqHeaderId, String currentType, int auditType, String description) {
 		BizRequestHeader bizRequestHeader = this.get(reqHeaderId);
+
+		if (!bizRequestHeader.getFromType().equals(ReqFromTypeEnum.CENTER_TYPE.getType())) {
+			return "操作失败,请在PC端使用V2版本进行审核!";
+		}
+
 		CommonProcessEntity cureentProcessEntity  = bizRequestHeader.getCommonProcess();
 
 		if (cureentProcessEntity == null) {

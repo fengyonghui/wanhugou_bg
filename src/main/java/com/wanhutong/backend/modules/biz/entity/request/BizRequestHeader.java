@@ -6,12 +6,16 @@ package com.wanhutong.backend.modules.biz.entity.request;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -104,6 +108,50 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	private Integer vendorId; //根据供应商Id搜索
 	private Integer vendorName; //根据供应商Id搜索
+
+	/**
+	 * 备货方：1.采购中心备货；2.供应商备货
+	 */
+	private Integer fromType;
+	/**
+	 * 供应商拓展信息
+	 */
+	private BizVendInfo bizVendInfo;
+	/**
+	 * 申请支付金额
+	 */
+	private BigDecimal planPay;
+
+	/**
+	 * 付款时间
+	 */
+	private Date payDeadline;
+	/**
+	 * 当前支付单ID
+	 */
+	private Integer currentPaymentId;
+	/**
+	 * 支付单
+	 */
+	private BizPoPaymentOrder bizPoPaymentOrder;
+
+	/**
+	 * 该采购单下所有商品的总采购数量
+	 */
+	private Integer totalOrdQty;
+	/**
+	 * 该采购单下所有商品的总排产数量
+	 */
+	private Integer toalSchedulingNum;
+	/**
+	 * 该采购单下所有商品的总已确认排产数
+	 */
+	private Integer toalCompleteNum;
+
+	/**
+	 * 与供应商结算的金额
+	 */
+	private BigDecimal balanceTotal;
 
 	public BizRequestHeader() {
 		super();
@@ -466,5 +514,85 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setVendorName(Integer vendorName) {
 		this.vendorName = vendorName;
+	}
+
+	public Integer getFromType() {
+		return fromType;
+	}
+
+	public void setFromType(Integer fromType) {
+		this.fromType = fromType;
+	}
+
+	public BizVendInfo getBizVendInfo() {
+		return bizVendInfo;
+	}
+
+	public void setBizVendInfo(BizVendInfo bizVendInfo) {
+		this.bizVendInfo = bizVendInfo;
+	}
+
+	public BigDecimal getPlanPay() {
+		return planPay;
+	}
+
+	public void setPlanPay(BigDecimal planPay) {
+		this.planPay = planPay;
+	}
+
+	public BizPoPaymentOrder getBizPoPaymentOrder() {
+		return bizPoPaymentOrder;
+	}
+
+	public void setBizPoPaymentOrder(BizPoPaymentOrder bizPoPaymentOrder) {
+		this.bizPoPaymentOrder = bizPoPaymentOrder;
+	}
+
+	public Date getPayDeadline() {
+		return payDeadline;
+	}
+
+	public void setPayDeadline(Date payDeadline) {
+		this.payDeadline = payDeadline;
+	}
+
+	public Integer getCurrentPaymentId() {
+		return currentPaymentId;
+	}
+
+	public void setCurrentPaymentId(Integer currentPaymentId) {
+		this.currentPaymentId = currentPaymentId;
+	}
+
+	public Integer getTotalOrdQty() {
+		return totalOrdQty;
+	}
+
+	public void setTotalOrdQty(Integer totalOrdQty) {
+		this.totalOrdQty = totalOrdQty;
+	}
+
+	public Integer getToalSchedulingNum() {
+		return toalSchedulingNum;
+	}
+
+	public void setToalSchedulingNum(Integer toalSchedulingNum) {
+		this.toalSchedulingNum = toalSchedulingNum;
+	}
+
+	public Integer getToalCompleteNum() {
+		return toalCompleteNum;
+	}
+
+	public void setToalCompleteNum(Integer toalCompleteNum) {
+		this.toalCompleteNum = toalCompleteNum;
+	}
+
+	public BigDecimal getBalanceTotal() {
+		return balanceTotal;
+	}
+
+	public void setBalanceTotal(BigDecimal balanceTotal) {
+		this.balanceTotal = balanceTotal;
 	}
 }
