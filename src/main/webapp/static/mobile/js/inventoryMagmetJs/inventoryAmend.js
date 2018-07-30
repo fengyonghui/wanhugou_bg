@@ -164,20 +164,24 @@
                 _this.skuInfoIds_2 = skuInfoIdsTemp.substring(1);
 
                 var skuIds2 = _this.skuInfoIds_2.split(",");
+                var reqQtysTemp = "";
                 for (var j=0; j<skuIds2.length; j++) {
                     var cheId = skuIds2[j];
                     var reqQty = $("#reqQty_" + cheId).val()
-                    _this.reqQtys_2 += "," + reqQty;
+                    if (reqQty == null || reqQty == "") {
+                        reqQty = 0;
+                    }
+                    reqQtysTemp += "," + reqQty;
                 }
-                _this.reqQtys_2 = _this.reqQtys_2.substring(1);
+                _this.reqQtys_2 = reqQtysTemp.substring(1);
 
                 skuInfoIds = _this.skuInfoIds_1 + _this.skuInfoIds_2;
                 reqQtys = _this.reqQtys_1 + _this.reqQtys_2;
                 _this.reqDetailIds = _this.reqDetailIds.substring(0,(_this.reqDetailIds.lastIndexOf(",")))
                 _this.LineNos = _this.LineNos.substring(0,(_this.LineNos.lastIndexOf(",")))
 
-                //var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
-                var inPoLastDaVal = '2018-07-26 20:30:09'
+                var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
+                console.log("inPoLastDaVal=" + inPoLastDaVal);
 
                 var inPoRemarkVal = $("#inPoRemark").val(); //备注
                 var bizStatusVal = $("#inputDivAmend")[0].value; //业务状态
@@ -186,6 +190,19 @@
                 if (_this.fromOfficeId == null || _this.fromOfficeId == "") {
                     var inOrordNum = $("#inOrordNum").val();
                     _this.fromOfficeId = _this.getFromOfficeId(inOrordNum);
+                }
+
+                if(_this.fromOfficeId == null || _this.fromOfficeId == ""){
+                    alert("请选择采购中心！")
+                    return;
+                }
+                if(inPoLastDaVal == null || inPoLastDaVal == "") {
+                    alert("请选择收货时间！")
+                    return;
+                }
+                if(bizStatusVal == null || bizStatusVal == "") {
+                    alert("请选择业务状态！")
+                    return;
                 }
 
                 $.ajax({

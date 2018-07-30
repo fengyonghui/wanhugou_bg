@@ -47,28 +47,37 @@
 
 
                 var skuIds2 = _this.skuInfoIds.split(",");
+
+                var reqQtysTemp = "";
                 for (var j=0; j<skuIds2.length; j++) {
                     var cheId = skuIds2[j];
                     var reqQty = $("#reqQty_" + cheId).val()
-                    _this.reqQtys += "," + _this.reqQty;
+                    if (reqQty == null || reqQty == "") {
+                        reqQty = 0;
+                    }
+                    reqQtysTemp += "," + reqQty;
                 }
-                _this.reqQtys = _this.reqQtys.substring(1);
+                _this.reqQtys = reqQtysTemp.substring(1);
 
                 var inOrordNumVal = $("#inOrordNum").val(); //采购中心
-                //var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
-                var inPoLastDaVal = '2018-07-26 20:30:09'
+                var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
+                //console.log("inPoLastDaVal=" + inPoLastDaVal)
 
                 var inPoRemarkVal = $("#inPoRemark").val(); //备注
                 var bizStatusVal = $("#inputDivAdd")[0].value; //业务状态
-                var id = 735; //业务状态
 
-				console.log(inPoLastDaVal)
-                console.log(inPoRemarkVal)
-                console.log(bizStatusVal)
-                console.log(_this.skuInfoIds)
-                console.log(_this.reqQtys)
-                console.log(_this.reqDetailIds)
-                console.log(_this.LineNos)
+                if(_this.fromOfficeId == null || _this.fromOfficeId == ""){
+				    alert("请选择采购中心！")
+                    return;
+                }
+                if(inPoLastDaVal == null || inPoLastDaVal == "") {
+                    alert("请选择收货时间！")
+                    return;
+                }
+                if(bizStatusVal == null || bizStatusVal == "") {
+                    alert("请选择业务状态！")
+                    return;
+                }
 
                 $.ajax({
                     type: "post",
