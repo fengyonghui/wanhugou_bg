@@ -50,6 +50,7 @@ public class UserUtils {
 	public static final String CACHE_OFFICE_LIST = "officeList";
 	public static final String CACHE_OFFICE_ALL_LIST = "officeAllList";
 	public static final String CACHE_CATEGORYINFO_LIST="categoryInfoList";
+	public static final String CACHE_PERMISSION_LIST="permissionList";
 	
 	/**
 	 * 根据ID获取用户
@@ -233,6 +234,26 @@ public class UserUtils {
 		}
 		return categoryInfoList;
 	}
+
+
+	/**
+	 * 获取用户权限标示
+	 * @param user
+	 * @return
+	 */
+	public static List<String> getPermissionAllList(User user){
+		@SuppressWarnings("unchecked")
+		List<String> permissionList = (List<String>)getCache(CACHE_PERMISSION_LIST);
+		if (permissionList == null){
+			if (user == null) {
+				user = getUser();
+			}
+			permissionList = menuDao.findAllPermissionList(user);
+			putCache(CACHE_PERMISSION_LIST, permissionList);
+		}
+		return permissionList;
+	}
+
 	/**
 	 * 获取授权主要对象
 	 */

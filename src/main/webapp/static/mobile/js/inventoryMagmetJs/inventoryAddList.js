@@ -53,7 +53,8 @@
                     var cheId = skuIds2[j];
                     var reqQty = $("#reqQty_" + cheId).val()
                     if (reqQty == null || reqQty == "") {
-                        reqQty = 0;
+                        alert("请输入申报数量！")
+                        return;
                     }
                     reqQtysTemp += "," + reqQty;
                 }

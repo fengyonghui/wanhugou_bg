@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.ImmutableMap;
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.modules.sys.dao.UserDao;
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +91,26 @@ public class MenuController extends BaseController {
 			});
 		}
 		return JsonUtil.generateData(result, request.getParameter("callback"));
+	}
+
+	/**
+	 * 移动端判断用户权限标示
+	 * @param
+	 * @return
+	 */
+	@RequestMapping(value = {"permissionList"})
+	@ResponseBody
+	public String permissionList(HttpServletRequest request, @RequestParam(value = "id", required = false)Integer id, @RequestParam(value = "marking") String marking) {
+		User user =  UserUtils.get(id);
+		Boolean falg = false;
+		List<String> permissionAllList = UserUtils.getPermissionAllList(user);
+		for (String permission:permissionAllList) {
+			if (permission.equals(marking)){
+				falg = true;
+				break;
+			}
+		}
+		return JsonUtil.generateData(falg, request.getParameter("callback"));
 	}
 
 	@RequiresPermissions("sys:menu:view")

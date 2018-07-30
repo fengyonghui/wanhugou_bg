@@ -11,7 +11,7 @@
         this.reqDetailIds="";
         this.LineNos="";
         this.fromOfficeId="";
-        this.fromOfficeIdTemp="";
+        this.deleteBtnFlag = "false"
         return this;
     }
 
@@ -95,6 +95,7 @@
                         htmlStatusAmend += '<option class="soption" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort +  '" value="' + item.value + '">' + item.label + '</option>'
                     });
                     $('#inputDivAmend').html(optHtml+htmlStatusAmend)
+                    _this.getPermissionList();
                     _this.getData()
                 }
             });
@@ -169,7 +170,8 @@
                     var cheId = skuIds2[j];
                     var reqQty = $("#reqQty_" + cheId).val()
                     if (reqQty == null || reqQty == "") {
-                        reqQty = 0;
+                        alert("请输入申报数量！")
+                        return;
                     }
                     reqQtysTemp += "," + reqQty;
                 }
@@ -222,6 +224,35 @@
                     }
                 })
             })
+        },
+        getPermissionList: function () {
+            var _this = this;
+            var userId = "";
+            $.ajax({
+                type: "GET",
+                url: "/a/getUser",
+                dataType: "json",
+                async:false,
+                success: function(res){
+                    $('#userName').html('您好 ! '+ res.data.name)
+                    userId = res.data.id;
+
+                    _this.checkPermission(userId)
+                }
+            });
+        },
+        checkPermission: function (id) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"id": id, "marking": "biz:request:bizRequestDetail:edit"},
+                async:false,
+                success: function(res){
+                    deleteBtnFlag = res.data;
+                }
+            });
         },
         getFromOfficeId: function(inOrordNum) {
             var _this = this;
@@ -336,10 +367,13 @@
                     '<li class="mui-table-view-cell">' +
                     '<div class="mui-input-row inputClassAdd">' +
                     '<label>申报数量:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.reqQty + '" disabled></div></li></div></div>' +
-                    '<div class="addBtn">' +
-                    '<button id="' + item.id +'" type="button" class="deleteSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block" >删除</button></div>' +
-                    '</div>';
+                    '<input type="text" class="mui-input-clear" id="" value="' + item.reqQty + '" disabled></div></li></div></div>';
+
+                if (deleteBtnFlag == true) {
+                    htmlCommodity += '<div class="addBtn">' +
+                    '<button id="' + item.id +'" type="button" class="deleteSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block" >删除</button></div>';
+                }
+                htmlCommodity += '</div>';
             });
             $("#commodityMenu").html(htmlCommodity)
             _this.delItem()
