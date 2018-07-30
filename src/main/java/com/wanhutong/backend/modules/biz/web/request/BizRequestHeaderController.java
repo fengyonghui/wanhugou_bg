@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -60,6 +61,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 备货清单Controller
@@ -135,6 +137,20 @@ public class BizRequestHeaderController extends BaseController {
         //品类名称
 		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
 		resultMap.put("varietyInfoList", varietyInfoList);
+
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
+            }
+        }
+        resultMap.put("roleSet", roleSet);
+        resultMap.put("roleEnNameSet", roleEnNameSet);
 		resultMap.put("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
 		return JsonUtil.generateData(resultMap, null);
