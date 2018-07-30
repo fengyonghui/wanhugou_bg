@@ -7,6 +7,7 @@
 		a.req_no AS "reqNo",
 		a.req_type AS "reqType",
 		a.from_id AS "fromOffice.id",
+		a.from_type AS "fromType",
 		a.to_id AS "toOffice.id",
 		so.name AS "fromOffice.name",
 		sot.name AS "toOffice.name",
