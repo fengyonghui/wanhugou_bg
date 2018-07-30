@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title>详情</title>
+		<title>审核</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
 		<style type="text/css">
@@ -35,34 +35,23 @@
 			.photoParent img {top: 50%;margin-top: -8px;width: 50px;}
 			.mui-input-group .mui-input-row:after {background-color: #ececec;}
 			.listBlue>li {border-bottom: 1px solid #40ABE9;}
+			.app_p20 button {margin-left: 17%;background-color: #007aff;color: #fff;}
 		</style>
 	</head>
 
 	<body>
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
-			<p class="app_cf app_nav_text_center">详情</p>
+			<p class="app_cf app_nav_text_center">审核</p>
 		</header>
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
 				<label>备货单编号：</label>
-				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
+				<input type="text" class="mui-input-clear" id="checkPoordNum" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
-				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>应付金额：</label>
-				<input type="text" class="mui-input-clear" id="inPototal" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>已收保证金：</label>
-				<input type="text" class="mui-input-clear" id="inMoneyReceive" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>保证金比例：</label>
-				<input type="text" class="mui-input-clear" id="inMarginLevel" disabled>
+				<input type="text" class="mui-input-clear" id="checkOrordNum" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>收货时间：</label>
@@ -70,33 +59,40 @@
 			</div>
 			<div class="mui-input-row">
 				<div class="labelLf">备货商品：</div>
-				<ul id="commodityMenu" class="listBlue mui-table-view">
+				<ul id="checkCommodityMenu" class="listBlue mui-table-view">
 					
 				</ul>
 			</div>
 			<div class="mui-input-row">
 				<label>备注：</label>
-				<textarea id="inPoRemark" name="" rows="" cols="" disabled></textarea>
+				<textarea id="checkPoRemark" name="" rows="" cols="" disabled></textarea>
 			</div>
 			<div class="mui-input-row">
 				<label>业务状态：</label>
-				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
+				<input type="text" id="checkPoDizstatus" class="mui-input-clear" disabled>
 			</div>
 			<!--审批流程块 有的话显示-->
 			<div class="mui-input-row">
 				<div class="labelLf">状态流程：</div>
-				<ul class="" id="inCheckAddMenu">
+				<ul class="" id="inCheckMen">
 					
 				</ul>
 			</div>
-			
 		</div>
-		<div class="clear"></div>
-
-		<script src="../../js/component/mui.min.js"></script>
-		<script src="../../js/component/zepto.min.js"></script>
-		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/inventoryMagmetJs/inventoryDetails.js"></script>
-	</body>
-
+		<div class="app_p20">
+		    <button id="inCheckBtn" type="submit" class="mui-btn mui-btn-blue">审核通过</button>
+			<button id="inRejectBtn" type="submit" class="mui-btn mui-btn-blue">审核驳回</button>
+		</div>
+	<div class="clear"></div>
+	<input type="hidden" name="codeId" id="codeId" value="" />
+	
+	
+	
+	<script src="../../js/component/mui.min.js"></script>
+	<script src="../../js/component/zepto.min.js"></script>
+	<script src="../../js/component/GHutils.js"></script>
+	<script src="../../js/inventoryMagmetJs/inCheck.js"></script>
+    </body>
 </html>
+
+
