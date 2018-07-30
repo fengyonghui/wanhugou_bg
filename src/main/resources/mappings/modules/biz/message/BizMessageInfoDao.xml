@@ -32,7 +32,7 @@
 		FROM biz_message_info a
 		<include refid="bizMessageInfoJoins"/>
 		<where>
-			
+			a.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 			<if test="title != null and title != ''">
 				AND a.title LIKE 
 					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
@@ -55,7 +55,7 @@
 		FROM biz_message_info a
 		<include refid="bizMessageInfoJoins"/>
 		<where>
-			
+			a.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		</where>		
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -66,9 +66,8 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_message_info(
-			id,
 			title,
 			content,
 			url,
@@ -77,18 +76,19 @@
 			create_name,
 			update_id,
 			update_time,
-			type
+			type,
+			status
 		) VALUES (
-			#{id},
 			#{title},
 			#{content},
 			#{url},
-			#{createTime},
+			NOW(),
 			#{createId.id},
-			#{createName},
+			#{createId.name},
 			#{updateId.id},
-			#{updateTime},
-			#{type}
+			NOW(),
+			#{type},
+			${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_DELETE}
 		)
 	</insert>
 	
@@ -106,7 +106,8 @@
 	</update>
 	
 	<update id="delete">
-		DELETE FROM biz_message_info
+		UPDATE biz_message_info SET
+		status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 	

@@ -38,20 +38,25 @@
 			<tr>
 				<th>标题</th>
 				<th>内容</th>
+				<th>url</th>
 				<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizMessageInfo">
 			<tr>
-				<td><a href="${ctx}/biz/message/bizMessageInfo/form?id=${bizMessageInfo.id}">
+				<td>
+					<%--<a href="${ctx}/biz/message/bizMessageInfo/form?id=${bizMessageInfo.id}">--%>
 					${bizMessageInfo.title}
-				</a></td>
-				<td><a href="${ctx}/biz/message/bizMessageInfo/form?id=${bizMessageInfo.id}">
+					<%--</a>--%>
+				</td>
+				<td>
 					${bizMessageInfo.content}
-				</a></td>
+				</td>
+				<td>
+					${bizMessageInfo.url}
+				</td>
 				<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><td>
-    				<a href="${ctx}/biz/message/bizMessageInfo/form?id=${bizMessageInfo.id}">修改</a>
 					<a href="${ctx}/biz/message/bizMessageInfo/delete?id=${bizMessageInfo.id}" onclick="return confirmx('确认要删除该发送站内信吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>

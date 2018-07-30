@@ -22,13 +22,19 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 	private String title;		// 标题
 	private String content;		// 内容
 	private String url;		// url
+	private String createName;		// create_name
 	private Date createTime;		// create_time
 	private User createId;		// create_id
-	private String createName;		// create_name
 	private User updateId;		// update_id
 	private Date updateTime;		// update_time
 	private String type;		// type
-	
+
+	private Integer companyId;
+
+
+
+
+
 	public BizMessageInfo() {
 		super();
 	}
@@ -98,7 +104,6 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 	}
 	
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@NotNull(message="update_time不能为空")
 	public Date getUpdateTime() {
 		return updateTime;
 	}
@@ -115,5 +120,13 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
+	@NotNull(message="所属公司不能为空")
+	public Integer getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(Integer companyId) {
+		this.companyId = companyId;
+	}
 }

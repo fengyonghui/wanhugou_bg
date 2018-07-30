@@ -6,6 +6,10 @@ package com.wanhutong.backend.modules.biz.dao.message;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.message.BizMessageUser;
+import com.wanhutong.backend.modules.sys.entity.User;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 站内信关系DAO接口
@@ -14,5 +18,8 @@ import com.wanhutong.backend.modules.biz.entity.message.BizMessageUser;
  */
 @MyBatisDao
 public interface BizMessageUserDao extends CrudDao<BizMessageUser> {
-	
+
+    int insertBatch(@Param("userList")List<User> userList, @Param("messageId") Integer messageId, @Param("bizStatus") Integer bizStatus);
+
+
 }

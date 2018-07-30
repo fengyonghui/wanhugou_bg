@@ -27,7 +27,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/message/bizMessageInfo/">发送站内信列表</a></li>
+		<li><a href="${ctx}/biz/message/bizMessageInfo/">站内信列表</a></li>
 		<li class="active"><a href="${ctx}/biz/message/bizMessageInfo/form?id=${bizMessageInfo.id}">发送站内信<shiro:hasPermission name="biz:message:bizMessageInfo:edit">${not empty bizMessageInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:message:bizMessageInfo:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizMessageInfo" action="${ctx}/biz/message/bizMessageInfo/save" method="post" class="form-horizontal">
@@ -43,8 +43,8 @@
 		<div class="control-group">
 			<label class="control-label">所属公司：</label>
 			<div class="controls">
-				<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
-								title="公司" url="/sys/office/treeData?type=1" cssClass="input-small" allowClear="true"/>
+				<sys:treeselect id="company" name="companyId" value="${companyId}" labelName="company.name" labelValue="${company.id}"
+								title="公司" url="/sys/office/treeData?isAll=true" cssClass="input-small" allowClear="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

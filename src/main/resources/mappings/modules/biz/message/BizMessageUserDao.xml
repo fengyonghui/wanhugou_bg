@@ -58,17 +58,34 @@
 	
 	<insert id="insert">
 		INSERT INTO biz_message_user(
-			id,
 			user_id,
 			message_id,
-			biz_status
+			biz_status,
+			status
 		) VALUES (
-			#{id},
 			#{user.id},
 			#{messageId},
-			#{bizStatus}
+			#{bizStatus},
+			${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		)
 	</insert>
+
+	<insert id="insertBatch">
+		INSERT INTO biz_message_user(
+		user_id,
+		message_id,
+		biz_status,
+		status
+		) VALUES
+
+		<foreach collection="userList" index="index" item="item" open="(" separator="),(" close=")">
+			#{item.id},
+			#{messageId},
+			#{bizStatus},
+			${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		</foreach>
+	</insert>
+
 	
 	<update id="update">
 		UPDATE biz_message_user SET 	
@@ -79,7 +96,8 @@
 	</update>
 	
 	<update id="delete">
-		DELETE FROM biz_message_user
+		UPDATE biz_message_user SET
+		status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 	

@@ -67,8 +67,12 @@ public class BizMessageInfoController extends BaseController {
 		if (!beanValidator(model, bizMessageInfo)){
 			return form(bizMessageInfo, model);
 		}
-		bizMessageInfoService.save(bizMessageInfo);
-		addMessage(redirectAttributes, "保存发送站内信成功");
+		try {
+			bizMessageInfoService.save(bizMessageInfo);
+		} catch (Exception e) {
+			logger.error("save message error", e);
+		}
+		addMessage(redirectAttributes, "保存站内信成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/message/bizMessageInfo/?repage";
 	}
 	
@@ -76,7 +80,7 @@ public class BizMessageInfoController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(BizMessageInfo bizMessageInfo, RedirectAttributes redirectAttributes) {
 		bizMessageInfoService.delete(bizMessageInfo);
-		addMessage(redirectAttributes, "删除发送站内信成功");
+		addMessage(redirectAttributes, "删除站内信成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/message/bizMessageInfo/?repage";
 	}
 
