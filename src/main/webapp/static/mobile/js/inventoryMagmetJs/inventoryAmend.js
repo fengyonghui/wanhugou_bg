@@ -133,7 +133,8 @@
                     $('#inPoRemark').val(res.data.entity.remark)
                     $('#inMoneyReceive').val()
                     $('#inMarginLevel').val()
-                    var dataValue=_this.formatDateTime(res.data.entity.recvEta)
+                    var dataValue =_this.newData(res.data.entity.recvEta)
+                    $('#inPoLastDa').val(dataValue)
                     console.log(dataValue)
                     $('#inPoLastDa').val(dataValue)
 
@@ -147,6 +148,15 @@
 
                 }
             });
+        },
+        newData:function(da){
+        	var _this = this;
+            var now = new Date(da),
+                y = now.getFullYear(),
+                m = now.getMonth() + 1,
+                d = now.getDate();
+           // return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + "T" + now.toTimeString().substr(0, 8);
+             return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d);
         },
         saveDetail: function () {
             mui('.saveDetailBtn').on('tap','#saveDetailBtn',function(){
@@ -484,8 +494,8 @@
                 }
                 var temp5 = temp4 + temp2.substring(index,temp2.length); // 07:17:43
 //	            now = temp1 + temp5; // 2014/7/6 07:17:43
-//	            now = now.replace("/","-"); //  2014-7/6 07:17:43
-                now = now.replace("-"); //  2014-7-6 07:17:43
+	            now = now.replace("/","-"); //  2014-7/6 07:17:43
+ //               now = now.replace("-"); //  2014-7-6 07:17:43
             }
             return now;
         }

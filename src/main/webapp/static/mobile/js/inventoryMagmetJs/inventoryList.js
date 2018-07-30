@@ -54,14 +54,14 @@
 								/*业务状态*/
 									var bizstatus = item.bizStatus;
 									var bizstatusTxt = '';
-									var inCheckBtn = '';
+									var inCheck = '';
 									if(bizstatus==0) {
 										bizstatusTxt = "未审核"
-										inCheckBtn = "审核"
 									}else if(bizstatus==1) {
 										bizstatusTxt = "首付支付"
 									}else if(bizstatus==2) {
 										bizstatusTxt = "全部支付"
+										inCheck = "审核"
 									}else if(bizstatus==5) {
 										bizstatusTxt = "审核通过"
 									}else if(bizstatus==6) {
@@ -101,7 +101,6 @@
 									}else {
 										inCancel = '取消'
 									}
-									var inCheck = '';
 								/*品类名称*/	
 									var varietyInfoName = '';
 									if(item.varietyInfo.name) {
@@ -160,7 +159,7 @@
 											'<div class="mui-col-xs-2 inPayBtn"  inListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+inPay+'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2 inCheckBtn" inListId="'+ item.id +'">' +
+											'<div class="mui-col-xs-2 inCheckBtn" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
 												'<li class="mui-table-view-cell">'+ inCheck +'</li>' +
 											'</div>'+
 										'</div>' +
@@ -264,6 +263,7 @@
             $('.content').on('tap','.inCheckBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
+				var bizStatus = $(this).attr('bizStatus');
                 if(url) {
                 	mui.toast('子菜单不存在')
                 }else if(inListId==inListId) {
@@ -271,6 +271,7 @@
 						url: "../../html/inventoryMagmetHtml/inCheck.html",
 						extras: {
 								inListId:inListId,
+								bizStatus:bizStatus,
 						}
 					})
                 }
@@ -388,14 +389,14 @@
 								/*业务状态*/
 									var bizstatus = item.bizStatus;
 									var bizstatusTxt = '';
-									var inCheckBtn = '';
+									var inCheck = '';
 									if(bizstatus==0) {
 										bizstatusTxt = "未审核"
-										inCheckBtn = "审核"
 									}else if(bizstatus==1) {
 										bizstatusTxt = "首付支付"
 									}else if(bizstatus==2) {
 										bizstatusTxt = "全部支付"
+										inCheck = "审核"
 									}else if(bizstatus==5) {
 										bizstatusTxt = "审核通过"
 									}else if(bizstatus==6) {
@@ -433,7 +434,7 @@
 									}else {
 										inCancel = '取消'
 									}
-									var inCheck = '';
+									
 								/*品类名称*/	
 									var varietyInfoName = '';
 									if(item.varietyInfo.name) {
