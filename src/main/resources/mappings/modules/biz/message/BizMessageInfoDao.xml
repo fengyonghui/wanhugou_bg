@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.message.BizMessageInfoDao">
+    
+	<sql id="bizMessageInfoColumns">
+		a.id AS "id",
+		a.title AS "title",
+		a.content AS "content",
+		a.url AS "url",
+		a.create_time AS "createTime",
+		a.create_id AS "createId.id",
+		a.create_name AS "createName",
+		a.update_id AS "updateId.id",
+		a.update_time AS "updateTime",
+		a.type AS "type"
+	</sql>
+	
+	<sql id="bizMessageInfoJoins">
+	</sql>
+    
+	<select id="get" resultType="BizMessageInfo">
+		SELECT 
+			<include refid="bizMessageInfoColumns"/>
+		FROM biz_message_info a
+		<include refid="bizMessageInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizMessageInfo">
+		SELECT 
+			<include refid="bizMessageInfoColumns"/>
+		FROM biz_message_info a
+		<include refid="bizMessageInfoJoins"/>
+		<where>
+			
+			<if test="title != null and title != ''">
+				AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizMessageInfo">
+		SELECT 
+			<include refid="bizMessageInfoColumns"/>
+		FROM biz_message_info a
+		<include refid="bizMessageInfoJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_message_info(
+			id,
+			title,
+			content,
+			url,
+			create_time,
+			create_id,
+			create_name,
+			update_id,
+			update_time,
+			type
+		) VALUES (
+			#{id},
+			#{title},
+			#{content},
+			#{url},
+			#{createTime},
+			#{createId.id},
+			#{createName},
+			#{updateId.id},
+			#{updateTime},
+			#{type}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_message_info SET 	
+			title = #{title},
+			content = #{content},
+			url = #{url},
+			create_time = #{createTime},
+			create_name = #{createName},
+			update_id = #{updateId.id},
+			update_time = #{updateTime},
+			type = #{type}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_message_info
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
