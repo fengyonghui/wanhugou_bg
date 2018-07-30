@@ -5,13 +5,14 @@
 		this.expTipNum = 0;
 		this.datagood = [];
 		this.selectOpen = false
+        this.skuInfoIds="";
+        this.reqQtys="";
+        this.reqDetailIds="";
+        this.LineNos="";
+        this.fromOfficeId="";
 		return this;
 	}
 
-    var skuInfoIds="";
-    var reqQtys="";
-    var reqDetailIds="";
-    var LineNos="";
 
 	ACCOUNT.prototype = {
 		init: function() {
@@ -28,15 +29,13 @@
 			var _this = this;
 
             _this.searchSkuHtml()
-
             _this.removeItem()
-
             _this.saveDetail();
-
 		},
         saveDetail: function () {
+            var _this = this;
             mui('.inSaveBtn').on('tap','#inSaveBtn',function(){
-                var skuIds = skuInfoIds.split(",");
+                var skuIds = _this.skuInfoIds.split(",");
                 var skuInfoIdsTemp = ""
                 for (var i=0; i<skuIds.length; i++){
                     var skuId = skuIds[i];
@@ -44,16 +43,16 @@
                         skuInfoIdsTemp += "," + skuId;
                     }
                 }
-                skuInfoIds = skuInfoIdsTemp.substring(1);
+                _this.skuInfoIds = skuInfoIdsTemp.substring(1);
 
 
-                var skuIds2 = skuInfoIds.split(",");
+                var skuIds2 = _this.skuInfoIds.split(",");
                 for (var j=0; j<skuIds2.length; j++) {
                     var cheId = skuIds2[j];
                     var reqQty = $("#reqQty_" + cheId).val()
-                    reqQtys += "," + reqQty;
+                    _this.reqQtys += "," + _this.reqQty;
                 }
-                reqQtys = reqQtys.substring(1);
+                _this.reqQtys = _this.reqQtys.substring(1);
 
                 var inOrordNumVal = $("#inOrordNum").val(); //采购中心
                 //var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
@@ -66,26 +65,31 @@
 				console.log(inPoLastDaVal)
                 console.log(inPoRemarkVal)
                 console.log(bizStatusVal)
-                console.log(skuInfoIds)
-                console.log(reqQtys)
-                console.log(reqDetailIds)
-                console.log(LineNos)
-
+                console.log(_this.skuInfoIds)
+                console.log(_this.reqQtys)
+                console.log(_this.reqDetailIds)
+                console.log(_this.LineNos)
 
                 $.ajax({
                     type: "post",
                     url: "/a/biz/request/bizRequestHeader/save4Mobile",
-                    data: {"id":"", "fromOffice.id": 240, "recvEta":inPoLastDaVal, "remark": inPoRemarkVal, "bizStatus": bizStatusVal, "skuInfoIds": skuInfoIds, "reqQtys": reqQtys, "reqDetailIds":reqDetailIds, "LineNos":LineNos},
-                    success: function (data) {
-                        if (data == 'ok') {
-                            alert("删除成功！");
-                            $("#" + obj).remove();
+                    dataType: 'json',
+                    data: {"id":"", "fromOffice.id": _this.fromOfficeId, "recvEta":inPoLastDaVal, "remark": inPoRemarkVal, "bizStatus": bizStatusVal, "skuInfoIds": _this.skuInfoIds, "reqQtys": _this.reqQtys, "reqDetailIds":_this.reqDetailIds, "LineNos":_this.LineNos},
+                    success: function (resule) {
+                        if (resule.data.value == '操作成功!') {
+                            alert("添加备货单成功！");
+                            GHUTILS.OPENPAGE({
+                                url: "../../html/inventoryMagmetHtml/inventoryList.html",
+                                extras: {
+                                }
+                            })
                         }
                     }
                 })
             })
         },
         removeItem:function () {
+            var _this = this;
             mui('#commodityMenu').on('tap','.removeSkuButton',function(e){
                 var obj = e.detail.target.id;
                 var cheId = obj.split("_")[1]
@@ -93,7 +97,7 @@
                 $("#" + cheId).show();
                 $("#batchAddDiv").before(cheDiv)
                 $("#removeBtn_" + cheId).remove();
-                skuInfoIds = skuInfoIds.replace(cheId, "");
+                _this.skuInfoIds = _this.skuInfoIds.replace(cheId, "");
             });
         },
         searchSkuHtml: function() {
@@ -181,6 +185,7 @@
             _this.addSku()
         },
         addSku:function () {
+            var _this = this;
             mui('#searchInfo').on('tap','.addSkuButton',function(){
                 $(".skuinfo_check").each(function () {
                     var cheId = $(this)[0].id;
@@ -196,7 +201,7 @@
                             '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">移除' +
                             '</button></div>';
                         $("#commodityMenu").append(removeButtonHtml)
-                        skuInfoIds += cheId + ",";
+                        _this.skuInfoIds += cheId + ",";
                     }
                 })
             });
@@ -229,6 +234,7 @@
 
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
+                _this.fromOfficeId = $(this).attr("id");
 				$(newinput).val($(this).text())
 				$(input_div).hide()
 				$('#hideSpanAdd').hide()
@@ -246,7 +252,6 @@
 					}
 				})
 			$.each(reult, function(i, item) {
-				console.log(item)
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
@@ -264,9 +269,7 @@
 				dataType: 'json',
 				success: function(res) {
 					_this.datagood = res
-					console.log(res)
 					$.each(res, function(i, item) {
-						console.log(item)
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlList)
@@ -284,9 +287,7 @@
 				data: {type:'biz_req_status'},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
 					$.each(res, function(i, item) {
-						console.log(item)
 						htmlStatusAdd += '<option class="soption" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort + '" value="' + item.value + '">' + item.label + '</option>'
 					});
 					$('#inputDivAdd').html(optHtml+htmlStatusAdd)

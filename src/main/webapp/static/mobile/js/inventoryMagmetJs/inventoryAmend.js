@@ -4,16 +4,16 @@
         this.userInfo = GHUTILS.parseUrlParam(window.location.href);
         this.expTipNum = 0;
         this.datagood = [];
+        this.skuInfoIds_1="";
+        this.skuInfoIds_2="";
+        this.reqQtys_1="";
+        this.reqQtys_2="";
+        this.reqDetailIds="";
+        this.LineNos="";
+        this.fromOfficeId="";
+        this.fromOfficeIdTemp="";
         return this;
     }
-
-    var skuInfoIds_1="";
-    var skuInfoIds_2="";
-    var reqQtys_1="";
-    var reqQtys_2="";
-    var reqDetailIds="";
-    var LineNos="";
-
 
     var bizStatusDesc = (function() {
         var result;
@@ -27,7 +27,6 @@
                 result = res;
             }
         });
-        console.log(result)
         return result;
 
     })();
@@ -57,7 +56,6 @@
 					}
 				})
 			$.each(reult, function(i, item) {
-				console.log(item)
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
@@ -75,9 +73,7 @@
                 dataType: 'json',
                 success: function(res) {
                     _this.datagood = res
-                    console.log(res)
                     $.each(res, function(i, item) {
-                        console.log(item)
                         htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
                     });
                     $('.input_div').html(htmlList)
@@ -95,7 +91,6 @@
                 data: {type:'biz_req_status'},
                 dataType: 'json',
                 success: function(res) {
-                    console.log(res)
                     $.each(res, function(i, item) {
                         htmlStatusAmend += '<option class="soption" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort +  '" value="' + item.value + '">' + item.label + '</option>'
                     });
@@ -123,10 +118,9 @@
             $.ajax({
                 type: "GET",
                 url: "/a/biz/request/bizRequestHeader/form4Mobile",
-                data: {id:735},
+                data: {id:_this.userInfo.reqId},
                 dataType: "json",
                 success: function(res){
-                    console.log(res)
                     $('#inPoordNum').val(res.data.entity.reqNo)
                     $('#inOrordNum').val(res.data.entity.fromOffice.name)
                     $('#inPototal').val(res.data.entity.totalMoney)
@@ -134,8 +128,6 @@
                     $('#inMoneyReceive').val()
                     $('#inMarginLevel').val()
                     var dataValue =_this.newData(res.data.entity.recvEta)
-                    $('#inPoLastDa').val(dataValue)
-                    console.log(dataValue)
                     $('#inPoLastDa').val(dataValue)
 
                     /*业务状态*/
@@ -159,8 +151,9 @@
              return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d);
         },
         saveDetail: function () {
+            var _this = this;
             mui('.saveDetailBtn').on('tap','#saveDetailBtn',function(){
-                var skuIds = skuInfoIds_2.split(",");
+                var skuIds = _this.skuInfoIds_2.split(",");
                 var skuInfoIdsTemp = ""
                 for (var i=0; i<skuIds.length; i++){
                     var skuId = skuIds[i];
@@ -168,44 +161,72 @@
                         skuInfoIdsTemp += "," + skuId;
                     }
                 }
-                skuInfoIds_2 = skuInfoIdsTemp.substring(1);
-                console.log(skuInfoIds_2)
+                _this.skuInfoIds_2 = skuInfoIdsTemp.substring(1);
 
-
-                var skuIds2 = skuInfoIds_2.split(",");
+                var skuIds2 = _this.skuInfoIds_2.split(",");
                 for (var j=0; j<skuIds2.length; j++) {
                     var cheId = skuIds2[j];
-                    console.log(cheId)
                     var reqQty = $("#reqQty_" + cheId).val()
-                    reqQtys_2 += "," + reqQty;
+                    _this.reqQtys_2 += "," + reqQty;
                 }
-                reqQtys_2 = reqQtys_2.substring(1);
+                _this.reqQtys_2 = _this.reqQtys_2.substring(1);
 
-                skuInfoIds = skuInfoIds_1 + skuInfoIds_2;
-                reqQtys = reqQtys_1 + reqQtys_2;
-                reqDetailIds = reqDetailIds.substring(0,(reqDetailIds.lastIndexOf(",")))
-                LineNos = LineNos.substring(0,(LineNos.lastIndexOf(",")))
+                skuInfoIds = _this.skuInfoIds_1 + _this.skuInfoIds_2;
+                reqQtys = _this.reqQtys_1 + _this.reqQtys_2;
+                _this.reqDetailIds = _this.reqDetailIds.substring(0,(_this.reqDetailIds.lastIndexOf(",")))
+                _this.LineNos = _this.LineNos.substring(0,(_this.LineNos.lastIndexOf(",")))
 
-                var inOrordNumVal = $("#inOrordNum").val(); //采购中心
                 //var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
                 var inPoLastDaVal = '2018-07-26 20:30:09'
 
                 var inPoRemarkVal = $("#inPoRemark").val(); //备注
                 var bizStatusVal = $("#inputDivAmend")[0].value; //业务状态
-                var id = 735; //业务状态
+                var id = _this.userInfo.reqId; //业务状态
+
+                if (_this.fromOfficeId == null || _this.fromOfficeId == "") {
+                    var inOrordNum = $("#inOrordNum").val();
+                    _this.fromOfficeId = _this.getFromOfficeId(inOrordNum);
+                }
 
                 $.ajax({
                     type: "post",
                     url: "/a/biz/request/bizRequestHeader/save4Mobile",
-                    data: {"id":735, "fromOffice.id": 240, "recvEta":inPoLastDaVal, "remark": inPoRemarkVal, "bizStatus": bizStatusVal, "skuInfoIds": skuInfoIds, "reqQtys": reqQtys, "reqDetailIds":reqDetailIds, "LineNos":LineNos},
-                    success: function (data) {
-                        if (data == 'ok') {
-                            alert("删除成功！");
-                            $("#" + obj).remove();
+                    data: {"id":id, "fromOffice.id": _this.fromOfficeId, "recvEta":inPoLastDaVal, "remark": inPoRemarkVal, "bizStatus": bizStatusVal, "skuInfoIds": skuInfoIds, "reqQtys": reqQtys, "reqDetailIds":_this.reqDetailIds, "LineNos":_this.LineNos},
+                    dataType: 'json',
+                    success: function (resule) {
+                        if (resule.data.value == '操作成功!') {
+                            alert("保存备货单成功！");
+                            GHUTILS.OPENPAGE({
+                                url: "../../html/inventoryMagmetHtml/inventoryList.html",
+                                extras: {
+                                }
+                            })
                         }
                     }
                 })
             })
+        },
+        getFromOfficeId: function(inOrordNum) {
+            var _this = this;
+            var fromOfficeId = "";
+            $.ajax({
+                type: 'GET',
+                url: '/a/sys/office/queryTreeList',
+                data: {
+                    type: 8
+                },
+                dataType: 'json',
+                async:false,
+                success: function(res) {
+                    $.each(res, function(i, item) {
+                        // htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
+                        if (item.name == inOrordNum){
+                            fromOfficeId = item.id;
+                        }
+                    });
+                }
+            });
+            return fromOfficeId;
         },
         hrefHtml: function (newinput, input_div) {
             var _this = this;
@@ -227,6 +248,7 @@
 
             $(input_div).on('click', '.soption', function () {
                 $(this).addClass('hasoid')
+                _this.fromOfficeId = $(this).attr("id");
                 $(newinput).val($(this).text())
                 $(input_div).hide()
                 $('#hideSpanAmend').hide()
@@ -234,7 +256,6 @@
         },
         statusListHtml:function(data){
             var _this = this;
-            console.log(data)
             var pHtmlList = '';
 //			var len = data.bizPoHeader.commonProcessList.length
             $.each(data.statusList, function(i, item) {
@@ -261,14 +282,12 @@
         },
         commodityHtml: function(data) {
             var _this = this;
-            console.log(data)
             var htmlCommodity = '';
             $.each(data.reqDetailList, function(i, item) {
-                console.log(item)
-                skuInfoIds_1 += item.skuInfo.id + ","
-                reqQtys_1 += item.reqQty + ","
-                reqDetailIds += item.id + ","
-                LineNos += item.lineNo + ","
+                _this.skuInfoIds_1 += item.skuInfo.id + ","
+                _this.reqQtys_1 += item.reqQty + ","
+                _this.reqDetailIds += item.id + ","
+                _this.LineNos += item.lineNo + ","
                 htmlCommodity += '<div class="mui-row border-btm5" id="' + item.id + '">' +
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
@@ -328,6 +347,7 @@
             });
         },
         removeItem:function () {
+            var _this = this;
             mui('#commodityMenu').on('tap','.removeSkuButton',function(e){
                 var obj = e.detail.target.id;
                 var cheId = obj.split("_")[1]
@@ -335,7 +355,7 @@
                 $("#" + cheId).show();
                 $("#batchAddDiv").before(cheDiv)
                 $("#removeBtn_" + cheId).remove();
-                skuInfoIds_2 = skuInfoIds_2.replace(cheId, "");
+                _this.skuInfoIds_2 = _this.skuInfoIds_2.replace(cheId, "");
             });
         },
         searchSkuHtml: function() {
@@ -423,6 +443,7 @@
             _this.addSku()
         },
         addSku:function () {
+            var _this = this;
             mui('#searchInfo').on('tap','.addSkuButton',function(){
                 $(".skuinfo_check").each(function () {
                     var cheId = $(this)[0].id;
@@ -438,7 +459,7 @@
                             '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">移除' +
                             '</button></div>';
                         $("#commodityMenu").append(removeButtonHtml)
-                        skuInfoIds_2 += cheId + ",";
+                        _this.skuInfoIds_2 += cheId + ",";
                     }
                 })
             });

@@ -237,10 +237,11 @@
 		/*修改*/
             $('.content').on('tap','.inAmendBtn', function() {
 				var url = $(this).attr('url');
+                var reqId = $(this).attr('inListId');
 				GHUTILS.OPENPAGE({
 					url: "../../html/inventoryMagmetHtml/inventoryAmend.html",
 					extras: {
-						
+                        reqId: reqId,
 					}
 				})
 			}),
