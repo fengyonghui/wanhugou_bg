@@ -417,6 +417,10 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
 		// 当前流程
 		RequestOrderProcessConfig.RequestOrderProcess currentProcess = requestOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
+		if (currentProcess == null) {
+			return "操作失败, 当前流程不存在!";
+		}
+
 		// 下一流程
 		RequestOrderProcessConfig.RequestOrderProcess nextProcess = requestOrderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
 		if (nextProcess == null) {
