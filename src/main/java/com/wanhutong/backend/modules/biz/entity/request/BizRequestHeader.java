@@ -153,6 +153,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 */
 	private BigDecimal balanceTotal;
 
+	/**
+	 * 已审批流程
+	 */
+	private List<CommonProcessEntity> commonProcessList;
+
 	public BizRequestHeader() {
 		super();
 	}
@@ -594,5 +599,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setBalanceTotal(BigDecimal balanceTotal) {
 		this.balanceTotal = balanceTotal;
+	}
+
+	public List<CommonProcessEntity> getCommonProcessList() {
+		return commonProcessList;
+	}
+
+	public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
+		this.commonProcessList = commonProcessList;
 	}
 }

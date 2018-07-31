@@ -197,9 +197,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         //获取库存数
                         BizInventorySku bizInventorySku = new BizInventorySku();
                         bizInventorySku.setSkuInfo(bizSkuInfo);
-                        if (odArr.length == 3) {
+                        if (odArr.length == 4) {
                             BizInventoryInfo inventoryInfo = bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
                             bizInventorySku.setInvInfo(inventoryInfo);
+                            bizInventorySku.setSkuType(Integer.parseInt(odArr[3]));
+                            bizInventorySku.setVendor(bizSkuInfo.getProductInfo().getOffice());
                         }
                         bizInventorySku.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
                         List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
@@ -237,7 +239,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             //生成供货记录表
                             BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
                             bsgr.setSendNum(sendNum);
-                            if (odArr.length == 3) {
+                            if (odArr.length == 4) {
                                 BizInventoryInfo inventoryInfo = bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
                                 bsgr.setInvInfo(inventoryInfo);
                             }

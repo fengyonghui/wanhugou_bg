@@ -84,7 +84,6 @@
 						<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
 					</c:if>
 					<c:if test="${bizPoPaymentOrder.type == PoPayMentOrderTypeEnum.REQ_TYPE.type && bizPoPaymentOrder.id == bizRequestHeader.bizPoPaymentOrder.id
-						  && BizPoPaymentOrder.BizStatus.NO_PAY.desc == '未支付'
 						  && bizRequestHeader.commonProcess.vendRequestOrderProcess.name == '审批完成'
 						  && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'}">
 						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizRequestHeader.id}&str=pay">确认付款</a>

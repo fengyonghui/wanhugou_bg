@@ -30,8 +30,9 @@
                         var t= $(this).val();
                         var detail="";
                         var num ="";
-                        var sObj= $("#prodInfo").find("input[title='sent_"+t+"']");
-                        var iObj=$("#prodInfo").find("select[title='invInfoId']");
+                        var sObj = $("#prodInfo").find("input[title='sent_"+t+"']");
+                        var iObj = $("#prodInfo").find("select[title='invInfoId']");
+                        var tObj = $("#prodInfo").find("select[title='skuType']");
                         sObj.each(function (index) {
                             total+= parseInt($(this).val());
                         })
@@ -42,9 +43,7 @@
                                 }
                             });
                             $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
-
-                                detail+=$(this).val()+"-"+sObj[i].value+"-"+iObj[i].value+"*";
-
+                                detail += $(this).val() + "-" + sObj[i].value + "-" + iObj[i].value + "-" + tObj[i].value + "*";
                             });
 						}else {
                             flag = true;
@@ -126,6 +125,7 @@
                             $.each(data.inventoryInfoList,function (index,inventory) {
                                 selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
                             });
+                            var skuType = "<select class='input-mini' title='skuType'><option value='1'>采购中心</option><option value='2'>供应商</option></select>";
                         }
                         var tr_tds="";
                         var bizName ="";
@@ -158,7 +158,8 @@
                                  tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
                                 tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
                                 if(bizStatus==0) {
-                                    tr_tds += "<td>" + selecttd + "</td>"
+                                    tr_tds += "<td>" + selecttd + "</td>";
+                                    tr_tds += "<td>"+ skuType +"<td>";
                                 }
                                 tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
                                 if(detail.ordQty==detail.sentQty){
@@ -183,7 +184,7 @@
 				$('input:checkbox:checked').each(function(i) {
 				   var t= $(this).val();
 				   var ttp= $(this).parent().parent().parent();
-				   var trt= ttp.find($(".tr_"+t))
+				   var trt= ttp.find($(".tr_"+t));
 					$("#prodInfo").append(trt);
 				});
                 $("#select_all").removeAttr("checked");
@@ -350,6 +351,9 @@
 						<c:if test="${bizInvoice.bizStatus==0}">
 							<th>选择仓库</th>
 						</c:if>
+						<c:if test="${bizInvoice.bizStatus==0}">
+							<th>选择货权方</th>
+						</c:if>
 						<th>采购数量</th>
 						<th>已发货数量</th>
 						<th>发货数量</th>
@@ -378,6 +382,9 @@
 						<th>商品属性</th>
 						<c:if test="${bizInvoice.bizStatus==0}">
 							<th>选择仓库</th>
+						</c:if>
+						<c:if test="${bizInvoice.bizStatus==0}">
+							<th>选择货权方</th>
 						</c:if>
 						<th>采购数量</th>
 						<th>已发货数量</th>

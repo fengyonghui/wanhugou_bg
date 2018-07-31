@@ -38,7 +38,7 @@
 				AND a.request_id = #{requestHeader.id}
 			</if>
 			<if test="vendor != null and vendor.id != null and vendor.id != ''">
-				AND a.vend_id = #{vendor.id}
+				AND a.vend_id = #{bizVendInfo.office.id}
 			</if>
 			<if test="bizPoPaymentOrder != null and bizPoPaymentOrder.id != null and bizPoPaymentOrder.id != null">
 				AND a.current_payment_id = #{bizPoPaymentOrder.id}

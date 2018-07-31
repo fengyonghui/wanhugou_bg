@@ -242,11 +242,23 @@
         }
 
         function checkPass() {
-            top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
-                if(v=="ok"){
-                    audit(1, '');
-                }
-            },{buttonsFocus:1});
+			top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
+				if(v=="ok"){
+					var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+					var submit = function (v, h, f) {
+						if ($String.isNullOrBlank(f.description)) {
+							jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+							return false;
+						}
+						audit(1, f.description);
+						return true;
+					};
+					jBox(html, {
+						title: "请输入通过理由:", submit: submit, loaded: function (h) {
+						}
+					});
+				}
+			},{buttonsFocus:1});
         }
         function checkReject() {
             top.$.jBox.confirm("确认驳回该流程吗？","系统提示",function(v,h,f){
@@ -461,9 +473,9 @@
 				<label class="control-label">申请金额：</label>
 				<div class="controls">
 					<input id="payTotal" name="planPay" type="text"
-						   <c:if test="${entity.str == 'audit' || entiry.str == 'pay'}">readonly</c:if>
+						   <c:if test="${entity.str == 'audit' || entity.str == 'pay'}">readonly</c:if>
 						   value="${entity.bizPoPaymentOrder.id != null ?
-                           entity.bizPoPaymentOrder.total : (entity.totalDetail-entity.balanceTotal)}"
+                           entity.bizPoPaymentOrder.total : (entity.totalDetail-(entity.balanceTotal == null ? 0 : entity.balanceTotal))}"
 						   htmlEscape="false" maxlength="30" class="input-xlarge"/>
 				</div>
 			</div>
@@ -826,6 +838,36 @@
 				</div>
 			</div>
 		</c:if>
+		<c:if test="${fn:length(entity.commonProcessList) > 0}">
+			<div class="control-group">
+				<label class="control-label">审批流程：</label>
+				<div class="controls help_wrap">
+					<div class="help_step_box fa">
+						<c:forEach items="${entity.commonProcessList}" var="v" varStatus="stat">
+							<c:if test="${!stat.last}" >
+								<div class="help_step_item">
+									<div class="help_step_left"></div>
+									<div class="help_step_num">${stat.index + 1}</div>
+									批注:${v.description}<br/><br/>
+									审批人:${v.user.name}<br/>
+									<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+									<div class="help_step_right"></div>
+								</div>
+							</c:if>
+							<c:if test="${stat.last}">
+								<div class="help_step_item help_step_set">
+									<div class="help_step_left"></div>
+									<div class="help_step_num">${stat.index + 1}</div>
+									当前状态:${v.vendRequestOrderProcess.name}<br/><br/>
+										${v.user.name}<br/>
+									<div class="help_step_right"></div>
+								</div>
+							</c:if>
+						</c:forEach>
+					</div>
+				</div>
+			</div>
+		</c:if>
 
 		<div class="form-actions">
 
@@ -855,7 +897,7 @@
 					<%--<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;--%>
 					<%--<input id="btnCheck" class="btn btn-primary" onclick="checkInfo2(${ReqHeaderStatusEnum.APPROVE.state},this.value)" type="button" value="审核通过"/>&nbsp;--%>
 				<%--</c:if>--%>
-				<c:if test="${entity.str!='detail' && entity.str!='audit'}">
+				<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str != 'startAudit' && entity.str != 'createPay' && entity.str != 'pay'}">
 					<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
 				</c:if>
 
@@ -912,6 +954,7 @@
                             "prew": prew,
                             "prewPayTotal": prewPayTotal,
                             "prewPayDeadline": prewPayDeadline,
+							"auditType": 1,
                             "desc": f.description
                         },
                         type: 'get',

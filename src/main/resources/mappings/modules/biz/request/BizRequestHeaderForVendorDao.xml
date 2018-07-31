@@ -124,6 +124,9 @@
 			<if test="fromOffice != null and fromOffice.id !=null and fromOffice.id != ''">
 				AND a.from_id = #{fromOffice.id}
 			</if>
+			<if test="fromType != null and fromType != ''">
+				AND a.from_type = #{fromType}
+			</if>
 			<if test="recvEta != null and recvEta != ''">
 				AND  a.recv_eta BETWEEN ${startDate} AND ${endDate}
 			</if>
@@ -194,6 +197,7 @@
 			LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
 			WHERE bod.header_id = a.id
 			AND bod.status = 1
+			AND a.from_type = 1
 			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
@@ -427,7 +431,9 @@
 
 	<update id="updateBizStatus">
 		UPDATE biz_request_header SET
-		biz_status = #{status}
+		biz_status = #{status},
+		update_id = #{updateBy.id},
+		update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 

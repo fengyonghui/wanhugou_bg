@@ -148,6 +148,12 @@
 								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-medium required" dataMsgRequired="必填信息">
 				</sys:treeselect>
 			</li>
+			<li><label>备货方：</label>
+				<form:select path="fromType" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('req_from_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+			</li>
 			<li><span><label>期望收货时间：</label></span>
 				<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
@@ -182,6 +188,7 @@
 				<th>备货单号</th>
 				<th>采购中心</th>
 				<th>期望收货时间</th>
+				<th>备货方</th>
 				<th>备货商品数量</th>
 				<th>备货商品总价</th>
 				<th>已收保证金</th>
@@ -220,6 +227,7 @@
 				<td>
 					<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
+				<td>${fns:getDictLabel(requestHeader.fromType,'req_from_type' ,'未知' )}</td>
 				<td>${requestHeader.reqQtys}</td>
 				<td id="total_${requestHeader.id}">${requestHeader.totalMoney}</td>
 					<input type="hidden" id="rev_${requestHeader.id}" value="${requestHeader.recvTotal}">
@@ -315,11 +323,11 @@
 					</c:if>
 
 				</shiro:hasPermission>
-				<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">
+				<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">${requestHeader.balanceTotal}
 					<c:if test="${requestHeader.bizPoPaymentOrder.id == null
 						&& requestHeader.commonProcess.vendRequestOrderProcess.name == '审批完成'
 						&& fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型') != '结算完成'
-						&& requestHeader.balanceTotal < requestHeader.totalDetail
+						&& (requestHeader.balanceTotal == null ? 0 : requestHeader.balanceTotal) < requestHeader.totalDetail
 						}">
 						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=createPay">申请付款</a>
 					</c:if>

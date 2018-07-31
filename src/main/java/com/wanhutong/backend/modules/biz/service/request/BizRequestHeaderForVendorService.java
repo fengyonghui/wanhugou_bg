@@ -537,7 +537,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 			Integer bizStatus = bizRequestHeader.getBizStatus();
 			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());
 			saveRequestHeader(bizRequestHeader);
-			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.APPROVE.getState())) {
 				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 			}
 		}
@@ -588,7 +588,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		}
 		cureentProcessEntity = commonProcessService.get(bizRequestHeader.getCommonProcess().getId());
 		if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
-			logger.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", reqHeaderId, currentType);
+			logger.warn("[exception]BizRequestHeaderController audit currentType mismatching [{}][{}]", reqHeaderId, currentType);
 			return "操作失败,当前审核状态异常!";
 		}
 		RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
@@ -630,22 +630,29 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 
 		if(nextProcessEntity.getType().equals(requestOrderProcessConfig.getAutProcessId().toString())){
 			Integer bizStatus = bizRequestHeader.getBizStatus();
-			updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.APPROVE.getState());
-			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.APPROVE.getState());
+			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.APPROVE.getState())) {
 				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 			}
 		}
 		if (cureentProcessEntity.getType().equals(requestOrderProcessConfig.getAutProcessId().toString())) {
 			Integer bizStatus = bizRequestHeader.getBizStatus();
-			updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.PROCESS.getState());
-			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.PROCESS.getState());
+			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.PROCESS.getState())) {
+				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+			}
+		}
+		if (cureentProcessEntity.getType().equals(vendorRequestOrderProcessConfig.getDefaultProcessId().toString())) {
+			Integer bizStatus =  bizRequestHeader.getBizStatus();
+			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.IN_REVIEW.getState());
+			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.IN_REVIEW.getState())) {
 				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 			}
 		}
 		if (nextProcessEntity.getType().equals(vendorRequestOrderProcessConfig.getAutProcessId().toString())) {
 			Integer bizStatus =  bizRequestHeader.getBizStatus();
-			updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.EXAMINE.getState());
-			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.EXAMINE.getState());
+			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.EXAMINE.getState())) {
 				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 			}
 		}
@@ -797,8 +804,8 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, int auditType, String desc) {
-        VendorRequestOrderProcessConfig vendorRequestOrderProcessConfig = ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get();
+    public Pair<Boolean, String> startAudit(Integer id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, int auditType, String desc) {
+        RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
         BizRequestHeader bizRequestHeader = this.get(id);
         if (bizRequestHeader == null) {
             LOGGER.error("start audit error [{}]", id);
@@ -812,11 +819,11 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
         }
         Byte bizStatus = bizRequestHeader.getBizStatus().byteValue();
         this.updateBizStatus(bizRequestHeader.getId(), ReqHeaderStatusEnum.PROCESS.getState());
-        if (!bizStatus.equals(bizRequestHeader.getBizStatus().byteValue())) {
+        if (!bizStatus.equals(ReqHeaderStatusEnum.PROCESS.getState().byteValue())) {
             bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
         }
-        this.updateProcessToInit(bizRequestHeader);
-        auditRe(id, String.valueOf(vendorRequestOrderProcessConfig.getDefaultProcessId()), auditType, desc);
+//        this.updateProcessToInit(bizRequestHeader);
+        auditRe(id, String.valueOf(requestOrderProcessConfig.getAutProcessId()), auditType, desc);
         return Pair.of(Boolean.TRUE,   "操作成功!");
     }
 
@@ -868,7 +875,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public int updateBizStatus(Integer id, Integer status) {
-        return dao.updateBizStatus(id, status);
+        return dao.updateBizStatus(id, status,UserUtils.getUser(),new Date());
     }
 
 	/**

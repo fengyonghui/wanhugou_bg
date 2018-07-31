@@ -29,6 +29,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
@@ -67,7 +68,7 @@ import java.util.stream.Stream;
 @RequestMapping(value = "${adminPath}/biz/request/bizRequestAll")
 public class BizRequestAllController {
     @Autowired
-    private BizRequestHeaderService bizRequestHeaderService;
+    private BizRequestHeaderForVendorService bizRequestHeaderService;
     @Autowired
     private DefaultPropService defaultPropService;
     @Autowired
@@ -135,7 +136,7 @@ public class BizRequestAllController {
             bizOrderHeader = new BizOrderHeader();
         }
         if ("kc".equals(source)) {
-            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.EXAMINE.getState().byteValue());
             bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCK_COMPLETE.getState().byteValue());
             if (bizStatu == 0) {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());

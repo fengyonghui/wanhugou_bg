@@ -22,6 +22,7 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
@@ -33,6 +34,8 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.po.BizCompletePalnService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 import com.wanhutong.backend.modules.biz.service.po.BizSchedulingPlanService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
@@ -45,9 +48,11 @@ import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -78,6 +83,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -118,7 +124,9 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@Autowired
 	private BizCompletePalnService bizCompletePalnService;
 	@Autowired
-	private BizRequestHeaderService bizRequestHeaderService;
+	private BizPoHeaderService bizPoHeaderService;
+	@Autowired
+	private BizPoPaymentOrderService bizPoPaymentOrderService;
 
 	public static final String REQUEST_DETAIL_TABLE_NAME = "biz_request_detail";
 
@@ -127,7 +135,12 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		BizRequestHeader entity = null;
 		if (id!=null){
 			entity = bizRequestHeaderForVendorService.get(id);
-
+			if (entity.getCommonProcess() != null && entity.getCommonProcess().getId() != null) {
+				List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
+				bizPoHeaderService.getCommonProcessListFromDB(entity.getCommonProcess().getId(), commonProcessList);
+				Collections.reverse(commonProcessList);
+				entity.setCommonProcessList(commonProcessList);
+			}
 			BizRequestDetail bizRequestDetail = new BizRequestDetail();
 			bizRequestDetail.setRequestHeader(entity);
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
@@ -209,6 +222,15 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	public String form(BizRequestHeader bizRequestHeader, Model model) {
 		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
 		if (bizRequestHeader.getId() != null) {
+			BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+			bizPoPaymentOrder.setPoHeaderId(bizRequestHeader.getId());
+			bizPoPaymentOrder.setType(PoPayMentOrderTypeEnum.REQ_TYPE.getType());
+			bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
+			List<BizPoPaymentOrder> payList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+			if (CollectionUtils.isNotEmpty(payList)) {
+				bizPoPaymentOrder = payList.get(0);
+			}
+			bizRequestHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
 			BizRequestDetail bizRequestDetail = new BizRequestDetail();
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
 			if (!ReqHeaderStatusEnum.CLOSE.getState().equals(bizRequestHeader.getBizStatus())
@@ -516,7 +538,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:audit")
 	@RequestMapping(value = "startAudit")
 	@ResponseBody
-	public String startAudit(HttpServletRequest request, int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, @RequestParam(defaultValue = "1") Integer auditType, String desc) {
+	public String startAudit(HttpServletRequest request, Integer id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, Integer auditType, String desc) {
 		Pair<Boolean, String> result = bizRequestHeaderForVendorService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
 		if (result.getLeft()) {
 			return JsonUtil.generateData(result, request.getParameter("callback"));

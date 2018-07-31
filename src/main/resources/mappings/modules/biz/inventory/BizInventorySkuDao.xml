@@ -86,9 +86,9 @@
 				AND a.inv_id = #{invInfo.id}
 			</if>
 			<if test="skuType != null and skuType != ''">
-				AND a.skuType = #{skuType}
+				AND a.sku_type = #{skuType}
 			</if>
-			<if test="vendor != null and vendor.id != null and vendor.id != ''">
+			<if test="vendor != null and vendor.id != null">
 				AND a.vend_id = #{vendor.id}
 			</if>
 			<if test="invInfo != null and invInfo.customer!= null and invInfo.customer.id !=null and invInfo.customer.id != ''">
@@ -224,7 +224,7 @@
 			<if test="cust!=null and cust.id!=null and cust.id!=''">
 				cust_id,
 			</if>
-			<if test="skuType != null and skuType != ''">
+			<if test="skuType != null">
 				sku_type,
 			</if>
 			vend_id,

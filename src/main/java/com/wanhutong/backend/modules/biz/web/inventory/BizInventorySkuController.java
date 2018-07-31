@@ -177,15 +177,15 @@ public class BizInventorySkuController extends BaseController {
                 //商品
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                 BizInventoryInfo inventoryInfo = new BizInventoryInfo();
-                if (odArr.length != 3) {
+                if (odArr.length != 4) {
                     continue;
                 }
                 inventoryInfo = bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
                 BizInventorySku bizInventorySku = new BizInventorySku();
                 bizInventorySku.setInvInfo(inventoryInfo);
                 bizInventorySku.setSkuInfo(bizSkuInfo);
-//                bizInventorySku.setSkuType();
-//                bizInventorySku.setVendor();
+                bizInventorySku.setSkuType(Integer.valueOf(odArr[3]));
+                bizInventorySku.setVendor(bizSkuInfo.getProductInfo().getOffice());
                 List<BizInventorySku> invSkuList = bizInventorySkuService.findList(bizInventorySku);
                 if (invSkuList != null && invSkuList.size() > 0) {
                     flag = "true";

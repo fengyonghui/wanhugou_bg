@@ -792,10 +792,10 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(paymentOrderId);
 
         if (bizPoPaymentOrder.getBizStatus() != BizPoPaymentOrder.BizStatus.NO_PAY.getStatus() && PoPayMentOrderTypeEnum.PO_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
-            LOGGER.warn("[exception]BizPoHeaderController payOrder currentType mismatching [{}][{}][{}]", poHeaderId, paymentOrderId,bizPoPaymentOrder.getType());
+            LOGGER.warn("[exception]BizPoHeaderController payOrder currentType mismatching [{}][{}][{}]", poHeaderId, paymentOrderId, bizPoPaymentOrder.getType());
             return "操作失败,当前状态有误!";
         } else if (bizPoPaymentOrder.getBizStatus() != BizPoPaymentOrder.BizStatus.NO_PAY.getStatus() && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
-            LOGGER.warn("[exception]BizRequestHeaderController payOrder currentType mismatching [{}][{}][{}]", reqHeaderId, paymentOrderId,bizPoPaymentOrder.getType());
+            LOGGER.warn("[exception]BizRequestHeaderController payOrder currentType mismatching [{}][{}][{}]", reqHeaderId, paymentOrderId, bizPoPaymentOrder.getType());
             return "操作失败,当前状态有误!";
         }
 
@@ -824,14 +824,17 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         } else {
             BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(reqHeaderId);
             Integer bizStatus = bizRequestHeader.getBizStatus();
-            bizRequestHeader.setBizStatus(bizRequestHeader.getBalanceTotal().add(payTotal).compareTo(BigDecimal.valueOf(bizRequestHeader.getTotalDetail())) >= 0 ? ReqHeaderStatusEnum.VEND_ALL_PAY.getState() : ReqHeaderStatusEnum.VEND_INITIAL_PAY.getState());
-            bizRequestHeaderForVendorService.saveRequestHeader(bizRequestHeader);
-            if (!bizStatus.equals(bizRequestHeader.getBizStatus())) {
-                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(),BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(),bizRequestHeader.getId());
+            Integer status = (bizRequestHeader.getBalanceTotal() == null ? BigDecimal.valueOf(0) : bizRequestHeader.getBalanceTotal()).add(payTotal).compareTo(BigDecimal.valueOf(bizRequestHeader.getTotalDetail())) >= 0 ? ReqHeaderStatusEnum.VEND_ALL_PAY.getState() : ReqHeaderStatusEnum.VEND_INITIAL_PAY.getState();
+            if ((ReqHeaderStatusEnum.VEND_INITIAL_PAY.getState().equals(status) && bizStatus < ReqHeaderStatusEnum.VEND_INITIAL_PAY.getState()) || ReqHeaderStatusEnum.VEND_ALL_PAY.getState().equals(status)) {
+                bizRequestHeaderForVendorService.updateBizStatus(reqHeaderId, status);
+                if (!bizStatus.equals(status)) {
+                    bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+                }
             }
             bizRequestExpandDao.incrPayTotal(bizRequestExpandDao.getIdByRequestHeaderId(bizRequestHeader.getId()), payTotal);
+            // 清除关联的支付申请单
+            bizRequestExpandDao.updatePaymentOrderId(bizRequestExpandDao.getIdByRequestHeaderId(reqHeaderId), null);
         }
-
         return "操作成功!";
     }
 
