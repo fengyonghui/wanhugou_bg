@@ -130,6 +130,7 @@
 		a.update_id AS "updateBy.id",
 		us.name as "updateBy.name",
 		a.update_time AS "updateDate",
+		s.id AS "centerId",
 		s.name as "centersName",
 		con.id AS "con.id",
 		con.name AS "con.name"

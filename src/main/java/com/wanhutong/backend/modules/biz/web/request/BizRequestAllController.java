@@ -285,7 +285,13 @@ public class BizRequestAllController {
             }
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
-            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+            List<BizOrderDetail> orderDetailList;
+            if (bizStatu == 0) {
+                bizOrderDetail.setSuplyis(new Office(bizOrderHeader.getCenterId()));
+                orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+            } else {
+                orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+            }
             orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
             if (orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
                 CommonImg commonImg = new CommonImg();

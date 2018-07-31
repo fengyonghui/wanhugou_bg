@@ -153,7 +153,7 @@
                                 tr_tds += "<td>" + detail.skuInfo.name + "</td><td>" + detail.vendor.name + "</td><td>" + (detail.skuInfo.itemNo == undefined ? "" : detail.skuInfo.itemNo) + "</td><td>" + detail.skuInfo.partNo + "</td><td>" + detail.skuInfo.skuPropertyInfos + "</td>";
                                 if (bizStatus == 0) {
                                     tr_tds += "<td>" + selecttd + "</td>";
-                                    tr_tds += "<td>" + skuType + "<td>";
+                                    tr_tds += "<td>" + skuType + "</td>";
                                 }
                                 tr_tds += "<td>" + detail.ordQty + "</td><td>" + detail.sentQty + "</td>";
                                 if (detail.ordQty == detail.sentQty) {
@@ -362,6 +362,7 @@
                         <th>商品属性</th>
                         <c:if test="${bizInvoice.bizStatus==0}">
                             <th>选择仓库</th>
+                            <th>选择货权方</th>
                         </c:if>
                         <th>采购数量</th>
                         <th>已发货数量</th>
@@ -391,6 +392,7 @@
                         <th>商品属性</th>
                         <c:if test="${bizInvoice.bizStatus==0}">
                             <th>选择仓库</th>
+                            <th>选择货权方</th>
                         </c:if>
                         <th>采购数量</th>
                         <th>已发货数量</th>

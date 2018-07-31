@@ -201,7 +201,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             BizInventoryInfo inventoryInfo = bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
                             bizInventorySku.setInvInfo(inventoryInfo);
                             bizInventorySku.setSkuType(Integer.parseInt(odArr[3]));
-                            bizInventorySku.setVendor(bizSkuInfo.getProductInfo().getOffice());
+                            if (InventorySkuTypeEnum.VENDOR_TYPE.getType().equals(Integer.parseInt(odArr[3]))) {
+                                bizInventorySku.setVendor(bizSkuInfo.getProductInfo().getOffice());
+                            }
                         }
                         bizInventorySku.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
                         List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);

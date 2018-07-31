@@ -28,6 +28,7 @@ import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryVi
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -185,7 +186,9 @@ public class BizInventorySkuController extends BaseController {
                 bizInventorySku.setInvInfo(inventoryInfo);
                 bizInventorySku.setSkuInfo(bizSkuInfo);
                 bizInventorySku.setSkuType(Integer.valueOf(odArr[3]));
-                bizInventorySku.setVendor(bizSkuInfo.getProductInfo().getOffice());
+                if (InventorySkuTypeEnum.VENDOR_TYPE.getType().equals(Integer.valueOf(odArr[3]))) {
+                    bizInventorySku.setVendor(bizSkuInfo.getProductInfo().getOffice());
+                }
                 List<BizInventorySku> invSkuList = bizInventorySkuService.findList(bizInventorySku);
                 if (invSkuList != null && invSkuList.size() > 0) {
                     flag = "true";
