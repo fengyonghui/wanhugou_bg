@@ -67,6 +67,7 @@
 											}
 										}else {
 											startBtn = ''
+											classBtn = ''
 										}
 									} else {
 										startBtn = '开启审核'
@@ -79,10 +80,13 @@
 									
 									var applyStatus = item.process.bizStatus;
 									/*有没有申请支付单*/
+									var ApplyPayListBtn ='';
 									if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
 										payBtn = '申请付款';
+										ApplyPayListBtn = 'ApplyPayListBtn'
 									} else {
 										payBtn = ''
+										ApplyPayListBtn = ''
 									}
 									pHtmlList += '<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">' +
 										'<div class="mui-input-row">' +
@@ -105,8 +109,8 @@
 										'<div class="mui-col-xs-3">' +
 										'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
 										'</div>' +
-										'<div class="mui-col-xs-3 ApplyPayListBtn">' +
-										'<li class="mui-table-view-cell paying" listId="' + item.id + '" poId="' + item.id + '">' + payBtn + '</li>' +
+										'<div class="mui-col-xs-3 '+ApplyPayListBtn+'">' +
+										'<li class="mui-table-view-cell" listId="' + item.id + '" poId="' + item.id + '">' + payBtn + '</li>' +
 										'</div>' +
 										'<div class="mui-col-xs-4 payListBtn" listId="' + item.id + '">' +
 										'<li class="mui-table-view-cell">支付申请列表</li>' +
@@ -162,7 +166,7 @@
 					
 			}),
 			/*申请付款*/
-			$('.listBlue').on('tap', '.paying', function() {
+			$('.listBlue').on('tap', '.ApplyPayListBtn', function() {
 				var url = $(this).attr('url');
 				var poId = $(this).attr('poId');
 				if(url) {
@@ -356,10 +360,13 @@
 									
 									var applyStatus = item.process.bizStatus;
 									/*有没有申请支付单*/
+									var ApplyPayListBtn ='';
 									if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
 										payBtn = '申请付款';
+										ApplyPayListBtn = 'ApplyPayListBtn'
 									} else {
 										payBtn = ''
+										ApplyPayListBtn = ''
 									}
 									pHtmlList += '<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">' +
 										'<div class="mui-input-row">' +
@@ -382,8 +389,8 @@
 										'<div class="mui-col-xs-3">' +
 										'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
 										'</div>' +
-										'<div class="mui-col-xs-3 ApplyPayListBtn">' +
-										'<li class="mui-table-view-cell paying" listId="' + item.id + '" poId="' + item.id + '">' + payBtn + '</li>' +
+										'<div class="mui-col-xs-3 '+ApplyPayListBtn+'">' +
+										'<li class="mui-table-view-cell" listId="' + item.id + '" poId="' + item.id + '">' + payBtn + '</li>' +
 										'</div>' +
 										'<div class="mui-col-xs-4 payListBtn" listId="' + item.id + '">' +
 										'<li class="mui-table-view-cell">支付申请列表</li>' +

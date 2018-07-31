@@ -4,10 +4,12 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+		this.deleteBtnFlag = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
+			this.getPermissionList()
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -90,6 +92,7 @@
 									}
 								/*审核按钮*/	
 									var inCheck = '';
+									var inCheckBtn='';
 									if (item.commonProcess.requestOrderProcess.code) {
 								 		var codeNum = item.commonProcess.requestOrderProcess.code;
 									}
@@ -98,23 +101,34 @@
 										var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 										if(item.commonProcess && fileRoleData.length>0 && bizstatus<5 && codeNum != -1) {
 											inCheck = '审核'
+											inCheckBtn='inCheckBtn'
+											
 										}else {
 											inCheck = ''
+											inCheckBtn=''
 										}
 									}
-								/*付款按钮*/
 									var inPay = '';
-									if(bizstatus==35 || bizstatus==40 || item.recvTotal == item.totalMoney) {
-										inPay = ''
-									}else {
-										inPay = '付款'
-									}
-								/*取消按钮*/	
 									var inCancel = '';
-									if(bizstatus<5) {
-										inCancel = '取消'
-									}else {
-										inCancel = ''
+									var inPayBtn = '';
+									var inCancelBtn = '';
+									if(_this.deleteBtnFlag == true){
+										/*付款按钮*/
+										if(bizstatus==35 || bizstatus==40 || item.recvTotal == item.totalMoney) {
+											inPay = ''
+											inPayBtn = ''
+										}else {
+											inPay = '付款'
+											inPayBtn = 'inPayBtn'
+										}
+										/*取消按钮*/	
+										if(bizstatus<5) {
+											inCancel = '取消'
+											inCancelBtn = 'inCancelBtn'
+										}else {
+											inCancel = ''
+											inCancelBtn = ''
+										}
 									}
 								/*品类名称*/	
 									var varietyInfoName = '';
@@ -173,13 +187,13 @@
 											'<div class="mui-col-xs-2 inAmendBtn" inListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell" poId="'+ item.id +'">修改</li>' +
 											'</div>' +
-											'<div class="mui-col-xs-2 inCancelBtn" inListId="'+ item.id +'">' +
+											'<div class="mui-col-xs-2 '+inCancelBtn+'" inListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell"> '+inCancel+'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2 inPayBtn"  inListId="'+ item.id +'">' +
+											'<div class="mui-col-xs-2 '+inPayBtn+'"  inListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+inPay+'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2 inCheckBtn" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
+											'<div class="mui-col-xs-2 '+inCheckBtn+'" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
 												'<li class="mui-table-view-cell">'+ inCheck +'</li>' +
 											'</div>'+
 										'</div>' +
@@ -211,6 +225,20 @@
 			});
 //			_this.comfirDialig()
 		},
+		 getPermissionList: function () {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": "biz:request:bizRequestHeader:edit"},
+                async:false,
+                success: function(res){
+                    _this.deleteBtnFlag = res.data;
+//                  console.log(_this.deleteBtnFlag)
+                }
+            });
+        },
 		inHrefHtml: function() {
 			var _this = this;
 		/*查询*/
