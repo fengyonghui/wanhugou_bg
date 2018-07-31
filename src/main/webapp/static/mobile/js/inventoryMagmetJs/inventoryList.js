@@ -122,6 +122,7 @@
 										varietyInfoName = item.varietyInfo.name
 									}else {
 										varietyInfoName = ''
+										
 									}
 									var checkStatus = '';
 									if(item.commonProcess.requestOrderProcess) {

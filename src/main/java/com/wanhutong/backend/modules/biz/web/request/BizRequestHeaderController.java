@@ -591,7 +591,8 @@ public class BizRequestHeaderController extends BaseController {
 	@RequestMapping(value = "audit")
 	@ResponseBody
 	public String audit(int id, String currentType, int auditType, String description) {
-		return bizRequestHeaderService.audit(id, currentType, auditType, description);
+		String result = bizRequestHeaderService.audit(id, currentType, auditType, description);
+		return JsonUtil.generateData(result, null);
 	}
 
 	@ResponseBody

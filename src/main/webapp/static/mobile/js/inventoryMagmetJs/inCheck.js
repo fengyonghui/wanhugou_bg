@@ -82,10 +82,29 @@
 //			var len = data.bizPoHeader.commonProcessList.length
 			$.each(data.statusList, function(i, item) {
 //				console.log(item)
-				
 				var checkBizStatus = '';
 				if(item.bizStatus==0) {
 					checkBizStatus = '未审核'
+				}else if(item.bizStatus==1) {
+					checkBizStatus = '首付款支付'
+				}else if(item.bizStatus==2) {
+					checkBizStatus = '全部支付'
+				}else if(item.bizStatus==5) {
+					checkBizStatus = '审核通过'
+				}else if(item.bizStatus==10) {
+					checkBizStatus = '采购中'
+				}else if(item.bizStatus==15) {
+					checkBizStatus = '采购完成'
+				}else if(item.bizStatus==20) {
+					checkBizStatus = '备货中'
+				}else if(item.bizStatus==25) {
+					checkBizStatus = '供货完成'
+				}else if(item.bizStatus==30) {
+					checkBizStatus = '收货完成'
+				}else if(item.bizStatus==35) {
+					checkBizStatus = '关闭'
+				}else {
+					checkBizStatus = ''
 				}
 				var step = i + 1;
 				pHtmlList +='<li class="step_item">'+
