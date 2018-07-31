@@ -86,6 +86,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * */
 	private BizVarietyInfo varietyInfo;
 
+	/**
+	 * 排产类型: 0:按订单排产， 1:按商品排产
+	 */
+	private Integer schedulingType;
+
 	private List<BizRequestDetail> requestDetailList;
 
 	private List<BizPoDetail> poDetailList;
@@ -607,5 +612,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
 		this.commonProcessList = commonProcessList;
+	}
+
+	public Integer getSchedulingType() {
+		return schedulingType;
+	}
+
+	public void setSchedulingType(Integer schedulingType) {
+		this.schedulingType = schedulingType;
 	}
 }

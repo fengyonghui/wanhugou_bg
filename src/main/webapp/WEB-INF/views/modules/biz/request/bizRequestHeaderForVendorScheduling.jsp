@@ -25,6 +25,7 @@
                 $("#fromType2").prop("checked","checked");
             }
             $("#fromOfficeButton").hide();
+
             var officeId = $("#officeId").val();
             $.ajax({
                 type:"post",
@@ -156,8 +157,14 @@
                 dataType:'json',
                 success: function (result) {
                     var totalOrdQty = result['totalOrdQty'];
-                    var toalSchedulingNum = result['toalSchedulingNum'];
+                    $("#totalOrdQty").val(totalOrdQty)
+                    var toalSchedulingNum = result['toalSchedulingNum'] == null ? 0 : result['toalSchedulingNum'];
+                    $("#toalSchedulingNum").val(toalSchedulingNum)
+                    $("#totalSchedulingNumToDo").val(parseInt(totalOrdQty) - parseInt(toalSchedulingNum))
                     if (totalOrdQty != null && toalSchedulingNum != null && totalOrdQty == toalSchedulingNum) {
+                        $("#addSchedulingHeaderPlanBtn").hide();
+                        $("#saveSubmit").hide();
+                        $("#schedulingPanAlert").show();
                         $("#batchSubmit").hide();
                     }
                 },
@@ -165,6 +172,104 @@
                     console.info(error);
                 }
             });
+        }
+
+        function addSchedulingHeaderPlan(id) {
+            var appendTr = $("#" + id);
+            var html = '<tr><td><div name="' + id + '"><label>排产日期' + '：' + '</label><input name="' + id + '_date' + '" type="text" maxlength="20" class="input-medium Wdate" ';
+            html += ' onclick="' + "WdatePicker({dateFmt:'" + "yyyy-MM-dd HH:mm:ss',isShowClear" + ":" + 'true});"/>' + ' &nbsp; '
+            html += ' <label>排产数量：</label> ';
+            html += ' <input name="' + id + "_value" + '" class="input-medium" type="text" maxlength="30"/>';
+            html += ' <input class="btn" type="button" value="删除" onclick="removeSchedulingHeaderPlan(this)"/></div></td></tr>'
+			console.log(html)
+            appendTr.after(html)
+        }
+
+        function removeSchedulingHeaderPlan(btn) {
+            var rootDiv = btn.parentElement.parentElement.remove();
+        }
+
+
+        function saveComplete(id) {
+            var divArray = $("[name='" + id + "']");
+            var params = new Array();
+            var totalCompleteNum = 0;
+            for(i=0;i<divArray.length;i++){
+                var div = divArray[i];
+                var jqDiv = $(div);
+                var date = jqDiv.find("[name='" + id + "_date']").val();
+                var value = jqDiv.find("[name='" + id + "_value']").val();
+                if(date == null || date == ""){
+                    alert("排产日期不能为空!")
+                    return false;
+                }
+                var reg= /^[0-9]+[0-9]*]*$/;
+                if(value == null || value == "" || parseInt(value)<=0 || !reg.test(value)){
+                    alert("确认值输入不正确!")
+                    return false;
+                }
+                var entity = {};
+                entity.schedulingId = id;
+                entity.planDate=date;
+                entity.completeNum=value;
+                params[i]=entity;
+
+                totalCompleteNum = parseInt(totalCompleteNum) + parseInt(value);
+            }
+            var schedulingNum = $(eval("schedulingNum_" + id)).text();
+            var sumCompleteNum = $(eval("sumCompleteNum_" + id)).text();
+            if (sumCompleteNum == null || sumCompleteNum == "") {
+                sumCompleteNum = 0;
+            }
+            if((parseInt(sumCompleteNum) + parseInt(totalCompleteNum)) > parseInt(schedulingNum)) {
+                alert("确认值输入太大，请从新输入!")
+                return false
+            }
+
+            if(confirm("确定执行该排产确认吗？")) {
+                $Mask.AddLogo("正在加载");
+                $.ajax({
+                    url: '${ctx}/biz/po/bizPoHeader/saveCompletePlan',
+                    contentType: 'application/json',
+                    data:JSON.stringify(params),
+                    datatype:"json",
+                    type: 'post',
+                    success: function (result) {
+                        if(result == true) {
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${bizRequestHeader.id} + "&forward=confirmScheduling";
+                        }
+                    },
+                    error: function (error) {
+                        console.info(error);
+                    }
+                });
+            }
+        }
+
+		//按商品查询排产
+        function addSchedulingSkuPlanBtn(id) {
+            var appendTr = $("#addSchedulingSkuPlanBtn");
+            var html = '<tr><td><div name="' + id + '"><label>排产日期' + '：' + '</label><input name="' + id + '_date' + '" type="text" maxlength="20" class="input-medium Wdate" ';
+            html += ' onclick="' + "WdatePicker({dateFmt:'" + "yyyy-MM-dd HH:mm:ss',isShowClear" + ":" + 'true});"/>' + ' &nbsp; '
+            html += ' <label>排产数量：</label> ';
+            html += ' <input name="' + id + "_value" + '" class="input-medium" type="text" maxlength="30"/>';
+            html += ' <input class="btn" type="button" value="删除" onclick="removeSchedulingHeaderPlan(this)"/></div></tr></td>'
+            appendTr.after(html)
+        }
+
+
+
+        function choose(obj) {
+            $(obj).attr('checked', true);
+            if ($(obj).val() == 0) {
+                $("#stockGoods").show();
+                $("#schedulingPlan_forHeader").show();
+                $("#schedulingPlan_forSku").hide();
+            } else {
+                $("#stockGoods").hide();
+                $("#schedulingPlan_forHeader").hide();
+                $("#schedulingPlan_forSku").show();
+            }
         }
 
 	</script>
@@ -264,8 +369,16 @@
 			</div>
 		</div>
 
-			<div class="control-group">
-			<label class="control-label">备货商品：</label>
+		<div class="control-group">
+			<label class="control-label">排产类型：</label>
+			<div class="controls">
+				<form:radiobutton id="deliveryStatus0" path="schedulingType" checked="true" onclick="choose(this)" value="0"/>按订单排产
+				<form:radiobutton id="deliveryStatus1" path="schedulingType" onclick="choose(this)"  value="1"/>按商品排产
+			</div>
+		</div>
+
+		<div class="control-group" id="stockGoods">
+		<label class="control-label">备货商品：</label>
 			<div class="controls">
 			<table id="contentTable" style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
 				<thead>
@@ -299,9 +412,9 @@
 							<th>采购数量</th>
 						</c:if>
 					</c:if>
-					<th>已排产数量</th>
-					<th>待排产数量</th>
-					<th>操作</th>
+					<%--<th>已排产数量</th>--%>
+					<%--<th>待排产数量</th>--%>
+					<%--<th>操作</th>--%>
 				</tr>
 				</thead>
 				<tbody id="prodInfo">
@@ -354,26 +467,25 @@
 									<td>${reqDetail.reqQty}</td>
 								</c:if>
 							</c:if>
-							<td id="sumSchedulingNum_${state.index+1}">${reqDetail.sumSchedulingNum}</td>
-							<td>
-								<input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}"
-									   htmlEscape="false" maxlength="30" class="input-xlarge "/>
-							</td>
-							<td>
-								<c:choose>
-									<c:when test="${reqDetail.reqQty != reqDetail.sumSchedulingNum}">
-										<input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${reqDetail.id}')" value="保存"/>&nbsp;
-									</c:when>
-									<c:otherwise>
-										<span style="color:red; ">已排产完成</span>
-									</c:otherwise>
-								</c:choose>
-							</td>
+							<%--<td id="sumSchedulingNum_${state.index+1}">${reqDetail.sumSchedulingNum}</td>--%>
+							<%--<td>--%>
+								<%--<input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}"--%>
+									   <%--htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+							<%--</td>--%>
+							<%--<td>--%>
+								<%--<c:choose>--%>
+									<%--<c:when test="${reqDetail.reqQty != reqDetail.sumSchedulingNum}">--%>
+										<%--<input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${reqDetail.id}')" value="保存"/>&nbsp;--%>
+									<%--</c:when>--%>
+									<%--<c:otherwise>--%>
+										<%--<span style="color:red; ">已排产完成</span>--%>
+									<%--</c:otherwise>--%>
+								<%--</c:choose>--%>
+							<%--</td>--%>
 						</tr>
 						<c:if test="${state.last}">
 							<c:set var="aa" value="${state.index}" scope="page"/>
 						</c:if>
-
 					</c:forEach>
 					<input id="aaId" value="${aa}" type="hidden"/>
 				</c:if>
@@ -381,6 +493,153 @@
 			</table>
 			</div>
 		</div>
+
+
+		<div class="control-group" id="schedulingPlan_forHeader">
+			<label class="control-label">按订单排产：</label>
+			<div class="controls">
+				<table  id="" style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
+					<tr>
+						<td>
+							<label>总申报数量：</label>
+							<input id="totalOrdQty" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
+							&nbsp;
+							<label>已排产数量：</label>
+							<input id="toalSchedulingNum" name='reqQtys' readonly="readonly" value="10" class="input-mini" type='text'/>
+							&nbsp;
+							<label>总待排产量：</label>
+							<input id="totalSchedulingNumToDo" name='reqQtys' readonly="readonly" value="10" class="input-mini" type='text'/>
+							&nbsp;
+							<input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan(${entity.id})"/>
+							&nbsp;
+							<input id="saveSubmit" class="btn btn-primary" type="button" onclick="saveComplete(${entity.id})" value="保存"/>
+							<span id="schedulingPanAlert" style="color:red; display:none" >已排产完成</span>
+						</td>
+					</tr>
+					<tr id="${entity.id}">
+						<td>
+							<div name="${entity.id}">
+								<label>排产日期：</label>
+								<input name="${entity.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;
+								<label>排产数量：</label>
+								<input name="${entity.id}_value" class="input-medium" type="text" maxlength="30" />
+							</div>
+						</td>
+					</tr>
+				</table>
+
+			</div>
+		</div>
+
+
+
+		<div class="control-group" id="schedulingPlan_forSku" style="display: none">
+			<label class="control-label">按商品排产：</label>
+			<div class="controls">
+				<table id="" style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
+					<thead>
+					<tr>
+						<th>产品图片</th>
+						<th>品牌名称</th>
+						<th>供应商</th>
+						<th>商品名称</th>
+						<th>商品编码</th>
+						<th>商品货号</th>
+						<th>价格</th>
+						<th>申报数量</th>
+						<th>总金额</th>
+						<%--<th>已排产数量</th>--%>
+						<%--<th>待排产数量</th>--%>
+						<%--<th>操作</th>--%>
+					</tr>
+					</thead>
+					<tbody>
+					<c:if test="${reqDetailList!=null}">
+						<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="state">
+							<tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
+								<td id="detailId_${state.index+1}" style="display: none">${reqDetail.id}</td>
+								<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}" width="100" height="100" /></td>
+								<td>${reqDetail.skuInfo.productInfo.brandName}</td>
+								<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
+										${reqDetail.skuInfo.productInfo.office.name}</a></td>
+								<td>${reqDetail.skuInfo.name}</td>
+								<td>${reqDetail.skuInfo.partNo}</td>
+								<td>${reqDetail.skuInfo.itemNo}</td>
+									<%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
+								<td style="white-space: nowrap">
+										${reqDetail.unitPrice}
+								</td>
+								<td>
+									<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
+									<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
+									<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>
+									<input id="reqQty_${state.index+1}" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
+								</td>
+								<td>
+										${reqDetail.unitPrice * reqDetail.reqQty}
+								</td>
+								<%--<td id="sumSchedulingNum_${state.index+1}">${reqDetail.sumSchedulingNum}</td>--%>
+								<%--<td>--%>
+									<%--<input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}"--%>
+										   <%--htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+								<%--</td>--%>
+								<%--<td>--%>
+									<%--<c:choose>--%>
+										<%--<c:when test="${reqDetail.reqQty != reqDetail.sumSchedulingNum}">--%>
+											<%--<input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${reqDetail.id}')" value="保存"/>&nbsp;--%>
+										<%--</c:when>--%>
+										<%--<c:otherwise>--%>
+											<%--<span style="color:red; ">已排产完成</span>--%>
+										<%--</c:otherwise>--%>
+									<%--</c:choose>--%>
+								<%--</td>--%>
+							</tr>
+							<c:if test="${state.last}">
+								<c:set var="aa" value="${state.index}" scope="page"/>
+							</c:if>
+
+							<tr>
+								<td colspan="10">
+									<table  id="" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
+										<tr>
+											<td>
+												<label>总申报数量：</label>
+												<input id="totalOrdQtyForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
+												&nbsp;
+												<label>已排产数量：</label>
+												<input id="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumSchedulingNum}" class="input-mini" type='text'/>
+												&nbsp;
+												<label>已待排产量：</label>
+												<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}" class="input-mini" type='text'/>
+												&nbsp;
+												<input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingSkuPlanBtn(${entity.id})"/>
+												<input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete(${entity.id})" value="保存"/>
+												<span id="schedulingPanAlertForSku" style="color:red; display:none" >已排产完成</span>
+											</td>
+										</tr>
+										<tr id="addSchedulingSkuPlanBtn">
+											<td>
+												<div>
+													<label>排产日期：</label>
+													<input name="${entity.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;
+													<label>排产数量：</label>
+													<input name="${entity.id}_value" class="input-medium" type="text" maxlength="30" />
+												</div>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</c:forEach>
+						<input id="aaId" value="${aa}" type="hidden"/>
+					</c:if>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+
+
 
 		<div class="form-actions">
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>

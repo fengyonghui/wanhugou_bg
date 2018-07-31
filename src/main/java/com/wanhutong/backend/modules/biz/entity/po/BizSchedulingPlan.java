@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,6 +43,11 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
      * 确认排产list
      */
     private List<BizCompletePaln> completePalnList;
+
+	/**
+	 * 排产日期
+	 */
+	private Date planDate;		// 排产日期
 
 	public BizSchedulingPlan() {
 		super();
@@ -123,5 +129,13 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 
 	public void setSumCompleteNum(Integer sumCompleteNum) {
 		this.sumCompleteNum = sumCompleteNum;
+	}
+
+	public Date getPlanDate() {
+		return planDate;
+	}
+
+	public void setPlanDate(Date planDate) {
+		this.planDate = planDate;
 	}
 }
