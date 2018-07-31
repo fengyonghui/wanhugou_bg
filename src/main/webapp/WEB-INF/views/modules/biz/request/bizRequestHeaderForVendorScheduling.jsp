@@ -191,11 +191,12 @@
 
 
         function saveComplete(id) {
-            var divArray = $("[name='" + id + "']");
+            var trArray = $("[name='" + id + "']");
             var params = new Array();
-            var totalCompleteNum = 0;
-            for(i=0;i<divArray.length;i++){
-                var div = divArray[i];
+            var originalNum = $("#totalOrdQty").val();
+            var totalSchedulingNum = 0;
+            for(i=0;i<trArray.length;i++){
+                var div = trArray[i];
                 var jqDiv = $(div);
                 var date = jqDiv.find("[name='" + id + "_date']").val();
                 var value = jqDiv.find("[name='" + id + "_value']").val();
@@ -204,32 +205,32 @@
                     return false;
                 }
                 var reg= /^[0-9]+[0-9]*]*$/;
-                if(value == null || value == "" || parseInt(value)<=0 || !reg.test(value)){
+                if(value == null || value == "" || parseInt(value)<=0 || parseInt(value) > originalNum || !reg.test(value)){
                     alert("确认值输入不正确!")
                     return false;
                 }
                 var entity = {};
-                entity.schedulingId = id;
+                entity.objectId = id;
+                entity.originalNum = originalNum;
+                entity.schedulingNum = value;
                 entity.planDate=date;
-                entity.completeNum=value;
                 params[i]=entity;
 
-                totalCompleteNum = parseInt(totalCompleteNum) + parseInt(value);
+                totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
             }
-            var schedulingNum = $(eval("schedulingNum_" + id)).text();
-            var sumCompleteNum = $(eval("sumCompleteNum_" + id)).text();
-            if (sumCompleteNum == null || sumCompleteNum == "") {
-                sumCompleteNum = 0;
-            }
-            if((parseInt(sumCompleteNum) + parseInt(totalCompleteNum)) > parseInt(schedulingNum)) {
-                alert("确认值输入太大，请从新输入!")
+//            var schedulingNum = $(eval("schedulingNum_" + id)).text();
+//            var sumCompleteNum = $(eval("sumCompleteNum_" + id)).text();
+//            if (sumCompleteNum == null || sumCompleteNum == "") {
+//                sumCompleteNum = 0;
+//            }
+            if(parseInt(totalSchedulingNum) > parseInt(originalNum)) {
+                alert("排产量总和太大，请从新输入!")
                 return false
             }
-
             if(confirm("确定执行该排产确认吗？")) {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
-                    url: '${ctx}/biz/po/bizPoHeader/saveCompletePlan',
+                    url: '${ctx}/biz/po/bizPoHeader/saveSchedulingPlan',
                     contentType: 'application/json',
                     data:JSON.stringify(params),
                     datatype:"json",

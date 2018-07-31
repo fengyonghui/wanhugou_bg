@@ -17,6 +17,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.BizCompletePalnDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizHeaderSchedulingDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizPoHeaderSchedulingDto;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -82,13 +83,7 @@ import java.math.BigDecimal;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 备货清单Controller
@@ -128,6 +123,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@Autowired
 	private BizPoPaymentOrderService bizPoPaymentOrderService;
 
+	public static final String REQUEST_HEADER_TABLE_NAME = "biz_request_header";
 	public static final String REQUEST_DETAIL_TABLE_NAME = "biz_request_detail";
 
 	@ModelAttribute
@@ -859,19 +855,27 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 	@RequestMapping(value = "saveSchedulingPlan")
 	@ResponseBody
-	public boolean saveSchedulingPlan(HttpServletRequest request, Integer detailId, Integer reqQty, Integer schedulingNum) {
-		BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
-		schedulingPlan.setObjectName(REQUEST_DETAIL_TABLE_NAME);
-		schedulingPlan.setObjectId(String.valueOf(detailId));
-		schedulingPlan.setOriginalNum(reqQty);
-		schedulingPlan.setSchedulingNum(schedulingNum);
+	public boolean saveSchedulingPlan(HttpServletRequest request, @RequestBody String params) {
+		List<BizHeaderSchedulingDto> dtoList = JsonUtil.parseArray(params, new TypeReference<List<BizHeaderSchedulingDto>>(){});
 		boolean boo = false;
-		try {
-			bizSchedulingPlanService.save(schedulingPlan);
-			boo = true;
-		} catch (Exception e) {
-			boo = false;
-			logger.error(e.getMessage());
+		for (int i=0; i <dtoList.size(); i++) {
+			BizHeaderSchedulingDto dto = dtoList.get(i);
+			BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
+			schedulingPlan.setObjectId(dto.getObjectId());
+			schedulingPlan.setObjectName(REQUEST_HEADER_TABLE_NAME);
+			schedulingPlan.setOriginalNum(dto.getOriginalNum());
+			schedulingPlan.setSchedulingNum(dto.getSchedulingNum());
+
+			try {
+				Scanner input=new Scanner(System.in);
+				bizSchedulingPlanService.save(schedulingPlan);
+				boo = true;
+			} catch (Exception e) {
+				boo = false;
+				logger.error(e.getMessage());
+				break;
+			}
+
 		}
 		return boo;
 	}
@@ -888,7 +892,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 			BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
 			schedulingPlan.setObjectName(REQUEST_DETAIL_TABLE_NAME);
-			schedulingPlan.setObjectId(String.valueOf(dto.getObjectId()));
+			schedulingPlan.setObjectId(dto.getObjectId());
 			schedulingPlan.setOriginalNum(dto.getOriginalNum());
 			schedulingPlan.setSchedulingNum(dto.getSchedulingNum());
 			try {

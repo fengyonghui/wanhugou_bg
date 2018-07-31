@@ -6,10 +6,6 @@ package com.wanhutong.backend.modules.biz.entity.dto;
  */
 public class BizHeaderSchedulingDto {
     /**
-     * id
-     */
-    public Integer id;
-    /**
      * 表ID
      */
     public Integer objectId;
@@ -25,14 +21,6 @@ public class BizHeaderSchedulingDto {
      * 已完成数量
      */
     public String planDate;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getObjectId() {
         return objectId;

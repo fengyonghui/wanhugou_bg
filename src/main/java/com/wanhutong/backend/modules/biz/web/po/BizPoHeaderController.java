@@ -94,14 +94,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 采购订单表Controller
@@ -988,7 +981,7 @@ public class BizPoHeaderController extends BaseController {
     public boolean saveSchedulingPlan(HttpServletRequest request, Integer detailId, Integer ordQty, Integer schedulingNum) {
         BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
         schedulingPlan.setObjectName(PO_DETAIL_TABLE_NAME);
-        schedulingPlan.setObjectId(String.valueOf(detailId));
+        schedulingPlan.setObjectId(detailId);
         schedulingPlan.setOriginalNum(ordQty);
         schedulingPlan.setSchedulingNum(schedulingNum);
         boolean boo = false;
@@ -1014,7 +1007,7 @@ public class BizPoHeaderController extends BaseController {
             }
             BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
             schedulingPlan.setObjectName(PO_DETAIL_TABLE_NAME);
-            schedulingPlan.setObjectId(String.valueOf(dto.getObjectId()));
+            schedulingPlan.setObjectId(dto.getObjectId());
             schedulingPlan.setOriginalNum(dto.getOriginalNum());
             schedulingPlan.setSchedulingNum(dto.getSchedulingNum());
             try {
