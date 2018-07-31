@@ -28,7 +28,7 @@
                 data: {id:_this.userInfo.inListId},
                 dataType: "json",
                 success: function(res){
-					console.log(res)
+//					console.log(res)
 					/*业务状态*/
 					var bizstatus = res.data.entity.bizStatus;
 					var bizstatusTxt = '';
@@ -69,6 +69,7 @@
 					$('#checkPoordNum').val(res.data.entity.reqNo)
 					$('#checkOrordNum').val(res.data.entity.fromOffice.name)
 					$('#inPoLastDa').val(_this.formatDateTime(res.data.entity.recvEta))
+					$('#currentType').val(res.data.entity.commonProcess.type)
 					_this.commodityHtml(res.data)
 					_this.statusListHtml(res.data)
                 }
@@ -76,11 +77,11 @@
 		},
 		statusListHtml:function(data){
 			var _this = this;
-			console.log(data)
+//			console.log(data)
 			var pHtmlList = '';
 //			var len = data.bizPoHeader.commonProcessList.length
 			$.each(data.statusList, function(i, item) {
-				console.log(item)
+//				console.log(item)
 				
 				var checkBizStatus = '';
 				if(item.bizStatus==0) {
@@ -108,10 +109,10 @@
 		},
 		commodityHtml: function(data) {
 			var _this = this;
-			console.log(data)
+//			console.log(data)
 			var htmlCommodity = '';
 			$.each(data.reqDetailList, function(i, item) {
-				console.log(item)
+//				console.log(item)
 				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
 //		产品图片
 					'<div class="photoParent mui-pull-left position_Re">'+
@@ -231,23 +232,29 @@
 				url: "/a/biz/request/bizRequestHeader/audit",
 				data: {
 					id:_this.userInfo.inListId,
-					currentType:_this.userInfo.bizStatus,
+					currentType:$('#currentType').val(),
 					auditType:num,
 					description:inText
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret==true){
 						alert('操作成功!')
 						GHUTILS.OPENPAGE({
 						url: "../../html/inventoryMagmetHtml/inventoryList.html",
 						extras: {
-							bizStatus:bizStatus,
 							}
 						})
 					}
 					
+				},
+				error: function (e) {
+				    //服务器响应失败处理函数
+//				    console.info(data);
+//				    console.info(status);
+				    console.info(e);
+				    
 				}
 			});
 			
@@ -259,19 +266,18 @@
 				url: "/a/biz/request/bizRequestHeader/audit",
 				data: {
 					id:_this.userInfo.inListId,
-					currentType:_this.userInfo.bizStatus,
+					currentType:$('#currentType').val(),
 					auditType:num,
 					description:rejectTxt
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret==true){
 						alert('操作成功!')
 						GHUTILS.OPENPAGE({
 						url: "../../html/inventoryMagmetHtml/inventoryList.html",
 						extras: {
-							bizStatus:bizStatus,
 							}
 						})
 					}

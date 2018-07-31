@@ -24,7 +24,7 @@
                 data: {id: _this.userInfo.inListId},
                 dataType: "json",
                 success: function(res){
-                	console.log(res)
+//              	console.log(res)
                 	var shouldPayNum = res.data.entity.totalMoney - res.data.entity.recvTotal
                 	$('#shouldPay').val(shouldPayNum)
                 }
@@ -45,7 +45,7 @@
                     },
                     dataType: "json",
                     success: function(res){
-                    	console.log(res)
+//                  	console.log(res)
                     }
                 });
 			})

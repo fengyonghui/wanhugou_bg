@@ -16,7 +16,7 @@
 
 	ACCOUNT.prototype = {
 		init: function() {
-			this.hrefHtml('.newinput', '.input_div', );
+			this.hrefHtml('.newinput', '.input_div');
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
@@ -179,6 +179,7 @@
                                     '<label>申报数量:</label>' +
                                     '<input type="hidden" class="mui-input-clear" value="' + skuInfo.id + '">' +
                                     '<input type="text" class="mui-input-clear" placeholder="请输入申报数量" id="reqQty_'+ skuInfo.id +'">' +
+                                    '<font>*</font>'+
                                     '</div></li></div></div></div></div>';
                             });
                             t++;

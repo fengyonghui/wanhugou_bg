@@ -240,6 +240,16 @@
 					})
 				}
 			})
+			/*首页*/
+			$('#purchaseNav').on('tap','.inHomePage', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../html/backstagemgmt.html",
+					extras: {
+						
+					}
+				})
+			})
 		},
 		formatDateTime: function(unix) {
 			var now = new Date(parseInt(unix) * 1);
@@ -328,7 +338,7 @@
 										if(item.process.purchaseOrderProcess.roleEnNameEnum) {
 											var DataRoleGener = item.process.purchaseOrderProcess.roleEnNameEnum;
 											var fileRoleData =  dataRow.filter(v => DataRoleGener.includes(v));
-											if(item.process && fileRoleData.length>0) {
+											if(item.process && fileRoleData.length>0 || dataRow[0]== 'DEPT' && code != 7 && code != -1) {
 												startBtn = '审核'
 												classBtn = 'shenHe'
 											}

@@ -156,7 +156,8 @@
 				color: red;
 				position: absolute;
 				right: 60px;
-				top: 30%;
+				top: 38%;
+				font-size: 20px;
 			}
 			
 			.addBtnClass {
@@ -241,7 +242,18 @@
 			}
 			
 			.mui-input-row .mui-input-clear~.mui-icon-clear {
-				display: none;
+				right: 4.5em;
+    			top: 10px;
+			}
+			.inputClassAdd font {
+				color: red;
+			    position: absolute;
+			    right: 5px;
+			    top: 10%;
+			    font-size: 20px;
+			}
+			.inputClassAdd label {
+				color:#40ABE9;
 			}
 			
 		</style>
@@ -268,10 +280,12 @@
 					<input class="savedata" type="hidden" value=''>
 					<div style="clear:both"></div>
 				</div>
+				<font>*</font>
 			</div>
 			<div class="mui-input-row">
 				<label>收货时间：</label>
 				<input type="date" class="mui-input-clear" id="inPoLastDa">
+				<font>*</font>
 			</div>
 			<div class="mui-input-row app_mb10" id="inAmendPoLastDaDiv">
 				<label class="commodityName">选择商品：</label>

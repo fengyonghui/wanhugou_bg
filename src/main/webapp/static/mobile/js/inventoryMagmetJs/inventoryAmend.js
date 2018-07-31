@@ -33,7 +33,7 @@
 
     ACCOUNT.prototype = {
         init: function() {
-            this.hrefHtml('.newinput', '.input_div', );
+            this.hrefHtml('.newinput', '.input_div');
             this.pageInit(); //页面初始化
             //this.getData();//获取数据
 
@@ -183,7 +183,7 @@
                 _this.LineNos = _this.LineNos.substring(0,(_this.LineNos.lastIndexOf(",")))
 
                 var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
-                console.log("inPoLastDaVal=" + inPoLastDaVal);
+//              console.log("inPoLastDaVal=" + inPoLastDaVal);
 
                 var inPoRemarkVal = $("#inPoRemark").val(); //备注
                 var bizStatusVal = $("#inputDivAmend")[0].value; //业务状态
@@ -235,7 +235,7 @@
                 async:false,
                 success: function(res){
                     _this.deleteBtnFlag = res.data;
-                    console.log(_this.deleteBtnFlag)
+//                  console.log(_this.deleteBtnFlag)
                 }
             });
         },
@@ -463,6 +463,7 @@
                                         '<label>申报数量:</label>' +
                                         '<input type="hidden" class="mui-input-clear" value="' + skuInfo.id + '">' +
                                         '<input type="text" class="mui-input-clear" placeholder="请输入申报数量" id="reqQty_'+ skuInfo.id +'">' +
+                                        '<font>*</font>'+
                                         '</div></li></div></div></div></div>';
                             });
                             t++;

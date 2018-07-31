@@ -23,7 +23,7 @@
 			var _this = this;
 			$('#inSearchBtn').on('tap', function() {
 				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"))
-				console.log(optionsBusiness)
+//				console.log(optionsBusiness)
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
 							_this.sureSelect(optionsBusiness)
@@ -42,8 +42,8 @@
 		sureSelect:function(optionsBusiness){
 			var _this = this;
 				_this.selectOpen = false
-				var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"))
-			GHUTILS.OPENPAGE({
+				var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
+				GHUTILS.OPENPAGE({
 					url: "../../html/inventoryMagmetHtml/inventoryList.html",
 					extras: {
 						reqNo: $('.inOrdNum').val(),
@@ -100,7 +100,7 @@
 					}
 				})
 			$.each(reult, function(i, item) {
-				console.log(item)
+//				console.log(item)
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
@@ -119,7 +119,7 @@
 				success: function(res) {
 					_this.datagood = res
 					$.each(res, function(i, item) {
-						console.log(item)
+//						console.log(item)
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlList)
@@ -137,9 +137,9 @@
 				data: {type:'biz_req_status'},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					$.each(res, function(i, item) {
-						console.log(item)
+//						console.log(item)
 						htmlBusiness += '<option class="soption"  value="' + item.value + '">' + item.label + '</option>'
 					});
 					$('#input_div_business').html(optHtml+htmlBusiness)
@@ -157,9 +157,9 @@
 				data: {},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					$.each(res.data.varietyInfoList, function(i, item) {
-						console.log(item)
+//						console.log(item)
 						htmlClass += '<option class="soption" value="' + item.id + '">' + item.name + '</option>'
 					});
 					$('#input_div_class').html(optHtml+htmlClass)
