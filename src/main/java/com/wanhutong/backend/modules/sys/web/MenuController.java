@@ -100,10 +100,9 @@ public class MenuController extends BaseController {
 	 */
 	@RequestMapping(value = {"permissionList"})
 	@ResponseBody
-	public String permissionList(HttpServletRequest request, @RequestParam(value = "id", required = false)Integer id, @RequestParam(value = "marking") String marking) {
-		User user =  UserUtils.get(id);
+	public String permissionList1(HttpServletRequest request, @RequestParam(value = "marking") String marking) {
 		Boolean falg = false;
-		List<String> permissionAllList = UserUtils.getPermissionAllList(user);
+		List<String> permissionAllList = UserUtils.getPermissionAllList();
 		for (String permission:permissionAllList) {
 			if (permission.equals(marking)){
 				falg = true;

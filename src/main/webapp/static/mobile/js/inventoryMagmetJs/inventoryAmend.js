@@ -247,7 +247,7 @@
                 type: "GET",
                 url: "/a/sys/menu/permissionList",
                 dataType: "json",
-                data: {"id": id, "marking": "biz:request:bizRequestDetail:edit"},
+                data: {"marking": "biz:request:bizRequestDetail:edit"},
                 async:false,
                 success: function(res){
                     deleteBtnFlag = res.data;

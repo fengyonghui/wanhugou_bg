@@ -99,6 +99,7 @@ public class UserUtils {
 		removeCache(CACHE_AREA_LIST);
 		removeCache(CACHE_OFFICE_LIST);
 		removeCache(CACHE_OFFICE_ALL_LIST);
+		removeCache(CACHE_PERMISSION_LIST);
 		UserUtils.clearCache(getUser());
 	}
 	
@@ -235,19 +236,15 @@ public class UserUtils {
 		return categoryInfoList;
 	}
 
-
 	/**
-	 * 获取用户权限标示
-	 * @param user
+	 * 获取用户权限标识
 	 * @return
 	 */
-	public static List<String> getPermissionAllList(User user){
+	public static List<String> getPermissionAllList(){
 		@SuppressWarnings("unchecked")
 		List<String> permissionList = (List<String>)getCache(CACHE_PERMISSION_LIST);
 		if (permissionList == null){
-			if (user == null) {
-				user = getUser();
-			}
+			User user = UserUtils.getUser();
 			permissionList = menuDao.findAllPermissionList(user);
 			putCache(CACHE_PERMISSION_LIST, permissionList);
 		}
