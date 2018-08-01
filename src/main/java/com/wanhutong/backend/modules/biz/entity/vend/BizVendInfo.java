@@ -28,7 +28,7 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 	/**
 	 * 用于存放厂家退换货流程
 	 */
-	private String remark;
+	private String remarks;
 	/**
 	 * 银行卡号
 	 */
@@ -211,11 +211,11 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 		this.identityCardImgList = identityCardImgList;
 	}
 
-	public String getRemark() {
-		return remark;
+	public String getRemarks() {
+		return remarks;
 	}
 
-	public void setRemark(String remark) {
-		this.remark = remark;
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 }

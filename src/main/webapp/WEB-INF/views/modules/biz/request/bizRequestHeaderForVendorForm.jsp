@@ -178,50 +178,6 @@
 			}
 
         }
-        function checkInfo(obj,val) {
-        	var valNmu = $(obj).attr("findg");
-            var html = "<div style='padding:10px;'>输入驳回原因：<input type='text' id='remark2' name='remarkReject' value=''/>"+
-            		"<span class='help-inline'><font color='red'>*</font></span></div>";
-            var submit = function (v, h, f) {
-                if (f.yourname == '') {
-                    $.jBox.tip("请输入您的驳回原因", 'error', { focusId: "partNo" }); // 关闭设置 partNo 为焦点
-                    return false;
-                }
-                if($("#remark2").val()!=null && $("#remark2").val()!=""){
-					if (v === 'ok') {
-						$.ajax({
-							type:"post",
-							url:"${ctx}/biz/request/bizRequestHeaderForVendor/saveInfo",
-							data:{checkStatus:obj,id:$("#id").val(),remark:$("#remark").val(),remarkReject:$("#remark2").val()},
-							success:function (data) {
-								if(data){
-									alert(val+"成功！");
-									window.location.href="${ctx}/biz/request/bizRequestHeaderForVendor";
-								}
-							}
-						})
-					}
-					return true;
-                }else{
-                	alert(val+"内容不能为空!");
-                	checkInfo(obj,val);
-                }
-            };
-            $.jBox(html, { title: "驳回原因", submit: submit });
-        }
-        function checkInfo2(obj,val) {
-			$.ajax({
-				type:"post",
-				url:"${ctx}/biz/request/bizRequestHeaderForVendor/saveInfo",
-				data:{checkStatus:obj,id:$("#id").val(),remarkReject:"adopt"},
-				success:function (data) {
-					if(data){
-						alert(val+"成功！");
-						window.location.href="${ctx}/biz/request/bizRequestHeaderForVendor";
-					}
-				}
-			})
-        }
         function updateMoney() {
             if(confirm("确定修改价钱吗？")){
                 var skuPrice=$("#skuPrice").val();
@@ -351,7 +307,7 @@
                             $("#identityCards").append("<a href=\"" + identity.imgServer + identity.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + identity.imgServer + identity.imgPath + "\"></a>");
                         });
                     }
-                    $("#remark").val(data.remark);
+                    $("#remark").val(data.remarks);
                 }
 			});
         }
@@ -888,19 +844,9 @@
 				</c:if>
 			</shiro:hasPermission>
 			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
-
-				<%--<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.APPROVE.state}">--%>
-					<%--<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;--%>
-				<%--</c:if>--%>
-				<%--<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">--%>
-
-					<%--<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;--%>
-					<%--<input id="btnCheck" class="btn btn-primary" onclick="checkInfo2(${ReqHeaderStatusEnum.APPROVE.state},this.value)" type="button" value="审核通过"/>&nbsp;--%>
-				<%--</c:if>--%>
 				<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str != 'startAudit' && entity.str != 'createPay' && entity.str != 'pay'}">
 					<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
 				</c:if>
-
 			</shiro:hasPermission>
 			<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
 				<input onclick="window.print();" type="button" class="btn btn-primary" value="打印备货清单" style="background:#F78181;"/>
