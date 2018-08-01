@@ -299,7 +299,9 @@
                                 <div class="control-group">
                                     <input class="btn" type="button" value="添加排产计划" onclick="addSchedulingComplete(${schedulingPlan.id})"/>
                                     &nbsp;&nbsp;
-                                    <input id="saveSubmit" class="btn btn-primary" type="button" onclick="saveComplete(${schedulingPlan.id})" value="保存"/>&nbsp;
+                                    <c:if test="${roleFlag != false}">
+                                        <input id="saveSubmit" class="btn btn-primary" type="button" onclick="saveComplete(${schedulingPlan.id})" value="保存"/>&nbsp;
+                                    </c:if>
                                 </div>
                             </c:otherwise>
                             </c:choose>

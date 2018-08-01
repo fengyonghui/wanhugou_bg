@@ -130,6 +130,7 @@
 		a.update_id AS "updateBy.id",
 		us.name as "updateBy.name",
 		a.update_time AS "updateDate",
+		s.id AS "centerId",
 		s.name as "centersName",
 		con.id AS "con.id",
 		con.name AS "con.name"
@@ -311,6 +312,9 @@
 		<!-- end  -->
 		<include refid="bizOrderHeaderJoins"/>
 		<where> 1=1 and a.order_type !=4
+			<if test="source != null and source == 'vendor'">
+				AND (a.order_type = 5 OR a.order_type = 6)
+			</if>
 			<if test="dataStatus==null">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
@@ -2615,6 +2619,28 @@ FROM
 		where
 		bo.id=a.order_id
 		and bo.order_num=#{orderNum}
+	</select>
+
+	<select id="findOrderForVendReq" resultType="BizOrderHeader">
+		SELECT
+		a.order_num AS "orderNum",
+		a.create_time AS "createDate",
+		(SELECT sum(bod.unit_price)
+		FROM biz_order_header boh
+		LEFT JOIN biz_order_detail bod ON bod.order_id = boh.id
+		WHERE bod.sku_id = ops.sku_id
+		AND boh.id = a.id) AS "detailPrice",
+		a.total_detail AS "totalDetail"
+		FROM biz_order_header a
+		LEFT JOIN biz_order_detail od ON od.order_id = a.id
+		LEFT JOIN biz_op_shelf_sku ops ON ops.id = od.sku_shelf_id
+		WHERE ops.sku_id IN 
+		<foreach collection="skuIdList" index="index" item="skuId" open="(" separator="," close=")">
+			 #{skuId}
+		</foreach>
+        <if test="skuIdList != null">
+		  AND ops.center_id = #{centId}
+        </if>
 	</select>
 
 </mapper>

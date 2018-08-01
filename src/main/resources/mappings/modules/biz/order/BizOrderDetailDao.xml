@@ -191,6 +191,7 @@
 		AND 20
 		AND rh.biz_status != 15
 		AND rh.STATUS = 1
+		AND rh.from_type = 1
 		AND rd.STATUS = 1
 		AND rd.header_id = rh.id
 		AND si.id = rd.sku_id

@@ -3,7 +3,6 @@
  */
 package com.wanhutong.backend.modules.biz.web.po;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -62,10 +61,8 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.util.JSONUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -88,14 +85,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -703,8 +698,8 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "payOrder")
     @ResponseBody
-    public String payOrder(RedirectAttributes redirectAttributes, Integer poHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
-        return bizPoHeaderService.payOrder(poHeaderId, paymentOrderId, payTotal, img);
+    public String payOrder(RedirectAttributes redirectAttributes, Integer poHeaderId,@RequestParam(required = false) Integer reqHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
+        return bizPoHeaderService.payOrder(poHeaderId,reqHeaderId, paymentOrderId, payTotal, img);
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:audit")
@@ -960,12 +955,7 @@ public class BizPoHeaderController extends BaseController {
             List<Integer> list = bizSchedulingPlanService.getSchedulingPlanIdListByPoId(bizPoHeader);
             JSONArray json = JSONArray.fromObject(list);
             model.addAttribute("schedulingPlanList", json);
-
             List<BizPoDetail> poDetailList = bizPoHeader.getPoDetailList();
-            if (poDetailList != null) {
-
-            }
-
             forwardPage = "modules/biz/po/bizPoHeaderConfirmScheduling";
         } else {
             forwardPage = "modules/biz/po/bizPoHeaderScheduling";
@@ -992,7 +982,7 @@ public class BizPoHeaderController extends BaseController {
     public boolean saveSchedulingPlan(HttpServletRequest request, Integer detailId, Integer ordQty, Integer schedulingNum) {
         BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
         schedulingPlan.setObjectName(PO_DETAIL_TABLE_NAME);
-        schedulingPlan.setObjectId(String.valueOf(detailId));
+        schedulingPlan.setObjectId(detailId);
         schedulingPlan.setOriginalNum(ordQty);
         schedulingPlan.setSchedulingNum(schedulingNum);
         boolean boo = false;
@@ -1018,7 +1008,7 @@ public class BizPoHeaderController extends BaseController {
             }
             BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
             schedulingPlan.setObjectName(PO_DETAIL_TABLE_NAME);
-            schedulingPlan.setObjectId(String.valueOf(dto.getObjectId()));
+            schedulingPlan.setObjectId(dto.getObjectId());
             schedulingPlan.setOriginalNum(dto.getOriginalNum());
             schedulingPlan.setSchedulingNum(dto.getSchedulingNum());
             try {

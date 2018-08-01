@@ -7,6 +7,7 @@ import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
@@ -37,6 +38,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess;
 	private RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess;
 	private PaymentOrderProcessConfig.Process paymentOrderProcess;
+	private VendorRequestOrderProcessConfig.RequestOrderProcess vendRequestOrderProcess;
 
 	/**
 	 * 前一个流程
@@ -158,6 +160,10 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 
 	public RequestOrderProcessConfig.RequestOrderProcess getRequestOrderProcess() {
 		return ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
+
+	public VendorRequestOrderProcessConfig.RequestOrderProcess getVendRequestOrderProcess() {
+		return ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 
 

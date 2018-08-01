@@ -167,6 +167,13 @@ public class OfficeController extends BaseController {
                 page.getList().add(officeService.get(office.getId()));
             }
         }
+        User user = UserUtils.getUser();
+        for (Role role: user.getRoleList()) {
+            if (RoleEnNameEnum.SUPPLY_CHAIN.getState().equals(role.getEnname())) {
+                model.addAttribute("vendor","vendor");
+                break;
+            }
+        }
         model.addAttribute("page", page);
         return "modules/sys/purchasersList";
     }

@@ -28,6 +28,7 @@ import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryVi
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -177,13 +178,17 @@ public class BizInventorySkuController extends BaseController {
                 //商品
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                 BizInventoryInfo inventoryInfo = new BizInventoryInfo();
-                if (odArr.length != 3) {
+                if (odArr.length != 4) {
                     continue;
                 }
                 inventoryInfo = bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
                 BizInventorySku bizInventorySku = new BizInventorySku();
                 bizInventorySku.setInvInfo(inventoryInfo);
                 bizInventorySku.setSkuInfo(bizSkuInfo);
+                bizInventorySku.setSkuType(Integer.valueOf(odArr[3]));
+                if (InventorySkuTypeEnum.VENDOR_TYPE.getType().equals(Integer.valueOf(odArr[3]))) {
+                    bizInventorySku.setVendor(bizSkuInfo.getProductInfo().getOffice());
+                }
                 List<BizInventorySku> invSkuList = bizInventorySkuService.findList(bizInventorySku);
                 if (invSkuList != null && invSkuList.size() > 0) {
                     flag = "true";
@@ -277,7 +282,7 @@ public class BizInventorySkuController extends BaseController {
                     bizInventoryViewLog.setNowStockQty(bizInventorySku.getStockQty());
                     bizInventorySkuService.save(bizInventorySku);
                 } else {
-                    if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
+                    if (StringUtils.isNotBlank(bizInventorySkus.getCustomerIds())) {
                         only.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
                     }
                     bizInventoryViewLog.setStockQty(0);

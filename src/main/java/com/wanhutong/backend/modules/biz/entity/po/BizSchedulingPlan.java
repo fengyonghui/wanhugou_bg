@@ -3,11 +3,13 @@
  */
 package com.wanhutong.backend.modules.biz.entity.po;
 
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,24 +21,34 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	
 	private static final long serialVersionUID = 1L;
 	private String objectName;		// 表名
-	private String objectId;		// 表ID
+	private Integer objectId;		// 表ID
 	private Integer originalNum;		// 单子原始数量
 	private Integer schedulingNum;		// 排产数量
-//	private Integer completeNum;		// 已完成数量
-
-	/**
-	 * 确认排产list
-	 */
-	private List<BizCompletePaln> completePalnList;
+	private Integer completeNum;		// 已完成数量
 	/**
 	 * 采购订单表Entity
 	 */
 	private BizPoDetail bizPoDetail;
+
+	/**
+	 * 备货清单详细信息Entity
+	 */
+	private BizRequestDetail bizRequestDetail;
 	/**
 	 * 该排产相关的总确认数
 	 */
 	private Integer sumCompleteNum;
-	
+
+    /**
+     * 确认排产list
+     */
+    private List<BizCompletePaln> completePalnList;
+
+	/**
+	 * 排产日期
+	 */
+	private Date planDate;		// 排产日期
+
 	public BizSchedulingPlan() {
 		super();
 	}
@@ -53,13 +65,12 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	public void setObjectName(String objectName) {
 		this.objectName = objectName;
 	}
-	
-	@Length(min=1, max=11, message="表ID长度必须介于 1 和 11 之间")
-	public String getObjectId() {
+
+	public Integer getObjectId() {
 		return objectId;
 	}
 
-	public void setObjectId(String objectId) {
+	public void setObjectId(Integer objectId) {
 		this.objectId = objectId;
 	}
 
@@ -79,12 +90,28 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 		this.schedulingNum = schedulingNum;
 	}
 
+	public Integer getCompleteNum() {
+		return completeNum;
+	}
+
+	public void setCompleteNum(Integer completeNum) {
+		this.completeNum = completeNum;
+	}
+
 	public BizPoDetail getBizPoDetail() {
 		return bizPoDetail;
 	}
 
 	public void setBizPoDetail(BizPoDetail bizPoDetail) {
 		this.bizPoDetail = bizPoDetail;
+	}
+
+	public BizRequestDetail getBizRequestDetail() {
+		return bizRequestDetail;
+	}
+
+	public void setBizRequestDetail(BizRequestDetail bizRequestDetail) {
+		this.bizRequestDetail = bizRequestDetail;
 	}
 
 	public List<BizCompletePaln> getCompletePalnList() {
@@ -101,5 +128,13 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 
 	public void setSumCompleteNum(Integer sumCompleteNum) {
 		this.sumCompleteNum = sumCompleteNum;
+	}
+
+	public Date getPlanDate() {
+		return planDate;
+	}
+
+	public void setPlanDate(Date planDate) {
+		this.planDate = planDate;
 	}
 }

@@ -1,0 +1,46 @@
+/**
+ * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
+ */
+package com.wanhutong.backend.modules.biz.dao.request;
+
+import com.wanhutong.backend.common.persistence.CrudDao;
+import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+import com.wanhutong.backend.modules.sys.entity.User;
+import org.apache.ibatis.annotations.Param;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 备货清单DAO接口
+ * @author ZhangTengfei
+ * @version 2018-07-19
+ */
+@MyBatisDao
+public interface BizRequestHeaderForVendorDao extends CrudDao<BizRequestHeader> {
+
+    int updateProcessId(@Param("headerId") Integer headerId, @Param("processId") Integer processId);
+
+    int findContByFromOffice(Integer fromOfficeId);
+
+    List<BizRequestHeader>findListForPoHeader(BizRequestHeader bizRequestHeader);
+
+    Integer findSellCount( @Param("centId") Integer centId, @Param("skuId") Integer skuId);
+
+    int incrPayTotal(@Param("id")int id, @Param("payTotal")BigDecimal payTotal);
+
+    int updatePaymentOrderId(@Param("id") Integer id, @Param("paymentId")Integer paymentId);
+
+    int updateBizStatus(@Param("id") Integer id,@Param("status") Integer status, @Param("updateBy") User updateBy, @Param("updateDate") Date updateDate);
+
+    /**
+     * 该备货单下所有商品的总采购数量，总排产数量，总已确认排产数
+     * @param id
+     * @return
+     */
+    BizRequestHeader getTotalNum(@Param("id") Integer id);
+
+}

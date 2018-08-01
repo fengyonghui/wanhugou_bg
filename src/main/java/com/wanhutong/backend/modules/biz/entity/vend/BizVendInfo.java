@@ -4,10 +4,13 @@
 package com.wanhutong.backend.modules.biz.entity.vend;
 
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+
+import java.util.List;
 
 /**
  * 供应商拓展表Entity
@@ -22,6 +25,10 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 	private BizCategoryInfo bizCategoryInfo;		// cate_id
 	private String cateName;		// cate_name
 	private String code;		// code
+	/**
+	 * 用于存放厂家退换货流程
+	 */
+	private String remark;
 	/**
 	 * 银行卡号
 	 */
@@ -49,6 +56,14 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 	 * 审核状态
 	 */
 	private int auditStatus;
+	/**
+	 * 用于展示合同图
+	 */
+	private List<CommonImg> compactImgList;
+	/**
+	 * 用于展示身份证
+	 */
+	private List<CommonImg> identityCardImgList;
 
 	public BizVendInfo() {
 		super();
@@ -178,5 +193,29 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 			this.status = status;
 			this.desc = desc;
 		}
+	}
+
+	public List<CommonImg> getCompactImgList() {
+		return compactImgList;
+	}
+
+	public void setCompactImgList(List<CommonImg> compactImgList) {
+		this.compactImgList = compactImgList;
+	}
+
+	public List<CommonImg> getIdentityCardImgList() {
+		return identityCardImgList;
+	}
+
+	public void setIdentityCardImgList(List<CommonImg> identityCardImgList) {
+		this.identityCardImgList = identityCardImgList;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 }

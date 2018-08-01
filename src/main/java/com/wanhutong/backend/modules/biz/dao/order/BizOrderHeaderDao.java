@@ -348,4 +348,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param orderNum
      */
     BizOrderHeader getByOrderNum(String orderNum);
+
+    /**
+     * 备货单商品的销售单
+     * @param skuIdList
+     * @param centId
+     * @return
+     */
+    List<BizOrderHeader> findOrderForVendReq(@Param("skuIdList") List<Integer> skuIdList, @Param("centId") Integer centId);
 }

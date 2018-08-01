@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,5 +64,9 @@ public class BizSchedulingPlanService extends CrudService<BizSchedulingPlanDao, 
 	@Transactional(readOnly = false)
 	public List<BizSchedulingPlan> findAllList(BizSchedulingPlan bizSchedulingPlan){
 		return bizSchedulingPlanDao.findAllList(bizSchedulingPlan);
+	}
+
+	public List<Integer> getSchedulingPlanIdListByRequestId(BizRequestHeader requestHeader){
+		return bizSchedulingPlanDao.getSchedulingPlanIdListByRequestId(requestHeader);
 	}
 }

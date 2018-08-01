@@ -28,6 +28,11 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
     private Integer bizStatus;        // 当前状态
     private String img;        // 图片
 
+    /**
+     * 支付单类型
+     */
+    private Integer type;
+
     private List<CommonImg> imgList;
 
     private Date deadline;
@@ -147,5 +152,13 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
         public String getDesc() {
             return desc;
         }
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }
