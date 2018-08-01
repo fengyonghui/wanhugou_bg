@@ -99,7 +99,9 @@ public class BizRequestPayController extends BaseController {
             if(payMethod==1){
                 BigDecimal bigDecimal =new BigDecimal(payMoney.toString());
                 BigDecimal bd=  bigDecimal.multiply(new BigDecimal("100"));
-                map.put("payType", "NATIVE");
+//                map.put("payType", "NATIVE");
+//                map.put("payType", "MWEB");
+                map.put("payType", "JSAPI");
                 map.put("amount", bd.intValue());
                 map.put("attach", ownCallbackStr);
                 map.put("out_trade_no",wxNo );

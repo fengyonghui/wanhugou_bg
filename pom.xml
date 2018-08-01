@@ -458,12 +458,12 @@
         </dependency>
 
 
-        <!-- fastjson json
+        <!-- fastjson json -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
-        </dependency> -->
+        </dependency>
 
         <!-- xstream xml -->
         <dependency>
