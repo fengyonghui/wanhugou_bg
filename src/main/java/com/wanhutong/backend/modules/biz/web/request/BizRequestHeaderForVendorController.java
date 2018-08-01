@@ -125,6 +125,9 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 	public static final String REQUEST_HEADER_TABLE_NAME = "biz_request_header";
 	public static final String REQUEST_DETAIL_TABLE_NAME = "biz_request_detail";
+	public static final Integer SCHEDULING_FOR_HEADER = 0;
+	public static final Integer SCHEDULING_FOR_DETAIL = 1;
+	public static final Integer COMPLETE_STATUS = 1;
 
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
@@ -750,6 +753,20 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
 			BizInventorySku bizInventorySku = new BizInventorySku();
 			List<Integer> skuIdList = new ArrayList<>();
+
+			//按订单排产时，获取排产记录
+			Integer schedulingType = bizRequestHeader.getSchedulingType();
+			List<BizSchedulingPlan> schedulingPlans = new ArrayList<BizSchedulingPlan>();
+			Boolean detailHeaderFlg = false;
+			if (SCHEDULING_FOR_HEADER.equals(schedulingType)) {
+				schedulingPlans = bizSchedulingPlanService.getByObjectIdAndObjectName(bizRequestHeader.getId(), REQUEST_HEADER_TABLE_NAME);
+				if(schedulingPlans.size() > 0) {
+					detailHeaderFlg = true;
+				}
+			}
+			model.addAttribute("schedulingPlans", schedulingPlans);
+
+			Boolean detailSchedulingFlg = false;
 			for (BizRequestDetail requestDetail : requestDetailList) {
 				skuIdList.add(requestDetail.getSkuInfo().getId());
 				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
@@ -766,24 +783,34 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				requestDetail.setSkuInfo(skuInfo);
 				requestDetail.setSellCount(findSellCount(requestDetail));
 
-				BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
-				bizSchedulingPlan.setBizRequestDetail(requestDetail);
-				List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findAllList(bizSchedulingPlan);
-				requestDetail.setSchedulingPlanList(schedulingPlanList);
+				//排产类型为按订单排产时，获取排产记录
+				if (SCHEDULING_FOR_DETAIL.equals(schedulingType)) {
+					BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
+					bizSchedulingPlan.setBizRequestDetail(requestDetail);
+					List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findAllList(bizSchedulingPlan);
+					if (schedulingPlanList.size() > 0) {
+						detailSchedulingFlg = true;
+					}
+					requestDetail.setSchedulingPlanList(schedulingPlanList);
+				}
 
 				BizRequestDetail requestDetailTemp = bizRequestDetailService.getsumSchedulingNum(requestDetail.getId());
 				if (requestDetailTemp != null) {
 					requestDetail.setSumSchedulingNum(requestDetailTemp.getSumSchedulingNum());
 					requestDetail.setSumCompleteNum(requestDetailTemp.getSumCompleteNum());
 				}
-
 				reqDetailList.add(requestDetail);
+
+
 			}
 			List<BizOrderHeader> orderHeaderList = bizRequestHeaderForVendorService.findOrderForVendReq(skuIdList, bizRequestHeader.getFromOffice().getId());
 			model.addAttribute("orderHeaderList",orderHeaderList);
 			if (requestDetailList.size() == 0) {
 				bizRequestHeader.setPoSource("poHeaderSource");
 			}
+
+			model.addAttribute("detailHeaderFlg", detailHeaderFlg);
+			model.addAttribute("detailSchedulingFlg", detailSchedulingFlg);
 		}
 
 		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
@@ -844,39 +871,55 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			JSONArray json = JSONArray.fromObject(list);
 			model.addAttribute("schedulingPlanList", json);
 			List<BizRequestDetail> poDetailList = bizRequestHeader.getRequestDetailList();
-			forwardPage = "modules/biz/request/bizRequestHeaderForVendorConfirmScheduling";
+			forwardPage = "modules/biz/request/bizRequestHeaderForVendorCompleteScheduling";
 		} else {
 			forwardPage = "modules/biz/request/bizRequestHeaderForVendorScheduling";
 		}
-
 		model.addAttribute("roleFlag", roleFlag);
 		return forwardPage;
 	}
 
 	@RequestMapping(value = "saveSchedulingPlan")
 	@ResponseBody
-	public boolean saveSchedulingPlan(HttpServletRequest request, @RequestBody String params) {
+	public boolean saveSchedulingPlan(HttpServletRequest request, @RequestBody String params) throws ParseException {
 		List<BizHeaderSchedulingDto> dtoList = JsonUtil.parseArray(params, new TypeReference<List<BizHeaderSchedulingDto>>(){});
 		boolean boo = false;
-		for (int i=0; i <dtoList.size(); i++) {
-			BizHeaderSchedulingDto dto = dtoList.get(i);
-			BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
-			schedulingPlan.setObjectId(dto.getObjectId());
-			schedulingPlan.setObjectName(REQUEST_HEADER_TABLE_NAME);
-			schedulingPlan.setOriginalNum(dto.getOriginalNum());
-			schedulingPlan.setSchedulingNum(dto.getSchedulingNum());
+		if (dtoList != null && dtoList.size() > 0) {
+			//通过排产类型获取排产表中objectName的值
+			Integer schedulingType = Integer.parseInt(dtoList.get(0).getSchedulingType());
+			String objectName = REQUEST_HEADER_TABLE_NAME;
+			if (SCHEDULING_FOR_DETAIL.equals(schedulingType)){
+				objectName = REQUEST_DETAIL_TABLE_NAME;
 
-			try {
-				Scanner input=new Scanner(System.in);
-				bizSchedulingPlanService.save(schedulingPlan);
-				boo = true;
-			} catch (Exception e) {
-				boo = false;
-				logger.error(e.getMessage());
-				break;
+				//排产类型为按订单排产时，更新备货单排产类型
+				Integer detailId = dtoList.get(0).getObjectId();
+				BizRequestDetail requestDetail = bizRequestDetailService.get(detailId);
+				BizRequestHeader requestHeader = bizRequestHeaderForVendorService.get(requestDetail.getRequestHeader().getId());
+				requestHeader.setSchedulingType(SCHEDULING_FOR_DETAIL);
+                bizRequestHeaderForVendorService.updateSchedulingType(requestHeader);
 			}
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			for (int i=0; i <dtoList.size(); i++) {
+				BizHeaderSchedulingDto dto = dtoList.get(i);
+				BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
+				schedulingPlan.setObjectId(dto.getObjectId());
+				schedulingPlan.setObjectName(objectName);
+				schedulingPlan.setOriginalNum(dto.getOriginalNum());
+				schedulingPlan.setSchedulingNum(dto.getSchedulingNum());
+				schedulingPlan.setPlanDate(sdf.parse(dto.getPlanDate()));
+				try {
+					Scanner input=new Scanner(System.in);
+					bizSchedulingPlanService.save(schedulingPlan);
 
+					boo = true;
+				} catch (Exception e) {
+					boo = false;
+					logger.error(e.getMessage());
+					break;
+				}
+			}
 		}
+
 		return boo;
 	}
 
@@ -939,5 +982,34 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		resultMap.put("toalCompleteNum", bizRequestHeader.getToalCompleteNum());
 
 		return JSONObject.fromObject(resultMap).toString();
+	}
+
+	@RequestMapping(value = "checkSchedulingNum")
+	@ResponseBody
+	public String checkSchedulingNum(HttpServletRequest request, Integer id) {
+		BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.getTotalQtyAndSchedulingNum(id);
+		Map resultMap = new HashMap();
+		resultMap.put("totalOrdQty", bizRequestHeader.getTotalOrdQty());
+		resultMap.put("toalSchedulingDetailNum", bizRequestHeader.getTotalSchedulingDetailNum());
+		resultMap.put("totalSchedulingHeaderNum", bizRequestHeader.getTotalSchedulingHeaderNum());
+
+		return JSONObject.fromObject(resultMap).toString();
+	}
+
+	@RequestMapping(value = "confirm")
+	@ResponseBody
+	public boolean confirm(HttpServletRequest request, Integer schedulingId) {
+		Boolean resultFlag = false;
+		BizSchedulingPlan bizSchedulingPlan = bizSchedulingPlanService.get(schedulingId);
+		bizSchedulingPlan.setCompleteStatus(COMPLETE_STATUS);
+
+		try {
+			bizSchedulingPlanService.updateCompleteStatus(bizSchedulingPlan);
+			resultFlag = true;
+		} catch (Exception e) {
+			resultFlag = false;
+			logger.error(e.getMessage());
+		}
+		return resultFlag;
 	}
 }

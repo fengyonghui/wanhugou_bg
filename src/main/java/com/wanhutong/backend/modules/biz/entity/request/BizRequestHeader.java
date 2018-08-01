@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
+import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
@@ -91,6 +92,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 */
 	private Integer schedulingType;
 
+	/**
+	 * 排产计划
+	 */
+	private List<BizSchedulingPlan> schedulingPlanList;
+
 	private List<BizRequestDetail> requestDetailList;
 
 	private List<BizPoDetail> poDetailList;
@@ -153,6 +159,15 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 */
 	private Integer toalCompleteNum;
 
+	/**
+	 * 该采购单下按订单排产的总排产量
+	 */
+	private Integer totalSchedulingDetailNum;
+
+	/**
+	 * 该采购单下按商品排产的总排产量
+	 */
+	private Integer totalSchedulingHeaderNum;
 	/**
 	 * 与供应商结算的金额
 	 */
@@ -620,5 +635,29 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setSchedulingType(Integer schedulingType) {
 		this.schedulingType = schedulingType;
+	}
+
+	public List<BizSchedulingPlan> getSchedulingPlanList() {
+		return schedulingPlanList;
+	}
+
+	public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
+		this.schedulingPlanList = schedulingPlanList;
+	}
+
+	public Integer getTotalSchedulingDetailNum() {
+		return totalSchedulingDetailNum;
+	}
+
+	public void setTotalSchedulingDetailNum(Integer totalSchedulingDetailNum) {
+		this.totalSchedulingDetailNum = totalSchedulingDetailNum;
+	}
+
+	public Integer getTotalSchedulingHeaderNum() {
+		return totalSchedulingHeaderNum;
+	}
+
+	public void setTotalSchedulingHeaderNum(Integer totalSchedulingHeaderNum) {
+		this.totalSchedulingHeaderNum = totalSchedulingHeaderNum;
 	}
 }

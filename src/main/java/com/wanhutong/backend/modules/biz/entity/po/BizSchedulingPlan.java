@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.po;
 
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 
@@ -48,6 +49,16 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	 * 排产日期
 	 */
 	private Date planDate;		// 排产日期
+
+	/**
+	 * 排产是否已确认 0：未确认，1：已确认
+	 */
+	private Integer completeStatus;
+
+	/**
+	 * 备货清单entity
+	 */
+	private BizRequestHeader bizRequestHeader;
 
 	public BizSchedulingPlan() {
 		super();
@@ -136,5 +147,21 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 
 	public void setPlanDate(Date planDate) {
 		this.planDate = planDate;
+	}
+
+	public Integer getCompleteStatus() {
+		return completeStatus;
+	}
+
+	public void setCompleteStatus(Integer completeStatus) {
+		this.completeStatus = completeStatus;
+	}
+
+	public BizRequestHeader getBizRequestHeader() {
+		return bizRequestHeader;
+	}
+
+	public void setBizRequestHeader(BizRequestHeader bizRequestHeader) {
+		this.bizRequestHeader = bizRequestHeader;
 	}
 }

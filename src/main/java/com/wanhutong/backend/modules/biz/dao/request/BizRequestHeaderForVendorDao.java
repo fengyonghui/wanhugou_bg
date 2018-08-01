@@ -43,4 +43,17 @@ public interface BizRequestHeaderForVendorDao extends CrudDao<BizRequestHeader> 
      */
     BizRequestHeader getTotalNum(@Param("id") Integer id);
 
+    /**
+     * 该备货单下所有商品的总采购数量，总排产数量（分为按订单排产的总排产量和按商品排产的总排产量）
+     * @param id
+     * @return
+     */
+    BizRequestHeader getTotalQtyAndSchedulingNum(@Param("id") Integer id);
+
+    /**
+     * 供应商确认排产后，更新排产表中排产状态
+     * @param requestHeader
+     */
+    void updateSchedulingType(BizRequestHeader requestHeader);
+
 }
