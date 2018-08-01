@@ -8,30 +8,60 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
-			this.getData();
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
-		    _this.ajaxData()
+		    _this.paymentMode();
+		    _this.hrefHtml()
 		},
-		getData: function() {
+		paymentMode: function() {
+			var _this = this;
+		//支付宝支付
+			$('#zfbPayBtn').on('tap', function() {
+				alert('欢迎使用支付宝')
+//				_this.zhifubao()
+			}),
+		//微信支付
+			$('#wxPayBtn').on('tap', function() {
+			var ua = window.navigator.userAgent.toLowerCase();
+		    if(ua.match(/MicroMessenger/i) == 'micromessenger' || ua.match(/_SQ_/i) == '_sq_'){
+		        //微信里面打开
+		        alert('欢迎使用微信内部打开支付')
+//		        _this.wxIn()
+		    }else{
+		    	//微信外面打开
+		    	alert('欢迎使用微信外部打开支付')
+//		        _this.wxOut()
+		    }
+				
+//				if() {
+////					
+//				}
+//			
+//				if() {
+////					
+//				}
+			})
+		},
+		zhifubao: function() {
 			var _this = this;
             $.ajax({
                 type: "GET",
-                url: "/a/biz/request/bizRequestHeader/form4Mobile",
-                data: {id: _this.userInfo.inListId},
+                url: "/a/biz/request/bizRequestPay/genPayQRCode",
+                data: {
+                	payMoney:$('#inPayNum').val(),
+                	reqId:_this.userInfo.inListId,
+                	payMethod:$('payMode').val()
+                },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
-                	var shouldPayNum = res.data.entity.totalMoney - res.data.entity.recvTotal
-                	$('#shouldPay').val(shouldPayNum)
+//                  	console.log(res)
                 }
             });
-		},
-		
-		ajaxData: function() {
+        },
+        wxIn: function() {
 			var _this = this;
              $('#inPayBtn').on('tap',function(){
                 
@@ -49,9 +79,25 @@
                     }
                 });
 			})
-        _this.hrefHtml()
         },
-
+        wxOut: function() {
+			var _this = this;
+             $('#inPayBtn').on('tap',function(){
+                
+                $.ajax({
+                    type: "GET",
+                    url: "/a/biz/request/bizRequestPay/genPayQRCode",
+                    data: {
+                    	payMoney:$('#inPayNum').val(),
+                    	reqId:_this.userInfo.inListId,
+                    	payMethod:$('payMode').val()
+                    },
+                    dataType: "json",
+                    success: function(res){
+                    }
+                });
+			})
+        },
         hrefHtml: function() {
 			var _this = this;
 		/*采购单管理*/
@@ -85,7 +131,6 @@
                 }
 			})
 		}
-		
 	}
 	$(function() {
 
