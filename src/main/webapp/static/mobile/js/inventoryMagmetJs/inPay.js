@@ -25,24 +25,16 @@
 			}),
 		//微信支付
 			$('#wxPayBtn').on('tap', function() {
-			var ua = window.navigator.userAgent.toLowerCase();
-		    if(ua.match(/MicroMessenger/i) == 'micromessenger' || ua.match(/_SQ_/i) == '_sq_'){
-		        //微信里面打开
-		        alert('欢迎使用微信内部打开支付')
-//		        _this.wxIn()
-		    }else{
-		    	//微信外面打开
-		    	alert('欢迎使用微信外部打开支付')
-//		        _this.wxOut()
-		    }
-				
-//				if() {
-////					
-//				}
-//			
-//				if() {
-////					
-//				}
+				var ua = window.navigator.userAgent.toLowerCase();
+			    if(ua.match(/MicroMessenger/i) == 'micromessenger' || ua.match(/_SQ_/i) == '_sq_'){
+			        //微信里面打开
+			        alert('欢迎使用微信内部打开支付')
+	//		        _this.wxIn()
+			    }else{
+			    	//微信外面打开
+			    	alert('欢迎使用微信外部打开支付')
+	//		        _this.wxOut()
+			    }
 			})
 		},
 		zhifubao: function() {
