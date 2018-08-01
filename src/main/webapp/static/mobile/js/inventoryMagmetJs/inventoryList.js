@@ -96,10 +96,10 @@
 								/*审核按钮*/	
 									var inCheck = '';
 									var inCheckBtn='';
-									if (item.commonProcess.requestOrderProcess.code) {
+									if (item.commonProcess.requestOrderProcess) {
 								 		var codeNum = item.commonProcess.requestOrderProcess.code;
 									}
-									if(item.commonProcess.requestOrderProcess.roleEnNameEnum) {
+									if(item.commonProcess.requestOrderProcess) {
 										var DataRoleGener = item.commonProcess.requestOrderProcess.roleEnNameEnum;
 										var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 										if(item.commonProcess && fileRoleData.length>0 && bizstatus<5 && codeNum != -1) {
@@ -464,7 +464,7 @@
 					name:nameTxt,
 					'fromOffice.id':_this.userInfo.fromOffice,
 					bizStatus:_this.userInfo.bizStatusid,
-					'varietyInfo.id':_this.userInfo.varietyInfoid,
+					'varietyInfo.id':_this.userInfo.varietyInfoid
 				},
 				dataType: 'json',
 				success: function(res) {
@@ -513,10 +513,10 @@
 						/*审核按钮*/	
 							var inCheck = '';
 							var inCheckBtn='';
-							if (item.commonProcess.requestOrderProcess.code) {
+							if (item.commonProcess.requestOrderProcess) {
 						 		var codeNum = item.commonProcess.requestOrderProcess.code;
 							}
-							if(item.commonProcess.requestOrderProcess.roleEnNameEnum) {
+							if(item.commonProcess.requestOrderProcess) {
 								var DataRoleGener = item.commonProcess.requestOrderProcess.roleEnNameEnum;
 								var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 								if(item.commonProcess && fileRoleData.length>0 && bizstatus<5 && codeNum != -1) {
