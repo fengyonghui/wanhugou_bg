@@ -67,7 +67,9 @@
 		WHERE
 		bsgr.biz_status = 1
 		AND bsgr.order_id = 0
-		AND bis.id = a.id and bsgr.status=1) AS "sendGoodsNum",
+		AND bis.id = a.id
+		AND bsgr.status=1
+		AND bsgr.cust_id = s.id) AS "sendGoodsNum",
 		(SELECT sum(bcgr.receive_num)
 		FROM biz_collect_goods_record bcgr
 		LEFT JOIN biz_inventory_sku bis ON bis.inv_id = bcgr.inv_id AND bis.sku_id = bcgr.sku_id
@@ -117,6 +119,9 @@
 				<if test="dbName == 'oracle'">'%'||#{skuInfo.partNo}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{skuInfo.partNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.partNo},'%')</if>
+			</if>
+			<if test="invInfo != null and invInfo.id != null">
+				AND i.id = #{invInfo.id}
 			</if>
 			<if test="invInfo != null and invInfo.name != null and invInfo.name != ''">
 				AND i.name LIKE
