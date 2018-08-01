@@ -135,6 +135,9 @@ public class BizInventorySkuController extends BaseController {
                 Office company = systemService.getUser(user.getId()).getCompany();
                 //根据采购中心取出仓库
                 BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+                if (bizInventorySku.getInvInfo() != null) {
+                    bizInventoryInfo = bizInventorySku.getInvInfo();
+                }
                 bizInventoryInfo.setCustomer(company);
                 bizInventorySku.setInvInfo(bizInventoryInfo);
             } else if (!oflag) {
