@@ -4,12 +4,16 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
-		this.deleteBtnFlag = "false"
+		this.detileFlag = "false"
+		this.cancelAmendPayFlag = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			this.getPermissionList()
+//			biz:request:bizRequestHeader:view   详情
+//			biz:request:bizRequestHeader:edit    取消、修改、付款
+			this.getPermissionList('biz:request:bizRequestHeader:view','detileFlag')
+			this.getPermissionList('biz:request:bizRequestHeader:edit','cancelAmendPayFlag')
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -53,7 +57,6 @@
 							if(arrLen > 0) {
 								$.each(res.data.page.list, function(i, item) {
 //									console.log(item)
-									
 								/*业务状态*/
 									var bizstatus = item.bizStatus;
 									var bizstatusTxt = '';
@@ -108,11 +111,17 @@
 											inCheckBtn=''
 										}
 									}
+								//取消、修改、付款
 									var inPay = '';
-									var inCancel = '';
 									var inPayBtn = '';
+									var inCancel = '';
 									var inCancelBtn = '';
-									if(_this.deleteBtnFlag == true){
+									var inAmend = '';
+									var inAmendBtn = '';
+									if(_this.cancelAmendPayFlag == true){
+										/*修改按钮*/
+										inAmend = '修改'
+										inAmendBtn = 'inAmendBtn'
 										/*付款按钮*/
 										if(bizstatus==35 || bizstatus==40 || item.recvTotal == item.totalMoney) {
 											inPay = ''
@@ -129,6 +138,19 @@
 											inCancel = ''
 											inCancelBtn = ''
 										}
+									}else {
+										inAmendBtn = ''
+										inAmend = ''
+									}
+								//详情
+									var inDetail = '';
+									var inDetailBtn = '';
+									if(_this.detileFlag == true) {
+										inDetail = '详情'
+										inDetailBtn = 'inDetailBtn'
+									}else {
+										inDetail = ''
+										inDetailBtn = ''
 									}
 								/*品类名称*/	
 									var varietyInfoName = '';
@@ -138,6 +160,7 @@
 										varietyInfoName = ''
 										
 									}
+								/*审核状态*/		
 									var checkStatus = '';
 									if(item.commonProcess.requestOrderProcess) {
 										checkStatus = item.commonProcess.requestOrderProcess.name
@@ -179,13 +202,12 @@
 										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
 											'<div class="mui-col-xs-2">' +
-//												'<li class="mui-table-view-cell"></li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2 inDetailBtn" inListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell" >详情</li>' +
+											'<div class="mui-col-xs-2 '+inDetailBtn+'" inListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell" >'+inDetail+'</li>' +
 											'</div>' +
-											'<div class="mui-col-xs-2 inAmendBtn" inListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell" poId="'+ item.id +'">修改</li>' +
+											'<div class="mui-col-xs-2 '+inAmendBtn+'" inListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+inAmend+'</li>' +
 											'</div>' +
 											'<div class="mui-col-xs-2 '+inCancelBtn+'" inListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell"> '+inCancel+'</li>' +
@@ -225,17 +247,19 @@
 			});
 //			_this.comfirDialig()
 		},
-		 getPermissionList: function () {
+		getPermissionList: function (markVal,flag) {
             var _this = this;
             $.ajax({
                 type: "GET",
                 url: "/a/sys/menu/permissionList",
                 dataType: "json",
-                data: {"marking": "biz:request:bizRequestHeader:edit"},
+                data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                    _this.deleteBtnFlag = res.data;
-//                  console.log(_this.deleteBtnFlag)
+                    _this.detileFlag = res.data;
+					_this.cancelAmendPayFlag = res.data;
+//                  console.log(_this.detileFlag)
+//					console.log(_this.cancelAmendPayFlag)
                 }
             });
         },
@@ -449,8 +473,7 @@
 					var arrLen = res.data.page.list.length;
 					if(arrLen > 0) {
 						$.each(res.data.page.list, function(i, item) {
-//									console.log(item)
-							
+//							console.log(item)
 						/*业务状态*/
 							var bizstatus = item.bizStatus;
 							var bizstatusTxt = '';
@@ -489,31 +512,62 @@
 							}
 						/*审核按钮*/	
 							var inCheck = '';
-							if (item.commonProcess.requestOrderProcess) {
+							var inCheckBtn='';
+							if (item.commonProcess.requestOrderProcess.code) {
 						 		var codeNum = item.commonProcess.requestOrderProcess.code;
 							}
-							if(item.commonProcess.requestOrderProcess) {
+							if(item.commonProcess.requestOrderProcess.roleEnNameEnum) {
 								var DataRoleGener = item.commonProcess.requestOrderProcess.roleEnNameEnum;
 								var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 								if(item.commonProcess && fileRoleData.length>0 && bizstatus<5 && codeNum != -1) {
 									inCheck = '审核'
+									inCheckBtn='inCheckBtn'
+									
 								}else {
 									inCheck = ''
+									inCheckBtn=''
 								}
 							}
-						/*付款按钮*/
+						//取消、修改、付款
 							var inPay = '';
-							if(bizstatus==35 || bizstatus==40 || item.recvTotal == item.totalMoney) {
-								inPay = ''
-							}else {
-								inPay = '付款'
-							}
-						/*取消按钮*/	
+							var inPayBtn = '';
 							var inCancel = '';
-							if(bizstatus<5) {
-								inCancel = '取消'
+							var inCancelBtn = '';
+							var inAmend = '';
+							var inAmendBtn = '';
+							if(_this.cancelAmendPayFlag == true){
+								/*修改按钮*/
+								inAmend = '修改'
+								inAmendBtn = 'inAmendBtn'
+								/*付款按钮*/
+								if(bizstatus==35 || bizstatus==40 || item.recvTotal == item.totalMoney) {
+									inPay = ''
+									inPayBtn = ''
+								}else {
+									inPay = '付款'
+									inPayBtn = 'inPayBtn'
+								}
+								/*取消按钮*/	
+								if(bizstatus<5) {
+									inCancel = '取消'
+									inCancelBtn = 'inCancelBtn'
+								}else {
+									inCancel = ''
+									inCancelBtn = ''
+								}
 							}else {
-								inCancel = ''
+								inAmendBtn = ''
+								inAmend = ''
+							}
+						//详情
+							var inDetail = '';
+							var inDetailBtn = '';
+							if(_this.detileFlag == true) {
+								inDetail = '详情'
+								inDetailBtn = 'inDetailBtn'
+							}else {
+								inDetail = ''
+								inDetailBtn = ''
 							}
 						/*品类名称*/	
 							var varietyInfoName = '';
@@ -521,7 +575,9 @@
 								varietyInfoName = item.varietyInfo.name
 							}else {
 								varietyInfoName = ''
+								
 							}
+						/*审核状态*/		
 							var checkStatus = '';
 							if(item.commonProcess.requestOrderProcess) {
 								checkStatus = item.commonProcess.requestOrderProcess.name
@@ -563,21 +619,20 @@
 								'</div>' +
 								'<div class="app_font_cl content_part mui-row app_text_center">' +
 									'<div class="mui-col-xs-2">' +
-//												'<li class="mui-table-view-cell"></li>' +
 									'</div>'+
-									'<div class="mui-col-xs-2 inDetailBtn" inListId="'+ item.id +'">' +
-										'<li class="mui-table-view-cell" >详情</li>' +
+									'<div class="mui-col-xs-2 '+inDetailBtn+'" inListId="'+ item.id +'">' +
+										'<li class="mui-table-view-cell" >'+inDetail+'</li>' +
 									'</div>' +
-									'<div class="mui-col-xs-2 inAmendBtn" inListId="'+ item.id +'">' +
-										'<li class="mui-table-view-cell" poId="'+ item.id +'">修改</li>' +
+									'<div class="mui-col-xs-2 '+inAmendBtn+'" inListId="'+ item.id +'">' +
+										'<li class="mui-table-view-cell">'+inAmend+'</li>' +
 									'</div>' +
-									'<div class="mui-col-xs-2 inCancelBtn" inListId="'+ item.id +'">' +
+									'<div class="mui-col-xs-2 '+inCancelBtn+'" inListId="'+ item.id +'">' +
 										'<li class="mui-table-view-cell"> '+inCancel+'</li>' +
 									'</div>'+
-									'<div class="mui-col-xs-2 inPayBtn"  inListId="'+ item.id +'">' +
+									'<div class="mui-col-xs-2 '+inPayBtn+'"  inListId="'+ item.id +'">' +
 										'<li class="mui-table-view-cell">'+inPay+'</li>' +
 									'</div>'+
-									'<div class="mui-col-xs-2 inCheckBtn" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
+									'<div class="mui-col-xs-2 '+inCheckBtn+'" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
 										'<li class="mui-table-view-cell">'+ inCheck +'</li>' +
 									'</div>'+
 								'</div>' +
@@ -585,7 +640,6 @@
 						});
 						$('.inListAdd').append(inPHtmlList);
 						_this.inHrefHtml()
-						
 					}else{
 						$('.inListAdd').append('<p class="noneTxt">暂无数据</p>');
 					}
