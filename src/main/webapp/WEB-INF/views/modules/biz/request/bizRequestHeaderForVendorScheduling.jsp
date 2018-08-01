@@ -63,11 +63,13 @@
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
                 $("#schedulingPlan_forSku").hide();
+                $("#batchSubmit").hide();
             }
             if (detailSchedulingFlg == 'true') {
                 $("#stockGoods").hide();
                 $("#schedulingPlan_forHeader").hide();
                 $("#schedulingPlan_forSku").show();
+                $("#batchSubmit").show();
             }
             if (detailHeaderFlg != 'true' && detailSchedulingFlg != 'true') {
                 $("#stockGoods").show();
@@ -99,10 +101,7 @@
             var schedulingNum = $(eval("schedulingNum_" + index)).val();
             var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
             var standard = reqQty - sumSchedulingNum;
-            // alert("reqQty=" + reqQty + "\r\n" +
-            //     "schedulingNum=" + schedulingNum + "\r\n" +
-            //     "sumSchedulingNum=" + sumSchedulingNum + "\r\n" +
-            //     "standard=" + standard)
+
             var reg= /^[0-9]+[0-9]*]*$/;
             if (parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
                 alert("排产量数值设置不正确，请重新输入")
@@ -127,55 +126,6 @@
             }
         }
 
-        //批量排产
-        function batchSave() {
-            var requestDetailList = '${reqDetailList.size()}';
-            var params = new Array()
-            for (var i=0; i<requestDetailList;i++) {
-                var entity = {};
-                var detailId = $(eval("detailId_" + (i+1))).text();
-                var reqQty = $(eval("reqQty_" + (i+1))).val();
-                var schedulingNum = $(eval("schedulingNum_" + (i+1))).val();
-                var sumSchedulingNum = $(eval("sumSchedulingNum_" + (i+1))).text();
-                var standard = reqQty - sumSchedulingNum;
-                console.log("detailId=" + detailId + "\r\n" +
-					"reqQty=" + reqQty + "\r\n" +
-                    "schedulingNum=" + schedulingNum + "\r\n" +
-                    "sumSchedulingNum=" + sumSchedulingNum + "\r\n" +
-                    "standard=" + reqQty)
-                var reg= /^[0-9]+[0-9]*]*$/;
-                console.log(!reg.test(parseInt(schedulingNum)))
-                console.log("schedulingNum=" + schedulingNum + "\r\n" + "standard=" + standard)
-                if (parseInt(schedulingNum) < 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
-                    alert("排产量数值设置不正确，请重新输入")
-                    return false;
-                }
-                entity.objectId = detailId;
-                entity.originalNum = reqQty;
-                entity.schedulingNum = schedulingNum;
-                entity.completeNum = 0;
-                params[i] = entity;
-            }
-            if(confirm("确定执行批量排产吗？")){
-                $Mask.AddLogo("正在加载");
-                $.ajax({
-                    url: '${ctx}/biz/request/bizRequestHeaderForVendor/batchSaveSchedulingPlan',
-                    contentType: 'application/json',
-                    data:JSON.stringify(params),
-                    datatype:"json",
-                    type: 'post',
-                    success: function (result) {
-                        if(result == true) {
-                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${bizRequestHeader.id};
-                        }
-                    },
-                    error: function (error) {
-                        console.info(error);
-                    }
-                });
-            }
-        }
-
         function checkResult(id) {
             $.ajax({
                 url: '${ctx}/biz/request/bizRequestHeaderForVendor/checkSchedulingNum',
@@ -186,32 +136,36 @@
                 success: function (result) {
                     var totalOrdQty = result['totalOrdQty'];
                     $("#totalOrdQty").val(totalOrdQty)
+
+                    var toalSchedulingNumForSkuHtml = $("[name=toalSchedulingNumForSku]");
+                    var toalSchedulingNumForSkuNum = 0;
+                    for(i=0;i<toalSchedulingNumForSkuHtml.length;i++){
+                        var schedulingNumForSkuNum = toalSchedulingNumForSkuHtml[i];
+                        var scForSkuNum = $(schedulingNumForSkuNum).attr("value")
+                        toalSchedulingNumForSkuNum = parseInt(toalSchedulingNumForSkuNum) + parseInt(scForSkuNum);
+                    }
+
+                    console.log(totalOrdQty)
+                    console.log(toalSchedulingNumForSkuNum)
+
+                    if(totalOrdQty == toalSchedulingNumForSkuNum) {
+                        $("#batchSubmit").hide()
+                    }
+
+
+
                     var totalSchedulingHeaderNum = result['totalSchedulingHeaderNum'] == null ? 0 : result['totalSchedulingHeaderNum'];
 					var toalSchedulingDetailNum = result['toalSchedulingDetailNum'] == null ? 0 : result['toalSchedulingDetailNum'];
 
                     $("#toalSchedulingNum").val(totalSchedulingHeaderNum)
-                    $("#toalSchedulingNumForSku").val(toalSchedulingDetailNum)
-
                     $("#totalSchedulingNumToDo").val(parseInt(totalOrdQty) - parseInt(totalSchedulingHeaderNum))
-					console.log("totalOrdQty=" + totalOrdQty  + "\r\n" +
-							"totalSchedulingHeaderNum=" + totalSchedulingHeaderNum + "\r\n" +
-							"toalSchedulingDetailNum=" + toalSchedulingDetailNum)
-
 
 					if(totalOrdQty != null && totalSchedulingHeaderNum != null && totalOrdQty == totalSchedulingHeaderNum) {
                         $("#addSchedulingHeaderPlanBtn").hide();
 						$("#saveSubmit").hide();
+                        $("#schedulingPanAlert").show();
+                        $(".headerScheduling").hide()
                     }
-
-                    // var toalSchedulingNum = result['toalSchedulingNum'] == null ? 0 : result['toalSchedulingNum'];
-                    // $("#toalSchedulingNum").val(toalSchedulingNum)
-
-                    // if (totalOrdQty != null && toalSchedulingNum != null && totalOrdQty == toalSchedulingNum) {
-                    //     $("#addSchedulingHeaderPlanBtn").hide();
-                    //     $("#saveSubmit").hide();
-                    //     $("#schedulingPanAlert").show();
-                    //     $("#batchSubmit").hide();
-                    // }
                 },
                 error: function (error) {
                     console.info(error);
@@ -237,7 +191,11 @@
         function saveComplete(schedulingType,id) {
             var trArray = $("[name='" + id + "']");
             var params = new Array();
-            var originalNum = $("#totalOrdQty").val();
+            if (schedulingType == "0"){
+                var originalNum = $("#totalOrdQty").val();
+			} else {
+                var originalNum = $(eval("totalOrdQtyForSku_" + id)).val();
+			}
             var totalSchedulingNum = 0;
             for(i=0;i<trArray.length;i++){
                 var div = trArray[i];
@@ -263,15 +221,80 @@
 
                 totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
             }
-//            var schedulingNum = $(eval("schedulingNum_" + id)).text();
-//            var sumCompleteNum = $(eval("sumCompleteNum_" + id)).text();
-//            if (sumCompleteNum == null || sumCompleteNum == "") {
-//                sumCompleteNum = 0;
-//            }
             if(parseInt(totalSchedulingNum) > parseInt(originalNum)) {
                 alert("排产量总和太大，请从新输入!")
                 return false
             }
+            if(confirm("确定执行该排产确认吗？")) {
+                $Mask.AddLogo("正在加载");
+                $.ajax({
+                    url: '${ctx}/biz/request/bizRequestHeaderForVendor/saveSchedulingPlan',
+                    contentType: 'application/json',
+                    data:JSON.stringify(params),
+                    datatype:"json",
+                    type: 'post',
+                    success: function (result) {
+                        if(result == true) {
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${entity.id};
+                        }
+                    },
+                    error: function (error) {
+                        console.info(error);
+                    }
+                });
+            }
+        }
+
+
+        function batchSave() {
+            var reqDetailIdList = JSON.parse('${reqDetailIdListJson}');
+            var params = new Array();
+            var totalSchedulingNum = 0;
+            var totalOriginalNum = 0;
+            var count = 1
+			var ind = 0;
+            for(var index in reqDetailIdList) {
+                var reqDetailId = reqDetailIdList[index];
+                var trArray = $("[name='" + reqDetailId + "']");
+
+                var originalNum = $(eval("totalOrdQtyForSku_" + reqDetailId)).val();
+                totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+
+                for(i=0;i<trArray.length;i++) {
+                    var div = trArray[i];
+                    var jqDiv = $(div);
+                    var date = jqDiv.find("[name='" + reqDetailId + "_date']").val();
+                    var value = jqDiv.find("[name='" + reqDetailId + "_value']").val();
+                    if (date == null || date == "") {
+                        alert("第" + count + "个商品排产日期不能为空!")
+                        return false;
+                    }
+                    var reg = /^[0-9]+[0-9]*]*$/;
+                    if (value == null || value == "" || parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value)) {
+                        alert("第" + count + "个商品确认值输入不正确!")
+                        return false;
+                    }
+                    var entity = {};
+                    entity.objectId = reqDetailId;
+                    entity.originalNum = originalNum;
+                    entity.schedulingNum = value;
+                    entity.planDate=date;
+                    entity.schedulingType=1;
+
+                    params[ind]=entity;
+
+                    totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
+
+                    ind++;
+                }
+                count++;
+            }
+
+            if(parseInt(totalSchedulingNum) > parseInt(originalNum)) {
+                alert("排产量总和太大，请从新输入!")
+                return false
+            }
+
             if(confirm("确定执行该排产确认吗？")) {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
@@ -475,7 +498,6 @@
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
-							<%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
 							<td style="white-space: nowrap">
 									${reqDetail.unitPrice}
 							</td>
@@ -586,12 +608,12 @@
 						</c:forEach>
 					</c:if>
 
-					<tr>
+					<tr class="headerScheduling">
 						<td>
 							<label>排产计划：</label>
 						</td>
 					</tr>
-					<tr id="header_${entity.id}">
+					<tr id="header_${entity.id}" class="headerScheduling">
 						<td>
 							<div name="${entity.id}">
 								<label>排产日期：</label>
@@ -660,45 +682,32 @@
 
 							<tr>
 								<td colspan="10">
-									<table  id="" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
+									<table style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
 										<tr>
 											<td>
 												<label>总申报数量：</label>
-												<input id="totalOrdQtyForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
+												<input id="totalOrdQtyForSku_${reqDetail.id}"  name='reqQtys' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 												&nbsp;
 												<label>已排产数量：</label>
-												<input id="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumSchedulingNum}" class="input-mini" type='text'/>
+												<input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumSchedulingNum}" class="input-mini" type='text'/>
 												&nbsp;
-												<label>已待排产量：</label>
+												<label>待排产量：</label>
 												<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}" class="input-mini" type='text'/>
 												&nbsp;
-												<input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('detail_', ${reqDetail.id})"/>
-												<input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete('1',${reqDetail.id})" value="保存"/>
-												<span id="schedulingPanAlertForSku" style="color:red; display:none" >已排产完成</span>
-
-
-													<%--<td id="sumSchedulingNum_${state.index+1}">${reqDetail.sumSchedulingNum}</td>--%>
-													<%--<td>--%>
-													<%--<input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}"--%>
-													<%--htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-													<%--</td>--%>
-													<%--<td>--%>
-													<%--<c:choose>--%>
-													<%--<c:when test="${reqDetail.reqQty != reqDetail.sumSchedulingNum}">--%>
-													<%--<input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${reqDetail.id}')" value="保存"/>&nbsp;--%>
-													<%--</c:when>--%>
-													<%--<c:otherwise>--%>
-													<%--<span style="color:red; ">已排产完成</span>--%>
-													<%--</c:otherwise>--%>
-													<%--</c:choose>--%>
-													<%--</td>--%>
-
-
-
+												<c:choose>
+													<c:when test="${reqDetail.reqQty == reqDetail.sumSchedulingNum}">
+														<span style="color:red; ">已排产完成</span>
+													</c:when>
+													<c:otherwise>
+														<input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('detail_', ${reqDetail.id})"/>
+														<input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete('1',${reqDetail.id})" value="保存"/>
+														<span id="schedulingPanAlertForSku" style="color:red; display:none" >已排产完成</span>
+													</c:otherwise>
+												</c:choose>
 											</td>
 										</tr>
 
-                                        <c:if test="${reqDetail.schedulingPlanList != null}">
+                                        <c:if test="${fn:length(reqDetail.schedulingPlanList) > 0}">
 											<tr>
 												<td>
 													<label>排产履历：</label>
@@ -718,13 +727,13 @@
 											</c:forEach>
                                         </c:if>
 
-
+										<c:if test="${reqDetail.reqQty != reqDetail.sumSchedulingNum}">
 										<tr>
 											<td>
 												<label>排产计划：</label>
 											</td>
 										</tr>
-										<tr id="detail_${reqDetail.id}">
+										<tr id="detail_${reqDetail.id}" name="detailScheduling">
 											<td>
 												<div name="${reqDetail.id}">
 													<label>排产日期：</label>
@@ -734,6 +743,7 @@
 												</div>
 											</td>
 										</tr>
+										</c:if>
 									</table>
 								</td>
 							</tr>
@@ -746,25 +756,11 @@
 		</div>
 
 
-
-
 		<div class="form-actions">
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 			&nbsp;&nbsp;
-			<c:if test="${reqDetailList!=null}">
-				<input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;
-			</c:if>
+			<input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;
 		</div>
 	</form:form>
-	<%--<form:form id="searchForm" modelAttribute="bizSkuInfo" >--%>
-		<%--&lt;%&ndash;<form:hidden id="productNameCopy" path="productInfo.name"/>&ndash;%&gt;--%>
-		<%--&lt;%&ndash;<form:hidden id="prodCodeCopy" path="productInfo.prodCode"/>&ndash;%&gt;--%>
-		<%--<form:hidden id="prodBrandNameCopy" path="productInfo.brandName"/>--%>
-		<%--<form:hidden id="skuNameCopy" path="name"/>--%>
-		<%--<form:hidden id="skuCodeCopy" path="partNo"/>--%>
-		<%--<form:hidden id="itemNoCopy" path="itemNo"/>--%>
-		<%--<input type="hidden" name="skuType" value="${SkuTypeEnum.OWN_PRODUCT.code}"/>--%>
-		<%--&lt;%&ndash;<form:hidden id="skuTypeCopy" path="skuType"/>&ndash;%&gt;--%>
-	<%--</form:form>--%>
 </body>
 </html>

@@ -741,6 +741,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequestMapping(value = "scheduling")
 	public String scheduling(HttpServletRequest request, BizRequestHeader bizRequestHeader, Model model) {
 		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
+		List<Integer> reqDetailIdList = Lists.newArrayList();
 		if (bizRequestHeader.getId() != null) {
 			BizRequestDetail bizRequestDetail = new BizRequestDetail();
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
@@ -783,7 +784,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				requestDetail.setSkuInfo(skuInfo);
 				requestDetail.setSellCount(findSellCount(requestDetail));
 
-				//排产类型为按订单排产时，获取排产记录
+				//排产类型为按商品排产时，获取排产记录
 				if (SCHEDULING_FOR_DETAIL.equals(schedulingType)) {
 					BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
 					bizSchedulingPlan.setBizRequestDetail(requestDetail);
@@ -799,6 +800,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 					requestDetail.setSumSchedulingNum(requestDetailTemp.getSumSchedulingNum());
 					requestDetail.setSumCompleteNum(requestDetailTemp.getSumCompleteNum());
 				}
+
+				reqDetailIdList.add(requestDetail.getId());
 				reqDetailList.add(requestDetail);
 
 
@@ -862,6 +865,9 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		//bizRequestHeader.setStr("");
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
+
+		JSONArray reqDetailIdListJson = JSONArray.fromObject(reqDetailIdList);
+		model.addAttribute("reqDetailIdListJson", reqDetailIdListJson);
 		model.addAttribute("bizSkuInfo", new BizSkuInfo());
 
 		String forward = request.getParameter("forward");

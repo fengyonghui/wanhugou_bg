@@ -248,23 +248,25 @@
         }
 
         function confirmForSku(schedulingId) {
-            console.log("schedulingId=" + schedulingId)
-            $.ajax({
-                url: '${ctx}/biz/request/bizRequestHeaderForVendor/confirm',
-                contentType: 'application/json',
-                data:{"schedulingId":schedulingId},
-                type: 'get',
-                success: function (result) {
-                    console.log(result)
-                    if(result == true) {
-                        console.log("--result--")
-                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${entity.id} + "&forward=confirmScheduling";
+            if(confirm("确定执行该确认排产吗？")) {
+                $Mask.AddLogo("正在加载");
+                $.ajax({
+                    url: '${ctx}/biz/request/bizRequestHeaderForVendor/confirm',
+                    contentType: 'application/json',
+                    data:{"schedulingId":schedulingId},
+                    type: 'get',
+                    success: function (result) {
+                        console.log(result)
+                        if(result == true) {
+                            console.log("--result--")
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${entity.id} + "&forward=confirmScheduling";
+                        }
+                    },
+                    error: function (error) {
+                        console.info(error);
                     }
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
+                });
+            }
         }
 
 	</script>

@@ -460,4 +460,10 @@
 		WHERE id = #{id}
 	</update>
 
+	<update id="updateSchedulingType">
+		UPDATE biz_request_header SET
+		scheduling_type = 1
+		WHERE id = #{id}
+	</update>
+
 </mapper>
