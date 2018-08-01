@@ -122,9 +122,11 @@
 				<form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
 							  htmlEscape="false"/></form:select>
 		</li>
-		<li><label>经销店电话：</label>
-			<form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
-		</li>
+		<c:if test="${source ne 'vendor'}">
+			<li><label>经销店电话：</label>
+				<form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
+			</li>
+		</c:if>
 		<li>
 			<label>商品货号：</label>
 			<form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
@@ -206,13 +208,17 @@
 		<th>订单类型</th>
 		<th>经销店名称</th>
 		<th>所属采购中心</th>
-		<th>经销店电话</th>
+		<c:if test="${source ne 'vendor'}">
+			<th>经销店电话</th>
+		</c:if>
 		<th>已收货款</th>
 		<th>商品总价</th>
 		<th>调整金额</th>
 		<th>运费</th>
 		<th>应付金额</th>
-		<th>服务费</th>
+		<c:if test="${source ne 'vendor'}">
+			<th>服务费</th>
+		</c:if>
 		<th>发票状态</th>
 		<th>业务状态</th>
 		<th>订单来源</th>
@@ -264,9 +270,11 @@
 			<td>
 					${orderHeader.centersName}
 			</td>
-			<td>
-					${orderHeader.customer.phone}
-			</td>
+			<c:if test="${source ne 'vendor'}">
+				<td>
+						${orderHeader.customer.phone}
+				</td>
+			</c:if>
 			<td>
 				<fmt:formatNumber type="number" value="${orderHeader.receiveTotal==null?0.00:orderHeader.receiveTotal}" pattern="0.00"/>
 			</td>
@@ -282,14 +290,16 @@
 			<td><font color="#0A2A0A">
 				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
 			</font></td>
-			<td>
-				<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
-					${orderHeader.totalExp}
-				</c:if>
-				<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
-					<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight-orderHeader.totalBuyPrice}" pattern="0.00"/>
-				</c:if>
-			</td>
+			<c:if test="${source ne 'vendor'}">
+				<td>
+					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+						${orderHeader.totalExp}
+					</c:if>
+					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+						<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight-orderHeader.totalBuyPrice}" pattern="0.00"/>
+					</c:if>
+				</td>
+			</c:if>
 			<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 			</td>

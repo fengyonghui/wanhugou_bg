@@ -691,12 +691,14 @@
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
+    <c:if test="${source ne 'vendor'}">
         <div class="control-group">
             <label class="control-label">服务费：</label>
             <div class="controls">
                 <input type="text" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">
             </div>
-        </div>
+        </div
+    </c:if>
         <div class="control-group">
             <label class="control-label">发票状态：</label>
             <div class="controls">
@@ -733,6 +735,7 @@
                 </c:if>
             </div>
         </div>
+    <c:if test="${source ne 'vendor'}">
     <div class="control-group">
         <label class="control-label">收货人：</label>
         <div class="controls">
@@ -839,6 +842,7 @@
         <input id="addRemark" class="btn" type="button" value="增加备注"onclick="saveRemark()"/>
         <%--<span id="addRemark" onclick="saveRemark()">增加备注</span>--%>
     </div>
+    </c:if>
 
     <c:if test="${photosMap != null && photosMap.size()>0 }">
         <div class="control-group">
@@ -1131,7 +1135,7 @@
                 <div style="float:left;color: red;font-size: medium;margin-right: 50px">
                     甲方(经销店):${entity2.customer.name}<br>
                 负责人:${custUser.name}<br>
-                联系电话:${custUser.mobile}
+                    <c:if test="${source ne 'vendor'}">联系电话:${custUser.mobile}</c:if>
                 </div>
                 <div style="float:left;color: red;font-size: medium;margin-right: 50px">
                 乙方(供应商):${vendUser.vendor.name}<br>

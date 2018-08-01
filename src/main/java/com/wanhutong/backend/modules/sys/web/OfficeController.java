@@ -26,9 +26,11 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.BuyerAdviser;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.BuyerAdviserService;
@@ -153,6 +155,13 @@ public class OfficeController extends BaseController {
             } else {
                 //当点击子节点显示
                 page.getList().add(officeService.get(office.getId()));
+            }
+        }
+        User user = UserUtils.getUser();
+        for (Role role: user.getRoleList()) {
+            if (RoleEnNameEnum.SUPPLY_CHAIN.getState().equals(role.getEnname())) {
+                model.addAttribute("vendor","vendor");
+                break;
             }
         }
         model.addAttribute("page", page);

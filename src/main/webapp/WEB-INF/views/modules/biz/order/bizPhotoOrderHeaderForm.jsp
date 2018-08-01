@@ -520,12 +520,14 @@
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
+    <c:if test="${source ne 'vendor'}">
         <div class="control-group">
             <label class="control-label">服务费：</label>
             <div class="controls">
                 <input type="text" value="${bizOrderHeader.totalExp}" disabled="true" class="input-xlarge">
             </div>
         </div>
+    </c:if>
         <div class="control-group">
             <label class="control-label">发票状态：</label>
             <div class="controls">
@@ -544,59 +546,61 @@
                                   htmlEscape="false"/></form:select>
             </div>
         </div>
-    <div class="control-group">
-        <label class="control-label">收货人：</label>
-        <div class="controls">
-            <form:input path="bizLocation.receiver" placeholder="收货人名称" htmlEscape="false" disabled="true"
-                        class="input-xlarge"/>
+    <c:if test="${source ne 'vendor'}">
+        <div class="control-group">
+            <label class="control-label">收货人：</label>
+            <div class="controls">
+                <form:input path="bizLocation.receiver" placeholder="收货人名称" htmlEscape="false" disabled="true"
+                            class="input-xlarge"/>
+            </div>
         </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label">联系电话：</label>
-        <div class="controls">
-            <form:input path="bizLocation.phone" placeholder="请输入联系电话" htmlEscape="false" disabled="true"
-                        class="input-xlarge required"/>
+        <div class="control-group">
+            <label class="control-label">联系电话：</label>
+            <div class="controls">
+                <form:input path="bizLocation.phone" placeholder="请输入联系电话" htmlEscape="false" disabled="true"
+                            class="input-xlarge required"/>
+            </div>
         </div>
-    </div>
-    <div class="control-group" id="add1">
-        <label class="control-label">收货地址：</label>
-        <div class="controls">
-            <select id="province" class="input-medium" name="bizLocation.province.id" disabled="disabled"
-                    style="width:150px;text-align: center;">
-                <c:if test="${bizOrderHeader.id ==null}">
-                    <option value="-1">—— 省 ——</option>
-                </c:if>
-            </select>
-            <select id="city" class="input-medium" name="bizLocation.city.id" disabled="disabled"
-                    style="width:150px;text-align: center;">
-                <c:if test="${bizOrderHeader.id ==null}">
-                    <option value="-1">—— 市 ——</option>
-                </c:if>
-            </select>
-            <select id="region" class="input-medium" name="bizLocation.region.id" disabled="disabled"
-                    style="width:150px;text-align: center;">
-                <c:if test="${bizOrderHeader.id ==null}">
-                    <option value="-1">—— 区 ——</option>
-                </c:if>
-            </select>
-            <span class="help-inline"><font color="red">*</font> </span>
+        <div class="control-group" id="add1">
+            <label class="control-label">收货地址：</label>
+            <div class="controls">
+                <select id="province" class="input-medium" name="bizLocation.province.id" disabled="disabled"
+                        style="width:150px;text-align: center;">
+                    <c:if test="${bizOrderHeader.id ==null}">
+                        <option value="-1">—— 省 ——</option>
+                    </c:if>
+                </select>
+                <select id="city" class="input-medium" name="bizLocation.city.id" disabled="disabled"
+                        style="width:150px;text-align: center;">
+                    <c:if test="${bizOrderHeader.id ==null}">
+                        <option value="-1">—— 市 ——</option>
+                    </c:if>
+                </select>
+                <select id="region" class="input-medium" name="bizLocation.region.id" disabled="disabled"
+                        style="width:150px;text-align: center;">
+                    <c:if test="${bizOrderHeader.id ==null}">
+                        <option value="-1">—— 区 ——</option>
+                    </c:if>
+                </select>
+                <span class="help-inline"><font color="red">*</font> </span>
+            </div>
         </div>
-    </div>
-    <div class="control-group" id="add2" style="display:none">
-        <label class="control-label">收货地址：</label>
-        <div class="controls">
-            <input id="addAddressHref" type="button" value="新增地址" htmlEscape="false" class="input-xlarge required"/>
-            <label class="error" id="addError" style="display:none;">必填信息</label>
-            <span class="help-inline"><font color="red">*</font></span>
+        <div class="control-group" id="add2" style="display:none">
+            <label class="control-label">收货地址：</label>
+            <div class="controls">
+                <input id="addAddressHref" type="button" value="新增地址" htmlEscape="false" class="input-xlarge required"/>
+                <label class="error" id="addError" style="display:none;">必填信息</label>
+                <span class="help-inline"><font color="red">*</font></span>
+            </div>
         </div>
-    </div>
-    <div class="control-group" id="add3">
-        <label class="control-label">详细地址：</label>
-        <div class="controls">
-            <input type="text" id="address" name="bizLocation.address" htmlEscape="false" readOnly="true"
-                   class="input-xlarge required"/>
+        <div class="control-group" id="add3">
+            <label class="control-label">详细地址：</label>
+            <div class="controls">
+                <input type="text" id="address" name="bizLocation.address" htmlEscape="false" readOnly="true"
+                       class="input-xlarge required"/>
+            </div>
         </div>
-    </div>
+    </c:if>
     <div class="control-group">
         <label class="control-label">备&nbsp;注：</label>
         <div id="remark" class="controls" style="overflow:auto; float:left;text-align: left; width: 400px;">
@@ -880,7 +884,7 @@
                 <div style="float:left;color: red;font-size: medium;margin-right: 50px">
                     甲方(经销店):${entity2.customer.name}<br>
                 负责人:${custUser.name}<br>
-                联系电话:${custUser.mobile}
+                    <c:if test="${source ne 'vendor'}">联系电话:${custUser.mobile}</c:if>
                 </div>
                 <div style="float:left;color: red;font-size: medium;margin-right: 50px">
                 乙方(供应商):${vendUser.vendor.name}<br>
