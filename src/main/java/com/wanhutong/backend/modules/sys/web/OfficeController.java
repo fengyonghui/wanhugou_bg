@@ -142,6 +142,7 @@ public class OfficeController extends BaseController {
         role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
         if (roleList.contains(role)) {
             customer.setVendorId(user.getCompany().getId());
+            model.addAttribute("vendor","vendor");
         }
 
 
@@ -165,13 +166,6 @@ public class OfficeController extends BaseController {
             } else {
                 //当点击子节点显示
                 page.getList().add(officeService.get(office.getId()));
-            }
-        }
-        User user = UserUtils.getUser();
-        for (Role role: user.getRoleList()) {
-            if (RoleEnNameEnum.SUPPLY_CHAIN.getState().equals(role.getEnname())) {
-                model.addAttribute("vendor","vendor");
-                break;
             }
         }
         model.addAttribute("page", page);
