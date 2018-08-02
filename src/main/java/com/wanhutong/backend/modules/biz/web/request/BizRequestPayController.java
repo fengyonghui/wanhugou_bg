@@ -21,6 +21,7 @@ import com.wanhutong.utils.MD5Util;
 import com.wanhutong.utils.WhgPaySign;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -66,47 +67,16 @@ public class BizRequestPayController extends BaseController {
         Map<String,String> reMap =new HashMap<>();
         BizRequestHeader bizRequestHeader= bizRequestHeaderService.get(reqId);
 
-        BizPayRecord bizPayRecord =new BizPayRecord();
         String photoName=null;
+        String payNum = null;
         try {
-           String aplipayNo= GenerateOrderUtils.getTradeNum(OutTradeNoTypeEnum.PLATFORM_ALIPAY_NO_TYPE,user.getCompany().getId());
-           String wxNo=  GenerateOrderUtils.getTradeNum(OutTradeNoTypeEnum.PLATFORM_WX_NO_TYPE,user.getCompany().getId());
+            Pair<String, Map<String, Object>> response = unifiedOrder(payMoney, reqId, payMethod, WechatPayTradeType.NATIVE.getType(), null);
+            Map<String, Object> map1 = response.getRight();
 
-            if(payMethod==0){
-                bizPayRecord.setPayNum(aplipayNo);
-                bizPayRecord.setPayType(OutTradeNoTypeEnum.PLATFORM_ALIPAY_NO_TYPE.getCode());
-                bizPayRecord.setPayTypeName(OutTradeNoTypeEnum.PLATFORM_ALIPAY_NO_TYPE.getMessage());
-                photoName= user.getCompany().getId()+bizRequestHeader.getReqNo()+aplipayNo+".png";
-
-            }else if(payMethod==1){
-                bizPayRecord.setPayNum(wxNo);
-                bizPayRecord.setPayType(OutTradeNoTypeEnum.PLATFORM_WX_NO_TYPE.getCode());
-                bizPayRecord.setPayTypeName(OutTradeNoTypeEnum.PLATFORM_WX_NO_TYPE.getMessage());
-
-                photoName= user.getCompany().getId()+bizRequestHeader.getReqNo()+wxNo+".png";
-            }
-
-            bizPayRecord.setOrderNum(bizRequestHeader.getReqNo());
-            bizPayRecord.setPayMoney(payMoney);
-            bizPayRecord.setPayer(user.getId());
-            bizPayRecord.setCustomer(user.getCompany());
-            bizPayRecord.setRecordType(TradeTypeEnum.REQUEST_PAY_TYPE.getCode());
-            bizPayRecord.setRecordTypeName(TradeTypeEnum.REQUEST_PAY_TYPE.getTradeNoType());
-
-            bizPayRecord.setCreateBy(user);
-            bizPayRecord.setUpdateBy(user);
-            bizPayRecordService.save(bizPayRecord);
-
-            payLogger.info("支付请求时添加支付记录----------"+bizPayRecord);
-
-
-            Map<String, Object> map1 = unifiedOrder(payMoney, reqId, payMethod, WechatPayTradeType.NATIVE.getType(), null);
-
-
+            payNum = response.getLeft();
+            photoName= user.getCompany().getId()+bizRequestHeader.getReqNo()+ payNum +".png";
             String pathFile = Global.getUserfilesBaseDir()+"/upload/" +photoName ;
             payLogger.info("二维码路径----------"+pathFile);
-
-
 
             String qrCodeUrl="";
             if("1".equalsIgnoreCase(map1.get("status").toString())&& payMethod==0){
@@ -126,20 +96,19 @@ public class BizRequestPayController extends BaseController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            bizPayRecord.setBizStatus(0);
-            bizPayRecordService.save(bizPayRecord);
         }finally {
         }
         reMap.put("imgUrl","/upload/" +photoName);
-        reMap.put("payNum",bizPayRecord.getPayNum());
+        reMap.put("payNum", payNum);
         return reMap;
     }
 
     @RequestMapping(value = "wechatPay4JSAPI")
     @ResponseBody
     public String wechatPay4JSAPI(Double payMoney, Integer reqId, String openid){
-        Map<String, Object> response = unifiedOrder(payMoney, reqId, 1, WechatPayTradeType.JSAPI.getType(), openid);
-        Map<String, String> payParamForJSAPI = getPayParamForJSAPI(response);
+        Pair<String, Map<String, Object>> response = unifiedOrder(payMoney, reqId, 1, WechatPayTradeType.JSAPI.getType(), openid);
+        Map<String, String> payParamForJSAPI = getPayParamForJSAPI(response.getRight());
+        payParamForJSAPI.put("payNum", response.getLeft());
         return JsonUtil.generateData(payParamForJSAPI, null);
 
     }
@@ -151,7 +120,7 @@ public class BizRequestPayController extends BaseController {
      * @param payMethod
      * @return
      */
-    private Map<String, Object> unifiedOrder (Double payMoney, Integer reqId, Integer payMethod, String payType, String openid) {
+    private Pair<String, Map<String, Object>> unifiedOrder (Double payMoney, Integer reqId, Integer payMethod, String payType, String openid) {
         User user = UserUtils.getUser();
         BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(reqId);
         String postUrl = DsConfig.getAlipayPostUrl();
@@ -181,11 +150,11 @@ public class BizRequestPayController extends BaseController {
             payLogger.info("微信请求自带参数-----------" + ownCallbackStr);
 
             map.put("appid", DsConfig.getAppid());
-            String aplipayNo = GenerateOrderUtils.getTradeNum(OutTradeNoTypeEnum.PLATFORM_ALIPAY_NO_TYPE, user.getCompany().getId());
-            String wxNo = GenerateOrderUtils.getTradeNum(OutTradeNoTypeEnum.PLATFORM_WX_NO_TYPE, user.getCompany().getId());
+
+            String payNum = null;
 
             if (payMethod == 0) {
-                map.put("out_trade_no", aplipayNo);
+                payNum = GenerateOrderUtils.getTradeNum(OutTradeNoTypeEnum.PLATFORM_ALIPAY_NO_TYPE, user.getCompany().getId());
                 map.put("amount", payMoney.toString());
             }
             if (payMethod == 1) {
@@ -197,9 +166,11 @@ public class BizRequestPayController extends BaseController {
                 }
                 map.put("amount", bd.intValue());
                 map.put("attach", ownCallbackStr);
-                map.put("out_trade_no", wxNo);
+                payNum = GenerateOrderUtils.getTradeNum(OutTradeNoTypeEnum.PLATFORM_WX_NO_TYPE, user.getCompany().getId());
+
             }
 
+            map.put("out_trade_no", payNum);
             map.put("notifyUrl", DsConfig.getNotifyUrl());
             map.put("body", "备货清单支付");
 
@@ -218,16 +189,15 @@ public class BizRequestPayController extends BaseController {
 
 
             if (payMethod == 0) {
-                bizPayRecord.setPayNum(aplipayNo);
                 bizPayRecord.setPayType(OutTradeNoTypeEnum.PLATFORM_ALIPAY_NO_TYPE.getCode());
                 bizPayRecord.setPayTypeName(OutTradeNoTypeEnum.PLATFORM_ALIPAY_NO_TYPE.getMessage());
 
             } else if (payMethod == 1) {
-                bizPayRecord.setPayNum(wxNo);
+
                 bizPayRecord.setPayType(OutTradeNoTypeEnum.PLATFORM_WX_NO_TYPE.getCode());
                 bizPayRecord.setPayTypeName(OutTradeNoTypeEnum.PLATFORM_WX_NO_TYPE.getMessage());
             }
-
+            bizPayRecord.setPayNum(payNum);
             bizPayRecord.setOrderNum(bizRequestHeader.getReqNo());
             bizPayRecord.setPayMoney(payMoney);
             bizPayRecord.setPayer(user.getId());
@@ -247,7 +217,7 @@ public class BizRequestPayController extends BaseController {
             result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
             payLogger.info("返回结果result=================" + result);
 
-            return (Map) com.alibaba.druid.support.json.JSONUtils.parse(result);
+            return Pair.of(payNum, (Map) com.alibaba.druid.support.json.JSONUtils.parse(result));
         } catch (Exception e) {
             e.printStackTrace();
             bizPayRecord.setBizStatus(0);
