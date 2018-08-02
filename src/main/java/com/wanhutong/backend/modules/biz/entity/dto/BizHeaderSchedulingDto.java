@@ -22,7 +22,7 @@ public class BizHeaderSchedulingDto {
      */
     public String planDate;
     /**
-     * 已完成数量
+     * 订单排产类型
      */
     public String schedulingType;
 

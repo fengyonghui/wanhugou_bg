@@ -71,7 +71,7 @@ public class BizSchedulingPlanService extends CrudService<BizSchedulingPlanDao, 
 	}
 
 	@Transactional(readOnly = false)
-	public List<BizSchedulingPlan> getByObjectIdAndObjectName(Integer objectId, String objectName) {
+	public BizSchedulingPlan getByObjectIdAndObjectName(Integer objectId, String objectName) {
 		return bizSchedulingPlanDao.getByObjectIdAndObjectName(objectId, objectName);
 	}
 

@@ -586,22 +586,20 @@
 					</tr>
 
 
-
-
-					<c:if test="${fn:length(schedulingPlans) > 0}">
+					<c:if test="${fn:length(bizCompletePalns) > 0}">
                         <tr>
                             <td>
                                 <label>排产履历：</label>
                             </td>
                         </tr>
-						<c:forEach items="${schedulingPlans}" var="schedulingPlan" varStatus="stat">
+						<c:forEach items="${bizCompletePalns}" var="bizCompletePaln" varStatus="stat">
 							<tr>
 								<td>
 									<div>
 										<label>排产日期：</label>
-										<input type="text" maxlength="20" class="input-medium Wdate" readonly="readonly" value="<fmt:formatDate value="${schedulingPlan.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" /> &nbsp;
+										<input type="text" maxlength="20" class="input-medium Wdate" readonly="readonly" value="<fmt:formatDate value="${bizCompletePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" /> &nbsp;
 										<label>排产数量：</label>
-										<input class="input-medium" type="text" readonly="readonly" value="${schedulingPlan.schedulingNum}" maxlength="30" />
+										<input class="input-medium" type="text" readonly="readonly" value="${bizCompletePaln.completeNum}" maxlength="30" />
 									</div>
 								</td>
 							</tr>
@@ -689,13 +687,13 @@
 												<input id="totalOrdQtyForSku_${reqDetail.id}"  name='reqQtys' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 												&nbsp;
 												<label>已排产数量：</label>
-												<input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumSchedulingNum}" class="input-mini" type='text'/>
+												<input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
 												&nbsp;
 												<label>待排产量：</label>
-												<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}" class="input-mini" type='text'/>
+												<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty - reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
 												&nbsp;
 												<c:choose>
-													<c:when test="${reqDetail.reqQty == reqDetail.sumSchedulingNum}">
+													<c:when test="${reqDetail.reqQty == reqDetail.sumCompleteNum}">
 														<span style="color:red; ">已排产完成</span>
 													</c:when>
 													<c:otherwise>
@@ -707,27 +705,27 @@
 											</td>
 										</tr>
 
-                                        <c:if test="${fn:length(reqDetail.schedulingPlanList) > 0}">
+                                        <c:if test="${reqDetail.bizSchedulingPlan != null}">
 											<tr>
 												<td>
 													<label>排产履历：</label>
 												</td>
 											</tr>
-											<c:forEach items="${reqDetail.schedulingPlanList}" var="schedulingPlan">
+											<c:forEach items="${reqDetail.bizSchedulingPlan.completePalnList}" var="completePaln">
 												<tr >
 													<td>
 														<div>
 															<label>排产日期：</label>
-															<input type="text" maxlength="20" readonly="readonly" value="<fmt:formatDate value="${schedulingPlan.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" class="input-medium Wdate"  /> &nbsp;
+															<input type="text" maxlength="20" readonly="readonly" value="<fmt:formatDate value="${completePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" class="input-medium Wdate"  /> &nbsp;
 															<label>排产数量：</label>
-															<input class="input-medium" readonly="readonly" value="${schedulingPlan.schedulingNum}" type="text" maxlength="30" />
+															<input class="input-medium" readonly="readonly" value="${completePaln.completeNum}" type="text" maxlength="30" />
 														</div>
 													</td>
 												</tr>
 											</c:forEach>
                                         </c:if>
 
-										<c:if test="${reqDetail.reqQty != reqDetail.sumSchedulingNum}">
+										<c:if test="${reqDetail.reqQty != reqDetail.sumCompleteNum}">
 										<tr>
 											<td>
 												<label>排产计划：</label>

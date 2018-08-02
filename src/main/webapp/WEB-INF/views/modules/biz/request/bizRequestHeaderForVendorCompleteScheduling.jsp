@@ -49,9 +49,7 @@
 
             var detailHeaderFlg = '${detailHeaderFlg}';
             var detailSchedulingFlg = '${detailSchedulingFlg}';
-            console.log("---1---")
             if (detailHeaderFlg == 'true' || detailSchedulingFlg == 'true') {
-                console.log("---2---")
                 var input = $("#schedulingPlanRadio").find("input:radio");
                 input.attr("disabled","disabled");
                 input.each(function(){
@@ -247,18 +245,39 @@
             }
         }
 
-        function confirmForSku(schedulingId) {
+        function confirmComplete(completeId) {
             if(confirm("确定执行该确认排产吗？")) {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
                     url: '${ctx}/biz/request/bizRequestHeaderForVendor/confirm',
                     contentType: 'application/json',
-                    data:{"schedulingId":schedulingId},
+                    data:{"completeId":completeId},
                     type: 'get',
                     success: function (result) {
-                        console.log(result)
                         if(result == true) {
-                            console.log("--result--")
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${entity.id} + "&forward=confirmScheduling";
+                        }
+                    },
+                    error: function (error) {
+                        console.info(error);
+                    }
+                });
+            }
+        }
+
+
+        function batchConfirmComplete() {
+
+
+            if(confirm("确定执行该确认排产吗？")) {
+                $Mask.AddLogo("正在加载");
+                $.ajax({
+                    url: '${ctx}/biz/request/bizRequestHeaderForVendor/confirm',
+                    contentType: 'application/json',
+                    data:{"completeId":completeId},
+                    type: 'get',
+                    success: function (result) {
+                        if(result == true) {
                             window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${entity.id} + "&forward=confirmScheduling";
                         }
                     },
@@ -507,6 +526,7 @@
 							<label>总待排产量：</label>
 							<input id="totalSchedulingNumToDo" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
 							&nbsp;
+							<input class="btn btn-primary" type="button" value="确定" onclick="batchConfirmComplete('${bizCompletePaln.id}');"/>
 							<%--<input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('header_', ${entity.id})"/>--%>
 							<%--&nbsp;--%>
 							<%--<input id="saveSubmit" class="btn btn-primary" type="button" onclick="saveComplete('0',${entity.id})" value="保存"/>--%>
@@ -515,23 +535,23 @@
 					</tr>
 
 
-					<c:if test="${fn:length(schedulingPlans) > 0}">
+					<c:if test="${fn:length(bizCompletePalns) > 0}">
                         <tr>
                             <td>
                                 <label>排产履历：</label>
                             </td>
                         </tr>
-						<c:forEach items="${schedulingPlans}" var="schedulingPlan" varStatus="stat">
-							<tr>
+						<c:forEach items="${bizCompletePalns}" var="bizCompletePaln" varStatus="stat">
+							<tr id="comSchedulingHeader_${bizCompletePaln.id}">
 								<td>
 									<div>
 										<label>排产日期：</label>
-										<input type="text" maxlength="20" class="input-medium Wdate" readonly="readonly" value="<fmt:formatDate value="${schedulingPlan.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" /> &nbsp;
+										<input type="text" maxlength="20" class="input-medium Wdate" readonly="readonly" value="<fmt:formatDate value="${bizCompletePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" /> &nbsp;
 										<label>排产数量：</label>
-										<input class="input-medium" type="text" readonly="readonly" value="${schedulingPlan.schedulingNum}" maxlength="30" />
+										<input class="input-medium" type="text" readonly="readonly" value="${bizCompletePaln.completeNum}" maxlength="30" />
 										<c:choose>
-											<c:when test="${schedulingPlan.completeStatus == 0}">
-												<input class="btn btn-primary" type="button" value="确定" onclick="confirmForSku('${schedulingPlan.id}');"/>
+											<c:when test="${bizCompletePaln.completeStatus == 0}">
+												<input class="btn btn-primary" type="button" value="确定" onclick="confirmComplete('${bizCompletePaln.id}');"/>
 											</c:when>
 											<c:otherwise>
 												<span style="color:red; ">已确认排产</span>
@@ -639,10 +659,10 @@
 												<input id="totalOrdQtyForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 												&nbsp;
 												<label>已排产数量：</label>
-												<input id="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumSchedulingNum}" class="input-mini" type='text'/>
+												<input id="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
 												&nbsp;
 												<label>待排产量：</label>
-												<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}" class="input-mini" type='text'/>
+												<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty - reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
 												&nbsp;
 												<%--<input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('detail_', ${reqDetail.id})"/>
 												<input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete('1',${reqDetail.id})" value="保存"/>--%>
@@ -652,19 +672,19 @@
 										</tr>
 
 
-                                        <c:if test="${reqDetail.schedulingPlanList != null}">
-											<c:forEach items="${reqDetail.schedulingPlanList}" var="schedulingPlan">
-												<tr >
+                                        <c:if test="${reqDetail.bizSchedulingPlan != null}">
+											<c:forEach items="${reqDetail.bizSchedulingPlan.completePalnList}" var="completePaln">
+												<tr name="comSchedulingDetail_${reqDetail.id}">
 													<td>
 														<div>
 															<label>排产日期：</label>
-															<input type="text" maxlength="20" readonly="readonly" value="<fmt:formatDate value="${schedulingPlan.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" class="input-medium Wdate"  /> &nbsp;
+															<input type="text" maxlength="20" readonly="readonly" value="<fmt:formatDate value="${completePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" class="input-medium Wdate"  /> &nbsp;
 															<label>排产数量：</label>
-															<input class="input-medium" readonly="readonly" value="${schedulingPlan.schedulingNum}" type="text" maxlength="30" />
+															<input class="input-medium" readonly="readonly" value="${completePaln.completeNum}" type="text" maxlength="30" />
 															&nbsp;
 															<c:choose>
-															<c:when test="${schedulingPlan.completeStatus == 0}">
-																<input class="btn btn-primary" type="button" value="确定" onclick="confirmForSku('${schedulingPlan.id}');"/>
+															<c:when test="${completePaln.completeStatus == 0}">
+																<input class="btn btn-primary" type="button" value="确定" onclick="confirmComplete('${completePaln.id}');"/>
 															</c:when>
 															<c:otherwise>
 																<span style="color:red; ">已确认排产</span>

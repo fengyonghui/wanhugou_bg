@@ -77,6 +77,8 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	 */
 	private Integer sumCompleteNum = 0;
 
+	private BizSchedulingPlan bizSchedulingPlan;
+
 	public BizRequestDetail() {
 		super();
 	}
@@ -277,5 +279,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setSumCompleteNum(Integer sumCompleteNum) {
 		this.sumCompleteNum = sumCompleteNum;
+	}
+
+	public BizSchedulingPlan getBizSchedulingPlan() {
+		return bizSchedulingPlan;
+	}
+
+	public void setBizSchedulingPlan(BizSchedulingPlan bizSchedulingPlan) {
+		this.bizSchedulingPlan = bizSchedulingPlan;
 	}
 }

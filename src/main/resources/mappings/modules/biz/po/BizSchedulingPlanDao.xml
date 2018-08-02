@@ -7,16 +7,26 @@
 		<result property="objectId" column="objectId"/>
 		<result property="originalNum" column="originalNum"/>
 		<result property="schedulingNum" column="schedulingNum"/>
-		<result property="totalExp" column="totalExp"/>
 		<result property="sumCompleteNum" column="sumCompleteNum"/>
+		<result property="delFlag" column="status"/>
+		<result property="createDate" column="createDate"/>
+		<result property="updateDate" column="updateDate"/>
         <result property="planDate" column="planDate"/>
 		<result property="completeStatus" column="completeStatus"/>
+
+		<association property="createBy" javaType="User" column="createBy.id">
+			<id property="id" column="createBy.id"/>
+		</association>
+		<association property="updateBy" javaType="User" column="updateBy.id">
+			<id property="id" column="updateBy.id"/>
+		</association>
 
 		<collection property="completePalnList" ofType="BizCompletePaln">
 			<id property="id" column="completePalnList.id" />
 			<result property="schedulingId" column="completePalnList.schedulingId" />
 			<result property="completeNum" column="completePalnList.completeNum" />
 			<result property="planDate" column="completePalnList.planDate" />
+			<result property="completeStatus" column="completePalnList.completeStatus"/>
 		</collection>
 	</resultMap>
 
@@ -29,10 +39,10 @@
 		a.scheduling_num AS "schedulingNum",
 		/*a.complete_num AS "completeNum",*/
 		a.status AS "delFlag",
-		a.create_id AS "createBy",
+		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
-		a.update_id AS "updateBy",
+		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
 		a.plan_date AS "planDate",
 		a.complete_status AS "completeStatus"
@@ -57,11 +67,16 @@
 		WHERE a.object_id = #{objectId}
 	</select>
 
-	<select id="getByObjectIdAndObjectName" resultType="BizSchedulingPlan">
+	<select id="getByObjectIdAndObjectName" resultMap="schedulingPlanResult">
 		SELECT
 		<include refid="bizSchedulingPlanColumns"/>
+		,bcp.id AS "completePalnList.id"
+		,bcp.scheduling_id AS "completePalnList.schedulingId"
+		,bcp.complete_num AS "completePalnList.completeNum"
+		,bcp.plan_date AS "completePalnList.planDate"
+		,bcp.complete_status AS "completePalnList.completeStatus"
 		FROM biz_scheduling_plan a
-		<include refid="bizSchedulingPlanJoins"/>
+		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = a.id AND bcp.status=1
 		WHERE
 		a.status = 1
 		AND a.object_id = #{objectId}
@@ -142,7 +157,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_scheduling_plan(
 			id,
 			object_name,
