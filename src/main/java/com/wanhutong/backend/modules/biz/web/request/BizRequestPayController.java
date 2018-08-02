@@ -80,9 +80,9 @@ public class BizRequestPayController extends BaseController {
             ownParams.put("centerId", user.getCompany().getId());
             ownParams.put("payer", user.getId());
             ownParams.put("amount", payMoney);
-            ownParams.put("payMethod",payMethod);
-            ownParams.put("orderNum",bizRequestHeader.getReqNo());
-            ownParams.put("reqId",bizRequestHeader.getId());
+            ownParams.put("payMethod", payMethod);
+            ownParams.put("orderNum", bizRequestHeader.getReqNo());
+            ownParams.put("reqId", bizRequestHeader.getId());
 
             String ownCallbackStr=JSONObject.fromObject(ownParams).toString();
 
@@ -99,9 +99,7 @@ public class BizRequestPayController extends BaseController {
             if(payMethod==1){
                 BigDecimal bigDecimal =new BigDecimal(payMoney.toString());
                 BigDecimal bd=  bigDecimal.multiply(new BigDecimal("100"));
-//                map.put("payType", "NATIVE");
-//                map.put("payType", "MWEB");
-                map.put("payType", "JSAPI");
+                map.put("payType", "NATIVE");
                 map.put("amount", bd.intValue());
                 map.put("attach", ownCallbackStr);
                 map.put("out_trade_no",wxNo );
