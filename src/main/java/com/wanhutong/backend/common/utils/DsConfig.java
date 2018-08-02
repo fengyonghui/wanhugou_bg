@@ -38,6 +38,8 @@ public class DsConfig {
 
     public static String getAlipayPostUrl(){return getConfig().getString("alipayPostUrl");}
 
+    public static String getAlipay4H5PostUrl(){return getConfig().getString("alipay4h5PostUrl");}
+
     public static String getUserGenCode(){
         return getConfig().getString("userGenCode");
     }

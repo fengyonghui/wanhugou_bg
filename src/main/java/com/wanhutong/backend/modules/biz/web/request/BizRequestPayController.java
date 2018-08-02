@@ -37,8 +37,12 @@ import org.springframework.web.context.ContextLoader;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -50,7 +54,7 @@ import java.util.TreeMap;
 @RequestMapping(value = "${adminPath}/biz/request/bizRequestPay")
 public class BizRequestPayController extends BaseController {
 
-    private static Logger payLogger = LoggerFactory.getLogger("requestPay");
+    private static final Logger LOGGER = LoggerFactory.getLogger("requestPay");
 
     @Resource
     private BizRequestHeaderService bizRequestHeaderService;
@@ -76,7 +80,7 @@ public class BizRequestPayController extends BaseController {
             payNum = response.getLeft();
             photoName= user.getCompany().getId()+bizRequestHeader.getReqNo()+ payNum +".png";
             String pathFile = Global.getUserfilesBaseDir()+"/upload/" +photoName ;
-            payLogger.info("二维码路径----------"+pathFile);
+            LOGGER.info("二维码路径----------"+pathFile);
 
             String qrCodeUrl="";
             if("1".equalsIgnoreCase(map1.get("status").toString())&& payMethod==0){
@@ -86,10 +90,10 @@ public class BizRequestPayController extends BaseController {
                 qrCodeUrl=(String) ((Map)map1.get("data")).get("code_url");
 
             }
-            payLogger.info("二维码地址-------------"+qrCodeUrl);
+            LOGGER.info("二维码地址-------------"+qrCodeUrl);
 
             String basePath = ContextLoader.getCurrentWebApplicationContext().getServletContext().getRealPath("/");;
-            payLogger.info("获取logo图片地址---------"+basePath);
+            LOGGER.info("获取logo图片地址---------"+basePath);
             BufferedImage image = QRCodeKit.createQRCodeWithLogo(qrCodeUrl,260,260, new File(basePath+"/static/images/whtLogo.png"));
             ImageIO.write(image, "png", new File(pathFile));
 
@@ -114,6 +118,36 @@ public class BizRequestPayController extends BaseController {
     }
 
     /**
+     * 获取移动支付的表单数据  仅用于黑卡推广H5支付
+     * @param httpRequest
+     * @param httpResponse
+     * @throws ServletException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/alipayForH5", produces = "application/json;charset=UTF-8")
+    public void alipayForH5(HttpServletRequest httpRequest,
+                         HttpServletResponse httpResponse,
+                        Double payMoney, Integer reqId
+    ) throws IOException {
+        String result = null;
+        try {
+            Pair<String, Map<String, Object>> response = unifiedOrder(payMoney, reqId, 3, null, null);
+            Map<String, Object> data = (Map)response.getRight().get("data");
+            result = String.valueOf(data.get("html"));
+        } catch (Exception e) {
+            LOGGER.error("alipay : html_alipay_payForH5 error!", e);
+            result = "<script type='text/javascript'>alert('支付请求失败,请重新提交!');</script>";//直接将完整的表单html输出到页面
+        } finally {
+            httpResponse.setContentType("text/html;charset=UTF-8");
+            httpResponse.getWriter().write(result);
+            httpResponse.getWriter().flush();
+            httpResponse.getWriter().close();
+        }
+    }
+
+
+
+    /**
      * 统一下单
      * @param payMoney
      * @param reqId
@@ -124,10 +158,22 @@ public class BizRequestPayController extends BaseController {
         User user = UserUtils.getUser();
         BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(reqId);
         String postUrl = DsConfig.getAlipayPostUrl();
-        if (payMethod == 1) {
-            postUrl = DsConfig.getWxPostUrl();
+
+        switch (payMethod) {
+            case 1:
+                postUrl = DsConfig.getWxPostUrl();
+                break;
+            case 0:
+                postUrl = DsConfig.getAlipayPostUrl();
+                break;
+            case 3:
+                postUrl = DsConfig.getAlipay4H5PostUrl();
+                break;
+            default:
+                break;
+
         }
-        payLogger.info("请求URL=====" + postUrl);
+        LOGGER.info("请求URL=====" + postUrl);
 
         BizPayRecord bizPayRecord = new BizPayRecord();
         HashMap<String, Object> map = Maps.newHashMap();
@@ -147,13 +193,13 @@ public class BizRequestPayController extends BaseController {
 
             String ownCallbackStr = JSONObject.fromObject(ownParams).toString();
 
-            payLogger.info("微信请求自带参数-----------" + ownCallbackStr);
+            LOGGER.info("微信请求自带参数-----------" + ownCallbackStr);
 
             map.put("appid", DsConfig.getAppid());
 
             String payNum = null;
 
-            if (payMethod == 0) {
+            if (payMethod == 0 || payMethod == 3) {
                 payNum = GenerateOrderUtils.getTradeNum(OutTradeNoTypeEnum.PLATFORM_ALIPAY_NO_TYPE, user.getCompany().getId());
                 map.put("amount", payMoney.toString());
             }
@@ -183,12 +229,12 @@ public class BizRequestPayController extends BaseController {
 
             String jsonstr = JSONObject.fromObject(map).toString();
 
-            payLogger.info("请求参数-------------" + new StringEntity(jsonstr, Charset.forName("UTF-8")));
+            LOGGER.info("请求参数-------------" + new StringEntity(jsonstr, Charset.forName("UTF-8")));
 
             httpPost.setEntity(new StringEntity(jsonstr, Charset.forName("UTF-8")));
 
 
-            if (payMethod == 0) {
+            if (payMethod == 0 || payMethod == 3) {
                 bizPayRecord.setPayType(OutTradeNoTypeEnum.PLATFORM_ALIPAY_NO_TYPE.getCode());
                 bizPayRecord.setPayTypeName(OutTradeNoTypeEnum.PLATFORM_ALIPAY_NO_TYPE.getMessage());
 
@@ -209,13 +255,13 @@ public class BizRequestPayController extends BaseController {
             bizPayRecord.setUpdateBy(user);
             bizPayRecordService.save(bizPayRecord);
 
-            payLogger.info("支付请求时添加支付记录----------" + bizPayRecord);
+            LOGGER.info("支付请求时添加支付记录----------" + bizPayRecord);
 
 
             httpResponse = httpClient.execute(httpPost);
 
             result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-            payLogger.info("返回结果result=================" + result);
+            LOGGER.info("返回结果result=================" + result);
 
             return Pair.of(payNum, (Map) com.alibaba.druid.support.json.JSONUtils.parse(result));
         } catch (Exception e) {
