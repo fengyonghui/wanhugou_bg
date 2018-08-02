@@ -50,13 +50,13 @@
 						},
 						dataType: 'json',
 						success: function(res) {
-//							console.log(res)
+							console.log(res)
 							var dataRow = res.data.roleSet;
 							var arrLen = res.data.page.list.length;
 							
 							if(arrLen > 0) {
 								$.each(res.data.page.list, function(i, item) {
-//									console.log(item)
+									console.log(item)
 								/*业务状态*/
 									var bizstatus = item.bizStatus;
 									var bizstatusTxt = '';
