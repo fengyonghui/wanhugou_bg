@@ -26,6 +26,8 @@ public class DsConfig {
 
     public static String getWechatSecret(){return getConfig().getString("WECHAT_SECRET");}
 
+    public static String getWechatMchSecret(){return getConfig().getString("WECHAT_MCH_SECRET");}
+
     public static String getAppid(){return getConfig().getString("appId");}
 
     public static String getNotifyUrl(){return getConfig().getString("notifyUrl");}
