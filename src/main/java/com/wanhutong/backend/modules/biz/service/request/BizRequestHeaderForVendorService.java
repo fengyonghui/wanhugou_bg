@@ -887,4 +887,22 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		return bizRequestHeaderForVendorDao.getTotalNum(id);
 	}
 
+	/**
+	 * 该备货单下所有商品的总采购数量，总排产数量（分为按订单排产的总排产量和按商品排产的总排产量）
+	 * @param id
+	 * @return
+	 */
+	public BizRequestHeader getTotalQtyAndSchedulingNum(Integer id){
+		return bizRequestHeaderForVendorDao.getTotalQtyAndSchedulingNum(id);
+	}
+
+	/**
+	 * 供应商确认排产后，更新排产表中排产状态
+	 * @param requestHeader
+	 */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void updateSchedulingType(BizRequestHeader requestHeader) {
+        bizRequestHeaderForVendorDao.updateSchedulingType(requestHeader);
+    }
+
 }

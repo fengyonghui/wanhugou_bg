@@ -21,6 +21,11 @@ public class BizHeaderSchedulingDto {
      * 已完成数量
      */
     public String planDate;
+    /**
+     * 订单排产类型
+     */
+    public String schedulingType;
+
 
     public Integer getObjectId() {
         return objectId;
@@ -52,5 +57,13 @@ public class BizHeaderSchedulingDto {
 
     public void setPlanDate(String planDate) {
         this.planDate = planDate;
+    }
+
+    public String getSchedulingType() {
+        return schedulingType;
+    }
+
+    public void setSchedulingType(String schedulingType) {
+        this.schedulingType = schedulingType;
     }
 }

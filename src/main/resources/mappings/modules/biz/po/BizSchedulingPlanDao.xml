@@ -7,14 +7,26 @@
 		<result property="objectId" column="objectId"/>
 		<result property="originalNum" column="originalNum"/>
 		<result property="schedulingNum" column="schedulingNum"/>
-		<result property="totalExp" column="totalExp"/>
 		<result property="sumCompleteNum" column="sumCompleteNum"/>
+		<result property="delFlag" column="status"/>
+		<result property="createDate" column="createDate"/>
+		<result property="updateDate" column="updateDate"/>
+        <result property="planDate" column="planDate"/>
+		<result property="completeStatus" column="completeStatus"/>
+
+		<association property="createBy" javaType="User" column="createBy.id">
+			<id property="id" column="createBy.id"/>
+		</association>
+		<association property="updateBy" javaType="User" column="updateBy.id">
+			<id property="id" column="updateBy.id"/>
+		</association>
 
 		<collection property="completePalnList" ofType="BizCompletePaln">
 			<id property="id" column="completePalnList.id" />
 			<result property="schedulingId" column="completePalnList.schedulingId" />
 			<result property="completeNum" column="completePalnList.completeNum" />
 			<result property="planDate" column="completePalnList.planDate" />
+			<result property="completeStatus" column="completePalnList.completeStatus"/>
 		</collection>
 	</resultMap>
 
@@ -27,11 +39,13 @@
 		a.scheduling_num AS "schedulingNum",
 		/*a.complete_num AS "completeNum",*/
 		a.status AS "delFlag",
-		a.create_id AS "createBy",
+		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
-		a.update_id AS "updateBy",
-		a.update_time AS "updateDate"
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.plan_date AS "planDate",
+		a.complete_status AS "completeStatus"
 	</sql>
 	
 	<sql id="bizSchedulingPlanJoins">
@@ -51,6 +65,22 @@
 		FROM biz_scheduling_plan a
 		<include refid="bizSchedulingPlanJoins"/>
 		WHERE a.object_id = #{objectId}
+	</select>
+
+	<select id="getByObjectIdAndObjectName" resultMap="schedulingPlanResult">
+		SELECT
+		<include refid="bizSchedulingPlanColumns"/>
+		,bcp.id AS "completePalnList.id"
+		,bcp.scheduling_id AS "completePalnList.schedulingId"
+		,bcp.complete_num AS "completePalnList.completeNum"
+		,bcp.plan_date AS "completePalnList.planDate"
+		,bcp.complete_status AS "completePalnList.completeStatus"
+		FROM biz_scheduling_plan a
+		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = a.id AND bcp.status=1
+		WHERE
+		a.status = 1
+		AND a.object_id = #{objectId}
+		AND a.object_name = #{objectName}
 	</select>
 	
 	<select id="findList" resultMap="schedulingPlanResult">
@@ -113,6 +143,10 @@
                 AND a.object_name = "biz_request_detail"
                 AND a.object_id = #{bizRequestDetail.id}
             </if>
+			<if test="bizRequestHeader!=null and bizRequestHeader.id!=null and bizRequestHeader.id!=''">
+				AND a.object_name = "biz_request_header"
+				AND a.object_id = #{bizRequestHeader.id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -123,7 +157,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_scheduling_plan(
 			id,
 			object_name,
@@ -132,9 +166,7 @@
 			<if test="schedulingNum !=null and schedulingNum !=''">
 				scheduling_num,
 			</if>
-			<!--<if test="completeNum !=null and completeNum !=''">-->
-				<!--complete_num,-->
-			<!--</if>-->
+			plan_date,
 			status,
 			create_id,
 			create_time,
@@ -149,9 +181,7 @@
 			<if test="schedulingNum !=null and schedulingNum !=''">
 				#{schedulingNum},
 			</if>
-			<!--<if test="completeNum !=null and completeNum !=''">-->
-				<!--#{completeNum},-->
-			<!--</if>-->
+			#{planDate},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -200,5 +230,25 @@
 		left join biz_request_header brh on brh.id = brd.header_id
 		WHERE brh.id = #{id}
 	</select>
+
+    <update id="updateSchedulingType">
+        UPDATE biz_scheduling_plan SET
+        object_name = #{objectName},
+        object_id = #{objectId},
+        original_num = #{originalNum},
+        scheduling_num = #{schedulingNum},
+        <!--complete_num = #{completeNum},-->
+        create_time = #{createDate},
+        u_version = #{uVersion},
+        update_id = #{updateBy.id},
+        update_time = #{updateDate}
+        WHERE id = #{id}
+    </update>
+
+	<update id="updateCompleteStatus">
+		UPDATE biz_scheduling_plan SET
+		complete_status = #{completeStatus}
+		WHERE id = #{id}
+	</update>
 	
 </mapper>

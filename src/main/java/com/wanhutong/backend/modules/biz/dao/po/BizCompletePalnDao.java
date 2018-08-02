@@ -14,5 +14,10 @@ import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
  */
 @MyBatisDao
 public interface BizCompletePalnDao extends CrudDao<BizCompletePaln> {
-	
+
+    /**
+     * 确认排产后更改排产状态
+     * @param bizCompletePaln
+     */
+    void updateCompleteStatus(BizCompletePaln bizCompletePaln);
 }

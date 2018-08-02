@@ -26,11 +26,16 @@ public interface BizSchedulingPlanDao extends CrudDao<BizSchedulingPlan> {
      * @param objectId
      * @return
      */
-    BizSchedulingPlan getByObjectId(String objectId);
+    List<BizSchedulingPlan> getByObjectId(Integer objectId);
 
     List<Integer> getSchedulingPlanIdListByPoId(BizPoHeader bizPoHeader);
 
     List<BizSchedulingPlan> findAllList(BizSchedulingPlan bizSchedulingPlan);
 
     List<Integer> getSchedulingPlanIdListByRequestId(BizRequestHeader bizRequestHeader);
+
+    BizSchedulingPlan getByObjectIdAndObjectName(@Param("objectId") Integer objectId, @Param("objectName") String objectName);
+
+    void updateCompleteStatus(BizSchedulingPlan bizSchedulingPlan);
+
 }

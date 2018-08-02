@@ -41,7 +41,8 @@
 		process.biz_status AS "commonProcess.bizStatus",
 		process.processor AS "commonProcess.processor",
 		process.description AS "commonProcess.description",
-		process.type AS "commonProcess.type"
+		process.type AS "commonProcess.type",
+		a.scheduling_type AS "schedulingType"
 	</sql>
 	
 	<sql id="bizRequestHeaderJoins">
@@ -417,6 +418,30 @@
 		and a.id =#{id}
 	</select>
 
+
+	<select id="getTotalQtyAndSchedulingNum" resultType="BizRequestHeader" parameterType="Integer">
+		SELECT
+		(select
+		sum(brd.req_qty)
+		from biz_request_header brh
+		left join biz_request_detail brd on brd.header_id=brh.id and brd.status=1
+		where brh.id = #{id}) as "totalOrdQty",
+		(select
+		sum(bcp.complete_num)
+		from biz_request_header brh
+		left join biz_request_detail brd on brd.header_id=brh.id and brd.status=1
+		left join biz_scheduling_plan bsp on bsp.object_id = brd.id and bsp.object_name = 'biz_request_detail' and bsp.status=1
+    	left join biz_complete_paln bcp on bcp.scheduling_id = bsp.id and bcp.status=1
+		where brh.id = #{id}) as "totalSchedulingDetailNum",
+		sum(bcp.complete_num) as "totalSchedulingHeaderNum"
+		from biz_request_header a
+		left join biz_scheduling_plan bsp on bsp.object_id = a.id and bsp.object_name = 'biz_request_header' and bsp.status=1
+    	left join biz_complete_paln bcp on bcp.scheduling_id = bsp.id and bcp.status=1
+		WHERE
+		a.status=1
+		and a.id =#{id}
+	</select>
+
 	<update id="incrPayTotal">
 		UPDATE biz_request_header SET
 		balance_total  = (balance_total + #{payTotal})
@@ -434,6 +459,12 @@
 		biz_status = #{status},
 		update_id = #{updateBy.id},
 		update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateSchedulingType">
+		UPDATE biz_request_header SET
+		scheduling_type = 1
 		WHERE id = #{id}
 	</update>
 
