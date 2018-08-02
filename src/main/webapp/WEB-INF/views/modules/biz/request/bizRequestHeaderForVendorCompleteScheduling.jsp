@@ -245,14 +245,23 @@
             }
         }
 
-        function confirmComplete(completeId) {
+        function confirmComplete() {
+            var orderHtml = $(".orderChk");
+            var params = new Array();
+            $(".orderChk").each(function () {
+                if(this.checked){
+                    var completeId = $(this).attr("value")
+					params.push(completeId);
+                }
+            })
+
             if(confirm("确定执行该确认排产吗？")) {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
                     url: '${ctx}/biz/request/bizRequestHeaderForVendor/confirm',
                     contentType: 'application/json',
-                    data:{"completeId":completeId},
-                    type: 'get',
+                    data:JSON.stringify(params),
+                    type: 'post',
                     success: function (result) {
                         if(result == true) {
                             window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${entity.id} + "&forward=confirmScheduling";
@@ -516,7 +525,7 @@
 			<div class="controls">
 				<table  style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
 					<tr>
-						<td>
+						<td colspan="2">
 							<label>总申报数量：</label>
 							<input id="totalOrdQty" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
 							&nbsp;
@@ -526,7 +535,7 @@
 							<label>总待排产量：</label>
 							<input id="totalSchedulingNumToDo" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
 							&nbsp;
-							<input class="btn btn-primary" type="button" value="确定" onclick="batchConfirmComplete('${bizCompletePaln.id}');"/>
+							<%--<input class="btn btn-primary" type="button" value="确定" onclick="batchConfirmComplete('${bizCompletePaln.id}');"/>--%>
 							<%--<input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('header_', ${entity.id})"/>--%>
 							<%--&nbsp;--%>
 							<%--<input id="saveSubmit" class="btn btn-primary" type="button" onclick="saveComplete('0',${entity.id})" value="保存"/>--%>
@@ -542,21 +551,24 @@
                             </td>
                         </tr>
 						<c:forEach items="${bizCompletePalns}" var="bizCompletePaln" varStatus="stat">
-							<tr id="comSchedulingHeader_${bizCompletePaln.id}">
+							<tr id="comSchedulingHeader">
+								<td>
+									<c:if test="${bizCompletePaln.completeStatus == 0}">
+										<input class="orderChk" type="checkbox" name="${bizCompletePaln.completeStatus}" value="${bizCompletePaln.id}" />
+									</c:if>
+									<c:if test="${bizCompletePaln.completeStatus == 1}">
+										<span style="color:red; ">已确认排产</span>
+									</c:if>
+								</td>
 								<td>
 									<div>
 										<label>排产日期：</label>
 										<input type="text" maxlength="20" class="input-medium Wdate" readonly="readonly" value="<fmt:formatDate value="${bizCompletePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" /> &nbsp;
 										<label>排产数量：</label>
 										<input class="input-medium" type="text" readonly="readonly" value="${bizCompletePaln.completeNum}" maxlength="30" />
-										<c:choose>
-											<c:when test="${bizCompletePaln.completeStatus == 0}">
-												<input class="btn btn-primary" type="button" value="确定" onclick="confirmComplete('${bizCompletePaln.id}');"/>
-											</c:when>
-											<c:otherwise>
-												<span style="color:red; ">已确认排产</span>
-											</c:otherwise>
-										</c:choose>
+
+
+
 									</div>
 								</td>
 							</tr>
@@ -661,9 +673,9 @@
 												<label>已排产数量：</label>
 												<input id="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
 												&nbsp;
-												<label>待排产量：</label>
-												<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty - reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
-												&nbsp;
+												<%--<label>待排产量：</label>--%>
+												<%--<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty - reqDetail.sumCompleteNum}" class="input-mini" type='text'/>--%>
+												<%--&nbsp;--%>
 												<%--<input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('detail_', ${reqDetail.id})"/>
 												<input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete('1',${reqDetail.id})" value="保存"/>--%>
 
@@ -729,20 +741,8 @@
 		<div class="form-actions">
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 			&nbsp;&nbsp;
-			<%--<c:if test="${reqDetailList!=null}">--%>
-				<%--<input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;--%>
-			<%--</c:if>--%>
+			<input class="btn btn-primary" type="button" value="确定" onclick="confirmComplete();"/>
 		</div>
 	</form:form>
-	<%--<form:form id="searchForm" modelAttribute="bizSkuInfo" >--%>
-		<%--&lt;%&ndash;<form:hidden id="productNameCopy" path="productInfo.name"/>&ndash;%&gt;--%>
-		<%--&lt;%&ndash;<form:hidden id="prodCodeCopy" path="productInfo.prodCode"/>&ndash;%&gt;--%>
-		<%--<form:hidden id="prodBrandNameCopy" path="productInfo.brandName"/>--%>
-		<%--<form:hidden id="skuNameCopy" path="name"/>--%>
-		<%--<form:hidden id="skuCodeCopy" path="partNo"/>--%>
-		<%--<form:hidden id="itemNoCopy" path="itemNo"/>--%>
-		<%--<input type="hidden" name="skuType" value="${SkuTypeEnum.OWN_PRODUCT.code}"/>--%>
-		<%--&lt;%&ndash;<form:hidden id="skuTypeCopy" path="skuType"/>&ndash;%&gt;--%>
-	<%--</form:form>--%>
 </body>
 </html>

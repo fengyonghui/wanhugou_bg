@@ -48,9 +48,21 @@ public class BizCompletePalnService extends CrudService<BizCompletePalnDao, BizC
 		super.delete(bizCompletePaln);
 	}
 
+	/**
+	 * 确认排产后更改排产状态
+	 * @param bizCompletePaln
+	 */
 	@Transactional(readOnly = false)
 	public void updateCompleteStatus(BizCompletePaln bizCompletePaln) {
 		bizCompletePalnDao.updateCompleteStatus(bizCompletePaln);
 	}
-	
+
+	/**
+	 * 批量确认排产后更改排产状态
+	 * @param paramList
+	 */
+	@Transactional(readOnly = false)
+	public void batchUpdateCompleteStatus(List<String> paramList) {
+		bizCompletePalnDao.batchUpdateCompleteStatus(paramList);
+	}
 }

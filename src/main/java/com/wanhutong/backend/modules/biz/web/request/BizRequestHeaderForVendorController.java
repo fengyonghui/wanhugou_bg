@@ -771,8 +771,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 			model.addAttribute("bizCompletePalns", bizCompletePalns);
 
-			JSONArray bizCompletePalnsJson = JSONArray.fromObject(bizCompletePalns);
-			model.addAttribute("bizCompletePalnsJson", bizCompletePalnsJson);
+//			JSONArray bizCompletePalnsJson = JSONArray.fromObject(bizCompletePalns);
+//			model.addAttribute("bizCompletePalnsJson", bizCompletePalnsJson);
 
 			Boolean detailSchedulingFlg = false;
 			for (BizRequestDetail requestDetail : requestDetailList) {
@@ -1059,17 +1059,29 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 	@RequestMapping(value = "confirm")
 	@ResponseBody
-	public boolean confirm(HttpServletRequest request, Integer completeId) {
+	public boolean confirm(HttpServletRequest request, @RequestBody String params) {
 		Boolean resultFlag = false;
-		BizCompletePaln bizCompletePaln = bizCompletePalnService.get(completeId);
-		bizCompletePaln.setCompleteStatus(COMPLETE_STATUS);
-		try {
-			bizCompletePalnService.updateCompleteStatus(bizCompletePaln);
-			resultFlag = true;
-		} catch (Exception e) {
-			resultFlag = false;
-			logger.error(e.getMessage());
+//		String[] paramsArr = JSON.parseArray(params);
+		JSONArray jsonArray = JSONArray.fromObject(params);
+		System.out.println(jsonArray);
+
+		List<String> paramList = Lists.newArrayList();
+		for (Object item:jsonArray) {
+			paramList.add(String.valueOf(item));
 		}
+
+
+
+
+//		BizCompletePaln bizCompletePaln = bizCompletePalnService.get(completeId);
+//		bizCompletePaln.setCompleteStatus(COMPLETE_STATUS);
+//		try {
+//			bizCompletePalnService.updateCompleteStatus(bizCompletePaln);
+//			resultFlag = true;
+//		} catch (Exception e) {
+//			resultFlag = false;
+//			logger.error(e.getMessage());
+//		}
 		return resultFlag;
 	}
 }
