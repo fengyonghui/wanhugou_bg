@@ -808,6 +808,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				if (requestDetailTemp != null) {
 					requestDetail.setSumSchedulingNum(requestDetailTemp.getSumSchedulingNum());
 					requestDetail.setSumCompleteNum(requestDetailTemp.getSumCompleteNum());
+					requestDetail.setSumCompleteDetailNum(requestDetailTemp.getSumCompleteDetailNum());
 				}
 
 				reqDetailIdList.add(requestDetail.getId());
@@ -1049,10 +1050,11 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@ResponseBody
 	public String checkSchedulingNum(HttpServletRequest request, Integer id) {
 		BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.getTotalQtyAndSchedulingNum(id);
-			Map resultMap = new HashMap();
+		Map resultMap = new HashMap();
 		resultMap.put("totalOrdQty", bizRequestHeader.getTotalOrdQty());
 		resultMap.put("toalSchedulingDetailNum", bizRequestHeader.getTotalSchedulingDetailNum());
 		resultMap.put("totalSchedulingHeaderNum", bizRequestHeader.getTotalSchedulingHeaderNum());
+		resultMap.put("totalCompleteScheduHeaderNum", bizRequestHeader.getTotalCompleteScheduHeaderNum());
 
 		return JSONObject.fromObject(resultMap).toString();
 	}
@@ -1061,7 +1063,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@ResponseBody
 	public boolean confirm(HttpServletRequest request, @RequestBody String params) {
 		Boolean resultFlag = false;
-//		String[] paramsArr = JSON.parseArray(params);
 		JSONArray jsonArray = JSONArray.fromObject(params);
 		System.out.println(jsonArray);
 
@@ -1070,18 +1071,14 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			paramList.add(String.valueOf(item));
 		}
 
+		try {
+			bizCompletePalnService.batchUpdateCompleteStatus(paramList);
+			resultFlag = true;
+		} catch (Exception e) {
+			resultFlag = false;
+			logger.error(e.getMessage());
+		}
 
-
-
-//		BizCompletePaln bizCompletePaln = bizCompletePalnService.get(completeId);
-//		bizCompletePaln.setCompleteStatus(COMPLETE_STATUS);
-//		try {
-//			bizCompletePalnService.updateCompleteStatus(bizCompletePaln);
-//			resultFlag = true;
-//		} catch (Exception e) {
-//			resultFlag = false;
-//			logger.error(e.getMessage());
-//		}
 		return resultFlag;
 	}
 }

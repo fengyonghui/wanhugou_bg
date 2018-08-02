@@ -73,6 +73,11 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	private Integer sumSchedulingNum = 0;
 
 	/**
+	 * 订单按商品排产是，总的已确认量
+	 */
+	private Integer sumCompleteDetailNum;
+
+	/**
 	 * 总的已确认数量
 	 */
 	private Integer sumCompleteNum = 0;
@@ -287,5 +292,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setBizSchedulingPlan(BizSchedulingPlan bizSchedulingPlan) {
 		this.bizSchedulingPlan = bizSchedulingPlan;
+	}
+
+	public Integer getSumCompleteDetailNum() {
+		return sumCompleteDetailNum;
+	}
+
+	public void setSumCompleteDetailNum(Integer sumCompleteDetailNum) {
+		this.sumCompleteDetailNum = sumCompleteDetailNum;
 	}
 }

@@ -63,11 +63,15 @@
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
                 $("#schedulingPlan_forSku").hide();
+
+                $("#schedulingPlanHeaderFlag").val("true");
             }
             if (detailSchedulingFlg == 'true') {
                 $("#stockGoods").hide();
                 $("#schedulingPlan_forHeader").hide();
                 $("#schedulingPlan_forSku").show();
+
+                $("#schedulingPlanDetailFlag").val("true");
             }
             if (detailHeaderFlg != 'true' && detailSchedulingFlg != 'true') {
                 $("#stockGoods").show();
@@ -101,10 +105,7 @@
             var schedulingNum = $(eval("schedulingNum_" + index)).val();
             var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
             var standard = reqQty - sumSchedulingNum;
-            // alert("reqQty=" + reqQty + "\r\n" +
-            //     "schedulingNum=" + schedulingNum + "\r\n" +
-            //     "sumSchedulingNum=" + sumSchedulingNum + "\r\n" +
-            //     "standard=" + standard)
+
             var reg= /^[0-9]+[0-9]*]*$/;
             if (parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
                 alert("排产量数值设置不正确，请重新输入")
@@ -180,7 +181,7 @@
 
         function checkResult(id) {
             $.ajax({
-                url: '${ctx}/biz/request/bizRequestHeaderForVendor/checkResult',
+                url: '${ctx}/biz/request/bizRequestHeaderForVendor/checkSchedulingNum',
                 contentType: 'application/json',
                 data: {"id": id},
                 type: 'get',
@@ -188,15 +189,25 @@
                 success: function (result) {
                     var totalOrdQty = result['totalOrdQty'];
                     $("#totalOrdQty").val(totalOrdQty)
-                    var toalSchedulingNum = result['toalSchedulingNum'] == null ? 0 : result['toalSchedulingNum'];
-                    $("#toalSchedulingNum").val(toalSchedulingNum)
-                    $("#totalSchedulingNumToDo").val(parseInt(totalOrdQty) - parseInt(toalSchedulingNum))
-                    if (totalOrdQty != null && toalSchedulingNum != null && totalOrdQty == toalSchedulingNum) {
-                        $("#addSchedulingHeaderPlanBtn").hide();
-                        $("#saveSubmit").hide();
-                        $("#schedulingPanAlert").show();
-                        $("#batchSubmit").hide();
+                    var totalSchedulingHeaderNum = result['totalSchedulingHeaderNum'] == null ? 0 : result['totalSchedulingHeaderNum'];
+                    $("#totalSchedulingNumToDo").val(totalSchedulingHeaderNum)
+					var totalCompleteScheduHeaderNum = result['totalCompleteScheduHeaderNum'] == null ? 0 : result['totalCompleteScheduHeaderNum'];
+                    $("#totalCompleteScheduHeaderNum").val(totalCompleteScheduHeaderNum)
+
+					if ($("#schedulingPlanHeaderFlag").val() == "true") {
+                        if($("#totalSchedulingNumToDo").val() == $("#totalCompleteScheduHeaderNum").val()) {
+                            $("#completeBtn").hide()
+							$("#totalCompleteAlert").show()
+                        }
                     }
+
+                    if ($("#schedulingPlanDetailFlag").val() == "true") {
+                        if($("#toalSchedulingNumForSku").val() == $("#sumCompleteDetailNum").val()) {
+                            $("#completeBtn").hide()
+                            $("#totalCompleteAlert").show()
+                        }
+                    }
+
                 },
                 error: function (error) {
                     console.info(error);
@@ -520,26 +531,22 @@
 		</div>
 
 
-		<div class="control-group" id="schedulingPlan_forHeader">
+		<div class="control-group" id="schedulingPlan_forHeader" >
 			<label class="control-label">按订单排产：</label>
 			<div class="controls">
 				<table  style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
 					<tr>
 						<td colspan="2">
+							<input  type='hidden' id='schedulingPlanHeaderFlag' value=''/>
 							<label>总申报数量：</label>
 							<input id="totalOrdQty" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
-							&nbsp;
-							<label>已排产数量：</label>
-							<input id="toalSchedulingNum" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
 							&nbsp;
 							<label>总待排产量：</label>
 							<input id="totalSchedulingNumToDo" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
 							&nbsp;
-							<%--<input class="btn btn-primary" type="button" value="确定" onclick="batchConfirmComplete('${bizCompletePaln.id}');"/>--%>
-							<%--<input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('header_', ${entity.id})"/>--%>
-							<%--&nbsp;--%>
-							<%--<input id="saveSubmit" class="btn btn-primary" type="button" onclick="saveComplete('0',${entity.id})" value="保存"/>--%>
-							<%--<span id="schedulingPanAlert" style="color:red; display:none" >已排产完成</span>--%>
+							<label>总已排产数量：</label>
+							<input id="totalCompleteScheduHeaderNum" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
+							&nbsp;
 						</td>
 					</tr>
 
@@ -574,22 +581,6 @@
 							</tr>
 						</c:forEach>
 					</c:if>
-
-					<%--<tr>--%>
-						<%--<td>--%>
-							<%--<label>排产计划：</label>--%>
-						<%--</td>--%>
-					<%--</tr>--%>
-					<%--<tr id="header_${entity.id}">--%>
-						<%--<td>--%>
-							<%--<div name="${entity.id}">--%>
-								<%--<label>排产日期：</label>--%>
-								<%--<input name="${entity.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;--%>
-								<%--<label>排产数量：</label>--%>
-								<%--<input name="${entity.id}_value" class="input-medium" type="text" maxlength="30" />--%>
-							<%--</div>--%>
-						<%--</td>--%>
-					<%--</tr>--%>
 				</table>
 
 			</div>
@@ -629,7 +620,6 @@
 								<td>${reqDetail.skuInfo.name}</td>
 								<td>${reqDetail.skuInfo.partNo}</td>
 								<td>${reqDetail.skuInfo.itemNo}</td>
-									<%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
 								<td style="white-space: nowrap">
 										${reqDetail.unitPrice}
 								</td>
@@ -664,15 +654,20 @@
 
 							<tr>
 								<td colspan="10">
-									<table  id="" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
+									<table style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
 										<tr>
-											<td>
+											<td colspan="2">
+												<input  type='hidden' id='schedulingPlanDetailFlag' value=''/>
 												<label>总申报数量：</label>
 												<input id="totalOrdQtyForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 												&nbsp;
-												<label>已排产数量：</label>
+												<label>总待排产数量：</label>
 												<input id="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
 												&nbsp;
+												<label>总已排产数量：</label>
+												<input id="sumCompleteDetailNum" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
+												&nbsp;
+
 												<%--<label>待排产量：</label>--%>
 												<%--<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty - reqDetail.sumCompleteNum}" class="input-mini" type='text'/>--%>
 												<%--&nbsp;--%>
@@ -688,20 +683,28 @@
 											<c:forEach items="${reqDetail.bizSchedulingPlan.completePalnList}" var="completePaln">
 												<tr name="comSchedulingDetail_${reqDetail.id}">
 													<td>
+														<c:if test="${completePaln.completeStatus == 0}">
+															<input class="orderChk" type="checkbox" name="${completePaln.completeStatus}" value="${completePaln.id}" />
+														</c:if>
+														<c:if test="${completePaln.completeStatus == 1}">
+															<span style="color:red; ">已确认排产</span>
+														</c:if>
+													</td>
+													<td>
 														<div>
 															<label>排产日期：</label>
 															<input type="text" maxlength="20" readonly="readonly" value="<fmt:formatDate value="${completePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" class="input-medium Wdate"  /> &nbsp;
 															<label>排产数量：</label>
 															<input class="input-medium" readonly="readonly" value="${completePaln.completeNum}" type="text" maxlength="30" />
 															&nbsp;
-															<c:choose>
-															<c:when test="${completePaln.completeStatus == 0}">
-																<input class="btn btn-primary" type="button" value="确定" onclick="confirmComplete('${completePaln.id}');"/>
-															</c:when>
-															<c:otherwise>
-																<span style="color:red; ">已确认排产</span>
-															</c:otherwise>
-															</c:choose>
+															<%--<c:choose>--%>
+															<%--<c:when test="${completePaln.completeStatus == 0}">--%>
+																<%--<input class="btn btn-primary" type="button" value="确定" onclick="confirmComplete('${completePaln.id}');"/>--%>
+															<%--</c:when>--%>
+															<%--<c:otherwise>--%>
+																<%--<span style="color:red; ">已确认排产</span>--%>
+															<%--</c:otherwise>--%>
+															<%--</c:choose>--%>
 														</div>
 													</td>
 												</tr>
@@ -741,7 +744,9 @@
 		<div class="form-actions">
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 			&nbsp;&nbsp;
-			<input class="btn btn-primary" type="button" value="确定" onclick="confirmComplete();"/>
+			<input id="completeBtn" class="btn btn-primary" type="button" value="确定" onclick="confirmComplete();"/>
+
+			<span id="totalCompleteAlert" style="color:red; display: none">排产已全部确认</span>
 		</div>
 	</form:form>
 </body>

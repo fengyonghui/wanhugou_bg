@@ -169,6 +169,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 */
 	private Integer totalSchedulingHeaderNum;
 	/**
+	 * 该采购单下按商品排产时总的已确认量
+	 */
+	private Integer totalCompleteScheduHeaderNum;
+	/**
 	 * 与供应商结算的金额
 	 */
 	private BigDecimal balanceTotal;
@@ -659,5 +663,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setTotalSchedulingHeaderNum(Integer totalSchedulingHeaderNum) {
 		this.totalSchedulingHeaderNum = totalSchedulingHeaderNum;
+	}
+
+	public Integer getTotalCompleteScheduHeaderNum() {
+		return totalCompleteScheduHeaderNum;
+	}
+
+	public void setTotalCompleteScheduHeaderNum(Integer totalCompleteScheduHeaderNum) {
+		this.totalCompleteScheduHeaderNum = totalCompleteScheduHeaderNum;
 	}
 }
