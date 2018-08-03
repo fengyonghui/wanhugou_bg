@@ -26,6 +26,8 @@ public interface BizCollectGoodsRecordDao extends CrudDao<BizCollectGoodsRecord>
 
     List<BizCollectGoodsRecord> getListBySkuIdCentId(@Param("skuId") Integer skuId, @Param("centId")Integer centId);
 
+    List<BizCollectGoodsRecord> getListBySkuIdInvId(@Param("skuId") Integer skuId, @Param("invId")Integer invId);
+
     List<BizSkuInputOutputDto> getSkuInputOutputRecord(@Param("startDate")String startDate, @Param("endDate")String endDate,
                                                        @Param("invName")String invName, @Param("skuItemNo")String skuItemNo);
 }

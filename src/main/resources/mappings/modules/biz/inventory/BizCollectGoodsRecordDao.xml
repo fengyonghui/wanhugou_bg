@@ -335,6 +335,32 @@
 		where a.sku_id = #{skuId} and b.cust_id = #{centId} and a.inv_id = b.id and a.sku_id = sku.id
 	</select>
 
+	<select id="getListBySkuIdInvId" resultType="BizCollectGoodsRecord">
+		SELECT
+		a.id AS "id",
+		a.inv_id AS "invInfo.id",
+		b.name AS "invInfo.name",
+		a.inv_old_num AS "invOldNum",
+		a.sku_id AS "skuInfo.id",
+		sku.part_no AS "skuInfo.partNo",
+		sku.name AS "skuInfo.name",
+		sku.item_no AS "skuInfo.itemNo",
+		a.order_id AS "bizOrderHeader.id",
+		a.request_id AS "bizRequestHeader.id",
+		a.order_num AS "orderNum",
+		a.receive_num AS "receiveNum",
+		a.vend_id AS "vender.id",
+		a.receive_time AS "receiveDate",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+		from biz_collect_goods_record a, biz_inventory_info b, biz_sku_info sku
+		where a.sku_id = #{skuId} and b.id = #{invId} and a.inv_id = b.id and a.sku_id = sku.id
+	</select>
+
 	<select id="getSkuInputOutputRecord" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizSkuInputOutputDto">
 	select
 	sum(receive_num) as countNumber,

@@ -524,8 +524,8 @@ public class BizInventorySkuController extends BaseController {
 
     @RequiresPermissions("biz:inventory:inventoryAge:view")
     @RequestMapping("showInventoryAge")
-    public String showInventoryAge(HttpServletRequest request, Integer skuId, Integer centId) {
-        Map<String, Object> resultMap = bizInventorySkuService.getInventoryAge(skuId, centId);
+    public String showInventoryAge(HttpServletRequest request, Integer skuId, Integer centId, Integer invInfoId) {
+        Map<String, Object> resultMap = bizInventorySkuService.getInventoryAge(skuId, centId, invInfoId);
         request.setAttribute("data", resultMap);
         return "modules/biz/inventory/bizInventoryAge";
     }
