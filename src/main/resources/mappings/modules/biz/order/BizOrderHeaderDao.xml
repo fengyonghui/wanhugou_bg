@@ -2394,15 +2394,15 @@ FROM
 		AND s1.type = 6
 		AND s1.STATUS = 1
 		AND u1.STATUS = 1
-		<if test="ordrHeaderStartTime ==null">
-			and DATE_FORMAT(s1.create_date,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
-		</if>
-		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
-			AND s1.create_date &lt;= #{ordrHeaderStartTime}
-		</if>
-		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
-			AND s1.create_date BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
-		</if>
+		<!--<if test="ordrHeaderStartTime ==null">-->
+			<!--and DATE_FORMAT(s1.create_date,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')-->
+		<!--</if>-->
+		<!--<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">-->
+			<!--AND s1.create_date &lt;= #{ordrHeaderStartTime}-->
+		<!--</if>-->
+		<!--<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">-->
+			<!--AND s1.create_date BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}-->
+		<!--</if>-->
 		)
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(bcc.update_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
