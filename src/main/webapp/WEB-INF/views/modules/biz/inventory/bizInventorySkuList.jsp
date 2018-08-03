@@ -210,7 +210,7 @@
 					</td>
 					<shiro:hasAnyPermissions name="biz:inventory:inventoryAge:view">
 					<td>
-						<a href="${ctx}/biz/inventory/bizInventorySku/showInventoryAge?skuId=${bizInventorySku.skuInfo.id}&centId=${bizInventorySku.invInfo.customer.id}">查看库龄</a>
+						<a href="${ctx}/biz/inventory/bizInventorySku/showInventoryAge?skuId=${bizInventorySku.skuInfo.id}&centId=${bizInventorySku.invInfo.customer.id}&invInfoId=${bizInventorySku.invInfo.id}">查看库龄</a>
 					</td>
 					</shiro:hasAnyPermissions>
 				</c:if>
