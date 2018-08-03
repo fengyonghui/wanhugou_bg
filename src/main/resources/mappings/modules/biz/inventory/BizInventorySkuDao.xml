@@ -62,7 +62,8 @@
 		LEFT JOIN biz_inventory_sku bis ON bis.inv_id = bsgr.inv_id AND bis.sku_id = bsgr.sku_id
 		WHERE
 		bsgr.biz_status = 0
-		AND bis.id = a.id) AS "outWarehouse",
+		AND bis.id = a.id
+		AND bsgr.status = 1) AS "outWarehouse",
 		(SELECT sum(bsgr.send_num)
 		FROM biz_send_goods_record bsgr
 		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsgr.sku_id
@@ -127,6 +128,9 @@
 				<if test="dbName == 'oracle'">'%'||#{skuInfo.partNo}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{skuInfo.partNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.partNo},'%')</if>
+			</if>
+			<if test="invInfo != null and invInfo.id != null">
+				AND i.id = #{invInfo.id}
 			</if>
 			<if test="invInfo != null and invInfo.name != null and invInfo.name != ''">
 				AND i.name LIKE
@@ -205,6 +209,14 @@
 		FROM biz_inventory_sku bis
 		INNER JOIN biz_inventory_info bii ON bii.id = bis.inv_id
 		WHERE bii.cust_id = #{centId} and bis.status = 1 and bis.sku_id = #{skuId}
+	</select>
+	<!--根据SKU和采购中心取库存数量-->
+	<select id="getStockQtyBySkuIdInvId" parameterType="Integer" resultType="Integer">
+		SELECT
+			SUM(stock_qty)
+		FROM biz_inventory_sku bis
+		INNER JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		WHERE bii.id = #{invId} and bis.status = 1 and bis.sku_id = #{skuId}
 	</select>
 
 	<insert id="insert">

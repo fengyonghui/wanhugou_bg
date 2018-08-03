@@ -19,16 +19,26 @@ public class DsConfig {
         return config;
     }
     public static String getImgServer(){return getConfig().getString("imgServer");}
+
     public static String getOldImgServer(){return getConfig().getString("oldImgServer");}
 
+    public static String getWechatAppid(){return getConfig().getString("WECHAT_APPID");}
+
+    public static String getWechatSecret(){return getConfig().getString("WECHAT_SECRET");}
+
+    public static String getWechatMchSecret(){return getConfig().getString("WECHAT_MCH_SECRET");}
+
     public static String getAppid(){return getConfig().getString("appId");}
+
     public static String getNotifyUrl(){return getConfig().getString("notifyUrl");}
+
     public static String getSsecureKey(){return getConfig().getString("secureKey");}
 
     public static String getWxPostUrl(){return getConfig().getString("wxPostUrl");}
 
     public static String getAlipayPostUrl(){return getConfig().getString("alipayPostUrl");}
 
+    public static String getAlipay4H5PostUrl(){return getConfig().getString("alipay4h5PostUrl");}
 
     public static String getUserGenCode(){
         return getConfig().getString("userGenCode");
