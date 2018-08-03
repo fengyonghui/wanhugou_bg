@@ -81,9 +81,7 @@
                         $.each(data,function (keys,skuInfoList) {
                             var prodKeys= keys.split(",");
                             var prodId= prodKeys[0];
-                            if($("#prodInfo").children("."+prodId).length>0){
-                            	return;
-							}
+
 //                            var prodName= prodKeys[1];
                             var prodUrl= prodKeys[2];
 //                            var cateName= prodKeys[3];
@@ -94,6 +92,10 @@
                             var tr_tds="";
                             var t=0;
                             $.each(skuInfoList,function (index,skuInfo) {
+                                if($("#prodInfo").children("."+skuInfo.id).length>0){
+                                    return;
+                                }
+
                                 skuInfoId+=","+skuInfo.id;
                                 tr_tds+= "<tr class='"+prodId+"'>";
 								if(flag){
@@ -430,7 +432,7 @@
 				<tbody id="prodInfo">
 				<c:if test="${reqDetailList!=null}">
 					<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
-						<tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
+						<tr class="${reqDetail.skuInfo.id}" id="${reqDetail.id}">
 							<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}" width="100" height="100" /></td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 							<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
