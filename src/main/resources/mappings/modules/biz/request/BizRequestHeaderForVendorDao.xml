@@ -437,6 +437,7 @@
 		from biz_request_header brh
 		LEFT JOIN biz_scheduling_plan bsp	ON (bsp.object_id = brh.id AND bsp.object_name = 'biz_request_header' AND bsp.status = 1)
 		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id AND bcp.status = 1 AND bcp.complete_status = 1
+		WHERE brh.status=1 AND brh.id=#{id}
 	  	) as "totalCompleteScheduHeaderNum",
 		sum(bcp.complete_num) as "totalSchedulingHeaderNum"
 		from biz_request_header a

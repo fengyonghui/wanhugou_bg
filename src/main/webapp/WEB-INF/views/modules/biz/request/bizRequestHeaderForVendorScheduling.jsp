@@ -572,11 +572,11 @@
 							<label>总申报数量：</label>
 							<input id="totalOrdQty" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
 							&nbsp;
-							<label>已排产数量：</label>
-							<input id="toalSchedulingNum" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
-							&nbsp;
 							<label>总待排产量：</label>
 							<input id="totalSchedulingNumToDo" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
+							&nbsp;
+							<label>已排产数量：</label>
+							<input id="toalSchedulingNum" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
 							&nbsp;
 							<input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('header_', ${entity.id})"/>
 							&nbsp;
@@ -686,11 +686,11 @@
 												<label>总申报数量：</label>
 												<input id="totalOrdQtyForSku_${reqDetail.id}"  name='reqQtys' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 												&nbsp;
-												<label>已排产数量：</label>
-												<input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
-												&nbsp;
 												<label>待排产量：</label>
 												<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty - reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
+												&nbsp;
+												<label>已排产数量：</label>
+												<input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
 												&nbsp;
 												<c:choose>
 													<c:when test="${reqDetail.reqQty == reqDetail.sumCompleteNum}">

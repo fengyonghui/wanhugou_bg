@@ -77,18 +77,17 @@
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
                 $("#schedulingPlan_forSku").hide();
+
+                $("#completeBtn").hide()
             }
-
-
 
             var reqDetailList = '${reqDetailList.size()}';
             if(reqDetailList == 0) {
-                $("#batchSubmit").hide();
+                $("#completeBtn").hide();
             } else {
                 var id = '${bizRequestHeader.id}'
                 checkResult(id);
             }
-
         });
 
         function selectRemark() {
@@ -186,6 +185,7 @@
                 data: {"id": id},
                 type: 'get',
                 dataType:'json',
+                async: false,
                 success: function (result) {
                     var totalOrdQty = result['totalOrdQty'];
                     $("#totalOrdQty").val(totalOrdQty)
@@ -266,6 +266,12 @@
                 }
             })
 
+            if(params.length == 0) {
+                alert("未勾选确认项！")
+				return false;
+			}
+
+            params.unshift('${bizRequestHeader.reqNo}')
             if(confirm("确定执行该确认排产吗？")) {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
@@ -564,7 +570,7 @@
 										<input class="orderChk" type="checkbox" name="${bizCompletePaln.completeStatus}" value="${bizCompletePaln.id}" />
 									</c:if>
 									<c:if test="${bizCompletePaln.completeStatus == 1}">
-										<span style="color:red; ">已确认排产</span>
+										<span style="color:red; ">已确认</span>
 									</c:if>
 								</td>
 								<td>
@@ -665,7 +671,7 @@
 												<input id="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
 												&nbsp;
 												<label>总已排产数量：</label>
-												<input id="sumCompleteDetailNum" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
+												<input id="sumCompleteDetailNum" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteDetailNum == null ? 0 : reqDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
 												&nbsp;
 
 												<%--<label>待排产量：</label>--%>
@@ -687,7 +693,7 @@
 															<input class="orderChk" type="checkbox" name="${completePaln.completeStatus}" value="${completePaln.id}" />
 														</c:if>
 														<c:if test="${completePaln.completeStatus == 1}">
-															<span style="color:red; ">已确认排产</span>
+															<span style="color:red; ">已确认</span>
 														</c:if>
 													</td>
 													<td>
@@ -744,9 +750,12 @@
 		<div class="form-actions">
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 			&nbsp;&nbsp;
-			<input id="completeBtn" class="btn btn-primary" type="button" value="确定" onclick="confirmComplete();"/>
+			<!-- 只有供应商拥有确认排产权限 -->
+			<c:if test="${roleFlag == false}">
+				<input id="completeBtn" class="btn btn-primary" type="button" value="确定" onclick="confirmComplete();"/>
 
-			<span id="totalCompleteAlert" style="color:red; display: none">排产已全部确认</span>
+				<span id="totalCompleteAlert" style="color:red; display: none">已全部确认</span>
+			</c:if>
 		</div>
 	</form:form>
 </body>

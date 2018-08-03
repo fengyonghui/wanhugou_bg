@@ -58,6 +58,7 @@ import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -122,12 +123,14 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	private BizPoHeaderService bizPoHeaderService;
 	@Autowired
 	private BizPoPaymentOrderService bizPoPaymentOrderService;
+	@Autowired
+	private SystemService systemService;
 
 	public static final String REQUEST_HEADER_TABLE_NAME = "biz_request_header";
 	public static final String REQUEST_DETAIL_TABLE_NAME = "biz_request_detail";
 	public static final Integer SCHEDULING_FOR_HEADER = 0;
 	public static final Integer SCHEDULING_FOR_DETAIL = 1;
-	public static final Integer COMPLETE_STATUS = 1;
+	public static final String MARKETING_MANAGER = "marketing_manager";
 
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
@@ -1065,15 +1068,33 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		Boolean resultFlag = false;
 		JSONArray jsonArray = JSONArray.fromObject(params);
 		System.out.println(jsonArray);
+		//备货单号
+		String reqNo = (String) jsonArray.get(0);
 
 		List<String> paramList = Lists.newArrayList();
-		for (Object item:jsonArray) {
+		for (int i=1; i <jsonArray.size(); i++) {
+			Object item = jsonArray.get(i);
 			paramList.add(String.valueOf(item));
 		}
-
 		try {
 			bizCompletePalnService.batchUpdateCompleteStatus(paramList);
 			resultFlag = true;
+
+//				//供应商已确认排产，发短息通知采销部经理
+//			List<User> userList = systemService.findUserByRoleEnName(MARKETING_MANAGER);
+//			if (!CollectionUtils.isEmpty(userList)) {
+//				String reqNo_1 = reqNo.substring(0,11);
+//				String reqNo_2 = reqNo.substring(11);
+//				StringBuilder phones = new StringBuilder();
+//				for (User user : userList) {
+//					if (StringUtils.isNotBlank(user.getMobile())) {
+//						phones.append(user.getMobile()).append(",");
+//					}
+//				}
+//				AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.COMPLETE_SCHEDULING.getCode(), phones.toString(), ImmutableMap.of("order", "备货单", "reqNo_1", reqNo_1, "reqNo_2", reqNo_2));
+//			}
+
+
 		} catch (Exception e) {
 			resultFlag = false;
 			logger.error(e.getMessage());
