@@ -106,6 +106,11 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 */
 	private Integer toalCompleteNum;
 
+	/**
+	 * 排产类型: 0:按订单排产， 1:按商品排产
+	 */
+	private Integer schedulingType;
+
 
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
@@ -488,5 +493,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setToalCompleteNum(Integer toalCompleteNum) {
 		this.toalCompleteNum = toalCompleteNum;
+	}
+
+	public Integer getSchedulingType() {
+		return schedulingType;
+	}
+
+	public void setSchedulingType(Integer schedulingType) {
+		this.schedulingType = schedulingType;
 	}
 }
