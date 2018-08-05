@@ -109,6 +109,7 @@
                 success: function (result) {
                     var totalOrdQty = result['totalOrdQty'];
                     $("#totalOrdQty").val(totalOrdQty)
+                    var totalSchedulingDetailNum = result['totalSchedulingDetailNum'] == null ? 0 : result['totalSchedulingDetailNum'];
                     var totalSchedulingHeaderNum = result['totalSchedulingHeaderNum'] == null ? 0 : result['totalSchedulingHeaderNum'];
 					var totalCompleteScheduHeaderNum = result['totalCompleteScheduHeaderNum'] == null ? 0 : result['totalCompleteScheduHeaderNum'];
                     $("#totalCompleteScheduHeaderNum").val(totalCompleteScheduHeaderNum)
@@ -121,7 +122,14 @@
                     }
 
                     if ($("#schedulingPlanDetailFlag").val() == "true") {
-                        if($("#toalSchedulingNumForSku").val() == $("#sumCompleteDetailNum").val()) {
+                        var toalSchedulingNumForSkuHtml = $("[name=toalSchedulingNumForSku]");
+                        var toalSchedulingNumForSkuNum = 0;
+                        for(i=0;i<toalSchedulingNumForSkuHtml.length;i++){
+                            var schedulingNumForSkuNum = toalSchedulingNumForSkuHtml[i];
+                            var scForSkuNum = $(schedulingNumForSkuNum).attr("value")
+                            toalSchedulingNumForSkuNum = parseInt(toalSchedulingNumForSkuNum) + parseInt(scForSkuNum);
+                        }
+                        if(toalSchedulingNumForSkuNum == 0) {
                             $("#completeBtn").hide()
                             $("#totalCompleteAlert").show()
                         }
@@ -420,7 +428,7 @@
 							<label>总待确认量：</label>
 							<input id="totalSchedulingNumToDo" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
 							&nbsp;
-							<label>总已确认数量：</label>
+							<label>总已确认量：</label>
 							<input id="totalCompleteScheduHeaderNum" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
 							&nbsp;
 						</td>
@@ -512,10 +520,10 @@
 												<input id="totalOrdQtyForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 												&nbsp;
 												<label>总待确认量：</label>
-												<input id="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
+												<input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteNum - reqDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
 												&nbsp;
 												<label>总已确认量：</label>
-												<input id="sumCompleteDetailNum" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteDetailNum == null ? 0 : reqDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
+												<input name="sumCompleteDetailNum" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteDetailNum == null ? 0 : reqDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
 												&nbsp;
 											</td>
 										</tr>

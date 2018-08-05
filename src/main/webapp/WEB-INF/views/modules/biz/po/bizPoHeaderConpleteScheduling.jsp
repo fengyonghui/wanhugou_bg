@@ -44,24 +44,27 @@
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
                 $("#schedulingPlan_forSku").hide();
-                $("#batchSubmit").hide();
+
+                $("#schedulingPlanHeaderFlag").val("true");
             }
             if (detailSchedulingFlg == 'true') {
                 $("#stockGoods").hide();
                 $("#schedulingPlan_forHeader").hide();
                 $("#schedulingPlan_forSku").show();
-                $("#batchSubmit").show();
+
+                $("#schedulingPlanDetailFlag").val("true");
             }
             if (detailHeaderFlg != 'true' && detailSchedulingFlg != 'true') {
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
                 $("#schedulingPlan_forSku").hide();
-            }
 
+                $("#completeBtn").hide()
+            }
 
             var poDetailList = '${bizPoHeader.poDetailList.size()}';
             if(poDetailList == 0) {
-                $("#batchSubmit").hide();
+                $("#completeBtn").hide();
             } else {
                 var id = '${bizPoHeader.id}'
                 checkResult(id);
@@ -82,9 +85,7 @@
                     //$("#totalSchedulingNumToDo").val(totalSchedulingHeaderNum)
                     var totalCompleteScheduHeaderNum = result['totalCompleteScheduHeaderNum'] == null ? 0 : result['totalCompleteScheduHeaderNum'];
                     $("#totalCompleteScheduHeaderNum").val(totalCompleteScheduHeaderNum)
-
                     $("#totalSchedulingNumToDo").val(parseInt(totalSchedulingHeaderNum) - parseInt(totalCompleteScheduHeaderNum))
-
                     if ($("#schedulingPlanHeaderFlag").val() == "true") {
                         if($("#totalSchedulingNumToDo").val() == $("#totalCompleteScheduHeaderNum").val()) {
                             $("#completeBtn").hide()
@@ -93,7 +94,14 @@
                     }
 
                     if ($("#schedulingPlanDetailFlag").val() == "true") {
-                        if($("#toalSchedulingNumForSku").val() == $("#sumCompleteDetailNum").val()) {
+                        var toalSchedulingNumForSkuHtml = $("[name=toalSchedulingNumForSku]");
+                        var toalSchedulingNumForSkuNum = 0;
+                        for(i=0;i<toalSchedulingNumForSkuHtml.length;i++){
+                            var schedulingNumForSkuNum = toalSchedulingNumForSkuHtml[i];
+                            var scForSkuNum = $(schedulingNumForSkuNum).attr("value")
+                            toalSchedulingNumForSkuNum = parseInt(toalSchedulingNumForSkuNum) + parseInt(scForSkuNum);
+                        }
+                        if(toalSchedulingNumForSkuNum == 0) {
                             $("#completeBtn").hide()
                             $("#totalCompleteAlert").show()
                         }
@@ -402,6 +410,7 @@
                 <table style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
                     <tr>
                         <td colspan="2">
+                            <input  type='hidden' id='schedulingPlanHeaderFlag' value=''/>
                             <label>总申报数量：</label>
                             <input id="totalOrdQty" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
                             &nbsp;
@@ -503,11 +512,12 @@
                                     <table style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
                                         <tr>
                                             <td colspan="2">
+                                                <input  type='hidden' id='schedulingPlanDetailFlag' value=''/>
                                                 <label>总申报数量：</label>
                                                 <input id="totalOrdQtyForSku"  name='reqQtys' readonly="readonly" value="${poDetail.ordQty}" class="input-mini" type='text'/>
                                                 &nbsp;
                                                 <label>总待确认量：</label>
-                                                <input id="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${poDetail.sumCompleteNum - poDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
+                                                <input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${poDetail.sumCompleteNum - poDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
                                                 &nbsp;
                                                 <label>总已确认量：</label>
                                                 <input name="sumCompleteDetailNum" name='reqQtys' readonly="readonly" value="${poDetail.sumCompleteDetailNum == null ? 0 : poDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
