@@ -95,37 +95,6 @@
             }
         }
 
-        //增加排产
-        function addSchedulingCheck(index, detailId) {
-            var reqQty = $(eval("reqQty_" + index)).val();
-            var schedulingNum = $(eval("schedulingNum_" + index)).val();
-            var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
-            var standard = reqQty - sumSchedulingNum;
-
-            var reg= /^[0-9]+[0-9]*]*$/;
-            if (parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
-                alert("排产量数值设置不正确，请重新输入")
-                return false;
-            }
-            if(confirm("确定添加排产量为" + schedulingNum + "的排产吗？")){
-                $Mask.AddLogo("正在加载");
-                $.ajax({
-                    url: '${ctx}/biz/request/bizRequestHeaderForVendor/saveSchedulingPlan',
-                    contentType: 'application/json',
-                    data: {"detailId": detailId, "reqQty": reqQty, "schedulingNum": schedulingNum},
-                    type: 'get',
-                    success: function (result) {
-                        if(result == true) {
-                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${bizRequestHeader.id};
-                        }
-                    },
-                    error: function (error) {
-                        console.info(error);
-                    }
-                });
-            }
-        }
-
         function checkResult(id) {
             $.ajax({
                 url: '${ctx}/biz/request/bizRequestHeaderForVendor/checkSchedulingNum',
@@ -152,10 +121,8 @@
                         $("#batchSubmit").hide()
                     }
 
-
-
                     var totalSchedulingHeaderNum = result['totalSchedulingHeaderNum'] == null ? 0 : result['totalSchedulingHeaderNum'];
-					var toalSchedulingDetailNum = result['toalSchedulingDetailNum'] == null ? 0 : result['toalSchedulingDetailNum'];
+					var totalSchedulingDetailNum = result['totalSchedulingDetailNum'] == null ? 0 : result['totalSchedulingDetailNum'];
 
                     $("#toalSchedulingNum").val(totalSchedulingHeaderNum)
                     $("#totalSchedulingNumToDo").val(parseInt(totalOrdQty) - parseInt(totalSchedulingHeaderNum))
@@ -290,7 +257,7 @@
                 count++;
             }
 
-            if(parseInt(totalSchedulingNum) > parseInt(originalNum)) {
+            if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
                 alert("排产量总和太大，请从新输入!")
                 return false
             }
@@ -315,16 +282,16 @@
             }
         }
 
-		//按商品查询排产
-        function addSchedulingSkuPlanBtn(id) {
-            var appendTr = $("#addSchedulingSkuPlanBtn");
-            var html = '<tr><td><div name="' + id + '"><label>排产日期' + '：' + '</label><input name="' + id + '_date' + '" type="text" maxlength="20" class="input-medium Wdate" ';
-            html += ' onclick="' + "WdatePicker({dateFmt:'" + "yyyy-MM-dd HH:mm:ss',isShowClear" + ":" + 'true});"/>' + ' &nbsp; '
-            html += ' <label>排产数量：</label> ';
-            html += ' <input name="' + id + "_value" + '" class="input-medium" type="text" maxlength="30"/>';
-            html += ' <input class="btn" type="button" value="删除" onclick="removeSchedulingHeaderPlan(this)"/></div></td></tr>'
-            appendTr.after(html)
-        }
+//		//按商品查询排产
+//        function addSchedulingSkuPlanBtn(id) {
+//            var appendTr = $("#addSchedulingSkuPlanBtn");
+//            var html = '<tr><td><div name="' + id + '"><label>排产日期' + '：' + '</label><input name="' + id + '_date' + '" type="text" maxlength="20" class="input-medium Wdate" ';
+//            html += ' onclick="' + "WdatePicker({dateFmt:'" + "yyyy-MM-dd HH:mm:ss',isShowClear" + ":" + 'true});"/>' + ' &nbsp; '
+//            html += ' <label>排产数量：</label> ';
+//            html += ' <input name="' + id + "_value" + '" class="input-medium" type="text" maxlength="30"/>';
+//            html += ' <input class="btn" type="button" value="删除" onclick="removeSchedulingHeaderPlan(this)"/></div></td></tr>'
+//            appendTr.after(html)
+//        }
 
 
 
@@ -458,7 +425,6 @@
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<%--<th>商品属性</th>--%>
 					<th>价格</th>
 					<th>申报数量</th>
 					<th>总金额</th>
@@ -481,9 +447,6 @@
 							<th>采购数量</th>
 						</c:if>
 					</c:if>
-					<%--<th>已排产数量</th>--%>
-					<%--<th>待排产数量</th>--%>
-					<%--<th>操作</th>--%>
 				</tr>
 				</thead>
 				<tbody id="prodInfo">
@@ -535,21 +498,6 @@
 									<td>${reqDetail.reqQty}</td>
 								</c:if>
 							</c:if>
-							<%--<td id="sumSchedulingNum_${state.index+1}">${reqDetail.sumSchedulingNum}</td>--%>
-							<%--<td>--%>
-								<%--<input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}"--%>
-									   <%--htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-							<%--</td>--%>
-							<%--<td>--%>
-								<%--<c:choose>--%>
-									<%--<c:when test="${reqDetail.reqQty != reqDetail.sumSchedulingNum}">--%>
-										<%--<input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${reqDetail.id}')" value="保存"/>&nbsp;--%>
-									<%--</c:when>--%>
-									<%--<c:otherwise>--%>
-										<%--<span style="color:red; ">已排产完成</span>--%>
-									<%--</c:otherwise>--%>
-								<%--</c:choose>--%>
-							<%--</td>--%>
 						</tr>
 						<c:if test="${state.last}">
 							<c:set var="aa" value="${state.index}" scope="page"/>
@@ -643,9 +591,6 @@
 						<th>价格</th>
 						<th>申报数量</th>
 						<th>总金额</th>
-						<%--<th>已排产数量</th>--%>
-						<%--<th>待排产数量</th>--%>
-						<%--<th>操作</th>--%>
 					</tr>
 					</thead>
 					<tbody>

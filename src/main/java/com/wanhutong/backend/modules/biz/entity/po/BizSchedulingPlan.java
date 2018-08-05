@@ -24,8 +24,8 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	private String objectName;		// 表名
 	private Integer objectId;		// 表ID
 	private Integer originalNum;		// 单子原始数量
-	private Integer schedulingNum;		// 排产数量
-	private Integer completeNum;		// 已完成数量
+//	private Integer schedulingNum;		// 排产数量
+//	private Integer completeNum;		// 已完成数量
 	/**
 	 * 采购订单表Entity
 	 */
@@ -38,7 +38,7 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	/**
 	 * 该排产相关的总确认数
 	 */
-	private Integer sumCompleteNum;
+	//private Integer sumCompleteNum;
 
     /**
      * 确认排产list
@@ -93,21 +93,21 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 		this.originalNum = originalNum;
 	}
 
-	public Integer getSchedulingNum() {
-		return schedulingNum;
-	}
+//	public Integer getSchedulingNum() {
+//		return schedulingNum;
+//	}
+//
+//	public void setSchedulingNum(Integer schedulingNum) {
+//		this.schedulingNum = schedulingNum;
+//	}
 
-	public void setSchedulingNum(Integer schedulingNum) {
-		this.schedulingNum = schedulingNum;
-	}
-
-	public Integer getCompleteNum() {
-		return completeNum;
-	}
-
-	public void setCompleteNum(Integer completeNum) {
-		this.completeNum = completeNum;
-	}
+//	public Integer getCompleteNum() {
+//		return completeNum;
+//	}
+//
+//	public void setCompleteNum(Integer completeNum) {
+//		this.completeNum = completeNum;
+//	}
 
 	public BizPoDetail getBizPoDetail() {
 		return bizPoDetail;
@@ -133,13 +133,13 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 		this.completePalnList = completePalnList;
 	}
 
-	public Integer getSumCompleteNum() {
-		return sumCompleteNum;
-	}
-
-	public void setSumCompleteNum(Integer sumCompleteNum) {
-		this.sumCompleteNum = sumCompleteNum;
-	}
+//	public Integer getSumCompleteNum() {
+//		return sumCompleteNum;
+//	}
+//
+//	public void setSumCompleteNum(Integer sumCompleteNum) {
+//		this.sumCompleteNum = sumCompleteNum;
+//	}
 
 	public Date getPlanDate() {
 		return planDate;

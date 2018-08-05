@@ -92,10 +92,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 */
 	private Integer schedulingType;
 
-	/**
-	 * 排产计划
-	 */
-	private List<BizSchedulingPlan> schedulingPlanList;
+//	/**
+//	 * 排产计划
+//	 */
+//	private List<BizSchedulingPlan> schedulingPlanList;
 
 	private List<BizRequestDetail> requestDetailList;
 
@@ -150,22 +150,14 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 该采购单下所有商品的总采购数量
 	 */
 	private Integer totalOrdQty;
-	/**
-	 * 该采购单下所有商品的总排产数量
-	 */
-	private Integer toalSchedulingNum;
-	/**
-	 * 该采购单下所有商品的总已确认排产数
-	 */
-	private Integer toalCompleteNum;
 
 	/**
-	 * 该采购单下按订单排产的总排产量
+	 * 该采购单下按商品排产的总排产量
 	 */
 	private Integer totalSchedulingDetailNum;
 
 	/**
-	 * 该采购单下按商品排产的总排产量
+	 * 该采购单下按订单排产的总排产量
 	 */
 	private Integer totalSchedulingHeaderNum;
 	/**
@@ -601,22 +593,6 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 		this.totalOrdQty = totalOrdQty;
 	}
 
-	public Integer getToalSchedulingNum() {
-		return toalSchedulingNum;
-	}
-
-	public void setToalSchedulingNum(Integer toalSchedulingNum) {
-		this.toalSchedulingNum = toalSchedulingNum;
-	}
-
-	public Integer getToalCompleteNum() {
-		return toalCompleteNum;
-	}
-
-	public void setToalCompleteNum(Integer toalCompleteNum) {
-		this.toalCompleteNum = toalCompleteNum;
-	}
-
 	public BigDecimal getBalanceTotal() {
 		return balanceTotal;
 	}
@@ -641,13 +617,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 		this.schedulingType = schedulingType;
 	}
 
-	public List<BizSchedulingPlan> getSchedulingPlanList() {
-		return schedulingPlanList;
-	}
-
-	public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
-		this.schedulingPlanList = schedulingPlanList;
-	}
+//	public List<BizSchedulingPlan> getSchedulingPlanList() {
+//		return schedulingPlanList;
+//	}
+//
+//	public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
+//		this.schedulingPlanList = schedulingPlanList;
+//	}
 
 	public Integer getTotalSchedulingDetailNum() {
 		return totalSchedulingDetailNum;
