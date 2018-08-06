@@ -826,6 +826,30 @@
 		GROUP BY center_id
 	</select>
 
+	<select id="getUserStatisticDataByOfficeId" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
+		SELECT s.name,count(1) as count
+		FROM biz_custom_center_consultant c, sys_office s
+		WHERE c.cust_id = ANY (
+			SELECT s1.id
+			from sys_office AS s1, sys_user AS u1
+			where s1.id = u1.company_id
+			AND s1.type = 6
+			AND date_format(s1.create_date, '%Y-%m') = #{month}
+			AND s1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+			AND u1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL})
+		AND c.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		AND s.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL} and s.id = c.center_id
+		and s.TYPE =8
+		AND NOT EXISTS(
+		select 1
+		from sys_test_account ta
+		where c.cust_id = ta.object_id
+		and ta.object_name = 'sys_office'
+		)
+		and s.id = #{officeId}
+		GROUP BY center_id
+	</select>
+
 	<select id="getUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
 		SELECT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,

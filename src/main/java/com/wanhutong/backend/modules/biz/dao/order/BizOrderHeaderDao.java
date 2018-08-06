@@ -61,6 +61,14 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     List<BizUserStatisticsDto> getUserStatisticData(String month);
 
     /**
+     * 按月获取用户相关的注册信息
+     *
+     * @param month 月份
+     * @return 用户统计数据
+     */
+    BizUserStatisticsDto getUserStatisticDataByOfficeId(@Param("month")String month, @Param("officeId")Integer officeId);
+
+    /**
      * 根据月份取用户业绩统计相关数据
      *
      * @param month 取数据的月份

@@ -23,6 +23,15 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	private String month;		// 计划所在月份; 选择月计划时，一定加入条件：and day=0
 	private String day;		// 日计划;
 	private String amount;		// amount
+	/**
+	 * 新用户
+	 */
+	private Integer newUser;
+	/**
+	 * 服务费
+	 */
+	private Double serviceCharge;
+
 	private String objectName1;  //office中的id对应名称
 	private String objectName2;  //user 中的id对应名称
 	private Office centerOffice;   //采购中心id
@@ -120,5 +129,20 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
+	public Integer getNewUser() {
+		return newUser;
+	}
+
+	public void setNewUser(Integer newUser) {
+		this.newUser = newUser;
+	}
+
+	public Double getServiceCharge() {
+		return serviceCharge;
+	}
+
+	public void setServiceCharge(Double serviceCharge) {
+		this.serviceCharge = serviceCharge;
+	}
 }

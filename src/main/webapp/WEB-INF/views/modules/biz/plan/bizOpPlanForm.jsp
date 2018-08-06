@@ -130,6 +130,20 @@
 			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>
+	<div class="control-group">
+		<label class="control-label">新用户：</label>
+		<div class="controls">
+			<form:input path="newUser" htmlEscape="false" class="input-xlarge required"/>
+			<span class="help-inline"><font color="red">*</font> </span>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">服务费：</label>
+		<div class="controls">
+			<form:input path="serviceCharge" htmlEscape="false" class="input-xlarge required"/>
+			<span class="help-inline"><font color="red">*</font> </span>
+		</div>
+	</div>
 	<div class="form-actions">
 		<shiro:hasPermission name="biz:plan:bizOpPlan:edit"><input id="btnSubmit" class="btn btn-primary" type="submit"
 																   value="保 存"/>&nbsp;</shiro:hasPermission>
