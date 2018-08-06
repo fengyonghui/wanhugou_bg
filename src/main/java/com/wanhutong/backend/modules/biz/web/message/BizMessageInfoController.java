@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.message;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -68,11 +69,13 @@ public class BizMessageInfoController extends BaseController {
 			return form(bizMessageInfo, model);
 		}
 		try {
-			bizMessageInfoService.save(bizMessageInfo);
+			Pair<Boolean, String> booleanStringPair = bizMessageInfoService.saveMessage(bizMessageInfo);
+			addMessage(redirectAttributes, booleanStringPair.getRight());
+			return "redirect:"+Global.getAdminPath()+"/biz/message/bizMessageInfo/?repage";
 		} catch (Exception e) {
 			logger.error("save message error", e);
 		}
-		addMessage(redirectAttributes, "保存站内信成功");
+		addMessage(redirectAttributes, "保存站内信失败");
 		return "redirect:"+Global.getAdminPath()+"/biz/message/bizMessageInfo/?repage";
 	}
 	

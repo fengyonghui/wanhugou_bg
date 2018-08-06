@@ -83,12 +83,12 @@
 			#{content},
 			#{url},
 			NOW(),
-			#{createId.id},
-			#{createId.name},
-			#{updateId.id},
+			#{createBy.id},
+			#{createBy.name},
+			#{updateBy.id},
 			NOW(),
 			#{type},
-			${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_DELETE}
+			${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		)
 	</insert>
 	
@@ -97,9 +97,7 @@
 			title = #{title},
 			content = #{content},
 			url = #{url},
-			create_time = #{createTime},
-			create_name = #{createName},
-			update_id = #{updateId.id},
+			update_id = #{updateBy.id},
 			update_time = #{updateTime},
 			type = #{type}
 		WHERE id = #{id}

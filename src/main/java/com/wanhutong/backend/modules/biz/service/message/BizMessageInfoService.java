@@ -10,6 +10,8 @@ import com.wanhutong.backend.modules.sys.dao.UserDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -57,11 +59,10 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    @Override
-    public void save(BizMessageInfo bizMessageInfo) {
+    public Pair<Boolean, String> saveMessage(BizMessageInfo bizMessageInfo) {
         if (bizMessageInfo.getCompanyId() == null) {
             LOGGER.error("save message has no companyId");
-            return;
+            return Pair.of(Boolean.FALSE, "参数错误!");
         }
         User currentUser = UserUtils.getUser();
         bizMessageInfo.setCreateBy(currentUser);
@@ -70,9 +71,12 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
         User user = new User();
         user.setCompany(new Office(bizMessageInfo.getCompanyId()));
         List<User> list = userDao.findList(user);
-
+        if(CollectionUtils.isEmpty(list)) {
+            return Pair.of(Boolean.FALSE, "当前公司下无用户!");
+        }
         int i = bizMessageUserDao.insertBatch(list, bizMessageInfo.getId(), DEFAULT_BIZ_STATUS);
         LOGGER.info("save message userCount:[{}], companyId:[{}], messageId[{}]", i, bizMessageInfo.getCompanyId(), bizMessageInfo.getId());
+        return Pair.of(Boolean.TRUE, "保存成功");
     }
 
     @Override
