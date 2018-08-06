@@ -984,7 +984,7 @@ public class BizPoHeaderController extends BaseController {
         String forward = request.getParameter("forward");
         String forwardPage = "";
         if ("confirmScheduling".equals(forward)) {
-            forwardPage = "modules/biz/po/bizPoHeaderConpleteScheduling";
+            forwardPage = "modules/biz/po/bizPoHeaderCompleteScheduling";
         } else {
             forwardPage = "modules/biz/po/bizPoHeaderScheduling";
         }

@@ -60,6 +60,8 @@
                 $("#schedulingPlan_forSku").hide();
 
                 $("#completeBtn").hide()
+
+                alert("该采购单未排产！")
             }
 
             var poDetailList = '${bizPoHeader.poDetailList.size()}';
