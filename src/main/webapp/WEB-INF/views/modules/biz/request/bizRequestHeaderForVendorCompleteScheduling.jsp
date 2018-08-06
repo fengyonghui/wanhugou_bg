@@ -115,7 +115,6 @@
                     $("#totalCompleteScheduHeaderNum").val(totalCompleteScheduHeaderNum)
                     $("#totalSchedulingNumToDo").val(parseInt(totalSchedulingHeaderNum) - parseInt(totalCompleteScheduHeaderNum))
 					if ($("#schedulingPlanHeaderFlag").val() == "true") {
-                        console.log()
                         if($("#totalSchedulingNumToDo").val() == 0) {
                             $("#completeBtn").hide()
 							$("#totalCompleteAlert").show()

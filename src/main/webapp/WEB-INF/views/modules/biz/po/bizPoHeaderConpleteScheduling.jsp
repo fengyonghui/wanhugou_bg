@@ -244,9 +244,6 @@
                 count++;
             }
 
-            console.log("totalSchedulingNum=" + totalSchedulingNum)
-            console.log("originalNum=" + totalOriginalNum)
-
             if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
                 alert("排产量总和太大，请从新输入!")
                 return false
