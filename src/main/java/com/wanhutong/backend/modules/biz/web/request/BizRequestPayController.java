@@ -22,6 +22,7 @@ import com.wanhutong.utils.WhgPaySign;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -43,7 +44,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +77,7 @@ public class BizRequestPayController extends BaseController {
         String photoName=null;
         String payNum = null;
         try {
-            Pair<String, Map<String, Object>> response = unifiedOrder(payMoney, reqId, payMethod, WechatPayTradeType.NATIVE.getType(), null);
+            Pair<String, Map<String, Object>> response = unifiedOrder(payMoney, reqId, payMethod, WechatPayTradeType.MWEB.getType(), null);
             Map<String, Object> map1 = response.getRight();
 
             payNum = response.getLeft();
@@ -92,7 +95,7 @@ public class BizRequestPayController extends BaseController {
             }
             LOGGER.info("二维码地址-------------"+qrCodeUrl);
 
-            String basePath = ContextLoader.getCurrentWebApplicationContext().getServletContext().getRealPath("/");;
+            String basePath = ContextLoader.getCurrentWebApplicationContext().getServletContext().getRealPath("/");
             LOGGER.info("获取logo图片地址---------"+basePath);
             BufferedImage image = QRCodeKit.createQRCodeWithLogo(qrCodeUrl,260,260, new File(basePath+"/static/images/whtLogo.png"));
             ImageIO.write(image, "png", new File(pathFile));
@@ -117,8 +120,21 @@ public class BizRequestPayController extends BaseController {
 
     }
 
+    @RequestMapping(value = "wechatPay4MWEB")
+    public String wechatPay4MWEB(Double payMoney, Integer reqId, String redirectUrl) throws UnsupportedEncodingException {
+        Pair<String, Map<String, Object>> response = unifiedOrder(payMoney, reqId, 1, WechatPayTradeType.MWEB.getType(), null);
+        if ("SUCCESS".equals(String.valueOf(response.getRight().get("return_code"))) && "SUCCESS".equals(String.valueOf(response.getRight().get("result_code")))) {
+            String mweb_url = String.valueOf(response.getRight().get("mweb_url"));// h5支付连接
+            return "redirect:" + mweb_url + "&redirect_url=" + URLEncoder.encode(redirectUrl, "UTF-8");
+        }else {
+            return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                    StringUtils.isBlank(String.valueOf(response.getRight().get("result_code"))) ?
+                            String.valueOf(response.getRight().get("return_code")) : String.valueOf(response.getRight().get("result_code")), null);
+        }
+    }
+
     /**
-     * 获取移动支付的表单数据  仅用于黑卡推广H5支付
+     * 获取移动支付的表单数据
      * @param httpRequest
      * @param httpResponse
      * @throws ServletException

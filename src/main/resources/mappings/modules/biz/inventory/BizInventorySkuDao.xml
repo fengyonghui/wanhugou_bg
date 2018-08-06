@@ -200,6 +200,14 @@
 		INNER JOIN biz_inventory_info bii ON bii.id = bis.inv_id
 		WHERE bii.cust_id = #{centId} and bis.status = 1 and bis.sku_id = #{skuId}
 	</select>
+	<!--根据SKU和采购中心取库存数量-->
+	<select id="getStockQtyBySkuIdInvId" parameterType="Integer" resultType="Integer">
+		SELECT
+			SUM(stock_qty)
+		FROM biz_inventory_sku bis
+		INNER JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		WHERE bii.id = #{invId} and bis.status = 1 and bis.sku_id = #{skuId}
+	</select>
 
 	<insert id="insert">
 		INSERT INTO biz_inventory_sku(

@@ -106,25 +106,25 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	 * @param skuId skuId
 	 * @return
 	 */
-	public Map<String, Object> getInventoryAge(Integer skuId, Integer centId) {
+	public Map<String, Object> getInventoryAge(Integer skuId, Integer centId, Integer invInfoId) {
 		Map<String, Object> result = Maps.newHashMap();
 
-		BizInventoryInfo inventoryByCustId = bizInventoryInfoService.getInventoryByCustId(centId);
+		BizInventoryInfo inventoryInfo = bizInventoryInfoService.get(invInfoId);
 		BizSkuInfo bizSku = bizSkuInfoService.get(skuId);
 
-		Integer stockQtyBySkuIdCentId = bizInventorySkuDao.getStockQtyBySkuIdCentId(skuId, centId);
-		if (stockQtyBySkuIdCentId == null || stockQtyBySkuIdCentId == 0) {
+		Integer skuIdInvId = bizInventorySkuDao.getStockQtyBySkuIdInvId(skuId, invInfoId);
+		if (skuIdInvId == null || skuIdInvId == 0) {
 			return result;
 		}
 
-		List<BizCollectGoodsRecord> recordList = bizCollectGoodsRecordDao.getListBySkuIdCentId(skuId, centId);
+		List<BizCollectGoodsRecord> recordList = bizCollectGoodsRecordDao.getListBySkuIdInvId(skuId, invInfoId);
 
 		recordList.sort((o1, o2) -> o2.getReceiveDate().compareTo(o1.getReceiveDate()));
 		Map<BizCollectGoodsRecord, Integer> resultRecordList = Maps.newLinkedHashMap();
 
-		int counter = stockQtyBySkuIdCentId;
+		int counter = skuIdInvId;
 		String skuName = bizSku.getName();
-		String invName = inventoryByCustId.getName();
+		String invName = inventoryInfo.getName();
 		String itemNo = bizSku.getItemNo();
 
 		for (BizCollectGoodsRecord bizCollectGoodsRecord : recordList) {
@@ -146,7 +146,7 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			resultRecordList.put(bizCollectGoodsRecord, counter);
 		}
 
-		result.put("stockQty", stockQtyBySkuIdCentId);
+		result.put("stockQty", skuIdInvId);
 		result.put("recordList", recordList);
 		result.put("resultRecordList", resultRecordList);
 		return result;
