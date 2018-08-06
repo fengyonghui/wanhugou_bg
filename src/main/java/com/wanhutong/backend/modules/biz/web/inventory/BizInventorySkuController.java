@@ -135,6 +135,9 @@ public class BizInventorySkuController extends BaseController {
                 Office company = systemService.getUser(user.getId()).getCompany();
                 //根据采购中心取出仓库
                 BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+                if (bizInventorySku.getInvInfo() != null) {
+                    bizInventoryInfo = bizInventorySku.getInvInfo();
+                }
                 bizInventoryInfo.setCustomer(company);
                 bizInventorySku.setInvInfo(bizInventoryInfo);
             } else if (!oflag) {
@@ -521,8 +524,8 @@ public class BizInventorySkuController extends BaseController {
 
     @RequiresPermissions("biz:inventory:inventoryAge:view")
     @RequestMapping("showInventoryAge")
-    public String showInventoryAge(HttpServletRequest request, Integer skuId, Integer centId) {
-        Map<String, Object> resultMap = bizInventorySkuService.getInventoryAge(skuId, centId);
+    public String showInventoryAge(HttpServletRequest request, Integer skuId, Integer centId, Integer invInfoId) {
+        Map<String, Object> resultMap = bizInventorySkuService.getInventoryAge(skuId, centId, invInfoId);
         request.setAttribute("data", resultMap);
         return "modules/biz/inventory/bizInventoryAge";
     }
