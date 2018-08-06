@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>订单列表</title>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/app.css" rel="stylesheet" />
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+				-webkit-text-size-adjust: none;
+			}
+			html {
+				font-size: 10px;
+			}
+			body {
+				background-color: #fff;
+			}
+			.header {
+				height: 44px;
+				line-height: 44px;
+				border-bottom: 1px solid #ccc;
+				background-color: #40ABE9;
+			}
+			.content {
+				padding-bottom: 40px;
+				background-color: #fff;
+			}
+			.dropload-down{
+				display: none;
+			}
+			.mui-content li {padding: 0;list-style: none;height: 30px;}
+ 			.mui-input-group>p {height: 30px;line-height: 30px;text-indent: 15px;color: #000;background-color: #374761;color: #fff;font-size: 16px;}
+ 			.mui-table-view:before {background-color: #FFF;}
+ 			.listBlue>div {border-bottom: 1px solid #40ABE9;}
+ 			.mui-input-group div.mui-input-row {background-color:#fff;}
+ 			.noneTxt {position: absolute;top: 50%;left: 50%;margin-left: -28px;}
+ 			.footClass {background-color: #40ABE9;}
+		</style>
+	</head>
+	<body>
+		<header class="header mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+		    <span id="staOrdSechBtn" class="mui-icon mui-icon-search mui-pull-right app_cf"></span>
+		    <p class="app_cf app_nav_text_center">订单列表</p>
+		</header>
+		<div class="content mui-content">
+			<div class="staOrdList listBlue">
+				
+			</div>
+		</div>
+		<script src="../../../js/component/mui.min.js"></script>	
+		<script src="../../../js/component/zepto.min.js"></script>
+		<script src="../../../js/component/GHutils.js"></script>
+		<script src="../../../js/staffMgmtJs/orderJs/staOrderList.js"></script>
+	</body>
+</html>

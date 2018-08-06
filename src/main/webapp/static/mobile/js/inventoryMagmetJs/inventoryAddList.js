@@ -34,7 +34,7 @@
 		},
         saveDetail: function () {
             var _this = this;
-            mui('.inSaveBtn').on('tap','#inSaveBtn',function(){
+            mui('.SaveBtn').on('tap','#inSaveBtn',function(){
                 var skuIds = _this.skuInfoIds.split(",");
                 var skuInfoIdsTemp = ""
                 for (var i=0; i<skuIds.length; i++){

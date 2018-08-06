@@ -3,10 +3,14 @@
 
 	<head>
 		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title>备货单查询</title>
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true">
+		<title>订单查询</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
+		<link href="../../css/drop.css" rel="stylesheet" />
 		<style>
 			.pre {
 				margin-bottom: 0;
@@ -15,9 +19,31 @@
 				width: 67%;
 			}
 			
+			#select {
+				top: 6px;
+				height: 50px;
+				width: 100%;
+			}
+			
+			.selectStyle {
+				margin: 0;
+			}
+			
 			.inSearchBtnClass {
 				margin: 60px auto;
 				width: 80%;
+			}
+			
+			.suppChoice {
+				padding: 5px;
+			}
+			
+			#inputselect {
+				width: 80%;
+				height: 50px;
+				position: relative;
+				top: -50px;
+				padding: 0;
 			}
 			
 			.newinput {
@@ -55,7 +81,7 @@
 			}
 			.mui-input-row input.newinput {padding-left: 0;}
 			.secStyle {margin: 5px 0;}
-			#inHideSpan {
+			#orHideSpan {
 			    position: absolute;
 			    right: 52px;
 			    top: 11px;
@@ -69,24 +95,32 @@
 	<body>
 		<header class="header mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
-			<p class="app_cf app_nav_text_center">备货单查询</p>
+			<p class="app_cf app_nav_text_center">订单查询</p>
 		</header>
 		<div class="mui-content menuMarg">
 			<form class="mui-input-group app_bline">
 				<div class="mui-input-row">
-					<label>备货单号：</label>
+					<label>订单编号：</label>
 					<input type="text" class="inOrdNum" placeholder="请输入备货单号">
 				</div>
 				<div class="mui-input-row">
-					<label>供应商：</label>
+					<label>经销店电话：</label>
+					<input type="text" class="inReqNum" placeholder="请输入供应商">
+				</div>
+				<div class="mui-input-row">
+					<label>商品货号：</label>
 					<input type="text" class="inReqNum" placeholder="请输入供应商">
 				</div>
 				<div class="mui-input-row">
 					<label>采购中心：</label>
+					<input type="text" class="inReqNum" placeholder="请输入供应商">
+				</div>
+				<div class="mui-input-row">
+					<label>店名称：</label>
 					<div class="pre">
-						<input class="newinput" type="text" placeholder="请选择采购中心">
-						<span class="mui-icon mui-icon-closeempty" id="inHideSpan"></span>
-						<div class="input_div" style="display: none;">
+						<input class="newinput" type="text" placeholder="请选择经销店">
+						<span class="mui-icon mui-icon-closeempty" id="orHideSpan"></span>
+						<div id="storeBtn" class="input_div" style="display: none;">
 							
 						</div>
 						<input class="savedata" type="hidden" value=''>
@@ -94,19 +128,9 @@
 					</div>
 				</div>
 				<div class="mui-input-row">
-					<label>业务状态：</label>
+					<label>订单状态：</label>
 					<div class="pre">
 						<select class="secStyle" name="" id="input_div_business">
-							<option value=""></option>
-						</select>
-						<input class="savedata" type="hidden" value=''>
-						<div style="clear:both"></div>
-					</div>
-				</div>
-				<div class="mui-input-row">
-					<label>品类名称：</label>
-					<div class="pre">
-						<select class="secStyle" name="" id="input_div_class">
 							<option value=""></option>
 						</select>
 						<input class="savedata" type="hidden" value=''>
@@ -121,7 +145,8 @@
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/inventoryMagmetJs/inSearch.js"></script>
+		<script src="../../js/component/dropload.js"></script>
+		<script src="../../js/orderMgmtJs/orSearch.js"></script>
 	</body>
 
 </html>

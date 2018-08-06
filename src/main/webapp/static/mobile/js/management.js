@@ -98,6 +98,51 @@
 					})
                 }
 			})
+        /*员工管理*/
+            $('#menuMaget').on('click','.childMenu',function(){
+            	var url = $(this).attr('url');
+				var purchId = $(this).attr('purchId');
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(purchId==235) {
+                	GHUTILS.OPENPAGE({
+						url: "../html/staffMgmtHtml/staffList.html",
+						extras: {
+								purchId:purchId,
+						}
+					})
+                }
+			})    
+        /*订单管理*/
+//          $('#menuMaget').on('click','.childMenu',function(){
+//          	var url = $(this).attr('url');
+//				var purchId = $(this).attr('purchId');
+//              if(url) {
+//              	mui.toast('子菜单不存在')
+//              }else if(purchId==133) {
+//              	GHUTILS.OPENPAGE({
+//						url: "../html/orderMgmtHtml/orderList.html",
+//						extras: {
+//								purchId:purchId,
+//						}
+//					})
+//              }
+//			})
+        /*会员管理*/
+//          $('#menuMaget').on('click','.childMenu',function(){
+//          	var url = $(this).attr('url');
+//				var purchId = $(this).attr('purchId');
+//              if(url) {
+//              	mui.toast('子菜单不存在')
+//              }else if(purchId==169) {
+//              	GHUTILS.OPENPAGE({
+//						url: "../html/memberMgmtHtml/memberList.html",
+//						extras: {
+//								purchId:purchId,
+//						}
+//					})
+//              }
+//			})
 		}
 		
 	}

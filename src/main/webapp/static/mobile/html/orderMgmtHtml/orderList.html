@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<meta name="full-screen" content="yes">
 		<meta name="x5-fullscreen" content="true">
-		<title>备货单管理</title>
+		<title>订单管理</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
 		<link href="../../css/drop.css" rel="stylesheet" />
@@ -22,6 +22,7 @@
 			}
 			body {
 				background-color: #fff;
+				/*font-size: 1.2em;*/
 			}
 			.header {
 				height: 44px;
@@ -29,9 +30,112 @@
 				border-bottom: 1px solid #ccc;
 				background-color: #40ABE9;
 			}
+			.header h1 {
+				text-align: center;
+				font-size: 2rem;
+				font-weight: normal;
+			}
 			.content {
 				padding-bottom: 40px;
 				background-color: #fff;
+			}
+			.content .item {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-box-align: center;
+				box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				padding: 3.125%;
+				border-bottom: 1px solid #ddd;
+				color: #333;
+				text-decoration: none;
+				height: 100px;
+			}
+			.content .item img {
+				display: block;
+				width: 40px;
+				height: 40px;
+				border: 1px solid #ddd;
+			}
+			.content .item h3 {
+				display: block;
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				-ms-flex: 1;
+				flex: 1;
+				width: 100%;
+				max-height: 40px;
+				overflow: hidden;
+				line-height: 20px;
+				margin: 0 10px;
+				font-size: 1.2rem;
+			}
+			
+			.content .item .date {
+				display: block;
+				height: 20px;
+				line-height: 20px;
+				color: #999;
+			}
+			.opacity {
+				-webkit-animation: opacity 0.3s linear;
+				animation: opacity 0.3s linear;
+			}
+			@-webkit-keyframes opacity {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			@keyframes opacity {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			.footer {
+				position: fixed;
+				left: 0;
+				bottom: 0;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+				width: 100%;
+				height: 40px;
+			}
+			.footer a {
+				position: relative;
+				display: block;
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				-ms-flex: 1;
+				flex: 1;
+				line-height: 40px;
+				text-align: center;
+				color: #666;
+				background-color: #eee;
+				text-decoration: none;
+			}
+			.footer a:before {
+				content: '';
+				position: absolute;
+				left: 0;
+				top: 10px;
+				width: 1px;
+				height: 20px;
+				background-color: #ccc;
+			}
+			.footer a:first-child:before {
+				display: none;
 			}
 			.dropload-down{
 				display: none;
@@ -49,27 +153,30 @@
 		<header class="header mui-bar mui-bar-nav">
 		    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
 		    <span id="searchBtn" class="mui-icon mui-icon-search mui-pull-right app_cf"></span>
-		    <p class="app_cf app_nav_text_center">备货单管理</p>
+		    <p class="app_cf app_nav_text_center">订单管理</p>
 		</header>
 		<nav class="mui-bar mui-bar-tab footClass" id="nav">
 			<a class="mui-tab-item app_cf inHomePage">
 				<span class="mui-icon mui-icon-home"></span>
 				<span class="mui-tab-label">返回首页</span>
 			</a>
-			<a class="mui-tab-item app_cf inAddBtn">
+			<!--<a class="mui-tab-item app_cf inAddBtn">
 				<span class="mui-icon mui-icon-plus"></span>
 				<span class="mui-tab-label">添加备货单</span>
-			</a>
+			</a>-->
 		</nav>
 		<div class="content mui-content">
-			<div class="inListAdd listBlue">
+			<div class="orderList listBlue">
 				
 			</div>
 		</div>
+		
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
 		<script src="../../js/component/dropload.js"></script>
-		<script src="../../js/inventoryMagmetJs/inventoryList.js"></script>
+		<script src="../../js/orderMgmtJs/orderList.js"></script>
+
 	</body>
+
 </html>
