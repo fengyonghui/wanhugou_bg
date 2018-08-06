@@ -97,14 +97,26 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 * 该采购单下所有商品的总采购数量
 	 */
 	private Integer totalOrdQty;
+
 	/**
-	 * 该采购单下所有商品的总排产数量
+	 * 按商品排产的总排产量
 	 */
-	private Integer toalSchedulingNum;
+	private Integer totalSchedulingDetailNum;
+
 	/**
-	 * 该采购单下所有商品的总已确认排产数
+	 * 按订单排产的总排产量
 	 */
-	private Integer toalCompleteNum;
+	private Integer totalSchedulingHeaderNum;
+
+	/**
+	 * 该采购单下按商品排产时总的已确认量
+	 */
+	private Integer totalCompleteScheduHeaderNum;
+
+	/**
+	 * 排产类型: 0:按订单排产， 1:按商品排产
+	 */
+	private Integer schedulingType;
 
 
 	public Integer getCurrentPaymentId() {
@@ -474,19 +486,35 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		this.totalOrdQty = totalOrdQty;
 	}
 
-	public Integer getToalSchedulingNum() {
-		return toalSchedulingNum;
+	public Integer getSchedulingType() {
+		return schedulingType;
 	}
 
-	public void setToalSchedulingNum(Integer toalSchedulingNum) {
-		this.toalSchedulingNum = toalSchedulingNum;
+	public void setSchedulingType(Integer schedulingType) {
+		this.schedulingType = schedulingType;
 	}
 
-	public Integer getToalCompleteNum() {
-		return toalCompleteNum;
+	public Integer getTotalSchedulingDetailNum() {
+		return totalSchedulingDetailNum;
 	}
 
-	public void setToalCompleteNum(Integer toalCompleteNum) {
-		this.toalCompleteNum = toalCompleteNum;
+	public void setTotalSchedulingDetailNum(Integer totalSchedulingDetailNum) {
+		this.totalSchedulingDetailNum = totalSchedulingDetailNum;
+	}
+
+	public Integer getTotalSchedulingHeaderNum() {
+		return totalSchedulingHeaderNum;
+	}
+
+	public void setTotalSchedulingHeaderNum(Integer totalSchedulingHeaderNum) {
+		this.totalSchedulingHeaderNum = totalSchedulingHeaderNum;
+	}
+
+	public Integer getTotalCompleteScheduHeaderNum() {
+		return totalCompleteScheduHeaderNum;
+	}
+
+	public void setTotalCompleteScheduHeaderNum(Integer totalCompleteScheduHeaderNum) {
+		this.totalCompleteScheduHeaderNum = totalCompleteScheduHeaderNum;
 	}
 }

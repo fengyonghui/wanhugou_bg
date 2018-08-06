@@ -44,24 +44,27 @@
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
                 $("#schedulingPlan_forSku").hide();
-                $("#batchSubmit").hide();
+
+                $("#schedulingPlanHeaderFlag").val("true");
             }
             if (detailSchedulingFlg == 'true') {
                 $("#stockGoods").hide();
                 $("#schedulingPlan_forHeader").hide();
                 $("#schedulingPlan_forSku").show();
-                $("#batchSubmit").show();
+
+                $("#schedulingPlanDetailFlag").val("true");
             }
             if (detailHeaderFlg != 'true' && detailSchedulingFlg != 'true') {
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
                 $("#schedulingPlan_forSku").hide();
-            }
 
+                $("#completeBtn").hide()
+            }
 
             var poDetailList = '${bizPoHeader.poDetailList.size()}';
             if(poDetailList == 0) {
-                $("#batchSubmit").hide();
+                $("#completeBtn").hide();
             } else {
                 var id = '${bizPoHeader.id}'
                 checkResult(id);
@@ -78,30 +81,30 @@
                 success: function (result) {
                     var totalOrdQty = result['totalOrdQty'];
                     $("#totalOrdQty").val(totalOrdQty)
-
-                    var toalSchedulingNumForSkuHtml = $("[name=toalSchedulingNumForSku]");
-                    var toalSchedulingNumForSkuNum = 0;
-                    for(i=0;i<toalSchedulingNumForSkuHtml.length;i++){
-                        var schedulingNumForSkuNum = toalSchedulingNumForSkuHtml[i];
-                        var scForSkuNum = $(schedulingNumForSkuNum).attr("value")
-                        toalSchedulingNumForSkuNum = parseInt(toalSchedulingNumForSkuNum) + parseInt(scForSkuNum);
-                    }
-
-                    if(totalOrdQty == toalSchedulingNumForSkuNum) {
-                        $("#batchSubmit").hide()
-                    }
-
                     var totalSchedulingHeaderNum = result['totalSchedulingHeaderNum'] == null ? 0 : result['totalSchedulingHeaderNum'];
-                    var totalSchedulingDetailNum = result['totalSchedulingDetailNum'] == null ? 0 : result['totalSchedulingDetailNum'];
+                    //$("#totalSchedulingNumToDo").val(totalSchedulingHeaderNum)
+                    var totalCompleteScheduHeaderNum = result['totalCompleteScheduHeaderNum'] == null ? 0 : result['totalCompleteScheduHeaderNum'];
+                    $("#totalCompleteScheduHeaderNum").val(totalCompleteScheduHeaderNum)
+                    $("#totalSchedulingNumToDo").val(parseInt(totalSchedulingHeaderNum) - parseInt(totalCompleteScheduHeaderNum))
+                    if ($("#schedulingPlanHeaderFlag").val() == "true") {
+                        if($("#totalSchedulingNumToDo").val() == 0) {
+                            $("#completeBtn").hide()
+                            $("#totalCompleteAlert").show()
+                        }
+                    }
 
-                    $("#toalSchedulingNum").val(totalSchedulingHeaderNum)
-                    $("#totalSchedulingNumToDo").val(parseInt(totalOrdQty) - parseInt(totalSchedulingHeaderNum))
-
-                    if(totalOrdQty != null && totalSchedulingHeaderNum != null && totalOrdQty == totalSchedulingHeaderNum) {
-                        $("#addSchedulingHeaderPlanBtn").hide();
-                        $("#saveSubmit").hide();
-                        $("#schedulingPanAlert").show();
-                        $(".headerScheduling").hide()
+                    if ($("#schedulingPlanDetailFlag").val() == "true") {
+                        var toalSchedulingNumForSkuHtml = $("[name=toalSchedulingNumForSku]");
+                        var toalSchedulingNumForSkuNum = 0;
+                        for(i=0;i<toalSchedulingNumForSkuHtml.length;i++){
+                            var schedulingNumForSkuNum = toalSchedulingNumForSkuHtml[i];
+                            var scForSkuNum = $(schedulingNumForSkuNum).attr("value")
+                            toalSchedulingNumForSkuNum = parseInt(toalSchedulingNumForSkuNum) + parseInt(scForSkuNum);
+                        }
+                        if(toalSchedulingNumForSkuNum == 0) {
+                            $("#completeBtn").hide()
+                            $("#totalCompleteAlert").show()
+                        }
                     }
 
                 },
@@ -240,10 +243,12 @@
                 }
                 count++;
             }
+
             if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
                 alert("排产量总和太大，请从新输入!")
                 return false
             }
+
             if(confirm("确定执行该排产确认吗？")) {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
@@ -263,13 +268,48 @@
                 });
             }
         }
+
+        function confirmComplete() {
+            var orderHtml = $(".orderChk");
+            var params = new Array();
+            $(".orderChk").each(function () {
+                if(this.checked){
+                    var completeId = $(this).attr("value")
+                    params.push(completeId);
+                }
+            })
+
+            if(params.length == 0) {
+                alert("未勾选确认项！")
+                return false;
+            }
+
+            params.unshift('${bizRequestHeader.reqNo}')
+            if(confirm("确定执行该确认排产吗？")) {
+                $Mask.AddLogo("正在加载");
+                $.ajax({
+                    url: '${ctx}/biz/po/bizPoHeader/confirm',
+                    contentType: 'application/json',
+                    data:JSON.stringify(params),
+                    type: 'post',
+                    success: function (result) {
+                        if(result == true) {
+                            window.location.href = "${ctx}/biz/po/bizPoHeader/scheduling?id="+${bizPoHeader.id} + "&forward=confirmScheduling";
+                        }
+                    },
+                    error: function (error) {
+                        console.info(error);
+                    }
+                });
+            }
+        }
     </script>
 </head>
 <body>
 <ul class="nav nav-tabs">
     <li><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
     <li class="active">
-        <a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}">排产</a>
+        <a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
     </li>
 </ul>
 <br/>
@@ -316,6 +356,10 @@
                         <th>采购数量</th>
                         <th>工厂价</th>
                         <th>总金额</th>
+                        <%--<th>已排产量</th>--%>
+                        <%--<th>待排产数量</th>--%>
+
+                        <%--<th>操作</th>--%>
                     </tr>
                     </thead>
                     <tbody id="prodInfo">
@@ -333,15 +377,15 @@
                                         <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}"
                                                    var="orderNumStr"
                                                    varStatus="orderStatus">
-                                        <c:if test="${orderNumStr.soType==1}">
-                                        <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
+                                            <c:if test="${orderNumStr.soType==1}">
+                                                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
                                             </c:if>
                                             <c:if test="${orderNumStr.soType==2}">
-                                            <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
-                                                </c:if>
-                                                    ${orderNumStr.orderNumStr}
-                                            </a>
-                                            </c:forEach>
+                                                <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
+                                            </c:if>
+                                                 ${orderNumStr.orderNumStr}
+                                                </a>
+                                        </c:forEach>
                                     </td>
                                 </c:if>
                                 <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
@@ -360,36 +404,34 @@
             <div class="controls">
                 <table style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
                     <tr>
-                        <td>
+                        <td colspan="2">
+                            <input  type='hidden' id='schedulingPlanHeaderFlag' value=''/>
                             <label>总申报数量：</label>
                             <input id="totalOrdQty" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
                             &nbsp;
-                            <label>总待排产量：</label>
+                            <label>总待确认量：</label>
                             <input id="totalSchedulingNumToDo" name='reqQtys' readonly="readonly" class="input-mini"
                                    type='text'/>
                             &nbsp;
-                            <label>已排产数量：</label>
-                            <input id="toalSchedulingNum" name='reqQtys' readonly="readonly" class="input-mini"
+                            <label>总已确认量：</label>
+                            <input id="totalCompleteScheduHeaderNum" name='reqQtys' readonly="readonly" class="input-mini"
                                    type='text'/>
                             &nbsp;
-                            <input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划"
-                                   onclick="addSchedulingHeaderPlan('header_', ${bizPoHeader.id})"/>
-                            &nbsp;
-                            <input id="saveSubmit" class="btn btn-primary" type="button"
-                                   onclick="saveComplete('0',${bizPoHeader.id})" value="保存"/>
-                            <span id="schedulingPanAlert" style="color:red; display:none">已排产完成</span>
                         </td>
                     </tr>
 
 
                     <c:if test="${fn:length(bizCompletePalns) > 0}">
-                        <tr>
-                            <td>
-                                <label>排产履历：</label>
-                            </td>
-                        </tr>
                         <c:forEach items="${bizCompletePalns}" var="bizCompletePaln" varStatus="stat">
                             <tr>
+                                <td>
+                                    <c:if test="${bizCompletePaln.completeStatus == 0}">
+                                        <input class="orderChk" type="checkbox" name="${bizCompletePaln.completeStatus}" value="${bizCompletePaln.id}" />
+                                    </c:if>
+                                    <c:if test="${bizCompletePaln.completeStatus == 1}">
+                                        <span style="color:red; ">已确认</span>
+                                    </c:if>
+                                </td>
                                 <td>
                                     <div>
                                         <label>排产日期：</label>
@@ -404,26 +446,7 @@
                             </tr>
                         </c:forEach>
                     </c:if>
-
-                    <tr class="headerScheduling">
-                        <td>
-                            <label>排产计划：</label>
-                        </td>
-                    </tr>
-                    <tr id="header_${bizPoHeader.id}" class="headerScheduling">
-                        <td>
-                            <div name="${bizPoHeader.id}">
-                                <label>排产日期：</label>
-                                <input name="${bizPoHeader.id}_date" type="text" maxlength="20"
-                                       class="input-medium Wdate"
-                                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/> &nbsp;
-                                <label>排产数量：</label>
-                                <input name="${bizPoHeader.id}_value" class="input-medium" type="text" maxlength="30"/>
-                            </div>
-                        </td>
-                    </tr>
                 </table>
-
             </div>
         </div>
 
@@ -460,15 +483,15 @@
                                         <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}"
                                                    var="orderNumStr"
                                                    varStatus="orderStatus">
-                                        <c:if test="${orderNumStr.soType==1}">
-                                        <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
+                                            <c:if test="${orderNumStr.soType==1}">
+                                                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
                                             </c:if>
                                             <c:if test="${orderNumStr.soType==2}">
-                                            <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
-                                                </c:if>
-                                                    ${orderNumStr.orderNumStr}
-                                            </a>
-                                            </c:forEach>
+                                                <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
+                                            </c:if>
+                                                ${orderNumStr.orderNumStr}
+                                                </a>
+                                        </c:forEach>
                                     </td>
                                 </c:if>
                                 <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
@@ -483,37 +506,31 @@
                                 <td colspan="10">
                                     <table style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
                                         <tr>
-                                            <td>
+                                            <td colspan="2">
+                                                <input  type='hidden' id='schedulingPlanDetailFlag' value=''/>
                                                 <label>总申报数量：</label>
-                                                <input id="totalOrdQtyForSku_${poDetail.id}"  name='reqQtys' readonly="readonly" value="${poDetail.ordQty}" class="input-mini" type='text'/>
+                                                <input id="totalOrdQtyForSku"  name='reqQtys' readonly="readonly" value="${poDetail.ordQty}" class="input-mini" type='text'/>
                                                 &nbsp;
-                                                <label>待排产量：</label>
-                                                <input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${poDetail.ordQty - poDetail.sumCompleteNum}" class="input-mini" type='text'/>
+                                                <label>总待确认量：</label>
+                                                <input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${poDetail.sumCompleteNum - poDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
                                                 &nbsp;
-                                                <label>已排产数量：</label>
-                                                <input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${poDetail.sumCompleteNum}" class="input-mini" type='text'/>
+                                                <label>总已确认量：</label>
+                                                <input name="sumCompleteDetailNum" name='reqQtys' readonly="readonly" value="${poDetail.sumCompleteDetailNum == null ? 0 : poDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
                                                 &nbsp;
-                                                <c:choose>
-                                                    <c:when test="${poDetail.ordQty == poDetail.sumCompleteNum}">
-                                                        <span style="color:red; ">已排产完成</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('detail_', ${poDetail.id})"/>
-                                                        <input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete('1',${poDetail.id})" value="保存"/>
-                                                        <span id="schedulingPanAlertForSku" style="color:red; display:none" >已排产完成</span>
-                                                    </c:otherwise>
-                                                </c:choose>
                                             </td>
                                         </tr>
 
                                         <c:if test="${poDetail.bizSchedulingPlan != null}">
-                                            <tr>
-                                                <td>
-                                                    <label>排产履历：</label>
-                                                </td>
-                                            </tr>
                                             <c:forEach items="${poDetail.bizSchedulingPlan.completePalnList}" var="completePaln">
                                                 <tr >
+                                                    <td>
+                                                        <c:if test="${completePaln.completeStatus == 0}">
+                                                            <input class="orderChk" type="checkbox" name="${completePaln.completeStatus}" value="${completePaln.id}" />
+                                                        </c:if>
+                                                        <c:if test="${completePaln.completeStatus == 1}">
+                                                            <span style="color:red; ">已确认</span>
+                                                        </c:if>
+                                                    </td>
                                                     <td>
                                                         <div>
                                                             <label>排产日期：</label>
@@ -524,24 +541,6 @@
                                                     </td>
                                                 </tr>
                                             </c:forEach>
-                                        </c:if>
-
-                                        <c:if test="${poDetail.ordQty != poDetail.sumCompleteNum}">
-                                            <tr>
-                                                <td>
-                                                    <label>排产计划：</label>
-                                                </td>
-                                            </tr>
-                                            <tr id="detail_${poDetail.id}" name="detailScheduling">
-                                                <td>
-                                                    <div name="${poDetail.id}">
-                                                        <label>排产日期：</label>
-                                                        <input name="${poDetail.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;
-                                                        <label>排产数量：</label>
-                                                        <input name="${poDetail.id}_value" class="input-medium" type="text" maxlength="30" />
-                                                    </div>
-                                                </td>
-                                            </tr>
                                         </c:if>
                                     </table>
                                 </td>
@@ -558,7 +557,12 @@
     <div class="form-actions">
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
         &nbsp;&nbsp;
-        <input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;
+        <!-- 只有供应商拥有确认排产权限 -->
+        <c:if test="${roleFlag == false}">
+            <input id="completeBtn" class="btn btn-primary" type="button" value="确定" onclick="confirmComplete();"/>
+
+            <span id="totalCompleteAlert" style="color:red; display: none">已全部确认</span>
+        </c:if>
     </div>
 </form:form>
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>

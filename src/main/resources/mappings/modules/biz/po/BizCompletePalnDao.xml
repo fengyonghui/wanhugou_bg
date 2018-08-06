@@ -118,5 +118,16 @@
 		complete_status = #{completeStatus}
 		WHERE id = #{id}
 	</update>
+
+	<update id="batchUpdateCompleteStatus">
+		UPDATE biz_complete_paln SET
+		complete_status = 1
+		WHERE id IN
+		<foreach item="item" index="index" collection="paramList" open="(" separator="," close=")">
+		 	 #{item}
+		</foreach>
+
+
+	</update>
 	
 </mapper>

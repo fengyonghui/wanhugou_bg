@@ -78,22 +78,20 @@
 			WHERE brh.id = a.id
 			) AS "totalOrdQty"
 			, (SELECT
-			SUM(bsp.scheduling_num)
+			SUM(bcp.complete_num)
 			FROM biz_request_header brh
-			LEFT JOIN biz_request_detail brd ON brd.header_id = brh.id
-			LEFT JOIN biz_scheduling_plan bsp
-			ON bsp.object_id = brd.id
-			AND bsp.object_name = 'biz_request_detail'
+			LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = brh.id AND bsp.status=1 AND bsp.object_name = 'biz_request_header'
+			LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
 			WHERE brh.status = 1
-			AND brh.id = a.id) AS "toalSchedulingNum"
+			AND brh.id = a.id) AS "totalSchedulingHeaderNum"
 			,(SELECT
 			SUM(bcp.complete_num)
 			FROM biz_request_header brh
-			LEFT JOIN biz_request_detail brd ON brd.header_id = brh.id
-			LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = brd.id AND bsp.object_name = 'biz_request_detail'
-			LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id
+			LEFT JOIN biz_request_detail brd ON brd.header_id = brh.id and brd.status=1
+			LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = brd.id AND bsp.status=1 AND bsp.object_name = 'biz_request_detail'
+			LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
 			WHERE brh.status = 1
-			AND brh.id = a.id) AS "toalCompleteNum"
+			AND brh.id = a.id) AS "totalSchedulingDetailNum"
 		FROM biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
 		LEFT JOIN biz_sku_info bsi on brd.sku_id = bsi.id
@@ -395,44 +393,25 @@
 		AND bsi.id = #{skuId}
 	</select>
 
-	<select id="getTotalNum" resultType="BizRequestHeader" parameterType="Integer">
-		SELECT
-		(select
-		sum(brd.req_qty)
-		from biz_request_header brh
-		left join biz_request_detail brd on brd.header_id=brh.id
-		where brh.id = #{id}) as "totalOrdQty",
-		(select
-		sum(bsp.scheduling_num)
-		from biz_request_header brh
-		left join biz_request_detail brd on brd.header_id=brh.id
-		left join biz_scheduling_plan bsp on bsp.object_id = brd.id and bsp.object_name = 'biz_request_detail'
-		where brh.id = #{id}) as "toalSchedulingNum",
-		sum(bcp.complete_num) as "toalCompleteNum"
-		from biz_request_header a
-		left join biz_request_detail brd on brd.header_id = a.id
-		left join biz_scheduling_plan bsp on bsp.object_id = brd.id and bsp.object_name = 'biz_request_detail'
-		left join biz_complete_paln bcp on bcp.scheduling_id = bsp.id
-		WHERE
-		a.status=1
-		and a.id =#{id}
-	</select>
-
-
 	<select id="getTotalQtyAndSchedulingNum" resultType="BizRequestHeader" parameterType="Integer">
 		SELECT
 		(select
 		sum(brd.req_qty)
 		from biz_request_header brh
 		left join biz_request_detail brd on brd.header_id=brh.id and brd.status=1
-		where brh.id = #{id}) as "totalOrdQty",
+		where brh.status=1 AND brh.id = #{id}) as "totalOrdQty",
 		(select
 		sum(bcp.complete_num)
 		from biz_request_header brh
 		left join biz_request_detail brd on brd.header_id=brh.id and brd.status=1
 		left join biz_scheduling_plan bsp on bsp.object_id = brd.id and bsp.object_name = 'biz_request_detail' and bsp.status=1
     	left join biz_complete_paln bcp on bcp.scheduling_id = bsp.id and bcp.status=1
-		where brh.id = #{id}) as "totalSchedulingDetailNum",
+		where brh.status=1 AND brh.id = #{id}) as "totalSchedulingDetailNum",
+		(SELECT SUM(bcp.complete_num)
+		from biz_request_header brh
+		LEFT JOIN biz_scheduling_plan bsp	ON (bsp.object_id = brh.id AND bsp.object_name = 'biz_request_header' AND bsp.status = 1)
+		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id AND bcp.status = 1 AND bcp.complete_status = 1
+		WHERE brh.status=1 AND brh.id=#{id}) as "totalCompleteScheduHeaderNum",
 		sum(bcp.complete_num) as "totalSchedulingHeaderNum"
 		from biz_request_header a
 		left join biz_scheduling_plan bsp on bsp.object_id = a.id and bsp.object_name = 'biz_request_header' and bsp.status=1
@@ -465,7 +444,8 @@
 	<update id="updateSchedulingType">
 		UPDATE biz_request_header SET
 		scheduling_type = 1
-		WHERE id = #{id}
+		WHERE status=1
+		AND id = #{id}
 	</update>
 
 </mapper>

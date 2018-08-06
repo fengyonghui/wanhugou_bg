@@ -879,15 +879,6 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
     }
 
 	/**
-	 * 该备货单下所有商品的总采购数量，总排产数量，总已确认排产数
-	 * @param id
-	 * @return
-	 */
-	public BizRequestHeader getTotalNum(Integer id){
-		return bizRequestHeaderForVendorDao.getTotalNum(id);
-	}
-
-	/**
 	 * 该备货单下所有商品的总采购数量，总排产数量（分为按订单排产的总排产量和按商品排产的总排产量）
 	 * @param id
 	 * @return

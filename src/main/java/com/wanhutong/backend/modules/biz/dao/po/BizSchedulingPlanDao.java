@@ -22,20 +22,11 @@ import java.util.List;
 public interface BizSchedulingPlanDao extends CrudDao<BizSchedulingPlan> {
 
     /**
-     * 通过objectId获取排产计划Entity
+     * 通过表名和表Id获取排产entity
      * @param objectId
+     * @param objectName
      * @return
      */
-    List<BizSchedulingPlan> getByObjectId(Integer objectId);
-
-    List<Integer> getSchedulingPlanIdListByPoId(BizPoHeader bizPoHeader);
-
-    List<BizSchedulingPlan> findAllList(BizSchedulingPlan bizSchedulingPlan);
-
-    List<Integer> getSchedulingPlanIdListByRequestId(BizRequestHeader bizRequestHeader);
-
     BizSchedulingPlan getByObjectIdAndObjectName(@Param("objectId") Integer objectId, @Param("objectName") String objectName);
-
-    void updateCompleteStatus(BizSchedulingPlan bizSchedulingPlan);
 
 }

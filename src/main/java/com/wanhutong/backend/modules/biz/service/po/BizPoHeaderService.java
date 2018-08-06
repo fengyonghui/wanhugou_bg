@@ -1028,11 +1028,20 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     }
 
     /**
-     * 该采购单下所有商品的总采购数量，总排产数量，总已确认排产数
+     * 该备货单下所有商品的总采购数量，总排产数量（分为按订单排产的总排产量和按商品排产的总排产量）
      * @param id
      * @return
      */
-    public BizPoHeader getTotalNum(Integer id){
-        return bizPoHeaderDao.getTotalNum(id);
+    public BizPoHeader getTotalQtyAndSchedulingNum(Integer id){
+        return bizPoHeaderDao.getTotalQtyAndSchedulingNum(id);
+    }
+
+    /**
+     * 供应商确认排产后，更新排产表中排产状态
+     * @param bizPoHeader
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void updateSchedulingType(BizPoHeader bizPoHeader) {
+        bizPoHeaderDao.updateSchedulingType(bizPoHeader);
     }
 }

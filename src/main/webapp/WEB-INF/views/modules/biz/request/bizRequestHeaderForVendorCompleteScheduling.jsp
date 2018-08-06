@@ -63,28 +63,31 @@
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
                 $("#schedulingPlan_forSku").hide();
+
+                $("#schedulingPlanHeaderFlag").val("true");
             }
             if (detailSchedulingFlg == 'true') {
                 $("#stockGoods").hide();
                 $("#schedulingPlan_forHeader").hide();
                 $("#schedulingPlan_forSku").show();
+
+                $("#schedulingPlanDetailFlag").val("true");
             }
             if (detailHeaderFlg != 'true' && detailSchedulingFlg != 'true') {
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
                 $("#schedulingPlan_forSku").hide();
+
+                $("#completeBtn").hide()
             }
-
-
 
             var reqDetailList = '${reqDetailList.size()}';
             if(reqDetailList == 0) {
-                $("#batchSubmit").hide();
+                $("#completeBtn").hide();
             } else {
                 var id = '${bizRequestHeader.id}'
                 checkResult(id);
             }
-
         });
 
         function selectRemark() {
@@ -95,142 +98,49 @@
             }
         }
 
-        //增加排产
-        function addSchedulingCheck(index, detailId) {
-            var reqQty = $(eval("reqQty_" + index)).val();
-            var schedulingNum = $(eval("schedulingNum_" + index)).val();
-            var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
-            var standard = reqQty - sumSchedulingNum;
-            // alert("reqQty=" + reqQty + "\r\n" +
-            //     "schedulingNum=" + schedulingNum + "\r\n" +
-            //     "sumSchedulingNum=" + sumSchedulingNum + "\r\n" +
-            //     "standard=" + standard)
-            var reg= /^[0-9]+[0-9]*]*$/;
-            if (parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
-                alert("排产量数值设置不正确，请重新输入")
-                return false;
-            }
-            if(confirm("确定添加排产量为" + schedulingNum + "的排产吗？")){
-                $Mask.AddLogo("正在加载");
-                $.ajax({
-                    url: '${ctx}/biz/request/bizRequestHeaderForVendor/saveSchedulingPlan',
-                    contentType: 'application/json',
-                    data: {"detailId": detailId, "reqQty": reqQty, "schedulingNum": schedulingNum},
-                    type: 'get',
-                    success: function (result) {
-                        if(result == true) {
-                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${bizRequestHeader.id};
-                        }
-                    },
-                    error: function (error) {
-                        console.info(error);
-                    }
-                });
-            }
-        }
-
-        //批量排产
-        function batchSave() {
-            var requestDetailList = '${reqDetailList.size()}';
-            var params = new Array()
-            for (var i=0; i<requestDetailList;i++) {
-                var entity = {};
-                var detailId = $(eval("detailId_" + (i+1))).text();
-                var reqQty = $(eval("reqQty_" + (i+1))).val();
-                var schedulingNum = $(eval("schedulingNum_" + (i+1))).val();
-                var sumSchedulingNum = $(eval("sumSchedulingNum_" + (i+1))).text();
-                var standard = reqQty - sumSchedulingNum;
-                console.log("detailId=" + detailId + "\r\n" +
-					"reqQty=" + reqQty + "\r\n" +
-                    "schedulingNum=" + schedulingNum + "\r\n" +
-                    "sumSchedulingNum=" + sumSchedulingNum + "\r\n" +
-                    "standard=" + reqQty)
-                var reg= /^[0-9]+[0-9]*]*$/;
-                console.log(!reg.test(parseInt(schedulingNum)))
-                console.log("schedulingNum=" + schedulingNum + "\r\n" + "standard=" + standard)
-                if (parseInt(schedulingNum) < 0 || (parseInt(schedulingNum) > parseInt(standard)) || !reg.test(schedulingNum)){
-                    alert("排产量数值设置不正确，请重新输入")
-                    return false;
-                }
-                entity.objectId = detailId;
-                entity.originalNum = reqQty;
-                entity.schedulingNum = schedulingNum;
-                entity.completeNum = 0;
-                params[i] = entity;
-            }
-            if(confirm("确定执行批量排产吗？")){
-                $Mask.AddLogo("正在加载");
-                $.ajax({
-                    url: '${ctx}/biz/request/bizRequestHeaderForVendor/batchSaveSchedulingPlan',
-                    contentType: 'application/json',
-                    data:JSON.stringify(params),
-                    datatype:"json",
-                    type: 'post',
-                    success: function (result) {
-                        if(result == true) {
-                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${bizRequestHeader.id};
-                        }
-                    },
-                    error: function (error) {
-                        console.info(error);
-                    }
-                });
-            }
-        }
-
         function checkResult(id) {
             $.ajax({
-                url: '${ctx}/biz/request/bizRequestHeaderForVendor/checkResult',
+                url: '${ctx}/biz/request/bizRequestHeaderForVendor/checkSchedulingNum',
                 contentType: 'application/json',
                 data: {"id": id},
                 type: 'get',
                 dataType:'json',
+                async: false,
                 success: function (result) {
                     var totalOrdQty = result['totalOrdQty'];
                     $("#totalOrdQty").val(totalOrdQty)
-                    var toalSchedulingNum = result['toalSchedulingNum'] == null ? 0 : result['toalSchedulingNum'];
-                    $("#toalSchedulingNum").val(toalSchedulingNum)
-                    $("#totalSchedulingNumToDo").val(parseInt(totalOrdQty) - parseInt(toalSchedulingNum))
-                    if (totalOrdQty != null && toalSchedulingNum != null && totalOrdQty == toalSchedulingNum) {
-                        $("#addSchedulingHeaderPlanBtn").hide();
-                        $("#saveSubmit").hide();
-                        $("#schedulingPanAlert").show();
-                        $("#batchSubmit").hide();
+                    var totalSchedulingDetailNum = result['totalSchedulingDetailNum'] == null ? 0 : result['totalSchedulingDetailNum'];
+                    var totalSchedulingHeaderNum = result['totalSchedulingHeaderNum'] == null ? 0 : result['totalSchedulingHeaderNum'];
+					var totalCompleteScheduHeaderNum = result['totalCompleteScheduHeaderNum'] == null ? 0 : result['totalCompleteScheduHeaderNum'];
+                    $("#totalCompleteScheduHeaderNum").val(totalCompleteScheduHeaderNum)
+                    $("#totalSchedulingNumToDo").val(parseInt(totalSchedulingHeaderNum) - parseInt(totalCompleteScheduHeaderNum))
+					if ($("#schedulingPlanHeaderFlag").val() == "true") {
+                        if($("#totalSchedulingNumToDo").val() == 0) {
+                            $("#completeBtn").hide()
+							$("#totalCompleteAlert").show()
+                        }
                     }
+
+                    if ($("#schedulingPlanDetailFlag").val() == "true") {
+                        var toalSchedulingNumForSkuHtml = $("[name=toalSchedulingNumForSku]");
+                        var toalSchedulingNumForSkuNum = 0;
+                        for(i=0;i<toalSchedulingNumForSkuHtml.length;i++){
+                            var schedulingNumForSkuNum = toalSchedulingNumForSkuHtml[i];
+                            var scForSkuNum = $(schedulingNumForSkuNum).attr("value")
+                            toalSchedulingNumForSkuNum = parseInt(toalSchedulingNumForSkuNum) + parseInt(scForSkuNum);
+                        }
+                        if(toalSchedulingNumForSkuNum == 0) {
+                            $("#completeBtn").hide()
+                            $("#totalCompleteAlert").show()
+                        }
+                    }
+
                 },
                 error: function (error) {
                     console.info(error);
                 }
             });
         }
-
-        function addSchedulingHeaderPlan(head, id) {
-            var appendTr = $("#" + head + id);
-            var html = '<tr><td><div name="' + id + '"><label>排产日期' + '：' + '</label><input name="' + id + '_date' + '" type="text" maxlength="20" class="input-medium Wdate" ';
-            html += ' onclick="' + "WdatePicker({dateFmt:'" + "yyyy-MM-dd HH:mm:ss',isShowClear" + ":" + 'true});"/>' + ' &nbsp; '
-            html += ' <label>排产数量：</label> ';
-            html += ' <input name="' + id + "_value" + '" class="input-medium" type="text" maxlength="30"/>';
-            html += ' <input class="btn" type="button" value="删除" onclick="removeSchedulingHeaderPlan(this)"/></div></td></tr>'
-
-            appendTr.after(html)
-        }
-
-        function removeSchedulingHeaderPlan(btn) {
-            var rootDiv = btn.parentElement.parentElement.remove();
-        }
-
-		//按商品查询排产
-        function addSchedulingSkuPlanBtn(id) {
-            var appendTr = $("#addSchedulingSkuPlanBtn");
-            var html = '<tr><td><div name="' + id + '"><label>排产日期' + '：' + '</label><input name="' + id + '_date' + '" type="text" maxlength="20" class="input-medium Wdate" ';
-            html += ' onclick="' + "WdatePicker({dateFmt:'" + "yyyy-MM-dd HH:mm:ss',isShowClear" + ":" + 'true});"/>' + ' &nbsp; '
-            html += ' <label>排产数量：</label> ';
-            html += ' <input name="' + id + "_value" + '" class="input-medium" type="text" maxlength="30"/>';
-            html += ' <input class="btn" type="button" value="删除" onclick="removeSchedulingHeaderPlan(this)"/></div></td></tr>'
-            appendTr.after(html)
-        }
-
-
 
         function choose(obj) {
             $(obj).attr('checked', true);
@@ -245,14 +155,29 @@
             }
         }
 
-        function confirmComplete(completeId) {
+        function confirmComplete() {
+            var orderHtml = $(".orderChk");
+            var params = new Array();
+            $(".orderChk").each(function () {
+                if(this.checked){
+                    var completeId = $(this).attr("value")
+					params.push(completeId);
+                }
+            })
+
+            if(params.length == 0) {
+                alert("未勾选确认项！")
+				return false;
+			}
+
+            params.unshift('${bizRequestHeader.reqNo}')
             if(confirm("确定执行该确认排产吗？")) {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
                     url: '${ctx}/biz/request/bizRequestHeaderForVendor/confirm',
                     contentType: 'application/json',
-                    data:{"completeId":completeId},
-                    type: 'get',
+                    data:JSON.stringify(params),
+                    type: 'post',
                     success: function (result) {
                         if(result == true) {
                             window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id="+${entity.id} + "&forward=confirmScheduling";
@@ -264,7 +189,6 @@
                 });
             }
         }
-
 
         function batchConfirmComplete() {
 
@@ -296,7 +220,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/biz/request/bizRequestHeaderForVendor/">备货清单列表</a></li>
-		<li class="active"><a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizRequestHeader.id}">备货清单<shiro:hasPermission name="biz:request:bizRequestHeader:edit">${not empty bizRequestHeader.str?'详情':(not empty bizRequestHeader.id?'修改':'添加')}</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${bizRequestHeader.id}&forward=confirmScheduling">确认排产</a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
@@ -405,7 +329,6 @@
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<%--<th>商品属性</th>--%>
 					<th>价格</th>
 					<th>申报数量</th>
 					<th>总金额</th>
@@ -428,9 +351,6 @@
 							<th>采购数量</th>
 						</c:if>
 					</c:if>
-					<%--<th>已排产数量</th>--%>
-					<%--<th>待排产数量</th>--%>
-					<%--<th>操作</th>--%>
 				</tr>
 				</thead>
 				<tbody id="prodInfo">
@@ -445,7 +365,6 @@
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
-							<%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
 							<td style="white-space: nowrap">
 									${reqDetail.unitPrice}
 							</td>
@@ -483,21 +402,6 @@
 									<td>${reqDetail.reqQty}</td>
 								</c:if>
 							</c:if>
-							<%--<td id="sumSchedulingNum_${state.index+1}">${reqDetail.sumSchedulingNum}</td>--%>
-							<%--<td>--%>
-								<%--<input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}"--%>
-									   <%--htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-							<%--</td>--%>
-							<%--<td>--%>
-								<%--<c:choose>--%>
-									<%--<c:when test="${reqDetail.reqQty != reqDetail.sumSchedulingNum}">--%>
-										<%--<input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${reqDetail.id}')" value="保存"/>&nbsp;--%>
-									<%--</c:when>--%>
-									<%--<c:otherwise>--%>
-										<%--<span style="color:red; ">已排产完成</span>--%>
-									<%--</c:otherwise>--%>
-								<%--</c:choose>--%>
-							<%--</td>--%>
 						</tr>
 						<c:if test="${state.last}">
 							<c:set var="aa" value="${state.index}" scope="page"/>
@@ -511,73 +415,48 @@
 		</div>
 
 
-		<div class="control-group" id="schedulingPlan_forHeader">
+		<div class="control-group" id="schedulingPlan_forHeader" >
 			<label class="control-label">按订单排产：</label>
 			<div class="controls">
 				<table  style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
 					<tr>
-						<td>
+						<td colspan="2">
+							<input  type='hidden' id='schedulingPlanHeaderFlag' value=''/>
 							<label>总申报数量：</label>
 							<input id="totalOrdQty" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
 							&nbsp;
-							<label>已排产数量：</label>
-							<input id="toalSchedulingNum" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
-							&nbsp;
-							<label>总待排产量：</label>
+							<label>总待确认量：</label>
 							<input id="totalSchedulingNumToDo" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
 							&nbsp;
-							<input class="btn btn-primary" type="button" value="确定" onclick="batchConfirmComplete('${bizCompletePaln.id}');"/>
-							<%--<input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('header_', ${entity.id})"/>--%>
-							<%--&nbsp;--%>
-							<%--<input id="saveSubmit" class="btn btn-primary" type="button" onclick="saveComplete('0',${entity.id})" value="保存"/>--%>
-							<%--<span id="schedulingPanAlert" style="color:red; display:none" >已排产完成</span>--%>
+							<label>总已确认量：</label>
+							<input id="totalCompleteScheduHeaderNum" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
+							&nbsp;
 						</td>
 					</tr>
 
 
 					<c:if test="${fn:length(bizCompletePalns) > 0}">
-                        <tr>
-                            <td>
-                                <label>排产履历：</label>
-                            </td>
-                        </tr>
 						<c:forEach items="${bizCompletePalns}" var="bizCompletePaln" varStatus="stat">
-							<tr id="comSchedulingHeader_${bizCompletePaln.id}">
+							<tr id="comSchedulingHeader">
+								<td>
+									<c:if test="${bizCompletePaln.completeStatus == 0}">
+										<input class="orderChk" type="checkbox" name="${bizCompletePaln.completeStatus}" value="${bizCompletePaln.id}" />
+									</c:if>
+									<c:if test="${bizCompletePaln.completeStatus == 1}">
+										<span style="color:red; ">已确认</span>
+									</c:if>
+								</td>
 								<td>
 									<div>
 										<label>排产日期：</label>
 										<input type="text" maxlength="20" class="input-medium Wdate" readonly="readonly" value="<fmt:formatDate value="${bizCompletePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" /> &nbsp;
 										<label>排产数量：</label>
 										<input class="input-medium" type="text" readonly="readonly" value="${bizCompletePaln.completeNum}" maxlength="30" />
-										<c:choose>
-											<c:when test="${bizCompletePaln.completeStatus == 0}">
-												<input class="btn btn-primary" type="button" value="确定" onclick="confirmComplete('${bizCompletePaln.id}');"/>
-											</c:when>
-											<c:otherwise>
-												<span style="color:red; ">已确认排产</span>
-											</c:otherwise>
-										</c:choose>
 									</div>
 								</td>
 							</tr>
 						</c:forEach>
 					</c:if>
-
-					<%--<tr>--%>
-						<%--<td>--%>
-							<%--<label>排产计划：</label>--%>
-						<%--</td>--%>
-					<%--</tr>--%>
-					<%--<tr id="header_${entity.id}">--%>
-						<%--<td>--%>
-							<%--<div name="${entity.id}">--%>
-								<%--<label>排产日期：</label>--%>
-								<%--<input name="${entity.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;--%>
-								<%--<label>排产数量：</label>--%>
-								<%--<input name="${entity.id}_value" class="input-medium" type="text" maxlength="30" />--%>
-							<%--</div>--%>
-						<%--</td>--%>
-					<%--</tr>--%>
 				</table>
 
 			</div>
@@ -600,9 +479,6 @@
 						<th>价格</th>
 						<th>申报数量</th>
 						<th>总金额</th>
-						<%--<th>已排产数量</th>--%>
-						<%--<th>待排产数量</th>--%>
-						<%--<th>操作</th>--%>
 					</tr>
 					</thead>
 					<tbody>
@@ -617,7 +493,6 @@
 								<td>${reqDetail.skuInfo.name}</td>
 								<td>${reqDetail.skuInfo.partNo}</td>
 								<td>${reqDetail.skuInfo.itemNo}</td>
-									<%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
 								<td style="white-space: nowrap">
 										${reqDetail.unitPrice}
 								</td>
@@ -630,21 +505,6 @@
 								<td>
 										${reqDetail.unitPrice * reqDetail.reqQty}
 								</td>
-								<%--<td id="sumSchedulingNum_${state.index+1}">${reqDetail.sumSchedulingNum}</td>--%>
-								<%--<td>--%>
-									<%--<input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${reqDetail.reqQty - reqDetail.sumSchedulingNum}"--%>
-										   <%--htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-								<%--</td>--%>
-								<%--<td>--%>
-									<%--<c:choose>--%>
-										<%--<c:when test="${reqDetail.reqQty != reqDetail.sumSchedulingNum}">--%>
-											<%--<input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${reqDetail.id}')" value="保存"/>&nbsp;--%>
-										<%--</c:when>--%>
-										<%--<c:otherwise>--%>
-											<%--<span style="color:red; ">已排产完成</span>--%>
-										<%--</c:otherwise>--%>
-									<%--</c:choose>--%>
-								<%--</td>--%>
 							</tr>
 							<c:if test="${state.last}">
 								<c:set var="aa" value="${state.index}" scope="page"/>
@@ -652,22 +512,19 @@
 
 							<tr>
 								<td colspan="10">
-									<table  id="" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
+									<table style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
 										<tr>
-											<td>
+											<td colspan="2">
+												<input  type='hidden' id='schedulingPlanDetailFlag' value=''/>
 												<label>总申报数量：</label>
 												<input id="totalOrdQtyForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 												&nbsp;
-												<label>已排产数量：</label>
-												<input id="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
+												<label>总待确认量：</label>
+												<input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteNum - reqDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
 												&nbsp;
-												<label>待排产量：</label>
-												<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${reqDetail.reqQty - reqDetail.sumCompleteNum}" class="input-mini" type='text'/>
+												<label>总已确认量：</label>
+												<input name="sumCompleteDetailNum" name='reqQtys' readonly="readonly" value="${reqDetail.sumCompleteDetailNum == null ? 0 : reqDetail.sumCompleteDetailNum}" class="input-mini" type='text'/>
 												&nbsp;
-												<%--<input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('detail_', ${reqDetail.id})"/>
-												<input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete('1',${reqDetail.id})" value="保存"/>--%>
-
-												<%--<input id="batchConfirmForSku" class="btn btn-primary" type="button" onclick="batchConfirmForSku('1',${reqDetail.id})" value="确定"/>--%>
 											</td>
 										</tr>
 
@@ -676,42 +533,25 @@
 											<c:forEach items="${reqDetail.bizSchedulingPlan.completePalnList}" var="completePaln">
 												<tr name="comSchedulingDetail_${reqDetail.id}">
 													<td>
+														<c:if test="${completePaln.completeStatus == 0}">
+															<input class="orderChk" type="checkbox" name="${completePaln.completeStatus}" value="${completePaln.id}" />
+														</c:if>
+														<c:if test="${completePaln.completeStatus == 1}">
+															<span style="color:red; ">已确认</span>
+														</c:if>
+													</td>
+													<td>
 														<div>
 															<label>排产日期：</label>
 															<input type="text" maxlength="20" readonly="readonly" value="<fmt:formatDate value="${completePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" class="input-medium Wdate"  /> &nbsp;
 															<label>排产数量：</label>
 															<input class="input-medium" readonly="readonly" value="${completePaln.completeNum}" type="text" maxlength="30" />
 															&nbsp;
-															<c:choose>
-															<c:when test="${completePaln.completeStatus == 0}">
-																<input class="btn btn-primary" type="button" value="确定" onclick="confirmComplete('${completePaln.id}');"/>
-															</c:when>
-															<c:otherwise>
-																<span style="color:red; ">已确认排产</span>
-															</c:otherwise>
-															</c:choose>
 														</div>
 													</td>
 												</tr>
 											</c:forEach>
                                         </c:if>
-
-
-										<%--<tr>--%>
-											<%--<td>--%>
-												<%--<label>排产计划：</label>--%>
-											<%--</td>--%>
-										<%--</tr>--%>
-										<%--<tr id="detail_${reqDetail.id}">--%>
-											<%--<td>--%>
-												<%--<div name="${reqDetail.id}">--%>
-													<%--<label>排产日期：</label>--%>
-													<%--<input name="${reqDetail.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;--%>
-													<%--<label>排产数量：</label>--%>
-													<%--<input name="${reqDetail.id}_value" class="input-medium" type="text" maxlength="30" />--%>
-												<%--</div>--%>
-											<%--</td>--%>
-										<%--</tr>--%>
 									</table>
 								</td>
 							</tr>
@@ -723,26 +563,16 @@
 			</div>
 		</div>
 
-
-
-
 		<div class="form-actions">
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 			&nbsp;&nbsp;
-			<%--<c:if test="${reqDetailList!=null}">--%>
-				<%--<input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;--%>
-			<%--</c:if>--%>
+			<!-- 只有供应商拥有确认排产权限 -->
+			<c:if test="${roleFlag == false}">
+				<input id="completeBtn" class="btn btn-primary" type="button" value="确定" onclick="confirmComplete();"/>
+
+				<span id="totalCompleteAlert" style="color:red; display: none">已全部确认</span>
+			</c:if>
 		</div>
 	</form:form>
-	<%--<form:form id="searchForm" modelAttribute="bizSkuInfo" >--%>
-		<%--&lt;%&ndash;<form:hidden id="productNameCopy" path="productInfo.name"/>&ndash;%&gt;--%>
-		<%--&lt;%&ndash;<form:hidden id="prodCodeCopy" path="productInfo.prodCode"/>&ndash;%&gt;--%>
-		<%--<form:hidden id="prodBrandNameCopy" path="productInfo.brandName"/>--%>
-		<%--<form:hidden id="skuNameCopy" path="name"/>--%>
-		<%--<form:hidden id="skuCodeCopy" path="partNo"/>--%>
-		<%--<form:hidden id="itemNoCopy" path="itemNo"/>--%>
-		<%--<input type="hidden" name="skuType" value="${SkuTypeEnum.OWN_PRODUCT.code}"/>--%>
-		<%--&lt;%&ndash;<form:hidden id="skuTypeCopy" path="skuType"/>&ndash;%&gt;--%>
-	<%--</form:form>--%>
 </body>
 </html>
