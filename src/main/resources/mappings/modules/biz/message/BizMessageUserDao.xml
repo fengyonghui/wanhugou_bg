@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.message.BizMessageUserDao">
+    
+	<sql id="bizMessageUserColumns">
+		a.id AS "id",
+		a.user_id AS "user.id",
+		a.message_id AS "messageId",
+		a.biz_status AS "bizStatus",
+		u2.name AS "user.name"
+	</sql>
+	
+	<sql id="bizMessageUserJoins">
+		LEFT JOIN sys_user u2 ON u2.id = a.user_id
+	</sql>
+    
+	<select id="get" resultType="BizMessageUser">
+		SELECT 
+			<include refid="bizMessageUserColumns"/>
+		FROM biz_message_user a
+		<include refid="bizMessageUserJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizMessageUser">
+		SELECT 
+			<include refid="bizMessageUserColumns"/>
+		FROM biz_message_user a
+		<include refid="bizMessageUserJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizMessageUser">
+		SELECT 
+			<include refid="bizMessageUserColumns"/>
+		FROM biz_message_user a
+		<include refid="bizMessageUserJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_message_user(
+			user_id,
+			message_id,
+			biz_status,
+			status
+		) VALUES (
+			#{user.id},
+			#{messageId},
+			#{bizStatus},
+			${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		)
+	</insert>
+
+	<insert id="insertBatch">
+		INSERT INTO biz_message_user(
+		user_id,
+		message_id,
+		biz_status,
+		status
+		) VALUES
+
+		<foreach collection="userList" index="index" item="item" open="(" separator="),(" close=")">
+			#{item.id},
+			#{messageId},
+			#{bizStatus},
+			${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		</foreach>
+	</insert>
+
+	
+	<update id="update">
+		UPDATE biz_message_user SET 	
+			user_id = #{user.id},
+			message_id = #{messageId},
+			biz_status = #{bizStatus}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_message_user SET
+		status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
