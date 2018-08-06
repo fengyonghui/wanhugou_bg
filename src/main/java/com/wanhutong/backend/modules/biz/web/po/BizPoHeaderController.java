@@ -961,8 +961,6 @@ public class BizPoHeaderController extends BaseController {
 
         List<Integer> poDetailIdList = Lists.newArrayList();
         Boolean detailSchedulingFlg = false;
-
-        //List<BizPoDetail> bizPoDetailList = bizPoDetailService.getBizPoDetailByPoHeader(bizPoHeader);
         List<BizPoDetail> bizPoDetailList = bizPoHeader.getPoDetailList();
         List<BizPoDetail> poDetailList = Lists.newArrayList();
         for (BizPoDetail bizpodetail : bizPoDetailList) {
@@ -1042,8 +1040,6 @@ public class BizPoHeaderController extends BaseController {
                         schedulingPlan.setObjectId(dto.getObjectId());
                         schedulingPlan.setObjectName(objectName);
                         schedulingPlan.setOriginalNum(dto.getOriginalNum());
-                        //schedulingPlan.setSchedulingNum(dto.getSchedulingNum());
-                        //schedulingPlan.setPlanDate(sdf.parse(dto.getPlanDate()));
                         bizSchedulingPlanService.save(schedulingPlan);
                     }
 

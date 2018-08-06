@@ -31,7 +31,6 @@ public class BizCompletePaln extends DataEntity<BizCompletePaln> {
 	 */
 	private Integer completeStatus;
 
-	
 	public BizCompletePaln() {
 		super();
 	}

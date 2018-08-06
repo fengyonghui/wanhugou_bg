@@ -114,9 +114,6 @@
                         toalSchedulingNumForSkuNum = parseInt(toalSchedulingNumForSkuNum) + parseInt(scForSkuNum);
                     }
 
-                    console.log(totalOrdQty)
-                    console.log(toalSchedulingNumForSkuNum)
-
                     if(totalOrdQty == toalSchedulingNumForSkuNum) {
                         $("#batchSubmit").hide()
                     }
@@ -316,7 +313,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/biz/request/bizRequestHeaderForVendor/">备货清单列表</a></li>
-		<li class="active"><a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizRequestHeader.id}">备货清单<shiro:hasPermission name="biz:request:bizRequestHeader:edit">${not empty bizRequestHeader.str?'详情':(not empty bizRequestHeader.id?'修改':'添加')}</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${bizRequestHeader.id}">排产</a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>

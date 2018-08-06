@@ -872,9 +872,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		String forward = request.getParameter("forward");
 		String forwardPage = "";
 		if ("confirmScheduling".equals(forward)) {
-//			List<Integer> list = bizSchedulingPlanService.getSchedulingPlanIdListByRequestId(bizRequestHeader);
-//			JSONArray json = JSONArray.fromObject(list);
-//			model.addAttribute("schedulingPlanList", json);
 			forwardPage = "modules/biz/request/bizRequestHeaderForVendorCompleteScheduling";
 		} else {
 			forwardPage = "modules/biz/request/bizRequestHeaderForVendorScheduling";

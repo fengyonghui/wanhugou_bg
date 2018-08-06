@@ -87,7 +87,7 @@
                     $("#totalCompleteScheduHeaderNum").val(totalCompleteScheduHeaderNum)
                     $("#totalSchedulingNumToDo").val(parseInt(totalSchedulingHeaderNum) - parseInt(totalCompleteScheduHeaderNum))
                     if ($("#schedulingPlanHeaderFlag").val() == "true") {
-                        if($("#totalSchedulingNumToDo").val() == $("#totalCompleteScheduHeaderNum").val()) {
+                        if($("#totalSchedulingNumToDo").val() == 0) {
                             $("#completeBtn").hide()
                             $("#totalCompleteAlert").show()
                         }
@@ -312,9 +312,7 @@
 <ul class="nav nav-tabs">
     <li><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
     <li class="active">
-        <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">采购订单
-            <shiro:hasPermission name="biz:po:bizPoHeader:edit">${not empty bizPoHeader.id?'修改':'添加'}</shiro:hasPermission>
-            <shiro:lacksPermission name="biz:po:bizPoHeader:edit">查看</shiro:lacksPermission></a>
+        <a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
     </li>
 </ul>
 <br/>

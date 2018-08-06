@@ -51,32 +51,8 @@ public class BizSchedulingPlanService extends CrudService<BizSchedulingPlanDao, 
 		super.delete(bizSchedulingPlan);
 	}
 
-//	@Transactional(readOnly = false)
-//	public List<BizSchedulingPlan> getByObjectId(Integer objectId){
-//		return bizSchedulingPlanDao.getByObjectId(objectId);
-//	}
-
-//	@Transactional(readOnly = false)
-//	public List<Integer> getSchedulingPlanIdListByPoId(BizPoHeader poHeader){
-//		return bizSchedulingPlanDao.getSchedulingPlanIdListByPoId(poHeader);
-//	}
-
-//	@Transactional(readOnly = false)
-//	public List<BizSchedulingPlan> findAllList(BizSchedulingPlan bizSchedulingPlan){
-//		return bizSchedulingPlanDao.findAllList(bizSchedulingPlan);
-//	}
-	/*@Transactional(readOnly = false)
-	public List<Integer> getSchedulingPlanIdListByRequestId(BizRequestHeader requestHeader){
-		return bizSchedulingPlanDao.getSchedulingPlanIdListByRequestId(requestHeader);
-	}*/
-
 	@Transactional(readOnly = false)
 	public BizSchedulingPlan getByObjectIdAndObjectName(Integer objectId, String objectName) {
 		return bizSchedulingPlanDao.getByObjectIdAndObjectName(objectId, objectName);
 	}
-
-//	@Transactional(readOnly = false)
-//	public void updateCompleteStatus(BizSchedulingPlan bizSchedulingPlan) {
-//		bizSchedulingPlanDao.updateCompleteStatus(bizSchedulingPlan);
-//	}
 }

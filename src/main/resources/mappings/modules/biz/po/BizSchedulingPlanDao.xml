@@ -6,13 +6,9 @@
 		<result property="objectName" column="objectName"/>
 		<result property="objectId" column="objectId"/>
 		<result property="originalNum" column="originalNum"/>
-		<!--<result property="schedulingNum" column="schedulingNum"/>-->
-		<!--<result property="sumCompleteNum" column="sumCompleteNum"/>-->
 		<result property="delFlag" column="status"/>
 		<result property="createDate" column="createDate"/>
 		<result property="updateDate" column="updateDate"/>
-        <result property="planDate" column="planDate"/>
-		<result property="completeStatus" column="completeStatus"/>
 
 		<association property="createBy" javaType="User" column="createBy.id">
 			<id property="id" column="createBy.id"/>
@@ -36,16 +32,12 @@
 		a.object_name AS "objectName",
 		a.object_id AS "objectId",
 		a.original_num AS "originalNum",
--- 		a.scheduling_num AS "schedulingNum",
-		/*a.complete_num AS "completeNum",*/
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate",
-		a.plan_date AS "planDate",
-		a.complete_status AS "completeStatus"
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizSchedulingPlanJoins">
@@ -58,14 +50,6 @@
 		<include refid="bizSchedulingPlanJoins"/>
 		WHERE a.id = #{id}
 	</select>
-
-	<!--<select id="getByObjectId" resultType="BizSchedulingPlan">-->
-		<!--SELECT-->
-		<!--<include refid="bizSchedulingPlanColumns"/>-->
-		<!--FROM biz_scheduling_plan a-->
-		<!--<include refid="bizSchedulingPlanJoins"/>-->
-		<!--WHERE a.object_id = #{objectId}-->
-	<!--</select>-->
 
 	<select id="getByObjectIdAndObjectName" resultMap="schedulingPlanResult">
 		SELECT
@@ -109,53 +93,6 @@
 			</otherwise>
 		</choose>
 	</select>
-
-	<!--<select id="findAllList" resultMap="schedulingPlanResult">-->
-		<!--SELECT-->
-		<!--<include refid="bizSchedulingPlanColumns"/>-->
-		<!--,bcp.id AS "completePalnList.id"-->
-		<!--,bcp.scheduling_id AS "completePalnList.schedulingId"-->
-		<!--,bcp.complete_num AS "completePalnList.completeNum"-->
-		<!--,bcp.plan_date AS "completePalnList.planDate"-->
-		<!--,(select-->
-		<!--sum(bcpl.complete_num)-->
-		<!--FROM biz_scheduling_plan bsp-->
-		<!--LEFT JOIN biz_complete_paln bcpl ON bcpl.scheduling_id = bsp.id-->
-		<!--where bsp.object_id =-->
-        <!--<if test="bizPoDetail!=null and bizPoDetail.id!=null and bizPoDetail.id!=''">-->
-            <!--#{bizPoDetail.id}-->
-        <!--</if>-->
-        <!--<if test="bizRequestDetail!=null and bizRequestDetail.id!=null and bizRequestDetail.id!=''">-->
-            <!--#{bizRequestDetail.id}-->
-        <!--</if>-->
-		<!--and bcpl.scheduling_id = bcp.scheduling_id-->
-		<!--) as "sumCompleteNum"-->
-		<!--FROM biz_scheduling_plan a-->
-		<!--LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = a.id-->
-		<!--<include refid="bizSchedulingPlanJoins"/>-->
-		<!--<where>-->
-			<!--a.status = #{DEL_FLAG_NORMAL}-->
-			<!--<if test="bizPoDetail!=null and bizPoDetail.id!=null and bizPoDetail.id!=''">-->
-				<!--AND a.object_name = "biz_po_detail"-->
-				<!--AND a.object_id = #{bizPoDetail.id}-->
-			<!--</if>-->
-            <!--<if test="bizRequestDetail!=null and bizRequestDetail.id!=null and bizRequestDetail.id!=''">-->
-                <!--AND a.object_name = "biz_request_detail"-->
-                <!--AND a.object_id = #{bizRequestDetail.id}-->
-            <!--</if>-->
-			<!--<if test="bizRequestHeader!=null and bizRequestHeader.id!=null and bizRequestHeader.id!=''">-->
-				<!--AND a.object_name = "biz_request_header"-->
-				<!--AND a.object_id = #{bizRequestHeader.id}-->
-			<!--</if>-->
-		<!--</where>-->
-		<!--<choose>-->
-			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
-				<!--ORDER BY ${page.orderBy}-->
-			<!--</when>-->
-			<!--<otherwise>-->
-			<!--</otherwise>-->
-		<!--</choose>-->
-	<!--</select>-->
 	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_scheduling_plan(
@@ -163,10 +100,6 @@
 			object_name,
 			object_id,
 			original_num,
-			<!--<if test="schedulingNum !=null and schedulingNum !=''">-->
-				<!--scheduling_num,-->
-			<!--</if>-->
-			plan_date,
 			status,
 			create_id,
 			create_time,
@@ -178,10 +111,6 @@
 			#{objectName},
 			#{objectId},
 			#{originalNum},
-			<!--<if test="schedulingNum !=null and schedulingNum !=''">-->
-				<!--#{schedulingNum},-->
-			<!--</if>-->
-			#{planDate},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -196,8 +125,6 @@
 			object_name = #{objectName},
 			object_id = #{objectId},
 			original_num = #{originalNum},
--- 			scheduling_num = #{schedulingNum},
-			<!--complete_num = #{completeNum},-->
 			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
@@ -211,43 +138,15 @@
 		WHERE id = #{id}
 	</update>
 
-	<!--<select id="getSchedulingPlanIdListByPoId" resultType="Integer" parameterType="com.wanhutong.backend.modules.biz.entity.po.BizPoHeader">-->
-		<!--SELECT-->
-			<!--a.id-->
-		<!--FROM biz_scheduling_plan a-->
-		<!--left join biz_po_detail bpd on a.object_id = bpd.id-->
-		<!--left join biz_po_header bph on bph.id = bpd.order_id-->
-		<!--left join biz_sku_info bsi on bsi.id = bpd.sku_no-->
-		<!--left join biz_product_info bpi on bpi.id = bsi.prod_id-->
-		<!--WHERE bph.id = #{id}-->
-	<!--</select>-->
-
-	<!--<select id="getSchedulingPlanIdListByRequestId" resultType="Integer" parameterType="com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader">-->
-		<!--SELECT-->
-		<!--a.id-->
-		<!--FROM biz_scheduling_plan a-->
-		<!--left join biz_request_detail brd on brd.id= a.object_id-->
-		<!--left join biz_request_header brh on brh.id = brd.header_id-->
-		<!--WHERE brh.id = #{id}-->
-	<!--</select>-->
-
     <update id="updateSchedulingType">
         UPDATE biz_scheduling_plan SET
         object_name = #{objectName},
         object_id = #{objectId},
         original_num = #{originalNum},
-        /*scheduling_num = #{schedulingNum},*/
         create_time = #{createDate},
         u_version = #{uVersion},
         update_id = #{updateBy.id},
         update_time = #{updateDate}
         WHERE id = #{id}
     </update>
-
-	<!--<update id="updateCompleteStatus">-->
-		<!--UPDATE biz_scheduling_plan SET-->
-		<!--complete_status = #{completeStatus}-->
-		<!--WHERE id = #{id}-->
-	<!--</update>-->
-	
 </mapper>
