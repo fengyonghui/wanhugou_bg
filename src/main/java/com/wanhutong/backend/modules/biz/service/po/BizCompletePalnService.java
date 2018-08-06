@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.po;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ import com.wanhutong.backend.modules.biz.dao.po.BizCompletePalnDao;
 @Service
 @Transactional(readOnly = true)
 public class BizCompletePalnService extends CrudService<BizCompletePalnDao, BizCompletePaln> {
+
+	@Autowired
+	private BizCompletePalnDao bizCompletePalnDao;
 
 	public BizCompletePaln get(Integer id) {
 		return super.get(id);
@@ -43,5 +47,22 @@ public class BizCompletePalnService extends CrudService<BizCompletePalnDao, BizC
 	public void delete(BizCompletePaln bizCompletePaln) {
 		super.delete(bizCompletePaln);
 	}
-	
+
+	/**
+	 * 确认排产后更改排产状态
+	 * @param bizCompletePaln
+	 */
+	@Transactional(readOnly = false)
+	public void updateCompleteStatus(BizCompletePaln bizCompletePaln) {
+		bizCompletePalnDao.updateCompleteStatus(bizCompletePaln);
+	}
+
+	/**
+	 * 批量确认排产后更改排产状态
+	 * @param paramList
+	 */
+	@Transactional(readOnly = false)
+	public void batchUpdateCompleteStatus(List<String> paramList) {
+		bizCompletePalnDao.batchUpdateCompleteStatus(paramList);
+	}
 }
