@@ -121,7 +121,6 @@ public class BizRequestPayController extends BaseController {
     }
 
     @RequestMapping(value = "wechatPay4MWEB")
-    @ResponseBody
     public String wechatPay4MWEB(Double payMoney, Integer reqId, String redirectUrl) throws UnsupportedEncodingException {
         Pair<String, Map<String, Object>> response = unifiedOrder(payMoney, reqId, 1, WechatPayTradeType.MWEB.getType(), null);
         if ("SUCCESS".equals(String.valueOf(response.getRight().get("return_code"))) && "SUCCESS".equals(String.valueOf(response.getRight().get("result_code")))) {
