@@ -272,18 +272,17 @@ public class BizSkuInfoController extends BaseController {
 					System.out.println(id[i].trim()+" 不是skuID值不操作");
 				}else {
 					BizSkuInfo bizSkuInfo1 = bizSkuInfoService.get(Integer.parseInt(id[i].trim()));
-                    BizProductInfo bizProductInfo = bizProductInfoV2Service.get(bizSkuInfo1.getProductInfo().getId());
-                    BizVarietyFactor bizVarietyFactor = new BizVarietyFactor();
-                    bizVarietyFactor.setVarietyInfo(new BizVarietyInfo(bizProductInfo.getBizVarietyInfo().getId()));
-                    List<BizVarietyFactor> bvFactorList = bizVarietyFactorService.findList(bizVarietyFactor);
-                    DecimalFormat df = new DecimalFormat("0.00");
-                    for (BizVarietyFactor varietyFactor:bvFactorList) {
-                        Double salePrice = bizSkuInfo1.getBuyPrice()*(1+varietyFactor.getServiceFactor()/100);
+					BizProductInfo bizProductInfo = bizProductInfoV2Service.get(bizSkuInfo1.getProductInfo().getId());
+					BizVarietyFactor bizVarietyFactor = new BizVarietyFactor();
+					bizVarietyFactor.setVarietyInfo(new BizVarietyInfo(bizProductInfo.getBizVarietyInfo().getId()));
+					List<BizVarietyFactor> bvFactorList = bizVarietyFactorService.findList(bizVarietyFactor);
+					for (BizVarietyFactor varietyFactor : bvFactorList) {
+						Double salePrice = bizSkuInfo1.getBuyPrice() * (1 + varietyFactor.getServiceFactor() / 100);
 						BigDecimal price = new BigDecimal(salePrice).setScale(0, BigDecimal.ROUND_HALF_UP);
-                        varietyFactor.setSalePrice(price.intValue());
-                    }
-                    bizSkuInfo1.setBvFactorList(bvFactorList);
-                    bizSkuInfoList.add(bizSkuInfo1);
+						varietyFactor.setSalePrice(price.intValue());
+					}
+					bizSkuInfo1.setBvFactorList(bvFactorList);
+					bizSkuInfoList.add(bizSkuInfo1);
 				}
 			}
 		}
