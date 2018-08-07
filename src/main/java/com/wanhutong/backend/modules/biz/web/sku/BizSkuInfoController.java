@@ -47,6 +47,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -271,18 +272,17 @@ public class BizSkuInfoController extends BaseController {
 					System.out.println(id[i].trim()+" 不是skuID值不操作");
 				}else {
 					BizSkuInfo bizSkuInfo1 = bizSkuInfoService.get(Integer.parseInt(id[i].trim()));
-                    BizProductInfo bizProductInfo = bizProductInfoV2Service.get(bizSkuInfo1.getProductInfo().getId());
-                    BizVarietyFactor bizVarietyFactor = new BizVarietyFactor();
-                    bizVarietyFactor.setVarietyInfo(new BizVarietyInfo(bizProductInfo.getBizVarietyInfo().getId()));
-                    List<BizVarietyFactor> bvFactorList = bizVarietyFactorService.findList(bizVarietyFactor);
-                    DecimalFormat df = new DecimalFormat("0.00");
-                    for (BizVarietyFactor varietyFactor:bvFactorList) {
-                        Double salePrice = bizSkuInfo1.getBuyPrice()*(1+varietyFactor.getServiceFactor()/100);
-                        String price = df.format(salePrice);
-                        varietyFactor.setSalePrice(Double.parseDouble(price));
-                    }
-                    bizSkuInfo1.setBvFactorList(bvFactorList);
-                    bizSkuInfoList.add(bizSkuInfo1);
+					BizProductInfo bizProductInfo = bizProductInfoV2Service.get(bizSkuInfo1.getProductInfo().getId());
+					BizVarietyFactor bizVarietyFactor = new BizVarietyFactor();
+					bizVarietyFactor.setVarietyInfo(new BizVarietyInfo(bizProductInfo.getBizVarietyInfo().getId()));
+					List<BizVarietyFactor> bvFactorList = bizVarietyFactorService.findList(bizVarietyFactor);
+					for (BizVarietyFactor varietyFactor : bvFactorList) {
+						Double salePrice = bizSkuInfo1.getBuyPrice() * (1 + varietyFactor.getServiceFactor() / 100);
+						BigDecimal price = new BigDecimal(salePrice).setScale(0, BigDecimal.ROUND_HALF_UP);
+						varietyFactor.setSalePrice(price.doubleValue());
+					}
+					bizSkuInfo1.setBvFactorList(bvFactorList);
+					bizSkuInfoList.add(bizSkuInfo1);
 				}
 			}
 		}
