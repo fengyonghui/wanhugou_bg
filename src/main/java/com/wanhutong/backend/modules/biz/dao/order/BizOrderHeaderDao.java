@@ -44,6 +44,15 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      */
     List<BizOrderStatisticsDto> getValidOrderTotalAndCountByCreateTimeMonth(@Param("month") String month, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList, @Param("officeType") String officeType);
 
+  /**
+     * 按月获取订单的总金额和订单数量
+     *
+     * @param month      月份
+     * @param officeId   机构ID
+     * @return 订单统计数据
+     */
+    BizOrderStatisticsDto getValidOrderTotalAndCountByCreateTimeMonthOfficeId(@Param("month") String month, @Param("officeId") Integer officeId);
+
     /**
      * 按月获取订单销售额相关的产品信息
      *

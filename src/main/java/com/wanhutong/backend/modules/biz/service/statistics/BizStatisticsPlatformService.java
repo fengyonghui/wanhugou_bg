@@ -223,10 +223,11 @@ public class BizStatisticsPlatformService {
             }
 
             BizUserStatisticsDto userStatisticDataByOfficeId = bizOrderHeaderDao.getUserStatisticDataByOfficeId(sdfMonth.format(sDate), o.getOfficeId());
-            o.setNewUser(BigDecimal.valueOf(userStatisticDataByOfficeId.getCount()));
-            o.setNewUserPlan(BigDecimal.valueOf(bizOpPlan.getNewUser()));
-
-            o.setServiceChargePlan(BigDecimal.valueOf(bizOpPlan.getServiceCharge()));
+            o.setNewUser(userStatisticDataByOfficeId == null ? BigDecimal.ZERO : BigDecimal.valueOf(userStatisticDataByOfficeId.getCount()));
+            o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
+            BizOrderStatisticsDto serviceChargeDto = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonthOfficeId(sdfMonth.format(sDate) + "%", o.getOfficeId());
+            o.setServiceCharge(serviceChargeDto == null ? BigDecimal.ZERO : serviceChargeDto.getProfitPrice());
+            o.setServiceChargePlan(bizOpPlan.getServiceCharge() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getServiceCharge()));
 
             o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
             o.setProcurementDay(

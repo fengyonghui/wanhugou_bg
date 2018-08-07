@@ -769,6 +769,56 @@
 		GROUP BY office.id
 	</select>
 
+	<select id="getValidOrderTotalAndCountByCreateTimeMonthOfficeId" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		sum(receive_total)                                   AS receiveTotal,
+		count(1) AS orderCount,
+		office.id AS officeId,
+		office.name AS officeName,
+		(SELECT
+		sum(detail1.buy_price * detail1.ord_qty)
+		FROM
+		biz_order_header AS header1
+		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
+		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		WHERE office.id = office1.id AND header1.order_type = 1
+		AND (<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND
+		header1.create_time LIKE #{month}
+		AND NOT EXISTS(
+		select 1
+		from sys_test_account ta
+		where header1.cust_id = ta.object_id
+		and ta.object_name = 'sys_office'
+		)
+		and office1.id = #{officeId}
+		GROUP BY office1.id)                     AS buyPrice
+		FROM biz_order_header AS header
+		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
+		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
+		WHERE
+		header.order_type = 1
+		AND not exists(
+		select 1
+		from sys_test_account ta
+		where header.cust_id = ta.object_id
+		and ta.object_name = 'sys_office'
+		)
+		AND
+		(<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND header.create_time LIKE #{month}
+		and office.id = #{officeId}
+		GROUP BY office.id
+	</select>
+
 	<select id="getProductStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,

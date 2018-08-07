@@ -60,17 +60,17 @@ public class BizPlatformDataOverviewDto {
     private String newUserRate;
 
     /**
-     * 新增用户计划
+     * 服务费计划
      */
     private BigDecimal serviceChargePlan = BigDecimal.ZERO;
 
     /**
-     * 新增用户
+     * 服务费
      */
     private BigDecimal serviceCharge = BigDecimal.ZERO;
 
     /**
-     * 新增用户达成率
+     * 服务费达成率
      */
     private String serviceChargeRate;
 
