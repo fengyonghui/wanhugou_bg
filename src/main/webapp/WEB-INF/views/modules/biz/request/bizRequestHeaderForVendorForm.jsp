@@ -366,7 +366,7 @@
 		<div class="control-group">
 			<label class="control-label">备货方：</label>
 			<div class="controls">
-				<input id="fromType1" type="radio" name="fromType" value="1" checked onclick="addAllStyle()"/>
+				<input id="fromType1" type="radio" name="fromType" value="1" checked onclick="addAllStyle()"/>采购中心备货
 				<input id="fromType2" type="radio" name="fromType" value="2" onclick="deleteVendorStyle()"/>厂商备货
 			</div>
 		</div>
