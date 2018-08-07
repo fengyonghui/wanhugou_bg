@@ -47,6 +47,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -278,8 +279,8 @@ public class BizSkuInfoController extends BaseController {
                     DecimalFormat df = new DecimalFormat("0.00");
                     for (BizVarietyFactor varietyFactor:bvFactorList) {
                         Double salePrice = bizSkuInfo1.getBuyPrice()*(1+varietyFactor.getServiceFactor()/100);
-                        String price = df.format(salePrice);
-                        varietyFactor.setSalePrice(Double.parseDouble(price));
+						BigDecimal price = new BigDecimal(salePrice).setScale(0, BigDecimal.ROUND_HALF_UP);
+                        varietyFactor.setSalePrice(price.intValue());
                     }
                     bizSkuInfo1.setBvFactorList(bvFactorList);
                     bizSkuInfoList.add(bizSkuInfo1);
