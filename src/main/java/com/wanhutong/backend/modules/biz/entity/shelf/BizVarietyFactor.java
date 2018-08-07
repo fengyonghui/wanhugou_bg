@@ -36,7 +36,7 @@ public class BizVarietyFactor extends DataEntity<BizVarietyFactor> {
 	private String varietyIds;
 	private String varietList;
 
-	private Integer salePrice;		//销售单价
+	private Double salePrice;		//销售单价
 	
 	public BizVarietyFactor() {
 		super();
@@ -70,11 +70,11 @@ public class BizVarietyFactor extends DataEntity<BizVarietyFactor> {
 		this.maxQty = maxQty;
 	}
 
-	public Integer getSalePrice() {
+	public Double getSalePrice() {
 		return salePrice;
 	}
 
-	public void setSalePrice(Integer salePrice) {
+	public void setSalePrice(Double salePrice) {
 		this.salePrice = salePrice;
 	}
 

@@ -279,7 +279,7 @@ public class BizSkuInfoController extends BaseController {
 					for (BizVarietyFactor varietyFactor : bvFactorList) {
 						Double salePrice = bizSkuInfo1.getBuyPrice() * (1 + varietyFactor.getServiceFactor() / 100);
 						BigDecimal price = new BigDecimal(salePrice).setScale(0, BigDecimal.ROUND_HALF_UP);
-						varietyFactor.setSalePrice(price.intValue());
+						varietyFactor.setSalePrice(price.doubleValue());
 					}
 					bizSkuInfo1.setBvFactorList(bvFactorList);
 					bizSkuInfoList.add(bizSkuInfo1);
