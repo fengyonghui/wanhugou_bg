@@ -119,7 +119,7 @@
             html += ' <input name="' + id + "_value" + '" class="input-medium" type="text" maxlength="30"/>';
             html += ' <input class="btn" type="button" value="删除" onclick="removeSchedulingHeaderPlan(this)"/></div></td></tr>'
 
-            appendTr.after(html)
+            appendTr.append(html)
         }
 
         function removeSchedulingHeaderPlan(btn) {
@@ -132,10 +132,12 @@
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
                 $("#schedulingPlan_forSku").hide();
+                $("#batchSubmit").hide();
             } else {
                 $("#stockGoods").hide();
                 $("#schedulingPlan_forHeader").hide();
                 $("#schedulingPlan_forSku").show();
+                $("#batchSubmit").show();
             }
         }
 
@@ -358,7 +360,7 @@
         <div class="control-group" id="schedulingPlan_forHeader">
             <label class="control-label">按订单排产：</label>
             <div class="controls">
-                <table style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+                <table id="schedulingForHeader_${bizPoHeader.id}" style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
                     <tr>
                         <td>
                             <label>总申报数量：</label>
@@ -373,7 +375,7 @@
                                    type='text'/>
                             &nbsp;
                             <input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划"
-                                   onclick="addSchedulingHeaderPlan('header_', ${bizPoHeader.id})"/>
+                                   onclick="addSchedulingHeaderPlan('schedulingForHeader_', ${bizPoHeader.id})"/>
                             &nbsp;
                             <input id="saveSubmit" class="btn btn-primary" type="button"
                                    onclick="saveComplete('0',${bizPoHeader.id})" value="保存"/>
@@ -481,7 +483,7 @@
 
                             <tr>
                                 <td colspan="10">
-                                    <table style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
+                                    <table id="schedulingForDetail_${poDetail.id}" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
                                         <tr>
                                             <td>
                                                 <label>总申报数量：</label>
@@ -498,7 +500,7 @@
                                                         <span style="color:red; ">已排产完成</span>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('detail_', ${poDetail.id})"/>
+                                                        <input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('schedulingForDetail_', ${poDetail.id})"/>
                                                         <input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete('1',${poDetail.id})" value="保存"/>
                                                         <span id="schedulingPanAlertForSku" style="color:red; display:none" >已排产完成</span>
                                                     </c:otherwise>
@@ -558,7 +560,7 @@
     <div class="form-actions">
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
         &nbsp;&nbsp;
-        <input id="batchSubmit" class="btn btn-primary" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;
+        <input id="batchSubmit" class="btn btn-primary" type="button" style="display: none;" onclick="batchSave()" value="批量保存"/>&nbsp;
     </div>
 </form:form>
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
