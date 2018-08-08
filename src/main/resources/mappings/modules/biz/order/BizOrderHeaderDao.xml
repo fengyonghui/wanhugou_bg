@@ -738,7 +738,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type = 1
+		WHERE office.id = office1.id AND header1.order_type = 1 AND detail1.status = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
 	</foreach>
@@ -842,13 +842,14 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type = 1
+		WHERE us.id = us1.id AND header1.order_type = 1 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
 		where header1.cust_id = ta.object_id
 		and ta.object_name = 'sys_office'
 		)
+		AND detail1.status = 1
 		AND header1.status = 1
 		AND us1.status = 1
 		AND consultant1.status = 1
@@ -916,7 +917,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type = 1
+		WHERE us.id = us1.id AND header1.order_type = 1 AND detail1.status = 1
 		AND header1.status = 1
 		AND us1.status = 1
 		AND consultant1.status = 1
@@ -987,7 +988,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type = 1
+		WHERE office.id = office1.id AND header1.order_type = 1 AND detail1.status = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
 		</foreach>
@@ -1175,7 +1176,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type = 1
+		WHERE office.id = office1.id AND header1.order_type = 1 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1335,7 +1336,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type = 1
+		WHERE us.id = us1.id AND header1.order_type = 1 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1487,6 +1488,7 @@
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		WHERE header1.order_type = 1
 		and header1.`status` = 1
+		AND detail1.status = 1
 		and office1.`status` = 1
 		AND NOT EXISTS(
 		select 1
@@ -1562,6 +1564,7 @@
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		WHERE header1.order_type = 1
 		and header1.`status` = 1
+		AND detail1.status = 1
 		and office1.`status` = 1
 		AND NOT EXISTS(
 		select 1
@@ -1736,7 +1739,7 @@ SELECT
        ON consultant1.cust_id = header1.cust_id
      LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
      LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-   WHERE office1.id = so.id AND header1.order_type = 1 AND header1.`status` = 1 AND
+   WHERE office1.id = so.id AND header1.order_type = 1 AND header1.`status` = 1 AND detail1.status = 1 AND
          NOT EXISTS(SELECT 1
                     FROM sys_test_account ta
                     WHERE header1.cust_id = ta.object_id AND ta.object_name = 'sys_office') AND
@@ -1776,7 +1779,7 @@ SELECT
 FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_header oh
 	WHERE cc.consultant_id = u.id AND oh.cust_id = cc.cust_id
 		AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
-		AND so.id = u.company_id
+		AND so.id = u.office_id
 		AND so.type IN (8, 10, 11)
 		AND
 		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
@@ -1802,7 +1805,7 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         LEFT JOIN biz_custom_center_consultant AS cc1 ON  header1.cust_id = cc1.cust_id
         LEFT JOIN sys_user AS u1 ON cc1.consultant_id = u1.id
         LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-        WHERE u1.id = u.id AND header1.order_type = 1 AND header1.`status` = 1 AND
+        WHERE u1.id = u.id AND header1.order_type = 1 AND header1.`status` = 1 AND detail1.status = 1 AND
         NOT EXISTS(SELECT 1
         FROM sys_test_account ta
         WHERE header1.cust_id = ta.object_id AND ta.object_name = 'sys_office') AND
@@ -1995,7 +1998,7 @@ FROM
 	  AND bod.status= 1
 	  AND (bod.suply_id=0 OR bod.suply_id=721)
 	AND EXISTS(
-		SELECT 1 FROM
+		SELECT 1 
 			(SELECT
 				DISTINCT a.id, pi.vendor_id
 				FROM biz_order_header a,biz_order_detail bod
