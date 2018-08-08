@@ -84,6 +84,27 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 * 结束金额
 	 */
 	private BigDecimal endPrice;
+	/**
+	 * 起始付款时间
+	 */
+	private Date startPayTime;
+	/**
+	 * 结束付款时间
+	 */
+	private Date endPayTime;
+
+	/**
+	 * 该采购单下所有商品的总采购数量
+	 */
+	private Integer totalOrdQty;
+	/**
+	 * 该采购单下所有商品的总排产数量
+	 */
+	private Integer toalSchedulingNum;
+	/**
+	 * 该采购单下所有商品的总已确认排产数
+	 */
+	private Integer toalCompleteNum;
 
 
 	public Integer getCurrentPaymentId() {
@@ -428,4 +449,44 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
     public void setType(String type) {
         this.type = type;
     }
+
+	public Date getStartPayTime() {
+		return startPayTime;
+	}
+
+	public void setStartPayTime(Date startPayTime) {
+		this.startPayTime = startPayTime;
+	}
+
+	public Date getEndPayTime() {
+		return endPayTime;
+	}
+
+	public void setEndPayTime(Date endPayTime) {
+		this.endPayTime = endPayTime;
+	}
+
+	public Integer getTotalOrdQty() {
+		return totalOrdQty;
+	}
+
+	public void setTotalOrdQty(Integer totalOrdQty) {
+		this.totalOrdQty = totalOrdQty;
+	}
+
+	public Integer getToalSchedulingNum() {
+		return toalSchedulingNum;
+	}
+
+	public void setToalSchedulingNum(Integer toalSchedulingNum) {
+		this.toalSchedulingNum = toalSchedulingNum;
+	}
+
+	public Integer getToalCompleteNum() {
+		return toalCompleteNum;
+	}
+
+	public void setToalCompleteNum(Integer toalCompleteNum) {
+		this.toalCompleteNum = toalCompleteNum;
+	}
 }

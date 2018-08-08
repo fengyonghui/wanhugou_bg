@@ -140,5 +140,17 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<select id="getsumSchedulingNum" resultType="BizPoDetail">
+		SELECT
+			a.object_id as "id",
+			(SELECT SUM(bsp.scheduling_num)
+			FROM biz_scheduling_plan bsp
+			WHERE bsp.object_id = #{objectId}) as "sumSchedulingNum",
+			sum(bcp.complete_num) as "sumCompleteNum"
+		FROM biz_scheduling_plan a
+		left join biz_complete_paln bcp on bcp.scheduling_id = a.id
+		WHERE a.object_id = #{objectId}
+	</select>
 	
 </mapper>

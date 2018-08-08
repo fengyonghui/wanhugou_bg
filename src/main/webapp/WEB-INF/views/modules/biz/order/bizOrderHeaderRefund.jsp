@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
-<%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderDrawBackStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 
@@ -99,7 +99,7 @@
     </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/saveRefund?type=refund" method="post" class="form-horizontal">
+<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/saveRefund?type=refund&drawbackStatus=${OrderHeaderDrawBackStatusEnum.REFUNDED.state}" method="post" class="form-horizontal">
     <form:hidden path="id"/>
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
@@ -210,7 +210,6 @@
         </div>
     </div>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
-    <form:input path="bizStatus" id="bizStatus" cssStyle="display: none"/>
     <form:input path="receiveTotal" id="receiveTotal" cssStyle="display: none"/>
     <div class="form-actions">
         <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
@@ -334,7 +333,6 @@
                 } else {
                     $("#photos").val(mainImgStr);
                     $("#receiveTotal").val("0");
-                    $("#bizStatus").val("<%=OrderHeaderBizStatusEnum.REFUNDED.getState()%>");
                     loading('正在提交，请稍等...');
                     inputForm.submit();
                 }

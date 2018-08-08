@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizPlatformDataOverviewDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.order.BizDrawBack;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -138,6 +139,18 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return 产品统计数据
      */
     List<BizProductStatisticsDto> getProductStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("variId") Integer variId, @Param("purchasingId") Integer purchasingId);
+
+   /**
+     * 按区间获取商品趋势相关的信息
+     *
+     * @param startDate 开始时间
+     * @return 产品统计数据
+     */
+    List<BizProductStatisticsDto> skuTendencyDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate,
+                                                         @Param("variId") Integer variId, @Param("purchasingId") Integer purchasingId,
+                                                         @Param("type") Integer type,
+                                                         @Param("timeType") String timeType
+                                                        );
 
     /**
      * 按区间获取用户相关的注册信息
@@ -322,4 +335,17 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * */
     BizOrderHeader categorySkuStatistics(User user);
 
+    /**
+     * 通过订单获取退款记录entity
+     *
+     * @param bizOrderHeader
+     */
+    BizDrawBack findDrawBack(BizOrderHeader bizOrderHeader);
+
+    /**
+     * 通过orderNum获取订单Entity
+     *
+     * @param orderNum
+     */
+    BizOrderHeader getByOrderNum(String orderNum);
 }

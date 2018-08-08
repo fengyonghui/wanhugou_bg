@@ -36,4 +36,11 @@ public interface BizSkuInfoV3Dao extends CrudDao<BizSkuInfo> {
      * @return
      */
     BizSkuInfo getEntityByPartNo(String partNo);
+
+    /**
+     * 获取商品和订单的对应关系列表
+     * @param bizSkuInfo
+     * @return
+     */
+    List<BizSkuInfo> findPageForSkuInfo(BizSkuInfo bizSkuInfo);
 }

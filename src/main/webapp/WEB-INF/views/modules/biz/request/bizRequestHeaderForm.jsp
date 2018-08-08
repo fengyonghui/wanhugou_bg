@@ -27,11 +27,22 @@
 			}
 			$("#inputForm").validate({
 				submitHandler: function(form){
+				    var prodInfo=$("#prodInfo").find("tr");
+				    if(prodInfo.length<0){
+				       alert("请选择商品") ;
+				       return;
+					}
+					var req=0;
                     $("input[name='reqQtys']").each(function () {
                         if($(this).val()==''){
-                            $(this).val(0)
+                            $(this).val(0);
 						}
+						req+=$(this).val();
                     });
+                    if(req==0){
+                        alert("请输入数量");
+                        return;
+					}
 					loading('正在提交，请稍等...');
 
 					form.submit();
@@ -62,16 +73,15 @@
                     type:"post",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuList",
                     data:$('#searchForm').serialize(),
-                    success:function (data) {
+                    success:function (result) {
                         if(id==''){
                             $("#prodInfo2").empty();
                         }
+                        var data = JSON.parse(result).data;
                         $.each(data,function (keys,skuInfoList) {
                             var prodKeys= keys.split(",");
                             var prodId= prodKeys[0];
-                            if($("#prodInfo").children("."+prodId).length>0){
-                            	return;
-							}
+
 //                            var prodName= prodKeys[1];
                             var prodUrl= prodKeys[2];
 //                            var cateName= prodKeys[3];
@@ -82,6 +92,10 @@
                             var tr_tds="";
                             var t=0;
                             $.each(skuInfoList,function (index,skuInfo) {
+                                if($("#prodInfo").children("."+skuInfo.id).length>0){
+                                    return;
+                                }
+
                                 skuInfoId+=","+skuInfo.id;
                                 tr_tds+= "<tr class='"+prodId+"'>";
 								if(flag){
@@ -303,7 +317,7 @@
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
 				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
-								labelValue="${entity.fromOffice.name}"  notAllowSelectParent="true"
+								labelValue="${entity.fromOffice.name}"
 								title="采购中心" isAll="false"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
 				</sys:treeselect>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -418,7 +432,7 @@
 				<tbody id="prodInfo">
 				<c:if test="${reqDetailList!=null}">
 					<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
-						<tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
+						<tr class="${reqDetail.skuInfo.id}" id="${reqDetail.id}">
 							<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}" width="100" height="100" /></td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 							<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">

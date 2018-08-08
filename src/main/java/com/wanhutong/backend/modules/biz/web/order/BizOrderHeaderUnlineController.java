@@ -6,8 +6,8 @@ package com.wanhutong.backend.modules.biz.web.order;
 import com.google.common.collect.ImmutableMap;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.common.web.BaseController;
@@ -18,6 +18,7 @@ import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.PhoneConfig;
@@ -27,7 +28,6 @@ import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
 import com.wanhutong.backend.modules.enums.TradeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +70,8 @@ public class BizOrderHeaderUnlineController extends BaseController {
     private BizOrderHeaderService bizOrderHeaderService;
     @Autowired
     private BizPayRecordService bizPayRecordService;
+    @Autowired
+    private BizOrderStatusService bizOrderStatusService;
 
     @ModelAttribute
     public BizOrderHeaderUnline get(@RequestParam(required = false) Integer id) {
@@ -94,8 +96,7 @@ public class BizOrderHeaderUnlineController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeaderUnline:view")
     @RequestMapping(value = "form")
     public String form(BizOrderHeaderUnline bizOrderHeaderUnline, Model model) {
-
-        if (bizOrderHeaderUnline != null && bizOrderHeaderUnline.getId() != null) {
+        if (bizOrderHeaderUnline.getId() != null) {
             CommonImg commonImg = new CommonImg();
             commonImg.setImgType(ImgEnum.UNlINE_PAYMENT_VOUCHER.getCode());
             commonImg.setObjectName(ImgEnum.UNlINE_PAYMENT_VOUCHER.getTableName());
@@ -113,6 +114,15 @@ public class BizOrderHeaderUnlineController extends BaseController {
         }
         model.addAttribute("bizOrderHeaderUnline", bizOrderHeaderUnline);
         return "modules/biz/order/bizOrderHeaderUnlineForm";
+    }
+
+    @RequiresPermissions("biz:order:bizOrderHeaderUnline:view")
+    @RequestMapping(value = "offLineform")
+    public String offLineform(BizOrderHeaderUnline bizOrderHeaderUnline, Model model) {
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeaderUnline.getOrderHeader().getId());
+        bizOrderHeaderUnline.setOrderHeader(orderHeader);
+        model.addAttribute("bizOrderHeaderUnline", bizOrderHeaderUnline);
+        return "modules/biz/order/bizOrderHeaderOffLineForm";
     }
 
     @RequiresPermissions("biz:order:bizOrderHeaderUnline:edit")
@@ -141,6 +151,7 @@ public class BizOrderHeaderUnlineController extends BaseController {
             }
         }
         bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+        bizOrderStatusService.saveOrderStatus(bizOrderHeader);
 
         try {
             User user = UserUtils.getUser();
@@ -160,8 +171,8 @@ public class BizOrderHeaderUnlineController extends BaseController {
             // 支付到账户
             bizPayRecord.setToAccount("1");
             // 交易类型：充值、提现、支付
-            bizPayRecord.setRecordType(TradeTypeEnum.REQUEST_PAY_TYPE.getCode());
-            bizPayRecord.setRecordTypeName(TradeTypeEnum.REQUEST_PAY_TYPE.getTradeNoType());
+            bizPayRecord.setRecordType(TradeTypeEnum.ORDER_PAY_TYPE.getCode());
+            bizPayRecord.setRecordTypeName(TradeTypeEnum.ORDER_PAY_TYPE.getTradeNoType());
             // 支付类型：wx(微信) alipay(支付宝)
             bizPayRecord.setPayType(OutTradeNoTypeEnum.OFFLINE_PAY_TYPE.getCode());
             bizPayRecord.setPayTypeName(OutTradeNoTypeEnum.OFFLINE_PAY_TYPE.getMessage());
@@ -193,6 +204,13 @@ public class BizOrderHeaderUnlineController extends BaseController {
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeaderUnline/?repage&orderHeader.id=" + bizOrderHeader.getId();
     }
 
+    @RequiresPermissions("biz:order:bizOrderHeaderOffLine:edit")
+    @RequestMapping(value = "saveOffLine")
+    public String saveOffLine(BizOrderHeaderUnline bizOrderHeaderUnline, Model model, RedirectAttributes redirectAttributes) {
+        bizOrderHeaderUnlineService.saveOffLine(bizOrderHeaderUnline);
+        addMessage(redirectAttributes, "保存线下支付订单成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeaderUnline/?repage&orderHeader.id=" + bizOrderHeaderUnline.getOrderHeader().getId();
+    }
     @RequiresPermissions("biz:order:bizOrderHeaderUnline:edit")
     @RequestMapping(value = "delete")
     public String delete(BizOrderHeaderUnline bizOrderHeaderUnline, RedirectAttributes redirectAttributes) {

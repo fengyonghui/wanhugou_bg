@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.sku;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
@@ -46,6 +47,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -182,20 +184,20 @@ public class BizSkuInfoController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuList")
-	public Map<String, List<BizSkuInfo>> findSkuList(BizSkuInfo bizSkuInfo, String skuIds){
+	public String findSkuList(BizSkuInfo bizSkuInfo, String skuIds){
 		if (skuIds != null && !"".equals(skuIds)){
 			String[] ids =StringUtils.split(skuIds, ",");
 			bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
 		}
 		bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
 		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
-		return listMap;
+		return JsonUtil.generateData(listMap, null);
 
 	}
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuListV2")
-    public Map<String,Object> findSkuListV2(BizSkuInfo bizSkuInfo, String skuIds) {
+    public String findSkuListV2(BizSkuInfo bizSkuInfo, String skuIds) {
         if (bizSkuInfo.getName().isEmpty() && bizSkuInfo.getPartNo().isEmpty() &&
                 bizSkuInfo.getItemNo().isEmpty() && bizSkuInfo.getProductInfo().getBrandName().isEmpty()) {
             logger.info("添加上架商品时，未输入查询条件，导致不查询商品，点击查询没反应");
@@ -226,7 +228,7 @@ public class BizSkuInfoController extends BaseController {
         }
         map.put("skuMap", listMap);
         map.put("serviceFactor", factorMap);
-        return map;
+		return JsonUtil.generateData(map, null);
 
     }
 	@ResponseBody
@@ -261,7 +263,7 @@ public class BizSkuInfoController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuNameListV2")
-	public List<BizSkuInfo> findSkuNameListV2(String ids,BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String findSkuNameListV2(String ids,BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
 		List<BizSkuInfo> bizSkuInfoList = new ArrayList<>();
 		if (ids != null && !"".equals(ids)){
 			String[] id = ids.split(",");
@@ -270,22 +272,21 @@ public class BizSkuInfoController extends BaseController {
 					System.out.println(id[i].trim()+" 不是skuID值不操作");
 				}else {
 					BizSkuInfo bizSkuInfo1 = bizSkuInfoService.get(Integer.parseInt(id[i].trim()));
-                    BizProductInfo bizProductInfo = bizProductInfoV2Service.get(bizSkuInfo1.getProductInfo().getId());
-                    BizVarietyFactor bizVarietyFactor = new BizVarietyFactor();
-                    bizVarietyFactor.setVarietyInfo(new BizVarietyInfo(bizProductInfo.getBizVarietyInfo().getId()));
-                    List<BizVarietyFactor> bvFactorList = bizVarietyFactorService.findList(bizVarietyFactor);
-                    DecimalFormat df = new DecimalFormat("0.00");
-                    for (BizVarietyFactor varietyFactor:bvFactorList) {
-                        Double salePrice = bizSkuInfo1.getBuyPrice()*(1+varietyFactor.getServiceFactor()/100);
-                        String price = df.format(salePrice);
-                        varietyFactor.setSalePrice(Double.parseDouble(price));
-                    }
-                    bizSkuInfo1.setBvFactorList(bvFactorList);
-                    bizSkuInfoList.add(bizSkuInfo1);
+					BizProductInfo bizProductInfo = bizProductInfoV2Service.get(bizSkuInfo1.getProductInfo().getId());
+					BizVarietyFactor bizVarietyFactor = new BizVarietyFactor();
+					bizVarietyFactor.setVarietyInfo(new BizVarietyInfo(bizProductInfo.getBizVarietyInfo().getId()));
+					List<BizVarietyFactor> bvFactorList = bizVarietyFactorService.findList(bizVarietyFactor);
+					for (BizVarietyFactor varietyFactor : bvFactorList) {
+						Double salePrice = bizSkuInfo1.getBuyPrice() * (1 + varietyFactor.getServiceFactor() / 100);
+						BigDecimal price = new BigDecimal(salePrice).setScale(0, BigDecimal.ROUND_HALF_UP);
+						varietyFactor.setSalePrice(price.doubleValue());
+					}
+					bizSkuInfo1.setBvFactorList(bvFactorList);
+					bizSkuInfoList.add(bizSkuInfo1);
 				}
 			}
 		}
-		return bizSkuInfoList;
+		return JsonUtil.generateData(bizSkuInfoList, null);
 	}
 
 	@ResponseBody
@@ -434,4 +435,19 @@ public class BizSkuInfoController extends BaseController {
 		return sources;
 	}
 
+	/**
+	 * 获取商品和订单的对应关系列表
+	 * @param bizSkuInfo
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findPageForSkuInfo")
+	public String findPageForSkuInfo(BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Page<BizSkuInfo> page = bizSkuInfoService.findPageForSkuInfo(new Page<BizSkuInfo>(request, response), bizSkuInfo);
+		model.addAttribute("page", page);
+		return "modules/biz/sku/pageForSkuInfoList";
+	}
 }

@@ -134,6 +134,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * */
     private String sendNum;
 
+    /**
+     * 退款状态- 0-申请 1审核通过 2驳回 3撤销申请退款
+     */
+    private BizDrawBack drawBack;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -703,5 +708,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSendNum(String sendNum) {
         this.sendNum = sendNum;
+    }
+
+    public BizDrawBack getDrawBack() {
+        return drawBack;
+    }
+
+    public void setDrawBack(BizDrawBack drawBack) {
+        this.drawBack = drawBack;
     }
 }

@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.supcan.annotation.treelist.SupTreeList;
 import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
-import com.wanhutong.backend.common.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
@@ -24,6 +24,7 @@ import com.wanhutong.backend.modules.sys.utils.UserUtils;
  * @author ThinkGem
  * @version 2014-05-16
  */
+@JsonIgnoreProperties({ "global", "Global", "currentUser", "page", "sqlMap"})
 @SupTreeList
 public abstract class BaseEntity<T> implements Serializable {
 
@@ -38,7 +39,7 @@ public abstract class BaseEntity<T> implements Serializable {
 	 * 当前用户
 	 */
 	protected User currentUser;
-	
+
 	/**
 	 * 当前实体分页对象
 	 */
@@ -72,7 +73,7 @@ public abstract class BaseEntity<T> implements Serializable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+
 	@JsonIgnore
 	@XmlTransient
 	public User getCurrentUser() {
@@ -81,7 +82,7 @@ public abstract class BaseEntity<T> implements Serializable {
 		}
 		return currentUser;
 	}
-	
+
 	public void setCurrentUser(User currentUser) {
 		this.currentUser = currentUser;
 	}
@@ -177,7 +178,7 @@ public abstract class BaseEntity<T> implements Serializable {
     }
     
 	/**
-	 * 删除标记（0：正常；1：删除；2：审核；）
+	 * 删除标记
 	 */
 	public static final String DEL_FLAG_DELETE = "0";
 	public static final String DEL_FLAG_NORMAL = "1";

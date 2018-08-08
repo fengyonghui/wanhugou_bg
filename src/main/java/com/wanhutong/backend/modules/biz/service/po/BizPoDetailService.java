@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.service.po;
 import java.util.List;
 
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
+import com.wanhutong.backend.modules.biz.dao.po.BizSchedulingPlanDao;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,9 @@ import javax.annotation.Resource;
 public class BizPoDetailService extends CrudService<BizPoDetailDao, BizPoDetail> {
 	@Resource
 	private BizPoHeaderDao bizPoHeaderDao;
+
+	@Resource
+	private BizPoDetailDao bizPoDetailDao;
 
 	public BizPoDetail get(Integer id) {
 		return super.get(id);
@@ -63,5 +67,14 @@ public class BizPoDetailService extends CrudService<BizPoDetailDao, BizPoDetail>
 	public void delete(BizPoDetail bizPoDetail) {
 		super.delete(bizPoDetail);
 	}
-	
+
+	/**
+	 * 获取已排产总量和已确认量
+	 * @param objectId
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public BizPoDetail getsumSchedulingNum(Integer objectId){
+		return bizPoDetailDao.getsumSchedulingNum(objectId);
+	}
 }

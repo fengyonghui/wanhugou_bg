@@ -56,6 +56,22 @@ public class BizOrderStatisticsDto {
      */
     private BigDecimal univalence;
 
+
+    /**
+     * SKU名称
+     */
+    private String skuName;
+    /**
+     * SKU ID
+     */
+    private Integer skuId;
+
+    /**
+     * SKU ID
+     */
+    private String skuItemNo;
+
+
     public BigDecimal getUnivalence() {
         if (orderCount <= 0) {
             return BigDecimal.ZERO;
@@ -155,13 +171,27 @@ public class BizOrderStatisticsDto {
         this.upProfitPrice = upProfitPrice;
     }
 
-    @Override
-    public String toString() {
-        return "BizOrderStatisticsDto{" +
-                "totalMoney=" + totalMoney +
-                ", orderCount=" + orderCount +
-                ", officeId=" + officeId +
-                ", officeName=" + officeName +
-                '}';
+    public String getSkuName() {
+        return skuName;
+    }
+
+    public void setSkuName(String skuName) {
+        this.skuName = skuName;
+    }
+
+    public Integer getSkuId() {
+        return skuId;
+    }
+
+    public void setSkuId(Integer skuId) {
+        this.skuId = skuId;
+    }
+
+    public String getSkuItemNo() {
+        return skuItemNo;
+    }
+
+    public void setSkuItemNo(String skuItemNo) {
+        this.skuItemNo = skuItemNo;
     }
 }

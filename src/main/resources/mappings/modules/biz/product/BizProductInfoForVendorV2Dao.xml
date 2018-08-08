@@ -91,8 +91,13 @@
 	<select id="findList" resultType="BizProductInfo">
 		SELECT 
 			<include refid="bizProductInfoColumns"/>
+			,
+			us.name AS "bizVarietyInfo.user.name",
+			us.id AS "bizVarietyInfo.user.id"
 		FROM biz_vendor_product_info a
 		<include refid="bizProductInfoJoins"/>
+		JOIN biz_variety_user_info bvui on bvui.variety_id = a.vari_id
+		JOIN sys_user us on us.id = bvui.user_id
 		<where>
 			  a.status = #{DEL_FLAG_NORMAL}
 			<if test="bizVarietyInfo != '' and bizVarietyInfo != null and  bizVarietyInfo.name != ''">

@@ -38,7 +38,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static com.wanhutong.backend.common.persistence.BaseEntity.DEL_FLAG_NORMAL;
 
@@ -396,6 +401,15 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     public void save(Office office, BizCustCredit bizCustCredit) {
         super.save(office);
         UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
+
+        //保存钱包
+        String purchasersId = DictUtils.getDictValue("经销店", "sys_office_type", "");
+        if (StringUtils.isNotBlank(purchasersId) && purchasersId.equals(office.getType())) {
+            bizCustCredit = new BizCustCredit();
+            bizCustCredit.setCustomer(office);
+            bizCustCredit.setLevel(StringUtils.isBlank(office.getLevel()) ? "1" : office.getLevel());
+            bizCustCreditService.save(bizCustCredit);
+        }
 
         //经销店保存新建联系人
         if (office.getPrimaryPerson() != null && office.getSource() != null && office.getSource().equals("add_prim")) {

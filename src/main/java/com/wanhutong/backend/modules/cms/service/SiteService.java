@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.cms.service;
 
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,7 @@ public class SiteService extends CrudService<SiteDao, Site> {
 //		//dc.addOrder(Order.asc("id"));
 //		return siteDao.find(page, dc);
 		
-		site.getSqlMap().put("site", dataScopeFilter(site.getCurrentUser(), "o", "u"));
+		site.getSqlMap().put("site", dataScopeFilter(UserUtils.getUser(), "o", "u"));
 		
 		return super.findPage(page, site);
 	}

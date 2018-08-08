@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.sku;
 
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -18,10 +19,11 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
-import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
@@ -35,13 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 商品skuService
@@ -135,21 +131,21 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		}
 		Integer prodId=	skuInfo.getProductInfo().getId();
 		BizProductInfo bizProductInfo=bizProductInfoDao.get(prodId);
-		AttributeValueV2 attributeValue =new AttributeValueV2();
-		attributeValue.setObjectId(skuInfo.getId());
-		attributeValue.setObjectName("biz_sku_info");
-		List<AttributeValueV2>skuPropValueList= attributeValueService.findList(attributeValue);
-        StringBuffer skuPropName=new StringBuffer();
-        for(AttributeValueV2 skuPropValue:skuPropValueList){
-            skuPropName.append("-");
-            skuPropName.append(skuPropValue.getValue());
-        }
-        String propNames="";
-        if(skuPropName.toString().length()>1){
-            propNames =skuPropName.toString().substring(1);
-        }
-
-        skuInfo.setSkuPropertyInfos(propNames);
+//		AttributeValueV2 attributeValue =new AttributeValueV2();
+//		attributeValue.setObjectId(skuInfo.getId());
+//		attributeValue.setObjectName("biz_sku_info");
+//		List<AttributeValueV2>skuPropValueList= attributeValueService.findList(attributeValue);
+//        StringBuffer skuPropName=new StringBuffer();
+//        for(AttributeValueV2 skuPropValue:skuPropValueList){
+//            skuPropName.append("-");
+//            skuPropName.append(skuPropValue.getValue());
+//        }
+//        String propNames="";
+//        if(skuPropName.toString().length()>1){
+//            propNames =skuPropName.toString().substring(1);
+//        }
+//
+//        skuInfo.setSkuPropertyInfos(propNames);
 		if(bizProductInfo!=null && bizProductInfo.getOffice()!=null){
 			Office	office=officeService.get(bizProductInfo.getOffice().getId());
 			bizProductInfo.setOffice(office);
@@ -193,7 +189,7 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 
 		BizProductInfo bizProductInfo = bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
 		String prodCode = bizProductInfo.getProdCode();
-		int sort = Integer.valueOf(bizSkuInfo.getSort());
+		int sort = Integer.valueOf(StringUtils.isBlank(bizSkuInfo.getSort()) ? "1" : bizSkuInfo.getSort());
 		String partNo = prodCode + sort;
 
 		while (this.hasEntityByPartNo(partNo)) {
@@ -378,5 +374,30 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 
 	public List<BizSkuInfo> findPurseSkuList(BizSkuInfo bizSkuInfo) {
 		return bizSkuInfoDao.findPurseSkuList(bizSkuInfo);
+	}
+
+	/**
+	 * 获取商品和订单的对应关系列表
+	 * @param page
+	 * @param bizSkuInfo
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public Page<BizSkuInfo> findPageForSkuInfo(Page<BizSkuInfo> page, BizSkuInfo bizSkuInfo) {
+		User user = UserUtils.getUser();
+
+		bizSkuInfo.setPage(page);
+
+		List<Role> roleList = user.getRoleList();
+		Role role = new Role();
+		role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+		if (roleList.contains(role)) {
+			bizSkuInfo.setVendorId(user.getCompany().getId().toString());
+		}else {
+			bizSkuInfo.getSqlMap().put("chat", BaseService.dataScopeFilter(user, "s", "su"));
+		}
+
+		page.setList(bizSkuInfoDao.findPageForSkuInfo(bizSkuInfo));
+		return page;
 	}
 }

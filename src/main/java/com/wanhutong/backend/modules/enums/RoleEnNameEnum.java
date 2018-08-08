@@ -19,10 +19,16 @@ public enum RoleEnNameEnum {
      * 总经理
      */
     GENERAL_MANAGER("General manager", "总经理"),
+
     /**
      * 财务经理
      */
     FINANCE("finance", "财务经理"),
+
+    /**
+     * 财务总经理
+     */
+    FINANCIAL_GENERAL_MANAGER ("financial_general_manager ", "财务总经理"),
 
     /**
      * 财务总监
@@ -65,6 +71,11 @@ public enum RoleEnNameEnum {
      * 渠道经理
      */
     CHANNEL_MANAGER("channel_manager","渠道经理"),
+
+    /**
+     * 提付款专员
+     */
+    PAYMENT_SPECIALIST_SUBMIT("payment_specialist_submit","提付款专员"),
 
     /**
      * 系统管理员

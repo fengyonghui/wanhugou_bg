@@ -3,39 +3,46 @@
  */
 package com.wanhutong.backend.modules.biz.web.request;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
-import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
-import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.*;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
-import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +54,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
-import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,6 +116,28 @@ public class BizRequestHeaderController extends BaseController {
 		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
 		return "modules/biz/request/bizRequestHeaderList";
+	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:view")
+	@RequestMapping(value = {"list4Mobile"})
+	@ResponseBody
+	public String list4Mobile(BizRequestHeader bizRequestHeader,
+							  @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
+							  HttpServletRequest request, HttpServletResponse response) {
+		String dataFrom = "biz_request_bizRequestHeader";
+		bizRequestHeader.setDataFrom(dataFrom);
+
+		Page<BizRequestHeader> bizPoHeaderPage = new Page<>(request, response);
+		bizPoHeaderPage.setPageNo(pageNo);
+		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(bizPoHeaderPage, bizRequestHeader);
+        Map<String, Object> resultMap = Maps.newHashMap();
+		resultMap.put("page", page);
+        //品类名称
+		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
+		resultMap.put("varietyInfoList", varietyInfoList);
+		resultMap.put("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
+
+		return JsonUtil.generateData(resultMap, null);
 	}
 
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
@@ -190,6 +215,80 @@ public class BizRequestHeaderController extends BaseController {
 
 	@ResponseBody
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
+	@RequestMapping(value = "form4Mobile")
+	public String form4Mobile(BizRequestHeader bizRequestHeader) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
+		if (bizRequestHeader.getId() != null) {
+			BizRequestDetail bizRequestDetail = new BizRequestDetail();
+			bizRequestDetail.setRequestHeader(bizRequestHeader);
+			if (!bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.CLOSE.getState()) && bizRequestHeader.getBizStatus() >= ReqHeaderStatusEnum.PURCHASING.getState()) {
+				/* 查询已生成的采购单 标识*/
+				bizRequestDetail.setPoheaderSource("poHeader");
+			}
+			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
+			BizInventorySku bizInventorySku = new BizInventorySku();
+			for (BizRequestDetail requestDetail : requestDetailList) {
+				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
+				List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
+				if (CollectionUtils.isNotEmpty(list)) {
+					//已有的库存数量
+					bizRequestHeader.setInvenSource("inventorySku");
+					requestDetail.setInvenSkuOrd(list.size());
+				}
+				if (requestDetail.getBizPoHeader() == null) {
+					bizRequestHeader.setPoSource("poHeaderSource");
+				}
+				BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+				requestDetail.setSkuInfo(skuInfo);
+				reqDetailList.add(requestDetail);
+			}
+			if (requestDetailList.size() == 0) {
+				bizRequestHeader.setPoSource("poHeaderSource");
+			}
+		}
+
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
+			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+			resultMap.put("requestOrderProcess", requestOrderProcess);
+		}
+
+		if (bizRequestHeader.getId() != null && bizRequestHeader.getId() != 0) {
+			BizOrderStatus bizOrderStatus = new BizOrderStatus();
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			bizOrderHeader.setId(bizRequestHeader.getId());
+			bizOrderStatus.setOrderHeader(bizOrderHeader);
+			bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
+			List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
+			statusList.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
+
+			Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
+
+			resultMap.put("statusList", statusList);
+			resultMap.put("statusMap", statusMap);
+		}
+
+		User userAdmin = UserUtils.getUser();
+		//渠道部角色
+		List<Role> roleList = userAdmin.getRoleList();
+		String roleName = null;
+		if (CollectionUtils.isNotEmpty(roleList)) {
+			for (Role role : roleList) {
+				if (role.getEnname().equals(RoleEnNameEnum.CHANNEL_MANAGER.getState()) || userAdmin.isAdmin() ) {
+					roleName = "channeOk";
+				}
+			}
+		}
+
+		resultMap.put("roleChanne", roleName);
+		resultMap.put("entity", bizRequestHeader);
+		resultMap.put("reqDetailList", reqDetailList);
+		return JsonUtil.generateData(resultMap, null);
+	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "findByRequest")
 	public List<BizRequestHeader> findByRequest(BizRequestHeader bizRequestHeader) {
 		bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
@@ -255,6 +354,17 @@ public class BizRequestHeaderController extends BaseController {
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
 	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:edit")
+	@RequestMapping(value = "save4Mobile")
+	@ResponseBody
+	public String save4Mobile(BizRequestHeader bizRequestHeader, Model model) {
+		if (!beanValidator(model, bizRequestHeader)){
+			return JsonUtil.generateErrorData(HttpStatus.SC_BAD_REQUEST, "数据验证失败!", null);
+		}
+		bizRequestHeaderService.save(bizRequestHeader);
+		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
+	}
 	@ResponseBody
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "saveInfo")
@@ -305,12 +415,33 @@ public class BizRequestHeaderController extends BaseController {
 	}
 
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
+	@RequestMapping(value = "delete4Mobile")
+	@ResponseBody
+	public String delete4Mobile(int id) {
+		BizRequestHeader bizRequestHeader = new BizRequestHeader();
+		bizRequestHeader.setId(id);
+		bizRequestHeader.setDelFlag(BizRequestHeader.DEL_FLAG_DELETE);
+		bizRequestHeaderService.delete(bizRequestHeader);
+		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
+	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "recovery")
 	public String recovery(BizRequestHeader bizRequestHeader, RedirectAttributes redirectAttributes) {
 		bizRequestHeader.setDelFlag(BizRequestHeader.DEL_FLAG_NORMAL);
 		bizRequestHeaderService.delete(bizRequestHeader);
 		addMessage(redirectAttributes, "删除备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
+	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:edit")
+	@RequestMapping(value = "recovery4Mobile")
+	public String recovery4Mobile(int id) {
+		BizRequestHeader bizRequestHeader = new BizRequestHeader();
+		bizRequestHeader.setId(id);
+		bizRequestHeader.setDelFlag(BizRequestHeader.DEL_FLAG_NORMAL);
+		bizRequestHeaderService.delete(bizRequestHeader);
+		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
 	}
 
 	/**
@@ -445,5 +576,13 @@ public class BizRequestHeaderController extends BaseController {
 	@ResponseBody
 	public String audit(int id, String currentType, int auditType, String description) {
 		return bizRequestHeaderService.audit(id, currentType, auditType, description);
+	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:request:bizRequestHeader:edit")
+	@RequestMapping(value = "cancel")
+	public String cancel(int id) {
+		bizRequestHeaderService.cancel(id);
+		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
 	}
 }

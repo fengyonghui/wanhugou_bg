@@ -68,6 +68,9 @@
                                         return true;
                                         loading('正在提交，请稍等...');
                                     }else {
+                                        $("input[name='orderHeaders']").each(function () {
+                                            $(this).remove();
+                                        });
                                         alert("库存不足！");
                                         return false;
                                     }
@@ -79,7 +82,6 @@
                             loading('正在提交，请稍等...');
                         }
                     }else{
-                        alert("请勾选发货内容");
                         return false;
                     }
                 },

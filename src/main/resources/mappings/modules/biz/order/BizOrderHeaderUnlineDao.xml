@@ -83,16 +83,19 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" keyProperty="id" useGeneratedKeys="true">
 		INSERT INTO biz_order_header_unline(
 			id,
 			order_id,
 			serial_num,
-			img_url,
 			unline_pay_money,
+		<if test="realMoney != null">
 			real_money,
+		</if>
 			status,
+		<if test="bizStatus != null">
 			biz_status,
+		</if>
 			create_id,
 			create_time,
 			u_version,
@@ -102,11 +105,14 @@
 			#{id},
 			#{orderHeader.id},
 			#{serialNum},
-			#{imgUrl},
 			#{unlinePayMoney},
+			<if test="realMoney != null">
 			#{realMoney},
-			#{status},
+			</if>
+			#{delFlag},
+		<if test="bizStatus != null">
 			#{bizStatus},
+		</if>
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
@@ -119,10 +125,13 @@
 		UPDATE biz_order_header_unline SET 	
 			order_id = #{orderHeader.id},
 			serial_num = #{serialNum},
-			img_url = #{imgUrl},
 			unline_pay_money = #{unlinePayMoney},
+		<if test="realMoney != null">
 			real_money = #{realMoney},
+		</if>
+		<if test="bizStatus != null">
 			biz_status = #{bizStatus},
+		</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

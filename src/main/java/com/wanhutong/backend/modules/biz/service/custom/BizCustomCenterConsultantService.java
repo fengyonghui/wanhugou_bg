@@ -49,10 +49,13 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 	public void save(BizCustomCenterConsultant bizCustomCenterConsultant) {
 		Office centers = bizCustomCenterConsultant.getCenters();
 		Office customs = bizCustomCenterConsultant.getCustoms();
-		BizCustomCenterConsultant bcc = super.get(bizCustomCenterConsultant.getCustoms().getId());
+		BizCustomCenterConsultant bcc = get(bizCustomCenterConsultant.getCustoms().getId());
 		if(bcc !=null){
-			if(bcc.getDelFlag().equals("1")){
-//					System.out.println("  数据库已有相同采购商—不做操作 ");
+			if(("1").equals(bcc.getDelFlag())){
+				bcc.setId(bizCustomCenterConsultant.getCustoms().getId());
+				bcc.setConsultants(new User(bizCustomCenterConsultant.getConsultants().getId()));
+				bcc.setCenters(new Office(centers.getId()));
+				super.save(bcc);
 			}else{
 				bizCustomCenterConsultant.setId(customs.getId());
 				bizCustomCenterConsultant.setCenters(officeService.get(centers));

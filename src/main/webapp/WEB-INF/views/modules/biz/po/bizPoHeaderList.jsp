@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.wanhutong.backend.modules.enums.BizOrderSchedulingEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
@@ -49,6 +50,15 @@
 			</li>
 			<li><span style="margin-left: 10px"><label>结束金额</label></span>
 				<form:input path="endPrice"  htmlEscape="false" maxlength="25" class="input-medium"/>
+			</li>
+			<li><label>付款时间：</label>
+				<input name="startPayTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizPoHeader.startPayTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				至
+				<input name="endPayTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizPoHeader.endPayTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
 			<li><label>供应商</label>
 				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${bizPoHeader.vendOffice.id}" labelName="vendOffice.name"
@@ -105,6 +115,7 @@
 				<th>创建时间</th>
 				<th>累积支付金额</th>
 				<th>审核状态</th>
+				<th>排产状态</th>
 				<th>操作</th>
 			</tr>
 		</thead>
@@ -153,6 +164,30 @@
 						${bizPoHeader.commonProcess.purchaseOrderProcess.name == null ?
 						 '当前无审批流程' : bizPoHeader.commonProcess.purchaseOrderProcess.name}
 				</td>
+				<td>
+					<c:if test="${bizPoHeader.bizStatus != 10}">
+					<c:choose>
+						<c:when test="${bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成' || bizPoHeader.totalOrdQty == null || bizPoHeader.totalOrdQty == 0}">
+							<%--${BizOrderSchedulingEnum.UNABLE_SCHEDULING.desc}--%>
+						</c:when>
+						<c:otherwise>
+							<c:choose>
+								<c:when test="${bizPoHeader.toalSchedulingNum == null || bizPoHeader.toalSchedulingNum == 0}">
+									${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}
+								</c:when>
+								<c:otherwise>
+									<c:if test="${bizPoHeader.totalOrdQty != bizPoHeader.toalSchedulingNum}">
+										${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}
+									</c:if>
+									<c:if test="${bizPoHeader.totalOrdQty == bizPoHeader.toalSchedulingNum}">
+										${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}
+									</c:if>
+								</c:otherwise>
+							</c:choose>
+						</c:otherwise>
+					</c:choose>
+					</c:if>
+				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<td>
 						<c:if test="${bizPoHeader.bizStatus != 10}">
@@ -190,6 +225,16 @@
 							<shiro:hasPermission name="biz:po:bizPoHeader:view">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
 							</shiro:hasPermission>
+							<c:if test="${bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
+								<c:if test="${bizPoHeader.totalOrdQty != null && bizPoHeader.totalOrdQty != 0}">
+							<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}">排产</a>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
+							</shiro:hasPermission>
+							</c:if>
+							</c:if>
 						</c:if>
 					</td>
 				</shiro:hasPermission>

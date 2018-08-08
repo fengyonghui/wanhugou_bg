@@ -4,9 +4,14 @@ package com.wanhutong.backend.modules.biz.service.statistics;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.dao.category.BizVarietyInfoDao;
+import com.wanhutong.backend.modules.biz.dao.custom.BizCustomCenterConsultantDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
+import com.wanhutong.backend.modules.biz.service.inventory.BizCollectGoodsRecordService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
@@ -36,10 +41,21 @@ public class BizStatisticsBetweenService {
     private BizOrderHeaderDao bizOrderHeaderDao;
 
     @Resource
+    private BizPoHeaderService bizPoHeaderService;
+
+    @Resource
     private BizVarietyInfoDao bizVarietyInfoDao;
     @Resource
     private OfficeDao officeDao;
 
+    @Resource
+    private BizCustomCenterConsultantDao bizCustomCenterConsultantDao;
+
+    @Resource
+    private BizCollectGoodsRecordService bizCollectGoodsRecordService;
+
+    @Resource
+    private BizSendGoodsRecordService bizSendGoodsRecordService;
 
     /**
      * 日统计请求参数日期格式
@@ -56,6 +72,17 @@ public class BizStatisticsBetweenService {
      */
     public List<BizProductStatisticsDto> productStatisticData (String startDate, String endDate, Integer variId, Integer purchasingId) {
         return bizOrderHeaderDao.getProductStatisticDataBetween(startDate, endDate + " 23:59:59", variId, purchasingId);
+    }
+
+    /**
+     * 根据月份取产品统计相关数据
+     *
+     * @param startDate 开始时间
+     * @param endDate 开始时间
+     * @return 根据不同产品分类的统计数据
+     */
+    public List<BizProductStatisticsDto> skuTendencyData (String startDate, String endDate, Integer variId, Integer purchasingId, Integer type, String timeType) {
+        return bizOrderHeaderDao.skuTendencyDataBetween(startDate, endDate + " 23:59:59", variId, purchasingId, type, timeType);
     }
 
 
@@ -185,5 +212,65 @@ public class BizStatisticsBetweenService {
     public List<BizProductStatisticsDto> skuAllStatisticData (Integer variId) {
         List<BizProductStatisticsDto> statisticsDtoList = bizOrderHeaderDao.getSkuAllStatisticData(variId);
         return statisticsDtoList;
+    }
+
+    /**
+     * 供应商供应总额统计
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    public List<BizOrderStatisticsDto> vendorProductPrice(String startDate, String endDate, String vendName) {
+        return bizPoHeaderService.vendorProductPrice(startDate, endDate, vendName);
+    }
+
+    /**
+     * 供应商供应SKU总额统计
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    public List<BizOrderStatisticsDto> vendorSkuPrice(String startDate, String endDate, Integer officeId) {
+        return bizPoHeaderService.vendorSkuPrice(startDate, endDate, officeId);
+    }
+
+    /**
+     * 客户专员关联采购商有效订单查询
+     * @param startDate 选择区间的开始时间
+     * @param endDate 选择区间的结束时间
+     * @param consultantId 客户专员Id
+     * @return
+     */
+    @Transactional(readOnly = false)
+    public List<BizCustomCenterConsultant> customOrderList(String startDate, String endDate, Integer consultantId) {
+        return bizCustomCenterConsultantDao.customOrderList(startDate, endDate + " 23:59:59", consultantId);
+    }
+
+    /**
+     * 采购专员关联下具有有效订单的采购商的数量统计
+     * @param startDate
+     * @param endDate
+     * @param purchasingId
+     * @return
+     */
+    @Transactional(readOnly = false)
+    public List<BizCustomCenterConsultant> consultantOrderList(String startDate, String endDate, Integer purchasingId) {
+        return bizCustomCenterConsultantDao.consultantOrderList(startDate, endDate + " 23:59:59", purchasingId);
+    }
+
+
+
+    /**
+     * sku出入库记录
+     *
+     * @param startDate
+     * @param endDate
+     * @param skuItemNo
+     * @return
+     */
+    public List<BizSkuInputOutputDto> skuInputOutputRecord(String startDate, String endDate, String invName, String skuItemNo) {
+        return bizCollectGoodsRecordService.skuInputOutputRecord(startDate, endDate, invName, skuItemNo);
     }
 }

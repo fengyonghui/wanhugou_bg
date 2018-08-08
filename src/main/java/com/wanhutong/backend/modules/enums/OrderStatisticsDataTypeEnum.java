@@ -15,6 +15,7 @@ public enum  OrderStatisticsDataTypeEnum {
     PROFIT(4,"利润"),
     UNIVALENCE(5,"平均单价"),
     RECEIVE(6,"回款额"),
+    CLICK(7,"点击量"),
     ;
     private int code;
     private String desc;

@@ -116,6 +116,7 @@
 			1=1
 			<if test="dataStatus==null ">
 				AND a.status = #{DEL_FLAG_NORMAL}
+                AND bpi.status = #{DEL_FLAG_NORMAL}
 			</if>
 			<if test="id != null and id != ''">
 				AND a.id =#{id}
@@ -495,5 +496,100 @@
 		status = #{delFlag}
 		WHERE id = #{id}
 	</update>
+
+	<select id="findPageForSkuInfo" resultType="BizSkuInfo">
+		SELECT
+		a.id AS "id",
+		a.name as "name",
+		a.item_no as "itemNo",
+		bod.buy_price as "orderDetail.buyPrice",
+		bod.unit_price as "orderDetail.unitPrice",
+		bod.ord_qty AS "orderDetail.ordQty",
+		(select sur.name from
+		biz_order_header bo,
+		sys_office so,
+		biz_custom_center_consultant bc,
+		sys_user sur
+		where
+		bo.cust_id != 0
+		and bo.cust_id = so.id
+		and bc.cust_id = so.id
+		and bc.consultant_id = sur.id
+		and sur.status = 1
+		and bo.id = boh.id
+		)as "custName",
+		boh.id as "orderId",
+		boh.order_num as "orderNum",
+		boh.order_type as "orderHeader.orderType",
+		s.name AS "centersName",
+		bis.stock_qty AS "inventorySku.stockQty",
+		bpi.vendor_id AS "vendorId"
+		FROM biz_sku_info a
+		left join biz_order_detail bod on bod.sku_id = a.id
+		left join biz_product_info bpi on a.prod_id = bpi.id
+		left join biz_order_header boh on boh.id = bod.order_id AND boh.order_type != 4 AND NOT EXISTS (
+		SELECT 1
+		FROM sys_test_account ta
+		WHERE boh.cust_id = ta.object_id
+		AND ta.object_name = 'sys_office'
+		)
+		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id = boh.cust_id
+		LEFT JOIN sys_user su ON su.id = ccs.consultant_id
+		LEFT JOIN sys_office s ON s.id = ccs.center_id
+		LEFT JOIN biz_inventory_info i ON i.cust_id=s.id
+		LEFT JOIN biz_inventory_sku bis on bis.inv_id=i.id and bis.sku_id=bod.sku_id and bis.status=1
+		WHERE a.status = #{DEL_FLAG_NORMAL}
+		AND (boh.order_num != NULL OR boh.order_num != "")
+		AND bpi.status = 1
+		<if test="vendorId != null and vendorId != ''">
+			AND 	bpi.vendor_id = #{vendorId}
+		</if>
+
+		<if test="name != null and name != ''">
+			AND a.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+		</if>
+		<if test="itemNo != null and itemNo != ''">
+			AND a.item_no LIKE
+			<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+		</if>
+		<if test="orderNum != null and orderNum != ''">
+			AND boh.order_num
+			LIKE
+			<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+		</if>
+		<if test="centersName != null and centersName != ''">
+			AND s.name
+			LIKE
+			<if test="dbName == 'oracle'">'%'||#{centersName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{centersName}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{centersName},'%')</if>
+		</if>
+		<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
+			AND boh.create_time &gt;= #{orderCreatStartTime}
+			<if test="orderCreatEndTime!=null and orderCreatEndTime!=''">
+				AND boh.create_time &lt;= #{orderCreatEndTime}
+			</if>
+		</if>
+		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+			${sqlMap.chat}
+		</if>
+		group by a.id,boh.order_num
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.id DESC
+			</otherwise>
+		</choose>
+
+	</select>
 
 </mapper>

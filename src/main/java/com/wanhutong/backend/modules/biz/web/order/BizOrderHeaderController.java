@@ -7,55 +7,27 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.DateUtils;
-import com.wanhutong.backend.common.utils.DsConfig;
-import com.wanhutong.backend.common.utils.Encodes;
-import com.wanhutong.backend.common.utils.RoleUtils;
-import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.*;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderAppointedTime;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
+import com.wanhutong.backend.modules.biz.entity.order.*;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderAppointedTimeService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
+import com.wanhutong.backend.modules.biz.service.order.*;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.SystemConfig;
-import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
-import com.wanhutong.backend.modules.enums.DefaultPropEnum;
-import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
-import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
-import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
-import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
-import com.wanhutong.backend.modules.enums.TradeTypeEnum;
-import com.wanhutong.backend.modules.process.service.CommonProcessService;
-import com.wanhutong.backend.modules.sys.entity.DefaultProp;
-import com.wanhutong.backend.modules.sys.entity.Dict;
-import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.Role;
-import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.enums.*;
+import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -71,16 +43,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -88,14 +55,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Controller
@@ -117,9 +77,6 @@ public class BizOrderHeaderController extends BaseController {
     private BizOrderDetailService bizOrderDetailService;
     @Autowired
     private OfficeService officeService;
-    @Resource
-    private BizOrderHeaderDao bizOrderHeaderDao;
-
     @Autowired
     private BizPayRecordService bizPayRecordService;
     @Autowired
@@ -147,7 +104,7 @@ public class BizOrderHeaderController extends BaseController {
     @Autowired
     private BizOrderAppointedTimeService bizOrderAppointedTimeService;
     @Autowired
-    private CommonProcessService commonProcessService;
+    private BizOrderCommentService bizOrderCommentService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -157,7 +114,9 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(entity);
             List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
+            double totalPrice=0.0;
             for (BizOrderDetail orderDetail : list) {
+                totalPrice+=orderDetail.getOrdQty()*orderDetail.getBuyPrice();
                 if(orderDetail.getSuplyis()!=null && orderDetail.getSuplyis().getId()!=null){
                     if(orderDetail.getSuplyis().getId().equals(0) || orderDetail.getSuplyis().getId().equals(721)){
                         Office office = new Office();
@@ -168,6 +127,7 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
             entity.setTotalDetail(entity.getTotalDetail());
+            entity.setTotalBuyPrice(totalPrice);
             entity.setOrderDetailList(list);
         }
         if (entity == null) {
@@ -194,6 +154,10 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails, HttpServletRequest request, HttpServletResponse response) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
+        BizOrderComment bizOrderComment = new BizOrderComment();
+        bizOrderComment.setOrder(bizOrderHeader);
+        List<BizOrderComment> commentList = bizOrderCommentService.findList(bizOrderComment);
+        model.addAttribute("commentList",commentList);
         List<BizOrderDetail> ordDetailList = Lists.newArrayList();
         Map<Integer, String> orderNumMap = new HashMap<Integer, String>();
         Map<Integer, Integer> detailIdMap = new HashMap<Integer, Integer>();
@@ -324,6 +288,13 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("refundSkip", refundSkip);
 
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
+        String drawbackStatusStr = request.getParameter("drawbackStatus");
+        if (StringUtils.isNotBlank(drawbackStatusStr)) {
+            Integer drawbackStatus = Integer.valueOf(drawbackStatusStr);
+            BizDrawBack bizDrawBack = new BizDrawBack();
+            bizDrawBack.setDrawbackStatus(drawbackStatus);
+            bizOrderHeader.setDrawBack(bizDrawBack);
+        }
         model.addAttribute("entity", bizOrderHeader);
         model.addAttribute("ordDetailList", ordDetailList);
         model.addAttribute("statusList", statusList);
@@ -356,6 +327,47 @@ public class BizOrderHeaderController extends BaseController {
         return "modules/biz/order/bizOrderHeaderForm";
     }
 
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "refundReject")
+    public boolean refundReject(BizOrderHeader bizOrderHeader, String checkStatus, Integer id) {
+        String str = checkStatus;
+        Integer idt = id;
+        bizOrderHeader = bizOrderHeaderService.get(idt);
+        BizDrawBack bizDrawBack = new BizDrawBack();
+        bizDrawBack.setDrawbackStatus(Integer.parseInt(checkStatus));
+        bizOrderHeader.setDrawBack(bizDrawBack);
+        boolean boo = false;
+        try {
+            bizOrderHeaderService.updateDrawbackStatus(bizOrderHeader);
+            boo = true;
+        } catch (Exception e) {
+            boo = false;
+            logger.error(e.getMessage());
+        }
+        return boo;
+    }
+
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "saveDrawStatus")
+    public boolean saveDrawStatus(BizOrderHeader bizOrderHeader, String checkStatus, Integer id) {
+        bizOrderHeader = bizOrderHeaderService.get(id);
+        BizDrawBack bizDrawBack = new BizDrawBack();
+        bizDrawBack.setDrawbackStatus(Integer.parseInt(checkStatus));
+        bizOrderHeader.setDrawBack(bizDrawBack);
+        boolean boo = false;
+        try {
+            bizOrderHeaderService.updateDrawbackStatus(bizOrderHeader);
+            boo = true;
+        } catch (Exception e) {
+            boo = false;
+            logger.error(e.getMessage());
+        }
+        return boo;
+    }
+
+
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "save")
     public String save(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
@@ -384,7 +396,14 @@ public class BizOrderHeaderController extends BaseController {
         }
         Double receiveTotal = (-1) * (bizOrderHeaderService.get(bizOrderHeader.getId()).getReceiveTotal());
         bizOrderHeaderService.save(bizOrderHeader);
-
+        String drawbackStatusStr = request.getParameter("drawbackStatus");
+        if (StringUtils.isNotBlank(drawbackStatusStr)) {
+            Integer drawbackStatus = Integer.valueOf(drawbackStatusStr);
+            BizDrawBack bizDrawBack = new BizDrawBack();
+            bizDrawBack.setDrawbackStatus(drawbackStatus);
+            bizOrderHeader.setDrawBack(bizDrawBack);
+        }
+        bizOrderHeaderService.updateDrawbackStatus(bizOrderHeader);
         User user = UserUtils.getUser();
         BizPayRecord bizPayRecord = new BizPayRecord();
         // 支付编号 *同订单号*
@@ -422,7 +441,7 @@ public class BizOrderHeaderController extends BaseController {
         if (bizOrderHeader.getFlag() != null && "cendDelete".equals(bizOrderHeader.getFlag())) {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId() + "&statu=" + bizOrderHeader.getStatu();
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
@@ -434,7 +453,7 @@ public class BizOrderHeaderController extends BaseController {
         if (bizOrderHeader.getFlag() != null && "cendRecover".equals(bizOrderHeader.getFlag())) {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId() + "&statu=" + bizOrderHeader.getStatu();
     }
 
 
@@ -538,24 +557,7 @@ public class BizOrderHeaderController extends BaseController {
                     if (objJsp.equals(OrderHeaderBizStatusEnum.SUPPLYING.getState())) {
                         order.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                         bizOrderHeaderService.saveOrderHeader(order);
-
-                        if (order.getId() != null || order.getBizStatus() != null) {
-                            /* 订单状态插入*/
-                            BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(order);
-                            orderStatus.setBizStatus(order.getBizStatus());
-                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                            if (CollectionUtils.isNotEmpty(list)) {
-                                for (BizOrderStatus bizOrderStatus : list) {
-                                    if (!bizOrderStatus.getBizStatus().equals(order.getBizStatus())) {
-                                        bizOrderStatusService.save(orderStatus);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        }
+                        bizOrderStatusService.saveOrderStatus(order);
                         BizOrderAddress orderAddres = new BizOrderAddress();
                         orderAddres.setOrderHeaderID(order);
                         List<BizOrderAddress> list = bizOrderAddressService.findList(orderAddres);
@@ -609,23 +611,7 @@ public class BizOrderHeaderController extends BaseController {
                     } else if (objJsp.equals(OrderHeaderBizStatusEnum.UNAPPROVE.getState())) {
                         order.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());
                         bizOrderHeaderService.saveOrderHeader(order);
-                        if (order.getId() != null || order.getBizStatus() != null) {
-                            /* 订单状态插入*/
-                            BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(order);
-                            orderStatus.setBizStatus(order.getBizStatus());
-                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                            if (CollectionUtils.isNotEmpty(list)) {
-                                for (BizOrderStatus bizOrderStatus : list) {
-                                    if (!bizOrderStatus.getBizStatus().equals(order.getBizStatus())) {
-                                        bizOrderStatusService.save(orderStatus);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        }
+                        bizOrderStatusService.saveOrderStatus(order);
                     }
                 }
             }

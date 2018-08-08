@@ -161,9 +161,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         Double valuePrice = 0.0;
 //        List<BizRequestHeader> requestHeaderList = bizInvoice.getRequestHeaderList();
         if (StringUtils.isNotBlank(orderHeaders)) {
-            boolean ordFlag = true;
             String[] orders = orderHeaders.split(",");
             for (int a = 0; a < orders.length; a++) {
+                boolean ordFlag = true;
                 String[] oheaders = orders[a].split("#");
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(Integer.parseInt(oheaders[0]));
                 //加入中间表关联关系
@@ -294,29 +294,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         bizSendGoodsRecordService.save(bsgr);
                     }
                 }
-
                 /*用于 订单状态表 保存状态*/
-                if (orderHeader != null && orderHeader.getId() != null || orderHeader.getBizStatus() != null) {
-                    BizOrderStatus orderStatus = new BizOrderStatus();
-                    orderStatus.setOrderHeader(orderHeader);
-                    orderStatus.setBizStatus(orderHeader.getBizStatus());
-                    List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                    if (CollectionUtils.isNotEmpty(list)) {
-                        boolean flag = true;
-                        for (BizOrderStatus bizOrderStatus : list) {
-                            if (bizOrderStatus.getBizStatus().equals(orderHeader.getBizStatus())) {
-                                flag = false;
-                                break;
-                            }
-                        }
-                        if (flag) {
-                            bizOrderStatusService.save(orderStatus);
-                        }
-                    } else {
-                        bizOrderStatusService.save(orderStatus);
-                    }
-                }
-
+                bizOrderStatusService.saveOrderStatus(orderHeader);
                 BizOrderDetail ordDetail = new BizOrderDetail();
                 ordDetail.setOrderHeader(orderHeader);
                 List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(ordDetail);
@@ -349,26 +328,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         }
                     }
                     /*用于 订单状态表 保存状态*/
-                    if (orderHeader != null && orderHeader.getId() != null || orderHeader.getBizStatus() != null) {
-                        BizOrderStatus orderStatus = new BizOrderStatus();
-                        orderStatus.setOrderHeader(orderHeader);
-                        orderStatus.setBizStatus(orderHeader.getBizStatus());
-                        List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                        if (CollectionUtils.isNotEmpty(list)) {
-                            boolean flag = true;
-                            for (BizOrderStatus bizOrderStatus : list) {
-                                if (bizOrderStatus.getBizStatus().equals(orderHeader.getBizStatus())) {
-                                    flag = false;
-                                    break;
-                                }
-                            }
-                            if (flag) {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        } else {
-                            bizOrderStatusService.save(orderStatus);
-                        }
-                    }
+                    bizOrderStatusService.saveOrderStatus(orderHeader);
                 }
 
                 //当供货部或供应商发货时，才涉及采购单状态

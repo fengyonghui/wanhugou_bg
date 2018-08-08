@@ -10,6 +10,7 @@ import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.biz.dao.order.BizDrawBackDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
@@ -74,6 +75,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private UserDao userDao;
     @Autowired
     private BizOrderCommentService bizOrderCommentService;
+    @Autowired
+    private BizDrawBackDao bizDrawBackDao;
 
     @Resource
     private CommonImgService commonImgService;
@@ -135,7 +138,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 }
             }
             if(flag){
-                bizOrderHeader.setCenterId(user.getOffice().getId());
+              //  bizOrderHeader.setCenterId(user.getCompany().getId());
+                bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }else {
                 if (roleFlag) {
                     bizOrderHeader.setConsultantId(user.getId());
@@ -227,31 +231,12 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
         if (bizOrderHeader.getOrderComment() != null && StringUtils.isNotBlank(bizOrderHeader.getOrderComment().getComments())) {
             BizOrderComment bizOrderComment = new BizOrderComment();
-            bizOrderComment.setId(bizOrderHeader.getOrderComment().getId() == null ? null : bizOrderHeader.getOrderComment().getId());
+            bizOrderComment.setId(bizOrderHeader.getOrderComment().getId());
             bizOrderComment.setOrder(bizOrderHeader);
             bizOrderComment.setComments(bizOrderHeader.getOrderComment().getComments());
             bizOrderCommentService.save(bizOrderComment);
         }
-        if (bizOrderHeader.getId() != null || bizOrderHeader.getBizStatus() != null) {
-            BizOrderStatus orderStatus = new BizOrderStatus();
-            orderStatus.setOrderHeader(bizOrderHeader);
-            orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-            if (CollectionUtils.isNotEmpty(list)) {
-                boolean flag = true;
-                for (BizOrderStatus bizOrderStatus : list) {
-                    if (bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
-                        flag = false;
-                        break;
-                    }
-                }
-                if (flag) {
-                    bizOrderStatusService.save(orderStatus);
-                }
-            } else {
-                bizOrderStatusService.save(orderStatus);
-            }
-        }
+        bizOrderStatusService.saveOrderStatus(bizOrderHeader);
         BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
         List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();
         if (CollectionUtils.isNotEmpty(orderDetailList)) {
@@ -666,4 +651,26 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
     }
 
+    /**
+     * 更新退款订单退款状态
+     *
+     * @param bizOrderHeader
+     */
+    @Transactional(readOnly = false)
+    public void updateDrawbackStatus(BizOrderHeader bizOrderHeader) {
+        BizDrawBack bizDrawBack = bizOrderHeaderDao.findDrawBack(bizOrderHeader);
+        Integer drawbackStatus = bizOrderHeader.getDrawBack().getDrawbackStatus();
+        bizDrawBack.setDrawbackStatus(drawbackStatus);
+        bizDrawBack.preUpdate();
+        bizDrawBackDao.update(bizDrawBack);
+    }
+
+    /**
+     * 通过orderNum获取订单Entity
+     *
+     * @param orderNum
+     */
+    public BizOrderHeader getByOrderNum(String orderNum) {
+        return bizOrderHeaderDao.getByOrderNum(orderNum);
+    }
 }

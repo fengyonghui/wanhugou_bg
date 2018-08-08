@@ -45,6 +45,10 @@ public class BizStatisticsDayService {
      * 日统计请求参数日期格式
      */
     public static final String DAY_PARAM_DATE_FORMAT = "yyyy-MM-dd";
+    /**
+     * 日统计请求参数日期格式
+     */
+    public static final String YEAR_MONTH_PARAM_DATE_FORMAT = "yyyy-MM";
 
 
     /**
