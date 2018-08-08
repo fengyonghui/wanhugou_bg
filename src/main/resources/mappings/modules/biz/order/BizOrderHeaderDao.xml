@@ -1826,7 +1826,7 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_header oh
         WHERE cc.consultant_id = u.id AND oh.cust_id = cc.cust_id
         AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
-        AND so.id = u.company_id
+        AND so.id = u.office_id
         AND so.type IN (8, 10, 11)
         AND
         (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
