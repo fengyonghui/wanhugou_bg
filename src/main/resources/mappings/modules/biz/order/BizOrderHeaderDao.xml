@@ -1994,7 +1994,7 @@ FROM
 	  AND bod.status= 1
 	  AND (bod.suply_id=0 OR bod.suply_id=721)
 	AND EXISTS(
-		SELECT 1 
+		SELECT 1 from
 			(SELECT
 				DISTINCT a.id, pi.vendor_id
 				FROM biz_order_header a,biz_order_detail bod
