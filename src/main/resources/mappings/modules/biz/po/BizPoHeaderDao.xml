@@ -87,13 +87,16 @@
 				LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bpd.id AND bsp.status=1 AND bsp.object_name = 'biz_po_detail'
 				LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
 				WHERE bph.status = 1
-				AND bph.id = a.id) AS "totalSchedulingDetailNum"
+				AND bph.id = a.id) AS "totalSchedulingDetailNum",
+				rh.id AS "bizRequestHeader.id",
+				rh.req_no AS "bizRequestHeader.reqNo",
+				rh.biz_status AS "bizRequestHeader.bizStatus"
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
 		LEFT JOIN biz_po_payment_order ppo ON ppo.po_header_id = a.id
 		LEFT JOIN biz_po_order_req por ON por.po_id = a.id
 		LEFT JOIN biz_order_header oh ON oh.id = por.so_id AND por.so_type = 1
-		LEFT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
+		RIGHT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			AND a.is_prew = 0
@@ -108,6 +111,9 @@
 				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
 				)
+			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.bizStatus != null">
+				AND rh.biz_status = #{bizRequestHeader.bizStatus}
 			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num LIKE

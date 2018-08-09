@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.entity.po;
 
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
@@ -117,6 +118,10 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 * 排产类型: 0:按订单排产， 1:按商品排产
 	 */
 	private Integer schedulingType;
+	/**
+	 * 备货单
+	 */
+	private BizRequestHeader bizRequestHeader;
 
 
 	public Integer getCurrentPaymentId() {
@@ -516,5 +521,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setTotalCompleteScheduHeaderNum(Integer totalCompleteScheduHeaderNum) {
 		this.totalCompleteScheduHeaderNum = totalCompleteScheduHeaderNum;
+	}
+
+	public BizRequestHeader getBizRequestHeader() {
+		return bizRequestHeader;
+	}
+
+	public void setBizRequestHeader(BizRequestHeader bizRequestHeader) {
+		this.bizRequestHeader = bizRequestHeader;
 	}
 }
