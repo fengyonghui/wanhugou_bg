@@ -773,6 +773,56 @@
 		GROUP BY office.id
 	</select>
 
+	<select id="getValidOrderTotalAndCountByCreateTimeMonthOfficeId" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		sum(receive_total)                                   AS receiveTotal,
+		count(1) AS orderCount,
+		office.id AS officeId,
+		office.name AS officeName,
+		(SELECT
+		sum(detail1.buy_price * detail1.ord_qty)
+		FROM
+		biz_order_header AS header1
+		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
+		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		WHERE office.id = office1.id AND header1.order_type = 1
+		AND (<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND
+		header1.create_time LIKE #{month}
+		AND NOT EXISTS(
+		select 1
+		from sys_test_account ta
+		where header1.cust_id = ta.object_id
+		and ta.object_name = 'sys_office'
+		)
+		and office1.id = #{officeId}
+		GROUP BY office1.id)                     AS buyPrice
+		FROM biz_order_header AS header
+		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
+		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
+		WHERE
+		header.order_type = 1
+		AND not exists(
+		select 1
+		from sys_test_account ta
+		where header.cust_id = ta.object_id
+		and ta.object_name = 'sys_office'
+		)
+		AND
+		(<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND header.create_time LIKE #{month}
+		and office.id = #{officeId}
+		GROUP BY office.id
+	</select>
+
 	<select id="getProductStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
@@ -827,6 +877,30 @@
 		where c.cust_id = ta.object_id
 		and ta.object_name = 'sys_office'
 		)
+		GROUP BY center_id
+	</select>
+
+	<select id="getUserStatisticDataByOfficeId" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
+		SELECT s.name,count(1) as count
+		FROM biz_custom_center_consultant c, sys_office s
+		WHERE c.cust_id = ANY (
+			SELECT s1.id
+			from sys_office AS s1, sys_user AS u1
+			where s1.id = u1.company_id
+			AND s1.type = 6
+			AND date_format(s1.create_date, '%Y-%m') = #{month}
+			AND s1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+			AND u1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL})
+		AND c.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		AND s.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL} and s.id = c.center_id
+		and s.TYPE =8
+		AND NOT EXISTS(
+		select 1
+		from sys_test_account ta
+		where c.cust_id = ta.object_id
+		and ta.object_name = 'sys_office'
+		)
+		and s.id = #{officeId}
 		GROUP BY center_id
 	</select>
 
@@ -1830,7 +1904,7 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_header oh
         WHERE cc.consultant_id = u.id AND oh.cust_id = cc.cust_id
         AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
-        AND so.id = u.company_id
+        AND so.id = u.office_id
         AND so.type IN (8, 10, 11)
         AND
         (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
@@ -1998,7 +2072,7 @@ FROM
 	  AND bod.status= 1
 	  AND (bod.suply_id=0 OR bod.suply_id=721)
 	AND EXISTS(
-		SELECT 1 
+		SELECT 1 from
 			(SELECT
 				DISTINCT a.id, pi.vendor_id
 				FROM biz_order_header a,biz_order_detail bod
