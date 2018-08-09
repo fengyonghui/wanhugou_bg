@@ -66,7 +66,8 @@
 
 			$("#searchData").click(function () {
                 var officeId = $("#officeId").val();
-                if ($("#fromType2").prop("checked") == true && officeId == "") {
+                //if ($("#fromType2").prop("checked") == true && officeId == "") {
+				if (officeId == "") {
 					alert("请先选择供应商");
 					return false;
 				}
@@ -280,6 +281,7 @@
 	</script>
 	<script type="text/javascript">
 		function deleteStyle() {
+            console.log("--deleteStyle--")
             $("#remark").removeAttr("style");
             $("#cardNumber").removeAttr("style");
             $("#payee").removeAttr("style");
@@ -312,11 +314,11 @@
 			});
         }
         function deleteVendorStyle() {
-            $("#vendor").removeAttr("style");
+            //$("#vendor").removeAttr("style");
 		}
 		function addAllStyle() {
 		    $("#remark").prop("style","display:none");
-			$("#vendor").prop("style","display:none");
+			//$("#vendor").prop("style","display:none");
             $("#cardNumber").prop("style","display:none");
             $("#payee").prop("style","display:none");
             $("#bankName").prop("style","display:none");
@@ -380,7 +382,7 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div id="vendor" class="control-group" style="display: none">
+		<div id="vendor" class="control-group" >
 			<label class="control-label">供应商：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="bizVendInfo.office.id" value="${entity.bizVendInfo.office.id}" labelName="bizVendInfo.office.name"
