@@ -322,7 +322,7 @@
                 _this.reqQtys_1 += item.reqQty + ","
                 _this.reqDetailIds += item.id + ","
                 _this.LineNos += item.lineNo + ","
-                htmlCommodity += '<div class="mui-row border-btm5" id="' + item.id + '">' +
+                htmlCommodity += '<div class="mui-row app_bline" id="' + item.id + '">' +
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
@@ -424,7 +424,7 @@
                                 if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
                                     return;
                                 }
-                                resultListHtml += '<div class="mui-row border-btm5" id="serskudiv_' + skuInfo.id + '">' +
+                                resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
                                         '<div class="mui-row mui-checkbox mui-left">' +
                                         '<input style="top: 30px;" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
                                         '<div class="mui-row">' +
@@ -491,12 +491,11 @@
                         var cheDiv = $("#serskudiv_" + cheId);
                         $("#" + cheId).prop('checked',false);
                         $("#" + cheId).hide();
-                        $("#commodityMenu").append(cheDiv)
-
-                        var removeButtonHtml = '<div class="addBtn" id="removeBtn_' + cheId + '">' +
+                        var resultHtml = '<div class="addBtn" id="removeBtn_' + cheId + '">' +
                             '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">移除' +
                             '</button></div>';
-                        $("#commodityMenu").append(removeButtonHtml)
+                            cheDiv.append(resultHtml)
+                        $("#commodityMenu").append($(cheDiv))
                         _this.skuInfoIds_2 += cheId + ",";
                     }
                 })

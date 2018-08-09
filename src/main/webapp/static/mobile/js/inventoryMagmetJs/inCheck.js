@@ -134,8 +134,8 @@
 //				console.log(item)
 				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
 //		产品图片
-					'<div class="photoParent mui-pull-left position_Re">'+
-						'<img class="position_Ab" src="'+item.skuInfo.productInfo.imgUrl+'">'+
+					'<div class="photoParent mui-pull-left app_pr">'+
+						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+
 					'</div>'+
 //		产品信息
 					'<div class="mui-media-body commodity">'+

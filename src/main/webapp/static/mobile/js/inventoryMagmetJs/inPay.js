@@ -57,6 +57,21 @@
 						var reqId = _this.userInfo.inListId;
 						window.open('/a/biz/request/bizRequestPay/alipayForH5?payMoney='+payMoney+'&reqId='+reqId)
 					}
+					
+					//实时刷新时间单位为毫秒
+//					setInterval('refreshQuery()',5000); 
+					/* 刷新查询 */
+//					function refreshQuery(){
+//					   $.ajax({
+//					   	type:"post",
+//					   	url: '/a/biz/request/bizRequestPay/checkCondition',
+//					   	data: payNum: ,
+//					   	dataType:'json',
+//					   	success: function() {
+//					   		
+//					   	}
+//					   })
+//					}
 				}),
 				//微信支付
 				$('#wxPayBtn').on('tap', function() {
@@ -64,18 +79,9 @@
 						mui.toast('请输入支付金额！')
 					}else {
 						alert('微信支付')
-						$.ajax({
-		                    type: "GET",
-		                    url: "",
-		                    data: {
-		                    	payMoney:$('#inPayNum').val(),
-			                	reqId:_this.userInfo.inListId,
-		                    },
-		                    dataType: "json",
-		                    success: function(res){
-		                  	console.log(res)
-		                    }
-		                })
+						var payMoney = $('#inPayNum').val();
+						var reqId = _this.userInfo.inListId;
+						window.open('/a/biz/request/bizRequestPay/wechatPay4MWEB?payMoney='+payMoney+'&reqId='+reqId)
 					}
 				})
 			}

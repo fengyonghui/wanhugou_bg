@@ -45,7 +45,6 @@
                 }
                 _this.skuInfoIds = skuInfoIdsTemp.substring(1);
 
-
                 var skuIds2 = _this.skuInfoIds.split(",");
 
                 var reqQtysTemp = "";
@@ -139,7 +138,7 @@
                                 if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
                                     return;
                                 }
-                                resultListHtml += '<div class="mui-row border-btm5" id="serskudiv_' + skuInfo.id + '">' +
+                                resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
                                     '<div class="mui-row mui-checkbox mui-left">' +
                                     '<input style="top: 30px;" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
                                     '<div class="mui-row">' +
@@ -206,12 +205,11 @@
                         var cheDiv = $("#serskudiv_" + cheId);
                         $("#" + cheId).prop('checked',false);
                         $("#" + cheId).hide();
-                        $("#commodityMenu").append(cheDiv)
-
                         var removeButtonHtml = '<div class="addBtn" id="removeBtn_' + cheId + '">' +
                             '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">移除' +
                             '</button></div>';
-                        $("#commodityMenu").append(removeButtonHtml)
+                            cheDiv.append(removeButtonHtml)
+                        $("#commodityMenu").append(cheDiv)
                         _this.skuInfoIds += cheId + ",";
                     }
                 })

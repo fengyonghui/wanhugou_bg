@@ -57,16 +57,6 @@
 					$('#PoRemark').val(res.data.bizPoHeader.remark)
 					$('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
 					$('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
-					//                  if(res.data.bizOrderHeaderTest){
-					//                 	   $('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
-					//	                   $('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
-					//	                   $('#PoVenBizCard').val(res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber)
-					//	                   $('#PoVenBizPayee').val(res.data.bizPoHeader.vendOffice.bizVendInfo.payee)
-					//	                   $('#PoVenBizBankname').val(res.data.bizPoHeader.vendOffice.bizVendInfo.bankName)
-					//                   }else{
-					//                  		$('#img').hide()//show()
-					//                  		$('.priceList').hide()//show()
-					//                  	}
 				}
 			});
 		},
@@ -78,7 +68,6 @@
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回流程吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
-
 						var btnArray = ['取消', '确定'];
 						mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
 							if(a.index == 1) {
@@ -91,12 +80,9 @@
 									_this.ajaxPoPayData(rejectTxt)
 								}
 							} else {
-								//		            info.innerText = '你点了取消按钮';
 							}
 						})
-						//		            info.innerText = '你刚确认MUI是个好框架';
 					} else {
-						//		            info.innerText = 'MUI没有得到你的认可，继续加油'
 					}
 				})
 			});
@@ -159,10 +145,8 @@
 							}
 						})
 					}
-
 				}
 			});
-
 		},
 		/*驳回*/
 		ajaxPoPayData: function(rejectTxt) {
@@ -189,7 +173,6 @@
 							}
 						})
 					}
-
 				}
 			});
 		},
@@ -268,12 +251,6 @@
 			}
 			return now;
 		}
-
-		/*		searchFromShow: function() {
-					var mask = mui.createMask(callback);//callback为用户点击蒙版时自动执行的回调；
-					mask.show();//显示遮罩
-					mask.close();//关闭遮罩
-				}*/
 	}
 	$(function() {
 

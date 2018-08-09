@@ -47,7 +47,6 @@
 						type: 'GET',
 						url: '/a/biz/po/bizPoHeader/listData4Mobile?page2='+page+'&size='+size,
 						data: {
-							parentId: _this.userInfo.poId,
 							pageNo: page
 						},
 						dataType: 'json',

@@ -25,43 +25,42 @@
                 dataType: "json",
                 success: function(res){
 //					console.log(res)
-					/*业务状态*/
-						var bizstatus = res.bizStatus;
-						var bizstatusTxt = '';
-						if(bizstatus==0) {
-							bizstatusTxt = "未审核"
-						}else if(bizstatus==1) {
-							bizstatusTxt = "首付支付"
-						}else if(bizstatus==2) {
-							bizstatusTxt = "全部支付"
-						}else if(bizstatus==4) {
-							bizstatusTxt = "审核中"
-						}else if(bizstatus==5) {
-							bizstatusTxt = "审核通过"
-						}else if(bizstatus==6) {
-							bizstatusTxt = "审批中"
-						}else if(bizstatus==7) {
-							bizstatusTxt = "审批完成"
-						}else if(bizstatus==10) {
-							bizstatusTxt = "采购中"
-						}else if(bizstatus==13) {
-							bizstatusTxt = "部分结算"
-						}else if(bizstatus==15) {
-							bizstatusTxt = "采购完成"
-						}else if(bizstatus==20) {
-							bizstatusTxt = "备货中"
-						}else if(bizstatus==25) {
-							bizstatusTxt = "供货完成"
-						}else if(bizstatus==30) {
-							bizstatusTxt = "收货完成"
-						}else if(bizstatus==37) {
-							bizstatusTxt = "结算完成"
-						}else if(bizstatus==40) {
-							bizstatusTxt = "取消"
-						}else {
-							bizstatusTxt = "未知类型"
-						}
-					
+				/*业务状态*/
+					var bizstatus = res.bizStatus;
+					var bizstatusTxt = '';
+					if(bizstatus==0) {
+						bizstatusTxt = "未审核"
+					}else if(bizstatus==1) {
+						bizstatusTxt = "首付支付"
+					}else if(bizstatus==2) {
+						bizstatusTxt = "全部支付"
+					}else if(bizstatus==4) {
+						bizstatusTxt = "审核中"
+					}else if(bizstatus==5) {
+						bizstatusTxt = "审核通过"
+					}else if(bizstatus==6) {
+						bizstatusTxt = "审批中"
+					}else if(bizstatus==7) {
+						bizstatusTxt = "审批完成"
+					}else if(bizstatus==10) {
+						bizstatusTxt = "采购中"
+					}else if(bizstatus==13) {
+						bizstatusTxt = "部分结算"
+					}else if(bizstatus==15) {
+						bizstatusTxt = "采购完成"
+					}else if(bizstatus==20) {
+						bizstatusTxt = "备货中"
+					}else if(bizstatus==25) {
+						bizstatusTxt = "供货完成"
+					}else if(bizstatus==30) {
+						bizstatusTxt = "收货完成"
+					}else if(bizstatus==37) {
+						bizstatusTxt = "结算完成"
+					}else if(bizstatus==40) {
+						bizstatusTxt = "取消"
+					}else {
+						bizstatusTxt = "未知类型"
+					}
 					$('#inPoDizstatus').val(bizstatusTxt)
 					$('#inPoordNum').val(res.data.entity.reqNo)
 					$('#inOrordNum').val(res.data.entity.fromOffice.name)
@@ -134,8 +133,8 @@
 //				console.log(item)
 				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
 //		产品图片
-					'<div class="photoParent mui-pull-left position_Re">'+
-						'<img class="position_Ab" src="'+item.skuInfo.productInfo.imgUrl+'">'+
+					'<div class="photoParent mui-pull-left app_pr">'+
+						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+
 					'</div>'+
 //		产品信息
 					'<div class="mui-media-body commodity">'+
