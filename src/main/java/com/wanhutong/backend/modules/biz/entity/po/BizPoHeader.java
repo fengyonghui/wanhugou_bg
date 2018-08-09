@@ -434,8 +434,6 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		NO_PAY(0, "未支付"),
 		DOWN_PAYMENT(1, "首付款支付"),
 		ALL_PAY(2, "全部支付"),
-		SHIPMENTS(3, "已发货"),
-		DELIVERY(4, "已收货"),
 		COMPLETE(5, "已完成"),
 		PROCESS(6, "审批中"),
 		PROCESS_COMPLETE(7, "审批完成"),

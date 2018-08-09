@@ -19,6 +19,7 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizHeaderSchedulingDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
@@ -49,6 +50,7 @@ import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
@@ -263,6 +265,13 @@ public class BizPoHeaderReqController extends BaseController {
                             map.put(requestDetail.getSkuInfo().getId(), bizPoOrderReqList);
                         }
                     }
+                    if (bizRequestHeader.getCommonProcess() != null && bizRequestHeader.getCommonProcess().getId() != null) {
+                        List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
+                        bizPoHeaderService.getCommonProcessListFromDB(bizRequestHeader.getCommonProcess().getId(), commonProcessList);
+                        Collections.reverse(commonProcessList);
+                        bizRequestHeader.setCommonProcessList(commonProcessList);
+                        entity.setBizRequestHeader(bizRequestHeader);
+                    }
                 }
 
                 //	poOrderReqs.add(mapSource);
@@ -420,6 +429,18 @@ public class BizPoHeaderReqController extends BaseController {
         }
         if (bizPoOrderReq != null && Byte.valueOf(PoOrderReqTypeEnum.RE.getOrderType()).equals(bizPoOrderReq.getSoType())) {
             bizRequestHeader = bizRequestHeaderService.get(bizPoOrderReq.getSoId());
+            BizOrderStatus bizOrderStatus = new BizOrderStatus();
+            BizOrderHeader orderHeader = new BizOrderHeader();
+            orderHeader.setId(bizRequestHeader.getId());
+            bizOrderStatus.setOrderHeader(orderHeader);
+            bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
+            List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
+            statusList.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
+
+            Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
+
+            model.addAttribute("statusList", statusList);
+            model.addAttribute("statusMap", statusMap);
         }
 
         if (bizOrderHeader != null && 6 == bizOrderHeader.getOrderType()) {

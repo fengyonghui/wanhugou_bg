@@ -408,26 +408,54 @@
             </div>
         </c:if>
 
-        <%--<c:if test="${type == 'audit' && bizPoHeader.commonProcess.id != null}">--%>
-            <%--<div class="control-group">--%>
-                <%--<label class="control-label">审核状态：</label>--%>
-                <%--<div class="controls">--%>
-                    <%--<input type="text" disabled="disabled"--%>
-                           <%--value="${purchaseOrderProcess.name}" htmlEscape="false"--%>
-                           <%--maxlength="30" class="input-xlarge "/>--%>
-                    <%--<input id="currentType" type="hidden" disabled="disabled"--%>
-                           <%--value="${purchaseOrderProcess.code}" htmlEscape="false"--%>
-                           <%--maxlength="30" class="input-xlarge "/>--%>
-                <%--</div>--%>
-            <%--</div>--%>
-        <%--</c:if>--%>
+        <c:if test="${type == 'audit' && bizPoHeader.commonProcess.id != null}">
+            <div class="control-group">
+                <label class="control-label">审核状态：</label>
+                <div class="controls">
+                    <input type="text" disabled="disabled"
+                           value="${purchaseOrderProcess.name}" htmlEscape="false"
+                           maxlength="30" class="input-xlarge "/>
+                    <input id="currentType" type="hidden" disabled="disabled"
+                           value="${purchaseOrderProcess.code}" htmlEscape="false"
+                           maxlength="30" class="input-xlarge "/>
+                </div>
+            </div>
+        </c:if>
     </c:if>
-    <c:if test="${fn:length(bizPoHeader.commonProcessList) > 0}">
+    <div class="control-group">
+        <label class="control-label">状态流程：</label>
+        <div class="controls help_wrap">
+            <div class="help_step_box fa">
+                <c:forEach items="${statusList}" var="v" varStatus="stat">
+                    <c:if test="${!stat.last}" >
+                        <div class="help_step_item">
+                            <div class="help_step_left"></div>
+                            <div class="help_step_num">${stat.index + 1}</div>
+                            处理人:${v.createBy.name}<br/><br/>
+                            状态:${statusMap[v.bizStatus].desc}<br/>
+                            <fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                            <div class="help_step_right"></div>
+                        </div>
+                    </c:if>
+                    <c:if test="${stat.last}">
+                        <div class="help_step_item help_step_set">
+                            <div class="help_step_left"></div>
+                            <div class="help_step_num">${stat.index + 1}</div>
+                            处理人:${v.createBy.name}<br/><br/>
+                            状态:${statusMap[v.bizStatus].desc}<br/>
+                            <fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                            <div class="help_step_right"></div>
+                        </div>
+                    </c:if>
+                </c:forEach>
+            </div>
+        </div>
+    </div>
     <div class="control-group">
         <label class="control-label">审批流程：</label>
         <div class="controls help_wrap">
             <div class="help_step_box fa">
-                <c:forEach items="${bizPoHeader.commonProcessList}" var="v" varStatus="stat">
+                <c:forEach items="${bizPoHeader.bizRequestHeader.commonProcessList}" var="v" varStatus="stat">
                     <c:if test="${!stat.last}" >
                         <div class="help_step_item">
                             <div class="help_step_left"></div>
@@ -438,7 +466,7 @@
                             <div class="help_step_right"></div>
                         </div>
                     </c:if>
-                    <c:if test="${stat.last}">
+                    <c:if test="${stat.last && bizPoHeader.commonProcessList == null}">
                         <div class="help_step_item help_step_set">
                             <div class="help_step_left"></div>
                             <div class="help_step_num">${stat.index + 1}</div>
@@ -450,8 +478,42 @@
                 </c:forEach>
             </div>
         </div>
+        <div class="controls help_wrap">
+            <div class="help_step_box fa">
+                <c:forEach items="${bizPoHeader.commonProcessList}" var="v" varStatus="stat">
+                    <c:if test="${stat.first}" >
+                        <div class="help_step_item">
+                            <div class="help_step_left"></div>
+                            <div class="help_step_num">${fn:length(bizPoHeader.bizRequestHeader.commonProcessList)}</div>
+                            批注:${v.description}<br/><br/>
+                            审批人:${v.user.name}<br/>
+                            <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                            <div class="help_step_right"></div>
+                        </div>
+                    </c:if>
+                    <c:if test="${!stat.last && !stat.first}" >
+                        <div class="help_step_item">
+                            <div class="help_step_left"></div>
+                            <div class="help_step_num">${fn:length(bizPoHeader.bizRequestHeader.commonProcessList) + stat.index}</div>
+                            批注:${v.description}<br/><br/>
+                            审批人:${v.user.name}<br/>
+                            <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                            <div class="help_step_right"></div>
+                        </div>
+                    </c:if>
+                    <c:if test="${stat.last}">
+                        <div class="help_step_item help_step_set">
+                            <div class="help_step_left"></div>
+                            <div class="help_step_num">${fn:length(bizPoHeader.bizRequestHeader.commonProcessList) + stat.index}</div>
+                            当前状态:${v.purchaseOrderProcess.name}<br/><br/>
+                                ${v.user.name}<br/>
+                            <div class="help_step_right"></div>
+                        </div>
+                    </c:if>
+                </c:forEach>
+            </div>
+        </div>
     </div>
-    </c:if>
     <c:if test="${bizPoHeader.poDetailList!=null}">
         <div class="form-actions">
             <shiro:hasPermission name="biz:po:bizPoHeader:audit">
