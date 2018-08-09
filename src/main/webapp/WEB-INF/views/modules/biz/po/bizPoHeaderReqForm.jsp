@@ -91,7 +91,7 @@
                 }
             }
 
-            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeader/savePoHeader?type=" + type);
+            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type);
             $("#inputForm").submit();
         }
 
@@ -169,15 +169,15 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
+    <li><a href="${ctx}/biz/po/bizPoHeaderReq/">采购订单列表</a></li>
     <li class="active">
-        <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">采购订单
+        <a href="${ctx}/biz/po/bizPoHeaderReq/form?id=${bizPoHeader.id}">采购订单
             <shiro:hasPermission name="biz:po:bizPoHeader:edit">${not empty bizPoHeader.id?'修改':'添加'}</shiro:hasPermission>
             <shiro:lacksPermission name="biz:po:bizPoHeader:edit">查看</shiro:lacksPermission></a>
     </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/save?prewStatus=prew"
+<form:form id="inputForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeaderReq/save?prewStatus=prew"
            method="post" class="form-horizontal">
     <form:hidden path="id" id="id"/>
     <form:hidden path="bizPoPaymentOrder.id" id="paymentOrderId"/>
@@ -246,15 +246,6 @@
                        value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
                        onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
 
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">交货地点：</label>
-            <div class="controls">
-                <form:radiobutton id="deliveryStatus0" path="deliveryStatus" onclick="choose(this)" value="0"/>采购中心
-                <form:radiobutton id="deliveryStatus1" path="deliveryStatus" checked="true" onclick="choose(this)"
-                                  value="1"/>供应商
             </div>
         </div>
         <div class="control-group" id="buyCenterId" style="display:none">
@@ -417,19 +408,19 @@
             </div>
         </c:if>
 
-        <c:if test="${type == 'audit' && bizPoHeader.commonProcess.id != null}">
-            <div class="control-group">
-                <label class="control-label">审核状态：</label>
-                <div class="controls">
-                    <input type="text" disabled="disabled"
-                           value="${purchaseOrderProcess.name}" htmlEscape="false"
-                           maxlength="30" class="input-xlarge "/>
-                    <input id="currentType" type="hidden" disabled="disabled"
-                           value="${purchaseOrderProcess.code}" htmlEscape="false"
-                           maxlength="30" class="input-xlarge "/>
-                </div>
-            </div>
-        </c:if>
+        <%--<c:if test="${type == 'audit' && bizPoHeader.commonProcess.id != null}">--%>
+            <%--<div class="control-group">--%>
+                <%--<label class="control-label">审核状态：</label>--%>
+                <%--<div class="controls">--%>
+                    <%--<input type="text" disabled="disabled"--%>
+                           <%--value="${purchaseOrderProcess.name}" htmlEscape="false"--%>
+                           <%--maxlength="30" class="input-xlarge "/>--%>
+                    <%--<input id="currentType" type="hidden" disabled="disabled"--%>
+                           <%--value="${purchaseOrderProcess.code}" htmlEscape="false"--%>
+                           <%--maxlength="30" class="input-xlarge "/>--%>
+                <%--</div>--%>
+            <%--</div>--%>
+        <%--</c:if>--%>
     </c:if>
     <c:if test="${fn:length(bizPoHeader.commonProcessList) > 0}">
     <div class="control-group">

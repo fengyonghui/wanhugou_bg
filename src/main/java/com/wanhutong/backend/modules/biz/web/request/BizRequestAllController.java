@@ -136,7 +136,7 @@ public class BizRequestAllController {
             bizOrderHeader = new BizOrderHeader();
         }
         if ("kc".equals(source)) {
-            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.EXAMINE.getState().byteValue());
+            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
             bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCK_COMPLETE.getState().byteValue());
             if (bizStatu == 0) {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.BizOrderSchedulingEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
@@ -130,7 +131,7 @@
 					<%--</c:if>--%>
 				<%--</td>--%>
 				<td>
-						${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}
+						${fns:getDictLabel(bizPoHeader.bizRequestHeader.bizStatus, 'biz_req_status', '未知类型')}
 				</td>
 				<%--<div style="display:none;">--%>
 					<%--<td style="display:none;">--%>
@@ -140,7 +141,7 @@
 					<%--${fns:getPlatFormName(bizPoHeader.plateformInfo.id, '未知平台')}--%>
 				<%--</td>--%>
 				<td>
-					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${bizPoHeader.bizRequestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
 						${bizPoHeader.payTotal}
@@ -199,15 +200,17 @@
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 							&& fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
 							&& bizPoHeader.payTotal < (bizPoHeader.totalDetail+bizPoHeader.totalExp)
+							&& bizPoHeader.bizRequestHeader.bizStatus >= ReqHeaderStatusEnum.COMPLETE.state
+							&& bizPoHeader.bizRequestHeader.bizStatus != ReqHeaderStatusEnum.CLOSE.state
 							}">
 									<a href="${ctx}/biz/po/bizPoHeaderReq/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
 								</c:if>
 							</shiro:hasPermission>
-							<shiro:hasPermission name="biz:po:bizPoHeader:startAudit">
-								<c:if test="${bizPoHeader.commonProcess.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'}">
-									<a href="${ctx}/biz/po/bizPoHeaderReq/form?id=${bizPoHeader.id}&type=startAudit">开启审核</a>
-								</c:if>
-							</shiro:hasPermission>
+							<%--<shiro:hasPermission name="biz:po:bizPoHeader:startAudit">--%>
+								<%--<c:if test="${bizPoHeader.commonProcess.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'}">--%>
+									<%--<a href="${ctx}/biz/po/bizPoHeaderReq/form?id=${bizPoHeader.id}&type=startAudit">开启审核</a>--%>
+								<%--</c:if>--%>
+							<%--</shiro:hasPermission>--%>
 							<shiro:hasPermission name="biz:po:bizPoHeader:audit">
 								<c:if test="${bizPoHeader.commonProcess.id != null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'

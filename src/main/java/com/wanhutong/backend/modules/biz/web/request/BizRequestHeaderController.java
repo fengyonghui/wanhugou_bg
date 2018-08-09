@@ -313,7 +313,7 @@ public class BizRequestHeaderController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "findByRequest")
 	public List<BizRequestHeader> findByRequest(BizRequestHeader bizRequestHeader) {
-		bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.EXAMINE.getState().byteValue());
+		bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
 		bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
 		List<BizRequestHeader> list= bizRequestHeaderService.findList(bizRequestHeader);
 		List<BizRequestHeader> bizRequestHeaderList=Lists.newArrayList();

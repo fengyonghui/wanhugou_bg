@@ -21,6 +21,7 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
@@ -42,6 +43,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVend
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
@@ -398,7 +400,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "findByRequest")
 	public List<BizRequestHeader> findByRequest(BizRequestHeader bizRequestHeader) {
-		bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.EXAMINE.getState().byteValue());
+		bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState().byteValue());
 		bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
 		List<BizRequestHeader> list= bizRequestHeaderForVendorService.findList(bizRequestHeader);
 		List<BizRequestHeader> bizRequestHeaderList=Lists.newArrayList();
@@ -419,33 +421,23 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			for (BizRequestDetail requestDetail:requestDetailList){
 				bizPoOrderReq.setSoLineNo(requestDetail.getLineNo());
 				List<BizPoOrderReq> poOrderReqList= bizPoOrderReqService.findList(bizPoOrderReq);
-				if(poOrderReqList!=null && poOrderReqList.size()>0 || ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader1.getFromType())){
+				PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+				Iterator<BizPoOrderReq> poOrderReqIterator = poOrderReqList.iterator();
+				if (poOrderReqIterator.hasNext()) {
+					BizPoHeader bizPoHeader = bizPoHeaderService.get(poOrderReqIterator.next().getPoHeader());
+					if (bizPoHeader.getProcessId() != purchaseOrderProcessConfig.getPayProcessId()) {
+						poOrderReqList.remove(poOrderReqIterator.next());
+					}
+				}
+				if(CollectionUtils.isNotEmpty(poOrderReqList)){
 					BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 					skuInfo.setVendorName(requestDetail.getSkuInfo().getVendorName());
 					requestDetail.setSkuInfo(skuInfo);
 					reqDetailList.add(requestDetail);
 				}
-
 			}
-			if(StringUtils.isNotBlank(bizRequestHeader.getItemNo())&& StringUtils.isNotBlank(bizRequestHeader.getPartNo())){
-				if(requestDetailList!=null && requestDetailList.size()>0){
-					bizRequestHeader1.setRequestDetailList(reqDetailList);
-					bizRequestHeaderList.add(bizRequestHeader1);
-				}
-			}else if(StringUtils.isNotBlank(bizRequestHeader.getItemNo())){
-				if(requestDetailList!=null && requestDetailList.size()>0){
-					bizRequestHeader1.setRequestDetailList(reqDetailList);
-					bizRequestHeaderList.add(bizRequestHeader1);
-				}
-			}else if(StringUtils.isNotBlank(bizRequestHeader.getPartNo())){
-				if(requestDetailList!=null && requestDetailList.size()>0){
-					bizRequestHeader1.setRequestDetailList(reqDetailList);
-					bizRequestHeaderList.add(bizRequestHeader1);
-				}
-			} else if (requestDetailList!=null && requestDetailList.size()>0){
-				bizRequestHeader1.setRequestDetailList(reqDetailList);
-				bizRequestHeaderList.add(bizRequestHeader1);
-			}
+			bizRequestHeader1.setRequestDetailList(reqDetailList);
+			bizRequestHeaderList.add(bizRequestHeader1);
 		}
 		return bizRequestHeaderList;
 	}

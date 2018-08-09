@@ -635,13 +635,13 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 			}
 		}
-		if (cureentProcessEntity.getType().equals(requestOrderProcessConfig.getAutProcessId().toString())) {
-			Integer bizStatus = bizRequestHeader.getBizStatus();
-			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.PROCESS.getState());
-			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.PROCESS.getState())) {
-				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
-			}
-		}
+//		if (cureentProcessEntity.getType().equals(requestOrderProcessConfig.getAutProcessId().toString())) {
+//			Integer bizStatus = bizRequestHeader.getBizStatus();
+//			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.PROCESS.getState());
+//			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.PROCESS.getState())) {
+//				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+//			}
+//		}
 		if (cureentProcessEntity.getType().equals(vendorRequestOrderProcessConfig.getDefaultProcessId().toString())) {
 			Integer bizStatus =  bizRequestHeader.getBizStatus();
 			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.IN_REVIEW.getState());
@@ -649,13 +649,13 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 			}
 		}
-		if (nextProcessEntity.getType().equals(vendorRequestOrderProcessConfig.getAutProcessId().toString())) {
-			Integer bizStatus =  bizRequestHeader.getBizStatus();
-			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.EXAMINE.getState());
-			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.EXAMINE.getState())) {
-				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
-			}
-		}
+//		if (nextProcessEntity.getType().equals(vendorRequestOrderProcessConfig.getAutProcessId().toString())) {
+//			Integer bizStatus =  bizRequestHeader.getBizStatus();
+//			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.EXAMINE.getState());
+//			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.EXAMINE.getState())) {
+//				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+//			}
+//		}
 		commonProcessService.save(nextProcessEntity);
 
 		/*String nextDesc = vendCurrentProcess.getName();
@@ -817,11 +817,11 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
             bizRequestHeader.setPlanPay(prewPayTotal);
             this.genPaymentOrder(bizRequestHeader);
         }
-        Byte bizStatus = bizRequestHeader.getBizStatus().byteValue();
-        this.updateBizStatus(bizRequestHeader.getId(), ReqHeaderStatusEnum.PROCESS.getState());
-        if (!bizStatus.equals(ReqHeaderStatusEnum.PROCESS.getState().byteValue())) {
-            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
-        }
+//        Byte bizStatus = bizRequestHeader.getBizStatus().byteValue();
+//        this.updateBizStatus(bizRequestHeader.getId(), ReqHeaderStatusEnum.PROCESS.getState());
+//        if (!bizStatus.equals(ReqHeaderStatusEnum.PROCESS.getState().byteValue())) {
+//            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+//        }
 //        this.updateProcessToInit(bizRequestHeader);
         auditRe(id, String.valueOf(requestOrderProcessConfig.getAutProcessId()), auditType, desc);
         return Pair.of(Boolean.TRUE,   "操作成功!");

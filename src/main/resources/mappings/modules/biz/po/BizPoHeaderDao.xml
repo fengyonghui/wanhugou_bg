@@ -90,7 +90,8 @@
 				AND bph.id = a.id) AS "totalSchedulingDetailNum",
 				rh.id AS "bizRequestHeader.id",
 				rh.req_no AS "bizRequestHeader.reqNo",
-				rh.biz_status AS "bizRequestHeader.bizStatus"
+				rh.biz_status AS "bizRequestHeader.bizStatus",
+                rh.create_time AS "bizRequestHeader.createDate"
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
 		LEFT JOIN biz_po_payment_order ppo ON ppo.po_header_id = a.id
