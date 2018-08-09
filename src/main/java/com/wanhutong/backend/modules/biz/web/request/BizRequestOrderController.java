@@ -44,6 +44,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -672,6 +673,82 @@ public class BizRequestOrderController extends BaseController {
             }
         }
         return "redirect:" + adminPath + "/biz/request/bizRequestOrder/list?source="+source;
+    }
+
+
+    @RequestMapping(value = "goListAutoSave")
+    @ResponseBody
+    public Map<String, String> goListForAutoSave(Integer reqId, HttpServletRequest request,HttpServletResponse response) {
+        BizRequestHeader requestHeader = new BizRequestHeader();
+        requestHeader.setId(reqId);
+        Page<BizRequestHeader> requestHeaderList = findBizRequestV2(requestHeader,request,response);
+        Map<String, String> result = new HashMap<String, String>();
+        if (requestHeaderList.getList().size() > 0) {
+            requestHeader = requestHeaderList.getList().get(0);
+            String reqDetailIds = requestHeader.getReqDetailIds();
+            Integer vendorId = requestHeader.getOnlyVendor();
+
+            result.put("reqDetailIds", reqDetailIds);
+            result.put("vendorId", String.valueOf(vendorId));
+
+            String unitPrices = "";
+            String ordQtys = "";
+
+            Map<String,List<BizRequestDetail>> reqDetailMap = new LinkedHashMap<>();
+
+            if (StringUtils.isNotBlank(reqDetailIds)) {
+                String[] reqDetailArr = reqDetailIds.split(",");
+                for (int i = 0; i < reqDetailArr.length; i++) {
+                    if (StringUtils.isBlank(reqDetailArr[i])){
+                        continue;
+                    }
+                    BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.parseInt(reqDetailArr[i].trim()));
+                    Integer reqQty = bizRequestDetail.getReqQty();
+                    Integer recvQty = bizRequestDetail.getRecvQty();
+                    Integer ordQty = reqQty - recvQty;
+                    ordQtys += ordQty + ",";
+                    Integer key =bizRequestDetail.getRequestHeader().getId();
+                    Integer lineNo=bizRequestDetail.getLineNo();
+                    BizPoOrderReq bizPoOrderReq =new BizPoOrderReq();
+                    bizPoOrderReq.setSoLineNo(lineNo);
+                    bizPoOrderReq.setRequestHeader(bizRequestDetail.getRequestHeader());
+                    bizPoOrderReq.setIsPrew(0);
+                    List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
+                    if(poOrderReqList!=null && poOrderReqList.size()==0){
+                        BizSkuInfo sku = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
+                        BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizRequestDetail.getRequestHeader().getId());
+                        bizRequestDetail.setRequestHeader(bizRequestHeader);
+                        BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
+                        Double buyPrice = skuInfo.getBuyPrice();
+                        unitPrices += String.valueOf(buyPrice) + ",";
+                        bizRequestDetail.setSkuInfo(skuInfo);
+                        if(reqDetailMap.containsKey(key.toString())){
+                            List<BizRequestDetail> requestDetails = reqDetailMap.get(key.toString());
+                            requestDetails.add(bizRequestDetail);
+                            reqDetailMap.put(key.toString(),requestDetails);
+                        }else {
+                            List<BizRequestDetail> requestDetails =  new ArrayList<>();
+                            requestDetails.add(bizRequestDetail);
+                            reqDetailMap.put(key.toString(),requestDetails);
+                        }
+                    }
+                }
+                ordQtys = ordQtys.substring(0, ordQtys.length()-1);
+                unitPrices = unitPrices.substring(0, unitPrices.length()-1);
+                result.put("ordQtys", ordQtys);
+                result.put("unitPrices", unitPrices);
+
+                //model.addAttribute("reqDetailMap",reqDetailMap);
+            }
+
+        }
+
+
+//        model.addAttribute("type","goList");
+//        model.addAttribute("vendorId", vendorId);
+//        model.addAttribute("bizPoHeader", new BizPoHeader());
+
+        return result;
     }
 
 }

@@ -690,12 +690,23 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@ResponseBody
 	public String audit(int id, String currentType, int auditType, String description) {
 		BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(id);
-		if (ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
-			return bizRequestHeaderForVendorService.vendAudit(id, currentType, auditType, description);
-		}else {
-			return bizRequestHeaderForVendorService.audit(id, currentType, auditType, description);
-		}
+		String result = bizRequestHeaderForVendorService.audit(id, currentType, auditType, description);
+//		if (ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+//            result = bizRequestHeaderForVendorService.vendAudit(id, currentType, auditType, description);
+//		}else {
+//            result =bizRequestHeaderForVendorService.audit(id, currentType, auditType, description);
+//		}
+		return result;
 	}
+
+    @RequiresPermissions("biz:request:bizRequestHeader:audit")
+    @RequestMapping(value = "getCurrentBizStatus")
+    @ResponseBody
+    public String getCurrentBizStatus(int id) {
+        BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(id);
+        Integer bizStatus = bizRequestHeader.getBizStatus();
+        return String.valueOf(bizStatus);
+    }
 
 	/**
 	 * 查询供应商备货的供应商拓展信息

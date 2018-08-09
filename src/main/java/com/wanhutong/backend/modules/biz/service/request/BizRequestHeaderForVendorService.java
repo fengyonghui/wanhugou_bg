@@ -533,6 +533,15 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
 		nextProcessEntity.setPrevId(cureentProcessEntity.getId());
 
+
+		if (cureentProcessEntity.getType().equals(requestOrderProcessConfig.getDefaultProcessId().toString())) {
+			Integer bizStatus =  bizRequestHeader.getBizStatus();
+			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.IN_REVIEW.getState());
+			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.IN_REVIEW.getState())) {
+				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+			}
+		}
+
 		if(nextProcessEntity.getType().equals(requestOrderProcessConfig.getAutProcessId().toString())){
 			Integer bizStatus = bizRequestHeader.getBizStatus();
 			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());

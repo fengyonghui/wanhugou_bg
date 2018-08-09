@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.po;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -1138,5 +1139,64 @@ public class BizPoHeaderController extends BaseController {
         }
 
         return resultFlag;
+    }
+
+
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "autoSave")
+    @ResponseBody
+    public String autoSave(String reqDetailIds, String vendorId, String unitPrices, String ordQtys, String prewStatus, String type,
+                         String version, HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes,Model model) {
+        Office vendOffice = new Office();
+        vendOffice.setId(Integer.parseInt(vendorId));
+
+        BizPoHeader bizPoHeader = new BizPoHeader();
+        bizPoHeader.setVendOffice(vendOffice);
+        bizPoHeader.setReqDetailIds(reqDetailIds);
+        bizPoHeader.setUnitPrices(unitPrices);
+        bizPoHeader.setOrdQtys(ordQtys);
+
+        if ("audit".equalsIgnoreCase(type)) {
+            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
+            addMessage(redirectAttributes, msg);
+            return "fail";
+        }
+        if (!beanValidator(model, bizPoHeader)) {
+            return "fail";
+        }
+        Set<Integer> poIdSet = bizPoHeaderService.findPrewPoHeader(bizPoHeader);
+        if (poIdSet.size() == 1) {
+            addMessage(redirectAttributes, "prew".equals(prewStatus) ? "采购订单预览信息" : "保存采购订单成功");
+            return "fail";
+        }
+        int deOfifceId = 0;
+        if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null) {
+            deOfifceId = bizPoHeader.getDeliveryOffice().getId();
+        }
+        String poNo = "0";
+        bizPoHeader.setOrderNum(poNo);
+        bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
+        bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
+        Integer id = bizPoHeader.getId();
+        bizPoHeaderService.save(bizPoHeader);
+        if (id == null) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
+        if (bizPoHeader.getOrderNum() == null || "0".equals(bizPoHeader.getOrderNum())) {
+            poNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO, deOfifceId, bizPoHeader.getVendOffice().getId(), bizPoHeader.getId());
+            bizPoHeader.setOrderNum(poNo);
+            bizPoHeaderService.savePoHeader(bizPoHeader);
+        }
+        if ("mobile".equalsIgnoreCase(version)) {
+            return renderString(response, JsonUtil.generateData("操作成功", request.getParameter("callback")), "application/json");
+        }
+        bizPoHeader.setDeliveryStatus(0);
+        bizPoHeader.setLastPayDate(bizPoHeader.getCreateDate());
+
+        bizPoHeader.setIsPrew(0);
+        bizPoHeaderService.savePoHeader(bizPoHeader);
+
+        addMessage(redirectAttributes, "保存采购订单成功");
+        return "ok";
     }
 }
