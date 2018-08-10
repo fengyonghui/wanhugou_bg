@@ -197,7 +197,7 @@
             }
         }
 
-        function checkPass() {
+        function checkPass(obj) {
 			top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
 				if(v=="ok"){
 					var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
@@ -206,7 +206,12 @@
 							jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
 							return false;
 						}
-						audit(1, f.description);
+                        if (obj == "RE") {
+                            audit(1, f.description);
+                        }
+                        if (obj == "PO") {
+                            poAudit(1,f.description);
+                        }
 						return true;
 					};
 					jBox(html, {
@@ -216,7 +221,7 @@
 				}
 			},{buttonsFocus:1});
         }
-        function checkReject() {
+        function checkReject(obj) {
             top.$.jBox.confirm("确认驳回该流程吗？","系统提示",function(v,h,f){
                 if(v=="ok"){
                     var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
@@ -225,7 +230,12 @@
                             jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
                             return false;
                         }
-                        audit(2, f.description);
+                        if (obj == "RE") {
+                            audit(2, f.description);
+						}
+                        if (obj == "PO") {
+                            poAudit(2,f.description);
+						}
                         return true;
                     };
 
@@ -261,6 +271,29 @@
                     }else {
                         alert("操作失败！");
 					}
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
+
+        function poAudit(auditType, description) {
+            var id = $("#id").val();
+            var currentType = $("#poCurrentType").val();
+            $.ajax({
+                url: '${ctx}/biz/po/bizPoHeaderReq/audit',
+                contentType: 'application/json',
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+                type: 'get',
+                success: function (result) {
+                    result = JSON.parse(result);
+                    if(result.ret == true || result.ret == 'true') {
+                        alert('操作成功!');
+                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
+                    }else {
+                        alert(result.errmsg);
+                    }
                 },
                 error: function (error) {
                     console.info(error);
@@ -516,13 +549,13 @@
 			</div>
 		</c:if>
 		<c:if test="${entity.str == 'startAudit'}">
-			<div class="control-group">
-				<label class="control-label">是否同时提交支付申请：</label>
-				<div class="controls">
-					<input name="meanwhilePayOrder" id="meanwhilePayOrderRadioFalse" type="radio" onclick="showTimeTotal(false);" checked/>否
-					<input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" />是
-				</div>
-			</div>
+			<%--<div class="control-group">--%>
+				<%--<label class="control-label">是否同时提交支付申请：</label>--%>
+				<%--<div class="controls">--%>
+					<%--<input name="meanwhilePayOrder" id="meanwhilePayOrderRadioFalse" type="radio" onclick="showTimeTotal(false);" checked/>否--%>
+					<%--<input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" />是--%>
+				<%--</div>--%>
+			<%--</div>--%>
 			<div class="control-group prewTimeTotal" style="display: none;">
 				<label class="control-label">最后付款时间：</label>
 				<div class="controls">
@@ -533,15 +566,15 @@
 						   placeholder="必填！"/>
 				</div>
 			</div>
-			<div class="control-group prewTimeTotal" style="display: none;">
-				<label class="control-label">申请金额：</label>
-				<div class="controls">
-					<input name="prewPayTotal" id="prewPayTotal" type="text"
-						   value="${entity.bizPoPaymentOrder.id != null ?
-                           entity.bizPoPaymentOrder.total : (entity.totalDetail-entity.balanceTotal)}"
-						   maxlength="20" placeholder="必填！"/>
-				</div>
-			</div>
+			<%--<div class="control-group prewTimeTotal" style="display: none;">--%>
+				<%--<label class="control-label">申请金额：</label>--%>
+				<%--<div class="controls">--%>
+					<%--<input name="prewPayTotal" id="prewPayTotal" type="text"--%>
+						   <%--value="${entity.bizPoPaymentOrder.id != null ?--%>
+                           <%--entity.bizPoPaymentOrder.total : (entity.totalDetail-entity.balanceTotal)}"--%>
+						   <%--maxlength="20" placeholder="必填！"/>--%>
+				<%--</div>--%>
+			<%--</div>--%>
 		</c:if>
 		<c:if test="${entity.str == 'pay'}">
 			<div class="control-group">
@@ -582,6 +615,12 @@
 				<label class="control-label">保证金比例：</label>
 				<div class="controls">
 					<fmt:formatNumber type="number" value="${entity.recvTotal*100/entity.totalMoney}" pattern="0.00" />%
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">累计结算金额：</label>
+				<div class="controls">
+					<fmt:formatNumber type="number" value="${entity.bizPoHeader.payTotal}" pattern="0.00" />
 				</div>
 			</div>
 		</c:if>
@@ -807,7 +846,7 @@
 			</div>
 		</div>
 
-		<c:if test="${entity.str == 'audit'}">
+		<c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList == null}">
 			<div class="control-group">
 				<label class="control-label">审核状态：</label>
 				<div class="controls">
@@ -816,6 +855,19 @@
 						   maxlength="30" class="input-xlarge "/>
 					<input id="currentType" type="hidden" disabled="disabled"
 						   value="${requestOrderProcess.code}" htmlEscape="false"
+						   maxlength="30" class="input-xlarge "/>
+				</div>
+			</div>
+		</c:if>
+		<c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
+			<div class="control-group">
+				<label class="control-label">审核状态：</label>
+				<div class="controls">
+					<input type="text" disabled="disabled"
+						   value="${purchaseOrderProcess.name}" htmlEscape="false"
+						   maxlength="30" class="input-xlarge "/>
+					<input id="poCurrentType" type="hidden" disabled="disabled"
+						   value="${purchaseOrderProcess.code}" htmlEscape="false"
 						   maxlength="30" class="input-xlarge "/>
 				</div>
 			</div>
@@ -932,13 +984,19 @@
 		<div class="form-actions">
 
 			<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-				<c:if test="${entity.str == 'startAudit'}">
-					<input id="btnSubmit" type="button" onclick="startAudit()" class="btn btn-primary" value="审核通过"/>
-					<input id="btnSubmit" type="button" onclick="startRejectAudit()" class="btn btn-primary" value="驳回"/>
-				</c:if>
+				<%--<c:if test="${entity.str == 'startAudit'}">--%>
+					<%--<input id="btnSubmit" type="button" onclick="startAudit()" class="btn btn-primary" value="审核通过"/>--%>
+					<%--<input id="btnSubmit" type="button" onclick="startRejectAudit()" class="btn btn-primary" value="驳回"/>--%>
+				<%--</c:if>--%>
 				<c:if test="${entity.str == 'audit'}">
-					<input id="btnSubmit" type="button" onclick="checkPass()" class="btn btn-primary" value="审核通过"/>
-					<input id="btnSubmit" type="button" onclick="checkReject()" class="btn btn-primary" value="审核驳回"/>
+					<c:if test="${entity.bizPoHeader.commonProcessList == null}">
+						<input id="btnSubmit" type="button" onclick="checkPass('SE')" class="btn btn-primary" value="审核通过"/>
+						<input id="btnSubmit" type="button" onclick="checkReject('SE')" class="btn btn-primary" value="审核驳回"/>
+					</c:if>
+					<c:if test="${entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
+						<input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary" value="审核通过"/>
+						<input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary" value="审核驳回"/>
+					</c:if>
 				</c:if>
 				<c:if test="${entity.str == 'pay'}">
 					<input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>

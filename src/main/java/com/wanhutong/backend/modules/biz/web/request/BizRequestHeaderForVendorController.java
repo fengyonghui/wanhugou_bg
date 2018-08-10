@@ -278,11 +278,15 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 
-		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
-			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+        if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader().getCommonProcess() != null) {
+            RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
-			model.addAttribute("requestOrderProcess", requestOrderProcess);
-		}
+            model.addAttribute("requestOrderProcess", requestOrderProcess);
+        }
+        if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader().getCommonProcess() != null) {
+            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
+            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+        }
 
 //		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
 //			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
