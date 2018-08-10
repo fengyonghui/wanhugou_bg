@@ -235,6 +235,9 @@
 			<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
 				${sqlMap.request}
 			</if>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
 			GROUP BY a.id
 		</where>
 		<choose>

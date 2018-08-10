@@ -141,7 +141,6 @@
             $("#updateMoney").click(function () {
                 updateMoney();
             });
-
         });
 		function removeItem(obj) {
             $("#td_"+obj).html("<a href='#' onclick=\"addItem('"+obj+"')\">增加</a>");
@@ -248,11 +247,80 @@
                 type: 'get',
                 success: function (result) {
                     if(result == 'ok') {
+                        //自动生成采购单
+                        var id = $("#id").val();
+                        var bizStatus = getCurrentBizStatus(id);
+                        console.log("bizStatus=" + bizStatus);
+                        console.log("bizStatus2=" + '${ReqHeaderStatusEnum.APPROVE.state}');
+                        //if (${ReqHeaderStatusEnum.APPROVE.state} == bizStatus)
+
+                        //getPoHeaderPara(id);
+
                         alert("操作成功！");
                         window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                     }else {
                         alert("操作失败！");
 					}
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
+
+        function getCurrentBizStatus(id) {
+		    var bizStatus = "";
+            $.ajax({
+                url: '${ctx}/biz/request/bizRequestHeaderForVendor/getCurrentBizStatus',
+                contentType: 'application/json',
+                data: {"id": id},
+                type: 'get',
+                dataType: 'json',
+                success: function (result) {
+                    bizStatus = result;
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+            return bizStatus;
+        }
+
+        function getPoHeaderPara(id) {
+            $.ajax({
+                url: '${ctx}/biz/request/bizRequestOrder/goListAutoSave',
+                contentType: 'application/json',
+                data: {"reqId": id},
+                type: 'get',
+                dataType: 'json',
+                success: function (result) {
+                    var reqDetailIds = result['unitPrices'];
+                    if (reqDetailIds == "") {
+                        alert("价钱不能为空！");
+                        return;
+                    }
+                    savePoHeader(result);
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
+
+        function savePoHeader(result) {
+            var reqDetailIds = result['reqDetailIds'];
+            var vendorId = result['vendorId'];
+            var unitPrices = result['unitPrices'];
+            var ordQtys = result['ordQtys'];
+            $.ajax({
+                url: '${ctx}/biz/po/bizPoHeader/autoSave',
+                contentType: 'application/json',
+                data: {"reqDetailIds": reqDetailIds, "vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "prewStatus":"prew"},
+                type: 'get',
+                success: function (res) {
+                    if (res == "ok") {
+
+                    }
                 },
                 error: function (error) {
                     console.info(error);
@@ -281,7 +349,6 @@
 	</script>
 	<script type="text/javascript">
 		function deleteStyle() {
-            console.log("--deleteStyle--")
             $("#remark").removeAttr("style");
             $("#cardNumber").removeAttr("style");
             $("#payee").removeAttr("style");
