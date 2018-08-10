@@ -334,6 +334,19 @@
 						<%--<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.id}&type=${PoPayMentOrderTypeEnum.REQ_TYPE.type}">支付申请列表</a>--%>
 					<%--</c:if>--%>
 				</shiro:hasPermission>
+
+				<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+					<c:if test="${requestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state}">
+						<c:if test="${requestHeader.bizPoHeader.commonProcess.id != null
+					&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
+					&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+					&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
+					&& (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+					}">
+							<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&type=audit">审核</a>
+						</c:if>
+					</c:if>
+				</shiro:hasPermission>
 				<%--<shiro:hasPermission name="biz:request:bizRequestHeader:startAudit">--%>
 					<%--<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.EXAMINE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'--%>
 						<%--&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus--%>

@@ -23,6 +23,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
@@ -1145,8 +1146,8 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "autoSave")
     @ResponseBody
-    public String autoSave(String reqDetailIds, String vendorId, String unitPrices, String ordQtys, String prewStatus, String type,
-                         String version, HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes,Model model) {
+    public String autoSave(String reqDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal, String prewStatus, String type,
+                         String version, HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes,Model model) throws ParseException {
         Office vendOffice = new Office();
         vendOffice.setId(Integer.parseInt(vendorId));
 
@@ -1173,6 +1174,8 @@ public class BizPoHeaderController extends BaseController {
         if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null) {
             deOfifceId = bizPoHeader.getDeliveryOffice().getId();
         }
+
+        //生成采购单预览
         String poNo = "0";
         bizPoHeader.setOrderNum(poNo);
         bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
@@ -1190,13 +1193,49 @@ public class BizPoHeaderController extends BaseController {
         if ("mobile".equalsIgnoreCase(version)) {
             return renderString(response, JsonUtil.generateData("操作成功", request.getParameter("callback")), "application/json");
         }
+
+        //确认生成采购单
+        Integer poHeaderIdid = bizPoHeader.getId();
+        bizPoHeader = bizPoHeaderService.get(poHeaderIdid);
         bizPoHeader.setDeliveryStatus(0);
-        bizPoHeader.setLastPayDate(bizPoHeader.getCreateDate());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date lastPayDate = sdf.parse(lastPayDateVal);
+        bizPoHeader.setLastPayDate(lastPayDate);
 
         bizPoHeader.setIsPrew(0);
+        bizPoHeader.setType("createPo");
         bizPoHeaderService.savePoHeader(bizPoHeader);
 
         addMessage(redirectAttributes, "保存采购订单成功");
+
+        //采购单开启审核
+        bizPoHeader = bizPoHeaderService.get(poHeaderIdid);
+        Boolean prew = false;
+        BigDecimal prewPayTotal = new BigDecimal(0);
+        Date prewPayDeadline = null;
+        Integer auditType = 1;
+        String desc = "";
+
+        BizPoPaymentOrder bizPoPaymentOrder = bizPoHeader.getBizPoPaymentOrder();
+        if (bizPoPaymentOrder != null) {
+            if (bizPoPaymentOrder.getId() != null) {
+                prewPayTotal = bizPoPaymentOrder.getTotal();
+            }
+        } else {
+            BigDecimal totalDetail = new BigDecimal((bizPoHeader.getTotalDetail() == null ? 0:bizPoHeader.getTotalDetail()));
+            BigDecimal totalExp = new BigDecimal((bizPoHeader.getTotalExp() == null ? 0:bizPoHeader.getTotalExp()));
+            BigDecimal freight = new BigDecimal((bizPoHeader.getFreight() == null ? 0:bizPoHeader.getFreight()));
+            BigDecimal payTotal = bizPoHeader.getPayTotal();
+
+            prewPayTotal = totalDetail.add(totalExp).add(freight).subtract(payTotal).setScale(0, BigDecimal.ROUND_HALF_UP);
+        }
+
+        Pair<Boolean, String> result = bizPoHeaderService.startAudit(poHeaderIdid, prew, prewPayTotal, prewPayDeadline, auditType, desc);
+//        if (result.getLeft()) {
+//            return JsonUtil.generateData(result, request.getParameter("callback"));
+//        }
+//        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
+
         return "ok";
     }
 }

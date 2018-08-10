@@ -42,7 +42,17 @@
 		process.processor AS "commonProcess.processor",
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
-		a.scheduling_type AS "schedulingType"
+		a.scheduling_type AS "schedulingType",
+		bph.id AS "bizPoHeader.id",
+		bph.process_id AS "bizPoHeader.process_id",
+		cp.id AS "bizPoHeader.commonProcess.id",
+		cp.object_id AS "bizPoHeader.commonProcess.objectId",
+		cp.object_name AS "bizPoHeader.commonProcess.objectName",
+		cp.prev_id AS "bizPoHeader.commonProcess.prevId",
+		cp.biz_status AS "bizPoHeader.commonProcess.bizStatus",
+		cp.processor AS "bizPoHeader.commonProcess.processor",
+		cp.description AS "bizPoHeader.commonProcess.description",
+		cp.type AS "bizPoHeader.commonProcess.type"
 	</sql>
 	
 	<sql id="bizRequestHeaderJoins">
@@ -55,6 +65,9 @@
 		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
 		LEFT JOIN  common_process process on process.id = a.process_id
 		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bre.current_payment_id
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 2
+		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
+		LEFT JOIN common_process cp ON cp.id = bph.process_id
 	</sql>
     
 	<select id="get" resultType="BizRequestHeader">

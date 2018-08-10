@@ -198,6 +198,13 @@
         }
 
         function checkPass(obj) {
+            if('${entity.bizStatus == ReqHeaderStatusEnum.IN_REVIEW.state}'){
+                var lastPayDateVal = $("#lastPayDate").val();
+                if (lastPayDateVal == ""){
+                    alert("请输入最后付款时间！")
+					return false;
+                }
+            }
 			top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
 				if(v=="ok"){
 					var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
@@ -257,15 +264,14 @@
                 type: 'get',
                 success: function (result) {
                     if(result == 'ok') {
-                        //自动生成采购单
-                        var id = $("#id").val();
-                        var bizStatus = getCurrentBizStatus(id);
-                        console.log("bizStatus=" + bizStatus);
-                        console.log("bizStatus2=" + '${ReqHeaderStatusEnum.APPROVE.state}');
-                        //if (${ReqHeaderStatusEnum.APPROVE.state} == bizStatus)
-
-                        //getPoHeaderPara(id);
-
+                        if(auditType==1){
+                            //自动生成采购单
+                            var id = $("#id").val();
+                            var bizStatus = getCurrentBizStatus(id);
+                            if ('${ReqHeaderStatusEnum.APPROVE.state}' == bizStatus) {
+                                getPoHeaderPara(id);
+                            }
+                        }
                         alert("操作成功！");
                         window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                     }else {
@@ -309,6 +315,7 @@
                 data: {"id": id},
                 type: 'get',
                 dataType: 'json',
+                async: false,
                 success: function (result) {
                     bizStatus = result;
                 },
@@ -345,10 +352,12 @@
             var vendorId = result['vendorId'];
             var unitPrices = result['unitPrices'];
             var ordQtys = result['ordQtys'];
+            <!-- 最后付款时间 -->
+            var lastPayDateVal = $("#lastPayDate").val();
             $.ajax({
                 url: '${ctx}/biz/po/bizPoHeader/autoSave',
                 contentType: 'application/json',
-                data: {"reqDetailIds": reqDetailIds, "vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "prewStatus":"prew"},
+                data: {"reqDetailIds": reqDetailIds, "vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
                 type: 'get',
                 success: function (res) {
                     if (res == "ok") {
@@ -634,6 +643,25 @@
 				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
+
+		<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
+			<c:if test="${entity.str == 'audit'}">
+				<c:if test="${entity.bizStatus == ReqHeaderStatusEnum.IN_REVIEW.state}">
+					<div class="control-group">
+						<label class="control-label">最后付款时间：</label>
+						<div class="controls">
+							<input name="lastPayDate" id="lastPayDate" type="text" readonly="readonly" maxlength="20"
+								   class="input-medium Wdate required"
+								   value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
+								   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
+								   placeholder="必填！"/>
+							<span class="help-inline"><font color="red">*</font></span>
+						</div>
+					</div>
+				</c:if>
+			</c:if>
+		</shiro:hasPermission>
+
 		<c:if test="${entity.str!='detail' && entity.str!='audit' }">
 
 		<div class="control-group">
