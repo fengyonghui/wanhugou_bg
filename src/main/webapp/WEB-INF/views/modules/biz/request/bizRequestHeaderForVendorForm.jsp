@@ -375,7 +375,7 @@
                 }
             }
 
-            $("#inputForm").attr("action", "${ctx}/biz/request/bizRequestHeaderForVendor/saveRequest?type=" + type);
+            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type);
             $("#inputForm").submit();
         }
 
@@ -441,7 +441,8 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<form:hidden path="bizPoPaymentOrder.id" id="paymentOrderId"/>
+		<form:hidden path="bizPoHeader.bizPoPaymentOrder.id" id="paymentOrderId"/>
+		<input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
 		<input id="str" type="hidden"  value="${entity.str}"/>
 		<input id="fromType" type="hidden" value="${entity.fromType}"/>
 		<input id="vendId" type="hidden" value="${entity.bizVendInfo.office.id}"/>
@@ -581,7 +582,7 @@
 				<label class="control-label">实际付款金额：</label>
 				<div class="controls">
 					<input id="truePayTotal" name="payTotal" type="text"
-						   value="${entity.bizPoPaymentOrder.payTotal}"
+						   value="${entity.bizPoHeader.bizPoPaymentOrder.payTotal}"
 						   htmlEscape="false" maxlength="30" class="input-xlarge "/>
 				</div>
 			</div>
@@ -594,7 +595,7 @@
 					<input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" multiple="multiple" id="payImg"/>
 				</div>
 				<div id="payImgDiv">
-					<img src="${entity.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
+					<img src="${entity.bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
 				</div>
 			</div>
 		</c:if>
@@ -1144,7 +1145,7 @@
     }
 
     function pay() {
-        var id = $("#id").val();
+        var id = $("#poHeaderId").val();
         var paymentOrderId = $("#paymentOrderId").val();
         var payTotal = $("#truePayTotal").val();
 
@@ -1166,7 +1167,7 @@
         $.ajax({
             url: '${ctx}/biz/po/bizPoHeader/payOrder',
             contentType: 'application/json',
-            data: {"poHeaderId": null,"reqHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img},
+            data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img},
             type: 'get',
             success: function (result) {
                 alert(result);
