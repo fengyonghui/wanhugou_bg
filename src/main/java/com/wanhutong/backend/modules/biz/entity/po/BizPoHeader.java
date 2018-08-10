@@ -457,6 +457,20 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	}
 
+	public enum SchedulingType {
+
+		ORDER(0),
+		SKU(1),
+		;
+		private Integer type;
+
+		SchedulingType(Integer type){this.type = type;}
+
+		public Integer getType() {
+			return type;
+		}
+	}
+
     public String getType() {
         return type;
     }

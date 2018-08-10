@@ -46,6 +46,7 @@ import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
+import com.wanhutong.backend.modules.enums.BizOrderSchedulingEnum;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
@@ -278,15 +279,34 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 
-        if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader().getCommonProcess() != null) {
+        if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() == null) {
             RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
             model.addAttribute("requestOrderProcess", requestOrderProcess);
         }
-        if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader().getCommonProcess() != null) {
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
-            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
-        }
+        if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getBizPoHeader().getCommonProcess() != null) {
+			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
+			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+		}
+		if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.ORDER.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
+				&& (bizRequestHeader.getBizPoHeader().getTotalSchedulingHeaderNum() == null || bizRequestHeader.getBizPoHeader().getTotalSchedulingHeaderNum() == 0)) {
+			model.addAttribute("schedulingType", BizOrderSchedulingEnum.SCHEDULING_NOT.getDesc());
+		}else if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.ORDER.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
+				&& !bizRequestHeader.getBizPoHeader().getTotalOrdQty().equals(bizRequestHeader.getBizPoHeader().getTotalSchedulingHeaderNum())) {
+			model.addAttribute("schedulingType",BizOrderSchedulingEnum.SCHEDULING_PLAN.getDesc());
+		}else if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.ORDER.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
+				&& bizRequestHeader.getBizPoHeader().getTotalOrdQty().equals(bizRequestHeader.getBizPoHeader().getTotalSchedulingHeaderNum())) {
+			model.addAttribute("schedulingType",BizOrderSchedulingEnum.SCHEDULING_DONE.getDesc());
+		}else if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.SKU.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
+				&& (bizRequestHeader.getBizPoHeader().getTotalSchedulingDetailNum() == null || bizRequestHeader.getBizPoHeader().getTotalSchedulingDetailNum() == 0)) {
+			model.addAttribute("schedulingType", BizOrderSchedulingEnum.SCHEDULING_NOT.getDesc());
+		}else if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.SKU.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
+				&& !bizRequestHeader.getBizPoHeader().getTotalOrdQty().equals(bizRequestHeader.getBizPoHeader().getTotalSchedulingDetailNum())) {
+			model.addAttribute("schedulingType",BizOrderSchedulingEnum.SCHEDULING_PLAN.getDesc());
+		}else if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.SKU.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
+				&& bizRequestHeader.getBizPoHeader().getTotalOrdQty().equals(bizRequestHeader.getBizPoHeader().getTotalSchedulingDetailNum())) {
+			model.addAttribute("schedulingType",BizOrderSchedulingEnum.SCHEDULING_DONE.getDesc());
+		}
 
 //		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
 //			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =

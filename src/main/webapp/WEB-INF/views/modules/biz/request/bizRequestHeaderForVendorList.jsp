@@ -197,7 +197,6 @@
 				<th>备注</th>
 				<th>业务状态</th>
 				<th>审核状态</th>
-				<th>排产状态</th>
 				<th>下单时间</th>
 				<th>品类名称</th>
 				<th>申请人</th>
@@ -250,45 +249,6 @@
 					<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">
 						${requestHeader.commonProcess.vendRequestOrderProcess.name}
 					</c:if>
-				</td>
-				<td>
-					<c:choose>
-					<c:when test="${requestHeader.bizPoHeader.totalOrdQty == null || requestHeader.bizPoHeader.totalOrdQty == 0}">
-						<%--${BizOrderSchedulingEnum.UNABLE_SCHEDULING.desc}--%>
-					</c:when>
-					<c:otherwise>
-						<c:if test="${requestHeader.bizPoHeader.schedulingType == 0}">
-							<c:choose>
-								<c:when test="${requestHeader.bizPoHeader.totalSchedulingHeaderNum == null || requestHeader.bizPoHeader.totalSchedulingHeaderNum == 0}">
-									${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}
-								</c:when>
-								<c:otherwise>
-									<c:if test="${requestHeader.bizPoHeader.totalOrdQty != requestHeader.bizPoHeader.totalSchedulingHeaderNum}">
-										${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}
-									</c:if>
-									<c:if test="${requestHeader.bizPoHeader.totalOrdQty == requestHeader.bizPoHeader.totalSchedulingHeaderNum}">
-										${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}
-									</c:if>
-								</c:otherwise>
-							</c:choose>
-						</c:if>
-						<c:if test="${requestHeader.bizPoHeader.schedulingType == 1}">
-							<c:choose>
-								<c:when test="${requestHeader.bizPoHeader.totalSchedulingDetailNum == null || requestHeader.bizPoHeader.totalSchedulingDetailNum == 0}">
-									${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}
-								</c:when>
-								<c:otherwise>
-									<c:if test="${requestHeader.bizPoHeader.totalOrdQty != requestHeader.bizPoHeader.totalSchedulingDetailNum}">
-										${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}
-									</c:if>
-									<c:if test="${requestHeader.bizPoHeader.totalOrdQty == requestHeader.bizPoHeader.totalSchedulingDetailNum}">
-										${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}
-									</c:if>
-								</c:otherwise>
-							</c:choose>
-						</c:if>
-					</c:otherwise>
-					</c:choose>
 				</td>
 				<td>
 					<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
