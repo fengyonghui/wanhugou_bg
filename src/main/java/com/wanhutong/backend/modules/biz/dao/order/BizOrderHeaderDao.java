@@ -155,7 +155,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param startDate 开始时间
      * @return 产品统计数据
      */
-    List<BizProductStatisticsDto> getProductStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("variId") Integer variId, @Param("purchasingId") Integer purchasingId);
+    List<BizProductStatisticsDto> getProductStatisticDataBetween(@Param("startDate") String startDate,
+                                                                 @Param("endDate") String endDate,
+                                                                 @Param("variId") Integer variId,
+                                                                 @Param("purchasingId") Integer purchasingId,
+                                                                 @Param("type") Integer type
+                                                                );
 
    /**
      * 按区间获取商品趋势相关的信息
@@ -166,7 +171,8 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     List<BizProductStatisticsDto> skuTendencyDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate,
                                                          @Param("variId") Integer variId, @Param("purchasingId") Integer purchasingId,
                                                          @Param("type") Integer type,
-                                                         @Param("timeType") String timeType
+                                                         @Param("timeType") String timeType,
+                                                         @Param("itemNo") String itemNo
                                                         );
 
     /**
