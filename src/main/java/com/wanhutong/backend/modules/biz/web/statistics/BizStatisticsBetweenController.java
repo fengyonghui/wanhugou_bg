@@ -302,7 +302,7 @@ public class BizStatisticsBetweenController extends BaseController {
         if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
             return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
         }
-        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.productStatisticData(startDate, endDate, variId, purchasingId);
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.productStatisticData(startDate, endDate, variId, purchasingId, dataType);
         List<String> nameList = Lists.newArrayList();
 
         List<Object> seriesDataList = Lists.newArrayList();
@@ -312,9 +312,15 @@ public class BizStatisticsBetweenController extends BaseController {
             switch (OrderStatisticsDataTypeEnum.parse(dataType)) {
                 case SALEROOM:
                     seriesDataList.add(o.getTotalMoney());
+                    echartsSeriesDto.setName(OrderStatisticsDataTypeEnum.SALEROOM.getDesc());
                     break;
                 case ORDER_COUNT:
                     seriesDataList.add(o.getCount());
+                    echartsSeriesDto.setName(OrderStatisticsDataTypeEnum.ORDER_COUNT.getDesc());
+                    break;
+                case CLICK:
+                    seriesDataList.add(o.getClickCount());
+                    echartsSeriesDto.setName(OrderStatisticsDataTypeEnum.CLICK.getDesc());
                     break;
                 default:
                     break;
@@ -323,7 +329,7 @@ public class BizStatisticsBetweenController extends BaseController {
             allList.add(o.getVendorName().concat("-").concat(o.getItemNo()).concat("-").concat(o.getCount()+"").concat("-")
                     .concat(o.getTotalMoney()+"").concat("-").concat(o.getClickCount()+""));
         });
-        echartsSeriesDto.setName("商品销量");
+
         echartsSeriesDto.setData(seriesDataList);
 
         Map<String, Object> paramMap = Maps.newHashMap();
@@ -350,7 +356,7 @@ public class BizStatisticsBetweenController extends BaseController {
                                     String endDate,
                                     Integer variId,
                                     Integer purchasingId) throws IOException {
-        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.productStatisticData(startDate, endDate, variId, purchasingId);
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.productStatisticData(startDate, endDate, variId, purchasingId, null);
 
         String fileName = "产品统计.xls";
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -367,6 +373,8 @@ public class BizStatisticsBetweenController extends BaseController {
         hCell1.setCellValue("销售额");
         HSSFCell hCell2 = header.createCell(2);
         hCell2.setCellValue("销量");
+        HSSFCell hCell3 = header.createCell(3);
+        hCell3.setCellValue("点击量");
 
 
         for (BizProductStatisticsDto o : bizProductStatisticsDtos) {
@@ -378,6 +386,8 @@ public class BizStatisticsBetweenController extends BaseController {
             cell1.setCellValue(o.getTotalMoney().toString());
             HSSFCell cell2 = row.createCell(2);
             cell2.setCellValue(o.getCount());
+            HSSFCell cell3 = row.createCell(3);
+            cell3.setCellValue(o.getClickCount());
         }
 
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -1974,8 +1984,10 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequiresPermissions("biz:statistics:product:view")
     @RequestMapping(value = {"skuTendencyData"})
     @ResponseBody
-    public String skuTendencyData(HttpServletRequest request, String startDate, String endDate, Integer variId, Integer purchasingId, Integer dataType, String timeType) {
-        if (StringUtils.isBlank(startDate)) {
+    public String skuTendencyData(HttpServletRequest request, String startDate, String endDate, Integer variId,
+                                  Integer purchasingId, Integer dataType, String timeType, String itemNo
+                                ) {
+        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(itemNo)) {
             return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
         }
 
@@ -1993,7 +2005,7 @@ public class BizStatisticsBetweenController extends BaseController {
             endDate = simpleDateFormatDay.format(new Date());
         }
 
-        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.skuTendencyData(startDate, endDate, variId, purchasingId, dataType, timeType);
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.skuTendencyData(startDate, endDate, variId, purchasingId, dataType, timeType, itemNo);
 
         Map<String, List<BizProductStatisticsDto>> skuMap = Maps.newHashMap();
         Set<String> allList = Sets.newHashSet();
@@ -2097,7 +2109,7 @@ public class BizStatisticsBetweenController extends BaseController {
             endDate = simpleDateFormatDay.format(new Date());
         }
 
-        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.skuTendencyData(startDate, endDate, variId, purchasingId, dataType, timeType);
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.skuTendencyData(startDate, endDate, variId, purchasingId, dataType, timeType, null);
 
         String fileName = "产品趋势统计.xls";
         HSSFWorkbook wb = new HSSFWorkbook();

@@ -9,6 +9,7 @@
 <body>
 <div>
     <input id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input id="itemNo" value="${itemNo}" placeholder="itemNo"  required="required"/>
     <label>
         <select class="input-medium" id="variId">
             <option value="0" label="全部"></option>
@@ -38,7 +39,7 @@
         </select>
     </label>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
-    <input id="exportTable" onclick="exportTable()" class="btn btn-primary" type="button" value="导出表格"/>
+    <%--<input id="exportTable" onclick="exportTable()" class="btn btn-primary" type="button" value="导出表格"/>--%>
     <input type="hidden" name="img" id="img"/>
     <div id="orderTotalDataChart" style="height: 500px"></div>
 
@@ -57,6 +58,7 @@
         salesVolumeChart.showLoading($Echarts.showLoadingStyle);
 
         var startDate = $("#startDate").val();
+        var itemNo = $("#itemNo").val();
 
         var variIdEle = $("#variId");
         var variId = variIdEle.find("option:selected").val();
@@ -83,7 +85,7 @@
         $.ajax({
             type: 'GET',
             url: "${ctx}/biz/statistics/between/skuTendencyData",
-            data: {"startDate": startDate, "variId" : variId, "dataType" : dataType, "timeType" : timeType, "purchasingId" : purchasingId},
+            data: {"startDate": startDate, "variId" : variId, "dataType" : dataType, "timeType" : timeType, "purchasingId" : purchasingId, "itemNo" : itemNo},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
