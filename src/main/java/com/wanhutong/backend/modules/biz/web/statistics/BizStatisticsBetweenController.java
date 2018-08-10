@@ -2038,34 +2038,35 @@ public class BizStatisticsBetweenController extends BaseController {
             }
 
 
-            for (Map.Entry<String, List<BizProductStatisticsDto>> me : skuMap.entrySet()) {
-                EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
-                echartsSeriesDto.setName(me.getKey());
-                echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
-                List<Object> seriesDataList = Lists.newArrayList();
+            EchartsSeriesDto clickEchartsSeriesDto = new EchartsSeriesDto();
+            clickEchartsSeriesDto.setName("点击量");
+            clickEchartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
 
+            EchartsSeriesDto orderEchartsSeriesDto = new EchartsSeriesDto();
+            orderEchartsSeriesDto.setName("订单量");
+            orderEchartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+
+            List<Object> clickSeriesDataList = Lists.newArrayList();
+            List<Object> orderSeriesDataList = Lists.newArrayList();
+            for (Map.Entry<String, List<BizProductStatisticsDto>> me : skuMap.entrySet()) {
                     daySet.forEach(o -> {
-                        Object value = 0;
+                        Object clickValue = 0;
+                        Object orderValue = 0;
                         for (BizProductStatisticsDto b : me.getValue()) {
                             if (b.getCreateTime().equals(o)) {
-                                switch (OrderStatisticsDataTypeEnum.parse(dataType)) {
-                                    case CLICK:
-                                        value = b.getClickCount();
-                                        break;
-                                    case ORDER_COUNT:
-                                        value = b.getCount();
-                                        break;
-                                    default:
-                                        break;
-                                }
+                                clickValue = b.getClickCount();
+                                orderValue = b.getCount();
                             }
                         }
-                        seriesDataList.add(value);
+                        clickSeriesDataList.add(clickValue);
+                        orderSeriesDataList.add(orderValue);
                     });
 
-                echartsSeriesDto.setData(seriesDataList);
-                resultData.add(echartsSeriesDto);
+                clickEchartsSeriesDto.setData(clickSeriesDataList);
+                orderEchartsSeriesDto.setData(orderSeriesDataList);
             }
+            resultData.add(clickEchartsSeriesDto);
+            resultData.add(orderEchartsSeriesDto);
         } catch (Exception e) {
             LOGGER.error("generate data error", e);
         }
