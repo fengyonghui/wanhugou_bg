@@ -827,7 +827,8 @@
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		sum(receive_total) AS receiveTotal,
-		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
+		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count,
+		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id AND date_format(pvLog.create_time, '%Y-%m') = #{month}) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
 		and oh.order_type = 1
@@ -1101,7 +1102,8 @@
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		sum(receive_total) AS receiveTotal,
-		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
+		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count,
+		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id AND date_format(pvLog.create_time, '%Y-%m-%d') = #{day}) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
 		and si.id = od.sku_id
@@ -1291,7 +1293,12 @@
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		sum(receive_total) AS receiveTotal,
-		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
+		od.sku_id AS skuId, pi.name,
+		pi.item_no AS itemNo,
+		pi.vendor_name AS vendorName,
+		ss.sale_price AS salePrice,
+		count(1) as count,
+		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id AND pvLog.create_time BETWEEN #{startDate} AND #{endDate}) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
 		and si.id = od.sku_id
@@ -1319,7 +1326,17 @@
 			AND ccc.center_id = #{purchasingId}
 		</if>
 		GROUP BY si.prod_id
-		ORDER BY count DESC
+		<choose>
+			<when test="type !=null and type != '' and type == 7">
+				ORDER BY clickCount DESC
+			</when>
+			<when test="type !=null and type != '' and type == 1">
+				ORDER BY totalMoney DESC
+			</when>
+			<otherwise>
+				ORDER BY count DESC
+			</otherwise>
+		</choose>
 		LIMIT 10
 	</select>
 
@@ -1329,7 +1346,15 @@
 		sum(receive_total) AS receiveTotal,
 		pi.id                                        AS productId,
 		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count,
-		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount,
+		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id
+		<if test="timeType == 'year'">
+			and date_format(pvLog.create_time, '%Y-%m') = date_format(oh.create_time, '%Y-%m')
+		</if>
+		<if test="timeType != 'year'">
+			and date_format(pvLog.create_time, '%Y-%m-%d') = date_format(oh.create_time, '%Y-%m-%d')
+		</if>
+		)
+		AS clickCount,
 		<if test="timeType == 'year'">
 			date_format(oh.create_time, '%Y-%m') AS createTime
 		</if>
@@ -1362,16 +1387,21 @@
 		<if test="purchasingId != null and purchasingId != 0">
 			AND ccc.center_id = #{purchasingId}
 		</if>
-		GROUP BY createTime, skuId
+		<if test="itemNo != null and itemNo != ''">
+			AND pi.item_no = #{itemNo}
+		</if>
+		GROUP BY createTime, pi.id
 		<choose>
 			<when test="type !=null and type != null and type == '7'">
 				ORDER BY clickCount DESC
+			</when>
+			<when test="type !=null and type != '' and type == 1">
+				ORDER BY totalMoney DESC
 			</when>
 			<otherwise>
 				ORDER BY count DESC
 			</otherwise>
 		</choose>
-		LIMIT 10
 	</select>
 
 	<select id="getUserStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
