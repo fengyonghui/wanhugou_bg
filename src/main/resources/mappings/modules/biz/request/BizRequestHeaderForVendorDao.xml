@@ -196,7 +196,6 @@
 			LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
 			WHERE bod.header_id = a.id
 			AND bod.status = 1
-			AND a.from_type = 1
 			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>

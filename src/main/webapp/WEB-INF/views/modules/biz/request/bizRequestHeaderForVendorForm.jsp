@@ -812,7 +812,7 @@
 									<div class="help_step_right"></div>
 								</div>
 							</c:if>
-							<c:if test="${stat.last}">
+							<c:if test="${stat.last && entity.bizPoHeader.commonProcessList == null}">
 								<div class="help_step_item help_step_set">
 									<div class="help_step_left"></div>
 									<div class="help_step_num">${stat.index + 1}</div>
@@ -825,6 +825,41 @@
 					</div>
 				</div>
 			</div>
+            <div class="controls help_wrap">
+                <div class="help_step_box fa">
+                    <c:forEach items="${entity.bizPoHeader.commonProcessList}" var="v" varStatus="stat">
+                        <c:if test="${stat.first}" >
+                            <div class="help_step_item">
+                                <div class="help_step_left"></div>
+                                <div class="help_step_num">${fn:length(entity.commonProcessList)}</div>
+                                批注:${v.description}<br/><br/>
+                                审批人:${v.user.name}<br/>
+                                <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                <div class="help_step_right"></div>
+                            </div>
+                        </c:if>
+                        <c:if test="${!stat.last && !stat.first}" >
+                            <div class="help_step_item">
+                                <div class="help_step_left"></div>
+                                <div class="help_step_num">${fn:length(entity.commonProcessList) + stat.index}</div>
+                                批注:${v.description}<br/><br/>
+                                审批人:${v.user.name}<br/>
+                                <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                <div class="help_step_right"></div>
+                            </div>
+                        </c:if>
+                        <c:if test="${stat.last}">
+                            <div class="help_step_item help_step_set">
+                                <div class="help_step_left"></div>
+                                <div class="help_step_num">${fn:length(entity.commonProcessList) + stat.index}</div>
+                                当前状态:${v.purchaseOrderProcess.name}<br/><br/>
+                                    ${v.user.name}<br/>
+                                <div class="help_step_right"></div>
+                            </div>
+                        </c:if>
+                    </c:forEach>
+                </div>
+            </div>
 		</c:if>
 
 		<div class="form-actions">

@@ -132,39 +132,50 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
-		BizRequestHeader entity = null;
-		if (id!=null){
-			entity = bizRequestHeaderForVendorService.get(id);
-			if (entity.getCommonProcess() != null && entity.getCommonProcess().getId() != null) {
-				List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
-				bizPoHeaderService.getCommonProcessListFromDB(entity.getCommonProcess().getId(), commonProcessList);
-				Collections.reverse(commonProcessList);
-				entity.setCommonProcessList(commonProcessList);
-			}
-			BizRequestDetail bizRequestDetail = new BizRequestDetail();
-			bizRequestDetail.setRequestHeader(entity);
-			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
-			List<BizRequestDetail> requestDetails = Lists.newArrayList();
-			for (BizRequestDetail requestDetail : requestDetailList) {
+		if (id == null){
+		    return new BizRequestHeader();
+        }
+        BizRequestHeader entity = bizRequestHeaderForVendorService.get(id);
+        if (entity.getCommonProcess() != null && entity.getCommonProcess().getId() != null) {
+            List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
+            bizPoHeaderService.getCommonProcessListFromDB(entity.getCommonProcess().getId(), commonProcessList);
+            Collections.reverse(commonProcessList);
+            entity.setCommonProcessList(commonProcessList);
+        }
+        BizPoHeader bizPoHeader = new BizPoHeader();
+        bizPoHeader.setBizRequestHeader(entity);
+        List<BizPoHeader> bizPoHeaderList = bizPoHeaderService.findList(bizPoHeader);
+        if (CollectionUtils.isNotEmpty(bizPoHeaderList)) {
+            BizPoHeader poHeader = bizPoHeaderList.get(0);
+            if (poHeader.getCommonProcess() != null && poHeader.getCommonProcess().getId() != null) {
+                List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
+                bizPoHeaderService.getCommonProcessListFromDB(poHeader.getCommonProcess().getId(), commonProcessList);
+                Collections.reverse(commonProcessList);
+                poHeader.setCommonProcessList(commonProcessList);
+                entity.setBizPoHeader(poHeader);
+            }
+        }
 
-				BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
-				bizSchedulingPlan.setBizRequestDetail(requestDetail);
+        BizRequestDetail bizRequestDetail = new BizRequestDetail();
+        bizRequestDetail.setRequestHeader(entity);
+        List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+        List<BizRequestDetail> requestDetails = Lists.newArrayList();
+        for (BizRequestDetail requestDetail : requestDetailList) {
+
+            BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
+            bizSchedulingPlan.setBizRequestDetail(requestDetail);
 //				List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findAllList(bizSchedulingPlan);
 //				//requestDetail.setSchedulingPlanList(schedulingPlanList);
 
-				BizRequestDetail requestDetailTemp = bizRequestDetailService.getsumSchedulingNum(requestDetail.getId());
-				if (requestDetailTemp != null) {
-					requestDetail.setSumSchedulingNum(requestDetailTemp.getSumSchedulingNum());
-					requestDetail.setSumCompleteNum(requestDetailTemp.getSumCompleteNum());
-					requestDetail.setSumCompleteDetailNum(requestDetailTemp.getSumCompleteDetailNum());
-				}
-				requestDetails.add(requestDetail);
-			}
-			entity.setRequestDetailList(requestDetails);
-		}
-		if (entity == null){
-			entity = new BizRequestHeader();
-		}
+            BizRequestDetail requestDetailTemp = bizRequestDetailService.getsumSchedulingNum(requestDetail.getId());
+            if (requestDetailTemp != null) {
+                requestDetail.setSumSchedulingNum(requestDetailTemp.getSumSchedulingNum());
+                requestDetail.setSumCompleteNum(requestDetailTemp.getSumCompleteNum());
+                requestDetail.setSumCompleteDetailNum(requestDetailTemp.getSumCompleteDetailNum());
+            }
+            requestDetails.add(requestDetail);
+        }
+        entity.setRequestDetailList(requestDetails);
 		return entity;
 	}
 

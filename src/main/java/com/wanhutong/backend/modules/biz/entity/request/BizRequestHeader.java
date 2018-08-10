@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.entity.request;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
@@ -173,6 +174,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 已审批流程
 	 */
 	private List<CommonProcessEntity> commonProcessList;
+
+	/**
+	 * 一单到底对应的采购单
+	 */
+	private BizPoHeader bizPoHeader;
 
 	public BizRequestHeader() {
 		super();
@@ -647,5 +653,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setTotalCompleteScheduHeaderNum(Integer totalCompleteScheduHeaderNum) {
 		this.totalCompleteScheduHeaderNum = totalCompleteScheduHeaderNum;
+	}
+
+	public BizPoHeader getBizPoHeader() {
+		return bizPoHeader;
+	}
+
+	public void setBizPoHeader(BizPoHeader bizPoHeader) {
+		this.bizPoHeader = bizPoHeader;
 	}
 }
