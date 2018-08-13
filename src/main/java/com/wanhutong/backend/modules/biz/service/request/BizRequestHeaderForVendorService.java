@@ -214,12 +214,14 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 			bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 		}
 		Integer processId = 0;
-		if (ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
-			processId = saveCommonProcess(bizRequestHeader);
-		}
-		if (ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
-			processId = saveVendCommonProcess(bizRequestHeader);
-		}
+
+		processId = saveCommonProcess(bizRequestHeader);
+//		if (ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+//			processId = saveCommonProcess(bizRequestHeader);
+//		}
+//		if (ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+//			processId = saveVendCommonProcess(bizRequestHeader);
+//		}
 
 		this.updateProcessId(bizRequestHeader.getId(),processId);
 

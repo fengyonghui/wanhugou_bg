@@ -315,7 +315,7 @@
 					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
 							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
 							}">
-						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核--RE</a>
+						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
 					</c:if>
 					<%--<!-- 本地备货审核 -->--%>
 					<%--<c:if test="${(fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'--%>
@@ -345,10 +345,22 @@
 					&& (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
 					}">
 							<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&type=audit">审核</a>--%>
-							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核--PO</a>
+							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
 						</c:if>
 					</c:if>
 				</shiro:hasPermission>
+
+					<c:if test="${requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
+						<c:if test="${requestHeader.bizPoHeader.totalOrdQty != null && requestHeader.bizPoHeader.totalOrdQty != 0}">
+							<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
+							</shiro:hasPermission>
+						</c:if>
+					</c:if>
+
 				<%--<shiro:hasPermission name="biz:request:bizRequestHeader:startAudit">--%>
 					<%--<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.EXAMINE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'--%>
 						<%--&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus--%>
