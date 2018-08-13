@@ -451,7 +451,7 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<form:hidden path="bizPoHeader.bizPoPaymentOrder.id" id="paymentOrderId"/>
+		<input type="hidden" value="${entity.bizPoPaymentOrder.id}" id="paymentOrderId"/>
 		<input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
 		<input id="str" type="hidden"  value="${entity.str}"/>
 		<input id="fromType" type="hidden" value="${entity.fromType}"/>
@@ -471,7 +471,7 @@
 			<div class="control-group">
 				<label class="control-label">备货清单编号：</label>
 				<div class="controls">
-					<form:input path="reqNo" cssClass="input-xlarge" disabled="true"/>
+					<input name="reqNo" value="${entity.reqNo}" class="input-xlarge" disabled="disabled"/>
 					<span class="help-inline"><font color="red">*</font> </span>
 				</div>
 			</div>

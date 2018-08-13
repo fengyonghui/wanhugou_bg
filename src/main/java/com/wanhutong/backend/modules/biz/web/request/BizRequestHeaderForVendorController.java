@@ -234,7 +234,13 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizRequestHeader bizRequestHeader, Model model) {
 		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
-		if (bizRequestHeader.getBizPoHeader() != null) {
+		if (bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getId() == null) {
+			List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
+			String str = bizRequestHeader.getStr();
+			if (CollectionUtils.isNotEmpty(requestHeaderList)) {
+				bizRequestHeader = requestHeaderList.get(0);
+				bizRequestHeader.setStr(str);
+			}
 			BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
 			bizPoPaymentOrder.setPoHeaderId(bizRequestHeader.getBizPoHeader().getId());
 			bizPoPaymentOrder.setType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
@@ -244,6 +250,9 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				bizPoPaymentOrder = payList.get(0);
 			}
 			bizRequestHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
+
+		}
+		if (bizRequestHeader.getId() != null) {
 			BizRequestDetail bizRequestDetail = new BizRequestDetail();
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
 			if (!ReqHeaderStatusEnum.CLOSE.getState().equals(bizRequestHeader.getBizStatus())

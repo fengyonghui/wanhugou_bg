@@ -304,7 +304,8 @@
 				<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">
 					<c:if test="${requestHeader.bizPoPaymentOrder.id == null
 						&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
-						&& fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型') != '结算完成'
+						&& requestHeader.bizStatus >= ReqHeaderStatusEnum.COMPLETE.state
+						&& requestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state
 						&& (requestHeader.balanceTotal == null ? 0 : requestHeader.balanceTotal) < requestHeader.totalDetail
 						}">
 						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=createPay">申请付款</a>

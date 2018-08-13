@@ -690,7 +690,7 @@ public class BizPoHeaderReqController extends BaseController {
         if ("createPay".equalsIgnoreCase(type)) {
             String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
             addMessage(redirectAttributes, msg);
-            return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeaderReq/?repage";
+            return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";
         }
 
         if (!beanValidator(model, bizPoHeader)) {
