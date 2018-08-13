@@ -234,10 +234,10 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizRequestHeader bizRequestHeader, Model model) {
 		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
-		if (bizRequestHeader.getId() != null) {
+		if (bizRequestHeader.getBizPoHeader() != null) {
 			BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
-			bizPoPaymentOrder.setPoHeaderId(bizRequestHeader.getId());
-			bizPoPaymentOrder.setType(PoPayMentOrderTypeEnum.REQ_TYPE.getType());
+			bizPoPaymentOrder.setPoHeaderId(bizRequestHeader.getBizPoHeader().getId());
+			bizPoPaymentOrder.setType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
 			bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
 			List<BizPoPaymentOrder> payList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
 			if (CollectionUtils.isNotEmpty(payList)) {
@@ -458,12 +458,12 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				List<BizPoOrderReq> poOrderReqList= bizPoOrderReqService.findList(bizPoOrderReq);
 				PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
 				Iterator<BizPoOrderReq> poOrderReqIterator = poOrderReqList.iterator();
-				if (poOrderReqIterator.hasNext()) {
-					BizPoHeader bizPoHeader = bizPoHeaderService.get(poOrderReqIterator.next().getPoHeader());
-					if (bizPoHeader.getProcessId() != purchaseOrderProcessConfig.getPayProcessId()) {
-						poOrderReqList.remove(poOrderReqIterator.next());
-					}
-				}
+//				if (poOrderReqIterator.hasNext()) {
+//					BizPoHeader bizPoHeader = bizPoHeaderService.get(poOrderReqIterator.next().getPoHeader());
+//					if (bizPoHeader.getProcessId() != purchaseOrderProcessConfig.getPayProcessId()) {
+//						poOrderReqList.remove(poOrderReqIterator.next());
+//					}
+//				}
 				if(CollectionUtils.isNotEmpty(poOrderReqList)){
 					BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 					skuInfo.setVendorName(requestDetail.getSkuInfo().getVendorName());

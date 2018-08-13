@@ -301,9 +301,9 @@
 
 				</shiro:hasPermission>
 				<!-- 保证金支付申请 -->
-				<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">${requestHeader.balanceTotal}
+				<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">
 					<c:if test="${requestHeader.bizPoPaymentOrder.id == null
-						&& requestHeader.commonProcess.vendRequestOrderProcess.name == '审批完成'
+						&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 						&& fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型') != '结算完成'
 						&& (requestHeader.balanceTotal == null ? 0 : requestHeader.balanceTotal) < requestHeader.totalDetail
 						}">
@@ -314,7 +314,7 @@
 					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
 							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
 							}">
-						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
+						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核--RE</a>
 					</c:if>
 					<%--<!-- 本地备货审核 -->--%>
 					<%--<c:if test="${(fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'--%>
@@ -331,7 +331,7 @@
 					<%--</c:if>--%>
 					<%--<!-- 保证金审核 -->--%>
 					<%--<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">--%>
-						<%--<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.id}&type=${PoPayMentOrderTypeEnum.REQ_TYPE.type}">支付申请列表</a>--%>
+					<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}">支付申请列表</a>
 					<%--</c:if>--%>
 				</shiro:hasPermission>
 
@@ -343,7 +343,8 @@
 					&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
 					&& (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
 					}">
-							<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&type=audit">审核</a>
+							<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&type=audit">审核</a>--%>
+							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核--PO</a>
 						</c:if>
 					</c:if>
 				</shiro:hasPermission>

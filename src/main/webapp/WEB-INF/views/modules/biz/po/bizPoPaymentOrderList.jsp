@@ -151,12 +151,13 @@
                         result = JSON.parse(result);
                         if(result.ret == true || result.ret == 'true') {
                             alert('操作成功!');
-                            if (type == ${PoPayMentOrderTypeEnum.PO_TYPE.type}) {
-                            window.location.href = "${ctx}/biz/po/bizPoHeader";
-							}
-							if (type == ${PoPayMentOrderTypeEnum.REQ_TYPE.type}) {
-                                window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"
-                            }
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"
+                            <%--if (type == ${PoPayMentOrderTypeEnum.PO_TYPE.type}) {--%>
+                            <%--window.location.href = "${ctx}/biz/po/bizPoHeader";--%>
+                            <%--}--%>
+                            <%--if (type == ${PoPayMentOrderTypeEnum.REQ_TYPE.type}) {--%>
+                                <%--window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"--%>
+                            <%--}--%>
                         }else {
                             alert(result.errmsg);
                         }

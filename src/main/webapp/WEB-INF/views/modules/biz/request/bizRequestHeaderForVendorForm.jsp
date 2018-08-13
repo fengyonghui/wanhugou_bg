@@ -374,6 +374,7 @@
             if (type == 'createPay') {
                 var payTotal = $("#payTotal").val();
                 var payDeadline = $("#payDeadline").val();
+                var id = $("#poHeaderId").val();
                 if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                     alert("请输入申请金额!");
                     return false;
@@ -384,7 +385,7 @@
                 }
             }
 
-            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type);
+            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id);
             $("#inputForm").submit();
         }
 
@@ -732,7 +733,7 @@
 						</c:if>
 					</c:if>
 					<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
-						<c:if test="${entity.str!='detail' && entity.str!='audit' }">
+						<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay' }">
 							<th>操作</th>
 						</c:if>
 
@@ -800,7 +801,7 @@
 							</c:if>
 
 							<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
-								<c:if test="${entity.str!='detail'&& entity.str!='audit'}">
+								<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay' }">
 								<td>
 								<a href="#" onclick="delItem(${reqDetail.id})">删除</a>
 
@@ -1025,11 +1026,11 @@
 				<%--</c:if>--%>
 				<c:if test="${entity.str == 'audit'}">
 					<c:if test="${entity.bizPoHeader.commonProcessList == null}">
-						<input id="btnSubmit" type="button" onclick="checkPass('SE')" class="btn btn-primary" value="审核通过"/>
-						<input id="btnSubmit" type="button" onclick="checkReject('SE')" class="btn btn-primary" value="审核驳回"/>
+						<input id="btnSubmit" type="button" onclick="checkPass('RE')" class="btn btn-primary" value="审核通过--RE"/>
+						<input id="btnSubmit" type="button" onclick="checkReject('RE')" class="btn btn-primary" value="审核驳回"/>
 					</c:if>
 					<c:if test="${entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
-						<input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary" value="审核通过"/>
+						<input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary" value="审核通过--PO"/>
 						<input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary" value="审核驳回"/>
 					</c:if>
 				</c:if>
@@ -1040,6 +1041,15 @@
 					<input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>
 				</c:if>
 			</shiro:hasPermission>
+
+			<!-- 一单到底，采购单审核 -->
+			<%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
+				<%--<c:if test="${type == 'audit'}">--%>
+					<%--<input id="btnSubmit" type="button" onclick="checkPass()" class="btn btn-primary" value="审核通过"/>--%>
+					<%--<input id="btnSubmit" type="button" onclick="checkReject()" class="btn btn-primary" value="审核驳回"/>--%>
+				<%--</c:if>--%>
+			<%--</shiro:hasPermission>--%>
+
 			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
 				<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str != 'startAudit' && entity.str != 'createPay' && entity.str != 'pay'}">
 					<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
