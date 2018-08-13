@@ -285,7 +285,7 @@
         }
 
         function poAudit(auditType, description) {
-            var id = $("#id").val();
+            var id = $("#poHeaderId").val();
             var currentType = $("#poCurrentType").val();
             $.ajax({
                 url: '${ctx}/biz/po/bizPoHeaderReq/audit',
@@ -1026,12 +1026,8 @@
 				<%--</c:if>--%>
 				<c:if test="${entity.str == 'audit'}">
 					<c:if test="${entity.bizPoHeader.commonProcessList == null}">
-						<input id="btnSubmit" type="button" onclick="checkPass('RE')" class="btn btn-primary" value="审核通过--RE"/>
+						<input id="btnSubmit" type="button" onclick="checkPass('RE')" class="btn btn-primary" value="审核通过"/>
 						<input id="btnSubmit" type="button" onclick="checkReject('RE')" class="btn btn-primary" value="审核驳回"/>
-					</c:if>
-					<c:if test="${entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
-						<input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary" value="审核通过--PO"/>
-						<input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary" value="审核驳回"/>
 					</c:if>
 				</c:if>
 				<c:if test="${entity.str == 'pay'}">
@@ -1043,12 +1039,14 @@
 			</shiro:hasPermission>
 
 			<!-- 一单到底，采购单审核 -->
-			<%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
-				<%--<c:if test="${type == 'audit'}">--%>
-					<%--<input id="btnSubmit" type="button" onclick="checkPass()" class="btn btn-primary" value="审核通过"/>--%>
-					<%--<input id="btnSubmit" type="button" onclick="checkReject()" class="btn btn-primary" value="审核驳回"/>--%>
-				<%--</c:if>--%>
-			<%--</shiro:hasPermission>--%>
+			<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+				<c:if test="${entity.str == 'audit'}">
+					<c:if test="${entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
+						<input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary" value="审核通过"/>
+						<input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary" value="审核驳回"/>
+					</c:if>
+				</c:if>
+			</shiro:hasPermission>
 
 			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
 				<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str != 'startAudit' && entity.str != 'createPay' && entity.str != 'pay'}">
