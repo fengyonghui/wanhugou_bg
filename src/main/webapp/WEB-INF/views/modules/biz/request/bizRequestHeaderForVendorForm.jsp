@@ -982,7 +982,7 @@
             <div class="controls help_wrap">
                 <div class="help_step_box fa">
                     <c:forEach items="${entity.bizPoHeader.commonProcessList}" var="v" varStatus="stat">
-                        <c:if test="${stat.first}" >
+                        <c:if test="${stat.first && !stat.last}" >
                             <div class="help_step_item">
                                 <div class="help_step_left"></div>
                                 <div class="help_step_num">${fn:length(entity.commonProcessList)}</div>
