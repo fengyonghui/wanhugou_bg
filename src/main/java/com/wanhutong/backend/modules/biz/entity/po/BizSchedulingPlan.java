@@ -24,6 +24,7 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	private String objectName;		// 表名
 	private Integer objectId;		// 表ID
 	private Integer originalNum;		// 单子原始数量
+	private String remark;     //备注
 //	private Integer schedulingNum;		// 排产数量
 //	private Integer completeNum;		// 已完成数量
 	/**
@@ -163,5 +164,13 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 
 	public void setBizRequestHeader(BizRequestHeader bizRequestHeader) {
 		this.bizRequestHeader = bizRequestHeader;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 }

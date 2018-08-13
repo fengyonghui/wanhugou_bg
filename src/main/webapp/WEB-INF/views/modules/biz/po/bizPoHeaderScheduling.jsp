@@ -151,8 +151,10 @@
             var params = new Array();
             if (schedulingType == "0"){
                 var originalNum = $("#totalOrdQty").val();
+                var schRemark = $("#schRemarkOrder").text();
             } else {
                 var originalNum = $(eval("totalOrdQtyForSku_" + id)).val();
+                var schRemark = $("#schRemarkSku").text();
             }
             var totalSchedulingNum = 0;
             for(i=0;i<trArray.length;i++){
@@ -175,6 +177,7 @@
                 entity.schedulingNum = value;
                 entity.planDate=date;
                 entity.schedulingType=schedulingType;
+                entity.remark=schRemark;
                 params[i]=entity;
 
                 totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
@@ -439,7 +442,7 @@
                         <td>
                             <div>
                                 <label>备注：</label>
-                                    <form:textarea path="remark" htmlEscape="false" maxlength="200" class="input-xlarge "/>
+                                <textarea id="schRemarkOrder" maxlength="200" class="input-xlarge " >${bizPoHeader.bizSchedulingPlan.remark}</textarea>
                             </div>
                         </td>
                     </tr>
@@ -575,7 +578,8 @@
                         <td colspan="10">
                             <div>
                                 <label>备注：</label>
-                                <form:textarea path="remark" htmlEscape="false" maxlength="200" class="input-xlarge "/>
+                                <%--<form:textarea path="remark" htmlEscape="false" maxlength="200" class="input-xlarge "/>--%>
+                                <textarea id="schRemarkSku" maxlength="200" class="input-xlarge " >${bizPoHeader.bizSchedulingPlan.remark}</textarea>
                             </div>
                         </td>
                     </tr>

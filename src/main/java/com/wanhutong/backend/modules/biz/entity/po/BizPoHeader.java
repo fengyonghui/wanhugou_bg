@@ -123,6 +123,11 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 */
 	private BizRequestHeader bizRequestHeader;
 
+	/**
+	 * 排产
+	 */
+	private BizSchedulingPlan bizSchedulingPlan;
+
 
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
@@ -541,5 +546,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setBizRequestHeader(BizRequestHeader bizRequestHeader) {
 		this.bizRequestHeader = bizRequestHeader;
+	}
+
+	public BizSchedulingPlan getBizSchedulingPlan() {
+		return bizSchedulingPlan;
+	}
+
+	public void setBizSchedulingPlan(BizSchedulingPlan bizSchedulingPlan) {
+		this.bizSchedulingPlan = bizSchedulingPlan;
 	}
 }

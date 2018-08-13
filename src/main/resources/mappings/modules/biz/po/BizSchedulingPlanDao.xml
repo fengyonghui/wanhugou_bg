@@ -9,6 +9,7 @@
 		<result property="delFlag" column="status"/>
 		<result property="createDate" column="createDate"/>
 		<result property="updateDate" column="updateDate"/>
+		<result property="remark" column="remark"/>
 
 		<association property="createBy" javaType="User" column="createBy.id">
 			<id property="id" column="createBy.id"/>
@@ -37,7 +38,8 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		a.remark AS "remark"
 	</sql>
 	
 	<sql id="bizSchedulingPlanJoins">
@@ -105,7 +107,8 @@
 			create_time,
 			u_version,
 			update_id,
-			update_time
+			update_time,
+			remark
 		) VALUES (
 			#{id},
 			#{objectName},
@@ -116,7 +119,8 @@
 			#{createDate},
 			#{uVersion},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+			#{remark}
 		)
 	</insert>
 	

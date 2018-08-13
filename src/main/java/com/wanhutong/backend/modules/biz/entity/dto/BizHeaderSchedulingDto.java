@@ -26,6 +26,11 @@ public class BizHeaderSchedulingDto {
      */
     public String schedulingType;
 
+    /**
+     * 订单排产类型
+     */
+    public String remark;
+
 
     public Integer getObjectId() {
         return objectId;
@@ -65,5 +70,13 @@ public class BizHeaderSchedulingDto {
 
     public void setSchedulingType(String schedulingType) {
         this.schedulingType = schedulingType;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

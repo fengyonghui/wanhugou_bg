@@ -1037,7 +1037,7 @@ public class BizPoHeaderController extends BaseController {
                     Integer detailId = dtoList.get(i).getObjectId();
                     BizHeaderSchedulingDto dto = dtoList.get(i);
                     BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(detailId, objectName);
-                    if (schedulingPlan == null) {
+                    if (i == 0) {
                         schedulingPlan = new BizSchedulingPlan();
                         schedulingPlan.setObjectId(dto.getObjectId());
                         schedulingPlan.setObjectName(objectName);
@@ -1072,7 +1072,7 @@ public class BizPoHeaderController extends BaseController {
                 BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(objectId, objectName);
                 for (int i = 0; i < dtoList.size(); i++) {
                     BizHeaderSchedulingDto dto = dtoList.get(i);
-                    if (schedulingPlan == null) {
+                    if (i == 0) {
                         schedulingPlan = new BizSchedulingPlan();
                         schedulingPlan.setObjectId(dto.getObjectId());
                         schedulingPlan.setObjectName(objectName);
