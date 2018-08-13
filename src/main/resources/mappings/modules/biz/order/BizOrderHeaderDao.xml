@@ -738,7 +738,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type = 1 AND detail1.status = 1
+		WHERE office.id = office1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
 	</foreach>
@@ -756,7 +756,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE
-		header.order_type = 1
+		header.order_type != 4
 		AND not exists(
 		select 1
 		from sys_test_account ta
@@ -787,7 +787,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type = 1
+		WHERE office.id = office1.id AND header1.order_type != 4
 		AND (<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
 	</foreach>
@@ -806,7 +806,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE
-		header.order_type = 1
+		header.order_type != 4
 		AND not exists(
 		select 1
 		from sys_test_account ta
@@ -831,7 +831,7 @@
 		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id AND date_format(pvLog.create_time, '%Y-%m') = #{month}) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
-		and oh.order_type = 1
+		and oh.order_type != 4
 		and si.id = od.sku_id
 		and si.prod_id = pi.id
 		<if test="variId != null and variId != 0">
@@ -917,7 +917,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type = 1 AND detail1.status = 1
+		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -951,7 +951,7 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1
+		oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -992,7 +992,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type = 1 AND detail1.status = 1
+		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND header1.status = 1
 		AND us1.status = 1
 		AND consultant1.status = 1
@@ -1024,7 +1024,7 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 	    WHERE
-		oh.order_type = 1
+		oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1063,7 +1063,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type = 1 AND detail1.status = 1
+		WHERE office.id = office1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
 		</foreach>
@@ -1081,7 +1081,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE
-		header.order_type = 1
+		header.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1111,7 +1111,7 @@
 		<if test="variId != null and variId != 0">
 			and pi.vari_id = #{variId}
 		</if>
-		and oh.order_type = 1
+		and oh.order_type != 4
 		and oh.status = 1
 		and ccc.status = 1
 		and ccc.cust_id = oh.cust_id
@@ -1172,7 +1172,7 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1
+		oh.order_type != 4
 		and oh.status = 1
 		and ccc.status = 1
 		AND NOT EXISTS(
@@ -1211,7 +1211,7 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1
+		oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1252,7 +1252,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type = 1 AND detail1.status = 1
+		WHERE office.id = office1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1270,7 +1270,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE
-		header.order_type = 1
+		header.order_type != 4
 		and header.status = 1
 		and consultant.status = 1
 		AND NOT EXISTS(
@@ -1306,7 +1306,7 @@
 		<if test="variId != null and variId != 0">
 			and pi.vari_id = #{variId}
 		</if>
-		and oh.order_type = 1
+		and oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1368,7 +1368,7 @@
 		<if test="variId != null and variId != 0">
 			and pi.vari_id = #{variId}
 		</if>
-		and oh.order_type = 1
+		and oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1440,7 +1440,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type = 1 AND detail1.status = 1
+		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1462,7 +1462,7 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1
+		oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1497,7 +1497,7 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1
+		oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1590,7 +1590,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE header1.order_type = 1
+		WHERE header1.order_type != 4
 		and header1.`status` = 1
 		AND detail1.status = 1
 		and office1.`status` = 1
@@ -1666,7 +1666,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE header1.order_type = 1
+		WHERE header1.order_type != 4
 		and header1.`status` = 1
 		AND detail1.status = 1
 		and office1.`status` = 1
@@ -1843,7 +1843,7 @@ SELECT
        ON consultant1.cust_id = header1.cust_id
      LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
      LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-   WHERE office1.id = so.id AND header1.order_type = 1 AND header1.`status` = 1 AND detail1.status = 1 AND
+   WHERE office1.id = so.id AND header1.order_type != 4 AND header1.`status` = 1 AND detail1.status = 1 AND
          NOT EXISTS(SELECT 1
                     FROM sys_test_account ta
                     WHERE header1.cust_id = ta.object_id AND ta.object_name = 'sys_office') AND
@@ -1909,7 +1909,7 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         LEFT JOIN biz_custom_center_consultant AS cc1 ON  header1.cust_id = cc1.cust_id
         LEFT JOIN sys_user AS u1 ON cc1.consultant_id = u1.id
         LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-        WHERE u1.id = u.id AND header1.order_type = 1 AND header1.`status` = 1 AND detail1.status = 1 AND
+        WHERE u1.id = u.id AND header1.order_type != 4 AND header1.`status` = 1 AND detail1.status = 1 AND
         NOT EXISTS(SELECT 1
         FROM sys_test_account ta
         WHERE header1.cust_id = ta.object_id AND ta.object_name = 'sys_office') AND
