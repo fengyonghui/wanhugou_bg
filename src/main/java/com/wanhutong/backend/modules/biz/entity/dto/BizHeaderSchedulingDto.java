@@ -6,6 +6,10 @@ package com.wanhutong.backend.modules.biz.entity.dto;
  */
 public class BizHeaderSchedulingDto {
     /**
+     * poHeaderId
+     */
+    public Integer id;
+    /**
      * 表ID
      */
     public Integer objectId;
@@ -31,6 +35,14 @@ public class BizHeaderSchedulingDto {
      */
     public String remark;
 
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getObjectId() {
         return objectId;

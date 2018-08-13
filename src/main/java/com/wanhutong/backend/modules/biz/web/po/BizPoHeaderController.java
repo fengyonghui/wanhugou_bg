@@ -1033,20 +1033,32 @@ public class BizPoHeaderController extends BaseController {
             //按商品排产时
             if (SCHEDULING_FOR_DETAIL.equals(schedulingType)) {
                 objectName = PO_DETAIL_TABLE_NAME;
+                Integer poHeaderId = dtoList.get(0).getId();
+                BizSchedulingPlan schedulingPlanPoh = bizSchedulingPlanService.getByObjectIdAndObjectName(poHeaderId, PO_HEADER_TABLE_NAME);
                 for (int i = 0; i < dtoList.size(); i++) {
-                    Integer detailId = dtoList.get(i).getObjectId();
                     BizHeaderSchedulingDto dto = dtoList.get(i);
-                    BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(detailId, objectName);
                     if (i == 0) {
-                        if (schedulingPlan == null) {
-                            schedulingPlan = new BizSchedulingPlan();
+                        if (schedulingPlanPoh == null) {
+                            schedulingPlanPoh = new BizSchedulingPlan();
                         }
+                        schedulingPlanPoh.setObjectId(dto.getId());
+                        schedulingPlanPoh.setObjectName(PO_HEADER_TABLE_NAME);
+                        schedulingPlanPoh.setOriginalNum(0);
+                        schedulingPlanPoh.setRemark(dto.getRemark());
+                        bizSchedulingPlanService.save(schedulingPlanPoh);
+                    }
+
+
+                    Integer detailId = dtoList.get(i).getObjectId();
+                    BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(detailId, objectName);
+                    if (schedulingPlan == null) {
+                        schedulingPlan = new BizSchedulingPlan();
                         schedulingPlan.setObjectId(dto.getObjectId());
                         schedulingPlan.setObjectName(objectName);
                         schedulingPlan.setOriginalNum(dto.getOriginalNum());
-                        schedulingPlan.setRemark(dto.getRemark());
                         bizSchedulingPlanService.save(schedulingPlan);
                     }
+
 
                     BizCompletePaln bizCompletePaln = new BizCompletePaln();
                     bizCompletePaln.setSchedulingPlan(schedulingPlan);
@@ -1071,15 +1083,15 @@ public class BizPoHeaderController extends BaseController {
                 bizPoHeaderService.updateSchedulingType(bizPoHeader);
 
             } else {
-                Integer objectId = dtoList.get(0).getObjectId();
-                BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(objectId, objectName);
+                Integer poHeaderId = dtoList.get(0).getId();
+                BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(poHeaderId, objectName);
                 for (int i = 0; i < dtoList.size(); i++) {
                     BizHeaderSchedulingDto dto = dtoList.get(i);
                     if (i == 0) {
                         if (schedulingPlan == null) {
                             schedulingPlan = new BizSchedulingPlan();
                         }
-                        schedulingPlan.setObjectId(dto.getObjectId());
+                        schedulingPlan.setObjectId(dto.getId());
                         schedulingPlan.setObjectName(objectName);
                         schedulingPlan.setOriginalNum(dto.getOriginalNum());
                         schedulingPlan.setRemark(dto.getRemark());

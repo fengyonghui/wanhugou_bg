@@ -56,7 +56,7 @@
 		LEFT JOIN biz_vend_info bvi on so.id= bvi.office_id
 		LEFT JOIN biz_po_payment_order payment ON payment.id = a.current_payment_id
 		LEFT JOIN common_process process ON process.id = a.process_id
-		LEFT JOIN biz_scheduling_plan bslp ON bslp.object_id = a.id
+		LEFT JOIN biz_scheduling_plan bslp ON bslp.object_id = a.id AND bslp.object_name='biz_po_header'
 	</sql>
 
 	<select id="get" resultType="BizPoHeader">

@@ -173,7 +173,8 @@
                     return false;
                 }
                 var entity = {};
-                entity.objectId = '${bizPoHeader.id}';
+                entity.id = '${bizPoHeader.id}';
+                entity.objectId = id;
                 entity.originalNum = originalNum;
                 entity.schedulingNum = value;
                 entity.planDate=date;
@@ -215,6 +216,8 @@
             var totalOriginalNum = 0;
             var count = 1
             var ind = 0;
+            var schRemark = "";
+            schRemark = $("#schRemarkSku").val();
             for(var index in reqDetailIdList) {
                 var reqDetailId = reqDetailIdList[index];
                 var trArray = $("[name='" + reqDetailId + "']");
@@ -237,11 +240,13 @@
                         return false;
                     }
                     var entity = {};
+                    entity.id = '${bizPoHeader.id}';
                     entity.objectId = reqDetailId;
                     entity.originalNum = originalNum;
                     entity.schedulingNum = value;
                     entity.planDate=date;
                     entity.schedulingType=1;
+                    entity.remark=schRemark;
 
                     params[ind]=entity;
 
@@ -301,7 +306,7 @@
                 <input id="orderNum" readonly="readonly" class="input-xlarge" type='text'/>
             </div>
             <!-- 采购单编号 -->
-            <div class="controls" >
+            <div class="controls" style="display: none">
                 <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
             </div>
         </div>
@@ -438,17 +443,18 @@
                             </div>
                         </td>
                     </tr>
-
-                    <tr id="remark" >
+                </table>
+                <table style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+                    <tr>
                         <td>
                             <div>
                                 <label>备注：</label>
-                                <textarea id="schRemarkOrder" maxlength="200" class="input-xlarge " >${bizPoHeader.bizSchedulingPlan.remark}</textarea>
+                                <textarea id="schRemarkOrder" maxlength="200"
+                                          class="input-xlarge ">${bizPoHeader.bizSchedulingPlan.remark}</textarea>
                             </div>
                         </td>
                     </tr>
                 </table>
-
             </div>
         </div>
 
@@ -575,14 +581,10 @@
                         <input id="aaId" value="${aa}" type="hidden"/>
                     </c:if>
 
-                    <tr id="remark" >
+                    <tr>
                         <td colspan="10">
                             <div>
                                 <label>备注：</label>
-                                <%--<form:textarea path="remark" htmlEscape="false" maxlength="200" class="input-xlarge "/>--%>
-                                <script>
-                                    console.log('${bizPoHeader.bizSchedulingPlan.remark}')
-                                </script>
                                 <textarea id="schRemarkSku" maxlength="200" class="input-xlarge " >${bizPoHeader.bizSchedulingPlan.remark}</textarea>
                             </div>
                         </td>
