@@ -971,7 +971,7 @@
 								<div class="help_step_item help_step_set">
 									<div class="help_step_left"></div>
 									<div class="help_step_num">${stat.index + 1}</div>
-									当前状态:${v.vendRequestOrderProcess.name}<br/><br/>
+									当前状态:${v.requestOrderProcess.name}<br/><br/>
 										${v.user.name}<br/>
 									<div class="help_step_right"></div>
 								</div>
