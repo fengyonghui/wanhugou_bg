@@ -1038,10 +1038,13 @@ public class BizPoHeaderController extends BaseController {
                     BizHeaderSchedulingDto dto = dtoList.get(i);
                     BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(detailId, objectName);
                     if (i == 0) {
-                        schedulingPlan = new BizSchedulingPlan();
+                        if (schedulingPlan == null) {
+                            schedulingPlan = new BizSchedulingPlan();
+                        }
                         schedulingPlan.setObjectId(dto.getObjectId());
                         schedulingPlan.setObjectName(objectName);
                         schedulingPlan.setOriginalNum(dto.getOriginalNum());
+                        schedulingPlan.setRemark(dto.getRemark());
                         bizSchedulingPlanService.save(schedulingPlan);
                     }
 
@@ -1073,10 +1076,13 @@ public class BizPoHeaderController extends BaseController {
                 for (int i = 0; i < dtoList.size(); i++) {
                     BizHeaderSchedulingDto dto = dtoList.get(i);
                     if (i == 0) {
-                        schedulingPlan = new BizSchedulingPlan();
+                        if (schedulingPlan == null) {
+                            schedulingPlan = new BizSchedulingPlan();
+                        }
                         schedulingPlan.setObjectId(dto.getObjectId());
                         schedulingPlan.setObjectName(objectName);
                         schedulingPlan.setOriginalNum(dto.getOriginalNum());
+                        schedulingPlan.setRemark(dto.getRemark());
                         bizSchedulingPlanService.save(schedulingPlan);
                     }
                     BizCompletePaln bizCompletePaln = new BizCompletePaln();

@@ -149,12 +149,13 @@
         function saveComplete(schedulingType,id) {
             var trArray = $("[name='" + id + "']");
             var params = new Array();
+            var schRemark = "";
             if (schedulingType == "0"){
                 var originalNum = $("#totalOrdQty").val();
-                var schRemark = $("#schRemarkOrder").text();
+                schRemark = $("#schRemarkOrder").val();
             } else {
                 var originalNum = $(eval("totalOrdQtyForSku_" + id)).val();
-                var schRemark = $("#schRemarkSku").text();
+                schRemark = $("#schRemarkSku").val();
             }
             var totalSchedulingNum = 0;
             for(i=0;i<trArray.length;i++){
@@ -172,7 +173,7 @@
                     return false;
                 }
                 var entity = {};
-                entity.objectId = id;
+                entity.objectId = '${bizPoHeader.id}';
                 entity.originalNum = originalNum;
                 entity.schedulingNum = value;
                 entity.planDate=date;
@@ -300,7 +301,7 @@
                 <input id="orderNum" readonly="readonly" class="input-xlarge" type='text'/>
             </div>
             <!-- 采购单编号 -->
-            <div class="controls" style="display: none">
+            <div class="controls" >
                 <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
             </div>
         </div>
@@ -579,6 +580,9 @@
                             <div>
                                 <label>备注：</label>
                                 <%--<form:textarea path="remark" htmlEscape="false" maxlength="200" class="input-xlarge "/>--%>
+                                <script>
+                                    console.log('${bizPoHeader.bizSchedulingPlan.remark}')
+                                </script>
                                 <textarea id="schRemarkSku" maxlength="200" class="input-xlarge " >${bizPoHeader.bizSchedulingPlan.remark}</textarea>
                             </div>
                         </td>
