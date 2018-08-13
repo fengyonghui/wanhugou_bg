@@ -111,9 +111,8 @@
 					'<div class="step_num_txt">'+
 						'<div class="mui-input-row">'+
 							'<label>处理人:</label>'+
-					        '<textarea name="" rows="" cols="" disabled>'+ item.createBy.name +'</textarea>'+
+							'<input type="text" value="'+ item.createBy.name +'" class="mui-input-clear" disabled>'+
 					    '</div>'+
-						'<br />'+
 						'<div class="mui-input-row">'+
 					        '<label>状态:</label>'+
 					        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
@@ -168,19 +167,27 @@
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>仓库名称：</label>'+
-							'<input type="text" class="mui-input-clear" disabled>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.invName +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>库存数量：</label>'+
-							'<input type="text" class="mui-input-clear" disabled>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.skuInvQty +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>总库存数量：</label>'+
-							'<input type="text" class="mui-input-clear" disabled>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.invenSkuOrd +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>已收货数量：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.recvQty +'" disabled>'+
+						'</div>'+
+						'<div class="mui-input-row">'+
+							'<label>已生成采购单：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.bizPoHeader.orderNum +'" disabled>'+
+						'</div>'+
+						'<div class="mui-input-row">'+
+							'<label>采购数量：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" disabled>'+
 						'</div>'+
 					'</div>'+
 				'</li>'

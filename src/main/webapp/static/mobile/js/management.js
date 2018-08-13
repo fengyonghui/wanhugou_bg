@@ -51,6 +51,7 @@
                         data: {parentId:dataId},
                         dataType: "json",
                         success: function(res){
+                        	console.log(res)
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
                                 pHtmlList+='<p class="childMenu" purchId="'+item.id+'">'+ item.name+'</p>'
@@ -109,6 +110,7 @@
 						url: "../html/staffMgmtHtml/staffList.html",
 						extras: {
 								purchId:purchId,
+								
 						}
 					})
                 }

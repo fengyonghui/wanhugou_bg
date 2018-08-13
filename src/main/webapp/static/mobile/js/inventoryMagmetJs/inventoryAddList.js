@@ -34,7 +34,7 @@
 		},
         saveDetail: function () {
             var _this = this;
-            mui('.SaveBtn').on('tap','#inSaveBtn',function(){
+            mui('.inSaveBtn').on('tap','#inSaveBtn',function(){
                 var skuIds = _this.skuInfoIds.split(",");
                 var skuInfoIdsTemp = ""
                 for (var i=0; i<skuIds.length; i++){
@@ -52,7 +52,7 @@
                     var cheId = skuIds2[j];
                     var reqQty = $("#reqQty_" + cheId).val()
                     if (reqQty == null || reqQty == "") {
-                        alert("请输入申报数量！")
+                        mui.toast("请输入申报数量！")
                         return;
                     }
                     reqQtysTemp += "," + reqQty;
@@ -67,15 +67,15 @@
                 var bizStatusVal = $("#inputDivAdd")[0].value; //业务状态
 
                 if(_this.fromOfficeId == null || _this.fromOfficeId == ""){
-				    alert("请选择采购中心！")
+				    mui.toast("请选择采购中心！")
                     return;
                 }
                 if(inPoLastDaVal == null || inPoLastDaVal == "") {
-                    alert("请选择收货时间！")
+                    mui.toast("请选择收货时间！")
                     return;
                 }
                 if(bizStatusVal == null || bizStatusVal == "") {
-                    alert("请选择业务状态！")
+                    mui.toast("请选择业务状态！")
                     return;
                 }
 

@@ -171,7 +171,6 @@
                     var reqQty = $("#reqQty_" + cheId).val()
                     if (reqQty == null || reqQty == "") {
                     	mui.toast("请输入申报数量！")
-//                      alert("请输入申报数量！")
                         return;
                     }
                     reqQtysTemp += "," + reqQty;
@@ -196,15 +195,15 @@
                 }
 
                 if(_this.fromOfficeId == null || _this.fromOfficeId == ""){
-                    alert("请选择采购中心！")
+                    mui.toast("请选择采购中心！")
                     return;
                 }
                 if(inPoLastDaVal == null || inPoLastDaVal == "") {
-                    alert("请选择收货时间！")
+                    mui.toast("请选择收货时间！")
                     return;
                 }
                 if(bizStatusVal == null || bizStatusVal == "") {
-                    alert("请选择业务状态！")
+                    mui.toast("请选择业务状态！")
                     return;
                 }
 
@@ -300,9 +299,8 @@
                     '<div class="step_num_txt">'+
                     '<div class="mui-input-row">'+
                     '<label>处理人:</label>'+
-                    '<textarea name="" rows="" cols="" disabled>'+ item.createBy.name +'</textarea>'+
+                    '<input type="text" value="'+ item.createBy.name +'" class="mui-input-clear" disabled>'+
                     '</div>'+
-                    '<br />'+
                     '<div class="mui-input-row">'+
                     '<label>状态:</label>'+
                     '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
@@ -353,7 +351,7 @@
                     '<li class="mui-table-view-cell">' +
                     '<div class="mui-input-row inputClassAdd">' +
                     '<label>申报数量:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.reqQty + '" disabled></div></li></div></div>';
+                    '<input type="text" class="mui-input-clear inDeclareNum" id="" value="' + item.reqQty + '" disabled></div></li></div></div>';
 
                 if (_this.deleteBtnFlag == true) {
                     htmlCommodity += '<div class="addBtn">' +
