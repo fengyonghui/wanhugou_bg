@@ -1247,12 +1247,19 @@ public class BizPoHeaderController extends BaseController {
 
             prewPayTotal = totalDetail.add(totalExp).add(freight).subtract(payTotal).setScale(0, BigDecimal.ROUND_HALF_UP);
         }
-
         Pair<Boolean, String> result = bizPoHeaderService.startAudit(poHeaderIdid, prew, prewPayTotal, prewPayDeadline, auditType, desc);
-//        if (result.getLeft()) {
-//            return JsonUtil.generateData(result, request.getParameter("callback"));
-//        }
-//        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
+
+        //自动生成付款单
+        bizPoHeader = bizPoHeaderService.get(poHeaderIdid);
+        //应付金额
+        bizPoHeader.setPlanPay(prewPayTotal);
+        //本次申请付款时间
+        String deadLine = DateUtils.getDateTime();
+        Date deadlineDate = DateUtils.parseDate(deadLine);
+        bizPoHeader.setPayDeadline(deadlineDate);
+        String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
+        addMessage(redirectAttributes, msg);
+
 
         return "ok";
     }

@@ -343,6 +343,15 @@
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
+			<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
+				<shiro:hasPermission name="biz:request:bizOrderHeader:audit">
+					<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, orderHeader.commonProcess.requestOrderProcess.roleEnNameEnum) && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
+							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
+							}">
+						<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=audit">审核</a>
+					</c:if>
+				</shiro:hasPermission>
+			</c:if >
 			<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
 				<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">

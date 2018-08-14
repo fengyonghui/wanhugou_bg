@@ -34,6 +34,7 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private Integer bizStatus;		//发货地：0、采购中心； 1、供货中心；
 	private Integer ship;		//发货单来源：0、销售订单；1、备货单
 	private Date sendDate;		// 供货时间
+	private Date inspectDate;		// 验货时间
 	private List<BizOrderHeader> orderHeaderList;
 	private List<BizRequestHeader> requestHeaderList;
 	private String requestHeaders;		//发货备货单ID
@@ -63,6 +64,11 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	 * 同一物流单号下总货值
 	 * */
 	private Double logisticsValuePrice;
+
+	/**
+	 * 集货地点
+	 * */
+	private String collLocate;
 
 
 	public BizInvoice() {
@@ -276,5 +282,21 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 
 	public void setLogisticsValuePrice(Double logisticsValuePrice) {
 		this.logisticsValuePrice = logisticsValuePrice;
+	}
+
+	public Date getInspectDate() {
+		return inspectDate;
+	}
+
+	public void setInspectDate(Date inspectDate) {
+		this.inspectDate = inspectDate;
+	}
+
+	public String getCollLocate() {
+		return collLocate;
+	}
+
+	public void setCollLocate(String collLocate) {
+		this.collLocate = collLocate;
 	}
 }

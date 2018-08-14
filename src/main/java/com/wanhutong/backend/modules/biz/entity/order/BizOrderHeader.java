@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 
@@ -147,6 +148,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 固定商品的详情总价
      */
     private String detailPrice;
+    /**
+     * 首付金额
+     */
+    private Integer payProportion;
+    /**
+     * 审核流程
+     */
+    private CommonProcessEntity commonProcess;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -741,5 +750,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setDetailPrice(String detailPrice) {
         this.detailPrice = detailPrice;
+    }
+
+    public Integer getPayProportion() {
+        return payProportion;
+    }
+
+    public void setPayProportion(Integer payProportion) {
+        this.payProportion = payProportion;
+    }
+
+    public CommonProcessEntity getCommonProcess() {
+        return commonProcess;
+    }
+
+    public void setCommonProcess(CommonProcessEntity commonProcess) {
+        this.commonProcess = commonProcess;
     }
 }
