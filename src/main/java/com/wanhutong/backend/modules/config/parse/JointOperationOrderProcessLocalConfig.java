@@ -17,17 +17,24 @@ import java.util.Map;
  *
  * @author ma.qiang
  */
-@XStreamAlias("PurchaseOrderProcessConfig")
-public class PurchaseOrderProcessConfig extends ConfigGeneral {
+@XStreamAlias("JointOperationOrderProcessLocalConfig")
+public class JointOperationOrderProcessLocalConfig extends ConfigGeneral {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseOrderProcessConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JointOperationOrderProcessLocalConfig.class);
 
 
-    @XStreamAlias("defaultProcessId")
-    private int defaultProcessId;
+    @XStreamAlias("zeroDefaultProcessId")
+    private int zeroDefaultProcessId;
+     @XStreamAlias("fifthDefaultProcessId")
+    private int fifthDefaultProcessId;
+     @XStreamAlias("allDefaultProcessId")
+    private int allDefaultProcessId;
+
 
     @XStreamAlias("payProcessId")
     private int payProcessId;
+
+
 
     @XStreamImplicit(itemFieldName = "process")
     private List<PurchaseOrderProcess> processList;
@@ -38,8 +45,8 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
     private Map<Integer, PurchaseOrderProcess> processMap;
 
     @Override
-    public PurchaseOrderProcessConfig parse(String content) throws Exception {
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = XmlUtils.fromXml(content);
+    public JointOperationOrderProcessLocalConfig parse(String content) throws Exception {
+        JointOperationOrderProcessLocalConfig purchaseOrderProcessConfig = XmlUtils.fromXml(content);
         purchaseOrderProcessConfig.processMap = Maps.newHashMap();
         if (CollectionUtils.isNotEmpty(purchaseOrderProcessConfig.processList)) {
             for (PurchaseOrderProcess e : purchaseOrderProcessConfig.processList) {
@@ -77,8 +84,16 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
         return processMap.get(currentEnum.getRejectCode());
     }
 
-    public int getDefaultProcessId() {
-        return defaultProcessId;
+    public int getZeroDefaultProcessId() {
+        return zeroDefaultProcessId;
+    }
+
+    public int getFifthDefaultProcessId() {
+        return fifthDefaultProcessId;
+    }
+
+    public int getAllDefaultProcessId() {
+        return allDefaultProcessId;
     }
 
     public int getPayProcessId() {

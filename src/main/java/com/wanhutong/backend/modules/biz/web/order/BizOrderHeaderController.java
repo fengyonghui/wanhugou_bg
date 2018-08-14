@@ -22,6 +22,7 @@ import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultan
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.*;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
@@ -36,6 +37,7 @@ import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -67,7 +69,7 @@ import java.util.*;
 @RequestMapping(value = "${adminPath}/biz/order/bizOrderHeader")
 public class BizOrderHeaderController extends BaseController {
 
-    protected Logger LOGGER = LoggerFactory.getLogger(BizOrderHeaderController.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BizOrderHeaderController.class);
 
 
     private static final Integer IMGTYPE = 37;
@@ -548,13 +550,15 @@ public class BizOrderHeaderController extends BaseController {
     @ResponseBody
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "Commissioner")
-    public String Commissioner(BizOrderHeader bizOrderHeader, String localSendIds, String boo, Integer objJsp, Model model, RedirectAttributes redirectAttributes) {
+    public String commissioner(BizOrderHeader bizOrderHeader, String localSendIds, String boo, Integer objJsp) {
         String commis = "comError";
         try {
             if (bizOrderHeader.getId() != null) {
                 BizOrderHeader order = bizOrderHeaderService.get(bizOrderHeader);
                 if (order != null) {
                     if (objJsp.equals(OrderHeaderBizStatusEnum.SUPPLYING.getState())) {
+                        OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(order.getTotalDetail(), order.getReceiveTotal());
+                        order.setPayProportion(orderPayProportionStatusEnum.getState());
                         order.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                         bizOrderHeaderService.saveOrderHeader(order);
                         bizOrderStatusService.saveOrderStatus(order);
@@ -619,6 +623,7 @@ public class BizOrderHeaderController extends BaseController {
             commis = "comError";
             e.printStackTrace();
         }
+
         return commis;
     }
 

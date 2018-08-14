@@ -560,6 +560,7 @@ public class BizPoHeaderController extends BaseController {
     public String save(HttpServletResponse response, HttpServletRequest request,
                        BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes,
                        String prewStatus, String type, String version) {
+
         if ("audit".equalsIgnoreCase(type)) {
             String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
             addMessage(redirectAttributes, msg);

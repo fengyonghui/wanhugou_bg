@@ -139,6 +139,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private BizDrawBack drawBack;
 
+    /**
+     * 支付比例
+     */
+    private Integer payProportion;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -716,5 +721,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setDrawBack(BizDrawBack drawBack) {
         this.drawBack = drawBack;
+    }
+
+    public Integer getPayProportion() {
+        return payProportion;
+    }
+
+    public void setPayProportion(Integer payProportion) {
+        this.payProportion = payProportion;
     }
 }
