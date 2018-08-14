@@ -61,10 +61,14 @@ import com.wanhutong.backend.common.utils.excel.ExportExcel;
 import com.wanhutong.backend.common.utils.excel.ImportExcel;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
 import com.wanhutong.backend.modules.biz.web.statistics.BizStatisticsPlatformController;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
@@ -75,6 +79,7 @@ import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +94,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -155,10 +161,12 @@ public class UserController extends BaseController {
 					user.getCompany().setCustomerTypeTen(queryOffice.getType());
 				} else if (queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()))) {    //网供中心 11
 					user.getCompany().setCustomerTypeEleven(queryOffice.getType());
+					user.getCompany().setCustomerTypeThirteen(String.valueOf(OfficeTypeEnum.NETWORK.getType()));
 				} else {
 					user.getCompany().setType(String.valueOf(OfficeTypeEnum.PURCHASINGCENTER.getType()));
 					user.getCompany().setCustomerTypeTen(String.valueOf(OfficeTypeEnum.WITHCAPITAL.getType()));
 					user.getCompany().setCustomerTypeEleven(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()));
+					user.getCompany().setCustomerTypeThirteen(String.valueOf(OfficeTypeEnum.NETWORK.getType()));
 				}
 			}
 		}
