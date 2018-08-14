@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ page import="com.wanhutong.backend.modules.enums.OfficeTypeEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
 <html>
 <head>
 	<title>用户管理</title>
@@ -32,6 +33,12 @@
 							    alert("该采购专员下关联有经销店，请交接后再修改");
 							    return false;
 							}
+                            var headImg = $("#headImgDiv").find("[customInput = 'headImgImg']");
+                            var headImgStr = "";
+                            for (var i = 0; i < headImg.length; i ++) {
+                                headImgStr += ($(headImg[i]).attr("src") + ",");
+                            }
+                            $("#photo").val(headImgStr);
                             loading('正在提交，请稍等...');
                             form.submit();
                         }
@@ -69,12 +76,20 @@
 	<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/save" method="post" class="form-horizontal">
 		<form:hidden id="userId" path="id"/>
 		<form:hidden path="conn"/>
+		<input type="hidden" id="photo" name="photo" value=""/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">头像:</label>
+			<label class="control-label">头像:
+				<p style="opacity: 0.5; color: red;">点击图片删除</p>
+			</label>
+
 			<div class="controls">
-				<form:hidden id="nameImage" path="photo" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-				<sys:ckfinder input="nameImage" type="images" uploadPath="/photo" selectMultiple="false" maxWidth="100" maxHeight="100"/>
+				<input class="btn" type="file" name="productImg" onchange="submitPic('headImg', true)" value="上传图片" multiple="multiple" id="headImg"/>
+			</div>
+			<div id="headImgDiv">
+				<c:forEach items="${headPhotoList}" var="photo">
+					<img src="${photo.imgServer}${photo.imgPath}" customInput="headImgImg" style='width: 100px' onclick="$(this).remove();">
+				</c:forEach>
 			</div>
 		</div>
 		<div class="control-group">
@@ -208,5 +223,68 @@
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+	<script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		function submitPic(id, multiple){
+			var f = $("#" + id).val();
+			if(f==null||f==""){
+				alert("错误提示:上传文件不能为空,请重新选择文件");
+				return false;
+			}else{
+				var extname = f.substring(f.lastIndexOf(".")+1,f.length);
+				extname = extname.toLowerCase();//处理了大小写
+				if(extname!= "jpeg"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png"){
+					$("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
+					return false;
+				}
+			}
+			var file = document.getElementById(id).files;
+			var size = file[0].size;
+			if(size>2097152){
+				alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
+				return false;
+			}
+			ajaxFileUploadPic(id, multiple);
+		}
+
+        function ajaxFileUploadPic(id, multiple) {
+            $.ajaxFileUpload({
+                url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
+                secureuri : false, //一般设置为false
+                fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
+                type : 'POST',
+                dataType : 'text', //返回值类型 一般设置为json
+                success : function(data, status) {
+                    //服务器成功响应处理函数
+                    var msg = data.substring(data.indexOf("{"), data.indexOf("}")+1);
+                    var msgJSON = JSON.parse(msg);
+                    var imgList = msgJSON.imgList;
+                    var imgDiv = $("#" + id + "Div");
+                    var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
+                    if (imgList && imgList.length > 0 && multiple) {
+                        for (var i = 0; i < imgList.length; i ++) {
+                            imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        }
+                    }else if (imgList && imgList.length > 0 && !multiple) {
+                        imgDiv.empty();
+                        for (var i = 0; i < imgList.length; i ++) {
+                            imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        }
+                    }else {
+                        var img = $("#" + id + "Img");
+                        img.attr("src", msgJSON.fullName);
+                    }
+                },
+                error : function(data, status, e) {
+                    //服务器响应失败处理函数
+                    console.info(data);
+                    console.info(status);
+                    console.info(e);
+                    alert("上传失败");
+                }
+            });
+            return false;
+        }
+	</script>
 </body>
 </html>

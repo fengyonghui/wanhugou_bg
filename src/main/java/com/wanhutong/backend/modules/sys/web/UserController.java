@@ -19,9 +19,12 @@ import javax.validation.ConstraintViolationException;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
@@ -121,6 +124,8 @@ public class UserController extends BaseController {
 	private BizVarietyInfoService bizVarietyInfoService;
 	@Autowired
 	private BizVarietyUserInfoService bizVarietyUserInfoService;
+	@Autowired
+	private CommonImgService commonImgService;
 
 	@ModelAttribute
 	public User get(@RequestParam(required=false) Integer id) {
@@ -199,6 +204,16 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "form")
 	public String form(User user, Model model,String flag) {
+		if (user.getId() != null) {
+			CommonImg commonImg = new CommonImg();
+			commonImg.setObjectId(user.getId());
+			commonImg.setObjectName(ImgEnum.USER_PHOTO.getTableName());
+			commonImg.setImgType(ImgEnum.USER_PHOTO.getCode());
+			List<CommonImg> headPhotoList = commonImgService.findList(commonImg);
+			if (CollectionUtils.isNotEmpty(headPhotoList)) {
+				model.addAttribute("headPhotoList",headPhotoList);
+			}
+		}
 		if (user.getOffice()==null || user.getOffice().getId()==null){
 			user.setCompany(UserUtils.getUser().getCompany());
 			user.setOffice(UserUtils.getUser().getOffice());

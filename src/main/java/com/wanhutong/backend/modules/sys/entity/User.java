@@ -83,6 +83,11 @@ public class User extends DataEntity<User> {
 	 */
 	private Office vendor;
 
+	/**
+	 * 头像
+	 */
+	private String headPhotos;
+
 	public String getConn() {
 		return conn;
 	}
@@ -450,6 +455,14 @@ public class User extends DataEntity<User> {
 
 	public void setVarityList(List<BizVarietyInfo> varityList) {
 		this.varityList = varityList;
+	}
+
+	public String getHeadPhotos() {
+		return headPhotos;
+	}
+
+	public void setHeadPhotos(String headPhotos) {
+		this.headPhotos = headPhotos;
 	}
 
 	@JsonIgnore
