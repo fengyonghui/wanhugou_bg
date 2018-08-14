@@ -146,6 +146,16 @@ public class BizStatisticsService {
     }
 
     /**
+     * 根据月份取用户统计相关数据
+     *
+     * @param month 取数据的月份
+     * @return 根据不同机构分类的统计数据
+     */
+    public BizUserStatisticsDto userStatisticDataByOfficeId(String month, Integer officeId) {
+        return bizOrderHeaderDao.getUserStatisticDataByOfficeId(month, officeId);
+    }
+
+    /**
      * 根据月份取用户业绩统计相关数据
      *
      * @param month 取数据的月份

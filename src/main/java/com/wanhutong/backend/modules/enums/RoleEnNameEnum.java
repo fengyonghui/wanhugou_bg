@@ -73,6 +73,11 @@ public enum RoleEnNameEnum {
     CHANNEL_MANAGER("channel_manager","渠道经理"),
 
     /**
+     * 提付款专员
+     */
+    PAYMENT_SPECIALIST_SUBMIT("payment_specialist_submit","提付款专员"),
+
+    /**
      * 系统管理员
      */
     DEPT("dept", "系统管理员");
