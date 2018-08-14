@@ -130,6 +130,12 @@
 			var htmlCommodity = '';
 			$.each(data.reqDetailList, function(i, item) {
 //				console.log(item)
+				var orderNum = '';
+				if(item.bizPoHeader) {
+					orderNum = item.bizPoHeader.orderNum;
+				}else {
+					orderNum = ''
+				}
 				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
 //		产品图片
 					'<div class="photoParent mui-pull-left app_pr">'+
@@ -183,7 +189,7 @@
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>已生成采购单：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.bizPoHeader.orderNum +'" disabled>'+
+							'<input type="text" class="mui-input-clear" value="'+ orderNum +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>采购数量：</label>'+

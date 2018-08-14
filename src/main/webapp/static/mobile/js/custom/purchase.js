@@ -61,7 +61,7 @@
 									var classBtn = '';
 									var processName = '';
 								//开启审核   、   审核
-									if(item.process) {
+									if(item.process.purchaseOrderProcess) {
 										processName = item.process.purchaseOrderProcess.name
 										var code = item.process.purchaseOrderProcess.code;
 										if(item.process.purchaseOrderProcess.roleEnNameEnum) {
@@ -76,6 +76,7 @@
 											classBtn = ''
 										}
 									} else {
+										processName = ''
 										startBtn = '开启审核'
 										classBtn = 'startShenhe'
 									}
