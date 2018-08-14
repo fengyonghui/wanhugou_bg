@@ -22,6 +22,7 @@ public class JointOperationOrderProcessLocalConfig extends ConfigGeneral {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JointOperationOrderProcessLocalConfig.class);
 
+    private static final String ORDER_TABLE_NAME = "ORDER_HEADER_SO_LOCAL";
 
     @XStreamAlias("zeroDefaultProcessId")
     private int zeroDefaultProcessId;

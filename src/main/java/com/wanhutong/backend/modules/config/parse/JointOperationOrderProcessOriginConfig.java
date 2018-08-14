@@ -23,12 +23,16 @@ public class JointOperationOrderProcessOriginConfig extends ConfigGeneral {
     private static final Logger LOGGER = LoggerFactory.getLogger(JointOperationOrderProcessOriginConfig.class);
 
 
+    private static final String ORDER_TABLE_NAME = "ORDER_HEADER_SO_ORIGIN";
+
+
     @XStreamAlias("zeroDefaultProcessId")
     private int zeroDefaultProcessId;
      @XStreamAlias("fifthDefaultProcessId")
     private int fifthDefaultProcessId;
      @XStreamAlias("allDefaultProcessId")
     private int allDefaultProcessId;
+
 
 
     @XStreamAlias("payProcessId")
