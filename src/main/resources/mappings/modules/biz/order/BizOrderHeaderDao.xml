@@ -1248,7 +1248,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type != 4 AND detail1.status = 1
+		WHERE office.id = office1.id AND header1.order_type != 4 and header1.order_type != 6  AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1267,6 +1267,7 @@
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE
 		header.order_type != 4
+		and header.order_type != 6
 		and header.status = 1
 		and consultant.status = 1
 		AND NOT EXISTS(
