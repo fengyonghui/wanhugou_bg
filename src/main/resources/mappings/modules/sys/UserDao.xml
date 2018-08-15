@@ -221,6 +221,9 @@
 			<if test="company != null and company.customerTypeEleven != null and company.customerTypeEleven != ''">
 				,#{company.customerTypeEleven}
 			</if>
+			<if test="company != null and company.customerTypeThirteen != null and company.customerTypeThirteen != ''">
+				,#{company.customerTypeThirteen}
+			</if>
 			)
 		</if>
 
