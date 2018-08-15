@@ -93,7 +93,11 @@
 				rh.id AS "bizRequestHeader.id",
 				rh.req_no AS "bizRequestHeader.reqNo",
 				rh.biz_status AS "bizRequestHeader.bizStatus",
-                rh.create_time AS "bizRequestHeader.createDate"
+                rh.create_time AS "bizRequestHeader.createDate",
+				oh.id AS "bizOrderHeader.id",
+				oh.order_num AS "bizOrderHeader.orderNum",
+				oh.biz_status AS "bizOrderHeader.bizStatus",
+				oh.create_time AS "bizOrderHeader.createDate"
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
 		LEFT JOIN biz_po_payment_order ppo ON ppo.po_header_id = a.id
@@ -110,6 +114,11 @@
 				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
 				OR
 				rh.req_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
+				OR
+				oh.order_num LIKE
 				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>

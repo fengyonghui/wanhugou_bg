@@ -15,6 +15,7 @@ import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.*;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
@@ -22,11 +23,16 @@ import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultan
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.*;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
+import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.SystemConfig;
 import com.wanhutong.backend.modules.enums.*;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -105,6 +111,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizOrderAppointedTimeService bizOrderAppointedTimeService;
     @Autowired
     private BizOrderCommentService bizOrderCommentService;
+    @Autowired
+    private BizPoHeaderService bizPoHeaderService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -129,6 +137,27 @@ public class BizOrderHeaderController extends BaseController {
             entity.setTotalDetail(entity.getTotalDetail());
             entity.setTotalBuyPrice(totalPrice);
             entity.setOrderDetailList(list);
+
+            if (entity.getCommonProcess() != null && entity.getCommonProcess().getId() != null) {
+                List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
+                bizOrderHeaderService.getCommonProcessListFromDB(entity.getCommonProcess().getId(), commonProcessList);
+                Collections.reverse(commonProcessList);
+                entity.setCommonProcessList(commonProcessList);
+            }
+
+            BizPoHeader bizPoHeader = new BizPoHeader();
+            bizPoHeader.setBizOrderHeader(entity);
+            List<BizPoHeader> bizPoHeaderList = bizPoHeaderService.findList(bizPoHeader);
+            if (CollectionUtils.isNotEmpty(bizPoHeaderList)) {
+                BizPoHeader poHeader = bizPoHeaderList.get(0);
+                if (poHeader.getCommonProcess() != null && poHeader.getCommonProcess().getId() != null) {
+                    List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
+                    bizPoHeaderService.getCommonProcessListFromDB(poHeader.getCommonProcess().getId(), commonProcessList);
+                    Collections.reverse(commonProcessList);
+                    poHeader.setCommonProcessList(commonProcessList);
+                    entity.setBizPoHeader(poHeader);
+                }
+            }
         }
         if (entity == null) {
             entity = new BizOrderHeader();
@@ -149,6 +178,8 @@ public class BizOrderHeaderController extends BaseController {
             model.addAttribute("source", bizOrderHeader.getSource());
         }
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
+        model.addAttribute("auditAllStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().getAutProcessId());
+        model.addAttribute("auditFithStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getAutProcessId());
 
         return "modules/biz/order/bizOrderHeaderList";
     }
@@ -234,6 +265,26 @@ public class BizOrderHeaderController extends BaseController {
                     if (appointedTimeList != null && !appointedTimeList.isEmpty()) {
                         model.addAttribute("appointedTimeList", appointedTimeList);
                     }
+                }
+
+                //100%首付款
+                if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() == null &&
+                        OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeaderTwo.getPayProportion())) {
+                    DoOrderHeaderProcessAllConfig.OrderHeaderProcess orderHeaderProcess =
+                            ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().processMap.get(Integer.valueOf(bizOrderHeaderTwo.getCommonProcess().getType()));
+                    model.addAttribute("orderHeaderProcess", orderHeaderProcess);
+                }
+                //20%首付款
+                if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() == null &&
+                        OrderPayProportionStatusEnum.FIFTH.getState().equals(bizOrderHeaderTwo.getPayProportion())) {
+                    DoOrderHeaderProcessFifthConfig.OrderHeaderProcess orderHeaderProcess =
+                            ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().processMap.get(Integer.valueOf(bizOrderHeaderTwo.getCommonProcess().getType()));
+                    model.addAttribute("orderHeaderProcess", orderHeaderProcess);
+                }
+
+                if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() != null && bizOrderHeaderTwo.getBizPoHeader().getCommonProcess() != null) {
+                    PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizOrderHeaderTwo.getBizPoHeader().getCommonProcess().getType()));
+                    model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
                 }
             }
 
@@ -331,6 +382,20 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         return "modules/biz/order/bizOrderHeaderForm";
+    }
+
+    @RequiresPermissions("biz:order:bizOrderHeader:audit")
+    @RequestMapping(value = "audit")
+    @ResponseBody
+    public String audit(int id, String currentType, int auditType, String description) {
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
+        String result = "";
+        if (OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeader.getPayProportion())) {
+            result = bizOrderHeaderService.auditAll(id, currentType, auditType, description);
+        } else {
+            result = bizOrderHeaderService.auditFifty(id, currentType, auditType, description);
+        }
+        return result;
     }
 
     @ResponseBody

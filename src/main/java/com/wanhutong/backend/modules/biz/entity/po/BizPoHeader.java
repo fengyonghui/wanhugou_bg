@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.po;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -122,6 +123,11 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 * 备货单
 	 */
 	private BizRequestHeader bizRequestHeader;
+
+	/**
+	 * 备货单
+	 */
+	private BizOrderHeader bizOrderHeader;
 
 	/**
 	 * 排产
@@ -554,5 +560,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setBizSchedulingPlan(BizSchedulingPlan bizSchedulingPlan) {
 		this.bizSchedulingPlan = bizSchedulingPlan;
+	}
+
+	public BizOrderHeader getBizOrderHeader() {
+		return bizOrderHeader;
+	}
+
+	public void setBizOrderHeader(BizOrderHeader bizOrderHeader) {
+		this.bizOrderHeader = bizOrderHeader;
 	}
 }

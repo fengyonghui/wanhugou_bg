@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
@@ -156,6 +157,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 审核流程
      */
     private CommonProcessEntity commonProcess;
+
+    /**
+     * 一单到底对应的采购单
+     */
+    private BizPoHeader bizPoHeader;
+
+    /**
+     * 审核路径参数记录
+     */
+    private String str;
+
+    /**
+     * 已审批流程
+     */
+    private List<CommonProcessEntity> commonProcessList;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -766,5 +782,29 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setCommonProcess(CommonProcessEntity commonProcess) {
         this.commonProcess = commonProcess;
+    }
+
+    public BizPoHeader getBizPoHeader() {
+        return bizPoHeader;
+    }
+
+    public void setBizPoHeader(BizPoHeader bizPoHeader) {
+        this.bizPoHeader = bizPoHeader;
+    }
+
+    public String getStr() {
+        return str;
+    }
+
+    public void setStr(String str) {
+        this.str = str;
+    }
+
+    public List<CommonProcessEntity> getCommonProcessList() {
+        return commonProcessList;
+    }
+
+    public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
+        this.commonProcessList = commonProcessList;
     }
 }
