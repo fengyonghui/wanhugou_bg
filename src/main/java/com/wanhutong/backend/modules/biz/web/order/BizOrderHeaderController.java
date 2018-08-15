@@ -1377,4 +1377,13 @@ public class BizOrderHeaderController extends BaseController {
         response.getWriter().write(JSONObject.fromObject(resultMap).toString());
     }
 
+    @RequiresPermissions("biz:order:bizOrderHeader:view")
+    @RequestMapping(value = "auditList")
+    public String auditList(int type, int id) {
+        // type = 0 产地直发
+        // type = 1 本地备货
+
+
+        return null;
+    }
 }

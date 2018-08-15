@@ -394,6 +394,8 @@
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}&statu=${statu}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 						</c:if>
+								<a href="${ctx}/biz/order/bizOrderHeader/auditList?id=${orderHeader.id}&type=0">产地直发审核状态</a>
+								<a href="${ctx}/biz/order/bizOrderHeader/auditList?id=${orderHeader.id}&type=1">本地备货审核状态</a>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="biz:order:bizOrderHeader:refund">
 						<!-- 退款增加 -->
