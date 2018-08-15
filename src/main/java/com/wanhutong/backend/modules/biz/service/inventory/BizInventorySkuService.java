@@ -153,4 +153,15 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		result.put("resultRecordList", resultRecordList);
 		return result;
 	}
+
+	/**
+	 * 根据SKU和采购中心和仓库商品类型取库存数量
+	 * @param skuId
+	 * @param centId
+	 * @param skuType
+	 * @return
+	 */
+	public Integer getStockQtyBySkuIdCentIdSkuType(Integer skuId, Integer centId, Integer skuType) {
+		return dao.getStockQtyBySkuIdCentIdSkuType(skuId, centId, skuType);
+	}
 }

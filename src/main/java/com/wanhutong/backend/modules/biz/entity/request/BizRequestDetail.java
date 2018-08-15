@@ -12,11 +12,13 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 import org.omg.PortableInterceptor.INACTIVE;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * 备货清单详细信息Entity
@@ -83,6 +85,11 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	private Integer sumCompleteNum = 0;
 
 	private BizSchedulingPlan bizSchedulingPlan;
+
+	/**
+	 * detail商品对应的各个采购中心的库存，Map<采购中心ID,库存数>
+	 */
+	private Map<String,Integer> invSkuMap;
 
 	public BizRequestDetail() {
 		super();
@@ -300,5 +307,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setSumCompleteDetailNum(Integer sumCompleteDetailNum) {
 		this.sumCompleteDetailNum = sumCompleteDetailNum;
+	}
+
+	public Map<String, Integer> getInvSkuMap() {
+		return invSkuMap;
+	}
+
+	public void setInvSkuMap(Map<String, Integer> invSkuMap) {
+		this.invSkuMap = invSkuMap;
 	}
 }

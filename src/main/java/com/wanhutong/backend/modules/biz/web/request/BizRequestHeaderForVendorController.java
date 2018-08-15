@@ -17,6 +17,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.BizHeaderSchedulingDto;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
@@ -49,15 +50,18 @@ import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfi
 import com.wanhutong.backend.modules.enums.BizOrderSchedulingEnum;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONArray;
@@ -123,7 +127,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@Autowired
 	private BizPoPaymentOrderService bizPoPaymentOrderService;
 	@Autowired
-	private SystemService systemService;
+	private OfficeService officeService;
 
 	public static final String REQUEST_HEADER_TABLE_NAME = "biz_request_header";
 	public static final String REQUEST_DETAIL_TABLE_NAME = "biz_request_detail";
@@ -206,13 +210,23 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+		User user = UserUtils.getUser();
+		List<String> enNameList = Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(user.getRoleList()))
+		for (Role role : user.getRoleList()) {
+			enNameList.add(role.getEnname());
+		}
+		if (enNameList.contains(RoleEnNameEnum.PROVIDER_MANAGER.getState()) || enNameList.contains(RoleEnNameEnum.SHIPPER.getState())
+				|| enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
+			bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
+			bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.CLOSE.getState().byteValue());
+		}
 		String dataFrom = "biz_request_bizRequestHeader";
 		bizRequestHeader.setDataFrom(dataFrom);
 		Page<BizRequestHeader> page = bizRequestHeaderForVendorService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
         model.addAttribute("page", page);
         //品类名称
 		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
-		User user = UserUtils.getUser();
 		List<Role> roleList = user.getRoleList();
 		Set<String> roleSet = Sets.newHashSet();
 		if (CollectionUtils.isNotEmpty(roleList)) {
@@ -264,6 +278,10 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
 			BizInventorySku bizInventorySku = new BizInventorySku();
 			List<Integer> skuIdList = new ArrayList<>();
+			List<String> typeList = Lists.newLinkedList();
+			typeList.add(OfficeTypeEnum.PURCHASINGCENTER.getType());
+			List<Office> centList = officeService.findListByTypeList(typeList);
+			model.addAttribute("centList",centList);
 			for (BizRequestDetail requestDetail : requestDetailList) {
 				skuIdList.add(requestDetail.getSkuInfo().getId());
 				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
@@ -279,13 +297,18 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 				requestDetail.setSkuInfo(skuInfo);
 				requestDetail.setSellCount(findSellCount(requestDetail));
+				Map<String, Integer> stockQtyMap = selectCentInvSku(centList, skuInfo, bizRequestHeader.getFromType());
+				requestDetail.setInvSkuMap(stockQtyMap);
 				reqDetailList.add(requestDetail);
+
 			}
 			List<BizOrderHeader> orderHeaderList = bizRequestHeaderForVendorService.findOrderForVendReq(skuIdList, bizRequestHeader.getFromOffice().getId());
 			model.addAttribute("orderHeaderList",orderHeaderList);
 			if (requestDetailList.size() == 0) {
 				bizRequestHeader.setPoSource("poHeaderSource");
 			}
+			RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
+			model.addAttribute("defaultProcessId",requestOrderProcessConfig.getDefaultProcessId().toString());
 		}
 
         if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() == null) {
@@ -338,7 +361,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			statusList.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
 
 			Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
-
+			List<BizPoPaymentOrder> paymentOrderList = getPayMentOrderByReqId(bizRequestHeader.getId());
+			model.addAttribute("paymentOrderList",paymentOrderList);
 			model.addAttribute("statusList", statusList);
 			model.addAttribute("statusMap", statusMap);
 		}
@@ -360,6 +384,21 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		model.addAttribute("reqDetailList", reqDetailList);
 		model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		return "modules/biz/request/bizRequestHeaderForVendorForm";
+	}
+
+	private Map<String,Integer> selectCentInvSku(List<Office> centList, BizSkuInfo skuInfo, Integer skuType) {
+		Map<String, Integer> map = new LinkedHashMap<>();
+		if (CollectionUtils.isNotEmpty(centList)) {
+			for (Office office : centList) {
+				Integer stockQty = bizInventorySkuService.getStockQtyBySkuIdCentIdSkuType(skuInfo.getId(), office.getId(), skuType);
+				map.put(office.getName(),stockQty == null ? 0 : stockQty);
+			}
+		}
+		return map;
+	}
+
+	private List<BizPoPaymentOrder> getPayMentOrderByReqId(Integer reqId) {
+		return bizPoPaymentOrderService.getPayMentOrderByReqId(reqId);
 	}
 
 	@ResponseBody

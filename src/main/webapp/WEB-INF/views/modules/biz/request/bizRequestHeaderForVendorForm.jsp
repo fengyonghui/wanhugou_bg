@@ -629,7 +629,7 @@
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label">累计结算金额：</label>
+				<label class="control-label">已支付厂商保证金：</label>
 				<div class="controls">
 					<fmt:formatNumber type="number" value="${entity.bizPoHeader.payTotal}" pattern="0.00" />
 				</div>
@@ -720,20 +720,24 @@
 						<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
 							<th>商品总库存数量</th>
 						</c:if>
-
 					</c:if>
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 						<th>已收货数量</th>
 					</c:if>
-					<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
-						<%--该备货单已生成采购单就显示--%>
-						<c:if test="${empty bizRequestHeader.poSource}">
-							<th>已生成的采购单</th>
-							<th>采购数量</th>
-						</c:if>
-					</c:if>
+					<%--<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">--%>
+						<%--&lt;%&ndash;该备货单已生成采购单就显示&ndash;%&gt;--%>
+						<%--<c:if test="${empty bizRequestHeader.poSource}">--%>
+							<%--<th>已生成的采购单</th>--%>
+							<%--<th>采购数量</th>--%>
+						<%--</c:if>--%>
+					<%--</c:if>--%>
+                    <c:if test="${entity.str == 'audit' && entity.commonProcess.type == defaultProcessId}">
+                        <c:forEach items="${centList}" var="center">
+                            <th>${center.name}</th>
+                        </c:forEach>
+                    </c:if>
 					<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
-						<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay' }">
+						<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay'}">
 							<th>操作</th>
 						</c:if>
 
@@ -791,14 +795,18 @@
 							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 								<td>${reqDetail.recvQty}</td>
 							</c:if>
-
-							<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
-								<%--该备货单已生成采购单就显示--%>
-								<c:if test="${reqDetail.bizPoHeader!=null}">
-									<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}">${reqDetail.bizPoHeader.orderNum}</a></td>
-									<td>${reqDetail.reqQty}</td>
-								</c:if>
-							</c:if>
+                            <c:if test="${entity.str == 'audit' && entity.commonProcess.type == defaultProcessId}">
+                                <c:forEach items="${reqDetail.invSkuMap}" var="stockQty">
+                                    <td>${stockQty.value}</td>
+                                </c:forEach>
+                            </c:if>
+							<%--<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">--%>
+								<%--&lt;%&ndash;该备货单已生成采购单就显示&ndash;%&gt;--%>
+								<%--<c:if test="${reqDetail.bizPoHeader!=null}">--%>
+									<%--<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}">${reqDetail.bizPoHeader.orderNum}</a></td>--%>
+									<%--<td>${reqDetail.reqQty}</td>--%>
+								<%--</c:if>--%>
+							<%--</c:if>--%>
 
 							<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 								<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay' }">
@@ -869,6 +877,33 @@
 				</div>
 			</div>
 		</c:if>
+        <c:if test="${paymentOrderList != null && fn:length(paymentOrderList) > 0}">
+            <div class="control-group">
+                <label class="control-label">支付列表：</label>
+                <div class="controls">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>付款金额</th>
+                                <th>实际付款金额</th>
+                                <th>最后付款时间</th>
+                                <th>实际付款时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${paymentOrderList}" var="paymentOrder">
+                                <tr>
+                                    <td>${paymentOrder.total}</td>
+                                    <td>${paymentOrder.payTotal}</td>
+                                    <td><fmt:formatDate value="${paymentOrder.deadline}" pattern="yy-MM-dd HH:mm:ss"/></td>
+                                    <td><fmt:formatDate value="${paymentOrder.payTime}" pattern="yy-MM-dd HH:mm:ss"/></td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </c:if>
 		<div class="control-group">
 			<label class="control-label">备注：</label>
 			<div class="controls">

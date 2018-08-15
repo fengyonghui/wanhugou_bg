@@ -63,8 +63,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private BizOrderAddressService bizOrderAddressService;
     @Autowired
     private BizSkuInfoService bizSkuInfoService;
-    @Autowired @Lazy
-    private BizOrderDetailService bizOrderDetailService;
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
     @Autowired

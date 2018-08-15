@@ -179,5 +179,13 @@
 		WHERE id = #{paymentId}
 	</update>
 
+	<select id="getPayMentOrderByReqId" parameterType="Integer" resultType="BizPoPaymentOrder">
+		SELECT a.*
+		FROM biz_po_payment_order a
+		LEFT JOIN biz_po_header bph ON bph.id = a.po_header_id
+		LEFT JOIN biz_po_order_req bpor ON bpor.po_id = bph.id AND bpor.so_type = 2
+		WHERE bpor.so_id = #{reqId}
+	</select>
+
 
 </mapper>

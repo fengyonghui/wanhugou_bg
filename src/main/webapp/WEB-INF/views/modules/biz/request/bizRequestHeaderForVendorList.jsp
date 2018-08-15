@@ -243,11 +243,11 @@
 
 				</td>
 				<td>
-					<c:if test="${requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type}">
+					<c:if test="${requestHeader.bizStatus < ReqHeaderStatusEnum.APPROVE.state}">
 						${requestHeader.commonProcess.requestOrderProcess.name}
 					</c:if>
-					<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">
-						${requestHeader.commonProcess.vendRequestOrderProcess.name}
+					<c:if test="${requestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state}">
+						${requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name}
 					</c:if>
 				</td>
 				<td>
@@ -296,7 +296,7 @@
 					</c:choose>
 
 					<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
-						<a data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
+						<a href="#" data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
 					</c:if>
 
 				</shiro:hasPermission>
