@@ -2754,12 +2754,14 @@ FROM
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		LEFT JOIN biz_op_shelf_sku ops ON ops.id = od.sku_shelf_id
-		WHERE ops.sku_id IN 
-		<foreach collection="skuIdList" index="index" item="skuId" open="(" separator="," close=")">
-			 #{skuId}
-		</foreach>
-        <if test="skuIdList != null">
-		  AND ops.center_id = #{centId}
+		WHERE
+			1 = 1
+		<if test="skuIdList != null">
+			ops.sku_id IN
+			<foreach collection="skuIdList" index="index" item="skuId" open="(" separator="," close=")">
+				 #{skuId}
+			</foreach>
+			  AND ops.center_id = #{centId}
         </if>
 	</select>
 
