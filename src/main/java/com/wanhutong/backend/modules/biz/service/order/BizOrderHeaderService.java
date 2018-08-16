@@ -14,19 +14,33 @@ import com.wanhutong.backend.modules.biz.dao.order.BizDrawBackDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.order.*;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
 import com.wanhutong.backend.modules.config.parse.Process;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.InvSkuTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.PoHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.SendGoodsRecordBizStatusEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.dao.UserDao;
@@ -34,6 +48,7 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -49,12 +64,14 @@ import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Service
+ *
  * @author OuyangXiutian
  * @version 2017-12-20
  */
@@ -71,8 +88,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private BizOrderAddressService bizOrderAddressService;
     @Autowired
     private BizSkuInfoService bizSkuInfoService;
-    @Autowired @Lazy
+    @Autowired
+    @Lazy
     private BizOrderDetailService bizOrderDetailService;
+    @Autowired
+    private OfficeService officeService;
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
     @Autowired
@@ -85,6 +105,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private BizOrderCommentService bizOrderCommentService;
     @Autowired
     private BizDrawBackDao bizDrawBackDao;
+
+    @Autowired
+    private BizSendGoodsRecordService bizSendGoodsRecordService;
 
     @Resource
     private CommonImgService commonImgService;
@@ -107,21 +130,21 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     @Override
     public List<BizOrderHeader> findList(BizOrderHeader bizOrderHeader) {
-        User user= UserUtils.getUser();
+        User user = UserUtils.getUser();
         boolean oflag = false;
-        if (UserUtils.getOfficeList() != null){
-            for (Office office:UserUtils.getOfficeList()){
-                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+        if (UserUtils.getOfficeList() != null) {
+            for (Office office : UserUtils.getOfficeList()) {
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
                     oflag = true;
                 }
             }
         }
-        if(user.isAdmin()){
+        if (user.isAdmin()) {
             return super.findList(bizOrderHeader);
-        }else {
-            if(oflag){
-           //     bizOrderHeader.setConsultantId(user.getId());
-            }else {
+        } else {
+            if (oflag) {
+                //     bizOrderHeader.setConsultantId(user.getId());
+            } else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
             return super.findList(bizOrderHeader);
@@ -130,30 +153,30 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     @Override
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
-        User user= UserUtils.getUser();
-        if(user.isAdmin()){
+        User user = UserUtils.getUser();
+        if (user.isAdmin()) {
             bizOrderHeader.setDataStatus("filter");
             return super.findPage(page, bizOrderHeader);
-        }else {
-            boolean flag=false;
+        } else {
+            boolean flag = false;
             boolean roleFlag = false;
-            if(user.getRoleList()!=null) {
+            if (user.getRoleList() != null) {
                 for (Role role : user.getRoleList()) {
                     if (RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
                         flag = true;
                     }
-                    if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
+                    if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())) {
                         roleFlag = true;
                     }
                 }
             }
-            if(flag){
-              //  bizOrderHeader.setCenterId(user.getCompany().getId());
+            if (flag) {
+                //  bizOrderHeader.setCenterId(user.getCompany().getId());
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
-            }else {
+            } else {
                 if (roleFlag) {
                     bizOrderHeader.setConsultantId(user.getId());
-                }else {
+                } else {
                     bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
                 }
             }
@@ -162,7 +185,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     public Page<BizOrderHeader> findPageForSendGoods(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
-        User user= UserUtils.getUser();
+        User user = UserUtils.getUser();
 //        boolean flag=false;
         boolean oflag = false;
         /*if(user.getRoleList()!=null){
@@ -173,19 +196,19 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 }
             }
         }*/
-        if (UserUtils.getOfficeList() != null){
-            for (Office office:UserUtils.getOfficeList()){
-                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+        if (UserUtils.getOfficeList() != null) {
+            for (Office office : UserUtils.getOfficeList()) {
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
                     oflag = true;
                 }
             }
         }
-        if(user.isAdmin()){
-            return super.findPage(page,bizOrderHeader);
-        }else {
-            if(oflag){
+        if (user.isAdmin()) {
+            return super.findPage(page, bizOrderHeader);
+        } else {
+            if (oflag) {
 
-            }else {
+            } else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
             return super.findPage(page, bizOrderHeader);
@@ -318,6 +341,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     /**
      * 查询线下支付订单
+     *
      * @return
      */
     public List<BizOrderHeader> findUnlineOrder() {
@@ -326,9 +350,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     /**
      * 订单发货分页
-     * */
-    public Page<BizOrderHeader> pageFindList(Page<BizOrderHeader> page,BizOrderHeader bizOrderHeader) {
-        User user= UserUtils.getUser();
+     */
+    public Page<BizOrderHeader> pageFindList(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
+        User user = UserUtils.getUser();
 //        boolean flag=false;
         boolean oflag = false;
         /*if(user.getRoleList()!=null){
@@ -339,21 +363,21 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 }
             }
         }*/
-        if (UserUtils.getOfficeList() != null){
-            for (Office office:UserUtils.getOfficeList()){
-                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+        if (UserUtils.getOfficeList() != null) {
+            for (Office office : UserUtils.getOfficeList()) {
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
                     oflag = true;
                 }
             }
         }
-        if(user.isAdmin()){
+        if (user.isAdmin()) {
             bizOrderHeader.setPage(page);
             page.setList(dao.headerFindList(bizOrderHeader));
             return page;
-        }else {
-            if(oflag){
+        } else {
+            if (oflag) {
 
-            }else {
+            } else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
             bizOrderHeader.setPage(page);
@@ -361,11 +385,12 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             return page;
         }
     }
+
     /**
      * 订单发货分页
-     * */
-    public Page<BizOrderHeader> pageFindListForPhotoOrder(Page<BizOrderHeader> page,BizOrderHeader bizOrderHeader) {
-        User user= UserUtils.getUser();
+     */
+    public Page<BizOrderHeader> pageFindListForPhotoOrder(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
+        User user = UserUtils.getUser();
 //        boolean flag=false;
         boolean oflag = false;
         /*if(user.getRoleList()!=null){
@@ -376,21 +401,21 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 }
             }
         }*/
-        if (UserUtils.getOfficeList() != null){
-            for (Office office:UserUtils.getOfficeList()){
-                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+        if (UserUtils.getOfficeList() != null) {
+            for (Office office : UserUtils.getOfficeList()) {
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
                     oflag = true;
                 }
             }
         }
-        if(user.isAdmin()){
+        if (user.isAdmin()) {
             bizOrderHeader.setPage(page);
             page.setList(dao.headerFindListForPhotoOrder(bizOrderHeader));
             return page;
-        }else {
-            if(oflag){
+        } else {
+            if (oflag) {
 
-            }else {
+            } else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
             bizOrderHeader.setPage(page);
@@ -401,7 +426,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     /**
      * C端订单列表
-     * */
+     */
     public Page<BizOrderHeader> cendfindPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         bizOrderHeader.setPage(page);
         page.setList(dao.cendfindList(bizOrderHeader));
@@ -411,7 +436,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     /**
      * C端订单 保存
-     * */
+     */
     @Transactional(readOnly = false)
     public void CendorderSave(BizOrderHeader bizOrderHeader) {
         if (bizOrderHeader.getBizType() == null) {
@@ -478,9 +503,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     /**
      * 导出，订单出库，订单发货导出
-     * */
+     */
     public List<BizOrderHeader> pageFindListExprot(BizOrderHeader bizOrderHeader) {
-        User user= UserUtils.getUser();
+        User user = UserUtils.getUser();
 //        boolean flag=false;
         boolean oflag = false;
         /*if(user.getRoleList()!=null){
@@ -491,20 +516,20 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 }
             }
         }*/
-        if (UserUtils.getOfficeList() != null){
-            for (Office office:UserUtils.getOfficeList()){
-                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+        if (UserUtils.getOfficeList() != null) {
+            for (Office office : UserUtils.getOfficeList()) {
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
                     oflag = true;
                 }
             }
         }
-        if(user.isAdmin()){
+        if (user.isAdmin()) {
             List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
             return bizOrderHeaderList;
-        }else {
-            if(oflag){
+        } else {
+            if (oflag) {
 
-            }else {
+            } else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
             List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
@@ -514,10 +539,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     /**
      * 查询供应商主负责人
+     *
      * @return
      */
-    public User findVendUser(Integer orderId,String vendType) {
-        return userDao.findVendUser(orderId,vendType);
+    public User findVendUser(Integer orderId, String vendType) {
+        return userDao.findVendUser(orderId, vendType);
     }
 
     private List<CommonImg> getImgList(Integer imgType, Integer prodId) {
@@ -629,7 +655,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     /**
      * 导出
-     * */
+     */
     public List<BizOrderHeader> findListExport(BizOrderHeader bizOrderHeader) {
         User user = UserUtils.getUser();
         if (user.isAdmin()) {
@@ -686,15 +712,15 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     /**
      * 审核
+     *
      * @param id
      * @param auditType
      * @param currentType
      * @param description
      * @return
      */
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public Pair<Boolean, String> audit(int id, int auditType, String currentType, String description, int orderType) {
-
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectId(String.valueOf(id));
         commonProcessEntity.setObjectName(orderType == 0 ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
@@ -707,7 +733,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         CommonProcessEntity cureentProcessEntity = list.get(0);
         if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
             LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", id, currentType);
-            return Pair.of(Boolean.FALSE,  "操作失败,当前审核状态异常!");
+            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常!");
         }
 
         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
@@ -717,7 +743,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         if (orderType == 0) {
             currentProcess = originConfig.getProcessMap().get(Integer.valueOf(currentType));
             nextProcess = originConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
-        }else {
+        } else {
             currentProcess = localConfig.getProcessMap().get(Integer.valueOf(currentType));
             nextProcess = localConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
         }
@@ -725,7 +751,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         // 当前流程
         // 下一流程
         if (nextProcess == null) {
-            return Pair.of(Boolean.FALSE,  "操作失败,当前流程已经结束!");
+            return Pair.of(Boolean.FALSE, "操作失败,当前流程已经结束!");
         }
 
         User user = UserUtils.getUser();
@@ -742,11 +768,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
 
         if (!user.isAdmin() && !hasRole) {
-            return Pair.of(Boolean.FALSE,  "操作失败,该用户没有权限!");
+            return Pair.of(Boolean.FALSE, "操作失败,该用户没有权限!");
         }
 
         if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
-            return Pair.of(Boolean.FALSE,  "请输入驳回理由!");
+            return Pair.of(Boolean.FALSE, "请输入驳回理由!");
         }
 
         cureentProcessEntity.setBizStatus(auditType);
@@ -763,6 +789,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         nextProcessEntity.setCurrent(1);
         commonProcessService.save(nextProcessEntity);
 
-        return Pair.of(Boolean.TRUE,  "操作成功!");
+        return Pair.of(Boolean.TRUE, "操作成功!");
     }
+
 }

@@ -202,7 +202,9 @@ public class BizInvoiceController extends BaseController {
 	@RequestMapping(value = "formV2")
 	public String formV2(HttpServletRequest request, int id, BizInvoice bizInvoice, Model model) {
         BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
-
+        List<User> userList = systemService.findUserByRoleEnName(RoleEnNameEnum.WAREHOUSESPECIALIST.getState());
+        model.addAttribute("userList", userList);
+        bizInvoice.setId(null);
         request.setAttribute("orderNum", bizOrderHeader.getOrderNum());
         request.setAttribute("bizStatus", bizOrderHeader.getBizStatus());
 
@@ -344,7 +346,7 @@ public class BizInvoiceController extends BaseController {
 			return form(bizInvoice, model);
 		}
 		bizInvoiceService.save(bizInvoice);
-		addMessage(redirectAttributes, "保存发货单成功");
+		addMessage(redirectAttributes, "发货成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage&bizStatus="+bizInvoice.getBizStatus()+"&ship="+bizInvoice.getShip();
 	}
 	
