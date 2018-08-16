@@ -762,6 +762,9 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 	 * @return
 	 */
 	public List<BizOrderHeader> findOrderForVendReq(List<Integer> skuIdList, Integer centId) {
+		if (skuIdList != null && skuIdList.size() == 0) {
+			skuIdList = null;
+		}
 		return bizOrderHeaderDao.findOrderForVendReq(skuIdList, centId);
 	}
 

@@ -280,6 +280,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         if (poDetail.getSendQty() + sendNum != poDetail.getOrdQty()) {
                             flagPo = false;
                         }
+                        poDetail.setSendQty(poDetail.getSendQty() + sendNum);
+                        bizPoDetailService.save(poDetail);
                         //累计已供数量
                         orderDetail.setSentQty(sentQty + sendNum);
                         bizOrderDetailService.saveStatus(orderDetail);

@@ -212,10 +212,11 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	public String list(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
 		User user = UserUtils.getUser();
 		List<String> enNameList = Lists.newArrayList();
-		if (CollectionUtils.isNotEmpty(user.getRoleList()))
-		for (Role role : user.getRoleList()) {
-			enNameList.add(role.getEnname());
-		}
+		if (CollectionUtils.isNotEmpty(user.getRoleList())) {
+            for (Role role : user.getRoleList()) {
+                enNameList.add(role.getEnname());
+            }
+        }
 		if (enNameList.contains(RoleEnNameEnum.PROVIDER_MANAGER.getState()) || enNameList.contains(RoleEnNameEnum.SHIPPER.getState())
 				|| enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
 			bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
