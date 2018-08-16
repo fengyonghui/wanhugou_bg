@@ -26,8 +26,12 @@ import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
+import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
 import com.wanhutong.backend.modules.config.parse.SystemConfig;
 import com.wanhutong.backend.modules.enums.*;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -38,6 +42,7 @@ import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -107,6 +112,9 @@ public class BizOrderHeaderController extends BaseController {
     private BizOrderAppointedTimeService bizOrderAppointedTimeService;
     @Autowired
     private BizOrderCommentService bizOrderCommentService;
+    @Autowired
+    private CommonProcessService commonProcessService;
+
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -116,11 +124,11 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(entity);
             List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
-            double totalPrice=0.0;
+            double totalPrice = 0.0;
             for (BizOrderDetail orderDetail : list) {
-                totalPrice+=orderDetail.getOrdQty()*orderDetail.getBuyPrice();
-                if(orderDetail.getSuplyis()!=null && orderDetail.getSuplyis().getId()!=null){
-                    if(orderDetail.getSuplyis().getId().equals(0) || orderDetail.getSuplyis().getId().equals(721)){
+                totalPrice += orderDetail.getOrdQty() * orderDetail.getBuyPrice();
+                if (orderDetail.getSuplyis() != null && orderDetail.getSuplyis().getId() != null) {
+                    if (orderDetail.getSuplyis().getId().equals(0) || orderDetail.getSuplyis().getId().equals(721)) {
                         Office office = new Office();
                         office.setName("供货部");
                         office.setId(orderDetail.getSuplyis().getId());
@@ -159,7 +167,7 @@ public class BizOrderHeaderController extends BaseController {
         BizOrderComment bizOrderComment = new BizOrderComment();
         bizOrderComment.setOrder(bizOrderHeader);
         List<BizOrderComment> commentList = bizOrderCommentService.findList(bizOrderComment);
-        model.addAttribute("commentList",commentList);
+        model.addAttribute("commentList", commentList);
         List<BizOrderDetail> ordDetailList = Lists.newArrayList();
         Map<Integer, String> orderNumMap = new HashMap<Integer, String>();
         Map<Integer, Integer> detailIdMap = new HashMap<Integer, Integer>();
@@ -469,30 +477,68 @@ public class BizOrderHeaderController extends BaseController {
      */
     @ResponseBody
     @RequiresPermissions("biz:order:bizOrderDetail:view")
+    @RequestMapping(value = "findByOrderV2")
+    public String findByOrderV2(BizOrderHeader bizOrderHeader, String flag, HttpServletRequest request, HttpServletResponse response, Model model) {
+        BizOrderHeader byOrderNum = bizOrderHeaderService.getByOrderNum(bizOrderHeader.getOrderNum());
+        if (byOrderNum != null) {
+            bizOrderHeader = byOrderNum;
+        }
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
+        commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+        commonProcessEntity.setCurrent(1);
+        List<CommonProcessEntity> currentList = commonProcessService.findList(commonProcessEntity);
+        if (CollectionUtils.isEmpty(currentList)) {
+            commonProcessEntity.setCurrent(null);
+            List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+            if (CollectionUtils.isEmpty(list)) {
+                Map<String, Object> byOrder = findByOrder(bizOrderHeader, flag, request, response, model);
+                return JsonUtil.generateData(byOrder, null);
+            }
+        }
+
+        JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
+        if (!localConfig.getPayProcessId().contains(Integer.valueOf(currentList.get(0).getType()))) {
+            return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, "当前订单未审核完成!", null);
+        }
+
+        Map<String, Object> byOrder = findByOrder(bizOrderHeader, flag, request, response, model);
+        return JsonUtil.generateData(byOrder, null);
+    }
+
+    /**
+     * @param bizOrderHeader
+     * @param flag           0为采购中心出库
+     * @param request
+     * @param response
+     * @param model
+     * @return
+     */
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderDetail:view")
     @RequestMapping(value = "findByOrder")
     public Map<String, Object> findByOrder(BizOrderHeader bizOrderHeader, String flag, HttpServletRequest request, HttpServletResponse response, Model model) {
-        User user= UserUtils.getUser();
-        DefaultProp defaultProp =new DefaultProp();
-         defaultProp.setPropKey("vend_center");
-        List<DefaultProp> defaultProps= defaultPropService.findList(defaultProp);
-        Integer vendCenterId=0;
 
-        if(defaultProps!=null){
-            vendCenterId= Integer.parseInt(defaultProps.get(0).getPropValue());
+        User user = UserUtils.getUser();
+        DefaultProp defaultProp = new DefaultProp();
+        defaultProp.setPropKey("vend_center");
+        List<DefaultProp> defaultProps = defaultPropService.findList(defaultProp);
+        Integer vendCenterId = 0;
+
+        if (defaultProps != null) {
+            vendCenterId = Integer.parseInt(defaultProps.get(0).getPropValue());
         }
-        if (StringUtils.isNotBlank(flag) && "0".equals(flag)) {
+        if ("0".equals(flag)) {
             bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
             bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.APPROVE.getState());
-            List<Role>roleList= user.getRoleList();
-            Role role=new Role();
+            List<Role> roleList = user.getRoleList();
+            Role role = new Role();
             role.setEnname(RoleEnNameEnum.DEPT.getState());
-            if(user.isAdmin() ||roleList.contains(role) ){
+            if (user.isAdmin() || roleList.contains(role)) {
                 bizOrderHeader.setSupplyId(-1); //判断orderDetail不等于0
-            }else {
-                bizOrderHeader.setSupplyId(user.getCompany()==null?0:user.getCompany().getId());
+            } else {
+                bizOrderHeader.setSupplyId(user.getCompany() == null ? 0 : user.getCompany().getId());
             }
-
-
         } else {
             bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
             bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
@@ -516,7 +562,7 @@ public class BizOrderHeaderController extends BaseController {
                 bizPoOrderReq.setOrderHeader(orderHeader);
             }
             for (BizOrderDetail orderDetail : orderDetailList) {
-                if (StringUtils.isNotBlank(flag)  && !"0".equals(flag)) {
+                if (StringUtils.isNotBlank(flag) && !"0".equals(flag)) {
                     bizPoOrderReq.setSoLineNo(orderDetail.getLineNo());
                     bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
                     List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
@@ -525,7 +571,7 @@ public class BizOrderHeaderController extends BaseController {
                         orderDetail.setSkuInfo(skuInfo);
                         bizOrderDetailList.add(orderDetail);
                     }
-                } else if(orderDetail.getSuplyis()!=null && orderDetail.getSuplyis().getId()!=0 && !orderDetail.getSuplyis().getId().equals(vendCenterId)) {
+                } else if (orderDetail.getSuplyis() != null && orderDetail.getSuplyis().getId() != 0 && !orderDetail.getSuplyis().getId().equals(vendCenterId)) {
                     BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
                     orderDetail.setSkuInfo(skuInfo);
                     bizOrderDetailList.add(orderDetail);
@@ -555,9 +601,10 @@ public class BizOrderHeaderController extends BaseController {
         try {
             if (bizOrderHeader.getId() != null) {
                 BizOrderHeader order = bizOrderHeaderService.get(bizOrderHeader);
+                OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(order.getTotalDetail(), order.getReceiveTotal());
                 if (order != null) {
                     if (objJsp.equals(OrderHeaderBizStatusEnum.SUPPLYING.getState())) {
-                        OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(order.getTotalDetail(), order.getReceiveTotal());
+
                         order.setPayProportion(orderPayProportionStatusEnum.getState());
                         order.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                         bizOrderHeaderService.saveOrderHeader(order);
@@ -618,6 +665,58 @@ public class BizOrderHeaderController extends BaseController {
                         bizOrderStatusService.saveOrderStatus(order);
                     }
                 }
+
+                if ("ok".equals(commis)) {
+                    JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
+                    JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
+
+                    // 产地直发
+                    CommonProcessEntity originEntity = new CommonProcessEntity();
+                    originEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
+                    originEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
+                    List<CommonProcessEntity> originList = commonProcessService.findList(originEntity);
+                    if (CollectionUtils.isEmpty(originList)) {
+                        originEntity.setCurrent(1);
+                        switch (orderPayProportionStatusEnum) {
+                            case ZERO:
+                                originEntity.setType(String.valueOf(originConfig.getZeroDefaultProcessId()));
+                                break;
+                            case FIFTH:
+                                originEntity.setType(String.valueOf(originConfig.getFifthDefaultProcessId()));
+                                break;
+                            case ALL:
+                                originEntity.setType(String.valueOf(originConfig.getAllDefaultProcessId()));
+                                break;
+                            default:
+                                break;
+                        }
+                        commonProcessService.save(originEntity);
+                    }
+
+                    // 本地备货
+                    CommonProcessEntity localEntity = new CommonProcessEntity();
+                    localEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
+                    localEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+                    List<CommonProcessEntity> localList = commonProcessService.findList(localEntity);
+                    if (CollectionUtils.isEmpty(localList)) {
+                        localEntity.setCurrent(1);
+                        switch (orderPayProportionStatusEnum) {
+                            case ZERO:
+                                localEntity.setType(String.valueOf(localConfig.getZeroDefaultProcessId()));
+                                break;
+                            case FIFTH:
+                                localEntity.setType(String.valueOf(localConfig.getFifthDefaultProcessId()));
+                                break;
+                            case ALL:
+                                localEntity.setType(String.valueOf(localConfig.getAllDefaultProcessId()));
+                                break;
+                            default:
+                                break;
+                        }
+                        commonProcessService.save(localEntity);
+                    }
+
+                }
             }
         } catch (Exception e) {
             commis = "comError";
@@ -653,7 +752,7 @@ public class BizOrderHeaderController extends BaseController {
      */
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "orderHeaderExport", method = RequestMethod.POST)
-    public String orderHeaderExportFile(BizOrderHeader bizOrderHeader,String cendExportbs, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+    public String orderHeaderExportFile(BizOrderHeader bizOrderHeader, String cendExportbs, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         try {
             DecimalFormat df = new DecimalFormat();
             BizOrderDetail orderDetail = new BizOrderDetail();
@@ -993,7 +1092,7 @@ public class BizOrderHeaderController extends BaseController {
 
     /**
      * C端订单列表
-     * */
+     */
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "cendList")
     public String cendList(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -1004,7 +1103,7 @@ public class BizOrderHeaderController extends BaseController {
 
     /**
      * C端订单编辑
-     * */
+     */
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "cendform")
     public String cendform(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails) {
@@ -1047,7 +1146,7 @@ public class BizOrderHeaderController extends BaseController {
 
     /**
      * C端订单保存
-     * */
+     */
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "cendSave")
     public String cendSave(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
@@ -1377,13 +1476,52 @@ public class BizOrderHeaderController extends BaseController {
         response.getWriter().write(JSONObject.fromObject(resultMap).toString());
     }
 
+    /**
+     * 审核列表
+     *
+     * @param request
+     * @param type
+     * @param id
+     * @return
+     */
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "auditList")
-    public String auditList(int type, int id) {
+    public String auditList(HttpServletRequest request, int type, int id) {
         // type = 0 产地直发
         // type = 1 本地备货
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(String.valueOf(id));
+        commonProcessEntity.setObjectName(type == 0 ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
 
+        request.setAttribute("id", id);
+        request.setAttribute("list", list);
+        request.setAttribute("type", type);
+        request.setAttribute("processMap", type == 0 ?
+                ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap()
+                : ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap());
 
-        return null;
+        return "modules/biz/order/bizOrderHeaderAuditList";
+    }
+
+    /**
+     * 审核
+     *
+     * @param request
+     * @param auditType
+     * @param id
+     * @param currentType
+     * @param description
+     * @return
+     */
+    @RequiresPermissions("biz:order:bizOrderHeader:view")
+    @RequestMapping(value = "audit")
+    @ResponseBody
+    public String audit(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType) {
+        Pair<Boolean, String> audit = bizOrderHeaderService.audit(id, auditType, currentType, description, orderType);
+        if (audit.getLeft()) {
+            return JsonUtil.generateData(audit.getRight(), null);
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);
     }
 }

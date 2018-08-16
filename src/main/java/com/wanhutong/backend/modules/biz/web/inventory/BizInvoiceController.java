@@ -198,6 +198,17 @@ public class BizInvoiceController extends BaseController {
 		return "modules/biz/inventory/bizInvoiceForm";
 	}
 
+	@RequiresPermissions("biz:inventory:bizInvoice:view")
+	@RequestMapping(value = "formV2")
+	public String formV2(HttpServletRequest request, int id, BizInvoice bizInvoice, Model model) {
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
+
+        request.setAttribute("orderNum", bizOrderHeader.getOrderNum());
+        request.setAttribute("bizStatus", bizOrderHeader.getBizStatus());
+
+        return "modules/biz/inventory/bizInvoiceFormV2";
+	}
+
     /**
      * 订单所属发货单详情
      * @param bizInvoice

@@ -33,10 +33,13 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	private Date createTime;		// 创建时间
 	private User user;
 	private Date updateTime;
+	private Integer current;
 
 	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess;
 	private RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess;
 	private PaymentOrderProcessConfig.Process paymentOrderProcess;
+	private com.wanhutong.backend.modules.config.parse.Process jointOperationLocalProcess;
+	private com.wanhutong.backend.modules.config.parse.Process jointOperationOriginProcess;
 
 	/**
 	 * 前一个流程
@@ -156,10 +159,25 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 		return ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
+	public com.wanhutong.backend.modules.config.parse.Process getJointOperationLocalProcess() {
+		return ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
+	}
+
+	public com.wanhutong.backend.modules.config.parse.Process getJointOperationOriginProcess() {
+		return ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
+	}
+
 	public RequestOrderProcessConfig.RequestOrderProcess getRequestOrderProcess() {
 		return ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 
+	public Integer getCurrent() {
+		return current;
+	}
+
+	public void setCurrent(Integer current) {
+		this.current = current;
+	}
 
 	public enum AuditType {
 		/**

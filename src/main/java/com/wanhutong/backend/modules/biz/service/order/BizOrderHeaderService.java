@@ -19,10 +19,16 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
+import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
+import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.dao.UserDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -31,6 +37,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +61,7 @@ import java.util.Set;
 @Service
 @Transactional(readOnly = true)
 public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrderHeader> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BizOrderHeaderService.class);
 
     /**
      * 默认表名
@@ -80,6 +88,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     @Resource
     private CommonImgService commonImgService;
+    @Autowired
+    private CommonProcessService commonProcessService;
 
     public static final String ORDER_TABLE = "biz_order_header";
 
@@ -672,5 +682,87 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
      */
     public BizOrderHeader getByOrderNum(String orderNum) {
         return bizOrderHeaderDao.getByOrderNum(orderNum);
+    }
+
+    /**
+     * 审核
+     * @param id
+     * @param auditType
+     * @param currentType
+     * @param description
+     * @return
+     */
+    @Transactional(readOnly = false)
+    public Pair<Boolean, String> audit(int id, int auditType, String currentType, String description, int orderType) {
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(String.valueOf(id));
+        commonProcessEntity.setObjectName(orderType == 0 ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+        commonProcessEntity.setCurrent(1);
+        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+        if (list.size() != 1) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常! current process 不为 1");
+        }
+
+        CommonProcessEntity cureentProcessEntity = list.get(0);
+        if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
+            LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", id, currentType);
+            return Pair.of(Boolean.FALSE,  "操作失败,当前审核状态异常!");
+        }
+
+        JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
+        JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
+        Process currentProcess = null;
+        Process nextProcess = null;
+        if (orderType == 0) {
+            currentProcess = originConfig.getProcessMap().get(Integer.valueOf(currentType));
+            nextProcess = originConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
+        }else {
+            currentProcess = localConfig.getProcessMap().get(Integer.valueOf(currentType));
+            nextProcess = localConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
+        }
+
+        // 当前流程
+        // 下一流程
+        if (nextProcess == null) {
+            return Pair.of(Boolean.FALSE,  "操作失败,当前流程已经结束!");
+        }
+
+        User user = UserUtils.getUser();
+        List<String> roleEnNameEnumList = currentProcess.getRoleEnNameEnum();
+        boolean hasRole = false;
+        for (String s : roleEnNameEnumList) {
+            RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(s);
+            Role role = new Role();
+            role.setEnname(roleEnNameEnum.getState());
+            if (user.getRoleList().contains(role)) {
+                hasRole = true;
+                break;
+            }
+        }
+
+        if (!user.isAdmin() && !hasRole) {
+            return Pair.of(Boolean.FALSE,  "操作失败,该用户没有权限!");
+        }
+
+        if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
+            return Pair.of(Boolean.FALSE,  "请输入驳回理由!");
+        }
+
+        cureentProcessEntity.setBizStatus(auditType);
+        cureentProcessEntity.setProcessor(user.getId().toString());
+        cureentProcessEntity.setDescription(description);
+        cureentProcessEntity.setCurrent(0);
+        commonProcessService.save(cureentProcessEntity);
+
+        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+        nextProcessEntity.setObjectId(String.valueOf(id));
+        nextProcessEntity.setObjectName(orderType == 0 ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+        nextProcessEntity.setCurrent(1);
+        commonProcessService.save(nextProcessEntity);
+
+        return Pair.of(Boolean.TRUE,  "操作成功!");
     }
 }

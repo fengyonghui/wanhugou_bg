@@ -101,88 +101,6 @@
 					}
 				}
 			});
-
-            $("#searchData").click(function () {
-                var orderNum=$("#orderNum").val();
-                $("#orderNumCopy").val(orderNum);
-                var skuItemNo=$("#skuItemNo").val();
-                $("#skuItemNoCopy").val(skuItemNo);
-                var skuCode =$("#skuCode").val();
-                $("#skuCodeCopy").val(skuCode);
-                var bizStatus= $("#bizStatus").val();
-                var name =$("#name").val();
-                $("#nameCopy").val(name);
-                $.ajax({
-                    type:"post",
-                    url:"${ctx}/biz/order/bizOrderHeader/findByOrderV2?flag="+bizStatus,
-                    data:$('#searchForm').serialize(),
-                    success:function (data) {
-                        data = JSON.parse(data);
-                        if(data.ret != true && data.ret != 'true') {
-                            alert(data.errmsg);
-						}
-                        data = data.data;
-                        if ($("#id").val() == '') {
-                            $("#prodInfo2").empty();
-                        }
-
-                        if(bizStatus==0){
-                            var selecttd="<select class='input-mini' title='invInfoId'><option value='"+data.inventoryInfoList[0].id+"'>"+data.inventoryInfoList[0].name+"</option>";
-                            $.each(data.inventoryInfoList,function (index,inventory) {
-                                selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
-                            });
-                        }
-                        var tr_tds="";
-                        var bizName ="";
-                        $.each(data.bizOrderHeaderList, function (index,orderHeader) {
-                            if(orderHeader.bizStatus==15){
-                                bizName="供货中"
-                            }
-							if(orderHeader.bizStatus==17){
-                                bizName="采购中"
-							}else if(orderHeader.bizStatus==18){
-                                bizName="采购完成"
-							}else if(orderHeader.bizStatus==19){
-                                bizName="供应商供货"
-							}else if(orderHeader.bizStatus==20){
-                                bizName="已发货"
-							}
-
-							var flag= true;
-							var deId = "";
-							var  num = "";
-                            $.each(orderHeader.orderDetailList,function (index,detail) {
-
-                                tr_tds+="<tr class='tr_"+orderHeader.id+"'>";
-
-                                if(flag){
-                                    tr_tds+="<td rowspan='"+orderHeader.orderDetailList.length+"'><input type='checkbox' value='"+orderHeader.id+"' /></td>";
-
-                                    tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'><a href='${ctx}/biz/order/bizOrderHeader/form?id="+orderHeader.id+"&orderDetails=details'> "+orderHeader.orderNum+"</a></td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
-                                }
-                                 tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
-                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
-                                if(bizStatus==0) {
-                                    tr_tds += "<td>" + selecttd + "</td>"
-                                }
-                                tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
-                                if(detail.ordQty==detail.sentQty){
-                                    tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
-                                }else {
-                                    tr_tds+="<td><input  type='text'  title='sent_"+orderHeader.id+"' name='' onchange='checkNum("+detail.ordQty+","+detail.sentQty+",this)' value='"+(detail.ordQty-detail.sentQty)+"'></td>";
-                                }
-
-                                tr_tds+="</tr>";
-                                if(orderHeader.orderDetailList.length>1){
-                                    flag=false;
-                                }
-                            });
-
-                        });
-                        $("#prodInfo2").append(tr_tds);
-                    }
-            });
-		});
             <%--点击确定时获取订单详情--%>
             $("#ensureData").click(function () {
 				$('input:checkbox:checked').each(function(i) {
@@ -194,7 +112,6 @@
                 $("#select_all").removeAttr("checked");
 
 			});
-
             });
 		function checkNum(ordQty,sentQty, sendQty) {
 			if (parseInt(sendQty.value)+parseInt(sentQty) > parseInt(ordQty)){
@@ -202,7 +119,84 @@
 			    $(sendQty).val(0);
 			}
         }
+        function getOrder () {
+		    var bizStatus = ${bizStatus};
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/order/bizOrderHeader/findByOrderV2?flag=" + bizStatus,
+                data:{"orderNum":"${orderNum}"},
+                success:function (data) {
+                    debugger;
+                    data = JSON.parse(data);
+                    if(data.ret != true && data.ret != 'true') {
+                        alert(data.errmsg);
+                    }
+                    data = data.data;
+                    if ($("#id").val() == '') {
+                        $("#prodInfo2").empty();
+                    }
 
+                    if(bizStatus==0){
+                        var selecttd="<select class='input-mini' title='invInfoId'><option value='"+data.inventoryInfoList[0].id+"'>"+data.inventoryInfoList[0].name+"</option>";
+                        $.each(data.inventoryInfoList,function (index,inventory) {
+                            selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
+                        });
+                    }
+                    var tr_tds="";
+                    var bizName ="";
+                    $.each(data.bizOrderHeaderList, function (index,orderHeader) {
+                        if(orderHeader.bizStatus==15){
+                            bizName="供货中"
+                        }
+                        if(orderHeader.bizStatus==17){
+                            bizName="采购中"
+                        }else if(orderHeader.bizStatus==18){
+                            bizName="采购完成"
+                        }else if(orderHeader.bizStatus==19){
+                            bizName="供应商供货"
+                        }else if(orderHeader.bizStatus==20){
+                            bizName="已发货"
+                        }
+
+                        var flag= true;
+                        var deId = "";
+                        var  num = "";
+                        $.each(orderHeader.orderDetailList,function (index,detail) {
+
+                            tr_tds+="<tr class='tr_"+orderHeader.id+"'>";
+
+                            if(flag){
+                                tr_tds+="<td rowspan='"+orderHeader.orderDetailList.length+"'><input type='checkbox' value='"+orderHeader.id+"' /></td>";
+
+                                tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'><a href='${ctx}/biz/order/bizOrderHeader/form?id="+orderHeader.id+"&orderDetails=details'> "+orderHeader.orderNum+"</a></td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
+                            }
+                            tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
+                            tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
+                            if(bizStatus==0) {
+                                tr_tds += "<td>" + selecttd + "</td>"
+                            }
+                            tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
+                            if(detail.ordQty==detail.sentQty){
+                                tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
+                            }else {
+                                tr_tds+="<td><input  type='text'  title='sent_"+orderHeader.id+"' name='' onchange='checkNum("+detail.ordQty+","+detail.sentQty+",this)' value='"+(detail.ordQty-detail.sentQty)+"'></td>";
+                            }
+
+                            tr_tds+="</tr>";
+                            if(orderHeader.orderDetailList.length>1){
+                                flag=false;
+                            }
+                        });
+
+                    });
+                    $("#prodInfo2").append(tr_tds);
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
+        getOrder();
 
 	</script>
 </head>
@@ -250,13 +244,7 @@
 							  maxHeight="100"/>
 			</div>
 		</div>
-		<%--<div class="control-group">
-			<label class="control-label">货值：</label>
-			<div class="controls">
-				<input id="valuePrice" name="valuePrice"  htmlEscape="false" value="" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>--%>
+
 		<div class="control-group">
 			<label class="control-label">操作费：</label>
 			<div class="controls">
@@ -315,35 +303,12 @@
 
 
 		<div class="control-group">
-			<label class="control-label">选择订单：</label>
-			<div class="controls">
-				<ul class="inline ul-form">
-					<li><label>订单编号：</label>
-						<input id="orderNum" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
-					</li>
-					<li><label>商品货号：</label>
-						<input id="skuItemNo"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
-					</li>
-					<li><label>商品编码：</label>
-						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
-					</li>
-					<li><label>供应商：</label>
-						<input id="name"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
-					</li>
-					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/><span style="color: red;">(请输入没有供货完成的订单)</span></li>
-					<li class="clearfix"></li>
-				</ul>
-
-			</div>
-		</div>
-
-		<div class="control-group">
 			<label class="control-label">待发货订单：</label>
 			<div class="controls">
 				<table id="contentTable2"  class="table table-striped table-bordered table-condensed">
 					<thead>
 					<tr>
-						<th><input id="select_all" type="checkbox" /></th>
+						<th><input id="select_all" type="checkbox" checked readonly/></th>
 						<th>订单编号</th>
 						<th>经销店名称</th>
 						<th>业务状态</th>
@@ -406,13 +371,6 @@
 			<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="发 货"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
-	</form:form>
-
-	<form:form id="searchForm" modelAttribute="bizOrderHeader">
-		<form:hidden id="orderNumCopy" path="orderNum"/>
-		<form:hidden id="skuItemNoCopy" path="itemNo"/>
-		<form:hidden id="skuCodeCopy" path="partNo"/>
-		<form:hidden id="nameCopy" path="name"/>
 	</form:form>
 </body>
 </html>

@@ -22,7 +22,7 @@ public class JointOperationOrderProcessLocalConfig extends ConfigGeneral {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JointOperationOrderProcessLocalConfig.class);
 
-    private static final String ORDER_TABLE_NAME = "ORDER_HEADER_SO_LOCAL";
+    public static final String ORDER_TABLE_NAME = "ORDER_HEADER_SO_LOCAL";
 
     @XStreamAlias("zeroDefaultProcessId")
     private int zeroDefaultProcessId;
@@ -32,25 +32,25 @@ public class JointOperationOrderProcessLocalConfig extends ConfigGeneral {
     private int allDefaultProcessId;
 
 
-    @XStreamAlias("payProcessId")
-    private int payProcessId;
+    @XStreamImplicit(itemFieldName = "payProcessId")
+    private List<Integer> payProcessId;
 
 
 
     @XStreamImplicit(itemFieldName = "process")
-    private List<PurchaseOrderProcess> processList;
+    private List<Process> processList;
 
     /**
      * 数据MAP
      */
-    private Map<Integer, PurchaseOrderProcess> processMap;
+    private Map<Integer, Process> processMap;
 
     @Override
     public JointOperationOrderProcessLocalConfig parse(String content) throws Exception {
         JointOperationOrderProcessLocalConfig purchaseOrderProcessConfig = XmlUtils.fromXml(content);
         purchaseOrderProcessConfig.processMap = Maps.newHashMap();
         if (CollectionUtils.isNotEmpty(purchaseOrderProcessConfig.processList)) {
-            for (PurchaseOrderProcess e : purchaseOrderProcessConfig.processList) {
+            for (Process e : purchaseOrderProcessConfig.processList) {
                 purchaseOrderProcessConfig.processMap.put(e.getCode(), e);
             }
         }
@@ -63,15 +63,15 @@ public class JointOperationOrderProcessLocalConfig extends ConfigGeneral {
      * @param currentProcess 当前状态
      * @return 通过后的状态
      */
-    public PurchaseOrderProcess getPassProcess(PurchaseOrderProcess currentProcess) {
+    public Process getPassProcess(Process currentProcess) {
         return processMap.get(currentProcess.getPassCode());
     }
 
-    public Map<Integer, PurchaseOrderProcess> getProcessMap() {
+    public Map<Integer, Process> getProcessMap() {
         return processMap;
     }
 
-    public List<PurchaseOrderProcess> getProcessList() {
+    public List<Process> getProcessList() {
         return processList;
     }
 
@@ -81,7 +81,7 @@ public class JointOperationOrderProcessLocalConfig extends ConfigGeneral {
      * @param currentEnum 当前状态
      * @return 通过后的状态
      */
-    public PurchaseOrderProcess getRejectProcess(PurchaseOrderProcess currentEnum) {
+    public Process getRejectProcess(Process currentEnum) {
         return processMap.get(currentEnum.getRejectCode());
     }
 
@@ -97,62 +97,10 @@ public class JointOperationOrderProcessLocalConfig extends ConfigGeneral {
         return allDefaultProcessId;
     }
 
-    public int getPayProcessId() {
+    public List<Integer> getPayProcessId() {
         return payProcessId;
     }
 
-    @XStreamAlias("process")
-    public static class PurchaseOrderProcess {
-        /**
-         * 状态码
-         */
-        @XStreamAlias("name")
-        private String name;
 
-        /**
-         * 状态码
-         */
-        @XStreamAlias("code")
-        private int code;
-
-        /**
-         * 处理角色
-         */
-        @XStreamImplicit(itemFieldName = "roleEnNameEnum")
-        private List<String> roleEnNameEnum;
-
-        /**
-         * 通过之后的状态
-         */
-        @XStreamAlias("passCode")
-        private int passCode;
-
-        /**
-         * 拒绝之后的状态
-         */
-        @XStreamAlias("rejectCode")
-        private int rejectCode;
-
-        public String getName() {
-            return name;
-        }
-
-        public int getCode() {
-            return code;
-        }
-
-        public List<String> getRoleEnNameEnum() {
-            return roleEnNameEnum;
-        }
-
-        public int getPassCode() {
-            return passCode;
-        }
-
-        public int getRejectCode() {
-            return rejectCode;
-        }
-
-    }
 
 }

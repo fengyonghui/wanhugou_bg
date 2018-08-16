@@ -123,9 +123,7 @@
                         $("#batchSubmit").hide();
                     }
                 },
-                error: function (error) {
-                    console.info(error);
-                }
+               ``
             });
         }
     </script>

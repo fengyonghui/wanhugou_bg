@@ -396,6 +396,7 @@
 						</c:if>
 								<a href="${ctx}/biz/order/bizOrderHeader/auditList?id=${orderHeader.id}&type=0">产地直发审核状态</a>
 								<a href="${ctx}/biz/order/bizOrderHeader/auditList?id=${orderHeader.id}&type=1">本地备货审核状态</a>
+								<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">本地备货出库确认</a>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="biz:order:bizOrderHeader:refund">
 						<!-- 退款增加 -->
