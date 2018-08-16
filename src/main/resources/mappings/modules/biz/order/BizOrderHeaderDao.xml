@@ -913,7 +913,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
+		WHERE us.id = us1.id AND header1.order_type != 4 AND header1.order_type != 6 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -948,6 +948,7 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
 		oh.order_type != 4
+		and oh.order_type != 6
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1169,6 +1170,7 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
 		oh.order_type != 4
+		and oh.order_type != 6
 		and oh.status = 1
 		and ccc.status = 1
 		AND NOT EXISTS(
@@ -1437,7 +1439,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
+		WHERE us.id = us1.id AND header1.order_type != 4 AND header1.order_type != 6 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1460,6 +1462,7 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
 		oh.order_type != 4
+		and oh.order_type != 6
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta

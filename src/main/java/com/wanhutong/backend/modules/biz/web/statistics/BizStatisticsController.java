@@ -1238,7 +1238,7 @@ public class BizStatisticsController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:profit:view")
-    @RequestMapping(value = {"singleUserProfitData", ""})
+    @RequestMapping(value = {"singleUserProfitData"})
     @ResponseBody
     public String singleUserProfitData(HttpServletRequest request, HttpServletResponse response, String month, String usName, Integer purchasingId) {
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month, purchasingId);
