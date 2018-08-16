@@ -4,6 +4,7 @@
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderDrawBackStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.BizOrderTypeEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderPayProportionStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 <html>
@@ -563,21 +564,22 @@
     </script>
 
     <script type="text/javascript">
+        //代采订单：审核通过
         function checkPass(obj) {
-            if('${entity.bizStatus == OrderHeaderBizStatusEnum.IN_REVIEW.state}'){
+            //requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum
+            // RoleEnNameEnum.SELECTION_OF_SPECIALIST.state
+            // (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum)) &&
+            if('${(fns:hasRole(roleSet, RoleEnNameEnum.SELECTION_OF_SPECIALIST.state)) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
                 var lastPayDateVal = $("#lastPayDate").val();
                 if (lastPayDateVal == ""){
                     alert("请输入最后付款时间！")
                     return false;
                 }
             }
-            console.log("--1--")
             top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
                 if(v=="ok"){
                     var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
-                    console.log("--2--")
                     var submit = function (v, h, f) {
-                        console.log("--3--")
                         if ($String.isNullOrBlank(f.description)) {
                             jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
                             return false;
@@ -598,9 +600,38 @@
             },{buttonsFocus:1});
         }
 
+        //代采订单：审核驳回
+        function checkReject(obj) {
+            top.$.jBox.confirm("确认驳回该流程吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
+                    var submit = function (v, h, f) {
+                        if ($String.isNullOrBlank(f.description)) {
+                            jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                            return false;
+                        }
+                        if (obj == "DO") {
+                            audit(2, f.description);
+                        }
+                        if (obj == "PO") {
+                            poAudit(2,f.description);
+                        }
+                        return true;
+                    };
+
+                    jBox(html, {
+                        title: "请输入驳回理由:", submit: submit, loaded: function (h) {
+                        }
+                    });
+                }
+            },{buttonsFocus:1});
+        }
+
         function audit(auditType, description) {
+            console.log("auditType=" + auditType);
             var id = $("#id").val();
             var currentType = $("#currentType").val();
+            console.log("id=" + id);
             $.ajax({
                 url: '${ctx}/biz/order/bizOrderHeader/audit',
                 contentType: 'application/json',
@@ -610,9 +641,16 @@
                     if(result == 'ok') {
                         if(auditType==1){
                             //自动生成采购单
-                            <%--var id = $("#id").val();--%>
-                            <%--var bizStatus = getCurrentBizStatus(id);--%>
-                            <%--if ('${ReqHeaderStatusEnum.APPROVE.state}' == bizStatus) {--%>
+                            var id = $("#id").val();
+                            //获取当前订单业务状态，如果订单审核完成则自动生成采购单
+                            //getCurrentBizStatus(id);
+                            //requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum
+                            // RoleEnNameEnum.SELECTION_OF_SPECIALIST.state
+                            // (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum)) &&
+                            if('${(fns:hasRole(roleSet, RoleEnNameEnum.SELECTION_OF_SPECIALIST.state)) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
+                                getPoHeaderPara(id);
+                            }
+                            <%--if ('${OrderHeaderBizStatusEnum.APPROVEPARTONE.state}' == bizStatus) {--%>
                                 <%--getPoHeaderPara(id);--%>
                             <%--}--%>
                         }
@@ -627,6 +665,72 @@
                 }
             });
         }
+
+        //获取当前订单业务状态
+        function getCurrentBizStatus(id) {
+            var bizStatus = "";
+            $.ajax({
+                url: '${ctx}/biz/request/bizRequestHeaderForVendor/getCurrentBizStatus',
+                contentType: 'application/json',
+                data: {"id": id},
+                type: 'get',
+                dataType: 'json',
+                success: function (result) {
+                    if ('${OrderHeaderBizStatusEnum.APPROVEPARTONE.state}' == result) {
+                        getPoHeaderPara(id);
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+            return bizStatus;
+        }
+
+        function getPoHeaderPara(id) {
+            $.ajax({
+                url: '${ctx}/biz/request/bizRequestOrder/goListAutoSave',
+                contentType: 'application/json',
+                data: {"orderId": id, "type": "2"},
+                type: 'get',
+                dataType: 'json',
+                success: function (result) {
+                    var reqDetailIds = result['unitPrices'];
+                    if (reqDetailIds == "") {
+                        alert("价钱不能为空！");
+                        return;
+                    }
+                    savePoHeader(result);
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
+
+        function savePoHeader(result) {
+            var orderDetailIds = result['orderDetailIds'];
+            var vendorId = result['vendorId'];
+            var unitPrices = result['unitPrices'];
+            var ordQtys = result['ordQtys'];
+            <!-- 最后付款时间 -->
+            var lastPayDateVal = $("#lastPayDate").val();
+            $.ajax({
+                url: '${ctx}/biz/po/bizPoHeader/autoSave',
+                contentType: 'application/json',
+                data: {"reqDetailIds":"", "orderDetailIds": orderDetailIds,"vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
+                type: 'get',
+                success: function (res) {
+                    if (res == "ok") {
+
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
+
 
     </script>
 </head>
@@ -787,6 +891,34 @@
                 </c:if>
             </div>
         </div>
+
+        <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList == null}">
+            <div class="control-group">
+                <label class="control-label">审核状态：</label>
+                <div class="controls">
+                    <input type="text" disabled="disabled"
+                           value="${orderHeaderProcess.name}" htmlEscape="false"
+                           maxlength="30" class="input-xlarge "/>
+                    <input id="currentType" type="hidden" disabled="disabled"
+                           value="${orderHeaderProcess.code}" htmlEscape="false"
+                           maxlength="30" class="input-xlarge "/>
+                </div>
+            </div>
+        </c:if>
+        <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
+            <div class="control-group">
+                <label class="control-label">审核状态：</label>
+                <div class="controls">
+                    <input type="text" disabled="disabled"
+                           value="${purchaseOrderProcess.name}" htmlEscape="false"
+                           maxlength="30" class="input-xlarge "/>
+                    <input id="poCurrentType" type="hidden" disabled="disabled"
+                           value="${purchaseOrderProcess.code}" htmlEscape="false"
+                           maxlength="30" class="input-xlarge "/>
+                </div>
+            </div>
+        </c:if>
+
         <div class="control-group">
             <label class="control-label">业务状态：</label>
             <div class="controls">
@@ -904,9 +1036,9 @@
 
     <!-- 状态为审核中，自动生成采购单时，需要填写最后付款时间 -->
         <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
-            <shiro:hasPermission name="biz:request:bizOrderHeader:audit">
+            <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
                 <c:if test="${entity.str == 'audit'}">
-                    <c:if test="${entity.bizStatus == OrderHeaderBizStatusEnum.IN_REVIEW.state}">
+                    <c:if test="${(fns:hasRole(roleSet, RoleEnNameEnum.SELECTION_OF_SPECIALIST.state)) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}">
                         <div class="control-group">
                             <label class="control-label">最后付款时间：</label>
                             <div class="controls">
@@ -1177,79 +1309,79 @@
             </div>
         </c:if>
 
-        <c:if test="${fn:length(entity.commonProcessList) > 0}">
-            <div class="control-group">
-                <label class="control-label">审批流程：</label>
-                <div class="controls help_wrap">
-                    <div class="help_step_box fa">
-                        <c:forEach items="${entity.commonProcessList}" var="v" varStatus="stat">
-                            <c:if test="${!stat.last}" >
-                                <div class="help_step_item">
-                                    <div class="help_step_left"></div>
-                                    <div class="help_step_num">${stat.index + 1}</div>
-                                    批注:${v.description}<br/><br/>
-                                    审批人:${v.user.name}<br/>
-                                    <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-                                    <div class="help_step_right"></div>
-                                </div>
-                            </c:if>
-                            <c:if test="${stat.last && entity.bizPoHeader.commonProcessList == null}">
-                                <div class="help_step_item help_step_set">
-                                    <div class="help_step_left"></div>
-                                    <div class="help_step_num">${stat.index + 1}</div>
-                                    <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-                                    当前状态:${v.doOrderHeaderProcessAll.name}<br/><br/>
-                                        ${v.user.name}<br/>
-                                    </c:if>
+        <%--<c:if test="${fn:length(entity.commonProcessList) > 0}">--%>
+            <%--<div class="control-group">--%>
+                <%--<label class="control-label">审批流程：</label>--%>
+                <%--<div class="controls help_wrap">--%>
+                    <%--<div class="help_step_box fa">--%>
+                        <%--<c:forEach items="${entity.commonProcessList}" var="v" varStatus="stat">--%>
+                            <%--<c:if test="${!stat.last}" >--%>
+                                <%--<div class="help_step_item">--%>
+                                    <%--<div class="help_step_left"></div>--%>
+                                    <%--<div class="help_step_num">${stat.index + 1}</div>--%>
+                                    <%--批注:${v.description}<br/><br/>--%>
+                                    <%--审批人:${v.user.name}<br/>--%>
+                                    <%--<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
+                                    <%--<div class="help_step_right"></div>--%>
+                                <%--</div>--%>
+                            <%--</c:if>--%>
+                            <%--<c:if test="${stat.last && entity.bizPoHeader.commonProcessList == null}">--%>
+                                <%--<div class="help_step_item help_step_set">--%>
+                                    <%--<div class="help_step_left"></div>--%>
+                                    <%--<div class="help_step_num">${stat.index + 1}</div>--%>
+                                    <%--<c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">--%>
+                                    <%--当前状态:${v.doOrderHeaderProcessAll.name}<br/><br/>--%>
+                                        <%--${v.user.name}<br/>--%>
+                                    <%--</c:if>--%>
 
-                                    <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-                                        当前状态:${v.doOrderHeaderProcessFifth.name}<br/><br/>
-                                        ${v.user.name}<br/>
-                                    </c:if>
+                                    <%--<c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">--%>
+                                        <%--当前状态:${v.doOrderHeaderProcessFifth.name}<br/><br/>--%>
+                                        <%--${v.user.name}<br/>--%>
+                                    <%--</c:if>--%>
 
-                                    <div class="help_step_right"></div>
-                                </div>
-                            </c:if>
-                        </c:forEach>
-                    </div>
-                </div>
-            </div>
-            <div class="controls help_wrap">
-                <div class="help_step_box fa">
-                    <c:forEach items="${entity.bizPoHeader.commonProcessList}" var="v" varStatus="stat">
-                        <c:if test="${stat.first && !stat.last}" >
-                            <div class="help_step_item">
-                                <div class="help_step_left"></div>
-                                <div class="help_step_num">${fn:length(entity.commonProcessList)}</div>
-                                批注:${v.description}<br/><br/>
-                                审批人:${v.user.name}<br/>
-                                <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-                                <div class="help_step_right"></div>
-                            </div>
-                        </c:if>
-                        <c:if test="${!stat.last && !stat.first}" >
-                            <div class="help_step_item">
-                                <div class="help_step_left"></div>
-                                <div class="help_step_num">${fn:length(entity.commonProcessList) + stat.index}</div>
-                                批注:${v.description}<br/><br/>
-                                审批人:${v.user.name}<br/>
-                                <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-                                <div class="help_step_right"></div>
-                            </div>
-                        </c:if>
-                        <c:if test="${stat.last}">
-                            <div class="help_step_item help_step_set">
-                                <div class="help_step_left"></div>
-                                <div class="help_step_num">${fn:length(entity.commonProcessList) + stat.index}</div>
-                                当前状态:${v.purchaseOrderProcess.name}<br/><br/>
-                                    ${v.user.name}<br/>
-                                <div class="help_step_right"></div>
-                            </div>
-                        </c:if>
-                    </c:forEach>
-                </div>
-            </div>
-        </c:if>
+                                    <%--<div class="help_step_right"></div>--%>
+                                <%--</div>--%>
+                            <%--</c:if>--%>
+                        <%--</c:forEach>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+            <%--</div>--%>
+            <%--<div class="controls help_wrap">--%>
+                <%--<div class="help_step_box fa">--%>
+                    <%--<c:forEach items="${entity.bizPoHeader.commonProcessList}" var="v" varStatus="stat">--%>
+                        <%--<c:if test="${stat.first && !stat.last}" >--%>
+                            <%--<div class="help_step_item">--%>
+                                <%--<div class="help_step_left"></div>--%>
+                                <%--<div class="help_step_num">${fn:length(entity.commonProcessList)}</div>--%>
+                                <%--批注:${v.description}<br/><br/>--%>
+                                <%--审批人:${v.user.name}<br/>--%>
+                                <%--<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
+                                <%--<div class="help_step_right"></div>--%>
+                            <%--</div>--%>
+                        <%--</c:if>--%>
+                        <%--<c:if test="${!stat.last && !stat.first}" >--%>
+                            <%--<div class="help_step_item">--%>
+                                <%--<div class="help_step_left"></div>--%>
+                                <%--<div class="help_step_num">${fn:length(entity.commonProcessList) + stat.index}</div>--%>
+                                <%--批注:${v.description}<br/><br/>--%>
+                                <%--审批人:${v.user.name}<br/>--%>
+                                <%--<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
+                                <%--<div class="help_step_right"></div>--%>
+                            <%--</div>--%>
+                        <%--</c:if>--%>
+                        <%--<c:if test="${stat.last}">--%>
+                            <%--<div class="help_step_item help_step_set">--%>
+                                <%--<div class="help_step_left"></div>--%>
+                                <%--<div class="help_step_num">${fn:length(entity.commonProcessList) + stat.index}</div>--%>
+                                <%--当前状态:${v.purchaseOrderProcess.name}<br/><br/>--%>
+                                    <%--${v.user.name}<br/>--%>
+                                <%--<div class="help_step_right"></div>--%>
+                            <%--</div>--%>
+                        <%--</c:if>--%>
+                    <%--</c:forEach>--%>
+                <%--</div>--%>
+            <%--</div>--%>
+        <%--</c:if>--%>
 
         <c:if test="${statu != '' && statu =='unline'}">
             <div class="control-group">
@@ -1385,7 +1517,7 @@
             <div class="form-actions">
                 <!-- 一单到底订单审核 -->
                 <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
-                    <shiro:hasPermission name="biz:request:bizOrderHeader:audit">
+                    <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
                         <c:if test="${entity.str == 'audit'}">
                             <c:if test="${entity.bizPoHeader.commonProcessList == null}">
                                 <input id="btnSubmit" type="button" onclick="checkPass('DO')" class="btn btn-primary"

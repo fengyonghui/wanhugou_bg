@@ -117,12 +117,13 @@
 				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
-				OR
-				oh.order_num LIKE
-				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
 				)
+			</if>
+			<!--<if test="bizOrderHeader != null and bizOrderHeader.id != null">-->
+				<!--AND oh.id = #{bizOrderHeader.id}-->
+			<!--</if>-->
+			<if test="bizOrderHeader != null and bizOrderHeader.bizStatus != null">
+				AND oh.biz_status = #{bizOrderHeader.bizStatus}
 			</if>
 			<if test="bizRequestHeader != null and bizRequestHeader.bizStatus != null">
 				AND rh.biz_status = #{bizRequestHeader.bizStatus}

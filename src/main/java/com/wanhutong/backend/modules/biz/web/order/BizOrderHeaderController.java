@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.web.order;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.*;
@@ -215,6 +216,8 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
+        bizOrderHeaderTwo.setStr(bizOrderHeader.getStr());
+        bizOrderHeaderTwo.setCommonProcess(bizOrderHeader.getCommonProcess());
         if (bizOrderHeader.getId() != null) {
             Double totalDetail = bizOrderHeaderTwo.getTotalDetail();//订单详情总价
             Double totalExp = bizOrderHeaderTwo.getTotalExp();//订单总费用
@@ -321,6 +324,19 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
         }
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
+            }
+        }
+        model.addAttribute("roleSet", roleSet);
+        model.addAttribute("roleEnNameSet", roleEnNameSet);
+
         if (bizOrderHeader.getId() != null) {
             BizOrderHeaderUnline bizOrderHeaderUnline = new BizOrderHeaderUnline();
             bizOrderHeaderUnline.setOrderHeader(bizOrderHeader);
@@ -359,6 +375,8 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("detailIdMap", detailIdMap);
         model.addAttribute("statusMap", statusMap);
 
+
+
         //图片处理
         CommonImg commonImg = new CommonImg();
         commonImg.setImgType(ImgEnum.UNlINE_REFUND_VOUCHER.getCode());
@@ -387,7 +405,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:audit")
     @RequestMapping(value = "audit")
     @ResponseBody
-    public String audit(int id, String currentType, int auditType, String description) {
+    public String audit(int id, String currentType, int auditType, String description, Model model) {
         BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
         String result = "";
         if (OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeader.getPayProportion())) {

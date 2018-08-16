@@ -344,20 +344,25 @@
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
-			<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
-				<shiro:hasPermission name="biz:request:bizOrderHeader:audit">
+			<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+				<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
 					<!-- 100%首付款审核 -->
 					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-						<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum) && orderHeader.bizStatus<OrderHeaderBizStatusEnum.APPROVEPARTONE.state && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
+                        <%--&& orderHeader.bizStatus<OrderHeaderBizStatusEnum.APPROVEPARTONE.state--%>
+						<%--&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.UNREVIEWED.state--%>
+						<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum)  && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
 							&& orderHeader.commonProcess.doOrderHeaderProcessAll.code != auditAllStatus
 							}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
 						</c:if>
 					</c:if>
 
+
 					<!-- 20%首付款审核 -->
 					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-						<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) && orderHeader.bizStatus<OrderHeaderBizStatusEnum.APPROVEPARTONE.state && orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
+                        <%--&& orderHeader.bizStatus<OrderHeaderBizStatusEnum.APPROVEPARTONE.state--%>
+						<%--&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.UNREVIEWED.state--%>
+						<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) && orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
 							&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
 							}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>

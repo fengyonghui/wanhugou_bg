@@ -1164,14 +1164,19 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "autoSave")
     @ResponseBody
-    public String autoSave(String reqDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal, String prewStatus, String type,
+    public String autoSave(String reqDetailIds, String orderDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal, String prewStatus, String type,
                          String version, HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes,Model model) throws ParseException {
         Office vendOffice = new Office();
         vendOffice.setId(Integer.parseInt(vendorId));
 
         BizPoHeader bizPoHeader = new BizPoHeader();
         bizPoHeader.setVendOffice(vendOffice);
-        bizPoHeader.setReqDetailIds(reqDetailIds);
+        if (reqDetailIds != null || !"".equals(reqDetailIds)) {
+            bizPoHeader.setReqDetailIds(reqDetailIds);
+        }
+        if (orderDetailIds != null || !"".equals(orderDetailIds)) {
+            bizPoHeader.setOrderDetailIds(orderDetailIds);
+        }
         bizPoHeader.setUnitPrices(unitPrices);
         bizPoHeader.setOrdQtys(ordQtys);
 
@@ -1259,7 +1264,6 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeader.setPayDeadline(deadlineDate);
         String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
         addMessage(redirectAttributes, msg);
-
 
         return "ok";
     }

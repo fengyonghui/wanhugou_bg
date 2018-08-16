@@ -13,9 +13,6 @@ public enum OrderHeaderBizStatusEnum {
     ORDER_DEFAULTSTATUS(1, "新建订单"),
     UNPAY(0, "未支付"),
     INITIAL_PAY(5, "首付款支付"),
-    UNREVIEWED(6, "未审核"),
-    IN_REVIEW(7,"审核中"),
-    APPROVEPARTONE(8, "第一阶段审核通过"),
     ALL_PAY(10, "全部支付"),
     SUPPLYING(15, "同意发货(供货中)"),
     APPROVE(16, "采购中心供货"),
@@ -27,7 +24,11 @@ public enum OrderHeaderBizStatusEnum {
     COMPLETE(30,"已完成"),
     CANCLE(35,"已取消"),
     DELETE(40,"已删除"),
-    UNAPPROVE(45, "审核失败");
+    UNAPPROVE(45, "审核失败"),
+    //一单到底审核
+    UNREVIEWED(50, "未审核"),
+    IN_REVIEW(55,"审核中"),
+    APPROVEPARTONE(60, "第一阶段审核通过");
 
     private Integer state;
     private String desc;

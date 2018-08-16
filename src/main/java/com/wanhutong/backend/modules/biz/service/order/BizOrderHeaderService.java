@@ -233,6 +233,13 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         } else {
             bizOrderHeader.setOrderNum(bizOrderHeader.getOrderNum());
         }
+        if(BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
+            Integer processId = 0;
+            processId = saveCommonProcess(bizOrderHeader);
+
+            this.updateProcessId(bizOrderHeader.getId(),processId);
+        }
+
         bizOrderHeader.setBizLocation(bizLocation);
         if (bizOrderHeader.getTotalDetail() == null) {
             bizOrderHeader.setTotalDetail(0.0);
@@ -271,6 +278,49 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         bizLocation.setId(bizOrderHeader.getBizLocation().getId());
         bizLocation.setOrderHeaderID(bizOrderHeader);
         bizOrderAddressService.save(bizLocation);
+    }
+
+    public Integer saveCommonProcess(BizOrderHeader bizOrderHeader){
+        Integer code = null;
+        if (OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeader.getPayProportion())) {
+            DoOrderHeaderProcessAllConfig doOrderHeaderProcessAllConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
+            DoOrderHeaderProcessAllConfig.OrderHeaderProcess purchaseOrderProcess = doOrderHeaderProcessAllConfig.processMap.get(doOrderHeaderProcessAllConfig.getDefaultProcessId());
+            code = purchaseOrderProcess.getCode();
+        } else if (OrderPayProportionStatusEnum.FIFTH.getState().equals(bizOrderHeader.getPayProportion())) {
+            DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
+            DoOrderHeaderProcessFifthConfig.OrderHeaderProcess purchaseOrderProcess = doOrderHeaderProcessFifthConfig.processMap.get(doOrderHeaderProcessFifthConfig.getDefaultProcessId());
+            code = purchaseOrderProcess.getCode();
+        }
+        RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
+        RequestOrderProcessConfig.RequestOrderProcess purchaseOrderProcess = requestOrderProcessConfig.processMap.get(requestOrderProcessConfig.getDefaultProcessId());
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(bizOrderHeader.getId().toString());
+        commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+        commonProcessEntity.setType(String.valueOf(code));
+        commonProcessService.save(commonProcessEntity);
+
+		/*String desc = purchaseOrderProcess.getName();
+		Integer bizStatus = ReqHeaderStatusEnum.getEnum(desc).getState();
+		bizOrderStatusService.insertAfterBizStatusChangedNew(bizStatus, BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());*/
+        StringBuilder phone = new StringBuilder();
+        User user=UserUtils.getUser();
+        User sendUser=new User(systemService.getRoleByEnname(purchaseOrderProcess.getRoleEnNameEnum()==null?"":purchaseOrderProcess.getRoleEnNameEnum().toLowerCase()));
+        sendUser.setCent(user.getCompany());
+        List<User> userList = systemService.findUser(sendUser);
+        if (CollectionUtils.isNotEmpty(userList)) {
+            for (User u : userList) {
+                phone.append(u.getMobile()).append(",");
+            }
+        }
+
+        if (StringUtils.isNotBlank(phone.toString())) {
+            AliyunSmsClient.getInstance().sendSMS(
+                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                    phone.toString(),
+                    ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
+        }
+
+        return commonProcessEntity.getId();
     }
 
     @Transactional(readOnly = false)
@@ -770,22 +820,22 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         nextProcessEntity.setPrevId(cureentProcessEntity.getId());
 
 
-        if (cureentProcessEntity.getType().equals(doOrderHeaderProcessConfig.getDefaultProcessId().toString())) {
-            Integer bizStatus =  bizOrderHeader.getBizStatus();
-            this.updateBizStatus(orderHeaderId, OrderHeaderBizStatusEnum.IN_REVIEW.getState());
-            if (bizStatus == null || !bizStatus.equals(OrderHeaderBizStatusEnum.IN_REVIEW.getState())) {
-                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(), BizOrderStatusOrderTypeEnum.SELLORDER.getState(), bizOrderHeader.getId());
-            }
-        }
-
-        if(nextProcessEntity.getType().equals(doOrderHeaderProcessConfig.getAutProcessId().toString())){
-            Integer bizStatus = bizOrderHeader.getBizStatus();
-            bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.APPROVEPARTONE.getState());
-            saveOrderHeader(bizOrderHeader);
-            if (bizStatus == null || !bizStatus.equals(OrderHeaderBizStatusEnum.APPROVEPARTONE.getState())) {
-                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(), BizOrderStatusOrderTypeEnum.SELLORDER.getState(), bizOrderHeader.getId());
-            }
-        }
+//        if (cureentProcessEntity.getType().equals(doOrderHeaderProcessConfig.getDefaultProcessId().toString())) {
+//            Integer bizStatus =  bizOrderHeader.getBizStatus();
+//            this.updateBizStatus(orderHeaderId, OrderHeaderBizStatusEnum.IN_REVIEW.getState());
+//            if (bizStatus == null || !bizStatus.equals(OrderHeaderBizStatusEnum.IN_REVIEW.getState())) {
+//                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(), BizOrderStatusOrderTypeEnum.SELLORDER.getState(), bizOrderHeader.getId());
+//            }
+//        }
+//
+//        if(nextProcessEntity.getType().equals(doOrderHeaderProcessConfig.getAutProcessId().toString())){
+//            Integer bizStatus = bizOrderHeader.getBizStatus();
+//            bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.APPROVEPARTONE.getState());
+//            saveOrderHeader(bizOrderHeader);
+//            if (bizStatus == null || !bizStatus.equals(OrderHeaderBizStatusEnum.APPROVEPARTONE.getState())) {
+//                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(), BizOrderStatusOrderTypeEnum.SELLORDER.getState(), bizOrderHeader.getId());
+//            }
+//        }
         commonProcessService.save(nextProcessEntity);
 
 		/*String nextDesc = currentProcess.getName();
@@ -808,7 +858,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             AliyunSmsClient.getInstance().sendSMS(
                     SmsTemplateCode.PENDING_AUDIT_1.getCode(),
                     phone.toString(),
-                    ImmutableMap.of("order","备货清单", "orderNum", bizOrderHeader.getOrderNum()));
+                    ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
         }
 
         return "ok";
@@ -874,22 +924,22 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         nextProcessEntity.setPrevId(cureentProcessEntity.getId());
 
 
-        if (cureentProcessEntity.getType().equals(doOrderHeaderProcessConfig.getDefaultProcessId().toString())) {
-            Integer bizStatus =  bizOrderHeader.getBizStatus();
-            this.updateBizStatus(orderHeaderId, OrderHeaderBizStatusEnum.IN_REVIEW.getState());
-            if (bizStatus == null || !bizStatus.equals(OrderHeaderBizStatusEnum.IN_REVIEW.getState())) {
-                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(), BizOrderStatusOrderTypeEnum.SELLORDER.getState(), bizOrderHeader.getId());
-            }
-        }
-
-        if(nextProcessEntity.getType().equals(doOrderHeaderProcessConfig.getAutProcessId().toString())){
-            Integer bizStatus = bizOrderHeader.getBizStatus();
-            bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.APPROVEPARTONE.getState());
-            saveOrderHeader(bizOrderHeader);
-            if (bizStatus == null || !bizStatus.equals(OrderHeaderBizStatusEnum.APPROVEPARTONE.getState())) {
-                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(), BizOrderStatusOrderTypeEnum.SELLORDER.getState(), bizOrderHeader.getId());
-            }
-        }
+//        if (cureentProcessEntity.getType().equals(doOrderHeaderProcessConfig.getDefaultProcessId().toString())) {
+//            Integer bizStatus =  bizOrderHeader.getBizStatus();
+//            this.updateBizStatus(orderHeaderId, OrderHeaderBizStatusEnum.IN_REVIEW.getState());
+//            if (bizStatus == null || !bizStatus.equals(OrderHeaderBizStatusEnum.IN_REVIEW.getState())) {
+//                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(), BizOrderStatusOrderTypeEnum.SELLORDER.getState(), bizOrderHeader.getId());
+//            }
+//        }
+//
+//        if(nextProcessEntity.getType().equals(doOrderHeaderProcessConfig.getAutProcessId().toString())){
+//            Integer bizStatus = bizOrderHeader.getBizStatus();
+//            bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.APPROVEPARTONE.getState());
+//            saveOrderHeader(bizOrderHeader);
+//            if (bizStatus == null || !bizStatus.equals(OrderHeaderBizStatusEnum.APPROVEPARTONE.getState())) {
+//                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(), BizOrderStatusOrderTypeEnum.SELLORDER.getState(), bizOrderHeader.getId());
+//            }
+//        }
         commonProcessService.save(nextProcessEntity);
 
 		/*String nextDesc = currentProcess.getName();
@@ -912,7 +962,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             AliyunSmsClient.getInstance().sendSMS(
                     SmsTemplateCode.PENDING_AUDIT_1.getCode(),
                     phone.toString(),
-                    ImmutableMap.of("order","备货清单", "orderNum", bizOrderHeader.getOrderNum()));
+                    ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
         }
 
         return "ok";

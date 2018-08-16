@@ -71,6 +71,17 @@
 			<result property="drawbackStatus" column="drawBack.drawbackStatus"/>
 		</association>
 
+		<association property="commonProcess" javaType="CommonProcessEntity" column="commonProcess.id">
+			<id property="id" column="commonProcess.id"/>
+			<result property="objectId" column="commonProcess.objectId"/>
+			<result property="objectName" column="commonProcess.objectName"/>
+			<result property="prevId" column="commonProcess.prevId"/>
+			<result property="bizStatus" column="commonProcess.bizStatus"/>
+			<result property="processor" column="commonProcess.processor"/>
+			<result property="description" column="commonProcess.description"/>
+			<result property="type" column="commonProcess.type"/>
+		</association>
+
 		<collection property="orderDetailList" ofType="BizOrderDetail">
 			<id property="id" column="orderDetailList.id" />
 			<result property="ordQty" column="orderDetailList.ordQty" />
