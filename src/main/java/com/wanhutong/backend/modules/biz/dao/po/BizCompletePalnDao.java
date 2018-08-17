@@ -6,6 +6,9 @@ package com.wanhutong.backend.modules.biz.dao.po;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 确认排产表DAO接口
@@ -14,5 +17,15 @@ import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
  */
 @MyBatisDao
 public interface BizCompletePalnDao extends CrudDao<BizCompletePaln> {
-	
+    /**
+     * 确认排产后更改排产状态
+     * @param bizCompletePaln
+     */
+    void updateCompleteStatus(BizCompletePaln bizCompletePaln);
+
+    /**
+     * 批量确认排产后更改排产状态
+     * @param paramList
+     */
+    void batchUpdateCompleteStatus(@Param("paramList")List<String> paramList);
 }
