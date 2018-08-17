@@ -4,6 +4,8 @@
 package com.wanhutong.backend.modules.process.entity;
 
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
@@ -39,6 +41,8 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	private RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess;
 	private PaymentOrderProcessConfig.Process paymentOrderProcess;
 	private VendorRequestOrderProcessConfig.RequestOrderProcess vendRequestOrderProcess;
+	private DoOrderHeaderProcessAllConfig.OrderHeaderProcess doOrderHeaderProcessAll;
+	private DoOrderHeaderProcessFifthConfig.OrderHeaderProcess doOrderHeaderProcessFifth;
 
 	/**
 	 * 前一个流程
@@ -166,6 +170,13 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 		return ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 
+	public DoOrderHeaderProcessAllConfig.OrderHeaderProcess getDoOrderHeaderProcessAll() {
+		return ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
+
+	public DoOrderHeaderProcessFifthConfig.OrderHeaderProcess getDoOrderHeaderProcessFifth() {
+		return ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
 
 	public enum AuditType {
 		/**

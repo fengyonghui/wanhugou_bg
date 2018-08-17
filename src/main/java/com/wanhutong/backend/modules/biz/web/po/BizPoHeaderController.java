@@ -1169,29 +1169,34 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "autoSave")
     @ResponseBody
-    public String autoSave(String reqDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal, String prewStatus, String type,
+    public String autoSave(String reqDetailIds, String orderDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal, String prewStatus, String type,
                          String version, HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes,Model model) throws ParseException {
         Office vendOffice = new Office();
         vendOffice.setId(Integer.parseInt(vendorId));
 
         BizPoHeader bizPoHeader = new BizPoHeader();
         bizPoHeader.setVendOffice(vendOffice);
-        bizPoHeader.setReqDetailIds(reqDetailIds);
+        if (reqDetailIds != null || !"".equals(reqDetailIds)) {
+            bizPoHeader.setReqDetailIds(reqDetailIds);
+        }
+        if (orderDetailIds != null || !"".equals(orderDetailIds)) {
+            bizPoHeader.setOrderDetailIds(orderDetailIds);
+        }
         bizPoHeader.setUnitPrices(unitPrices);
         bizPoHeader.setOrdQtys(ordQtys);
 
         if ("audit".equalsIgnoreCase(type)) {
             String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
             addMessage(redirectAttributes, msg);
-            return "fail";
+            return "生成支付申请单";
         }
         if (!beanValidator(model, bizPoHeader)) {
-            return "fail";
+            return "自动生成采购单时，服务端参数有效性验证";
         }
         Set<Integer> poIdSet = bizPoHeaderService.findPrewPoHeader(bizPoHeader);
         if (poIdSet.size() == 1) {
             addMessage(redirectAttributes, "prew".equals(prewStatus) ? "采购订单预览信息" : "保存采购订单成功");
-            return "fail";
+            return "采购单预览";
         }
         int deOfifceId = 0;
         if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null) {
@@ -1231,40 +1236,8 @@ public class BizPoHeaderController extends BaseController {
 
         addMessage(redirectAttributes, "保存采购订单成功");
 
-        //采购单开启审核
-        bizPoHeader = bizPoHeaderService.get(poHeaderIdid);
-        Boolean prew = false;
-        BigDecimal prewPayTotal = new BigDecimal(0);
-        Date prewPayDeadline = null;
-        Integer auditType = 1;
-        String desc = "";
-
-        BizPoPaymentOrder bizPoPaymentOrder = bizPoHeader.getBizPoPaymentOrder();
-        if (bizPoPaymentOrder != null) {
-            if (bizPoPaymentOrder.getId() != null) {
-                prewPayTotal = bizPoPaymentOrder.getTotal();
-            }
-        } else {
-            BigDecimal totalDetail = new BigDecimal((bizPoHeader.getTotalDetail() == null ? 0:bizPoHeader.getTotalDetail()));
-            BigDecimal totalExp = new BigDecimal((bizPoHeader.getTotalExp() == null ? 0:bizPoHeader.getTotalExp()));
-            BigDecimal freight = new BigDecimal((bizPoHeader.getFreight() == null ? 0:bizPoHeader.getFreight()));
-            BigDecimal payTotal = bizPoHeader.getPayTotal();
-
-            prewPayTotal = totalDetail.add(totalExp).add(freight).subtract(payTotal).setScale(0, BigDecimal.ROUND_HALF_UP);
-        }
-        Pair<Boolean, String> result = bizPoHeaderService.startAudit(poHeaderIdid, prew, prewPayTotal, prewPayDeadline, auditType, desc);
-
-        //自动生成付款单
-        bizPoHeader = bizPoHeaderService.get(poHeaderIdid);
-        //应付金额
-        bizPoHeader.setPlanPay(prewPayTotal);
-        //本次申请付款时间
-        String deadLine = DateUtils.getDateTime();
-        Date deadlineDate = DateUtils.parseDate(deadLine);
-        bizPoHeader.setPayDeadline(deadlineDate);
-        String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
-        addMessage(redirectAttributes, msg);
-
+        //采购单开启审核，同时自动生成付款单
+        bizPoHeaderService.autoSavePaymentOrder(poHeaderIdid);
 
         return "ok";
     }

@@ -330,7 +330,7 @@
             $.ajax({
                 url: '${ctx}/biz/request/bizRequestOrder/goListAutoSave',
                 contentType: 'application/json',
-                data: {"reqId": id},
+                data: {"orderId": id, "type": "1"},
                 type: 'get',
                 dataType: 'json',
                 success: function (result) {
@@ -357,7 +357,7 @@
             $.ajax({
                 url: '${ctx}/biz/po/bizPoHeader/autoSave',
                 contentType: 'application/json',
-                data: {"reqDetailIds": reqDetailIds, "vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
+                data: {"reqDetailIds": reqDetailIds, "orderDetailIds": "", "vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
                 type: 'get',
                 success: function (res) {
                     if (res == "ok") {

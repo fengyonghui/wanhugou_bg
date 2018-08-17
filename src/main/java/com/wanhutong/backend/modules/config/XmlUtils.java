@@ -3,6 +3,8 @@ package com.wanhutong.backend.modules.config;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.Xpp3Driver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PhoneConfig;
@@ -49,6 +51,8 @@ public class XmlUtils {
 		X_STREAM.processAnnotations(EmailConfig.class);
 		X_STREAM.processAnnotations(PhoneConfig.class);
 		X_STREAM.processAnnotations(VendorRequestOrderProcessConfig.class);
+		X_STREAM.processAnnotations(DoOrderHeaderProcessAllConfig.class);
+		X_STREAM.processAnnotations(DoOrderHeaderProcessFifthConfig.class);
 	}
 
 	@SuppressWarnings("unchecked")

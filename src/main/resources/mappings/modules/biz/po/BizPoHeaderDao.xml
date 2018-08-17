@@ -93,13 +93,17 @@
 				rh.id AS "bizRequestHeader.id",
 				rh.req_no AS "bizRequestHeader.reqNo",
 				rh.biz_status AS "bizRequestHeader.bizStatus",
-                rh.create_time AS "bizRequestHeader.createDate"
+                rh.create_time AS "bizRequestHeader.createDate",
+				oh.id AS "bizOrderHeader.id",
+				oh.order_num AS "bizOrderHeader.orderNum",
+				oh.biz_status AS "bizOrderHeader.bizStatus",
+				oh.create_time AS "bizOrderHeader.createDate"
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
 		LEFT JOIN biz_po_payment_order ppo ON ppo.po_header_id = a.id
 		LEFT JOIN biz_po_order_req por ON por.po_id = a.id
 		LEFT JOIN biz_order_header oh ON oh.id = por.so_id AND por.so_type = 1
-		RIGHT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
+		LEFT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			AND a.is_prew = 0
@@ -114,6 +118,12 @@
 				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
 				)
+			</if>
+			<!--<if test="bizOrderHeader != null and bizOrderHeader.id != null">-->
+				<!--AND oh.id = #{bizOrderHeader.id}-->
+			<!--</if>-->
+			<if test="bizOrderHeader != null and bizOrderHeader.bizStatus != null">
+				AND oh.biz_status = #{bizOrderHeader.bizStatus}
 			</if>
 			<if test="bizRequestHeader != null and bizRequestHeader.bizStatus != null">
 				AND rh.biz_status = #{bizRequestHeader.bizStatus}
