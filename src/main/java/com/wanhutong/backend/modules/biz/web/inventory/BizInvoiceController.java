@@ -164,8 +164,6 @@ public class BizInvoiceController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInvoice:view")
 	@RequestMapping(value = "form")
 	public String form(BizInvoice bizInvoice, Model model) {
-        BizLogistics bizLogistics = new BizLogistics();
-		List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
         User user = UserUtils.getUser();
         List<Role> roleList = user.getRoleList();
         boolean flag = false;
@@ -175,7 +173,8 @@ public class BizInvoiceController extends BaseController {
                 break;
             }
         }
-        model.addAttribute("logisticsList",logisticsList);
+        List<User> inspectorList = systemService.findUserByRoleEnName(RoleEnNameEnum.INSPECTOR.getState());
+        model.addAttribute("inspectorList",inspectorList);
         if (StringUtils.isBlank(bizInvoice.getCarrier())) {
             bizInvoice.setCarrier(user.getName());
         }
@@ -206,8 +205,8 @@ public class BizInvoiceController extends BaseController {
      */
     @RequiresPermissions("biz:inventory:bizInvoice:view")
     @RequestMapping(value = "invoiceOrderDetail")
-    public String invoiceOrderDetail(BizInvoice bizInvoice,String source, Model model) {
-
+    public String invoiceOrderDetail(BizInvoice bizInvoice, String str, String source, Model model) {
+        bizInvoice.setStr(str);
         BizLogistics bizLogistics = new BizLogistics();
         List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
@@ -230,7 +229,6 @@ public class BizInvoiceController extends BaseController {
                 }
             }
         }
-
         User user = UserUtils.getUser();
         List<Role> roleList = user.getRoleList();
         boolean flag = false;
@@ -240,9 +238,8 @@ public class BizInvoiceController extends BaseController {
                 break;
             }
         }
-//        if (StringUtils.isBlank(bizInvoice.getCarrier())) {
-//            bizInvoice.setCarrier(user.getName());
-//        }
+        List<User> inspectorList = systemService.findUserByRoleEnName(RoleEnNameEnum.INSPECTOR.getState());
+        model.addAttribute("inspectorList",inspectorList);
         if (flag && bizInvoice.getBizStatus()==1) {
             List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
             model.addAttribute("userList", userList);
@@ -272,8 +269,8 @@ public class BizInvoiceController extends BaseController {
      */
     @RequiresPermissions("biz:inventory:bizInvoice:view")
     @RequestMapping(value = "invoiceRequestDetail")
-    public String invoiceRequestDetail(BizInvoice bizInvoice,String source, Model model) {
-
+    public String invoiceRequestDetail(BizInvoice bizInvoice,String str, String source, Model model) {
+        bizInvoice.setStr(str);
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
         bizDetailInvoice.setInvoice(bizInvoice);
         List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
@@ -305,9 +302,8 @@ public class BizInvoiceController extends BaseController {
                 break;
             }
         }
-//        if (StringUtils.isBlank(bizInvoice.getCarrier())) {
-//            bizInvoice.setCarrier(user.getName());
-//        }
+        List<User> inspectorList = systemService.findUserByRoleEnName(RoleEnNameEnum.INSPECTOR.getState());
+        model.addAttribute("inspectorList",inspectorList);
         if (flag && bizInvoice.getBizStatus()==1) {
             List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
             model.addAttribute("userList", userList);

@@ -162,63 +162,61 @@
 			<div class="control-group">
 				<label class="control-label">发货单号：</label>
 				<div class="controls">
-					<form:input path="sendNumber" htmlEscape="false" disabled="true" class="input-xlarge "/>
+					<form:input path="sendNumber" htmlEscape="false" type="text" disabled="true" class="input-xlarge "/>
 				</div>
 			</div>
 		</c:if>
 		<div class="control-group">
 			<label class="control-label">物流单号：</label>
 			<div class="controls">
-				<form:input path="trackingNumber" htmlEscape="false" class="input-xlarge required"/>
+				<form:input path="trackingNumber" type="text" htmlEscape="false" class="input-xlarge"/>
+			</div>
+		</div>
+        <c:if test="${bizInvoice.str == 'freight'}">
+            <div class="control-group">
+                <label class="control-label">运费：</label>
+                <div class="controls">
+                    <form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
+                    <span class="help-inline"><font color="red">*</font> </span>
+                </div>
+            </div>
+        </c:if>
+        <div class="control-group">
+			<label class="control-label">验货员：</label>
+			<div class="controls">
+				<form:select about="choose" path="inspector.id" class="input-medium required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${inspectorList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">物流商：</label>
+			<label class="control-label">验货时间：</label>
 			<div class="controls">
-				<select id="bizLogistics" name="logistics.id" onmouseout="" class="input-medium">
-					<c:forEach items="${logisticsList}" var="bizLogistics">
-						<option value="${bizLogistics.id}"/>${bizLogistics.name}
-					</c:forEach>
-				</select>
+				<input name="inspectDate" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+					   value="<fmt:formatDate value="${bizInvoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">物流信息图：</label>
+			<label class="control-label">验货备注：</label>
 			<div class="controls">
-				<form:hidden path="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-				<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="false" maxWidth="100"
-							  maxHeight="100"/>
-			</div>
-		</div>
-		<%--<div class="control-group">--%>
-			<%--<label class="control-label">货值：</label>--%>
-			<%--<div class="controls">--%>
-				<%--<input id="valuePrice" name="valuePrice"  htmlEscape="false" value="" class="input-xlarge required"/>--%>
-				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-			<%--</div>--%>
-		<%--</div>--%>
-		<div class="control-group">
-			<label class="control-label">操作费：</label>
-			<div class="controls">
-				<form:input path="operation" htmlEscape="false" class="input-xlarge "/>
+				<form:textarea path="inspectRemark" type="textarea" htmlEscape="false" maxlength="30" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">运费：</label>
+			<label class="control-label">集货地点：</label>
 			<div class="controls">
-				<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:select path="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('coll_locate')}" itemValue="value" itemLabel="label"/>
+				</form:select>
+                <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<%--<div class="control-group">--%>
-			<%--<label class="control-label">承运人：</label>--%>
-			<%--<div class="controls">--%>
-				<%--<form:input path="carrier" htmlEscape="false" maxlength="20" class="input-xlarge required"/>--%>
-				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-			<%--</div>--%>
-		<%--</div>--%>
+
 		<c:if test="${userList==null}">
 			<div class="control-group">
 				<label class="control-label">发货人：</label>
@@ -262,6 +260,12 @@
 			</div>
 		</div>
 
+		<div class="control-group">
+			<label class="control-label">备注：</label>
+			<div class="controls">
+				<form:textarea path="remarks" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+			</div>
+		</div>
 
 		<div class="control-group">
 			<label class="control-label">选择备货单：</label>
@@ -282,37 +286,35 @@
 					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/><span style="color: red;">(请输入没有供货完成的订单)</span></li>
 					<li class="clearfix"></li>
 				</ul>
-
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label">待发货单：</label>
-			<div class="controls">
-				<table id="contentTable2"  class="table table-striped table-bordered table-condensed">
-					<thead>
-					<tr>
-						<th><input id="select_all" type="checkbox" /></th>
-						<th>备货清单号</th>
-						<th>采购中心</th>
-						<th>业务状态</th>
-						<th>商品名称</th>
-						<th>供应商</th>
-						<th>商品货号</th>
-						<th>商品编码</th>
-						<th>商品属性</th>
+				<div class="controls">
+					<table id="contentTable2"  class="table table-striped table-bordered table-condensed">
+						<thead>
+						<tr>
+							<th><input id="select_all" type="checkbox" /></th>
+							<th>备货清单号</th>
+							<th>采购中心</th>
+							<th>业务状态</th>
+							<th>商品名称</th>
+							<th>供应商</th>
+							<th>商品货号</th>
+							<th>商品编码</th>
+							<th>商品属性</th>
+							<th>申报数量</th>
+							<th>已发货数量</th>
+							<th>发货数量</th>
+						</tr>
+						</thead>
+						<tbody id="prodInfo2">
 
-						<th>申报数量</th>
-						<th>已发货数量</th>
-						<th>发货数量</th>
-					</tr>
-					</thead>
-					<tbody id="prodInfo2">
-
-					</tbody>
-				</table>
-				<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>
-			</div>
+						</tbody>
+					</table>
+					<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>
+				</div>
 
 			<div class="controls">
 				<table id="contentTable"  class="table table-striped table-bordered table-condensed">

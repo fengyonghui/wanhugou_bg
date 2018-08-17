@@ -78,6 +78,11 @@ public enum RoleEnNameEnum {
     PAYMENT_SPECIALIST_SUBMIT("payment_specialist_submit","提付款专员"),
 
     /**
+     * 验货员
+     */
+    INSPECTOR("inspector","验货员"),
+
+    /**
      * 系统管理员
      */
     DEPT("dept", "系统管理员");

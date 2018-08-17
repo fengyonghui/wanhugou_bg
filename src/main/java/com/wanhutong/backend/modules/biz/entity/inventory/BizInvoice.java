@@ -85,6 +85,16 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	 */
 	private String inspectRemark;
 
+    /**
+     * 用于页面传参 str = audit (确认发货信息)
+     */
+	private String str;
+
+    /**
+     * 是否已确认发货单
+     */
+	private Integer isConfirm;
+
 
 	public BizInvoice() {
 		super();
@@ -330,4 +340,83 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	public void setInspectRemark(String inspectRemark) {
 		this.inspectRemark = inspectRemark;
 	}
+
+    public String getStr() {
+        return str;
+    }
+
+    public void setStr(String str) {
+        this.str = str;
+    }
+
+    public enum BizStatus {
+
+        /**
+         * 采购中心发货
+         */
+		CENTER(0),
+
+        /**
+         * 供货部发货
+         */
+        SUPPLY(1),
+		;
+		private Integer bizStatus;
+
+		BizStatus(Integer bizStatus) {
+			this.bizStatus = bizStatus;
+		}
+		public Integer getBizStatus() {
+			return bizStatus;
+		}
+	}
+
+	public enum Ship {
+
+        /**
+         * 订单发货
+         */
+		SO(0),
+
+        /**
+         * 备货单发货
+         */
+		RE(1),
+		;
+		private Integer ship;
+
+		Ship(Integer ship) {
+			this.ship = ship;
+		}
+		public Integer getShip() {
+			return ship;
+		}
+	}
+
+    public Integer getIsConfirm() {
+        return isConfirm;
+    }
+
+    public void setIsConfirm(Integer isConfirm) {
+        this.isConfirm = isConfirm;
+    }
+
+    public enum IsConfirm {
+
+        /**
+         * 未确认
+         */
+        NO(0),
+        YES(1),
+        ;
+        private Integer isConfirm;
+
+        IsConfirm(Integer isConfirm) {
+            this.isConfirm = isConfirm;
+        }
+
+        public Integer getIsConfirm() {
+            return isConfirm;
+        }
+    }
 }

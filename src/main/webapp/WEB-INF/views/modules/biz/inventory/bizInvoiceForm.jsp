@@ -226,43 +226,45 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+        <div class="control-group">
+            <label class="control-label">运费：</label>
+            <div class="controls">
+                <form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font> </span>
+            </div>
+        </div>
 		<div class="control-group">
-			<label class="control-label">物流商：</label>
+			<label class="control-label">验货员：</label>
 			<div class="controls">
-				<select id="bizLogistics" name="logistics.id" onmouseout="" class="input-medium required">
-					<c:forEach items="${logisticsList}" var="bizLogistics">
-						<option value="${bizLogistics.id}"/>${bizLogistics.name}
-					</c:forEach>
-				</select>
+				<form:select about="choose" path="inspector.id" class="input-medium ">
+					<form:option value="" label="请选择"/>
+					<form:options items="${inspectorList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">物流信息图：</label>
+			<label class="control-label">验货时间：</label>
 			<div class="controls">
-				<form:hidden path="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-				<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="false" maxWidth="100"
-							  maxHeight="100"/>
-			</div>
-		</div>
-		<%--<div class="control-group">
-			<label class="control-label">货值：</label>
-			<div class="controls">
-				<input id="valuePrice" name="valuePrice"  htmlEscape="false" value="" class="input-xlarge required"/>
+				<input name="inspectDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+					   value="<fmt:formatDate value="${bizInvoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
 				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>--%>
-		<div class="control-group">
-			<label class="control-label">操作费：</label>
-			<div class="controls">
-				<form:input path="operation" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">运费：</label>
+			<label class="control-label">验货备注：</label>
 			<div class="controls">
-				<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:textarea path="inspectRemark" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">集货地点：</label>
+			<div class="controls">
+				<form:select path="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('coll_locate')}" itemValue="value" itemLabel="label"/>
+				</form:select>
 			</div>
 		</div>
 		<c:if test="${userList==null}">
@@ -308,7 +310,7 @@
 			</div>
 		</div>
 
-
+		<c:if test="${bizInvoice.id == null}">
 		<div class="control-group">
 			<label class="control-label">选择订单：</label>
 			<div class="controls">
@@ -331,6 +333,7 @@
 
 			</div>
 		</div>
+		</c:if>
 
 		<div class="control-group">
 			<label class="control-label">待发货订单：</label>

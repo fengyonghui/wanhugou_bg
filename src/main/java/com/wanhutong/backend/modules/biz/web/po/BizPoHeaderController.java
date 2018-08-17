@@ -17,6 +17,7 @@ import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.BizHeaderSchedulingDto;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -30,6 +31,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
@@ -137,6 +139,8 @@ public class BizPoHeaderController extends BaseController {
     private BizSchedulingPlanService bizSchedulingPlanService;
     @Autowired
     private BizCompletePalnService bizCompletePalnService;
+    @Autowired
+    private BizInvoiceService bizInvoiceService;
 
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
     public static final String PO_HEADER_TABLE_NAME = "biz_po_header";
@@ -1114,6 +1118,7 @@ public class BizPoHeaderController extends BaseController {
                 }
 
             }
+            bizInvoiceService.saveDeliver(dtoList.get(0).getId());
         }
 
         return boo;

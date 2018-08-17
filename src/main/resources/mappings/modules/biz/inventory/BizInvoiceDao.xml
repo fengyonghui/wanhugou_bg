@@ -24,7 +24,8 @@
         a.inspector_id AS "inspector.id",
         us.name AS "inspector.name",
         a.inspect_remark AS "inspectRemark",
-        a.coll_locate AS "collLocate"
+        a.coll_locate AS "collLocate",
+        a.is_confirm AS "isConfirm"
 	</sql>
 	
 	<sql id="bizInvoiceJoins">
@@ -189,7 +190,8 @@
 			update_time,
             inspector_id,
             inspect_remark,
-            coll_locate
+            coll_locate,
+            is_confirm
 		) VALUES (
 			#{id},
 			#{sendNumber},
@@ -219,9 +221,10 @@
 			#{uVersion},
 			#{updateBy.id},
 			#{updateDate},
-            #{inspector.id}",
+            #{inspector.id},
             #{inspectRemark},
-            #{collLocate}
+            #{collLocate},
+            #{isConfirm}
 		)
 	</insert>
 	
@@ -247,12 +250,14 @@
 			biz_status = #{bizStatus},
 			ship = #{ship},
 			send_time = #{sendDate},
+            inspect_time = #{inspectDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate},
             inspector_id = #{inspector.id},
             inspect_remark = #{inspectRemark},
-            coll_locate = #{collLocate}
+            coll_locate = #{collLocate},
+            is_confirm = #{isConfirm}
 		WHERE id = #{id}
 	</update>
 	
