@@ -33,6 +33,9 @@ public class JointOperationOrderProcessOriginConfig extends ConfigGeneral {
      @XStreamAlias("allDefaultProcessId")
     private int allDefaultProcessId;
 
+     @XStreamImplicit(itemFieldName = "genPoProcessId")
+    private List<Integer> genPoProcessId;
+
 
 
     @XStreamImplicit(itemFieldName = "payProcessId")
@@ -103,4 +106,7 @@ public class JointOperationOrderProcessOriginConfig extends ConfigGeneral {
         return payProcessId;
     }
 
+    public List<Integer> getGenPoProcessId() {
+        return genPoProcessId;
+    }
 }
