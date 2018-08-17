@@ -1567,7 +1567,7 @@
 			AND date_format(so.create_date, '%Y-%m') = #{month}
 		</if>
 		<if test="centerType == null or centerType == 0">
-			and o.type in (8, 10, 11)
+			and o.type in (8, 10, 11,13)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and o.type = #{centerType}
@@ -1601,7 +1601,7 @@
 		and ta.object_name = 'sys_office'
 		)
 		<if test="centerType == null or centerType == 0">
-			and office1.type in (8, 10, 11)
+			and office1.type in (8, 10, 11,13)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and office1.type = #{centerType}
@@ -1636,7 +1636,7 @@
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE oh.`status` = 1
 		<if test="centerType == null or centerType == 0">
-			and office.type in (8, 10, 11)
+			and office.type in (8, 10, 11,13)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and office.type = #{centerType}
@@ -1677,7 +1677,7 @@
 		and ta.object_name = 'sys_office'
 		)
 		<if test="centerType == null or centerType == 0">
-			and office1.type in (8, 10, 11)
+			and office1.type in (8, 10, 11,13)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and office1.type = #{centerType}
@@ -1728,7 +1728,7 @@
 		)
 		and so.id = u.company_id
 		<if test="centerType == null or centerType == 0">
-			and so.type in (8, 10, 11)
+			and so.type in (8, 10, 11,13)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and so.type = #{centerType}
@@ -1884,14 +1884,14 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 	WHERE cc.consultant_id = u.id AND oh.cust_id = cc.cust_id
 		AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
 		AND so.id = u.office_id
-		AND so.type IN (8, 10, 11)
+		AND so.type IN (8, 10, 11,13)
 		AND
 		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
 	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
       AND oh.`status` = 1 AND u.`status` = 1 AND cc.`status` = 1 AND so.id in
-		(select id from sys_office where type IN (8, 10, 11) and status = 1)
+		(select id from sys_office where type IN (8, 10, 11,13) and status = 1)
 		AND oh.create_time BETWEEN #{startDate} AND #{endDate}
 		GROUP BY so.id
 
@@ -1935,14 +1935,14 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         WHERE cc.consultant_id = u.id AND oh.cust_id = cc.cust_id
         AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
         AND so.id = u.office_id
-        AND so.type IN (8, 10, 11)
+        AND so.type IN (8, 10, 11,13)
         AND
         (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
         biz_status != #{item.state}
     </foreach>
         OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
         AND oh.`status` = 1 AND u.`status` = 1 AND cc.`status` = 1 AND so.id in
-        (select id from sys_office where type IN (8, 10, 11) and status = 1)
+        (select id from sys_office where type IN (8, 10, 11,13) and status = 1)
         AND oh.create_time BETWEEN #{startDate} AND #{endDate}
         and so.id = #{officeId}
         GROUP BY u.id
@@ -2517,13 +2517,13 @@ FROM
 		<!--</if>-->
 		)
 		<if test="ordrHeaderStartTime ==null">
-			and DATE_FORMAT(bcc.update_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+			and DATE_FORMAT(bcc.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
 		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
-			AND bcc.update_time &lt;= #{ordrHeaderStartTime}
+			AND bcc.create_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
-			AND bcc.update_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+			AND bcc.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
 		</if>
 		) as "officeCount"
 		FROM biz_order_header AS oh

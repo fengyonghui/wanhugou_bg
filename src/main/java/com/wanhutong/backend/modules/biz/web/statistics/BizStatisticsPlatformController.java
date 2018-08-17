@@ -136,7 +136,7 @@ public class BizStatisticsPlatformController extends BaseController {
             e.printStackTrace();
         }
 
-        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
+        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11","13")));
         request.setAttribute("officeId", officeId);
         request.setAttribute("adminPath", adminPath);
         if (officeId == null || officeId == 0) {
@@ -800,7 +800,7 @@ public class BizStatisticsPlatformController extends BaseController {
         int pageSize = 20;
         long startTime = System.currentTimeMillis();
 
-        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
+        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11","13")));
         if (office == null) {
             return "modules/biz/statistics/bizPlatformOrderCountFrequency";
         }
@@ -880,7 +880,7 @@ public class BizStatisticsPlatformController extends BaseController {
     @RequiresPermissions("biz:statistics:receive:view")
     @RequestMapping(value = {"singleReceive"})
     public String singleReceive(HttpServletRequest request) {
-        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
+        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11","13")));
         return "modules/biz/statistics/bizStatisticSingleReceive";
     }
 
