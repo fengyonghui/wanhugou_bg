@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
@@ -215,7 +216,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             bizPoHeader.setOrderNum(poNo);
             this.savePoHeader(bizPoHeader);
         }
-//        autoSavePaymentOrder(bizPoHeader.getId());
+        autoSavePaymentOrder(bizPoHeader.getId());
 
         return Pair.of(Boolean.TRUE, "操作成功");
     }
@@ -1144,5 +1145,44 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void updateSchedulingType(BizPoHeader bizPoHeader) {
         bizPoHeaderDao.updateSchedulingType(bizPoHeader);
+    }
+
+    /**
+     * 采购单开启审核，同时自动生成付款单
+     * @param poHeaderIdid
+     * @return
+     */
+    public void autoSavePaymentOrder(Integer poHeaderIdid){
+        BizPoHeader bizPoHeader = this.get(poHeaderIdid);
+        Boolean prew = false;
+        BigDecimal prewPayTotal = new BigDecimal(0);
+        Date prewPayDeadline = null;
+        Integer auditType = 1;
+        String desc = "";
+
+        BizPoPaymentOrder bizPoPaymentOrder = bizPoHeader.getBizPoPaymentOrder();
+        if (bizPoPaymentOrder != null) {
+            if (bizPoPaymentOrder.getId() != null) {
+                prewPayTotal = bizPoPaymentOrder.getTotal();
+            }
+        } else {
+            BigDecimal totalDetail = new BigDecimal((bizPoHeader.getTotalDetail() == null ? 0:bizPoHeader.getTotalDetail()));
+            BigDecimal totalExp = new BigDecimal((bizPoHeader.getTotalExp() == null ? 0:bizPoHeader.getTotalExp()));
+            BigDecimal freight = new BigDecimal((bizPoHeader.getFreight() == null ? 0:bizPoHeader.getFreight()));
+            BigDecimal payTotal = bizPoHeader.getPayTotal();
+
+            prewPayTotal = totalDetail.add(totalExp).add(freight).subtract(payTotal).setScale(0, BigDecimal.ROUND_HALF_UP);
+        }
+        Pair<Boolean, String> result = this.startAudit(poHeaderIdid, prew, prewPayTotal, prewPayDeadline, auditType, desc);
+
+        //自动生成付款单
+        bizPoHeader = this.get(poHeaderIdid);
+        //应付金额
+        bizPoHeader.setPlanPay(prewPayTotal);
+        //本次申请付款时间
+        String deadLine = DateUtils.getDateTime();
+        Date deadlineDate = DateUtils.parseDate(deadLine);
+        bizPoHeader.setPayDeadline(deadlineDate);
+        String msg = this.genPaymentOrder(bizPoHeader).getRight();
     }
 }
