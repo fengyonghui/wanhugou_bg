@@ -74,6 +74,12 @@
 			<li><label>商品货号：</label>
 				<form:input path="skuInfo.itemNo" htmlEscape="false"  class="input-medium"/>
 			</li>
+			<li><label>货权：</label>
+				<form:select path="skuType" htmlEscape="false"  class="input-medium">
+					<form:option value="" label="全部"/>
+					<form:options items="${fns:getDictList('inventory_sku_type')}" itemLabel="label" itemValue="value"/>
+				</form:select>
+			</li>
 			<li><label>仓库名称：</label>
 				<sys:treeselect id="invInfo" name="invInfo.id" value="${bizInventorySku.invInfo.id}" labelName="invInfo.name"
 								labelValue="${bizInventorySku.invInfo.name}" notAllowSelectParent="true"
@@ -119,6 +125,7 @@
 				<td>序号</td>
 				<th>库存类型</th>
 				<th>仓库名称</th>
+				<th>货权归属</th>
 				<th>采购中心</th>
 				<th style="width: 15%">商品名称</th>
 				<th>出厂价</th>
@@ -162,6 +169,9 @@
 				</a></td>
 				<td>
 					${bizInventorySku.invInfo.name}
+				</td>
+				<td>
+					${fns:getDictLabel(bizInventorySku.skuType, 'inventory_sku_type', '未知')}
 				</td>
 				<td>
 					${bizInventorySku.customer.name}

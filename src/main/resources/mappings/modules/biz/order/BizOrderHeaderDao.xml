@@ -71,6 +71,17 @@
 			<result property="drawbackStatus" column="drawBack.drawbackStatus"/>
 		</association>
 
+		<association property="commonProcess" javaType="CommonProcessEntity" column="commonProcess.id">
+			<id property="id" column="commonProcess.id"/>
+			<result property="objectId" column="commonProcess.objectId"/>
+			<result property="objectName" column="commonProcess.objectName"/>
+			<result property="prevId" column="commonProcess.prevId"/>
+			<result property="bizStatus" column="commonProcess.bizStatus"/>
+			<result property="processor" column="commonProcess.processor"/>
+			<result property="description" column="commonProcess.description"/>
+			<result property="type" column="commonProcess.type"/>
+		</association>
+
 		<collection property="orderDetailList" ofType="BizOrderDetail">
 			<id property="id" column="orderDetailList.id" />
 			<result property="ordQty" column="orderDetailList.ordQty" />
@@ -132,9 +143,29 @@
 		a.update_id AS "updateBy.id",
 		us.name as "updateBy.name",
 		a.update_time AS "updateDate",
+		s.id AS "centerId",
 		s.name as "centersName",
 		con.id AS "con.id",
-		con.name AS "con.name"
+		con.name AS "con.name",
+		a.pay_proportion AS "payProportion",
+		process.id AS "commonProcess.id",
+		process.object_id AS "commonProcess.objectId",
+		process.object_name AS "commonProcess.objectName",
+		process.prev_id AS "commonProcess.prevId",
+		process.biz_status AS "commonProcess.bizStatus",
+		process.processor AS "commonProcess.processor",
+		process.description AS "commonProcess.description",
+		process.type AS "commonProcess.type",
+		bph.id AS "bizPoHeader.id",
+		bph.process_id AS "bizPoHeader.process_id",
+		cp.id AS "bizPoHeader.commonProcess.id",
+		cp.object_id AS "bizPoHeader.commonProcess.objectId",
+		cp.object_name AS "bizPoHeader.commonProcess.objectName",
+		cp.prev_id AS "bizPoHeader.commonProcess.prevId",
+		cp.biz_status AS "bizPoHeader.commonProcess.bizStatus",
+		cp.processor AS "bizPoHeader.commonProcess.processor",
+		cp.description AS "bizPoHeader.commonProcess.description",
+		cp.type AS "bizPoHeader.commonProcess.type"
 	</sql>
 
 	<!-- C端订单管理 -->
@@ -190,6 +221,10 @@
     	LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
+		LEFT JOIN  common_process process on process.id = a.process_id
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 1
+		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
+		LEFT JOIN common_process cp ON cp.id = bph.process_id
 	</sql>
 
 	<select id="get" resultType="BizOrderHeader">
@@ -198,6 +233,7 @@
 		FROM biz_order_header a
 		<include refid="bizOrderHeaderJoins"/>
 		WHERE a.id = #{id}
+		group by a.id
 	</select>
 
 	<select id="getByOrderNum" resultType="BizOrderHeader">
@@ -313,6 +349,9 @@
 		<!-- end  -->
 		<include refid="bizOrderHeaderJoins"/>
 		<where> 1=1 and a.order_type !=4
+			<if test="source != null and source == 'vendor'">
+				AND (a.order_type = 5 OR a.order_type = 6)
+			</if>
 			<if test="dataStatus==null">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
@@ -786,7 +825,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type != 4
+		WHERE office.id = office1.id AND header1.order_type != 4 AND header1.order_type != 6 and detail1.status = 1
 		AND (<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
 	</foreach>
@@ -805,7 +844,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE
-		header.order_type != 4
+		header.order_type != 4 and header.order_type != 6 and header.status = 1
 		AND not exists(
 		select 1
 		from sys_test_account ta
@@ -1251,7 +1290,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type != 4 AND detail1.status = 1
+		WHERE office.id = office1.id AND header1.order_type != 4 and header1.order_type != 6  AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1270,6 +1309,7 @@
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE
 		header.order_type != 4
+		and header.order_type != 6
 		and header.status = 1
 		and consultant.status = 1
 		AND NOT EXISTS(
@@ -1842,7 +1882,7 @@ SELECT
        ON consultant1.cust_id = header1.cust_id
      LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
      LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-   WHERE office1.id = so.id AND header1.order_type != 4 AND header1.`status` = 1 AND detail1.status = 1 AND
+   WHERE office1.id = so.id AND header1.order_type != 4 AND header1.order_type != 6 AND header1.`status` = 1 AND detail1.status = 1 AND
          NOT EXISTS(SELECT 1
                     FROM sys_test_account ta
                     WHERE header1.cust_id = ta.object_id AND ta.object_name = 'sys_office') AND
@@ -1908,7 +1948,7 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         LEFT JOIN biz_custom_center_consultant AS cc1 ON  header1.cust_id = cc1.cust_id
         LEFT JOIN sys_user AS u1 ON cc1.consultant_id = u1.id
         LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-        WHERE u1.id = u.id AND header1.order_type != 4 AND header1.`status` = 1 AND detail1.status = 1 AND
+        WHERE u1.id = u.id AND header1.order_type != 4 AND header1.order_type != 6 AND header1.`status` = 1 AND detail1.status = 1 AND
         NOT EXISTS(SELECT 1
         FROM sys_test_account ta
         WHERE header1.cust_id = ta.object_id AND ta.object_name = 'sys_office') AND
@@ -2727,5 +2767,41 @@ FROM
 		bo.id=a.order_id
 		and bo.order_num=#{orderNum}
 	</select>
+
+	<select id="findOrderForVendReq" resultType="BizOrderHeader">
+		SELECT
+		a.order_num AS "orderNum",
+		a.create_time AS "createDate",
+		(SELECT sum(bod.unit_price)
+		FROM biz_order_header boh
+		LEFT JOIN biz_order_detail bod ON bod.order_id = boh.id
+		WHERE bod.sku_id = ops.sku_id
+		AND boh.id = a.id) AS "detailPrice",
+		a.total_detail AS "totalDetail"
+		FROM biz_order_header a
+		LEFT JOIN biz_order_detail od ON od.order_id = a.id
+		LEFT JOIN biz_op_shelf_sku ops ON ops.id = od.sku_shelf_id
+		WHERE ops.sku_id IN 
+		<foreach collection="skuIdList" index="index" item="skuId" open="(" separator="," close=")">
+			 #{skuId}
+		</foreach>
+        <if test="skuIdList != null">
+		  AND ops.center_id = #{centId}
+        </if>
+	</select>
+
+	<update id="updateBizStatus">
+		UPDATE biz_order_header SET
+		biz_status = #{status},
+		update_id = #{updateBy.id},
+		update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateProcessId">
+		UPDATE biz_order_header SET
+		process_id  = #{processId}
+		WHERE id = #{headerId}
+	</update>
 
 </mapper>

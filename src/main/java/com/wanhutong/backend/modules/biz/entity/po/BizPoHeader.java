@@ -3,8 +3,10 @@
  */
 package com.wanhutong.backend.modules.biz.entity.po;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
@@ -97,14 +99,40 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 * 该采购单下所有商品的总采购数量
 	 */
 	private Integer totalOrdQty;
+
 	/**
-	 * 该采购单下所有商品的总排产数量
+	 * 按商品排产的总排产量
 	 */
-	private Integer toalSchedulingNum;
+	private Integer totalSchedulingDetailNum;
+
 	/**
-	 * 该采购单下所有商品的总已确认排产数
+	 * 按订单排产的总排产量
 	 */
-	private Integer toalCompleteNum;
+	private Integer totalSchedulingHeaderNum;
+
+	/**
+	 * 该采购单下按商品排产时总的已确认量
+	 */
+	private Integer totalCompleteScheduHeaderNum;
+
+	/**
+	 * 排产类型: 0:按订单排产， 1:按商品排产
+	 */
+	private Integer schedulingType;
+	/**
+	 * 备货单
+	 */
+	private BizRequestHeader bizRequestHeader;
+
+	/**
+	 * 备货单
+	 */
+	private BizOrderHeader bizOrderHeader;
+
+	/**
+	 * 排产
+	 */
+	private BizSchedulingPlan bizSchedulingPlan;
 
 
 	public Integer getCurrentPaymentId() {
@@ -417,8 +445,6 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		NO_PAY(0, "未支付"),
 		DOWN_PAYMENT(1, "首付款支付"),
 		ALL_PAY(2, "全部支付"),
-		SHIPMENTS(3, "已发货"),
-		DELIVERY(4, "已收货"),
 		COMPLETE(5, "已完成"),
 		PROCESS(6, "审批中"),
 		PROCESS_COMPLETE(7, "审批完成"),
@@ -440,6 +466,20 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 			return desc;
 		}
 
+	}
+
+	public enum SchedulingType {
+
+		ORDER(0),
+		SKU(1),
+		;
+		private Integer type;
+
+		SchedulingType(Integer type){this.type = type;}
+
+		public Integer getType() {
+			return type;
+		}
 	}
 
     public String getType() {
@@ -474,19 +514,59 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		this.totalOrdQty = totalOrdQty;
 	}
 
-	public Integer getToalSchedulingNum() {
-		return toalSchedulingNum;
+	public Integer getSchedulingType() {
+		return schedulingType;
 	}
 
-	public void setToalSchedulingNum(Integer toalSchedulingNum) {
-		this.toalSchedulingNum = toalSchedulingNum;
+	public void setSchedulingType(Integer schedulingType) {
+		this.schedulingType = schedulingType;
 	}
 
-	public Integer getToalCompleteNum() {
-		return toalCompleteNum;
+	public Integer getTotalSchedulingDetailNum() {
+		return totalSchedulingDetailNum;
 	}
 
-	public void setToalCompleteNum(Integer toalCompleteNum) {
-		this.toalCompleteNum = toalCompleteNum;
+	public void setTotalSchedulingDetailNum(Integer totalSchedulingDetailNum) {
+		this.totalSchedulingDetailNum = totalSchedulingDetailNum;
+	}
+
+	public Integer getTotalSchedulingHeaderNum() {
+		return totalSchedulingHeaderNum;
+	}
+
+	public void setTotalSchedulingHeaderNum(Integer totalSchedulingHeaderNum) {
+		this.totalSchedulingHeaderNum = totalSchedulingHeaderNum;
+	}
+
+	public Integer getTotalCompleteScheduHeaderNum() {
+		return totalCompleteScheduHeaderNum;
+	}
+
+	public void setTotalCompleteScheduHeaderNum(Integer totalCompleteScheduHeaderNum) {
+		this.totalCompleteScheduHeaderNum = totalCompleteScheduHeaderNum;
+	}
+
+	public BizRequestHeader getBizRequestHeader() {
+		return bizRequestHeader;
+	}
+
+	public void setBizRequestHeader(BizRequestHeader bizRequestHeader) {
+		this.bizRequestHeader = bizRequestHeader;
+	}
+
+	public BizSchedulingPlan getBizSchedulingPlan() {
+		return bizSchedulingPlan;
+	}
+
+	public void setBizSchedulingPlan(BizSchedulingPlan bizSchedulingPlan) {
+		this.bizSchedulingPlan = bizSchedulingPlan;
+	}
+
+	public BizOrderHeader getBizOrderHeader() {
+		return bizOrderHeader;
+	}
+
+	public void setBizOrderHeader(BizOrderHeader bizOrderHeader) {
+		this.bizOrderHeader = bizOrderHeader;
 	}
 }

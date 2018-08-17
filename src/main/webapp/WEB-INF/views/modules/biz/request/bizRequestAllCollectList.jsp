@@ -173,6 +173,9 @@
 				<c:if test="${ship eq 'bh'}">
 					<th>采购中心</th>
 				</c:if>
+				<c:if test="${ship eq 'bh'}">
+					<th>备货方</th>
+				</c:if>
 				<c:if test="${ship eq 'xs'}">
 					<th>采购客户</th>
 				</c:if>
@@ -210,7 +213,9 @@
 					<td>
 						${requestHeader.fromOffice.name}
 					</td>
-
+					<td>
+						${fns:getDictLabel(requestHeader.fromType,'req_from_type' , '未知')}
+					</td>
 					<td>
 						<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
@@ -256,7 +261,7 @@
 					<c:if test="${source=='gh'}">
 						<td><input name="orderIds" title="orderIds" type="checkbox" value="${orderHeader.id}" /></td>
 					</c:if>
-					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs">
+					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs&bizStatu=${bizStatu}">
 							${orderHeader.orderNum}
 					</a></td>
 					<td>

@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.web.order;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -27,6 +28,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
@@ -44,10 +46,16 @@ import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
+import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
 import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.config.parse.SystemConfig;
+import com.wanhutong.backend.modules.enums.*;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.DefaultPropEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -160,6 +168,7 @@ public class BizOrderHeaderController extends BaseController {
     @Autowired
     private BizPoHeaderService bizPoHeaderService;
 
+
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
         BizOrderHeader entity = null;
@@ -183,6 +192,27 @@ public class BizOrderHeaderController extends BaseController {
             entity.setTotalDetail(entity.getTotalDetail());
             entity.setTotalBuyPrice(totalPrice);
             entity.setOrderDetailList(list);
+
+            if (entity.getCommonProcess() != null && entity.getCommonProcess().getId() != null) {
+                List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
+                bizOrderHeaderService.getCommonProcessListFromDB(entity.getCommonProcess().getId(), commonProcessList);
+                Collections.reverse(commonProcessList);
+                entity.setCommonProcessList(commonProcessList);
+            }
+
+            BizPoHeader bizPoHeader = new BizPoHeader();
+            bizPoHeader.setBizOrderHeader(entity);
+            List<BizPoHeader> bizPoHeaderList = bizPoHeaderService.findList(bizPoHeader);
+            if (CollectionUtils.isNotEmpty(bizPoHeaderList)) {
+                BizPoHeader poHeader = bizPoHeaderList.get(0);
+                if (poHeader.getCommonProcess() != null && poHeader.getCommonProcess().getId() != null) {
+                    List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
+                    bizPoHeaderService.getCommonProcessListFromDB(poHeader.getCommonProcess().getId(), commonProcessList);
+                    Collections.reverse(commonProcessList);
+                    poHeader.setCommonProcessList(commonProcessList);
+                    entity.setBizPoHeader(poHeader);
+                }
+            }
         }
         if (entity == null) {
             entity = new BizOrderHeader();
@@ -199,7 +229,12 @@ public class BizOrderHeaderController extends BaseController {
         }
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
+        if (bizOrderHeader.getSource() != null) {
+            model.addAttribute("source", bizOrderHeader.getSource());
+        }
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
+        model.addAttribute("auditAllStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().getAutProcessId());
+        model.addAttribute("auditFithStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getAutProcessId());
 
         return "modules/biz/order/bizOrderHeaderList";
     }
@@ -208,6 +243,9 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails, HttpServletRequest request, HttpServletResponse response) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
+        if (bizOrderHeader.getSource() != null) {
+            model.addAttribute("source", bizOrderHeader.getSource());
+        }
         BizOrderComment bizOrderComment = new BizOrderComment();
         bizOrderComment.setOrder(bizOrderHeader);
         List<BizOrderComment> commentList = bizOrderCommentService.findList(bizOrderComment);
@@ -232,6 +270,8 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
+        bizOrderHeaderTwo.setStr(bizOrderHeader.getStr());
+        bizOrderHeaderTwo.setCommonProcess(bizOrderHeader.getCommonProcess());
         if (bizOrderHeader.getId() != null) {
             Double totalDetail = bizOrderHeaderTwo.getTotalDetail();//订单详情总价
             Double totalExp = bizOrderHeaderTwo.getTotalExp();//订单总费用
@@ -283,6 +323,26 @@ public class BizOrderHeaderController extends BaseController {
                         model.addAttribute("appointedTimeList", appointedTimeList);
                     }
                 }
+
+                //100%首付款
+                if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() == null &&
+                        OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeaderTwo.getPayProportion())) {
+                    DoOrderHeaderProcessAllConfig.OrderHeaderProcess orderHeaderProcess =
+                            ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().processMap.get(Integer.valueOf(bizOrderHeaderTwo.getCommonProcess().getType()));
+                    model.addAttribute("orderHeaderProcess", orderHeaderProcess);
+                }
+                //20%首付款
+                if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() == null &&
+                        OrderPayProportionStatusEnum.FIFTH.getState().equals(bizOrderHeaderTwo.getPayProportion())) {
+                    DoOrderHeaderProcessFifthConfig.OrderHeaderProcess orderHeaderProcess =
+                            ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().processMap.get(Integer.valueOf(bizOrderHeaderTwo.getCommonProcess().getType()));
+                    model.addAttribute("orderHeaderProcess", orderHeaderProcess);
+                }
+
+                if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() != null && bizOrderHeaderTwo.getBizPoHeader().getCommonProcess() != null) {
+                    PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizOrderHeaderTwo.getBizPoHeader().getCommonProcess().getType()));
+                    model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+                }
             }
 
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
@@ -318,6 +378,19 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
         }
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
+            }
+        }
+        model.addAttribute("roleSet", roleSet);
+        model.addAttribute("roleEnNameSet", roleEnNameSet);
+
         if (bizOrderHeader.getId() != null) {
             BizOrderHeaderUnline bizOrderHeaderUnline = new BizOrderHeaderUnline();
             bizOrderHeaderUnline.setOrderHeader(bizOrderHeader);
@@ -381,6 +454,20 @@ public class BizOrderHeaderController extends BaseController {
         return "modules/biz/order/bizOrderHeaderForm";
     }
 
+    @RequiresPermissions("biz:order:bizOrderHeader:audit")
+    @RequestMapping(value = "audit")
+    @ResponseBody
+    public String audit(int id, String currentType, int auditType, String description, Model model) {
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
+        String result = "";
+        if (OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeader.getPayProportion())) {
+            result = bizOrderHeaderService.auditAll(id, currentType, auditType, description);
+        } else {
+            result = bizOrderHeaderService.auditFifty(id, currentType, auditType, description);
+        }
+        return result;
+    }
+
     @ResponseBody
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "refundReject")
@@ -439,7 +526,7 @@ public class BizOrderHeaderController extends BaseController {
 //			保存跳回客户专员
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=" + bizOrderHeader.getConsultantId();
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?statu=" + statuPath;
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?statu=" + statuPath + "&source=" + bizOrderHeader.getSource();
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:doRefund")
@@ -495,7 +582,7 @@ public class BizOrderHeaderController extends BaseController {
         if (bizOrderHeader.getFlag() != null && "cendDelete".equals(bizOrderHeader.getFlag())) {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId() + "&statu=" + bizOrderHeader.getStatu();
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId() + "&statu=" + bizOrderHeader.getStatu() + "&source=" + bizOrderHeader.getSource();
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
@@ -766,7 +853,6 @@ public class BizOrderHeaderController extends BaseController {
             commis = "comError";
             e.printStackTrace();
         }
-
         return commis;
     }
 

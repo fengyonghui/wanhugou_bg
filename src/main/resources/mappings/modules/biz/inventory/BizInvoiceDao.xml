@@ -23,7 +23,8 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		a.remarks AS "remarks"
+		a.remarks AS "remarks",
+		a.inspect_time AS "inspectDate"
 	</sql>
 	
 	<sql id="bizInvoiceJoins">
@@ -198,6 +199,7 @@
 			biz_status,
 			ship,
 			send_time,
+			inspect_time,
 			status,
 			create_id,
 			create_time,
@@ -235,6 +237,7 @@
 			#{bizStatus},
 			#{ship},
 			#{sendDate},
+			#{inspectDate},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},

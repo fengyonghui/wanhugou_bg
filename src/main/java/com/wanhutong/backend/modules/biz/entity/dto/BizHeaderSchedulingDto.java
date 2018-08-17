@@ -1,12 +1,12 @@
 package com.wanhutong.backend.modules.biz.entity.dto;
 
 /**
- * 采购单排产Dto
- * @author Ma.Qiang
+ * 备货单排产Dto
+ * @author 王冰洋
  */
-public class BizPoHeaderSchedulingDto {
+public class BizHeaderSchedulingDto {
     /**
-     * id
+     * poHeaderId
      */
     public Integer id;
     /**
@@ -24,7 +24,17 @@ public class BizPoHeaderSchedulingDto {
     /**
      * 已完成数量
      */
-    public Integer completeNum;
+    public String planDate;
+    /**
+     * 订单排产类型
+     */
+    public String schedulingType;
+
+    /**
+     * 订单排产类型
+     */
+    public String remark;
+
 
     public Integer getId() {
         return id;
@@ -58,11 +68,27 @@ public class BizPoHeaderSchedulingDto {
         this.schedulingNum = schedulingNum;
     }
 
-    public Integer getCompleteNum() {
-        return completeNum;
+    public String getPlanDate() {
+        return planDate;
     }
 
-    public void setCompleteNum(Integer completeNum) {
-        this.completeNum = completeNum;
+    public void setPlanDate(String planDate) {
+        this.planDate = planDate;
+    }
+
+    public String getSchedulingType() {
+        return schedulingType;
+    }
+
+    public void setSchedulingType(String schedulingType) {
+        this.schedulingType = schedulingType;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

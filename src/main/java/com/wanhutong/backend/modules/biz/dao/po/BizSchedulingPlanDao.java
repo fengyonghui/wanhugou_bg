@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -21,13 +22,11 @@ import java.util.List;
 public interface BizSchedulingPlanDao extends CrudDao<BizSchedulingPlan> {
 
     /**
-     * 通过objectId获取排产计划Entity
+     * 通过表名和表Id获取排产entity
      * @param objectId
+     * @param objectName
      * @return
      */
-    BizSchedulingPlan getByObjectId(String objectId);
+    BizSchedulingPlan getByObjectIdAndObjectName(@Param("objectId") Integer objectId, @Param("objectName") String objectName);
 
-    List<Integer> getSchedulingPlanIdListByPoId(BizPoHeader bizPoHeader);
-
-    List<BizSchedulingPlan> findAllList(BizSchedulingPlan bizSchedulingPlan);
 }

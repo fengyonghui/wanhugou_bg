@@ -28,13 +28,14 @@
 			.sucessColor {
 				color: #40ABE9;
 			}
-			#commodity {font-size: 13px;}
-			#commodity div.mui-input-row>input {padding: 0;font-size: 13px;}
-			#commodity div.mui-input-row>label {padding: 0;}
+			.commodity {font-size: 13px;}
+			.commodity div.mui-input-row>input {padding: 0;font-size: 13px;}
+			.commodity div.mui-input-row>label {padding: 0;}
 			.photoParent {width: 15%;height: 220px;margin-right: 15px;}
 			.photoParent img {top: 50%;margin-top: -8px;width: 50px;}
 			.mui-input-group .mui-input-row:after {background-color: #ececec;}
 			.listBlue>li {border-bottom: 1px solid #40ABE9;}
+			#inCheckAddMenu>li:last-child {color: #40ABE9;}
 		</style>
 	</head>
 
@@ -45,7 +46,7 @@
 		</header>
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
-				<label>备货清单编号：</label>
+				<label>备货单编号：</label>
 				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
 			</div>
 			<div class="mui-input-row">
@@ -65,7 +66,7 @@
 				<input type="text" class="mui-input-clear" id="inMarginLevel" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>期望收货时间：</label>
+				<label>收货时间：</label>
 				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
 			</div>
 			<div class="mui-input-row">
@@ -91,7 +92,6 @@
 			</div>
 			
 		</div>
-		<input id="inStatus" name="inStatus" type="hidden" />
 		<div class="clear"></div>
 
 		<script src="../../js/component/mui.min.js"></script>

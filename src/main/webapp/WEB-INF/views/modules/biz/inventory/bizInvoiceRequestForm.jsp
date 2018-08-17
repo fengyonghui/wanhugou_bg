@@ -74,7 +74,7 @@
 
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/biz/request/bizRequestHeader/findByRequest",
+                    url:"${ctx}/biz/request/bizRequestHeaderForVendor/findByRequest",
                     data:$('#searchForm').serialize(),
                     success:function (data) {
                         if ($("#id").val() == '') {
@@ -84,6 +84,7 @@
 
                         var tr_tds="";
                         var sum = 0;
+                        var bizName = "";
                         $.each(data, function (index,requestHeader) {
 							if(requestHeader.bizStatus==10){
                                 bizName="采购中"

@@ -3,20 +3,14 @@
  */
 package com.wanhutong.backend.modules.sys.entity;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
-
-import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.common.persistence.TreeEntity;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
-import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import org.hibernate.validator.constraints.Length;
 
-import com.wanhutong.backend.common.persistence.TreeEntity;
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.List;
 
 
 /**
@@ -54,6 +48,7 @@ public class Office extends TreeEntity<Office> {
 	private User moblieMoeny;	//用于用户钱包查询手机号，采购商手机号，供应商手机号
 	private String customerTypeTen;   //用于客户专员查询采购中心,type=10
 	private String customerTypeEleven;   //用于客户专员查询采购中心,type=11
+	private String customerTypeThirteen;   //用于客户专员查询采购中心,type=13
 
 	private Integer consultantId;
 	private Integer centerId;
@@ -85,6 +80,12 @@ public class Office extends TreeEntity<Office> {
 	 * 省份
 	 */
 	private String province;
+
+	/**
+	 * 供应商office Id
+	 *
+	 */
+	private Integer vendorId;
 
 	/**
 	 * 供应商
@@ -355,6 +356,14 @@ public class Office extends TreeEntity<Office> {
 		this.customerTypeEleven = customerTypeEleven;
 	}
 
+	public String getCustomerTypeThirteen() {
+		return customerTypeThirteen;
+	}
+
+	public void setCustomerTypeThirteen(String customerTypeThirteen) {
+		this.customerTypeThirteen = customerTypeThirteen;
+	}
+
 	public String getQueryMemberGys() {
 		return queryMemberGys;
 	}
@@ -401,5 +410,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setShelfInfoUser(User shelfInfoUser) {
 		this.shelfInfoUser = shelfInfoUser;
+	}
+
+	public Integer getVendorId() {
+		return vendorId;
+	}
+
+	public void setVendorId(Integer vendorId) {
+		this.vendorId = vendorId;
 	}
 }

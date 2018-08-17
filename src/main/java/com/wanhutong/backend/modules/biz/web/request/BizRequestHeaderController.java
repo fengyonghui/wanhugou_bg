@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -32,7 +33,9 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -60,6 +63,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 备货清单Controller
@@ -135,6 +139,20 @@ public class BizRequestHeaderController extends BaseController {
         //品类名称
 		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
 		resultMap.put("varietyInfoList", varietyInfoList);
+
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
+            }
+        }
+        resultMap.put("roleSet", roleSet);
+        resultMap.put("roleEnNameSet", roleEnNameSet);
 		resultMap.put("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
 		return JsonUtil.generateData(resultMap, null);
@@ -248,9 +266,13 @@ public class BizRequestHeaderController extends BaseController {
 			}
 		}
 
-		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+			resultMap.put("requestOrderProcess", requestOrderProcess);
+		} else if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+			VendorRequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+					ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			resultMap.put("requestOrderProcess", requestOrderProcess);
 		}
 
@@ -312,7 +334,7 @@ public class BizRequestHeaderController extends BaseController {
 			for (BizRequestDetail requestDetail:requestDetailList){
 				bizPoOrderReq.setSoLineNo(requestDetail.getLineNo());
 				List<BizPoOrderReq> poOrderReqList= bizPoOrderReqService.findList(bizPoOrderReq);
-				if(poOrderReqList!=null && poOrderReqList.size()>0){
+				if(poOrderReqList!=null && poOrderReqList.size()>0 || ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader1.getFromType())){
 					BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 					skuInfo.setVendorName(requestDetail.getSkuInfo().getVendorName());
 					requestDetail.setSkuInfo(skuInfo);
@@ -575,7 +597,8 @@ public class BizRequestHeaderController extends BaseController {
 	@RequestMapping(value = "audit")
 	@ResponseBody
 	public String audit(int id, String currentType, int auditType, String description) {
-		return bizRequestHeaderService.audit(id, currentType, auditType, description);
+		String result = bizRequestHeaderService.audit(id, currentType, auditType, description);
+		return JsonUtil.generateData(result, null);
 	}
 
 	@ResponseBody

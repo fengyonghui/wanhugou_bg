@@ -32,7 +32,7 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	private Double unitPrice;		// 商品单价
 	private Integer ordQty;		// 采购数量
 	private Integer sendQty;		//采购单供货数量
-	private List<BizSchedulingPlan> schedulingPlanList;
+//	private List<BizSchedulingPlan> schedulingPlanList;
 
 	/**
 	 * 总的已排产量
@@ -44,6 +44,15 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	 */
 	private Integer sumCompleteNum = 0;
 
+	/**
+	 * 排产计划
+	 */
+	private BizSchedulingPlan bizSchedulingPlan;
+
+	/**
+	 * 订单按商品排产是，总的已确认量
+	 */
+	private Integer sumCompleteDetailNum;
 
 	
 	public BizPoDetail() {
@@ -128,13 +137,13 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 		this.sendQty = sendQty;
 	}
 
-	public List<BizSchedulingPlan> getSchedulingPlanList() {
-		return schedulingPlanList;
-	}
-
-	public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
-		this.schedulingPlanList = schedulingPlanList;
-	}
+//	public List<BizSchedulingPlan> getSchedulingPlanList() {
+//		return schedulingPlanList;
+//	}
+//
+//	public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
+//		this.schedulingPlanList = schedulingPlanList;
+//	}
 
 	public Integer getSumSchedulingNum() {
 		return sumSchedulingNum;
@@ -150,5 +159,21 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 
 	public void setSumCompleteNum(Integer sumCompleteNum) {
 		this.sumCompleteNum = sumCompleteNum;
+	}
+
+	public BizSchedulingPlan getBizSchedulingPlan() {
+		return bizSchedulingPlan;
+	}
+
+	public void setBizSchedulingPlan(BizSchedulingPlan bizSchedulingPlan) {
+		this.bizSchedulingPlan = bizSchedulingPlan;
+	}
+
+	public Integer getSumCompleteDetailNum() {
+		return sumCompleteDetailNum;
+	}
+
+	public void setSumCompleteDetailNum(Integer sumCompleteDetailNum) {
+		this.sumCompleteDetailNum = sumCompleteDetailNum;
 	}
 }

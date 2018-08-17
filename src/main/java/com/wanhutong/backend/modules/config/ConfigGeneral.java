@@ -1,5 +1,7 @@
 package com.wanhutong.backend.modules.config;
 
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
@@ -8,6 +10,7 @@ import com.wanhutong.backend.modules.config.parse.PhoneConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.SystemConfig;
+import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -50,6 +53,9 @@ public abstract class ConfigGeneral {
 	public static final ConfigWrapper<RequestOrderProcessConfig> REQUEST_ORDER_PROCESS_CONFIG = new ConfigWrapper<RequestOrderProcessConfig>(
 			"RequestOrderProcessConfig.xml",new RequestOrderProcessConfig());
 
+	public static final ConfigWrapper<VendorRequestOrderProcessConfig> VENDOR_REQUEST_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
+			"VendorRequestOrderProcessConfig.xml",new VendorRequestOrderProcessConfig());
+
 	public static final ConfigWrapper<PaymentOrderProcessConfig> PAYMENT_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
 			"PaymentOrderProcessConfig.xml",new PaymentOrderProcessConfig());
 
@@ -67,6 +73,12 @@ public abstract class ConfigGeneral {
 
 	public static final ConfigWrapper<PhoneConfig> PHONE_CONFIG = new ConfigWrapper<>(
 			"PhoneConfig.xml",new PhoneConfig());
+
+	public static final ConfigWrapper<DoOrderHeaderProcessAllConfig> DO_ORDER_HEADER_PROCESS_All_CONFIG = new ConfigWrapper<>(
+			"DoOrderHeaderProcessAllConfig.xml",new DoOrderHeaderProcessAllConfig());
+
+	public static final ConfigWrapper<DoOrderHeaderProcessFifthConfig> DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG = new ConfigWrapper<>(
+			"DoOrderHeaderProcessFifthConfig.xml",new DoOrderHeaderProcessFifthConfig());
 
 	/**
 	 * 获取所有的配置对象实例所属的父容器，使用反射实现，由于仅在更新配置的内存版本时调用，属于可容忍的性能损耗

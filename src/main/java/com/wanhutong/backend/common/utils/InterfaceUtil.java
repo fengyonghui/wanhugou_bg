@@ -400,7 +400,7 @@ public class InterfaceUtil {
 			result=buffer.toString();
 		}
 		catch (ConnectException ce) {
-			// TODO: handle exception
+			ce.printStackTrace();
 		}
 		catch (Exception e) {  
 			e.printStackTrace();

@@ -26,7 +26,11 @@ public class BizCompletePaln extends DataEntity<BizCompletePaln> {
 	 */
 	private BizSchedulingPlan schedulingPlan;
 
-	
+	/**
+	 * 排产是否已确认 0：未确认，1：已确认
+	 */
+	private Integer completeStatus;
+
 	public BizCompletePaln() {
 		super();
 	}
@@ -59,4 +63,19 @@ public class BizCompletePaln extends DataEntity<BizCompletePaln> {
 		this.planDate = planDate;
 	}
 
+	public BizSchedulingPlan getSchedulingPlan() {
+		return schedulingPlan;
+	}
+
+	public void setSchedulingPlan(BizSchedulingPlan schedulingPlan) {
+		this.schedulingPlan = schedulingPlan;
+	}
+
+	public Integer getCompleteStatus() {
+		return completeStatus;
+	}
+
+	public void setCompleteStatus(Integer completeStatus) {
+		this.completeStatus = completeStatus;
+	}
 }

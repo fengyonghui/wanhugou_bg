@@ -58,4 +58,14 @@ public class BizRequestDetailService extends CrudService<BizRequestDetailDao, Bi
 		return dao.findPoRequet(bizRequestDetail);
 	}
 
+	/**
+	 * 获取已排产总量和已确认量
+	 * @param objectId
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public BizRequestDetail getsumSchedulingNum(Integer objectId){
+		return bizRequestDetailDao.getsumSchedulingNum(objectId);
+	}
+
 }

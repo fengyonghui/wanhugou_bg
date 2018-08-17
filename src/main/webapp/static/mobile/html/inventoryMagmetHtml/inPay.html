@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true">
+		<title>付款</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/app.css" rel="stylesheet" />
+		<link href="../../css/drop.css" rel="stylesheet" />
+		<style>
+			.mui-input-row font {color:red;position: absolute;right: 60px;top: 36%;}
+			.pay-logo {width: 40px;}
+			.pay-txt {float: right;padding: 9px;width: 80%;}
+			.pay-txt>input {position: absolute;right: 55px;}
+			.inPayBtnStyle {margin: 10px auto;width: 30%;padding: 10px;}
+			.photoShow {width: 150px;height: 150px;margin: auto;}
+		</style>
+	</head>
+	<body>
+		<header class="header mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">付款</p>
+		</header>
+		<div class="mui-content">
+			<div class="mui-input-group border-btm5">
+				<div class="mui-input-row">
+					<label>应付金额：</label>
+					<input id="shouldPay" type="text" class="ordNum" disabled>
+				</div>
+				<div class="mui-input-row">
+					<label>支付金额：</label>
+					<input id="inPayNum" type="text" class="detaNum" placeholder="请输入金额">
+					<font>*</font>
+				</div>
+			</div>
+			<ul class="mui-table-view border-btm5">
+				<div class="mui-input-row">
+					<label>支付方式：</label>
+				</div>
+				<li id="wxPayBtn" class="mui-table-view-cell">
+					<img class="mui-pull-left pay-logo" src="../../images/wx-logo.jpg">
+					<div class="mui-pull-right pay-txt">
+						 <a class="mui-navigate-right">微信支付</a>
+					</div>
+				</li>
+				<li id="zfbPayBtn" class="mui-table-view-cell">
+					<img class="mui-pull-left pay-logo" src="../../images/zfb-logo.jpg">
+					<div class="mui-pull-right pay-txt">
+						 <a class="mui-navigate-right">支付宝</a>
+					</div>
+				</li>
+			</ul>
+			<!--<div class="mui-input-row border-btm5">
+				<button id="inPayBtn" type="submit" class="mui-btn-blue mui-btn-block inPayBtnStyle">确认支付</button>
+			</div>-->
+		</div>
+		
+	<script src="../../js/component/zepto.min.js"></script>
+	<script src="../../js/component/mui.min.js"></script>
+	<script src="../../js/component/GHutils.js"></script>
+	<script src="../../js/component/dropload.js"></script>
+	<script src="../../js/inventoryMagmetJs/inPay.js"></script>	
+	</body>
+</html>

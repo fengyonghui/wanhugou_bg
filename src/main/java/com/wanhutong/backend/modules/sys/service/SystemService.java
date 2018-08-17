@@ -392,6 +392,8 @@ public class SystemService extends BaseService implements InitializingBean {
 //		saveActivitiGroup(role);
 		// 清除用户角色缓存
 		UserUtils.removeCache(UserUtils.CACHE_ROLE_LIST);
+		// 清除用户权限标识
+		UserUtils.removeCache(UserUtils.CACHE_PERMISSION_LIST);
 //		// 清除权限缓存
 //		systemRealm.clearAllCachedAuthorizationInfo();
 	}
@@ -403,6 +405,8 @@ public class SystemService extends BaseService implements InitializingBean {
 //		deleteActivitiGroup(role);
 		// 清除用户角色缓存
 		UserUtils.removeCache(UserUtils.CACHE_ROLE_LIST);
+		// 清除用户权限标识
+		UserUtils.removeCache(UserUtils.CACHE_PERMISSION_LIST);
 //		// 清除权限缓存
 //		systemRealm.clearAllCachedAuthorizationInfo();
 	}

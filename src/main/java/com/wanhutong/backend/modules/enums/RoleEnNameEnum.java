@@ -80,7 +80,12 @@ public enum RoleEnNameEnum {
     /**
      * 系统管理员
      */
-    DEPT("dept", "系统管理员");
+    DEPT("dept", "系统管理员"),
+
+    /**
+     * 品类主管
+     */
+    SELECTION_OF_SPECIALIST("selection_of_specialist", "品类主管");
 
 
 

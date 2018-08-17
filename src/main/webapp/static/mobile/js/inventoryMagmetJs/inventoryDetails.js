@@ -21,39 +21,53 @@
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/request/bizRequestHeader/form4Mobile",
-                data: {id:735},
+                data: {id:_this.userInfo.inListId},
                 dataType: "json",
                 success: function(res){
-					console.log(res)
+//					console.log(res)
 					/*业务状态*/
-					var bizstatus = res.data.entity.bizStatus;
-					var bizstatusTxt = '';
-					if(bizstatus==0) {
-						bizstatusTxt = "未审核"
-					}else if(bizstatus==5) {
-						bizstatusTxt = "审核通过"
-					}else if(bizstatus==10) {
-						bizstatusTxt = "采购中"
-					}else if(bizstatus==15) {
-						bizstatusTxt = "采购完成"
-					}else if(bizstatus==20) {
-						bizstatusTxt = "备货中"
-					}else if(bizstatus==25) {
-						bizstatusTxt = "供货完成"
-					}else if(bizstatus==30) {
-						bizstatusTxt = "收货完成"
-					}else if(bizstatus==35) {
-						bizstatusTxt = "关闭"
-					}else {
-						bizstatusTxt = '未知类型'
-					}
+						var bizstatus = res.bizStatus;
+						var bizstatusTxt = '';
+						if(bizstatus==0) {
+							bizstatusTxt = "未审核"
+						}else if(bizstatus==1) {
+							bizstatusTxt = "首付支付"
+						}else if(bizstatus==2) {
+							bizstatusTxt = "全部支付"
+						}else if(bizstatus==4) {
+							bizstatusTxt = "审核中"
+						}else if(bizstatus==5) {
+							bizstatusTxt = "审核通过"
+						}else if(bizstatus==6) {
+							bizstatusTxt = "审批中"
+						}else if(bizstatus==7) {
+							bizstatusTxt = "审批完成"
+						}else if(bizstatus==10) {
+							bizstatusTxt = "采购中"
+						}else if(bizstatus==13) {
+							bizstatusTxt = "部分结算"
+						}else if(bizstatus==15) {
+							bizstatusTxt = "采购完成"
+						}else if(bizstatus==20) {
+							bizstatusTxt = "备货中"
+						}else if(bizstatus==25) {
+							bizstatusTxt = "供货完成"
+						}else if(bizstatus==30) {
+							bizstatusTxt = "收货完成"
+						}else if(bizstatus==37) {
+							bizstatusTxt = "结算完成"
+						}else if(bizstatus==40) {
+							bizstatusTxt = "取消"
+						}else {
+							bizstatusTxt = "未知类型"
+						}
 					
 					$('#inPoDizstatus').val(bizstatusTxt)
 					$('#inPoordNum').val(res.data.entity.reqNo)
 					$('#inOrordNum').val(res.data.entity.fromOffice.name)
 					$('#inPototal').val(res.data.entity.totalMoney)
-					$('#inMoneyReceive').val()
-					$('#inMarginLevel').val()
+					$('#inMoneyReceive').val(res.data.entity.recvQtys)
+					$('#inMarginLevel').val(res.data.entity.recvTotal + '%')
 					$('#inPoLastDa').val(_this.formatDateTime(res.data.entity.recvEta))
 					_this.commodityHtml(res.data)
 					_this.statusListHtml(res.data)
@@ -62,18 +76,38 @@
 		},
 		statusListHtml:function(data){
 			var _this = this;
-			console.log(data)
+//			console.log(data)
 			var pHtmlList = '';
 //			var len = data.bizPoHeader.commonProcessList.length
 			$.each(data.statusList, function(i, item) {
-				console.log(item)
-				
+//				console.log(item)
+//				0未审核 1首付款支付,2是全部支付 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
 				var checkBizStatus = '';
 				if(item.bizStatus==0) {
 					checkBizStatus = '未审核'
+				}else if(item.bizStatus==1) {
+					checkBizStatus = '首付款支付'
+				}else if(item.bizStatus==2) {
+					checkBizStatus = '全部支付'
+				}else if(item.bizStatus==5) {
+					checkBizStatus = '审核通过'
+				}else if(item.bizStatus==10) {
+					checkBizStatus = '采购中'
+				}else if(item.bizStatus==15) {
+					checkBizStatus = '采购完成'
+				}else if(item.bizStatus==20) {
+					checkBizStatus = '备货中'
+				}else if(item.bizStatus==25) {
+					checkBizStatus = '供货完成'
+				}else if(item.bizStatus==30) {
+					checkBizStatus = '收货完成'
+				}else if(item.bizStatus==35) {
+					checkBizStatus = '关闭'
+				}else {
+					checkBizStatus = ''
 				}
 				var step = i + 1;
-				pHtmlList +='<li id="procList" class="step_item">'+
+				pHtmlList +='<li class="step_item">'+
 					'<div class="step_num">'+ step +' </div>'+
 					'<div class="step_num_txt">'+
 						'<div class="mui-input-row">'+
@@ -94,17 +128,17 @@
 		},
 		commodityHtml: function(data) {
 			var _this = this;
-			console.log(data)
+//			console.log(data)
 			var htmlCommodity = '';
 			$.each(data.reqDetailList, function(i, item) {
-				console.log(item)
+//				console.log(item)
 				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
 //		产品图片
 					'<div class="photoParent mui-pull-left position_Re">'+
 						'<img class="position_Ab" src="'+item.skuInfo.productInfo.imgUrl+'">'+
 					'</div>'+
 //		产品信息
-					'<div id="commodity" class="mui-media-body">'+
+					'<div class="mui-media-body commodity">'+
 						'<div class="mui-input-row">'+
 							'<label>品牌名称：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled>'+
@@ -142,7 +176,7 @@
 							'<input type="text" class="mui-input-clear" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
-							'<label>商品总库存数量：</label>'+
+							'<label>总库存数量：</label>'+
 							'<input type="text" class="mui-input-clear" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+

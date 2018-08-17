@@ -350,6 +350,13 @@
             <form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="input-xlarge"/>
         </div>
     </div>
+
+    <div class="control-group">
+        <label class="control-label">退换货条款:</label>
+        <div class="controls">
+            <form:textarea path="bizVendInfo.remarks" htmlEscape="false" rows="3" maxlength="200" class="input-xlarge"/>
+        </div>
+    </div>
     <c:if test="${empty office.id}">
         <div class="control-group">
             <label class="control-label">快速添加下级部门:</label>

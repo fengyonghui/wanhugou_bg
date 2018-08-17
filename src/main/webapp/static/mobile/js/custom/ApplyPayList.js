@@ -72,7 +72,7 @@
 							var PoName = item.commonProcess.paymentOrderProcess.name
 							if(PoName=='审批完成') {
 //								 && item.bizStatus == 1
-								pHtmlList += '<div class="mui-input-row">' +
+								pHtmlList += '<div class="mui-input-row border-btm5">' +
 								'<div class="mui-input-row">' +
 								'<label>id：</label>' +
 								'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
@@ -145,7 +145,7 @@
 								'</div>'+
 							'</div>'
 							}*/else {
-								pHtmlList += '<div class="mui-input-row">' +
+								pHtmlList += '<div class="mui-input-row border-btm5">' +
 								'<div class="mui-input-row">' +
 								'<label>id：</label>' +
 								'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
@@ -193,32 +193,7 @@
 					$("#addPayListBtn").html(pHtmlList)
 				}
 			});
-//			_this.hrefHtmlConfirmPay()
 		},
-//		hrefHtmlConfirmPay: function() {
-//			var _this = this;
-//			$('#addPayListBtn').on('tap','#confirmPayBtn',function(){
-//          	var url = $(this).attr('url');
-//          	var poId = $(this).attr('poId');
-//          	var listId = $(this).attr('listId');
-//				var applyPayId = $(this).attr('applyPayId');
-//				var confirmPayId =  _this.userInfo.listId;
-//              if(url) {
-//              	mui.toast('子菜单不存在')
-//              }else if(applyPayId==applyPayId) {
-//              	GHUTILS.OPENPAGE({
-//						url: "../../mobile/html/confirmPayment.html",
-//						extras: {
-//								applyPayId:applyPayId,
-//								id: _this.userInfo.listId,
-//								poId:poId,
-//								listId:listId,
-//						}
-//					})
-//              }
-//			})
-//		},
-		            
 		payComfirDialig: function() {
 			var _this = this;
 			$('#addPayListBtn').on('click','.payRejectBtn', function() {

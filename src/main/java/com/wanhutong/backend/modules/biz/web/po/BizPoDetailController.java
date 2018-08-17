@@ -48,10 +48,10 @@ public class BizPoDetailController extends BaseController {
 		if (id!=null){
 			entity = bizPoDetailService.get(id);
 
-			BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
-			bizSchedulingPlan.setBizPoDetail(entity);
-			List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findList(bizSchedulingPlan);
-			entity.setSchedulingPlanList(schedulingPlanList);
+//			BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
+//			bizSchedulingPlan.setBizPoDetail(entity);
+//			List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findList(bizSchedulingPlan);
+//			entity.setSchedulingPlanList(schedulingPlanList);
 		}
 		if (entity == null){
 			entity = new BizPoDetail();
