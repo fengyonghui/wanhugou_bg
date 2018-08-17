@@ -111,7 +111,7 @@
         var id = $("#id").val();
         var orderType = $("#type").val();
         $.ajax({
-            url: '${ctx}/biz/order/bizOrderHeader/audit',
+            url: '${ctx}/biz/order/bizOrderHeader/auditSo',
             contentType: 'application/json',
             data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "orderType": orderType},
             type: 'get',

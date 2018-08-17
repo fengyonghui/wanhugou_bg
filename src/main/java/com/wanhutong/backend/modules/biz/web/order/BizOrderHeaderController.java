@@ -48,14 +48,11 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
-import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
 import com.wanhutong.backend.modules.config.parse.Process;
+import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.SystemConfig;
-import com.wanhutong.backend.modules.enums.*;
-import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
-import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.DefaultPropEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -107,12 +104,14 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -1645,7 +1644,7 @@ public class BizOrderHeaderController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:order:bizOrderHeader:view")
-    @RequestMapping(value = "audit")
+    @RequestMapping(value = "auditSo")
     @ResponseBody
     public String audit(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType) {
         Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType);

@@ -112,8 +112,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private CommonImgService commonImgService;
     @Resource
     private SystemService systemService;
-    @Autowired
-    private CommonProcessService commonProcessService;
 
     public static final String ORDER_TABLE = "biz_order_header";
 

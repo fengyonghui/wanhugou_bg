@@ -215,6 +215,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             bizPoHeader.setOrderNum(poNo);
             this.savePoHeader(bizPoHeader);
         }
+//        autoSavePaymentOrder(bizPoHeader.getId());
 
         return Pair.of(Boolean.TRUE, "操作成功");
     }
