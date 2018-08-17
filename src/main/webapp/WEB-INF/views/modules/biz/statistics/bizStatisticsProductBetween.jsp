@@ -22,6 +22,7 @@
         <select class="input-medium" id="dataType">
             <option value="1" label="销售额">销售额</option>
             <option value="3" label="订单量">订单量</option>
+            <option value="7" label="点击量">产品点击量</option>
         </select>
     </label>
     <label>

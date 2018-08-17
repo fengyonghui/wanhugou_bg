@@ -45,6 +45,36 @@ public class BizPlatformDataOverviewDto {
     private BigDecimal receiveTotal = BigDecimal.ZERO;
 
     /**
+     * 新增用户计划
+     */
+    private BigDecimal newUserPlan = BigDecimal.ZERO;
+
+    /**
+     * 新增用户
+     */
+    private BigDecimal newUser = BigDecimal.ZERO;
+
+    /**
+     * 新增用户达成率
+     */
+    private String newUserRate;
+
+    /**
+     * 服务费计划
+     */
+    private BigDecimal serviceChargePlan = BigDecimal.ZERO;
+
+    /**
+     * 服务费
+     */
+    private BigDecimal serviceCharge = BigDecimal.ZERO;
+
+    /**
+     * 服务费达成率
+     */
+    private String serviceChargeRate;
+
+    /**
      * 日采购额
      */
     private BigDecimal procurementDay = BigDecimal.ZERO;
@@ -202,6 +232,20 @@ public class BizPlatformDataOverviewDto {
         return getReceiveTotal().divide(getProcurement(), 2, BigDecimal.ROUND_HALF_UP).multiply(PERCENTAGE).toString().concat("%");
     }
 
+    public String getNewUserRate() {
+        if (getNewUserPlan().compareTo(BigDecimal.ZERO) == 0) {
+            return "0";
+        }
+        return getNewUser().divide(getNewUserPlan(), 2, BigDecimal.ROUND_HALF_UP).multiply(PERCENTAGE).toString().concat("%");
+    }
+
+    public String getServiceChargeRate() {
+        if (getServiceChargePlan().compareTo(BigDecimal.ZERO) == 0) {
+            return "0";
+        }
+        return getServiceCharge().divide(getServiceChargePlan(), 2, BigDecimal.ROUND_HALF_UP).multiply(PERCENTAGE).toString().concat("%");
+    }
+
 
     public BigDecimal getDifferenceTotalMonth() {
         return getAccumulatedSalesMonth().subtract(getProcurement());
@@ -253,5 +297,37 @@ public class BizPlatformDataOverviewDto {
 
     public void setReceiveTotal(BigDecimal receiveTotal) {
         this.receiveTotal = receiveTotal;
+    }
+
+    public BigDecimal getNewUserPlan() {
+        return newUserPlan;
+    }
+
+    public void setNewUserPlan(BigDecimal newUserPlan) {
+        this.newUserPlan = newUserPlan;
+    }
+
+    public BigDecimal getNewUser() {
+        return newUser;
+    }
+
+    public void setNewUser(BigDecimal newUser) {
+        this.newUser = newUser;
+    }
+
+    public BigDecimal getServiceChargePlan() {
+        return serviceChargePlan;
+    }
+
+    public void setServiceChargePlan(BigDecimal serviceChargePlan) {
+        this.serviceChargePlan = serviceChargePlan;
+    }
+
+    public BigDecimal getServiceCharge() {
+        return serviceCharge;
+    }
+
+    public void setServiceCharge(BigDecimal serviceCharge) {
+        this.serviceCharge = serviceCharge;
     }
 }

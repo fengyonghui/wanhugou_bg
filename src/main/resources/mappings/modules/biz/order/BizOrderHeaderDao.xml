@@ -734,7 +734,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type = 1
+		WHERE office.id = office1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
 	</foreach>
@@ -752,7 +752,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE
-		header.order_type = 1
+		header.order_type != 4
 		AND not exists(
 		select 1
 		from sys_test_account ta
@@ -769,14 +769,65 @@
 		GROUP BY office.id
 	</select>
 
+	<select id="getValidOrderTotalAndCountByCreateTimeMonthOfficeId" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		sum(receive_total)                                   AS receiveTotal,
+		count(1) AS orderCount,
+		office.id AS officeId,
+		office.name AS officeName,
+		(SELECT
+		sum(detail1.buy_price * detail1.ord_qty)
+		FROM
+		biz_order_header AS header1
+		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
+		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		WHERE office.id = office1.id AND header1.order_type != 4 AND header1.order_type != 6 and detail1.status = 1
+		AND (<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND
+		header1.create_time LIKE #{month}
+		AND NOT EXISTS(
+		select 1
+		from sys_test_account ta
+		where header1.cust_id = ta.object_id
+		and ta.object_name = 'sys_office'
+		)
+		and office1.id = #{officeId}
+		GROUP BY office1.id)                     AS buyPrice
+		FROM biz_order_header AS header
+		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
+		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
+		WHERE
+		header.order_type != 4 and header.order_type != 6 and header.status = 1
+		AND not exists(
+		select 1
+		from sys_test_account ta
+		where header.cust_id = ta.object_id
+		and ta.object_name = 'sys_office'
+		)
+		AND
+		(<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND header.create_time LIKE #{month}
+		and office.id = #{officeId}
+		GROUP BY office.id
+	</select>
+
 	<select id="getProductStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		sum(receive_total) AS receiveTotal,
-		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
+		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count,
+		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id AND date_format(pvLog.create_time, '%Y-%m') = #{month}) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
-		and oh.order_type = 1
+		and oh.order_type != 4
 		and si.id = od.sku_id
 		and si.prod_id = pi.id
 		<if test="variId != null and variId != 0">
@@ -826,6 +877,30 @@
 		GROUP BY center_id
 	</select>
 
+	<select id="getUserStatisticDataByOfficeId" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
+		SELECT s.name,count(1) as count
+		FROM biz_custom_center_consultant c, sys_office s
+		WHERE c.cust_id = ANY (
+			SELECT s1.id
+			from sys_office AS s1, sys_user AS u1
+			where s1.id = u1.company_id
+			AND s1.type = 6
+			AND date_format(s1.create_date, '%Y-%m') = #{month}
+			AND s1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+			AND u1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL})
+		AND c.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		AND s.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL} and s.id = c.center_id
+		and s.TYPE =8
+		AND NOT EXISTS(
+		select 1
+		from sys_test_account ta
+		where c.cust_id = ta.object_id
+		and ta.object_name = 'sys_office'
+		)
+		and s.id = #{officeId}
+		GROUP BY center_id
+	</select>
+
 	<select id="getUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
 		SELECT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
@@ -838,13 +913,14 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type = 1
+		WHERE us.id = us1.id AND header1.order_type != 4 AND header1.order_type != 6 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
 		where header1.cust_id = ta.object_id
 		and ta.object_name = 'sys_office'
 		)
+		AND detail1.status = 1
 		AND header1.status = 1
 		AND us1.status = 1
 		AND consultant1.status = 1
@@ -871,7 +947,8 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1
+		oh.order_type != 4
+		and oh.order_type != 6
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -912,7 +989,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type = 1
+		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND header1.status = 1
 		AND us1.status = 1
 		AND consultant1.status = 1
@@ -944,7 +1021,7 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 	    WHERE
-		oh.order_type = 1
+		oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -983,7 +1060,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type = 1
+		WHERE office.id = office1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
 		</foreach>
@@ -1001,7 +1078,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE
-		header.order_type = 1
+		header.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1022,7 +1099,8 @@
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		sum(receive_total) AS receiveTotal,
-		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
+		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count,
+		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id AND date_format(pvLog.create_time, '%Y-%m-%d') = #{day}) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
 		and si.id = od.sku_id
@@ -1030,7 +1108,7 @@
 		<if test="variId != null and variId != 0">
 			and pi.vari_id = #{variId}
 		</if>
-		and oh.order_type = 1
+		and oh.order_type != 4
 		and oh.status = 1
 		and ccc.status = 1
 		and ccc.cust_id = oh.cust_id
@@ -1091,7 +1169,8 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1
+		oh.order_type != 4
+		and oh.order_type != 6
 		and oh.status = 1
 		and ccc.status = 1
 		AND NOT EXISTS(
@@ -1130,7 +1209,7 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1
+		oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1171,7 +1250,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE office.id = office1.id AND header1.order_type = 1
+		WHERE office.id = office1.id AND header1.order_type != 4 and header1.order_type != 6  AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1189,7 +1268,8 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE
-		header.order_type = 1
+		header.order_type != 4
+		and header.order_type != 6
 		and header.status = 1
 		and consultant.status = 1
 		AND NOT EXISTS(
@@ -1212,7 +1292,12 @@
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		sum(receive_total) AS receiveTotal,
-		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
+		od.sku_id AS skuId, pi.name,
+		pi.item_no AS itemNo,
+		pi.vendor_name AS vendorName,
+		ss.sale_price AS salePrice,
+		count(1) as count,
+		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id AND pvLog.create_time BETWEEN #{startDate} AND #{endDate}) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
 		and si.id = od.sku_id
@@ -1220,7 +1305,7 @@
 		<if test="variId != null and variId != 0">
 			and pi.vari_id = #{variId}
 		</if>
-		and oh.order_type = 1
+		and oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1240,7 +1325,17 @@
 			AND ccc.center_id = #{purchasingId}
 		</if>
 		GROUP BY si.prod_id
-		ORDER BY count DESC
+		<choose>
+			<when test="type !=null and type != '' and type == 7">
+				ORDER BY clickCount DESC
+			</when>
+			<when test="type !=null and type != '' and type == 1">
+				ORDER BY totalMoney DESC
+			</when>
+			<otherwise>
+				ORDER BY count DESC
+			</otherwise>
+		</choose>
 		LIMIT 10
 	</select>
 
@@ -1250,7 +1345,15 @@
 		sum(receive_total) AS receiveTotal,
 		pi.id                                        AS productId,
 		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count,
-		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount,
+		(SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id
+		<if test="timeType == 'year'">
+			and date_format(pvLog.create_time, '%Y-%m') = date_format(oh.create_time, '%Y-%m')
+		</if>
+		<if test="timeType != 'year'">
+			and date_format(pvLog.create_time, '%Y-%m-%d') = date_format(oh.create_time, '%Y-%m-%d')
+		</if>
+		)
+		AS clickCount,
 		<if test="timeType == 'year'">
 			date_format(oh.create_time, '%Y-%m') AS createTime
 		</if>
@@ -1264,7 +1367,7 @@
 		<if test="variId != null and variId != 0">
 			and pi.vari_id = #{variId}
 		</if>
-		and oh.order_type = 1
+		and oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1283,16 +1386,21 @@
 		<if test="purchasingId != null and purchasingId != 0">
 			AND ccc.center_id = #{purchasingId}
 		</if>
-		GROUP BY createTime, skuId
+		<if test="itemNo != null and itemNo != ''">
+			AND pi.item_no = #{itemNo}
+		</if>
+		GROUP BY createTime, pi.id
 		<choose>
 			<when test="type !=null and type != null and type == '7'">
 				ORDER BY clickCount DESC
+			</when>
+			<when test="type !=null and type != '' and type == 1">
+				ORDER BY totalMoney DESC
 			</when>
 			<otherwise>
 				ORDER BY count DESC
 			</otherwise>
 		</choose>
-		LIMIT 10
 	</select>
 
 	<select id="getUserStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
@@ -1331,7 +1439,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type = 1
+		WHERE us.id = us1.id AND header1.order_type != 4 AND header1.order_type != 6 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1353,7 +1461,8 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1
+		oh.order_type != 4
+		and oh.order_type != 6
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1388,7 +1497,7 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1
+		oh.order_type != 4
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1481,8 +1590,9 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE header1.order_type = 1
+		WHERE header1.order_type != 4
 		and header1.`status` = 1
+		AND detail1.status = 1
 		and office1.`status` = 1
 		AND NOT EXISTS(
 		select 1
@@ -1556,8 +1666,9 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		WHERE header1.order_type = 1
+		WHERE header1.order_type != 4
 		and header1.`status` = 1
+		AND detail1.status = 1
 		and office1.`status` = 1
 		AND NOT EXISTS(
 		select 1
@@ -1732,7 +1843,7 @@ SELECT
        ON consultant1.cust_id = header1.cust_id
      LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
      LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-   WHERE office1.id = so.id AND header1.order_type = 1 AND header1.`status` = 1 AND
+   WHERE office1.id = so.id AND header1.order_type != 4 AND header1.order_type != 6 AND header1.`status` = 1 AND detail1.status = 1 AND
          NOT EXISTS(SELECT 1
                     FROM sys_test_account ta
                     WHERE header1.cust_id = ta.object_id AND ta.object_name = 'sys_office') AND
@@ -1772,7 +1883,7 @@ SELECT
 FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_header oh
 	WHERE cc.consultant_id = u.id AND oh.cust_id = cc.cust_id
 		AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
-		AND so.id = u.company_id
+		AND so.id = u.office_id
 		AND so.type IN (8, 10, 11)
 		AND
 		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
@@ -1798,7 +1909,7 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         LEFT JOIN biz_custom_center_consultant AS cc1 ON  header1.cust_id = cc1.cust_id
         LEFT JOIN sys_user AS u1 ON cc1.consultant_id = u1.id
         LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-        WHERE u1.id = u.id AND header1.order_type = 1 AND header1.`status` = 1 AND
+        WHERE u1.id = u.id AND header1.order_type != 4 AND header1.order_type != 6 AND header1.`status` = 1 AND detail1.status = 1 AND
         NOT EXISTS(SELECT 1
         FROM sys_test_account ta
         WHERE header1.cust_id = ta.object_id AND ta.object_name = 'sys_office') AND
@@ -1823,7 +1934,7 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_header oh
         WHERE cc.consultant_id = u.id AND oh.cust_id = cc.cust_id
         AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
-        AND so.id = u.company_id
+        AND so.id = u.office_id
         AND so.type IN (8, 10, 11)
         AND
         (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
@@ -1991,7 +2102,7 @@ FROM
 	  AND bod.status= 1
 	  AND (bod.suply_id=0 OR bod.suply_id=721)
 	AND EXISTS(
-		SELECT 1 FROM
+		SELECT 1 from
 			(SELECT
 				DISTINCT a.id, pi.vendor_id
 				FROM biz_order_header a,biz_order_detail bod

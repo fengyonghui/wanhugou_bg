@@ -13,6 +13,8 @@
 		a.month AS "month",
 		a.day AS "day",
 		a.amount AS "amount",
+		a.new_user AS "newUser",
+		a.service_charge AS "serviceCharge",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -117,7 +119,9 @@
 		create_time,
 		u_version,
 		update_id,
-		update_time
+		update_time,
+		new_user,
+		service_charge
 		) VALUES (
 		#{id},
 		#{objectId},
@@ -131,7 +135,9 @@
 		#{createDate},
 		#{uVersion},
 		#{updateBy.id},
-		#{updateDate}
+		#{updateDate},
+		#{newUser},
+		#{serviceCharge}
 		)
 	</insert>
 
@@ -143,6 +149,8 @@
 		`month` = #{month},
 		`day` = #{day},
 		amount = #{amount},
+		new_user = #{newUser},
+		service_charge = #{serviceCharge},
 		update_id = #{updateBy.id},
 		update_time = #{updateDate}
 		WHERE id = #{id}
