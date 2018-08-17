@@ -1065,6 +1065,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @param poHeaderIdid
      * @return
      */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void autoSavePaymentOrder(Integer poHeaderIdid){
         BizPoHeader bizPoHeader = this.get(poHeaderIdid);
         Boolean prew = false;

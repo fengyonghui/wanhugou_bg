@@ -498,6 +498,9 @@
 			<if test="vendorId !=null and vendorId != ''">
 				AND  sv.id = ${vendorId}
 			</if>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -2172,6 +2175,9 @@ FROM
         <if test="page != null and page.includeTestData != true">
 	        AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE a.cust_id = ta.object_id AND ta.object_name = 'sys_office' )
         </if>
+		<if test="id != null and id != ''">
+			AND a.id = #{id}
+		</if>
 	GROUP by a.id
     ORDER BY
 	    a.update_time DESC

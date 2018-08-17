@@ -569,7 +569,7 @@
             //requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum
             // RoleEnNameEnum.SELECTION_OF_SPECIALIST.state
             // (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum)) &&
-            if('${(fns:hasRole(roleSet, RoleEnNameEnum.SELECTION_OF_SPECIALIST.state)) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
+            if('${(fns:hasRole(roleSet, 'SELECTIONOFSPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
                 var lastPayDateVal = $("#lastPayDate").val();
                 if (lastPayDateVal == ""){
                     alert("请输入最后付款时间！")
@@ -641,13 +641,14 @@
                     if(result == 'ok') {
                         if(auditType==1){
                             //自动生成采购单
+                            console.log("---------------")
                             var id = $("#id").val();
                             //获取当前订单业务状态，如果订单审核完成则自动生成采购单
                             //getCurrentBizStatus(id);
                             //requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum
                             // RoleEnNameEnum.SELECTION_OF_SPECIALIST.state
                             // (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum)) &&
-                            if('${(fns:hasRole(roleSet, RoleEnNameEnum.SELECTION_OF_SPECIALIST.state)) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
+                            if('${(fns:hasRole(roleSet, RoleEnNameEnum.SELECTIONOFSPECIALIST.state)) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
                                 getPoHeaderPara(id);
                             }
                             <%--if ('${OrderHeaderBizStatusEnum.APPROVEPARTONE.state}' == bizStatus) {--%>
@@ -1038,7 +1039,7 @@
         <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
             <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
                 <c:if test="${entity.str == 'audit'}">
-                    <c:if test="${(fns:hasRole(roleSet, RoleEnNameEnum.SELECTION_OF_SPECIALIST.state)) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}">
+                    <c:if test="${(fns:hasRole(roleSet, 'SELECTIONOFSPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}">
                         <div class="control-group">
                             <label class="control-label">最后付款时间：</label>
                             <div class="controls">

@@ -350,7 +350,7 @@
 					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">
                         <%--&& orderHeader.bizStatus<OrderHeaderBizStatusEnum.APPROVEPARTONE.state--%>
 						<%--&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.UNREVIEWED.state--%>
-						<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum)  && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
+						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum)  && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
 							&& orderHeader.commonProcess.doOrderHeaderProcessAll.code != auditAllStatus
 							}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
@@ -362,7 +362,7 @@
 					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
                         <%--&& orderHeader.bizStatus<OrderHeaderBizStatusEnum.APPROVEPARTONE.state--%>
 						<%--&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.UNREVIEWED.state--%>
-						<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) && orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
+						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) && orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
 							&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
 							}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>

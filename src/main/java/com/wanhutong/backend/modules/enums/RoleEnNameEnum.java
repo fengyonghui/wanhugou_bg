@@ -51,9 +51,9 @@ public enum RoleEnNameEnum {
      */
     WAREHOUSESPECIALIST("warehouse_specialist", "仓储专员"),
     /**
-     * 选品专员
+     * 品类主管
      */
-    SELECTIONOFSPECIALIST("selection_of_specialist", "选品专员"),
+    SELECTIONOFSPECIALIST("selection_of_specialist", "品类主管"),
     /**
      * 供货中心经理
      */
@@ -85,15 +85,7 @@ public enum RoleEnNameEnum {
     /**
      * 系统管理员
      */
-    DEPT("dept", "系统管理员"),
-
-    /**
-     * 品类主管
-     */
-    SELECTION_OF_SPECIALIST("selection_of_specialist", "品类主管");
-
-
-
+    DEPT("dept", "系统管理员");
 
 
     private String state;

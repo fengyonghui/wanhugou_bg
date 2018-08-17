@@ -164,7 +164,7 @@
                                 if(detail.ordQty==detail.sentQty){
                                     tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
                                 }else {
-                                    tr_tds+="<td><input  type='text'  title='sent_"+orderHeader.id+"' name='' onchange='checkNum("+detail.ordQty+","+detail.sentQty+",this)' value='"+(detail.ordQty-detail.sentQty)+"'></td>";
+                                    tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' onchange='checkNum("+detail.ordQty+","+detail.sentQty+",this)' value='0'></td>";
                                 }
 
                                 tr_tds+="</tr>";

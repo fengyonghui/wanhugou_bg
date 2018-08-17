@@ -178,6 +178,17 @@ public class BizOrderHeaderController extends BaseController {
         if (bizOrderHeader.getSource() != null) {
             model.addAttribute("source", bizOrderHeader.getSource());
         }
+
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+            }
+        }
+        model.addAttribute("roleSet", roleSet);
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
         model.addAttribute("auditAllStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().getAutProcessId());
         model.addAttribute("auditFithStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getAutProcessId());

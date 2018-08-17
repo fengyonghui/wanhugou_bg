@@ -125,6 +125,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         boolean flagRequest = true;        //备货单完成状态
         boolean flagOrder = true;        //销售单完成状态
         boolean flagPo = true;     //采购单完成状态
+        boolean flagInvoceId = bizInvoice.getId() == null ? true : false;
         //修改发货单
         if (bizInvoice.getId() != null) {
             BizInvoice invoice = bizInvoiceDao.get(bizInvoice.getId());
@@ -154,6 +155,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             //采购商或采购中心
 //        Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
             bizInvoice.setSendNumber("");
+            bizInvoice.setIsConfirm(BizInvoice.IsConfirm.NO.getIsConfirm());
             super.save(bizInvoice);
             bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE, company.getId(), 0, bizInvoice.getId()));
             super.save(bizInvoice);
@@ -175,7 +177,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String[] oheaders = orders[a].split("#");
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(Integer.parseInt(oheaders[0]));
                 //加入中间表关联关系
-                if (bizInvoice.getId() == null) {
+                if (flagInvoceId) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                     bizDetailInvoice.setInvoice(bizInvoice);
                     bizDetailInvoice.setOrderHeader(orderHeader);
@@ -366,7 +368,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         List<BizPoDetail> poDetailList = bizPoDetailService.findList(poDetail);
                         boolean flag = true;
                         for (BizPoDetail bizPoDetail : poDetailList) {
-                            if (bizPoDetail.getOrdQty() != bizPoDetail.getSendQty()) {
+                            if (!bizPoDetail.getOrdQty().equals(bizPoDetail.getSendQty())) {
                                 flag = false;
                             }
                         }
@@ -394,7 +396,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String[] rheaders = requests[b].split("#".trim());
                 BizRequestHeader requestHeader = bizRequestHeaderService.get(Integer.parseInt(rheaders[0]));
                 //加入中间表关联关系
-                if (bizInvoice.getId() == null) {
+                if (flagInvoceId) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                     bizDetailInvoice.setInvoice(bizInvoice);
                     bizDetailInvoice.setRequestHeader(requestHeader);

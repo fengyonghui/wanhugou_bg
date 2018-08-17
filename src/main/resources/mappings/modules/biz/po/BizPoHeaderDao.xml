@@ -119,9 +119,9 @@
 				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
 				)
 			</if>
-			<!--<if test="bizOrderHeader != null and bizOrderHeader.id != null">-->
-				<!--AND oh.id = #{bizOrderHeader.id}-->
-			<!--</if>-->
+			<if test="bizOrderHeader != null and bizOrderHeader.id != null">
+				AND oh.id = #{bizOrderHeader.id}
+			</if>
 			<if test="bizOrderHeader != null and bizOrderHeader.bizStatus != null">
 				AND oh.biz_status = #{bizOrderHeader.bizStatus}
 			</if>
