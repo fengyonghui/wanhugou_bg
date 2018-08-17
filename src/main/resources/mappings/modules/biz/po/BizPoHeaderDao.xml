@@ -103,7 +103,7 @@
 		LEFT JOIN biz_po_payment_order ppo ON ppo.po_header_id = a.id
 		LEFT JOIN biz_po_order_req por ON por.po_id = a.id
 		LEFT JOIN biz_order_header oh ON oh.id = por.so_id AND por.so_type = 1
-		RIGHT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
+		LEFT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			AND a.is_prew = 0
