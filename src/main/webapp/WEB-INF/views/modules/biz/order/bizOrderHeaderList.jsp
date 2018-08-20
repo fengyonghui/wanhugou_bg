@@ -357,7 +357,6 @@
 						</c:if>
 					</c:if>
 
-
 					<!-- 20%首付款审核 -->
 					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
                         <%--&& orderHeader.bizStatus<OrderHeaderBizStatusEnum.APPROVEPARTONE.state--%>
@@ -370,6 +369,35 @@
 					</c:if>
 				</shiro:hasPermission>
 			</c:if >
+
+			<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+				<c:if test="${requestHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">
+					<c:if test="${requestHeader.bizPoHeader.commonProcess.id != null
+				&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
+				&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+				&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
+				&& (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+				}">
+						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
+					</c:if>
+				</c:if>
+			</shiro:hasPermission>
+			<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
+				<c:if test="${orderHeader.bizPoHeader !=null}">
+					<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${orderHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}">支付申请列表</a>
+				</c:if>
+			</shiro:hasPermission>
+
+			<c:if test="${orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
+				<c:if test="${orderHeader.bizPoHeader.totalOrdQty != null && orderHeader.bizPoHeader.totalOrdQty != 0}">
+					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
+					</shiro:hasPermission>
+				</c:if>
+			</c:if>
 			<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
 				<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
