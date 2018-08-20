@@ -32,6 +32,7 @@
 	<form:form id="inputForm" modelAttribute="bizPoPaymentOrder" action="${ctx}/biz/po/bizPoPaymentOrder/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<form:hidden path="poHeaderId"/>
+		<form:hidden path="orderType"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">付款金额：</label>
