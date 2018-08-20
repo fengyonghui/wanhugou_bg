@@ -651,7 +651,7 @@
             //requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum
             // RoleEnNameEnum.SELECTION_OF_SPECIALIST.state
             // (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum)) &&
-            if('${(fns:hasRole(roleSet, 'SELECTIONOFSPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
+            if('${(fns:hasRole(roleSet, 'SELECTION_OF_SPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
                 var lastPayDateVal = $("#lastPayDate").val();
                 if (lastPayDateVal == ""){
                     alert("请输入最后付款时间！")
@@ -727,7 +727,7 @@
                             //requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum
                             // RoleEnNameEnum.SELECTION_OF_SPECIALIST.state
                             // (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum)) &&
-                            if(${(fns:hasRole(roleSet, 'SELECTIONOFSPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}){
+                            if(${(fns:hasRole(roleSet, 'SELECTION_OF_SPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}){
                                 getPoHeaderPara(id);
                             }
                             <%--if ('${OrderHeaderBizStatusEnum.APPROVEPARTONE.state}' == bizStatus) {--%>
@@ -1169,7 +1169,7 @@
         <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
             <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
                 <c:if test="${entity.str == 'audit'}">
-                    <c:if test="${(fns:hasRole(roleSet, 'SELECTIONOFSPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}">
+                    <c:if test="${(fns:hasRole(roleSet, 'SELECTION_OF_SPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}">
                         <div class="control-group">
                             <label class="control-label">最后付款时间：</label>
                             <div class="controls">

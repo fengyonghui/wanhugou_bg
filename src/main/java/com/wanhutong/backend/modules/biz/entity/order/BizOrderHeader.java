@@ -180,6 +180,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private BizPoPaymentOrder bizPoPaymentOrder;
 
+    /**
+     * 是否是本地备货的订单，0:是 721:是  大于0且不等于721：不是
+     */
+    private Integer suplys;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -821,5 +826,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setBizPoPaymentOrder(BizPoPaymentOrder bizPoPaymentOrder) {
         this.bizPoPaymentOrder = bizPoPaymentOrder;
+    }
+
+    public Integer getSuplys() {
+        return suplys;
+    }
+
+    public void setSuplys(Integer suplys) {
+        this.suplys = suplys;
     }
 }

@@ -53,7 +53,7 @@ public enum RoleEnNameEnum {
     /**
      * 品类主管
      */
-    SELECTIONOFSPECIALIST("selection_of_specialist", "品类主管"),
+    SELECTION_OF_SPECIALIST("selection_of_specialist", "品类主管"),
     /**
      * 供货中心经理
      */

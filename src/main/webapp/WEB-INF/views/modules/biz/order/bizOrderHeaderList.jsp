@@ -352,9 +352,13 @@
                         <%--&& orderHeader.bizStatus<OrderHeaderBizStatusEnum.APPROVEPARTONE.state--%>
 						<%--&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.UNREVIEWED.state--%>
 						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum)  && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
-							&& orderHeader.commonProcess.doOrderHeaderProcessAll.code != auditAllStatus
+							&& orderHeader.commonProcess.doOrderHeaderProcessAll.code != auditAllStatus && orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state
 							}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
+						</c:if>
+						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.) && orderHeader.commonProcess..name != '驳回' && orderHeader.commonProcess..code != auditAllStatus
+							 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
+							<a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}"></a>
 						</c:if>
 					</c:if>
 
