@@ -51,17 +51,7 @@ public class BizSchedulingPlanService extends CrudService<BizSchedulingPlanDao, 
 	}
 
 	@Transactional(readOnly = false)
-	public BizSchedulingPlan getByObjectId(String objectId){
-		return bizSchedulingPlanDao.getByObjectId(objectId);
-	}
-
-	@Transactional(readOnly = false)
-	public List<Integer> getSchedulingPlanIdListByPoId(BizPoHeader poHeader){
-		return bizSchedulingPlanDao.getSchedulingPlanIdListByPoId(poHeader);
-	}
-
-	@Transactional(readOnly = false)
-	public List<BizSchedulingPlan> findAllList(BizSchedulingPlan bizSchedulingPlan){
-		return bizSchedulingPlanDao.findAllList(bizSchedulingPlan);
+	public BizSchedulingPlan getByObjectIdAndObjectName(Integer objectId, String objectName) {
+		return bizSchedulingPlanDao.getByObjectIdAndObjectName(objectId, objectName);
 	}
 }

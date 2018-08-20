@@ -69,7 +69,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_complete_paln(
 			id,
 			scheduling_id,
@@ -83,7 +83,7 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{schedulingId},
+			#{schedulingPlan.id},
 			#{completeNum},
 			#{planDate},
 			#{delFlag},
@@ -111,6 +111,21 @@
 		UPDATE biz_complete_paln SET 
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
+	</update>
+
+	<update id="updateCompleteStatus">
+		UPDATE biz_complete_paln SET
+		complete_status = #{completeStatus}
+		WHERE id = #{id}
+	</update>
+
+	<update id="batchUpdateCompleteStatus">
+		UPDATE biz_complete_paln SET
+		complete_status = 1
+		WHERE id IN
+		<foreach item="item" index="index" collection="paramList" open="(" separator="," close=")">
+			#{item}
+		</foreach>
 	</update>
 	
 </mapper>
