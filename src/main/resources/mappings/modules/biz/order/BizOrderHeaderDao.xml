@@ -165,7 +165,6 @@
 		s.name as "centersName",
 		con.id AS "con.id",
 		con.name AS "con.name",
-		a.pay_proportion AS "payProportion",
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
 		process.object_name AS "commonProcess.objectName",
