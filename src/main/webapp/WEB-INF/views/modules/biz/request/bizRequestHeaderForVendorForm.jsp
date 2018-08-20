@@ -410,12 +410,12 @@
                     $("#payeeInput").val(data.payee);
                     $("#bankNameInput").val(data.bankName);
                     if (data.compactImgList != undefined) {
-                        data.compactImgList.each(function (index, compact) {
+                        $.each(data.compactImgList,function (index, compact) {
                             $("#compactImgs").append("<a href=\"" + compact.imgServer + compact.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + compact.imgServer + compact.imgPath + "\"></a>");
                         });
                     }
                     if (data.identityCardImgList != undefined) {
-                        data.identityCardImgList.each(function (index, identity) {
+                        $.each(data.identityCardImgList,function (index, identity) {
                             $("#identityCards").append("<a href=\"" + identity.imgServer + identity.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + identity.imgServer + identity.imgPath + "\"></a>");
                         });
                     }
