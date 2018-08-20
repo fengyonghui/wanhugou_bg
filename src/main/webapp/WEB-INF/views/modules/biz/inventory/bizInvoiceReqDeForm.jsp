@@ -15,31 +15,52 @@
                     choose.attr('checked',false);
                 }
             });
+            var str = $("#str").val();
+            if (str != 'audit') {
+                $(":input").each(function () {
+                   $(this).attr("disabled","disabled");
+                });
+                $("select").each(function () {
+                    $(this).attr("disabled","disabled");
+                });
+                $("textarea").each(function () {
+                   $(this).attr("disabled","disabled");
+                });
+                $("#id").removeAttr("disabled");
+                $("#btnCancel").removeAttr("disabled");
+                $("#btnSubmit").removeAttr("disabled");
+                $("#freight").removeAttr("disabled");
+            }
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
                     var tt="";
                     var total = 0;
-                    $('input:checkbox:checked').each(function(i) {
-                        var t= $(this).val();
-                        var detail="";
-                        var num ="";
-                        var sObj= $("#prodInfo").find("input[title='sent_"+t+"']");
-                        sObj.each(function (index) {
-                            total+= parseInt($(this).val());
-                        })
-                        $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
-                            detail+=$(this).val()+"-"+sObj[i].value+"*";
+                    var str = $("#str").val();
+                    alert(str);
+                    if (str == 'audit') {
+                        $('#prodInfo3').find("tr").each(function(i) {
+                            var t= $(this).attr("id");
+                            var detail="";
+                            var num ="";
+                            var sObj= $("#prodInfo3").find("input[title='sent_"+t+"']");
+                            sObj.each(function (index) {
+                                total+= parseInt($(this).val());
+                            })
+                            $("#prodInfo3").find("input[title='details_"+t+"']").each(function (i) {
+                                detail+=$(this).val()+"-"+sObj[i].value+"*";
+
+                            });
+                            tt+=t+"#"+detail+",";
+                            alert(tt);
 
                         });
-                        tt+=t+"#"+detail+",";
-
-                    });
-                    tt=tt.substring(0,tt.length-1);
+                        tt=tt.substring(0,tt.length-1);
+                    }
                     if(window.confirm('你确定要发货吗？')){
                         // alert("确定");
                         if (tt != '') {
-                            $("#prodInfo").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
+                            $("#prodInfo3").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
                         }
                         form.submit();
                         loading('正在提交，请稍等...');
@@ -150,6 +171,7 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+        <input id="str" name="str" type="hidden" value="${bizInvoice.str}"/>
 		<sys:message content="${message}"/>
 		<c:if test="${bizInvoice.id != null && bizInvoice.id != ''}">
 			<div class="control-group">
@@ -167,23 +189,38 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">物流商：</label>
+			<label class="control-label">验货员：</label>
 			<div class="controls">
-                <%--<form:input path="logistics.name" htmlEscape="false" class="input-xlarge "/>--%>
-				<form:select id="bizLogistics" path="logistics.id" onmouseout="" class="input-medium">
-					<%--<c:forEach items="${logisticsList}" var="bizLogistics">--%>
-					<form:option value="${bizLogistics.id}"/>${bizLogistics.name}
-					<form:options items="${logisticsList}" itemLabel="name" itemValue="id"/>
-					<%--</c:forEach>--%>
+				<form:select about="choose" path="inspector.id" class="input-medium required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${inspectorList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">物流信息图：</label>
+			<label class="control-label">验货时间：</label>
 			<div class="controls">
-				<form:hidden path="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-				<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="false" maxWidth="100"
-							  maxHeight="100"/>
+				<input name="inspectDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+					   value="<fmt:formatDate value="${bizInvoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">验货备注：</label>
+			<div class="controls">
+				<form:textarea path="inspectRemark" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">集货地点：</label>
+			<div class="controls">
+				<form:select path="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('coll_locate')}" itemValue="value" itemLabel="label"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -192,39 +229,35 @@
 				<form:input id="valuePrice" path="valuePrice"  htmlEscape="false" value="" readonly="true" class="input-xlarge required"/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">操作费：</label>
-			<div class="controls">
-				<form:input path="operation" htmlEscape="false" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">运费：</label>
-			<div class="controls">
-				<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
-			</div>
-		</div>
-		<c:if test="${userList==null}">
+		<c:if test="${bizInvoice.str == 'freight' || source == 'xq'}">
 			<div class="control-group">
-				<label class="control-label">发货人：</label>
+				<label class="control-label">运费：</label>
 				<div class="controls">
-					<form:input about="choose" readonly="true" path="carrier" class="input-medium required"/>
-					<span class="help-inline"><font color="red">*</font> </span>
+					<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
 				</div>
 			</div>
 		</c:if>
-		<c:if test="${userList!=null}">
-			<div class="control-group">
-				<label class="control-label">发货人：</label>
-				<div class="controls">
-					<form:select about="choose" path="carrier" class="input-medium required">
-						<form:option value="" label="请选择"/>
-						<form:options items="${userList}" itemLabel="name" itemValue="name" htmlEscape="false"/>
-					</form:select>
-					<span class="help-inline"><font color="red">*</font> </span>
-				</div>
-			</div>
-		</c:if>
+		<%--<c:if test="${userList==null}">--%>
+			<%--<div class="control-group">--%>
+				<%--<label class="control-label">发货人：</label>--%>
+				<%--<div class="controls">--%>
+					<%--<form:input about="choose" readonly="true" path="carrier" class="input-medium required"/>--%>
+					<%--<span class="help-inline"><font color="red">*</font> </span>--%>
+				<%--</div>--%>
+			<%--</div>--%>
+		<%--</c:if>--%>
+		<%--<c:if test="${userList!=null}">--%>
+			<%--<div class="control-group">--%>
+				<%--<label class="control-label">发货人：</label>--%>
+				<%--<div class="controls">--%>
+					<%--<form:select about="choose" path="carrier" class="input-medium required">--%>
+						<%--<form:option value="" label="请选择"/>--%>
+						<%--<form:options items="${userList}" itemLabel="name" itemValue="name" htmlEscape="false"/>--%>
+					<%--</form:select>--%>
+					<%--<span class="help-inline"><font color="red">*</font> </span>--%>
+				<%--</div>--%>
+			<%--</div>--%>
+		<%--</c:if>--%>
 		<div class="control-group">
 			<label class="control-label">发货时间：</label>
 			<div class="controls">
@@ -237,94 +270,102 @@
 		<div class="control-group">
 			<label class="control-label">物流结算方式：</label>
 			<div class="controls">
-                <form:select id="settlementStatus" path="settlementStatus" onmouseout="" class="input-xlarge">
+                <form:select id="settlementStatus" path="settlementStatus" onmouseout="" class="input-xlarge required">
                     <c:forEach items="${fns:getDictList('biz_settlement_status')}" var="settlementStatus">
                         <option value="${settlementStatus.value}">${settlementStatus.label}</option>
                     </c:forEach>
                 </form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-
+		<div class="control-group">
+			<label class="control-label">备注：</label>
+			<div class="controls">
+				<form:textarea path="remarks" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+			</div>
+		</div>
 		<c:if test="${source ne 'xq'}">
-			<div class="control-group">
-				<label class="control-label">选择备货单：</label>
-				<div class="controls">
-					<ul class="inline ul-form">
-						<li><label>备货清单号：</label>
-							<input id="reqNo" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
-						</li>
-						<li><label>商品货号：</label>
-							<input id="skuItemNo"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
-						</li>
-						<li><label>商品编码：</label>
-							<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
-						</li>
-						<li><label>供应商：</label>
-							<input id="name"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
-						</li>
-						<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/><span style="color: red;">(请输入没有供货完成的订单)</span></li>
-						<li class="clearfix"></li>
-					</ul>
+			<c:if test="${bizInvoice.id == null}">
+				<div class="control-group">
+					<label class="control-label">选择备货单：</label>
+					<div class="controls">
+						<ul class="inline ul-form">
+							<li><label>备货清单号：</label>
+								<input id="reqNo" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
+							</li>
+							<li><label>商品货号：</label>
+								<input id="skuItemNo"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
+							</li>
+							<li><label>商品编码：</label>
+								<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+							</li>
+							<li><label>供应商：</label>
+								<input id="name"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+							</li>
+							<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/><span style="color: red;">(请输入没有供货完成的订单)</span></li>
+							<li class="clearfix"></li>
+						</ul>
 
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label">待发货单：</label>
-				<div class="controls">
-					<table id="contentTable2"  class="table table-striped table-bordered table-condensed">
-						<thead>
-						<tr>
-							<th><input id="select_all" type="checkbox" /></th>
-							<th>备货清单号</th>
-							<th>采购中心</th>
-							<th>业务状态</th>
-							<th>商品名称</th>
-							<th>供应商</th>
-							<th>商品货号</th>
-							<th>商品编码</th>
-							<th>商品属性</th>
-
-							<th>申报数量</th>
-							<th>已发货数量</th>
-							<th>发货数量</th>
-						</tr>
-						</thead>
-						<tbody id="prodInfo2">
-
-						</tbody>
-					</table>
-					<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>
+					</div>
 				</div>
 
-				<div class="controls">
-					<table id="contentTable"  class="table table-striped table-bordered table-condensed">
-						<thead>
-						<tr>
-							<th></th>
-							<th>备货清单号</th>
-							<th>采购中心</th>
-							<th>业务状态</th>
-							<th>商品名称</th>
-							<th>供应商</th>
-							<th>商品货号</th>
-							<th>商品编码</th>
-							<th>商品属性</th>
-							<c:if test="${bizStatus==0}">
-								<th>选择仓库</th>
-							</c:if>
-							<th>申报数量</th>
-							<th>已发货数量</th>
-							<th>发货数量</th>
-						</tr>
-						</thead>
-						<tbody id="prodInfo">
-						<input name="bizStatu" value="1" type="hidden"/>
-						</tbody>
-					</table>
-						<%--<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>--%>
+				<div class="control-group">
+					<label class="control-label">待发货单：</label>
+					<div class="controls">
+						<table id="contentTable2"  class="table table-striped table-bordered table-condensed">
+							<thead>
+							<tr>
+								<th><input id="select_all" type="checkbox" /></th>
+								<th>备货清单号</th>
+								<th>采购中心</th>
+								<th>业务状态</th>
+								<th>商品名称</th>
+								<th>供应商</th>
+								<th>商品货号</th>
+								<th>商品编码</th>
+								<th>商品属性</th>
+
+								<th>申报数量</th>
+								<th>已发货数量</th>
+								<th>发货数量</th>
+							</tr>
+							</thead>
+							<tbody id="prodInfo2">
+
+							</tbody>
+						</table>
+						<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>
+					</div>
+
+					<div class="controls">
+						<table id="contentTable"  class="table table-striped table-bordered table-condensed">
+							<thead>
+							<tr>
+								<th></th>
+								<th>备货清单号</th>
+								<th>采购中心</th>
+								<th>业务状态</th>
+								<th>商品名称</th>
+								<th>供应商</th>
+								<th>商品货号</th>
+								<th>商品编码</th>
+								<th>商品属性</th>
+								<c:if test="${bizStatus==0}">
+									<th>选择仓库</th>
+								</c:if>
+								<th>申报数量</th>
+								<th>已发货数量</th>
+								<th>发货数量</th>
+							</tr>
+							</thead>
+							<tbody id="prodInfo">
+							<input name="bizStatu" value="1" type="hidden"/>
+							</tbody>
+						</table>
+							<%--<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>--%>
+					</div>
 				</div>
-			</div>
+			</c:if>
 		</c:if>
 
 
@@ -340,8 +381,11 @@
                         <th>商品名称</th>
                         <th>商品编码</th>
                         <th>商品属性</th>
-                        <th>采购数量</th>
+                        <th>申报</th>
                         <th>已发货数量</th>
+						<c:if test="${bizInvoice.str == 'audit'}">
+                        	<th>发货数量</th>
+						</c:if>
                     </tr>
                     </thead>
                     <tbody id="prodInfo3">
@@ -349,7 +393,7 @@
                         <c:forEach items="${requestHeaderList}" var="requestHeader">
                             <c:set var="flag" value="true"></c:set>
                                 <c:forEach items="${requestHeader.requestDetailList}" var="requestDetail" varStatus="index">
-									<tr>
+									<tr id="${requestHeader.id}">
 										<td><a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">${requestHeader.reqNo}</a></td>
 										<td>${requestHeader.fromOffice.name}</td>
 										<td>${fns:getDictLabel(requestHeader.bizStatus,"biz_req_status",'' )}</td>
@@ -358,6 +402,10 @@
 										<td>${requestDetail.skuInfo.skuPropertyInfos}</td>
 										<td>${requestDetail.reqQty}</td>
 										<td>${requestDetail.sendQty}</td>
+										<c:if test="${bizInvoice.str == 'audit'}">
+											<input type="hidden" title="details_${requestHeader.id}" value="${requestDetail.id}"/>
+											<td><input type='text' title='sent_${requestHeader.id}' name='' required="required" onchange='checkNum(${requestDetail.reqQty},${requestDetail.sendQty},this)' value=''></td>
+										</c:if>
 									</tr>
 									<c:if test="${fn:length(requestHeader.requestDetailList)>1}">
 										<c:set var="flag" value="false"></c:set>

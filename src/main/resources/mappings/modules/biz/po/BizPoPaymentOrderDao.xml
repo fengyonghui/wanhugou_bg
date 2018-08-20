@@ -5,7 +5,7 @@
 	<resultMap type="BizPoPaymentOrder" id="bizPoPaymentOrderMaps">
 		<id column="id" property="id"/>
 		<result column="poHeaderId" property="poHeaderId"/>
-		<result column="type" property="type"/>
+		<result column="orderType" property="orderType"/>
 		<result column="total" property="total"/>
 		<result column="payTotal" property="payTotal"/>
 		<result column="bizStatus" property="bizStatus"/>
@@ -49,7 +49,7 @@
 	<sql id="bizPoPaymentOrderColumns">
 		a.id AS "id",
 		a.po_header_id AS "poHeaderId",
-		a.type AS "type",
+		a.type AS "orderType",
 		a.total AS "total",
 		a.pay_total AS "payTotal",
 		a.img AS "img",
@@ -99,8 +99,8 @@
 			<if test="bizStatus != null and bizStatus != -1">
 				AND a.biz_status = #{bizStatus}
 			</if>
-			<if test="type != null">
-				AND a.type = #{type}
+			<if test="orderType != null">
+				AND a.type = #{orderType}
 			</if>
 		</where>
 		<choose>
@@ -133,7 +133,7 @@
 		INSERT INTO biz_po_payment_order(
 			id,
 			po_header_id,
-			<if test="type != null">
+			<if test="orderType != null">
 				type,
 			</if>
 			total,
@@ -142,8 +142,8 @@
 		) VALUES (
 			#{id},
 			#{poHeaderId},
-		<if test="type != null">
-			#{type},
+		<if test="orderType != null">
+			#{orderType},
 		</if>
 			#{total},
 			#{deadline},
@@ -154,8 +154,8 @@
 	<update id="update">
 		UPDATE biz_po_payment_order SET 	
 			po_header_id = #{poHeaderId},
-			<if test="type != null">
-				type = #{type},
+			<if test="orderType != null">
+				type = #{orderType},
 			</if>
 			total = #{total},
 			deadline = #{deadline},

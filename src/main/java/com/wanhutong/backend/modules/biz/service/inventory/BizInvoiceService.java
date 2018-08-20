@@ -125,20 +125,29 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         boolean flagRequest = true;        //备货单完成状态
         boolean flagOrder = true;        //销售单完成状态
         boolean flagPo = true;     //采购单完成状态
+        boolean flagInvoceId = bizInvoice.getId() == null ? true : false;
         //修改发货单
         if (bizInvoice.getId() != null) {
             BizInvoice invoice = bizInvoiceDao.get(bizInvoice.getId());
             invoice.setTrackingNumber(bizInvoice.getTrackingNumber());
-            invoice.setLogistics(bizInvoice.getLogistics());
-            invoice.setOperation(bizInvoice.getOperation());
             invoice.setFreight(bizInvoice.getFreight());
             invoice.setCarrier(bizInvoice.getCarrier());
             invoice.setSettlementStatus(bizInvoice.getSettlementStatus());
             invoice.setSendDate(bizInvoice.getSendDate());
             invoice.setRemarks(bizInvoice.getRemarks());
+            invoice.setInspector(bizInvoice.getInspector());
+            invoice.setInspectDate(bizInvoice.getInspectDate());
+            invoice.setInspectRemark(bizInvoice.getInspectRemark());
+            invoice.setCollLocate(bizInvoice.getCollLocate());
+            invoice.setSendDate(bizInvoice.getSendDate());
+            if ("audit".equals(bizInvoice.getStr())) {
+                invoice.setCarrier(UserUtils.getUser().getName());
+            }
+            bizInvoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
+            invoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
             bizInvoiceDao.update(invoice);
             //保存图片
-            saveCommonImg(bizInvoice);
+//            saveCommonImg(bizInvoice);
         } else {
             // 取出当前用户所在机构，
             User user = UserUtils.getUser();
@@ -146,11 +155,12 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             //采购商或采购中心
 //        Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
             bizInvoice.setSendNumber("");
+            bizInvoice.setIsConfirm(BizInvoice.IsConfirm.NO.getIsConfirm());
             super.save(bizInvoice);
             bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE, company.getId(), 0, bizInvoice.getId()));
             super.save(bizInvoice);
             //保存图片
-            saveCommonImg(bizInvoice);
+//            saveCommonImg(bizInvoice);
         }
         //获取订单ID
         String orderHeaders = bizInvoice.getOrderHeaders();
@@ -167,10 +177,12 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String[] oheaders = orders[a].split("#");
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(Integer.parseInt(oheaders[0]));
                 //加入中间表关联关系
-                BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
-                bizDetailInvoice.setInvoice(bizInvoice);
-                bizDetailInvoice.setOrderHeader(orderHeader);
-                bizDetailInvoiceService.save(bizDetailInvoice);
+                if (flagInvoceId) {
+                    BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
+                    bizDetailInvoice.setInvoice(bizInvoice);
+                    bizDetailInvoice.setOrderHeader(orderHeader);
+                    bizDetailInvoiceService.save(bizDetailInvoice);
+                }
                 String[] odNumArr = oheaders[1].split("\\*");
                 for (int i = 0; i < odNumArr.length; i++) {
                     String[] odArr = odNumArr[i].split("-");
@@ -280,6 +292,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         if (poDetail.getSendQty() + sendNum != poDetail.getOrdQty()) {
                             flagPo = false;
                         }
+                        poDetail.setSendQty(poDetail.getSendQty() + sendNum);
+                        bizPoDetailService.save(poDetail);
                         //累计已供数量
                         orderDetail.setSentQty(sentQty + sendNum);
                         bizOrderDetailService.saveStatus(orderDetail);
@@ -354,7 +368,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         List<BizPoDetail> poDetailList = bizPoDetailService.findList(poDetail);
                         boolean flag = true;
                         for (BizPoDetail bizPoDetail : poDetailList) {
-                            if (bizPoDetail.getOrdQty() != bizPoDetail.getSendQty()) {
+                            if (!bizPoDetail.getOrdQty().equals(bizPoDetail.getSendQty())) {
                                 flag = false;
                             }
                         }
@@ -382,10 +396,12 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String[] rheaders = requests[b].split("#".trim());
                 BizRequestHeader requestHeader = bizRequestHeaderService.get(Integer.parseInt(rheaders[0]));
                 //加入中间表关联关系
-                BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
-                bizDetailInvoice.setInvoice(bizInvoice);
-                bizDetailInvoice.setRequestHeader(requestHeader);
-                bizDetailInvoiceService.save(bizDetailInvoice);
+                if (flagInvoceId) {
+                    BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
+                    bizDetailInvoice.setInvoice(bizInvoice);
+                    bizDetailInvoice.setRequestHeader(requestHeader);
+                    bizDetailInvoiceService.save(bizDetailInvoice);
+                }
                 String[] reNumArr = rheaders[1].split("\\*");
                 for (int i = 0; i < reNumArr.length; i++) {
                     String[] reArr = reNumArr[i].split("-");
@@ -613,6 +629,48 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
     @Transactional(readOnly = false)
     public List<BizOrderDetail> findLogisticsDetail(BizInvoice bizInvoice) {
         return bizInvoiceDao.findLogisticsDetail(bizInvoice);
+    }
+
+    /**
+     * 自动生成发货单
+     * @param poHeaderId
+     */
+    @Transactional(readOnly = false)
+    public void saveDeliver(Integer poHeaderId) {
+        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+        bizPoOrderReq.setPoHeader(new BizPoHeader(poHeaderId));
+        List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+        BizInvoice invoice = new BizInvoice();
+        invoice.setBizStatus(BizInvoice.BizStatus.SUPPLY.getBizStatus());
+        if (CollectionUtils.isNotEmpty(poOrderReqList)) {
+            bizPoOrderReq = poOrderReqList.get(0);
+            if (bizPoOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())) {
+                BizOrderHeader orderHeader = bizOrderHeaderService.get(bizPoOrderReq.getSoId());
+                BizOrderDetail orderDetail = new BizOrderDetail();
+                orderDetail.setOrderHeader(orderHeader);
+                orderDetail.setSuplyis(new Office(0));
+                List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(orderDetail);
+                StringBuilder sb = new StringBuilder();
+                for (BizOrderDetail bizOrderDetail : orderDetailList) {
+                    sb.append(orderHeader.getId()).append("#").append(bizOrderDetail.getId()).append("-").append("0").append("*").append(",");
+                }
+                invoice.setOrderHeaders(sb.toString());
+                invoice.setShip(BizInvoice.Ship.SO.getShip());
+            } else {
+                BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizPoOrderReq.getSoId());
+                BizRequestDetail requestDetail = new BizRequestDetail();
+                requestDetail.setRequestHeader(bizRequestHeader);
+                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(requestDetail);
+                StringBuilder sb = new StringBuilder();
+                for (BizRequestDetail bizRequestDetail : requestDetailList) {
+                    sb.append(bizRequestHeader.getId()).append("#").append(bizRequestDetail.getId()).append("-").append("0").append("*").append(",");
+                }
+                invoice.setRequestHeaders(sb.toString());
+                invoice.setShip(BizInvoice.Ship.RE.getShip());
+            }
+            this.save(invoice);
+        }
+
     }
 
 }

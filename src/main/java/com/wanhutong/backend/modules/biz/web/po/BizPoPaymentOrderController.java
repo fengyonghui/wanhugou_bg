@@ -84,10 +84,10 @@ public class BizPoPaymentOrderController extends BaseController {
 			}
 		}
 		model.addAttribute("roleSet", roleSet);
-		if (bizPoPaymentOrder.getType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
+		if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
 			BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(poId);
 			model.addAttribute("bizRequestHeader",bizRequestHeader);
-		} else if (bizPoPaymentOrder.getType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
+		} else if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
 			bizOrderHeaderService.get(poId);
 		} else {
 			BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);

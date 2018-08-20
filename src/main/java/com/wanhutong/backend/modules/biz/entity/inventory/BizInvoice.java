@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.entity.inventory;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +35,6 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private Integer bizStatus;		//发货地：0、采购中心； 1、供货中心；
 	private Integer ship;		//发货单来源：0、销售订单；1、备货单
 	private Date sendDate;		// 供货时间
-	private Date inspectDate;		// 验货时间
 	private List<BizOrderHeader> orderHeaderList;
 	private List<BizRequestHeader> requestHeaderList;
 	private String requestHeaders;		//发货备货单ID
@@ -68,7 +68,32 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	/**
 	 * 集货地点
 	 * */
-	private String collLocate;
+	private Byte collLocate;
+
+	/**
+	 * 验货时间
+	 */
+	private Date inspectDate;
+
+	/**
+	 * 验货员
+	 */
+	private User inspector;
+
+	/**
+	 * 验货备注
+	 */
+	private String inspectRemark;
+
+    /**
+     * 用于页面传参 str = audit (确认发货信息)
+     */
+	private String str;
+
+    /**
+     * 是否已确认发货单
+     */
+	private Integer isConfirm;
 
 
 	public BizInvoice() {
@@ -292,11 +317,106 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 		this.inspectDate = inspectDate;
 	}
 
-	public String getCollLocate() {
+	public Byte getCollLocate() {
 		return collLocate;
 	}
 
-	public void setCollLocate(String collLocate) {
+	public void setCollLocate(Byte collLocate) {
 		this.collLocate = collLocate;
 	}
+
+	public User getInspector() {
+		return inspector;
+	}
+
+	public void setInspector(User inspector) {
+		this.inspector = inspector;
+	}
+
+	public String getInspectRemark() {
+		return inspectRemark;
+	}
+
+	public void setInspectRemark(String inspectRemark) {
+		this.inspectRemark = inspectRemark;
+	}
+
+    public String getStr() {
+        return str;
+    }
+
+    public void setStr(String str) {
+        this.str = str;
+    }
+
+    public enum BizStatus {
+
+        /**
+         * 采购中心发货
+         */
+		CENTER(0),
+
+        /**
+         * 供货部发货
+         */
+        SUPPLY(1),
+		;
+		private Integer bizStatus;
+
+		BizStatus(Integer bizStatus) {
+			this.bizStatus = bizStatus;
+		}
+		public Integer getBizStatus() {
+			return bizStatus;
+		}
+	}
+
+	public enum Ship {
+
+        /**
+         * 订单发货
+         */
+		SO(0),
+
+        /**
+         * 备货单发货
+         */
+		RE(1),
+		;
+		private Integer ship;
+
+		Ship(Integer ship) {
+			this.ship = ship;
+		}
+		public Integer getShip() {
+			return ship;
+		}
+	}
+
+    public Integer getIsConfirm() {
+        return isConfirm;
+    }
+
+    public void setIsConfirm(Integer isConfirm) {
+        this.isConfirm = isConfirm;
+    }
+
+    public enum IsConfirm {
+
+        /**
+         * 未确认
+         */
+        NO(0),
+        YES(1),
+        ;
+        private Integer isConfirm;
+
+        IsConfirm(Integer isConfirm) {
+            this.isConfirm = isConfirm;
+        }
+
+        public Integer getIsConfirm() {
+            return isConfirm;
+        }
+    }
 }

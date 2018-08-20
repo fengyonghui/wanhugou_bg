@@ -762,6 +762,9 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 	 * @return
 	 */
 	public List<BizOrderHeader> findOrderForVendReq(List<Integer> skuIdList, Integer centId) {
+		if (skuIdList != null && skuIdList.size() == 0) {
+			skuIdList = null;
+		}
 		return bizOrderHeaderDao.findOrderForVendReq(skuIdList, centId);
 	}
 
@@ -801,7 +804,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
         bizPoPaymentOrder.setTotal(bizRequestHeader.getPlanPay());
         bizPoPaymentOrder.setDeadline(bizRequestHeader.getPayDeadline());
         bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
-        bizPoPaymentOrder.setType(PoPayMentOrderTypeEnum.REQ_TYPE.getType());
+        bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.REQ_TYPE.getType());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
         bizRequestHeader.setBizPoPaymentOrder(bizPoPaymentOrder);

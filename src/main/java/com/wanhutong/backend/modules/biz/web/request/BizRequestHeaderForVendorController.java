@@ -213,10 +213,10 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		User user = UserUtils.getUser();
 		List<String> enNameList = Lists.newArrayList();
 		if (CollectionUtils.isNotEmpty(user.getRoleList())) {
-			for (Role role : user.getRoleList()) {
-				enNameList.add(role.getEnname());
-			}
-		}
+            for (Role role : user.getRoleList()) {
+                enNameList.add(role.getEnname());
+            }
+        }
 		if (enNameList.contains(RoleEnNameEnum.PROVIDER_MANAGER.getState()) || enNameList.contains(RoleEnNameEnum.SHIPPER.getState())
 				|| enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
 			bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
@@ -258,7 +258,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 			BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
 			bizPoPaymentOrder.setPoHeaderId(bizRequestHeader.getBizPoHeader().getId());
-			bizPoPaymentOrder.setType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
+			bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
 			bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
 			List<BizPoPaymentOrder> payList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
 			if (CollectionUtils.isNotEmpty(payList)) {

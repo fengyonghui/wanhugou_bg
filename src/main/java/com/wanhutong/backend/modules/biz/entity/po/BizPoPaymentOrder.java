@@ -5,7 +5,6 @@ package com.wanhutong.backend.modules.biz.entity.po;
 
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
-import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
@@ -31,7 +30,7 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
     /**
      * 支付单类型
      */
-    private Integer type;
+    private Integer orderType;
 
     private List<CommonImg> imgList;
 
@@ -52,7 +51,6 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
         super(id);
     }
 
-    @Length(min = 1, max = 11, message = "采购单ID长度必须介于 1 和 11 之间")
     public Integer getPoHeaderId() {
         return poHeaderId;
     }
@@ -154,11 +152,11 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
         }
     }
 
-    public Integer getType() {
-        return type;
+    public Integer getOrderType() {
+        return orderType;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setOrderType(Integer orderType) {
+        this.orderType = orderType;
     }
 }

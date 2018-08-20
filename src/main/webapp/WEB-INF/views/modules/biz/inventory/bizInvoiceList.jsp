@@ -40,12 +40,9 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货记录</a></li>
+		<li class="active"><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单列表</a></li>
 		<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
-			<li><a href="${ctx}/biz/inventory/bizInvoice/form?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货</a></li>
-			<c:if test="${bizInvoice.ship==0 && bizInvoice.bizStatus==1}">
-				<li><a href="${ctx}/biz/inventory/bizDeliverGoods/form?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">拍照下单发货</a></li>
-			</c:if>
+			<li><a href="${ctx}/biz/inventory/bizInvoice/form?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单添加</a></li>
 		</shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/" method="post" class="breadcrumb form-search">
