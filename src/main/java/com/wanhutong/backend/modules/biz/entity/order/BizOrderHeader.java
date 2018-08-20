@@ -10,12 +10,14 @@ import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -173,6 +175,10 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 已审批流程
      */
     private List<CommonProcessEntity> commonProcessList;
+    /**
+     * 支付单
+     */
+    private BizPoPaymentOrder bizPoPaymentOrder;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -807,5 +813,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
         this.commonProcessList = commonProcessList;
+    }
+
+    public BizPoPaymentOrder getBizPoPaymentOrder() {
+        return bizPoPaymentOrder;
+    }
+
+    public void setBizPoPaymentOrder(BizPoPaymentOrder bizPoPaymentOrder) {
+        this.bizPoPaymentOrder = bizPoPaymentOrder;
     }
 }

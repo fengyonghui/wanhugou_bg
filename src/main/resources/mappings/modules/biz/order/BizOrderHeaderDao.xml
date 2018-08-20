@@ -539,6 +539,9 @@
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
 			</if>
+			<if test="bizPoHeader !=null and bizPoHeader.id != null and bizPoHeader.id != ''">
+				AND  bph.id = ${bizPoHeader.id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

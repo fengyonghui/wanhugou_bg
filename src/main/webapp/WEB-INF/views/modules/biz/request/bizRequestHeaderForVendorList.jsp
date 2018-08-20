@@ -332,7 +332,7 @@
 					<%--</c:if>--%>
 					<%--<!-- 保证金审核 -->--%>
 					<%--<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">--%>
-					<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader">支付申请列表</a>
+					<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${requestHeader.id}">支付申请列表</a>
 					<%--</c:if>--%>
 				</shiro:hasPermission>
 

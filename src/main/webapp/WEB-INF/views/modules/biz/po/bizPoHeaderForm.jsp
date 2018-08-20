@@ -835,9 +835,6 @@
 
         var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
         var img = "";
-        // if（mainImg.length >=2 ){
-        //
-        // }
         if(mainImg.length >= 2) {
             for (var i = 1; i < mainImg.length; i ++) {
                 img += $(mainImg[i]).attr("src") + ",";

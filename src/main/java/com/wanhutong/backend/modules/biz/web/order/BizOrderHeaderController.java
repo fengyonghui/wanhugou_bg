@@ -29,6 +29,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
@@ -43,6 +44,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineServi
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
@@ -61,6 +63,7 @@ import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderPayProportionStatusEnum;
 import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
 import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
+import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.enums.TradeTypeEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
@@ -166,6 +169,8 @@ public class BizOrderHeaderController extends BaseController {
     private CommonProcessService commonProcessService;
     @Autowired
     private BizPoHeaderService bizPoHeaderService;
+    @Autowired
+    private BizPoPaymentOrderService bizPoPaymentOrderService;
 
 
     @ModelAttribute
@@ -253,6 +258,18 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails, HttpServletRequest request, HttpServletResponse response) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
+        String str = bizOrderHeader.getStr();
+        if ("pay".equals(str)) {
+            BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+            bizPoPaymentOrder.setPoHeaderId(bizOrderHeader.getBizPoHeader().getId());
+            bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
+            bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
+            List<BizPoPaymentOrder> payList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+            if (CollectionUtils.isNotEmpty(payList)) {
+                bizPoPaymentOrder = payList.get(0);
+            }
+            bizOrderHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
+        }
         if (bizOrderHeader.getSource() != null) {
             model.addAttribute("source", bizOrderHeader.getSource());
         }

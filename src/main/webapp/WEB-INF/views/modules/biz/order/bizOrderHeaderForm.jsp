@@ -399,6 +399,46 @@
         }
     </script>
 
+    <script type="text/javascript">
+        function pay() {
+            var id = $("#poHeaderId").val();
+            var paymentOrderId = $("#paymentOrderId").val();
+            var payTotal = $("#truePayTotal").val();
+
+            var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
+            var img = "";
+            if(mainImg.length >= 2) {
+                for (var i = 1; i < mainImg.length; i ++) {
+                    img += $(mainImg[i]).attr("src") + ",";
+                }
+            }
+            if ($String.isNullOrBlank(payTotal)) {
+                alert("错误提示:请输入支付金额");
+                return false;
+            }
+            if ($String.isNullOrBlank(img)) {
+                alert("错误提示:请上传支付凭证");
+                return false;
+            }
+
+            $.ajax({
+                url: '${ctx}/biz/po/bizPoHeader/payOrder',
+                contentType: 'application/json',
+                data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img},
+                type: 'get',
+                success: function (result) {
+                    alert(result);
+                    if (result == '操作成功!') {
+                        window.location.href = "${ctx}/biz/order/bizOrderHeader";
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
+    </script>
+
     <script type="text/javascript" src="${ctxStatic}/jquery/jquery-1.9.1-min.js"></script>
     <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
     <script src="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.js"></script>
@@ -450,12 +490,54 @@
                 alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
                 return false;
             }
-            ajaxFileUploadPic(id, multiple);
+            if("payImg" == id) {
+                ajaxFileUploadPicForPoHeader(id, multiple)
+            } else if ("prodMainImg" == id) {
+                ajaxFileUploadPicForRefund(id, multiple);
+            }
+        }
+
+        function ajaxFileUploadPicForPoHeader(id, multiple) {
+            $.ajaxFileUpload({
+                url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
+                secureuri : false, //一般设置为false
+                fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
+                type : 'POST',
+                dataType : 'text', //返回值类型 一般设置为json
+                success : function(data, status) {
+                    //服务器成功响应处理函数
+                    var msg = data.substring(data.indexOf("{"), data.indexOf("}")+1);
+                    var msgJSON = JSON.parse(msg);
+                    var imgList = msgJSON.imgList;
+                    var imgDiv = $("#" + id + "Div");
+                    var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
+                    if (imgList && imgList.length > 0 && multiple) {
+                        for (var i = 0; i < imgList.length; i ++) {
+                            imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        }
+                    }else if (imgList && imgList.length > 0 && !multiple) {
+                        imgDiv.empty();
+                        for (var i = 0; i < imgList.length; i ++) {
+                            imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        }
+                    }else {
+                        var img = $("#" + id + "Img");
+                        img.attr("src", msgJSON.fullName);
+                    }
+                },
+                error : function(data, status, e) {
+                    //服务器响应失败处理函数
+                    console.info(data);
+                    console.info(status);
+                    console.info(e);
+                    alert("上传失败");
+                }
+            });
+            return false;
         }
 
         var a = 0;
-
-        function ajaxFileUploadPic(id, multiple) {
+        function ajaxFileUploadPicForRefund(id, multiple) {
             $.ajaxFileUpload({
                 url: '${ctx}/biz/order/bizOrderHeader/saveColorImg', //用于文件上传的服务器端请求地址
                 secureuri: false, //一般设置为false
@@ -628,10 +710,8 @@
         }
 
         function audit(auditType, description) {
-            console.log("auditType=" + auditType);
             var id = $("#id").val();
             var currentType = $("#currentType").val();
-            console.log("id=" + id);
             $.ajax({
                 url: '${ctx}/biz/order/bizOrderHeader/audit',
                 contentType: 'application/json',
@@ -807,6 +887,7 @@
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
     <input type="hidden" name="source" value="${source}"/>
     <input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
+    <input type="hidden" value="${entity.bizPoPaymentOrder.id}" id="paymentOrderId"/>
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
@@ -991,6 +1072,30 @@
             </c:if>
         </div>
     </div>
+
+        <c:if test="${entity.str == 'pay'}">
+            <div class="control-group">
+                <label class="control-label">实际付款金额：</label>
+                <div class="controls">
+                    <input id="truePayTotal" name="payTotal" type="text"
+                           value="${entity.bizPoHeader.bizPoPaymentOrder.payTotal}"
+                           htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">上传付款凭证：
+                    <p style="opacity: 0.5;">点击图片删除</p>
+                </label>
+
+                <div class="controls">
+                    <input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" multiple="multiple" id="payImg"/>
+                </div>
+                <div id="payImgDiv">
+                    <img src="${entity.bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
+                </div>
+            </div>
+        </c:if>
+
     <div class="control-group" id="add1">
         <label class="control-label">收货地址：</label>
         <div class="controls">
@@ -1550,6 +1655,10 @@
                                 <input id="btnSubmit" type="button" onclick="checkReject('DO')" class="btn btn-primary"
                                        value="审核驳回"/>
                             </c:if>
+                        </c:if>
+
+                        <c:if test="${entity.str == 'pay'}">
+                            <input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
                         </c:if>
                     </shiro:hasPermission>
 
