@@ -197,12 +197,10 @@ public class BizOrderHeaderController extends BaseController {
             entity.setTotalBuyPrice(totalPrice);
             entity.setOrderDetailList(list);
 
-            if(entity.getCommonProcess() == null) {
-                if(BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(entity.getOrderType())) {
-                    Integer processId = 0;
-                    processId = bizOrderHeaderService.saveCommonProcess(entity);
-                    bizOrderHeaderService.updateProcessId(entity.getId(),processId);
-                }
+            if (entity.getPayProportion() != null && entity.getCommonProcess() == null && BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(entity.getOrderType())) {
+                Integer processId = 0;
+                processId = bizOrderHeaderService.saveCommonProcess(entity);
+                bizOrderHeaderService.updateProcessId(entity.getId(), processId);
             }
             if (entity.getCommonProcess() != null && entity.getCommonProcess().getId() != null) {
                 List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
