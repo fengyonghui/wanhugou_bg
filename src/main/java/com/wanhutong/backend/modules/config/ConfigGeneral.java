@@ -3,6 +3,8 @@ package com.wanhutong.backend.modules.config;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
+import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
+import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PhoneConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
@@ -56,6 +58,12 @@ public abstract class ConfigGeneral {
 
 	public static final ConfigWrapper<PaymentOrderProcessConfig> PAYMENT_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
 			"PaymentOrderProcessConfig.xml",new PaymentOrderProcessConfig());
+
+	public static final ConfigWrapper<JointOperationOrderProcessOriginConfig> JOINT_OPERATION_ORIGIN_CONFIG = new ConfigWrapper<>(
+			"JointOperationOrderProcessOriginConfig.xml",new JointOperationOrderProcessOriginConfig());
+
+	public static final ConfigWrapper<JointOperationOrderProcessLocalConfig> JOINT_OPERATION_LOCAL_CONFIG = new ConfigWrapper<>(
+			"JointOperationOrderProcessLocalConfig.xml",new JointOperationOrderProcessLocalConfig());
 
 	public static final ConfigWrapper<SystemConfig> SYSTEM_CONFIG = new ConfigWrapper<>(
 			"SystemConfig.xml",new SystemConfig());

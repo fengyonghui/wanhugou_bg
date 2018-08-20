@@ -141,6 +141,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private BizDrawBack drawBack;
 
+
     /**
      * 供应商查看订单 source = vendor
      */

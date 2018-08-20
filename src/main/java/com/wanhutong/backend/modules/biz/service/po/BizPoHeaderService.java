@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableMap;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
@@ -14,13 +15,12 @@ import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestExpandDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -28,6 +28,8 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
+import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
@@ -38,7 +40,14 @@ import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PhoneConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.*;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.DefaultPropEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
+import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -57,7 +66,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -77,7 +91,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     private BizSkuInfoV2Service bizSkuInfoService;
     @Autowired
     private BizPoDetailService bizPoDetailService;
-
+    @Autowired
+    private BizPlatformInfoService bizPlatformInfoService;
     @Autowired
     private BizPoOrderReqService bizPoOrderReqService;
     @Autowired
@@ -100,6 +115,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     private SystemService systemService;
     @Autowired
     private BizPoHeaderDao bizPoHeaderDao;
+    @Autowired
+    private BizProductInfoV3Service bizProductInfoV3Service;
     @Autowired
     private BizRequestExpandDao bizRequestExpandDao;
 
@@ -134,6 +151,79 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         }
         savePoHeaderDetail(bizPoHeader);
     }
+
+    /**
+     * 自动生成采购单
+     *
+     * @param orderId
+     * @return
+     */
+    @Transactional(readOnly = false)
+    public Pair<Boolean, String > autoGenPO(Integer orderId) {
+        BizOrderDetail bizOrderDetail = new BizOrderDetail();
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderId);
+        bizOrderDetail.setOrderHeader(bizOrderHeader);
+
+        List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+        if (CollectionUtils.isEmpty(orderDetailList)) {
+            return Pair.of(Boolean.FALSE, "操作失败, 订单详情为空");
+        }
+
+        BizOrderDetail bzod = orderDetailList.get(0);
+        BizProductInfo bizProductInfo = bizProductInfoV3Service.get(bzod.getSkuInfo().getProductInfo().getId());
+
+
+        BizPoHeader bizPoHeader = new BizPoHeader();
+
+        StringBuilder orderDetailIds = new StringBuilder();
+        StringBuilder unitPrices = new StringBuilder();
+        StringBuilder ordQtys = new StringBuilder();
+        // orderDetailIds
+        // unitPrices
+        // ordQtys
+        for (BizOrderDetail bd : orderDetailList) {
+            if (bd.getSuplyis().getId() == 0 || bd.getSuplyis().getId() == 721) {
+                orderDetailIds.append(bd.getId()).append(",");
+                unitPrices.append(bd.getUnitPrice()).append(",");
+                ordQtys.append(bd.getOrdQty()).append(",");
+            }
+        }
+
+        bizPoHeader.setOrderDetailIds(orderDetailIds.toString());
+        bizPoHeader.setUnitPrices(unitPrices.toString());
+        bizPoHeader.setOrdQtys(ordQtys.toString());
+        Office office = new Office();
+        office.setId(bizProductInfo.getOffice().getId());
+        bizPoHeader.setVendOffice(office);
+
+        Set<Integer> poIdSet = this.findPrewPoHeader(bizPoHeader);
+        if (poIdSet.size() == 1) {
+            return Pair.of(Boolean.TRUE, "操作成功");
+        }
+        int deOfifceId = 0;
+        if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null) {
+            deOfifceId = bizPoHeader.getDeliveryOffice().getId();
+        }
+        String poNo = "0";
+        bizPoHeader.setOrderNum(poNo);
+        bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
+        bizPoHeader.setIsPrew(0);
+        Integer id = bizPoHeader.getId();
+        this.save(bizPoHeader);
+        if (id == null) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
+        if (bizPoHeader.getOrderNum() == null || "0".equals(bizPoHeader.getOrderNum())) {
+            poNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO, deOfifceId, bizPoHeader.getVendOffice().getId(), bizPoHeader.getId());
+            bizPoHeader.setOrderNum(poNo);
+            this.savePoHeader(bizPoHeader);
+        }
+
+        autoSavePaymentOrder(bizPoHeader.getId());
+
+        return Pair.of(Boolean.TRUE, "操作成功");
+    }
+
 
     private void updateProcessToInit(BizPoHeader bizPoHeader) {
         PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();

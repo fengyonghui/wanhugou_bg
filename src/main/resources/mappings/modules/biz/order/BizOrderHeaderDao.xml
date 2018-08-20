@@ -126,6 +126,7 @@
 		a.id AS "id",
 		a.order_num AS "orderNum",
 		a.order_type AS "orderType",
+		a.pay_proportion AS "payProportion",
 		a.cust_id AS "customer.id",
 		a.consultant_id AS "consultantId",
 		so.name as "customer.name",
@@ -754,7 +755,8 @@
 		ship_to_addr = #{bizLocation.id},
 		u_version = #{uVersion},
 		update_id = #{updateBy.id},
-		update_time = #{updateDate}
+		update_time = #{updateDate},
+		pay_proportion = #{payProportion}
 		WHERE id = #{id}
 	</update>
 

@@ -529,6 +529,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
      */
     @Transactional(readOnly = false)
     public void saveCommonImg(BizInvoice bizInvoice) {
+        if (bizInvoice.getImgUrl() == null || StringUtils.isBlank(bizInvoice.getImgUrl())) {
+            return;
+        }
         String imgUrl = null;
         try {
             imgUrl = URLDecoder.decode(bizInvoice.getImgUrl(), "utf-8");//主图转换编码

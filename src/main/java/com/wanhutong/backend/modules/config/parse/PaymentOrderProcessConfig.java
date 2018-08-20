@@ -1,10 +1,5 @@
 package com.wanhutong.backend.modules.config.parse;
 
-/**
- * @author Ma.Qiang
- * 2018/5/28
- */
-
 import com.google.common.collect.Maps;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;

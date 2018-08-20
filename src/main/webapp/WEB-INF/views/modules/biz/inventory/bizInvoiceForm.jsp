@@ -113,9 +113,14 @@
                 $("#nameCopy").val(name);
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/biz/order/bizOrderHeader/findByOrder?flag="+bizStatus,
+                    url:"${ctx}/biz/order/bizOrderHeader/findByOrderV2?flag="+bizStatus,
                     data:$('#searchForm').serialize(),
                     success:function (data) {
+                        data = JSON.parse(data);
+                        if(data.ret != true && data.ret != 'true') {
+                            alert(data.errmsg);
+						}
+                        data = data.data;
                         if ($("#id").val() == '') {
                             $("#prodInfo2").empty();
                         }
@@ -203,7 +208,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单列表</a></li>
+		<li><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货记录</a></li>
 		<li class="active"><a href="${ctx}/biz/inventory/bizInvoice/form?id=${bizInvoice.id}&ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单<shiro:hasPermission name="biz:inventory:bizInvoice:edit">${not empty bizInvoice.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInvoice:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save" method="post" class="form-horizontal">
@@ -392,7 +397,6 @@
 		<form:hidden id="skuItemNoCopy" path="itemNo"/>
 		<form:hidden id="skuCodeCopy" path="partNo"/>
 		<form:hidden id="nameCopy" path="name"/>
-
 	</form:form>
 </body>
 </html>

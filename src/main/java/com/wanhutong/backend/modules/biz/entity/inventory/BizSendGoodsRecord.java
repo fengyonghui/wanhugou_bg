@@ -46,6 +46,10 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	private BizRequestDetail bizRequestDetail;
 	private BizOrderDetail bizOrderDetail;
 	private List<BizSendGoodsRecord> bizSendGoodsRecordList;
+	/**
+	 * 是否生效
+	 */
+	private Integer effect;
 
 	public BizSendGoodsRecord() {
 		super();
@@ -216,5 +220,13 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 
 	public void setInvOldNum(Integer invOldNum) {
 		this.invOldNum = invOldNum;
+	}
+
+	public Integer getEffect() {
+		return effect;
+	}
+
+	public void setEffect(Integer effect) {
+		this.effect = effect;
 	}
 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JointOperationOrderProcessLocalConfig>
+    <!--本地备货审核-->
+
+    <zeroDefaultProcessId>10001</zeroDefaultProcessId>
+    <fifthDefaultProcessId>10001</fifthDefaultProcessId>
+    <allDefaultProcessId>666</allDefaultProcessId>
+    <payProcessId>666</payProcessId>
+    <endProcessId>-1</endProcessId>
+
+    <!--流程节点-->
+    <process>
+        <name>财务主管审核</name>
+        <code>10001</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>777</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>全额支付不需要审核</name>
+        <code>666</code>
+    </process>
+    <process>
+        <name>审核完成</name>
+        <code>777</code>
+    </process>
+    <process>
+        <name>驳回</name>
+        <code>-1</code>
+    </process>
+</JointOperationOrderProcessLocalConfig>
