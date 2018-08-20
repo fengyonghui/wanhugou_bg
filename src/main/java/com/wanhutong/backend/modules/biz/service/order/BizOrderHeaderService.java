@@ -293,6 +293,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         bizOrderAddressService.save(bizLocation);
     }
 
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public Integer saveCommonProcess(BizOrderHeader bizOrderHeader){
         Integer code = null;
         if (OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeader.getPayProportion())) {
