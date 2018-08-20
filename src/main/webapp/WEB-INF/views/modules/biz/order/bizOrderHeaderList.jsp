@@ -371,12 +371,12 @@
 			</c:if >
 
 			<shiro:hasPermission name="biz:po:bizPoHeader:audit">
-				<c:if test="${requestHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">
-					<c:if test="${requestHeader.bizPoHeader.commonProcess.id != null
-				&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
-				&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
-				&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
-				&& (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+				<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">
+					<c:if test="${orderHeader.bizPoHeader.commonProcess.id != null
+				&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
+				&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+				&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
+				&& (fns:hasRole(roleSet, orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
 				}">
 						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
 					</c:if>
