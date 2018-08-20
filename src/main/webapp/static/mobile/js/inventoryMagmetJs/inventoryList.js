@@ -30,7 +30,7 @@
 		    function pullRefresh(){
 		        mui("#refreshContainer").pullRefresh({
 			        up:{
-			            contentrefresh : "正在加载...",
+//			            contentrefresh : "正在加载...",
 			            contentnomore:'没 有 更 多 数 据 了',
 			            callback:function(){
 			                window.setTimeout(function(){
@@ -57,6 +57,7 @@
 				                console.log('222')
 				                console.log(pager)
 				                $('.mui-pull-caption-down').html('');
+				                
 				                getData(pager);
 //				            },500);
 			            }
@@ -244,13 +245,11 @@
 										'</div>' +
 									'</div>'
 								});
-							} else {
-							}
-							// 为了测试，延迟1秒加载
-//							setTimeout(function() {
 								$('#list').append(inPHtmlList);
 								_this.inHrefHtml()
-//							}, 1000);
+							} else {
+								$('.mui-pull-caption').html('');
+							}
 						totalPage = res.data.page.count%pager.size!=0?
 		                parseInt(res.data.page.count/pager.size)+1:
 		                res.data.page.count/pager.size;

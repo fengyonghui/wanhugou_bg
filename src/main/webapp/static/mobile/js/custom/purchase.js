@@ -39,6 +39,8 @@
 					domLoad: '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
 					domNoData: '<div class="dropload-noData">暂无更多内容</div>'
 				},
+				 distance: 50,
+
 				loadDownFn: function(me) {
 				    page++;
 					// 拼接HTML
@@ -55,6 +57,7 @@
 							var dataRow = res.data.roleSet;
 //							console.log(res)
 							if(arrLen > 0) {
+//								$('.dropload-down').css('display','block')
 								$.each(res.data.resultList, function(i, item) {
 //									console.log(item)
 									var startBtn = '';
@@ -150,19 +153,20 @@
 										'</div>'
 								});
 							} else {
+//								$('.dropload-down').css('display','none')
 								// 锁定
 								me.lock();
 								// 无数据
 								me.noData();
 							}
 							// 为了测试，延迟1秒加载
-							setTimeout(function() {
+//							setTimeout(function() {
 								// 插入数据到页面，放到最后面
 								$('.listBlue').append(pHtmlList);
 								_this.hrefHtml()
 								// 每次数据插入，必须重置
 								me.resetload();
-							}, 1000);
+//							}, 1000);
 						},
 						error: function(xhr, type) {
 							alert('Ajax error!');
