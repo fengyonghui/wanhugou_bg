@@ -1050,9 +1050,9 @@ public class BizPoHeaderController extends BaseController {
                         schedulingPlanPoh.setObjectName(PO_HEADER_TABLE_NAME);
                         schedulingPlanPoh.setOriginalNum(0);
                         schedulingPlanPoh.setRemark(dto.getRemark());
+                        schedulingPlanPoh.setPoSchType(Integer.valueOf(dto.getPoSchType()));
                         bizSchedulingPlanService.save(schedulingPlanPoh);
                     }
-
 
                     Integer detailId = dtoList.get(i).getObjectId();
                     BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(detailId, objectName);
@@ -1063,7 +1063,6 @@ public class BizPoHeaderController extends BaseController {
                         schedulingPlan.setOriginalNum(dto.getOriginalNum());
                         bizSchedulingPlanService.save(schedulingPlan);
                     }
-
 
                     BizCompletePaln bizCompletePaln = new BizCompletePaln();
                     bizCompletePaln.setSchedulingPlan(schedulingPlan);
@@ -1080,7 +1079,7 @@ public class BizPoHeaderController extends BaseController {
                         break;
                     }
                 }
-                //排产类型为按订单排产时，更新备货单排产类型
+                //排产类型为按商品排产时，更新备货单排产类型
                 Integer detailId = dtoList.get(0).getObjectId();
                 BizPoDetail bizPoDetail = bizPoDetailService.get(detailId);
                 BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoDetail.getPoHeader().getId());
@@ -1100,6 +1099,7 @@ public class BizPoHeaderController extends BaseController {
                         schedulingPlan.setObjectName(objectName);
                         schedulingPlan.setOriginalNum(dto.getOriginalNum());
                         schedulingPlan.setRemark(dto.getRemark());
+                        schedulingPlan.setPoSchType(Integer.valueOf(dto.getPoSchType()));
                         bizSchedulingPlanService.save(schedulingPlan);
                     }
                     BizCompletePaln bizCompletePaln = new BizCompletePaln();

@@ -392,14 +392,14 @@
 			</shiro:hasPermission>
 
 			<c:if test="${orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
-				<c:if test="${orderHeader.bizPoHeader.totalOrdQty != null && orderHeader.bizPoHeader.totalOrdQty != 0}">
+				<%--<c:if test="${orderHeader.bizPoHeader.totalOrdQty != null && orderHeader.bizPoHeader.totalOrdQty != 0}">--%>
 					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
 						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
 					</shiro:hasPermission>
-				</c:if>
+				<%--</c:if>--%>
 			</c:if>
 			<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
 				<c:choose>

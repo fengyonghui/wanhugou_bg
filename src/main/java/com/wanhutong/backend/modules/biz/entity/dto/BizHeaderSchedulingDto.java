@@ -22,7 +22,7 @@ public class BizHeaderSchedulingDto {
      */
     public Integer schedulingNum;
     /**
-     * 已完成数量
+     * 排产日期
      */
     public String planDate;
     /**
@@ -34,6 +34,11 @@ public class BizHeaderSchedulingDto {
      * 订单排产类型
      */
     public String remark;
+
+    /**
+     * 采购单排产状态 0,未排产  1,排产中  2,排产完成
+     */
+    public String poSchType;
 
 
     public Integer getId() {
@@ -90,5 +95,13 @@ public class BizHeaderSchedulingDto {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getPoSchType() {
+        return poSchType;
+    }
+
+    public void setPoSchType(String poSchType) {
+        this.poSchType = poSchType;
     }
 }

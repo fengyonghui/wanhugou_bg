@@ -134,6 +134,10 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 */
 	private BizSchedulingPlan bizSchedulingPlan;
 
+	/**
+	 * 采购单排产状态 0,未排产  1,排产中  2,排产完成
+	 */
+	public Integer poSchType;
 
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
@@ -568,5 +572,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setBizOrderHeader(BizOrderHeader bizOrderHeader) {
 		this.bizOrderHeader = bizOrderHeader;
+	}
+
+	public Integer getPoSchType() {
+		return poSchType;
+	}
+
+	public void setPoSchType(Integer poSchType) {
+		this.poSchType = poSchType;
 	}
 }
