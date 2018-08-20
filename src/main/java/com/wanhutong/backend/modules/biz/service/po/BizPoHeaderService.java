@@ -465,7 +465,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
         bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
         bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
-        bizPoPaymentOrder.setTotal(bizPoHeader.getPlanPay());
+        //bizPoPaymentOrder.setTotal(bizPoHeader.getPlanPay());
+        bizPoPaymentOrder.setTotal(BigDecimal.ZERO);
         bizPoPaymentOrder.setDeadline(bizPoHeader.getPayDeadline());
         bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
@@ -609,9 +610,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(id);
         BizPoHeader bizPoHeader = new BizPoHeader();
         BizRequestHeader bizRequestHeader = new BizRequestHeader();
-        if (PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
+        if (PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
             bizRequestHeader = bizRequestHeaderForVendorService.get(bizPoPaymentOrder.getPoHeaderId());
-        } else if (PoPayMentOrderTypeEnum.PO_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
+        } else if (PoPayMentOrderTypeEnum.PO_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
             bizPoHeader = this.get(bizPoPaymentOrder.getPoHeaderId());
         }
         CommonProcessEntity cureentProcessEntity = bizPoPaymentOrder.getCommonProcess();
@@ -620,7 +621,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         }
         cureentProcessEntity = commonProcessService.get(cureentProcessEntity.getId());
         if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
-            LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}][{}]", id, currentType, bizPoPaymentOrder.getType());
+            LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}][{}]", id, currentType, bizPoPaymentOrder.getOrderType());
             return Pair.of(Boolean.FALSE,   "操作失败,当前审核状态异常!");
         }
 
@@ -702,13 +703,13 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     }
                 }
 
-                if (StringUtils.isNotBlank(phone.toString()) && PoPayMentOrderTypeEnum.PO_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
+                if (StringUtils.isNotBlank(phone.toString()) && PoPayMentOrderTypeEnum.PO_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
                     AliyunSmsClient.getInstance().sendSMS(
                             SmsTemplateCode.PENDING_AUDIT_1.getCode(),
                             phone.toString(),
                             ImmutableMap.of("order", "采购单支付", "orderNum", bizPoHeader.getOrderNum()));
                 }
-                if (StringUtils.isNotBlank(phone.toString()) && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
+                if (StringUtils.isNotBlank(phone.toString()) && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
                     AliyunSmsClient.getInstance().sendSMS(
                             SmsTemplateCode.PENDING_AUDIT_1.getCode(),
                             phone.toString(),
@@ -717,7 +718,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
             }
         } catch (Exception e) {
-            if (PoPayMentOrderTypeEnum.PO_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
+            if (PoPayMentOrderTypeEnum.PO_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
                 LOGGER.error("[exception]PO支付审批短信提醒发送异常[poHeaderId:{}]", id, e);
                 EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.COMMON_EXCEPTION.name());
                 AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(), email.getSubject(),
@@ -728,7 +729,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                                 LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
                         ));
             }
-            if (PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
+            if (PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
                 LOGGER.error("[exception]RE支付审批短信提醒发送异常[RequestHeaderId:{}]", id, e);
                 EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.COMMON_EXCEPTION.name());
                 AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(), email.getSubject(),
@@ -792,11 +793,11 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(paymentOrderId);
 
-        if (bizPoPaymentOrder.getBizStatus() != BizPoPaymentOrder.BizStatus.NO_PAY.getStatus() && PoPayMentOrderTypeEnum.PO_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
-            LOGGER.warn("[exception]BizPoHeaderController payOrder currentType mismatching [{}][{}][{}]", poHeaderId, paymentOrderId, bizPoPaymentOrder.getType());
+        if (bizPoPaymentOrder.getBizStatus() != BizPoPaymentOrder.BizStatus.NO_PAY.getStatus() && PoPayMentOrderTypeEnum.PO_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+            LOGGER.warn("[exception]BizPoHeaderController payOrder currentType mismatching [{}][{}][{}]", poHeaderId, paymentOrderId, bizPoPaymentOrder.getOrderType());
             return "操作失败,当前状态有误!";
-        } else if (bizPoPaymentOrder.getBizStatus() != BizPoPaymentOrder.BizStatus.NO_PAY.getStatus() && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getType())) {
-            LOGGER.warn("[exception]BizRequestHeaderController payOrder currentType mismatching [{}][{}][{}]", reqHeaderId, paymentOrderId, bizPoPaymentOrder.getType());
+        } else if (bizPoPaymentOrder.getBizStatus() != BizPoPaymentOrder.BizStatus.NO_PAY.getStatus() && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+            LOGGER.warn("[exception]BizRequestHeaderController payOrder currentType mismatching [{}][{}][{}]", reqHeaderId, paymentOrderId, bizPoPaymentOrder.getOrderType());
             return "操作失败,当前状态有误!";
         }
 

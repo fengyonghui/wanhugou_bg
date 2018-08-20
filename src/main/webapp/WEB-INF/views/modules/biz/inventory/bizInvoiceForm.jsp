@@ -162,9 +162,9 @@
                                 }
                                 tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
                                 if(detail.ordQty==detail.sentQty){
-                                    tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
+                                    tr_tds+="<td><input type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
                                 }else {
-                                    tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' onchange='checkNum("+detail.ordQty+","+detail.sentQty+",this)' value='0'></td>";
+                                    tr_tds+="<td><input type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
                                 }
 
                                 tr_tds+="</tr>";
@@ -267,27 +267,6 @@
 				</form:select>
 			</div>
 		</div>
-		<c:if test="${userList==null}">
-		<div class="control-group">
-			<label class="control-label">发货人：</label>
-			<div class="controls">
-				<form:input about="choose" readonly="true" path="carrier" class="input-medium required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		</c:if>
-		<c:if test="${userList != null}">
-			<div class="control-group">
-				<label class="control-label">发货人：</label>
-				<div class="controls">
-					<form:select about="choose" path="carrier" class="input-medium required">
-						<form:option value="" label="请选择"/>
-						<form:options items="${userList}" itemLabel="name" itemValue="name" htmlEscape="false"/>
-					</form:select>
-					<span class="help-inline"><font color="red">*</font> </span>
-				</div>
-			</div>
-		</c:if>
 		<div class="control-group">
 			<label class="control-label">发货时间：</label>
 			<div class="controls">

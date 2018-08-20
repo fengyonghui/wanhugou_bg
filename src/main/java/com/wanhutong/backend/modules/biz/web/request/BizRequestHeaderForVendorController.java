@@ -258,7 +258,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 			BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
 			bizPoPaymentOrder.setPoHeaderId(bizRequestHeader.getBizPoHeader().getId());
-			bizPoPaymentOrder.setType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
+			bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
 			bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
 			List<BizPoPaymentOrder> payList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
 			if (CollectionUtils.isNotEmpty(payList)) {
