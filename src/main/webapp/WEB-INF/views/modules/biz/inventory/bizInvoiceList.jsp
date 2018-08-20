@@ -82,16 +82,13 @@
 				<td>序号</td>
 				<th>发货号</th>
 				<th>物流单号</th>
-				<th>物流商</th>
 				<th>运费</th>
-				<th>操作费</th>
 				<th>货值</th>
 				<th>运费/货值</th>
 				<th>发货人</th>
 				<th>物流结算方式</th>
 				<th>备注</th>
 				<th>发货时间</th>
-				<th>物流信息图</th>
 				<th>操作</th>
 				<%--<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><th>操作</th></shiro:hasPermission>--%>
 			</tr>
@@ -107,9 +104,7 @@
 					<td><a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&source=xq">${bizInvoice.sendNumber}</a></td>
 				</c:if>
 				<td>${bizInvoice.trackingNumber}</td>
-				<td>${bizInvoice.logistics.name}</td>
 				<td>${bizInvoice.freight}</td>
-				<td>${bizInvoice.operation}</td>
 				<td>${bizInvoice.valuePrice}</td>
 				<td>
 					<c:if test="${bizInvoice.valuePrice != 0}">
@@ -122,17 +117,22 @@
 				<td>
 					<fmt:formatDate value="${bizInvoice.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<td><a href="${bizInvoice.imgUrl}" target="view_window"><img src="${bizInvoice.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></a></td>
 				<td>
 					<c:if test="${bizInvoice.ship==0}">
 						<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
-							<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}">修改</a>
+                            <c:if test="${bizInvoice.isConfirm == 0}">
+							    <a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&str =audit">确认发货单</a>
+                            </c:if>
+							<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&str =freight">添加运费</a>
 						</shiro:hasPermission>
 						<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&source=xq">发货单详情</a>
 					</c:if>
 					<c:if test="${bizInvoice.ship==1}">
 						<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
-							<a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}">修改</a>
+                            <c:if test="${bizInvoice.isConfirm == 0}">
+							    <a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&str=audit">确认发货单</a>
+                            </c:if>
+                            <a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&str=freight">添加运费</a>
 						</shiro:hasPermission>
 						<a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&source=xq">发货单详情</a>
 					</c:if>
@@ -141,10 +141,6 @@
 						<a href="${ctx}/biz/inventory/bizInvoice/delete?id=${bizInvoice.id}" onclick="return confirmx('确认要删除该发货单吗？', this.href)">删除</a>
 					</c:if>
 				</td>
-				<%--<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><td>
-    				<a href="${ctx}/biz/inventory/bizInvoice/form?id=${bizInvoice.id}">修改</a>
-					<a href="${ctx}/biz/inventory/bizInvoice/delete?id=${bizInvoice.id}" onclick="return confirmx('确认要删除该发货单吗？', this.href)">删除</a>
-				<td><td></shiro:hasPermission>--%>
 			</tr>
 		</c:forEach>
 		</tbody>

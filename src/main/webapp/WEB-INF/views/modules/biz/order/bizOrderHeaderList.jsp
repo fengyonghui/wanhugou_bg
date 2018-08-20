@@ -356,10 +356,6 @@
 							}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
 						</c:if>
-						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.) && orderHeader.commonProcess..name != '驳回' && orderHeader.commonProcess..code != auditAllStatus
-							 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
-							<a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}"></a>
-						</c:if>
 					</c:if>
 
 					<!-- 20%首付款审核 -->
@@ -370,6 +366,10 @@
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
 						</c:if>
 					</c:if>
+                    <c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOrderProcessOriginConfig.roleEnNameEnum) && orderHeader.commonProcess.jointOperationOrderProcessOriginConfig.name != '驳回' && orderHeader.commonProcess.jointOperationOrderProcessOriginConfig.code != auditAllStatus
+							 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
+                        <a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}">审核</a>
+                    </c:if>
 				</shiro:hasPermission>
 			</c:if >
 

@@ -654,7 +654,7 @@
             if('${(fns:hasRole(roleSet, 'SELECTION_OF_SPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
                 var lastPayDateVal = $("#lastPayDate").val();
                 if (lastPayDateVal == ""){
-                    alert("请输入最后付款时间！")
+                    alert("请输入最后付款时间！");
                     return false;
                 }
             }
@@ -671,6 +671,9 @@
                         }
                         if (obj == "PO") {
                             poAudit(1,f.description);
+                        }
+                        if (obj == "SO") {
+                            audit(1,f.description);
                         }
                         return true;
                     };
@@ -1647,9 +1650,9 @@
         <c:otherwise>
             <div class="form-actions">
                 <!-- 一单到底订单审核 -->
-                <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
-                    <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-                        <c:if test="${entity.str == 'audit'}">
+                <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
+                    <c:if test="${entity.str == 'audit'}">
+                        <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
                             <c:if test="${entity.bizPoHeader.commonProcessList == null}">
                                 <input id="btnSubmit" type="button" onclick="checkPass('DO')" class="btn btn-primary"
                                        value="审核通过"/>
@@ -1657,11 +1660,20 @@
                                        value="审核驳回"/>
                             </c:if>
                         </c:if>
-
-                        <c:if test="${entity.str == 'pay'}">
-                            <input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
+                        <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
+                            <c:if test="${entity.bizPoHeader.commonProcessList == null}">
+                                <input id="btnSubmit" type="button" onclick="checkPass('SO')" class="btn btn-primary"
+                                       value="审核通过"/>
+                                <input id="btnSubmit" type="button" onclick="checkReject('SO')" class="btn btn-primary"
+                                       value="审核驳回"/>
+                            </c:if>
                         </c:if>
-                    </shiro:hasPermission>
+                    </c:if>
+
+                    <c:if test="${entity.str == 'pay'}">
+                        <input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
+                    </c:if>
+                </shiro:hasPermission>
 
                     <!-- 一单到底，采购单审核 -->
                     <shiro:hasPermission name="biz:po:bizPoHeader:audit">
@@ -1674,7 +1686,7 @@
                             </c:if>
                         </c:if>
                     </shiro:hasPermission>
-                </c:if>
+
 
 
 
