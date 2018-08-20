@@ -45,7 +45,7 @@
 			            contentover : "",
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
-			                window.setTimeout(function(){
+//			                window.setTimeout(function(){
 			                    pager['size']= 10;//条数
 			                    pager['pageNo'] = 1;//页码      
 			                    //刷新要先清空父节点里面的子节点
@@ -56,8 +56,9 @@
 				                }
 				                console.log('222')
 				                console.log(pager)
+				                $('.mui-pull-caption-down').html('');
 				                getData(pager);
-				            },500);
+//				            },500);
 			            }
 			        }
 			    })
