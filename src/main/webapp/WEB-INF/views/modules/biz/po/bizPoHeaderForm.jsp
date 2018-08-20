@@ -835,10 +835,14 @@
 
         var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
         var img = "";
-        for (var i = 0; i < mainImg.length; i ++) {
-            img += $(mainImg[i]).attr("src") + ",";
+        // if（mainImg.length >=2 ){
+        //
+        // }
+        if(mainImg.length >= 2) {
+            for (var i = 1; i < mainImg.length; i ++) {
+                img += $(mainImg[i]).attr("src") + ",";
+            }
         }
-
         if ($String.isNullOrBlank(payTotal)) {
             alert("错误提示:请输入支付金额");
             return false;

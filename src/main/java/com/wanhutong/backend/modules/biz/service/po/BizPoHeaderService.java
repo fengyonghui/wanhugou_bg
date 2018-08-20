@@ -911,20 +911,31 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             }
             BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
             bizPoOrderReq.setPoHeader(bizPoHeader);
+            //bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType()));
             List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
             Integer reqId = 0;
             if (CollectionUtils.isNotEmpty(poOrderReqList)) {
-                reqId = poOrderReqList.get(0).getSoId();
+                BizPoOrderReq poOrderReq = poOrderReqList.get(0);
+                reqId = poOrderReq.getSoId();
+                Byte soType = poOrderReq.getSoType();
+                if (PoOrderReqTypeEnum.RE.getOrderType().equals(soType)) {
+                    BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(reqId);
+                    Integer reqBizStatus = bizRequestHeader.getBizStatus();
+                    bizRequestHeader.setBizStatus(bizPoHeader.getPayTotal().add(payTotal).compareTo(orderTotal) >= 0 ? ReqHeaderStatusEnum.VEND_INITIAL_PAY.getState() : ReqHeaderStatusEnum.VEND_ALL_PAY.getState());
+                    bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+                    if (reqBizStatus == null || !reqBizStatus.equals(bizRequestHeader.getBizStatus())) {
+                        bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizPoHeader.getId());
+                    }
+                } else if (PoOrderReqTypeEnum.SO.getOrderType().equals(soType)) {
+                    BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(reqId);
+                    Integer orderBizStatus = bizOrderHeader.getBizStatus();
+                    bizOrderHeader.setBizStatus(bizPoHeader.getPayTotal().add(payTotal).compareTo(orderTotal) >= 0 ? ReqHeaderStatusEnum.VEND_INITIAL_PAY.getState() : ReqHeaderStatusEnum.VEND_ALL_PAY.getState());
+                    if (orderBizStatus == null || !orderBizStatus.equals(bizOrderHeader.getBizStatus())) {
+                        bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizPoHeader.getId());
+                    }
+                }
+                incrPayTotal(bizPoHeader.getId(), payTotal);
             }
-            BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(reqId);
-            Integer reqBizStatus = bizRequestHeader.getBizStatus();
-            bizRequestHeader.setBizStatus(bizPoHeader.getPayTotal().add(payTotal).compareTo(orderTotal) >= 0 ? ReqHeaderStatusEnum.VEND_INITIAL_PAY.getState() : ReqHeaderStatusEnum.VEND_ALL_PAY.getState());
-            bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
-            if (reqBizStatus == null || !reqBizStatus.equals(bizRequestHeader.getBizStatus())) {
-                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizPoHeader.getId());
-            }
-            incrPayTotal(bizPoHeader.getId(), payTotal);
-
             // 清除关联的支付申请单
             this.updatePaymentOrderId(bizPoHeader.getId(), null);
         } else {

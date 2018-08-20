@@ -359,8 +359,6 @@
 
 					<!-- 20%首付款审核 -->
 					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-                        <%--&& orderHeader.bizStatus<OrderHeaderBizStatusEnum.APPROVEPARTONE.state--%>
-						<%--&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.UNREVIEWED.state--%>
 						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) && orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
 							&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
 							}">
@@ -378,13 +376,13 @@
 				&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
 				&& (fns:hasRole(roleSet, orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
 				}">
-						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
 					</c:if>
 				</c:if>
 			</shiro:hasPermission>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
 				<c:if test="${orderHeader.bizPoHeader !=null}">
-					<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${orderHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}">支付申请列表</a>
+					<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${orderHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader">支付申请列表</a>
 				</c:if>
 			</shiro:hasPermission>
 

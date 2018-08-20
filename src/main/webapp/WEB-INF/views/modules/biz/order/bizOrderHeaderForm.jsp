@@ -641,14 +641,13 @@
                     if(result == 'ok') {
                         if(auditType==1){
                             //自动生成采购单
-                            console.log("---------------")
                             var id = $("#id").val();
                             //获取当前订单业务状态，如果订单审核完成则自动生成采购单
                             //getCurrentBizStatus(id);
                             //requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum
                             // RoleEnNameEnum.SELECTION_OF_SPECIALIST.state
                             // (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum)) &&
-                            if('${(fns:hasRole(roleSet, RoleEnNameEnum.SELECTIONOFSPECIALIST.state)) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
+                            if(${(fns:hasRole(roleSet, 'SELECTIONOFSPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}){
                                 getPoHeaderPara(id);
                             }
                             <%--if ('${OrderHeaderBizStatusEnum.APPROVEPARTONE.state}' == bizStatus) {--%>
@@ -659,6 +658,30 @@
                         window.location.href = "${ctx}/biz/order/bizOrderHeader";
                     }else {
                         alert("操作失败！");
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
+
+        //采购单审核
+        function poAudit(auditType, description) {
+            var id = $("#poHeaderId").val();
+            var currentType = $("#poCurrentType").val();
+            $.ajax({
+                url: '${ctx}/biz/po/bizPoHeaderReq/audit',
+                contentType: 'application/json',
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+                type: 'get',
+                success: function (result) {
+                    result = JSON.parse(result);
+                    if(result.ret == true || result.ret == 'true') {
+                        alert('操作成功!');
+                        window.location.href = "${ctx}/biz/order/bizOrderHeader";
+                    }else {
+                        alert(result.errmsg);
                     }
                 },
                 error: function (error) {
@@ -783,6 +806,7 @@
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
     <input type="hidden" name="source" value="${source}"/>
+    <input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>

@@ -100,6 +100,9 @@ public class BizPoPaymentOrderController extends BaseController {
 		}
 		Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
 		model.addAttribute("page", page);
+		String fromPage = request.getParameter("fromPage");
+		model.addAttribute("fromPage", fromPage);
+
 		return "modules/biz/po/bizPoPaymentOrderList";
 	}
 

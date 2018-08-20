@@ -167,9 +167,12 @@
 			<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
 				${sqlMap.request}
 			</if>
-			<if test="vendorId !=null and vendorId != ''">
-				AND  sv.id = ${vendorId}
-			</if>
+            <if test="vendorId !=null and vendorId != ''">
+                AND  sv.id = ${vendorId}
+            </if>
+            <if test="bizPoHeader !=null and bizPoHeader.id != null and bizPoHeader.id != ''">
+                AND  bph.id = ${bizPoHeader.id}
+            </if>
 			GROUP BY a.id
 		</where>
 		<choose>
