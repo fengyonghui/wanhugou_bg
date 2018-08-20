@@ -4,12 +4,10 @@
 package com.wanhutong.backend.modules.biz.service.po;
 
 import com.google.common.collect.ImmutableMap;
-import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.common.utils.GenerateOrderUtils;
-import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
@@ -17,10 +15,8 @@ import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestExpandDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
@@ -44,7 +40,14 @@ import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PhoneConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.*;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.DefaultPropEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
+import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -54,22 +57,21 @@ import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -216,6 +218,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             bizPoHeader.setOrderNum(poNo);
             this.savePoHeader(bizPoHeader);
         }
+
         autoSavePaymentOrder(bizPoHeader.getId());
 
         return Pair.of(Boolean.TRUE, "操作成功");
