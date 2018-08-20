@@ -47,7 +47,7 @@
 			            callback :function(){ 
 			                window.setTimeout(function(){
 			                    pager['size']= 10;//条数
-			                    pager['pageNo'] = 0;//页码      
+			                    pager['pageNo'] = 1;//页码      
 			                    //刷新要先清空父节点里面的子节点
 				                var f = document.getElementById("list");
 				                var childs = f.childNodes;
