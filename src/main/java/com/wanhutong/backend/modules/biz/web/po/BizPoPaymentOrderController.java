@@ -93,7 +93,11 @@ public class BizPoPaymentOrderController extends BaseController {
 			BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
 			model.addAttribute("bizPoHeader", bizPoHeader);
 		}
-		bizPoPaymentOrder.setPoHeaderId(poId);
+		if (poId == null) {
+			bizPoPaymentOrder.setPoHeaderId(-1);
+		} else {
+			bizPoPaymentOrder.setPoHeaderId(poId);
+		}
 		Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
 		model.addAttribute("page", page);
 		return "modules/biz/po/bizPoPaymentOrderList";
@@ -127,7 +131,7 @@ public class BizPoPaymentOrderController extends BaseController {
 		}
 		bizPoPaymentOrderService.save(bizPoPaymentOrder);
 		addMessage(redirectAttributes, "保存采购付款单成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoPaymentOrder/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "orderType=" + bizPoPaymentOrder.getOrderType();
 	}
 	
 	@RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
