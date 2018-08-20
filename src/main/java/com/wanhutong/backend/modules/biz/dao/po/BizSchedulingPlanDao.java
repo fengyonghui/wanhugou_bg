@@ -5,13 +5,9 @@ package com.wanhutong.backend.modules.biz.dao.po;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
-import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
 
 /**
  * 排产计划DAO接口

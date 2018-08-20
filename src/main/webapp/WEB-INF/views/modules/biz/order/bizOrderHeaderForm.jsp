@@ -975,7 +975,8 @@
         <div class="control-group">
             <label class="control-label">服务费：</label>
             <div class="controls">
-                <input type="text" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">
+                <fmt:formatNumber type="number" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" pattern="0.00"/>
+                <%--<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">--%>
             </div>
         </div
     </c:if>

@@ -54,7 +54,7 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	 */
 	private Integer sumCompleteDetailNum;
 
-	
+
 	public BizPoDetail() {
 		super();
 	}
@@ -136,14 +136,6 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	public void setSendQty(Integer sendQty) {
 		this.sendQty = sendQty;
 	}
-
-//	public List<BizSchedulingPlan> getSchedulingPlanList() {
-//		return schedulingPlanList;
-//	}
-//
-//	public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
-//		this.schedulingPlanList = schedulingPlanList;
-//	}
 
 	public Integer getSumSchedulingNum() {
 		return sumSchedulingNum;

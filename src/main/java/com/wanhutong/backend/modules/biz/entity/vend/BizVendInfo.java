@@ -65,6 +65,26 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 	 */
 	private List<CommonImg> identityCardImgList;
 
+	/**
+	 * 用于存放厂家退换货流程
+	 */
+	private String remark;
+
+	/**
+	 * 基本介绍
+	 */
+	private String introduce;
+
+	/**
+	 * 生产优势
+	 */
+	private String prodAdv;
+
+	/**
+	 * 1联营厂商2代采厂商3融资
+	 */
+	private String type;
+
 	public BizVendInfo() {
 		super();
 	}
@@ -193,6 +213,38 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 			this.status = status;
 			this.desc = desc;
 		}
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getIntroduce() {
+		return introduce;
+	}
+
+	public void setIntroduce(String introduce) {
+		this.introduce = introduce;
+	}
+
+	public String getProdAdv() {
+		return prodAdv;
+	}
+
+	public void setProdAdv(String prodAdv) {
+		this.prodAdv = prodAdv;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public List<CommonImg> getCompactImgList() {

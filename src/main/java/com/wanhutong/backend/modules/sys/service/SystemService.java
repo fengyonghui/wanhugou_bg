@@ -10,9 +10,13 @@ import com.wanhutong.backend.common.security.shiro.session.SessionDAO;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.ServiceException;
 import com.wanhutong.backend.common.utils.CacheUtils;
+import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.Servlets;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.dao.MenuDao;
 import com.wanhutong.backend.modules.sys.dao.RoleDao;
@@ -30,9 +34,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -58,6 +65,8 @@ public class SystemService extends BaseService implements InitializingBean {
 	private SessionDAO sessionDao;
 	@Autowired
 	private SystemAuthorizingRealm systemRealm;
+	@Autowired
+	private CommonImgService commonImgService;
 	
 	public SessionDAO getSessionDao() {
 		return sessionDao;
@@ -235,8 +244,69 @@ public class SystemService extends BaseService implements InitializingBean {
 //			// 清除权限缓存
 //			systemRealm.clearAllCachedAuthorizationInfo();
 		}
+		saveHeadPhoto(user);
 	}
-	
+
+	private void saveHeadPhoto(User user) {
+		String imgStr = user.getPhoto();
+		if (StringUtils.isBlank(imgStr)) {
+			return;
+		}
+		String[] split = imgStr.split(",");
+
+		List<CommonImg> commonImgs = getImgList(ImgEnum.USER_PHOTO.getCode(), user.getId(), ImgEnum.USER_PHOTO.getTableName());
+
+		Set<String> existSet = new LinkedHashSet<>();
+		for (CommonImg c : commonImgs) {
+			existSet.add(c.getImgServer() + c.getImgPath());
+		}
+		Set<String> newSet = new LinkedHashSet<>(Arrays.asList(split));
+
+		Set<String> result = new LinkedHashSet<>();
+		//差集，结果做删除操作
+		result.clear();
+		result.addAll(existSet);
+		result.removeAll(newSet);
+		for (String url : result) {
+			for (CommonImg c : commonImgs) {
+				if (url.equals(c.getImgServer() + c.getImgPath())) {
+					c.setDelFlag("0");
+					commonImgService.delete(c);
+				}
+			}
+		}
+
+		result.clear();
+		result.addAll(newSet);
+		result.removeAll(existSet);
+
+		CommonImg commonImg = new CommonImg();
+		commonImg.setObjectId(user.getId());
+		commonImg.setObjectName(ImgEnum.USER_PHOTO.getTableName());
+		commonImg.setImgType(ImgEnum.USER_PHOTO.getCode());
+
+		int index = 0;
+		for (String headPhoto : result) {
+			if (StringUtils.isNotBlank(headPhoto)) {
+				commonImg.setImgSort(index);
+				commonImg.setId(null);
+				commonImg.setImgPath(headPhoto.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY).replaceAll(DsConfig.getOldImgServer(), StringUtils.EMPTY));
+				commonImg.setImgServer(headPhoto.contains(DsConfig.getOldImgServer()) ? DsConfig.getOldImgServer() : DsConfig.getImgServer());
+				commonImgService.save(commonImg);
+				continue;
+			}
+			index ++;
+		}
+	}
+
+	private List<CommonImg> getImgList(Integer imgType, Integer userId, String objectName) {
+		CommonImg commonImg = new CommonImg();
+		commonImg.setObjectId(userId);
+		commonImg.setObjectName(objectName);
+		commonImg.setImgType(imgType);
+		return commonImgService.findList(commonImg);
+	}
+
 	@Transactional(readOnly = false)
 	public void updateUserInfo(User user) {
 		user.preUpdate();

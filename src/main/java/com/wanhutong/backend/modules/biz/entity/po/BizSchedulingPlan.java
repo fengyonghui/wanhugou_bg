@@ -6,7 +6,6 @@ package com.wanhutong.backend.modules.biz.entity.po;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotNull;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
@@ -19,7 +18,7 @@ import java.util.List;
  * @version 2018-07-17
  */
 public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String objectName;		// 表名
 	private Integer objectId;		// 表ID

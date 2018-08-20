@@ -592,7 +592,7 @@
                                        class="input-mini" type='text'/></td>
                             <td>
                                 <input readonly="readonly" type="text" name="unitPrices"
-                                       value="${reqDetail.skuInfo.buyPrice}" class="input-mini">
+                                       value="${reqDetail.unitPrice}" class="input-mini">
                             </td>
 
                         </tr>

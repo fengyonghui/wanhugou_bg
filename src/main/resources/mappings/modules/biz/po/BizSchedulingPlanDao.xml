@@ -68,9 +68,9 @@
 		AND a.object_id = #{objectId}
 		AND a.object_name = #{objectName}
 	</select>
-	
+
 	<select id="findList" resultMap="schedulingPlanResult">
-		SELECT 
+		SELECT
 			<include refid="bizSchedulingPlanColumns"/>
 			,bcp.id AS "completePalnList.id"
 			,bcp.scheduling_id AS "completePalnList.schedulingId"
