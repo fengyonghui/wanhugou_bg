@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.supcan.treelist.cols.Col;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -21,6 +22,7 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.chat.BizChatRecordService;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
@@ -92,6 +94,8 @@ public class OfficeController extends BaseController {
     private BizChatRecordService bizChatRecordService;
     @Autowired
     private BizProductInfoV2Service bizProductInfoV2Service;
+    @Autowired
+    private CommonImgService commonImgService;
 
 
 
@@ -226,6 +230,16 @@ public class OfficeController extends BaseController {
     @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "supplierForm")
     public String supplierForm(Office office, Model model, String gysFlag) {
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(office.getId());
+        commonImg.setObjectName(ImgEnum.VENDOR_VIDEO.getTableName());
+        if (office.getId() != null) {
+            commonImg.setImgType(ImgEnum.VENDOR_VIDEO.getCode());
+            List<CommonImg> vendVideoList = commonImgService.findList(commonImg);
+            if (CollectionUtils.isNotEmpty(vendVideoList)) {
+                model.addAttribute("vendVideoList",vendVideoList);
+            }
+        }
         User user = UserUtils.getUser();
         if (office.getParent() == null || office.getParent().getId() == null) {
             if (OfficeTypeEnum.VENDOR.getType().equals(office.getType())) {

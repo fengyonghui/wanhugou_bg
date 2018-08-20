@@ -144,6 +144,7 @@
 								title="经销店"  url="/sys/office/queryTreeList?type=6"
 								cssClass="input-medium required"
 								allowClear="true"  dataMsgRequired="必填信息"/>
+				<%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">--%>
 			</c:if>
 		</li>
 		<li><label>采购中心：</label>

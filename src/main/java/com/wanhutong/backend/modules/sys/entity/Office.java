@@ -68,6 +68,11 @@ public class Office extends TreeEntity<Office> {
 
 	private String delRemark ;
 
+	/**
+	 * 厂商视频
+	 */
+	private String vendVideo;
+
 	public String getDelRemark() {
 		return delRemark;
 	}
@@ -404,5 +409,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setShelfInfoUser(User shelfInfoUser) {
 		this.shelfInfoUser = shelfInfoUser;
+	}
+
+	public String getVendVideo() {
+		return vendVideo;
+	}
+
+	public void setVendVideo(String vendVideo) {
+		this.vendVideo = vendVideo;
 	}
 }

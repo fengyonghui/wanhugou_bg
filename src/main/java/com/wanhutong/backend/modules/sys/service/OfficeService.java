@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -307,6 +308,10 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
             bizVendInfo.setCardNumber(office.getBizVendInfo().getCardNumber());
             bizVendInfo.setCode(office.getCode());
             bizVendInfo.setAuditStatus(BizVendInfo.AuditStatus.UNAUDITED.getStatus());
+            bizVendInfo.setRemark(office.getBizVendInfo().getRemark());
+            bizVendInfo.setIntroduce(office.getBizVendInfo().getIntroduce());
+            bizVendInfo.setProdAdv(office.getBizVendInfo().getProdAdv());
+            bizVendInfo.setType(office.getBizVendInfo().getType());
             bizVendInfoService.save(bizVendInfo);
         }
 
@@ -316,6 +321,10 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
         if (office.getBizVendInfo() != null && StringUtils.isNotBlank(office.getBizVendInfo().getIdCardPhotos())) {
             saveImg(office.getBizVendInfo().getIdCardPhotos(), office.getId(), ImgEnum.VEND_IDENTITY_CARD);
+        }
+
+        if (office.getVendVideo() != null) {
+            saveVideo(office.getId(),office.getVendVideo(),ImgEnum.VENDOR_VIDEO);
         }
 
         SysOfficeAddress address = new SysOfficeAddress();
@@ -430,6 +439,72 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
                 }
             }
         }
+    }
+
+    /**
+     * 保存视频
+     *
+     * @param id
+     * @param videos
+     * @param imgEnum
+     */
+    private void saveVideo(Integer id, String videos, ImgEnum imgEnum) {
+        if (StringUtils.isBlank(videos)) {
+            return;
+        }
+        String[] videoArr = videos.split(",");
+
+        List<CommonImg> commonImgs = getImgList(imgEnum.getCode(), id, imgEnum.getTableName());
+
+        Set<String> existSet = new LinkedHashSet<>();
+        for (CommonImg c : commonImgs) {
+            existSet.add(c.getImgServer() + c.getImgPath());
+        }
+        Set<String> newSet = new LinkedHashSet<>(Arrays.asList(videoArr));
+
+        Set<String> result = new LinkedHashSet<>();
+        //差集，结果做删除操作
+        result.clear();
+        result.addAll(existSet);
+        result.removeAll(newSet);
+        for (String url : result) {
+            for (CommonImg c : commonImgs) {
+                if (url.equals(c.getImgServer() + c.getImgPath())) {
+                    c.setDelFlag("0");
+                    commonImgService.delete(c);
+                }
+            }
+        }
+
+        result.clear();
+        result.addAll(newSet);
+        result.removeAll(existSet);
+
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(id);
+        commonImg.setObjectName(imgEnum.getTableName());
+        commonImg.setImgType(imgEnum.getCode());
+
+        int index = 0;
+        for (String video : result) {
+            if (StringUtils.isNotBlank(video)) {
+                commonImg.setImgSort(index);
+                commonImg.setId(null);
+                commonImg.setImgPath(video.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY).replaceAll(DsConfig.getOldImgServer(), StringUtils.EMPTY));
+                commonImg.setImgServer(video.contains(DsConfig.getOldImgServer()) ? DsConfig.getOldImgServer() : DsConfig.getImgServer());
+                commonImgService.save(commonImg);
+                continue;
+            }
+            index ++;
+        }
+    }
+
+    private List<CommonImg> getImgList(Integer imgType, Integer officeId, String objectName) {
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(officeId);
+        commonImg.setObjectName(objectName);
+        commonImg.setImgType(imgType);
+        return commonImgService.findList(commonImg);
     }
 
     @Override
