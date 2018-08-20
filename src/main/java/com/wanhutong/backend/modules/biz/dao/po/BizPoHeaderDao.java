@@ -48,9 +48,15 @@ public interface BizPoHeaderDao extends CrudDao<BizPoHeader> {
     List<BizOrderStatisticsDto> vendorSkuPrice(@Param("startDate")String startDate, @Param("endDate")String endDate, @Param("officeId")Integer officeId);
 
     /**
-     * 该采购单下所有商品的总采购数量，总排产数量，总已确认排产数
+     * 该备货单下所有商品的总采购数量，总排产数量（分为按订单排产的总排产量和按商品排产的总排产量）
      * @param id
      * @return
      */
-    BizPoHeader getTotalNum(@Param("id") Integer id);
+    BizPoHeader getTotalQtyAndSchedulingNum(@Param("id") Integer id);
+
+    /**
+     * 供应商确认排产后，更新排产表中排产状态
+     * @param bizPoHeader
+     */
+    void updateSchedulingType(BizPoHeader bizPoHeader);
 }
