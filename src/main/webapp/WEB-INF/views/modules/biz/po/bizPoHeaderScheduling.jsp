@@ -158,6 +158,27 @@
                 schRemark = $("#schRemarkSku").val();
             }
             var totalSchedulingNum = 0;
+            var totalSchedulingHeaderNum = 0;
+            var totalSchedulingDetailNum = 0;
+            var poSchType = 0;
+            for(i=0;i<trArray.length;i++){
+                var div = trArray[i];
+                var jqDiv = $(div);
+                var value = jqDiv.find("[name='" + id + "_value']").val();
+
+                if (schedulingType == "0"){
+                    totalSchedulingHeaderNum = parseInt(totalSchedulingHeaderNum) + parseInt(value);
+                } else {
+                    totalSchedulingDetailNum = parseInt(totalSchedulingDetailNum) + parseInt(value);
+                }
+            }
+
+            if (schedulingType == "0"){
+                poSchType = originalNum > totalSchedulingHeaderNum ? 1 : 2;
+            } else {
+                poSchType = originalNum > totalSchedulingDetailNum ? 1 : 2;
+            }
+
             for(i=0;i<trArray.length;i++){
                 var div = trArray[i];
                 var jqDiv = $(div);
@@ -180,6 +201,14 @@
                 entity.planDate=date;
                 entity.schedulingType=schedulingType;
                 entity.remark=schRemark;
+                entity.poSchType = poSchType;
+
+                if (schedulingType == "0"){
+                    totalSchedulingHeaderNum = parseInt(totalSchedulingHeaderNum) + parseInt(value);
+                } else {
+                    totalSchedulingDetailNum = parseInt(totalSchedulingDetailNum) + parseInt(value);
+                }
+
                 params[i]=entity;
 
                 totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
@@ -218,13 +247,34 @@
             var ind = 0;
             var schRemark = "";
             schRemark = $("#schRemarkSku").val();
+
+            var totalSchedulingHeaderNum = 0;
+            var totalSchedulingDetailNum = 0;
+            var poSchType = 0;
+
             for(var index in reqDetailIdList) {
                 var reqDetailId = reqDetailIdList[index];
                 var trArray = $("[name='" + reqDetailId + "']");
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + reqDetailId)).val();
                 totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+            }
 
+            for(var index in reqDetailIdList) {
+                var reqDetailId = reqDetailIdList[index];
+                var trArray = $("[name='" + reqDetailId + "']");
+                for(i=0;i<trArray.length;i++) {
+                    var div = trArray[i];
+                    var jqDiv = $(div);
+                    var value = jqDiv.find("[name='" + reqDetailId + "_value']").val();
+                    totalSchedulingDetailNum = parseInt(totalSchedulingDetailNum) + parseInt(value);
+                }
+            }
+            poSchType = totalOriginalNum > totalSchedulingDetailNum ? 1 : 2;
+
+            for(var index in reqDetailIdList) {
+                var reqDetailId = reqDetailIdList[index];
+                var trArray = $("[name='" + reqDetailId + "']");
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];
                     var jqDiv = $(div);
@@ -247,11 +297,10 @@
                     entity.planDate=date;
                     entity.schedulingType=1;
                     entity.remark=schRemark;
+                    entity.poSchType = poSchType;
 
                     params[ind]=entity;
-
                     totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
-
                     ind++;
                 }
                 count++;

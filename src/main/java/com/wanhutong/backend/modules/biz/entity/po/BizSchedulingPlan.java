@@ -60,6 +60,11 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	 */
 	private BizRequestHeader bizRequestHeader;
 
+	/**
+	 * 采购单排产状态 0,未排产  1,排产中  2,排产完成
+	 */
+	public Integer poSchType;
+
 	public BizSchedulingPlan() {
 		super();
 	}
@@ -171,5 +176,13 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public Integer getPoSchType() {
+		return poSchType;
+	}
+
+	public void setPoSchType(Integer poSchType) {
+		this.poSchType = poSchType;
 	}
 }

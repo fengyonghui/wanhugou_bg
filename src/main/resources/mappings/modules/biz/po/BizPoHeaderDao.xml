@@ -70,12 +70,12 @@
 	<select id="findList" resultType="BizPoHeader">
 		SELECT
 			<include refid="bizPoHeaderColumns"/>
-			,(SELECT SUM(bpd.ord_qty)
+		,(SELECT SUM(bpd.ord_qty)
 				FROM biz_po_header bph
 				LEFT JOIN biz_po_detail bpd ON bpd.order_id = bph.id
 				WHERE bph.id = a.id
 				) AS "totalOrdQty"
-				,(SELECT
+		/*		,(SELECT
 				SUM(bcp.complete_num)
 				FROM biz_po_header bph
 				LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.status=1 AND bsp.object_name = 'biz_po_header'
@@ -89,7 +89,11 @@
 				LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bpd.id AND bsp.status=1 AND bsp.object_name = 'biz_po_detail'
 				LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
 				WHERE bph.status = 1
-				AND bph.id = a.id) AS "totalSchedulingDetailNum",
+				AND bph.id = a.id) AS "totalSchedulingDetailNum",*/
+				,(SELECT bsp.po_sch_type FROM biz_po_header bph
+				LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id
+				AND bsp.object_name='biz_po_header' AND bsp.status = 1
+				WHERE bph.id = a.id) AS "poSchType",
 				rh.id AS "bizRequestHeader.id",
 				rh.req_no AS "bizRequestHeader.reqNo",
 				rh.biz_status AS "bizRequestHeader.bizStatus",
