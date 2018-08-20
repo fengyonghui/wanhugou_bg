@@ -82,6 +82,24 @@
 			<result property="type" column="commonProcess.type"/>
 		</association>
 
+		<association property="bizPoHeader" javaType="BizPoHeader" column="bizPoHeader.id">
+			<id property="id" column="bizPoHeader.id"/>
+			<id property="orderNum" column="bizPoHeader.orderNum"/>
+			<id property="totalOrdQty" column="bizPoHeader.totalOrdQty"/>
+			<id property="totalSchedulingHeaderNum" column="bizPoHeader.totalSchedulingHeaderNum"/>
+			<id property="totalSchedulingDetailNum" column="bizPoHeader.totalSchedulingDetailNum"/>
+			<association property="commonProcess" javaType="CommonProcessEntity" column="bizPoHeader.commonProcess">
+				<id property="id" column="bizPoHeader.commonProcess.id"/>
+				<id property="objectId" column="bizPoHeader.commonProcess.objectId"/>
+				<id property="objectName" column="bizPoHeader.commonProcess.objectName"/>
+				<id property="prevId" column="bizPoHeader.commonProcess.prevId"/>
+				<id property="bizStatus" column="bizPoHeader.commonProcess.bizStatus"/>
+				<id property="processor" column="bizPoHeader.commonProcess.processor"/>
+				<id property="description" column="bizPoHeader.commonProcess.description"/>
+				<id property="type" column="bizPoHeader.commonProcess.type"/>
+			</association>
+		</association>
+
 		<collection property="orderDetailList" ofType="BizOrderDetail">
 			<id property="id" column="orderDetailList.id" />
 			<result property="ordQty" column="orderDetailList.ordQty" />
@@ -320,6 +338,26 @@
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
 		si.item_no AS "orderDetailList.skuInfo.itemNo",
 		pi.vendor_name AS "orderDetailList.vendor.name",
+		(SELECT SUM(bpd.ord_qty)
+		FROM biz_po_header bph
+		LEFT JOIN biz_po_detail bpd ON bpd.order_id = bph.id
+		WHERE bph.id = bpor.po_id
+		) AS "bizPoHeader.totalOrdQty"
+		,(SELECT
+		SUM(bcp.complete_num)
+		FROM biz_po_header bph
+		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.status=1 AND bsp.object_name = 'biz_po_header'
+		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
+		WHERE bph.status = 1
+		AND bph.id = bpor.po_id) AS "bizPoHeader.totalSchedulingHeaderNum"
+		,(SELECT
+		SUM(bcp.complete_num)
+		FROM biz_po_header bph
+		LEFT JOIN biz_po_detail bpd on bpd.order_id = bph.id AND bpd.status=1
+		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bpd.id AND bsp.status=1 AND bsp.object_name = 'biz_po_detail'
+		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
+		WHERE bph.status = 1
+		AND bph.id = bpor.po_id) AS "bizPoHeader.totalSchedulingDetailNum",
 		(select
 			sum(od.buy_price * od.ord_qty)
 		from
