@@ -36,7 +36,7 @@ public enum OrderPayProportionStatusEnum {
      * @return
      */
     public static OrderPayProportionStatusEnum parse(BigDecimal orderTotal, BigDecimal payTotal) {
-        BigDecimal divide = payTotal.divide(orderTotal).multiply(new BigDecimal(100));
+        BigDecimal divide = payTotal.divide(orderTotal, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
 
         for (OrderPayProportionStatusEnum statusEnum : values()) {
             if (statusEnum.minProportion <= divide.intValue() && statusEnum.maxProportion >= divide.intValue()) {
@@ -54,7 +54,7 @@ public enum OrderPayProportionStatusEnum {
      * @return
      */
     public static OrderPayProportionStatusEnum parse(Double orderTotal, Double payTotal) {
-        BigDecimal divide = BigDecimal.valueOf(payTotal).divide(BigDecimal.valueOf(orderTotal)).multiply(new BigDecimal(100));
+        BigDecimal divide = BigDecimal.valueOf(payTotal).divide(BigDecimal.valueOf(orderTotal),2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
 
         for (OrderPayProportionStatusEnum statusEnum : values()) {
             if (statusEnum.minProportion <= divide.intValue() && statusEnum.maxProportion >= divide.intValue()) {
