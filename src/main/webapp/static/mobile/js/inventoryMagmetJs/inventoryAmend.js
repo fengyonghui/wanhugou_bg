@@ -330,6 +330,7 @@
                 _this.reqDetailIds += item.id + ","
                 _this.LineNos += item.lineNo + ","// 最开始的id="' + item.id + '"    修改后1、id="' + item.skuInfo.id + '"     2、id="serskudiv_' + skuInfo.id + '"
                 htmlCommodity += '<div class="mui-row app_bline" id="' + item.id + '">' +
+                '<input style="top: 30px;" name="" class="skuinfo_check" id="' + item.skuInfo.id + '" type="checkbox"></div>' +
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
@@ -417,7 +418,7 @@
                     data: {itemNo: itemNo},
                     success: function (result) {
                     	console.log('修改查询数据')  
-                    	console.log(result)
+//                  	console.log(result)
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
                         $.each(data,function (keys,skuInfoList) {
@@ -488,7 +489,41 @@
                                         '</div></li></div></div></div></div>';
                             });
                             t++;                          
-                            $("#searchInfo").append(resultListHtml);  
+                            $("#searchInfo").append(resultListHtml);
+                            
+                            
+                            console.log('=========')
+                            var dis=$("#searchInfo .skuinfo_check");
+                            console.log(dis.length);
+                            var dos=$("#commodityMenu .skuinfo_check");
+                            console.log(dos.length);
+                            $.each(dis,function(n,v){
+                            	console.log('+++++');
+                            	var s=$(this).attr('id')
+                            	console.log(s);
+                            	$.each(dos,function(n,v){
+                            		var that=this;
+                            		console.log('dosdosdosdosdos');
+	                            	
+	                            	var y=$(that).attr('id')
+	                            	console.log(y);
+//	                            	var divs=$("#serskudiv_56733");
+//	                            	''#serskudiv'+'_'+S'
+	                            	var divs=$("#serskudiv_"+s);
+	                            	console.log('HAHA')
+	                            	console.log(divs)
+	                            	console.log('HAHA')
+	                            	if (s==y) {
+	                            		divs.html('');
+	                            	} else{
+	                            		
+	                            	}
+	                            })
+                            })
+ 
+                            console.log('=========')
+                            
+                            
                         })
                         var addButtonHtml = '<div class="addBtn" id="batchAddDiv">' +
                                 '<button id="batchAdd" type="submit" class="addSkuButton addBtnClass app_btn_search mui-btn-blue    mui-btn-block">添加' +
