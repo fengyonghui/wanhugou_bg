@@ -2,9 +2,9 @@
 <JointOperationOrderProcessLocalConfig>
     <!--本地备货审核-->
 
-    <zeroDefaultProcessId>10001</zeroDefaultProcessId>
-    <fifthDefaultProcessId>10001</fifthDefaultProcessId>
-    <allDefaultProcessId>666</allDefaultProcessId>
+    <zeroDefaultProcessId>30001</zeroDefaultProcessId>
+    <fifthDefaultProcessId>20001</fifthDefaultProcessId>
+    <allDefaultProcessId>10001</allDefaultProcessId>
     <payProcessId>666</payProcessId>
     <endProcessId>-1</endProcessId>
 
@@ -12,6 +12,46 @@
     <process>
         <name>财务主管审核</name>
         <code>10001</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <passCode>777</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>渠道总监审核</name>
+        <code>20001</code>
+        <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
+        <passCode>20002</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>财务主管审核</name>
+        <code>20002</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <passCode>777</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>渠道总监审核</name>
+        <code>30001</code>
+        <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
+        <passCode>30002</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>总经理审核</name>
+        <code>30002</code>
+        <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
+        <passCode>30003</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>财务主管审核</name>
+        <code>30003</code>
         <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
         <passCode>777</passCode>
         <rejectCode>-1</rejectCode>
