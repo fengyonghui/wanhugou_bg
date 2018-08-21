@@ -129,6 +129,9 @@
 			<if test="bizOrderHeader != null and bizOrderHeader.bizStatus != null">
 				AND oh.biz_status = #{bizOrderHeader.bizStatus}
 			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.id != null">
+				AND rh.id = #{bizRequestHeader.id}
+			</if>
 			<if test="bizRequestHeader != null and bizRequestHeader.bizStatus != null">
 				AND rh.biz_status = #{bizRequestHeader.bizStatus}
 			</if>
