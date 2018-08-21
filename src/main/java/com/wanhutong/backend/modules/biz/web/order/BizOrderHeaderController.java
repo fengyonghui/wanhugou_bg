@@ -257,7 +257,11 @@ public class BizOrderHeaderController extends BaseController {
 
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "form")
-    public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails, HttpServletRequest request, HttpServletResponse response) {
+    public String form(BizOrderHeader bizOrderHeader, Model model,
+                       String orderNoEditable, String orderDetails,
+                       HttpServletRequest request, HttpServletResponse response,
+                        String type
+    ) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
         String str = bizOrderHeader.getStr();
         if ("pay".equals(str)) {
@@ -479,6 +483,23 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
 
+        if ("audit".equals(str) && ("0".equals(type) || "1".equals(type))) {
+            // type = 0 产地直发
+            // type = 1 本地备货
+            CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+            commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
+            commonProcessEntity.setObjectName("0".equals(type) ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+            List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+
+            request.setAttribute("id", bizOrderHeader.getId());
+            request.setAttribute("auditList", list);
+            request.setAttribute("type", type);
+            request.setAttribute("processMap", "0".equals(type) ?
+                    ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap()
+                    : ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap());
+        }
+
+
         return "modules/biz/order/bizOrderHeaderForm";
     }
 
@@ -541,7 +562,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "save")
     public String save(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         if (!beanValidator(model, bizOrderHeader)) {
-            return form(bizOrderHeader, model, null, null, request, response);
+            return form(bizOrderHeader, model, null, null, request, response, null);
         }
         if (bizOrderHeader.getPlatformInfo() == null) {
             //后台默认保存为 系统后台订单
@@ -561,7 +582,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "saveRefund")
     public String saveRefund(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         if (!beanValidator(model, bizOrderHeader)) {
-            return form(bizOrderHeader, model, null, null, request, response);
+            return form(bizOrderHeader, model, null, null, request, response, null);
         }
         Double receiveTotal = (-1) * (bizOrderHeaderService.get(bizOrderHeader.getId()).getReceiveTotal());
         bizOrderHeaderService.save(bizOrderHeader);
@@ -1675,7 +1696,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "auditSo")
     @ResponseBody
-    public String audit(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType) {
+    public String auditSo(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType) {
         Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType);
         if (audit.getLeft()) {
             return JsonUtil.generateData(audit.getRight(), null);
@@ -1691,6 +1712,7 @@ public class BizOrderHeaderController extends BaseController {
      * @param auditType
      * @param currentType
      * @param description
+     * @param orderType
      * @return
      */
     private Pair<Boolean, String> doAudit(int id, int auditType, String currentType, String description, int orderType) {
