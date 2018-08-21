@@ -259,8 +259,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model,
                        String orderNoEditable, String orderDetails,
-                       HttpServletRequest request, HttpServletResponse response,
-                        String type
+                       HttpServletRequest request, HttpServletResponse response
     ) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
         String str = bizOrderHeader.getStr();
@@ -302,6 +301,12 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
+
+        String type = "1";
+        if (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721) {
+            type = "0";
+        }
+
         bizOrderHeaderTwo.setStr(bizOrderHeader.getStr());
         bizOrderHeaderTwo.setCommonProcess(bizOrderHeader.getCommonProcess());
         if (bizOrderHeader.getId() != null) {
@@ -336,6 +341,7 @@ public class BizOrderHeaderController extends BaseController {
                     }
                 }
             }
+
             //代采
             if (bizOrderHeaderTwo != null && StringUtils.isBlank(type)) {
                 if (bizOrderHeaderTwo.getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
@@ -499,7 +505,6 @@ public class BizOrderHeaderController extends BaseController {
                     : ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap());
         }
 
-
         return "modules/biz/order/bizOrderHeaderForm";
     }
 
@@ -562,7 +567,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "save")
     public String save(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         if (!beanValidator(model, bizOrderHeader)) {
-            return form(bizOrderHeader, model, null, null, request, response, null);
+            return form(bizOrderHeader, model, null, null, request, response);
         }
         if (bizOrderHeader.getPlatformInfo() == null) {
             //后台默认保存为 系统后台订单
@@ -582,7 +587,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "saveRefund")
     public String saveRefund(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         if (!beanValidator(model, bizOrderHeader)) {
-            return form(bizOrderHeader, model, null, null, request, response, null);
+            return form(bizOrderHeader, model, null, null, request, response);
         }
         Double receiveTotal = (-1) * (bizOrderHeaderService.get(bizOrderHeader.getId()).getReceiveTotal());
         bizOrderHeaderService.save(bizOrderHeader);

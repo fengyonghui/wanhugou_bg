@@ -249,6 +249,11 @@
 	<select id="get" resultType="BizOrderHeader">
 		SELECT
 		<include refid="bizOrderHeaderColumns"/>
+		,
+		(SELECT SUM(bod.suply_id)
+		FROM biz_order_detail bod
+		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
+		WHERE boh.id = a.id) AS "suplys"
 		FROM biz_order_header a
 		<include refid="bizOrderHeaderJoins"/>
 		WHERE a.id = #{id}

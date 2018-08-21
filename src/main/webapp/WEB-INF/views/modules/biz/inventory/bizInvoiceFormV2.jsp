@@ -68,35 +68,36 @@
                         for (var i = 0; i < e; i ++ ) {
 
 
-
-
-                        }
-
-
-                        <%--$.ajax({--%>
+                            <%--$.ajax({--%>
                             <%--type:"post",--%>
                             <%--async:false,--%>
                             <%--url:"${ctx}/biz/inventory/bizInventorySku/findInvSku?orderHeaders="+encodeURIComponent(orderHeaders),--%>
                             <%--success:(function (data) {--%>
-                                <%--if (data == "true"){--%>
-                                    <%--form.submit();--%>
-                                    <%--return true;--%>
-                                    <%--loading('正在提交，请稍等...');--%>
-                                <%--}else {--%>
-                                    <%--$("input[name='orderHeaders']").each(function () {--%>
-                                        <%--$(this).remove();--%>
-                                    <%--});--%>
-                                    <%--alert("库存不足！");--%>
-                                    <%--return false;--%>
-                                <%--}--%>
-                            <%--})--%>
-                        <%--})--%>
-
-                        <%--if (1==1) {--%>
+                            <%--if (data == "true"){--%>
                             <%--form.submit();--%>
                             <%--return true;--%>
                             <%--loading('正在提交，请稍等...');--%>
-                        <%--}--%>
+                            <%--}else {--%>
+                            <%--$("input[name='orderHeaders']").each(function () {--%>
+                            <%--$(this).remove();--%>
+                            <%--});--%>
+                            <%--alert("库存不足！");--%>
+                            <%--return false;--%>
+                            <%--}--%>
+                            <%--})--%>
+                            <%--})--%>
+
+                        }
+
+                        var invCountStatus = true;
+
+
+
+                        if (invCountStatus) {
+                            form.submit();
+                            loading('正在提交，请稍等...');
+                            return true;
+                        }
 
                     }else{
                         alert("请勾选发货内容");
