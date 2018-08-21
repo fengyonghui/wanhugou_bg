@@ -136,6 +136,8 @@
                     $('#inputDivAmend  option[value="' + bizstatus + '"]').attr("selected",true)
                     _this.commodityHtml(res.data)
                     _this.statusListHtml(res.data)
+                    console.log('=======')
+                    console.log(res.data)
                     _this.searchSkuHtml()
                     _this.saveDetail();
 
@@ -155,6 +157,8 @@
             var _this = this;
             mui('.saveDetailBtn').on('tap','#saveDetailBtn',function(){
                 var skuIds = _this.skuInfoIds_2.split(",");
+                console.log('5511')
+                console.log(skuIds)
                 var skuInfoIdsTemp = ""
                 for (var i=0; i<skuIds.length; i++){
                     var skuId = skuIds[i];
@@ -163,7 +167,8 @@
                     }
                 }
                 _this.skuInfoIds_2 = skuInfoIdsTemp.substring(1);
-
+                console.log('5522')
+                console.log(_this.skuInfoIds_2)
                 var skuIds2 = _this.skuInfoIds_2.split(",");
                 var reqQtysTemp = "";
                 for (var j=0; j<skuIds2.length; j++) {
@@ -214,12 +219,15 @@
                     dataType: 'json',
                     success: function (resule) {
                         if (resule.data.value == '操作成功!') {
+//                      	mui.toast("保存备货单成功！");
                             alert("保存备货单成功！");
-                            GHUTILS.OPENPAGE({
-                                url: "../../html/inventoryMagmetHtml/inventoryList.html",
-                                extras: {
-                                }
-                            })
+//                          setTimeout(function(){
+                            	GHUTILS.OPENPAGE({
+	                                url: "../../html/inventoryMagmetHtml/inventoryList.html",
+	                                extras: {
+	                                }
+	                            })
+//                          },1000)                           
                         }
                     }
                 })
@@ -313,20 +321,21 @@
             $("#inCheckAddMenu").html(pHtmlList)
         },
         commodityHtml: function(data) {
+        	//备货商品初始化反填
             var _this = this;
             var htmlCommodity = '';
             $.each(data.reqDetailList, function(i, item) {
                 _this.skuInfoIds_1 += item.skuInfo.id + ","
                 _this.reqQtys_1 += item.reqQty + ","
                 _this.reqDetailIds += item.id + ","
-                _this.LineNos += item.lineNo + ","
+                _this.LineNos += item.lineNo + ","// 最开始的id="' + item.id + '"    修改后1、id="' + item.skuInfo.id + '"     2、id="serskudiv_' + skuInfo.id + '"
                 htmlCommodity += '<div class="mui-row app_bline" id="' + item.id + '">' +
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
                     '<li class="mui-table-view-cell">' +
                     '<div class="mui-input-row inputClassAdd">' +
-                    '<label class="commodityName">商品名称:</label>' +
+                    '<label class="commodityName">商品名称：:</label>' +
                     '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div></div>' +
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
@@ -358,14 +367,19 @@
                     '<button id="' + item.id +'" type="button" class="deleteSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block" >删除</button></div>';
                 }
                 htmlCommodity += '</div>';
+
             });
             $("#commodityMenu").html(htmlCommodity)
             _this.delItem()
             _this.removeItem()
         },
         delItem:function () {
+        	var that=this;
             mui('#commodityMenu').on('tap','.deleteSkuButton',function(e){
+            	
                 var obj = e.detail.target.id;
+                console.log('hah')
+            	console.log(obj)
                 if (confirm("此删除不需点保存,即可生效.确认删除此条信息吗？")) {
                     $.ajax({
                         type: "post",
@@ -402,9 +416,14 @@
                     url: "/a/biz/sku/bizSkuInfo/findSkuList",
                     data: {itemNo: itemNo},
                     success: function (result) {
+                    	console.log('修改查询数据')  
+                    	console.log(result)
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
                         $.each(data,function (keys,skuInfoList) {
+                        	console.log('5555')
+                        	console.log(keys)
+                        	console.log(skuInfoList)
                             var prodKeys= keys.split(",");
                             var prodId= prodKeys[0];
 
@@ -418,8 +437,11 @@
                             var resultListHtml="";
                             var t=0;
                             $.each(skuInfoList,function (index,skuInfo) {
+                            	console.log('6666')
+	                        	console.log(skuInfo)
                                 //skuInfoId+=","+skuInfo.id;
                                 if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
+                                	console.log($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length)
                                     return;
                                 }
                                 resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
@@ -465,34 +487,39 @@
                                         '<font>*</font>'+
                                         '</div></li></div></div></div></div>';
                             });
-                            t++;
-                            $("#searchInfo").append(resultListHtml);
+                            t++;                          
+                            $("#searchInfo").append(resultListHtml);  
                         })
                         var addButtonHtml = '<div class="addBtn" id="batchAddDiv">' +
-                                '<button id="batchAdd" type="submit" class="addSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">添加' +
+                                '<button id="batchAdd" type="submit" class="addSkuButton addBtnClass app_btn_search mui-btn-blue    mui-btn-block">添加' +
                                 '</button></div>';
                         $("#searchInfo").append(addButtonHtml);
                     }
                 })
             });
-            //$("#searchInfo").html(htmlCommodity)
+            //$("#searchInfo").html(htmlCommodity)           
             _this.addSku()
         },
         addSku:function () {
             var _this = this;
+            //查询里面的添加
             mui('#searchInfo').on('tap','.addSkuButton',function(){
                 $(".skuinfo_check").each(function () {
+                	//选择的checkbox
+                	console.log('pp')
+                	console.log($(this)[0].id)
                     var cheId = $(this)[0].id;
 
                     var cheFlag = $("#" + cheId).is(':checked');
                     if (cheFlag == true) {
                         var cheDiv = $("#serskudiv_" + cheId);
-                        $("#" + cheId).prop('checked',false);
+                        $("#" + cheId).prop('checked',false);                      
                         $("#" + cheId).hide();
                         var resultHtml = '<div class="addBtn" id="removeBtn_' + cheId + '">' +
                             '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">移除' +
                             '</button></div>';
                             cheDiv.append(resultHtml)
+                           //$("#commodityMenu")备货商品的内容 
                         $("#commodityMenu").append($(cheDiv))
                         _this.skuInfoIds_2 += cheId + ",";
                     }
