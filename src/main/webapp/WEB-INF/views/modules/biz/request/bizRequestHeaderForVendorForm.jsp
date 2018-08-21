@@ -949,12 +949,14 @@
 				</div>
 			</div>
 		</c:if>
-		<div class="control-group">
-			<label class="control-label">排产状态：</label>
-			<div class="controls">
-				${schedulingType}
+		<c:if test="${entity.id != null}">
+			<div class="control-group">
+				<label class="control-label">排产状态：</label>
+				<div class="controls">
+					${schedulingType}
+				</div>
 			</div>
-		</div>
+		</c:if>
 		<c:if test="${fn:length(statusList) > 0}">
 			<div class="control-group">
 				<label class="control-label">状态流程：</label>

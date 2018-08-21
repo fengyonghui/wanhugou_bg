@@ -189,6 +189,7 @@
 				<th>采购中心</th>
 				<th>期望收货时间</th>
 				<th>备货方</th>
+				<th>供应商</th>
 				<th>备货商品数量</th>
 				<th>备货商品总价</th>
 				<th>已收保证金</th>
@@ -227,6 +228,9 @@
 					<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>${fns:getDictLabel(requestHeader.fromType,'req_from_type' ,'未知' )}</td>
+				<td>
+						${requestHeader.name}
+				</td>
 				<td>${requestHeader.reqQtys}</td>
 				<td id="total_${requestHeader.id}">${requestHeader.totalMoney}</td>
 					<input type="hidden" id="rev_${requestHeader.id}" value="${requestHeader.recvTotal}">
@@ -281,11 +285,11 @@
 								<a href="${ctx}/biz/request/bizRequestHeaderForVendor/recovery?id=${requestHeader.id}" onclick="return confirmx('确认要恢复该备货清单吗？', this.href)">恢复</a>
 							</c:if>
 						</c:when>
-						<c:when test="${!fns:getUser().isAdmin() && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state}">
+						<c:when test="${!fns:getUser().isAdmin() && requestHeader.bizStatus<ReqHeaderStatusEnum.IN_REVIEW.state}">
 							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}">修改</a>
-
-							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
-
+							<shiro:hasPermission name="biz:request:bizRequestHeader:delete">
+								<a href="${ctx}/biz/request/bizRequestHeaderForVendor/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
+							</shiro:hasPermission>
 							<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},'取消',${requestHeader.id})">取消</a>
 
 						</c:when>
@@ -332,7 +336,9 @@
 					<%--</c:if>--%>
 					<%--<!-- 保证金审核 -->--%>
 					<%--<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">--%>
+				<shiro:hasPermission name="biz:po:pay:list">
 					<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${requestHeader.id}">支付申请列表</a>
+				</shiro:hasPermission>
 					<%--</c:if>--%>
 				</shiro:hasPermission>
 
