@@ -574,7 +574,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         return genPaymentOrder(bizPoHeader);
     }
 
-    public Pair<Boolean, String> audit(int id, String currentType, int auditType, String description, CommonProcessEntity cureentProcessEntity) {
+    public Pair<Boolean, String> audit(int id, String currentType, int auditType, String description, CommonProcessEntity cureentProcessEntity, String fromPage) {
         if (cureentProcessEntity == null) {
             return Pair.of(Boolean.FALSE, "操作失败,当前订单无审核状态!");
         }
@@ -584,7 +584,13 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             return Pair.of(Boolean.FALSE,  "操作失败,当前审核状态异常!");
         }
 
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = new PurchaseOrderProcessConfig();
+
+        if ("orderHeader".equals(fromPage)) {
+            //purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG_FOR_ORDER_HEADER.get();
+        } else {
+            purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+        }
         // 当前流程
         PurchaseOrderProcessConfig.PurchaseOrderProcess currentProcess = purchaseOrderProcessConfig.getProcessMap().get(Integer.valueOf(currentType));
         // 下一流程
@@ -680,10 +686,10 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> auditPo(int id, String currentType, int auditType, String description) {
+    public Pair<Boolean, String> auditPo(int id, String currentType, int auditType, String description, String fromPage) {
         BizPoHeader bizPoHeader = this.get(id);
         CommonProcessEntity cureentProcessEntity = bizPoHeader.getCommonProcess();
-        return audit(id, currentType, auditType, description, cureentProcessEntity);
+        return audit(id, currentType, auditType, description, cureentProcessEntity, fromPage);
     }
 
     /**
@@ -860,7 +866,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
         }
         this.updateProcessToInit(bizPoHeader);
-        auditPo(id, String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId()), auditType, desc);
+        String fromPage = null;
+        auditPo(id, String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId()), auditType, desc, fromPage);
         return Pair.of(Boolean.TRUE,   "操作成功!");
     }
 

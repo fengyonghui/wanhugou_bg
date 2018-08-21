@@ -290,7 +290,7 @@
             $.ajax({
                 url: '${ctx}/biz/po/bizPoHeader/audit',
                 contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "fromPage": "requestHeader"},
                 type: 'get',
                 success: function (result) {
                     result = JSON.parse(result);

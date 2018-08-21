@@ -343,7 +343,7 @@ public class BizOrderHeaderController extends BaseController {
             }
 
             //代采
-            if (bizOrderHeaderTwo != null && StringUtils.isBlank(type)) {
+            if (bizOrderHeaderTwo != null && BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
                 if (bizOrderHeaderTwo.getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
                     //经销店
                     Office office = officeService.get(bizOrderHeader.getCustomer().getId());

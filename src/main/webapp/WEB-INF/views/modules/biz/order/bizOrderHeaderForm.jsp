@@ -1003,7 +1003,7 @@
                 <fmt:formatNumber type="number" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" pattern="0.00"/>
                 <%--<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">--%>
             </div>
-        </div
+        </div>
     </c:if>
         <div class="control-group">
             <label class="control-label">发票状态：</label>
