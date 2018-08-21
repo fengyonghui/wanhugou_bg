@@ -666,14 +666,11 @@
                             jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
                             return false;
                         }
-                        if (obj == "DO") {
+                        if (obj == "DO" || obj == "SO") {
                             audit(1, f.description);
                         }
                         if (obj == "PO") {
                             poAudit(1,f.description);
-                        }
-                        if (obj == "SO") {
-                            audit(1,f.description);
                         }
                         return true;
                     };
@@ -695,7 +692,7 @@
                             jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
                             return false;
                         }
-                        if (obj == "DO") {
+                        if (obj == "DO" || obj == "SO") {
                             audit(2, f.description);
                         }
                         if (obj == "PO") {
@@ -715,10 +712,15 @@
         function audit(auditType, description) {
             var id = $("#id").val();
             var currentType = $("#currentType").val();
+            var suplys = $("#suplys").val();
+            var orderType = 0;
+            if (suplys == 0 || suplys == 721) {
+                orderType = 1;
+            }
             $.ajax({
                 url: '${ctx}/biz/order/bizOrderHeader/audit',
                 contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "orderType": orderType},
                 type: 'get',
                 success: function (result) {
                     if(result == 'ok') {
@@ -889,6 +891,7 @@
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
     <input type="hidden" name="source" value="${source}"/>
+    <input type="hidden" id="suplys" value="${entity.suplys}"/>
     <input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
     <input type="hidden" value="${entity.bizPoPaymentOrder.id}" id="paymentOrderId"/>
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>

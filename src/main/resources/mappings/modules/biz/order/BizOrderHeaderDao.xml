@@ -337,7 +337,10 @@
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
 		si.item_no AS "orderDetailList.skuInfo.itemNo",
 		pi.vendor_name AS "orderDetailList.vendor.name",
-		SUM(od.suply_id) AS "suplys",
+		(SELECT SUM(bod.suply_id)
+		FROM biz_order_detail bod
+		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
+		WHERE boh.id = a.id) AS "suplys",
 		/*(SELECT SUM(bpd.ord_qty)
 		FROM biz_po_header bph
 		LEFT JOIN biz_po_detail bpd ON bpd.order_id = bph.id

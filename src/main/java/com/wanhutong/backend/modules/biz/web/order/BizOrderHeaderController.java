@@ -255,6 +255,7 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
         model.addAttribute("auditAllStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().getAutProcessId());
         model.addAttribute("auditFithStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getAutProcessId());
+        model.addAttribute("auditStatus",ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getPayProcessId());
 
         return "modules/biz/order/bizOrderHeaderList";
     }
