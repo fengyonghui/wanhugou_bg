@@ -1037,6 +1037,7 @@
                 </div>
             </div>
         </c:if>
+
         <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
             <div class="control-group">
                 <label class="control-label">审核状态：</label>
