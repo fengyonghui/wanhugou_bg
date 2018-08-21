@@ -136,7 +136,7 @@ public class BizStatisticsPlatformController extends BaseController {
             e.printStackTrace();
         }
 
-        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11","13")));
+        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
         request.setAttribute("officeId", officeId);
         request.setAttribute("adminPath", adminPath);
         if (officeId == null || officeId == 0) {
