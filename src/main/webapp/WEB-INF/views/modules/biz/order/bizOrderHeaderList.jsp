@@ -370,6 +370,13 @@
                     </c:if>
 				</shiro:hasPermission>
 			</c:if >
+				<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
+					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+						<a href="${ctx}/biz/order/bizOrderHeader/auditList?id=${orderHeader.id}&type=0">产地直发审核状态</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/auditList?id=${orderHeader.id}&type=1">本地备货审核状态</a>
+						<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">本地备货出库确认</a>
+					</c:if>
+				</shiro:hasPermission>
 
 			<shiro:hasPermission name="biz:po:bizPoHeader:audit">
 				<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">
@@ -461,9 +468,6 @@
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}&statu=${statu}&source=${source}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 						</c:if>
-								<%--<a href="${ctx}/biz/order/bizOrderHeader/auditList?id=${orderHeader.id}&type=0">产地直发审核状态</a>--%>
-								<%--<a href="${ctx}/biz/order/bizOrderHeader/auditList?id=${orderHeader.id}&type=1">本地备货审核状态</a>--%>
-								<%--<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">本地备货出库确认</a>--%>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="biz:order:bizOrderHeader:refund">
 						<!-- 退款增加 -->
