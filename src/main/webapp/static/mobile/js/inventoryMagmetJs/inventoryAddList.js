@@ -162,7 +162,7 @@
                                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
                                     '<li class="mui-table-view-cell">' +
                                     '<div class="mui-input-row inputClassAdd">' +
-                                    '<label>工厂价:</label>' +
+                                    '<label>结算价:</label>' +
                                     '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled>' +
                                     '</div></li></div></div>' +
                                     '<div class="mui-row">' +

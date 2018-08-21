@@ -168,18 +168,20 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         Double valuePrice = 0.0;
 //        List<BizRequestHeader> requestHeaderList = bizInvoice.getRequestHeaderList();
         if (StringUtils.isNotBlank(orderHeaders)) {
+            Integer ordId = 0;
             String[] orders = orderHeaders.split(",");
             for (int a = 0; a < orders.length; a++) {
                 boolean ordFlag = true;
                 String[] oheaders = orders[a].split("#");
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(Integer.parseInt(oheaders[0]));
                 //加入中间表关联关系
-                if (flagInvoceId) {
+                if (flagInvoceId && !ordId.equals(orderHeader.getId())) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                     bizDetailInvoice.setInvoice(bizInvoice);
                     bizDetailInvoice.setOrderHeader(orderHeader);
                     bizDetailInvoiceService.save(bizDetailInvoice);
                 }
+                ordId = orderHeader.getId();
                 String[] odNumArr = oheaders[1].split("\\*");
                 for (int i = 0; i < odNumArr.length; i++) {
                     String[] odArr = odNumArr[i].split("-");
@@ -388,17 +390,19 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
         if (StringUtils.isNotBlank(requestHeaders)) {
             boolean reqFlag = true;
+            Integer reqId = 0;
             String[] requests = requestHeaders.split(",".trim());
             for (int b = 0; b < requests.length; b++) {
                 String[] rheaders = requests[b].split("#".trim());
                 BizRequestHeader requestHeader = bizRequestHeaderService.get(Integer.parseInt(rheaders[0]));
                 //加入中间表关联关系
-                if (flagInvoceId) {
+                if (flagInvoceId && !reqId.equals(requestHeader.getId())) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                     bizDetailInvoice.setInvoice(bizInvoice);
                     bizDetailInvoice.setRequestHeader(requestHeader);
                     bizDetailInvoiceService.save(bizDetailInvoice);
                 }
+                reqId = requestHeader.getId();
                 String[] reNumArr = rheaders[1].split("\\*");
                 for (int i = 0; i < reNumArr.length; i++) {
                     String[] reArr = reNumArr[i].split("-");

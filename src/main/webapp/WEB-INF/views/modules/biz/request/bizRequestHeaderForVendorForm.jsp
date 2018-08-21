@@ -806,7 +806,7 @@
 						<th>商品编码</th>
 						<th>商品货号</th>
 						<%--<th>商品属性</th>--%>
-						<th>工厂价</th>
+						<th>结算价</th>
 							<%--<th>商品类型</th>--%>
 						<th>申报数量</th>
 							<%--<th>已收货数量</th>--%>
@@ -865,7 +865,7 @@
 							<th>商品编码</th>
 							<th>商品货号</th>
 								<%--<th>商品属性</th>--%>
-							<th>工厂价</th>
+							<th>结算价</th>
 								<%--<th>商品类型</th>--%>
 							<th>申报数量</th>
 								<%--<th>已收货数量</th>--%>
@@ -980,7 +980,7 @@
 			<div class="control-group">
 				<label class="control-label">排产状态：</label>
 				<div class="controls">
-					${schedulingType}
+					${schedulingType == null ? "未排产" : schedulingType}
 				</div>
 			</div>
 		</c:if>

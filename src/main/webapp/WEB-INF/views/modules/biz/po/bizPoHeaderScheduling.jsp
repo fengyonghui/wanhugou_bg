@@ -355,7 +355,7 @@
     <input id="deliveryStatus" type="hidden" value="${bizPoHeader.deliveryStatus}"/>
     <c:if test="${bizPoHeader.id!=null}">
         <div class="control-group">
-            <label class="control-label">所属单号：</label>
+            <label class="control-label">订单号/备货单号：</label>
             <div class="controls">
                 <input id="orderNum" readonly="readonly" class="input-xlarge" type='text'/>
             </div>
@@ -388,7 +388,7 @@
                             <th style="display: none">所属单号</th>
                         </c:if>
                         <th>采购数量</th>
-                        <th>工厂价</th>
+                        <th>结算价</th>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -458,7 +458,7 @@
                     <c:if test="${fn:length(bizCompletePalns) > 0}">
                         <tr>
                             <td>
-                                <label>排产履历：</label>
+                                <label>排产记录：</label>
                             </td>
                         </tr>
                         <c:forEach items="${bizCompletePalns}" var="bizCompletePaln" varStatus="stat">
@@ -524,7 +524,7 @@
                             <th>所属单号</th>
                         </c:if>
                         <th>采购数量</th>
-                        <th>工厂价</th>
+                        <th>结算价</th>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -592,7 +592,7 @@
                                         <c:if test="${poDetail.bizSchedulingPlan != null}">
                                             <tr>
                                                 <td>
-                                                    <label>排产履历：</label>
+                                                    <label>排产记录：</label>
                                                 </td>
                                             </tr>
                                             <c:forEach items="${poDetail.bizSchedulingPlan.completePalnList}" var="completePaln">

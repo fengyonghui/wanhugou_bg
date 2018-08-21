@@ -298,10 +298,11 @@
 							<%--<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},this.value,${requestHeader.id})">关闭</a>--%>
 						<%--</c:when>--%>
 					</c:choose>
-
-					<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
-						<a href="#" data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
-					</c:if>
+					<shiro:hasPermission name="biz:requestHeader:pay">
+						<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
+							<a href="#" data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
+						</c:if>
+					</shiro:hasPermission>
 
 				</shiro:hasPermission>
 				<!-- 保证金支付申请 -->

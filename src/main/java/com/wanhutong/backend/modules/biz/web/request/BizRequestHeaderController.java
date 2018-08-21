@@ -556,7 +556,7 @@ public class BizRequestHeaderController extends BaseController {
 								detailListData.add("");
 							}
 							if(detail.getSkuInfo()!=null && detail.getSkuInfo().getSkuPropertyInfos()!=null || detail.getSkuInfo().getBuyPrice()!=null){
-								//商品属性，工厂价
+								//商品属性，结算价
 								detailListData.add(String.valueOf(detail.getSkuInfo().getSkuPropertyInfos()));
 								detailListData.add(String.valueOf(detail.getSkuInfo().getBuyPrice()));
 							}else{
@@ -575,7 +575,7 @@ public class BizRequestHeaderController extends BaseController {
 				}
 			}
 			String[] headers = {"备货单号", "采购中心","期望收货时间", "备货商品数量", "备货商品总价","已收保证金","已到货数量", "备注", "业务状态","下单时间","申请人"};
-			String[] details = {"备货单号", "产品名称", "品牌名称", "商品名称","商品编码", "商品货号", "商品属性", "工厂价", "申报数量","期望收货时间"};
+			String[] details = {"备货单号", "产品名称", "品牌名称", "商品名称","商品编码", "商品货号", "商品属性", "结算价", "申报数量","期望收货时间"};
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
 			eeu.exportExcel(workbook, 0, "备货单数据", headers, data, fileName);

@@ -563,7 +563,7 @@
                 <%--<c:if test="${bizPoHeader.id!=null}">--%>
                     <th>已供货数量</th>
                 <%--</c:if>--%>
-                <th>工厂价</th>
+                <th>结算价</th>
             </tr>
             </thead>
             <tbody id="prodInfo">

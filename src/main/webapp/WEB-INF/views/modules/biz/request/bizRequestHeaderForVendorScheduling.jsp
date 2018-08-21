@@ -536,7 +536,7 @@
 					<c:if test="${fn:length(bizCompletePalns) > 0}">
                         <tr>
                             <td>
-                                <label>排产履历：</label>
+                                <label>排产记录：</label>
                             </td>
                         </tr>
 						<c:forEach items="${bizCompletePalns}" var="bizCompletePaln" varStatus="stat">
@@ -652,7 +652,7 @@
                                         <c:if test="${reqDetail.bizSchedulingPlan != null}">
 											<tr>
 												<td>
-													<label>排产履历：</label>
+													<label>排产记录：</label>
 												</td>
 											</tr>
 											<c:forEach items="${reqDetail.bizSchedulingPlan.completePalnList}" var="completePaln">
