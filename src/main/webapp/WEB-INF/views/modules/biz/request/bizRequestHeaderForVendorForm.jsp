@@ -288,7 +288,7 @@
             var id = $("#poHeaderId").val();
             var currentType = $("#poCurrentType").val();
             $.ajax({
-                url: '${ctx}/biz/po/bizPoHeaderReq/audit',
+                url: '${ctx}/biz/po/bizPoHeader/audit',
                 contentType: 'application/json',
                 data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
                 type: 'get',

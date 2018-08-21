@@ -381,6 +381,13 @@ public class BizOrderHeaderController extends BaseController {
                     PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizOrderHeaderTwo.getBizPoHeader().getCommonProcess().getType()));
                     model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
                 }
+
+                CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+                commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
+                commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+                List<CommonProcessEntity> DoComPList = commonProcessService.findList(commonProcessEntity);
+                request.setAttribute("doComPList", DoComPList);
+
             }
 
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
