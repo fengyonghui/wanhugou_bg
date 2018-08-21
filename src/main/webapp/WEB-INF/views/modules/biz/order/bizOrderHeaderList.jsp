@@ -347,9 +347,6 @@
 			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
 			<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 				<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-                    <c:if test="${orderHeader.commonProcess == null }">
-                        <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
-                    </c:if>
 					<!-- 100%首付款审核 -->
 					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">
 						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum)  && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
@@ -357,10 +354,6 @@
 							}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
 						</c:if>
-						<%--<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.) && orderHeader.commonProcess..name != '驳回' && orderHeader.commonProcess..code != auditAllStatus--%>
-							 <%--&& orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">--%>
-							<%--<a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}"></a>--%>
-						<%--</c:if>--%>
 					</c:if>
 
 					<!-- 20%首付款审核 -->
