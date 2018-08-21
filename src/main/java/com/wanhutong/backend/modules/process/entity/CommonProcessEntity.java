@@ -39,6 +39,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	private Integer current;
 
 	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess;
+	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderForOrderHeaderProcess;
 	private RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess;
 	private PaymentOrderProcessConfig.Process paymentOrderProcess;
 	private VendorRequestOrderProcessConfig.RequestOrderProcess vendRequestOrderProcess;
@@ -160,6 +161,10 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	public PurchaseOrderProcessConfig.PurchaseOrderProcess getPurchaseOrderProcess() {
 		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
+
+//	public PurchaseOrderProcessConfig.PurchaseOrderProcess getPurchaseOrderForOrderHeaderProcess() {
+//		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG_FOR_ORDER_HEADER.get().getProcessMap().get(Integer.valueOf(type));
+//	}
 
 	public PaymentOrderProcessConfig.Process getPaymentOrderProcess() {
 		return ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));

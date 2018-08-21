@@ -223,6 +223,7 @@
 		</c:if>
 		<th>发票状态</th>
 		<th>业务状态</th>
+		<th>审核状态</th>
 		<th>订单来源</th>
 		<th>创建人</th>
 		<th>创建时间</th>
@@ -332,6 +333,31 @@
 					</c:otherwise>
 				</c:choose>
 			</td>
+
+			<td>
+				<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state}">
+					待客户专员审核
+				</c:if>
+				<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state
+								&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state
+								&& orderHeader.bizStatus < OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state
+								}">
+					<c:if test="${orderHeader.payProportion !=null
+									&& orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state
+									&& orderHeader.commonProcess.doOrderHeaderProcessAll.name != '审核完成'}">
+						${orderHeader.commonProcess.doOrderHeaderProcessAll.name}
+					</c:if>
+					<c:if test="${orderHeader.payProportion !=null
+									&& orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state
+									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '审核完成'}">
+						${orderHeader.commonProcess.doOrderHeaderProcessFifth.name}
+					</c:if>
+				</c:if>
+				<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">
+					${orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name}
+				</c:if>
+			</td>
+
 			<td>
 					${orderHeader.platformInfo.name}
 			</td>
@@ -377,6 +403,8 @@
 						</c:if>
 						<c:if test="${orderHeader.suplys != 0 }">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
+						</c:if>
+						<c:if test="${orderHeader.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}">
 							<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>
 						</c:if>
 					</c:if>
