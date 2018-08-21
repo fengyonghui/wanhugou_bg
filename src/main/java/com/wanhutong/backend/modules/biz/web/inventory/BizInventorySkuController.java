@@ -201,6 +201,32 @@ public class BizInventorySkuController extends BaseController {
         return flag;
     }
 
+    @ResponseBody
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping(value = "findInvSkuV2")
+    public String findInvSkuV2(int invId, int skuId, int count, int skuType) {
+        String flag = "false";
+
+        // 仓库
+        BizInventoryInfo inventoryInfo = bizInventoryInfoService.get(invId);
+        // SKU
+        BizSkuInfo bizSkuInfo = bizSkuInfoService.get(skuId);
+
+        // 仓库内数量
+        BizInventorySku bizInventorySku = new BizInventorySku();
+        bizInventorySku.setInvInfo(inventoryInfo);
+        bizInventorySku.setSkuInfo(bizSkuInfo);
+        bizInventorySku.setSkuType(skuType);
+        if (InventorySkuTypeEnum.VENDOR_TYPE.getType().equals(skuType)) {
+            bizInventorySku.setVendor(bizSkuInfo.getProductInfo().getOffice());
+        }
+        List<BizInventorySku> invSkuList = bizInventorySkuService.findList(bizInventorySku);
+        if (invSkuList != null && invSkuList.size() >= count) {
+            return "true";
+        }
+        return flag;
+    }
+
     @RequiresPermissions("biz:inventory:bizInventorySku:view")
     @RequestMapping(value = "form")
     public String form(BizInventorySku bizInventorySku, HttpServletRequest request, Model model) {
