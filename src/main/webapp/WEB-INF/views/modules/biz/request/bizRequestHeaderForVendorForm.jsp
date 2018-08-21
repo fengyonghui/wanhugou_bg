@@ -697,7 +697,7 @@
 		</div>
 
 		</c:if>
-			<div class="control-group">
+		<div class="control-group">
 			<label class="control-label">备货商品：</label>
 			<div class="controls">
 			<table id="contentTable" style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
@@ -709,7 +709,6 @@
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<%--<th>商品属性</th>--%>
 					<th>价格</th>
 					<th>申报数量</th>
 
@@ -724,18 +723,7 @@
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 						<th>已收货数量</th>
 					</c:if>
-					<%--<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">--%>
-						<%--&lt;%&ndash;该备货单已生成采购单就显示&ndash;%&gt;--%>
-						<%--<c:if test="${empty bizRequestHeader.poSource}">--%>
-							<%--<th>已生成的采购单</th>--%>
-							<%--<th>采购数量</th>--%>
-						<%--</c:if>--%>
-					<%--</c:if>--%>
-                    <c:if test="${entity.str == 'audit' && entity.commonProcess.type == defaultProcessId}">
-                        <c:forEach items="${centList}" var="center">
-                            <th>${center.name}</th>
-                        </c:forEach>
-                    </c:if>
+
 					<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 						<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay'}">
 							<th>操作</th>
@@ -756,21 +744,7 @@
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
-							<%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
 							<td style="white-space: nowrap">
-								<%--<c:choose>--%>
-									<%--<c:when test="${flag &&entity.str!='detail'&& entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">--%>
-									<%--<span style="float: left">--%>
-										<%--<input type="text"  class="input-mini" id="skuPrice" value="${reqDetail.unitPrice}"/>--%>
-										<%--<a href="#"  id="updateMoney" class="icon-ok-circle"></a>--%>
-									<%--</span>--%>
-										<%--<input type="hidden"  id="detailId" value="${reqDetail.id}"/>--%>
-									<%--</c:when>--%>
-									<%--<c:otherwise>--%>
-										<%--${reqDetail.unitPrice}--%>
-									<%--</c:otherwise>--%>
-								<%--</c:choose>--%>
-
 									${reqDetail.unitPrice}
 							</td>
 							<td>
@@ -795,18 +769,11 @@
 							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 								<td>${reqDetail.recvQty}</td>
 							</c:if>
-                            <c:if test="${entity.str == 'audit' && entity.commonProcess.type == defaultProcessId}">
-                                <c:forEach items="${reqDetail.invSkuMap}" var="stockQty">
-                                    <td>${stockQty.value}</td>
-                                </c:forEach>
-                            </c:if>
-							<%--<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">--%>
-								<%--&lt;%&ndash;该备货单已生成采购单就显示&ndash;%&gt;--%>
-								<%--<c:if test="${reqDetail.bizPoHeader!=null}">--%>
-									<%--<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}">${reqDetail.bizPoHeader.orderNum}</a></td>--%>
-									<%--<td>${reqDetail.reqQty}</td>--%>
-								<%--</c:if>--%>
-							<%--</c:if>--%>
+                            <%--<c:if test="${entity.str == 'audit' && entity.commonProcess.type == defaultProcessId}">--%>
+                                <%--<c:forEach items="${reqDetail.invSkuMap}" var="stockQty">--%>
+                                    <%--<td>${stockQty.value}</td>--%>
+                                <%--</c:forEach>--%>
+                            <%--</c:if>--%>
 
 							<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 								<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay' }">
@@ -854,6 +821,66 @@
 			</div>
 
 		</div>
+		<c:if test="${entity.str == 'audit' && entity.commonProcess.type == defaultProcessId}">
+		<div class="control-group">
+			<label class="control-label">商品库存：</label>
+			<div class="controls">
+				<table id="contentTable" style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
+					<thead>
+					<tr>
+						<th>库存类型</th>
+						<th>仓库名称</th>
+						<th>采购中心</th>
+						<th>商品名称</th>
+						<th>商品货号</th>
+						<th>商品数量</th>
+					</tr>
+					</thead>
+					<tbody>
+					<c:if test="${inventorySkuList!=null}">
+						<c:forEach items="${inventorySkuList}" var="bizInventorySku" varStatus="reqStatus">
+							<tr>
+								<td>${fns:getDictLabel(bizInventorySku.invType, 'inv_type', '未知状态')}</td>
+								<td>${bizInventorySku.invInfo.name}</td>
+								<td><font color="red">${bizInventorySku.customer.name}</font></td>
+								<td>${bizInventorySku.skuInfo.name}</td>
+								<td><font color="red">${bizInventorySku.skuInfo.itemNo}</font></td>
+								<td><font color="red">${bizInventorySku.stockQty}</font></td>
+							</tr>
+						</c:forEach>
+						<input id="aaId" value="${aa}" type="hidden"/>
+					</c:if>
+					</tbody>
+				</table>
+				<c:if test="${entity.str!='detail' && entity.str!='audit'}">
+					<table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-bordered table-condensed">
+						<thead>
+						<tr>
+							<th>产品图片</th>
+								<%--<th>产品名称</th>--%>
+								<%--<th>产品分类</th>--%>
+							<th>品牌名称</th>
+							<th>供应商</th>
+							<th>商品名称</th>
+							<th>商品编码</th>
+							<th>商品货号</th>
+								<%--<th>商品属性</th>--%>
+							<th>工厂价</th>
+								<%--<th>商品类型</th>--%>
+							<th>申报数量</th>
+								<%--<th>已收货数量</th>--%>
+							<th>操作</th>
+						</tr>
+						</thead>
+						<tbody id="prodInfo2">
+
+						</tbody>
+					</table>
+				</c:if>
+			</div>
+
+		</div>
+		</c:if>
 		<c:if test="${entity.str eq 'detail' && entity.fromType eq ReqFromTypeEnum.VENDOR_TYPE.type}">
 			<div>
 				<label class="control-label">销售单号</label>
