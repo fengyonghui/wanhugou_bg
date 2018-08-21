@@ -377,11 +377,6 @@ public class BizOrderHeaderController extends BaseController {
                     model.addAttribute("orderHeaderProcess", orderHeaderProcess);
                 }
 
-                if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() != null && bizOrderHeaderTwo.getBizPoHeader().getCommonProcess() != null) {
-                    PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizOrderHeaderTwo.getBizPoHeader().getCommonProcess().getType()));
-                    model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
-                }
-
                 CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
                 commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
                 commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
@@ -494,6 +489,11 @@ public class BizOrderHeaderController extends BaseController {
             if (imgList != null && !imgList.isEmpty()) {
                 model.addAttribute("photosMap", photosMap);
             }
+        }
+
+        if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() != null && bizOrderHeaderTwo.getBizPoHeader().getCommonProcess() != null) {
+            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizOrderHeaderTwo.getBizPoHeader().getCommonProcess().getType()));
+            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
         if ("audit".equals(str) && ("0".equals(type) || "1".equals(type))) {
