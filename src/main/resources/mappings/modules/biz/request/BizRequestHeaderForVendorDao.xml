@@ -52,7 +52,8 @@
 		cp.biz_status AS "bizPoHeader.commonProcess.bizStatus",
 		cp.processor AS "bizPoHeader.commonProcess.processor",
 		cp.description AS "bizPoHeader.commonProcess.description",
-		cp.type AS "bizPoHeader.commonProcess.type"
+		cp.type AS "bizPoHeader.commonProcess.type",
+		bsp.po_sch_type AS "bizPoHeader.poSchType"
 	</sql>
 	
 	<sql id="bizRequestHeaderJoins">
@@ -68,6 +69,7 @@
 		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 2
 		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
 		LEFT JOIN common_process cp ON cp.id = bph.process_id
+		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
 	</sql>
     
 	<select id="get" resultType="BizRequestHeader">
@@ -104,11 +106,11 @@
 			LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bpd.id AND bsp.status=1 AND bsp.object_name = 'biz_po_detail'
 			LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
 			WHERE bph.status = 1
-			AND bph.id = bpor.po_id) AS "bizPoHeader.totalSchedulingDetailNum"*/
+			AND bph.id = bpor.po_id) AS "bizPoHeader.totalSchedulingDetailNum"
 		,(SELECT bsp.po_sch_type FROM biz_po_header bph
 		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id
 		AND bsp.object_name='biz_po_header' AND bsp.status = 1
-		WHERE bph.id = bpor.po_id) AS "bizPoHeader.poSchType"
+		WHERE bph.id = bpor.po_id) AS "bizPoHeader.poSchType"*/
 		FROM biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
 		LEFT JOIN biz_sku_info bsi on brd.sku_id = bsi.id

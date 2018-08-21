@@ -1000,9 +1000,10 @@ public class BizPoHeaderController extends BaseController {
         List<Role> roleList = UserUtils.getUser().getRoleList();
         if (roleList != null) {
             for (Role role : roleList) {
-                String roleName = role.getName();
+                String roleName = role.getEnname();
                 if (RoleEnNameEnum.SUPPLY_CHAIN.getDesc().equals(roleName)) {
                     roleFlag = true;
+                    break;
                 }
             }
         }

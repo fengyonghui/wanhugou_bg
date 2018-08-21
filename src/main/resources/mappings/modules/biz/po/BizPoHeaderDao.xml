@@ -48,7 +48,8 @@
 		bvi.vend_name AS "vendOffice.bizVendInfo.vendName",
 		bvi.bank_name AS "vendOffice.bizVendInfo.bankName",
 		bvi.payee AS "vendOffice.bizVendInfo.payee",
-		bslp.remark AS "bizSchedulingPlan.remark"
+		bslp.remark AS "bizSchedulingPlan.remark",
+		bslp.po_sch_type AS "poSchType"
 	</sql>
 
 	<sql id="bizPoHeaderJoins">
@@ -89,12 +90,12 @@
 				LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bpd.id AND bsp.status=1 AND bsp.object_name = 'biz_po_detail'
 				LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
 				WHERE bph.status = 1
-				AND bph.id = a.id) AS "totalSchedulingDetailNum",*/
+				AND bph.id = a.id) AS "totalSchedulingDetailNum",
 				,(SELECT bsp.po_sch_type FROM biz_po_header bph
 				LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id
 				AND bsp.object_name='biz_po_header' AND bsp.status = 1
-				WHERE bph.id = a.id) AS "poSchType",
-				rh.id AS "bizRequestHeader.id",
+				WHERE bph.id = a.id) AS "poSchType",*/
+				,rh.id AS "bizRequestHeader.id",
 				rh.req_no AS "bizRequestHeader.reqNo",
 				rh.biz_status AS "bizRequestHeader.bizStatus",
                 rh.create_time AS "bizRequestHeader.createDate",
@@ -128,6 +129,9 @@
 			</if>
 			<if test="bizOrderHeader != null and bizOrderHeader.bizStatus != null">
 				AND oh.biz_status = #{bizOrderHeader.bizStatus}
+			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.id != null">
+				AND rh.id = #{bizRequestHeader.id}
 			</if>
 			<if test="bizRequestHeader != null and bizRequestHeader.bizStatus != null">
 				AND rh.biz_status = #{bizRequestHeader.bizStatus}
