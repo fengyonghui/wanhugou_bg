@@ -357,7 +357,7 @@
 					</c:if>
 				</shiro:hasPermission>
 
-					<c:if test="${requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
+					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审批完成'}">
 						<%--<c:if test="${requestHeader.bizPoHeader.totalOrdQty != null && requestHeader.bizPoHeader.totalOrdQty != 0}">--%>
 							<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>
