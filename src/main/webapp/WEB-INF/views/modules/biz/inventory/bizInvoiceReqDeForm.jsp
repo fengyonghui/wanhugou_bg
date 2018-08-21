@@ -37,22 +37,20 @@
                     var tt="";
                     var total = 0;
                     var str = $("#str").val();
-                    alert(str);
                     if (str == 'audit') {
-                        $('#prodInfo3').find("tr").each(function(i) {
-                            var t= $(this).attr("id");
+                        $("td[name='requestNo']").each(function(i) {
+                            var t= $(this).parent().attr("id");
                             var detail="";
                             var num ="";
                             var sObj= $("#prodInfo3").find("input[title='sent_"+t+"']");
                             sObj.each(function (index) {
                                 total+= parseInt($(this).val());
-                            })
+                            });
                             $("#prodInfo3").find("input[title='details_"+t+"']").each(function (i) {
                                 detail+=$(this).val()+"-"+sObj[i].value+"*";
 
                             });
                             tt+=t+"#"+detail+",";
-                            alert(tt);
 
                         });
                         tt=tt.substring(0,tt.length-1);
@@ -394,7 +392,9 @@
                             <c:set var="flag" value="true"></c:set>
                                 <c:forEach items="${requestHeader.requestDetailList}" var="requestDetail" varStatus="index">
 									<tr id="${requestHeader.id}">
-										<td><a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">${requestHeader.reqNo}</a></td>
+										<c:if test="${flag}">
+											<td name="requestNo" rowspan="${fn:length(requestHeader.requestDetailList)}"><a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">${requestHeader.reqNo}</a></td>
+										</c:if>
 										<td>${requestHeader.fromOffice.name}</td>
 										<td>${fns:getDictLabel(requestHeader.bizStatus,"biz_req_status",'' )}</td>
 										<td>${requestDetail.skuInfo.name}</td>

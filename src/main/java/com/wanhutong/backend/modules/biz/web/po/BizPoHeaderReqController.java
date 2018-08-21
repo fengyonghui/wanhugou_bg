@@ -557,8 +557,8 @@ public class BizPoHeaderReqController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "audit")
     @ResponseBody
-    public String audit(HttpServletRequest request, int id, String currentType, int auditType, String description) {
-        Pair<Boolean, String> result = bizPoHeaderService.auditPo(id, currentType, auditType, description);
+    public String audit(HttpServletRequest request, int id, String currentType, int auditType, String description, String fromPage) {
+        Pair<Boolean, String> result = bizPoHeaderService.auditPo(id, currentType, auditType, description, fromPage);
         if (result.getLeft()) {
             return JsonUtil.generateData(result, request.getParameter("callback"));
         }
@@ -833,7 +833,7 @@ public class BizPoHeaderReqController extends BaseController {
                         headerListData.add("");
                         //已供货数量
                         headerListData.add("");
-                        //工厂价
+                        //结算价
                         headerListData.add("");
                         data.add(headerListData);
                     } else {
@@ -929,14 +929,14 @@ public class BizPoHeaderReqController extends BaseController {
                             headerListData.add(String.valueOf(poDetail.getOrdQty()));
                             //已供货数量
                             headerListData.add(String.valueOf(poDetail.getSendQty()));
-                            //工厂价
+                            //结算价
                             headerListData.add(String.valueOf(poDetail.getSkuInfo().getBuyPrice()));
                             data.add(headerListData);
                         }
                     }
                 }
             }
-            String[] headers = {"采购单号", "供应商", "采购总价", "交易费用","应付金额", "累计支付金额", "支付比例","订单状态","审核状态","创建时间","所属单号","商品名称","商品货号","采购数量","已供货数量","工厂价"};
+            String[] headers = {"采购单号", "供应商", "采购总价", "交易费用","应付金额", "累计支付金额", "支付比例","订单状态","审核状态","创建时间","所属单号","商品名称","商品货号","采购数量","已供货数量","结算价"};
             ExportExcelUtils eeu = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             eeu.exportExcel(workbook, 0, "采购单数据", headers, data, fileName);

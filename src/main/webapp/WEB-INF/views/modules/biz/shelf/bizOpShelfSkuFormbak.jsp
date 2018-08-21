@@ -199,7 +199,7 @@
 									<th>上架人：</th>
 							</c:if>
 							<th>上架数量(个)：</th>
-							<th>工厂价(元)：</th>
+							<th>结算价(元)：</th>
 							<th>现价(元)：(销售单价)</th>
 							<th>最低销售数量(个)：(该单价所对应的)</th>
 							<th>最高销售数量(个)：(该单价所对应的，9999：不限制)</th>
@@ -292,7 +292,7 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">工厂价(元)：</label>
+			<label class="control-label">结算价(元)：</label>
 			<div class="controls">
 				<form:input path="orgPrice" htmlEscape="false" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>

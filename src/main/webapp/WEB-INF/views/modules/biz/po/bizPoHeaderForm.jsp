@@ -528,7 +528,7 @@
             <c:if test="${bizPoHeader.id!=null}">
                 <th>已供货数量</th>
             </c:if>
-            <th>工厂价</th>
+            <th>结算价</th>
 
 
         </tr>
@@ -810,7 +810,7 @@
         $.ajax({
             url: '${ctx}/biz/po/bizPoHeader/audit',
             contentType: 'application/json',
-            data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+            data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "fromPage": "poHeader"},
             type: 'get',
             success: function (result) {
                 result = JSON.parse(result);

@@ -21,9 +21,9 @@ public class BizSkuViewLog extends DataEntity<BizSkuViewLog> {
 	private static final long serialVersionUID = 1L;
 	private BizSkuInfo skuInfo;		// sku商品编号
 	private String itemNo;		// sku商品货号
-	private Double frontBuyPrice;		// 商品修改前工厂价格
+	private Double frontBuyPrice;		// 商品修改前结算价格
 	private Double changePrice;		//价格变化
-	private Double afterBuyPrice;		// 商品修改后工厂价格
+	private Double afterBuyPrice;		// 商品修改后结算价格
 	
 	public BizSkuViewLog() {
 		super();

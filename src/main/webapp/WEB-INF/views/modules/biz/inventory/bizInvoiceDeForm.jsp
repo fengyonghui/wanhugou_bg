@@ -38,8 +38,8 @@
                     var flag = false;
                     var total = 0;
                     if (str == 'audit') {
-                        $('#prodInfo3').find("tr").each(function (i) {
-                            var t = $(this).attr("id");
+                        $("td[name='orderNo']").each(function (i) {
+                            var t = $(this).parent().attr("id");
                             var detail = "";
                             var num = "";
                             var sObj = $("#prodInfo3").find("input[title='sent_" + t + "']");
@@ -65,7 +65,6 @@
                                 });
                             }
                             tt += t + "#" + detail + ",";
-                            alert(tt);
                         });
                         tt = tt.substring(0, tt.length - 1);
                     }
@@ -485,9 +484,11 @@
                 <c:set var="flag" value="true"></c:set>
                 <c:forEach items="${orderDetailList}" var="orderDetail">
                     <tr id="${orderDetail.orderHeader.id}">
-                        <td rowspan=""><a
-                                href="${ctx}/biz/order/bizOrderHeader/form?id=${orderDetail.orderHeader.id}&orderDetails=details">${orderDetail.orderHeader.orderNum}</a>
-                        </td>
+                        <c:if test="${flag}">
+                            <td name="orderNo" rowspan="${fn:length(orderDetailList)}"><a
+                                    href="${ctx}/biz/order/bizOrderHeader/form?id=${orderDetail.orderHeader.id}&orderDetails=details">${orderDetail.orderHeader.orderNum}</a>
+                            </td>
+                        </c:if>
                         <td rowspan="">${orderDetail.cust.name}</td>
                         <td rowspan="">${fns:getDictLabel(orderDetail.orderHeader.bizStatus,"biz_order_status",'' )}</td>
                         <td>${orderDetail.skuInfo.name}</td>

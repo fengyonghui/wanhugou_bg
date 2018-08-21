@@ -298,10 +298,11 @@
 							<%--<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},this.value,${requestHeader.id})">关闭</a>--%>
 						<%--</c:when>--%>
 					</c:choose>
-
-					<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
-						<a href="#" data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
-					</c:if>
+					<shiro:hasPermission name="biz:requestHeader:pay">
+						<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
+							<a href="#" data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
+						</c:if>
+					</shiro:hasPermission>
 
 				</shiro:hasPermission>
 				<!-- 保证金支付申请 -->
@@ -356,7 +357,7 @@
 					</c:if>
 				</shiro:hasPermission>
 
-					<c:if test="${requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
+					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审批完成'}">
 						<%--<c:if test="${requestHeader.bizPoHeader.totalOrdQty != null && requestHeader.bizPoHeader.totalOrdQty != 0}">--%>
 							<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>

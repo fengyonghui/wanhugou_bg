@@ -343,7 +343,7 @@ public class BizOrderHeaderController extends BaseController {
             }
 
             //代采
-            if (bizOrderHeaderTwo != null && StringUtils.isBlank(type)) {
+            if (bizOrderHeaderTwo != null && BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
                 if (bizOrderHeaderTwo.getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
                     //经销店
                     Office office = officeService.get(bizOrderHeader.getCustomer().getId());
@@ -381,6 +381,13 @@ public class BizOrderHeaderController extends BaseController {
                     PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizOrderHeaderTwo.getBizPoHeader().getCommonProcess().getType()));
                     model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
                 }
+
+                CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+                commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
+                commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+                List<CommonProcessEntity> DoComPList = commonProcessService.findList(commonProcessEntity);
+                request.setAttribute("doComPList", DoComPList);
+
             }
 
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
@@ -1255,7 +1262,7 @@ public class BizOrderHeaderController extends BaseController {
             }
             String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品工厂总价", "调整金额", "运费",
                     "应付金额", "已收货款", "尾款信息", "服务费", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
-            String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "商品工厂价", "采购数量", "商品总价"};
+            String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "商品结算价", "采购数量", "商品总价"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             eeu.exportExcel(workbook, 0, "订单数据", headers, data, fileName);

@@ -747,9 +747,9 @@
             var id = $("#poHeaderId").val();
             var currentType = $("#poCurrentType").val();
             $.ajax({
-                url: '${ctx}/biz/po/bizPoHeaderReq/audit',
+                url: '${ctx}/biz/po/bizPoHeader/audit',
                 contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "fromPage": "orderHeader"},
                 type: 'get',
                 success: function (result) {
                     result = JSON.parse(result);
@@ -1003,7 +1003,7 @@
                 <fmt:formatNumber type="number" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" pattern="0.00"/>
                 <%--<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">--%>
             </div>
-        </div
+        </div>
     </c:if>
         <div class="control-group">
             <label class="control-label">发票状态：</label>
@@ -1511,6 +1511,44 @@
             </div>
         </c:if>
 
+        <c:if test="${fn:length(doComPList) > 0}">
+            <div class="control-group">
+                <label class="control-label">审核流程：</label>
+                <div class="controls help_wrap">
+                    <div class="help_step_box fa">
+                        <c:forEach items="${doComPList}" var="v" varStatus="stat">
+                            <c:if test="${!stat.last}">
+                                <div class="help_step_item">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
+                                    处理人:${v.user.name}<br/><br/>
+                                    批注:${v.description}<br/><br/>
+                                    状态:
+                                    <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <div class="help_step_right"></div>
+                                </div>
+                            </c:if>
+                            <c:if test="${stat.last && entity.bizPoHeader.commonProcessList == null}">
+                                <div class="help_step_item help_step_set">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
+                                    <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
+                                        当前状态:${v.doOrderHeaderProcessFifth.name}
+                                            ${v.user.name}<br/>
+                                    </c:if>
+                                    <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">
+                                        当前状态:${v.doOrderHeaderProcessAll.name}
+                                            ${v.user.name}<br/>
+                                    </c:if>
+                                    <div class="help_step_right"></div>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+                    </div>
+                </div>
+            </div>
+        </c:if>
+
         <c:if test="${statu != '' && statu =='unline'}">
             <div class="control-group">
                 <label class="control-label">支付信息:</label>
@@ -1657,15 +1695,15 @@
             <div class="form-actions">
                 <!-- 一单到底订单审核 -->
                 <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-                    <c:if test="${entity.str == 'audit' && type != 0 && type != 1}">
-                        <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
-                            <c:if test="${entity.bizPoHeader.commonProcessList == null}">
-                                <input id="btnSubmit" type="button" onclick="checkPass('DO')" class="btn btn-primary"
-                                       value="审核通过"/>
-                                <input id="btnSubmit" type="button" onclick="checkReject('DO')" class="btn btn-primary"
-                                       value="审核驳回"/>
-                            </c:if>
+                    <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
+                        <c:if test="${entity.bizPoHeader.commonProcessList == null}">
+                            <input id="btnSubmit" type="button" onclick="checkPass('DO')" class="btn btn-primary"
+                                   value="审核通过"/>
+                            <input id="btnSubmit" type="button" onclick="checkReject('DO')" class="btn btn-primary"
+                                   value="审核驳回"/>
                         </c:if>
+                    </c:if>
+                    <c:if test="${entity.str == 'audit' && type != 0 && type != 1}">
                         <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
                             <c:if test="${entity.bizPoHeader.commonProcessList == null}">
                                 <input id="btnSubmit" type="button" onclick="checkPass('SO')" class="btn btn-primary"
@@ -1702,9 +1740,6 @@
                         </c:if>
                     </shiro:hasPermission>
 
-
-
-
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails && entity.str!='audit'}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
                         <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
@@ -1737,7 +1772,7 @@
         <th>商品名称</th>
         <th>商品编号</th>
         <th>商品货号</th>
-        <th>已生成的采购单</th>
+        <%--<th>已生成的采购单</th>--%>
         <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
             <th>商品出厂价</th>
         </c:if>
@@ -1752,8 +1787,10 @@
         </c:if>
         <th>创建时间</th>
         <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <th>操作</th>
+            <c:if test="${entity.str != 'audit'}">
+                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                    <th>操作</th>
+                </c:if>
             </c:if>
         </shiro:hasPermission>
     </tr>
@@ -1790,9 +1827,9 @@
             <td>
                 ${bizOrderDetail.skuInfo.itemNo}
             </td>
-            <td>
-                <a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>
-            </td>
+            <%--<td>--%>
+                <%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>--%>
+            <%--</td>--%>
             <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
                 <td>
                         ${bizOrderDetail.buyPrice}
@@ -1827,26 +1864,31 @@
                 <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
             </td>
             <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
-                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                    <td>
-                        <c:if test="${empty bizOrderHeader.clientModify}">
-                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}">修改</a>
-                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}"
-                               onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
-                        </c:if>
-                        <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
-                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">修改</a>
-                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}"
-                               onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
-                        </c:if>
-                    </td>
+                <c:if test="${entity.str != 'audit'}">
+                    <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                        <td>
+                            <c:if test="${empty bizOrderHeader.clientModify}">
+                                <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}">修改</a>
+                                <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}"
+                                   onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+                            </c:if>
+                            <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
+                                <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">修改</a>
+                                <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}"
+                                   onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+                            </c:if>
+                        </td>
+                    </c:if>
                 </c:if>
             </shiro:hasPermission>
         </tr>
     </c:forEach>
     </tbody>
 </table>
+
+
 <div class="form-actions">
+    <c:if test="${entity.str != 'audit'}">
     <c:if test="${empty entity.orderNoEditable}">
         <c:if test="${bizOrderHeader.id!=null}">
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
@@ -1869,7 +1911,9 @@
             </c:if>
         </c:if>
     </c:if>
+    </c:if>
 </div>
+
 <c:if test="${bizOrderHeader.flag=='check_pending'}">
     <div class="form-actions">
         <shiro:hasPermission name="biz:order:bizOrderHeader:edit">

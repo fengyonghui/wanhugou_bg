@@ -133,7 +133,7 @@
 			</div>--%>
 		</div>
 		<div class="control-group">
-			<label class="control-label">工厂价格：</label>
+			<label class="control-label">结算价格：</label>
 			<div class="controls">
 				<form:input path="buyPrice"  htmlEscape="false" maxlength="20" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
