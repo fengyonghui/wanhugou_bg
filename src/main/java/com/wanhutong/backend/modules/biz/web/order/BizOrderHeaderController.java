@@ -843,57 +843,62 @@ public class BizOrderHeaderController extends BaseController {
                         bizOrderStatusService.saveOrderStatus(order);
                     }
                 }
-
                 if ("ok".equals(commis)) {
-                    JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
-                    JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
+                    if(BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
+                        Integer processId = 0;
+                        BizOrderHeader orderheader = bizOrderHeaderService.get(bizOrderHeader.getId());
+                        processId = bizOrderHeaderService.saveCommonProcess(orderheader);
+                        bizOrderHeaderService.updateProcessId(orderheader.getId(),processId);
+                    } else {
+                        JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
+                        JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
 
-                    // 产地直发
-                    CommonProcessEntity originEntity = new CommonProcessEntity();
-                    originEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
-                    originEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
-                    List<CommonProcessEntity> originList = commonProcessService.findList(originEntity);
-                    if (CollectionUtils.isEmpty(originList)) {
-                        originEntity.setCurrent(1);
-                        switch (orderPayProportionStatusEnum) {
-                            case ZERO:
-                                originEntity.setType(String.valueOf(originConfig.getZeroDefaultProcessId()));
-                                break;
-                            case FIFTH:
-                                originEntity.setType(String.valueOf(originConfig.getFifthDefaultProcessId()));
-                                break;
-                            case ALL:
-                                originEntity.setType(String.valueOf(originConfig.getAllDefaultProcessId()));
-                                break;
-                            default:
-                                break;
+                        // 产地直发
+                        CommonProcessEntity originEntity = new CommonProcessEntity();
+                        originEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
+                        originEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
+                        List<CommonProcessEntity> originList = commonProcessService.findList(originEntity);
+                        if (CollectionUtils.isEmpty(originList)) {
+                            originEntity.setCurrent(1);
+                            switch (orderPayProportionStatusEnum) {
+                                case ZERO:
+                                    originEntity.setType(String.valueOf(originConfig.getZeroDefaultProcessId()));
+                                    break;
+                                case FIFTH:
+                                    originEntity.setType(String.valueOf(originConfig.getFifthDefaultProcessId()));
+                                    break;
+                                case ALL:
+                                    originEntity.setType(String.valueOf(originConfig.getAllDefaultProcessId()));
+                                    break;
+                                default:
+                                    break;
+                            }
+                            commonProcessService.save(originEntity);
                         }
-                        commonProcessService.save(originEntity);
-                    }
 
-                    // 本地备货
-                    CommonProcessEntity localEntity = new CommonProcessEntity();
-                    localEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
-                    localEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
-                    List<CommonProcessEntity> localList = commonProcessService.findList(localEntity);
-                    if (CollectionUtils.isEmpty(localList)) {
-                        localEntity.setCurrent(1);
-                        switch (orderPayProportionStatusEnum) {
-                            case ZERO:
-                                localEntity.setType(String.valueOf(localConfig.getZeroDefaultProcessId()));
-                                break;
-                            case FIFTH:
-                                localEntity.setType(String.valueOf(localConfig.getFifthDefaultProcessId()));
-                                break;
-                            case ALL:
-                                localEntity.setType(String.valueOf(localConfig.getAllDefaultProcessId()));
-                                break;
-                            default:
-                                break;
+                        // 本地备货
+                        CommonProcessEntity localEntity = new CommonProcessEntity();
+                        localEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
+                        localEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+                        List<CommonProcessEntity> localList = commonProcessService.findList(localEntity);
+                        if (CollectionUtils.isEmpty(localList)) {
+                            localEntity.setCurrent(1);
+                            switch (orderPayProportionStatusEnum) {
+                                case ZERO:
+                                    localEntity.setType(String.valueOf(localConfig.getZeroDefaultProcessId()));
+                                    break;
+                                case FIFTH:
+                                    localEntity.setType(String.valueOf(localConfig.getFifthDefaultProcessId()));
+                                    break;
+                                case ALL:
+                                    localEntity.setType(String.valueOf(localConfig.getAllDefaultProcessId()));
+                                    break;
+                                default:
+                                    break;
+                            }
+                            commonProcessService.save(localEntity);
                         }
-                        commonProcessService.save(localEntity);
                     }
-
                 }
             }
         } catch (Exception e) {
