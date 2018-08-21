@@ -262,6 +262,14 @@ public class BizInvoiceController extends BaseController {
         }else {
             model.addAttribute("userList",null);
         }
+        BizDetailInvoice detailInvoice = new BizDetailInvoice();
+        detailInvoice.setInvoice(bizInvoice);
+        List<BizDetailInvoice> list = bizDetailInvoiceService.findList(detailInvoice);
+        BizDetailInvoice deInvoice = list.get(0);
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(deInvoice.getOrderHeader().getId());
+        if (orderHeader != null) {
+            model.addAttribute("orderHeader",orderHeader);
+        }
 
         model.addAttribute("logisticsList",logisticsList);
         model.addAttribute("source",source);

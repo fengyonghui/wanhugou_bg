@@ -301,6 +301,12 @@
             </div>
         </div>
     </c:if>
+    <div class="control-group">
+        <label class="control-label">配送服务费：</label>
+        <div class="controls">
+            <input value="${orderHeader.freight}" htmlEscape="false" disabled="disabled" class="input-xlarge required"/>
+        </div>
+    </div>
     <%--<c:if test="${userList==null}">--%>
         <%--<div class="control-group">--%>
             <%--<label class="control-label">发货人：</label>--%>
