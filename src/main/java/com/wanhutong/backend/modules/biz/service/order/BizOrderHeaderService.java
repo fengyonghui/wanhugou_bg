@@ -333,11 +333,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     @Transactional(readOnly = false)
     public void saveOrderHeader(BizOrderHeader bizOrderHeader) {
-        if(BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
-            Integer processId = 0;
-            processId = saveCommonProcess(bizOrderHeader);
-            this.updateProcessId(bizOrderHeader.getId(),processId);
-        }
         super.save(bizOrderHeader);
     }
 
