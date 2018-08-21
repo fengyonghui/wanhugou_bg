@@ -23,6 +23,7 @@
 		<result property="totalBuyPrice" column="totalBuyPrice"/>
 		<result property="sellersId" column="sellersId"/>
 		<result property="payProportion" column="payProportion"/>
+		<result property="suplys" column="suplys"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>

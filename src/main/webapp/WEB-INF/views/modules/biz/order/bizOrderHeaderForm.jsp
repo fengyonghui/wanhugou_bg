@@ -342,11 +342,20 @@
             boo=boo.substring(0,boo.length-1);
             if(obj==${OrderHeaderBizStatusEnum.SUPPLYING.state}){ <%--15同意发货--%>
                 $("#id").val();
+
+                var r2 = document.getElementsByName("localOriginType");
+                var localOriginType = "";
+                for (var i = 0; i < r2.length; i++) {
+                    if (r2[i].checked == true) {
+                        localOriginType = r2[i].value;
+                    }
+                }
+
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/order/bizOrderHeader/Commissioner",
                     data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.SUPPLYING.state}&bizLocation.address="+$("#jhaddress").val()+"&bizLocation.appointedTime="+$("#appointedDate").val()+"&localSendIds="+localSendIds+"&boo="+boo
-                    +"&bizLocation.province.id="+$("#jhprovince").val()+"&bizLocation.city.id="+$("#jhcity").val()+"&bizLocation.region.id="+$("#jhregion").val(),
+                    +"&bizLocation.province.id="+$("#jhprovince").val()+"&bizLocation.city.id="+$("#jhcity").val()+"&bizLocation.region.id="+$("#jhregion").val()+"&localOriginType="+localOriginType,
                     success:function(commis){
                         if(commis=="ok"){
                             alert(" 同意发货 ");
@@ -698,15 +707,11 @@
         function audit(auditType, description) {
             var id = $("#id").val();
             var currentType = $("#currentType").val();
-            var suplys = $("#suplys").val();
-            var orderType = 0;
-            if (suplys == 0 || suplys == 721) {
-                orderType = 1;
-            }
+
             $.ajax({
                 url: '${ctx}/biz/order/bizOrderHeader/audit',
                 contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "orderType": orderType},
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
                 type: 'get',
                 success: function (result) {
                     if(result == 'ok') {
@@ -1635,6 +1640,18 @@
                            onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false});"/>
                 </div>
             </div>
+            <c:if test="${bizOrderHeader.flag=='check_pending'}">
+                <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                    <div class="control-group">
+                        <label class="control-label">供货方式:</label>
+                        <div class="controls">
+                            产地直发:<input name="localOriginType" value="0" checked type="radio" readonly="readonly"/>
+                            本地备货:<input name="localOriginType" value="1" type="radio" readonly="readonly"/>
+                        </div>
+                    </div>
+                </c:if>
+            </c:if>
+
         </c:when>
         <c:otherwise>
             <div class="form-actions">
@@ -1661,9 +1678,9 @@
 
                     <c:if test="${entity.str == 'audit' && (type != 0 || type != 1)}">
                         <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
-                                <input id="btnSubmit" type="button" onclick="checkPass('JO')" class="btn btn-primary"
+                                <input type="button" onclick="checkPass('JO')" class="btn btn-primary"
                                        value="审核通过"/>
-                                <input id="btnSubmit" type="button" onclick="checkReject('JO')" class="btn btn-primary"
+                                <input type="button" onclick="checkReject('JO')" class="btn btn-primary"
                                        value="审核驳回"/>
                         </c:if>
                     </c:if>
@@ -1693,7 +1710,6 @@
                         <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
                     </shiro:hasPermission>
                 </c:if>
-                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
                 <%--<c:if test="${empty entity.orderDetails}">--%>
                 <c:if test="${(empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails) || (refundSkip eq 'refundSkip')}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
@@ -1706,6 +1722,7 @@
             </div>
         </c:otherwise>
     </c:choose>
+    <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
 </form:form>
 
 <%--详情列表--%>
@@ -1732,11 +1749,6 @@
         <th>已发货数量</th>
         <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
             <th>发货方</th>
-        </c:if>
-        <c:if test="${bizOrderHeader.flag=='check_pending'}">
-            <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-                <th>本地备货</th>
-            </c:if>
         </c:if>
         <th>创建时间</th>
         <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
@@ -1810,20 +1822,6 @@
                 <td>
                     ${bizOrderDetail.suplyis.name}
                 </td>
-            </c:if>
-            <c:if test="${bizOrderHeader.flag=='check_pending'}">
-                <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-                    <td>
-                        <c:choose>
-                            <c:when test="${bizOrderDetail.suplyis.id!=0}">
-                                <input type="checkbox" checked="checked" name="localSendIds" value="${bizOrderDetail.id}"/>
-                            </c:when>
-                            <c:otherwise>
-                                <input type="checkbox" name="localSendIds" value="${bizOrderDetail.id}"/>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                </c:if>
             </c:if>
             <td>
                 <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
