@@ -35,6 +35,12 @@
 		<form:hidden path="orderType"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
+			<label class="control-label">订单总金额：</label>
+			<div class="controls">
+				<input value="${requestHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">付款金额：</label>
 			<div class="controls">
 				<form:input path="total" htmlEscape="false" class="input-xlarge "/>

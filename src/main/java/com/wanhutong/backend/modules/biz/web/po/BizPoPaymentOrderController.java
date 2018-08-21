@@ -123,6 +123,14 @@ public class BizPoPaymentOrderController extends BaseController {
 	@RequiresPermissions("biz:po:bizPoPaymentOrder:view")
 	@RequestMapping(value = "form")
 	public String form(BizPoPaymentOrder bizPoPaymentOrder, Model model) {
+		if (bizPoPaymentOrder.getPoHeaderId() != null) {
+			bizPoHeaderService.get(bizPoPaymentOrder.getId());
+			BizRequestHeader bizRequestHeader = new BizRequestHeader();
+			bizRequestHeader.setBizPoHeader(new BizPoHeader(bizPoPaymentOrder.getPoHeaderId()));
+			List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
+			BizRequestHeader requestHeader = requestHeaderList.get(0);
+			model.addAttribute("requestHeader",requestHeader);
+		}
 		model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
 		return "modules/biz/po/bizPoPaymentOrderForm";
 	}
@@ -135,7 +143,7 @@ public class BizPoPaymentOrderController extends BaseController {
 		}
 		bizPoPaymentOrderService.save(bizPoPaymentOrder);
 		addMessage(redirectAttributes, "保存采购付款单成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "orderType=" + bizPoPaymentOrder.getOrderType();
+		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "&orderType=" + bizPoPaymentOrder.getOrderType();
 	}
 	
 	@RequiresPermissions("biz:po:bizPoPaymentOrder:edit")

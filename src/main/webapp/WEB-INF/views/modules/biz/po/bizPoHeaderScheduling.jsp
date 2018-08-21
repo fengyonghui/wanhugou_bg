@@ -48,18 +48,21 @@
             if (detailHeaderFlg == 'true') {
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
+                $("#saveSubmit").show();
                 $("#schedulingPlan_forSku").hide();
                 $("#batchSubmit").hide();
             }
             if (detailSchedulingFlg == 'true') {
                 $("#stockGoods").hide();
                 $("#schedulingPlan_forHeader").hide();
+                $("#saveSubmit").hide();
                 $("#schedulingPlan_forSku").show();
                 $("#batchSubmit").show();
             }
             if (detailHeaderFlg != 'true' && detailSchedulingFlg != 'true') {
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
+                $("#saveSubmit").show();
                 $("#schedulingPlan_forSku").hide();
             }
 
@@ -136,11 +139,13 @@
             if ($(obj).val() == 0) {
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
+                $("#saveSubmit").show();
                 $("#schedulingPlan_forSku").hide();
                 $("#batchSubmit").hide();
             } else {
                 $("#stockGoods").hide();
                 $("#schedulingPlan_forHeader").hide();
+                $("#saveSubmit").hide();
                 $("#schedulingPlan_forSku").show();
                 $("#batchSubmit").show();
             }
@@ -445,8 +450,6 @@
                             <input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划"
                                    onclick="addSchedulingHeaderPlan('schedulingForHeader_', ${bizPoHeader.id})"/>
                             &nbsp;
-                            <input id="saveSubmit" class="btn btn-primary" type="button"
-                                   onclick="saveComplete('0',${bizPoHeader.id})" value="保存"/>
                             <span id="schedulingPanAlert" style="color:red; display:none">已排产完成</span>
                         </td>
                     </tr>
@@ -645,6 +648,8 @@
     </c:if>
 
     <div class="form-actions">
+        <input id="saveSubmit" class="btn btn-primary" type="button"
+               onclick="saveComplete('0',${bizPoHeader.id})" value="保存"/>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
         &nbsp;&nbsp;
         <input id="batchSubmit" class="btn btn-primary" type="button" style="display: none;" onclick="batchSave()" value="批量保存"/>&nbsp;
