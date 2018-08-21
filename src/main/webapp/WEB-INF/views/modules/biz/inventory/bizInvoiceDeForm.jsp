@@ -59,7 +59,7 @@
                                 });
                             } else {
                                 flag = true;
-                                $("#prodInfo").find("input[title='details_" + t + "']").each(function (i) {
+                                $("#prodInfo3").find("input[title='details_" + t + "']").each(function (i) {
                                     detail += $(this).val() + "-" + sObj[i].value + "*";
 
                                 });
@@ -70,7 +70,7 @@
                     }
                     if (window.confirm('你确定要发货吗？')) {
                         if (tt != '') {
-                            $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='" + tt + "'>");
+                            $("#prodInfo3").append("<input name='orderHeaders' type='hidden' value='" + tt + "'>");
                         }
                         var orderHeaders = $("input[name='orderHeaders']").val();
                         if (${bizInvoice.bizStatus == 0}) {
