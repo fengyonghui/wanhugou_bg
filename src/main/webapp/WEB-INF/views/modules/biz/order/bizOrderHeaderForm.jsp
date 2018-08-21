@@ -749,7 +749,7 @@
             $.ajax({
                 url: '${ctx}/biz/po/bizPoHeader/audit',
                 contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "fromPage": "orderHeader"},
                 type: 'get',
                 success: function (result) {
                     result = JSON.parse(result);
@@ -1695,15 +1695,15 @@
             <div class="form-actions">
                 <!-- 一单到底订单审核 -->
                 <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-                    <c:if test="${entity.str == 'audit' && type != 0 && type != 1}">
-                        <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
-                            <c:if test="${entity.bizPoHeader.commonProcessList == null}">
-                                <input id="btnSubmit" type="button" onclick="checkPass('DO')" class="btn btn-primary"
-                                       value="审核通过"/>
-                                <input id="btnSubmit" type="button" onclick="checkReject('DO')" class="btn btn-primary"
-                                       value="审核驳回"/>
-                            </c:if>
+                    <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
+                        <c:if test="${entity.bizPoHeader.commonProcessList == null}">
+                            <input id="btnSubmit" type="button" onclick="checkPass('DO')" class="btn btn-primary"
+                                   value="审核通过"/>
+                            <input id="btnSubmit" type="button" onclick="checkReject('DO')" class="btn btn-primary"
+                                   value="审核驳回"/>
                         </c:if>
+                    </c:if>
+                    <c:if test="${entity.str == 'audit' && type != 0 && type != 1}">
                         <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
                             <c:if test="${entity.bizPoHeader.commonProcessList == null}">
                                 <input id="btnSubmit" type="button" onclick="checkPass('SO')" class="btn btn-primary"
@@ -1740,9 +1740,6 @@
                         </c:if>
                     </shiro:hasPermission>
 
-
-
-
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails && entity.str!='audit'}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
                         <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
@@ -1775,7 +1772,7 @@
         <th>商品名称</th>
         <th>商品编号</th>
         <th>商品货号</th>
-        <th>已生成的采购单</th>
+        <%--<th>已生成的采购单</th>--%>
         <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
             <th>商品出厂价</th>
         </c:if>
@@ -1830,9 +1827,9 @@
             <td>
                 ${bizOrderDetail.skuInfo.itemNo}
             </td>
-            <td>
-                <a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>
-            </td>
+            <%--<td>--%>
+                <%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>--%>
+            <%--</td>--%>
             <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
                 <td>
                         ${bizOrderDetail.buyPrice}
