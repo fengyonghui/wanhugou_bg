@@ -372,9 +372,13 @@
 			</c:if >
 				<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
 					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
-						<a href="${ctx}/biz/order/bizOrderHeader/auditList?id=${orderHeader.id}&type=0">产地直发审核状态</a>
-						<a href="${ctx}/biz/order/bizOrderHeader/auditList?id=${orderHeader.id}&type=1">本地备货审核状态</a>
-						<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">本地备货出库确认</a>
+						<c:if test="${orderHeader.suplys == 0 }">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
+						</c:if>
+						<c:if test="${orderHeader.suplys != 0 }">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
+							<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>
+						</c:if>
 					</c:if>
 				</shiro:hasPermission>
 

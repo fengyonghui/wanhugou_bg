@@ -342,11 +342,20 @@
             boo=boo.substring(0,boo.length-1);
             if(obj==${OrderHeaderBizStatusEnum.SUPPLYING.state}){ <%--15同意发货--%>
                 $("#id").val();
+
+                var r2 = document.getElementsByName("localOriginType");
+                var localOriginType = "";
+                for (var i = 0; i < r2.length; i++) {
+                    if (r2[i].checked == true) {
+                        localOriginType = r2[i].value;
+                    }
+                }
+
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/order/bizOrderHeader/Commissioner",
                     data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.SUPPLYING.state}&bizLocation.address="+$("#jhaddress").val()+"&bizLocation.appointedTime="+$("#appointedDate").val()+"&localSendIds="+localSendIds+"&boo="+boo
-                    +"&bizLocation.province.id="+$("#jhprovince").val()+"&bizLocation.city.id="+$("#jhcity").val()+"&bizLocation.region.id="+$("#jhregion").val(),
+                    +"&bizLocation.province.id="+$("#jhprovince").val()+"&bizLocation.city.id="+$("#jhcity").val()+"&bizLocation.region.id="+$("#jhregion").val()+"&localOriginType="+localOriginType,
                     success:function(commis){
                         if(commis=="ok"){
                             alert(" 同意发货 ");
@@ -622,27 +631,7 @@
                 }
             });
         }
-            <%--$("#addRemark").click(function () {--%>
-                <%--var orderId = $("#id").val();--%>
-                <%--alert(orderId);--%>
-                <%--var remark;--%>
-                <%--remark=prompt("请输入你要添加的备注");--%>
-                <%--alert(remark);--%>
-                <%--$.ajax({--%>
-                    <%--type:"post",--%>
-                    <%--url:"${ctx}/biz/order/bizOrderComment/addComment",--%>
-                    <%--data:{orderId:orderId,remark:remark},--%>
-                    <%--success:function (data) {--%>
-                        <%--if (data == "error") {--%>
-                            <%--alert("添加订单备注失败，备注可能为空");--%>
-                        <%--}--%>
-                        <%--if (data == "ok") {--%>
-                            <%--alert("添加订单备注成功");--%>
-                            <%--window.reload();--%>
-                        <%--}--%>
-                    <%--}--%>
-                <%--});--%>
-            <%--});--%>
+
     </script>
 
     <script type="text/javascript">
@@ -658,69 +647,71 @@
                     return false;
                 }
             }
-            top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
-                if(v=="ok"){
-                    var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
-                    var submit = function (v, h, f) {
+            var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+            var submit = function (v, h, f) {
+                top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v1,h1,f1){
+                    if(v1=="ok"){
                         if ($String.isNullOrBlank(f.description)) {
                             jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
                             return false;
                         }
-                        if (obj == "DO" || obj == "SO") {
+                        if (obj == "DO" ||  obj == 'SO') {
                             audit(1, f.description);
+                        }
+                        if (obj == "JO") {
+                            auditJo(1, f.description);
                         }
                         if (obj == "PO") {
                             poAudit(1,f.description);
                         }
                         return true;
-                    };
-                    jBox(html, {
-                        title: "请输入通过理由:", submit: submit, loaded: function (h) {
-                        }
-                    });
+                    }
+                },{buttonsFocus:1});
+            };
+            jBox(html, {
+                title: "请输入通过理由:", submit: submit, loaded: function (h) {
                 }
-            },{buttonsFocus:1});
+            });
         }
 
         //代采订单：审核驳回
         function checkReject(obj) {
-            top.$.jBox.confirm("确认驳回该流程吗？","系统提示",function(v,h,f){
-                if(v=="ok"){
-                    var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
-                    var submit = function (v, h, f) {
+            var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
+            var submit = function (v, h, f) {
+                top.$.jBox.confirm("确认驳回该流程吗？","系统提示",function(v1,h1,f1){
+                    if(v1=="ok"){
                         if ($String.isNullOrBlank(f.description)) {
                             jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
                             return false;
                         }
-                        if (obj == "DO" || obj == "SO") {
+                        if (obj == "DO" || obj == 'SO') {
                             audit(2, f.description);
+                        }
+                        if (obj == "JO") {
+                            auditJo(2, f.description);
                         }
                         if (obj == "PO") {
                             poAudit(2,f.description);
                         }
                         return true;
-                    };
+                    }
+                },{buttonsFocus:1});
+            };
 
-                    jBox(html, {
-                        title: "请输入驳回理由:", submit: submit, loaded: function (h) {
-                        }
-                    });
+            jBox(html, {
+                title: "请输入驳回理由:", submit: submit, loaded: function (h) {
                 }
-            },{buttonsFocus:1});
+            });
         }
 
         function audit(auditType, description) {
             var id = $("#id").val();
             var currentType = $("#currentType").val();
-            var suplys = $("#suplys").val();
-            var orderType = 0;
-            if (suplys == 0 || suplys == 721) {
-                orderType = 1;
-            }
+
             $.ajax({
                 url: '${ctx}/biz/order/bizOrderHeader/audit',
                 contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "orderType": orderType},
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
                 type: 'get',
                 success: function (result) {
                     if(result == 'ok') {
@@ -765,6 +756,34 @@
                     if(result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
                         window.location.href = "${ctx}/biz/order/bizOrderHeader";
+                    }else {
+                        alert(result.errmsg);
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
+
+        function auditJo(auditType, description) {
+            var id = $("#id").val();
+            var currentType = $("#currentJoType").val();
+            var suplys = $("#suplys").val();
+            var orderType = 1;
+            if (suplys == 0 || suplys == 721) {
+                orderType = 0;
+            }
+            $.ajax({
+                url: '${ctx}/biz/order/bizOrderHeader/auditSo',
+                contentType: 'application/json',
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "orderType": orderType},
+                type: 'get',
+                success: function (result) {
+                    result = JSON.parse(result);
+                    if(result.ret == true || result.ret == 'true') {
+                        alert('操作成功!');
+                        window.history.go(-1);
                     }else {
                         alert(result.errmsg);
                     }
@@ -1445,80 +1464,52 @@
                 </div>
             </div>
         </c:if>
+  <c:if test="${fn:length(auditList) > 0}">
+            <div class="control-group">
+                <label class="control-label">审核流程：</label>
+                <div class="controls help_wrap">
+                    <div class="help_step_box fa">
+                        <c:forEach items="${auditList}" var="v" varStatus="stat">
+                            <c:if test="${v.current == 0}" >
+                                <div class="help_step_item">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
+                                    处理人:${v.user.name}<br/><br/>
+                                    批注:${v.description}<br/><br/>
+                                    状态:
+                                    <c:if test="${type == 1}">
+                                    ${v.jointOperationLocalProcess.name}
+                                    </c:if>
+                                    <c:if test="${type == 0}">
+                                        ${v.jointOperationOriginProcess.name}
+                                    </c:if><br/>
+                                    <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <div class="help_step_right"></div>
+                                </div>
+                            </c:if>
+                            <c:if test="${v.current == 1}">
+                                <div class="help_step_item help_step_set">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
 
-        <%--<c:if test="${fn:length(entity.commonProcessList) > 0}">--%>
-            <%--<div class="control-group">--%>
-                <%--<label class="control-label">审批流程：</label>--%>
-                <%--<div class="controls help_wrap">--%>
-                    <%--<div class="help_step_box fa">--%>
-                        <%--<c:forEach items="${entity.commonProcessList}" var="v" varStatus="stat">--%>
-                            <%--<c:if test="${!stat.last}" >--%>
-                                <%--<div class="help_step_item">--%>
-                                    <%--<div class="help_step_left"></div>--%>
-                                    <%--<div class="help_step_num">${stat.index + 1}</div>--%>
-                                    <%--批注:${v.description}<br/><br/>--%>
-                                    <%--审批人:${v.user.name}<br/>--%>
-                                    <%--<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
-                                    <%--<div class="help_step_right"></div>--%>
-                                <%--</div>--%>
-                            <%--</c:if>--%>
-                            <%--<c:if test="${stat.last && entity.bizPoHeader.commonProcessList == null}">--%>
-                                <%--<div class="help_step_item help_step_set">--%>
-                                    <%--<div class="help_step_left"></div>--%>
-                                    <%--<div class="help_step_num">${stat.index + 1}</div>--%>
-                                    <%--<c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">--%>
-                                    <%--当前状态:${v.doOrderHeaderProcessAll.name}<br/><br/>--%>
-                                        <%--${v.user.name}<br/>--%>
-                                    <%--</c:if>--%>
-
-                                    <%--<c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">--%>
-                                        <%--当前状态:${v.doOrderHeaderProcessFifth.name}<br/><br/>--%>
-                                        <%--${v.user.name}<br/>--%>
-                                    <%--</c:if>--%>
-
-                                    <%--<div class="help_step_right"></div>--%>
-                                <%--</div>--%>
-                            <%--</c:if>--%>
-                        <%--</c:forEach>--%>
-                    <%--</div>--%>
-                <%--</div>--%>
-            <%--</div>--%>
-            <%--<div class="controls help_wrap">--%>
-                <%--<div class="help_step_box fa">--%>
-                    <%--<c:forEach items="${entity.bizPoHeader.commonProcessList}" var="v" varStatus="stat">--%>
-                        <%--<c:if test="${stat.first && !stat.last}" >--%>
-                            <%--<div class="help_step_item">--%>
-                                <%--<div class="help_step_left"></div>--%>
-                                <%--<div class="help_step_num">${fn:length(entity.commonProcessList)}</div>--%>
-                                <%--批注:${v.description}<br/><br/>--%>
-                                <%--审批人:${v.user.name}<br/>--%>
-                                <%--<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
-                                <%--<div class="help_step_right"></div>--%>
-                            <%--</div>--%>
-                        <%--</c:if>--%>
-                        <%--<c:if test="${!stat.last && !stat.first}" >--%>
-                            <%--<div class="help_step_item">--%>
-                                <%--<div class="help_step_left"></div>--%>
-                                <%--<div class="help_step_num">${fn:length(entity.commonProcessList) + stat.index}</div>--%>
-                                <%--批注:${v.description}<br/><br/>--%>
-                                <%--审批人:${v.user.name}<br/>--%>
-                                <%--<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
-                                <%--<div class="help_step_right"></div>--%>
-                            <%--</div>--%>
-                        <%--</c:if>--%>
-                        <%--<c:if test="${stat.last}">--%>
-                            <%--<div class="help_step_item help_step_set">--%>
-                                <%--<div class="help_step_left"></div>--%>
-                                <%--<div class="help_step_num">${fn:length(entity.commonProcessList) + stat.index}</div>--%>
-                                <%--当前状态:${v.purchaseOrderProcess.name}<br/><br/>--%>
-                                    <%--${v.user.name}<br/>--%>
-                                <%--<div class="help_step_right"></div>--%>
-                            <%--</div>--%>
-                        <%--</c:if>--%>
-                    <%--</c:forEach>--%>
-                <%--</div>--%>
-            <%--</div>--%>
-        <%--</c:if>--%>
+                                    状态:
+                                    <c:if test="${type == 1}">
+                                        ${v.jointOperationLocalProcess.name}
+                                    </c:if>
+                                    <c:if test="${type == 0}">
+                                        ${v.jointOperationOriginProcess.name}
+                                    </c:if>
+                                    <br/>
+                                    <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <div class="help_step_right"></div>
+                                    <input type="hidden" value="${v.type}" id="currentJoType"/>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+                    </div>
+                </div>
+            </div>
+        </c:if>
 
         <c:if test="${statu != '' && statu =='unline'}">
             <div class="control-group">
@@ -1649,12 +1640,24 @@
                            onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false});"/>
                 </div>
             </div>
+            <c:if test="${bizOrderHeader.flag=='check_pending'}">
+                <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                    <div class="control-group">
+                        <label class="control-label">供货方式:</label>
+                        <div class="controls">
+                            产地直发:<input name="localOriginType" value="0" checked type="radio" readonly="readonly"/>
+                            本地备货:<input name="localOriginType" value="1" type="radio" readonly="readonly"/>
+                        </div>
+                    </div>
+                </c:if>
+            </c:if>
+
         </c:when>
         <c:otherwise>
             <div class="form-actions">
                 <!-- 一单到底订单审核 -->
                 <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-                    <c:if test="${entity.str == 'audit'}">
+                    <c:if test="${entity.str == 'audit' && type != 0 && type != 1}">
                         <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
                             <c:if test="${entity.bizPoHeader.commonProcessList == null}">
                                 <input id="btnSubmit" type="button" onclick="checkPass('DO')" class="btn btn-primary"
@@ -1670,6 +1673,15 @@
                                 <input id="btnSubmit" type="button" onclick="checkReject('SO')" class="btn btn-primary"
                                        value="审核驳回"/>
                             </c:if>
+                        </c:if>
+                    </c:if>
+
+                    <c:if test="${entity.str == 'audit' && (type != 0 || type != 1)}">
+                        <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
+                                <input type="button" onclick="checkPass('JO')" class="btn btn-primary"
+                                       value="审核通过"/>
+                                <input type="button" onclick="checkReject('JO')" class="btn btn-primary"
+                                       value="审核驳回"/>
                         </c:if>
                     </c:if>
 
@@ -1698,7 +1710,6 @@
                         <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
                     </shiro:hasPermission>
                 </c:if>
-                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
                 <%--<c:if test="${empty entity.orderDetails}">--%>
                 <c:if test="${(empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails) || (refundSkip eq 'refundSkip')}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
@@ -1711,6 +1722,7 @@
             </div>
         </c:otherwise>
     </c:choose>
+    <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
 </form:form>
 
 <%--详情列表--%>
@@ -1737,11 +1749,6 @@
         <th>已发货数量</th>
         <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
             <th>发货方</th>
-        </c:if>
-        <c:if test="${bizOrderHeader.flag=='check_pending'}">
-            <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-                <th>本地备货</th>
-            </c:if>
         </c:if>
         <th>创建时间</th>
         <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
@@ -1815,20 +1822,6 @@
                 <td>
                     ${bizOrderDetail.suplyis.name}
                 </td>
-            </c:if>
-            <c:if test="${bizOrderHeader.flag=='check_pending'}">
-                <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-                    <td>
-                        <c:choose>
-                            <c:when test="${bizOrderDetail.suplyis.id!=0}">
-                                <input type="checkbox" checked="checked" name="localSendIds" value="${bizOrderDetail.id}"/>
-                            </c:when>
-                            <c:otherwise>
-                                <input type="checkbox" name="localSendIds" value="${bizOrderDetail.id}"/>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                </c:if>
             </c:if>
             <td>
                 <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
