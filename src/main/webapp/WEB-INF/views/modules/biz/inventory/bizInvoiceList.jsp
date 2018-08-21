@@ -121,7 +121,7 @@
 					<c:if test="${bizInvoice.ship==0}">
 						<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
                             <c:if test="${bizInvoice.isConfirm == 0}">
-							    <a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&str =audit">确认发货单</a>
+							    <a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&str=audit">确认发货单</a>
                             </c:if>
 							<c:if test="${bizInvoice.freight == '0.00'}">
 								<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&str =freight">添加运费</a>
