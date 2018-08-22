@@ -411,7 +411,6 @@
 				</shiro:hasPermission>
 
 			<shiro:hasPermission name="biz:po:bizPoHeader:audit">
-				'${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}'
 				<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">
 					<c:if test="${orderHeader.bizPoHeader.commonProcess.id != null
 				&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
