@@ -137,6 +137,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             invoice.setInspectRemark(bizInvoice.getInspectRemark());
             invoice.setCollLocate(bizInvoice.getCollLocate());
             invoice.setSendDate(bizInvoice.getSendDate());
+            invoice.setIsConfirm(bizInvoice.getIsConfirm());
             if ("audit".equals(bizInvoice.getStr())) {
                 invoice.setCarrier(UserUtils.getUser().getName());
             }
@@ -152,7 +153,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             //采购商或采购中心
 //        Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
             bizInvoice.setSendNumber("");
-            bizInvoice.setIsConfirm(BizInvoice.IsConfirm.NO.getIsConfirm());
+            bizInvoice.setIsConfirm(bizInvoice.getIsConfirm());
             super.save(bizInvoice);
             bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE, company.getId(), 0, bizInvoice.getId()));
             super.save(bizInvoice);

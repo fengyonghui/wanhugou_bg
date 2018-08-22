@@ -512,21 +512,25 @@ public class BizOrderHeaderController extends BaseController {
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
-        if ("audit".equals(str) && ("0".equals(type) || "1".equals(type))) {
+//        if ("audit".equals(str) && ("0".equals(type) || "1".equals(type))) {
             // type = 0 产地直发
             // type = 1 本地备货
-            CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-            commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
-            commonProcessEntity.setObjectName("0".equals(type) ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
-            List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
+        commonProcessEntity.setObjectName("0".equals(type) ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
 
-            request.setAttribute("id", bizOrderHeader.getId());
-            request.setAttribute("auditList", list);
-            request.setAttribute("type", type);
-            request.setAttribute("processMap", "0".equals(type) ?
-                    ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap()
-                    : ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap());
-        }
+        commonProcessEntity.setCurrent(1);
+        List<CommonProcessEntity> currentList = commonProcessService.findList(commonProcessEntity);
+
+        request.setAttribute("id", bizOrderHeader.getId());
+        request.setAttribute("auditList", list);
+        request.setAttribute("currentAuditStatus", CollectionUtils.isNotEmpty(currentList) ? currentList.get(0) : StringUtils.EMPTY);
+        request.setAttribute("type", type);
+        request.setAttribute("processMap", "0".equals(type) ?
+                ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap()
+                : ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap());
+//        }
 
         return "modules/biz/order/bizOrderHeaderForm";
     }

@@ -187,6 +187,7 @@
 <form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save" method="post" class="form-horizontal">
     <sys:message content="${message}"/>
     <form:hidden path="ship" value="0"/>
+    <form:hidden path="isConfirm" value="1"/>
     <form:hidden path="bizStatus" value="0"/>
 
     <div class="control-group">

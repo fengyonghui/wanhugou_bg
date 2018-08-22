@@ -1693,11 +1693,11 @@
                     </c:if>
 
                     <c:if test="${entity.str == 'audit' && (type != 0 || type != 1)}">
-                        <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && entity.bizPoHeader.commonProcessList == null}">
+                        <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && currentAuditStatus.type != 777 && currentAuditStatus.type != 666}">
                                 <input type="button" onclick="checkPass('JO')" class="btn btn-primary"
-                                       value="审核通过"/>
+                                       value="通过"/>
                                 <input type="button" onclick="checkReject('JO')" class="btn btn-primary"
-                                       value="审核驳回"/>
+                                       value="驳回"/>
                         </c:if>
                     </c:if>
 
@@ -1709,7 +1709,10 @@
                     <!-- 一单到底，采购单审核 -->
                     <shiro:hasPermission name="biz:po:bizPoHeader:audit">
                         <c:if test="${entity.str == 'audit'}">
-                            <c:if test="${entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
+                            <c:if test="${entity.bizPoHeader.commonProcessList != null
+                            && fn:length(entity.bizPoHeader.commonProcessList) > 0
+                            && (currentAuditStatus.type == 777 || currentAuditStatus.type == 666)
+                            }">
                                 <input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"
                                        value="审核通过"/>
                                 <input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"
