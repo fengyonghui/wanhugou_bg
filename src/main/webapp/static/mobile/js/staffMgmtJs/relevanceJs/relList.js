@@ -116,6 +116,16 @@
 					})
 				}
 			}),
+		/*返回客户专员列表*/
+			$('#nav').on('tap','.staRelStaBtn', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../../html/staffMgmtHtml/staffList.html",
+					extras: {
+						
+					}
+				})
+			}),	
 		/*经销店添加*/
 			$('#nav').on('tap','.staRelAddBtn', function() {
 				var url = $(this).attr('url');

@@ -59,6 +59,8 @@
 				                $('.mui-pull-caption-down').html('');
 				                
 				                getData(pager);
+				                
+				                
 //				            },500);
 			            }
 			        }
@@ -622,7 +624,7 @@
 				                data: {id:inListId},
 				                dataType: "json",
 				                success: function(res){
-				                	alert('操作成功！')
+				                	mui.toast('操作成功！')
 				                	GHUTILS.OPENPAGE({
 										url: "../../html/inventoryMagmetHtml/inventoryList.html",
 										extras: {

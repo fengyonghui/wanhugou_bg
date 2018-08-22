@@ -86,7 +86,7 @@
                     data: {"id":"", "fromOffice.id": _this.fromOfficeId, "recvEta":inPoLastDaVal, "remark": inPoRemarkVal, "bizStatus": bizStatusVal, "skuInfoIds": _this.skuInfoIds, "reqQtys": _this.reqQtys, "reqDetailIds":_this.reqDetailIds, "LineNos":_this.LineNos},
                     success: function (resule) {
                         if (resule.data.value == '操作成功!') {
-                            alert("添加备货单成功！");
+                            mui.toast("添加备货单成功！");
                             GHUTILS.OPENPAGE({
                                 url: "../../html/inventoryMagmetHtml/inventoryList.html",
                                 extras: {

@@ -4,7 +4,7 @@ package com.wanhutong.backend.modules.enums;
 public enum ImgEnum{
 
     /**用户头像*/
-    USER_PHOTO((byte)0,"用户头像", "sys_user"),
+    USER_PHOTO((byte)1,"用户头像", "sys_user"),
 
     /**首页轮播图*/
     INDEX_BANNER_TYPE((byte)5,"首页轮播图", "biz_product_info"),
@@ -54,6 +54,10 @@ public enum ImgEnum{
      * 产品详情视频
      */
     PRODUCT_DETAIL_VIDEO((byte) 72, "产品详情视频", "biz_product_info"),
+    /**
+     * 73
+     */
+    VENDOR_VIDEO((byte) 73,"供应商视频","sys_office"),
     ;
 
     private int code;

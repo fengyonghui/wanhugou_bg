@@ -19,8 +19,11 @@
 		a.create_time AS "createDate",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		o1.name AS "office.name",
-		a.remark AS "remarks"
+		a.remark AS "remark",
+		a.introduce AS "introduce",
+		a.prod_adv AS "prodAdv",
+		a.type AS "type",
+		o1.name AS "office.name"
 	</sql>
 	
 	<sql id="bizVendInfoJoins">
@@ -101,7 +104,10 @@
 			card_number,
 			bank_name,
 			payee,
-			remark
+			remark,
+			introduce,
+			prod_adv,
+			type
 		) VALUES (
 			#{office.id},
 			#{vendName},
@@ -117,7 +123,10 @@
 			#{cardNumber},
 			#{bankName},
 			#{payee},
-			#{remarks}
+			#{remark},
+			#{introduce},
+			#{prodAdv},
+			#{type}
 		)
 	</insert>
 	
@@ -134,7 +143,10 @@
 			card_number = #{cardNumber},
 			bank_name = #{bankName},
 			payee = #{payee},
-			remark = #{remarks}
+			remark = #{remark},
+			introduce = #{introduce},
+			prod_adv = #{prodAdv},
+			type = #{type}
 		WHERE office_id = #{office.id}
 	</update>
 

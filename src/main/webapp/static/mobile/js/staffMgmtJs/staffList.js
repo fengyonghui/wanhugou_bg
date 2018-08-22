@@ -30,12 +30,6 @@
 			//下拉刷新
 			$('.staffList').dropload({
 				scrollArea: window,
-				domDown: {
-					domClass: 'dropload-down',
-					domRefresh: '<div class="dropload-refresh">↑上拉加载更多内容</div>',
-					domLoad: '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
-					domNoData: '<div class="dropload-noData">暂无更多内容</div>'
-				},
 				loadDownFn: function(me) {
 				    page++;
 					// 拼接HTML
@@ -43,7 +37,7 @@
 					var staffHtmlList = '';
 					$.ajax({
 						type: 'GET',
-						url: '/a/sys/user/listData4mobile?page2='+page+'&size='+size,
+						url: 'sys/user/listData4mobile?page2='+page+'&size='+size,
 						data: {
 							pageNo: page,
 							conn: 0

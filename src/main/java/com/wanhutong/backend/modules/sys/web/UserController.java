@@ -17,13 +17,16 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
 import com.wanhutong.backend.modules.biz.web.statistics.BizStatisticsPlatformController;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -40,7 +43,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -84,6 +91,8 @@ public class UserController extends BaseController {
 	private BizVarietyInfoService bizVarietyInfoService;
 	@Autowired
 	private BizVarietyUserInfoService bizVarietyUserInfoService;
+	@Autowired
+	private CommonImgService commonImgService;
 
 	@ModelAttribute
 	public User get(@RequestParam(required=false) Integer id) {
@@ -164,6 +173,16 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "form")
 	public String form(User user, Model model,String flag) {
+		if (user.getId() != null) {
+			CommonImg commonImg = new CommonImg();
+			commonImg.setObjectId(user.getId());
+			commonImg.setObjectName(ImgEnum.USER_PHOTO.getTableName());
+			commonImg.setImgType(ImgEnum.USER_PHOTO.getCode());
+			List<CommonImg> headPhotoList = commonImgService.findList(commonImg);
+			if (CollectionUtils.isNotEmpty(headPhotoList)) {
+				model.addAttribute("headPhotoList",headPhotoList);
+			}
+		}
 		if (user.getOffice()==null || user.getOffice().getId()==null){
 			user.setCompany(UserUtils.getUser().getCompany());
 			user.setOffice(UserUtils.getUser().getOffice());
