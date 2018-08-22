@@ -3,16 +3,9 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventory;
 
-import com.alibaba.druid.support.json.JSONUtils;
-import com.google.gson.JsonObject;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.CloseableHttpClientUtil;
-import com.wanhutong.backend.common.utils.DateUtils;
-import com.wanhutong.backend.common.utils.DsConfig;
-import com.wanhutong.backend.common.utils.Encodes;
-import com.wanhutong.backend.common.utils.JsonUtil;
-import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.*;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
@@ -42,7 +35,6 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -57,11 +49,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -261,6 +249,14 @@ public class BizInvoiceController extends BaseController {
             model.addAttribute("userList", userList);
         }else {
             model.addAttribute("userList",null);
+        }
+        BizDetailInvoice detailInvoice = new BizDetailInvoice();
+        detailInvoice.setInvoice(bizInvoice);
+        List<BizDetailInvoice> list = bizDetailInvoiceService.findList(detailInvoice);
+        BizDetailInvoice deInvoice = list.get(0);
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(deInvoice.getOrderHeader().getId());
+        if (orderHeader != null) {
+            model.addAttribute("orderHeader",orderHeader);
         }
 
         model.addAttribute("logisticsList",logisticsList);

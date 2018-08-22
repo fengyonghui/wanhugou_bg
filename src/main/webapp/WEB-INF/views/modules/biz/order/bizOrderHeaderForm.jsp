@@ -637,10 +637,7 @@
     <script type="text/javascript">
         //代采订单：审核通过
         function checkPass(obj) {
-            //requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum
-            // RoleEnNameEnum.SELECTION_OF_SPECIALIST.state
-            // (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum)) &&
-            if('${(fns:hasRole(roleSet, 'SELECTION_OF_SPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
+            if('${(fns:hasRole(roleSet, "SELECTION_OF_SPECIALIST")) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
                 var lastPayDateVal = $("#lastPayDate").val();
                 if (lastPayDateVal == ""){
                     alert("请输入最后付款时间！");
@@ -719,16 +716,9 @@
                             //自动生成采购单
                             var id = $("#id").val();
                             //获取当前订单业务状态，如果订单审核完成则自动生成采购单
-                            //getCurrentBizStatus(id);
-                            //requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum
-                            // RoleEnNameEnum.SELECTION_OF_SPECIALIST.state
-                            // (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum)) &&
-                            if(${(fns:hasRole(roleSet, 'SELECTION_OF_SPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}){
+                            if(${(fns:hasRole(roleSet, "SELECTION_OF_SPECIALIST")) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}){
                                 getPoHeaderPara(id);
                             }
-                            <%--if ('${OrderHeaderBizStatusEnum.APPROVEPARTONE.state}' == bizStatus) {--%>
-                                <%--getPoHeaderPara(id);--%>
-                            <%--}--%>
                         }
                         alert("操作成功！");
                         window.location.href = "${ctx}/biz/order/bizOrderHeader";
@@ -792,27 +782,6 @@
                     console.info(error);
                 }
             });
-        }
-
-        //获取当前订单业务状态
-        function getCurrentBizStatus(id) {
-            var bizStatus = "";
-            $.ajax({
-                url: '${ctx}/biz/request/bizRequestHeaderForVendor/getCurrentBizStatus',
-                contentType: 'application/json',
-                data: {"id": id},
-                type: 'get',
-                dataType: 'json',
-                success: function (result) {
-                    if ('${OrderHeaderBizStatusEnum.APPROVEPARTONE.state}' == result) {
-                        getPoHeaderPara(id);
-                    }
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-            return bizStatus;
         }
 
         function getPoHeaderPara(id) {
@@ -1686,6 +1655,14 @@
                         <div class="controls">
                             产地直发:<input name="localOriginType" value="0" checked type="radio" readonly="readonly"/>
                             本地备货:<input name="localOriginType" value="1" type="radio" readonly="readonly"/>
+                        </div>
+                    </div>
+                </c:if>
+                <c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+                    <div class="control-group" style="display: none">
+                        <label class="control-label">供货方式:</label>
+                        <div class="controls">
+                            产地直发:<input name="localOriginType" value="0" checked type="radio" readonly="readonly"/>
                         </div>
                     </div>
                 </c:if>
