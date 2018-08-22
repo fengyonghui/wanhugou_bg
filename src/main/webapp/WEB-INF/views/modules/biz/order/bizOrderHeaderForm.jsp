@@ -637,10 +637,7 @@
     <script type="text/javascript">
         //代采订单：审核通过
         function checkPass(obj) {
-            //requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum
-            // RoleEnNameEnum.SELECTION_OF_SPECIALIST.state
-            // (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum)) &&
-            if('${(fns:hasRole(roleSet, 'SELECTION_OF_SPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
+            if('${(fns:hasRole(roleSet, "SELECTION_OF_SPECIALIST")) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
                 var lastPayDateVal = $("#lastPayDate").val();
                 if (lastPayDateVal == ""){
                     alert("请输入最后付款时间！");
@@ -719,7 +716,7 @@
                             //自动生成采购单
                             var id = $("#id").val();
                             //获取当前订单业务状态，如果订单审核完成则自动生成采购单
-                            if(${(fns:hasRole(roleSet, 'SELECTION_OF_SPECIALIST')) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}){
+                            if(${(fns:hasRole(roleSet, "SELECTION_OF_SPECIALIST")) && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}){
                                 getPoHeaderPara(id);
                             }
                         }
