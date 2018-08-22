@@ -528,7 +528,7 @@
             <c:if test="${bizPoHeader.id!=null}">
                 <th>已供货数量</th>
             </c:if>
-            <th>工厂价</th>
+            <th>结算价</th>
 
 
         </tr>
@@ -810,13 +810,13 @@
         $.ajax({
             url: '${ctx}/biz/po/bizPoHeader/audit',
             contentType: 'application/json',
-            data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+            data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "fromPage": "poHeader"},
             type: 'get',
             success: function (result) {
                 result = JSON.parse(result);
                 if(result.ret == true || result.ret == 'true') {
                     alert('操作成功!');
-                    window.location.href = "${ctx}/biz/po/bizPoHeader";
+                    window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                 }else {
                     alert(result.errmsg);
                 }
@@ -835,10 +835,11 @@
 
         var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
         var img = "";
-        for (var i = 0; i < mainImg.length; i ++) {
-            img += $(mainImg[i]).attr("src") + ",";
+        if(mainImg.length >= 2) {
+            for (var i = 1; i < mainImg.length; i ++) {
+                img += $(mainImg[i]).attr("src") + ",";
+            }
         }
-
         if ($String.isNullOrBlank(payTotal)) {
             alert("错误提示:请输入支付金额");
             return false;

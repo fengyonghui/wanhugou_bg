@@ -21,7 +21,7 @@ public enum ReqFromTypeEnum {
         return type;
     }
 
-    public static ReqFromTypeEnum typeOf(String index) {
+    public static ReqFromTypeEnum typeOf(Integer index) {
         for (ReqFromTypeEnum type : values()) {
             if (type.getType().equals(index)) {
                 return type;

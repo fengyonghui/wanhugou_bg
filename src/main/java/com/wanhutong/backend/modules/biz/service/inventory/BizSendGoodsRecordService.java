@@ -534,5 +534,4 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 	public void delete(BizSendGoodsRecord bizSendGoodsRecord) {
 		super.delete(bizSendGoodsRecord);
 	}
-	
 }

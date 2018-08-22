@@ -308,6 +308,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
             bizVendInfo.setCardNumber(office.getBizVendInfo().getCardNumber());
             bizVendInfo.setCode(office.getCode());
             bizVendInfo.setAuditStatus(BizVendInfo.AuditStatus.UNAUDITED.getStatus());
+            bizVendInfo.setRemarks(office.getBizVendInfo().getRemarks());
             bizVendInfo.setRemark(office.getBizVendInfo().getRemark());
             bizVendInfo.setIntroduce(office.getBizVendInfo().getIntroduce());
             bizVendInfo.setProdAdv(office.getBizVendInfo().getProdAdv());

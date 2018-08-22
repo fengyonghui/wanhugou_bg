@@ -76,6 +76,9 @@ public class BizPhotoOrderHeaderController extends BaseController {
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
+        if (bizOrderHeader.getSource() != null) {
+            model.addAttribute("source",bizOrderHeader.getSource());
+        }
         BizOrderComment bizOrderComment = new BizOrderComment();
         bizOrderComment.setOrder(bizOrderHeader);
         List<BizOrderComment> commentList = bizOrderCommentService.findList(bizOrderComment);
@@ -190,7 +193,7 @@ public class BizPhotoOrderHeaderController extends BaseController {
 //			保存跳回客户专员
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=" + bizOrderHeader.getConsultantId();
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list";
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?source=" + bizOrderHeader.getSource();
     }
 
 

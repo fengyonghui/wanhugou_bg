@@ -4,9 +4,12 @@
 package com.wanhutong.backend.modules.process.entity;
 
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
@@ -33,10 +36,17 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	private Date createTime;		// 创建时间
 	private User user;
 	private Date updateTime;
+	private Integer current;
 
 	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess;
+	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderForOrderHeaderProcess;
 	private RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess;
 	private PaymentOrderProcessConfig.Process paymentOrderProcess;
+	private VendorRequestOrderProcessConfig.RequestOrderProcess vendRequestOrderProcess;
+	private DoOrderHeaderProcessAllConfig.OrderHeaderProcess doOrderHeaderProcessAll;
+	private DoOrderHeaderProcessFifthConfig.OrderHeaderProcess doOrderHeaderProcessFifth;
+	private com.wanhutong.backend.modules.config.parse.Process jointOperationLocalProcess;
+	private com.wanhutong.backend.modules.config.parse.Process jointOperationOriginProcess;
 
 	/**
 	 * 前一个流程
@@ -152,14 +162,44 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
+//	public PurchaseOrderProcessConfig.PurchaseOrderProcess getPurchaseOrderForOrderHeaderProcess() {
+//		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG_FOR_ORDER_HEADER.get().getProcessMap().get(Integer.valueOf(type));
+//	}
+
 	public PaymentOrderProcessConfig.Process getPaymentOrderProcess() {
 		return ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
+	}
+
+	public com.wanhutong.backend.modules.config.parse.Process getJointOperationLocalProcess() {
+		return ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
+	}
+
+	public com.wanhutong.backend.modules.config.parse.Process getJointOperationOriginProcess() {
+		return ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
 	public RequestOrderProcessConfig.RequestOrderProcess getRequestOrderProcess() {
 		return ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 
+	public Integer getCurrent() {
+		return current;
+	}
+
+	public void setCurrent(Integer current) {
+		this.current = current;
+	}
+	public VendorRequestOrderProcessConfig.RequestOrderProcess getVendRequestOrderProcess() {
+		return ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
+
+	public DoOrderHeaderProcessAllConfig.OrderHeaderProcess getDoOrderHeaderProcessAll() {
+		return ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
+
+	public DoOrderHeaderProcessFifthConfig.OrderHeaderProcess getDoOrderHeaderProcessFifth() {
+		return ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
 
 	public enum AuditType {
 		/**

@@ -29,27 +29,21 @@
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/">支付申请列表</a></li>
 	</ul><br/>
-	<form:form id="inputForm" modelAttribute="bizPoPaymentOrder" action="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="bizPoPaymentOrder" action="${ctx}/biz/po/bizPoPaymentOrder/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<form:hidden path="poHeaderId"/>
+		<form:hidden path="orderType"/>
+		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">采购单ID：</label>
+			<label class="control-label">订单总金额：</label>
 			<div class="controls">
-				<form:input path="poHeaderId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<input value="${requestHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">付款金额：</label>
 			<div class="controls">
 				<form:input path="total" htmlEscape="false" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">当前审核状态ID：</label>
-			<div class="controls">
-				<form:input path="processId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="form-actions">

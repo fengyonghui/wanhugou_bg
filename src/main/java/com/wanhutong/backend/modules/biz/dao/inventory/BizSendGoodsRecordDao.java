@@ -14,5 +14,6 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
  */
 @MyBatisDao
 public interface BizSendGoodsRecordDao extends CrudDao<BizSendGoodsRecord> {
-	
+
+    void effectSendRecord(BizSendGoodsRecord bizSendGoodsRecord);
 }

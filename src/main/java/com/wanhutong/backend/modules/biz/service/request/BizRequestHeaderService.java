@@ -32,6 +32,7 @@ import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -126,16 +127,10 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 				}
 			}
 		}
-		if (user.isAdmin()) {
-			return super.findPage(page,bizRequestHeader);
-		} else {
-			if(oflag){
-
-			}else {
-				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
-			}
-			return super.findPage(page,bizRequestHeader);
+		if (!user.isAdmin() && !oflag) {
+			bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
 		}
+		return super.findPage(page,bizRequestHeader);
 	}
 
 	@Override
@@ -400,7 +395,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	 * @param description
 	 * @return
 	 */
-	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	@Transactional(readOnly = false, rollbackFor = Exception.class, propagation = Propagation.SUPPORTS)
 	public String audit(Integer reqHeaderId, String currentType, int auditType, String description) {
 		BizRequestHeader bizRequestHeader = this.get(reqHeaderId);
 
@@ -553,4 +548,5 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	public void cancel(int id) {
 		dao.updateREStatus(id, ReqHeaderStatusEnum.CLOSE.getState());
 	}
+
 }

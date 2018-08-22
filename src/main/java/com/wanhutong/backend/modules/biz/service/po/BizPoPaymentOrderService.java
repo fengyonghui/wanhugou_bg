@@ -187,4 +187,8 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 		return dao.updateProcessId(paymentId, processId);
 	}
 
+	public List<BizPoPaymentOrder> getPayMentOrderByReqId(Integer reqId) {
+		return dao.getPayMentOrderByReqId(reqId);
+	}
+
 }

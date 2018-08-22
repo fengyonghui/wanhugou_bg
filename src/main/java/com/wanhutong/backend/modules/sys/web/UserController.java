@@ -10,6 +10,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcel;
 import com.wanhutong.backend.common.utils.excel.ImportExcel;
@@ -160,6 +161,70 @@ public class UserController extends BaseController {
 		model.addAttribute("ordrHeaderStartTime", ordrHeaderStartTime);
 		model.addAttribute("orderHeaderEedTime", orderHeaderEedTime);
 		return "modules/sys/userList";
+	}
+
+
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = {"listData4mobile"})
+	@ResponseBody
+	public String listData4mobile(User user, HttpServletRequest request, HttpServletResponse response, Date ordrHeaderStartTime,Date orderHeaderEedTime,
+								  Model model, @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo
+								  ) {
+		if (user.getCompany() != null && user.getCompany().getSource() != null && "officeConnIndex".equals(user.getCompany().getSource())) {
+			//属于客户专员左边点击菜单查询
+			Office queryOffice = officeService.get(user.getCompany().getId());
+			if (queryOffice != null) {
+				if (queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.PURCHASINGCENTER.getType()))) {//采购中心8
+					user.getCompany().setType(queryOffice.getType());
+				} else if (queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.WITHCAPITAL.getType()))) { //配资中心 10
+					user.getCompany().setCustomerTypeTen(queryOffice.getType());
+				} else if (queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()))) {    //网供中心 11
+					user.getCompany().setCustomerTypeEleven(queryOffice.getType());
+					user.getCompany().setCustomerTypeThirteen(String.valueOf(OfficeTypeEnum.NETWORK.getType()));
+				} else {
+					user.getCompany().setType(String.valueOf(OfficeTypeEnum.PURCHASINGCENTER.getType()));
+					user.getCompany().setCustomerTypeTen(String.valueOf(OfficeTypeEnum.WITHCAPITAL.getType()));
+					user.getCompany().setCustomerTypeEleven(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()));
+					user.getCompany().setCustomerTypeThirteen(String.valueOf(OfficeTypeEnum.NETWORK.getType()));
+				}
+			}
+		}
+		if (UserUtils.getUser().isAdmin()) {
+			user.setDataStatus("filter");
+		}
+
+		Page<User> userPage = new Page<>(request, response);
+		userPage.setPageNo(pageNo);
+		Page<User> page = systemService.findUser(userPage, user);
+		if (user.getConn() != null && "connIndex".equals(user.getConn())) {
+			//客户专员统计
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			User userAdmin = UserUtils.getUser();
+			if (ordrHeaderStartTime != null) {
+				bizOrderHeader.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
+			}
+			if (orderHeaderEedTime != null) {
+				bizOrderHeader.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
+			}
+			if (!userAdmin.isAdmin()) {
+				bizOrderHeader.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+			}
+			for (int i = 0; i < page.getList().size(); i++) {
+				bizOrderHeader.setCon(page.getList().get(i));
+				BizOrderHeader orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
+				if (orderUserCount != null) {
+					page.getList().get(i).setUserOrder(orderUserCount);
+				}
+			}
+		}
+//		model.addAttribute("page", page);
+//		model.addAttribute("ordrHeaderStartTime", ordrHeaderStartTime);
+//		model.addAttribute("orderHeaderEedTime", orderHeaderEedTime);
+		Map<String, Object> resultMap = Maps.newHashMap();
+		resultMap.put("page", page);
+		resultMap.put("ordrHeaderStartTime", ordrHeaderStartTime);
+		resultMap.put("orderHeaderEedTime", orderHeaderEedTime);
+		return JsonUtil.generateData(resultMap, request.getParameter("callback"));
 	}
 
 	@ResponseBody

@@ -146,6 +146,7 @@ public class OfficeController extends BaseController {
         role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
         if (roleList.contains(role)) {
             customer.setVendorId(user.getCompany().getId());
+            model.addAttribute("vendor","vendor");
         }
 
 

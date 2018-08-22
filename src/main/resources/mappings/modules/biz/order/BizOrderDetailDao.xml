@@ -22,6 +22,7 @@
 		a.part_no AS "partNo",
 		a.sku_name AS "skuName",
 		bsi.item_no AS "skuInfo.itemNo",
+		bsi.prod_id as "skuInfo.productInfo.id",
 		a.unit_price AS "unitPrice",
 		a.sent_qty as "sentQty",
 		a.ord_qty AS "ordQty",
@@ -646,7 +647,8 @@ GROUP BY
 			si.name AS "skuInfo.name",
 			si.item_no AS "skuInfo.itemNo",
 			od.ord_qty AS "ordQty",
-			od.sent_qty AS "sentQty"
+			od.sent_qty AS "sentQty",
+			od.id AS "id"
 		FROM biz_order_detail od
 		LEFT JOIN biz_sku_info si ON si.id = od.sku_id
 		LEFT JOIN biz_order_header oh ON oh.id = od.order_id

@@ -356,12 +356,12 @@
                             <th>所属单号</th>
                         </c:if>
                         <th>采购数量</th>
-                        <th>工厂价</th>
+                        <th>结算价</th>
                         <th>总金额</th>
-                            <%--<th>已排产量</th>--%>
-                            <%--<th>待排产数量</th>--%>
+                        <%--<th>已排产量</th>--%>
+                        <%--<th>待排产数量</th>--%>
 
-                            <%--<th>操作</th>--%>
+                        <%--<th>操作</th>--%>
                     </tr>
                     </thead>
                     <tbody id="prodInfo">
@@ -379,15 +379,15 @@
                                         <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}"
                                                    var="orderNumStr"
                                                    varStatus="orderStatus">
-                                        <c:if test="${orderNumStr.soType==1}">
-                                        <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
+                                            <c:if test="${orderNumStr.soType==1}">
+                                                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
                                             </c:if>
                                             <c:if test="${orderNumStr.soType==2}">
-                                            <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
-                                                </c:if>
-                                                    ${orderNumStr.orderNumStr}
-                                            </a>
-                                            </c:forEach>
+                                                <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
+                                            </c:if>
+                                                 ${orderNumStr.orderNumStr}
+                                                </a>
+                                        </c:forEach>
                                     </td>
                                 </c:if>
                                 <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
@@ -466,7 +466,7 @@
                             <th>所属单号</th>
                         </c:if>
                         <th>采购数量</th>
-                        <th>工厂价</th>
+                        <th>结算价</th>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -485,15 +485,15 @@
                                         <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}"
                                                    var="orderNumStr"
                                                    varStatus="orderStatus">
-                                        <c:if test="${orderNumStr.soType==1}">
-                                        <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
+                                            <c:if test="${orderNumStr.soType==1}">
+                                                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
                                             </c:if>
                                             <c:if test="${orderNumStr.soType==2}">
-                                            <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
-                                                </c:if>
-                                                    ${orderNumStr.orderNumStr}
-                                            </a>
-                                            </c:forEach>
+                                                <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
+                                            </c:if>
+                                                ${orderNumStr.orderNumStr}
+                                                </a>
+                                        </c:forEach>
                                     </td>
                                 </c:if>
                                 <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>

@@ -1,10 +1,5 @@
 package com.wanhutong.backend.modules.config.parse;
 
-/**
- * @author Ma.Qiang
- * 2018/5/31
- */
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;

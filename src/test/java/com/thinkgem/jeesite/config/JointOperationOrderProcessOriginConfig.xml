@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JointOperationOrderProcessOriginConfig>
+    <!--产地直发审核-->
+
+    <zeroDefaultProcessId>10001</zeroDefaultProcessId>
+    <fifthDefaultProcessId>20001</fifthDefaultProcessId>
+    <allDefaultProcessId>30001</allDefaultProcessId>
+    <payProcessId>666</payProcessId>
+    <endProcessId>-1</endProcessId>
+
+    <!--流程节点-->
+    <process>
+        <name>品类主管审核</name>
+        <code>30001</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>30002</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>财务主管审核</name>
+        <code>30002</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>666</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>渠道总监审核</name>
+        <code>20001</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>20002</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>品类主管审核</name>
+        <code>20002</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>20003</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>财务主管审核</name>
+        <code>20003</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>666</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+
+    <process>
+        <name>渠道总监审核</name>
+        <code>10001</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>10002</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>总经理审核</name>
+        <code>10002</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>10003</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>品类主管审核</name>
+        <code>10003</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>10004</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>财务主管审核</name>
+        <code>10004</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>666</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>审批完成</name>
+        <code>666</code>
+    </process>
+    <process>
+        <name>驳回</name>
+        <code>-1</code>
+    </process>
+</JointOperationOrderProcessOriginConfig>

@@ -137,7 +137,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		//只查询选品专员
 		if (user.getConn() != null && user.getConn().equals("selectIndex")) {
 			Role role = new Role();
-			role.setEnname(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+			role.setEnname(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState());
 			List<Role> roleList = findRole(role);
 			if (roleList != null && roleList.size() > 0){
 				role = roleList.get(0);
@@ -781,7 +781,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	public Page<User> findUserSele(Page<User> page, User user) {
 		//查询选品专员
 		Role role = new Role();
-		role.setEnname(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+		role.setEnname(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState());
 		List<Role> roleList = findRole(role);
 		if (roleList != null && roleList.size() > 0){
 			role = roleList.get(0);

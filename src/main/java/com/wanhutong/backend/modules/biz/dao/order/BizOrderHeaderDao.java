@@ -18,6 +18,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -371,4 +372,31 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param orderNum
      */
     BizOrderHeader getByOrderNum(String orderNum);
+
+    /**
+     * 备货单商品的销售单
+     * @param skuIdList
+     * @param centId
+     * @return
+     */
+    List<BizOrderHeader> findOrderForVendReq(@Param("skuIdList") List<Integer> skuIdList, @Param("centId") Integer centId);
+
+
+    /**
+     * 更新订单业务状态
+     * @param id
+     * @param status
+     * @param updateBy
+     * @param updateDate
+     * @return
+     */
+    int updateBizStatus(@Param("id") Integer id,@Param("status") Integer status, @Param("updateBy") User updateBy, @Param("updateDate") Date updateDate);
+
+    /**
+     * 更新审核流程id
+     * @param headerId
+     * @param processId
+     * @return
+     */
+    int updateProcessId(@Param("headerId") Integer headerId, @Param("processId") Integer processId);
 }

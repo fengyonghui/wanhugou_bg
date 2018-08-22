@@ -191,7 +191,8 @@
 					id:_this.userInfo.listId,
 					currentType:$('#codeId').val(),//流程code
 					auditType:num,
-					description:inText
+					description:inText,
+                    fromPage:""
 				},
 				dataType: "json",
 				success: function(res) {
@@ -223,7 +224,8 @@
 					id:_this.userInfo.listId,
 					currentType:$('#codeId').val(),//流程code
 					auditType:num,
-					description:rejectTxt
+					description:rejectTxt,
+                    fromPage:""
 				},
 				dataType: "json",
 				success: function(res) {
