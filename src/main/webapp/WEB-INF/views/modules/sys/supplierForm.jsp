@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OfficeTypeEnum" %>
 <html>
 <head>
     <title>机构管理</title>
@@ -99,6 +100,10 @@
                     }
                 });
             });
+
+            if ($("#type").val() == ${OfficeTypeEnum.VENDOR.type}) {
+
+            }
         });
     </script>
     <script type="text/javascript">
@@ -345,6 +350,52 @@
         </div>
     </div>
     <div class="control-group">
+        <label class="control-label">厂商类型:</label>
+        <div class="controls">
+            <form:select path="bizVendInfo.type" class="input-xlarge">
+                <form:option value="" label="请选择"/>
+                <form:options items="${fns:getDictList('vend_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+            </form:select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">厂商视频:
+            <p style="opacity: 0.5;color: red;">*上传厂商视频</p>
+            <p style="opacity: 0.5;color: red;">视频比例建议16:9横版</p>
+            <p style="opacity: 0.5;color: red;">点击视频删除</p>
+        </label>
+        <div class="controls">
+            <input class="btn" type="file" name="file" onchange="submitVideo('officeVideo', false)" value="上传" id="officeVideo"/>
+        </div>
+        <div id="officeVideoDiv">
+            <table>
+                <div id="officeVideoDivTr">
+                    <c:forEach items="${vendVideoList}" var="v" varStatus="status">
+                        <video width="300px" customInput="officeVideoInput" src="${v.imgServer}${v.imgPath}" controls="controls" onclick="$(this).remove();"></video>
+                    </c:forEach>
+                </div>
+            </table>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">退换货流程:</label>
+        <div class="controls">
+            <form:textarea path="bizVendInfo.remark" htmlEscape="false" class="input-xlarge"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">基本介绍:</label>
+        <div class="controls">
+            <form:textarea path="bizVendInfo.introduce" htmlEscape="false" class="input-xlarge"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">生产优势:</label>
+        <div class="controls">
+            <form:textarea path="bizVendInfo.prodAdv" htmlEscape="false" class="input-xlarge"/>
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label">备注:</label>
         <div class="controls">
             <form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="input-xlarge"/>
@@ -365,6 +416,7 @@
             </div>
         </div>
     </c:if>
+    <form:input path="vendVideo" id="vendVideo" cssStyle="display: none"/>
     <div class="form-actions">
         <shiro:hasPermission name="sys:supplier:audit">
             <c:if test="${gysFlag == 'gys_audit' && office.bizVendInfo.auditStatus == 0}">
@@ -374,7 +426,7 @@
         </shiro:hasPermission>
         <shiro:hasPermission name="sys:office:edit">
             <c:if test="${gysFlag != 'gys_audit' && gysFlag != 'onlySelect' && (office.bizVendInfo.auditStatus == 0 || office.bizVendInfo.auditStatus == 2)}">
-                <input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
+                <input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存" onclick="submitVendForm()"/>&nbsp;
             </c:if>
         </shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
@@ -494,6 +546,73 @@
                 }else {
                     var img = $("#" + id + "Img");
                     img.attr("src", msgJSON.fullName);
+                }
+            },
+            error : function(data, status, e) {
+                //服务器响应失败处理函数
+                console.info(data);
+                console.info(status);
+                console.info(e);
+                alert("上传失败");
+            }
+        });
+        return false;
+    }
+
+    function submitVendForm() {
+        var inputForm = $("#inputForm");
+        var vendVideo = $("#officeVideoDiv").find("[customInput = 'officeVideoInput']");
+        var vendVideoStr = "";
+        for (var i = 0; i < vendVideo.length; i ++) {
+            vendVideoStr += ($(vendVideo[i]).attr("src"));
+        }
+        $("#vendVideo").val(vendVideoStr);
+
+        inputForm.submit();
+
+    }
+
+    function submitVideo(id, multiple){
+        var f = $("#" + id).val();
+        if(f==null||f==""){
+            alert("错误提示:上传文件不能为空,请重新选择文件");
+            return false;
+        }else{
+            var extname = f.substring(f.lastIndexOf(".")+1,f.length);
+            extname = extname.toLowerCase();//处理了大小写
+        }
+        var file = document.getElementById(id).files;
+        var size = file[0].size;
+        ajaxFileUploadVideo(id, multiple);
+    }
+
+    function ajaxFileUploadVideo(id, multiple) {
+        $.ajaxFileUpload({
+            url : '${ctx}/file/upload', //用于文件上传的服务器端请求地址
+            secureuri : false, //一般设置为false
+            fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
+            type : 'POST',
+            dataType : 'text', //返回值类型 一般设置为json
+            success : function(data, status) {
+                var msg = data.substring(data.indexOf("{"), data.lastIndexOf("}")+1);
+                var msgJSON = $.parseJSON(msg);
+                console.info(msgJSON);
+                if(msgJSON.ret == "false" || !msgJSON.ret) {
+                    alert(msgJSON.errmsg);
+                    return;
+                }
+                var fileList = msgJSON.data.fileList;
+                var imgDiv = $("#" + id + "Div");
+                var imgDivHtml = "<td><video width='300px' customInput=\""+ id +"Input\" src=\"$Src\" controls=\"controls\" onclick=\"removeThis(this);\"></video></td>";
+                if (fileList && fileList.length > 0 && multiple) {
+                    for (var i = 0; i < fileList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", fileList[i]));
+                    }
+                }else if (fileList && fileList.length > 0 && !multiple) {
+                    imgDiv.empty();
+                    for (var i = 0; i < fileList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", fileList[i]));
+                    }
                 }
             },
             error : function(data, status, e) {

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.request.BizRequestExpandDao">
+    
+	<sql id="bizRequestExpandColumns">
+		a.id AS "id",
+		a.request_id AS "requestHeader.id",
+		a.vend_id AS "bizVendInfo.office.id",
+		a.current_payment_id AS "bizPoPaymentOrder.id",
+		a.balance_total AS "balanceTotal",
+		a.status AS "delFlag",
+		a.u_version AS "uVersion",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizRequestExpandJoins">
+	</sql>
+    
+	<select id="get" resultType="BizRequestExpand">
+		SELECT 
+			<include refid="bizRequestExpandColumns"/>
+		FROM biz_request_expand a
+		<include refid="bizRequestExpandJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizRequestExpand">
+		SELECT 
+			<include refid="bizRequestExpandColumns"/>
+		FROM biz_request_expand a
+		<include refid="bizRequestExpandJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+				AND a.request_id = #{requestHeader.id}
+			</if>
+			<if test="vendor != null and vendor.id != null and vendor.id != ''">
+				AND a.vend_id = #{bizVendInfo.office.id}
+			</if>
+			<if test="bizPoPaymentOrder != null and bizPoPaymentOrder.id != null and bizPoPaymentOrder.id != null">
+				AND a.current_payment_id = #{bizPoPaymentOrder.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizRequestExpand">
+		SELECT 
+			<include refid="bizRequestExpandColumns"/>
+		FROM biz_request_expand a
+		<include refid="bizRequestExpandJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_request_expand(
+			id,
+			request_id,
+			vend_id,
+			current_payment_id,
+			balance_total,
+			status,
+			u_version,
+			create_id,
+			create_time,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{requestHeader.id},
+			#{bizVendInfo.office.id},
+			#{bizPoPaymentOrder.id},
+			#{balanceTotal},
+			#{delFlag},
+			#{uVersion},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_request_expand SET 	
+			request_id = #{requestHeader.id},
+			vend_id = #{bizVendInfo.office.id},
+			current_payment_id = #{bizPoPaymentOrder.id},
+			balance_total = #{balanceTotal},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_request_expand SET 
+			status = #{DEL_FLAG_DELETE},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+
+	<update id="incrPayTotal">
+		UPDATE biz_request_expand SET
+		balance_total  = (balance_total + #{payTotal})
+		WHERE id = #{id}
+	</update>
+
+	<update id="updatePaymentOrderId">
+		UPDATE biz_request_expand SET
+		current_payment_id = #{paymentId}
+		WHERE id = #{id}
+	</update>
+
+	<select id="getIdByRequestHeaderId" resultType="Integer">
+		SELECT id FROM
+		biz_request_expand
+		WHERE request_id = #{requestId}
+	</select>
+	
+</mapper>

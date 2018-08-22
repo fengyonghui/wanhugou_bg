@@ -30,13 +30,9 @@
 						}else{
 							mui.toast('请选择匹配的选项')
 						}
-					
 				}else{
 					_this.sureSelect(optionsBusiness)
-					
 				}
-				
-
 			})
 		},
 		sureSelect:function(optionsBusiness){
@@ -132,7 +128,6 @@
 					$('.input_div').html(htmlList)
 				}
 			});
-
 		},
 		ajaxCheckStatus: function() {
 			var _this = this;
@@ -173,9 +168,7 @@
 					_this.getData()
 				}
 			});
-
 		},
-		
 	}
 	$(function() {
 

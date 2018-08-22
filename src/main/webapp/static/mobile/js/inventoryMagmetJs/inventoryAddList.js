@@ -86,7 +86,7 @@
                     data: {"id":"", "fromOffice.id": _this.fromOfficeId, "recvEta":inPoLastDaVal, "remark": inPoRemarkVal, "bizStatus": bizStatusVal, "skuInfoIds": _this.skuInfoIds, "reqQtys": _this.reqQtys, "reqDetailIds":_this.reqDetailIds, "LineNos":_this.LineNos},
                     success: function (resule) {
                         if (resule.data.value == '操作成功!') {
-                            alert("添加备货单成功！");
+                            mui.toast("添加备货单成功！");
                             GHUTILS.OPENPAGE({
                                 url: "../../html/inventoryMagmetHtml/inventoryList.html",
                                 extras: {
@@ -161,7 +161,7 @@
                                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
                                     '<li class="mui-table-view-cell">' +
                                     '<div class="mui-input-row inputClassAdd">' +
-                                    '<label>工厂价:</label>' +
+                                    '<label>结算价:</label>' +
                                     '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled>' +
                                     '</div></li></div></div>' +
                                     '<div class="mui-row">' +

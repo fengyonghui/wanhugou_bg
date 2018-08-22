@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao">
+    
+	<sql id="bizRequestHeaderColumns">
+		a.id AS "id",
+		a.req_no AS "reqNo",
+		a.req_type AS "reqType",
+		a.from_id AS "fromOffice.id",
+		a.to_id AS "toOffice.id",
+		a.from_type AS "fromType",
+		bre.vend_id AS "bizVendInfo.office.id",
+		vend.vend_name AS "bizVendInfo.vendName",
+		so.name AS "fromOffice.name",
+		sot.name AS "toOffice.name",
+		a.recv_eta AS "recvEta",
+		a.total_detail AS "totalDetail",
+		a.recv_total AS "recvTotal",
+		a.remark AS "remark",
+		a.biz_status AS "bizStatus",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		bre.current_payment_id AS "bizPoPaymentOrder.id",
+		bre.balance_total AS "balanceTotal",
+		suu.name AS "updateBy.name",
+		su.name AS "createBy.name",
+		a.update_time AS "updateDate",
+		sum(req_qty) as "reqQtys",
+		sum(recv_qty) as "recvQtys",
+		sum(req_qty * unit_price) AS totalMoney,
+		GROUP_CONCAT(brd.id) AS reqDetailIds,
+		count(brd.id) as "ordCount",
+		(@rownum:=@rownum+1) as "numberRownum",
+		process.id AS "commonProcess.id",
+		process.object_id AS "commonProcess.objectId",
+		process.object_name AS "commonProcess.objectName",
+		process.prev_id AS "commonProcess.prevId",
+		process.biz_status AS "commonProcess.bizStatus",
+		process.processor AS "commonProcess.processor",
+		process.description AS "commonProcess.description",
+		process.type AS "commonProcess.type",
+		a.scheduling_type AS "schedulingType",
+		bph.id AS "bizPoHeader.id",
+		bph.process_id AS "bizPoHeader.process_id",
+		cp.id AS "bizPoHeader.commonProcess.id",
+		cp.object_id AS "bizPoHeader.commonProcess.objectId",
+		cp.object_name AS "bizPoHeader.commonProcess.objectName",
+		cp.prev_id AS "bizPoHeader.commonProcess.prevId",
+		cp.biz_status AS "bizPoHeader.commonProcess.bizStatus",
+		cp.processor AS "bizPoHeader.commonProcess.processor",
+		cp.description AS "bizPoHeader.commonProcess.description",
+		cp.type AS "bizPoHeader.commonProcess.type",
+		bsp.po_sch_type AS "bizPoHeader.poSchType"
+	</sql>
+	
+	<sql id="bizRequestHeaderJoins">
+		LEFT JOIN biz_request_expand bre ON bre.request_id = a.id
+		LEFT JOIN biz_vend_info vend ON vend.office_id = bre.vend_id
+		LEFT JOIN sys_office so ON so.id=a.from_id
+		LEFT JOIN sys_office sot ON sot.id=a.to_id
+		LEFT JOIN sys_user su ON su.id=a.create_id
+		LEFT JOIN sys_user suu ON suu.id=a.update_id
+		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
+		LEFT JOIN  common_process process on process.id = a.process_id
+		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bre.current_payment_id
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 2
+		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
+		LEFT JOIN common_process cp ON cp.id = bph.process_id
+		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
+	</sql>
+    
+	<select id="get" resultType="BizRequestHeader">
+		SELECT 
+			<include refid="bizRequestHeaderColumns"/>
+		FROM biz_request_header a
+		<include refid="bizRequestHeaderJoins"/>
+		WHERE a.id = #{id}
+		group by a.id
+	</select>
+	
+	<select id="findList" resultType="BizRequestHeader">
+		SELECT 
+			<include refid="bizRequestHeaderColumns"/>,
+			pi.vendor_name AS "name",
+			bvi.id as "varietyInfo.id",
+			bvi.name as "varietyInfo.name"
+		/*	,(SELECT SUM(bpd.ord_qty)
+			FROM biz_po_header bph
+			LEFT JOIN biz_po_detail bpd ON bpd.order_id = bph.id
+			WHERE bph.id = bpor.po_id
+			) AS "bizPoHeader.totalOrdQty" */
+/*			,(SELECT
+			SUM(bcp.complete_num)
+			FROM biz_po_header bph
+			LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.status=1 AND bsp.object_name = 'biz_po_header'
+			LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
+			WHERE bph.status = 1
+			AND bph.id = bpor.po_id) AS "bizPoHeader.totalSchedulingHeaderNum"
+			,(SELECT
+			SUM(bcp.complete_num)
+			FROM biz_po_header bph
+			LEFT JOIN biz_po_detail bpd on bpd.order_id = bph.id AND bpd.status=1
+			LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bpd.id AND bsp.status=1 AND bsp.object_name = 'biz_po_detail'
+			LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
+			WHERE bph.status = 1
+			AND bph.id = bpor.po_id) AS "bizPoHeader.totalSchedulingDetailNum"
+		,(SELECT bsp.po_sch_type FROM biz_po_header bph
+		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id
+		AND bsp.object_name='biz_po_header' AND bsp.status = 1
+		WHERE bph.id = bpor.po_id) AS "bizPoHeader.poSchType"*/
+		FROM biz_request_header a
+		<include refid="bizRequestHeaderJoins"/>
+		LEFT JOIN biz_sku_info bsi on brd.sku_id = bsi.id
+		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		<!-- 供应商id -->
+		<if test="vendorId !=null and vendorId != ''">
+			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
+		</if>
+		<!-- end  -->
+		LEFT JOIN biz_variety_info bvi on bvi.id=pi.vari_id and bvi.status=1
+		<where>
+			1=1
+			<if test="dataStatus!=null and dataStatus!=''">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+			<if test="varietyInfo!=null and varietyInfo.id!=null and varietyInfo.id!=''">
+				and bvi.id = #{varietyInfo.id}
+			</if>
+			<if test="reqNo != null and reqNo != ''">
+				AND a.req_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{reqNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{reqNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{reqNo},'%')</if>
+			</if>
+			<if test="reqType != null and reqType != ''">
+				AND a.req_type = #{reqType}
+			</if>
+			<if test="fromOffice != null and fromOffice.id !=null and fromOffice.id != ''">
+				AND a.from_id = #{fromOffice.id}
+			</if>
+			<if test="fromType != null and fromType != ''">
+				AND a.from_type = #{fromType}
+			</if>
+			<if test="recvEta != null and recvEta != ''">
+				AND  a.recv_eta BETWEEN ${startDate} AND ${endDate}
+			</if>
+			<if test="bizStatus != null and bizStatus != -1">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND  pi.vendor_name = #{name}
+			</if>
+
+			<if test="page != null and page.includeTestData != true">
+				AND NOT EXISTS(
+				select 1
+				from sys_test_account ta
+				where a.from_id = ta.object_id
+				and ta.object_name = 'sys_office'
+				)
+			</if>
+
+			<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
+				${sqlMap.request}
+			</if>
+            <if test="vendorId !=null and vendorId != ''">
+                AND  sv.id = ${vendorId}
+            </if>
+            <if test="bizPoHeader !=null and bizPoHeader.id != null and bizPoHeader.id != ''">
+                AND  bph.id = ${bizPoHeader.id}
+            </if>
+			GROUP BY a.id
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				<!--GROUP  BY a.id-->
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="dataFrom != null and dataFrom != '' and dataFrom == 'biz_request_bizRequestHeader'">
+				order by createDate desc
+			</when>
+			<otherwise>
+				order by updateDate desc
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findListForPoHeader" resultType="BizRequestHeader">
+		SELECT
+		<include refid="bizRequestHeaderColumns"/>,
+		pi.vendor_id AS "onlyVendor"
+		FROM (select @rownum:=0) as rownum,biz_request_header a
+		<include refid="bizRequestHeaderJoins"/>
+		INNER JOIN biz_sku_info bsi on brd.sku_id = bsi.id
+		INNER JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		<where>
+			1=1
+			AND EXISTS(
+			SELECT 1 FROM
+			(SELECT
+			DISTINCT a.id, pi.vendor_id
+			FROM biz_request_header a,biz_request_detail bod
+			LEFT JOIN biz_sku_info bsi on bod.sku_id = bsi.id
+			LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+			WHERE bod.header_id = a.id
+			AND bod.status = 1
+			<if test="dataStatus!=null and dataStatus!=''">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+			<if test="fromType != null">
+				AND a.from_type = #{fromType}
+			</if>
+			<if test="reqNo != null and reqNo != ''">
+				AND a.req_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{reqNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{reqNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{reqNo},'%')</if>
+			</if>
+			<if test="reqType != null and reqType != ''">
+				AND a.req_type = #{reqType}
+			</if>
+			<if test="fromOffice != null and fromOffice.id !=null and fromOffice.id != ''">
+				AND a.from_id = #{fromOffice.id}
+			</if>
+			<if test="recvEta != null and recvEta != ''">
+				AND  a.recv_eta BETWEEN ${startDate} AND ${endDate}
+			</if>
+			<if test="bizStatus != null and bizStatus != -1">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+
+			AND a.STATUS =1 ) t
+			WHERE a.id = t.id
+			GROUP BY id
+			HAVING  count(1) = 1
+			)
+
+			<if test="page != null and page.includeTestData != true">
+				AND NOT EXISTS(
+				select 1
+				from sys_test_account ta
+				where a.from_id = ta.object_id
+				and ta.object_name = 'sys_office'
+				)
+			</if>
+
+			<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
+				${sqlMap.request}
+			</if>
+			GROUP BY a.id
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				<!--GROUP  BY a.id-->
+			</otherwise>
+		</choose>
+		order by updateDate desc
+	</select>
+
+	<select id="findAllList" resultType="BizRequestHeader">
+		SELECT 
+			<include refid="bizRequestHeaderColumns"/>
+		FROM biz_request_header a
+		<include refid="bizRequestHeaderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>
+		GROUP BY a.id
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_request_header(
+			id,
+			req_no,
+			<if test="reqType!=null">
+				req_type,
+			</if>
+			from_id,
+			to_id,
+			from_type,
+			recv_eta,
+		<if test="totalDetail!=null">
+			total_detail,
+		</if>
+		<if test="recvTotal!=null">
+			recv_total,
+		</if>
+			remark,
+		<if test="bizStatus!=null">
+			biz_status,
+		</if>
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{reqNo},
+		<if test="reqType!=null">
+			#{reqType},
+		</if>
+			#{fromOffice.id},
+			#{toOffice.id},
+			#{fromType},
+			#{recvEta},
+			<if test="totalDetail!=null">
+				#{totalDetail},
+			</if>
+			<if test="recvTotal!=null">
+			#{recvTotal},
+			</if>
+			#{remark},
+		<if test="bizStatus!=null">
+			#{bizStatus},
+		</if>
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_request_header SET
+			<if test="reqNo!=null">
+				req_no = #{reqNo},
+			</if>
+			<if test="reqType!=null">
+				req_type = #{reqType},
+			</if>
+			from_id = #{fromOffice.id},
+			to_id = #{toOffice.id},
+			from_type = #{fromType},
+			recv_eta = #{recvEta},
+			<if test="totalDetail!=null">
+				total_detail = #{totalDetail},
+			</if>
+			<if test="recvTotal!=null">
+				recv_total	=  #{recvTotal},
+			</if>
+			remark = #{remark},
+		<if test="bizStatus!=null">
+			biz_status = #{bizStatus},
+		</if>
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_request_header SET 
+			status = #{delFlag}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateProcessId">
+		UPDATE biz_request_header SET
+		process_id  = #{processId}
+		WHERE id = #{headerId}
+	</update>
+
+	<select id="findContByFromOffice" resultType="Integer">
+		SELECT
+		count(1)
+		FROM biz_request_header a
+		WHERE a.from_id = #{fromOfficeId}
+
+	</select>
+
+	<select id="findSellCount" resultType="Integer">
+		select
+			count(1)
+		FROM biz_order_header oh
+		LEFT JOIN biz_order_detail od ON od.order_id = oh.id
+		LEFT JOIN biz_op_shelf_sku boss ON boss.id = od.sku_shelf_id
+		LEFT JOIN biz_sku_info bsi ON bsi.id = boss.sku_id
+		WHERE boss.center_id = #{centId}
+		AND bsi.id = #{skuId}
+	</select>
+
+	<select id="getTotalQtyAndSchedulingNum" resultType="BizRequestHeader" parameterType="Integer">
+		SELECT
+		(select
+		sum(brd.req_qty)
+		from biz_request_header brh
+		left join biz_request_detail brd on brd.header_id=brh.id and brd.status=1
+		where brh.status=1 AND brh.id = #{id}) as "totalOrdQty",
+		(select
+		sum(bcp.complete_num)
+		from biz_request_header brh
+		left join biz_request_detail brd on brd.header_id=brh.id and brd.status=1
+		left join biz_scheduling_plan bsp on bsp.object_id = brd.id and bsp.object_name = 'biz_request_detail' and bsp.status=1
+    	left join biz_complete_paln bcp on bcp.scheduling_id = bsp.id and bcp.status=1
+		where brh.status=1 AND brh.id = #{id}) as "totalSchedulingDetailNum",
+		(SELECT SUM(bcp.complete_num)
+		from biz_request_header brh
+		LEFT JOIN biz_scheduling_plan bsp	ON (bsp.object_id = brh.id AND bsp.object_name = 'biz_request_header' AND bsp.status = 1)
+		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id AND bcp.status = 1 AND bcp.complete_status = 1
+		WHERE brh.status=1 AND brh.id=#{id}) as "totalCompleteScheduHeaderNum",
+		sum(bcp.complete_num) as "totalSchedulingHeaderNum"
+		from biz_request_header a
+		left join biz_scheduling_plan bsp on bsp.object_id = a.id and bsp.object_name = 'biz_request_header' and bsp.status=1
+    	left join biz_complete_paln bcp on bcp.scheduling_id = bsp.id and bcp.status=1
+		WHERE
+		a.status=1
+		and a.id =#{id}
+	</select>
+
+	<update id="incrPayTotal">
+		UPDATE biz_request_header SET
+		balance_total  = (balance_total + #{payTotal})
+		WHERE id = #{id}
+	</update>
+
+	<update id="updatePaymentOrderId">
+		UPDATE biz_request_header SET
+		current_payment_id = #{paymentId}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateBizStatus">
+		UPDATE biz_request_header SET
+		biz_status = #{status},
+		update_id = #{updateBy.id},
+		update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateSchedulingType">
+		UPDATE biz_request_header SET
+		scheduling_type = 1
+		WHERE status=1
+		AND id = #{id}
+	</update>
+
+</mapper>

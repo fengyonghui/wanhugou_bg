@@ -36,7 +36,7 @@
 
 						});
                         tt+=t+"#"+detail+",";
-
+						alert(tt)
                     });
                     tt=tt.substring(0,tt.length-1);
                     if(window.confirm('你确定要发货吗？') && total > 0){
@@ -74,7 +74,7 @@
 
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/biz/request/bizRequestHeader/findByRequest",
+                    url:"${ctx}/biz/request/bizRequestHeaderForVendor/findByRequest",
                     data:$('#searchForm').serialize(),
                     success:function (data) {
                         if ($("#id").val() == '') {
@@ -84,6 +84,7 @@
 
                         var tr_tds="";
                         var sum = 0;
+                        var bizName = "";
                         $.each(data, function (index,requestHeader) {
 							if(requestHeader.bizStatus==10){
                                 bizName="采购中"
@@ -109,7 +110,7 @@
                                 tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.vendorName+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
 
                                 tr_tds+= "<td>"+detail.reqQty+"</td><td>"+detail.sendQty+"</td>";
-                                tr_tds+="<td><input  type='text' title='sent_"+requestHeader.id+"' name='' onchange='checkNum("+detail.reqQty+","+detail.sendQty+",this)' value='"+(detail.reqQty-detail.sendQty)+"'></td>";
+                                tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+requestHeader.id+"' name='' value='0'></td>";
                                 tr_tds+="</tr>";
                                 // alert(detail.skuInfo.buyPrice)
                                 if(requestHeader.requestDetailList.length>1){
@@ -149,7 +150,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单列表</a></li>
+		<li><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货记录</a></li>
 		<li class="active"><a href="${ctx}/biz/inventory/bizInvoice/form?id=${bizInvoice.id}&ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单<shiro:hasPermission name="biz:inventory:bizInvoice:edit">${not empty bizInvoice.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInvoice:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save" method="post" class="form-horizontal">
@@ -161,84 +162,60 @@
 			<div class="control-group">
 				<label class="control-label">发货单号：</label>
 				<div class="controls">
-					<form:input path="sendNumber" htmlEscape="false" disabled="true" class="input-xlarge "/>
+					<form:input path="sendNumber" htmlEscape="false" type="text" disabled="true" class="input-xlarge "/>
 				</div>
 			</div>
 		</c:if>
 		<div class="control-group">
 			<label class="control-label">物流单号：</label>
 			<div class="controls">
-				<form:input path="trackingNumber" htmlEscape="false" class="input-xlarge required"/>
+				<form:input path="trackingNumber" type="text" htmlEscape="false" class="input-xlarge"/>
+			</div>
+		</div>
+        <c:if test="${bizInvoice.str == 'freight'}">
+            <div class="control-group">
+                <label class="control-label">运费：</label>
+                <div class="controls">
+                    <form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
+                    <span class="help-inline"><font color="red">*</font> </span>
+                </div>
+            </div>
+        </c:if>
+        <div class="control-group">
+			<label class="control-label">验货员：</label>
+			<div class="controls">
+				<form:select about="choose" path="inspector.id" class="input-medium required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${inspectorList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">物流商：</label>
+			<label class="control-label">验货时间：</label>
 			<div class="controls">
-				<select id="bizLogistics" name="logistics.id" onmouseout="" class="input-medium">
-					<c:forEach items="${logisticsList}" var="bizLogistics">
-						<option value="${bizLogistics.id}"/>${bizLogistics.name}
-					</c:forEach>
-				</select>
+				<input name="inspectDate" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+					   value="<fmt:formatDate value="${bizInvoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">物流信息图：</label>
+			<label class="control-label">验货备注：</label>
 			<div class="controls">
-				<form:hidden path="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-				<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="false" maxWidth="100"
-							  maxHeight="100"/>
-			</div>
-		</div>
-		<%--<div class="control-group">--%>
-			<%--<label class="control-label">货值：</label>--%>
-			<%--<div class="controls">--%>
-				<%--<input id="valuePrice" name="valuePrice"  htmlEscape="false" value="" class="input-xlarge required"/>--%>
-				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-			<%--</div>--%>
-		<%--</div>--%>
-		<div class="control-group">
-			<label class="control-label">操作费：</label>
-			<div class="controls">
-				<form:input path="operation" htmlEscape="false" class="input-xlarge "/>
+				<form:textarea path="inspectRemark" type="textarea" htmlEscape="false" maxlength="30" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">运费：</label>
+			<label class="control-label">集货地点：</label>
 			<div class="controls">
-				<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:select path="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('coll_locate')}" itemValue="value" itemLabel="label"/>
+				</form:select>
+                <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<%--<div class="control-group">--%>
-			<%--<label class="control-label">承运人：</label>--%>
-			<%--<div class="controls">--%>
-				<%--<form:input path="carrier" htmlEscape="false" maxlength="20" class="input-xlarge required"/>--%>
-				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-			<%--</div>--%>
-		<%--</div>--%>
-		<c:if test="${userList==null}">
-			<div class="control-group">
-				<label class="control-label">发货人：</label>
-				<div class="controls">
-					<form:input about="choose" readonly="true" path="carrier" class="input-medium required"/>
-					<span class="help-inline"><font color="red">*</font> </span>
-				</div>
-			</div>
-		</c:if>
-		<c:if test="${userList!=null}">
-			<div class="control-group">
-				<label class="control-label">发货人：</label>
-				<div class="controls">
-					<form:select about="choose" path="carrier" class="input-medium required">
-						<form:option value="" label="请选择"/>
-						<form:options items="${userList}" itemLabel="name" itemValue="name" htmlEscape="false"/>
-					</form:select>
-					<span class="help-inline"><font color="red">*</font> </span>
-				</div>
-			</div>
-		</c:if>
 		<div class="control-group">
 			<label class="control-label">发货时间：</label>
 			<div class="controls">
@@ -261,6 +238,12 @@
 			</div>
 		</div>
 
+		<div class="control-group">
+			<label class="control-label">备注：</label>
+			<div class="controls">
+				<form:textarea path="remarks" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+			</div>
+		</div>
 
 		<div class="control-group">
 			<label class="control-label">选择备货单：</label>
@@ -281,37 +264,35 @@
 					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/><span style="color: red;">(请输入没有供货完成的订单)</span></li>
 					<li class="clearfix"></li>
 				</ul>
-
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label">待发货单：</label>
-			<div class="controls">
-				<table id="contentTable2"  class="table table-striped table-bordered table-condensed">
-					<thead>
-					<tr>
-						<th><input id="select_all" type="checkbox" /></th>
-						<th>备货清单号</th>
-						<th>采购中心</th>
-						<th>业务状态</th>
-						<th>商品名称</th>
-						<th>供应商</th>
-						<th>商品货号</th>
-						<th>商品编码</th>
-						<th>商品属性</th>
+				<div class="controls">
+					<table id="contentTable2"  class="table table-striped table-bordered table-condensed">
+						<thead>
+						<tr>
+							<th><input id="select_all" type="checkbox" /></th>
+							<th>备货清单号</th>
+							<th>采购中心</th>
+							<th>业务状态</th>
+							<th>商品名称</th>
+							<th>供应商</th>
+							<th>商品货号</th>
+							<th>商品编码</th>
+							<th>商品属性</th>
+							<th>申报数量</th>
+							<th>已发货数量</th>
+							<th>发货数量</th>
+						</tr>
+						</thead>
+						<tbody id="prodInfo2">
 
-						<th>申报数量</th>
-						<th>已发货数量</th>
-						<th>发货数量</th>
-					</tr>
-					</thead>
-					<tbody id="prodInfo2">
-
-					</tbody>
-				</table>
-				<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>
-			</div>
+						</tbody>
+					</table>
+					<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>
+				</div>
 
 			<div class="controls">
 				<table id="contentTable"  class="table table-striped table-bordered table-condensed">

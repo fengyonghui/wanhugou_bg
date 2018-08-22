@@ -6,7 +6,9 @@ package com.wanhutong.backend.modules.biz.entity.request;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
+import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
@@ -86,6 +88,16 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * */
 	private BizVarietyInfo varietyInfo;
 
+	/**
+	 * 排产类型: 0:按订单排产， 1:按商品排产
+	 */
+	private Integer schedulingType;
+
+//	/**
+//	 * 排产计划
+//	 */
+//	private List<BizSchedulingPlan> schedulingPlanList;
+
 	private List<BizRequestDetail> requestDetailList;
 
 	private List<BizPoDetail> poDetailList;
@@ -139,19 +151,34 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 该采购单下所有商品的总采购数量
 	 */
 	private Integer totalOrdQty;
-	/**
-	 * 该采购单下所有商品的总排产数量
-	 */
-	private Integer toalSchedulingNum;
-	/**
-	 * 该采购单下所有商品的总已确认排产数
-	 */
-	private Integer toalCompleteNum;
 
+	/**
+	 * 该采购单下按商品排产的总排产量
+	 */
+	private Integer totalSchedulingDetailNum;
+
+	/**
+	 * 该采购单下按订单排产的总排产量
+	 */
+	private Integer totalSchedulingHeaderNum;
+	/**
+	 * 该采购单下按商品排产时总的已确认量
+	 */
+	private Integer totalCompleteScheduHeaderNum;
 	/**
 	 * 与供应商结算的金额
 	 */
 	private BigDecimal balanceTotal;
+
+	/**
+	 * 已审批流程
+	 */
+	private List<CommonProcessEntity> commonProcessList;
+
+	/**
+	 * 一单到底对应的采购单
+	 */
+	private BizPoHeader bizPoHeader;
 
 	public BizRequestHeader() {
 		super();
@@ -572,27 +599,67 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 		this.totalOrdQty = totalOrdQty;
 	}
 
-	public Integer getToalSchedulingNum() {
-		return toalSchedulingNum;
-	}
-
-	public void setToalSchedulingNum(Integer toalSchedulingNum) {
-		this.toalSchedulingNum = toalSchedulingNum;
-	}
-
-	public Integer getToalCompleteNum() {
-		return toalCompleteNum;
-	}
-
-	public void setToalCompleteNum(Integer toalCompleteNum) {
-		this.toalCompleteNum = toalCompleteNum;
-	}
-
 	public BigDecimal getBalanceTotal() {
 		return balanceTotal;
 	}
 
 	public void setBalanceTotal(BigDecimal balanceTotal) {
 		this.balanceTotal = balanceTotal;
+	}
+
+	public List<CommonProcessEntity> getCommonProcessList() {
+		return commonProcessList;
+	}
+
+	public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
+		this.commonProcessList = commonProcessList;
+	}
+
+	public Integer getSchedulingType() {
+		return schedulingType;
+	}
+
+	public void setSchedulingType(Integer schedulingType) {
+		this.schedulingType = schedulingType;
+	}
+
+//	public List<BizSchedulingPlan> getSchedulingPlanList() {
+//		return schedulingPlanList;
+//	}
+//
+//	public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
+//		this.schedulingPlanList = schedulingPlanList;
+//	}
+
+	public Integer getTotalSchedulingDetailNum() {
+		return totalSchedulingDetailNum;
+	}
+
+	public void setTotalSchedulingDetailNum(Integer totalSchedulingDetailNum) {
+		this.totalSchedulingDetailNum = totalSchedulingDetailNum;
+	}
+
+	public Integer getTotalSchedulingHeaderNum() {
+		return totalSchedulingHeaderNum;
+	}
+
+	public void setTotalSchedulingHeaderNum(Integer totalSchedulingHeaderNum) {
+		this.totalSchedulingHeaderNum = totalSchedulingHeaderNum;
+	}
+
+	public Integer getTotalCompleteScheduHeaderNum() {
+		return totalCompleteScheduHeaderNum;
+	}
+
+	public void setTotalCompleteScheduHeaderNum(Integer totalCompleteScheduHeaderNum) {
+		this.totalCompleteScheduHeaderNum = totalCompleteScheduHeaderNum;
+	}
+
+	public BizPoHeader getBizPoHeader() {
+		return bizPoHeader;
+	}
+
+	public void setBizPoHeader(BizPoHeader bizPoHeader) {
+		this.bizPoHeader = bizPoHeader;
 	}
 }

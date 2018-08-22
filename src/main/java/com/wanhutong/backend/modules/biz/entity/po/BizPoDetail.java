@@ -32,6 +32,7 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	private Double unitPrice;		// 商品单价
 	private Integer ordQty;		// 采购数量
 	private Integer sendQty;		//采购单供货数量
+//	private List<BizSchedulingPlan> schedulingPlanList;
 
 	/**
 	 * 总的已排产量
@@ -52,6 +53,7 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	 * 订单按商品排产是，总的已确认量
 	 */
 	private Integer sumCompleteDetailNum;
+
 
 	public BizPoDetail() {
 		super();

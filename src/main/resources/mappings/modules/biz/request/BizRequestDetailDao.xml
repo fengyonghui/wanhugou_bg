@@ -308,5 +308,25 @@
 			</otherwise>
 		</choose>
 	</select>
+
+	<select id="getsumSchedulingNum" resultType="BizRequestDetail">
+		SELECT
+		a.object_id as "id",
+		SUM(bcp.complete_num) as "sumCompleteNum",
+		(
+		select SUM(bcp.complete_num)
+		FROM biz_scheduling_plan bsp
+			left join biz_complete_paln bcp on bcp.scheduling_id = bsp.id and bcp.status=1 and bcp.complete_status=1
+		WHERE
+				bsp.status = 1
+			   AND bsp.object_id =#{objectId}
+		   and bsp.object_name='biz_request_detail'
+	  	) as "sumCompleteDetailNum"
+		FROM biz_scheduling_plan a
+		left join biz_complete_paln bcp on bcp.scheduling_id = a.id and bcp.status=1
+		WHERE
+			a.status = 1
+		   AND a.object_id =#{objectId}
+	</select>
 	
 </mapper>

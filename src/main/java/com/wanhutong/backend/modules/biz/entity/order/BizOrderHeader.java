@@ -9,11 +9,15 @@ import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -138,6 +142,48 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 退款状态- 0-申请 1审核通过 2驳回 3撤销申请退款
      */
     private BizDrawBack drawBack;
+
+
+    /**
+     * 供应商查看订单 source = vendor
+     */
+    private String source;
+    /**
+     * 固定商品的详情总价
+     */
+    private String detailPrice;
+    /**
+     * 首付金额
+     */
+    private Integer payProportion;
+    /**
+     * 审核流程
+     */
+    private CommonProcessEntity commonProcess;
+
+    /**
+     * 一单到底对应的采购单
+     */
+    private BizPoHeader bizPoHeader;
+
+    /**
+     * 审核路径参数记录
+     */
+    private String str;
+
+    /**
+     * 已审批流程
+     */
+    private List<CommonProcessEntity> commonProcessList;
+    /**
+     * 支付单
+     */
+    private BizPoPaymentOrder bizPoPaymentOrder;
+
+    /**
+     * 是否是本地备货的订单，0:是 721:是  大于0且不等于721：不是
+     */
+    private Integer suplys;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -716,5 +762,77 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setDrawBack(BizDrawBack drawBack) {
         this.drawBack = drawBack;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getDetailPrice() {
+        return detailPrice;
+    }
+
+    public void setDetailPrice(String detailPrice) {
+        this.detailPrice = detailPrice;
+    }
+
+    public Integer getPayProportion() {
+        return payProportion;
+    }
+
+    public void setPayProportion(Integer payProportion) {
+        this.payProportion = payProportion;
+    }
+
+    public CommonProcessEntity getCommonProcess() {
+        return commonProcess;
+    }
+
+    public void setCommonProcess(CommonProcessEntity commonProcess) {
+        this.commonProcess = commonProcess;
+    }
+
+    public BizPoHeader getBizPoHeader() {
+        return bizPoHeader;
+    }
+
+    public void setBizPoHeader(BizPoHeader bizPoHeader) {
+        this.bizPoHeader = bizPoHeader;
+    }
+
+    public String getStr() {
+        return str;
+    }
+
+    public void setStr(String str) {
+        this.str = str;
+    }
+
+    public List<CommonProcessEntity> getCommonProcessList() {
+        return commonProcessList;
+    }
+
+    public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
+        this.commonProcessList = commonProcessList;
+    }
+
+    public BizPoPaymentOrder getBizPoPaymentOrder() {
+        return bizPoPaymentOrder;
+    }
+
+    public void setBizPoPaymentOrder(BizPoPaymentOrder bizPoPaymentOrder) {
+        this.bizPoPaymentOrder = bizPoPaymentOrder;
+    }
+
+    public Integer getSuplys() {
+        return suplys;
+    }
+
+    public void setSuplys(Integer suplys) {
+        this.suplys = suplys;
     }
 }
