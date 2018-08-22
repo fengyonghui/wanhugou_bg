@@ -425,9 +425,12 @@
                                 if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
                                     return;
                                 }
+                                if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length<0){
+		                            return;
+		                        }
                                 resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
                                         '<div class="mui-row mui-checkbox mui-left">' +
-                                        '<input style="top: 30px;" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
+                                        '<input style="display:none;" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox">' +
                                         '<div class="mui-row">' +
                                         '<div class="mui-row">' +
                                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
@@ -492,6 +495,7 @@
                                 '<button id="batchAdd" type="submit" class="addSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">添加' +
                                 '</button></div>';
                         $("#searchInfo").append(addButtonHtml);
+                        
                     }
                 })
             });
@@ -514,7 +518,7 @@
                             '</button></div>';
                             cheDiv.append(resultHtml)
                         $("#commodityMenu").append($(cheDiv))
-                        _this.skuInfoIds_2 += cheId + ",";
+//                      _this.skuInfoIds_2 += cheId + ",";
                     }
                 })
             });

@@ -23,37 +23,59 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			// 页数
-			var page = 0;
-			// 每页展示10个
-			var size = 10;
-			//下拉刷新
-			$('.staffList').dropload({
-				scrollArea: window,
-				loadDownFn: function(me) {
-				    page++;
-					// 拼接HTML
-					//'/a/biz/request/bizRequestHeader/list4Mobile?page2='+page+'&size='+size
-					var staffHtmlList = '';
-					$.ajax({
-						type: 'GET',
-						url: "/a/sys/user/listData4mobile",
-						data: {
-							pageNo: page,
-							"company.type": 8,
-							"company.customerTypeTen": 10,
-							"company.customerTypeEleven": 11,
-							conn: "connIndex"
-						},
-						dataType: 'json',
-						success: function(res) {
-							console.log(res)
-							var dataRow = res.data.roleSet;
-							var arrLen = res.data.page.list.length;
-							
-							if(arrLen > 0) {
-								$.each(res.data.page.list, function(i, item) {
-									console.log(item)
+			var pager = {};//分页 
+		    var totalPage;//总页码
+		    pullRefresh(pager);//启用上拉下拉 
+		    function pullRefresh(){
+		        mui("#refreshContainer").pullRefresh({
+			        up:{
+			            contentnomore:'没 有 更 多 数 据 了',
+			            callback:function(){
+			                window.setTimeout(function(){
+			                    getData(pager);
+			                },500);
+			            }
+			         },
+			        down : {
+			            height:50,
+			            auto: true,
+			            contentdown : "",
+			            contentover : "",
+			            contentrefresh : "正在加载...",
+			            callback :function(){ 
+			                    pager['size']= 10;//条数
+			                    pager['pageNo'] = 1;
+			                    pager['company.type'] = 8;
+			                    pager['company.customerTypeTen'] = 10;
+			                    pager['company.customerTypeEleven'] = 11;
+			                    pager['conn'] ="connIndex"//页码
+				                var f = document.getElementById("list");
+				                var childs = f.childNodes;
+				                for(var i = childs.length - 1; i >= 0; i--) {
+				                    f.removeChild(childs[i]);
+				                }
+				                console.log('222')
+				                console.log(pager)
+				                $('.mui-pull-caption-down').html('');				                
+				                getData(pager);
+			            }
+			        }
+			    })
+		    }
+		    function getData(params){
+		    	var staffHtmlList = '';
+		        mui.ajax("/a/sys/user/listData4mobile",{
+		            data:params,               
+		            dataType:'json',
+		            type:'get',
+		            headers:{'Content-Type':'application/json'},
+		            success:function(res){
+		          	    console.log(res)
+		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+						var dataRow = res.data.roleSet;
+						var arrLen = res.data.page.list.length;						
+                        if(arrLen > 0) {
+                        $.each(res.data.page.list, function(i, item) {
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
 											'<label>归属公司:</label>' +
@@ -107,32 +129,139 @@
 										'</div>' +
 									'</div>'
 								});
-							} else {
-								// 锁定
-								me.lock();
-								// 无数据
-								me.noData();
-							}
-							// 为了测试，延迟1秒加载
-							setTimeout(function() {
-								// 插入数据到页面，放到最后面
-								$('.staffList').append(staffHtmlList);
+								$('#list').append(staffHtmlList);
 								_this.stHrefHtml()
-								// 每次数据插入，必须重置
-								me.resetload();
-							}, 1000);
-						},
-						error: function(xhr, type) {
-							alert('Ajax error!222222');
-							// 即使加载出错，也得重置
-							me.resetload();
-						}
-					});
-				},
-				threshold: 50
-			});
-//			_this.comfirDialig()
+						} else {
+								$('.mui-pull-caption').html('');
+							}
+						totalPage = res.data.page.count%pager.size!=0?
+		                parseInt(res.data.page.count/pager.size)+1:
+		                res.data.page.count/pager.size;
+		                if(totalPage==pager.pageNo){		                	
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+			            }else{
+			                pager.pageNo++;
+			                mui('#refreshContainer').pullRefresh().refresh(true);
+			            }          
+			        },
+		            error:function(xhr,type,errorThrown){
+			            console.log(type);
+		            }
+		        })
+		    }
 		},
+//		pageInit: function() {
+//			var _this = this;
+//			// 页数
+//			var page = 0;
+//			// 每页展示10个
+//			var size = 10;
+//			//下拉刷新
+//			$('.staffList').dropload({
+//				scrollArea: window,
+//				loadDownFn: function(me) {
+//				    page++;
+//					// 拼接HTML
+//					//'/a/biz/request/bizRequestHeader/list4Mobile?page2='+page+'&size='+size
+//					var staffHtmlList = '';
+//					$.ajax({
+//						type: 'GET',
+//						url: "/a/sys/user/listData4mobile",
+//						data: {
+//							pageNo: page,
+//							"company.type": 8,
+//							"company.customerTypeTen": 10,
+//							"company.customerTypeEleven": 11,
+//							conn: "connIndex"
+//						},
+//						dataType: 'json',
+//						success: function(res) {
+//							console.log(res)
+//							var dataRow = res.data.roleSet;
+//							var arrLen = res.data.page.list.length;
+//							
+//							if(arrLen > 0) {
+//								$.each(res.data.page.list, function(i, item) {
+//									console.log(item)
+//									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
+//										'<div class="mui-input-row">' +
+//											'<label>归属公司:</label>' +
+//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.company.name+' ">' +
+//										'</div>' +
+//										'<div class="mui-input-row">' +
+//											'<label>归属部门:</label>' +
+//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.office.name+' ">' +
+//										'</div>' +
+//										'<div class="mui-input-row">' +
+//											'<label>登录名:</label>' +
+//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.loginName+' ">' +
+//										'</div>' +
+//										'<div class="mui-input-row">' +
+//											'<label>姓名:</label>' +
+//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.name +' ">' +
+//										'</div>' +
+//										'<div class="mui-input-row">' +
+//											'<label>手机:</label>' +
+//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.mobile+' ">' +
+//										'</div>' +
+//										'<div class="mui-input-row">' +
+//											'<label>洽谈数:</label>' +
+//											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.officeChatRecord+'">' +
+//										'</div>' +
+//										'<div class="mui-input-row">' +
+//											'<label>新增订单量:</label>' +
+//											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.orderCount+'">' +
+//										'</div>' +
+//										'<div class="mui-input-row">' +
+//											'<label>新增回款额:</label>' +
+//											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.userOfficeReceiveTotal+'">' +
+//										'</div>' +
+//										'<div class="mui-input-row">' +
+//											'<label>新增会员:</label>' +
+//											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.officeCount+'">' +
+//										'</div>' +
+//										'<div class="app_font_cl content_part mui-row app_text_center">' +
+//											'<div class="mui-col-xs-4 staRelevanBtn" staListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">关联经销店</li>' +
+//											'</div>' +
+//											'<div class="mui-col-xs-3 staOrdBtn" staListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">订单管理</li>' +
+//											'</div>'+
+//											'<div class="mui-col-xs-3 staAmendBtn" staListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">修改</li>' +
+//											'</div>'+
+//											'<div class="mui-col-xs-2 staDeletBtn" staListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">删除</li>' +
+//											'</div>'+
+//										'</div>' +
+//									'</div>'
+//								});
+//							} else {
+//								// 锁定
+//								me.lock();
+//								// 无数据
+//								me.noData();
+//							}
+//							// 为了测试，延迟1秒加载
+//							setTimeout(function() {
+//								// 插入数据到页面，放到最后面
+//								$('.staffList').append(staffHtmlList);
+//								_this.stHrefHtml()
+//								// 每次数据插入，必须重置
+//								me.resetload();
+//							}, 1000);
+//						},
+//						error: function(xhr, type) {
+//							alert('Ajax error!222222');
+//							// 即使加载出错，也得重置
+//							me.resetload();
+//						}
+//					});
+//				},
+//				threshold: 50
+//			});
+////			_this.comfirDialig()
+//		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
             $.ajax({
