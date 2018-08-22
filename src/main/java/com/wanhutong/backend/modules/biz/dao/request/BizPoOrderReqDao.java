@@ -6,6 +6,9 @@ package com.wanhutong.backend.modules.biz.dao.request;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 销售采购备货中间表DAO接口
@@ -14,5 +17,11 @@ import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
  */
 @MyBatisDao
 public interface BizPoOrderReqDao extends CrudDao<BizPoOrderReq> {
-	
+
+    /**
+     * 通过po单子获取销售采购备货中间表
+     * @param bphId
+     * @return
+     */
+    List<BizPoOrderReq> getByPo(@Param("bphId")Integer bphId);
 }

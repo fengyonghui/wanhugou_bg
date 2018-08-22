@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.request;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ import com.wanhutong.backend.modules.biz.dao.request.BizPoOrderReqDao;
 @Service
 @Transactional(readOnly = true)
 public class BizPoOrderReqService extends CrudService<BizPoOrderReqDao, BizPoOrderReq> {
+
+	@Autowired
+	private BizPoOrderReqDao bizPoOrderReqDao;
 
 	public BizPoOrderReq get(Integer id) {
 		return super.get(id);
@@ -43,5 +47,14 @@ public class BizPoOrderReqService extends CrudService<BizPoOrderReqDao, BizPoOrd
 	public void delete(BizPoOrderReq bizPoOrderReq) {
 		super.delete(bizPoOrderReq);
 	}
-	
+
+	/**
+	 * 通过po单子获取销售采购备货中间表
+	 * @param bphId
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public List<BizPoOrderReq> getByPo(Integer bphId){
+		return bizPoOrderReqDao.getByPo(bphId);
+	}
 }
