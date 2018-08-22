@@ -417,14 +417,6 @@ public class Office extends TreeEntity<Office> {
 		this.shelfInfoUser = shelfInfoUser;
 	}
 
-	public String getVendVideo() {
-		return vendVideo;
-	}
-
-	public void setVendVideo(String vendVideo) {
-		this.vendVideo = vendVideo;
-	}
-
 	public Integer getVendorId() {
 		return vendorId;
 	}

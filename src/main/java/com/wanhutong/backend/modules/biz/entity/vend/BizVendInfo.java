@@ -85,26 +85,6 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 	 */
 	private String type;
 
-	/**
-	 * 用于存放厂家退换货流程
-	 */
-	private String remark;
-
-	/**
-	 * 基本介绍
-	 */
-	private String introduce;
-
-	/**
-	 * 生产优势
-	 */
-	private String prodAdv;
-
-	/**
-	 * 1联营厂商2代采厂商3融资
-	 */
-	private String type;
-
 	public BizVendInfo() {
 		super();
 	}

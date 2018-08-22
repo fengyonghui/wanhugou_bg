@@ -37,10 +37,13 @@
 					var staffHtmlList = '';
 					$.ajax({
 						type: 'GET',
-						url: 'sys/user/listData4mobile?page2='+page+'&size='+size,
+						url: "/a/sys/user/listData4mobile",
 						data: {
 							pageNo: page,
-							conn: 0
+							"company.type": 8,
+							"company.customerTypeTen": 10,
+							"company.customerTypeEleven": 11,
+							conn: "connIndex"
 						},
 						dataType: 'json',
 						success: function(res) {
@@ -54,15 +57,15 @@
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
 											'<label>归属公司:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.reqNo+' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.company.name+' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>归属部门:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+bizstatusTxt+' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.office.name+' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>登录名:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.loginName+' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>姓名:</label>' +
@@ -70,32 +73,32 @@
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>手机:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.createDate)+' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.mobile+' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>洽谈数:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+varietyInfoName+' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.officeChatRecord+'">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>新增订单量:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.createBy.name+' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.orderCount+'">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>新增回款额:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.userOfficeReceiveTotal+'">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>新增会员:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.officeCount+'">' +
 										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
 											'<div class="mui-col-xs-4 staRelevanBtn" staListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">关联经销店</li>' +
 											'</div>' +
-											'<div class="mui-col-xs-4 staOrdBtn" staListId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 staOrdBtn" staListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">订单管理</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2 staAmendBtn" staListId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 staAmendBtn" staListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">修改</li>' +
 											'</div>'+
 											'<div class="mui-col-xs-2 staDeletBtn" staListId="'+ item.id +'">' +
