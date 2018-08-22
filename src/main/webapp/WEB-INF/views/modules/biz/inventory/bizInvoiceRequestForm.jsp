@@ -36,7 +36,6 @@
 
 						});
                         tt+=t+"#"+detail+",";
-						alert(tt)
                     });
                     tt=tt.substring(0,tt.length-1);
                     if(window.confirm('你确定要发货吗？') && total > 0){
