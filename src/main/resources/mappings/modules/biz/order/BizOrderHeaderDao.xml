@@ -268,70 +268,6 @@
 		WHERE a.order_num = #{orderNum}
 	</select>
 
-	<!--<select id="findList" resultType="BizOrderHeader">-->
-	<!--SELECT-->
-	<!--<include refid="bizOrderHeaderColumns"/>-->
-	<!--from biz_order_header a-->
-	<!--<include refid="bizOrderHeaderJoins"/>-->
-	<!--<where>-->
-	<!--a.status = #{DEL_FLAG_NORMAL}-->
-	<!--<if test="orderNum != null and orderNum != ''">-->
-	<!--AND a.order_num-->
-	<!--LIKE-->
-	<!--<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>-->
-	<!--<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>-->
-	<!--<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>-->
-	<!--</if>-->
-	<!--<if test="orderType != null and orderType != ''">-->
-	<!--AND a.order_type = #{orderType}-->
-	<!--</if>-->
-	<!--<if test="customer != null and customer.id != null and customer.id!=''">-->
-	<!--AND a.cust_id = #{customer.id}-->
-	<!--</if>-->
-	<!--<if test="customer != null and customer.phone != null and customer.phone!=''">-->
-	<!--AND su.mobile LIKE-->
-	<!--<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>-->
-	<!--<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>-->
-	<!--<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>-->
-	<!--</if>-->
-	<!--<if test="receiveTotal != null and receiveTotal != ''">-->
-	<!--AND a.receive_total = #{receiveTotal}-->
-	<!--</if>-->
-	<!--<if test="bizStatus !=null">-->
-	<!--AND a.biz_status=#{bizStatus}-->
-	<!--</if>-->
-	<!--<if test="bizType !=null and bizType!=''">-->
-	<!--AND a.biz_type=#{bizType}-->
-	<!--</if>-->
-	<!--<if test="bizStatusStart !=null and bizStatusEnd !=null">-->
-	<!--AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}-->
-	<!--</if>-->
-	<!--<if test="invStatus !=null and invStatus!=''">-->
-	<!--AND a.inv_status=#{invStatus}-->
-	<!--</if>-->
-	<!--<if test="consultantId!=null">-->
-	<!--and ccs.consultant_id = #{consultantId}-->
-	<!--</if>-->
-
-	<!--<if test="centerId!=null">-->
-	<!--and ccs.center_id = #{centerId}-->
-	<!--</if>-->
-
-
-	<!--<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">-->
-	<!--${sqlMap.order}-->
-	<!--</if>-->
-	<!--</where>-->
-	<!--<choose>-->
-	<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
-	<!--ORDER BY ${page.orderBy}-->
-	<!--</when>-->
-	<!--<otherwise>-->
-	<!--</otherwise>-->
-	<!--</choose>-->
-	<!--ORDER BY updateDate DESC-->
-	<!--</select>-->
-
 
 	<select id="findList" resultMap="orderHeaderResult">
 		SELECT
@@ -418,6 +354,7 @@
 				AND (
 				(
 				biz_status != 45
+				AND biz_status != 40
 				AND biz_status != 35
 				AND biz_status != 0
 				)

@@ -237,6 +237,22 @@ public class BizOrderHeaderController extends BaseController {
             model.addAttribute("source", bizOrderHeader.getSource());
         }
 
+
+        for (BizOrderHeader b : page.getList()) {
+            if (b.getOrderNum().startsWith("SO")) {
+                CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+                commonProcessEntity.setObjectId(String.valueOf(b.getId()));
+                commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+                if (b.getSuplys() == 0 || b.getSuplys() == 721) {
+                    commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
+                }
+                List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+                if (CollectionUtils.isNotEmpty(list)) {
+                    b.setCommonProcess(list.get(0));
+                }
+            }
+        }
+
         User user = UserUtils.getUser();
         List<Role> roleList = user.getRoleList();
         Set<String> roleSet = Sets.newHashSet();
