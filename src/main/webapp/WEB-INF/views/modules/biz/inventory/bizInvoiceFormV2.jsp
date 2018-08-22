@@ -17,8 +17,6 @@
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
-                    // var fTd= $("#prodInfo").find("td").length;
-                    // alert(fTd)
                     if($("#prodInfo").find("td").length==0){
                         alert("请先选择待发货订单,然后点击确定。");
                         return;
@@ -30,11 +28,12 @@
                         var t= $(this).val();
                         var detail="";
                         var num ="";
-                        var sObj= $("#prodInfo").find("input[title='sent_"+t+"']");
-                        var iObj=$("#prodInfo").find("select[title='invInfoId']");
+                        var sObj = $("#prodInfo").find("input[title='sent_"+t+"']");
+                        var iObj = $("#prodInfo").find("select[title='invInfoId']");
+                        var tObj = $("#prodInfo").find("select[title='skuType']");
                         sObj.each(function (index) {
                             total+= parseInt($(this).val());
-                        })
+                        });
                         if(iObj.length!=0){
                             iObj.each(function (index) {
                                 if ($(this).val() != ''){
@@ -42,9 +41,7 @@
                                 }
                             });
                             $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
-
-                                detail+=$(this).val()+"-"+sObj[i].value+"-"+iObj[i].value+"*";
-
+                                detail += $(this).val() + "-" + sObj[i].value + "-" + iObj[i].value + "-" + tObj[i].value + "*";
                             });
                         }else {
                             flag = true;
@@ -58,50 +55,30 @@
 
                     });
                     tt=tt.substring(0,tt.length-1);
+
                     if(window.confirm('你确定要发货吗？') && flag && total > 0){
                         if (tt != '') {
                             $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>");
                         }
+                        var orderHeaders = $("input[name='orderHeaders']").val();
+                            $.ajax({
+                                type:"post",
+                                url:"${ctx}/biz/inventory/bizInventorySku/findInvSku?orderHeaders="+encodeURIComponent(orderHeaders),
+                                success:(function (data) {
+                                    if (data == "true"){
+                                        form.submit();
+                                        return true;
+                                        loading('正在提交，请稍等...');
+                                    }else {
+                                        $("input[name='orderHeaders']").each(function () {
+                                            $(this).remove();
+                                        });
+                                        alert("库存不足！");
+                                        return false;
+                                    }
+                                })
+                            })
 
-                        var prodInfo = $("#prodInfo");
-                        var prodInfoTr = prodInfo.find("tr");
-                        for (var i = 0; i < e; i ++ ) {
-
-
-                            <%--$.ajax({--%>
-                            <%--type:"post",--%>
-                            <%--async:false,--%>
-                            <%--url:"${ctx}/biz/inventory/bizInventorySku/findInvSku?orderHeaders="+encodeURIComponent(orderHeaders),--%>
-                            <%--success:(function (data) {--%>
-                            <%--if (data == "true"){--%>
-                            <%--form.submit();--%>
-                            <%--return true;--%>
-                            <%--loading('正在提交，请稍等...');--%>
-                            <%--}else {--%>
-                            <%--$("input[name='orderHeaders']").each(function () {--%>
-                            <%--$(this).remove();--%>
-                            <%--});--%>
-                            <%--alert("库存不足！");--%>
-                            <%--return false;--%>
-                            <%--}--%>
-                            <%--})--%>
-                            <%--})--%>
-
-                        }
-
-                        var invCountStatus = true;
-
-
-
-                        if (invCountStatus) {
-                            form.submit();
-                            loading('正在提交，请稍等...');
-                            return true;
-                        }
-
-                    }else{
-                        alert("请勾选发货内容");
-                        return false;
                     }
                 },
                 errorContainer: "#messageBox",
@@ -143,6 +120,7 @@
                         $.each(data.inventoryInfoList,function (index,inventory) {
                             selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
                         });
+                        var skuType = "<select class='input-mini' title='skuType'><option value='1'>采购中心</option><option value='2'>供应商</option></select>";
                     }
                     var tr_tds="";
                     var bizName ="";
@@ -173,9 +151,9 @@
                                 tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'><a href='${ctx}/biz/order/bizOrderHeader/form?id="+orderHeader.id+"&orderDetails=details'> "+orderHeader.orderNum+"</a></td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
                             }
                             tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
-                            tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
+                            tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td>" ;
                             if(bizStatus==0) {
-                                tr_tds += "<td>" + selecttd + "</td>"
+                                tr_tds += "<td>" + selecttd + "</td><td>"+ skuType +"</td>"
                             }
                             tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
                             if(detail.ordQty==detail.sentQty){
@@ -253,9 +231,8 @@
                     <th>商品名称</th>
                     <th>供应商</th>
                     <th>商品货号</th>
-                    <th>商品编码</th>
-                    <th>商品属性</th>
                     <th>选择仓库</th>
+                    <th>选择备货方</th>
                     <th>采购数量</th>
                     <th>已发货数量</th>
                     <th>发货数量</th>
