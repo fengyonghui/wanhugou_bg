@@ -404,11 +404,7 @@
                     url: "/a/biz/sku/bizSkuInfo/findSkuList",
                     data: {itemNo: itemNo},
                     success: function (result) {
-<<<<<<< HEAD
                     	console.log('修改查询数据')  
-//                  	console.log(result)
-=======
->>>>>>> origin/ft-20180628-mobilePo
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
                         $.each(data,function (keys,skuInfoList) {
@@ -472,32 +468,17 @@
                                         '<font>*</font>'+
                                         '</div></li></div></div></div></div>';
                             });
-<<<<<<< HEAD
                             t++;                          
                             $("#searchInfo").append(resultListHtml);
-                            
-                            
                             console.log('=========')
                             var dis=$("#searchInfo .skuinfo_check");
-                            console.log(dis.length);
                             var dos=$("#commodityMenu .skuinfo_check");
-                            console.log(dos.length);
                             $.each(dis,function(n,v){
-                            	console.log('+++++');
                             	var s=$(this).attr('id')
-                            	console.log(s);
                             	$.each(dos,function(n,v){
-                            		var that=this;
-                            		console.log('dosdosdosdosdos');
-	                            	
+                            		var that=this;	                            	
 	                            	var y=$(that).attr('id')
-	                            	console.log(y);
-//	                            	var divs=$("#serskudiv_56733");
-//	                            	''#serskudiv'+'_'+S'
 	                            	var divs=$("#serskudiv_"+s);
-	                            	console.log('HAHA')
-	                            	console.log(divs)
-	                            	console.log('HAHA')
 	                            	if (s==y) {
 	                            		divs.html('');
 	                            	} else{
@@ -505,14 +486,7 @@
 	                            	}
 	                            })
                             })
- 
                             console.log('=========')
-                            
-                            
-=======
-                            t++;
-                            $("#searchInfo").append(resultListHtml);
->>>>>>> origin/ft-20180628-mobilePo
                         })
                         var addButtonHtml = '<div class="addBtn" id="batchAddDiv">' +
                                 '<button id="batchAdd" type="submit" class="addSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">添加' +
