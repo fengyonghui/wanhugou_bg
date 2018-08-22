@@ -187,7 +187,7 @@
 			<label class="control-label">物流信息图：</label>
 			<div class="controls">
 				<form:hidden path="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-				<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="false" maxWidth="100"
+				<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="true" maxWidth="100"
 							  maxHeight="100"/>
 			</div>
 		</div>

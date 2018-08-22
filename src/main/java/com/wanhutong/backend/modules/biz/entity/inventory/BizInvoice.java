@@ -3,17 +3,16 @@
  */
 package com.wanhutong.backend.modules.biz.entity.inventory;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import javax.validation.constraints.NotNull;
-
-import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
  * 发货单Entity
@@ -81,8 +80,7 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	public void setSendNumber(String sendNumber) {
 		this.sendNumber = sendNumber;
 	}
-
-	@Length(min=0, max=100, message="物流信息图(img_server+img_path)长度必须介于 0 和 100 之间")
+	
 	public String getImgUrl() {
 		return imgUrl;
 	}

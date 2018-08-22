@@ -94,7 +94,7 @@
 				<th>物流结算方式</th>
 				<th>备注</th>
 				<th>发货时间</th>
-				<th>物流信息图</th>
+				<%--<th>物流信息图</th>--%>
 				<th>操作</th>
 				<%--<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><th>操作</th></shiro:hasPermission>--%>
 			</tr>
@@ -125,7 +125,7 @@
 				<td>
 					<fmt:formatDate value="${bizInvoice.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<td><a href="${bizInvoice.imgUrl}" target="view_window"><img src="${bizInvoice.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></a></td>
+				<%--<td><a href="${bizInvoice.imgUrl}" target="view_window"><img src="${bizInvoice.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></a></td>--%>
 				<td>
 					<c:if test="${bizInvoice.ship==0}">
 						<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
