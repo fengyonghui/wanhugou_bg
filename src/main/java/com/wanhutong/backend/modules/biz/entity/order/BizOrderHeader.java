@@ -4,9 +4,8 @@
 package com.wanhutong.backend.modules.biz.entity.order;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
-import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
-import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
@@ -17,7 +16,6 @@ import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +41,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private BizPlatformInfo platformInfo;        // 订单来源； biz_platform_info.id
     private BizOrderAddress bizLocation;        // 订单收货地址： common_location.id 在1月22改为 biz_order_address.id
     private Integer sendGoodsStatus;     //区分非拍照下单发货
+    private List<BizInvoice> bizInvoiceList;
     /**
      * 卖方ID
      *  if(order_type == 4)｛
@@ -834,5 +833,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSuplys(Integer suplys) {
         this.suplys = suplys;
+    }
+
+    public List<BizInvoice> getBizInvoiceList() {
+        return bizInvoiceList;
+    }
+
+    public void setBizInvoiceList(List<BizInvoice> bizInvoiceList) {
+        this.bizInvoiceList = bizInvoiceList;
     }
 }

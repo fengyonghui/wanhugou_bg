@@ -19,6 +19,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.order.BizDrawBack;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAppointedTime;
@@ -35,6 +36,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAppointedTimeService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderCommentService;
@@ -171,6 +173,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizPoHeaderService bizPoHeaderService;
     @Autowired
     private BizPoPaymentOrderService bizPoPaymentOrderService;
+    @Autowired
+    private BizInvoiceService bizInvoiceService;
 
 
     @ModelAttribute
@@ -251,6 +255,10 @@ public class BizOrderHeaderController extends BaseController {
                     b.setCommonProcess(list.get(0));
                 }
             }
+            BizInvoice bizInvoice = new BizInvoice();
+            bizInvoice.setOrderNum(b.getOrderNum());
+            bizInvoice.setShip(0);
+            b.setBizInvoiceList(bizInvoiceService.findList(bizInvoice));
         }
 
         User user = UserUtils.getUser();
@@ -266,7 +274,7 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
         model.addAttribute("auditAllStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().getAutProcessId());
         model.addAttribute("auditFithStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getAutProcessId());
-        model.addAttribute("auditStatus",ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getPayProcessId());
+        model.addAttribute("auditStatus", ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getPayProcessId());
 
         return "modules/biz/order/bizOrderHeaderList";
     }
@@ -513,8 +521,8 @@ public class BizOrderHeaderController extends BaseController {
         }
 
 //        if ("audit".equals(str) && ("0".equals(type) || "1".equals(type))) {
-            // type = 0 产地直发
-            // type = 1 本地备货
+        // type = 0 产地直发
+        // type = 1 本地备货
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
         commonProcessEntity.setObjectName("0".equals(type) ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
@@ -876,11 +884,11 @@ public class BizOrderHeaderController extends BaseController {
                     }
                 }
                 if ("ok".equals(commis)) {
-                    if(BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
+                    if (BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
                         Integer processId = 0;
                         BizOrderHeader orderheader = bizOrderHeaderService.get(bizOrderHeader.getId());
                         processId = bizOrderHeaderService.saveCommonProcess(orderheader);
-                        bizOrderHeaderService.updateProcessId(orderheader.getId(),processId);
+                        bizOrderHeaderService.updateProcessId(orderheader.getId(), processId);
                     } else {
                         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
                         JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
@@ -1819,7 +1827,7 @@ public class BizOrderHeaderController extends BaseController {
         nextProcessEntity.setCurrent(1);
         commonProcessService.save(nextProcessEntity);
 
-        if(originConfig.getGenPoProcessId().contains(Integer.valueOf(nextProcessEntity.getType()))) {
+        if (originConfig.getGenPoProcessId().contains(Integer.valueOf(nextProcessEntity.getType()))) {
             bizPoHeaderService.autoGenPO(id);
         }
 
