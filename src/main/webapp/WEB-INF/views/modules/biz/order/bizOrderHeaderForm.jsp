@@ -421,6 +421,17 @@
                     img += $(mainImg[i]).attr("src") + ",";
                 }
             }
+
+            var ecpectPay = $("#ecpectPay").val();
+            var receiveTotal = $("#receiveTotal").val();
+            var truePayTotal = $("#truePayTotal").val();
+
+            var totalPay = parseFloat(receiveTotal) + parseFloat(truePayTotal)
+            if(totalPay > ecpectPay) {
+                alert("错误提示:输入支付金额太大,请重新输入");
+                return false;
+            }
+
             if ($String.isNullOrBlank(payTotal)) {
                 alert("错误提示:请输入支付金额");
                 return false;
@@ -882,6 +893,7 @@
     <input type="hidden" id="suplys" value="${entity.suplys}"/>
     <input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
     <input type="hidden" value="${entity.bizPoPaymentOrder.id}" id="paymentOrderId"/>
+    <input type="hidden" name="receiveTotal" value="${bizOrderHeader.receiveTotal}" />
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
@@ -953,7 +965,7 @@
         <div class="control-group">
             <label class="control-label">应付金额：</label>
             <div class="controls">
-                <input type="text" value="<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight}" pattern="0.00"/>"
+                <input type="text" id="ecpectPay" value="<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight}" pattern="0.00"/>"
                        disabled="true" class="input-xlarge">
             </div>
         </div>

@@ -86,7 +86,7 @@
 						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认支付金额</a>
 					</c:if>
 
-					<c:if test="${fromPage == 'orderHeader' && bizPoPaymentOrder.total == '0.00' && (orderHeader == null || (orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state && orderHeader.bizStatus < OrderHeaderBizStatusEnum.UNAPPROVE.state))}">
+					<c:if test="${fromPage == 'orderHeader' && bizPoPaymentOrder.total == '0.00'}">
 						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认支付金额</a>
 					</c:if>
 				</shiro:hasPermission>
