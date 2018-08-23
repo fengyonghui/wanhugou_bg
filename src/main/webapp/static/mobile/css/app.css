@@ -130,6 +130,7 @@ input, select, textarea{font-size: 16px;}
 .app_lline2{border-left: 1px solid #ececec;}
 .app_rline2{border-right: 1px solid rgba(255,255,255,.5);}
 
+.app_bline3{border-bottom: 1px solid #efeff4;}
 /*背景色*/
 .app_bgf{background-color: #fff}
 .app_bgfff{background: #fff!important}
@@ -573,5 +574,5 @@ body{font-size: 15px;color:#3b3b3b;}
 .step_item {border: 1px #3daae9 solid;margin: 15px 15px;}
 .oneBtn {left: 50%;margin-left: -41px;}
 .font-color {color: #40ABE9;}
-
+.list-padding {padding: 10px 10px 0 10px;}
 

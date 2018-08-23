@@ -26,9 +26,11 @@
 			var _this = this;
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/request/bizRequestHeader/list4Mobile?page2='+page+'&size='+size,
+				url: "/a/biz/custom/bizCustomCenterConsultant/listData4mobile",
 				data: {
-					pageNo: page
+					"consultants.id": _this.userInfo.staListId,
+					conn: "connIndex",
+					"office.id": _this.userInfo.dptmtId 
 				},
 				dataType: 'json',
 				success: function(res) {

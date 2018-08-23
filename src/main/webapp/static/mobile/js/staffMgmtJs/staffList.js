@@ -92,7 +92,7 @@
 											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.officeCount+'">' +
 										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
-											'<div class="mui-col-xs-4 staRelevanBtn" staListId="'+ item.id +'">' +
+											'<div class="mui-col-xs-4 staRelevanBtn" staListId="'+ item.id +'" dptmtId="'+ item.office.id +'">' +
 												'<li class="mui-table-view-cell">关联经销店</li>' +
 											'</div>' +
 											'<div class="mui-col-xs-3 staOrdBtn" staListId="'+ item.id +'">' +
@@ -188,13 +188,15 @@
 			$('.listBlue').on('tap', '.staRelevanBtn', function() {
 				var url = $(this).attr('url');
 				var staListId = $(this).attr('staListId');
+				var dptmtId = $(this).attr('dptmtId');
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staListId == staListId) {
 					GHUTILS.OPENPAGE({
-						url: "../../html/staffMgmtHtml/staffRelevance.html",
+						url: "../../html/staffMgmtHtml/relevanceHtml/relList.html",
 						extras: {
 							staListId: staListId,
+							dptmtId: dptmtId,
 						}
 					})
 				}
@@ -204,7 +206,7 @@
 				var url = $(this).attr('url');
                 var reqId = $(this).attr('staListId');
 				GHUTILS.OPENPAGE({
-					url: "../../html/staffMgmtHtml/staffOrder.html",
+					url: "../../html/staffMgmtHtml/orderHtml/staOrderList.html",
 					extras: {
                         reqId: reqId,
 					}
