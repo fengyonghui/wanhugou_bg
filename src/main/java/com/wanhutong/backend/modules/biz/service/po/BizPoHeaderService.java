@@ -158,10 +158,13 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @param orderId
      * @return
      */
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public Pair<Boolean, String > autoGenPO(Integer orderId) {
         BizOrderDetail bizOrderDetail = new BizOrderDetail();
         BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderId);
+
+        bizOrderHeaderService.updateBizStatus(orderId, OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
+
         bizOrderDetail.setOrderHeader(bizOrderHeader);
 
         List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
