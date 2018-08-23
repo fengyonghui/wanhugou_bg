@@ -23,8 +23,8 @@
 			var _this = this;
 			$('#puSearchBtn').on('tap', function() {
 				var options = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"))
-				console.log('----------------')
-				console.log(options)
+//				console.log('----------------')
+//				console.log(options)
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
 							_this.sureSelect(options)
@@ -99,7 +99,7 @@
 					}
 				})
 			$.each(reult, function(i, item) {
-				console.log(item)
+//				console.log(item)
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
@@ -117,9 +117,9 @@
 				dataType: 'json',
 				success: function(res) {
 					_this.datagood = res
-					console.log(res)
+//					console.log(res)
 					$.each(res, function(i, item) {
-						console.log(item)
+//						console.log(item)
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlList)
@@ -136,9 +136,9 @@
 				data: {},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					$.each(res.data.processList, function(i, item) {
-						console.log(item)
+//						console.log(item)
 						htmlCheck += '<option class="soption" value="' + item.code + '" roleEnNameEnum="' + item.roleEnNameEnum + '" passCode="' + item.passCode + '" rejectCode="' + item.rejectCode + '">' + item.name + '</option>'
 					});
 					$('#input_div_check').html(optHtml+htmlCheck)

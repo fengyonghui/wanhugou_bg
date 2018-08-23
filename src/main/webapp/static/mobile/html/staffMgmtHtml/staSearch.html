@@ -6,60 +6,7 @@
 		<title>客户专员查询</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
-		<style>
-			.pre {
-				margin-bottom: 0;
-				padding-left: 0;
-				float: right;
-				width: 67%;
-			}
-			
-			.newinput {
-				width: 150px;
-				padding: 2px 0px 2px 0px;
-				margin-bottom: -1px;
-				background: url(./thumb.jpg) no-repeat scroll right center;
-				border: 1px solid #ccc;
-				box-shadow: 0 1px 0 0 #eee inset;
-				cursor: default;
-			}
-			
-			.newinput:focus {
-				cursor: text;
-			}
-			
-			.input_div {
-				width: 150px;
-				border: 1px solid #ddd;
-				border-bottom: none;
-				border-radius: 0 0 3px 3px;
-				display: none;
-			}
-			
-			.soption {
-				display: block;
-				padding: 2px 5px;
-			}
-			
-			.soption:hover {
-				background: #f9f9f9;
-				border-top: 1px dotted #ddd;
-				border-bottom: 1px dotted #ddd;
-				padding: 1px 5px;
-			}
-			.mui-input-row input.newinput {padding-left: 0;}
-			.secStyle {margin: 5px 0;}
-			#cpySchHideSpan {
-			    position: absolute;
-			    right: 52px;
-			    top: 11px;
-			    border: 1px solid rgb(204, 204, 204);
-			    border-radius: 13px;
-				display: none;
-			}
-		</style>
 	</head>
-
 	<body>
 		<header class="header mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
@@ -71,7 +18,7 @@
 					<label>归属公司：</label>
 					<div class="pre">
 						<input class="newinput" type="text" placeholder="请选择归属公司">
-						<span class="mui-icon mui-icon-closeempty" id="cpySchHideSpan"></span>
+						<span class="mui-icon mui-icon-closeempty hideSpan" id="cpySchHideSpan"></span>
 						<div class="input_div" style="display: none;">
 							
 						</div>

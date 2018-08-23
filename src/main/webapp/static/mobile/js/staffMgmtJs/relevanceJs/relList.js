@@ -161,7 +161,7 @@
 		stHrefHtml: function() {
 			var _this = this;
 		/*查询*/
-			$('.header').on('tap', '#staffSearchBtn', function() {
+			$('.header').on('tap', '#staReleSechBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
 					mui.toast('子菜单不存在')

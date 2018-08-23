@@ -78,7 +78,7 @@
 				})
 			},
 			userComfirDialig: function() {
-				document.getElementById("appQuit").addEventListener('tap', function() {
+				document.getElementById("appQuitBtn").addEventListener('tap', function() {
 					var btnArray = ['取消', '确定'];
 					mui.confirm('确定要注销当前账号？', '确定注销', btnArray, function(choice) {
 						if(choice.index == 1) {
