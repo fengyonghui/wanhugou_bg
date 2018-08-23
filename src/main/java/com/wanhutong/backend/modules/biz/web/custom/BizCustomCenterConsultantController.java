@@ -11,9 +11,12 @@ import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.dto.BizCustomCenterConsultantDto;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsPlatformService;
@@ -185,6 +188,147 @@ public class BizCustomCenterConsultantController extends BaseController {
         model.addAttribute("ordrHeaderStartTime", ordrHeaderStartTime);
         model.addAttribute("orderHeaderEedTime", orderHeaderEedTime);
         return "modules/biz/custom/bizCustomCenterConsultantList";
+    }
+
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
+    @RequestMapping(value = {"listData4mobile"})
+    @ResponseBody
+    public String listData4mobile(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model,Date ordrHeaderStartTime,Date orderHeaderEedTime) {
+        BizCustomCenterConsultant centersCust = new BizCustomCenterConsultant();
+        User userBcc = new User();
+        User user = systemService.getUser(bizCustomCenterConsultant.getConsultants().getId());
+        Office office = officeService.get(user.getOffice());
+        Map<String, Object> jsonResuleMap = Maps.newHashMap();
+        List<BizCustomCenterConsultantDto> resultData = Lists.newArrayList();
+        if (bizCustomCenterConsultant.getConsultants() != null) {
+            if (bizCustomCenterConsultant.getQueryCustomes() != null && "query_Custome".equals(bizCustomCenterConsultant.getQueryCustomes())) {
+                if (bizCustomCenterConsultant.getCustoms() != null && bizCustomCenterConsultant.getCustoms().getId() != null) {
+                    centersCust.setCustoms(bizCustomCenterConsultant.getCustoms());//采购商
+                }
+                if (bizCustomCenterConsultant.getConsultants() != null && StringUtils.isNotEmpty(bizCustomCenterConsultant.getConsultants().getMobile())) {
+                    userBcc.setMobile(bizCustomCenterConsultant.getConsultants().getMobile());
+                    centersCust.setConsultants(userBcc);//电话查询
+                }
+            }
+            centersCust.setCenters(office);//采购中心
+            userBcc.setId(user.getId());
+            centersCust.setConsultants(userBcc);//客户专员
+            model.addAttribute("bcUser", centersCust);
+            if (ordrHeaderStartTime != null) {
+                centersCust.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
+            }
+            if (orderHeaderEedTime != null) {
+                centersCust.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
+            }
+            List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.userFindList(centersCust);
+
+            List<Callable<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>> tasks = new ArrayList<>();
+            Map<BizCustomCenterConsultant, BizOrderHeader> resultMap = Maps.newLinkedHashMap();
+
+            BizChatRecord bizChatRecord = new BizChatRecord();
+            User userAdmin = UserUtils.getUser();
+            if (ordrHeaderStartTime != null) {
+                bizChatRecord.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
+            }
+            if (orderHeaderEedTime != null) {
+                bizChatRecord.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
+            }
+            if (!userAdmin.isAdmin()) {
+                bizChatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+            }
+            if (list.size() != 0) {
+                for (BizCustomCenterConsultant customCenterConsultant : list) {
+                    tasks.add(new Callable<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>() {
+                        @Override
+                        public Pair<BizCustomCenterConsultant, List<BizOrderHeader>> call() throws Exception {
+                            List<BizOrderHeader> orderHeaderList = null;
+                            try {
+                                lock.lock();
+                                bizChatRecord.setOffice(customCenterConsultant.getCustoms());
+                                orderHeaderList = bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord);
+                            } catch (Exception e) {
+                                logger.error("多线程取订单列表失败", e);
+                            } finally {
+                                lock.unlock();
+                            }
+                            return Pair.of(customCenterConsultant, orderHeaderList);
+                        }
+                    });
+                }
+                bizCustomCenterConsultant.setBccList(list);
+            }
+            List<Future<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>> futures = null;
+            try {
+                futures = ThreadPoolManager.getDefaultThreadPool().invokeAll(tasks);
+            } catch (InterruptedException e) {
+                LOGGER.error("get user error (tasks)", e);
+            }
+            if (futures != null) {
+                for (Future<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>> future : futures) {
+                    try {
+                        Pair<BizCustomCenterConsultant, List<BizOrderHeader>> data = future.get(DEFAULT_TIME_OUT, TimeUnit.SECONDS);
+                        List<BizOrderHeader> countList = data.getRight();
+                        BizOrderHeader orHeaders = new BizOrderHeader();
+                        int totalCount = 0;
+                        for (BizOrderHeader b : countList) {
+                            totalCount += b.getOrderCount();
+                            orHeaders.setUserOfficeReceiveTotal(b.getUserOfficeReceiveTotal());
+                            orHeaders.setUserOfficeDeta(b.getUserOfficeDeta());
+                            orHeaders.setBizLocation(b.getBizLocation());
+                        }
+                        orHeaders.setOrderCount(totalCount);
+                        resultMap.put(data.getLeft(), orHeaders == null ? new BizOrderHeader() : orHeaders);
+                        if (orHeaders == null) {
+                            orHeaders = new BizOrderHeader();
+                        }
+                        BizCustomCenterConsultant consultant = data.getLeft() != null ? data.getLeft() : new BizCustomCenterConsultant();
+                        BizCustomCenterConsultantDto dto = new BizCustomCenterConsultantDto();
+
+
+                        Office customs = consultant.getCustoms();
+                        dto.setCustomsId(customs != null ? customs.getId() : null);
+                        dto.setCustomsName(customs != null ? customs.getName() : null);
+                        if (customs != null) {
+                            dto.setCustomsPrimaryPersonName(customs.getPrimaryPerson() != null ? customs.getPrimaryPerson().getName() : null);
+                        } else {
+                            dto.setCustomsPrimaryPersonName(null);
+                        }
+
+                        dto.setCentersName(consultant.getCenters() != null ? consultant.getCenters().getName() : null);
+                        dto.setConsultantsId(consultant.getConsultants() != null ? consultant.getConsultants().getId() : null);
+                        dto.setConsultantsName(consultant.getConsultants() != null ? consultant.getConsultants().getName() : null);
+                        dto.setConsultantsMobile(consultant.getConsultants() !=null ? consultant.getConsultants().getMobile() : null);
+                        dto.setUserOfficeDeta(orHeaders.getUserOfficeDeta());
+                        dto.setUserOfficeReceiveTotal(orHeaders.getUserOfficeReceiveTotal());
+                        BizOrderAddress location = orHeaders.getBizLocation();
+                        if (location != null) {
+                            dto.setProvinceName(location.getProvince() != null ? location.getProvince().getName() : null);
+                            dto.setCityName(location.getCity() != null ? location.getCity().getName() : null);
+                            dto.setRegionName(location.getRegion() != null ? location.getRegion().getName() : null);
+                            dto.setAddress(location.getAddress());
+                        } else {
+                            dto.setProvinceName(null);
+                            dto.setCityName(null);
+                            dto.setRegionName(null);
+                            dto.setAddress(null);
+                        }
+                        dto.setOrderCount(orHeaders.getOrderCount());
+
+                        resultData.add(dto);
+                    } catch (Exception e) {
+                        LOGGER.error("多线程取订单频率异常[{}]", bizCustomCenterConsultant.getCustoms().getId(), e);
+                    }
+                }
+            }
+            model.addAttribute("resultMap", resultMap);
+        }
+        jsonResuleMap.put("resultData", resultData);
+        //model.addAttribute("ordrHeaderStartTime", ordrHeaderStartTime);
+        //model.addAttribute("orderHeaderEedTime", orderHeaderEedTime);
+        jsonResuleMap.put("ordrHeaderStartTime", ordrHeaderStartTime);
+        jsonResuleMap.put("orderHeaderEedTime", orderHeaderEedTime);
+
+        return JsonUtil.generateData(jsonResuleMap, request.getParameter("callback"));
     }
 
 
