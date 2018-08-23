@@ -534,7 +534,7 @@ public class BizOrderHeaderController extends BaseController {
 
         request.setAttribute("id", bizOrderHeader.getId());
         request.setAttribute("auditList", list);
-        request.setAttribute("currentAuditStatus", CollectionUtils.isNotEmpty(currentList) ? currentList.get(0) : StringUtils.EMPTY);
+        request.setAttribute("currentAuditStatus", CollectionUtils.isNotEmpty(currentList) ? currentList.get(0) : new CommonProcessEntity());
         request.setAttribute("type", type);
         request.setAttribute("processMap", "0".equals(type) ?
                 ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap()
