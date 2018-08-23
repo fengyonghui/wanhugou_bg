@@ -56,12 +56,16 @@
                         tt=tt.substring(0,tt.length-1);
                     }
                     if(window.confirm('你确定要发货吗？')){
-                        // alert("确定");
-                        if (tt != '') {
-                            $("#prodInfo3").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
-                        }
-                        form.submit();
-                        loading('正在提交，请稍等...');
+                        if (total > 0) {
+							// alert("确定");
+							if (tt != '') {
+								$("#prodInfo3").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
+							}
+							form.submit();
+							loading('正在提交，请稍等...');
+                        } else {
+                            alert("发货数量不能为0");
+						}
                     }else{
                         return false;
                     }
@@ -235,27 +239,6 @@
 				</div>
 			</div>
 		</c:if>
-		<%--<c:if test="${userList==null}">--%>
-			<%--<div class="control-group">--%>
-				<%--<label class="control-label">发货人：</label>--%>
-				<%--<div class="controls">--%>
-					<%--<form:input about="choose" readonly="true" path="carrier" class="input-medium required"/>--%>
-					<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-				<%--</div>--%>
-			<%--</div>--%>
-		<%--</c:if>--%>
-		<%--<c:if test="${userList!=null}">--%>
-			<%--<div class="control-group">--%>
-				<%--<label class="control-label">发货人：</label>--%>
-				<%--<div class="controls">--%>
-					<%--<form:select about="choose" path="carrier" class="input-medium required">--%>
-						<%--<form:option value="" label="请选择"/>--%>
-						<%--<form:options items="${userList}" itemLabel="name" itemValue="name" htmlEscape="false"/>--%>
-					<%--</form:select>--%>
-					<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-				<%--</div>--%>
-			<%--</div>--%>
-		<%--</c:if>--%>
 		<div class="control-group">
 			<label class="control-label">发货时间：</label>
 			<div class="controls">

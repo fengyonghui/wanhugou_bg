@@ -557,8 +557,8 @@ public class BizPoHeaderReqController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "audit")
     @ResponseBody
-    public String audit(HttpServletRequest request, int id, String currentType, int auditType, String description, String fromPage) {
-        Pair<Boolean, String> result = bizPoHeaderService.auditPo(id, currentType, auditType, description, fromPage);
+    public String audit(HttpServletRequest request, int id, String currentType, int auditType, String description) {
+        Pair<Boolean, String> result = bizPoHeaderService.auditPo(id, currentType, auditType, description);
         if (result.getLeft()) {
             return JsonUtil.generateData(result, request.getParameter("callback"));
         }

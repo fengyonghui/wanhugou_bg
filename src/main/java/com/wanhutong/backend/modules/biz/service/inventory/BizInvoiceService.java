@@ -122,7 +122,6 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         boolean flagRequest = true;        //备货单完成状态
         boolean flagOrder = true;        //销售单完成状态
         boolean flagPo = true;     //采购单完成状态
-        boolean flagInvoceId = bizInvoice.getId() == null ? true : false;
         //修改发货单
         if (bizInvoice.getId() != null) {
             BizInvoice invoice = bizInvoiceDao.get(bizInvoice.getId());
@@ -176,7 +175,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String[] oheaders = orders[a].split("#");
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(Integer.parseInt(oheaders[0]));
                 //加入中间表关联关系
-                if (flagInvoceId && !ordId.equals(orderHeader.getId())) {
+                if (BizInvoice.IsConfirm.NO.getIsConfirm().equals(bizInvoice.getIsConfirm()) && !ordId.equals(orderHeader.getId())) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                     bizDetailInvoice.setInvoice(bizInvoice);
                     bizDetailInvoice.setOrderHeader(orderHeader);
@@ -397,7 +396,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String[] rheaders = requests[b].split("#".trim());
                 BizRequestHeader requestHeader = bizRequestHeaderService.get(Integer.parseInt(rheaders[0]));
                 //加入中间表关联关系
-                if (flagInvoceId && !reqId.equals(requestHeader.getId())) {
+                if (BizInvoice.IsConfirm.NO.getIsConfirm().equals(bizInvoice.getIsConfirm()) && !reqId.equals(requestHeader.getId())) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                     bizDetailInvoice.setInvoice(bizInvoice);
                     bizDetailInvoice.setRequestHeader(requestHeader);
@@ -543,9 +542,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         }
         if (imgUrl != null) {
             String[] photoArr = imgUrl.split("\\|");
-            saveLogisticsImg(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizInvoice, photoArr);
+            saveLogisticsImg(ImgEnum.LOGISTICS_TYPE.getCode(), bizInvoice, photoArr);
         }
-        List<CommonImg> commonImgs = getImgList(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizInvoice.getId());
+        List<CommonImg> commonImgs = getImgList(ImgEnum.LOGISTICS_TYPE.getCode(), bizInvoice.getId());
         for (int i = 0; i < commonImgs.size(); i++) {
             CommonImg commonImg = commonImgs.get(i);
             commonImg.setImgSort(i);

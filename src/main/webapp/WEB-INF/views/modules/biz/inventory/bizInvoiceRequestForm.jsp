@@ -36,7 +36,6 @@
 
 						});
                         tt+=t+"#"+detail+",";
-						alert(tt)
                     });
                     tt=tt.substring(0,tt.length-1);
                     if(window.confirm('你确定要发货吗？') && total > 0){
@@ -110,7 +109,7 @@
                                 tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.vendorName+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
 
                                 tr_tds+= "<td>"+detail.reqQty+"</td><td>"+detail.sendQty+"</td>";
-                                tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+requestHeader.id+"' name='' value='0'></td>";
+                                tr_tds+="<td><input type='text' title='sent_"+requestHeader.id+"' name='' onchange='checkNum("+detail.reqQty+","+detail.sendQty+",this)' value='0'></td>";
                                 tr_tds+="</tr>";
                                 // alert(detail.skuInfo.buyPrice)
                                 if(requestHeader.requestDetailList.length>1){
@@ -158,6 +157,7 @@
 		<sys:message content="${message}"/>
 		<form:hidden path="ship"/>
 		<form:hidden path="bizStatus"/>
+		<input type="hidden" name="isConfirm" value="1"/>
 		<c:if test="${bizInvoice.id != null && bizInvoice.id != ''}">
 			<div class="control-group">
 				<label class="control-label">发货单号：</label>

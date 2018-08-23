@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="/WEB-INF/views/include/taglib.jsp" %>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
     <title>发货单管理</title>
@@ -69,6 +69,10 @@
                         tt = tt.substring(0, tt.length - 1);
                     }
                     if (window.confirm('你确定要发货吗？')) {
+                        if (total <= 0) {
+                            alert("发货数量不能为0");
+                            return false;
+                        }
                         if (tt != '') {
                             $("#prodInfo3").append("<input name='orderHeaders' type='hidden' value='" + tt + "'>");
                         }
