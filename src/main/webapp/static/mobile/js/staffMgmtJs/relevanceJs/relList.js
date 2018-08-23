@@ -28,26 +28,22 @@
 		    pullRefresh(pager);//启用上拉下拉 
 		    function pullRefresh(){
 		        mui("#refreshContainer").pullRefresh({
-			        up:{
-			            contentnomore:'没 有 更 多 数 据 了',
-			            callback:function(){
-			                window.setTimeout(function(){
-			                    getData(pager);
-			                },500);
-			            }
-			         },
+//			        up:{
+//			            contentnomore:'没 有 更 多 数 据 了',
+//			            callback:function(){
+//			                window.setTimeout(function(){
+//			                    getData(pager);
+//			                },500);
+//			            }
+//			         },
 			        down : {
-			            height:50,
 			            auto: true,
-			            contentdown : "",
-			            contentover : "",
-			            contentrefresh : "正在加载...",
 			            callback :function(){ 
 			                    pager['size']= 10;//条数
 			                    pager['pageNo'] = 1;
 			                    pager['consultants.id'] = _this.userInfo.staListId;
 			                    pager['office.id'] = _this.userInfo.dptmtId;
-			                    pager['conn'] ="connIndex"//页码
+			                    pager['conn'] ="connIndex"
 				                var f = document.getElementById("staReleList");
 				                var childs = f.childNodes;
 				                for(var i = childs.length - 1; i >= 0; i--) {
@@ -71,7 +67,8 @@
 		            success:function(res){
 		          	    console.log(res)
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-						var arrLen = res.data.resultData.length;						
+						var arrLen = res.data.resultData.length;
+						
                         if(arrLen > 0) {
                         $.each(res.data.resultData, function(i, item) {
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
@@ -122,14 +119,16 @@
 								});
 								$('#staReleList').html(staffHtmlList);
 								_this.stHrefHtml()
-						} else {
+						} 
+						else {
 								$('.mui-pull-caption').html('');
-							}
-						totalPage = res.data.page.count%pager.size!=0?
-		                parseInt(res.data.page.count/pager.size)+1:
-		                res.data.page.count/pager.size;
-		                if(totalPage==pager.pageNo){		                	
-			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+						}								                	
+//			           totalPage = res.data.page.count%pager.size!=0?
+//		                parseInt(res.data.page.count/pager.size)+1:
+//		                res.data.page.count/pager.size;
+                        var totalPage=1;
+		                if(totalPage==pager.pageNo){
+			                mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
