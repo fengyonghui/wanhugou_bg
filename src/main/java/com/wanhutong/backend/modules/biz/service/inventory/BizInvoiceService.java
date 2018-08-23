@@ -542,9 +542,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         }
         if (imgUrl != null) {
             String[] photoArr = imgUrl.split("\\|");
-            saveLogisticsImg(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizInvoice, photoArr);
+            saveLogisticsImg(ImgEnum.LOGISTICS_TYPE.getCode(), bizInvoice, photoArr);
         }
-        List<CommonImg> commonImgs = getImgList(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizInvoice.getId());
+        List<CommonImg> commonImgs = getImgList(ImgEnum.LOGISTICS_TYPE.getCode(), bizInvoice.getId());
         for (int i = 0; i < commonImgs.size(); i++) {
             CommonImg commonImg = commonImgs.get(i);
             commonImg.setImgSort(i);
