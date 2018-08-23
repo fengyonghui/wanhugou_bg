@@ -211,7 +211,7 @@
                     dataType: 'json',
                     success: function (resule) {
                         if (resule.data.value == '操作成功!') {
-                            mui.toast("保存备货单成功！");
+                            alert("保存备货单成功！");
                             GHUTILS.OPENPAGE({
                                 url: "../../html/inventoryMagmetHtml/inventoryList.html",
                                 extras: {
@@ -317,9 +317,9 @@
                 _this.skuInfoIds_1 += item.skuInfo.id + ","
                 _this.reqQtys_1 += item.reqQty + ","
                 _this.reqDetailIds += item.id + ","
-                _this.LineNos += item.lineNo + ","// 最开始的id="' + item.id + '"    修改后1、id="' + item.skuInfo.id + '"     2、id="serskudiv_' + skuInfo.id + '"
+                _this.LineNos += item.lineNo + ","
                 htmlCommodity += '<div class="mui-row app_bline" id="' + item.id + '">' +
-                '<input style="top: 30px;" name="" class="skuinfo_check" id="' + item.skuInfo.id + '" type="checkbox"></div>' +
+                '<input style="display:none;" name="" class="skuinfo_check" id="' + item.skuInfo.id + '" type="checkbox">' +
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
@@ -350,7 +350,7 @@
                     '<li class="mui-table-view-cell">' +
                     '<div class="mui-input-row inputClassAdd">' +
                     '<label>申报数量:</label>' +
-                    '<input type="text" class="mui-input-clear inDeclareNum" id="" value="' + item.reqQty + '">'+
+                    '<input type="text" class="mui-input-clear inDeclareNum" id="reqQty_'+ item.skuInfo.id + '" value="' + item.reqQty + '">'+
                     '<font>*</font>'+
                     '</div></li></div></div>';
 
@@ -425,12 +425,13 @@
                                 if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
                                     return;
                                 }
-                                if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length<0){
-		                            return;
-		                        }
+//                              if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length<0){
+//                                  alert(1)
+//		                            return;
+//		                        }
                                 resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
                                         '<div class="mui-row mui-checkbox mui-left">' +
-                                        '<input style="display:none;" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox">' +
+                                        '<input style="top:30px" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
                                         '<div class="mui-row">' +
                                         '<div class="mui-row">' +
                                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
@@ -518,7 +519,7 @@
                             '</button></div>';
                             cheDiv.append(resultHtml)
                         $("#commodityMenu").append($(cheDiv))
-//                      _this.skuInfoIds_2 += cheId + ",";
+                        _this.skuInfoIds_2 += cheId + ",";
                     }
                 })
             });
