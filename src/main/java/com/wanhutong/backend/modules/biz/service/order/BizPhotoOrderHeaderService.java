@@ -49,8 +49,8 @@ public class BizPhotoOrderHeaderService extends CrudService<BizOrderHeaderDao, B
      * 查询供应商主负责人
      * @return
      */
-    public User findVendUser(Integer orderId, String vendType) {
-        return userDao.findVendUser(orderId,vendType);
+    public User findVendUser(Integer orderId) {
+        return userDao.findVendUser(orderId);
     }
 
     /**

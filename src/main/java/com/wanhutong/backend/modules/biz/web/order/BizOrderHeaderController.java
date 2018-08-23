@@ -366,18 +366,19 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
 
+            //经销店
+            Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+            if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
+                User user = systemService.getUser(office.getPrimaryPerson().getId());
+                model.addAttribute("custUser", user);
+            }
+            //供应商
+            User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId());
+            model.addAttribute("vendUser", vendUser);
+
             //代采
             if (bizOrderHeaderTwo != null && BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
                 if (bizOrderHeaderTwo.getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
-                    //经销店
-                    Office office = officeService.get(bizOrderHeader.getCustomer().getId());
-                    if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
-                        User user = systemService.getUser(office.getPrimaryPerson().getId());
-                        model.addAttribute("custUser", user);
-                    }
-                    //供应商
-                    User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
-                    model.addAttribute("vendUser", vendUser);
                     BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
                     bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
                     List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);
@@ -533,7 +534,7 @@ public class BizOrderHeaderController extends BaseController {
 
         request.setAttribute("id", bizOrderHeader.getId());
         request.setAttribute("auditList", list);
-        request.setAttribute("currentAuditStatus", CollectionUtils.isNotEmpty(currentList) ? currentList.get(0) : StringUtils.EMPTY);
+        request.setAttribute("currentAuditStatus", CollectionUtils.isNotEmpty(currentList) ? currentList.get(0) : new CommonProcessEntity());
         request.setAttribute("type", type);
         request.setAttribute("processMap", "0".equals(type) ?
                 ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap()
@@ -699,9 +700,9 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderDetail:view")
     @RequestMapping(value = "findByOrderV2")
     public String findByOrderV2(BizOrderHeader bizOrderHeader, String flag, HttpServletRequest request, HttpServletResponse response, Model model) {
-        BizOrderHeader byOrderNum = bizOrderHeaderService.getByOrderNum(bizOrderHeader.getOrderNum());
-        if (byOrderNum != null) {
-            bizOrderHeader = byOrderNum;
+        BizOrderHeader order = bizOrderHeaderService.getByOrderNum(bizOrderHeader.getOrderNum());
+        if (order != null) {
+            bizOrderHeader = order;
         }
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
@@ -713,6 +714,14 @@ public class BizOrderHeaderController extends BaseController {
             List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
             if (CollectionUtils.isEmpty(list)) {
                 Map<String, Object> byOrder = findByOrder(bizOrderHeader, flag, request, response, model);
+
+                BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+                Office office = new Office();
+                office.setId(order.getCenterId());
+                bizInventoryInfo.setCustomer(office);
+                List<BizInventoryInfo> inventoryInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+                byOrder.put("inventoryInfoList", inventoryInfoList);
+
                 return JsonUtil.generateData(byOrder, null);
             }
         }
@@ -723,6 +732,13 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         Map<String, Object> byOrder = findByOrder(bizOrderHeader, flag, request, response, model);
+        BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+        Office office = new Office();
+        office.setId(order.getCenterId());
+        bizInventoryInfo.setCustomer(office);
+        List<BizInventoryInfo> inventoryInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+        byOrder.put("inventoryInfoList", inventoryInfoList);
+
         return JsonUtil.generateData(byOrder, null);
     }
 
@@ -1549,18 +1565,20 @@ public class BizOrderHeaderController extends BaseController {
                     }
                 }
             }
+
+            //经销店
+            Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+            if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
+                User user = systemService.getUser(office.getPrimaryPerson().getId());
+                model.addAttribute("custUser", user);
+            }
+            //供应商
+            User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId());
+            model.addAttribute("vendUser", vendUser);
+
             //代采
             if (bizOrderHeaderTwo != null) {
                 if (bizOrderHeaderTwo.getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
-                    //经销店
-                    Office office = officeService.get(bizOrderHeader.getCustomer().getId());
-                    if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
-                        User user = systemService.getUser(office.getPrimaryPerson().getId());
-                        model.addAttribute("custUser", user);
-                    }
-                    //供应商
-                    User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
-                    model.addAttribute("vendUser", vendUser);
                     BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
                     bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
                     List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);

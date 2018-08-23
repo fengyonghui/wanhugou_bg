@@ -406,18 +406,25 @@
 				</shiro:hasPermission>
 			</c:if >
 				<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
-						<c:if test="${orderHeader.suplys == 0 }">
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
-						</c:if>
-						<c:if test="${orderHeader.suplys != 0 }">
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
-						</c:if>
+					<c:if test="${orderHeader.commonProcess.id != null
+							&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
+							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+							&& orderHeader.commonProcess.purchaseOrderProcess.code != payStatus
+							&& (fns:hasRole(roleSet, orderHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+							}">
+						<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+							<c:if test="${orderHeader.suplys == 0 }">
+								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
+							</c:if>
+							<c:if test="${orderHeader.suplys != 0 }">
+								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
+							</c:if>
 
-						<c:if test="${orderHeader.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">
-						<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">
-							<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>
-						</c:if>
+							<c:if test="${orderHeader.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">
+								<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">
+									<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>
+								</c:if>
+							</c:if>
 						</c:if>
 					</c:if>
 				</shiro:hasPermission>
