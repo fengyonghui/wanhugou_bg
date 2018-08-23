@@ -56,7 +56,7 @@
 			_this.ajaxCheckStatus()
 
 			$(newinput).on('focus', function() {
-				//$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
 				$(inHideSpan).show()
 			})
@@ -76,6 +76,7 @@
 			})
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
+//				_this.fromOfficeId = $(this).attr("id");
 				$(newinput).val($(this).text())
 				$(input_div).hide()
 				$('#inHideSpan').hide()
@@ -127,9 +128,7 @@
 				data: {type:'biz_req_status'},
 				dataType: 'json',
 				success: function(res) {
-//					console.log(res)
 					$.each(res, function(i, item) {
-//						console.log(item)
 						htmlBusiness += '<option class="soption"  value="' + item.value + '">' + item.label + '</option>'
 					});
 					$('#input_div_business').html(optHtml+htmlBusiness)

@@ -151,7 +151,9 @@
         saveDetail: function () {
             var _this = this;
             mui('.saveDetailBtn').on('tap','#saveDetailBtn',function(){
-                var skuIds = _this.skuInfoIds_2.split(",");
+            	console.log('获取_this.skuInfoIds_2的值');//加个判断 判断是初始化修改数量还是查询按钮添加的修改数量
+            	console.log(_this.skuInfoIds_2);
+    		    var skuIds = _this.skuInfoIds_2.split(",");
                 var skuInfoIdsTemp = ""
                 for (var i=0; i<skuIds.length; i++){
                     var skuId = skuIds[i];
@@ -220,7 +222,7 @@
                         }
                     }
                 })
-            })
+           })
         },
         getPermissionList: function () {
             var _this = this;
