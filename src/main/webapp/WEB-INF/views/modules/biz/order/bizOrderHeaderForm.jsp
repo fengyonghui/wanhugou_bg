@@ -1710,7 +1710,7 @@
             <div class="form-actions">
                 <!-- 一单到底订单审核 -->
                 <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-                    <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
+                    <c:if test="${entity.str == 'audit' && entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
                         <c:if test="${entity.bizPoHeader.commonProcessList == null}">
                             <input id="btnSubmit" type="button" onclick="checkPass('DO')" class="btn btn-primary"
                                    value="审核通过"/>
