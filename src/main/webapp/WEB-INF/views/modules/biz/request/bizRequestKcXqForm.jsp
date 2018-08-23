@@ -98,7 +98,33 @@
 			</div>
 		</div>
 		</c:if>
-
+		<c:if test="${invoiceList != null}">
+			<div class="control-group">
+				<label class="control-label">集货信息：</label>
+				<div class="controls">
+					<table class="table table-striped table-bordered table-condensed">
+						<thead>
+						<tr>
+							<th>集货地点</th>
+							<th>验货员</th>
+							<th>验货时间</th>
+							<th>验货备注</th>
+						</tr>
+						</thead>
+						<tbody>
+						<c:forEach items="${invoiceList}" var="invoice">
+							<tr>
+								<td>${fns:getDictLabel(invoice.collLocate, 'coll_locate', '')}</td>
+								<td>${invoice.inspector.name}</td>
+								<td><fmt:formatDate value="${invoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/></td>
+								<td><textarea>${invoice.inspectRemark}</textarea></td>
+							</tr>
+						</c:forEach>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</c:if>
 
 
 		<div class="control-group">
@@ -123,10 +149,10 @@
 						</c:if>
 						<c:if test="${not empty source && source eq 'ghs'}">
 							<%--该备货单已生成采购单就显示--%>
-							<c:if test="${bizOrderHeader.poSource==null}">
-								<th>已生成的采购单</th>
-								<th>采购数量</th>
-							</c:if>
+							<%--<c:if test="${bizOrderHeader.poSource==null}">--%>
+								<%--<th>已生成的采购单</th>--%>
+								<%--<th>采购数量</th>--%>
+							<%--</c:if>--%>
 						</c:if>
 					</tr>
 					</thead>
@@ -172,10 +198,10 @@
 							</c:if>
 								<c:if test="${not empty source && source eq 'ghs'}">
 									<%--该备货单已生成采购单就显示--%>
-									<c:if test="${ordDetail.poHeader!=null}">
-										<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${ordDetail.poHeader.id}&str=detail">${ordDetail.poHeader.orderNum}</a></td>
-										<td>${ordDetail.ordQty}</td>
-									</c:if>
+									<%--<c:if test="${ordDetail.poHeader!=null}">--%>
+										<%--<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${ordDetail.poHeader.id}&str=detail">${ordDetail.poHeader.orderNum}</a></td>--%>
+										<%--<td>${ordDetail.ordQty}</td>--%>
+									<%--</c:if>--%>
 								</c:if>
 							</tr>
 						</c:forEach>

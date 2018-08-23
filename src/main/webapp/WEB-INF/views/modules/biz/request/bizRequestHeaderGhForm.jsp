@@ -1,3 +1,4 @@
+<%@ taglib prefix="s" uri="http://www.opensymphony.com/sitemesh/decorator" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
@@ -58,42 +59,33 @@
 			/>			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>
-	<div class="control-group">
-		<label class="control-label">验货员：</label>
-		<div class="controls">
-			<input value="${invoice.inspector.name}" disabled="disabled" class="input-mini"/>
+	<c:if test="${invoiceList != null}">
+		<div class="control-group">
+			<label class="control-label">集货信息：</label>
+			<div class="controls">
+				<table class="table table-striped table-bordered table-condensed">
+					<thead>
+						<tr>
+							<th>集货地点</th>
+							<th>验货员</th>
+							<th>验货时间</th>
+							<th>验货备注</th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach items="${invoiceList}" var="invoice">
+							<tr>
+								<td>${fns:getDictLabel(invoice.collLocate, 'coll_locate', '')}</td>
+								<td>${invoice.inspector.name}</td>
+								<td><fmt:formatDate value="${invoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/></td>
+								<td><textarea>${invoice.inspectRemark}</textarea></td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">验货时间：</label>
-		<div class="controls">
-			<input name="inspectDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-				   value="<fmt:formatDate value="${invoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
-				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
-			<span class="help-inline"><font color="red">*</font> </span>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">验货备注：</label>
-		<div class="controls">
-			<textarea value="${invoice.inspectRemark}" disabled="disabled" htmlEscape="false" maxlength="30" class="input-xlarge "/>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">集货地点：</label>
-		<div class="controls">
-			<%--<select>--%>
-			<%--<c:forEach items="${fns:getDictList('coll_locate')}">--%>
-				<%----%>
-			<%--</c:forEach>--%>
-			<%--</select>--%>
-			<%--<form:select path="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">--%>
-				<%--<form:option value="" label="请选择"/>--%>
-				<%--<form:options items="${fns:getDictList('coll_locate')}" itemValue="value" itemLabel="label"/>--%>
-			<%--</form:select>--%>
-		</div>
-	</div>
-
+	</c:if>
 	<div class="control-group">
 		<label class="control-label">备货商品：</label>
 		<div class="controls">
@@ -111,10 +103,10 @@
 					<th>已供货数量</th>
 					<c:if test="${not empty source && source eq 'gh'}">
 						<%--该备货单已生成采购单就显示--%>
-						<c:if test="${empty bizRequestHeader.poSource}">
-							<th>已生成的采购单</th>
-							<th>采购数量</th>
-						</c:if>
+						<%--<c:if test="${empty bizRequestHeader.poSource}">--%>
+							<%--<th>已生成的采购单</th>--%>
+							<%--<th>采购数量</th>--%>
+						<%--</c:if>--%>
 					</c:if>
 				</tr>
 				</thead>
@@ -142,10 +134,10 @@
 
 							<c:if test="${not empty source && source eq 'gh'}">
 								<%--该备货单已生成采购单就显示--%>
-								<c:if test="${reqDetail.bizPoHeader!=null}">
-									<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}&str=detail">${reqDetail.bizPoHeader.orderNum}</a></td>
-									<td>${reqDetail.reqQty}</td>
-								</c:if>
+								<%--<c:if test="${reqDetail.bizPoHeader!=null}">--%>
+									<%--<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}&str=detail">${reqDetail.bizPoHeader.orderNum}</a></td>--%>
+									<%--<td>${reqDetail.reqQty}</td>--%>
+								<%--</c:if>--%>
 							</c:if>
 
 						</tr>

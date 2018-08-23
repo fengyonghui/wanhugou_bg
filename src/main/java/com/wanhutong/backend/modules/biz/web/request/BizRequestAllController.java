@@ -269,11 +269,14 @@ public class BizRequestAllController {
                 requestHeader.setPoSource("poHeaderSource");
             }
             BizInvoice invoice = new BizInvoice();
-            invoice.setShip(Integer.parseInt(ship));
-            invoice.setReqNo(bizRequestHeader.getReqNo());
+            if ("bh".equals(ship)) {
+                invoice.setShip(BizInvoice.Ship.RE.getShip());
+                invoice.setReqNo(bizRequestHeader.getReqNo());
+                invoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
+            }
             List<BizInvoice> invoiceList = bizInvoiceService.findList(invoice);
             if (CollectionUtils.isNotEmpty(invoiceList)) {
-                model.addAttribute("invoice",invoice);
+                model.addAttribute("invoiceList",invoiceList);
             }
         }
         if (bizOrderHeader != null && bizOrderHeader.getId() != null) {
@@ -297,13 +300,23 @@ public class BizRequestAllController {
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
             List<BizOrderDetail> orderDetailList;
+            orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
             if (bizStatu == 0) {
                 bizOrderDetail.setSuplyis(new Office(bizOrderHeader.getCenterId()));
                 orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
             } else {
                 orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+                BizInvoice invoice = new BizInvoice();
+                if ("xs".equals(ship)) {
+                    invoice.setShip(BizInvoice.Ship.SO.getShip());
+                    invoice.setOrderNum(orderHeader.getOrderNum());
+                    invoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
+                }
+                List<BizInvoice> invoiceList = bizInvoiceService.findList(invoice);
+                if (CollectionUtils.isNotEmpty(invoiceList)) {
+                    model.addAttribute("invoiceList",invoiceList);
+                }
             }
-            orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
             if (orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
                 CommonImg commonImg = new CommonImg();
                 commonImg.setObjectId(orderHeader.getId());
