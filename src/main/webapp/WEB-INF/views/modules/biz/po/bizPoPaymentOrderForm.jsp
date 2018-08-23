@@ -37,7 +37,12 @@
 		<div class="control-group">
 			<label class="control-label">订单总金额：</label>
 			<div class="controls">
-				<input value="${requestHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
+				<c:if test="${fromPage == 'requestHeader' }">
+					<input value="${requestHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
+				</c:if>
+				<c:if test="${fromPage == 'orderHeader' }">
+					<input value="${orderHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
+				</c:if>
 			</div>
 		</div>
 		<div class="control-group">
@@ -47,7 +52,9 @@
 			</div>
 		</div>
 		<div class="form-actions">
-			<shiro:hasPermission name="biz.po:bizpopaymentorder:bizPoPaymentOrder:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
+				<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
+			</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>

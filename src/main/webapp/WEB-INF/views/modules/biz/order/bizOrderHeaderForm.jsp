@@ -1743,6 +1743,7 @@
                     <!-- 一单到底，采购单审核 -->
                     <shiro:hasPermission name="biz:po:bizPoHeader:audit">
                         <c:if test="${entity.str == 'audit'}">
+                        <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
                             <c:if test="${entity.bizPoHeader.commonProcessList != null
                             && fn:length(entity.bizPoHeader.commonProcessList) > 0
                             && (currentAuditStatus.type == 777 || currentAuditStatus.type == 666)
@@ -1752,6 +1753,18 @@
                                 <input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"
                                        value="审核驳回"/>
                             </c:if>
+                        </c:if>
+
+                        <c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+                            <c:if test="${entity.bizPoHeader.commonProcessList != null
+                            && fn:length(entity.bizPoHeader.commonProcessList) > 0
+                            }">
+                                <input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"
+                                       value="审核通过"/>
+                                <input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"
+                                       value="审核驳回"/>
+                            </c:if>
+                        </c:if>
                         </c:if>
                     </shiro:hasPermission>
 
