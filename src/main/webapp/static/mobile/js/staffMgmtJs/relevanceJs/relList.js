@@ -110,11 +110,11 @@
 			//								'<label>首次开单:</label>' +
 			//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 			//							'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center">' +
-											'<div class="mui-col-xs-6">' +
-											'</div>'+
-											'<div class="mui-col-xs-6 staReMoveBtn" staListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">移除</li>' +
+										'<div class="app_font_cl content_part mui-row">' +
+//											'<div class="mui-col-xs-6">' +
+//											'</div>'+
+											'<div class="staReMoveBtn" staListId="'+ item.id +'">' +
+												'<div class="mui-row">移除</div>' +
 											'</div>'+
 										'</div>' +
 									'</div>'

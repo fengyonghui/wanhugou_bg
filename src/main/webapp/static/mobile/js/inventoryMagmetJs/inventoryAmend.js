@@ -368,19 +368,37 @@
         	var that=this;
             mui('#commodityMenu').on('tap','.deleteSkuButton',function(e){
                 var obj = e.detail.target.id;
-                if (confirm("此删除不需点保存,即可生效.确认删除此条信息吗？")) {
-                    $.ajax({
-                        type: "post",
-                        url: "/a/biz/request/bizRequestDetail/delItem",
-                        data: {id: obj},
-                        success: function (data) {
-                            if (data == 'ok') {
-                                mui.toast("删除成功！");
-                                $("#" + obj).remove();
-                            }
-                        }
-                    })
-                }
+                mui.confirm("此删除不需点保存,即可生效.确认删除此条信息吗？",'系统提示！',function (choice){
+                	console.log(choice)
+					if(choice.index==1){
+                        $.ajax({
+                            type: "post",
+	                        url: "/a/biz/request/bizRequestDetail/delItem",
+	                        data: {id: obj},
+	                        success: function (data) {
+	                            if (data == 'ok') {
+	                                mui.toast("删除成功！");
+	                                $("#" + obj).remove();
+	                            }
+	                        }
+	                    })
+					}else{
+	
+                    }
+               });
+//              if (confirm("此删除不需点保存,即可生效.确认删除此条信息吗？")) {
+//                  $.ajax({
+//                      type: "post",
+//                      url: "/a/biz/request/bizRequestDetail/delItem",
+//                      data: {id: obj},
+//                      success: function (data) {
+//                          if (data == 'ok') {
+//                              mui.toast("删除成功！");
+//                              $("#" + obj).remove();
+//                          }
+//                      }
+//                  })
+//              }
             });
         },
         removeItem:function () {
