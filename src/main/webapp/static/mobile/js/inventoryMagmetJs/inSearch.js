@@ -17,7 +17,6 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			
 		},
 		getData: function() {
 			var _this = this;
@@ -30,30 +29,26 @@
 						}else{
 							mui.toast('请选择匹配的选项')
 						}
-					
 				}else{
 					_this.sureSelect(optionsBusiness)
-					
 				}
-				
-
 			})
 		},
 		sureSelect:function(optionsBusiness){
 			var _this = this;
-				_this.selectOpen = false
-				var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
-				GHUTILS.OPENPAGE({
-					url: "../../html/inventoryMagmetHtml/inventoryList.html",
-					extras: {
-						reqNo: $('.inOrdNum').val(),
-						name: $('.inReqNum').val(),
-						fromOffice: $('.hasoid').attr('id'),
-						bizStatusid: optionsBusiness.val(),
-						varietyInfoid: optionsClass.val(),
-						isFunc: true
-						}
-					})
+			_this.selectOpen = false
+			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
+			GHUTILS.OPENPAGE({
+				url: "../../html/inventoryMagmetHtml/inventoryList.html",
+				extras: {
+					reqNo: $('.inOrdNum').val(),
+					name: $('.inReqNum').val(),
+					fromOffice: $('.hasoid').attr('id'),
+					bizStatusid: optionsBusiness.val(),
+					varietyInfoid: optionsClass.val(),
+					isFunc: true
+				}
+			})
 		},
 		hrefHtml: function(newinput, input_div,inHideSpan) {
 			var _this = this;
@@ -71,7 +66,6 @@
 				}else{
 					_this.selectOpen = true
 				}
-				
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
 			
@@ -80,7 +74,6 @@
 				$(input_div).hide()
 				$(inHideSpan).hide()
 			})
-
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
 				$(newinput).val($(this).text())
@@ -96,7 +89,6 @@
 				$.each(data, function(i, item) {
 					if(item.name.indexOf(key) > -1) {
 						reult.push(item)
-
 					}
 				})
 			$.each(reult, function(i, item) {
@@ -104,7 +96,6 @@
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
-
 		},
 		ajaxGoodList: function() {
 			var _this = this;
@@ -125,7 +116,6 @@
 					$('.input_div').html(htmlList)
 				}
 			});
-
 		},
 		ajaxCheckStatus: function() {
 			var _this = this;
@@ -166,12 +156,9 @@
 					_this.getData()
 				}
 			});
-
 		},
-		
 	}
 	$(function() {
-
 		var ac = new ACCOUNT();
 		ac.init();
 	});

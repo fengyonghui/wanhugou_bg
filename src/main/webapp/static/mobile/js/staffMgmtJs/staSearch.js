@@ -9,7 +9,7 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			this.hrefHtml('.newinput', '.input_div','#cpyHideSpan', '#dptmtHideSpan');
+			this.hrefHtml('.newinput', '.input_div','#cpySchHideSpan');
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
@@ -17,7 +17,6 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			
 		},
 		getData: function() {
 			var _this = this;
@@ -37,21 +36,21 @@
 		},
 		sureSelect:function(optionsBusiness){
 			var _this = this;
-				_this.selectOpen = false
-				var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
-				GHUTILS.OPENPAGE({
-					url: "../../html/inventoryMagmetHtml/inventoryList.html",
-					extras: {
-						reqNo: $('.inOrdNum').val(),
-						name: $('.inReqNum').val(),
-						fromOffice: $('.hasoid').attr('id'),
-						bizStatusid: optionsBusiness.val(),
-						varietyInfoid: optionsClass.val(),
-						isFunc: true
-						}
-					})
+			_this.selectOpen = false
+			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
+			GHUTILS.OPENPAGE({
+				url: "../../html/inventoryMagmetHtml/inventoryList.html",
+				extras: {
+					reqNo: $('.inOrdNum').val(),
+					name: $('.inReqNum').val(),
+					fromOffice: $('.hasoid').attr('id'),
+					bizStatusid: optionsBusiness.val(),
+					varietyInfoid: optionsClass.val(),
+					isFunc: true
+				}
+			})
 		},
-		hrefHtml: function(newinput, input_div, cpyHideSpan, dptmtHideSpan) {
+		hrefHtml: function(newinput, input_div, cpySchHideSpan) {
 			var _this = this;
 			_this.ajaxGoodList()
 			_this.ajaxCheckStatus()
@@ -59,8 +58,7 @@
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
-				$(cpyHideSpan).show()
-				$(dptmtHideSpan).show()
+				$(cpySchHideSpan).show()
 			})
 			$(newinput).on('keyup', function() {
 				if($(this).val()==''){
@@ -68,27 +66,18 @@
 				}else{
 					_this.selectOpen = true
 				}
-				
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
-			
-			$(cpyHideSpan).on('click', function() {
+			$(cpySchHideSpan).on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
-				$(cpyHideSpan).hide()
+				$(cpySchHideSpan).hide()
 			})
-			$(dptmtHideSpan).on('click', function() {
-				$(input_div).find('hasoid').removeClass('hasoid')
-				$(input_div).hide()
-				$(dptmtHideSpan).hide()
-			})
-
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
 				$(newinput).val($(this).text())
 				$(input_div).hide()
-				$('#cpyHideSpan').hide()
-				$('#dptmtHideSpan').hide()
+				$('#cpySchHideSpan').hide()
 				_this.selectOpen = true
 			})
 		},
@@ -99,7 +88,6 @@
 				$.each(data, function(i, item) {
 					if(item.name.indexOf(key) > -1) {
 						reult.push(item)
-
 					}
 				})
 			$.each(reult, function(i, item) {
@@ -107,7 +95,6 @@
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
-
 		},
 		ajaxGoodList: function() {
 			var _this = this;

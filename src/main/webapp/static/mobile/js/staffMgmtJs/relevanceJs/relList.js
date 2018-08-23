@@ -1,4 +1,3 @@
-
 (function($) {
 	var ACCOUNT = function() {
 		this.ws = null;
@@ -24,68 +23,123 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			$.ajax({
-				type: 'GET',
-				url: "/a/biz/custom/bizCustomCenterConsultant/listData4mobile",
-				data: {
-					"consultants.id": _this.userInfo.staListId,
-					conn: "connIndex",
-					"office.id": _this.userInfo.dptmtId 
-				},
-				dataType: 'json',
-				success: function(res) {
-					console.log(res)
-					var staffHtmlList = '';
-					$.each(res.data.page.list, function(i, item) {
-						console.log(item)
-						staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
-							'<div class="mui-input-row">' +
-								'<label>采购中心:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.reqNo+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>客户专员:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+bizstatusTxt+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>电话:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>经销店名称:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.name +' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>负责人:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.createDate)+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>详细地址:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+varietyInfoName+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>采购频次:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.createBy.name+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>累计金额:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>首次开单:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
-							'</div>' +
-							'<div class="app_font_cl content_part mui-row app_text_center">' +
-								'<div class="mui-col-xs-6">' +
-								'</div>'+
-								'<div class="mui-col-xs-6 staReMoveBtn" staListId="'+ item.id +'">' +
-									'<li class="mui-table-view-cell">移除</li>' +
-								'</div>'+
-							'</div>' +
-						'</div>'
-					});
-				}
-			});
+			var pager = {};//分页 
+		    var totalPage;//总页码
+		    pullRefresh(pager);//启用上拉下拉 
+		    function pullRefresh(){
+		        mui("#refreshContainer").pullRefresh({
+			        up:{
+			            contentnomore:'没 有 更 多 数 据 了',
+			            callback:function(){
+			                window.setTimeout(function(){
+			                    getData(pager);
+			                },500);
+			            }
+			         },
+			        down : {
+			            height:50,
+			            auto: true,
+			            contentdown : "",
+			            contentover : "",
+			            contentrefresh : "正在加载...",
+			            callback :function(){ 
+			                    pager['size']= 10;//条数
+			                    pager['pageNo'] = 1;
+			                    pager['consultants.id'] = _this.userInfo.staListId;
+			                    pager['office.id'] = _this.userInfo.dptmtId;
+			                    pager['conn'] ="connIndex"//页码
+				                var f = document.getElementById("staReleList");
+				                var childs = f.childNodes;
+				                for(var i = childs.length - 1; i >= 0; i--) {
+				                    f.removeChild(childs[i]);
+				                }
+				                console.log('222')
+				                console.log(pager)
+				                $('.mui-pull-caption-down').html('');				                
+				                getData(pager);
+			            }
+			        }
+			    })
+		    }
+		    function getData(params){
+		    	var staffHtmlList = '';
+		        mui.ajax("/a/biz/custom/bizCustomCenterConsultant/listData4mobile",{
+		            data:params,               
+		            dataType:'json',
+		            type:'get',
+		            headers:{'Content-Type':'application/json'},
+		            success:function(res){
+		          	    console.log(res)
+		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+						var arrLen = res.data.resultData.length;						
+                        if(arrLen > 0) {
+                        $.each(res.data.resultData, function(i, item) {
+									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
+										'<div class="mui-input-row">' +
+											'<label>采购中心:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.centersName+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>客户专员:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsName+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>电话:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsMobile+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>经销店名称:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.customsName +' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>负责人:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customsPrimaryPersonName+' ">' +
+										'</div>' +
+			//							'<div class="mui-input-row">' +
+			//								'<label>详细地址:</label>' +
+			//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+varietyInfoName+' ">' +
+			//							'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>采购频次:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.orderCount+' ">' +
+										'</div>' +
+			//							'<div class="mui-input-row">' +
+			//								'<label>累计金额:</label>' +
+			//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
+			//							'</div>' +
+			//							'<div class="mui-input-row">' +
+			//								'<label>首次开单:</label>' +
+			//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
+			//							'</div>' +
+										'<div class="app_font_cl content_part mui-row app_text_center">' +
+											'<div class="mui-col-xs-6">' +
+											'</div>'+
+											'<div class="mui-col-xs-6 staReMoveBtn" staListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">移除</li>' +
+											'</div>'+
+										'</div>' +
+									'</div>'
+								});
+								$('#staReleList').html(staffHtmlList);
+								_this.stHrefHtml()
+						} else {
+								$('.mui-pull-caption').html('');
+							}
+						totalPage = res.data.page.count%pager.size!=0?
+		                parseInt(res.data.page.count/pager.size)+1:
+		                res.data.page.count/pager.size;
+		                if(totalPage==pager.pageNo){		                	
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+			            }else{
+			                pager.pageNo++;
+			                mui('#refreshContainer').pullRefresh().refresh(true);
+			            }          
+			        },
+		            error:function(xhr,type,errorThrown){
+			            console.log(type);
+		            }
+		        })
+		    }
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
