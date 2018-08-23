@@ -575,4 +575,45 @@ body{font-size: 15px;color:#3b3b3b;}
 .oneBtn {left: 50%;margin-left: -41px;}
 .font-color {color: #40ABE9;}
 .list-padding {padding: 10px 10px 0 10px;}
+
+
+/*查询页面公共样式*/
 .SearchBtnClass {margin: 60px auto;width: 80%;}
+.pre {margin-bottom: 0;padding-left: 0;float: right;width: 67%;}
+.newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;background: url(./thumb.jpg) no-repeat scroll right center;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
+.input_div {width: 150px;border: 1px solid #ddd;border-bottom: none;border-radius: 0 0 3px 3px;display: none;}
+.hideSpan {position: absolute;right: 52px;top: 11px;border: 1px solid rgb(204, 204, 204);border-radius: 13px;display: none;}
+.secStyle {margin: 5px 0;} 
+.newinput:focus {cursor: text;}
+.soption {display: block;padding: 2px 5px;}
+.soption:hover {background: #f9f9f9;border-top: 1px dotted #ddd;border-bottom: 1px dotted #ddd;padding: 1px 5px;}
+.mui-input-row input.newinput {padding-left: 0;}
+
+
+/*运营管理后台*/
+.appQuitBtn {background-color: #dd5563;border: none;border-radius: 8px;}
+.quitBtn {position: absolute;width: 80%;bottom: 50px;left: 50%;margin-left: -40%;}
+.app_border_rb {border-right: 1px solid #e5e5e5;border-bottom: 1px solid #e5e5e5;}
+.mui-table-view.mui-grid-view .mui-table-view-cell {margin-right: 0;}
+.clear {clear: both;}
+.app_bnp {padding: 0 !important;}
+
+
+/*运营管理*/
+.mui-table-view-cell p {border-bottom: 1px solid #e8e8e8;padding: 8px 0 8px;}
+
+
+/*审核公共样式*/
+.app_p20 button {margin-left: 17%;background-color: #007aff;color: #fff;}
+
+
+/*备货单审核*/
+.commodity {font-size: 13px;}
+.commodity div.mui-input-row>input {padding: 0;font-size: 13px;}
+.commodity div.mui-input-row>label {padding: 0;}
+.photoParent {width: 15%;height: 220px;margin-right: 15px;}
+.photoParent img {top: 50%;margin-top: -8px;width: 50px;}
+.listBlue>li {border-bottom: 1px solid #40ABE9;}
+
+
+
