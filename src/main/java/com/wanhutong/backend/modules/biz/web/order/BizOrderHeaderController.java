@@ -272,6 +272,62 @@ public class BizOrderHeaderController extends BaseController {
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:view")
+    @RequestMapping(value = {"listData4mobile"})
+    @ResponseBody
+    public String listData4mobile(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        if (bizOrderHeader.getSkuChickCount() != null) {
+            //商品下单量标识
+            bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
+        }
+        Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+        model.addAttribute("page", page);
+        resultMap.put("page", page);
+        if (bizOrderHeader.getSource() != null) {
+            model.addAttribute("source", bizOrderHeader.getSource());
+        }
+
+
+        for (BizOrderHeader b : page.getList()) {
+            if (b.getOrderNum().startsWith("SO")) {
+                CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+                commonProcessEntity.setObjectId(String.valueOf(b.getId()));
+                commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+                if (b.getSuplys() == 0 || b.getSuplys() == 721) {
+                    commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
+                }
+                List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+                if (CollectionUtils.isNotEmpty(list)) {
+                    b.setCommonProcess(list.get(0));
+                }
+            }
+        }
+
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+            }
+        }
+//        model.addAttribute("roleSet", roleSet);
+//        model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
+//        model.addAttribute("auditAllStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().getAutProcessId());
+//        model.addAttribute("auditFithStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getAutProcessId());
+//        model.addAttribute("auditStatus",ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getPayProcessId());
+
+        resultMap.put("roleSet", roleSet);
+        resultMap.put("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
+        resultMap.put("auditAllStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().getAutProcessId());
+        resultMap.put("auditFithStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getAutProcessId());
+        resultMap.put("auditStatus", ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getPayProcessId());
+
+        return JsonUtil.generateData(resultMap, request.getParameter("callback"));
+    }
+
+    @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model,
                        String orderNoEditable, String orderDetails,
