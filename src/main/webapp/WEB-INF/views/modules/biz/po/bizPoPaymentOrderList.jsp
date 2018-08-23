@@ -2,6 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <html>
 <head>
 	<title>支付申请管理</title>
@@ -81,8 +82,12 @@
 					<%--</c:if>--%>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:sure:bizPoPaymentOrder">
-					<c:if test="${bizPoPaymentOrder.total == '0.00' && (requestHeader == null || (requestHeader.bizStatus >= ReqHeaderStatusEnum.COMPLETE.state && requestHeader.bizStatus < ReqHeaderStatusEnum.CLOSE.state))}">
-						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}">确认支付金额</a>
+					<c:if test="${fromPage == 'requestHeader' && bizPoPaymentOrder.total == '0.00' && (requestHeader == null || (requestHeader.bizStatus >= ReqHeaderStatusEnum.COMPLETE.state && requestHeader.bizStatus < ReqHeaderStatusEnum.CLOSE.state))}">
+						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认支付金额</a>
+					</c:if>
+
+					<c:if test="${fromPage == 'orderHeader' && bizPoPaymentOrder.total == '0.00' && (orderHeader == null || (orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state && orderHeader.bizStatus < OrderHeaderBizStatusEnum.UNAPPROVE.state))}">
+						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认支付金额</a>
 					</c:if>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
@@ -169,9 +174,9 @@
                         result = JSON.parse(result);
                         if(result.ret == true || result.ret == 'true') {
                             alert('操作成功!');
-                            if(fromPage != null && fromPage == 'requestHeader') {
+                            if(${fromPage != null && fromPage == 'requestHeader'}) {
                                 window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
-                            } else if (fromPage != null && fromPage == 'orderHeader') {
+                            } else if (${fromPage != null && fromPage == 'orderHeader'}) {
                                 window.location.href = "${ctx}/biz/order/bizOrderHeader";
                             } else {
                                 window.location.href = "${ctx}/biz/po/bizPoHeader";

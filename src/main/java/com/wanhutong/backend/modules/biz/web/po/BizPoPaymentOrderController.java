@@ -85,6 +85,9 @@ public class BizPoPaymentOrderController extends BaseController {
 			}
 		}
 		model.addAttribute("roleSet", roleSet);
+
+		String fromPage = request.getParameter("fromPage");
+		model.addAttribute("fromPage", fromPage);
 		if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
 			BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(poId);
 			model.addAttribute("bizRequestHeader",bizRequestHeader);
@@ -92,13 +95,28 @@ public class BizPoPaymentOrderController extends BaseController {
 			bizOrderHeaderService.get(poId);
 		} else {
 			BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
-            BizRequestHeader bizRequestHeader = new BizRequestHeader();
-            bizRequestHeader.setBizPoHeader(bizPoHeader);
-            List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
-            if (CollectionUtils.isNotEmpty(requestHeaderList)) {
-                model.addAttribute("requestHeader",requestHeaderList.get(0));
-            }
-            model.addAttribute("bizPoHeader", bizPoHeader);
+			if (fromPage != null) {
+				switch (fromPage) {
+					case "requestHeader":
+						BizRequestHeader bizRequestHeader = new BizRequestHeader();
+						bizRequestHeader.setBizPoHeader(bizPoHeader);
+						List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
+						if (CollectionUtils.isNotEmpty(requestHeaderList)) {
+							model.addAttribute("requestHeader",requestHeaderList.get(0));
+						}
+					case "orderHeader":
+						BizOrderHeader bizOrderHeader = new BizOrderHeader();
+						bizOrderHeader.setBizPoHeader(bizPoHeader);
+						List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
+						if (CollectionUtils.isNotEmpty(orderHeaderList)) {
+							model.addAttribute("orderHeader", orderHeaderList.get(0));
+						}
+						break;
+					default:
+						break;
+				}
+			}
+			model.addAttribute("bizPoHeader", bizPoHeader);
 		}
 		if (poId == null) {
 			bizPoPaymentOrder.setPoHeaderId(-1);
@@ -107,9 +125,7 @@ public class BizPoPaymentOrderController extends BaseController {
 		}
 		Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
 		model.addAttribute("page", page);
-		String fromPage = request.getParameter("fromPage");
 		String orderId = request.getParameter("orderId");
-		model.addAttribute("fromPage", fromPage);
 		model.addAttribute("orderId", orderId);
 		return "modules/biz/po/bizPoPaymentOrderList";
 	}
@@ -129,14 +145,34 @@ public class BizPoPaymentOrderController extends BaseController {
 
 	@RequiresPermissions("biz:po:bizPoPaymentOrder:view")
 	@RequestMapping(value = "form")
-	public String form(BizPoPaymentOrder bizPoPaymentOrder, Model model) {
+	public String form(HttpServletRequest request, HttpServletResponse response,BizPoPaymentOrder bizPoPaymentOrder, Model model) {
+		String fromPage = request.getParameter("fromPage");
+		model.addAttribute("fromPage",fromPage);
 		if (bizPoPaymentOrder.getPoHeaderId() != null) {
 			bizPoHeaderService.get(bizPoPaymentOrder.getId());
-			BizRequestHeader bizRequestHeader = new BizRequestHeader();
-			bizRequestHeader.setBizPoHeader(new BizPoHeader(bizPoPaymentOrder.getPoHeaderId()));
-			List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
-			BizRequestHeader requestHeader = requestHeaderList.get(0);
-			model.addAttribute("requestHeader",requestHeader);
+			if (fromPage != null) {
+				switch (fromPage) {
+					case "requestHeader":
+						BizRequestHeader bizRequestHeader = new BizRequestHeader();
+						bizRequestHeader.setBizPoHeader(new BizPoHeader(bizPoPaymentOrder.getPoHeaderId()));
+						List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
+						if (CollectionUtils.isNotEmpty(requestHeaderList)) {
+							BizRequestHeader requestHeader = requestHeaderList.get(0);
+							model.addAttribute("requestHeader",requestHeader);
+						}
+						break;
+					case "orderHeader":
+						BizOrderHeader bizOrderHeader = new BizOrderHeader();
+						bizOrderHeader.setBizPoHeader(new BizPoHeader(bizPoPaymentOrder.getPoHeaderId()));
+						List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
+						if (CollectionUtils.isNotEmpty(orderHeaderList)) {
+							model.addAttribute("orderHeader", orderHeaderList.get(0));
+						}
+						break;
+					default:
+						break;
+				}
+			}
 		}
 		model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
 		return "modules/biz/po/bizPoPaymentOrderForm";
@@ -144,9 +180,9 @@ public class BizPoPaymentOrderController extends BaseController {
 
 	@RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
 	@RequestMapping(value = "save")
-	public String save(BizPoPaymentOrder bizPoPaymentOrder, Model model, RedirectAttributes redirectAttributes) {
+	public String save(HttpServletRequest request, HttpServletResponse response,BizPoPaymentOrder bizPoPaymentOrder, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, bizPoPaymentOrder)){
-			return form(bizPoPaymentOrder, model);
+			return form(request, response, bizPoPaymentOrder, model);
 		}
 		bizPoPaymentOrderService.save(bizPoPaymentOrder);
 		addMessage(redirectAttributes, "保存付款单成功");

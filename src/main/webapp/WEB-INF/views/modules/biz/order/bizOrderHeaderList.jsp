@@ -385,7 +385,7 @@
 					<!-- 100%首付款审核 -->
 					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">
 						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum)  && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
-							&& orderHeader.commonProcess.doOrderHeaderProcessAll.code != auditAllStatus && orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state
+							&& orderHeader.commonProcess.doOrderHeaderProcessAll.code != auditAllStatus
 							}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
 						</c:if>
@@ -448,15 +448,38 @@
 				</c:if>
 			</shiro:hasPermission>
 
-			<c:if test="${orderHeader.commonProcess.type == '2' || orderHeader.commonProcess.type == '3'
-							|| orderHeader.commonProcess.type == '666' || orderHeader.commonProcess.type == '777'}">
-				<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
-					<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
-				</shiro:hasPermission>
-				<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
-					<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
-				</shiro:hasPermission>
+
+			<c:if test="${orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
+				<c:if test="${(orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state && orderHeader.commonProcess.doOrderHeaderProcessAll.name == '审批完成')}">
+					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
+					</shiro:hasPermission>
+				</c:if>
+
+				<c:if test="${(orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state && orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成')}">
+					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
+					</shiro:hasPermission>
+				</c:if>
 			</c:if>
+
+			<c:if test="${orderType != BizOrderTypeEnum.PURCHASE_ORDER.state}">
+				<c:if test="${orderHeader.commonProcess.type == '666' || orderHeader.commonProcess.type == '777'}">
+					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
+					</shiro:hasPermission>
+				</c:if>
+			</c:if>
+
 			<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
 				<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
