@@ -409,7 +409,6 @@
 					<c:if test="${orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
 							&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
 							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
-							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
 							&& (fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationLocalProcess)
 							 	|| fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationOriginProcess)
 							 	 || fns:getUser().isAdmin())
