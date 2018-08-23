@@ -142,7 +142,7 @@ public class BizPoPaymentOrderController extends BaseController {
 			return form(bizPoPaymentOrder, model);
 		}
 		bizPoPaymentOrderService.save(bizPoPaymentOrder);
-		addMessage(redirectAttributes, "保存采购付款单成功");
+		addMessage(redirectAttributes, "保存付款单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "&orderType=" + bizPoPaymentOrder.getOrderType();
 	}
 	
@@ -150,7 +150,7 @@ public class BizPoPaymentOrderController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(BizPoPaymentOrder bizPoPaymentOrder, RedirectAttributes redirectAttributes) {
 		bizPoPaymentOrderService.delete(bizPoPaymentOrder);
-		addMessage(redirectAttributes, "删除采购付款单成功");
+		addMessage(redirectAttributes, "删除付款单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoPaymentOrder/?repage";
 	}
 

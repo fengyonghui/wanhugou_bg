@@ -709,7 +709,7 @@
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<th>价格</th>
+					<th>结算价</th>
 					<th>申报数量</th>
 
 					<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
