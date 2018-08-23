@@ -361,7 +361,6 @@
                 contentType: 'application/json',
                 data: {"reqDetailIds": reqDetailIds, "orderDetailIds": "", "vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
                 type: 'get',
-                async: false,
                 success: function (res) {
                     if (res == "ok") {
 

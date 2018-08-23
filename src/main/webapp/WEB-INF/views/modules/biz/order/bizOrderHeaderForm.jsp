@@ -721,7 +721,9 @@
                 contentType: 'application/json',
                 data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
                 type: 'get',
+                async: false,
                 success: function (result) {
+                    alert("操作成功！");
                     if(result == 'ok') {
                         if(auditType==1){
                             //自动生成采购单
@@ -731,7 +733,6 @@
                                 getPoHeaderPara(id);
                             }
                         }
-                        alert("操作成功！");
                         window.location.href = "${ctx}/biz/order/bizOrderHeader";
                     }else {
                         alert("操作失败！");
@@ -802,6 +803,7 @@
                 data: {"orderId": id, "type": "2"},
                 type: 'get',
                 dataType: 'json',
+                async: false,
                 success: function (result) {
                     var reqDetailIds = result['unitPrices'];
                     if (reqDetailIds == "") {
