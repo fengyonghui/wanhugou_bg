@@ -414,13 +414,14 @@
 							 	 || fns:getUser().isAdmin())
 							}">
 						<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
-							<c:if test="${orderHeader.suplys == 0 }">
-								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
+							<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">
+								<c:if test="${orderHeader.suplys == 0 }">
+									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
+								</c:if>
+								<c:if test="${orderHeader.suplys != 0 }">
+									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
+								</c:if>
 							</c:if>
-							<c:if test="${orderHeader.suplys != 0 }">
-								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
-							</c:if>
-
 							<c:if test="${orderHeader.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">
 								<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">
 									<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>
@@ -470,6 +471,7 @@
 			</c:if>
 
 			<c:if test="${orderType != BizOrderTypeEnum.PURCHASE_ORDER.state}">
+				${orderHeader.commonProcess.type}
 				<c:if test="${orderHeader.commonProcess.type == '666' || orderHeader.commonProcess.type == '777'}">
 					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>

@@ -9,6 +9,13 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+                    var totalDetail = $('.totalDetail').val();
+                    var total = $('#total').val();
+                    if (total > totalDetail) {
+                        alert("输入金额过大！")
+						return false;
+					}
+
 					loading('正在提交，请稍等...');
 					form.submit();
 				},
@@ -38,10 +45,10 @@
 			<label class="control-label">订单总金额：</label>
 			<div class="controls">
 				<c:if test="${fromPage == 'requestHeader' }">
-					<input value="${requestHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
+					<input class="totalDetail" value="${requestHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
 				</c:if>
 				<c:if test="${fromPage == 'orderHeader' }">
-					<input value="${orderHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
+					<input class="totalDetail" value="${orderHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
 				</c:if>
 			</div>
 		</div>
