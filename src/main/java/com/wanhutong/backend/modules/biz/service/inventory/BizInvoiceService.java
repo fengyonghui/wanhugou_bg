@@ -652,22 +652,28 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 orderDetail.setSuplyis(new Office(0));
                 List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(orderDetail);
                 StringBuilder sb = new StringBuilder();
+                sb.append(orderHeader.getId()).append("#");
                 for (BizOrderDetail bizOrderDetail : orderDetailList) {
-                    sb.append(orderHeader.getId()).append("#").append(bizOrderDetail.getId()).append("-").append("0").append("*").append(",");
+                    sb.append(bizOrderDetail.getId()).append("-").append("0").append("*");
                 }
+                sb.append(",");
                 invoice.setOrderHeaders(sb.toString());
                 invoice.setShip(BizInvoice.Ship.SO.getShip());
+                invoice.setIsConfirm(BizInvoice.IsConfirm.NO.getIsConfirm());
             } else {
                 BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizPoOrderReq.getSoId());
                 BizRequestDetail requestDetail = new BizRequestDetail();
                 requestDetail.setRequestHeader(bizRequestHeader);
                 List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(requestDetail);
                 StringBuilder sb = new StringBuilder();
+                sb.append(bizRequestHeader.getId()).append("#");
                 for (BizRequestDetail bizRequestDetail : requestDetailList) {
-                    sb.append(bizRequestHeader.getId()).append("#").append(bizRequestDetail.getId()).append("-").append("0").append("*").append(",");
+                    sb.append(bizRequestDetail.getId()).append("-").append("0").append("*");
                 }
+                sb.append(",");
                 invoice.setRequestHeaders(sb.toString());
                 invoice.setShip(BizInvoice.Ship.RE.getShip());
+                invoice.setIsConfirm(BizInvoice.IsConfirm.NO.getIsConfirm());
             }
             this.save(invoice);
         }
