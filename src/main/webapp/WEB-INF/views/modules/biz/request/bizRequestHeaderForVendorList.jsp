@@ -307,7 +307,7 @@
 				</shiro:hasPermission>
 				<!-- 保证金支付申请 -->
 				<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">
-					<c:if test="${requestHeader.bizPoPaymentOrder.id == null
+					<c:if test="${requestHeader.bizPoHeader.bizPoPaymentOrder.id == null
 						&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 						&& requestHeader.bizStatus >= ReqHeaderStatusEnum.COMPLETE.state
 						&& requestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state
@@ -356,8 +356,7 @@
 						</c:if>
 					</c:if>
 				</shiro:hasPermission>
-
-					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审批完成'}">
+					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">
 						<%--<c:if test="${requestHeader.bizPoHeader.totalOrdQty != null && requestHeader.bizPoHeader.totalOrdQty != 0}">--%>
 							<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>

@@ -11,6 +11,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -22,6 +23,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
@@ -95,6 +97,8 @@ public class BizRequestAllController {
     private CommonImgService commonImgService;
     @Autowired
     private BizPoHeaderService bizPoHeaderService;
+    @Autowired
+    private BizInvoiceService bizInvoiceService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -263,6 +267,13 @@ public class BizRequestAllController {
             }
             if(requestDetailList.size()==0){
                 requestHeader.setPoSource("poHeaderSource");
+            }
+            BizInvoice invoice = new BizInvoice();
+            invoice.setShip(Integer.parseInt(ship));
+            invoice.setReqNo(bizRequestHeader.getReqNo());
+            List<BizInvoice> invoiceList = bizInvoiceService.findList(invoice);
+            if (CollectionUtils.isNotEmpty(invoiceList)) {
+                model.addAttribute("invoice",invoice);
             }
         }
         if (bizOrderHeader != null && bizOrderHeader.getId() != null) {

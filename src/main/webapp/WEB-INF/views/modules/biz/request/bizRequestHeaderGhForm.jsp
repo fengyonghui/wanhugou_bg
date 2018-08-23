@@ -58,6 +58,41 @@
 			/>			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>
+	<div class="control-group">
+		<label class="control-label">验货员：</label>
+		<div class="controls">
+			<input value="${invoice.inspector.name}" disabled="disabled" class="input-mini"/>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">验货时间：</label>
+		<div class="controls">
+			<input name="inspectDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+				   value="<fmt:formatDate value="${invoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
+			<span class="help-inline"><font color="red">*</font> </span>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">验货备注：</label>
+		<div class="controls">
+			<textarea value="${invoice.inspectRemark}" disabled="disabled" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">集货地点：</label>
+		<div class="controls">
+			<%--<select>--%>
+			<%--<c:forEach items="${fns:getDictList('coll_locate')}">--%>
+				<%----%>
+			<%--</c:forEach>--%>
+			<%--</select>--%>
+			<%--<form:select path="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">--%>
+				<%--<form:option value="" label="请选择"/>--%>
+				<%--<form:options items="${fns:getDictList('coll_locate')}" itemValue="value" itemLabel="label"/>--%>
+			<%--</form:select>--%>
+		</div>
+	</div>
 
 	<div class="control-group">
 		<label class="control-label">备货商品：</label>
