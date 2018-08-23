@@ -442,7 +442,7 @@
 					</c:if>
 				</c:if>
 			</shiro:hasPermission>
-			<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
+			<shiro:hasPermission name="biz:po:bizPoPaymentOrder:view">
 				<c:if test="${orderHeader.bizPoHeader !=null}">
 					<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${orderHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${orderHeader.id}">支付申请列表</a>
 				</c:if>
