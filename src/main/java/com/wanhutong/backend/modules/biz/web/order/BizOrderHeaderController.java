@@ -366,18 +366,19 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
 
+            //经销店
+            Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+            if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
+                User user = systemService.getUser(office.getPrimaryPerson().getId());
+                model.addAttribute("custUser", user);
+            }
+            //供应商
+            User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId());
+            model.addAttribute("vendUser", vendUser);
+
             //代采
             if (bizOrderHeaderTwo != null && BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
                 if (bizOrderHeaderTwo.getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
-                    //经销店
-                    Office office = officeService.get(bizOrderHeader.getCustomer().getId());
-                    if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
-                        User user = systemService.getUser(office.getPrimaryPerson().getId());
-                        model.addAttribute("custUser", user);
-                    }
-                    //供应商
-                    User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
-                    model.addAttribute("vendUser", vendUser);
                     BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
                     bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
                     List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);
@@ -1564,18 +1565,20 @@ public class BizOrderHeaderController extends BaseController {
                     }
                 }
             }
+
+            //经销店
+            Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+            if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
+                User user = systemService.getUser(office.getPrimaryPerson().getId());
+                model.addAttribute("custUser", user);
+            }
+            //供应商
+            User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId());
+            model.addAttribute("vendUser", vendUser);
+
             //代采
             if (bizOrderHeaderTwo != null) {
                 if (bizOrderHeaderTwo.getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
-                    //经销店
-                    Office office = officeService.get(bizOrderHeader.getCustomer().getId());
-                    if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
-                        User user = systemService.getUser(office.getPrimaryPerson().getId());
-                        model.addAttribute("custUser", user);
-                    }
-                    //供应商
-                    User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
-                    model.addAttribute("vendUser", vendUser);
                     BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
                     bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
                     List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);

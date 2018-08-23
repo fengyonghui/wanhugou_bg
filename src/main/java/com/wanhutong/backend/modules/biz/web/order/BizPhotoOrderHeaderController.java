@@ -131,7 +131,7 @@ public class BizPhotoOrderHeaderController extends BaseController {
                 model.addAttribute("custUser", user);
             }
             //供应商
-            User vendUser = bizPhotoOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
+            User vendUser = bizPhotoOrderHeaderService.findVendUser(bizOrderHeader.getId());
             model.addAttribute("vendUser", vendUser);
             BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
             bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
