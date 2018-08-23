@@ -211,7 +211,7 @@
                     dataType: 'json',
                     success: function (resule) {
                         if (resule.data.value == '操作成功!') {
-                            mui.toast("保存备货单成功！");
+                            alert("保存备货单成功！");
                             GHUTILS.OPENPAGE({
                                 url: "../../html/inventoryMagmetHtml/inventoryList.html",
                                 extras: {
@@ -317,8 +317,9 @@
                 _this.skuInfoIds_1 += item.skuInfo.id + ","
                 _this.reqQtys_1 += item.reqQty + ","
                 _this.reqDetailIds += item.id + ","
-                _this.LineNos += item.lineNo + ","// 最开始的id="' + item.id + '"    修改后1、id="' + item.skuInfo.id + '"     2、id="serskudiv_' + skuInfo.id + '"
+                _this.LineNos += item.lineNo + ","
                 htmlCommodity += '<div class="mui-row app_bline" id="' + item.id + '">' +
+                '<input style="display:none;" name="" class="skuinfo_check" id="' + item.skuInfo.id + '" type="checkbox">' +
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
@@ -349,7 +350,7 @@
                     '<li class="mui-table-view-cell app_bline3">' +
                     '<div class="mui-input-row inputClassAdd">' +
                     '<label>申报数量:</label>' +
-                    '<input type="text" class="mui-input-clear inDeclareNum" id="" value="' + item.reqQty + '">'+
+                    '<input type="text" class="mui-input-clear inDeclareNum" id="reqQty_'+ item.skuInfo.id + '" value="' + item.reqQty + '">'+
                     '<font>*</font>'+
                     '</div></li></div></div>';
 
@@ -403,6 +404,7 @@
                     url: "/a/biz/sku/bizSkuInfo/findSkuList",
                     data: {itemNo: itemNo},
                     success: function (result) {
+                    	console.log('修改查询数据')  
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
                         $.each(data,function (keys,skuInfoList) {
@@ -423,9 +425,13 @@
                                 if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
                                     return;
                                 }
+//                              if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length<0){
+//                                  alert(1)
+//		                            return;
+//		                        }
                                 resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
                                         '<div class="mui-row mui-checkbox mui-left">' +
-                                        '<input style="top: 30px;" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
+                                        '<input style="top:30px" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
                                         '<div class="mui-row">' +
                                         '<div class="mui-row">' +
                                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
@@ -466,13 +472,31 @@
                                         '<font>*</font>'+
                                         '</div></li></div></div></div></div>';
                             });
-                            t++;
+                            t++;                          
                             $("#searchInfo").append(resultListHtml);
+                            console.log('=========')
+                            var dis=$("#searchInfo .skuinfo_check");
+                            var dos=$("#commodityMenu .skuinfo_check");
+                            $.each(dis,function(n,v){
+                            	var s=$(this).attr('id')
+                            	$.each(dos,function(n,v){
+                            		var that=this;	                            	
+	                            	var y=$(that).attr('id')
+	                            	var divs=$("#serskudiv_"+s);
+	                            	if (s==y) {
+	                            		divs.html('');
+	                            	} else{
+	                            		
+	                            	}
+	                            })
+                            })
+                            console.log('=========')
                         })
                         var addButtonHtml = '<div class="addBtn" id="batchAddDiv">' +
                                 '<button id="batchAdd" type="submit" class="addSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">添加' +
                                 '</button></div>';
                         $("#searchInfo").append(addButtonHtml);
+                        
                     }
                 })
             });

@@ -23,7 +23,8 @@
 			var _this = this;
 			$('#puSearchBtn').on('tap', function() {
 				var options = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"))
-//				console.log(options)
+				console.log('----------------')
+				console.log(options)
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
 							_this.sureSelect(options)
