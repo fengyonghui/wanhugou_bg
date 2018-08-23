@@ -1,5 +1,6 @@
 package com.wanhutong.backend.common.utils;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -32,6 +33,9 @@ public class RoleUtils {
             return false;
         }
         List<String> roleEnNameEnum = roleStr.getRoleEnNameEnum();
+        if (CollectionUtils.isEmpty(roleEnNameEnum)) {
+            return Boolean.FALSE;
+        }
         for (String role : roleEnNameEnum) {
             if (roleSet.contains(role.trim())) {
                 return Boolean.TRUE;
