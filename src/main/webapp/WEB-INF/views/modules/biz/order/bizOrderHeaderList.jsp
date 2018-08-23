@@ -449,9 +449,13 @@
 				</c:if>
 			</shiro:hasPermission>
 
-
 			<c:if test="${orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
-				<c:if test="${(orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state && orderHeader.commonProcess.doOrderHeaderProcessAll.name == '审批完成')}">
+				<c:if test="${(orderHeader.payProportion !=null
+				&& orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state
+				&& orderHeader.bizPoHeader.id != null
+				&& orderHeader.bizPoHeader.id != 0
+				 && orderHeader.commonProcess.doOrderHeaderProcessAll.name == '审批完成')
+				 }">
 					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
 					</shiro:hasPermission>
@@ -471,8 +475,10 @@
 			</c:if>
 
 			<c:if test="${orderType != BizOrderTypeEnum.PURCHASE_ORDER.state}">
-				${orderHeader.commonProcess.type}
-				<c:if test="${orderHeader.commonProcess.type == '666' || orderHeader.commonProcess.type == '777'}">
+				<c:if test="${(orderHeader.commonProcess.type == '666' || orderHeader.commonProcess.type == '777')
+						&& orderHeader.bizPoHeader.id != null
+				        && orderHeader.bizPoHeader.id != 0
+				}">
 					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
 					</shiro:hasPermission>

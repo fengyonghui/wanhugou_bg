@@ -970,17 +970,19 @@ public class BizPoHeaderController extends BaseController {
         Boolean detailSchedulingFlg = false;
         List<BizPoDetail> bizPoDetailList = bizPoHeader.getPoDetailList();
         List<BizPoDetail> poDetailList = Lists.newArrayList();
-        for (BizPoDetail bizpodetail : bizPoDetailList) {
-            //排产类型为按商品排产时，获取排产记录
-            if (SCHEDULING_FOR_DETAIL.equals(schedulingType)) {
-                BizSchedulingPlan bizSchedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(bizpodetail.getId(), PO_DETAIL_TABLE_NAME);
-                if (bizSchedulingPlan != null) {
-                    detailSchedulingFlg = true;
+        if (CollectionUtils.isNotEmpty(bizPoDetailList)) {
+            for (BizPoDetail bizpodetail : bizPoDetailList) {
+                //排产类型为按商品排产时，获取排产记录
+                if (SCHEDULING_FOR_DETAIL.equals(schedulingType)) {
+                    BizSchedulingPlan bizSchedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(bizpodetail.getId(), PO_DETAIL_TABLE_NAME);
+                    if (bizSchedulingPlan != null) {
+                        detailSchedulingFlg = true;
+                    }
+                    bizpodetail.setBizSchedulingPlan(bizSchedulingPlan);
                 }
-                bizpodetail.setBizSchedulingPlan(bizSchedulingPlan);
+                poDetailList.add(bizpodetail);
+                poDetailIdList.add(bizpodetail.getId());
             }
-            poDetailList.add(bizpodetail);
-            poDetailIdList.add(bizpodetail.getId());
         }
         bizPoHeader.setPoDetailList(poDetailList);
 

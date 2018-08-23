@@ -1861,7 +1861,8 @@ public class BizOrderHeaderController extends BaseController {
         commonProcessService.save(nextProcessEntity);
 
         if (originConfig.getGenPoProcessId().contains(Integer.valueOf(nextProcessEntity.getType()))) {
-            bizPoHeaderService.autoGenPO(id);
+            Pair<Boolean, String> booleanStringPair = bizPoHeaderService.autoGenPO(id);
+            LOGGER.warn("auto gen po[{}]", booleanStringPair.getLeft());
         }
 
         return Pair.of(Boolean.TRUE, "操作成功!");
