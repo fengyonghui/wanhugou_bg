@@ -406,11 +406,13 @@
 				</shiro:hasPermission>
 			</c:if >
 				<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-					<c:if test="${orderHeader.commonProcess.id != null
+					<c:if test="${orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
 							&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
 							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
-							&& orderHeader.commonProcess.purchaseOrderProcess.code != payStatus
-							&& (fns:hasRole(roleSet, orderHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+							&& (fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationLocalProcess)
+							 	|| fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationOriginProcess)
+							 	 || fns:getUser().isAdmin())
 							}">
 						<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 							<c:if test="${orderHeader.suplys == 0 }">

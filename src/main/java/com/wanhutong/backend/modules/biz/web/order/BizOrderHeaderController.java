@@ -252,7 +252,7 @@ public class BizOrderHeaderController extends BaseController {
                 }
                 List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
                 if (CollectionUtils.isNotEmpty(list)) {
-                    b.setCommonProcess(list.get(0));
+                    b.setCommonProcess(list.get(list.size() - 1));
                 }
             }
             BizInvoice bizInvoice = new BizInvoice();
