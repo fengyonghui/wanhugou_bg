@@ -699,9 +699,9 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderDetail:view")
     @RequestMapping(value = "findByOrderV2")
     public String findByOrderV2(BizOrderHeader bizOrderHeader, String flag, HttpServletRequest request, HttpServletResponse response, Model model) {
-        BizOrderHeader byOrderNum = bizOrderHeaderService.getByOrderNum(bizOrderHeader.getOrderNum());
-        if (byOrderNum != null) {
-            bizOrderHeader = byOrderNum;
+        BizOrderHeader order = bizOrderHeaderService.getByOrderNum(bizOrderHeader.getOrderNum());
+        if (order != null) {
+            bizOrderHeader = order;
         }
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
@@ -713,6 +713,14 @@ public class BizOrderHeaderController extends BaseController {
             List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
             if (CollectionUtils.isEmpty(list)) {
                 Map<String, Object> byOrder = findByOrder(bizOrderHeader, flag, request, response, model);
+
+                BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+                Office office = new Office();
+                office.setId(order.getCenterId());
+                bizInventoryInfo.setCustomer(office);
+                List<BizInventoryInfo> inventoryInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+                byOrder.put("inventoryInfoList", inventoryInfoList);
+
                 return JsonUtil.generateData(byOrder, null);
             }
         }
@@ -723,6 +731,13 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         Map<String, Object> byOrder = findByOrder(bizOrderHeader, flag, request, response, model);
+        BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+        Office office = new Office();
+        office.setId(order.getCenterId());
+        bizInventoryInfo.setCustomer(office);
+        List<BizInventoryInfo> inventoryInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+        byOrder.put("inventoryInfoList", inventoryInfoList);
+
         return JsonUtil.generateData(byOrder, null);
     }
 
