@@ -340,38 +340,52 @@
 			}else {
 				nameTxt = ''
 			}
-			
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/request/bizRequestHeader/list4Mobile',
+				url: '/a/sys/user/listData4mobile',
 				data: {
 					pageNo: 1,
-					reqNo:_this.userInfo.reqNo,
-					name:nameTxt,
-					'fromOffice.id':_this.userInfo.fromOffice,
-					bizStatus:_this.userInfo.bizStatusid,
-					'varietyInfo.id':_this.userInfo.varietyInfoid
+					"company.id": _this.userInfo.companyId,
+					loginName:_this.userInfo.loginName,
+					name: nameTxt,
+					mobile:_this.userInfo.mobile
 				},
 				dataType: 'json',
 				success: function(res) {
-//							console.log(res)
-					var dataRow = res.data.roleSet;
+					console.log(res)
+					mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 					var arrLen = res.data.page.list.length;
 					if(arrLen > 0) {
-						$.each(res.data.page.list, function(i, item) {
-//							console.log(item)
+                        $.each(res.data.page.list, function(i, item) {
+                        	console.log(item)
+                        	var officeChatRecord = '';
+                        	if(item.userOrder.officeChatRecord) {
+                        		officeChatRecord = item.userOrder.officeChatRecord
+                        	}
+                        	var orderCount = '';
+                        	if(item.userOrder.orderCount) {
+                        		orderCount = item.userOrder.orderCount
+                        	}
+                        	var userOfficeReceiveTotal = '';
+                        	if(item.userOrder.userOfficeReceiveTotal) {
+                        		userOfficeReceiveTotal = item.userOrder.userOfficeReceiveTotal
+                        	}
+                        	var officeCount = '';
+                        	if(item.userOrder.officeCount) {
+                        		officeCount = item.userOrder.officeCount
+                        	}
 							staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 								'<div class="mui-input-row">' +
 									'<label>归属公司:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.reqNo+' ">' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.company.name+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>归属部门:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+bizstatusTxt+' ">' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.office.name+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>登录名:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.loginName+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>姓名:</label>' +
@@ -379,47 +393,47 @@
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>手机:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.createDate)+' ">' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.mobile+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>洽谈数:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+varietyInfoName+' ">' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value="'+officeChatRecord+'">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>新增订单量:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.createBy.name+' ">' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value="'+orderCount+'">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>新增回款额:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value="'+userOfficeReceiveTotal+'">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>新增会员:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value="'+officeCount+'">' +
 								'</div>' +
 								'<div class="app_font_cl content_part mui-row app_text_center">' +
-									'<div class="mui-col-xs-4" staListId="'+ item.id +'">' +
+									'<div class="mui-col-xs-4 staRelevanBtn" staListId="'+ item.id +'" dptmtId="'+ item.office.id +'">' +
 										'<li class="mui-table-view-cell">关联经销店</li>' +
 									'</div>' +
-									'<div class="mui-col-xs-4" inListId="'+ item.id +'">' +
+									'<div class="mui-col-xs-3 staOrdBtn" staListId="'+ item.id +'">' +
 										'<li class="mui-table-view-cell">订单管理</li>' +
 									'</div>'+
-									'<div class="mui-col-xs-2"  inListId="'+ item.id +'">' +
+									'<div class="mui-col-xs-3 staAmendBtn" staListId="'+ item.id +'">' +
 										'<li class="mui-table-view-cell">修改</li>' +
 									'</div>'+
-									'<div class="mui-col-xs-2" inListId="'+ item.id +'">' +
+									'<div class="mui-col-xs-2 staDeletBtn" staListId="'+ item.id +'">' +
 										'<li class="mui-table-view-cell">删除</li>' +
 									'</div>'+
 								'</div>' +
 							'</div>'
 						});
-						$('.staffList').append(staffHtmlList);
-						_this.stHrefHtml()
+						$('#staffList').append(staffHtmlList);
 					}else{
-						$('.staffList').append('<p class="noneTxt">暂无数据</p>');
+						$('#staffList').append('<p class="noneTxt">暂无数据</p>');
 					}
 				}
 			});
+			_this.stHrefHtml()
 		}
 	}
 	$(function() {
