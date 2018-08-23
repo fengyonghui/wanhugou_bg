@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.service.request;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
@@ -56,6 +57,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -109,14 +111,14 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 	public List<BizRequestHeader> findList(BizRequestHeader bizRequestHeader) {
 		User user = UserUtils.getUser();
 		boolean oflag = false;
-		/*boolean flag=false;
-		if(user.getRoleList()!=null){
-			for(Role role:user.getRoleList()){
-				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
-					flag = true;
-				}
-			}
-		}*/
+		boolean flag=false;
+		List<String> roleList = Lists.newArrayList();
+		for (Role role : user.getRoleList()) {
+			roleList.add(role.getEnname());
+		}
+		if (roleList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
+			flag = true;
+		}
 		if (UserUtils.getOfficeList() != null){
 			for (Office office:UserUtils.getOfficeList()){
 				if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
@@ -126,6 +128,8 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		}
 		if (!user.isAdmin() && !oflag) {
             bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
+		} else if (!user.isAdmin() && flag) {
+			bizRequestHeader.getSqlMap().put("request",BaseService.dataScopeFilter(user,"sv","su"));
 		}
 		return super.findList(bizRequestHeader);
 	}

@@ -527,123 +527,124 @@
 		},
 		seachFunc:function(){
 			var _this = this;
-					// 拼接HTML
-					var pHtmlList = '';
-					$.ajax({
-						type: 'GET',
-						url: '/a/biz/po/bizPoHeader/listData4Mobile',
-						data: {
-							pageNo: 1,
-							orderNum:_this.userInfo.orderNum,
-							num:_this.userInfo.num,
-							'vendOffice.id':_this.userInfo.vendOffice,
-							'commonProcess.type':_this.userInfo.commonProcess
-						},
-						dataType: 'json',
-						success: function(res) {
-							var arrLen = res.data.resultList.length;
-							var dataRow = res.data.roleSet;
+			// 拼接HTML
+			var pHtmlList = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/biz/po/bizPoHeader/listData4Mobile',
+				data: {
+					pageNo: 1,
+					orderNum:_this.userInfo.orderNum,
+					num:_this.userInfo.num,
+					'vendOffice.id':_this.userInfo.vendOffice,
+					'commonProcess.type':_this.userInfo.commonProcess
+				},
+				dataType: 'json',
+				success: function(res) {
+					mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+					var arrLen = res.data.resultList.length;
+					var dataRow = res.data.roleSet;
 //							console.log(res)
-							if(arrLen > 0) {
-								$.each(res.data.resultList, function(i, item) {
+					if(arrLen > 0) {
+						$.each(res.data.resultList, function(i, item) {
 //									console.log(item)
-									var startBtn = '';
-									var classBtn = '';
-									var processName = '';
-								//开启审核   、   审核
-									if(item.process) {
-										processName = item.process.purchaseOrderProcess.name
-										var code = item.process.purchaseOrderProcess.code;
-										if(item.process.purchaseOrderProcess.roleEnNameEnum) {
-											var DataRoleGener = item.process.purchaseOrderProcess.roleEnNameEnum;
-											var fileRoleData =  dataRow.filter(v => DataRoleGener.includes(v));
-											if(item.process && fileRoleData.length>0 || dataRow[0]== 'DEPT' && code != 7 && code != -1) {
-												startBtn = '审核'
-												classBtn = 'shenHe'
-											}
-										}else {
-											startBtn = ''
-											classBtn = ''
-										}
-									} else {
-										startBtn = '开启审核'
-										classBtn = 'startShenhe'
+							var startBtn = '';
+							var classBtn = '';
+							var processName = '';
+						//开启审核   、   审核
+							if(item.process) {
+								processName = item.process.purchaseOrderProcess.name
+								var code = item.process.purchaseOrderProcess.code;
+								if(item.process.purchaseOrderProcess.roleEnNameEnum) {
+									var DataRoleGener = item.process.purchaseOrderProcess.roleEnNameEnum;
+									var fileRoleData =  dataRow.filter(v => DataRoleGener.includes(v));
+									if(item.process && fileRoleData.length>0 || dataRow[0]== 'DEPT' && code != 7 && code != -1) {
+										startBtn = '审核'
+										classBtn = 'shenHe'
 									}
-								//申请支付	
-									var bizStatus = item.bizStatus;
-									var payment = item.currentPaymentId;
-									var applyStatus = item.process.bizStatus;
-									var applyPay = '';
-									var applyPayBtn ='';
-									if(_this.payFlag == true) {
-										if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
-											applyPay = '申请付款';
-											applyPayBtn = 'applyPayBtn'
-										} else {
-											applyPay = ''
-											applyPayBtn = ''
-										}
-									}
-								//支付申请列表
-									var payList = ''
-									var payListBtn = ''
-									if(_this.payListFlag == true) {
-										payList = '支付申请列表'
-										payListBtn = 'payListBtn'
-									}else {
-										payList = ''
-										payListBtn = ''
-									}
-								//详情
-									var detail = '';
-									var detailBtn = '';
-									if(_this.detileFlag == true ) {
-										detail = '详情'
-										detailBtn = 'detailBtn'
-									}else {
-										detail = ''
-										detailBtn = ''
-									}
-									pHtmlList += '<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">' +
-										'<div class="mui-input-row">' +
-										'<label>采购单号:</label>' +
-										'<input id="orderNum" name="orderNum" type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.orderNum + ' ">' +
-										'</div>' +
-										'<div class="mui-input-row">' +
-										'<label>供应商:</label>' +
-										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.vendOffice + ' ">' +
-										'</div>' +
-										'<div class="mui-input-row">' +
-										'<label>订单状态:</label>' +
-										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.bizStatus + ' ">' +
-										'</div>' +
-										'<div class="mui-input-row">' +
-										'<label>审核状态:</label>' +
-										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + processName + ' ">' +
-										'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center">' +
-										'<div class="mui-col-xs-3">' +
-										'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
-										'</div>' +
-										'<div class="mui-col-xs-3 '+applyPayBtn+'">' +
-										'<li class="mui-table-view-cell" listId="' + item.id + '" poId="' + item.id + '">' + applyPay + '</li>' +
-										'</div>' +
-										'<div class="mui-col-xs-4 '+payListBtn+'" listId="' + item.id + '">' +
-										'<li class="mui-table-view-cell">'+payList+'</li>' +
-										'</div>' +
-										'<div class="mui-col-xs-2 '+detailBtn+'" listId="' + item.id + '">' +
-										'<li class="mui-table-view-cell">'+detail+'</li>' +
-										'</div>' +
-										'</div>' +
-										'</div>'
-								});
-								$('.listBlue').append(pHtmlList);
-								_this.hrefHtml()
-							}else{
-								$('.listBlue').append('<p class="noneTxt">暂无数据</p>');
+								}else {
+									startBtn = ''
+									classBtn = ''
+								}
+							} else {
+								startBtn = '开启审核'
+								classBtn = 'startShenhe'
 							}
-						}
-					});
+						//申请支付	
+							var bizStatus = item.bizStatus;
+							var payment = item.currentPaymentId;
+							var applyStatus = item.process.bizStatus;
+							var applyPay = '';
+							var applyPayBtn ='';
+							if(_this.payFlag == true) {
+								if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
+									applyPay = '申请付款';
+									applyPayBtn = 'applyPayBtn'
+								} else {
+									applyPay = ''
+									applyPayBtn = ''
+								}
+							}
+						//支付申请列表
+							var payList = ''
+							var payListBtn = ''
+							if(_this.payListFlag == true) {
+								payList = '支付申请列表'
+								payListBtn = 'payListBtn'
+							}else {
+								payList = ''
+								payListBtn = ''
+							}
+						//详情
+							var detail = '';
+							var detailBtn = '';
+							if(_this.detileFlag == true ) {
+								detail = '详情'
+								detailBtn = 'detailBtn'
+							}else {
+								detail = ''
+								detailBtn = ''
+							}
+							pHtmlList += '<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">' +
+								'<div class="mui-input-row">' +
+								'<label>采购单号:</label>' +
+								'<input id="orderNum" name="orderNum" type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.orderNum + ' ">' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>供应商:</label>' +
+								'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.vendOffice + ' ">' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>订单状态:</label>' +
+								'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.bizStatus + ' ">' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>审核状态:</label>' +
+								'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + processName + ' ">' +
+								'</div>' +
+								'<div class="app_font_cl content_part mui-row app_text_center">' +
+								'<div class="mui-col-xs-3">' +
+								'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
+								'</div>' +
+								'<div class="mui-col-xs-3 '+applyPayBtn+'">' +
+								'<li class="mui-table-view-cell" listId="' + item.id + '" poId="' + item.id + '">' + applyPay + '</li>' +
+								'</div>' +
+								'<div class="mui-col-xs-4 '+payListBtn+'" listId="' + item.id + '">' +
+								'<li class="mui-table-view-cell">'+payList+'</li>' +
+								'</div>' +
+								'<div class="mui-col-xs-2 '+detailBtn+'" listId="' + item.id + '">' +
+								'<li class="mui-table-view-cell">'+detail+'</li>' +
+								'</div>' +
+								'</div>' +
+								'</div>'
+						});
+						$('.listBlue').append(pHtmlList);
+					}else{
+						$('.listBlue').append('<p class="noneTxt">暂无数据</p>');
+					}
+				}
+			});
+			_this.hrefHtml()
 		}
 	}
 	$(function() {

@@ -9,6 +9,7 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
+			//权限添加
 //			biz:request:bizRequestHeader:view   详情
 //			biz:request:bizRequestHeader:edit    取消、修改、付款
 			this.getPermissionList('biz:request:bizRequestHeader:view','detileFlag')
@@ -70,40 +71,57 @@
 		            success:function(res){
 		          	    console.log(res)
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-						var arrLen = res.data.resultData.length;						
+						var arrLen = res.data.page.list.length;						
                         if(arrLen > 0) {
-                        $.each(res.data.resultData, function(i, item) {
+                        $.each(res.data.page.list, function(i, item) {
+                        	var staCheckSucBtn = '';
+                        	var staCheckSuc = '';
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
 											'<label>订单编号:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.reqNo+' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.orderNum+' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>经销店:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+bizstatusTxt+' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customer.name+' ">' +
 										'</div>' +
-										'<div class="mui-input-row">' +
-											'<label>业务状态:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
-										'</div>' +
+										//业务状态需要添加权限
+//										'<div class="mui-input-row">' +
+//											'<label>业务状态:</label>' +
+//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
+//										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
-											'<div class="mui-col-xs-4 '+staCheckSucBtn+'" inListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell"> '+staCheckSuc+'</li>' +
+											'<div class="mui-col-xs-3 staCheckSucBtn" staOrdListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">审核</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-4 '+staOraAmendBtn+'"  inListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+staOraAmend+'</li>' +
+											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">出库确认</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-4 '+staOrDetalBtn+'"  inListId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">审核成功</li>' +
+											'</div>'+
+											'<div class="mui-col-xs-3 staOrDetailBtn" staOrdListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">详情</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-4 app_c0" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
-												'<li class="mui-table-view-cell">'+ staOff +'</li>' +
-											'</div>'+
 										'</div>' +
+//										'<div class="app_font_cl content_part mui-row app_text_center">' +
+//											'<div class="mui-col-xs-4 '+staCheckSucBtn+'" staOrdListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell"> '+staCheckSuc+'</li>' +
+//											'</div>'+
+//											'<div class="mui-col-xs-4 '+staOraAmendBtn+'"  staOrdListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">'+staOraAmend+'</li>' +
+//											'</div>'+
+//											'<div class="mui-col-xs-4 '+staOrDetalBtn+'"  staOrdListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">详情</li>' +
+//											'</div>'+
+//											'<div class="mui-col-xs-4 app_c0" staOrdListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
+//												'<li class="mui-table-view-cell">'+ staOff +'</li>' +
+//											'</div>'+
+//										'</div>' +
 									'</div>'
 								});
-								$('#staOrdList').html(staffHtmlList);
-								_this.stHrefHtml()
+								$('#staOrdList').append(staffHtmlList);
+								_this.stOrdHrefHtml()
 						} else {
 								$('.mui-pull-caption').html('');
 							}
@@ -139,7 +157,7 @@
                 }
             });
         },
-		inHrefHtml: function() {
+		stOrdHrefHtml: function() {
 			var _this = this;
 		/*查询*/
 			$('.header').on('tap', '#staOrdSechBtn', function() {
@@ -165,17 +183,17 @@
 					}
 				})
 			}),
-		 /*审核状态*/
+		 /*审核*/
 	       $('.listBlue').on('tap', '.staCheckSucBtn', function() {
 				var url = $(this).attr('url');
-				var inListId = $(this).attr('inListId');
+				var staOrdListId = $(this).attr('staOrdListId');
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(inListId == inListId) {
+				} else if(staOrdListId == staOrdListId) {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdCheck.html",
 						extras: {
-							inListId: inListId,
+							staOrdListId: staOrdListId,
 						}
 					})
 				}
@@ -183,29 +201,29 @@
 		/*修改*/
 	       $('.listBlue').on('tap', '.staOraAmendBtn', function() {
 				var url = $(this).attr('url');
-				var inListId = $(this).attr('inListId');
+				var staOrdListId = $(this).attr('staOrdListId');
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(inListId == inListId) {
+				} else if(staOrdListId == staOrdListId) {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdAmend.html",
 						extras: {
-							inListId: inListId,
+							staOrdListId: staOrdListId,
 						}
 					})
 				}
 			}),	
 		/*详情*/
-			$('.listBlue').on('tap', '.staOrDetalBtn', function() {
+			$('.listBlue').on('tap', '.staOrDetailBtn', function() {
 				var url = $(this).attr('url');
-				var inListId = $(this).attr('inListId');
+				var staOrdListId = $(this).attr('staOrdListId');
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(inListId == inListId) {
+				} else if(staOrdListId == staOrdListId) {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdDetail.html",
 						extras: {
-							inListId: inListId,
+							staOrdListId: staOrdListId,
 						}
 					})
 				}
@@ -311,16 +329,16 @@
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 								'</div>' +
 								'<div class="app_font_cl content_part mui-row app_text_center">' +
-									'<div class="mui-col-xs-3 '+staCheckSucBtn+'" inListId="'+ item.id +'">' +
+									'<div class="mui-col-xs-3 '+staCheckSucBtn+'" staOrdListId="'+ item.id +'">' +
 										'<li class="mui-table-view-cell"> '+staCheckSuc+'</li>' +
 									'</div>'+
-									'<div class="mui-col-xs-3 '+staOraAmendBtn+'"  inListId="'+ item.id +'">' +
+									'<div class="mui-col-xs-3 '+staOraAmendBtn+'"  staOrdListId="'+ item.id +'">' +
 										'<li class="mui-table-view-cell">'+staOraAmend+'</li>' +
 									'</div>'+
-									'<div class="mui-col-xs-3 '+staOrDetalBtn+'"  inListId="'+ item.id +'">' +
+									'<div class="mui-col-xs-3 '+staOrDetalBtn+'"  staOrdListId="'+ item.id +'">' +
 										'<li class="mui-table-view-cell">详情</li>' +
 									'</div>'+
-									'<div class="mui-col-xs-3" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
+									'<div class="mui-col-xs-3" staOrdListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
 										'<li class="mui-table-view-cell">'+ staOff +'</li>' +
 									'</div>'+
 								'</div>' +
