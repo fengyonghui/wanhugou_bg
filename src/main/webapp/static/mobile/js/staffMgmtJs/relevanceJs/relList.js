@@ -38,6 +38,9 @@
 //			         },
 			        down : {
 			            auto: true,
+			            contentdown : "",
+			            contentover : "",
+			            contentrefresh : "正在加载...",
 			            callback :function(){ 
 			                    pager['size']= 10;//条数
 			                    pager['pageNo'] = 1;
@@ -67,8 +70,7 @@
 		            success:function(res){
 		          	    console.log(res)
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-						var arrLen = res.data.resultData.length;
-						
+						var arrLen = res.data.resultData.length;						
                         if(arrLen > 0) {
                         $.each(res.data.resultData, function(i, item) {
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
