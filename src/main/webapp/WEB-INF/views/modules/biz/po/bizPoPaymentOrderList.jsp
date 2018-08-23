@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <html>
 <head>
 	<title>支付申请管理</title>
@@ -80,7 +81,7 @@
 					<%--</c:if>--%>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:sure:bizPoPaymentOrder">
-					<c:if test="${bizPoPaymentOrder.total == '0.00'}">
+					<c:if test="${bizPoPaymentOrder.total == '0.00' && (requestHeader == null || (requestHeader.bizStatus >= ReqHeaderStatusEnum.COMPLETE.state && requestHeader.bizStatus < ReqHeaderStatusEnum.CLOSE.state))}">
 						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}">确认支付金额</a>
 					</c:if>
 				</shiro:hasPermission>

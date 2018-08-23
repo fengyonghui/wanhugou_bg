@@ -21,6 +21,7 @@ import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -91,7 +92,13 @@ public class BizPoPaymentOrderController extends BaseController {
 			bizOrderHeaderService.get(poId);
 		} else {
 			BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
-			model.addAttribute("bizPoHeader", bizPoHeader);
+            BizRequestHeader bizRequestHeader = new BizRequestHeader();
+            bizRequestHeader.setBizPoHeader(bizPoHeader);
+            List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
+            if (CollectionUtils.isNotEmpty(requestHeaderList)) {
+                model.addAttribute("requestHeader",requestHeaderList.get(0));
+            }
+            model.addAttribute("bizPoHeader", bizPoHeader);
 		}
 		if (poId == null) {
 			bizPoPaymentOrder.setPoHeaderId(-1);
