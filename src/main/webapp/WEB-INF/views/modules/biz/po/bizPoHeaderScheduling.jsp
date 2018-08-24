@@ -179,9 +179,15 @@
             }
 
             if (schedulingType == "0"){
-                poSchType = originalNum > totalSchedulingHeaderNum ? 1 : 2;
+                var toalSchedulingNum = $('#toalSchedulingNum').val();
+                poSchType = originalNum >  parseInt(totalSchedulingHeaderNum) + parseInt(toalSchedulingNum)  ? 1 : 2;
+                console.log(originalNum)
+                console.log(totalSchedulingHeaderNum)
+                console.log(toalSchedulingNum)
+                console.log(poSchType)
             } else {
-                poSchType = originalNum > totalSchedulingDetailNum ? 1 : 2;
+                var toalSchedulingNumForSku = $('#toalSchedulingNumForSku').val();
+                poSchType = originalNum > parseInt(totalSchedulingDetailNum) + parseInt(toalSchedulingNumForSku) ? 1 : 2;
             }
 
             for(i=0;i<trArray.length;i++){
@@ -248,6 +254,7 @@
             var params = new Array();
             var totalSchedulingNum = 0;
             var totalOriginalNum = 0;
+            var toalSchedulingNumForSkuDetailNum = 0;
             var count = 1
             var ind = 0;
             var schRemark = "";
@@ -259,10 +266,17 @@
 
             for(var index in reqDetailIdList) {
                 var reqDetailId = reqDetailIdList[index];
-                var trArray = $("[name='" + reqDetailId + "']");
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + reqDetailId)).val();
                 totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+            }
+
+            var toalSchedulingNumForSkuHtml = $("[name=toalSchedulingNumForSku]");
+            var toalSchedulingNumForSkuNum = 0;
+            for(i=0;i<toalSchedulingNumForSkuHtml.length;i++){
+                var schedulingNumForSkuNum = toalSchedulingNumForSkuHtml[i];
+                var scForSkuNum = $(schedulingNumForSkuNum).attr("value")
+                toalSchedulingNumForSkuNum = parseInt(toalSchedulingNumForSkuNum) + parseInt(scForSkuNum);
             }
 
             for(var index in reqDetailIdList) {
@@ -275,7 +289,7 @@
                     totalSchedulingDetailNum = parseInt(totalSchedulingDetailNum) + parseInt(value);
                 }
             }
-            poSchType = totalOriginalNum > totalSchedulingDetailNum ? 1 : 2;
+            poSchType = totalOriginalNum > parseInt(totalSchedulingDetailNum) + parseInt(toalSchedulingNumForSkuNum) ? 1 : 2;
 
             for(var index in reqDetailIdList) {
                 var reqDetailId = reqDetailIdList[index];
@@ -359,8 +373,8 @@
             <div class="controls">
                 <input id="orderNum" readonly="readonly" class="input-xlarge" type='text'/>
             </div>
-            <!-- 采购单编号 -->
-            <div class="controls" style="display: none">
+            <!-- 采购单编号 style="display: none"-->
+            <div class="controls" >
                 <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
             </div>
         </div>
