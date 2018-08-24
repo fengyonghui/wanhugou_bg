@@ -1420,7 +1420,7 @@
                 </div>
             </div>
         </c:if>
-  <c:if test="${fn:length(auditList) > 0}">
+        <c:if test="${fn:length(auditList) > 0}">
             <div class="control-group">
                 <label class="control-label">审核流程：</label>
                 <div class="controls help_wrap">
@@ -1433,12 +1433,16 @@
                                     处理人:${v.user.name}<br/><br/>
                                     批注:${v.description}<br/><br/>
                                     状态:
-                                    <c:if test="${type == 1}">
+                                    <c:if test="${v.objectName == 'ORDER_HEADER_SO_LOCAL'}">
                                     ${v.jointOperationLocalProcess.name}
                                     </c:if>
-                                    <c:if test="${type == 0}">
+                                    <c:if test="${v.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
                                         ${v.jointOperationOriginProcess.name}
-                                    </c:if><br/>
+                                    </c:if>
+                                    <c:if test="${v.objectName == 'biz_po_header'}">
+                                        ${v.purchaseOrderProcess.name}
+                                    </c:if>
+                                    <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     <div class="help_step_right"></div>
                                 </div>
@@ -1449,11 +1453,14 @@
                                     <div class="help_step_num">${stat.index + 1}</div>
 
                                     当前状态:
-                                    <c:if test="${type == 1}">
+                                    <c:if test="${v.objectName == 'ORDER_HEADER_SO_LOCAL'}">
                                         ${v.jointOperationLocalProcess.name}
                                     </c:if>
-                                    <c:if test="${type == 0}">
+                                    <c:if test="${v.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
                                         ${v.jointOperationOriginProcess.name}
+                                    </c:if>
+                                    <c:if test="${v.objectName == 'biz_po_header'}">
+                                        ${v.purchaseOrderProcess.name}
                                     </c:if>
                                     <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>

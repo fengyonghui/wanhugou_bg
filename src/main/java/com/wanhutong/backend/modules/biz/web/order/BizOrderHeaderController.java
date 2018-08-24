@@ -235,6 +235,38 @@ public class BizOrderHeaderController extends BaseController {
             //商品下单量标识
             bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
         }
+
+        JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
+        JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
+        DoOrderHeaderProcessAllConfig doOrderHeaderProcessAllConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
+        DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
+
+        Map<String, String> originConfigMap = Maps.newLinkedHashMap();
+        Map<String, Integer> originConfigValueMap = Maps.newLinkedHashMap();
+
+        for(Process process : originConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+            originConfigValueMap.put(process.getName(), process.getCode());
+        }
+
+        for(Process process : localConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+            originConfigValueMap.put(process.getName(), process.getCode());
+        }
+
+        for(DoOrderHeaderProcessAllConfig.OrderHeaderProcess process : doOrderHeaderProcessAllConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+            originConfigValueMap.put(process.getName(), process.getCode());
+        }
+
+        for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+            originConfigValueMap.put(process.getName(), process.getCode());
+        }
+
+        String selectAuditStatus = bizOrderHeader.getSelectAuditStatus();
+        // TODO 过滤
+
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
         if (bizOrderHeader.getSource() != null) {
@@ -288,29 +320,6 @@ public class BizOrderHeaderController extends BaseController {
             if (parse != null) {
                 roleSet.add(parse.name());
             }
-        }
-
-        JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
-        JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
-        DoOrderHeaderProcessAllConfig doOrderHeaderProcessAllConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
-        DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
-
-        Map<String, String> originConfigMap = Maps.newLinkedHashMap();
-
-        for(Process process : originConfig.getProcessList()) {
-            originConfigMap.put(process.getName(), process.getName());
-        }
-
-        for(Process process : localConfig.getProcessList()) {
-            originConfigMap.put(process.getName(), process.getName());
-        }
-
-        for(DoOrderHeaderProcessAllConfig.OrderHeaderProcess process : doOrderHeaderProcessAllConfig.getProcessList()) {
-            originConfigMap.put(process.getName(), process.getName());
-        }
-
-        for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
-            originConfigMap.put(process.getName(), process.getName());
         }
 
         model.addAttribute("originConfigMap", originConfigMap);
