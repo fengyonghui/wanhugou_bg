@@ -1862,7 +1862,7 @@ public class BizOrderHeaderController extends BaseController {
 
         if (originConfig.getGenPoProcessId().contains(Integer.valueOf(nextProcessEntity.getType()))) {
             Pair<Boolean, String> booleanStringPair = bizPoHeaderService.autoGenPO(id);
-            LOGGER.warn("auto gen po[{}]", booleanStringPair.getLeft());
+            LOGGER.warn("auto gen po[{}][{}]", booleanStringPair.getLeft(), booleanStringPair.getRight());
         }
 
         return Pair.of(Boolean.TRUE, "操作成功!");

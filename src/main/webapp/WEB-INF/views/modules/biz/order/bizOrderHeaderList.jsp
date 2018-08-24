@@ -362,7 +362,7 @@
 						${orderHeader.commonProcess.jointOperationOriginProcess.name}
 					</c:if>
 					<c:if test="${orderHeader.suplys != 0}">
-						${orderHeader.bizPoHeader.commonProcess.jointOperationLocalProcess.name}
+						${orderHeader.commonProcess.jointOperationLocalProcess.name}
 					</c:if>
 				</c:if>
 			</td>
