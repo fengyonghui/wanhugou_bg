@@ -78,7 +78,8 @@
                             $("#prodInfo3").append("<input name='orderHeaders' type='hidden' value='" + tt + "'>");
                         }
                         var orderHeaders = $("input[name='orderHeaders']").val();
-                        if (${bizInvoice.bizStatus == 0}) {
+                        var flag = orderHeaders != undefined;
+                        if (${bizInvoice.bizStatus == 0 && flag}) {
                             $.ajax({
                                 type: "post",
                                 url: "${ctx}/biz/inventory/bizInventorySku/findInvSku?orderHeaders=" + encodeURIComponent(orderHeaders),
