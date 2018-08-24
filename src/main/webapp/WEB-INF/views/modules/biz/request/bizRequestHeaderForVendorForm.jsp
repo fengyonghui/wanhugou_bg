@@ -978,7 +978,7 @@
 				</div>
 			</div>
 		</c:if>
-		<c:if test="${entity.id != null}">${poSchType}
+		<c:if test="${entity.id != null}">
 			<div class="control-group">
 				<label class="control-label">排产状态：</label>
 				<div class="controls">

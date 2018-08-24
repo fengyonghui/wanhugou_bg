@@ -15,7 +15,7 @@ public enum ReqHeaderStatusEnum {
 //    PROCESS(6, "审批中"),
 //    EXAMINE(7,"审批完成"),
     PURCHASING(10, "采购中"),
-    ACCOMPLISH_PURCHASE(15, "采购完成"),
+    ACCOMPLISH_PURCHASE(15, "待供货"),
     STOCKING(20, "供货中"),
     STOCK_COMPLETE(25, "供货完成"),
     COMPLETEING(27, "收货中"),

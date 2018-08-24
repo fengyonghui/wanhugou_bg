@@ -314,7 +314,9 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
 			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
 		}
-		model.addAttribute("poSchType",bizRequestHeader.getBizPoHeader().getPoSchType());
+		if (bizRequestHeader.getBizPoHeader() != null) {
+			model.addAttribute("poSchType", bizRequestHeader.getBizPoHeader().getPoSchType());
+		}
 
 //		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
 //			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =

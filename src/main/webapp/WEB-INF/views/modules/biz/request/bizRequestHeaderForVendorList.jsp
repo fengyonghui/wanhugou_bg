@@ -165,14 +165,14 @@
 					<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
-			<%--<li><label>审核状态</label>--%>
-				<%--<select class="input-medium" name="process">--%>
-					<%--<option>全部</option>--%>
-					<%--<c:forEach items="${processMap}" var="map">--%>
-						<%--<option value="${map.value}">${map.key}</option>--%>
-					<%--</c:forEach>--%>
-				<%--</select>--%>
-			<%--</li>--%>
+			<li><label>审核状态</label>
+				<select class="input-medium" name="process">
+					<option value="">全部</option>
+					<c:forEach items="${processMap}" var="map">
+						<option value="${map.value}">${map.key}</option>
+					</c:forEach>
+				</select>
+			</li>
 			<li><label>品类名称：</label>
 				<form:select id="varietyInfoId" about="choose" path="varietyInfo.id" class="input-medium">
 					<form:option value="" label="请选择"/>
