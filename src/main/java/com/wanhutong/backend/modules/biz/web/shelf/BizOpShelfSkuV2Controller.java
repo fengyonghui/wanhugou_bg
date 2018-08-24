@@ -294,6 +294,7 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 //		System.out.println(df.format(day));
 		bizOpShelfSku.setUnshelfTime(day);
 		bizOpShelfSkuV2Service.updateDateTime(bizOpShelfSku);
+		bizOpShelfSkuV2Service.saveShelfProdInfoPrice(bizOpShelfSku);
 		addMessage(redirectAttributes, "下架成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSkuV2/?repage";
 	}
@@ -314,6 +315,7 @@ public class BizOpShelfSkuV2Controller extends BaseController {
         bizOpShelfSku.setShelfTime(new Date());
         bizOpShelfSku.setUnshelfTime(null);
 		bizOpShelfSkuV2Service.updateShelves(bizOpShelfSku);
+		bizOpShelfSkuV2Service.saveShelfProdInfoPrice(bizOpShelfSku);
 		addMessage(redirectAttributes, "上架成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSkuV2/?repage";
 	}

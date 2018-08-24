@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品上架管理Service
@@ -57,27 +59,31 @@ public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuV2Dao, BizO
 	
 	@Transactional(readOnly = false)
 	public void save(BizOpShelfSku bizOpShelfSku) {
+		BizProductInfo bizProductInfo=saveProductPrice(bizOpShelfSku);
+		bizOpShelfSku.setProductInfo(bizProductInfo);
+		super.save(bizOpShelfSku);
+	}
+	@Transactional(readOnly = false)
+	public BizProductInfo saveProductPrice(BizOpShelfSku bizOpShelfSku){
+
 		Integer skuId=bizOpShelfSku.getSkuInfo().getId();//skuId 为key
 		BizSkuInfo skuInfo=bizSkuInfoService.get(skuId);
 		BizProductInfo bizProductInfo=bizProductInfoService.get(skuInfo.getProductInfo().getId());
-			if(bizProductInfo.getMinPrice()>bizOpShelfSku.getSalePrice()){
-				bizProductInfo.setMinPrice(bizOpShelfSku.getSalePrice());
-			}
-			if(bizProductInfo.getMaxPrice()==null){
-				bizProductInfo.setMaxPrice(0.0);
+		if(bizProductInfo.getMinPrice()==0.0){
+			bizProductInfo.setMinPrice(bizOpShelfSku.getSalePrice());
+		}else if(bizProductInfo.getMinPrice()>bizOpShelfSku.getSalePrice()){
+			bizProductInfo.setMinPrice(bizOpShelfSku.getSalePrice());
+		}
+		if(bizProductInfo.getMaxPrice()==null){
+			bizProductInfo.setMaxPrice(0.0);
+		}else if(bizProductInfo.getMaxPrice()<bizOpShelfSku.getSalePrice()){
+			bizProductInfo.setMaxPrice(bizOpShelfSku.getSalePrice());
+		}
 
-			}
-				if(bizProductInfo.getMaxPrice()<bizOpShelfSku.getSalePrice()){
-					bizProductInfo.setMaxPrice(bizOpShelfSku.getSalePrice());
-				}
 
-			if(bizProductInfo.getMinPrice()==0.0){
-				bizProductInfo.setMinPrice(bizOpShelfSku.getSalePrice());
-			}
 
 		bizProductInfoService.saveProd(bizProductInfo);
-		bizOpShelfSku.setProductInfo(bizProductInfo);
-		super.save(bizOpShelfSku);
+		return bizProductInfo;
 	}
 	
 	@Transactional(readOnly = false)
@@ -91,8 +97,18 @@ public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuV2Dao, BizO
 	}
 
 	@Transactional(readOnly = false)
-	public void updateDateTime(BizOpShelfSku bizOpShelfSku){
+	public void updateDateTime(BizOpShelfSku bizOpShelfSku) {
 		bizOpShelfSkuV2Dao.dateTimeUpdate(bizOpShelfSku);
+	}
+	@Transactional(readOnly = false)
+	public  void saveShelfProdInfoPrice(BizOpShelfSku bizOpShelfSku){
+		BizProductInfo productInfo=bizProductInfoService.get(bizOpShelfSku.getProductInfo().getId());
+		BizOpShelfSku opShelfSku =new BizOpShelfSku();
+		opShelfSku.setProductInfo(productInfo);
+		Map<String,BigDecimal> map=bizOpShelfSkuV2Dao.findMinMaxPrice(opShelfSku);
+		productInfo.setMaxPrice(map.get("maxPrice").doubleValue());
+		productInfo.setMinPrice(map.get("minPrice").doubleValue());
+		bizProductInfoService.saveProd(productInfo);
 	}
 
 	@Transactional(readOnly = false)
