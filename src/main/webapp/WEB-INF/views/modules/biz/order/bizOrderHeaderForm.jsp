@@ -1476,7 +1476,7 @@
                                     <div class="help_step_left"></div>
                                     <div class="help_step_num">${stat.index + 1}</div>
 
-                                    状态:
+                                    当前状态:
                                     <c:if test="${type == 1}">
                                         ${v.jointOperationLocalProcess.name}
                                     </c:if>
