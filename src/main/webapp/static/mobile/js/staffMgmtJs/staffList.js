@@ -346,9 +346,15 @@
 				data: {
 					pageNo: 1,
 					"company.id": _this.userInfo.companyId,
+					"company.name": _this.userInfo.companyName, 
 					loginName:_this.userInfo.loginName,
 					name: nameTxt,
-					mobile:_this.userInfo.mobile
+					mobile:_this.userInfo.mobile,
+					"company.type": 8,  
+					"company.customerTypeTypeTen": 10,
+					"company.customerTypeEypeEleven": 11,
+					conn: "connIndex",
+					isFunc: true
 				},
 				dataType: 'json',
 				success: function(res) {
