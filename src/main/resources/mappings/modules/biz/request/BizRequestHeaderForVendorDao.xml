@@ -128,6 +128,12 @@
 			<if test="varietyInfo!=null and varietyInfo.id!=null and varietyInfo.id!=''">
 				and bvi.id = #{varietyInfo.id}
 			</if>
+			<if test="process != null and bizStatus &lt; 5">
+				AND process.type = #{process}
+			</if>
+			<if test="process != null and bizStatus &gt;= 5">
+				AND cp.type = #{process}
+			</if>
 			<if test="reqNo != null and reqNo != ''">
 				AND a.req_no
 				LIKE

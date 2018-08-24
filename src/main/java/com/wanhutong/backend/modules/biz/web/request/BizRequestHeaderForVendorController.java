@@ -224,6 +224,16 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				}
 			}
 		}
+		Map<Integer, RequestOrderProcessConfig.RequestOrderProcess> reqMap = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap;
+		Map<Integer, PurchaseOrderProcessConfig.PurchaseOrderProcess> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
+		Map<String,Integer> processMap = new LinkedHashMap<>();
+		for (Map.Entry<Integer,RequestOrderProcessConfig.RequestOrderProcess> map : reqMap.entrySet()) {
+			processMap.put(map.getValue().getName(),map.getKey());
+		}
+		for (Map.Entry<Integer,PurchaseOrderProcessConfig.PurchaseOrderProcess> map : purMap.entrySet()) {
+			processMap.put(map.getValue().getName(),map.getKey());
+		}
+		model.addAttribute("processMap",processMap);
 		model.addAttribute("roleSet",roleSet);
 		model.addAttribute("varietyInfoList", varietyInfoList);
 		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
