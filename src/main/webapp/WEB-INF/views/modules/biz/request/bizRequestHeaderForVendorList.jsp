@@ -165,14 +165,14 @@
 					<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
-			<li><label>审核状态</label>
-				<select class="input-medium" name="process">
-					<option value="">全部</option>
-					<c:forEach items="${processMap}" var="map">
-						<option value="${map.value}">${map.key}</option>
-					</c:forEach>
-				</select>
-			</li>
+			<%--<li><label>审核状态</label>--%>
+				<%--<select class="input-medium" name="process">--%>
+					<%--<option value="">请选择</option>--%>
+					<%--<c:forEach items="${processSet}" var="process">--%>
+						<%--<option value="${process}">${process}</option>--%>
+					<%--</c:forEach>--%>
+				<%--</select>--%>
+			<%--</li>--%>
 			<li><label>品类名称：</label>
 				<form:select id="varietyInfoId" about="choose" path="varietyInfo.id" class="input-medium">
 					<form:option value="" label="请选择"/>
@@ -315,7 +315,7 @@
 				</shiro:hasPermission>
 				<!-- 保证金支付申请 -->
 				<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">
-					<c:if test="${requestHeader.bizPoHeader.bizPoPaymentOrder.id == null
+					<c:if test="${requestHeader.bizPoHeader.currentPaymentId == null
 						&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 						&& requestHeader.bizStatus >= ReqHeaderStatusEnum.COMPLETE.state
 						&& requestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state

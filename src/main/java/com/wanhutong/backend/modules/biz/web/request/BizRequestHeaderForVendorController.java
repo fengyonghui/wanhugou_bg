@@ -203,6 +203,23 @@ public class BizRequestHeaderForVendorController extends BaseController {
                 enNameList.add(role.getEnname());
             }
         }
+
+		Map<Integer, RequestOrderProcessConfig.RequestOrderProcess> reqMap = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap;
+		Map<Integer, PurchaseOrderProcessConfig.PurchaseOrderProcess> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
+		Map<String,Integer> requestMap = new LinkedHashMap<>();
+		Map<String,Integer> poMap = new LinkedHashMap<>();
+		Set<String> processSet = new HashSet<>();
+		for (Map.Entry<Integer,RequestOrderProcessConfig.RequestOrderProcess> map : reqMap.entrySet()) {
+			requestMap.put(map.getValue().getName(),map.getKey());
+			processSet.add(map.getValue().getName());
+		}
+		processSet.remove("审核完成");
+		processSet.remove("驳回");
+		for (Map.Entry<Integer,PurchaseOrderProcessConfig.PurchaseOrderProcess> map : purMap.entrySet()) {
+			poMap.put(map.getValue().getName(),map.getKey());
+			processSet.add(map.getValue().getName());
+		}
+
 		if (enNameList.contains(RoleEnNameEnum.PROVIDER_MANAGER.getState()) || enNameList.contains(RoleEnNameEnum.SHIPPER.getState())
 				|| enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
 			bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
@@ -224,16 +241,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				}
 			}
 		}
-		Map<Integer, RequestOrderProcessConfig.RequestOrderProcess> reqMap = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap;
-		Map<Integer, PurchaseOrderProcessConfig.PurchaseOrderProcess> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
-		Map<String,Integer> processMap = new LinkedHashMap<>();
-		for (Map.Entry<Integer,RequestOrderProcessConfig.RequestOrderProcess> map : reqMap.entrySet()) {
-			processMap.put(map.getValue().getName(),map.getKey());
-		}
-		for (Map.Entry<Integer,PurchaseOrderProcessConfig.PurchaseOrderProcess> map : purMap.entrySet()) {
-			processMap.put(map.getValue().getName(),map.getKey());
-		}
-		model.addAttribute("processMap",processMap);
+
+		model.addAttribute("processSet",processSet);
 		model.addAttribute("roleSet",roleSet);
 		model.addAttribute("varietyInfoList", varietyInfoList);
 		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());

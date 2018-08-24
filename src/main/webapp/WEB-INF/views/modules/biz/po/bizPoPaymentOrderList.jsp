@@ -91,21 +91,23 @@
 					</c:if>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
-					<c:if test="${bizPoPaymentOrder.orderType == PoPayMentOrderTypeEnum.PO_TYPE.type && bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id
-					&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
-					&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
-					}">
-					<c:if test="${fromPage != null && fromPage == 'requestHeader'}">
-						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认付款</a>
-					</c:if>
-					<c:if test="${fromPage != null && fromPage == 'orderHeader'}">
-						<a href="${ctx}/biz/order/bizOrderHeader/form?bizPoHeader.id=${bizPoHeader.id}&id=${orderId}&str=pay">确认付款</a>
-						<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>--%>
-					</c:if>
-					<c:if test="${fromPage == null}">
-						<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
-					</c:if>
-					</c:if>
+					<shiro:hasPermission name="biz:po:payment:sure:pay">
+						<c:if test="${bizPoPaymentOrder.orderType == PoPayMentOrderTypeEnum.PO_TYPE.type && bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id
+						&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
+						&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
+						}">
+						<c:if test="${fromPage != null && fromPage == 'requestHeader'}">
+							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认付款</a>
+						</c:if>
+						<c:if test="${fromPage != null && fromPage == 'orderHeader'}">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?bizPoHeader.id=${bizPoHeader.id}&id=${orderId}&str=pay">确认付款</a>
+							<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>--%>
+						</c:if>
+						<c:if test="${fromPage == null}">
+							<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
+						</c:if>
+						</c:if>
+				</shiro:hasPermission>
 					<%--<c:if test="${bizPoPaymentOrder.type == PoPayMentOrderTypeEnum.REQ_TYPE.type && bizPoPaymentOrder.id == bizRequestHeader.bizPoPaymentOrder.id--%>
 						  <%--&& bizRequestHeader.commonProcess.vendRequestOrderProcess.name == '审批完成'--%>
 						  <%--&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'}">--%>
