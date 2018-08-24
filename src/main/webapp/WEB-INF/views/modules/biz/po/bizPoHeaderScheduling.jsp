@@ -374,7 +374,7 @@
                 <input id="orderNum" readonly="readonly" class="input-xlarge" type='text'/>
             </div>
             <!-- 采购单编号 style="display: none"-->
-            <div class="controls" >
+            <div class="controls" style="display: none">
                 <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
             </div>
         </div>

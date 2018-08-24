@@ -9,14 +9,7 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-                    var totalDetail = $('.totalDetail').val();
-                    var total = $('#total').val();
-                    if (total > totalDetail) {
-                        alert("输入金额过大！")
-						return false;
-					}
-
-					loading('正在提交，请稍等...');
+                    loading('正在提交，请稍等...');
 					form.submit();
 				},
 				errorContainer: "#messageBox",
