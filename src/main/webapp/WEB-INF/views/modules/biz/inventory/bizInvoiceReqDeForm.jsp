@@ -37,6 +37,7 @@
                     var tt="";
                     var total = 0;
                     var str = $("#str").val();
+                    var freight = $("#freight").val();
                     if (str == 'audit') {
                         $("td[name='requestNo']").each(function(i) {
                             var t= $(this).parent().attr("id");
@@ -55,17 +56,18 @@
                         });
                         tt=tt.substring(0,tt.length-1);
                     }
+                    alert(total+"---"+freight);
                     if(window.confirm('你确定要发货吗？')){
-                        if (total > 0) {
+                        if (total <= 0 && freight == undefined) {
+                            alert("发货数量不能为0");
+                            return false;
+                        }
 							// alert("确定");
 							if (tt != '') {
 								$("#prodInfo3").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
 							}
 							form.submit();
 							loading('正在提交，请稍等...');
-                        } else {
-                            alert("发货数量不能为0");
-						}
                     }else{
                         return false;
                     }

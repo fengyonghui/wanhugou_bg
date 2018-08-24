@@ -122,12 +122,13 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         boolean flagRequest = true;        //备货单完成状态
         boolean flagOrder = true;        //销售单完成状态
         boolean flagPo = true;     //采购单完成状态
+        User user = UserUtils.getUser();
         //修改发货单
         if (bizInvoice.getId() != null) {
             BizInvoice invoice = bizInvoiceDao.get(bizInvoice.getId());
             invoice.setTrackingNumber(bizInvoice.getTrackingNumber());
             invoice.setFreight(bizInvoice.getFreight());
-            invoice.setCarrier(bizInvoice.getCarrier());
+            invoice.setCarrier(user.getName());
             invoice.setSettlementStatus(bizInvoice.getSettlementStatus());
             invoice.setSendDate(bizInvoice.getSendDate());
             invoice.setRemarks(bizInvoice.getRemarks());
@@ -147,9 +148,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 //            saveCommonImg(bizInvoice);
         } else {
             // 取出当前用户所在机构，
-            User user = UserUtils.getUser();
             Office company = officeService.get(user.getCompany().getId());
             //采购商或采购中心
+            if ("new".equals(bizInvoice.getSource())) {
+                bizInvoice.setCarrier(user.getName());
+            }
 //        Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
             bizInvoice.setSendNumber("");
             bizInvoice.setIsConfirm(bizInvoice.getIsConfirm());

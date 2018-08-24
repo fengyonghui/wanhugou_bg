@@ -59,7 +59,7 @@
 			/>			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>
-	<c:if test="${invoiceList != null}">
+	<c:if test="${invoiceList != null && bizStatu != 0}">
 		<div class="control-group">
 			<label class="control-label">集货信息：</label>
 			<div class="controls">
@@ -100,7 +100,12 @@
 					<th>供应商电话</th>
 					<th>品牌</th>
 					<th>申报数量</th>
-					<th>已供货数量</th>
+					<c:if test="${bizStatu == 0}">
+						<th>已收数量</th>
+					</c:if>
+					<c:if test="${bizStatu != 0}">
+						<th>已供货数量</th>
+					</c:if>
 					<c:if test="${not empty source && source eq 'gh'}">
 						<%--该备货单已生成采购单就显示--%>
 						<%--<c:if test="${empty bizRequestHeader.poSource}">--%>
@@ -128,9 +133,16 @@
 							<td>
 								<input   value="${reqDetail.reqQty}" readonly="readonly" class="input-medium" type='text'/>
 							</td>
-							<td>
-								<input  value="${reqDetail.sendQty}" readonly="readonly" class="input-medium" type='text'/>
-							</td>
+							<c:if test="${bizStatu == 0}">
+								<td>
+									<input  value="${reqDetail.recvQty}" readonly="readonly" class="input-medium" type='text'/>
+								</td>
+							</c:if>
+							<c:if test="${bizStatu != 0}">
+								<td>
+									<input  value="${reqDetail.sendQty}" readonly="readonly" class="input-medium" type='text'/>
+								</td>
+							</c:if>
 
 							<c:if test="${not empty source && source eq 'gh'}">
 								<%--该备货单已生成采购单就显示--%>

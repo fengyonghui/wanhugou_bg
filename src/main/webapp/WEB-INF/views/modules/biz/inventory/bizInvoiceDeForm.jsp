@@ -37,6 +37,7 @@
                     var tt = "";
                     var flag = false;
                     var total = 0;
+                    var freight = $("#freight").val();
                     if (str == 'audit') {
                         $("td[name='orderNo']").each(function (i) {
                             var t = $(this).parent().attr("id");
@@ -69,7 +70,7 @@
                         tt = tt.substring(0, tt.length - 1);
                     }
                     if (window.confirm('你确定要发货吗？')) {
-                        if (total <= 0) {
+                        if (total <= 0 && freight == undefined) {
                             alert("发货数量不能为0");
                             return false;
                         }

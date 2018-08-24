@@ -240,11 +240,11 @@
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">详情</a>
 							</c:when>
 							<c:when test="${source=='sh'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">备货详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&ship=${ship}&bizStatu=${bizStatu}">备货详情</a>
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">收货</a>
 							</c:when>
 							<c:when test="${bizStatu=='1'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">备货详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&ship=${ship}&bizStatu=${bizStatu}">备货详情</a>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=bh">发货</a>--%>
 							</c:when>
 						</c:choose>
@@ -299,10 +299,10 @@
 					<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
 						<c:choose>
 							<c:when test="${source=='gh'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}">详情</a>
 							</c:when>
 							<c:otherwise>
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs">发货详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs&ship=${ship}&bizStatu=${bizStatu}">发货详情</a>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=xs">发货</a>--%>
 							</c:otherwise>
 						</c:choose>

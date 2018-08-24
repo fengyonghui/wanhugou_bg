@@ -564,9 +564,13 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
         bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
+        List<BizPoPaymentOrder> poPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+        if (poPaymentOrderList.size() == 0) {
+            bizPoPaymentOrder.setTotal(BigDecimal.ZERO);
+        } else {
+            bizPoPaymentOrder.setTotal(bizPoHeader.getPlanPay());
+        }
         bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
-        //bizPoPaymentOrder.setTotal(bizPoHeader.getPlanPay());
-        bizPoPaymentOrder.setTotal(BigDecimal.ZERO);
         bizPoPaymentOrder.setDeadline(bizPoHeader.getPayDeadline());
         bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
