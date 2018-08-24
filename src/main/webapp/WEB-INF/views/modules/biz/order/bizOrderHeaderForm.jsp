@@ -1454,7 +1454,7 @@
                 <div class="controls help_wrap">
                     <div class="help_step_box fa">
                         <c:forEach items="${auditList}" var="v" varStatus="stat">
-                            <c:if test="${v.current == 0}" >
+                            <c:if test="${v.current != 1}" >
                                 <div class="help_step_item">
                                     <div class="help_step_left"></div>
                                     <div class="help_step_num">${stat.index + 1}</div>

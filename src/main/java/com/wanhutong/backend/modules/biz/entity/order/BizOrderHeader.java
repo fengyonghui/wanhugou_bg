@@ -169,6 +169,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 审核路径参数记录
      */
     private String str;
+    /**
+     * 审核状态过滤
+     */
+    private String selectAuditStatus;
+    /**
+     * 审核状态过滤
+     */
+    private String selectAuditType;
 
     /**
      * 已审批流程
@@ -841,5 +849,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setBizInvoiceList(List<BizInvoice> bizInvoiceList) {
         this.bizInvoiceList = bizInvoiceList;
+    }
+
+    public String getSelectAuditStatus() {
+        return selectAuditStatus;
+    }
+
+    public void setSelectAuditStatus(String selectAuditStatus) {
+        this.selectAuditStatus = selectAuditStatus;
+    }
+
+    public String getSelectAuditType() {
+        return selectAuditType;
+    }
+
+    public void setSelectAuditType(String selectAuditType) {
+        this.selectAuditType = selectAuditType;
     }
 }

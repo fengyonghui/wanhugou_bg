@@ -123,6 +123,14 @@
 				<form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
 							  htmlEscape="false"/></form:select>
 		</li>
+
+		<li><label>审核状态：</label>
+			<form:select path="selectAuditStatus" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:options items="${originConfigMap}"  htmlEscape="false"/>
+			</form:select>
+		</li>
+
 		<c:if test="${source ne 'vendor'}">
 			<li><label>经销店电话：</label>
 				<form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>

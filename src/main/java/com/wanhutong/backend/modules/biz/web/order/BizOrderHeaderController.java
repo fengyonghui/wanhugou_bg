@@ -244,21 +244,35 @@ public class BizOrderHeaderController extends BaseController {
 
         for (BizOrderHeader b : page.getList()) {
             if (b.getOrderNum().startsWith("SO")) {
+                BizPoHeader bizPoHeader = new BizPoHeader();
+                bizPoHeader.setBizOrderHeader(b);
+                List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+
+                List<CommonProcessEntity> list = null;
+
                 CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
                 commonProcessEntity.setObjectId(String.valueOf(b.getId()));
                 commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
-                if (b.getSuplys() == 0 || b.getSuplys() == 721) {
-                    commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
+                if (CollectionUtils.isNotEmpty(poList)) {
+                    bizPoHeader = poList.get(0);
+                    commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+                    commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+                } else {
+                    if (b.getSuplys() == 0 || b.getSuplys() == 721) {
+                        commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
+                    }
                 }
-                List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
-                if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
-                    OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail(), b.getReceiveTotal());
-                    genAuditProcess(orderPayProportionStatusEnum, b);
-                }
+                list = commonProcessService.findList(commonProcessEntity);
 
                 if (CollectionUtils.isNotEmpty(list)) {
                     b.setCommonProcess(list.get(list.size() - 1));
                 }
+
+                if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                    OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail(), b.getReceiveTotal());
+                    genAuditProcess(orderPayProportionStatusEnum, b);
+                }
+
             }
             BizInvoice bizInvoice = new BizInvoice();
             bizInvoice.setOrderNum(b.getOrderNum());
@@ -275,11 +289,37 @@ public class BizOrderHeaderController extends BaseController {
                 roleSet.add(parse.name());
             }
         }
+
+        JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
+        JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
+        DoOrderHeaderProcessAllConfig doOrderHeaderProcessAllConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
+        DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
+
+        Map<String, String> originConfigMap = Maps.newLinkedHashMap();
+
+        for(Process process : originConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+        }
+
+        for(Process process : localConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+        }
+
+        for(DoOrderHeaderProcessAllConfig.OrderHeaderProcess process : doOrderHeaderProcessAllConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+        }
+
+        for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+        }
+
+        model.addAttribute("originConfigMap", originConfigMap);
+
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
-        model.addAttribute("auditAllStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().getAutProcessId());
-        model.addAttribute("auditFithStatus", ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getAutProcessId());
-        model.addAttribute("auditStatus", ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getPayProcessId());
+        model.addAttribute("auditAllStatus", doOrderHeaderProcessAllConfig.getAutProcessId());
+        model.addAttribute("auditFithStatus", doOrderHeaderProcessFifthConfig.getAutProcessId());
+        model.addAttribute("auditStatus", originConfig.getPayProcessId());
 
         return "modules/biz/order/bizOrderHeaderList";
     }
@@ -533,6 +573,21 @@ public class BizOrderHeaderController extends BaseController {
         commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
         commonProcessEntity.setObjectName("0".equals(type) ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
         List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+
+        BizPoHeader bizPoHeader = new BizPoHeader();
+        bizPoHeader.setBizOrderHeader(bizOrderHeader);
+        List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+        bizPoHeader = poList.get(0);
+        CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
+        poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+        poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+        List<CommonProcessEntity> poAuditList = commonProcessService.findList(poCommonProcessEntity);
+
+        if (CollectionUtils.isNotEmpty(poAuditList)) {
+            list.remove(list.size() - 1);
+            list.addAll(poAuditList);
+            list.get(list.size() - 1).setCurrent(1);
+        }
 
         commonProcessEntity.setCurrent(1);
         List<CommonProcessEntity> currentList = commonProcessService.findList(commonProcessEntity);
