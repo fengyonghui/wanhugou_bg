@@ -1007,34 +1007,6 @@
             </div>
         </div>
 
-        <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList == null}">
-            <div class="control-group">
-                <label class="control-label">审核状态：</label>
-                <div class="controls">
-                    <input type="text" disabled="disabled"
-                           value="${orderHeaderProcess.name}" htmlEscape="false"
-                           maxlength="30" class="input-xlarge "/>
-                    <input id="currentType" type="hidden" disabled="disabled"
-                           value="${orderHeaderProcess.code}" htmlEscape="false"
-                           maxlength="30" class="input-xlarge "/>
-                </div>
-            </div>
-        </c:if>
-
-        <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
-            <div class="control-group">
-                <label class="control-label">审核状态：</label>
-                <div class="controls">
-                    <input type="text" disabled="disabled"
-                           value="${purchaseOrderProcess.name}" htmlEscape="false"
-                           maxlength="30" class="input-xlarge "/>
-                    <input id="poCurrentType" type="hidden" disabled="disabled"
-                           value="${purchaseOrderProcess.code}" htmlEscape="false"
-                           maxlength="30" class="input-xlarge "/>
-                </div>
-            </div>
-        </c:if>
-
         <div class="control-group">
             <label class="control-label">业务状态：</label>
             <div class="controls">
