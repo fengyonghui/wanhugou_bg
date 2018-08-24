@@ -1056,7 +1056,7 @@
         </div>
 
     <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList == null}">
-        <div class="control-group" >
+        <div class="control-group" style="display: none" >
             <label class="control-label">审核状态：</label>
             <div class="controls">
                 <input type="text" disabled="disabled"
@@ -1070,7 +1070,7 @@
     </c:if>
 
     <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
-        <div class="control-group">
+        <div class="control-group" style="display: none">
             <label class="control-label">审核状态：</label>
             <div class="controls">
                 <input type="text" disabled="disabled"
