@@ -129,11 +129,14 @@
 			<if test="varietyInfo!=null and varietyInfo.id!=null and varietyInfo.id!=''">
 				and bvi.id = #{varietyInfo.id}
 			</if>
-			<if test="process != null and bizStatus &lt; 5">
-				AND process.type = #{process}
+			<if test="process != null and process == '驳回'">
+				AND process.type = #{process} OR process.type = #{process}
 			</if>
-			<if test="process != null and bizStatus &gt;= 5">
-				AND cp.type = #{process}
+			<if test="reqCode != null">
+				AND process.type = #{reqCode} AND a.biz_status &lt; 5
+			</if>
+			<if test="poCode != null">
+				AND cp.type = #{poCode} AND a.biz_status &gt;= 5
 			</if>
 			<if test="reqNo != null and reqNo != ''">
 				AND a.req_no

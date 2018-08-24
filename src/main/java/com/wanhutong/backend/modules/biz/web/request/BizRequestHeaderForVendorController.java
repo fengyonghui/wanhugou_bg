@@ -11,6 +11,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
@@ -213,13 +214,23 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			requestMap.put(map.getValue().getName(),map.getKey());
 			processSet.add(map.getValue().getName());
 		}
+		requestMap.remove("审核完成");
+		requestMap.remove("驳回");
 		processSet.remove("审核完成");
 		processSet.remove("驳回");
 		for (Map.Entry<Integer,PurchaseOrderProcessConfig.PurchaseOrderProcess> map : purMap.entrySet()) {
 			poMap.put(map.getValue().getName(),map.getKey());
 			processSet.add(map.getValue().getName());
 		}
+		poMap.remove("驳回");
+		if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && requestMap.get(bizRequestHeader.getProcess()) != null) {
+			bizRequestHeader.setReqCode(requestMap.get(bizRequestHeader.getProcess()));
+		} else if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && poMap.get(bizRequestHeader.getProcess()) != null){
+			bizRequestHeader.setPoCode(poMap.get(bizRequestHeader.getProcess()));
+		}
+		if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && "驳回".equals(bizRequestHeader.getProcess())) {
 
+		}
 		if (enNameList.contains(RoleEnNameEnum.PROVIDER_MANAGER.getState()) || enNameList.contains(RoleEnNameEnum.SHIPPER.getState())
 				|| enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
 			bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());

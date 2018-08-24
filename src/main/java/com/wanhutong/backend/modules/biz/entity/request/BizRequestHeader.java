@@ -182,7 +182,17 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	/**
 	 * 用于审核状态查询
 	 */
-	private Integer process;
+	private String process;
+
+	/**
+	 * 备货单审核code
+	 */
+	private Integer reqCode;
+
+	/**
+	 * PO审核code
+	 */
+	private Integer poCode;
 
 	public BizRequestHeader() {
 		super();
@@ -659,11 +669,27 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 		this.bizPoHeader = bizPoHeader;
 	}
 
-	public Integer getProcess() {
+	public String getProcess() {
 		return process;
 	}
 
-	public void setProcess(Integer process) {
+	public void setProcess(String process) {
 		this.process = process;
+	}
+
+	public Integer getReqCode() {
+		return reqCode;
+	}
+
+	public void setReqCode(Integer reqCode) {
+		this.reqCode = reqCode;
+	}
+
+	public Integer getPoCode() {
+		return poCode;
+	}
+
+	public void setPoCode(Integer poCode) {
+		this.poCode = poCode;
 	}
 }
