@@ -459,6 +459,29 @@
         }
     </script>
 
+    <script type="text/javascript">
+        function saveMon(type) {
+            if (type == 'createPay') {
+                var payTotal = $("#payTotal").val();
+                var payDeadline = $("#payDeadline").val();
+                var id = $("#poHeaderId").val();
+                if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
+                    alert("请输入申请金额!");
+                    return false;
+                }
+                if ($String.isNullOrBlank(payDeadline)) {
+                    alert("请选择本次申请付款时间!");
+                    return false;
+                }
+            }
+
+            window.location.href="${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader";
+
+            <%--$("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader");--%>
+            <%--$("#inputForm").submit();--%>
+        }
+    </script>
+
     <script type="text/javascript" src="${ctxStatic}/jquery/jquery-1.9.1-min.js"></script>
     <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
     <script src="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.js"></script>
@@ -830,6 +853,7 @@
                 contentType: 'application/json',
                 data: {"reqDetailIds":"", "orderDetailIds": orderDetailIds,"vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
                 type: 'get',
+                async: false,
                 success: function (res) {
                     if (res == "ok") {
 
@@ -979,6 +1003,30 @@
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
+
+    <c:if test="${entity.bizPoPaymentOrder.id != null || entity.str == 'createPay'}">
+        <div class="control-group">
+            <label class="control-label">申请金额：</label>
+            <div class="controls">
+                <input id="payTotal" name="planPay" type="text"
+                       <c:if test="${entity.str == 'audit' || entity.str == 'pay'}">readonly</c:if>
+                       value="${entity.bizPoPaymentOrder.id != null ?
+                           entity.bizPoPaymentOrder.total : (entity.totalDetail-(entity.bizPoHeader.payTotal == null ? 0 : entity.bizPoHeader.payTotal))}"
+                       htmlEscape="false" maxlength="30" class="input-xlarge"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">本次申请付款时间：</label>
+            <div class="controls">
+                <input name="payDeadline" id="payDeadline" type="text" readonly="readonly" maxlength="20"
+                       class="input-medium Wdate required"
+                       value="<fmt:formatDate value="${entity.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+                        <c:if test="${entity.str == 'createPay'}"> onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"</c:if>
+                       placeholder="必填！"/>
+            </div>
+        </div>
+    </c:if>
+
     <c:if test="${source ne 'vendor'}">
         <div class="control-group">
             <label class="control-label">服务费：</label>
@@ -1731,6 +1779,10 @@
                     <c:if test="${entity.str == 'pay'}">
                         <input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
                     </c:if>
+
+                    <c:if test="${entity.str == 'createPay'}">
+                        <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>
+                    </c:if>
                 </shiro:hasPermission>
 
                     <!-- 一单到底，采购单审核 -->
@@ -1808,7 +1860,7 @@
         </c:if>
         <th>创建时间</th>
         <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-            <c:if test="${entity.str != 'audit'}">
+            <c:if test="${entity.str != 'audit' && entity.str!='detail' && entity.str!='createPay'}">
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                     <th>操作</th>
                 </c:if>

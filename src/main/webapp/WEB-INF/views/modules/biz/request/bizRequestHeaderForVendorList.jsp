@@ -317,9 +317,9 @@
 				<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">
 					<c:if test="${requestHeader.bizPoHeader.currentPaymentId == null
 						&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
-						&& requestHeader.bizStatus >= ReqHeaderStatusEnum.COMPLETE.state
+						&& requestHeader.bizStatus >= ReqHeaderStatusEnum.COMPLETEING.state
 						&& requestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state
-						&& (requestHeader.balanceTotal == null ? 0 : requestHeader.balanceTotal) < requestHeader.totalDetail
+						&& (requestHeader.bizPoHeader.payTotal == null ? 0 : requestHeader.bizPoHeader.payTotal) < requestHeader.totalDetail
 						}">
 						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=createPay">申请付款</a>
 					</c:if>

@@ -493,6 +493,15 @@
 				</c:if>
 			</c:if>
 
+			<shiro:hasPermission name="biz:request:bizOrderHeader:createPayOrder">
+				<c:if test="${orderHeader.bizPoHeader.currentPaymentId == null
+					&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
+					&& (orderHeader.bizPoHeader.payTotal == null ? 0 : orderHeader.bizPoHeader.payTotal) < orderHeader.totalDetail
+					}">
+					<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=createPay">申请付款</a>
+				</c:if>
+			</shiro:hasPermission>
+
 			<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
 				<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">

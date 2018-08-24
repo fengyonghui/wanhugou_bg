@@ -16,6 +16,7 @@ import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -174,6 +175,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private String selectAuditStatus;
 
+
+    /**
+     * 申请支付金额
+     */
+    private BigDecimal planPay;
+
+    /**
+     * 与供应商结算的金额
+     */
+    private BigDecimal balanceTotal;
+
+    /**
+     * 付款时间
+     */
+    private Date payDeadline;
 
     /**
      * 已审批流程
@@ -846,6 +862,22 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setBizInvoiceList(List<BizInvoice> bizInvoiceList) {
         this.bizInvoiceList = bizInvoiceList;
+    }
+
+    public BigDecimal getPlanPay() {
+        return planPay;
+    }
+
+    public void setPlanPay(BigDecimal planPay) {
+        this.planPay = planPay;
+    }
+
+    public Date getPayDeadline() {
+        return payDeadline;
+    }
+
+    public void setPayDeadline(Date payDeadline) {
+        this.payDeadline = payDeadline;
     }
 
     public String getSelectAuditStatus() {

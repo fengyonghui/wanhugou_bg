@@ -361,6 +361,7 @@
                 contentType: 'application/json',
                 data: {"reqDetailIds": reqDetailIds, "orderDetailIds": "", "vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
                 type: 'get',
+                async: false,
                 success: function (res) {
                     if (res == "ok") {
 
@@ -387,7 +388,7 @@
                 }
             }
 
-            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id);
+            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=requestHeader");
             $("#inputForm").submit();
         }
 
@@ -546,7 +547,7 @@
 					<input id="payTotal" name="planPay" type="text"
 						   <c:if test="${entity.str == 'audit' || entity.str == 'pay'}">readonly</c:if>
 						   value="${entity.bizPoPaymentOrder.id != null ?
-                           entity.bizPoPaymentOrder.total : (entity.totalDetail-(entity.balanceTotal == null ? 0 : entity.balanceTotal))}"
+                           entity.bizPoPaymentOrder.total : (entity.totalDetail-(entity.bizPoHeader.payTotal == null ? 0 : entity.bizPoHeader.payTotal))}"
 						   htmlEscape="false" maxlength="30" class="input-xlarge"/>
 				</div>
 			</div>
