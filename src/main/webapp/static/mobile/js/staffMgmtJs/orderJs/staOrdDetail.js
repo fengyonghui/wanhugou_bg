@@ -1,4 +1,4 @@
-staPoLastDa(function($) {
+(function($) {
 	var ACCOUNT = function() {
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);

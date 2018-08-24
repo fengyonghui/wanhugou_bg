@@ -37,10 +37,8 @@
 			GHUTILS.OPENPAGE({
 				url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
 				extras: {
-					companyId: $('.hasoid').attr('id'),
-					loginName: $('.staLogName').val(),
-					name: $('.staName').val(),
-					mobile: $('.staMobile').val(),
+//					customsName: $('.hasoid').attr('id'),
+					consultantsMobile: $('#staRelMobile').val(),
 					isFunc: true
 				}
 			})

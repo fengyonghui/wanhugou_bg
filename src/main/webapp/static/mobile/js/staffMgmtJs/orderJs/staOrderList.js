@@ -86,6 +86,14 @@
 											'<label>经销店:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customer.name+' ">' +
 										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>创建时间:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.createDate)+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>更新时间:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
+										'</div>' +
 										//业务状态需要添加权限
 //										'<div class="mui-input-row">' +
 //											'<label>业务状态:</label>' +
@@ -174,6 +182,16 @@
 					})
 				}
 			}),
+		/*客户专员列表*/
+			$('#nav').on('tap','.staOrdStaBtn', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../../html/staffMgmtHtml/staffList.html",
+					extras: {
+						
+					}
+				})
+			}),	
 		/*首页*/
 			$('#nav').on('tap','.inHomePage', function() {
 				var url = $(this).attr('url');
@@ -230,6 +248,7 @@
 				}
 			})
         },
+        //时间戳转化方法：
 		formatDateTime: function(unix) {
 			var _this = this;
 			var now = new Date(parseInt(unix) * 1);
@@ -285,6 +304,7 @@
 			}
 			return now;
 		},
+		//查询过来渲染页面:
 		seachFunc:function(){
 			var _this = this;
 			var inPHtmlList = '';
