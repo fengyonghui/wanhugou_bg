@@ -55,63 +55,72 @@ staPoLastDa(function($) {
 						$('#staShippAddress').val()
 						$('#staDateilAddress').val(item.bizLocation.address)
 						$('#staEvolve').val()
-//						_this.commodityHtml(res.data)
-//						_this.statusListHtml(res.data)
 					}) 
+//					_this.commodityHtml(res.data)
+//					_this.statusProcessHtml(res.data)
+					_this.checkProcessHtml(res.data)
                 }
             });
 		},
-		statusListHtml:function(data){
+		
+		
+		checkProcessHtml:function(data){
 			var _this = this;
-//			console.log(data)
-			var pHtmlList = '';
-//			var len = data.bizPoHeader.commonProcessList.length
-			$.each(data.statusList, function(i, item) {
-//				console.log(item)
-//				0未审核 1首付款支付,2是全部支付 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
-				var checkBizStatus = '';
-				if(item.bizStatus==0) {
-					checkBizStatus = '未审核'
-				}else if(item.bizStatus==1) {
-					checkBizStatus = '首付款支付'
-				}else if(item.bizStatus==2) {
-					checkBizStatus = '全部支付'
-				}else if(item.bizStatus==5) {
-					checkBizStatus = '审核通过'
-				}else if(item.bizStatus==10) {
-					checkBizStatus = '采购中'
-				}else if(item.bizStatus==15) {
-					checkBizStatus = '采购完成'
-				}else if(item.bizStatus==20) {
-					checkBizStatus = '备货中'
-				}else if(item.bizStatus==25) {
-					checkBizStatus = '供货完成'
-				}else if(item.bizStatus==30) {
-					checkBizStatus = '收货完成'
-				}else if(item.bizStatus==35) {
-					checkBizStatus = '关闭'
-				}else {
-					checkBizStatus = ''
-				}
-				var step = i + 1;
-				pHtmlList +='<li class="step_item">'+
-					'<div class="step_num">'+ step +' </div>'+
-					'<div class="step_num_txt">'+
-						'<div class="mui-input-row">'+
-							'<label>处理人:</label>'+
-					        '<textarea name="" rows="" cols="" disabled>'+ item.createBy.name +'</textarea>'+
-					    '</div>'+
-						'<br />'+
-						'<div class="mui-input-row">'+
-					        '<label>状态:</label>'+
-					        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
-					    	'<label>时间:</label>'+
-					        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
-					    '</div>'+
-					'</div>'+
-				'</li>'
-			});
-			$("#inCheckAddMenu").html(pHtmlList)
+			console.log(data)
+			$.each(data.page.list, function(i, item) {
+				console.log(item)
+				var pHtmlList = '';
+//				$.each(item.commonProcess, function(i, item) {
+//					console.log('---------------------')
+//					console.log(item)
+//	//				0未审核 1首付款支付,2是全部支付 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
+//					var checkBizStatus = '';
+//					if(item.bizStatus==0) {
+//						checkBizStatus = '未审核'
+//					}else if(item.bizStatus==1) {
+//						checkBizStatus = '首付款支付'
+//					}else if(item.bizStatus==2) {
+//						checkBizStatus = '全部支付'
+//					}else if(item.bizStatus==5) {
+//						checkBizStatus = '审核通过'
+//					}else if(item.bizStatus==10) {
+//						checkBizStatus = '采购中'
+//					}else if(item.bizStatus==15) {
+//						checkBizStatus = '采购完成'
+//					}else if(item.bizStatus==20) {
+//						checkBizStatus = '备货中'
+//					}else if(item.bizStatus==25) {
+//						checkBizStatus = '供货完成'
+//					}else if(item.bizStatus==30) {
+//						checkBizStatus = '收货完成'
+//					}else if(item.bizStatus==35) {
+//						checkBizStatus = '关闭'
+//					}else {
+//						checkBizStatus = ''
+//					}
+//					var step = i + 1;
+//					pHtmlList +='<li class="step_item">'+
+//						'<div class="step_num">'+ step +' </div>'+
+//						'<div class="step_num_txt">'+
+//							'<div class="mui-input-row">'+
+//								'<label>处理人:</label>'+
+//						        '<textarea name="" rows="" cols="" disabled>'+ item.createBy.name +'</textarea>'+
+//						    '</div>'+
+//							'<br />'+
+//							'<div class="mui-input-row">'+
+//						        '<label>状态:</label>'+
+//						        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
+//						    	'<label>时间:</label>'+
+//						        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
+//						    '</div>'+
+//						'</div>'+
+//					'</li>'
+//				});
+//				$("#staEvoMenu").html(pHtmlList)
+				
+				
+				
+			})
 		},
 		commodityHtml: function(data) {
 			var _this = this;
