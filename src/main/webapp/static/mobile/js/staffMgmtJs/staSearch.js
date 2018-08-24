@@ -20,14 +20,35 @@
 		getData: function() {
 			var _this = this;
 			$('#staffSearchBtn').on('tap', function() {
+				var companyIdVal = $(".newinput").val(); 
+//              var companyNameVal = $("#inPoLastDa").val(); 
+                var loginNameVal = $('.staLogName').val(); 
+                var nameVal = $('.staName').val();
+                var mobielVal = $('.staMobile').val();
+				if(companyIdVal == null ||companyIdVal == ""){
+				    mui.toast("请选择归属公司！")
+                    return;
+                }
+                if(loginNameVal == null || loginNameVal == "") {
+                    mui.toast("请输入登录名！")
+                    return;
+                }
+                if(nameVal == null || nameVal == "") {
+                    mui.toast("请输入姓名！")
+                    return;
+                }
+                if(mobielVal == null || mobielVal == "") {
+                    mui.toast("请输入手机号！")
+                    return;
+                }               
 				if(_this.selectOpen){
-						if($('.hasoid').attr('id')){
-							_this.sureSelect()
-						}else{
-							mui.toast('请选择匹配的选项')
-						}
+					if($('.hasoid').attr('id')){
+						_this.sureSelect()
+					}else{
+						mui.toast('请选择匹配的选项！')
+					}
 				}else{
-					_this.sureSelect()
+					_this.sureSelect();
 				}
 			})
 		},

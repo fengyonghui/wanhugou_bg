@@ -587,8 +587,14 @@ body{font-size: 15px;color:#3b3b3b;}
 .soption {display: block;padding: 2px 5px;}
 .soption:hover {background: #f9f9f9;border-top: 1px dotted #ddd;border-bottom: 1px dotted #ddd;padding: 1px 5px;}
 .mui-input-row input.newinput {padding-left: 0;}
-.app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;    background-color: #40ABE9;border: none;}
+.app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;background-color: #40ABE9;border: none;}
+.app_btn_search:active {
+				color: #fff;
+				border: 1px solid #046d90;
+				background-color: #007aff !important;
+}
 
+#inCheckAddMenu,#addCheckMen,#addDetailMen{padding-left:0;}
 
 /*运营管理后台*/
 .appQuitBtn {background-color: #dd5563;border: none;border-radius: 8px;}
@@ -604,7 +610,7 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*审核公共样式*/
-.app_p20 button {margin-left: 17%;background-color: #007aff;color: #fff;}
+.app_p20 button {margin-left: 17%;background-color: #40ABE9;color: #fff;}
 
 
 /*备货单审核*/
