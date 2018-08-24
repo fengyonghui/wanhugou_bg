@@ -577,13 +577,17 @@ public class BizOrderHeaderController extends BaseController {
         BizPoHeader bizPoHeader = new BizPoHeader();
         bizPoHeader.setBizOrderHeader(bizOrderHeader);
         List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
-        bizPoHeader = poList.get(0);
-        CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
-        poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-        poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-        List<CommonProcessEntity> poAuditList = commonProcessService.findList(poCommonProcessEntity);
+        List<CommonProcessEntity> poAuditList = null;
 
-        if (CollectionUtils.isNotEmpty(poAuditList)) {
+        if (CollectionUtils.isNotEmpty(poList)) {
+            bizPoHeader = poList.get(0);
+            CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
+            poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+            poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+            poAuditList = commonProcessService.findList(poCommonProcessEntity);
+        }
+
+        if (CollectionUtils.isNotEmpty(poAuditList) && CollectionUtils.isNotEmpty(list)) {
             list.remove(list.size() - 1);
             list.addAll(poAuditList);
             list.get(list.size() - 1).setCurrent(1);
