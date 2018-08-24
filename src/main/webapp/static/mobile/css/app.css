@@ -564,7 +564,6 @@ body{font-size: 15px;color:#3b3b3b;}
 .app_text_indt10 {text-indent: 10px;}
 .app_text_indt15 {text-indent: 15px;}
 .app_text_alg_r {text-align: right;}
-.app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;}
 .labelLf {padding: 14px 14px;line-height: 21px;width: 33%}
 .labelri {width: 67%;float: right;padding: 14px 15px;height: auto;line-height: 21px;font-size: 16px;text-align: center;}
 .labelPto {width:30%}
@@ -578,7 +577,7 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*查询页面公共样式*/
-.SearchBtnClass {margin: 60px auto;width: 80%;}
+.SearchBtnClass {margin: 60px auto;width: 70%;}
 .pre {margin-bottom: 0;padding-left: 0;float: right;width: 67%;}
 .newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;background: url(./thumb.jpg) no-repeat scroll right center;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
 .input_div {width: 150px;border: 1px solid #ddd;border-bottom: none;border-radius: 0 0 3px 3px;display: none;}
@@ -588,6 +587,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .soption {display: block;padding: 2px 5px;}
 .soption:hover {background: #f9f9f9;border-top: 1px dotted #ddd;border-bottom: 1px dotted #ddd;padding: 1px 5px;}
 .mui-input-row input.newinput {padding-left: 0;}
+.app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;    background-color: #40ABE9;border: none;}
 
 
 /*运营管理后台*/
