@@ -82,7 +82,7 @@
 					<%--</c:if>--%>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:sure:bizPoPaymentOrder">
-					<c:if test="${fromPage == 'requestHeader' && bizPoPaymentOrder.total == '0.00' && (requestHeader == null || (requestHeader.bizStatus >= ReqHeaderStatusEnum.COMPLETE.state && requestHeader.bizStatus < ReqHeaderStatusEnum.CLOSE.state))}">
+					<c:if test="${fromPage == 'requestHeader' && bizPoPaymentOrder.total == '0.00' && (requestHeader == null || (requestHeader.bizStatus >= ReqHeaderStatusEnum.COMPLETEING.state && requestHeader.bizStatus < ReqHeaderStatusEnum.CLOSE.state))}">
 						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认支付金额</a>
 					</c:if>
 

@@ -422,15 +422,15 @@
                 }
             }
 
-            var ecpectPay = $("#ecpectPay").val();
-            var receiveTotal = $("#receiveTotal").val();
-            var truePayTotal = $("#truePayTotal").val();
-
-            var totalPay = parseFloat(receiveTotal) + parseFloat(truePayTotal)
-            if(totalPay > ecpectPay) {
-                alert("错误提示:输入支付金额太大,请重新输入");
-                return false;
-            }
+            // var ecpectPay = $("#ecpectPay").val();
+            // var receiveTotal = $("#receiveTotal").val();
+            // var truePayTotal = $("#truePayTotal").val();
+            //
+            // var totalPay = parseFloat(receiveTotal) + parseFloat(truePayTotal)
+            // if(totalPay > ecpectPay) {
+            //     alert("错误提示:输入支付金额太大,请重新输入");
+            //     return false;
+            // }
 
             if ($String.isNullOrBlank(payTotal)) {
                 alert("错误提示:请输入支付金额");
