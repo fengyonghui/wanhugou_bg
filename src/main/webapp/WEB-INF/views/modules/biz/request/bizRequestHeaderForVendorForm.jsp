@@ -978,11 +978,11 @@
 				</div>
 			</div>
 		</c:if>
-		<c:if test="${entity.id != null}">
+		<c:if test="${entity.id != null}">${poSchType}
 			<div class="control-group">
 				<label class="control-label">排产状态：</label>
 				<div class="controls">
-					${schedulingType == null ? "未排产" : schedulingType}
+					${fns:getDictLabel(poSchType, 'poSchType', '未排产')}
 				</div>
 			</div>
 		</c:if>

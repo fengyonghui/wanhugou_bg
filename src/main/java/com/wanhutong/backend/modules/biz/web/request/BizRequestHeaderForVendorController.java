@@ -304,25 +304,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
 			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
 		}
-		if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.ORDER.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
-				&& (bizRequestHeader.getBizPoHeader().getTotalSchedulingHeaderNum() == null || bizRequestHeader.getBizPoHeader().getTotalSchedulingHeaderNum() == 0)) {
-			model.addAttribute("schedulingType", BizOrderSchedulingEnum.SCHEDULING_NOT.getDesc());
-		}else if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.ORDER.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
-				&& !bizRequestHeader.getBizPoHeader().getTotalOrdQty().equals(bizRequestHeader.getBizPoHeader().getTotalSchedulingHeaderNum())) {
-			model.addAttribute("schedulingType",BizOrderSchedulingEnum.SCHEDULING_PLAN.getDesc());
-		}else if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.ORDER.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
-				&& bizRequestHeader.getBizPoHeader().getTotalOrdQty().equals(bizRequestHeader.getBizPoHeader().getTotalSchedulingHeaderNum())) {
-			model.addAttribute("schedulingType",BizOrderSchedulingEnum.SCHEDULING_DONE.getDesc());
-		}else if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.SKU.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
-				&& (bizRequestHeader.getBizPoHeader().getTotalSchedulingDetailNum() == null || bizRequestHeader.getBizPoHeader().getTotalSchedulingDetailNum() == 0)) {
-			model.addAttribute("schedulingType", BizOrderSchedulingEnum.SCHEDULING_NOT.getDesc());
-		}else if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.SKU.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
-				&& !bizRequestHeader.getBizPoHeader().getTotalOrdQty().equals(bizRequestHeader.getBizPoHeader().getTotalSchedulingDetailNum())) {
-			model.addAttribute("schedulingType",BizOrderSchedulingEnum.SCHEDULING_PLAN.getDesc());
-		}else if (bizRequestHeader.getBizPoHeader() != null && BizPoHeader.SchedulingType.SKU.getType().equals(bizRequestHeader.getBizPoHeader().getSchedulingType())
-				&& bizRequestHeader.getBizPoHeader().getTotalOrdQty().equals(bizRequestHeader.getBizPoHeader().getTotalSchedulingDetailNum())) {
-			model.addAttribute("schedulingType",BizOrderSchedulingEnum.SCHEDULING_DONE.getDesc());
-		}
+		model.addAttribute("poSchType",bizRequestHeader.getBizPoHeader().getPoSchType());
 
 //		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
 //			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =

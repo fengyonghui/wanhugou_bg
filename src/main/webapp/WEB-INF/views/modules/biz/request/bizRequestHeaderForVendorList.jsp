@@ -165,6 +165,11 @@
 					<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
+			<li><label>审核状态</label>
+				<select class="input-medium">
+					<option></option>
+				</select>
+			</li>
 			<li><label>品类名称：</label>
 				<form:select id="varietyInfoId" about="choose" path="varietyInfo.id" class="input-medium">
 					<form:option value="" label="请选择"/>

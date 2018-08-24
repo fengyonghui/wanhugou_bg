@@ -157,6 +157,7 @@
 		<sys:message content="${message}"/>
 		<form:hidden path="ship"/>
 		<form:hidden path="bizStatus"/>
+		<input name="source" type="hidden" value="new"/>
 		<input type="hidden" name="isConfirm" value="1"/>
 		<c:if test="${bizInvoice.id != null && bizInvoice.id != ''}">
 			<div class="control-group">

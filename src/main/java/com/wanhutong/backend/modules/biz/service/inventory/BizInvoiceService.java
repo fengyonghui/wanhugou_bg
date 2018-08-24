@@ -175,7 +175,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String[] oheaders = orders[a].split("#");
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(Integer.parseInt(oheaders[0]));
                 //加入中间表关联关系
-                if (BizInvoice.IsConfirm.NO.getIsConfirm().equals(bizInvoice.getIsConfirm()) && !ordId.equals(orderHeader.getId())) {
+                if ((BizInvoice.IsConfirm.NO.getIsConfirm().equals(bizInvoice.getIsConfirm()) || "new".equals(bizInvoice.getSource())) && !ordId.equals(orderHeader.getId())) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                     bizDetailInvoice.setInvoice(bizInvoice);
                     bizDetailInvoice.setOrderHeader(orderHeader);
@@ -396,7 +396,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String[] rheaders = requests[b].split("#".trim());
                 BizRequestHeader requestHeader = bizRequestHeaderService.get(Integer.parseInt(rheaders[0]));
                 //加入中间表关联关系
-                if (BizInvoice.IsConfirm.NO.getIsConfirm().equals(bizInvoice.getIsConfirm()) && !reqId.equals(requestHeader.getId())) {
+                if ((BizInvoice.IsConfirm.NO.getIsConfirm().equals(bizInvoice.getIsConfirm()) || "new".equals(bizInvoice.getSource())) && !reqId.equals(requestHeader.getId())) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                     bizDetailInvoice.setInvoice(bizInvoice);
                     bizDetailInvoice.setRequestHeader(requestHeader);

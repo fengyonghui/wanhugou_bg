@@ -94,6 +94,11 @@ public class BizInvoice extends DataEntity<BizInvoice> {
      */
 	private Integer isConfirm;
 
+	/**
+	 * 用于判断页面新增发货单（source = new）
+	 */
+	private String source;
+
 
 	public BizInvoice() {
 		super();
@@ -347,7 +352,15 @@ public class BizInvoice extends DataEntity<BizInvoice> {
         this.str = str;
     }
 
-    public enum BizStatus {
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public enum BizStatus {
 
         /**
          * 采购中心发货

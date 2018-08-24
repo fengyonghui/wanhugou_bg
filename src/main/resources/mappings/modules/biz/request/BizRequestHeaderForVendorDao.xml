@@ -42,7 +42,6 @@
 		process.processor AS "commonProcess.processor",
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
-		a.scheduling_type AS "schedulingType",
 		bph.id AS "bizPoHeader.id",
 		bph.process_id AS "bizPoHeader.process_id",
 		cp.id AS "bizPoHeader.commonProcess.id",
