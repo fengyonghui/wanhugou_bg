@@ -475,7 +475,7 @@
                 }
             }
 
-            window.location.href="${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader";
+            window.location.href="${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal  + "&payDeadline=" + payDeadline + "&fromPage=orderHeader";
 
             <%--$("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader");--%>
             <%--$("#inputForm").submit();--%>
@@ -1056,7 +1056,7 @@
         </div>
 
     <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList == null}">
-        <div class="control-group">
+        <div class="control-group" >
             <label class="control-label">审核状态：</label>
             <div class="controls">
                 <input type="text" disabled="disabled"

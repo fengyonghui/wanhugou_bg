@@ -489,9 +489,7 @@
 			</c:if>
 
 			<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PURCHASE_ORDER.state}">
-				<c:if test="${(orderHeader.commonProcess.type == '666' || orderHeader.commonProcess.type == '777')
-						&& orderHeader.bizPoHeader.id != null
-				        && orderHeader.bizPoHeader.id != 0
+				<c:if test="${orderHeader.bizPoHeader.id != null && orderHeader.bizPoHeader.id != 0
 				}">
 					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
