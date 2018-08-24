@@ -124,7 +124,7 @@
 							    <a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&str=audit">确认发货单</a>
                             </c:if>
 							<c:if test="${bizInvoice.freight == '0.00'}">
-								<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&str =freight">添加运费</a>
+								<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&str=freight">添加运费</a>
 							</c:if>
 						</shiro:hasPermission>
 						<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&source=xq">发货单详情</a>

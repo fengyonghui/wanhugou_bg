@@ -108,7 +108,8 @@
 			u_version,
 			update_id,
 			update_time,
-			remark
+			remark,
+			po_sch_type
 		) VALUES (
 			#{id},
 			#{objectName},
@@ -120,7 +121,8 @@
 			#{uVersion},
 			#{updateBy.id},
 			#{updateDate},
-			#{remark}
+			#{remark},
+			#{poSchType}
 		)
 	</insert>
 	
@@ -133,7 +135,8 @@
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate},
-			remark = #{remark}
+			remark = #{remark},
+			po_sch_type = #{poSchType}
 		WHERE id = #{id}
 	</update>
 	

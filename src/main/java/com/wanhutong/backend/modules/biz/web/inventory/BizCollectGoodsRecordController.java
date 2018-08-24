@@ -101,7 +101,7 @@ public class BizCollectGoodsRecordController extends BaseController {
 //		}
 		bizCollectGoodsRecordService.save(bizCollectGoodsRecord);
 		addMessage(redirectAttributes, "保存收货记录成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestAll/?source=sh&ship=bh";
+		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestAll/?source=sh&ship=bh&bizStatu=0";
 	}
 	
 	@RequiresPermissions("biz:inventory:bizCollectGoodsRecord:edit")

@@ -116,7 +116,7 @@
                     }
 
                     if(bizStatus==0){
-                        var selecttd="<select class='input-mini' title='invInfoId'><option value='"+data.inventoryInfoList[0].id+"'>"+data.inventoryInfoList[0].name+"</option>";
+                        var selecttd="<select class='input-mini' title='invInfoId'>";
                         $.each(data.inventoryInfoList,function (index,inventory) {
                             selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
                         });
@@ -187,6 +187,7 @@
 <form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save" method="post" class="form-horizontal">
     <sys:message content="${message}"/>
     <form:hidden path="ship" value="0"/>
+    <form:hidden path="isConfirm" value="1"/>
     <form:hidden path="bizStatus" value="0"/>
 
     <div class="control-group">

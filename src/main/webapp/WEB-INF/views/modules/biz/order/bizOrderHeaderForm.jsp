@@ -421,6 +421,17 @@
                     img += $(mainImg[i]).attr("src") + ",";
                 }
             }
+
+            // var ecpectPay = $("#ecpectPay").val();
+            // var receiveTotal = $("#receiveTotal").val();
+            // var truePayTotal = $("#truePayTotal").val();
+            //
+            // var totalPay = parseFloat(receiveTotal) + parseFloat(truePayTotal)
+            // if(totalPay > ecpectPay) {
+            //     alert("错误提示:输入支付金额太大,请重新输入");
+            //     return false;
+            // }
+
             if ($String.isNullOrBlank(payTotal)) {
                 alert("错误提示:请输入支付金额");
                 return false;
@@ -445,6 +456,29 @@
                     console.info(error);
                 }
             });
+        }
+    </script>
+
+    <script type="text/javascript">
+        function saveMon(type) {
+            if (type == 'createPay') {
+                var payTotal = $("#payTotal").val();
+                var payDeadline = $("#payDeadline").val();
+                var id = $("#poHeaderId").val();
+                if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
+                    alert("请输入申请金额!");
+                    return false;
+                }
+                if ($String.isNullOrBlank(payDeadline)) {
+                    alert("请选择本次申请付款时间!");
+                    return false;
+                }
+            }
+
+            window.location.href="${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal  + "&payDeadline=" + payDeadline + "&fromPage=orderHeader";
+
+            <%--$("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader");--%>
+            <%--$("#inputForm").submit();--%>
         }
     </script>
 
@@ -710,7 +744,9 @@
                 contentType: 'application/json',
                 data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
                 type: 'get',
+                async: false,
                 success: function (result) {
+                    alert("操作成功！");
                     if(result == 'ok') {
                         if(auditType==1){
                             //自动生成采购单
@@ -720,7 +756,6 @@
                                 getPoHeaderPara(id);
                             }
                         }
-                        alert("操作成功！");
                         window.location.href = "${ctx}/biz/order/bizOrderHeader";
                     }else {
                         alert("操作失败！");
@@ -791,6 +826,7 @@
                 data: {"orderId": id, "type": "2"},
                 type: 'get',
                 dataType: 'json',
+                async: false,
                 success: function (result) {
                     var reqDetailIds = result['unitPrices'];
                     if (reqDetailIds == "") {
@@ -817,6 +853,7 @@
                 contentType: 'application/json',
                 data: {"reqDetailIds":"", "orderDetailIds": orderDetailIds,"vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
                 type: 'get',
+                async: false,
                 success: function (res) {
                     if (res == "ok") {
 
@@ -882,6 +919,7 @@
     <input type="hidden" id="suplys" value="${entity.suplys}"/>
     <input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
     <input type="hidden" value="${entity.bizPoPaymentOrder.id}" id="paymentOrderId"/>
+    <input type="hidden" name="receiveTotal" value="${bizOrderHeader.receiveTotal}" />
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
@@ -953,7 +991,7 @@
         <div class="control-group">
             <label class="control-label">应付金额：</label>
             <div class="controls">
-                <input type="text" value="<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight}" pattern="0.00"/>"
+                <input type="text" id="ecpectPay" value="<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight}" pattern="0.00"/>"
                        disabled="true" class="input-xlarge">
             </div>
         </div>
@@ -965,6 +1003,30 @@
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
+
+    <c:if test="${entity.bizPoPaymentOrder.id != null || entity.str == 'createPay'}">
+        <div class="control-group">
+            <label class="control-label">申请金额：</label>
+            <div class="controls">
+                <input id="payTotal" name="planPay" type="text"
+                       <c:if test="${entity.str == 'audit' || entity.str == 'pay'}">readonly</c:if>
+                       value="${entity.bizPoPaymentOrder.id != null ?
+                           entity.bizPoPaymentOrder.total : (entity.totalDetail-(entity.bizPoHeader.payTotal == null ? 0 : entity.bizPoHeader.payTotal))}"
+                       htmlEscape="false" maxlength="30" class="input-xlarge"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">本次申请付款时间：</label>
+            <div class="controls">
+                <input name="payDeadline" id="payDeadline" type="text" readonly="readonly" maxlength="20"
+                       class="input-medium Wdate required"
+                       value="<fmt:formatDate value="${entity.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+                        <c:if test="${entity.str == 'createPay'}"> onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"</c:if>
+                       placeholder="必填！"/>
+            </div>
+        </div>
+    </c:if>
+
     <c:if test="${source ne 'vendor'}">
         <div class="control-group">
             <label class="control-label">服务费：</label>
@@ -993,33 +1055,33 @@
             </div>
         </div>
 
-        <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList == null}">
-            <div class="control-group">
-                <label class="control-label">审核状态：</label>
-                <div class="controls">
-                    <input type="text" disabled="disabled"
-                           value="${orderHeaderProcess.name}" htmlEscape="false"
-                           maxlength="30" class="input-xlarge "/>
-                    <input id="currentType" type="hidden" disabled="disabled"
-                           value="${orderHeaderProcess.code}" htmlEscape="false"
-                           maxlength="30" class="input-xlarge "/>
-                </div>
+    <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList == null}">
+        <div class="control-group" style="display: none" >
+            <label class="control-label">审核状态：</label>
+            <div class="controls">
+                <input type="text" disabled="disabled"
+                       value="${orderHeaderProcess.name}" htmlEscape="false"
+                       maxlength="30" class="input-xlarge "/>
+                <input id="currentType" type="hidden" disabled="disabled"
+                       value="${orderHeaderProcess.code}" htmlEscape="false"
+                       maxlength="30" class="input-xlarge "/>
             </div>
-        </c:if>
+        </div>
+    </c:if>
 
-        <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
-            <div class="control-group">
-                <label class="control-label">审核状态：</label>
-                <div class="controls">
-                    <input type="text" disabled="disabled"
-                           value="${purchaseOrderProcess.name}" htmlEscape="false"
-                           maxlength="30" class="input-xlarge "/>
-                    <input id="poCurrentType" type="hidden" disabled="disabled"
-                           value="${purchaseOrderProcess.code}" htmlEscape="false"
-                           maxlength="30" class="input-xlarge "/>
-                </div>
+    <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
+        <div class="control-group" style="display: none">
+            <label class="control-label">审核状态：</label>
+            <div class="controls">
+                <input type="text" disabled="disabled"
+                       value="${purchaseOrderProcess.name}" htmlEscape="false"
+                       maxlength="30" class="input-xlarge "/>
+                <input id="poCurrentType" type="hidden" disabled="disabled"
+                       value="${purchaseOrderProcess.code}" htmlEscape="false"
+                       maxlength="30" class="input-xlarge "/>
             </div>
-        </c:if>
+        </div>
+    </c:if>
 
         <div class="control-group">
             <label class="control-label">业务状态：</label>
@@ -1434,25 +1496,29 @@
                 </div>
             </div>
         </c:if>
-  <c:if test="${fn:length(auditList) > 0}">
+        <c:if test="${fn:length(auditList) > 0}">
             <div class="control-group">
                 <label class="control-label">审核流程：</label>
                 <div class="controls help_wrap">
                     <div class="help_step_box fa">
                         <c:forEach items="${auditList}" var="v" varStatus="stat">
-                            <c:if test="${v.current == 0}" >
+                            <c:if test="${v.current != 1}" >
                                 <div class="help_step_item">
                                     <div class="help_step_left"></div>
                                     <div class="help_step_num">${stat.index + 1}</div>
                                     处理人:${v.user.name}<br/><br/>
                                     批注:${v.description}<br/><br/>
                                     状态:
-                                    <c:if test="${type == 1}">
+                                    <c:if test="${v.objectName == 'ORDER_HEADER_SO_LOCAL'}">
                                     ${v.jointOperationLocalProcess.name}
                                     </c:if>
-                                    <c:if test="${type == 0}">
+                                    <c:if test="${v.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
                                         ${v.jointOperationOriginProcess.name}
-                                    </c:if><br/>
+                                    </c:if>
+                                    <c:if test="${v.objectName == 'biz_po_header'}">
+                                        ${v.purchaseOrderProcess.name}
+                                    </c:if>
+                                    <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     <div class="help_step_right"></div>
                                 </div>
@@ -1462,12 +1528,15 @@
                                     <div class="help_step_left"></div>
                                     <div class="help_step_num">${stat.index + 1}</div>
 
-                                    状态:
-                                    <c:if test="${type == 1}">
+                                    当前状态:
+                                    <c:if test="${v.objectName == 'ORDER_HEADER_SO_LOCAL'}">
                                         ${v.jointOperationLocalProcess.name}
                                     </c:if>
-                                    <c:if test="${type == 0}">
+                                    <c:if test="${v.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
                                         ${v.jointOperationOriginProcess.name}
+                                    </c:if>
+                                    <c:if test="${v.objectName == 'biz_po_header'}">
+                                        ${v.purchaseOrderProcess.name}
                                     </c:if>
                                     <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
@@ -1546,6 +1615,40 @@
                 </div>
             </div>
         </c:if>
+    <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
+        <div class="control-group">
+            <div class="controls">
+                <div style="float:left;color: red;font-size: medium;margin-right: 50px">
+                    甲方(经销店):${entity2.customer.name}<br>
+                    负责人:${custUser.name}<br>
+                    <c:if test="${source ne 'vendor'}">联系电话:${custUser.mobile}</c:if>
+                </div>
+                <div style="float:left;color: red;font-size: medium;margin-right: 50px">
+                    乙方(供应商):${vendUser.vendor.name}<br>
+                    负责人:${vendUser.name}<br>
+                    联系电话:${vendUser.mobile}
+                </div>
+                <div style="float:left;color: red;font-size: medium;margin-right: 50px">
+                    丙方(万户通):万户通总公司<br>
+                    负责人:${orderCenter.consultants.name}<br>
+                    联系电话:${orderCenter.consultants.mobile}
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="controls">
+                <div style="float:left;color: red;font-size: medium;margin-right: 50px">
+                    注：<br>
+                    （1）本订单作为丙方采购、验货和收货的依据，丙方可持本订单及付款凭证到甲方的仓库提货。
+                    （2）本订单商品价格为未含税价，如果丙方需要发票，则乙方有义务提供正规发票，税点由丙方承担。
+                    （3）乙方负责处理在甲方平台上销售的全部商品的质量问题和售后服务问题，由乙丙双方自行解决；甲方可配合协调处理；
+                    （4）本订单在万户通平台经甲、乙、丙三方线上确认后生效，与纸质盖章订单具有同等的法律效力。在系统出现故障时，甲、乙、丙三方也可采用纸质订单签字或盖章后生效。
+                </div>
+            </div>
+        </div>
+
+    </c:if>
     <c:if test="${entity.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
     <div class="control-group">
         <label class="control-label">付款约定：</label>
@@ -1673,7 +1776,7 @@
             <div class="form-actions">
                 <!-- 一单到底订单审核 -->
                 <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-                    <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
+                    <c:if test="${entity.str == 'audit' && entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
                         <c:if test="${entity.bizPoHeader.commonProcessList == null}">
                             <input id="btnSubmit" type="button" onclick="checkPass('DO')" class="btn btn-primary"
                                    value="审核通过"/>
@@ -1693,28 +1796,48 @@
                     </c:if>
 
                     <c:if test="${entity.str == 'audit' && (type != 0 || type != 1)}">
-                        <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && entity.bizPoHeader.commonProcessList == null}">
+                        <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && currentAuditStatus.type != 777 && currentAuditStatus.type != 666}">
                                 <input type="button" onclick="checkPass('JO')" class="btn btn-primary"
-                                       value="审核通过"/>
+                                       value="通过"/>
                                 <input type="button" onclick="checkReject('JO')" class="btn btn-primary"
-                                       value="审核驳回"/>
+                                       value="驳回"/>
                         </c:if>
                     </c:if>
 
                     <c:if test="${entity.str == 'pay'}">
                         <input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
                     </c:if>
+
+                    <c:if test="${entity.str == 'createPay'}">
+                        <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>
+                    </c:if>
                 </shiro:hasPermission>
 
                     <!-- 一单到底，采购单审核 -->
                     <shiro:hasPermission name="biz:po:bizPoHeader:audit">
                         <c:if test="${entity.str == 'audit'}">
-                            <c:if test="${entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
+                        <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                            <c:if test="${entity.bizPoHeader.commonProcessList != null
+                            && fn:length(entity.bizPoHeader.commonProcessList) > 0
+                            && (currentAuditStatus.type == 777 || currentAuditStatus.type == 666)
+                            }">
                                 <input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"
                                        value="审核通过"/>
                                 <input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"
                                        value="审核驳回"/>
                             </c:if>
+                        </c:if>
+
+                        <c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+                            <c:if test="${entity.bizPoHeader.commonProcessList != null
+                            && fn:length(entity.bizPoHeader.commonProcessList) > 0
+                            }">
+                                <input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"
+                                       value="审核通过"/>
+                                <input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"
+                                       value="审核驳回"/>
+                            </c:if>
+                        </c:if>
                         </c:if>
                     </shiro:hasPermission>
 
@@ -1765,7 +1888,7 @@
         </c:if>
         <th>创建时间</th>
         <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-            <c:if test="${entity.str != 'audit'}">
+            <c:if test="${entity.str != 'audit' && entity.str!='detail' && entity.str!='createPay'}">
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                     <th>操作</th>
                 </c:if>

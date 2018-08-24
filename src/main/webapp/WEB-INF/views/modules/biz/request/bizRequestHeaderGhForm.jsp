@@ -1,3 +1,4 @@
+<%@ taglib prefix="s" uri="http://www.opensymphony.com/sitemesh/decorator" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
@@ -58,7 +59,33 @@
 			/>			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>
-
+	<c:if test="${invoiceList != null && bizStatu != 0}">
+		<div class="control-group">
+			<label class="control-label">集货信息：</label>
+			<div class="controls">
+				<table class="table table-striped table-bordered table-condensed">
+					<thead>
+						<tr>
+							<th>集货地点</th>
+							<th>验货员</th>
+							<th>验货时间</th>
+							<th>验货备注</th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach items="${invoiceList}" var="invoice">
+							<tr>
+								<td>${fns:getDictLabel(invoice.collLocate, 'coll_locate', '')}</td>
+								<td>${invoice.inspector.name}</td>
+								<td><fmt:formatDate value="${invoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/></td>
+								<td><textarea>${invoice.inspectRemark}</textarea></td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</c:if>
 	<div class="control-group">
 		<label class="control-label">备货商品：</label>
 		<div class="controls">
@@ -73,13 +100,18 @@
 					<th>供应商电话</th>
 					<th>品牌</th>
 					<th>申报数量</th>
-					<th>已供货数量</th>
+					<c:if test="${bizStatu == 0}">
+						<th>已收数量</th>
+					</c:if>
+					<c:if test="${bizStatu != 0}">
+						<th>已供货数量</th>
+					</c:if>
 					<c:if test="${not empty source && source eq 'gh'}">
 						<%--该备货单已生成采购单就显示--%>
-						<c:if test="${empty bizRequestHeader.poSource}">
-							<th>已生成的采购单</th>
-							<th>采购数量</th>
-						</c:if>
+						<%--<c:if test="${empty bizRequestHeader.poSource}">--%>
+							<%--<th>已生成的采购单</th>--%>
+							<%--<th>采购数量</th>--%>
+						<%--</c:if>--%>
 					</c:if>
 				</tr>
 				</thead>
@@ -101,16 +133,23 @@
 							<td>
 								<input   value="${reqDetail.reqQty}" readonly="readonly" class="input-medium" type='text'/>
 							</td>
-							<td>
-								<input  value="${reqDetail.sendQty}" readonly="readonly" class="input-medium" type='text'/>
-							</td>
+							<c:if test="${bizStatu == 0}">
+								<td>
+									<input  value="${reqDetail.recvQty}" readonly="readonly" class="input-medium" type='text'/>
+								</td>
+							</c:if>
+							<c:if test="${bizStatu != 0}">
+								<td>
+									<input  value="${reqDetail.sendQty}" readonly="readonly" class="input-medium" type='text'/>
+								</td>
+							</c:if>
 
 							<c:if test="${not empty source && source eq 'gh'}">
 								<%--该备货单已生成采购单就显示--%>
-								<c:if test="${reqDetail.bizPoHeader!=null}">
-									<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}&str=detail">${reqDetail.bizPoHeader.orderNum}</a></td>
-									<td>${reqDetail.reqQty}</td>
-								</c:if>
+								<%--<c:if test="${reqDetail.bizPoHeader!=null}">--%>
+									<%--<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}&str=detail">${reqDetail.bizPoHeader.orderNum}</a></td>--%>
+									<%--<td>${reqDetail.reqQty}</td>--%>
+								<%--</c:if>--%>
 							</c:if>
 
 						</tr>

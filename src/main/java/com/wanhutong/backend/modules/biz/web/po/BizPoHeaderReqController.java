@@ -557,8 +557,8 @@ public class BizPoHeaderReqController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "audit")
     @ResponseBody
-    public String audit(HttpServletRequest request, int id, String currentType, int auditType, String description, String fromPage) {
-        Pair<Boolean, String> result = bizPoHeaderService.auditPo(id, currentType, auditType, description, fromPage);
+    public String audit(HttpServletRequest request, int id, String currentType, int auditType, String description) {
+        Pair<Boolean, String> result = bizPoHeaderService.auditPo(id, currentType, auditType, description);
         if (result.getLeft()) {
             return JsonUtil.generateData(result, request.getParameter("callback"));
         }
@@ -686,11 +686,16 @@ public class BizPoHeaderReqController extends BaseController {
 
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "savePoHeader")
-    public String savePoHeader(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
+    public String savePoHeader(HttpServletRequest request, BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
+        String fromPage = request.getParameter("fromPage");
         if ("createPay".equalsIgnoreCase(type)) {
             String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
             addMessage(redirectAttributes, msg);
-            return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";
+            String toPage = "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";
+            if ("orderHeader".equals(fromPage)) {
+                toPage = "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage";
+            }
+            return toPage;
         }
 
         if (!beanValidator(model, bizPoHeader)) {

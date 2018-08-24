@@ -158,5 +158,16 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<!-- 通过po单子获取销售采购备货中间表 -->
+	<select id="getByPo" resultType="BizPoOrderReq">
+		SELECT
+		a.id AS "id",
+		a.so_type AS "soType"
+		FROM biz_po_order_req a
+		 LEFT JOIN biz_po_header bph on bph.id = a.po_id
+		WHERE bph.id=#{bphId}
+		group by a.id
+	</select>
 	
 </mapper>

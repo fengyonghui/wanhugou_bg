@@ -50,9 +50,6 @@ public abstract class ConfigGeneral {
 	public static final ConfigWrapper<PurchaseOrderProcessConfig> PURCHASE_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
 			"PurchaseOrderProcessConfig.xml",new PurchaseOrderProcessConfig());
 
-//	public static final ConfigWrapper<PurchaseOrderProcessConfig> PURCHASE_ORDER_PROCESS_CONFIG_FOR_ORDER_HEADER = new ConfigWrapper<>(
-//			"PurchaseOrderProcessForOrderHeaderConfig.xml",new PurchaseOrderProcessConfig());
-
 	public static final ConfigWrapper<RequestOrderProcessConfig> REQUEST_ORDER_PROCESS_CONFIG = new ConfigWrapper<RequestOrderProcessConfig>(
 			"RequestOrderProcessConfig.xml",new RequestOrderProcessConfig());
 

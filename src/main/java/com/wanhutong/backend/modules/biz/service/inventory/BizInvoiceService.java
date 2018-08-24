@@ -122,13 +122,13 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         boolean flagRequest = true;        //备货单完成状态
         boolean flagOrder = true;        //销售单完成状态
         boolean flagPo = true;     //采购单完成状态
-        boolean flagInvoceId = bizInvoice.getId() == null ? true : false;
+        User user = UserUtils.getUser();
         //修改发货单
         if (bizInvoice.getId() != null) {
             BizInvoice invoice = bizInvoiceDao.get(bizInvoice.getId());
             invoice.setTrackingNumber(bizInvoice.getTrackingNumber());
             invoice.setFreight(bizInvoice.getFreight());
-            invoice.setCarrier(bizInvoice.getCarrier());
+            invoice.setCarrier(user.getName());
             invoice.setSettlementStatus(bizInvoice.getSettlementStatus());
             invoice.setSendDate(bizInvoice.getSendDate());
             invoice.setRemarks(bizInvoice.getRemarks());
@@ -137,6 +137,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             invoice.setInspectRemark(bizInvoice.getInspectRemark());
             invoice.setCollLocate(bizInvoice.getCollLocate());
             invoice.setSendDate(bizInvoice.getSendDate());
+            invoice.setIsConfirm(bizInvoice.getIsConfirm());
             if ("audit".equals(bizInvoice.getStr())) {
                 invoice.setCarrier(UserUtils.getUser().getName());
             }
@@ -147,12 +148,14 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 //            saveCommonImg(bizInvoice);
         } else {
             // 取出当前用户所在机构，
-            User user = UserUtils.getUser();
             Office company = officeService.get(user.getCompany().getId());
             //采购商或采购中心
+            if ("new".equals(bizInvoice.getSource())) {
+                bizInvoice.setCarrier(user.getName());
+            }
 //        Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
             bizInvoice.setSendNumber("");
-            bizInvoice.setIsConfirm(BizInvoice.IsConfirm.NO.getIsConfirm());
+            bizInvoice.setIsConfirm(bizInvoice.getIsConfirm());
             super.save(bizInvoice);
             bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE, company.getId(), 0, bizInvoice.getId()));
             super.save(bizInvoice);
@@ -175,7 +178,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String[] oheaders = orders[a].split("#");
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(Integer.parseInt(oheaders[0]));
                 //加入中间表关联关系
-                if (flagInvoceId && !ordId.equals(orderHeader.getId())) {
+                if ((BizInvoice.IsConfirm.NO.getIsConfirm().equals(bizInvoice.getIsConfirm()) || "new".equals(bizInvoice.getSource())) && !ordId.equals(orderHeader.getId())) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                     bizDetailInvoice.setInvoice(bizInvoice);
                     bizDetailInvoice.setOrderHeader(orderHeader);
@@ -383,7 +386,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     }
                 }
             }
-            bizInvoice.setValuePrice(bizInvoice.getValuePrice() == null ? 0 : bizInvoice.getValuePrice() + valuePrice);
+            if ("new".equals(bizInvoice.getSource())) {
+                bizInvoice.setValuePrice(valuePrice);
+            } else {
+                bizInvoice.setValuePrice(bizInvoice.getValuePrice() == null ? 0 : bizInvoice.getValuePrice() + valuePrice);
+            }
             super.save(bizInvoice);
         }
 
@@ -396,7 +403,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String[] rheaders = requests[b].split("#".trim());
                 BizRequestHeader requestHeader = bizRequestHeaderService.get(Integer.parseInt(rheaders[0]));
                 //加入中间表关联关系
-                if (flagInvoceId && !reqId.equals(requestHeader.getId())) {
+                if ((BizInvoice.IsConfirm.NO.getIsConfirm().equals(bizInvoice.getIsConfirm()) || "new".equals(bizInvoice.getSource())) && !reqId.equals(requestHeader.getId())) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                     bizDetailInvoice.setInvoice(bizInvoice);
                     bizDetailInvoice.setRequestHeader(requestHeader);
@@ -518,7 +525,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     }
                 }
             }
-            bizInvoice.setValuePrice(bizInvoice.getValuePrice() == null ? 0 : bizInvoice.getValuePrice() + valuePrice);
+            if ("new".equals(bizInvoice.getSource())) {
+                bizInvoice.setValuePrice(valuePrice);
+            } else {
+                bizInvoice.setValuePrice(bizInvoice.getValuePrice() == null ? 0 : bizInvoice.getValuePrice() + valuePrice);
+            }
             super.save(bizInvoice);
         }
     }
@@ -652,22 +663,28 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 orderDetail.setSuplyis(new Office(0));
                 List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(orderDetail);
                 StringBuilder sb = new StringBuilder();
+                sb.append(orderHeader.getId()).append("#");
                 for (BizOrderDetail bizOrderDetail : orderDetailList) {
-                    sb.append(orderHeader.getId()).append("#").append(bizOrderDetail.getId()).append("-").append("0").append("*").append(",");
+                    sb.append(bizOrderDetail.getId()).append("-").append("0").append("*");
                 }
+                sb.append(",");
                 invoice.setOrderHeaders(sb.toString());
                 invoice.setShip(BizInvoice.Ship.SO.getShip());
+                invoice.setIsConfirm(BizInvoice.IsConfirm.NO.getIsConfirm());
             } else {
                 BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizPoOrderReq.getSoId());
                 BizRequestDetail requestDetail = new BizRequestDetail();
                 requestDetail.setRequestHeader(bizRequestHeader);
                 List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(requestDetail);
                 StringBuilder sb = new StringBuilder();
+                sb.append(bizRequestHeader.getId()).append("#");
                 for (BizRequestDetail bizRequestDetail : requestDetailList) {
-                    sb.append(bizRequestHeader.getId()).append("#").append(bizRequestDetail.getId()).append("-").append("0").append("*").append(",");
+                    sb.append(bizRequestDetail.getId()).append("-").append("0").append("*");
                 }
+                sb.append(",");
                 invoice.setRequestHeaders(sb.toString());
                 invoice.setShip(BizInvoice.Ship.RE.getShip());
+                invoice.setIsConfirm(BizInvoice.IsConfirm.NO.getIsConfirm());
             }
             this.save(invoice);
         }

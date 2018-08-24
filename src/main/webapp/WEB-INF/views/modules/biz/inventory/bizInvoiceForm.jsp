@@ -167,9 +167,9 @@
                                 }
                                 tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
                                 if(detail.ordQty==detail.sentQty){
-                                    tr_tds+="<td><input type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
+                                    tr_tds+="<td><input type='text' title='sent_"+orderHeader.id+"' name='' onchange='checkNum(" + detail.ordQty + "," + detail.sentQty + ",this)' value='0'></td>";
                                 }else {
-                                    tr_tds+="<td><input type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
+                                    tr_tds+="<td><input type='text' title='sent_"+orderHeader.id+"' name='' onchange='checkNum(" + detail.ordQty + "," + detail.sentQty + ",this)' value='0'></td>";
                                 }
 
                                 tr_tds+="</tr>";
@@ -216,6 +216,8 @@
 		<sys:message content="${message}"/>		
 		<form:hidden path="ship"/>
 		<form:hidden path="bizStatus"/>
+		<input name="source" type="hidden" value="new"/>
+		<input type="hidden" name="isConfirm" value="1"/>
 		<c:if test="${bizInvoice.id != null && bizInvoice.id != ''}">
 			<div class="control-group">
 				<label class="control-label">发货单号：</label>
@@ -231,13 +233,13 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-        <div class="control-group">
-            <label class="control-label">运费：</label>
-            <div class="controls">
-                <form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
-                <span class="help-inline"><font color="red">*</font> </span>
-            </div>
-        </div>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">运费：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>--%>
+                <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+            <%--</div>--%>
+        <%--</div>--%>
 		<div class="control-group">
 			<label class="control-label">验货员：</label>
 			<div class="controls">
