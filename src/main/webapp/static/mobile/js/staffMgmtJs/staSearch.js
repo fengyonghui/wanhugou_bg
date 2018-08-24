@@ -38,6 +38,7 @@
 				url: "../../html/staffMgmtHtml/staffList.html",
 				extras: {
 					companyId: $('.hasoid').attr('id'),
+					companyName: $('.hasoid').attr('name'),
 					loginName: $('.staLogName').val(),
 					name: $('.staName').val(),
 					mobile: $('.staMobile').val(),
@@ -63,7 +64,7 @@
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
 			$(cpySchHideSpan).on('click', function() {
-				$(input_div).find('hasoid').removeClass('hasoid')
+//				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
 				$(cpySchHideSpan).hide()
 			})
@@ -86,7 +87,7 @@
 				})
 			$.each(reult, function(i, item) {
 //				console.log(item)
-				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
+				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="'+item.name+'">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
 		},
@@ -105,7 +106,7 @@
 					_this.datagood = res
 					$.each(res, function(i, item) {
 //						console.log(item)
-						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
+						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="'+item.name+'">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlList)
 				}

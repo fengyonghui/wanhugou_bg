@@ -20,57 +20,44 @@
 			var _this = this;
 			$.ajax({
                 type: "GET",
-                url: "/a/biz/request/bizRequestHeader/form4Mobile",
-                data: {id:_this.userInfo.inListId},
+                url: "/a/biz/order/bizOrderHeader/listData4mobile",
+                data: {id:_this.userInfo.staOrdListId},
                 dataType: "json",
                 success: function(res){
-//					console.log(res)
-					/*业务状态*/
-						var bizstatus = res.bizStatus;
-						var bizstatusTxt = '';
-						if(bizstatus==0) {
-							bizstatusTxt = "未审核"
-						}else if(bizstatus==1) {
-							bizstatusTxt = "首付支付"
-						}else if(bizstatus==2) {
-							bizstatusTxt = "全部支付"
-						}else if(bizstatus==4) {
-							bizstatusTxt = "审核中"
-						}else if(bizstatus==5) {
-							bizstatusTxt = "审核通过"
-						}else if(bizstatus==6) {
-							bizstatusTxt = "审批中"
-						}else if(bizstatus==7) {
-							bizstatusTxt = "审批完成"
-						}else if(bizstatus==10) {
-							bizstatusTxt = "采购中"
-						}else if(bizstatus==13) {
-							bizstatusTxt = "部分结算"
-						}else if(bizstatus==15) {
-							bizstatusTxt = "采购完成"
-						}else if(bizstatus==20) {
-							bizstatusTxt = "备货中"
-						}else if(bizstatus==25) {
-							bizstatusTxt = "供货完成"
-						}else if(bizstatus==30) {
-							bizstatusTxt = "收货完成"
-						}else if(bizstatus==37) {
-							bizstatusTxt = "结算完成"
-						}else if(bizstatus==40) {
-							bizstatusTxt = "取消"
-						}else {
-							bizstatusTxt = "未知类型"
+					console.log(res)
+					$.each(res.data.page.list, function(i, item) {
+						console.log(item)
+						var shouldPay = item.totalDetail + item.totalExp + item.freight;
+						var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
+						//发票状态
+						var invStatusTxt = '';
+						if(item.invStatus==0) {
+							invStatusTxt = "不开发票"					
 						}
-					
-					$('#inPoDizstatus').val(bizstatusTxt)
-					$('#inPoordNum').val(res.data.entity.reqNo)
-					$('#inOrordNum').val(res.data.entity.fromOffice.name)
-					$('#inPototal').val(res.data.entity.totalMoney)
-					$('#inMoneyReceive').val(res.data.entity.recvQtys)
-					$('#inMarginLevel').val(res.data.entity.recvTotal + '%')
-					$('#inPoLastDa').val(_this.formatDateTime(res.data.entity.recvEta))
-					_this.commodityHtml(res.data)
-					_this.statusListHtml(res.data)
+						//业务状态
+						var statusTxt = '';
+						if(item.staStatus=15) {
+							statusTxt = "供货中"
+						}
+						$('#staPoordNum').val(item.orderNum)
+						$('#staRelNum').val(item.customer.name)
+						$('#staPototal').val(item.totalDetail)
+						$('#staAdjustmentMoney').val(item.totalExp)
+						$('#staFreight').val(item.freight)
+						$('#staShouldPay').val(shouldPay)
+						var poLastDa = item.receiveTotal/(item.totalDetail+item.totalExp+item.freight);
+						$('#staPoLastDa').val(item.receiveTotal)
+						$('#staServerPrice').val(serverPrice)
+						$('#staInvoice').val(invStatusTxt)
+						$('#staStatus').val(statusTxt)
+						$('#staConsignee').val(item.bizLocation.receiver)
+						$('#staMobile').val(item.bizLocation.phone)
+						$('#staShippAddress').val()
+						$('#staDateilAddress').val(item.bizLocation.address)
+						$('#staEvolve').val()
+//						_this.commodityHtml(res.data)
+//						_this.statusListHtml(res.data)
+					}) 
                 }
             });
 		},

@@ -74,6 +74,7 @@
 						var arrLen = res.data.page.list.length;						
                         if(arrLen > 0) {
                         $.each(res.data.page.list, function(i, item) {
+                        	console.log(item)
                         	var staCheckSucBtn = '';
                         	var staCheckSuc = '';
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
