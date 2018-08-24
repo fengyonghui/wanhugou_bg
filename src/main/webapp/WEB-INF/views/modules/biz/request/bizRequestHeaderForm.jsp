@@ -43,8 +43,8 @@
                         alert("请输入数量");
                         return;
 					}
+					$("#btnSubmit").attr("disabled","disabled ");
 					loading('正在提交，请稍等...');
-
 					form.submit();
 				},
 				errorContainer: "#messageBox",
