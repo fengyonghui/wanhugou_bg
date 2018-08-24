@@ -56,7 +56,6 @@
                         });
                         tt=tt.substring(0,tt.length-1);
                     }
-                    alert(total+"---"+freight);
                     if(window.confirm('你确定要发货吗？')){
                         if (total <= 0 && freight == undefined) {
                             alert("发货数量不能为0");

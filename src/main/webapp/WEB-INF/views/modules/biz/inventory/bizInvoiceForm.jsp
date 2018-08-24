@@ -233,13 +233,13 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-        <div class="control-group">
-            <label class="control-label">运费：</label>
-            <div class="controls">
-                <form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
-                <span class="help-inline"><font color="red">*</font> </span>
-            </div>
-        </div>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">运费：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>--%>
+                <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+            <%--</div>--%>
+        <%--</div>--%>
 		<div class="control-group">
 			<label class="control-label">验货员：</label>
 			<div class="controls">

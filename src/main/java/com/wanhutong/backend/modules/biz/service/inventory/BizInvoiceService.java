@@ -386,7 +386,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     }
                 }
             }
-            bizInvoice.setValuePrice(bizInvoice.getValuePrice() == null ? 0 : bizInvoice.getValuePrice() + valuePrice);
+            if ("new".equals(bizInvoice.getSource())) {
+                bizInvoice.setValuePrice(valuePrice);
+            } else {
+                bizInvoice.setValuePrice(bizInvoice.getValuePrice() == null ? 0 : bizInvoice.getValuePrice() + valuePrice);
+            }
             super.save(bizInvoice);
         }
 
@@ -521,7 +525,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     }
                 }
             }
-            bizInvoice.setValuePrice(bizInvoice.getValuePrice() == null ? 0 : bizInvoice.getValuePrice() + valuePrice);
+            if ("new".equals(bizInvoice.getSource())) {
+                bizInvoice.setValuePrice(valuePrice);
+            } else {
+                bizInvoice.setValuePrice(bizInvoice.getValuePrice() == null ? 0 : bizInvoice.getValuePrice() + valuePrice);
+            }
             super.save(bizInvoice);
         }
     }
