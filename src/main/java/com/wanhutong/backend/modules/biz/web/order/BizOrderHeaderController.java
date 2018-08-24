@@ -258,7 +258,7 @@ public class BizOrderHeaderController extends BaseController {
                     commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
                     commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
                 } else {
-                    if (b.getSuplys() == 0 || b.getSuplys() == 721) {
+                    if (b.getSuplys() == null || b.getSuplys() == 0 || b.getSuplys() == 721) {
                         commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
                     }
                 }
