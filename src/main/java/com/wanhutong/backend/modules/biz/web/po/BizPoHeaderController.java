@@ -1081,6 +1081,7 @@ public class BizPoHeaderController extends BaseController {
                         logger.error(e.getMessage());
                         break;
                     }
+                    bizInvoiceService.saveDeliver(dtoList.get(0).getId());
                 }
                 //排产类型为按商品排产时，更新备货单排产类型
                 Integer detailId = dtoList.get(0).getObjectId();
@@ -1119,10 +1120,10 @@ public class BizPoHeaderController extends BaseController {
                         logger.error(e.getMessage());
                         break;
                     }
+                    bizInvoiceService.saveDeliver(dtoList.get(0).getId());
                 }
 
             }
-            bizInvoiceService.saveDeliver(dtoList.get(0).getId());
         }
 
         return boo;
