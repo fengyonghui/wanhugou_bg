@@ -603,8 +603,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
      *
      * @return
      */
-    public User findVendUser(Integer orderId, String vendType) {
-        return userDao.findVendUser(orderId, vendType);
+    public User findVendUser(Integer orderId) {
+        return userDao.findVendUser(orderId);
     }
 
     private List<CommonImg> getImgList(Integer imgType, Integer prodId) {

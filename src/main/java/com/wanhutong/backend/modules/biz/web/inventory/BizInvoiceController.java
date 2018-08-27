@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.*;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
@@ -17,6 +18,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizDetailInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
@@ -27,6 +29,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -94,6 +97,8 @@ public class BizInvoiceController extends BaseController {
     private DictService dictService;
     @Autowired
     private BizPhotoOrderHeaderService bizPhotoOrderHeaderService;
+    @Autowired
+    private CommonImgService commonImgService;
 
     private static final String DEF_EN_NAME = "shipper";
 
@@ -208,6 +213,18 @@ public class BizInvoiceController extends BaseController {
     @RequestMapping(value = "invoiceOrderDetail")
     public String invoiceOrderDetail(BizInvoice bizInvoice, String str, String source, Model model) {
         bizInvoice.setStr(str);
+        CommonImg commonImg=new CommonImg();
+        commonImg.setImgType(ImgEnum.LOGISTICS_TYPE.getCode());
+        commonImg.setObjectId(bizInvoice.getId());
+        commonImg.setObjectName("biz_invoice");
+        if(bizInvoice.getId()!=null){
+            String photos="";
+            List<CommonImg> imgList=commonImgService.findList(commonImg);
+            for(CommonImg img:imgList){
+                photos+="|"+img.getImgServer()+img.getImgPath();
+            }
+            bizInvoice.setImgUrl(photos);
+        }
         BizLogistics bizLogistics = new BizLogistics();
         List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
@@ -280,6 +297,18 @@ public class BizInvoiceController extends BaseController {
     @RequestMapping(value = "invoiceRequestDetail")
     public String invoiceRequestDetail(BizInvoice bizInvoice,String str, String source, Model model) {
         bizInvoice.setStr(str);
+        CommonImg commonImg=new CommonImg();
+        commonImg.setImgType(ImgEnum.LOGISTICS_TYPE.getCode());
+        commonImg.setObjectId(bizInvoice.getId());
+        commonImg.setObjectName("biz_invoice");
+        if(bizInvoice.getId()!=null){
+            String photos="";
+            List<CommonImg> imgList=commonImgService.findList(commonImg);
+            for(CommonImg img:imgList){
+                photos+="|"+img.getImgServer()+img.getImgPath();
+            }
+            bizInvoice.setImgUrl(photos);
+        }
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
         bizDetailInvoice.setInvoice(bizInvoice);
         List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);

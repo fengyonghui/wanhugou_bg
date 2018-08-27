@@ -95,12 +95,20 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 		for (BizCollectGoodsRecord bcgr : bizCollectGoodsRecord.getBizCollectGoodsRecordList()) {
 			int receiveNum = bcgr.getReceiveNum();    //收货数
 			int recvQty = bcgr.getBizRequestDetail().getRecvQty();		//已收货数量
+			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			//累计备货单收货数量
 			if (bcgr.getBizRequestDetail() != null && bcgr.getBizRequestDetail().getId() != 0) {
 //				int sendQty = bcgr.getBizRequestDetail().getSendQty();   //备货单已供货数量
 				//当收货数量和申报数量不相等时，更改备货单状态
 				if (bcgr.getBizRequestDetail().getReqQty() != (recvQty + receiveNum)) {
 					flagRequest = false;
+					//改状态为收货中
+					bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.COMPLETEING.getState());
+					bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+					Integer bizStatus = bizRequestHeader.getBizStatus();
+					if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.COMPLETEING.getState())) {
+						bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizCollectGoodsRecord.getBizRequestHeader().getId());
+					}
 				}
 				if (receiveNum == 0) {
 					continue;
@@ -112,7 +120,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			//收货之前的库存
 			int invOldNum = 0;
 			//获取库存信息
-			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
+			//BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			BizInventorySku bizInventorySku = new BizInventorySku();
 			bizInventorySku.setSkuInfo(bcgr.getSkuInfo());
 			bizInventorySku.setInvInfo(bcgr.getInvInfo());

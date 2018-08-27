@@ -82,6 +82,10 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
         return autProcessId;
     }
 
+    public List<OrderHeaderProcess> getProcessList() {
+        return processList;
+    }
+
     @XStreamAlias("process")
     public static class OrderHeaderProcess {
         /**

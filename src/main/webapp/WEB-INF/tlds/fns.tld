@@ -265,5 +265,13 @@
     <function-signature>java.lang.Boolean hasRole(java.util.Set, java.lang.String)</function-signature>
     <example>${fns:hasRole(set, str)}</example>
   </function>
+
+  <function>
+    <description>查看是否有权限</description>
+    <name>hasRoleByProcess</name>
+    <function-class>com.wanhutong.backend.common.utils.RoleUtils</function-class>
+    <function-signature>java.lang.Boolean hasRoleByProcess(java.util.Set, com.wanhutong.backend.modules.config.parse.Process)</function-signature>
+    <example>${fns:hasRole(set, str)}</example>
+  </function>
   
 </taglib>

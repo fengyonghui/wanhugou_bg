@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <html>
 <head>
 	<title>支付申请管理</title>
@@ -79,27 +81,32 @@
 						<%--<a onclick="checkReject(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.type})">审核驳回</a>--%>
 					<%--</c:if>--%>
 				</shiro:hasPermission>
+				<shiro:hasPermission name="biz:po:sure:bizPoPaymentOrder">
+					<c:if test="${fromPage == 'requestHeader' && bizPoPaymentOrder.total == '0.00' && (requestHeader == null || requestHeader.bizStatus < ReqHeaderStatusEnum.CLOSE.state)}">
+						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认支付金额</a>
+					</c:if>
+
+					<c:if test="${fromPage == 'orderHeader' && bizPoPaymentOrder.total == '0.00'}">
+						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认支付金额</a>
+					</c:if>
+				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
-					<shiro:hasPermission name="biz:po:sure:bizPoPaymentOrder">
-						<c:if test="${bizPoPaymentOrder.total == '0.00'}">
-							<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}">确认支付金额</a>
+					<shiro:hasPermission name="biz:po:payment:sure:pay">
+						<c:if test="${bizPoPaymentOrder.orderType == PoPayMentOrderTypeEnum.PO_TYPE.type && bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id
+						&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
+						}">
+						<c:if test="${fromPage != null && fromPage == 'requestHeader'}">
+							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认付款</a>
 						</c:if>
-					</shiro:hasPermission>
-					<c:if test="${bizPoPaymentOrder.orderType == PoPayMentOrderTypeEnum.PO_TYPE.type && bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id
-					&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
-					&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
-					}">
-					<c:if test="${fromPage != null && fromPage == 'requestHeader'}">
-						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认付款</a>
-					</c:if>
-					<c:if test="${fromPage != null && fromPage == 'orderHeader'}">
-						<a href="${ctx}/biz/order/bizOrderHeader/form?bizPoHeader.id=${bizPoHeader.id}&id=${orderId}&str=pay">确认付款</a>
-						<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>--%>
-					</c:if>
-					<c:if test="${fromPage == null}">
-						<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
-					</c:if>
-					</c:if>
+						<c:if test="${fromPage != null && fromPage == 'orderHeader'}">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?bizPoHeader.id=${bizPoHeader.id}&id=${orderId}&str=pay">确认付款</a>
+							<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>--%>
+						</c:if>
+						<c:if test="${fromPage == null}">
+							<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
+						</c:if>
+						</c:if>
+				</shiro:hasPermission>
 					<%--<c:if test="${bizPoPaymentOrder.type == PoPayMentOrderTypeEnum.REQ_TYPE.type && bizPoPaymentOrder.id == bizRequestHeader.bizPoPaymentOrder.id--%>
 						  <%--&& bizRequestHeader.commonProcess.vendRequestOrderProcess.name == '审批完成'--%>
 						  <%--&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'}">--%>
@@ -168,9 +175,9 @@
                         result = JSON.parse(result);
                         if(result.ret == true || result.ret == 'true') {
                             alert('操作成功!');
-                            if(fromPage != null && fromPage == 'requestHeader') {
+                            if(${fromPage != null && fromPage == 'requestHeader'}) {
                                 window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
-                            } else if (fromPage != null && fromPage == 'orderHeader') {
+                            } else if (${fromPage != null && fromPage == 'orderHeader'}) {
                                 window.location.href = "${ctx}/biz/order/bizOrderHeader";
                             } else {
                                 window.location.href = "${ctx}/biz/po/bizPoHeader";

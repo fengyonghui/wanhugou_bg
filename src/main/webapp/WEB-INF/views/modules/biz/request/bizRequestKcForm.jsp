@@ -80,6 +80,7 @@
 	<sys:message content="${message}"/>
 	<input name="bizRequestHeader.id" value="${bizRequestHeader==null?0:bizRequestHeader.id}" type="hidden"/>
 	<input name="bizOrderHeader.id" value="${bizOrderHeader==null?0:bizOrderHeader.id}" type="hidden"/>
+	<input type="hidden" name="bizStatu" value="${bizStatu}"/>
 	<div class="control-group">
 		<label class="control-label">备货清单号：</label>
 		<div class="controls">
