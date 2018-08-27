@@ -4,14 +4,21 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+		this.detileFlag = "false"
+		this.cancelAmendPayFlag = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			this.pageInit(); //页面初始化
-			this.btnshow()
-			//this.getData()
-			//			this.getKey()
+//			biz:request:bizRequestHeader:view   详情
+//			biz:request:bizRequestHeader:edit    取消、修改、付款
+			this.getPermissionList('biz:request:bizRequestHeader:view','detileFlag')
+			this.getPermissionList('biz:request:bizRequestHeader:edit','cancelAmendPayFlag')
+			if(this.userInfo.isFunc){
+				this.seachFunc()
+			}else{
+				this.pageInit(); //页面初始化
+			}
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
@@ -39,29 +46,38 @@
 						type: 'GET',
 						url: '/a/biz/request/bizRequestHeader/list4Mobile?page2='+page+'&size='+size,
 						data: {
-							parentId: _this.userInfo.purchId,
 							pageNo: page
 						},
 						dataType: 'json',
 						success: function(res) {
 							console.log(res)
+							var dataRow = res.data.roleSet;
 							var arrLen = res.data.page.list.length;
 							
 							if(arrLen > 0) {
 								$.each(res.data.page.list, function(i, item) {
 									console.log(item)
-									
 								/*业务状态*/
 									var bizstatus = item.bizStatus;
 									var bizstatusTxt = '';
-									var inCheckBtn = '';
 									if(bizstatus==0) {
 										bizstatusTxt = "未审核"
-										inCheckBtn = "审核"
+									}else if(bizstatus==1) {
+										bizstatusTxt = "首付支付"
+									}else if(bizstatus==2) {
+										bizstatusTxt = "全部支付"
+									}else if(bizstatus==4) {
+										bizstatusTxt = "审核中"
 									}else if(bizstatus==5) {
 										bizstatusTxt = "审核通过"
+									}else if(bizstatus==6) {
+										bizstatusTxt = "审批中"
+									}else if(bizstatus==7) {
+										bizstatusTxt = "审批完成"
 									}else if(bizstatus==10) {
 										bizstatusTxt = "采购中"
+									}else if(bizstatus==13) {
+										bizstatusTxt = "部分结算"
 									}else if(bizstatus==15) {
 										bizstatusTxt = "采购完成"
 									}else if(bizstatus==20) {
@@ -70,20 +86,71 @@
 										bizstatusTxt = "供货完成"
 									}else if(bizstatus==30) {
 										bizstatusTxt = "收货完成"
-									}else if(bizstatus==35) {
-										bizstatusTxt = "关闭"
+									}else if(bizstatus==37) {
+										bizstatusTxt = "结算完成"
+									}else if(bizstatus==40) {
+										bizstatusTxt = "取消"
 									}else {
-										bizstatusTxt = '未知类型'
+										bizstatusTxt = "未知类型"
 									}
-								/*付款按钮*/
+								/*审核按钮*/	
+									var inCheck = '';
+									var inCheckBtn='';
+									if (item.commonProcess.requestOrderProcess) {
+								 		var codeNum = item.commonProcess.requestOrderProcess.code;
+									}
+									if(item.commonProcess.requestOrderProcess) {
+										var DataRoleGener = item.commonProcess.requestOrderProcess.roleEnNameEnum;
+										var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
+										if(item.commonProcess && fileRoleData.length>0 && bizstatus<5 && codeNum != -1) {
+											inCheck = '审核'
+											inCheckBtn='inCheckBtn'
+											
+										}else {
+											inCheck = ''
+											inCheckBtn=''
+										}
+									}
+								//取消、修改、付款
+									var inPay = '';
 									var inPayBtn = '';
+									var inCancel = '';
 									var inCancelBtn = '';
-									if(bizstatus==35) {
-										inPayBtn = ''
-										inCancelBtn = ''
+									var inAmend = '';
+									var inAmendBtn = '';
+									if(_this.cancelAmendPayFlag == true){
+										/*修改按钮*/
+										inAmend = '修改'
+										inAmendBtn = 'inAmendBtn'
+										/*付款按钮*/
+										if(bizstatus==35 || bizstatus==40 || item.recvTotal == item.totalMoney) {
+											inPay = ''
+											inPayBtn = ''
+										}else {
+											inPay = '付款'
+											inPayBtn = 'inPayBtn'
+										}
+										/*取消按钮*/	
+										if(bizstatus<5) {
+											inCancel = '取消'
+											inCancelBtn = 'inCancelBtn'
+										}else {
+											inCancel = ''
+											inCancelBtn = ''
+										}
 									}else {
-										inPayBtn = '付款'
-										inCancelBtn = '取消'
+										inAmendBtn = ''
+										inAmend = ''
+									}
+								//详情
+									var inDetail = '';
+									var inDetailBtn = '';
+									if(_this.detileFlag == true) {
+										inDetail = '详情'
+										inDetailBtn = 'inDetailBtn'
+									}else {
+										inDetail = ''
+										inDetailBtn = ''
 									}
 								/*品类名称*/	
 									var varietyInfoName = '';
@@ -91,7 +158,9 @@
 										varietyInfoName = item.varietyInfo.name
 									}else {
 										varietyInfoName = ''
+										
 									}
+								/*审核状态*/		
 									var checkStatus = '';
 									if(item.commonProcess.requestOrderProcess) {
 										checkStatus = item.commonProcess.requestOrderProcess.name
@@ -112,12 +181,16 @@
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
-											'<label>品类名称:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+varietyInfoName+' ">' +
+											'<label>供应商:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.name +' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>下单时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.createDate)+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>品类名称:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+varietyInfoName+' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>申请人:</label>' +
@@ -128,23 +201,22 @@
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
-											'<div class="mui-col-xs-2 inAddBtn">' +
-												'<li class="mui-table-view-cell">添加</li>' +
+											'<div class="mui-col-xs-2">' +
 											'</div>'+
-											'<div class="mui-col-xs-2 inDetailBtn">' +
-												'<li class="mui-table-view-cell" inListId="'+ item.id +'">详情</li>' +
+											'<div class="mui-col-xs-2 '+inDetailBtn+'" inListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell" >'+inDetail+'</li>' +
 											'</div>' +
-											'<div class="mui-col-xs-2 inAmendBtn">' +
-												'<li class="mui-table-view-cell paying" inListId="'+ item.id +'" poId="'+ item.id +'">修改</li>' +
+											'<div class="mui-col-xs-2 '+inAmendBtn+'" inListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+inAmend+'</li>' +
 											'</div>' +
-											'<div class="mui-col-xs-2" inListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell"> '+inCancelBtn+'</li>' +
+											'<div class="mui-col-xs-2 '+inCancelBtn+'" inListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell"> '+inCancel+'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2" inListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+inPayBtn+'</li>' +
+											'<div class="mui-col-xs-2 '+inPayBtn+'"  inListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+inPay+'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2" inListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+inCheckBtn+'</li>' +
+											'<div class="mui-col-xs-2 '+inCheckBtn+'" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
+												'<li class="mui-table-view-cell">'+ inCheck +'</li>' +
 											'</div>'+
 										'</div>' +
 									'</div>'
@@ -173,13 +245,27 @@
 				},
 				threshold: 50
 			});
+//			_this.comfirDialig()
 		},
-		//		getKey: function() {
-		//
-		//		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.detileFlag = res.data;
+					_this.cancelAmendPayFlag = res.data;
+//                  console.log(_this.detileFlag)
+//					console.log(_this.cancelAmendPayFlag)
+                }
+            });
+        },
 		inHrefHtml: function() {
 			var _this = this;
-			/*查询*/
+		/*查询*/
 			$('.header').on('tap', '#searchBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
@@ -188,7 +274,6 @@
 					GHUTILS.OPENPAGE({
 						url: "../../html/inventoryMagmetHtml/inSearch.html",
 						extras:{
-							purchId:_this.userInfo.purchId
 						}
 						
 					})
@@ -196,7 +281,7 @@
 					
 			}),
 		/*备货单添加*/
-			$('.content').on('tap','.inAddBtn', function() {
+			$('#nav').on('tap','.inAddBtn', function() {
 				var url = $(this).attr('url');
 				GHUTILS.OPENPAGE({
 					url: "../../html/inventoryMagmetHtml/inventoryAddList.html",
@@ -205,8 +290,18 @@
 					}
 				})
 			}),
+		/*首页*/
+			$('#nav').on('tap','.inHomePage', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../html/backstagemgmt.html",
+					extras: {
+						
+					}
+				})
+			}),
 		/*详情*/
-			$('.content').on('tap', '.inDetailBtn', function() {
+			$('.listBlue').on('tap', '.inDetailBtn', function() {
 				var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
 				if(url) {
@@ -223,68 +318,78 @@
 		/*修改*/
             $('.content').on('tap','.inAmendBtn', function() {
 				var url = $(this).attr('url');
+                var reqId = $(this).attr('inListId');
 				GHUTILS.OPENPAGE({
 					url: "../../html/inventoryMagmetHtml/inventoryAmend.html",
 					extras: {
-						
+                        reqId: reqId,
 					}
 				})
 			}),
-		/*取消*/
-            $('content').on('tap','.inCancelBtn',function(){
-            	var url = $(this).attr('url');
-				var inListId = $(this).attr('inListId');
-                if(url) {
-                	mui.toast('子菜单不存在')
-                }else if(inListId==inListId) {
-                	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/details.html",
-						extras: {
-								inListId:inListId,
-						}
-					})
-                }
-			})
         /*付款*/
-            $('content').on('tap','.inPayBtn',function(){
+	       $('.listBlue').on('tap', '.inPayBtn', function() {
+					var url = $(this).attr('url');
+					var inListId = $(this).attr('inListId');
+					if(url) {
+						mui.toast('子菜单不存在')
+					} else if(inListId == inListId) {
+						GHUTILS.OPENPAGE({
+							url: "../../html/inventoryMagmetHtml/inPay.html",
+							extras: {
+								inListId: inListId,
+							}
+						})
+					}
+				}),
+        /* 审核*/
+            $('.content').on('tap','.inCheckBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
+				var bizStatus = $(this).attr('bizStatus');
                 if(url) {
                 	mui.toast('子菜单不存在')
                 }else if(inListId==inListId) {
                 	GHUTILS.OPENPAGE({
-						url: "../../html/inventoryMagmetHtml/inPay.html",
+						url: "../../html/inventoryMagmetHtml/inCheck.html",
 						extras: {
 								inListId:inListId,
+								bizStatus:bizStatus,
 						}
 					})
                 }
-			})
-        /* 审核*/
-            $('content').on('tap','.inCheckBtn',function(){
+			}),
+		/*取消*/	
+            $('.content').on('tap','.inCancelBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
                 if(url) {
                 	mui.toast('子菜单不存在')
                 }else if(inListId==inListId) {
-                	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/startCheck.html",
-						extras: {
-								inListId:inListId,
+                	var btnArray = ['取消', '确定'];
+					mui.confirm('您确认取消该备货单吗？', '系统提示！', btnArray, function(choice) {
+						if(choice.index == 1) {
+							$.ajax({
+				                type: "GET",
+				                url: "/a/biz/request/bizRequestHeader/cancel",
+				                data: {id:inListId},
+				                dataType: "json",
+				                success: function(res){
+				                	alert('操作成功！')
+				                	GHUTILS.OPENPAGE({
+										url: "../../html/inventoryMagmetHtml/inventoryList.html",
+										extras: {
+												inListId:inListId,
+										}
+									})
+			                	}
+			            	})
+						}else {
+							
 						}
-					})
+					})	
                 }
 			})
         },
-		//		
-		btnshow: function() {
-			$('#search_btn').on('tap', function() {
-				mui('.mui-off-canvas-wrap').offCanvas().toggle()
-			})
-			$('.closeBtn').on('tap', function() {
-				mui('.mui-off-canvas-wrap').offCanvas().toggle()
-			})
-		},
 		formatDateTime: function(unix) {
 			var _this = this;
 			var now = new Date(parseInt(unix) * 1);
@@ -339,6 +444,207 @@
 				now = now.replace("-"); //  2014-7-6 07:17:43
 			}
 			return now;
+		},
+		seachFunc:function(){
+			var _this = this;
+			var inPHtmlList = '';
+			var nameTxt = '';
+			if(_this.userInfo.name) {
+				nameTxt = decodeURIComponent(_this.userInfo.name)
+			}else {
+				nameTxt = ''
+			}
+			
+			$.ajax({
+				type: 'GET',
+				url: '/a/biz/request/bizRequestHeader/list4Mobile',
+				data: {
+					pageNo: 1,
+					reqNo:_this.userInfo.reqNo,
+					name:nameTxt,
+					'fromOffice.id':_this.userInfo.fromOffice,
+					bizStatus:_this.userInfo.bizStatusid,
+					'varietyInfo.id':_this.userInfo.varietyInfoid
+				},
+				dataType: 'json',
+				success: function(res) {
+//							console.log(res)
+					var dataRow = res.data.roleSet;
+					var arrLen = res.data.page.list.length;
+					if(arrLen > 0) {
+						$.each(res.data.page.list, function(i, item) {
+//							console.log(item)
+						/*业务状态*/
+							var bizstatus = item.bizStatus;
+							var bizstatusTxt = '';
+							if(bizstatus==0) {
+								bizstatusTxt = "未审核"
+							}else if(bizstatus==1) {
+								bizstatusTxt = "首付支付"
+							}else if(bizstatus==2) {
+								bizstatusTxt = "全部支付"
+							}else if(bizstatus==4) {
+								bizstatusTxt = "审核中"
+							}else if(bizstatus==5) {
+								bizstatusTxt = "审核通过"
+							}else if(bizstatus==6) {
+								bizstatusTxt = "审批中"
+							}else if(bizstatus==7) {
+								bizstatusTxt = "审批完成"
+							}else if(bizstatus==10) {
+								bizstatusTxt = "采购中"
+							}else if(bizstatus==13) {
+								bizstatusTxt = "部分结算"
+							}else if(bizstatus==15) {
+								bizstatusTxt = "采购完成"
+							}else if(bizstatus==20) {
+								bizstatusTxt = "备货中"
+							}else if(bizstatus==25) {
+								bizstatusTxt = "供货完成"
+							}else if(bizstatus==30) {
+								bizstatusTxt = "收货完成"
+							}else if(bizstatus==37) {
+								bizstatusTxt = "结算完成"
+							}else if(bizstatus==40) {
+								bizstatusTxt = "取消"
+							}else {
+								bizstatusTxt = "未知类型"
+							}
+						/*审核按钮*/	
+							var inCheck = '';
+							var inCheckBtn='';
+							if (item.commonProcess.requestOrderProcess) {
+						 		var codeNum = item.commonProcess.requestOrderProcess.code;
+							}
+							if(item.commonProcess.requestOrderProcess) {
+								var DataRoleGener = item.commonProcess.requestOrderProcess.roleEnNameEnum;
+								var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
+								if(item.commonProcess && fileRoleData.length>0 && bizstatus<5 && codeNum != -1) {
+									inCheck = '审核'
+									inCheckBtn='inCheckBtn'
+									
+								}else {
+									inCheck = ''
+									inCheckBtn=''
+								}
+							}
+						//取消、修改、付款
+							var inPay = '';
+							var inPayBtn = '';
+							var inCancel = '';
+							var inCancelBtn = '';
+							var inAmend = '';
+							var inAmendBtn = '';
+							if(_this.cancelAmendPayFlag == true){
+								/*修改按钮*/
+								inAmend = '修改'
+								inAmendBtn = 'inAmendBtn'
+								/*付款按钮*/
+								if(bizstatus==35 || bizstatus==40 || item.recvTotal == item.totalMoney) {
+									inPay = ''
+									inPayBtn = ''
+								}else {
+									inPay = '付款'
+									inPayBtn = 'inPayBtn'
+								}
+								/*取消按钮*/	
+								if(bizstatus<5) {
+									inCancel = '取消'
+									inCancelBtn = 'inCancelBtn'
+								}else {
+									inCancel = ''
+									inCancelBtn = ''
+								}
+							}else {
+								inAmendBtn = ''
+								inAmend = ''
+							}
+						//详情
+							var inDetail = '';
+							var inDetailBtn = '';
+							if(_this.detileFlag == true) {
+								inDetail = '详情'
+								inDetailBtn = 'inDetailBtn'
+							}else {
+								inDetail = ''
+								inDetailBtn = ''
+							}
+						/*品类名称*/	
+							var varietyInfoName = '';
+							if(item.varietyInfo.name) {
+								varietyInfoName = item.varietyInfo.name
+							}else {
+								varietyInfoName = ''
+								
+							}
+						/*审核状态*/		
+							var checkStatus = '';
+							if(item.commonProcess.requestOrderProcess) {
+								checkStatus = item.commonProcess.requestOrderProcess.name
+							}else {
+								checkStatus = ''
+							}
+							inPHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
+								'<div class="mui-input-row">' +
+									'<label>备货单号:</label>' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.reqNo+' ">' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+									'<label>业务状态:</label>' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+bizstatusTxt+' ">' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+									'<label>审核状态:</label>' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+									'<label>供应商:</label>' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.name +' ">' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+									'<label>下单时间:</label>' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.createDate)+' ">' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+									'<label>品类名称:</label>' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+varietyInfoName+' ">' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+									'<label>申请人:</label>' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.createBy.name+' ">' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+									'<label>更新时间:</label>' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
+								'</div>' +
+								'<div class="app_font_cl content_part mui-row app_text_center">' +
+									'<div class="mui-col-xs-2">' +
+									'</div>'+
+									'<div class="mui-col-xs-2 '+inDetailBtn+'" inListId="'+ item.id +'">' +
+										'<li class="mui-table-view-cell" >'+inDetail+'</li>' +
+									'</div>' +
+									'<div class="mui-col-xs-2 '+inAmendBtn+'" inListId="'+ item.id +'">' +
+										'<li class="mui-table-view-cell">'+inAmend+'</li>' +
+									'</div>' +
+									'<div class="mui-col-xs-2 '+inCancelBtn+'" inListId="'+ item.id +'">' +
+										'<li class="mui-table-view-cell"> '+inCancel+'</li>' +
+									'</div>'+
+									'<div class="mui-col-xs-2 '+inPayBtn+'"  inListId="'+ item.id +'">' +
+										'<li class="mui-table-view-cell">'+inPay+'</li>' +
+									'</div>'+
+									'<div class="mui-col-xs-2 '+inCheckBtn+'" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
+										'<li class="mui-table-view-cell">'+ inCheck +'</li>' +
+									'</div>'+
+								'</div>' +
+							'</div>'
+						});
+						$('.inListAdd').append(inPHtmlList);
+						_this.inHrefHtml()
+					}else{
+						$('.inListAdd').append('<p class="noneTxt">暂无数据</p>');
+					}
+				}
+			});
 		}
 	}
 	$(function() {

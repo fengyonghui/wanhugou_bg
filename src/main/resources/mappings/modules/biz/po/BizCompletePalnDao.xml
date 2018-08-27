@@ -127,5 +127,5 @@
 			#{item}
 		</foreach>
 	</update>
-	
+
 </mapper>

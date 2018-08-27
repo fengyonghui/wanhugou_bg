@@ -63,7 +63,7 @@
                         var orgPrice = $(this).find("td").find("input[name='orgPrices']").val();
                         var salePrice = $(this).find("td").find("input[name='salePrices']").val();
                         if(parseInt(orgPrice)>parseInt(salePrice)){
-                            alert("售价不能低于工厂价");
+                            alert("售价不能低于结算价");
                             numFlag = false;
                             return false;
                         }

@@ -54,8 +54,8 @@
 				<th>商品货号</th>
 				<th>商品修改时间</th>
 				<th>商品修改人</th>
-				<th>修改前工厂价格</th>
-				<th>修改后工厂价格</th>
+				<th>修改前结算价格</th>
+				<th>修改后结算价格</th>
 				<th>改变的价格</th>
 				<th>创建时间</th>
 				<%--<shiro:hasPermission name="biz:sku:bizSkuViewLog:edit"><th>操作</th></shiro:hasPermission>--%>

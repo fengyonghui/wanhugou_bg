@@ -31,4 +31,5 @@ public interface BizRequestHeaderDao extends CrudDao<BizRequestHeader> {
      * @return
      */
     int updateREStatus(@Param("id")int id, @Param("status") Integer status);
+
 }

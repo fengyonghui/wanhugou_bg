@@ -28,6 +28,11 @@
                 // rows:[0,2]
             });
 
+            //采购单所属单号
+            var orderNum = $("#orderNumStr_1").attr('value');
+            $("#orderNum").val(orderNum)
+
+
             var detailHeaderFlg = '${detailHeaderFlg}';
             var detailSchedulingFlg = '${detailSchedulingFlg}';
             if (detailHeaderFlg == 'true' || detailSchedulingFlg == 'true') {
@@ -43,18 +48,21 @@
             if (detailHeaderFlg == 'true') {
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
+                $("#saveSubmit").show();
                 $("#schedulingPlan_forSku").hide();
                 $("#batchSubmit").hide();
             }
             if (detailSchedulingFlg == 'true') {
                 $("#stockGoods").hide();
                 $("#schedulingPlan_forHeader").hide();
+                $("#saveSubmit").hide();
                 $("#schedulingPlan_forSku").show();
                 $("#batchSubmit").show();
             }
             if (detailHeaderFlg != 'true' && detailSchedulingFlg != 'true') {
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
+                $("#saveSubmit").show();
                 $("#schedulingPlan_forSku").hide();
             }
 
@@ -131,11 +139,13 @@
             if ($(obj).val() == 0) {
                 $("#stockGoods").show();
                 $("#schedulingPlan_forHeader").show();
+                $("#saveSubmit").show();
                 $("#schedulingPlan_forSku").hide();
                 $("#batchSubmit").hide();
             } else {
                 $("#stockGoods").hide();
                 $("#schedulingPlan_forHeader").hide();
+                $("#saveSubmit").hide();
                 $("#schedulingPlan_forSku").show();
                 $("#batchSubmit").show();
             }
@@ -144,12 +154,42 @@
         function saveComplete(schedulingType,id) {
             var trArray = $("[name='" + id + "']");
             var params = new Array();
+            var schRemark = "";
             if (schedulingType == "0"){
                 var originalNum = $("#totalOrdQty").val();
+                schRemark = $("#schRemarkOrder").val();
             } else {
                 var originalNum = $(eval("totalOrdQtyForSku_" + id)).val();
+                schRemark = $("#schRemarkSku").val();
             }
             var totalSchedulingNum = 0;
+            var totalSchedulingHeaderNum = 0;
+            var totalSchedulingDetailNum = 0;
+            var poSchType = 0;
+            for(i=0;i<trArray.length;i++){
+                var div = trArray[i];
+                var jqDiv = $(div);
+                var value = jqDiv.find("[name='" + id + "_value']").val();
+
+                if (schedulingType == "0"){
+                    totalSchedulingHeaderNum = parseInt(totalSchedulingHeaderNum) + parseInt(value);
+                } else {
+                    totalSchedulingDetailNum = parseInt(totalSchedulingDetailNum) + parseInt(value);
+                }
+            }
+
+            if (schedulingType == "0"){
+                var toalSchedulingNum = $('#toalSchedulingNum').val();
+                poSchType = originalNum >  parseInt(totalSchedulingHeaderNum) + parseInt(toalSchedulingNum)  ? 1 : 2;
+                console.log(originalNum)
+                console.log(totalSchedulingHeaderNum)
+                console.log(toalSchedulingNum)
+                console.log(poSchType)
+            } else {
+                var toalSchedulingNumForSku = $('#toalSchedulingNumForSku').val();
+                poSchType = originalNum > parseInt(totalSchedulingDetailNum) + parseInt(toalSchedulingNumForSku) ? 1 : 2;
+            }
+
             for(i=0;i<trArray.length;i++){
                 var div = trArray[i];
                 var jqDiv = $(div);
@@ -165,11 +205,21 @@
                     return false;
                 }
                 var entity = {};
+                entity.id = '${bizPoHeader.id}';
                 entity.objectId = id;
                 entity.originalNum = originalNum;
                 entity.schedulingNum = value;
                 entity.planDate=date;
                 entity.schedulingType=schedulingType;
+                entity.remark=schRemark;
+                entity.poSchType = poSchType;
+
+                if (schedulingType == "0"){
+                    totalSchedulingHeaderNum = parseInt(totalSchedulingHeaderNum) + parseInt(value);
+                } else {
+                    totalSchedulingDetailNum = parseInt(totalSchedulingDetailNum) + parseInt(value);
+                }
+
                 params[i]=entity;
 
                 totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
@@ -204,15 +254,46 @@
             var params = new Array();
             var totalSchedulingNum = 0;
             var totalOriginalNum = 0;
+            var toalSchedulingNumForSkuDetailNum = 0;
             var count = 1
             var ind = 0;
+            var schRemark = "";
+            schRemark = $("#schRemarkSku").val();
+
+            var totalSchedulingHeaderNum = 0;
+            var totalSchedulingDetailNum = 0;
+            var poSchType = 0;
+
             for(var index in reqDetailIdList) {
                 var reqDetailId = reqDetailIdList[index];
-                var trArray = $("[name='" + reqDetailId + "']");
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + reqDetailId)).val();
                 totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+            }
 
+            var toalSchedulingNumForSkuHtml = $("[name=toalSchedulingNumForSku]");
+            var toalSchedulingNumForSkuNum = 0;
+            for(i=0;i<toalSchedulingNumForSkuHtml.length;i++){
+                var schedulingNumForSkuNum = toalSchedulingNumForSkuHtml[i];
+                var scForSkuNum = $(schedulingNumForSkuNum).attr("value")
+                toalSchedulingNumForSkuNum = parseInt(toalSchedulingNumForSkuNum) + parseInt(scForSkuNum);
+            }
+
+            for(var index in reqDetailIdList) {
+                var reqDetailId = reqDetailIdList[index];
+                var trArray = $("[name='" + reqDetailId + "']");
+                for(i=0;i<trArray.length;i++) {
+                    var div = trArray[i];
+                    var jqDiv = $(div);
+                    var value = jqDiv.find("[name='" + reqDetailId + "_value']").val();
+                    totalSchedulingDetailNum = parseInt(totalSchedulingDetailNum) + parseInt(value);
+                }
+            }
+            poSchType = totalOriginalNum > parseInt(totalSchedulingDetailNum) + parseInt(toalSchedulingNumForSkuNum) ? 1 : 2;
+
+            for(var index in reqDetailIdList) {
+                var reqDetailId = reqDetailIdList[index];
+                var trArray = $("[name='" + reqDetailId + "']");
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];
                     var jqDiv = $(div);
@@ -228,16 +309,17 @@
                         return false;
                     }
                     var entity = {};
+                    entity.id = '${bizPoHeader.id}';
                     entity.objectId = reqDetailId;
                     entity.originalNum = originalNum;
                     entity.schedulingNum = value;
                     entity.planDate=date;
                     entity.schedulingType=1;
+                    entity.remark=schRemark;
+                    entity.poSchType = poSchType;
 
                     params[ind]=entity;
-
                     totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
-
                     ind++;
                 }
                 count++;
@@ -287,8 +369,12 @@
     <input id="deliveryStatus" type="hidden" value="${bizPoHeader.deliveryStatus}"/>
     <c:if test="${bizPoHeader.id!=null}">
         <div class="control-group">
-            <label class="control-label">采购单编号：</label>
+            <label class="control-label">订单号/备货单号：</label>
             <div class="controls">
+                <input id="orderNum" readonly="readonly" class="input-xlarge" type='text'/>
+            </div>
+            <!-- 采购单编号 style="display: none"-->
+            <div class="controls" style="display: none">
                 <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
             </div>
         </div>
@@ -313,10 +399,10 @@
                         <th>商品名称</th>
                         <th>商品货号</th>
                         <c:if test="${bizPoHeader.id!=null}">
-                            <th>所属单号</th>
+                            <th style="display: none">所属单号</th>
                         </c:if>
                         <th>采购数量</th>
-                        <th>工厂价</th>
+                        <th>结算价</th>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -331,7 +417,7 @@
                                 <td>${poDetail.skuInfo.name}</td>
                                 <td>${poDetail.skuInfo.itemNo}</td>
                                 <c:if test="${bizPoHeader.id!=null}">
-                                    <td>
+                                    <td style="display: none">
                                         <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}"
                                                    var="orderNumStr"
                                                    varStatus="orderStatus">
@@ -343,6 +429,7 @@
                                                 </c:if>
                                                     ${orderNumStr.orderNumStr}
                                             </a>
+                                            <span id="orderNumStr_${orderStatus.index+1}" style="display:none" value="${orderNumStr.orderNumStr}" />
                                             </c:forEach>
                                     </td>
                                 </c:if>
@@ -360,7 +447,7 @@
         <div class="control-group" id="schedulingPlan_forHeader">
             <label class="control-label">按订单排产：</label>
             <div class="controls">
-                <table id="schedulingForHeader_${bizPoHeader.id}"  style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+                <table id="schedulingForHeader_${bizPoHeader.id}" style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
                     <tr>
                         <td>
                             <label>总申报数量：</label>
@@ -377,8 +464,6 @@
                             <input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划"
                                    onclick="addSchedulingHeaderPlan('schedulingForHeader_', ${bizPoHeader.id})"/>
                             &nbsp;
-                            <input id="saveSubmit" class="btn btn-primary" type="button"
-                                   onclick="saveComplete('0',${bizPoHeader.id})" value="保存"/>
                             <span id="schedulingPanAlert" style="color:red; display:none">已排产完成</span>
                         </td>
                     </tr>
@@ -387,7 +472,7 @@
                     <c:if test="${fn:length(bizCompletePalns) > 0}">
                         <tr>
                             <td>
-                                <label>排产履历：</label>
+                                <label>排产记录：</label>
                             </td>
                         </tr>
                         <c:forEach items="${bizCompletePalns}" var="bizCompletePaln" varStatus="stat">
@@ -425,7 +510,17 @@
                         </td>
                     </tr>
                 </table>
-
+                <table style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+                    <tr>
+                        <td>
+                            <div>
+                                <label>备注：</label>
+                                <textarea id="schRemarkOrder" maxlength="200"
+                                          class="input-xlarge ">${bizPoHeader.bizSchedulingPlan.remark}</textarea>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
 
@@ -443,7 +538,7 @@
                             <th>所属单号</th>
                         </c:if>
                         <th>采购数量</th>
-                        <th>工厂价</th>
+                        <th>结算价</th>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -511,7 +606,7 @@
                                         <c:if test="${poDetail.bizSchedulingPlan != null}">
                                             <tr>
                                                 <td>
-                                                    <label>排产履历：</label>
+                                                    <label>排产记录：</label>
                                                 </td>
                                             </tr>
                                             <c:forEach items="${poDetail.bizSchedulingPlan.completePalnList}" var="completePaln">
@@ -551,6 +646,15 @@
                         </c:forEach>
                         <input id="aaId" value="${aa}" type="hidden"/>
                     </c:if>
+
+                    <tr>
+                        <td colspan="10">
+                            <div>
+                                <label>备注：</label>
+                                <textarea id="schRemarkSku" maxlength="200" class="input-xlarge " >${bizPoHeader.bizSchedulingPlan.remark}</textarea>
+                            </div>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -558,9 +662,11 @@
     </c:if>
 
     <div class="form-actions">
+        <input id="saveSubmit" class="btn btn-primary" type="button"
+               onclick="saveComplete('0',${bizPoHeader.id})" value="保存"/>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
         &nbsp;&nbsp;
-        <input id="batchSubmit" class="btn btn-primary" style="display: none" type="button" onclick="batchSave()" value="批量保存"/>&nbsp;
+        <input id="batchSubmit" class="btn btn-primary" type="button" style="display: none;" onclick="batchSave()" value="批量保存"/>&nbsp;
     </div>
 </form:form>
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>

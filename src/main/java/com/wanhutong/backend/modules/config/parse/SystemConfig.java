@@ -1,10 +1,5 @@
 package com.wanhutong.backend.modules.config.parse;
 
-/**
- * @author Ma.Qiang
- * 2018/5/31
- */
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -79,6 +74,12 @@ public class SystemConfig extends ConfigGeneral {
     @XStreamAlias("photoOrderRatio")
     private BigDecimal photoOrderRatio;
 
+    /**
+     * PO查询过滤时间节点（小于此节点）
+     */
+    @XStreamAlias("filteringDate")
+    private String filteringDate;
+
 
 
 
@@ -116,5 +117,9 @@ public class SystemConfig extends ConfigGeneral {
 
     public BigDecimal getPhotoOrderRatio() {
         return photoOrderRatio;
+    }
+
+    public String getFilteringDate() {
+        return filteringDate;
     }
 }

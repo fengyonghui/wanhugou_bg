@@ -137,7 +137,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		//只查询选品专员
 		if (user.getConn() != null && user.getConn().equals("selectIndex")) {
 			Role role = new Role();
-			role.setEnname(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+			role.setEnname(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState());
 			List<Role> roleList = findRole(role);
 			if (roleList != null && roleList.size() > 0){
 				role = roleList.get(0);
@@ -462,6 +462,8 @@ public class SystemService extends BaseService implements InitializingBean {
 //		saveActivitiGroup(role);
 		// 清除用户角色缓存
 		UserUtils.removeCache(UserUtils.CACHE_ROLE_LIST);
+		// 清除用户权限标识
+		UserUtils.removeCache(UserUtils.CACHE_PERMISSION_LIST);
 //		// 清除权限缓存
 //		systemRealm.clearAllCachedAuthorizationInfo();
 	}
@@ -473,6 +475,8 @@ public class SystemService extends BaseService implements InitializingBean {
 //		deleteActivitiGroup(role);
 		// 清除用户角色缓存
 		UserUtils.removeCache(UserUtils.CACHE_ROLE_LIST);
+		// 清除用户权限标识
+		UserUtils.removeCache(UserUtils.CACHE_PERMISSION_LIST);
 //		// 清除权限缓存
 //		systemRealm.clearAllCachedAuthorizationInfo();
 	}
@@ -777,7 +781,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	public Page<User> findUserSele(Page<User> page, User user) {
 		//查询选品专员
 		Role role = new Role();
-		role.setEnname(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+		role.setEnname(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState());
 		List<Role> roleList = findRole(role);
 		if (roleList != null && roleList.size() > 0){
 			role = roleList.get(0);

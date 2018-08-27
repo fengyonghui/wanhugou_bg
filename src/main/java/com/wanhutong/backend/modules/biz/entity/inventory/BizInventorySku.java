@@ -41,6 +41,14 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	 * 备货清单进入查询库存 标识
 	 * */
 	private String reqSource;
+	/**
+	 * 库存商品类型
+	 */
+	private Integer skuType;
+	/**
+	 * 供应商库存商品对应的供应商ID
+	 */
+	private Office vendor;
 
 	private String inventoryAgeDate;
 
@@ -181,5 +189,21 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 
 	public void setInWarehouse(Integer inWarehouse) {
 		this.inWarehouse = inWarehouse;
+	}
+
+	public Integer getSkuType() {
+		return skuType;
+	}
+
+	public void setSkuType(Integer skuType) {
+		this.skuType = skuType;
+	}
+
+	public Office getVendor() {
+		return vendor;
+	}
+
+	public void setVendor(Office vendor) {
+		this.vendor = vendor;
 	}
 }

@@ -37,6 +37,9 @@ public enum ImgEnum{
     UNlINE_PAYMENT_VOUCHER((byte)27,"线下支付凭证","biz_order_header_unline"),
     /**线下退款凭证*/
     UNlINE_REFUND_VOUCHER((byte)27,"线下退款凭证","biz_order_header"),
+
+    /**订单备注*/
+    ORDER_REMARK((byte)29,"订单备注","biz_order_header"),
     /**
      * 采购单支付凭证
      */

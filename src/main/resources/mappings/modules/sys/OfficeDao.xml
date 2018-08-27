@@ -325,6 +325,19 @@
 		LEFT join sys_user sua on sua.company_id=a.id and sua.status =1 and a.primary_person=sua.id
 		<where>
 			1 = 1
+
+			<if test="vendorId !=null and vendorId != 0">
+				and a.id in (
+				select boh.cust_id from biz_order_header boh where boh.id in (
+				select distinct bod.order_id
+				from biz_order_detail bod
+				left join biz_sku_info bsi on bod.sku_id = bsi.id
+				left join biz_product_info bpi on bpi.id = bsi.prod_id
+				where bpi.vendor_id = #{vendorId}
+				)
+				)
+			</if>
+
 			<if test="dataStatus==null or  dataStatus==''">
 				AND  a.status = #{DEL_FLAG_NORMAL}
 			</if>

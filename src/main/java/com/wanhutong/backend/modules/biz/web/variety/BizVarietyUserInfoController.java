@@ -71,7 +71,7 @@ public class BizVarietyUserInfoController extends BaseController {
 	public String form(BizVarietyUserInfo bizVarietyUserInfo, Model model) {
 		model.addAttribute("bizVarietyUserInfo", bizVarietyUserInfo);
 		Role role = new Role();
-		role.setName(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+		role.setName(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState());
 		User user = new User();
 		user.setRole(role);
 		List<User> users = systemService.userSelectCompany(user);

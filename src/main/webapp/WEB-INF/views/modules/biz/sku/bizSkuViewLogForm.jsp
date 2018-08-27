@@ -63,14 +63,14 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品修改前工厂价格：</label>
+			<label class="control-label">商品修改前结算价格：</label>
 			<div class="controls">
 				<form:input path="frontBuyPrice" htmlEscape="false" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品修改后工厂价格：</label>
+			<label class="control-label">商品修改后结算价格：</label>
 			<div class="controls">
 				<form:input path="afterBuyPrice" htmlEscape="false" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>

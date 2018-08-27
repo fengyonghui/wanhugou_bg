@@ -81,7 +81,12 @@
 			}
 			.mui-input-row input.newinput {padding-left: 0;}
 			.secStyle {margin: 5px 0;}
-			#hideSpan {position: absolute;right: 77px;top: 49px;border: 1px solid rgb(204, 204, 204);border-left: none;display: none;}
+			#hideSpan {position: absolute;
+			    right: 52px;
+			    top: 11px;
+			    border: 1px solid rgb(204, 204, 204);
+			    border-radius: 13px;
+				display: none;}
 		</style>
 	</head>
 
@@ -97,15 +102,15 @@
 					<input type="text" class="ordNum" placeholder="请输入采购单号">
 				</div>
 				<div class="mui-input-row">
-					<label>订单/备货清单编号：</label>
+					<label>订单编号：</label>
 					<input type="text" class="detaNum" placeholder="请输入订单/备货清单编号">
 				</div>
 				<div class="mui-input-row">
 					<label>供应商：</label>
 					<div class="pre">
-						<input class="newinput" type="text" placeholder="请选择供应商">
+						<input class="newinput" type="text" placeholder="关键字">
 						<span class="mui-icon mui-icon-closeempty" id="hideSpan"></span>
-						<div id="supplierNum" class="input_div" style="display: none;">
+						<div class="input_div" style="display: none;">
 							
 						</div>
 						<input class="savedata" type="hidden" value=''>
@@ -123,9 +128,9 @@
 					</div>
 				</div>
 			</form>
-			<div class="puSearchBtn">
-				<button id="puSearchBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">查询</button>
-			</div>
+		</div>
+		<div class="puSearchBtn">
+			<button id="puSearchBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">查询</button>
 		</div>
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/mui.min.js"></script>

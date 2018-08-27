@@ -5,6 +5,7 @@
 	<resultMap type="BizPoPaymentOrder" id="bizPoPaymentOrderMaps">
 		<id column="id" property="id"/>
 		<result column="poHeaderId" property="poHeaderId"/>
+		<result column="orderType" property="orderType"/>
 		<result column="total" property="total"/>
 		<result column="payTotal" property="payTotal"/>
 		<result column="bizStatus" property="bizStatus"/>
@@ -48,10 +49,11 @@
 	<sql id="bizPoPaymentOrderColumns">
 		a.id AS "id",
 		a.po_header_id AS "poHeaderId",
+		a.type AS "orderType",
 		a.total AS "total",
 		a.pay_total AS "payTotal",
 		a.img AS "img",
-		a.biz_status AS bizStatus,
+		a.biz_status AS "bizStatus",
 		a.deadline AS deadline,
 		a.process_id AS processId,
 		a.pay_time AS payTime,
@@ -94,6 +96,12 @@
 			<if test="total != null and total != ''">
 				AND a.total = #{total}
 			</if>
+			<if test="bizStatus != null and bizStatus != -1">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="orderType != null">
+				AND a.type = #{orderType}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -125,12 +133,18 @@
 		INSERT INTO biz_po_payment_order(
 			id,
 			po_header_id,
+			<if test="orderType != null">
+				type,
+			</if>
 			total,
 			deadline,
 			process_id
 		) VALUES (
 			#{id},
 			#{poHeaderId},
+		<if test="orderType != null">
+			#{orderType},
+		</if>
 			#{total},
 			#{deadline},
 			#{processId}
@@ -140,6 +154,9 @@
 	<update id="update">
 		UPDATE biz_po_payment_order SET 	
 			po_header_id = #{poHeaderId},
+			<if test="orderType != null">
+				type = #{orderType},
+			</if>
 			total = #{total},
 			deadline = #{deadline},
 			pay_total = #{payTotal},
@@ -161,6 +178,15 @@
 		process_id  = #{processId}
 		WHERE id = #{paymentId}
 	</update>
+
+	<select id="getPayMentOrderByReqId" parameterType="Integer" resultType="BizPoPaymentOrder">
+		SELECT a.*
+		FROM biz_po_payment_order a
+		LEFT JOIN biz_po_header bph ON bph.id = a.po_header_id
+		LEFT JOIN biz_po_order_req bpor ON bpor.po_id = bph.id AND bpor.so_type = 2
+		WHERE bpor.so_id = #{reqId}
+		GROUP BY a.id
+	</select>
 
 
 </mapper>

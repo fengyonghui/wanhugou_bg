@@ -22,6 +22,8 @@
 		<result property="updateDate" column="updateDate"/>
 		<result property="totalBuyPrice" column="totalBuyPrice"/>
 		<result property="sellersId" column="sellersId"/>
+		<result property="payProportion" column="payProportion"/>
+		<result property="suplys" column="suplys"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -70,6 +72,34 @@
 			<result property="drawbackStatus" column="drawBack.drawbackStatus"/>
 		</association>
 
+		<association property="commonProcess" javaType="CommonProcessEntity" column="commonProcess.id">
+			<id property="id" column="commonProcess.id"/>
+			<result property="objectId" column="commonProcess.objectId"/>
+			<result property="objectName" column="commonProcess.objectName"/>
+			<result property="prevId" column="commonProcess.prevId"/>
+			<result property="bizStatus" column="commonProcess.bizStatus"/>
+			<result property="processor" column="commonProcess.processor"/>
+			<result property="description" column="commonProcess.description"/>
+			<result property="type" column="commonProcess.type"/>
+		</association>
+
+		<association property="bizPoHeader" javaType="BizPoHeader" column="bizPoHeader.id">
+			<id property="id" column="bizPoHeader.id"/>
+			<id property="orderNum" column="bizPoHeader.orderNum"/>
+			<id property="currentPaymentId" column="bizPoHeader.currentPaymentId"/>
+			<id property="poSchType" column="bizPoHeader.poSchType"/>
+			<association property="commonProcess" javaType="CommonProcessEntity" column="bizPoHeader.commonProcess">
+				<id property="id" column="bizPoHeader.commonProcess.id"/>
+				<id property="objectId" column="bizPoHeader.commonProcess.objectId"/>
+				<id property="objectName" column="bizPoHeader.commonProcess.objectName"/>
+				<id property="prevId" column="bizPoHeader.commonProcess.prevId"/>
+				<id property="bizStatus" column="bizPoHeader.commonProcess.bizStatus"/>
+				<id property="processor" column="bizPoHeader.commonProcess.processor"/>
+				<id property="description" column="bizPoHeader.commonProcess.description"/>
+				<id property="type" column="bizPoHeader.commonProcess.type"/>
+			</association>
+		</association>
+
 		<collection property="orderDetailList" ofType="BizOrderDetail">
 			<id property="id" column="orderDetailList.id" />
 			<result property="ordQty" column="orderDetailList.ordQty" />
@@ -96,6 +126,7 @@
 		a.id AS "id",
 		a.order_num AS "orderNum",
 		a.order_type AS "orderType",
+		a.pay_proportion AS "payProportion",
 		a.cust_id AS "customer.id",
 		a.consultant_id AS "consultantId",
 		so.name as "customer.name",
@@ -130,9 +161,30 @@
 		a.update_id AS "updateBy.id",
 		us.name as "updateBy.name",
 		a.update_time AS "updateDate",
+		s.id AS "centerId",
 		s.name as "centersName",
 		con.id AS "con.id",
-		con.name AS "con.name"
+		con.name AS "con.name",
+		process.id AS "commonProcess.id",
+		process.object_id AS "commonProcess.objectId",
+		process.object_name AS "commonProcess.objectName",
+		process.prev_id AS "commonProcess.prevId",
+		process.biz_status AS "commonProcess.bizStatus",
+		process.processor AS "commonProcess.processor",
+		process.description AS "commonProcess.description",
+		process.type AS "commonProcess.type",
+		bph.id AS "bizPoHeader.id",
+		bph.process_id AS "bizPoHeader.processId",
+		bph.current_payment_id AS "bizPoHeader.currentPaymentId",
+		cp.id AS "bizPoHeader.commonProcess.id",
+		cp.object_id AS "bizPoHeader.commonProcess.objectId",
+		cp.object_name AS "bizPoHeader.commonProcess.objectName",
+		cp.prev_id AS "bizPoHeader.commonProcess.prevId",
+		cp.biz_status AS "bizPoHeader.commonProcess.bizStatus",
+		cp.processor AS "bizPoHeader.commonProcess.processor",
+		cp.description AS "bizPoHeader.commonProcess.description",
+		cp.type AS "bizPoHeader.commonProcess.type",
+		bsp.po_sch_type AS "bizPoHeader.poSchType"
 	</sql>
 
 	<!-- C端订单管理 -->
@@ -188,14 +240,26 @@
     	LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
+		LEFT JOIN  common_process process on process.id = a.process_id
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 1
+		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
+		LEFT JOIN common_process cp ON cp.id = bph.process_id
+		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
+		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bph.current_payment_id
 	</sql>
 
 	<select id="get" resultType="BizOrderHeader">
 		SELECT
 		<include refid="bizOrderHeaderColumns"/>
+		,
+		(SELECT SUM(bod.suply_id)
+		FROM biz_order_detail bod
+		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
+		WHERE boh.id = a.id) AS "suplys"
 		FROM biz_order_header a
 		<include refid="bizOrderHeaderJoins"/>
 		WHERE a.id = #{id}
+		group by a.id
 	</select>
 
 	<select id="getByOrderNum" resultType="BizOrderHeader">
@@ -205,70 +269,6 @@
 		<include refid="bizOrderHeaderJoins"/>
 		WHERE a.order_num = #{orderNum}
 	</select>
-
-	<!--<select id="findList" resultType="BizOrderHeader">-->
-	<!--SELECT-->
-	<!--<include refid="bizOrderHeaderColumns"/>-->
-	<!--from biz_order_header a-->
-	<!--<include refid="bizOrderHeaderJoins"/>-->
-	<!--<where>-->
-	<!--a.status = #{DEL_FLAG_NORMAL}-->
-	<!--<if test="orderNum != null and orderNum != ''">-->
-	<!--AND a.order_num-->
-	<!--LIKE-->
-	<!--<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>-->
-	<!--<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>-->
-	<!--<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>-->
-	<!--</if>-->
-	<!--<if test="orderType != null and orderType != ''">-->
-	<!--AND a.order_type = #{orderType}-->
-	<!--</if>-->
-	<!--<if test="customer != null and customer.id != null and customer.id!=''">-->
-	<!--AND a.cust_id = #{customer.id}-->
-	<!--</if>-->
-	<!--<if test="customer != null and customer.phone != null and customer.phone!=''">-->
-	<!--AND su.mobile LIKE-->
-	<!--<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>-->
-	<!--<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>-->
-	<!--<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>-->
-	<!--</if>-->
-	<!--<if test="receiveTotal != null and receiveTotal != ''">-->
-	<!--AND a.receive_total = #{receiveTotal}-->
-	<!--</if>-->
-	<!--<if test="bizStatus !=null">-->
-	<!--AND a.biz_status=#{bizStatus}-->
-	<!--</if>-->
-	<!--<if test="bizType !=null and bizType!=''">-->
-	<!--AND a.biz_type=#{bizType}-->
-	<!--</if>-->
-	<!--<if test="bizStatusStart !=null and bizStatusEnd !=null">-->
-	<!--AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}-->
-	<!--</if>-->
-	<!--<if test="invStatus !=null and invStatus!=''">-->
-	<!--AND a.inv_status=#{invStatus}-->
-	<!--</if>-->
-	<!--<if test="consultantId!=null">-->
-	<!--and ccs.consultant_id = #{consultantId}-->
-	<!--</if>-->
-
-	<!--<if test="centerId!=null">-->
-	<!--and ccs.center_id = #{centerId}-->
-	<!--</if>-->
-
-
-	<!--<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">-->
-	<!--${sqlMap.order}-->
-	<!--</if>-->
-	<!--</where>-->
-	<!--<choose>-->
-	<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
-	<!--ORDER BY ${page.orderBy}-->
-	<!--</when>-->
-	<!--<otherwise>-->
-	<!--</otherwise>-->
-	<!--</choose>-->
-	<!--ORDER BY updateDate DESC-->
-	<!--</select>-->
 
 
 	<select id="findList" resultMap="orderHeaderResult">
@@ -283,6 +283,10 @@
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
 		si.item_no AS "orderDetailList.skuInfo.itemNo",
 		pi.vendor_name AS "orderDetailList.vendor.name",
+		(SELECT SUM(bod.suply_id)
+		FROM biz_order_detail bod
+		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
+		WHERE boh.id = a.id) AS "suplys",
 		(select
 			sum(od.buy_price * od.ord_qty)
 		from
@@ -308,11 +312,39 @@
 		<if test="vendorId !=null and vendorId != ''">
 			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
 		</if>
+
+		<if test="originCode !=null and originCode != ''">
+			LEFT JOIN common_process cpo ON cpo.object_id = a.id
+		</if>
+		<if test="localCode !=null and localCode != ''">
+			LEFT JOIN common_process cpl ON cpl.object_id = a.id
+		</if>
+
 		<!-- end  -->
 		<include refid="bizOrderHeaderJoins"/>
 		<where> 1=1 and a.order_type !=4
+			<!--<if test="originCode !=null and originCode != ''">-->
+				<!--and cpo.type in ${originCode}  and cpo.object_name = 'ORDER_HEADER_SO_ORIGIN' and cpo.current = 1-->
+                <!--and bph.id is null-->
+			<!--</if>-->
+			<!--<if test="localCode !=null and localCode != ''">-->
+				<!--and cpl.type in ${localCode} and cpl.object_name = 'ORDER_HEADER_SO_LOCAL'  and cpl.current = 1-->
+                <!--and bph.id is null-->
+			<!--</if>-->
+			<!--<if test="doAllCode !=null and doAllCode != ''">-->
+				<!--and process.type in ${doAllCode}-->
+                <!--and bph.id is null-->
+			<!--</if>-->
+			<!--<if test="doFifthCode != null and doFifthCode != '' ">-->
+				<!--and process.type in ${doFifthCode}-->
+                <!--and bph.id is null-->
+			<!--</if>-->
+
+			<if test="source != null and source == 'vendor'">
+				AND (a.order_type = 5 OR a.order_type = 6)
+			</if>
 			<if test="dataStatus==null">
-				and a.status = #{DEL_FLAG_NORMAL}
+				and a.status = 1
 			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num
@@ -325,6 +357,7 @@
 				AND (
 				(
 				biz_status != 45
+				AND biz_status != 40
 				AND biz_status != 35
 				AND biz_status != 0
 				)
@@ -457,6 +490,12 @@
 			</if>
 			<if test="vendorId !=null and vendorId != ''">
 				AND  sv.id = ${vendorId}
+			</if>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="bizPoHeader !=null and bizPoHeader.id != null and bizPoHeader.id != ''">
+				AND  bph.id = ${bizPoHeader.id}
 			</if>
 		</where>
 		<choose>
@@ -673,7 +712,8 @@
 		ship_to_addr = #{bizLocation.id},
 		u_version = #{uVersion},
 		update_id = #{updateBy.id},
-		update_time = #{updateDate}
+		update_time = #{updateDate},
+		pay_proportion = #{payProportion}
 		WHERE id = #{id}
 	</update>
 
@@ -913,7 +953,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type != 4 AND header1.order_type != 6 AND detail1.status = 1
+		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -948,7 +988,6 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
 		oh.order_type != 4
-		and oh.order_type != 6
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1170,7 +1209,6 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
 		oh.order_type != 4
-		and oh.order_type != 6
 		and oh.status = 1
 		and ccc.status = 1
 		AND NOT EXISTS(
@@ -1439,7 +1477,7 @@
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
-		WHERE us.id = us1.id AND header1.order_type != 4 AND header1.order_type != 6 AND detail1.status = 1
+		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1462,7 +1500,6 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
 		oh.order_type != 4
-		and oh.order_type != 6
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1567,7 +1604,7 @@
 			AND date_format(so.create_date, '%Y-%m') = #{month}
 		</if>
 		<if test="centerType == null or centerType == 0">
-			and o.type in (8, 10, 11,13)
+			and o.type in (8, 10, 11)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and o.type = #{centerType}
@@ -1601,7 +1638,7 @@
 		and ta.object_name = 'sys_office'
 		)
 		<if test="centerType == null or centerType == 0">
-			and office1.type in (8, 10, 11,13)
+			and office1.type in (8, 10, 11)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and office1.type = #{centerType}
@@ -1636,7 +1673,7 @@
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE oh.`status` = 1
 		<if test="centerType == null or centerType == 0">
-			and office.type in (8, 10, 11,13)
+			and office.type in (8, 10, 11)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and office.type = #{centerType}
@@ -1677,7 +1714,7 @@
 		and ta.object_name = 'sys_office'
 		)
 		<if test="centerType == null or centerType == 0">
-			and office1.type in (8, 10, 11,13)
+			and office1.type in (8, 10, 11)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and office1.type = #{centerType}
@@ -1728,7 +1765,7 @@
 		)
 		and so.id = u.company_id
 		<if test="centerType == null or centerType == 0">
-			and so.type in (8, 10, 11,13)
+			and so.type in (8, 10, 11)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and so.type = #{centerType}
@@ -1884,14 +1921,14 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 	WHERE cc.consultant_id = u.id AND oh.cust_id = cc.cust_id
 		AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
 		AND so.id = u.office_id
-		AND so.type IN (8, 10, 11,13)
+		AND so.type IN (8, 10, 11)
 		AND
 		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
 	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
       AND oh.`status` = 1 AND u.`status` = 1 AND cc.`status` = 1 AND so.id in
-		(select id from sys_office where type IN (8, 10, 11,13) and status = 1)
+		(select id from sys_office where type IN (8, 10, 11) and status = 1)
 		AND oh.create_time BETWEEN #{startDate} AND #{endDate}
 		GROUP BY so.id
 
@@ -1935,14 +1972,14 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         WHERE cc.consultant_id = u.id AND oh.cust_id = cc.cust_id
         AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
         AND so.id = u.office_id
-        AND so.type IN (8, 10, 11,13)
+        AND so.type IN (8, 10, 11)
         AND
         (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
         biz_status != #{item.state}
     </foreach>
         OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
         AND oh.`status` = 1 AND u.`status` = 1 AND cc.`status` = 1 AND so.id in
-        (select id from sys_office where type IN (8, 10, 11,13) and status = 1)
+        (select id from sys_office where type IN (8, 10, 11) and status = 1)
         AND oh.create_time BETWEEN #{startDate} AND #{endDate}
         and so.id = #{officeId}
         GROUP BY u.id
@@ -2135,6 +2172,9 @@ FROM
         <if test="page != null and page.includeTestData != true">
 	        AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE a.cust_id = ta.object_id AND ta.object_name = 'sys_office' )
         </if>
+		<if test="id != null and id != ''">
+			AND a.id = #{id}
+		</if>
 	GROUP by a.id
     ORDER BY
 	    a.update_time DESC
@@ -2517,13 +2557,13 @@ FROM
 		<!--</if>-->
 		)
 		<if test="ordrHeaderStartTime ==null">
-			and DATE_FORMAT(bcc.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+			and DATE_FORMAT(bcc.update_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
 		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
-			AND bcc.create_time &lt;= #{ordrHeaderStartTime}
+			AND bcc.update_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
-			AND bcc.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+			AND bcc.update_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
 		</if>
 		) as "officeCount"
 		FROM biz_order_header AS oh
@@ -2728,5 +2768,43 @@ FROM
 		bo.id=a.order_id
 		and bo.order_num=#{orderNum}
 	</select>
+
+	<select id="findOrderForVendReq" resultType="BizOrderHeader">
+		SELECT
+		a.order_num AS "orderNum",
+		a.create_time AS "createDate",
+		(SELECT sum(bod.unit_price)
+		FROM biz_order_header boh
+		LEFT JOIN biz_order_detail bod ON bod.order_id = boh.id
+		WHERE bod.sku_id = ops.sku_id
+		AND boh.id = a.id) AS "detailPrice",
+		a.total_detail AS "totalDetail"
+		FROM biz_order_header a
+		LEFT JOIN biz_order_detail od ON od.order_id = a.id
+		LEFT JOIN biz_op_shelf_sku ops ON ops.id = od.sku_shelf_id
+		WHERE
+			1 = 1
+		<if test="skuIdList != null">
+			AND ops.sku_id IN
+			<foreach collection="skuIdList" index="index" item="skuId" open="(" separator="," close=")">
+				 #{skuId}
+			</foreach>
+			  AND ops.center_id = #{centId}
+        </if>
+	</select>
+
+	<update id="updateBizStatus">
+		UPDATE biz_order_header SET
+		biz_status = #{status},
+		update_id = #{updateBy.id},
+		update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateProcessId">
+		UPDATE biz_order_header SET
+		process_id  = #{processId}
+		WHERE id = #{headerId}
+	</update>
 
 </mapper>

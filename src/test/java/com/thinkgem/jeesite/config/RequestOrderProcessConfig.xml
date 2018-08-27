@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RequestOrderProcessConfig>
     <defaultProcessId>1</defaultProcessId>
-    <autProcessId>3</autProcessId>
+    <autProcessId>8</autProcessId>
     <process>
         <name>待采购中心经理审批</name>
         <code>1</code>
@@ -16,10 +16,38 @@
         <passCode>3</passCode>
         <rejectCode>-1</rejectCode>
     </process>
-
+    <process>
+        <name>待采销部经理审批</name>
+        <code>3</code>
+        <roleEnNameEnum>MARKETINGMANAGER</roleEnNameEnum>
+        <passCode>4</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>待供货部开启流程</name>
+        <code>4</code>
+        <roleEnNameEnum>PROVIDER_MANAGER</roleEnNameEnum>
+        <passCode>5</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>待财务部经理审批</name>
+        <code>5</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <passCode>6</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>待运营总监或总经理审批</name>
+        <code>6</code>
+        <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
+        <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
+        <passCode>7</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
     <process>
         <name>审核完成</name>
-        <code>3</code>
+        <code>7</code>
         <roleEnNameEnum></roleEnNameEnum>
         <passCode>0</passCode>
         <rejectCode>0</rejectCode>

@@ -6,6 +6,10 @@ package com.wanhutong.backend.modules.biz.entity.dto;
  */
 public class BizHeaderSchedulingDto {
     /**
+     * poHeaderId
+     */
+    public Integer id;
+    /**
      * 表ID
      */
     public Integer objectId;
@@ -18,7 +22,7 @@ public class BizHeaderSchedulingDto {
      */
     public Integer schedulingNum;
     /**
-     * 已完成数量
+     * 排产日期
      */
     public String planDate;
     /**
@@ -26,6 +30,24 @@ public class BizHeaderSchedulingDto {
      */
     public String schedulingType;
 
+    /**
+     * 订单排产类型
+     */
+    public String remark;
+
+    /**
+     * 采购单排产状态 0,未排产  1,排产中  2,排产完成
+     */
+    public String poSchType;
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getObjectId() {
         return objectId;
@@ -65,5 +87,21 @@ public class BizHeaderSchedulingDto {
 
     public void setSchedulingType(String schedulingType) {
         this.schedulingType = schedulingType;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getPoSchType() {
+        return poSchType;
+    }
+
+    public void setPoSchType(String poSchType) {
+        this.poSchType = poSchType;
     }
 }

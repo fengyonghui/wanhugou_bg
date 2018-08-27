@@ -7,6 +7,7 @@
 		a.req_no AS "reqNo",
 		a.req_type AS "reqType",
 		a.from_id AS "fromOffice.id",
+		a.from_type AS "fromType",
 		a.to_id AS "toOffice.id",
 		so.name AS "fromOffice.name",
 		sot.name AS "toOffice.name",
@@ -67,6 +68,8 @@
 		<include refid="bizRequestHeaderJoins"/>
 		LEFT JOIN biz_sku_info bsi on brd.sku_id = bsi.id
 		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		LEFT JOIN biz_po_order_req por ON por.so_id = a.id AND por.so_type = 2
+		RIGHT JOIN biz_po_header po ON po.id = por.po_id
 		<!-- 供应商id -->
 		<if test="vendorId !=null and vendorId != ''">
 			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
@@ -211,6 +214,9 @@
 			<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
 				${sqlMap.request}
 			</if>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
 			GROUP BY a.id
 		</where>
 		<choose>
@@ -350,4 +356,6 @@
 		biz_status  = #{status}
 		WHERE id = #{id}
 	</update>
+
+
 </mapper>

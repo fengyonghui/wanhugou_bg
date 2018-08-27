@@ -23,6 +23,7 @@
 		a.introduce AS "introduce",
 		a.prod_adv AS "prodAdv",
 		a.type AS "type",
+		a.remark AS "remarks",
 		o1.name AS "office.name"
 	</sql>
 	

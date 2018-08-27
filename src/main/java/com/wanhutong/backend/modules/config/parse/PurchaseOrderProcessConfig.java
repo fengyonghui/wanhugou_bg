@@ -1,10 +1,5 @@
 package com.wanhutong.backend.modules.config.parse;
 
-/**
- * @author Ma.Qiang
- * 2017/10/8
- */
-
 import com.google.common.collect.Maps;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -30,6 +25,12 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
 
     @XStreamAlias("defaultProcessId")
     private int defaultProcessId;
+
+    @XStreamAlias("defaultNewProcessId")
+    private int defaultNewProcessId;
+
+    @XStreamAlias("orderHeaderDefaultProcessId")
+    private int orderHeaderDefaultProcessId;
 
     @XStreamAlias("payProcessId")
     private int payProcessId;
@@ -84,6 +85,14 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
 
     public int getDefaultProcessId() {
         return defaultProcessId;
+    }
+
+    public int getDefaultNewProcessId() {
+        return defaultNewProcessId;
+    }
+
+    public int getOrderHeaderDefaultProcessId() {
+        return orderHeaderDefaultProcessId;
     }
 
     public int getPayProcessId() {

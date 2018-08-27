@@ -3,12 +3,19 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+		this.payFlag = "false"
+		this.payListFlag = "false"
+		this.detileFlag = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			
-//			this.btnshow()
+//			biz:po:bizPoHeader:createPayOrder   申请付款
+//			biz:po:bizPoHeader:audit			支付申请列表
+//			biz:po:bizPoHeader:view				详情
+			this.getPermissionList('biz:po:bizPoHeader:createPayOrder','payFlag')
+			this.getPermissionList('biz:po:bizPoHeader:audit','payListFlag')
+			this.getPermissionList('biz:po:bizPoHeader:view','detileFlag')
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			if(this.userInfo.isFunc){
 				this.seachFunc()
@@ -47,15 +54,14 @@
 						success: function(res) {
 							var arrLen = res.data.resultList.length;
 							var dataRow = res.data.roleSet;
-							console.log(res)
+//							console.log(res)
 							if(arrLen > 0) {
 								$.each(res.data.resultList, function(i, item) {
-									console.log(item)
+//									console.log(item)
 									var startBtn = '';
 									var classBtn = '';
-									var payBtn = '';
 									var processName = '';
-									/*有没有开启审核*/
+								//开启审核   、   审核
 									if(item.process) {
 										processName = item.process.purchaseOrderProcess.name
 										var code = item.process.purchaseOrderProcess.code;
@@ -68,23 +74,48 @@
 											}
 										}else {
 											startBtn = ''
+											classBtn = ''
 										}
 									} else {
 										startBtn = '开启审核'
 										classBtn = 'startShenhe'
 									}
-									
+								//申请支付
 									var bizStatus = item.bizStatus;
 									var payment = item.currentPaymentId;
-									/*审核流程*/
-									
 									var applyStatus = item.process.bizStatus;
-									/*有没有申请支付单*/
-									if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
-										payBtn = '申请付款';
-									} else {
-										payBtn = ''
+									var applyPay = '';
+									var applyPayBtn ='';
+									if(_this.payFlag == true) {
+										if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
+											applyPay = '申请付款';
+											applyPayBtn = 'applyPayBtn'
+										} else {
+											applyPay = ''
+											applyPayBtn = ''
+										}
 									}
+								//支付申请列表
+									var payList = ''
+									var payListBtn = ''
+									if(_this.payListFlag == true) {
+										payList = '支付申请列表'
+										payListBtn = 'payListBtn'
+									}else {
+										payList = ''
+										payListBtn = ''
+									}
+								//详情
+									var detail = '';
+									var detailBtn = '';
+									if(_this.detileFlag == true ) {
+										detail = '详情'
+										detailBtn = 'detailBtn'
+									}else {
+										detail = ''
+										detailBtn = ''
+									}
+									
 									pHtmlList += '<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">' +
 										'<div class="mui-input-row">' +
 										'<label>采购单号:</label>' +
@@ -106,14 +137,14 @@
 										'<div class="mui-col-xs-3">' +
 										'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
 										'</div>' +
-										'<div class="mui-col-xs-3 ApplyPayListBtn">' +
-										'<li class="mui-table-view-cell paying" listId="' + item.id + '" poId="' + item.id + '">' + payBtn + '</li>' +
+										'<div class="mui-col-xs-3 '+applyPayBtn+'">' +
+										'<li class="mui-table-view-cell" listId="' + item.id + '" poId="' + item.id + '">' + applyPay + '</li>' +
 										'</div>' +
-										'<div class="mui-col-xs-4 payListBtn" listId="' + item.id + '">' +
-										'<li class="mui-table-view-cell">支付申请列表</li>' +
+										'<div class="mui-col-xs-4 '+payListBtn+'" listId="' + item.id + '">' +
+										'<li class="mui-table-view-cell">'+payList+'</li>' +
 										'</div>' +
-										'<div class="mui-col-xs-2 detailBtn" listId="' + item.id + '">' +
-										'<li class="mui-table-view-cell">详情</li>' +
+										'<div class="mui-col-xs-2 '+detailBtn+'" listId="' + item.id + '">' +
+										'<li class="mui-table-view-cell">'+detail+'</li>' +
 										'</div>' +
 										'</div>' +
 										'</div>'
@@ -144,6 +175,24 @@
 			});
 			
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.payFlag = res.data
+					_this.payListFlag = res.data
+					_this.detileFlag = res.data
+//                  console.log(_this.payFlag)
+//                  console.log(_this.payListFlag)
+//                  console.log(_this.detileFlag)
+                }
+            });
+        },
 		hrefHtml: function() {
 			var _this = this;
 			/*查询*/
@@ -163,7 +212,7 @@
 					
 			}),
 			/*申请付款*/
-			$('.listBlue').on('tap', '.paying', function() {
+			$('.listBlue').on('tap', '.applyPayBtn', function() {
 				var url = $(this).attr('url');
 				var poId = $(this).attr('poId');
 				if(url) {
@@ -177,7 +226,7 @@
 					})
 				}
 			}),
-			/*支付单列表*/
+			/*支付申请列表*/
 			$('.listBlue').on('tap', '.payListBtn', function() {
 				var url = $(this).attr('url');
 				var listId = $(this).attr('listId');
@@ -241,16 +290,17 @@
 					})
 				}
 			})
+			/*首页*/
+			$('#purchaseNav').on('tap','.inHomePage', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../html/backstagemgmt.html",
+					extras: {
+						
+					}
+				})
+			})
 		},
-		//		
-//		btnshow: function() {
-//			$('#search_btn').on('tap', function() {
-//				mui('.mui-off-canvas-wrap').offCanvas().toggle()
-//			})
-//			$('.closeBtn').on('tap', function() {
-//				mui('.mui-off-canvas-wrap').offCanvas().toggle()
-//			})
-//		},
 		formatDateTime: function(unix) {
 			var now = new Date(parseInt(unix) * 1);
 			now = now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
@@ -313,15 +363,11 @@
 						type: 'GET',
 						url: '/a/biz/po/bizPoHeader/listData4Mobile',
 						data: {
-						//	parentId: _this.userInfo.purchId,
 							pageNo: 1,
 							orderNum:_this.userInfo.orderNum,
 							num:_this.userInfo.num,
 							'vendOffice.id':_this.userInfo.vendOffice,
-							'commonProcess.type':_this.userInfo.commonProcess,
-							
-							
-							
+							'commonProcess.type':_this.userInfo.commonProcess
 						},
 						dataType: 'json',
 						success: function(res) {
@@ -333,37 +379,60 @@
 //									console.log(item)
 									var startBtn = '';
 									var classBtn = '';
-									var payBtn = '';
 									var processName = '';
-									/*有没有开启审核*/
+								//开启审核   、   审核
 									if(item.process) {
 										processName = item.process.purchaseOrderProcess.name
 										var code = item.process.purchaseOrderProcess.code;
 										if(item.process.purchaseOrderProcess.roleEnNameEnum) {
 											var DataRoleGener = item.process.purchaseOrderProcess.roleEnNameEnum;
 											var fileRoleData =  dataRow.filter(v => DataRoleGener.includes(v));
-											if(item.process && fileRoleData.length>0) {
+											if(item.process && fileRoleData.length>0 || dataRow[0]== 'DEPT' && code != 7 && code != -1) {
 												startBtn = '审核'
 												classBtn = 'shenHe'
 											}
 										}else {
 											startBtn = ''
+											classBtn = ''
 										}
 									} else {
 										startBtn = '开启审核'
 										classBtn = 'startShenhe'
 									}
-									
+								//申请支付	
 									var bizStatus = item.bizStatus;
 									var payment = item.currentPaymentId;
-									/*审核流程*/
-									
 									var applyStatus = item.process.bizStatus;
-									/*有没有申请支付单*/
-									if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
-										payBtn = '申请付款';
-									} else {
-										payBtn = ''
+									var applyPay = '';
+									var applyPayBtn ='';
+									if(_this.payFlag == true) {
+										if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
+											applyPay = '申请付款';
+											applyPayBtn = 'applyPayBtn'
+										} else {
+											applyPay = ''
+											applyPayBtn = ''
+										}
+									}
+								//支付申请列表
+									var payList = ''
+									var payListBtn = ''
+									if(_this.payListFlag == true) {
+										payList = '支付申请列表'
+										payListBtn = 'payListBtn'
+									}else {
+										payList = ''
+										payListBtn = ''
+									}
+								//详情
+									var detail = '';
+									var detailBtn = '';
+									if(_this.detileFlag == true ) {
+										detail = '详情'
+										detailBtn = 'detailBtn'
+									}else {
+										detail = ''
+										detailBtn = ''
 									}
 									pHtmlList += '<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">' +
 										'<div class="mui-input-row">' +
@@ -386,29 +455,25 @@
 										'<div class="mui-col-xs-3">' +
 										'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
 										'</div>' +
-										'<div class="mui-col-xs-3 ApplyPayListBtn">' +
-										'<li class="mui-table-view-cell paying" listId="' + item.id + '" poId="' + item.id + '">' + payBtn + '</li>' +
+										'<div class="mui-col-xs-3 '+applyPayBtn+'">' +
+										'<li class="mui-table-view-cell" listId="' + item.id + '" poId="' + item.id + '">' + applyPay + '</li>' +
 										'</div>' +
-										'<div class="mui-col-xs-4 payListBtn" listId="' + item.id + '">' +
-										'<li class="mui-table-view-cell">支付申请列表</li>' +
+										'<div class="mui-col-xs-4 '+payListBtn+'" listId="' + item.id + '">' +
+										'<li class="mui-table-view-cell">'+payList+'</li>' +
 										'</div>' +
-										'<div class="mui-col-xs-2 detailBtn" listId="' + item.id + '">' +
-										'<li class="mui-table-view-cell">详情</li>' +
+										'<div class="mui-col-xs-2 '+detailBtn+'" listId="' + item.id + '">' +
+										'<li class="mui-table-view-cell">'+detail+'</li>' +
 										'</div>' +
 										'</div>' +
 										'</div>'
 								});
 								$('.listBlue').append(pHtmlList);
 								_this.hrefHtml()
-								
 							}else{
 								$('.listBlue').append('<p class="noneTxt">暂无数据</p>');
 							}
-								
-							
 						}
 					});
-				
 		}
 	}
 	$(function() {

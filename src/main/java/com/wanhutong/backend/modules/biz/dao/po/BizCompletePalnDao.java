@@ -17,6 +17,7 @@ import java.util.List;
  */
 @MyBatisDao
 public interface BizCompletePalnDao extends CrudDao<BizCompletePaln> {
+
     /**
      * 确认排产后更改排产状态
      * @param bizCompletePaln

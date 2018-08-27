@@ -9,6 +9,7 @@
 		<result property="delFlag" column="status"/>
 		<result property="createDate" column="createDate"/>
 		<result property="updateDate" column="updateDate"/>
+		<result property="remark" column="remark"/>
 
 		<association property="createBy" javaType="User" column="createBy.id">
 			<id property="id" column="createBy.id"/>
@@ -37,7 +38,8 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		a.remark AS "remark"
 	</sql>
 	
 	<sql id="bizSchedulingPlanJoins">
@@ -66,9 +68,9 @@
 		AND a.object_id = #{objectId}
 		AND a.object_name = #{objectName}
 	</select>
-	
+
 	<select id="findList" resultMap="schedulingPlanResult">
-		SELECT 
+		SELECT
 			<include refid="bizSchedulingPlanColumns"/>
 			,bcp.id AS "completePalnList.id"
 			,bcp.scheduling_id AS "completePalnList.schedulingId"
@@ -93,7 +95,7 @@
 			</otherwise>
 		</choose>
 	</select>
-
+	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_scheduling_plan(
 			id,
@@ -105,7 +107,9 @@
 			create_time,
 			u_version,
 			update_id,
-			update_time
+			update_time,
+			remark,
+			po_sch_type
 		) VALUES (
 			#{id},
 			#{objectName},
@@ -116,7 +120,9 @@
 			#{createDate},
 			#{uVersion},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+			#{remark},
+			#{poSchType}
 		)
 	</insert>
 	
@@ -128,7 +134,9 @@
 			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+			update_time = #{updateDate},
+			remark = #{remark},
+			po_sch_type = #{poSchType}
 		WHERE id = #{id}
 	</update>
 	
@@ -138,16 +146,15 @@
 		WHERE id = #{id}
 	</update>
 
-	<update id="updateSchedulingType">
-		UPDATE biz_scheduling_plan SET
-		object_name = #{objectName},
-		object_id = #{objectId},
-		original_num = #{originalNum},
-		create_time = #{createDate},
-		u_version = #{uVersion},
-		update_id = #{updateBy.id},
-		update_time = #{updateDate}
-		WHERE id = #{id}
-	</update>
-	
+    <update id="updateSchedulingType">
+        UPDATE biz_scheduling_plan SET
+        object_name = #{objectName},
+        object_id = #{objectId},
+        original_num = #{originalNum},
+        create_time = #{createDate},
+        u_version = #{uVersion},
+        update_id = #{updateBy.id},
+        update_time = #{updateDate}
+        WHERE id = #{id}
+    </update>
 </mapper>

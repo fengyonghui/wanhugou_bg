@@ -23,7 +23,9 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	private String objectName;		// 表名
 	private Integer objectId;		// 表ID
 	private Integer originalNum;		// 单子原始数量
-
+	private String remark;     //备注
+//	private Integer schedulingNum;		// 排产数量
+//	private Integer completeNum;		// 已完成数量
 	/**
 	 * 采购订单表Entity
 	 */
@@ -33,11 +35,15 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	 * 备货清单详细信息Entity
 	 */
 	private BizRequestDetail bizRequestDetail;
-
 	/**
-	 * 确认排产list
+	 * 该排产相关的总确认数
 	 */
-	private List<BizCompletePaln> completePalnList;
+	//private Integer sumCompleteNum;
+
+    /**
+     * 确认排产list
+     */
+    private List<BizCompletePaln> completePalnList;
 
 	/**
 	 * 排产日期
@@ -53,6 +59,11 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	 * 备货清单entity
 	 */
 	private BizRequestHeader bizRequestHeader;
+
+	/**
+	 * 采购单排产状态 0,未排产  1,排产中  2,排产完成
+	 */
+	public Integer poSchType;
 
 	public BizSchedulingPlan() {
 		super();
@@ -87,6 +98,22 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 		this.originalNum = originalNum;
 	}
 
+//	public Integer getSchedulingNum() {
+//		return schedulingNum;
+//	}
+//
+//	public void setSchedulingNum(Integer schedulingNum) {
+//		this.schedulingNum = schedulingNum;
+//	}
+
+//	public Integer getCompleteNum() {
+//		return completeNum;
+//	}
+//
+//	public void setCompleteNum(Integer completeNum) {
+//		this.completeNum = completeNum;
+//	}
+
 	public BizPoDetail getBizPoDetail() {
 		return bizPoDetail;
 	}
@@ -111,6 +138,14 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 		this.completePalnList = completePalnList;
 	}
 
+//	public Integer getSumCompleteNum() {
+//		return sumCompleteNum;
+//	}
+//
+//	public void setSumCompleteNum(Integer sumCompleteNum) {
+//		this.sumCompleteNum = sumCompleteNum;
+//	}
+
 	public Date getPlanDate() {
 		return planDate;
 	}
@@ -133,5 +168,21 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 
 	public void setBizRequestHeader(BizRequestHeader bizRequestHeader) {
 		this.bizRequestHeader = bizRequestHeader;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getPoSchType() {
+		return poSchType;
+	}
+
+	public void setPoSchType(Integer poSchType) {
+		this.poSchType = poSchType;
 	}
 }

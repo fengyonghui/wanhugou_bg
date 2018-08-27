@@ -3,7 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.po;
 
-import com.google.common.collect.ImmutableMap;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -17,18 +17,21 @@ import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.BizHeaderSchedulingDto;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
@@ -44,6 +47,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.SystemConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -61,10 +65,8 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.util.JSONUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -88,16 +90,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 采购订单表Controller
@@ -145,6 +141,8 @@ public class BizPoHeaderController extends BaseController {
     private BizSchedulingPlanService bizSchedulingPlanService;
     @Autowired
     private BizCompletePalnService bizCompletePalnService;
+    @Autowired
+    private BizInvoiceService bizInvoiceService;
 
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
     public static final String PO_HEADER_TABLE_NAME = "biz_po_header";
@@ -176,12 +174,10 @@ public class BizPoHeaderController extends BaseController {
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(bizSkuInfo.getId()));
                 poDetail.setSkuInfo(skuInfo);
 
-                //BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
-                //bizSchedulingPlan.setBizPoDetail(poDetail);
-                //List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findList(bizSchedulingPlan);
-                //schedulingPlanList.sort(Comparator.comparing(BizSchedulingPlan::getUpdateDate));
-                //List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findAllList(bizSchedulingPlan);
-                //poDetail.setSchedulingPlanList(schedulingPlanList);
+//                BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
+//                bizSchedulingPlan.setBizPoDetail(poDetail);
+//                List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findAllList(bizSchedulingPlan);
+//                poDetail.setSchedulingPlanList(schedulingPlanList);
                 BizPoDetail poDetailTemp = bizPoDetailService.getsumSchedulingNum(poDetail.getId());
                 if (poDetailTemp != null){
                     poDetail.setSumSchedulingNum(poDetailTemp.getSumSchedulingNum());
@@ -293,7 +289,14 @@ public class BizPoHeaderController extends BaseController {
         if (roleList.contains(role)) {
             bizPoHeader.setVendOffice(user.getCompany());
         }
-
+        try {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
+            Date date = df.parse(filteringDate);
+            bizPoHeader.setFilteringDate(date);
+        } catch (ParseException e) {
+            LOGGER.error("日期解析失败",e);
+        }
         Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<BizPoHeader>(request, response), bizPoHeader);
         Set<String> roleSet = Sets.newHashSet();
         Set<String> roleEnNameSet = Sets.newHashSet();
@@ -561,6 +564,7 @@ public class BizPoHeaderController extends BaseController {
     public String save(HttpServletResponse response, HttpServletRequest request,
                        BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes,
                        String prewStatus, String type, String version) {
+
         if ("audit".equalsIgnoreCase(type)) {
             String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
             addMessage(redirectAttributes, msg);
@@ -704,15 +708,16 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "payOrder")
     @ResponseBody
-    public String payOrder(RedirectAttributes redirectAttributes, Integer poHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
-        return bizPoHeaderService.payOrder(poHeaderId, paymentOrderId, payTotal, img);
+    public String payOrder(RedirectAttributes redirectAttributes, Integer poHeaderId,@RequestParam(required = false) Integer reqHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
+        return bizPoHeaderService.payOrder(poHeaderId,reqHeaderId, paymentOrderId, payTotal, img);
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "startAudit")
     @ResponseBody
     public String startAudit(HttpServletRequest request, int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, @RequestParam(defaultValue = "1") Integer auditType, String desc) {
-        Pair<Boolean, String> result = bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
+        String mark = "oldAudit";
+        Pair<Boolean, String> result = bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc, mark);
         if (result.getLeft()) {
             return JsonUtil.generateData(result, request.getParameter("callback"));
         }
@@ -812,7 +817,7 @@ public class BizPoHeaderController extends BaseController {
                         headerListData.add("");
                         //已供货数量
                         headerListData.add("");
-                        //工厂价
+                        //结算价
                         headerListData.add("");
                         data.add(headerListData);
                     } else {
@@ -908,14 +913,14 @@ public class BizPoHeaderController extends BaseController {
                             headerListData.add(String.valueOf(poDetail.getOrdQty()));
                             //已供货数量
                             headerListData.add(String.valueOf(poDetail.getSendQty()));
-                            //工厂价
+                            //结算价
                             headerListData.add(String.valueOf(poDetail.getSkuInfo().getBuyPrice()));
                             data.add(headerListData);
                         }
                     }
                 }
             }
-            String[] headers = {"采购单号", "供应商", "采购总价", "交易费用","应付金额", "累计支付金额", "支付比例","订单状态","审核状态","创建时间","所属单号","商品名称","商品货号","采购数量","已供货数量","工厂价"};
+            String[] headers = {"采购单号", "供应商", "采购总价", "交易费用","应付金额", "累计支付金额", "支付比例","订单状态","审核状态","创建时间","所属单号","商品名称","商品货号","采购数量","已供货数量","结算价"};
             ExportExcelUtils eeu = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             eeu.exportExcel(workbook, 0, "采购单数据", headers, data, fileName);
@@ -975,17 +980,19 @@ public class BizPoHeaderController extends BaseController {
         Boolean detailSchedulingFlg = false;
         List<BizPoDetail> bizPoDetailList = bizPoHeader.getPoDetailList();
         List<BizPoDetail> poDetailList = Lists.newArrayList();
-        for (BizPoDetail bizpodetail : bizPoDetailList) {
-            //排产类型为按商品排产时，获取排产记录
-            if (SCHEDULING_FOR_DETAIL.equals(schedulingType)) {
-                BizSchedulingPlan bizSchedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(bizpodetail.getId(), PO_DETAIL_TABLE_NAME);
-                if (bizSchedulingPlan != null) {
-                    detailSchedulingFlg = true;
+        if (CollectionUtils.isNotEmpty(bizPoDetailList)) {
+            for (BizPoDetail bizpodetail : bizPoDetailList) {
+                //排产类型为按商品排产时，获取排产记录
+                if (SCHEDULING_FOR_DETAIL.equals(schedulingType)) {
+                    BizSchedulingPlan bizSchedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(bizpodetail.getId(), PO_DETAIL_TABLE_NAME);
+                    if (bizSchedulingPlan != null) {
+                        detailSchedulingFlg = true;
+                    }
+                    bizpodetail.setBizSchedulingPlan(bizSchedulingPlan);
                 }
-                bizpodetail.setBizSchedulingPlan(bizSchedulingPlan);
+                poDetailList.add(bizpodetail);
+                poDetailIdList.add(bizpodetail.getId());
             }
-            poDetailList.add(bizpodetail);
-            poDetailIdList.add(bizpodetail.getId());
         }
         bizPoHeader.setPoDetailList(poDetailList);
 
@@ -1005,14 +1012,16 @@ public class BizPoHeaderController extends BaseController {
         List<Role> roleList = UserUtils.getUser().getRoleList();
         if (roleList != null) {
             for (Role role : roleList) {
-                String roleName = role.getName();
+                String roleName = role.getEnname();
                 if (RoleEnNameEnum.SUPPLY_CHAIN.getDesc().equals(roleName)) {
                     roleFlag = true;
+                    break;
                 }
             }
         }
         model.addAttribute("roleFlag", roleFlag);
         return forwardPage;
+
     }
 
     @RequestMapping(value = "checkSchedulingNum")
@@ -1042,9 +1051,23 @@ public class BizPoHeaderController extends BaseController {
             //按商品排产时
             if (SCHEDULING_FOR_DETAIL.equals(schedulingType)) {
                 objectName = PO_DETAIL_TABLE_NAME;
+                Integer poHeaderId = dtoList.get(0).getId();
+                BizSchedulingPlan schedulingPlanPoh = bizSchedulingPlanService.getByObjectIdAndObjectName(poHeaderId, PO_HEADER_TABLE_NAME);
                 for (int i = 0; i < dtoList.size(); i++) {
-                    Integer detailId = dtoList.get(i).getObjectId();
                     BizHeaderSchedulingDto dto = dtoList.get(i);
+                    if (i == 0) {
+                        if (schedulingPlanPoh == null) {
+                            schedulingPlanPoh = new BizSchedulingPlan();
+                        }
+                        schedulingPlanPoh.setObjectId(dto.getId());
+                        schedulingPlanPoh.setObjectName(PO_HEADER_TABLE_NAME);
+                        schedulingPlanPoh.setOriginalNum(0);
+                        schedulingPlanPoh.setRemark(dto.getRemark());
+                        schedulingPlanPoh.setPoSchType(Integer.valueOf(dto.getPoSchType()));
+                        bizSchedulingPlanService.save(schedulingPlanPoh);
+                    }
+
+                    Integer detailId = dtoList.get(i).getObjectId();
                     BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(detailId, objectName);
                     if (schedulingPlan == null) {
                         schedulingPlan = new BizSchedulingPlan();
@@ -1068,8 +1091,9 @@ public class BizPoHeaderController extends BaseController {
                         logger.error(e.getMessage());
                         break;
                     }
+                    bizInvoiceService.saveDeliver(dtoList.get(0).getId());
                 }
-                //排产类型为按订单排产时，更新备货单排产类型
+                //排产类型为按商品排产时，更新备货单排产类型
                 Integer detailId = dtoList.get(0).getObjectId();
                 BizPoDetail bizPoDetail = bizPoDetailService.get(detailId);
                 BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoDetail.getPoHeader().getId());
@@ -1077,15 +1101,19 @@ public class BizPoHeaderController extends BaseController {
                 bizPoHeaderService.updateSchedulingType(bizPoHeader);
 
             } else {
-                Integer objectId = dtoList.get(0).getObjectId();
-                BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(objectId, objectName);
+                Integer poHeaderId = dtoList.get(0).getId();
+                BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(poHeaderId, objectName);
                 for (int i = 0; i < dtoList.size(); i++) {
                     BizHeaderSchedulingDto dto = dtoList.get(i);
-                    if (schedulingPlan == null) {
-                        schedulingPlan = new BizSchedulingPlan();
-                        schedulingPlan.setObjectId(dto.getObjectId());
+                    if (i == 0) {
+                        if (schedulingPlan == null) {
+                            schedulingPlan = new BizSchedulingPlan();
+                        }
+                        schedulingPlan.setObjectId(dto.getId());
                         schedulingPlan.setObjectName(objectName);
                         schedulingPlan.setOriginalNum(dto.getOriginalNum());
+                        schedulingPlan.setRemark(dto.getRemark());
+                        schedulingPlan.setPoSchType(Integer.valueOf(dto.getPoSchType()));
                         bizSchedulingPlanService.save(schedulingPlan);
                     }
                     BizCompletePaln bizCompletePaln = new BizCompletePaln();
@@ -1102,6 +1130,7 @@ public class BizPoHeaderController extends BaseController {
                         logger.error(e.getMessage());
                         break;
                     }
+                    bizInvoiceService.saveDeliver(dtoList.get(0).getId());
                 }
 
             }
@@ -1149,5 +1178,82 @@ public class BizPoHeaderController extends BaseController {
         }
 
         return resultFlag;
+    }
+
+
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "autoSave")
+    @ResponseBody
+    public String autoSave(String reqDetailIds, String orderDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal, String prewStatus, String type,
+                         String version, HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes,Model model) throws ParseException {
+        Office vendOffice = new Office();
+        vendOffice.setId(Integer.parseInt(vendorId));
+
+        BizPoHeader bizPoHeader = new BizPoHeader();
+        bizPoHeader.setVendOffice(vendOffice);
+        if (reqDetailIds != null || !"".equals(reqDetailIds)) {
+            bizPoHeader.setReqDetailIds(reqDetailIds);
+        }
+        if (orderDetailIds != null || !"".equals(orderDetailIds)) {
+            bizPoHeader.setOrderDetailIds(orderDetailIds);
+        }
+        bizPoHeader.setUnitPrices(unitPrices);
+        bizPoHeader.setOrdQtys(ordQtys);
+
+        if ("audit".equalsIgnoreCase(type)) {
+            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
+            addMessage(redirectAttributes, msg);
+            return "生成支付申请单";
+        }
+        if (!beanValidator(model, bizPoHeader)) {
+            return "自动生成采购单时，服务端参数有效性验证";
+        }
+        Set<Integer> poIdSet = bizPoHeaderService.findPrewPoHeader(bizPoHeader);
+        if (poIdSet.size() == 1) {
+            addMessage(redirectAttributes, "prew".equals(prewStatus) ? "采购订单预览信息" : "保存采购订单成功");
+            return "采购单预览";
+        }
+        int deOfifceId = 0;
+        if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null) {
+            deOfifceId = bizPoHeader.getDeliveryOffice().getId();
+        }
+
+        //生成采购单预览
+        String poNo = "0";
+        bizPoHeader.setOrderNum(poNo);
+        bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
+        bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
+        Integer id = bizPoHeader.getId();
+        bizPoHeaderService.save(bizPoHeader);
+        if (id == null) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
+        if (bizPoHeader.getOrderNum() == null || "0".equals(bizPoHeader.getOrderNum())) {
+            poNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO, deOfifceId, bizPoHeader.getVendOffice().getId(), bizPoHeader.getId());
+            bizPoHeader.setOrderNum(poNo);
+            bizPoHeaderService.savePoHeader(bizPoHeader);
+        }
+        if ("mobile".equalsIgnoreCase(version)) {
+            return renderString(response, JsonUtil.generateData("操作成功", request.getParameter("callback")), "application/json");
+        }
+
+        //确认生成采购单
+        Integer poHeaderIdid = bizPoHeader.getId();
+        bizPoHeader = bizPoHeaderService.get(poHeaderIdid);
+        bizPoHeader.setDeliveryStatus(0);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date lastPayDate = sdf.parse(lastPayDateVal);
+        bizPoHeader.setLastPayDate(lastPayDate);
+
+        bizPoHeader.setIsPrew(0);
+        bizPoHeader.setType("createPo");
+        bizPoHeaderService.savePoHeader(bizPoHeader);
+
+        addMessage(redirectAttributes, "保存采购订单成功");
+
+        //采购单开启审核，同时自动生成付款单
+        bizPoHeaderService.autoSavePaymentOrder(poHeaderIdid);
+
+        return "ok";
     }
 }
