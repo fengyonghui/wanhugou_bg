@@ -242,37 +242,67 @@ public class BizOrderHeaderController extends BaseController {
         DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
 
         Map<String, String> originConfigMap = Maps.newLinkedHashMap();
-        Map<String, Integer> originConfigValueMap = Maps.newLinkedHashMap();
-
-        for(Process process : originConfig.getProcessList()) {
-            originConfigMap.put(process.getName(), process.getName());
-            originConfigValueMap.put(process.getName(), process.getCode());
-        }
-
-        for(Process process : localConfig.getProcessList()) {
-            originConfigMap.put(process.getName(), process.getName());
-            originConfigValueMap.put(process.getName(), process.getCode());
-        }
-
-        for(DoOrderHeaderProcessAllConfig.OrderHeaderProcess process : doOrderHeaderProcessAllConfig.getProcessList()) {
-            originConfigMap.put(process.getName(), process.getName());
-            originConfigValueMap.put(process.getName(), process.getCode());
-        }
-
-        for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
-            originConfigMap.put(process.getName(), process.getName());
-            originConfigValueMap.put(process.getName(), process.getCode());
-        }
+        StringBuilder originConfigValue = new StringBuilder("(");
+        StringBuilder localConfigValue = new StringBuilder("(");
+        StringBuilder doAllConfigValue = new StringBuilder("(");
+        StringBuilder doFifthConfigValue = new StringBuilder("(");
 
         String selectAuditStatus = bizOrderHeader.getSelectAuditStatus();
-        // TODO 过滤
+//////////////////////////////////////////////////////////////////
+        for(Process process : originConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+            if (process.getName().equals(selectAuditStatus)) {
+                originConfigValue.append(process.getCode() + ",");
+            }
+        }
+        originConfigValue.delete(originConfigValue.length() - 1, originConfigValue.length());
+        if (originConfigValue.length() > 0) {
+            originConfigValue.append(")");
+        }
+//////////////////////////////////////////////////////////////////
+        for(Process process : localConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+            if (process.getName().equals(selectAuditStatus)) {
+                localConfigValue.append(process.getCode() + ",");
+            }
+        }
+        localConfigValue.delete(localConfigValue.length() - 1, localConfigValue.length());
+        if (localConfigValue.length() > 0) {
+            localConfigValue.append(")");
+        }
+//////////////////////////////////////////////////////////////////
+        for(DoOrderHeaderProcessAllConfig.OrderHeaderProcess process : doOrderHeaderProcessAllConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+            if (process.getName().equals(selectAuditStatus)) {
+                doAllConfigValue.append(process.getCode() + ",");
+            }
+        }
+        doAllConfigValue.delete(doAllConfigValue.length() - 1, doAllConfigValue.length());
+        if (doAllConfigValue.length() > 0) {
+            doAllConfigValue.append(")");
+        }
+//////////////////////////////////////////////////////////////////
+        for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
+            originConfigMap.put(process.getName(), process.getName());
+            if (process.getName().equals(selectAuditStatus)) {
+                doFifthConfigValue.append(process.getCode() + ",");
+            }
+        }
+        doFifthConfigValue.delete(doFifthConfigValue.length() - 1, doFifthConfigValue.length());
+        if (doFifthConfigValue.length() > 0) {
+            doFifthConfigValue.append(")");
+        }
+
+        bizOrderHeader.setOriginCode(originConfigValue.toString());
+        bizOrderHeader.setLocalCode(localConfigValue.toString());
+        bizOrderHeader.setDoAllCode(doAllConfigValue.toString());
+        bizOrderHeader.setDoFifthCode(doFifthConfigValue.toString());
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
         if (bizOrderHeader.getSource() != null) {
             model.addAttribute("source", bizOrderHeader.getSource());
         }
-
 
         for (BizOrderHeader b : page.getList()) {
             if (b.getOrderNum().startsWith("SO")) {

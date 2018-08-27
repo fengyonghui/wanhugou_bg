@@ -205,6 +205,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private Integer suplys;
 
+    /**
+     * 流程查询
+     */
+    private String originCode;
+    private String localCode;
+    private String doAllCode;
+    private String doFifthCode;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -888,4 +896,35 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.selectAuditStatus = selectAuditStatus;
     }
 
+    public String getOriginCode() {
+        return originCode;
+    }
+
+    public void setOriginCode(String originCode) {
+        this.originCode = originCode;
+    }
+
+    public String getLocalCode() {
+        return localCode;
+    }
+
+    public void setLocalCode(String localCode) {
+        this.localCode = localCode;
+    }
+
+    public String getDoAllCode() {
+        return doAllCode;
+    }
+
+    public void setDoAllCode(String doAllCode) {
+        this.doAllCode = doAllCode;
+    }
+
+    public String getDoFifthCode() {
+        return doFifthCode;
+    }
+
+    public void setDoFifthCode(String doFifthCode) {
+        this.doFifthCode = doFifthCode;
+    }
 }

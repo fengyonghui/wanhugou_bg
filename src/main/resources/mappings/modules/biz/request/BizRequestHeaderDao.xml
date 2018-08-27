@@ -64,28 +64,6 @@
 			pi.vendor_name AS "name",
 			bvi.id as "varietyInfo.id",
 			bvi.name as "varietyInfo.name"
-		/*,
-			po.scheduling_type AS "bizPoHeader.schedulingType",
-			(SELECT SUM(bpd.ord_qty)
-			FROM biz_po_header bph
-			LEFT JOIN biz_po_detail bpd ON bpd.order_id = bph.id
-			WHERE bph.id = po.id
-			) AS "bizPoHeader.totalOrdQty"
-			,(SELECT
-			SUM(bcp.complete_num)
-			FROM biz_po_header bph
-			LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.status=1 AND bsp.object_name = 'biz_po_header'
-			LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
-			WHERE bph.status = 1
-			AND bph.id = po.id) AS "bizPoHeader.totalSchedulingHeaderNum"
-			,(SELECT
-			SUM(bcp.complete_num)
-			FROM biz_po_header bph
-			LEFT JOIN biz_po_detail bpd on bpd.order_id = bph.id AND bpd.status=1
-			LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bpd.id AND bsp.status=1 AND bsp.object_name = 'biz_po_detail'
-			LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
-			WHERE bph.status = 1
-			AND bph.id = po.id) AS "bizPoHeader.totalSchedulingDetailNum"*/
 		FROM biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
 		LEFT JOIN biz_sku_info bsi on brd.sku_id = bsi.id

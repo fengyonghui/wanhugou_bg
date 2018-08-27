@@ -271,7 +271,7 @@
 	</select>
 
 
-	<select id="findList" resultMap="orderHeaderResult">
+	<select id="findList" resultMap="orderHeaderResult" statementType="STATEMENT">
 		SELECT
 		<include refid="bizOrderHeaderColumns"/>,
 		od.id AS "orderDetailList.id",
@@ -287,30 +287,6 @@
 		FROM biz_order_detail bod
 		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
 		WHERE boh.id = a.id) AS "suplys",
-		/*(SELECT SUM(bpd.ord_qty)
-		FROM biz_po_header bph
-		LEFT JOIN biz_po_detail bpd ON bpd.order_id = bph.id
-		WHERE bph.id = bpor.po_id
-		) AS "bizPoHeader.totalOrdQty"
-		,(SELECT
-		SUM(bcp.complete_num)
-		FROM biz_po_header bph
-		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.status=1 AND bsp.object_name = 'biz_po_header'
-		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
-		WHERE bph.status = 1
-		AND bph.id = bpor.po_id) AS "bizPoHeader.totalSchedulingHeaderNum"
-		,(SELECT
-		SUM(bcp.complete_num)
-		FROM biz_po_header bph
-		LEFT JOIN biz_po_detail bpd on bpd.order_id = bph.id AND bpd.status=1
-		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bpd.id AND bsp.status=1 AND bsp.object_name = 'biz_po_detail'
-		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
-		WHERE bph.status = 1
-		AND bph.id = bpor.po_id) AS "bizPoHeader.totalSchedulingDetailNum",
-		(SELECT bsp.po_sch_type FROM biz_po_header bph
-		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id
-		AND bsp.object_name='biz_po_header' AND bsp.status = 1
-		WHERE bph.id = bpor.po_id) AS "bizPoHeader.poSchType",*/
 		(select
 			sum(od.buy_price * od.ord_qty)
 		from
@@ -336,9 +312,30 @@
 		<if test="vendorId !=null and vendorId != ''">
 			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
 		</if>
+
+		<if test="originCode !=null and originCode != ''">
+			LEFT JOIN common_process cpo ON cpo.object_id = a.id
+		</if>
+		<if test="localCode !=null and localCode != ''">
+			LEFT JOIN common_process cpl ON cpl.object_id = a.id
+		</if>
+
 		<!-- end  -->
 		<include refid="bizOrderHeaderJoins"/>
 		<where> 1=1 and a.order_type !=4
+			<if test="originCode !=null and originCode != ''">
+				and cpo.type in ${originCode}  and cpo.object_name = 'ORDER_HEADER_SO_ORIGIN' and cpo.current = 1
+			</if>
+			<if test="localCode !=null and localCode != ''">
+				and cpl.type in ${localCode} and cpl.object_name = 'ORDER_HEADER_SO_LOCAL'  and cpl.current = 1
+			</if>
+			<if test="doAllCode !=null and doAllCode != ''">
+				and process.type in ${doAllCode}
+			</if>
+			<if test="doFifthCode != null and doFifthCode != '' ">
+				and process.type in ${doFifthCode}
+			</if>
+
 			<if test="source != null and source == 'vendor'">
 				AND (a.order_type = 5 OR a.order_type = 6)
 			</if>
