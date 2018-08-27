@@ -26,6 +26,9 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
     @XStreamAlias("defaultProcessId")
     private int defaultProcessId;
 
+    @XStreamAlias("defaultNewProcessId")
+    private int defaultNewProcessId;
+
     @XStreamAlias("orderHeaderDefaultProcessId")
     private int orderHeaderDefaultProcessId;
 
@@ -82,6 +85,10 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
 
     public int getDefaultProcessId() {
         return defaultProcessId;
+    }
+
+    public int getDefaultNewProcessId() {
+        return defaultNewProcessId;
     }
 
     public int getOrderHeaderDefaultProcessId() {

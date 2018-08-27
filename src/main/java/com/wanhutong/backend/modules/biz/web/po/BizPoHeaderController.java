@@ -716,7 +716,8 @@ public class BizPoHeaderController extends BaseController {
     @RequestMapping(value = "startAudit")
     @ResponseBody
     public String startAudit(HttpServletRequest request, int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, @RequestParam(defaultValue = "1") Integer auditType, String desc) {
-        Pair<Boolean, String> result = bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
+        String mark = "oldAudit";
+        Pair<Boolean, String> result = bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc, mark);
         if (result.getLeft()) {
             return JsonUtil.generateData(result, request.getParameter("callback"));
         }

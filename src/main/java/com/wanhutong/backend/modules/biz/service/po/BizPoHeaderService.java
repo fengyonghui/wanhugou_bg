@@ -235,7 +235,31 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         if (soType == Byte.parseByte("1")) {
             code = purchaseOrderProcessConfig.getOrderHeaderDefaultProcessId();
         } else {
+            code = purchaseOrderProcessConfig.getDefaultNewProcessId();
+        }
+        PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.getProcessMap().get(code);
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
+        commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+        commonProcessService.save(commonProcessEntity);
+
+        this.updateProcessId(bizPoHeader.getId(), commonProcessEntity.getId());
+    }
+
+    private void updateProcessToInitAudit(BizPoHeader bizPoHeader, String mark) {
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+        Byte soType = getBizPoOrderReqByPo(bizPoHeader);
+        Integer code = 0;
+        if ("oldAudit".equals(mark)) {
             code = purchaseOrderProcessConfig.getDefaultProcessId();
+        } else {
+            if (soType == Byte.parseByte("1")) {
+                code = purchaseOrderProcessConfig.getOrderHeaderDefaultProcessId();
+            } else {
+                code = purchaseOrderProcessConfig.getDefaultNewProcessId();
+            }
         }
         PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.getProcessMap().get(code);
 
@@ -857,7 +881,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, int auditType, String desc) {
+    public Pair<Boolean, String> startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, int auditType, String desc, String mark) {
         PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         BizPoHeader bizPoHeader = this.get(id);
         if (bizPoHeader == null) {
@@ -875,13 +899,18 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         if (bizStatus == null || !bizStatus.equals(bizPoHeader.getBizStatus())) {
             bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
         }
-        this.updateProcessToInit(bizPoHeader);
+        this.updateProcessToInitAudit(bizPoHeader, mark);
         Byte soType = getBizPoOrderReqByPo(bizPoHeader);
         String currentType = "";
         if (soType == Byte.parseByte("1")) {
             currentType = String.valueOf(purchaseOrderProcessConfig.getOrderHeaderDefaultProcessId());
         } else {
-            currentType = String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId());
+            if ("oldAudit".equals(mark)) {
+                currentType = String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId());
+            } else {
+                currentType = String.valueOf(purchaseOrderProcessConfig.getDefaultNewProcessId());
+            }
+
         }
         auditPo(id, currentType, auditType, desc);
         return Pair.of(Boolean.TRUE,   "操作成功!");
@@ -1212,7 +1241,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
             prewPayTotal = totalDetail.add(totalExp).add(freight).subtract(payTotal).setScale(0, BigDecimal.ROUND_HALF_UP);
         }
-        Pair<Boolean, String> result = this.startAudit(poHeaderIdid, prew, prewPayTotal, prewPayDeadline, auditType, desc);
+        String mark = "newAudit";
+        Pair<Boolean, String> result = this.startAudit(poHeaderIdid, prew, prewPayTotal, prewPayDeadline, auditType, desc, mark);
 
         //自动生成付款单
         bizPoHeader = this.get(poHeaderIdid);
