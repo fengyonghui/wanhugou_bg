@@ -48,14 +48,10 @@
 							_this.sureSelect(options)
 						}else{
 							mui.toast('请选择匹配的选项')
-						}
-					
+						}					
 				}else{
-					_this.sureSelect(options)
-					
-				}
-				
-
+					_this.sureSelect(options)					
+				}				
 			})
 		},
 		sureSelect:function(options){
@@ -166,7 +162,6 @@
 		}
 	}
 	$(function() {
-
 		var ac = new ACCOUNT();
 		ac.init();
 	});

@@ -39,26 +39,27 @@
 						if(item.staStatus=15) {
 							statusTxt = "供货中"
 						}
-						$('#staPoordNum').val(item.orderNum)
-						$('#staRelNum').val(item.customer.name)
-						$('#staPototal').val(item.totalDetail)
-						$('#staAdjustmentMoney').val(item.totalExp)
-						$('#staFreight').val(item.freight)
-						$('#staShouldPay').val(shouldPay)
-						var poLastDa = item.receiveTotal/(item.totalDetail+item.totalExp+item.freight);
-						$('#staPoLastDa').val(item.receiveTotal)
-						$('#staServerPrice').val(serverPrice)
-						$('#staInvoice').val(invStatusTxt)
-						$('#staStatus').val(statusTxt)
-						$('#staConsignee').val(item.bizLocation.receiver)
-						$('#staMobile').val(item.bizLocation.phone)
-						$('#staShippAddress').val()
-						$('#staDateilAddress').val(item.bizLocation.address)
-						$('#staEvolve').val()
+						$('#staPoordNum').val(item.orderNum);
+						$('#staRelNum').val(item.customer.name);
+						$('#staPototal').val(item.totalDetail);
+						$('#staAdjustmentMoney').val(item.totalExp);
+						$('#staFreight').val(item.freight);
+						$('#staShouldPay').val(shouldPay);
+						var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
+//						console.log(poLastDa)
+						$('#staPoLastDa').val(item.receiveTotal);
+						$('#staServerPrice').val(serverPrice);
+						$('#staInvoice').val(invStatusTxt);
+						$('#staStatus').val(statusTxt);
+						$('#staConsignee').val(item.bizLocation.receiver);
+						$('#staMobile').val(item.bizLocation.phone);
+						$('#staShippAddress').val();
+						$('#staDateilAddress').val(item.bizLocation.address);
+						$('#staEvolve').val();
 					}) 
 //					_this.commodityHtml(res.data)
 //					_this.statusProcessHtml(res.data)
-					_this.checkProcessHtml(res.data)
+					_this.checkProcessHtml(res.data);
                 }
             });
 		},
