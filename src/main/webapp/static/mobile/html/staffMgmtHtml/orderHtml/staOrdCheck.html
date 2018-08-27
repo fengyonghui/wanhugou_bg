@@ -18,6 +18,12 @@
 			.photoParent img {top: 50%;margin-top: -8px;width: 50px;}
 			.listBlue>li {border-bottom: 1px solid #40ABE9;}
 			#staEvoMenu>li:last-child {color: #40ABE9;}
+			.labelRi>li {float: left;}
+			.labelRi {}
+			.labelRi div {width: 70px;margin: 5px 15px;border: 1px solid #40ABE9;border-radius: 5px;font-size: 13px;text-align: center;}
+		    .nextTxt01 {top: 17px;left: 88px;}
+		    .nextTxt02 {top: 6px;left: 87px;}
+		    .labelParent{display: flex;justify-content: center;}
 		</style>
 	</head>
 	<body>
@@ -91,8 +97,25 @@
 				<textarea id="inPoRemark" name="" rows="" cols="" disabled></textarea>
 			</div>
 			<div class="mui-input-row">
-				<label>进展信息：</label>
-				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
+				<div class="labelLf">进展信息：</div>
+				<div class="labelParent">
+					<ul class="labelRi ">
+					<li class="app_pr">
+						<div>首付款支付</div>
+						<div>全部支付</div>
+						<span class="mui-icon mui-icon-arrowthinright app_pa nextTxt01"></span>
+					</li>
+					<li class="app_pr app_t12">
+						<div class="app_pr">供货中</div>
+						<span class="mui-icon mui-icon-arrowthinright app_pa nextTxt02"></span>
+					</li>
+					<li>
+						<div>采购中</div>
+						<div>已发货</div>
+					</li>
+				</ul>
+				</div>
+				
 			</div>
 			<div class="mui-input-row">
 				<div class="labelLf">状态流程：</div>

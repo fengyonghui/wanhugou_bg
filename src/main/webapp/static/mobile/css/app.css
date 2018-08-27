@@ -292,6 +292,13 @@ a:hover{text-decoration:none;}
 .app_w100{width: 100%;}
 .app_w100p{width: 100%;}
 
+
+/*高度*/
+.app_t12 {top: 12px;}
+
+
+
+
 /*边线设置*/
 .mui-table-view.app_notborder{border-top:none;color: #40ABE9;}
 .mui-table-view.app_notborder:before{height: 0}
