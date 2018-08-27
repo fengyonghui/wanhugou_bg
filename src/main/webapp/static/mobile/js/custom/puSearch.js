@@ -15,9 +15,7 @@
 			this.pageInit(); //页面初始化
 		},
 		pageInit: function() {
-			var _this = this;
-			
-
+			var _this = this;			
 		},
 		getData: function() {
 			var _this = this;
@@ -25,6 +23,26 @@
 				var options = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"))
 //				console.log('----------------')
 //				console.log(options)
+                var ordNumVal = $(".ordNum").val(); 
+                var detaNumVal = $('.detaNum').val(); 
+                var newInputVal = $('.newinput').val();
+                var secStyleVal = $('.secStyle').val();
+				if(ordNumVal == null||ordNumVal == undefined){
+					ordNumVal == "";
+                }
+                if(detaNumVal == null||detaNumVal == undefined) {
+                	detaNumVal == "";
+                }
+                if(newInputVal == null||newInputVal == undefined) {
+                	newInputVal == "";
+                }
+                if(secStyleVal == null||secStyleVal == undefined) {
+                	secStyleVal == "";
+                }
+                if(ordNumVal == ""&&detaNumVal == ""&&newInputVal == ""&&secStyleVal == ""){
+                	 mui.toast("请输入查询条件！");
+                	 return;
+                }
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
 							_this.sureSelect(options)
