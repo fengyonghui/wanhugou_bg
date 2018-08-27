@@ -509,7 +509,7 @@
                         <td>${orderDetail.sentQty}</td>
                         <c:if test="${bizInvoice.str == 'audit'}">
                             <input type="hidden" title="details_${orderDetail.orderHeader.id}" value="${orderDetail.id}"/>
-                            <td><input type='text' title='sent_${orderDetail.orderHeader.id}' name='' required="required" onchange='checkNum(${orderDetail.ordQty},${orderDetail.sentQty},this)' value=''></td>
+                            <td><input type='text' title='sent_${orderDetail.orderHeader.id}' name='' required="required" onchange='checkNum(${orderDetail.ordQty},${orderDetail.sentQty},this)' value='0'></td>
                         </c:if>
                     </tr>
                     <c:if test="${fn:length(orderDetailList)>1}">
