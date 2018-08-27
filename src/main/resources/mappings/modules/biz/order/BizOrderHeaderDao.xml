@@ -323,22 +323,52 @@
 		<!-- end  -->
 		<include refid="bizOrderHeaderJoins"/>
 		<where> 1=1 and a.order_type !=4
-			<!--<if test="originCode !=null and originCode != ''">-->
-				<!--and cpo.type in ${originCode}  and cpo.object_name = 'ORDER_HEADER_SO_ORIGIN' and cpo.current = 1-->
-                <!--and bph.id is null-->
-			<!--</if>-->
-			<!--<if test="localCode !=null and localCode != ''">-->
-				<!--and cpl.type in ${localCode} and cpl.object_name = 'ORDER_HEADER_SO_LOCAL'  and cpl.current = 1-->
-                <!--and bph.id is null-->
-			<!--</if>-->
-			<!--<if test="doAllCode !=null and doAllCode != ''">-->
-				<!--and process.type in ${doAllCode}-->
-                <!--and bph.id is null-->
-			<!--</if>-->
-			<!--<if test="doFifthCode != null and doFifthCode != '' ">-->
-				<!--and process.type in ${doFifthCode}-->
-                <!--and bph.id is null-->
-			<!--</if>-->
+			<if test="poAuditCode != null and poAuditCode != ''">
+				and cp.type in
+				<foreach collection="poAuditCode" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="poAuditCode == null or poAuditCode == ''">
+				<if test="originCode !=null and originCode != ''">
+					and cpo.object_name = 'ORDER_HEADER_SO_ORIGIN' and cpo.current = 1
+					and bph.id is null
+					and cpo.type in
+					<foreach collection="originCode" index="index" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+					and (SELECT SUM(bod.suply_id)
+					FROM biz_order_detail bod
+					LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
+					WHERE boh.id = a.id) = 0
+				</if>
+				<if test="localCode !=null and localCode != ''">
+					and cpl.object_name = 'ORDER_HEADER_SO_LOCAL' and cpl.current = 1
+					and bph.id is null
+					and cpl.type in
+					<foreach collection="localCode" index="index" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+					and (SELECT SUM(bod.suply_id)
+					FROM biz_order_detail bod
+					LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
+					WHERE boh.id = a.id) != 0
+				</if>
+				<if test="doAllCode !=null and doAllCode != ''">
+					and bph.id is null
+					and process.type in
+					<foreach collection="doAllCode" index="index" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+				<if test="doFifthCode != null and doFifthCode != '' ">
+					and bph.id is null
+					and process.type in
+					<foreach collection="doFifthCode" index="index" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			</if>
 
 			<if test="source != null and source == 'vendor'">
 				AND (a.order_type = 5 OR a.order_type = 6)

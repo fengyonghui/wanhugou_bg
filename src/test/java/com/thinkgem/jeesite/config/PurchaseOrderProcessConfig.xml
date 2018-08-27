@@ -1,62 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PurchaseOrderProcessConfig>
-    <defaultProcessId>2</defaultProcessId>
-    <payProcessId>7</payProcessId>
+    <defaultProcessId>1</defaultProcessId>
+    <orderHeaderDefaultProcessId>3</orderHeaderDefaultProcessId>
+    <payProcessId>10</payProcessId>
+    <endProcessId>-1</endProcessId>
 
     <!--流程节点-->
-    <!--采购中心负责人审批-->
+    <!--财务经理审批-->
     <process>
-        <name>待采购中心负责人审批</name>
+        <name>待财务经理审批</name>
         <code>1</code>
-        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
-        <passCode>2</passCode>
-        <rejectCode>-1</rejectCode>
-    </process>
-    <!--供货部-->
-    <process>
-        <name>待供货部负责人审批</name>
-        <code>2</code>
-        <roleEnNameEnum>PROVIDER_MANAGER</roleEnNameEnum>
-        <passCode>3</passCode>
-        <rejectCode>-1</rejectCode>
-    </process>
-    <!--会计-->
-    <process>
-        <name>待会计审批</name>
-        <code>3</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
-        <passCode>5</passCode>
+        <passCode>2</passCode>
         <rejectCode>-1</rejectCode>
     </process>
     <!--运营总监-->
     <process>
         <name>待运营总监审批</name>
-        <code>4</code>
+        <code>2</code>
         <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
-        <passCode>5</passCode>
+        <passCode>10</passCode>
         <rejectCode>-1</rejectCode>
     </process>
-    <!--总经理-->
+    <!--财务经理审批-->
     <process>
-        <name>待运营总监或总经理审批</name>
-        <code>5</code>
-        <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
-        <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
-        <passCode>7</passCode>
-        <rejectCode>-1</rejectCode>
-    </process>
-    <!--财会待付款-->
-    <process>
-        <name>财会待付款</name>
-        <code>6</code>
+        <name>待财务经理审批</name>
+        <code>3</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
-        <passCode>7</passCode>
+        <passCode>10</passCode>
         <rejectCode>-1</rejectCode>
     </process>
-    <!--支付完成-->
+    <!--审批完成-->
     <process>
         <name>审批完成</name>
-        <code>7</code>
+        <code>10</code>
         <roleEnNameEnum></roleEnNameEnum>
         <passCode>0</passCode>
         <rejectCode>0</rejectCode>
