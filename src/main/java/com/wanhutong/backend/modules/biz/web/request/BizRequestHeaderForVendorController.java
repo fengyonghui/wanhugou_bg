@@ -46,7 +46,12 @@ import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.*;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -66,7 +71,11 @@ import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -74,7 +83,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
 
 /**
  * 备货清单Controller
@@ -227,14 +246,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			bizRequestHeader.setReqCode(requestMap.get(bizRequestHeader.getProcess()));
 		} else if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && poMap.get(bizRequestHeader.getProcess()) != null){
 			bizRequestHeader.setPoCode(poMap.get(bizRequestHeader.getProcess()));
-		}
-		if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && "驳回".equals(bizRequestHeader.getProcess())) {
-
-		}
-		if (enNameList.contains(RoleEnNameEnum.PROVIDER_MANAGER.getState()) || enNameList.contains(RoleEnNameEnum.SHIPPER.getState())
-				|| enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
-			bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
-			bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.CLOSE.getState().byteValue());
 		}
 		String dataFrom = "biz_request_bizRequestHeader";
 		bizRequestHeader.setDataFrom(dataFrom);
