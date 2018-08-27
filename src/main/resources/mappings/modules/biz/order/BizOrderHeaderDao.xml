@@ -344,7 +344,7 @@
 				AND (a.order_type = 5 OR a.order_type = 6)
 			</if>
 			<if test="dataStatus==null">
-				and a.status = #{DEL_FLAG_NORMAL}
+				and a.status = 1
 			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num
