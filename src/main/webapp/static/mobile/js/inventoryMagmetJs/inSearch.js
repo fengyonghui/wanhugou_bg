@@ -21,8 +21,32 @@
 		getData: function() {
 			var _this = this;
 			$('#inSearchBtn').on('tap', function() {
-				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"))
+				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
+				var ordNumVal = $(".inOrdNum").val(); 
+                var reqNumVal = $(".inReqNum").val(); 
+                var newInputVal = $('.newinput').val(); 
+                var secStyleVal = $('.secStyle').val();
+                var cateGoryVal = $('#input_div_class').val();
 //				console.log(optionsBusiness)
+               if(ordNumVal == null||ordNumVal == undefined){
+					ordNumVal == "";
+                }
+                if(reqNumVal == null||reqNumVal == undefined) {
+                	reqNumVal == "";
+                }
+                if(newInputVal == null||newInputVal == undefined) {
+                	newInputVal == "";
+                }
+                if(secStyleVal == null||secStyleVal == undefined) {
+                	secStyleVal == "";
+                }
+                if(cateGoryVal == null||cateGoryVal == undefined) {
+                	cateGoryVal == "";
+                }
+                if(ordNumVal == ""&&reqNumVal == ""&&newInputVal == ""&&secStyleVal == ""&&cateGoryVal == ""){
+                	 mui.toast("请输入查询条件！");
+                	 return;
+                }
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
 							_this.sureSelect(optionsBusiness)
