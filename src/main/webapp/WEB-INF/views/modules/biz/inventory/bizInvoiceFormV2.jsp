@@ -188,6 +188,7 @@
     <sys:message content="${message}"/>
     <form:hidden path="ship" value="0"/>
     <form:hidden path="isConfirm" value="1"/>
+    <form:hidden path="source" value="new"/>
     <form:hidden path="bizStatus" value="0"/>
 
     <div class="control-group">
