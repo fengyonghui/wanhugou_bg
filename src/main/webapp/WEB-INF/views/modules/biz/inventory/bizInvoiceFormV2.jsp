@@ -202,7 +202,6 @@
             <label class="control-label">发货人：</label>
             <div class="controls">
                 <form:select about="choose" path="carrier" class="input-medium required">
-                    <form:option value="" label="请选择"/>
                     <form:options items="${userList}" itemLabel="name" itemValue="name" htmlEscape="false"/>
                 </form:select>
                 <span class="help-inline"><font color="red">*</font> </span>
