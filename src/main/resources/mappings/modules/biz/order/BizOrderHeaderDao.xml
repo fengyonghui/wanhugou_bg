@@ -325,15 +325,19 @@
 		<where> 1=1 and a.order_type !=4
 			<if test="originCode !=null and originCode != ''">
 				and cpo.type in ${originCode}  and cpo.object_name = 'ORDER_HEADER_SO_ORIGIN' and cpo.current = 1
+                and bph.id is null
 			</if>
 			<if test="localCode !=null and localCode != ''">
 				and cpl.type in ${localCode} and cpl.object_name = 'ORDER_HEADER_SO_LOCAL'  and cpl.current = 1
+                and bph.id is null
 			</if>
 			<if test="doAllCode !=null and doAllCode != ''">
 				and process.type in ${doAllCode}
+                and bph.id is null
 			</if>
 			<if test="doFifthCode != null and doFifthCode != '' ">
 				and process.type in ${doFifthCode}
+                and bph.id is null
 			</if>
 
 			<if test="source != null and source == 'vendor'">
