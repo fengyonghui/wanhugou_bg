@@ -208,10 +208,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     /**
      * 流程查询
      */
-    private String originCode;
-    private String localCode;
-    private String doAllCode;
-    private String doFifthCode;
+    private List<String> originCode;
+    private List<String> localCode;
+    private List<String> doAllCode;
+    private List<String> doFifthCode;
+    private List<String> poAuditCode;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -896,35 +897,43 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.selectAuditStatus = selectAuditStatus;
     }
 
-    public String getOriginCode() {
+    public List<String> getOriginCode() {
         return originCode;
     }
 
-    public void setOriginCode(String originCode) {
+    public void setOriginCode(List<String> originCode) {
         this.originCode = originCode;
     }
 
-    public String getLocalCode() {
+    public List<String> getLocalCode() {
         return localCode;
     }
 
-    public void setLocalCode(String localCode) {
+    public void setLocalCode(List<String> localCode) {
         this.localCode = localCode;
     }
 
-    public String getDoAllCode() {
+    public List<String> getDoAllCode() {
         return doAllCode;
     }
 
-    public void setDoAllCode(String doAllCode) {
+    public void setDoAllCode(List<String> doAllCode) {
         this.doAllCode = doAllCode;
     }
 
-    public String getDoFifthCode() {
+    public List<String> getDoFifthCode() {
         return doFifthCode;
     }
 
-    public void setDoFifthCode(String doFifthCode) {
+    public void setDoFifthCode(List<String> doFifthCode) {
         this.doFifthCode = doFifthCode;
+    }
+
+    public List<String> getPoAuditCode() {
+        return poAuditCode;
+    }
+
+    public void setPoAuditCode(List<String> poAuditCode) {
+        this.poAuditCode = poAuditCode;
     }
 }
