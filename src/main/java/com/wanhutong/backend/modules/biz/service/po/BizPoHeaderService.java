@@ -1257,7 +1257,11 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
     public Byte getBizPoOrderReqByPo(BizPoHeader bizPoHeader) {
         List<BizPoOrderReq> poOrderReqs = bizPoOrderReqService.getByPo(bizPoHeader.getId());
-        return poOrderReqs.get(0).getSoType();
+        Byte result = 0;
+        if (poOrderReqs.size() > 0) {
+            result = poOrderReqs.get(0).getSoType();
+        }
+        return result;
     }
 
 
