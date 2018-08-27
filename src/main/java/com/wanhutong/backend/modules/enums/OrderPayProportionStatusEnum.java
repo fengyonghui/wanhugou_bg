@@ -12,7 +12,7 @@ public enum OrderPayProportionStatusEnum {
 
     ZERO(0, 0, 19, "0%首付款"),
     FIFTH(1, 20, 99, "20%首付款"),
-    ALL(2, 100, 100, "全部支付"),
+    ALL(2, 100, 10000, "全部支付"),
     UNKNOWN(-1, -1, -1, "未知"),;
 
     private Integer state;
@@ -54,6 +54,10 @@ public enum OrderPayProportionStatusEnum {
      * @return
      */
     public static OrderPayProportionStatusEnum parse(Double orderTotal, Double payTotal) {
+        if (orderTotal <= 0) {
+            return ALL;
+        }
+
         BigDecimal divide = BigDecimal.valueOf(payTotal).divide(BigDecimal.valueOf(orderTotal),2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
 
         for (OrderPayProportionStatusEnum statusEnum : values()) {

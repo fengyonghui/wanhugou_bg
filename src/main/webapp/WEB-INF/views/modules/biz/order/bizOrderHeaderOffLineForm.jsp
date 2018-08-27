@@ -54,7 +54,7 @@
 		<label class="control-label">线下支付凭证：</label>
 		<div class="controls">
 			<form:hidden path="imgUrls" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-			<sys:ckfinder input="imgUrls" type="images" uploadPath="/logistics/info" selectMultiple="true" maxWidth="100"
+			<sys:ckfinder input="imgUrls" type="images" uploadPath="/offLine/info" selectMultiple="true" maxWidth="100"
 						  maxHeight="100"/>
 		</div>
 	</div>

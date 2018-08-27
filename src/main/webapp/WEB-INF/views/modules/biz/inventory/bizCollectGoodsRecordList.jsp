@@ -80,7 +80,7 @@
 				<td>
 					${bizCollectGoodsRecord.skuInfo.partNo}
 				</td>
-				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${bizCollectGoodsRecord.bizRequestHeader.id}&source=gh">
+				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${bizCollectGoodsRecord.bizRequestHeader.id}&source=gh&bizStatu=0">
 					${bizCollectGoodsRecord.orderNum}</a>
 				</td>
 				<td>

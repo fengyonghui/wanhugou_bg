@@ -11,6 +11,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -22,6 +23,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
@@ -95,6 +97,8 @@ public class BizRequestAllController {
     private CommonImgService commonImgService;
     @Autowired
     private BizPoHeaderService bizPoHeaderService;
+    @Autowired
+    private BizInvoiceService bizInvoiceService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -264,6 +268,16 @@ public class BizRequestAllController {
             if(requestDetailList.size()==0){
                 requestHeader.setPoSource("poHeaderSource");
             }
+            BizInvoice invoice = new BizInvoice();
+            if ("bh".equals(ship)) {
+                invoice.setShip(BizInvoice.Ship.RE.getShip());
+                invoice.setReqNo(bizRequestHeader.getReqNo());
+                invoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
+            }
+            List<BizInvoice> invoiceList = bizInvoiceService.findList(invoice);
+            if (CollectionUtils.isNotEmpty(invoiceList)) {
+                model.addAttribute("invoiceList",invoiceList);
+            }
         }
         if (bizOrderHeader != null && bizOrderHeader.getId() != null) {
             //取出用户所属采购中心
@@ -286,13 +300,23 @@ public class BizRequestAllController {
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
             List<BizOrderDetail> orderDetailList;
+            orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
             if (bizStatu == 0) {
                 bizOrderDetail.setSuplyis(new Office(bizOrderHeader.getCenterId()));
                 orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
             } else {
                 orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+                BizInvoice invoice = new BizInvoice();
+                if ("xs".equals(ship)) {
+                    invoice.setShip(BizInvoice.Ship.SO.getShip());
+                    invoice.setOrderNum(orderHeader.getOrderNum());
+                    invoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
+                }
+                List<BizInvoice> invoiceList = bizInvoiceService.findList(invoice);
+                if (CollectionUtils.isNotEmpty(invoiceList)) {
+                    model.addAttribute("invoiceList",invoiceList);
+                }
             }
-            orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
             if (orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
                 CommonImg commonImg = new CommonImg();
                 commonImg.setObjectId(orderHeader.getId());

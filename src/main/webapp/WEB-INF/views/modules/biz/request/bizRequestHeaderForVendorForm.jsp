@@ -262,8 +262,10 @@
                 contentType: 'application/json',
                 data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
                 type: 'get',
+                async: false,
                 success: function (result) {
                     if(result == 'ok') {
+                        alert("操作成功！");
                         if(auditType==1){
                             //自动生成采购单
                             var id = $("#id").val();
@@ -272,7 +274,6 @@
                                 getPoHeaderPara(id);
                             }
                         }
-                        alert("操作成功！");
                         window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                     }else {
                         alert("操作失败！");
@@ -333,6 +334,7 @@
                 data: {"orderId": id, "type": "1"},
                 type: 'get',
                 dataType: 'json',
+                async: false,
                 success: function (result) {
                     var reqDetailIds = result['unitPrices'];
                     if (reqDetailIds == "") {
@@ -359,6 +361,7 @@
                 contentType: 'application/json',
                 data: {"reqDetailIds": reqDetailIds, "orderDetailIds": "", "vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
                 type: 'get',
+                async: false,
                 success: function (res) {
                     if (res == "ok") {
 
@@ -385,7 +388,7 @@
                 }
             }
 
-            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id);
+            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=requestHeader");
             $("#inputForm").submit();
         }
 
@@ -544,7 +547,7 @@
 					<input id="payTotal" name="planPay" type="text"
 						   <c:if test="${entity.str == 'audit' || entity.str == 'pay'}">readonly</c:if>
 						   value="${entity.bizPoPaymentOrder.id != null ?
-                           entity.bizPoPaymentOrder.total : (entity.totalDetail-(entity.balanceTotal == null ? 0 : entity.balanceTotal))}"
+                           entity.bizPoPaymentOrder.total : (entity.totalDetail-(entity.bizPoHeader.payTotal == null ? 0 : entity.bizPoHeader.payTotal))}"
 						   htmlEscape="false" maxlength="30" class="input-xlarge"/>
 				</div>
 			</div>
@@ -709,7 +712,7 @@
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<th>价格</th>
+					<th>结算价</th>
 					<th>申报数量</th>
 
 					<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
@@ -980,7 +983,7 @@
 			<div class="control-group">
 				<label class="control-label">排产状态：</label>
 				<div class="controls">
-					${schedulingType == null ? "未排产" : schedulingType}
+					${fns:getDictLabel(poSchType, 'poSchType', '未排产')}
 				</div>
 			</div>
 		</c:if>

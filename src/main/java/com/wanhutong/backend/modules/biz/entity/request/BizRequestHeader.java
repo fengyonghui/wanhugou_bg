@@ -8,7 +8,6 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
-import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
@@ -179,6 +178,21 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 一单到底对应的采购单
 	 */
 	private BizPoHeader bizPoHeader;
+
+	/**
+	 * 用于审核状态查询
+	 */
+	private String process;
+
+	/**
+	 * 备货单审核code
+	 */
+	private Integer reqCode;
+
+	/**
+	 * PO审核code
+	 */
+	private Integer poCode;
 
 	public BizRequestHeader() {
 		super();
@@ -623,14 +637,6 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 		this.schedulingType = schedulingType;
 	}
 
-//	public List<BizSchedulingPlan> getSchedulingPlanList() {
-//		return schedulingPlanList;
-//	}
-//
-//	public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
-//		this.schedulingPlanList = schedulingPlanList;
-//	}
-
 	public Integer getTotalSchedulingDetailNum() {
 		return totalSchedulingDetailNum;
 	}
@@ -661,5 +667,29 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setBizPoHeader(BizPoHeader bizPoHeader) {
 		this.bizPoHeader = bizPoHeader;
+	}
+
+	public String getProcess() {
+		return process;
+	}
+
+	public void setProcess(String process) {
+		this.process = process;
+	}
+
+	public Integer getReqCode() {
+		return reqCode;
+	}
+
+	public void setReqCode(Integer reqCode) {
+		this.reqCode = reqCode;
+	}
+
+	public Integer getPoCode() {
+		return poCode;
+	}
+
+	public void setPoCode(Integer poCode) {
+		this.poCode = poCode;
 	}
 }

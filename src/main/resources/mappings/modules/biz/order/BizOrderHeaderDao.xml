@@ -86,7 +86,7 @@
 		<association property="bizPoHeader" javaType="BizPoHeader" column="bizPoHeader.id">
 			<id property="id" column="bizPoHeader.id"/>
 			<id property="orderNum" column="bizPoHeader.orderNum"/>
-			<!--<id property="totalOrdQty" column="bizPoHeader.totalOrdQty"/>-->
+			<id property="currentPaymentId" column="bizPoHeader.currentPaymentId"/>
 			<id property="poSchType" column="bizPoHeader.poSchType"/>
 			<association property="commonProcess" javaType="CommonProcessEntity" column="bizPoHeader.commonProcess">
 				<id property="id" column="bizPoHeader.commonProcess.id"/>
@@ -174,7 +174,8 @@
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
 		bph.id AS "bizPoHeader.id",
-		bph.process_id AS "bizPoHeader.process_id",
+		bph.process_id AS "bizPoHeader.processId",
+		bph.current_payment_id AS "bizPoHeader.currentPaymentId",
 		cp.id AS "bizPoHeader.commonProcess.id",
 		cp.object_id AS "bizPoHeader.commonProcess.objectId",
 		cp.object_name AS "bizPoHeader.commonProcess.objectName",
@@ -244,6 +245,7 @@
 		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
 		LEFT JOIN common_process cp ON cp.id = bph.process_id
 		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
+		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bph.current_payment_id
 	</sql>
 
 	<select id="get" resultType="BizOrderHeader">
@@ -285,30 +287,6 @@
 		FROM biz_order_detail bod
 		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
 		WHERE boh.id = a.id) AS "suplys",
-		/*(SELECT SUM(bpd.ord_qty)
-		FROM biz_po_header bph
-		LEFT JOIN biz_po_detail bpd ON bpd.order_id = bph.id
-		WHERE bph.id = bpor.po_id
-		) AS "bizPoHeader.totalOrdQty"
-		,(SELECT
-		SUM(bcp.complete_num)
-		FROM biz_po_header bph
-		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.status=1 AND bsp.object_name = 'biz_po_header'
-		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
-		WHERE bph.status = 1
-		AND bph.id = bpor.po_id) AS "bizPoHeader.totalSchedulingHeaderNum"
-		,(SELECT
-		SUM(bcp.complete_num)
-		FROM biz_po_header bph
-		LEFT JOIN biz_po_detail bpd on bpd.order_id = bph.id AND bpd.status=1
-		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bpd.id AND bsp.status=1 AND bsp.object_name = 'biz_po_detail'
-		LEFT JOIN biz_complete_paln bcp ON bcp.scheduling_id = bsp.id and bcp.status=1
-		WHERE bph.status = 1
-		AND bph.id = bpor.po_id) AS "bizPoHeader.totalSchedulingDetailNum",
-		(SELECT bsp.po_sch_type FROM biz_po_header bph
-		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id
-		AND bsp.object_name='biz_po_header' AND bsp.status = 1
-		WHERE bph.id = bpor.po_id) AS "bizPoHeader.poSchType",*/
 		(select
 			sum(od.buy_price * od.ord_qty)
 		from
@@ -334,11 +312,22 @@
 		<if test="vendorId !=null and vendorId != ''">
 			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
 		</if>
+
+		<if test="originCode !=null and originCode != ''">
+			LEFT JOIN common_process cpo ON cpo.object_id = a.id
+		</if>
+		<if test="localCode !=null and localCode != ''">
+			LEFT JOIN common_process cpl ON cpl.object_id = a.id
+		</if>
+
 		<!-- end  -->
 		<include refid="bizOrderHeaderJoins"/>
 		<where> 1=1 and a.order_type !=4
+			<if test="source != null and source == 'vendor'">
+				AND (a.order_type = 5 OR a.order_type = 6)
+			</if>
 			<if test="dataStatus==null">
-				and a.status = #{DEL_FLAG_NORMAL}
+				and a.status = 1
 			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num

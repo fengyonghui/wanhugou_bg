@@ -63,7 +63,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<c:if test="${source eq 'sh'}">
-			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&ship=${ship}">收货清单列表</a></li>
+			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&ship=${ship}&bizStau=${bizStatu}">收货清单列表</a></li>
 		</c:if>
 		<c:if test="${source eq 'kc'}">
 			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&bizStatu=${bizStatu}&ship=${ship}">供货清单列表</a></li>
@@ -195,7 +195,7 @@
 					<c:if test="${source=='gh'}">
 					<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>
 					</c:if>
-					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">
+					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&bizStatu=${bizStatu}">
 						${requestHeader.reqNo}
 					</a></td>
 					<td>
@@ -226,16 +226,16 @@
 					<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
 						<c:choose>
 							<c:when test="${source=='gh'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">详情</a>
 							</c:when>
 							<c:when test="${source=='sh'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">备货详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&bizStatu=${bizStatu}">备货详情</a>
 								<c:if test="${requestHeader.bizStatus < ReqHeaderStatusEnum.COMPLETE.state}">
-									<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">收货</a>
+									<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">收货</a>
 								</c:if>
 							</c:when>
 							<c:when test="${bizStatu=='1'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">备货详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&bizStatu=${bizStatu}">备货详情</a>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=bh">发货</a>--%>
 							</c:when>
 						</c:choose>
@@ -245,7 +245,7 @@
 			</c:forEach>
 		</c:if>
 
-		<c:if test="${source == 'kc' && ship=='xs'||bizStatu == 0 || source=='gh'}">
+		<c:if test="${(source == 'kc' && ship=='xs' && bizStatu == 0) || source=='gh'}">
 			<c:forEach items="${page.list}" var="orderHeader" varStatus="state">
 				<tr>
 					<td>${state.index+1}</td>
@@ -289,10 +289,10 @@
 					<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
 						<c:choose>
 							<c:when test="${source=='gh'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}">详情</a>
 							</c:when>
 							<c:otherwise>
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs">发货详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs&bizStatu=${bizStatu}">发货详情</a>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=xs">发货</a>--%>
 							</c:otherwise>
 						</c:choose>

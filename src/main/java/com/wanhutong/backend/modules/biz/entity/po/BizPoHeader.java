@@ -137,7 +137,12 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	/**
 	 * 采购单排产状态 0,未排产  1,排产中  2,排产完成
 	 */
-	public Integer poSchType;
+	private Integer poSchType;
+
+	/**
+	 * 用于新版本和旧版本的PO页面查询的过滤时间条件
+	 */
+	private Date filteringDate;
 
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
@@ -580,5 +585,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setPoSchType(Integer poSchType) {
 		this.poSchType = poSchType;
+	}
+
+	public Date getFilteringDate() {
+		return filteringDate;
+	}
+
+	public void setFilteringDate(Date filteringDate) {
+		this.filteringDate = filteringDate;
 	}
 }

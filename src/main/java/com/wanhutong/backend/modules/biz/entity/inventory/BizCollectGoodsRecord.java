@@ -56,6 +56,11 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	private Date createDateEnd;
 	private String skuInfoItemNo;
 
+	/**
+	 * 用于页面判断
+	 */
+	private String bizStatu;
+
 	public BizCollectGoodsRecord() {
 		super();
 	}
@@ -233,5 +238,13 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 
 	public void setSkuInfoItemNo(String skuInfoItemNo) {
 		this.skuInfoItemNo = skuInfoItemNo;
+	}
+
+	public String getBizStatu() {
+		return bizStatu;
+	}
+
+	public void setBizStatu(String bizStatu) {
+		this.bizStatu = bizStatu;
 	}
 }

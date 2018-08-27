@@ -4,9 +4,8 @@
 package com.wanhutong.backend.modules.biz.entity.order;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
-import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
-import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
@@ -43,6 +42,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private BizPlatformInfo platformInfo;        // 订单来源； biz_platform_info.id
     private BizOrderAddress bizLocation;        // 订单收货地址： common_location.id 在1月22改为 biz_order_address.id
     private Integer sendGoodsStatus;     //区分非拍照下单发货
+    private List<BizInvoice> bizInvoiceList;
     /**
      * 卖方ID
      *  if(order_type == 4)｛
@@ -170,6 +170,26 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 审核路径参数记录
      */
     private String str;
+    /**
+     * 审核状态过滤
+     */
+    private String selectAuditStatus;
+
+
+    /**
+     * 申请支付金额
+     */
+    private BigDecimal planPay;
+
+    /**
+     * 与供应商结算的金额
+     */
+    private BigDecimal balanceTotal;
+
+    /**
+     * 付款时间
+     */
+    private Date payDeadline;
 
     /**
      * 已审批流程
@@ -184,6 +204,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 是否是本地备货的订单，0:是 721:是  大于0且不等于721：不是
      */
     private Integer suplys;
+
+    /**
+     * 流程查询
+     */
+    private String originCode;
+    private String localCode;
+    private String doAllCode;
+    private String doFifthCode;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -834,5 +862,69 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSuplys(Integer suplys) {
         this.suplys = suplys;
+    }
+
+    public List<BizInvoice> getBizInvoiceList() {
+        return bizInvoiceList;
+    }
+
+    public void setBizInvoiceList(List<BizInvoice> bizInvoiceList) {
+        this.bizInvoiceList = bizInvoiceList;
+    }
+
+    public BigDecimal getPlanPay() {
+        return planPay;
+    }
+
+    public void setPlanPay(BigDecimal planPay) {
+        this.planPay = planPay;
+    }
+
+    public Date getPayDeadline() {
+        return payDeadline;
+    }
+
+    public void setPayDeadline(Date payDeadline) {
+        this.payDeadline = payDeadline;
+    }
+
+    public String getSelectAuditStatus() {
+        return selectAuditStatus;
+    }
+
+    public void setSelectAuditStatus(String selectAuditStatus) {
+        this.selectAuditStatus = selectAuditStatus;
+    }
+
+    public String getOriginCode() {
+        return originCode;
+    }
+
+    public void setOriginCode(String originCode) {
+        this.originCode = originCode;
+    }
+
+    public String getLocalCode() {
+        return localCode;
+    }
+
+    public void setLocalCode(String localCode) {
+        this.localCode = localCode;
+    }
+
+    public String getDoAllCode() {
+        return doAllCode;
+    }
+
+    public void setDoAllCode(String doAllCode) {
+        this.doAllCode = doAllCode;
+    }
+
+    public String getDoFifthCode() {
+        return doFifthCode;
+    }
+
+    public void setDoFifthCode(String doFifthCode) {
+        this.doFifthCode = doFifthCode;
     }
 }
