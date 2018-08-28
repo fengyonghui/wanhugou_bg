@@ -63,6 +63,12 @@
             if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state}) {
                 $("#totalExp").attr("disabled","disabled");
             }
+
+            if ($("#vendId").val() != "") {
+                $("#vendor").removeAttr("style");
+                deleteStyle();
+            }
+
             $("#inputForm").validate({
                 submitHandler: function(form){
                     if($("#address").val()==''){
@@ -866,6 +872,39 @@
         }
 
 
+        function deleteStyle() {
+            $("#remark").removeAttr("style");
+            $("#cardNumber").removeAttr("style");
+            $("#payee").removeAttr("style");
+            $("#bankName").removeAttr("style");
+            $("#compact").removeAttr("style");
+            $("#identityCard").removeAttr("style");
+            var officeId = $("#officeVendorId").val();
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/order/bizOrderHeader/selectVendInfo?vendorId="+officeId,
+                success:function (data) {
+                    if (data == null) {
+                        return false;
+                    }
+                    $("#cardNumberInput").val(data.cardNumber);
+                    $("#payeeInput").val(data.payee);
+                    $("#bankNameInput").val(data.bankName);
+                    if (data.compactImgList != undefined) {
+                        $.each(data.compactImgList,function (index, compact) {
+                            $("#compactImgs").append("<a href=\"" + compact.imgServer + compact.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + compact.imgServer + compact.imgPath + "\"></a>");
+                        });
+                    }
+                    if (data.identityCardImgList != undefined) {
+                        $.each(data.identityCardImgList,function (index, identity) {
+                            $("#identityCards").append("<a href=\"" + identity.imgServer + identity.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + identity.imgServer + identity.imgPath + "\"></a>");
+                        });
+                    }
+                    $("#remark").val(data.remarks);
+                }
+            });
+        }
+
     </script>
 </head>
 <body>
@@ -920,6 +959,7 @@
     <input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
     <input type="hidden" value="${entity.bizPoPaymentOrder.id}" id="paymentOrderId"/>
     <input type="hidden" name="receiveTotal" value="${bizOrderHeader.receiveTotal}" />
+    <input id="vendId" type="hidden" value="${entity.sellers.bizVendInfo.office.id}"/>
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
@@ -1003,6 +1043,52 @@
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
+
+
+    <div id="vendor" class="control-group" >
+        <label class="control-label">供应商：</label>
+        <div class="controls">
+            <sys:treeselect id="officeVendor" name="bizVendInfo.office.id" value="${entity.sellers.bizVendInfo.office.id}" labelName="bizVendInfo.office.name"
+                            labelValue="${entity.sellers.bizVendInfo.vendName}" notAllowSelectParent="true"
+                            title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium required"
+                            allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息" onchange="deleteStyle()"/>
+            <span class="help-inline"><font color="red">*</font> </span>
+            <a href="#" id="remark" onclick="selectRemark()" style="display: none">《厂家退换货流程》</a>
+        </div>
+    </div>
+    <div id="cardNumber" class="control-group" style="display: none">
+        <label class="control-label">供应商卡号：</label>
+        <div class="controls">
+            <input id="cardNumberInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+                   class="input-xlarge "/>
+        </div>
+    </div>
+    <div id="payee" class="control-group" style="display: none">
+        <label class="control-label">供应商收款人：</label>
+        <div class="controls">
+            <input id="payeeInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+                   class="input-xlarge "/>
+        </div>
+    </div>
+    <div id="bankName" class="control-group" style="display: none">
+        <label class="control-label">供应商开户行：</label>
+        <div class="controls">
+            <input id="bankNameInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+                   class="input-xlarge "/>
+        </div>
+    </div>
+    <div id="compact" class="control-group" style="display: none">
+        <label class="control-label">供应商合同：</label>
+        <div id="compactImgs" class="controls">
+
+        </div>
+    </div>
+    <div id="identityCard" class="control-group" style="display: none">
+        <label class="control-label">供应商身份证：</label>
+        <div id="identityCards" class="controls">
+
+        </div>
+    </div>
 
     <c:if test="${entity.bizPoPaymentOrder.id != null || entity.str == 'createPay'}">
         <div class="control-group">
