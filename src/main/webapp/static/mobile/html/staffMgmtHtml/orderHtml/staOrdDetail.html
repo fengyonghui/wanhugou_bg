@@ -16,7 +16,6 @@
 			.commodity div.mui-input-row>label {padding: 0;}
 			.photoParent {width: 15%;height: 220px;margin-right: 15px;}
 			.photoParent img {top: 50%;margin-top: -8px;width: 50px;}
-			.listBlue>li {border-bottom: 1px solid #40ABE9;}
 			#staEvoMenu>li:last-child {color: #40ABE9;}
 			.mui-table-view-cell {
 				border-bottom: 1px solid #efeff4;
@@ -58,6 +57,7 @@
 			.inputClass label {
 				color:#40ABE9;
 			}
+			.mui-input-row label~input {width: 60%;}
 		</style>
 	</head>
 	<body>
@@ -127,8 +127,24 @@
 				<textarea id="staPoRemark" name="" rows="" cols="" disabled></textarea>
 			</div>
 			<div class="mui-input-row">
-				<label>进展信息：</label>
-				<input type="text" class="mui-input-clear" id="staEvolve" disabled>
+				<div class="labelLf">进展信息：</div>
+				<div class="labelParent">
+					<ul class="labelRi ">
+						<li class="app_pr">
+							<div>首付款支付</div>
+							<div>全部支付</div>
+							<span class="mui-icon mui-icon-arrowthinright app_pa nextTxt01"></span>
+						</li>
+						<li class="app_pr app_t12">
+							<div class="app_pr">供货中</div>
+							<span class="mui-icon mui-icon-arrowthinright app_pa nextTxt02"></span>
+						</li>
+						<li>
+							<div>采购中</div>
+							<div>已发货</div>
+						</li>
+					</ul>
+				</div>
 			</div>
 			<div class="mui-input-row">
 				<div class="labelLf">状态流程：</div>
@@ -146,9 +162,9 @@
 				<div class="labelLf">付款约定：</div>
 				
 			</div>
-			<div class="mui-input-row">
+			<div class="mui-input-row staCommodity">
 				<div class="labelLf">商品信息：</div>
-				<ul id="staCommodity" class="listBlue mui-table-view">
+				<ul id="staCommodity" class="mui-table-view app_pl10">
 					
 				</ul>
 			</div>

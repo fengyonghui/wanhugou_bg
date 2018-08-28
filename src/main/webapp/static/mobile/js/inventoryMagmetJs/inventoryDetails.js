@@ -148,7 +148,7 @@
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>供应商：</label>'+
-							'<input type="text" class="font-color mui-input-clear" value="'+ item.skuInfo.productInfo.vendorName +'" disabled>'+
+							'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuInfo.productInfo.vendorName +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>商品名称：</label>'+

@@ -65,7 +65,16 @@ input, select, textarea{font-size: 16px;}
 .app_lh30{line-height: 30px;}
 .app_lh35{line-height: 35px;}
 
-/*文字颜色*/
+/*字体颜色*/
+.app_color40 {color: #40ABE9;}
+.mui-h5, h5{color: #999;}
+.mui-h5.app_c3{color: #333;}
+.mui-h5.app_cy{color: #dff0fc;}
+.mui-h5.app_cred{color: #f85c50;}
+.mui-h5.app_cc{color:#ccc}
+.mui-badge.app_c3{color: #333;}
+.mui-badge.app_cblue{color:#2795f3}
+
 .app_cf80{color:rgba(255,255,255,.8)}
 .app_c0{color:#000}
 .app_c2{color:#222}
@@ -310,15 +319,6 @@ a:hover{text-decoration:none;}
 .mui-table-view:after{background-color: #ddd;}
 .mui-table-view-cell:after{background-color: #e8e8e8;}
 .app_nobborder {border-bottom: none;}
-
-/*字体颜色*/
-.mui-h5, h5{color: #999;}
-.mui-h5.app_c3{color: #333;}
-.mui-h5.app_cy{color: #dff0fc;}
-.mui-h5.app_cred{color: #f85c50;}
-.mui-h5.app_cc{color:#ccc}
-.mui-badge.app_c3{color: #333;}
-.mui-badge.app_cblue{color:#2795f3}
 
 /*主体颜色配置*/
 
@@ -579,7 +579,6 @@ body{font-size: 15px;color:#3b3b3b;}
 .step_num {text-align: center;color: #007aff;}
 .step_item {border: 1px #3daae9 solid;margin: 15px 15px;}
 .oneBtn {left: 50%;margin-left: -41px;}
-.font-color {color: #40ABE9;}
 .list-padding {padding: 10px 10px 0 10px;}
 
 
@@ -595,12 +594,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .soption:hover {background: #f9f9f9;border-top: 1px dotted #ddd;border-bottom: 1px dotted #ddd;padding: 1px 5px;}
 .mui-input-row input.newinput {padding-left: 0;}
 .app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;background-color: #40ABE9;border: none;}
-.app_btn_search:active {
-				color: #fff;
-				border: 1px solid #046d90;
-				background-color: #007aff !important;
-}
-
+.app_btn_search:active {color: #fff;border: 1px solid #046d90;background-color: #007aff !important;}
 #inCheckAddMenu,#addCheckMen,#addDetailMen{padding-left:0;}
 
 /*运营管理后台*/
@@ -619,14 +613,26 @@ body{font-size: 15px;color:#3b3b3b;}
 /*审核公共样式*/
 .app_p20 button {margin-left: 17%;background-color: #40ABE9;color: #fff;}
 
+/*备货单审核 和 订单详情公用---产品信息*/
+.commodity input, .commodity label {padding: 0;font-size: 13px;}
 
 /*备货单审核*/
-.commodity {font-size: 13px;}
-.commodity div.mui-input-row>input {padding: 0;font-size: 13px;}
-.commodity div.mui-input-row>label {padding: 0;}
 .photoParent {width: 15%;height: 220px;margin-right: 15px;}
 .photoParent img {top: 50%;margin-top: -8px;width: 50px;}
 .listBlue>li {border-bottom: 1px solid #40ABE9;}
 
 
+/*订单详情---产品信息*/
+.commodity label {width: 40%;}
+.commodity input {width: 60%;color: #40ABE9;}/*--被覆盖了*/
+/*订单详情---产品信息---一列样式:*/
+.commodity div.lineStyle label {width:20%}
+.commodity div.lineStyle input {width:80%}
 
+
+/*进展信息*/
+.nextTxt01 {top: 17px;left: 88px;}
+.nextTxt02 {top: 6px;left: 87px;}
+.labelParent{display: flex;justify-content: center;}
+.labelRi>li {float: left;}
+.labelRi div {width: 70px;margin: 5px 15px;border: 1px solid #40ABE9;border-radius: 5px;font-size: 13px;text-align: center;}

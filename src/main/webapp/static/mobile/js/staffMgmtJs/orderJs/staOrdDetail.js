@@ -62,21 +62,9 @@
 					$('#staDateilAddress').val(item.bizLocation.address);
 					$('#staEvolve').val();
 					
-					if(res.statusList) {
-						var statusLen = res.statusList.length;
-						if(statusLen > 0) {
-						_this.statusListHtml(res.data)
-						}
-					}
-					if(res.statusList) {
-						_this.statusListHtml(res.data)
-					}
-					var auditLen = res.auditList.length;
-					
-					if(auditLen > 0) {
-						_this.checkProcessHtml(res.data);
-					}
-				_this.commodityHtml(res.data)
+					_this.statusListHtml(res.data)
+					_this.checkProcessHtml(res.data);
+					_this.commodityHtml(res.data)
                 }
             });
 		},
@@ -98,7 +86,8 @@
 						    '</div>'+
 							'<div class="mui-input-row">'+
 						        '<label>状态:</label>'+
-						        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
+						        '<input type="text" class="mui-input-clear" disabled>'+
+//						         value="'++'"
 						    	'<label>时间:</label>'+
 						        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
 						    '</div>'+
@@ -111,150 +100,167 @@
 		checkProcessHtml:function(data){
 			var _this = this;
 			console.log(data)
-			var auditLen = res.auditList.length;
+			var auditLen = data.auditList.length;
 			if(auditLen > 0) {
-				
+				var CheckHtmlList ='';
+				$.each(data.auditList, function(i, item) {
+					console.log(item)
+					var step = i + 1;
+					var current = item.current;
+					if(current !== 1) {
+						CheckHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ step +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+								'<label>处理人:</label>'+
+								'<input type="text" value="'+ item.user.name +'" class="mui-input-clear" disabled>'+
+						    '</div>'+
+							'<div class="mui-input-row">'+
+						        '<label>批注:</label>'+
+						        '<input type="text" value="'+ item.description +'" class="mui-input-clear" disabled>'+
+						    	'<label>状态:</label>'+
+						        '<input type="text" value=" '+ item.jointOperationLocalProcess.name +' " class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+					}
+					if(current == 1) {
+						CheckHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ step +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+								'<label>当前状态:</label>'+
+								'<input type="text" value="'+ item.jointOperationLocalProcess.name +'" class="mui-input-clear" disabled>'+
+						   		'<label>时间:</label>'+
+						        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+					}
+				});
+				$("#staCheckMenu").html(CheckHtmlList)
 			}
-			$.each(data.statusList, function(i, item) {
-				console.log(item)
-				var step = i + 1;
-				if(current != 1) {
-					CheckHtmlList +='<li class="step_item">'+
-					'<div class="step_num">'+ step +' </div>'+
-					'<div class="step_num_txt">'+
-						'<div class="mui-input-row">'+
-							'<label>处理人:</label>'+
-							'<input type="text" value="'+ item.user.name +'" class="mui-input-clear" disabled>'+
-					    '</div>'+
-						'<div class="mui-input-row">'+
-					        '<label>批注:</label>'+
-					        '<input type="text" value="'+ item.description +'" class="mui-input-clear" disabled>'+
-					    	'<label>状态:</label>'+
-					        '<input type="text" value=" '+ item.jointOperationLocalProcess.name +' " class="mui-input-clear" disabled>'+
-					    '</div>'+
-					'</div>'+
-				'</li>'
-				}
-				if(current == 1) {
-					CheckHtmlList +='<li class="step_item">'+
-					'<div class="step_num">'+ step +' </div>'+
-					'<div class="step_num_txt">'+
-						'<div class="mui-input-row">'+
-							'<label>当前状态:</label>'+
-							'<input type="text" value="'+ item.jointOperationLocalProcess.name +'" class="mui-input-clear" disabled>'+
-					   		'<label>时间:</label>'+
-					        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
-					    '</div>'+
-					'</div>'+
-				'</li>'
-				}
-			});
-			$("#staCheckMenu").html(CheckHtmlList)
 		},
 		commodityHtml: function(data) {
 			var _this = this;
 			console.log(data)
-			var htmlCommodity = '';
-			$.each(data.statusList, function(i, item) {
-//				console.log(item)
-				var hightNum = i + 1;
-				
-				 htmlCommodity += '<div class="mui-row border-btm5" id="' + item.id + '">' +
-					'<div class="mui-row mui-checkbox mui-left">'+hightNum+'</div>'+
-                    '<div class="mui-row">' +
-                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label class="commodityName">商品货号:</label>' +
-                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div></div>' +
-                    '<div class="mui-row">' +
-                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label class="commodityName">已生成的采购单:</label>' +
-                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div></div>' +
-                   
-                   '<div class="mui-row">' +
-                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>货架名称:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.productInfo.brandName + '" disabled></div></li></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>商品名称:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div></div>' +
-                   
-                    '<div class="mui-row">' +
-                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>商品编号:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.productInfo.brandName + '" disabled></div></li></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>创建时间:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div></div>' +
-                   
-                    '<div class="mui-row">' +
-                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>商品出厂价:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.productInfo.brandName + '" disabled></div></li></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>供应商:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div></div>' +
-                   
-                   '<div class="mui-row">' +
-                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>供应商电话:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.itemNo + '" disabled></div></li></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>商品单价:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.reqQty + '" disabled></div></li></div></div>'+
-				
-					'<div class="mui-row">' +
-                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>采购数量:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.itemNo + '" disabled></div></li></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>总 额:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.reqQty + '" disabled></div></li></div></div>'+
-				
-					'<div class="mui-row">' +
-                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>已发货数量:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.itemNo + '" disabled></div></li></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label>发货方:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.reqQty + '" disabled></div></li></div></div>';
-			});
-			$("#staCommodity").html(htmlCommodity)
+			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
+			if(orderDetailLen > 0) {
+				var htmlCommodity = '';
+				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
+					console.log(item)
+					var opShelfInfo = '';
+					if(item.shelfInfo.opShelfInfo) {
+						opShelfInfo = item.shelfInfo.opShelfInfo.name
+					}else {
+						opShelfInfo = ''
+					}
+					
+					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
+	                    
+	                    '<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>详情行号:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>货架名称:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + opShelfInfo + '" disabled></div></li></div></div>' +
+                    
+                    	'<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>商品名称:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuName + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>创建时间:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div></div>' +
+	                   
+                    	'<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>商品出厂价:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>供应商:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div></div>' +
+	                   
+                    	 '<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>供应商电话:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.primary.mobile + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>商品单价:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div></div>'+
+					
+						'<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>采购数量:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.ordQty + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>总 额:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice * item.ordQty + '" disabled></div></li></div></div>'+
+					
+						'<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>已发货数量:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.sentQty + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>发货方:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.suplyis.name + '" disabled></div></li></div></div>'+
+						
+                    	'<div class="mui-row lineStyle">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label class="commodityName">商品货号:</label>' +
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.itemNo + '" disabled></div></li></div>' +
+	                    
+	                    '<div class="mui-row lineStyle">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label class="commodityName">商品编号:</label>' +
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.partNo + '" disabled></div></li></div>' +
+	                    
+//                  	'<div class="mui-row">' +
+//	                    '<li class="mui-table-view-cell">' +
+//	                    '<div class="mui-input-row ">' +
+//	                    '<label class="commodityName">已生成的采购单:</label>' +
+//	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div>'+
+//	                   
+                    
+                    
+                    
+                    
+                    '</div>'
+	                    
+	                    
+	                  
+						
+//	                    
+				});
+				$("#staCommodity").html(htmlCommodity)
+			}
 		},
 		formatDateTime: function(unix) {
         	var _this = this;
