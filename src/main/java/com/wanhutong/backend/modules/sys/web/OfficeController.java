@@ -624,6 +624,21 @@ public class OfficeController extends BaseController {
         return convertList(list);
     }
 
+    @RequiresPermissions("user")
+    @ResponseBody
+    @RequestMapping(value = "getImgTreeListByPhone")
+    public List<Map<String, Object>> getImgTreeListByPhone(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes, String phone) {
+        List<Office> list = null;
+        if (StringUtils.isNotBlank(type)) {
+            String defType = type;
+            list = officeService.filerOfficeByPhone(null, source, OfficeTypeEnum.stateOf(defType), phone);
+        }
+        if (list == null || list.size() == 0) {
+            addMessage(redirectAttributes, "列表不存在");
+        }
+        return convertList(list);
+    }
+
     private List<Map<String, Object>> convertList(List<Office> list) {
         List<Map<String, Object>> mapList = Lists.newArrayList();
         if (list != null && list.size() > 0) {
