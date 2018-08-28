@@ -295,7 +295,7 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
 
-        if ("财会待付款".equals(selectAuditStatus)) {
+        if ("财会待付款".equals(selectAuditStatus) && "财务待付款".equals(selectAuditStatus)) {
             bizOrderHeader.setWaitPay(1);
         } else {
             if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("产地直发订单-")) {
