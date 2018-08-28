@@ -318,6 +318,7 @@
 			$.ajax({
 				type: 'GET',
 				url: '/a/biz/request/bizRequestHeader/list4Mobile',
+//              url: '/a/biz/order/bizOrderHeader/listData4mobile',
 				data: {
 					pageNo: 1,
 					reqNo:_this.userInfo.reqNo,
