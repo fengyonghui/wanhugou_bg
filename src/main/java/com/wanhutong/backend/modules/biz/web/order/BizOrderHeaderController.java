@@ -341,6 +341,8 @@ public class BizOrderHeaderController extends BaseController {
 
                 if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
                     OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail(), b.getReceiveTotal());
+                    b.setPayProportion(orderPayProportionStatusEnum.getState());
+                    bizOrderHeaderService.saveOrderHeader(b);
                     genAuditProcess(orderPayProportionStatusEnum, b);
                 }
             }
