@@ -345,6 +345,19 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
             if (b.getOrderNum().startsWith("DO")) {
+                OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail(), b.getReceiveTotal());
+                b.setPayProportion(orderPayProportionStatusEnum.getState());
+                bizOrderHeaderService.save(b);
+                CommonProcessEntity commonProcessEntityTemp = new CommonProcessEntity();
+                commonProcessEntityTemp.setObjectId(String.valueOf(b.getId()));
+                commonProcessEntityTemp.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+                list = commonProcessService.findList(commonProcessEntityTemp);
+                if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                    Integer processId = 0;
+                    processId = bizOrderHeaderService.saveCommonProcess(b);
+                    bizOrderHeaderService.updateProcessId(b.getId(), processId);
+                }
+
                 CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
                 commonProcessEntity.setObjectId(String.valueOf(b.getId()));
                 commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
