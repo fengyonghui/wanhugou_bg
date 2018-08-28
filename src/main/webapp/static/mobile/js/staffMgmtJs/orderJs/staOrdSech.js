@@ -21,8 +21,9 @@
 		//点击查询
 		getData: function() {
 			var _this = this;
-			$('#inSearchBtn').on('tap', function() {
-				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
+			$('#staOrdSechBtn').on('tap', function() {
+//				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
+				var optionsBusiness = $("#input_div_orderStatus option").eq($("#input_div_orderStatus").attr("selectedIndex"));
 				var ordNumVal = $("#staOrderNum").val(); 
                 var reqNumVal = $("#staOrdPurchasing").val(); 
                 var newInputVal = $('#staOrdMobile').val(); 
@@ -31,7 +32,8 @@
                 var orderStatusVal = $('#input_div_orderStatus').val();
                 var checkStatusVal = $('#input_div_checkStatus').val();
                  var newinputVal = $('.newinput').val();
-//				console.log(optionsBusiness)
+                 console.log('000')
+				console.log(optionsBusiness)
                if(ordNumVal == null||ordNumVal == undefined){
 					ordNumVal == "";
                 }
@@ -47,7 +49,13 @@
                 if(cateGoryVal == null||cateGoryVal == undefined) {
                 	cateGoryVal == "";
                 }
-                if(ordNumVal == ""&&reqNumVal == ""&&newInputVal == ""&&secStyleVal == ""&&cateGoryVal == ""){
+                if(orderStatusVal == null||orderStatusVal == undefined) {
+                	orderStatusVal == "";
+                }
+                if(checkStatusVal == null||checkStatusVal == undefined) {
+                	checkStatusVal == "";
+                }
+                if(ordNumVal == ""&&reqNumVal == ""&&newInputVal == ""&&secStyleVal == ""&&cateGoryVal == ""&&orderStatusVal == ""&&checkStatusVal == ""){
                 	 mui.toast("请输入查询条件！");
                 	 return;
                 }
@@ -65,15 +73,18 @@
 		sureSelect:function(optionsBusiness){
 			var _this = this;
 			_this.selectOpen = false
-			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
+//			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
+			var optionsClass = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
 			GHUTILS.OPENPAGE({
 				url: "../../html/inventoryMagmetHtml/inventoryList.html",
 				extras: {
-					reqNo: $('.inOrdNum').val(),
-					name: $('.inReqNum').val(),
-					fromOffice: $('.hasoid').attr('id'),
+//					reqNo: $('#staOrderNum').val(),
+//					name: $('#staOrdPurchasing').val(),
+//					fromOffice: $('.hasoid').attr('id'),
 					bizStatusid: optionsBusiness.val(),
 					varietyInfoid: optionsClass.val(),
+                    flag:'check_pending',
+                    consultantId:_this.userInfo.staListId,
 					isFunc: true
 				}
 			})
@@ -173,15 +184,12 @@
 			var htmlClass = '';
 			$.ajax({
 				type: 'GET',
-//				url: '/a/biz/request/bizRequestHeader/list4Mobile',
-//              url: '/a/sys/office/queryTreeList',
-				data: {},
+				url: '/a/biz/order/bizOrderHeader/listData4mobile',
+				data: {flag:'check_pending',consultantId:_this.userInfo.staListId},
 				dataType: 'json',
 				success: function(res) {
-//					console.log(res)
-					$.each(res.data.varietyInfoList, function(i, item) {
-//						console.log(item)
-						htmlClass += '<option class="soption" value="' + item.id + '">' + item.name + '</option>'
+					$.each(res.data.originConfigMap, function(i, item) {
+						htmlClass += '<option class="soption" value="">' + item + '</option>'
 					});
 					$('#input_div_checkStatus').html(optHtml+htmlClass)
 					_this.getData()
