@@ -496,7 +496,7 @@ public class BizOrderHeaderController extends BaseController {
                 model.addAttribute("custUser", user);
             }
             //供应商
-            User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId());
+            User vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
             model.addAttribute("vendUser", vendUser);
 
             //代采
@@ -1725,7 +1725,7 @@ public class BizOrderHeaderController extends BaseController {
                 model.addAttribute("custUser", user);
             }
             //供应商
-            User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId());
+            User vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
             model.addAttribute("vendUser", vendUser);
 
             //代采
