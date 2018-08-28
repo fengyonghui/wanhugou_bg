@@ -33,6 +33,7 @@ import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
@@ -49,6 +50,7 @@ import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
@@ -175,6 +177,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizPoPaymentOrderService bizPoPaymentOrderService;
     @Autowired
     private BizInvoiceService bizInvoiceService;
+    @Autowired
+    private BizVendInfoService bizVendInfoService;
 
 
     @ModelAttribute
@@ -689,6 +693,37 @@ public class BizOrderHeaderController extends BaseController {
 //        }
 
         return "modules/biz/order/bizOrderHeaderForm";
+    }
+
+    /**
+     * 查询供应商备货的供应商拓展信息
+     * @param vendorId
+     * @return
+     */
+    @ResponseBody
+    @RequiresPermissions("biz:vend:bizVendInfo:view")
+    @RequestMapping(value = "selectVendInfo")
+    public BizVendInfo selectVendInfo(Integer vendorId) {
+
+        BizVendInfo bizVendInfo = bizVendInfoService.get(vendorId);
+        if (bizVendInfo == null) {
+            return null;
+        }
+        CommonImg compactImg = new CommonImg();
+        compactImg.setImgType(ImgEnum.VEND_COMPACT.getCode());
+        compactImg.setObjectId(vendorId);
+        compactImg.setObjectName(ImgEnum.VEND_COMPACT.getTableName());
+        List<CommonImg> compactImgList = commonImgService.findList(compactImg);
+
+        CommonImg identityCardImg = new CommonImg();
+        identityCardImg.setImgType(ImgEnum.VEND_IDENTITY_CARD.getCode());
+        identityCardImg.setObjectId(vendorId);
+        identityCardImg.setObjectName(ImgEnum.VEND_IDENTITY_CARD.getTableName());
+        List<CommonImg> identityCardImgList = commonImgService.findList(identityCardImg);
+
+        bizVendInfo.setCompactImgList(compactImgList);
+        bizVendInfo.setIdentityCardImgList(identityCardImgList);
+        return bizVendInfo;
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:audit")
