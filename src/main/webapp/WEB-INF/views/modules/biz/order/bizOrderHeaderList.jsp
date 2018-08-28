@@ -124,12 +124,12 @@
 							  htmlEscape="false"/></form:select>
 		</li>
 
-		<%--<li><label>审核状态：</label>--%>
-			<%--<form:select path="selectAuditStatus" class="input-medium">--%>
-				<%--<form:option value="" label="请选择"/>--%>
-				<%--<form:options items="${originConfigMap}"  htmlEscape="false"/>--%>
-			<%--</form:select>--%>
-		<%--</li>--%>
+		<li><label>审核状态：</label>
+			<form:select path="selectAuditStatus" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:options items="${originConfigMap}"  htmlEscape="false"/>
+			</form:select>
+		</li>
 
 		<c:if test="${source ne 'vendor'}">
 			<li><label>经销店电话：</label>
@@ -469,7 +469,7 @@
 			</shiro:hasPermission>
 
 			<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizPoHeader.id != null && orderHeader.bizPoHeader.id != 0 && orderHeader.payProportion !=null}">
-				<c:if test="${orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state && orderHeader.commonProcess.doOrderHeaderProcessAll.name == '审批完成'}">
+				<c:if test="${orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">
 					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
 					</shiro:hasPermission>
@@ -478,7 +478,8 @@
 					</shiro:hasPermission>
 				</c:if>
 
-				<c:if test="${orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state && orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成'}">
+
+				<c:if test="${orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
 					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
 					</shiro:hasPermission>

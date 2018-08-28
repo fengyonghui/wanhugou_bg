@@ -2,76 +2,76 @@
 <JointOperationOrderProcessOriginConfig>
     <!--产地直发审核-->
 
-    <zeroDefaultProcessId>10001</zeroDefaultProcessId>
-    <fifthDefaultProcessId>20001</fifthDefaultProcessId>
-    <allDefaultProcessId>30001</allDefaultProcessId>
+    <zeroDefaultProcessId>1001</zeroDefaultProcessId>
+    <fifthDefaultProcessId>2001</fifthDefaultProcessId>
+    <allDefaultProcessId>3001</allDefaultProcessId>
     <payProcessId>666</payProcessId>
-    <endProcessId>-1</endProcessId>
+    <genPoProcessId>666</genPoProcessId>
 
     <!--流程节点-->
     <process>
         <name>品类主管审核</name>
-        <code>30001</code>
-        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
-        <passCode>30002</passCode>
+        <code>3001</code>
+        <roleEnNameEnum>SELECTION_OF_SPECIALIST</roleEnNameEnum>
+        <passCode>666</passCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
         <name>财务主管审核</name>
-        <code>30002</code>
-        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <code>3002</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
         <passCode>666</passCode>
         <rejectCode>-1</rejectCode>
     </process>
 
     <process>
-        <name>渠道总监审核</name>
-        <code>20001</code>
-        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
-        <passCode>20002</passCode>
+        <name>渠道主管审核</name>
+        <code>2001</code>
+        <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
+        <passCode>2002</passCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
         <name>品类主管审核</name>
-        <code>20002</code>
-        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
-        <passCode>20003</passCode>
+        <code>2002</code>
+        <roleEnNameEnum>SELECTION_OF_SPECIALIST</roleEnNameEnum>
+        <passCode>666</passCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
         <name>财务主管审核</name>
-        <code>20003</code>
-        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <code>2003</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
         <passCode>666</passCode>
         <rejectCode>-1</rejectCode>
     </process>
 
 
     <process>
-        <name>渠道总监审核</name>
-        <code>10001</code>
-        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
-        <passCode>10002</passCode>
+        <name>渠道主管审核</name>
+        <code>1001</code>
+        <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
+        <passCode>1002</passCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
         <name>总经理审核</name>
-        <code>10002</code>
-        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
-        <passCode>10003</passCode>
+        <code>1002</code>
+        <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
+        <passCode>1003</passCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
         <name>品类主管审核</name>
-        <code>10003</code>
-        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
-        <passCode>10004</passCode>
+        <code>1003</code>
+        <roleEnNameEnum>SELECTION_OF_SPECIALIST</roleEnNameEnum>
+        <passCode>666</passCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
         <name>财务主管审核</name>
-        <code>10004</code>
-        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <code>1004</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
         <passCode>666</passCode>
         <rejectCode>-1</rejectCode>
     </process>
@@ -81,7 +81,7 @@
         <code>666</code>
     </process>
     <process>
-        <name>驳回</name>
+        <name>审批驳回</name>
         <code>-1</code>
     </process>
 </JointOperationOrderProcessOriginConfig>
