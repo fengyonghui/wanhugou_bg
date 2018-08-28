@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventory;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.*;
@@ -194,8 +195,8 @@ public class BizInvoiceController extends BaseController {
 	@RequestMapping(value = "formV2")
 	public String formV2(HttpServletRequest request, int id, BizInvoice bizInvoice, Model model) {
         BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
-        List<User> userList = systemService.findUserByRoleEnName(RoleEnNameEnum.WAREHOUSESPECIALIST.getState());
-        model.addAttribute("userList", userList);
+//        List<User> userList = systemService.findUserByRoleEnName(RoleEnNameEnum.WAREHOUSESPECIALIST.getState());
+        model.addAttribute("userList", Lists.newArrayList(UserUtils.getUser()));
         bizInvoice.setId(null);
         request.setAttribute("orderNum", bizOrderHeader.getOrderNum());
         request.setAttribute("bizStatus", bizOrderHeader.getBizStatus());

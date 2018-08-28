@@ -388,7 +388,7 @@
 										<td>${requestDetail.sendQty}</td>
 										<c:if test="${bizInvoice.str == 'audit'}">
 											<input type="hidden" title="details_${requestHeader.id}" value="${requestDetail.id}"/>
-											<td><input type='text' title='sent_${requestHeader.id}' name='' required="required" onchange='checkNum(${requestDetail.reqQty},${requestDetail.sendQty},this)' value=''></td>
+											<td><input type='text' title='sent_${requestHeader.id}' name='' required="required" onchange='checkNum(${requestDetail.reqQty},${requestDetail.sendQty},this)' value='0'></td>
 										</c:if>
 									</tr>
 									<c:if test="${fn:length(requestHeader.requestDetailList)>1}">

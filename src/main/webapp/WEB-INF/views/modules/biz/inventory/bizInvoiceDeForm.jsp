@@ -257,41 +257,41 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">验货员：</label>
-        <div class="controls">
-            <form:select about="choose" path="inspector.id" class="input-medium required">
-                <form:option value="" label="请选择"/>
-                <form:options items="${inspectorList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
-            </form:select>
-            <span class="help-inline"><font color="red">*</font> </span>
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label">验货时间：</label>
-        <div class="controls">
-            <input name="inspectDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-                   value="<fmt:formatDate value="${bizInvoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
-                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
-            <span class="help-inline"><font color="red">*</font> </span>
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label">验货备注：</label>
-        <div class="controls">
-            <form:textarea path="inspectRemark" htmlEscape="false" maxlength="30" class="input-xlarge "/>
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label">集货地点：</label>
-        <div class="controls">
-            <form:select path="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">
-                <form:option value="" label="请选择"/>
-                <form:options items="${fns:getDictList('coll_locate')}" itemValue="value" itemLabel="label"/>
-            </form:select>
-            <span class="help-inline"><font color="red">*</font> </span>
-        </div>
-    </div>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">验货员：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<form:select about="choose" path="inspector.id" class="input-medium required">--%>
+                <%--<form:option value="" label="请选择"/>--%>
+                <%--<form:options items="${inspectorList}" itemLabel="name" itemValue="id" htmlEscape="false"/>--%>
+            <%--</form:select>--%>
+            <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+        <%--</div>--%>
+    <%--</div>--%>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">验货时间：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<input name="inspectDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"--%>
+                   <%--value="<fmt:formatDate value="${bizInvoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"--%>
+                   <%--onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>--%>
+            <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+        <%--</div>--%>
+    <%--</div>--%>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">验货备注：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<form:textarea path="inspectRemark" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+        <%--</div>--%>
+    <%--</div>--%>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">集货地点：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<form:select path="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">--%>
+                <%--<form:option value="" label="请选择"/>--%>
+                <%--<form:options items="${fns:getDictList('coll_locate')}" itemValue="value" itemLabel="label"/>--%>
+            <%--</form:select>--%>
+            <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+        <%--</div>--%>
+    <%--</div>--%>
     <div class="control-group">
         <label class="control-label">货值：</label>
         <div class="controls">
@@ -299,20 +299,20 @@
                         class="input-xlarge required"/>
         </div>
     </div>
-    <c:if test="${bizInvoice.str == 'freight' || source == 'xq'}">
-        <div class="control-group">
-            <label class="control-label">运费：</label>
-            <div class="controls">
-                <form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
-            </div>
-        </div>
-    </c:if>
-    <div class="control-group">
-        <label class="control-label">配送服务费：</label>
-        <div class="controls">
-            <input value="${orderHeader.freight}" htmlEscape="false" disabled="disabled" class="input-xlarge required"/>
-        </div>
-    </div>
+    <%--<c:if test="${bizInvoice.str == 'freight' || source == 'xq'}">--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">运费：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+    <%--</c:if>--%>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">配送服务费：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<input value="${orderHeader.freight}" htmlEscape="false" disabled="disabled" class="input-xlarge required"/>--%>
+        <%--</div>--%>
+    <%--</div>--%>
     <%--<c:if test="${userList==null}">--%>
         <%--<div class="control-group">--%>
             <%--<label class="control-label">发货人：</label>--%>
@@ -343,17 +343,17 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">物流结算方式：</label>
-        <div class="controls">
-            <form:select id="settlementStatus" path="settlementStatus" onmouseout="" class="input-xlarge required">
-                <c:forEach items="${fns:getDictList('biz_settlement_status')}" var="settlementStatus">
-                    <option value="${settlementStatus.value}">${settlementStatus.label}</option>
-                </c:forEach>
-            </form:select>
-            <span class="help-inline"><font color="red">*</font> </span>
-        </div>
-    </div>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">物流结算方式：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<form:select id="settlementStatus" path="settlementStatus" onmouseout="" class="input-xlarge required">--%>
+                <%--<c:forEach items="${fns:getDictList('biz_settlement_status')}" var="settlementStatus">--%>
+                    <%--<option value="${settlementStatus.value}">${settlementStatus.label}</option>--%>
+                <%--</c:forEach>--%>
+            <%--</form:select>--%>
+            <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+        <%--</div>--%>
+    <%--</div>--%>
     <div class="control-group">
         <label class="control-label">备注：</label>
         <div class="controls">
@@ -509,7 +509,7 @@
                         <td>${orderDetail.sentQty}</td>
                         <c:if test="${bizInvoice.str == 'audit'}">
                             <input type="hidden" title="details_${orderDetail.orderHeader.id}" value="${orderDetail.id}"/>
-                            <td><input type='text' title='sent_${orderDetail.orderHeader.id}' name='' required="required" onchange='checkNum(${orderDetail.ordQty},${orderDetail.sentQty},this)' value=''></td>
+                            <td><input type='text' title='sent_${orderDetail.orderHeader.id}' name='' required="required" onchange='checkNum(${orderDetail.ordQty},${orderDetail.sentQty},this)' value='0'></td>
                         </c:if>
                     </tr>
                     <c:if test="${fn:length(orderDetailList)>1}">
