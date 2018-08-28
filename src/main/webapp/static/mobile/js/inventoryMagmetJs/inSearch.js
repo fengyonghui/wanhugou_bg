@@ -167,7 +167,7 @@
 			$.ajax({
 				type: 'GET',
 				url: '/a/biz/request/bizRequestHeader/list4Mobile',
-				data: {},
+				data: {consultantId: _this.userInfo.staListId},
 				dataType: 'json',
 				success: function(res) {
 //					console.log(res)

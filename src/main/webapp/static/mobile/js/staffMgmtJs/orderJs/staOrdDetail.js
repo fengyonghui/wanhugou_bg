@@ -30,57 +30,132 @@
                 dataType: "json",
                 success: function(res){
 					console.log(res)
-//					$.each(res.data.page.list, function(i, item) {
-//						console.log(item)
-//						var shouldPay = item.totalDetail + item.totalExp + item.freight;
-//						var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
-//						//发票状态
-//						var invStatusTxt = '';
-//						if(item.invStatus==0) {
-//							invStatusTxt = "不开发票"					
-//						}
-//						//业务状态
-//						var statusTxt = '';
-//						if(item.staStatus=15) {
-//							statusTxt = "供货中"
-//						}
-//						$('#staPoordNum').val(item.orderNum);
-//						$('#staRelNum').val(item.customer.name);
-//						$('#staPototal').val(item.totalDetail);
-//						$('#staAdjustmentMoney').val(item.totalExp);
-//						$('#staFreight').val(item.freight);
-//						$('#staShouldPay').val(shouldPay);
-//						var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
-////						console.log(poLastDa)
-//						$('#staPoLastDa').val(item.receiveTotal);
-//						$('#staServerPrice').val(serverPrice);
-//						$('#staInvoice').val(invStatusTxt);
-//						$('#staStatus').val(statusTxt);
-//						$('#staConsignee').val(item.bizLocation.receiver);
-//						$('#staMobile').val(item.bizLocation.phone);
-//						$('#staShippAddress').val();
-//						$('#staDateilAddress').val(item.bizLocation.address);
-//						$('#staEvolve').val();
-//					}) 
-//					_this.commodityHtml(res.data)
-//					_this.statusProcessHtml(res.data)
-//					_this.checkProcessHtml(res.data);
+					var item = res.data.bizOrderHeader;
+					console.log(item)
+					var shouldPay = item.totalDetail + item.totalExp + item.freight;
+					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
+					//发票状态
+					var invStatusTxt = '';
+					if(item.invStatus==0) {
+						invStatusTxt = "不开发票"					
+					}
+					//业务状态
+					var statusTxt = '';
+					if(item.staStatus=15) {
+						statusTxt = "供货中"
+					}
+					$('#staPoordNum').val(item.orderNum);
+					$('#staRelNum').val(item.customer.name);
+					$('#staPototal').val(item.totalDetail);
+					$('#staAdjustmentMoney').val(item.totalExp);
+					$('#staFreight').val(item.freight);
+					$('#staShouldPay').val(shouldPay);
+					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
+//						console.log(poLastDa)
+					$('#staPoLastDa').val(item.receiveTotal);
+					$('#staServerPrice').val(serverPrice);
+					$('#staInvoice').val(invStatusTxt);
+					$('#staStatus').val(statusTxt);
+					$('#staConsignee').val(item.bizLocation.receiver);
+					$('#staMobile').val(item.bizLocation.phone);
+					$('#staShippAddress').val();
+					$('#staDateilAddress').val(item.bizLocation.address);
+					$('#staEvolve').val();
+					
+					if(res.statusList) {
+						var statusLen = res.statusList.length;
+						if(statusLen > 0) {
+						_this.statusListHtml(res.data)
+						}
+					}
+					if(res.statusList) {
+						_this.statusListHtml(res.data)
+					}
+					var auditLen = res.auditList.length;
+					
+					if(auditLen > 0) {
+						_this.checkProcessHtml(res.data);
+					}
+				_this.commodityHtml(res.data)
                 }
             });
+		},
+		statusListHtml:function(data){
+			var _this = this;
+			console.log(data)
+			var statusLen = data.statusList.length;
+			if(statusLen > 0) {
+				var pHtmlList = '';
+				$.each(data.statusList, function(i, item) {
+					console.log(item)
+					var step = i + 1;
+					pHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ step +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+								'<label>处理人:</label>'+
+								'<input type="text" value="'+ item.createBy.name +'" class="mui-input-clear" disabled>'+
+						    '</div>'+
+							'<div class="mui-input-row">'+
+						        '<label>状态:</label>'+
+						        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
+						    	'<label>时间:</label>'+
+						        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+				});
+				$("#staEvoMenu").html(pHtmlList)
+			}
 		},
 		checkProcessHtml:function(data){
 			var _this = this;
 			console.log(data)
-			$.each(data.page.list, function(i, item) {
+			var auditLen = res.auditList.length;
+			if(auditLen > 0) {
+				
+			}
+			$.each(data.statusList, function(i, item) {
 				console.log(item)
-				var pHtmlList = '';
-			})
+				var step = i + 1;
+				if(current != 1) {
+					CheckHtmlList +='<li class="step_item">'+
+					'<div class="step_num">'+ step +' </div>'+
+					'<div class="step_num_txt">'+
+						'<div class="mui-input-row">'+
+							'<label>处理人:</label>'+
+							'<input type="text" value="'+ item.user.name +'" class="mui-input-clear" disabled>'+
+					    '</div>'+
+						'<div class="mui-input-row">'+
+					        '<label>批注:</label>'+
+					        '<input type="text" value="'+ item.description +'" class="mui-input-clear" disabled>'+
+					    	'<label>状态:</label>'+
+					        '<input type="text" value=" '+ item.jointOperationLocalProcess.name +' " class="mui-input-clear" disabled>'+
+					    '</div>'+
+					'</div>'+
+				'</li>'
+				}
+				if(current == 1) {
+					CheckHtmlList +='<li class="step_item">'+
+					'<div class="step_num">'+ step +' </div>'+
+					'<div class="step_num_txt">'+
+						'<div class="mui-input-row">'+
+							'<label>当前状态:</label>'+
+							'<input type="text" value="'+ item.jointOperationLocalProcess.name +'" class="mui-input-clear" disabled>'+
+					   		'<label>时间:</label>'+
+					        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
+					    '</div>'+
+					'</div>'+
+				'</li>'
+				}
+			});
+			$("#staCheckMenu").html(CheckHtmlList)
 		},
 		commodityHtml: function(data) {
 			var _this = this;
-//			console.log(data)
+			console.log(data)
 			var htmlCommodity = '';
-			$.each(data.reqDetailList, function(i, item) {
+			$.each(data.statusList, function(i, item) {
 //				console.log(item)
 				var hightNum = i + 1;
 				

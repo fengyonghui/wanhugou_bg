@@ -54,6 +54,7 @@
 				                }
 				                console.log('222')
 				                console.log(pager)
+				                $('#consultantId').val(pager.consultantId);
 				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
 			            }
@@ -249,46 +250,19 @@
                 }
             });
         },
-//      orderType: function() {
-//      	var _this = this;
-//          var ass=[];
-//      	$.ajax({
-//              type: "GET",
-//              url: "/a/sys/dict/listData",
-//              dataType: "json",
-//              data: {type: "biz_order_type"},
-//              async:false,
-//              success: function(res){
-//                  console.log(res)                  
-//                $.each(res,function(i,item){ 
-//                	 var aaaaa=item.label;
-//                  sessionStorage.setItem('aa',JSON.stringify(aaaaa));
-//					console.log(sessionStorage.getItem('aa'));
-//                	console.log('/////////////')
-//
-//                	if(val==item.val){
-//                		$('.orderTypeTxt').val(item.label)
-//               	}  
-//               	ass.push(item.value);
-//               })
-//                console.log(ass);
-//                sessionStorage.setItem('bb',JSON.stringify(ass));
-//					console.log(sessionStorage.getItem('bb'));
-//              }
-//          });
-//      },
 		stOrdHrefHtml: function() {
 			var _this = this;
 		/*查询*/
 			$('.header').on('tap', '#staOrdSechBtn', function() {
 				var url = $(this).attr('url');
+				var staListId = $('#consultantId').val();
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdSech.html",
 						extras:{
-							
+							staListId: staListId,
 						}
 					})
 				}
