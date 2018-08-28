@@ -115,12 +115,12 @@
 //                      	console.log(item.orderType)
                             var orderTypeTxt = '';
                             $.each(ass,function(i,items){
-                            	console.log('=============')
-                            	console.log(item.orderType)
-                            	console.log(items.value)
-                            	console.log('ppp')
-                            	console.log(items.label)
-                            	console.log('=============')
+//                          	console.log('=============')
+//                          	console.log(item.orderType)
+//                          	console.log(items.value)
+//                          	console.log('ppp')
+//                          	console.log(items.label)
+//                          	console.log('=============')
 	                        	if(item.orderType==items.value) {
 	                        		orderTypeTxt = items.label
 	                        	}else if(item.orderType==items.value) {
@@ -215,11 +215,9 @@
 								});
 								$('#staOrdList').append(staffHtmlList);
 								_this.stOrdHrefHtml()
-//								_this.orderType();
-						} else {
-								$('.mui-pull-caption').html('');
+					} else {
 								$('.mui-pull-bottom-pocket').html('');
-								$('#staOrdList').append('<p class="noneTxt">暂无数据</p>');
+								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);							
 							}
 						totalPage = res.data.page.count%pager.size!=0?
 		                parseInt(res.data.page.count/pager.size)+1:
@@ -229,9 +227,7 @@
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
-			            } 
-			            
-			           
+			            } 			           
 			        },
 		            error:function(xhr,type,errorThrown){
 			            console.log(type);
@@ -432,8 +428,7 @@
 			
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/request/bizRequestHeader/list4Mobile',
-//              url: '/a/biz/order/bizOrderHeader/listData4mobile',
+                url: '/a/biz/order/bizOrderHeader/listData4mobile',
 				data: {
 					pageNo: 1,
 					reqNo:_this.userInfo.reqNo,
@@ -450,39 +445,54 @@
 					if(arrLen > 0) {
 						$.each(res.data.page.list, function(i, item) {
 							console.log(item)
-							inPHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
-								'<div class="mui-input-row">' +
-									'<label>订单编号:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.reqNo+' ">' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-									'<label>经销店:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+bizstatusTxt+' ">' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-									'<label>业务状态:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
-								'</div>' +
-								'<div class="app_font_cl content_part mui-row app_text_center">' +
-									'<div class="mui-col-xs-3 '+staCheckSucBtn+'" staOrdListId="'+ item.id +'">' +
-										'<li class="mui-table-view-cell"> '+staCheckSuc+'</li>' +
-									'</div>'+
-									'<div class="mui-col-xs-3 '+staOraAmendBtn+'"  staOrdListId="'+ item.id +'">' +
-										'<li class="mui-table-view-cell">'+staOraAmend+'</li>' +
-									'</div>'+
-									'<div class="mui-col-xs-3 '+staOrDetalBtn+'"  staOrdListId="'+ item.id +'">' +
-										'<li class="mui-table-view-cell">详情</li>' +
-									'</div>'+
-									'<div class="mui-col-xs-3" staOrdListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
-										'<li class="mui-table-view-cell">'+ staOff +'</li>' +
-									'</div>'+
-								'</div>' +
-							'</div>'
-						});
-						$('.inListAdd').append(inPHtmlList);
-						_this.inHrefHtml()
+							var staCheckSucBtn = '';
+                        	var staCheckSuc = '';
+									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
+										'<div class="mui-input-row">' +
+											'<label>订单编号:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.orderNum+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>经销店:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customer.name+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>订单类型:</label>' +
+											'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+orderTypeTxt+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>创建时间:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.createDate)+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>更新时间:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
+										'</div>' +
+										//业务状态需要添加权限
+//										'<div class="mui-input-row">' +
+//											'<label>业务状态:</label>' +
+//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
+//										'</div>' +
+										'<div class="app_font_cl content_part mui-row app_text_center">' +
+											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
+											'</div>'+
+//											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">出库确认</li>' +
+//											'</div>'+
+//											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">审核成功</li>' +
+//											'</div>'+
+											'<div class="mui-col-xs-6 staOrDetailBtn" staOrdListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">详情</li>' +
+											'</div>'+
+										'</div>' +
+									'</div>'
+								});
+								$('#staOrdList').append(staffHtmlList);
+								_this.stOrdHrefHtml()
 					}else{
-						$('.inListAdd').append('<p class="noneTxt">暂无数据</p>');
+						$('#staOrdList').append('<p class="noneTxt">暂无数据</p>');
 					}
 				}
 			});

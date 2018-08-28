@@ -23,11 +23,14 @@
 			var _this = this;
 			$('#inSearchBtn').on('tap', function() {
 				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
-				var ordNumVal = $(".inOrdNum").val(); 
-                var reqNumVal = $(".inReqNum").val(); 
-                var newInputVal = $('.newinput').val(); 
-                var secStyleVal = $('.secStyle').val();
-                var cateGoryVal = $('#input_div_class').val();
+				var ordNumVal = $("#staOrderNum").val(); 
+                var reqNumVal = $("#staOrdPurchasing").val(); 
+                var newInputVal = $('#staOrdMobile').val(); 
+                var secStyleVal = $('#staOrdNumbers').val();
+                var cateGoryVal = $('#staOrdClient').val();
+                var orderStatusVal = $('#input_div_orderStatus').val();
+                var checkStatusVal = $('#input_div_checkStatus').val();
+                 var newinputVal = $('.newinput').val();
 //				console.log(optionsBusiness)
                if(ordNumVal == null||ordNumVal == undefined){
 					ordNumVal == "";
@@ -91,7 +94,7 @@
 				}else{
 					_this.selectOpen = true
 				}
-				_this.rendHtml(_this.datagood,$(this).val())
+				_this.rendHtml(jrollVip,$(this).val())
 			})
 			
 			$(staOrdHideSpan).on('click', function() {
@@ -124,6 +127,7 @@
 			});
 			$('.input_div').html(htmlList)
 		},
+		//经销店名称
 		ajaxGoodList: function() {
 			var _this = this;
 			var htmlList = ''
@@ -131,13 +135,12 @@
 				type: 'GET',
 				url: '/a/sys/office/queryTreeList',
 				data: {
-					type: 8
+					type: 6
 				},
 				dataType: 'json',
 				success: function(res) {
 					_this.datagood = res
 					$.each(res, function(i, item) {
-//						console.log(item)
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlList)
@@ -170,7 +173,8 @@
 			var htmlClass = '';
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/request/bizRequestHeader/list4Mobile',
+//				url: '/a/biz/request/bizRequestHeader/list4Mobile',
+//              url: '/a/sys/office/queryTreeList',
 				data: {},
 				dataType: 'json',
 				success: function(res) {
