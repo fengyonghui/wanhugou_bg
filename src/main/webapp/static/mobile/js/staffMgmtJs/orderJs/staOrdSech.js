@@ -9,50 +9,79 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			this.hrefHtml('.newinput', '.input_div','#staOrdHideSpan');
+			this.hrefHtml('.newinput', '.input_div','#staOrdHideSpan' );
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
+			this.ajaxGoodName()
 		},
 		pageInit: function() {
 			var _this = this;
 		},
+		//点击查询
 		getData: function() {
 			var _this = this;
-			$('#staOrdSechBtn').on('tap', function() {
+			$('#inSearchBtn').on('tap', function() {
+				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
+				var ordNumVal = $(".inOrdNum").val(); 
+                var reqNumVal = $(".inReqNum").val(); 
+                var newInputVal = $('.newinput').val(); 
+                var secStyleVal = $('.secStyle').val();
+                var cateGoryVal = $('#input_div_class').val();
+//				console.log(optionsBusiness)
+               if(ordNumVal == null||ordNumVal == undefined){
+					ordNumVal == "";
+                }
+                if(reqNumVal == null||reqNumVal == undefined) {
+                	reqNumVal == "";
+                }
+                if(newInputVal == null||newInputVal == undefined) {
+                	newInputVal == "";
+                }
+                if(secStyleVal == null||secStyleVal == undefined) {
+                	secStyleVal == "";
+                }
+                if(cateGoryVal == null||cateGoryVal == undefined) {
+                	cateGoryVal == "";
+                }
+                if(ordNumVal == ""&&reqNumVal == ""&&newInputVal == ""&&secStyleVal == ""&&cateGoryVal == ""){
+                	 mui.toast("请输入查询条件！");
+                	 return;
+                }
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
-							_this.sureSelect()
+							_this.sureSelect(optionsBusiness)
 						}else{
 							mui.toast('请选择匹配的选项')
 						}
 				}else{
-					_this.sureSelect()
+					_this.sureSelect(optionsBusiness)
 				}
 			})
 		},
-		sureSelect:function(){
+		sureSelect:function(optionsBusiness){
 			var _this = this;
 			_this.selectOpen = false
+			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
 			GHUTILS.OPENPAGE({
-				url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+				url: "../../html/inventoryMagmetHtml/inventoryList.html",
 				extras: {
-					orderNum: $('#staOrderNum').val(),
-					centersName: $('#staOrdPurchasing').val(),
-					staOrdMobile: $('#staOrdMobile').val(),
-					//商品货号：    $('#staOrdNumbers').val(),
-					//客户专员：    $('#staOrdClient').val(),
+					reqNo: $('.inOrdNum').val(),
+					name: $('.inReqNum').val(),
+					fromOffice: $('.hasoid').attr('id'),
+					bizStatusid: optionsBusiness.val(),
+					varietyInfoid: optionsClass.val(),
 					isFunc: true
 				}
 			})
 		},
-		hrefHtml: function(newinput, input_div, staOrdHideSpan) {
+		hrefHtml: function(newinput, input_div,staOrdHideSpan) {
 			var _this = this;
 			_this.ajaxGoodList()
 			_this.ajaxCheckStatus()
-			
+
 			$(newinput).on('focus', function() {
-				//$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
 				$(staOrdHideSpan).show()
 			})
@@ -64,20 +93,22 @@
 				}
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
+			
 			$(staOrdHideSpan).on('click', function() {
-//				$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
 				$(staOrdHideSpan).hide()
 			})
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
+//				_this.fromOfficeId = $(this).attr("id");
 				$(newinput).val($(this).text())
 				$(input_div).hide()
 				$('#staOrdHideSpan').hide()
 				_this.selectOpen = true
 			})
 		},
-		//选择经销店名称：
+		//选择经销店
 		rendHtml: function(data, key) {
 			var _this = this;
 			var reult = [];
@@ -89,7 +120,7 @@
 				})
 			$.each(reult, function(i, item) {
 //				console.log(item)
-				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="'+item.name+'">' + item.name + '</span>'
+				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
 		},
@@ -100,26 +131,24 @@
 				type: 'GET',
 				url: '/a/sys/office/queryTreeList',
 				data: {
-					type: 8,
-					customerTypeTen: 10
+					type: 8
 				},
 				dataType: 'json',
 				success: function(res) {
 					_this.datagood = res
 					$.each(res, function(i, item) {
 //						console.log(item)
-						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="'+item.name+'">' + item.name + '</span>'
+						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlList)
 				}
 			});
-		_this.getData()
 		},
-		//订单状态：
+		//订单状态
 		ajaxCheckStatus: function() {
 			var _this = this;
 			var optHtml ='<option value="">全部</option>';
-			var htmlStaOrd = ''
+			var htmlBusiness = ''
 			$.ajax({
 				type: 'GET',
 				url: '/a/sys/dict/listData',
@@ -127,16 +156,36 @@
 				dataType: 'json',
 				success: function(res) {
 					$.each(res, function(i, item) {
-						htmlStaOrd += '<option class="soption"  value="' + item.value + '">' + item.label + '</option>'
+						htmlBusiness += '<option class="soption"  value="' + item.value + '">' + item.label + '</option>'
 					});
-					$('#input_div_class').html(optHtml+htmlStaOrd)
+					$('#input_div_orderStatus').html(optHtml+htmlBusiness)
 					_this.getData()
 				}
 			});
-		}
+		},
+		//审核状态
+		ajaxGoodName: function() {
+			var _this = this;
+			var optHtml ='<option value="">全部</option>';
+			var htmlClass = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/biz/request/bizRequestHeader/list4Mobile',
+				data: {},
+				dataType: 'json',
+				success: function(res) {
+//					console.log(res)
+					$.each(res.data.varietyInfoList, function(i, item) {
+//						console.log(item)
+						htmlClass += '<option class="soption" value="' + item.id + '">' + item.name + '</option>'
+					});
+					$('#input_div_checkStatus').html(optHtml+htmlClass)
+					_this.getData()
+				}
+			});
+		},
 	}
 	$(function() {
-
 		var ac = new ACCOUNT();
 		ac.init();
 	});
