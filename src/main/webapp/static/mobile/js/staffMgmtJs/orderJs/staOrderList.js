@@ -88,30 +88,23 @@
 
                             $.each(res.data.page.list, function(i, item) {
                         	console.log(item)
-//                      	var hh=sessionStorage.getItem('bb')
-//                      	console.log(hh);
-//                      	for(var i=0;i<hh.length;i++){
-//                      		if((i+1)==item.orderType){
-//                      			$('.orderTypeTxt').val(hh[i])
-//                      		}
-//                      	}
 							$('#statu').val(item.statu);
 							$('#source').val(item.source);
                         	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
-                        	var orderTypeTxt = '';
-                        	if(item.orderType==1) {
-                        		orderTypeTxt = '普通订单'
-                        	}else if(item.orderType==2) {
-                        		orderTypeTxt = '帐期采购'
-                        	}else if(item.orderType==3) {
-                        		orderTypeTxt = '配资采购'
-                        	}else if(item.orderType==4) {
-                        		orderTypeTxt = '微商订单'
-                        	}else if(item.orderType==5) {
-                        		orderTypeTxt = '代采订单'
-                        	}else if(item.orderType==6) {
-                        		orderTypeTxt = '拍照下单'
-                        	}
+//                      	var orderTypeTxt = '';
+//                      	if(item.orderType==1) {
+//                      		orderTypeTxt = '普通订单'
+//                      	}else if(item.orderType==2) {
+//                      		orderTypeTxt = '帐期采购'
+//                      	}else if(item.orderType==3) {
+//                      		orderTypeTxt = '配资采购'
+//                      	}else if(item.orderType==4) {
+//                      		orderTypeTxt = '微商订单'
+//                      	}else if(item.orderType==5) {
+//                      		orderTypeTxt = '代采订单'
+//                      	}else if(item.orderType==6) {
+//                      		orderTypeTxt = '拍照下单'
+//                      	}
 //                      	console.log('-----')
 //                      	console.log(item.orderType)
                             var orderTypeTxt = '';
@@ -135,22 +128,7 @@
 	                        	}else if(item.orderType==items.value) {
 	                        		orderTypeTxt = items.label
 	                        	}
-                            })
-                        	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
-//                      	var orderTypeTxt = '';
-//                      	if(item.orderType==1) {
-//                      		orderTypeTxt = '普通订单'
-//                      	}else if(item.orderType==2) {
-//                      		orderTypeTxt = '帐期采购'
-//                      	}else if(item.orderType==3) {
-//                      		orderTypeTxt = '配资采购'
-//                      	}else if(item.orderType==4) {
-//                      		orderTypeTxt = '微商订单'
-//                      	}else if(item.orderType==5) {
-//                      		orderTypeTxt = '代采订单'
-//                      	}else if(item.orderType==6) {
-//                      		orderTypeTxt = '拍照下单'
-//                      	}
+                           })
 
                         	//审核
                         	var staCheckBtn = '';
@@ -392,7 +370,7 @@
 		//查询过来渲染页面:
 		seachFunc:function(){
 			var _this = this;
-			var inPHtmlList = '';
+			var staffHtmlList = '';
 			var nameTxt = '';
 			if(_this.userInfo.name) {
 				nameTxt = decodeURIComponent(_this.userInfo.name)
@@ -404,23 +382,72 @@
 				type: 'GET',
                 url: '/a/biz/order/bizOrderHeader/listData4mobile',
 				data: {
-					pageNo: 1,
-					reqNo:_this.userInfo.reqNo,
-					name:nameTxt,
-					'fromOffice.id':_this.userInfo.fromOffice,
-					bizStatus:_this.userInfo.bizStatusid,
-					'varietyInfo.id':_this.userInfo.varietyInfoid
+					'pageNo': 1,
+					'orderNum' : _this.userInfo.staOrder,
+                    'centersName': _this.userInfo.Purchasing,
+                    'customer.phone': _this.userInfo.OrdMobile,
+                    'itemNo': _this.userInfo.OrdNumbers,
+                    'con.name': _this.userInfo.OrdClient,
+                    'biz_order_status': _this.userInfo.orderStatus,
+                    'originConfigMap': _this.userInfo.checkStatus,
+                    'bizOrderHeader.customer.name':_this.userInfo.newinput
 				},
 				dataType: 'json',
 				success: function(res) {
-//							console.log(res)
-					var dataRow = res.data.roleSet;
-					var arrLen = res.data.page.list.length;
-					if(arrLen > 0) {
-						$.each(res.data.page.list, function(i, item) {
-							console.log(item)
-							var staCheckSucBtn = '';
-                        	var staCheckSuc = '';
+					$.ajax({
+			                type: "GET",
+			                url: "/a/sys/dict/listData",
+			                dataType: "json",
+			                data: {type: "biz_order_type"},
+			                async:false,
+			                success: function(res){                 
+				                ass=res;
+			                }
+			            });
+//		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+						var arrLen = res.data.page.list.length;	
+                        var that=this;
+                        if(arrLen > 0) {
+                            $.each(res.data.page.list, function(i, item) {
+	                        	console.log(item)
+								$('#statu').val(item.statu);
+								$('#source').val(item.source);
+	                        	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
+	                            var orderTypeTxt = '';
+	                            $.each(ass,function(i,items){
+		                        	if(item.orderType==items.value) {
+		                        		orderTypeTxt = items.label
+		                        	}else if(item.orderType==items.value) {
+		                        		orderTypeTxt = items.label
+		                        	}else if(item.orderType==items.value) {
+		                        		orderTypeTxt = items.label
+		                        	}else if(item.orderType==items.value) {
+		                        		orderTypeTxt = items.label
+		                        	}else if(item.orderType==items.value) {
+		                        		orderTypeTxt = items.label
+		                        	}else if(item.orderType==items.value) {
+		                        		orderTypeTxt = items.label
+		                        	}
+	                            })
+								var staCheckBtn = '';
+	                        	var staCheckBtnTxt = '';
+				                if(_this.staCheckFlag == true) {
+				                	if(item.bizStatus==0 || item.bizStatus==5 || item.bizStatus==10) {
+				                		staCheckBtn = 'waitCheckBtn'
+				                		staCheckBtnTxt = "待审核"
+				                	}
+				                	if(item.bizStatus==45) {
+				                		staCheckBtnTxt = "审核失败"
+				                	}
+				                	if(item.bizStatus==15) {
+				                		staCheckBtnTxt = "审核成功"
+				                	}
+				                }
+				                else {
+				                	staCheckBtnTxt = ''
+				                }
+	                        	var staCheckSucBtn = '';
+	                        	var staCheckSuc = '';
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
 											'<label>订单编号:</label>' +

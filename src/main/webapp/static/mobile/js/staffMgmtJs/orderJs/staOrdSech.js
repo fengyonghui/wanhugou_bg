@@ -78,7 +78,7 @@
 //			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
 //			var optionsClass = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
 			GHUTILS.OPENPAGE({
-				url: "../../html/inventoryMagmetHtml/inventoryList.html",
+				url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
 				extras: {
 					staOrder: $('#staOrderNum').val(),
 					Purchasing: $('#staOrdPurchasing').val(),
