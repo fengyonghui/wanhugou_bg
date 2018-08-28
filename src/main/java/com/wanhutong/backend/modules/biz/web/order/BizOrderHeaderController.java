@@ -355,11 +355,14 @@ public class BizOrderHeaderController extends BaseController {
                 list = commonProcessService.findList(commonProcessEntityTemp);
                 if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
                     OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail(), b.getReceiveTotal());
-                    b.setPayProportion(orderPayProportionStatusEnum.getState());
-                    bizOrderHeaderService.save(b);
-                    Integer processId = 0;
-                    processId = bizOrderHeaderService.saveCommonProcess(b);
-                    bizOrderHeaderService.updateProcessId(b.getId(), processId);
+                    Integer state = orderPayProportionStatusEnum.getState();
+                    if (state > 0) {
+                        b.setPayProportion(orderPayProportionStatusEnum.getState());
+                        bizOrderHeaderService.save(b);
+                        Integer processId = 0;
+                        processId = bizOrderHeaderService.saveCommonProcess(b);
+                        bizOrderHeaderService.updateProcessId(b.getId(), processId);
+                    }
                 }
 
                 CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
