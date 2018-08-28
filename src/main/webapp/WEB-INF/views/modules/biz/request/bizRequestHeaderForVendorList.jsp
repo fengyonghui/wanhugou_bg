@@ -318,6 +318,7 @@
 				<!-- 保证金支付申请 -->
 				<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">
 					<c:if test="${requestHeader.bizPoHeader.currentPaymentId == null
+						&& requestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state
 						&& requestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state
 						&& (requestHeader.bizPoHeader.payTotal == null ? 0 : requestHeader.bizPoHeader.payTotal) < requestHeader.totalDetail
 						}">

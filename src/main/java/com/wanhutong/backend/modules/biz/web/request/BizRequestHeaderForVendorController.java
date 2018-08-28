@@ -224,11 +224,25 @@ public class BizRequestHeaderForVendorController extends BaseController {
             }
         }
 
-		Map<Integer, RequestOrderProcessConfig.RequestOrderProcess> reqMap = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap;
 		Map<Integer, PurchaseOrderProcessConfig.PurchaseOrderProcess> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
-		Map<String,Integer> requestMap = new LinkedHashMap<>();
+		Integer currentCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getDefaultNewProcessId();
+		Integer lastCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId();
 		Map<String,Integer> poMap = new LinkedHashMap<>();
 		Set<String> processSet = new HashSet<>();
+		while (true) {
+			PurchaseOrderProcessConfig.PurchaseOrderProcess current = purMap.get(currentCode);
+			PurchaseOrderProcessConfig.PurchaseOrderProcess next = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPassProcess(current);
+			poMap.put(current.getName(),currentCode);
+			processSet.add(current.getName());
+			if (lastCode.equals(currentCode)) {
+				break;
+			}
+			currentCode = next.getCode();
+		}
+		Map<Integer, RequestOrderProcessConfig.RequestOrderProcess> reqMap = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap;
+		Map<String,Integer> requestMap = new LinkedHashMap<>();
+
+
 		for (Map.Entry<Integer,RequestOrderProcessConfig.RequestOrderProcess> map : reqMap.entrySet()) {
 			requestMap.put(map.getValue().getName(),map.getKey());
 			processSet.add(map.getValue().getName());
@@ -236,11 +250,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		requestMap.remove("审核完成");
 		requestMap.remove("驳回");
 		processSet.remove("审核完成");
-		processSet.remove("驳回");
-		for (Map.Entry<Integer,PurchaseOrderProcessConfig.PurchaseOrderProcess> map : purMap.entrySet()) {
-			poMap.put(map.getValue().getName(),map.getKey());
-			processSet.add(map.getValue().getName());
-		}
 		poMap.remove("驳回");
 		if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && requestMap.get(bizRequestHeader.getProcess()) != null) {
 			bizRequestHeader.setReqCode(requestMap.get(bizRequestHeader.getProcess()));
