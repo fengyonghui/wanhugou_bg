@@ -592,6 +592,15 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         return userDao.findVendUser(orderId);
     }
 
+    /**
+     * 查询供应商主负责人
+     *
+     * @return
+     */
+    public User findVendUserV2(Integer orderId) {
+        return userDao.findVendUserV2(orderId);
+    }
+
     private List<CommonImg> getImgList(Integer imgType, Integer prodId) {
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(prodId);

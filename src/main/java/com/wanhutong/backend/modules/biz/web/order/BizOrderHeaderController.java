@@ -341,10 +341,25 @@ public class BizOrderHeaderController extends BaseController {
 
                 if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
                     OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail(), b.getReceiveTotal());
+                    b.setPayProportion(orderPayProportionStatusEnum.getState());
+                    bizOrderHeaderService.saveOrderHeader(b);
                     genAuditProcess(orderPayProportionStatusEnum, b);
                 }
             }
             if (b.getOrderNum().startsWith("DO")) {
+                CommonProcessEntity commonProcessEntityTemp = new CommonProcessEntity();
+                commonProcessEntityTemp.setObjectId(String.valueOf(b.getId()));
+                commonProcessEntityTemp.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+                list = commonProcessService.findList(commonProcessEntityTemp);
+                if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                    OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail(), b.getReceiveTotal());
+                    b.setPayProportion(orderPayProportionStatusEnum.getState());
+                    bizOrderHeaderService.save(b);
+                    Integer processId = 0;
+                    processId = bizOrderHeaderService.saveCommonProcess(b);
+                    bizOrderHeaderService.updateProcessId(b.getId(), processId);
+                }
+
                 CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
                 commonProcessEntity.setObjectId(String.valueOf(b.getId()));
                 commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
@@ -481,7 +496,7 @@ public class BizOrderHeaderController extends BaseController {
                 model.addAttribute("custUser", user);
             }
             //供应商
-            User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId());
+            User vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
             model.addAttribute("vendUser", vendUser);
 
             //代采
@@ -1710,7 +1725,7 @@ public class BizOrderHeaderController extends BaseController {
                 model.addAttribute("custUser", user);
             }
             //供应商
-            User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId());
+            User vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
             model.addAttribute("vendUser", vendUser);
 
             //代采

@@ -137,6 +137,12 @@ public interface UserDao extends CrudDao<User> {
 	User findVendUser(@Param("orderId") Integer orderId);
 
 	/**
+	 * 查询供应商和主负责人信息
+	 * @return
+	 */
+	User findVendUserV2(@Param("orderId") Integer orderId);
+
+	/**
 	 * 品类主管 管理
 	 * */
 	List<User> findSeleList(User user);

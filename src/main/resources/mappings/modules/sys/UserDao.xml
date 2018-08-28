@@ -661,6 +661,23 @@
 		GROUP BY u.id
 	</select>
 
+<select id="findVendUserV2" resultType="User">
+		select
+		su.id,
+			su.name AS "name",
+			su.mobile AS "mobile",
+			so.id AS "vendor.id",
+			so.name AS "vendor.name"
+		from biz_order_header boh
+		left join biz_order_detail bod on boh.id = bod.order_id
+		left join biz_sku_info bsi on bod.sku_id = bsi.id
+		left join biz_product_info bpi on bsi.prod_id = bpi.id
+		left join sys_office so on bpi.vendor_id = so.id
+		left join sys_user su on so.primary_person = su.id
+		WHERE boh.id = #{orderId}
+		GROUP BY su.id
+	</select>
+
 	<!-- 品类主管 管理 -->
 	<select id="findSeleList" resultType="User">
 		SELECT
