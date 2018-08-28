@@ -228,6 +228,7 @@
 										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
 											'<div class="mui-col-xs-2">' +
+												'<li class="mui-table-view-cell" >支付列表</li>' +
 											'</div>'+
 											'<div class="mui-col-xs-2 '+inDetailBtn+'" inListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell" >'+inDetail+'</li>' +
@@ -324,7 +325,7 @@
 				})
 			}),
 		/*详情*/
-			$('.listBlue').on('tap', '.inDetailBtn', function() {
+			$('#list').on('tap', '.inDetailBtn', function() {
 				var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
 				if(url) {
@@ -350,7 +351,7 @@
 				})
 			}),
         /*付款*/
-	       $('.listBlue').on('tap', '.inPayBtn', function() {
+	       $('#list').on('tap', '.inPayBtn', function() {
 					var url = $(this).attr('url');
 					var inListId = $(this).attr('inListId');
 					if(url) {
@@ -662,9 +663,9 @@
 								'</div>' +
 							'</div>'
 						});
-						$('.inListAdd').append(inPHtmlList);
+						$('#list').append(inPHtmlList);
 					}else{
-						$('.inListAdd').append('<p class="noneTxt">暂无数据</p>');
+						$('#list').append('<p class="noneTxt">暂无数据</p>');
 					}
 				}
 			});

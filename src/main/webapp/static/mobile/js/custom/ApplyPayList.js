@@ -75,7 +75,7 @@
 								var PoName = item.commonProcess.paymentOrderProcess.name
 								if(PoName=='审批完成') {
 	//								 && item.bizStatus == 1
-									pHtmlList += '<div class="mui-input-row app_bline">' +
+									pHtmlList += '<div class="mui-input-row app_bline2">' +
 									'<div class="mui-input-row">' +
 									'<label>id：</label>' +
 									'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
@@ -148,7 +148,7 @@
 									'</div>'+
 								'</div>'
 								}*/else {
-									pHtmlList += '<div class="mui-input-row app_bline">' +
+									pHtmlList += '<div class="mui-input-row app_bline2">' +
 									'<div class="mui-input-row">' +
 									'<label>id：</label>' +
 									'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +

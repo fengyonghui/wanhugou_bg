@@ -118,15 +118,6 @@
 				width: 85%;
 			}
 			
-			#hideSpanAdd {
-			    position: absolute;
-			    right: 52px;
-			    top: 11px;
-			    border: 1px solid rgb(204, 204, 204);
-			    border-radius: 13px;
-				display: none;
-			}
-			
 			.mui-table-view-cell {
 				border-bottom: 1px solid #efeff4;
 			}
@@ -155,12 +146,34 @@
 		</header>
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
+				<label>备货方：</label>
+		    	<div id="changeTxt" class="labelri" style="padding: 14px 8px;">
+			        <input checked type="radio" name="apply" />
+		        	采购中心备货
+			        <input id="yes" type="radio" name="apply" />
+			                厂商备货
+		    	</div>
+		    </div>
+			<div class="mui-input-row">
 				<label>采购中心：</label>
 				<div class="pre">
-					<input class="newinput" type="text" placeholder="请选择采购中心">
+					<input class="newinput newinput01" type="text" placeholder="请选择采购中心">
 					<font>*</font>
-					<span class="mui-icon mui-icon-closeempty" id="hideSpanAdd"></span>
-					<div class="input_div" style="display: none;">
+					<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAdd01"></span>
+					<div class="input_div input_div01" style="display: none;">
+
+					</div>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商：</label>
+				<div class="pre">
+					<input class="newinput newinput02" type="text" placeholder="请选择供应商">
+					<font>*</font>
+					<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAdd02"></span>
+					<div class="input_div input_div02" style="display: none;">
 
 					</div>
 					<input class="savedata" type="hidden" value=''>

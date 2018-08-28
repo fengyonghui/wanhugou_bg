@@ -9,10 +9,8 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-//			biz:request:bizRequestHeader:view   详情
-//			biz:request:bizRequestHeader:edit    取消、修改、付款
-			this.getPermissionList('biz:request:bizRequestHeader:view','detileFlag')
-			this.getPermissionList('biz:request:bizRequestHeader:edit','cancelAmendPayFlag')
+//			biz:order:bizOrderHeader:edit     审核
+//			this.getPermissionList('biz:order:bizOrderHeader:edit','staCheckFlag')
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -72,7 +70,6 @@
 		            success:function(res){
 		          	    console.log(res)
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-						var dataRow = res.data.roleSet;
 						var arrLen = res.data.page.list.length;						
                         if(arrLen > 0) {
                         $.each(res.data.page.list, function(i, item) {
@@ -114,18 +111,18 @@
 											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.officeCount+'">' +
 										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
-											'<div class="mui-col-xs-4 staRelevanBtn" staListId="'+ item.id +'" dptmtId="'+ item.office.id +'">' +
+											'<div class="mui-col-xs-6 staRelevanBtn" staListId="'+ item.id +'" dptmtId="'+ item.office.id +'">' +
 												'<li class="mui-table-view-cell">关联经销店</li>' +
 											'</div>' +
-											'<div class="mui-col-xs-3 staOrdBtn" staListId="'+ item.id +'">' +
+											'<div class="mui-col-xs-6 staOrdBtn" staListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">订单管理</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-3 staAmendBtn" staListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">修改</li>' +
-											'</div>'+
-											'<div class="mui-col-xs-2 staDeletBtn" staListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">删除</li>' +
-											'</div>'+
+//											'<div class="mui-col-xs-3 staAmendBtn" staListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">修改</li>' +
+//											'</div>'+
+//											'<div class="mui-col-xs-2 staDeletBtn" staListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">删除</li>' +
+//											'</div>'+
 										'</div>' +
 									'</div>'
 								});
@@ -159,10 +156,8 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                    _this.detileFlag = res.data;
-					_this.cancelAmendPayFlag = res.data;
-//                  console.log(_this.detileFlag)
-//					console.log(_this.cancelAmendPayFlag)
+                    _this.staCheckFlag = res.data;
+					console.log(_this.staCheckFlag)
                 }
             });
         },
@@ -182,15 +177,15 @@
 				}
 			}),
 		/*用户添加*/
-			$('#nav').on('tap','.staAddBtn', function() {
-				var url = $(this).attr('url');
-				GHUTILS.OPENPAGE({
-					url: "../../html/staffMgmtHtml/staffAdd.html",
-					extras: {
-						
-					}
-				})
-			}),
+//			$('#nav').on('tap','.staAddBtn', function() {
+//				var url = $(this).attr('url');
+//				GHUTILS.OPENPAGE({
+//					url: "../../html/staffMgmtHtml/staffAdd.html",
+//					extras: {
+//						
+//					}
+//				})
+//			}),
 		/*首页*/
 			$('#nav').on('tap','.staHomePage', function() {
 				var url = $(this).attr('url');
@@ -228,53 +223,53 @@
                         staListId: staListId,
 					}
 				})
-			}),
-        /*修改*/
-	       $('.listBlue').on('tap', '.staAmendBtn', function() {
-					var url = $(this).attr('url');
-					var staListId = $(this).attr('staListId');
-					if(url) {
-						mui.toast('子菜单不存在')
-					} else if(staListId == staListId) {
-						GHUTILS.OPENPAGE({
-							url: "../../html/staffMgmtHtml/staffAmend.html",
-							extras: {
-								staListId: staListId,
-							}
-						})
-					}
-				}),
-		/*删除*/	
-            $('.content').on('tap','.staDeletBtn',function(){
-            	var url = $(this).attr('url');
-				var staListId = $(this).attr('staListId');
-                if(url) {
-                	mui.toast('子菜单不存在')
-                }else if(staListId==staListId) {
-                	var btnArray = ['取消', '确定'];
-					mui.confirm('您确定要删除该用户吗？', '系统提示！', btnArray, function(choice) {
-						if(choice.index == 1) {
-							$.ajax({
-				                type: "GET",
-				                url: "",
-				                data: {id:staListId},
-				                dataType: "json",
-				                success: function(res){
-				                	alert('操作成功！')
-				                	GHUTILS.OPENPAGE({
-										url: "../../html/staffMgmtHtml/staffList.html",
-										extras: {
-												staListId:staListId,
-										}
-									})
-			                	}
-			            	})
-						}else {
-							
-						}
-					})	
-                }
 			})
+        /*修改*/
+//	       $('.listBlue').on('tap', '.staAmendBtn', function() {
+//					var url = $(this).attr('url');
+//					var staListId = $(this).attr('staListId');
+//					if(url) {
+//						mui.toast('子菜单不存在')
+//					} else if(staListId == staListId) {
+//						GHUTILS.OPENPAGE({
+//							url: "../../html/staffMgmtHtml/staffAmend.html",
+//							extras: {
+//								staListId: staListId,
+//							}
+//						})
+//					}
+//				}),
+		/*删除*/	
+//          $('.content').on('tap','.staDeletBtn',function(){
+//          	var url = $(this).attr('url');
+//				var staListId = $(this).attr('staListId');
+//              if(url) {
+//              	mui.toast('子菜单不存在')
+//              }else if(staListId==staListId) {
+//              	var btnArray = ['取消', '确定'];
+//					mui.confirm('您确定要删除该用户吗？', '系统提示！', btnArray, function(choice) {
+//						if(choice.index == 1) {
+//							$.ajax({
+//				                type: "GET",
+//				                url: "",
+//				                data: {id:staListId},
+//				                dataType: "json",
+//				                success: function(res){
+//				                	alert('操作成功！')
+//				                	GHUTILS.OPENPAGE({
+//										url: "../../html/staffMgmtHtml/staffList.html",
+//										extras: {
+//												staListId:staListId,
+//										}
+//									})
+//			                	}
+//			            	})
+//						}else {
+//							
+//						}
+//					})	
+//              }
+//			})
         },
 		formatDateTime: function(unix) {
 			var _this = this;
@@ -418,18 +413,18 @@
 									'<input type="text" class="mui-input-clear" disabled="disabled" value="'+officeCount+'">' +
 								'</div>' +
 								'<div class="app_font_cl content_part mui-row app_text_center">' +
-									'<div class="mui-col-xs-4 staRelevanBtn" staListId="'+ item.id +'" dptmtId="'+ item.office.id +'">' +
+									'<div class="mui-col-xs-6 staRelevanBtn" staListId="'+ item.id +'" dptmtId="'+ item.office.id +'">' +
 										'<li class="mui-table-view-cell">关联经销店</li>' +
 									'</div>' +
-									'<div class="mui-col-xs-3 staOrdBtn" staListId="'+ item.id +'">' +
+									'<div class="mui-col-xs-6 staOrdBtn" staListId="'+ item.id +'">' +
 										'<li class="mui-table-view-cell">订单管理</li>' +
 									'</div>'+
-									'<div class="mui-col-xs-3 staAmendBtn" staListId="'+ item.id +'">' +
-										'<li class="mui-table-view-cell">修改</li>' +
-									'</div>'+
-									'<div class="mui-col-xs-2 staDeletBtn" staListId="'+ item.id +'">' +
-										'<li class="mui-table-view-cell">删除</li>' +
-									'</div>'+
+//									'<div class="mui-col-xs-3 staAmendBtn" staListId="'+ item.id +'">' +
+//										'<li class="mui-table-view-cell">修改</li>' +
+//									'</div>'+
+//									'<div class="mui-col-xs-2 staDeletBtn" staListId="'+ item.id +'">' +
+//										'<li class="mui-table-view-cell">删除</li>' +
+//									'</div>'+
 								'</div>' +
 							'</div>'
 						});

@@ -203,21 +203,21 @@
                 	var btnArray = ['取消', '确定'];
 					mui.confirm('您确定要移除该关联信息吗？', '系统提示！', btnArray, function(choice) {
 						if(choice.index == 1) {
-							$.ajax({
-				                type: "GET",
-				                url: "",
-				                data: {id:staListId},
-				                dataType: "json",
-				                success: function(res){
-				                	alert('操作成功！')
-				                	GHUTILS.OPENPAGE({
-										url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
-										extras: {
-												staListId:staListId,
-										}
-									})
-			                	}
-			            	})
+//							$.ajax({
+//				                type: "GET",
+//				                url: "",
+//				                data: {id:staListId},
+//				                dataType: "json",
+//				                success: function(res){
+//				                	alert('操作成功！')
+//				                	GHUTILS.OPENPAGE({
+//										url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
+//										extras: {
+//												staListId:staListId,
+//										}
+//									})
+//			                	}
+//			            	})
 						}else {
 							
 						}

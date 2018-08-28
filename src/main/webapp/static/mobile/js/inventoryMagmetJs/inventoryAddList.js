@@ -16,7 +16,8 @@
 
 	ACCOUNT.prototype = {
 		init: function() {
-			this.hrefHtml('.newinput', '.input_div');
+			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAdd01');
+			this.hrefHtml('.newinput02', '.input_div02','#hideSpanAdd02');
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
@@ -215,7 +216,7 @@
                 })
             });
         },
-		hrefHtml: function(newinput, input_div) {
+		hrefHtml: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
 			_this.ajaxGoodList()
 			_this.ajaxCheckStatus()
@@ -223,7 +224,7 @@
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
-				$('#hideSpanAdd').show()
+				$(hideSpanAdd).show();
 			})
 			$(newinput).on('keyup', function() {
 				if($(this).val()==''){
@@ -235,10 +236,10 @@
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
 			
-			$('#hideSpanAdd').on('click', function() {
+			$(hideSpanAdd).on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
-				$('#hideSpanAdd').hide()
+				$(hideSpanAdd).hide()
 			})
 
 			$(input_div).on('click', '.soption', function() {
@@ -246,7 +247,7 @@
                 _this.fromOfficeId = $(this).attr("id");
 				$(newinput).val($(this).text())
 				$(input_div).hide()
-				$('#hideSpanAdd').hide()
+				$(hideSpanAdd).hide()
 				_this.selectOpen = true
 			})
 		},

@@ -4,16 +4,14 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.detileFlag = "false"
-		this.cancelAmendPayFlag = "false"
+		this.cancelAmendPayFlag = "false";
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			//权限添加
-//			biz:request:bizRequestHeader:view   详情
-//			biz:request:bizRequestHeader:edit    取消、修改、付款
-			this.getPermissionList('biz:request:bizRequestHeader:view','detileFlag')
-			this.getPermissionList('biz:request:bizRequestHeader:edit','cancelAmendPayFlag')
+//			biz:order:bizOrderHeader:edit     审核
+			this.getPermissionList('biz:order:bizOrderHeader:edit','staCheckFlag')
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -24,6 +22,7 @@
 		},
 		pageInit: function() {
 			var _this = this;
+			
 			var pager = {};//分页 
 		    var totalPage;//总页码
 		    pullRefresh(pager);//启用上拉下拉 
@@ -71,10 +70,54 @@
 		            success:function(res){
 		          	    console.log(res)
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-						var arrLen = res.data.page.list.length;						
+						var arrLen = res.data.page.list.length;	
+                        var that=this;
+						
                         if(arrLen > 0) {
+                        	
                         $.each(res.data.page.list, function(i, item) {
                         	console.log(item)
+//                      	var hh=sessionStorage.getItem('bb')
+//                      	console.log(hh);
+//                      	for(var i=0;i<hh.length;i++){
+//                      		if((i+1)==item.orderType){
+//                      			$('.orderTypeTxt').val(hh[i])
+//                      		}
+//                      	}
+                        	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
+                        	var orderTypeTxt = '';
+                        	if(item.orderType==1) {
+                        		orderTypeTxt = '普通订单'
+                        	}else if(item.orderType==2) {
+                        		orderTypeTxt = '帐期采购'
+                        	}else if(item.orderType==3) {
+                        		orderTypeTxt = '配资采购'
+                        	}else if(item.orderType==4) {
+                        		orderTypeTxt = '微商订单'
+                        	}else if(item.orderType==5) {
+                        		orderTypeTxt = '代采订单'
+                        	}else if(item.orderType==6) {
+                        		orderTypeTxt = '拍照下单'
+                        	}
+
+                        	//审核
+                        	var staCheckBtn = '';
+                        	var staCheckBtnTxt = '';
+			                if(_this.staCheckFlag == true) {
+			                	if(item.bizStatus==0 || item.bizStatus==5 || item.bizStatus==10) {
+			                		staCheckBtn = 'waitCheckBtn'
+			                		staCheckBtnTxt = "待审核"
+			                	}
+			                	if(item.bizStatus==45) {
+			                		staCheckBtnTxt = "审核失败"
+			                	}
+			                	if(item.bizStatus==15) {
+			                		staCheckBtnTxt = "审核成功"
+			                	}
+			                }
+			                else {
+			                	staCheckBtnTxt = ''
+			                }
                         	var staCheckSucBtn = '';
                         	var staCheckSuc = '';
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
@@ -86,6 +129,11 @@
 											'<label>经销店:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customer.name+' ">' +
 										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>订单类型:</label>' +
+											'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+orderTypeTxt+' ">' +
+										'</div>' +
+//										 value=" '+orderTypeTxt+' "
 										'<div class="mui-input-row">' +
 											'<label>创建时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.createDate)+' ">' +
@@ -100,37 +148,24 @@
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
-											'<div class="mui-col-xs-3 staCheckSucBtn" staOrdListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">审核</li>' +
+											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdListId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">出库确认</li>' +
-											'</div>'+
-											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">审核成功</li>' +
-											'</div>'+
-											'<div class="mui-col-xs-3 staOrDetailBtn" staOrdListId="'+ item.id +'">' +
+//											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">出库确认</li>' +
+//											'</div>'+
+//											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">审核成功</li>' +
+//											'</div>'+
+											'<div class="mui-col-xs-6 staOrDetailBtn" staOrdListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">详情</li>' +
 											'</div>'+
 										'</div>' +
-//										'<div class="app_font_cl content_part mui-row app_text_center">' +
-//											'<div class="mui-col-xs-4 '+staCheckSucBtn+'" staOrdListId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell"> '+staCheckSuc+'</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-4 '+staOraAmendBtn+'"  staOrdListId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+staOraAmend+'</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-4 '+staOrDetalBtn+'"  staOrdListId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">详情</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-4 app_c0" staOrdListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
-//												'<li class="mui-table-view-cell">'+ staOff +'</li>' +
-//											'</div>'+
-//										'</div>' +
 									'</div>'
 								});
 								$('#staOrdList').append(staffHtmlList);
 								_this.stOrdHrefHtml()
+								_this.orderType();
 						} else {
 								$('.mui-pull-caption').html('');
 							}
@@ -142,7 +177,9 @@
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
-			            }          
+			            } 
+			            
+			           
 			        },
 		            error:function(xhr,type,errorThrown){
 			            console.log(type);
@@ -159,10 +196,37 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                    _this.detileFlag = res.data;
-					_this.cancelAmendPayFlag = res.data;
-//                  console.log(_this.detileFlag)
-//					console.log(_this.cancelAmendPayFlag)
+                    _this.staCheckFlag = res.data;
+                    console.log(_this.staCheckFlag)
+                }
+            });
+        },
+        orderType: function() {
+        	var _this = this;
+            var ass=[];
+        	$.ajax({
+                type: "GET",
+                url: "/a/sys/dict/listData",
+                dataType: "json",
+                data: {type: "biz_order_type"},
+                async:false,
+                success: function(res){
+                    console.log(res)
+                   
+                  $.each(res,function(i,item){ 
+                  	 var aaaaa=item.label;
+                    sessionStorage.setItem('aa',JSON.stringify(aaaaa));
+					console.log(sessionStorage.getItem('aa'));
+////                  	console.log('/////////////')
+//
+////                  	if(val==item.val){
+////                  		$('.orderTypeTxt').val(item.label)
+////                  	}  
+                 	ass.push(item.value);
+                 })
+                  console.log(ass);
+                  sessionStorage.setItem('bb',JSON.stringify(ass));
+					console.log(sessionStorage.getItem('bb'));
                 }
             });
         },
@@ -203,7 +267,7 @@
 				})
 			}),
 		 /*审核*/
-	       $('.listBlue').on('tap', '.staCheckSucBtn', function() {
+	       $('#staOrdList').on('tap', '.waitCheckBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdListId = $(this).attr('staOrdListId');
 				if(url) {
@@ -335,8 +399,6 @@
 					if(arrLen > 0) {
 						$.each(res.data.page.list, function(i, item) {
 							console.log(item)
-							
-							
 							inPHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 								'<div class="mui-input-row">' +
 									'<label>订单编号:</label>' +
