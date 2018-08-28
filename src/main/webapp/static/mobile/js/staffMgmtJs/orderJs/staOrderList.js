@@ -62,6 +62,7 @@
 		    }
 		    function getData(params){
 		    	var staffHtmlList = '';
+		    	var ass=[];
 		        mui.ajax("/a/biz/order/bizOrderHeader/listData4mobile",{
 		            data:params,               
 		            dataType:'json',
@@ -69,36 +70,60 @@
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
 		          	    console.log(res)
+		          	    $.ajax({
+			                type: "GET",
+			                url: "/a/sys/dict/listData",
+			                dataType: "json",
+			                data: {type: "biz_order_type"},
+			                async:false,
+			                success: function(res){                 
+				                ass=res;
+			                }
+			            });
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						var arrLen = res.data.page.list.length;	
-                        var that=this;
-						
-                        if(arrLen > 0) {
-                        	
+                        var that=this;						
+                        if(arrLen > 0) {                        	
                         $.each(res.data.page.list, function(i, item) {
-                        	console.log(item)
-//                      	var hh=sessionStorage.getItem('bb')
-//                      	console.log(hh);
-//                      	for(var i=0;i<hh.length;i++){
-//                      		if((i+1)==item.orderType){
-//                      			$('.orderTypeTxt').val(hh[i])
-//                      		}
-//                      	}
+//                      	console.log('-----')
+//                      	console.log(item.orderType)
+                            var orderTypeTxt = '';
+                            $.each(ass,function(i,items){
+                            	console.log('=============')
+                            	console.log(item.orderType)
+                            	console.log(items.value)
+                            	console.log('ppp')
+                            	console.log(items.label)
+                            	console.log('=============')
+	                        	if(item.orderType==items.value) {
+	                        		orderTypeTxt = items.label
+	                        	}else if(item.orderType==items.value) {
+	                        		orderTypeTxt = items.label
+	                        	}else if(item.orderType==items.value) {
+	                        		orderTypeTxt = items.label
+	                        	}else if(item.orderType==items.value) {
+	                        		orderTypeTxt = items.label
+	                        	}else if(item.orderType==items.value) {
+	                        		orderTypeTxt = items.label
+	                        	}else if(item.orderType==items.value) {
+	                        		orderTypeTxt = items.label
+	                        	}
+                            })
                         	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
-                        	var orderTypeTxt = '';
-                        	if(item.orderType==1) {
-                        		orderTypeTxt = '普通订单'
-                        	}else if(item.orderType==2) {
-                        		orderTypeTxt = '帐期采购'
-                        	}else if(item.orderType==3) {
-                        		orderTypeTxt = '配资采购'
-                        	}else if(item.orderType==4) {
-                        		orderTypeTxt = '微商订单'
-                        	}else if(item.orderType==5) {
-                        		orderTypeTxt = '代采订单'
-                        	}else if(item.orderType==6) {
-                        		orderTypeTxt = '拍照下单'
-                        	}
+//                      	var orderTypeTxt = '';
+//                      	if(item.orderType==1) {
+//                      		orderTypeTxt = '普通订单'
+//                      	}else if(item.orderType==2) {
+//                      		orderTypeTxt = '帐期采购'
+//                      	}else if(item.orderType==3) {
+//                      		orderTypeTxt = '配资采购'
+//                      	}else if(item.orderType==4) {
+//                      		orderTypeTxt = '微商订单'
+//                      	}else if(item.orderType==5) {
+//                      		orderTypeTxt = '代采订单'
+//                      	}else if(item.orderType==6) {
+//                      		orderTypeTxt = '拍照下单'
+//                      	}
 
                         	//审核
                         	var staCheckBtn = '';
@@ -133,7 +158,6 @@
 											'<label>订单类型:</label>' +
 											'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+orderTypeTxt+' ">' +
 										'</div>' +
-//										 value=" '+orderTypeTxt+' "
 										'<div class="mui-input-row">' +
 											'<label>创建时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.createDate)+' ">' +
@@ -165,7 +189,7 @@
 								});
 								$('#staOrdList').append(staffHtmlList);
 								_this.stOrdHrefHtml()
-								_this.orderType();
+//								_this.orderType();
 						} else {
 								$('.mui-pull-caption').html('');
 							}
@@ -201,35 +225,34 @@
                 }
             });
         },
-        orderType: function() {
-        	var _this = this;
-            var ass=[];
-        	$.ajax({
-                type: "GET",
-                url: "/a/sys/dict/listData",
-                dataType: "json",
-                data: {type: "biz_order_type"},
-                async:false,
-                success: function(res){
-                    console.log(res)
-                   
-                  $.each(res,function(i,item){ 
-                  	 var aaaaa=item.label;
-                    sessionStorage.setItem('aa',JSON.stringify(aaaaa));
-					console.log(sessionStorage.getItem('aa'));
-////                  	console.log('/////////////')
+//      orderType: function() {
+//      	var _this = this;
+//          var ass=[];
+//      	$.ajax({
+//              type: "GET",
+//              url: "/a/sys/dict/listData",
+//              dataType: "json",
+//              data: {type: "biz_order_type"},
+//              async:false,
+//              success: function(res){
+//                  console.log(res)                  
+//                $.each(res,function(i,item){ 
+//                	 var aaaaa=item.label;
+//                  sessionStorage.setItem('aa',JSON.stringify(aaaaa));
+//					console.log(sessionStorage.getItem('aa'));
+//                	console.log('/////////////')
 //
-////                  	if(val==item.val){
-////                  		$('.orderTypeTxt').val(item.label)
-////                  	}  
-                 	ass.push(item.value);
-                 })
-                  console.log(ass);
-                  sessionStorage.setItem('bb',JSON.stringify(ass));
-					console.log(sessionStorage.getItem('bb'));
-                }
-            });
-        },
+//                	if(val==item.val){
+//                		$('.orderTypeTxt').val(item.label)
+//               	}  
+//               	ass.push(item.value);
+//               })
+//                console.log(ass);
+//                sessionStorage.setItem('bb',JSON.stringify(ass));
+//					console.log(sessionStorage.getItem('bb'));
+//              }
+//          });
+//      },
 		stOrdHrefHtml: function() {
 			var _this = this;
 		/*查询*/
