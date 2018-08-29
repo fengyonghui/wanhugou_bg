@@ -191,6 +191,8 @@
 				data: {flag:'check_pending',consultantId:_this.userInfo.staListId},
 				dataType: 'json',
 				success: function(res) {
+					console.log('====')
+					console.log(res)
 					$.each(res.data.originConfigMap, function(i, item) {
 						htmlClass += '<option class="soption" value="">' + item + '</option>'
 					});
