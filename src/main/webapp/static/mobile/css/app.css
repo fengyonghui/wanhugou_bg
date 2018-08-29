@@ -581,8 +581,11 @@ body{font-size: 15px;color:#3b3b3b;}
 .oneBtn {left: 50%;margin-left: -41px;}
 .list-padding {padding: 10px 10px 0 10px;}
 
+/*红色 * 号，必填必选*/
+.mui-input-row font {color: red;position: absolute;right: 60px;top: 38%;font-size: 20px;}
 
-/*查询页面公共样式*/
+
+/*查询页面和经销店添加公共样式*/
 .SearchBtnClass {margin: 60px auto;width: 70%;}
 .pre {margin-bottom: 0;padding-left: 0;float: right;width: 67%;}
 .newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;background: url(./thumb.jpg) no-repeat scroll right center;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}

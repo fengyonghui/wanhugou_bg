@@ -6,73 +6,6 @@
 		<title>经销店添加</title>
 		<link href="../../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../../css/app.css" rel="stylesheet" />
-		<style type="text/css">
-			.saveBtn {
-			    width: 80%;
-				margin: 20px auto;
-			}
-			.pre {
-				margin-bottom: 0;
-				padding-left: 0;
-				float: right;
-				width: 67%;
-			}
-			.newinput {
-				width: 150px;
-				padding: 2px 0px 2px 0px;
-				margin-bottom: -1px;
-				background: url(./thumb.jpg) no-repeat scroll right center;
-				border: 1px solid #ccc;
-				box-shadow: 0 1px 0 0 #eee inset;
-				cursor: default;
-			}
-			
-			.newinput:focus {
-				cursor: text;
-			}
-			
-			.input_div {
-				width: 150px;
-				border: 1px solid #ddd;
-				border-bottom: none;
-				border-radius: 0 0 3px 3px;
-				display: none;
-			}
-			
-			.soption {
-				display: block;
-				padding: 2px 5px;
-			}
-			
-			.soption:hover {
-				background: #f9f9f9;
-				border-top: 1px dotted #ddd;
-				border-bottom: 1px dotted #ddd;
-				padding: 1px 5px;
-			}
-			
-			.mui-input-row label {
-				padding: 14px 14px;
-			}
-			.secStyle {
-				margin: 5px 0;
-			}
-			.staHideSpan {
-			    position: absolute;
-			    right: 52px;
-			    top: 11px;
-			    border: 1px solid rgb(204, 204, 204);
-			    border-radius: 13px;
-				display: none;
-			}
-			.mui-input-row font {
-				color: red;
-				position: absolute;
-				right: 60px;
-				top: 38%;
-				font-size: 20px;
-			}
-		</style>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
@@ -85,7 +18,7 @@
 				<div class="pre">
 					<input class="newinput" type="text" placeholder="请选择经销店">
 					<font>*</font>
-					<span class="mui-icon mui-icon-closeempty staHideSpan" id="cpyAddHideSpan"></span>
+					<span class="mui-icon mui-icon-closeempty hideSpan" id="cpyAddHideSpan"></span>
 					<div class="input_div" style="display: none;">
 
 					</div>
@@ -121,7 +54,7 @@
 				<font>*</font>
 			</div>
 		</div>
-		<div class="saveBtn">
+		<div class="SearchBtnClass">
 			<button id="staRelSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>
 		</div>
 		<script src="../../../js/component/zepto.min.js"></script>

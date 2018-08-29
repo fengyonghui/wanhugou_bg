@@ -228,7 +228,7 @@
 										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
 											'<div class="mui-col-xs-2">' +
-												'<li class="mui-table-view-cell" >支付列表</li>' +
+												'<li class="mui-table-view-cell" ></li>' +
 											'</div>'+
 											'<div class="mui-col-xs-2 '+inDetailBtn+'" inListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell" >'+inDetail+'</li>' +

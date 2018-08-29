@@ -40,11 +40,15 @@
 					
 					$('#partCPrincipal').val(res.data.orderCenter.consultants.name);
 					$('#partCMobile').val(res.data.orderCenter.consultants.mobile);
-					
-					$.each(res.data.appointedTimeList, function(n, v) {
-						$('#staPayTime').val(_this.formatDateTime(v.appointedDate));
-						$('#staPayMoney').val(v.appointedMoney);
-					})
+					if(res.data.appointedTimeList) {
+						$.each(res.data.appointedTimeList, function(n, v) {
+							$('#staPayTime').val(_this.formatDateTime(v.appointedDate));
+							$('#staPayMoney').val(v.appointedMoney);
+						})
+					}else {
+						$('#staPayTime').val();
+						$('#staPayMoney').val();
+					}
 					$.each(res.data.commentList, function(q, w) {
 						$('#staPoRemark').val(w.comments);
 					})
