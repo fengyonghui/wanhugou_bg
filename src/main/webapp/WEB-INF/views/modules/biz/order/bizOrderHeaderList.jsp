@@ -352,12 +352,12 @@
 								}">
 					<c:if test="${orderHeader.payProportion !=null
 									&& orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state
-									&& orderHeader.commonProcess.doOrderHeaderProcessAll.name != '审核完成'}">
+									&& orderHeader.commonProcess.doOrderHeaderProcessAll.name != '审批完成'}">
 						${orderHeader.commonProcess.doOrderHeaderProcessAll.name}
 					</c:if>
 					<c:if test="${orderHeader.payProportion !=null
 									&& orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state
-									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '审核完成'}">
+									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '审批完成'}">
 						${orderHeader.commonProcess.doOrderHeaderProcessFifth.name}
 					</c:if>
 				</c:if>
