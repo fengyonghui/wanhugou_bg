@@ -13,6 +13,7 @@
 //			biz:request:bizRequestHeader:edit    取消、修改、付款
 			this.getPermissionList('biz:request:bizRequestHeader:view','detileFlag')
 			this.getPermissionList('biz:request:bizRequestHeader:edit','cancelAmendPayFlag')
+//			 $('#consultantsid').val(this.userInfo.staListId)
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -47,6 +48,7 @@
 			                    pager['consultants.id'] = _this.userInfo.staListId;
 			                    pager['office.id'] = _this.userInfo.dptmtId;
 			                    pager['conn'] ="connIndex"
+			                   
 				                var f = document.getElementById("staReleList");
 				                var childs = f.childNodes;
 				                for(var i = childs.length - 1; i >= 0; i--) {
@@ -177,7 +179,7 @@
 			$('.header').on('tap', '#staReleSechBtn', function() {
 				var url = $(this).attr('url');
 				var hideul=$('#hideul').val();
-				alert(hideul)
+//				alert(hideul)
 
 				if(url) {
 					mui.toast('子菜单不存在')
@@ -297,7 +299,7 @@
 			}
 			return now;
 		},
-		seachFunc:function(){
+		seachFunc:function(){			
 			var _this = this;
 			var staffHtmlList = '';
 //			var nameTxt = '';
@@ -306,6 +308,7 @@
 //			}else {
 //				nameTxt = ''
 //			}
+//          alert($('#consultantsid').val())
 			$.ajax({
 				type: 'GET',
 				url: '/a/biz/custom/bizCustomCenterConsultant/listData4mobile',
@@ -313,6 +316,7 @@
 					pageNo: 1,
 					'customs.id':_this.userInfo.customsName,
 					'consultants.id':$('#consultantsid').val(),
+//					'consultants.id':_this.userInfo.consultantsid,
 					'consultants.mobile':_this.userInfo.consultantsMobile
 				},
 				dataType: 'json',

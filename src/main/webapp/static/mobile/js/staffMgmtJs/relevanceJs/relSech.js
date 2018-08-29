@@ -10,6 +10,9 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			this.hrefHtml('.newinput', '.input_div','#cpySchRelHideSpan');
+//			var _this=this;
+//			alert(_this.userInfo.hideul)
+//			$('#hideul').val(_this.userInfo.hideul)
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
@@ -56,7 +59,7 @@
 				extras: {
 					customsId: $('.hasoid').attr('id'),
 					consultantsMobile: $('#staRelMobile').val(),
-//					consultantsid:_this.userInfo.hideul,
+//					consultantsid:$('#hideul').val(),
 					isFunc: true
 				}
 			})
