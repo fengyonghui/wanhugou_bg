@@ -6,6 +6,12 @@
 		<title>经销店添加</title>
 		<link href="../../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../../css/app.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-input-row .mui-input-clear~.mui-icon-clear {
+				right: 4.5em;
+    			top: 10px;
+			}
+		</style>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
@@ -13,7 +19,7 @@
 			<p class="app_cf app_nav_text_center">经销店添加</p>
 		</header>
 		<div class="mui-content mui-input-group">
-			<div class="mui-input-row">
+			<!--<div class="mui-input-row">
 				<label>经销店名称：</label>
 				<div class="pre">
 					<input class="newinput" type="text" placeholder="请选择经销店">
@@ -25,18 +31,7 @@
 					<input class="savedata" type="hidden" value=''>
 					<div style="clear:both"></div>
 				</div>
-			</div>
-			<div class="mui-input-row">
-				<label>采购中心：</label>
-				<div class="pre">
-					<select class="secStyle" name="" id="input_div_business">
-						<option value=""></option>
-					</select>
-					<input class="savedata" type="hidden" value=''>
-					<div style="clear:both"></div>
-				</div>
-				<font>*</font>
-			</div>
+			</div>-->
 			<div class="mui-input-row">
 				<label>客户专员：</label>
 				<div class="pre">
@@ -49,10 +44,26 @@
 				<font>*</font>
 			</div>
 			<div class="mui-input-row">
+				<label>采购中心：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="input_div_business">
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+				<font>*</font>
+			</div>
+			<div class="mui-input-row app_mb10" id="inAmendPoLastDaDiv">
+				<label class="commodityName">经销店名称：</label>
+				<input type="text" class="mui-input-clear commodityTxt" id="staRelAddMobeil" placeholder="请输入手机号查询">
+				<button id="staRelAddSehBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">查询</button>
+			</div>
+			<!--<div class="mui-input-row">
 				<label>手机号：</label>
 				<input type="text" class="mui-input-clear" id="phoneNum" placeholder="请输入手机号码">
 				<font>*</font>
-			</div>
+			</div>-->
 		</div>
 		<div class="SearchBtnClass">
 			<button id="staRelSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>

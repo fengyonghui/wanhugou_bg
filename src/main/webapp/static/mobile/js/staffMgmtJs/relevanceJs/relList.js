@@ -73,7 +73,18 @@
 						var arrLen = res.data.resultData.length;						
                         if(arrLen > 0) {
                         $.each(res.data.resultData, function(i, item) {
-//                      	console.log(item)
+                        	var userOfficeDeta = '';
+			                if(item.userOfficeDeta) {
+			                	userOfficeDeta = _this.formatDateTime(item.userOfficeDeta)
+			                }else {
+			                	userOfficeDeta = ''
+			                }
+			                var reAddress = '';
+			                if(item.userOfficeReceiveTotal) {
+			                	reAddress = item.provinceName + item.cityName + item.regionName + item.address
+			                }else {
+			                	reAddress = ''
+			                }
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
 											'<label>采购中心:</label>' +
@@ -95,27 +106,25 @@
 											'<label>负责人:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customsPrimaryPersonName+' ">' +
 										'</div>' +
-			//							'<div class="mui-input-row">' +
-			//								'<label>详细地址:</label>' +
-			//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+varietyInfoName+' ">' +
-			//							'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>详细地址:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+reAddress+' ">' +
+										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>采购频次:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.orderCount+' ">' +
 										'</div>' +
-			//							'<div class="mui-input-row">' +
-			//								'<label>累计金额:</label>' +
-			//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
-			//							'</div>' +
-			//							'<div class="mui-input-row">' +
-			//								'<label>首次开单:</label>' +
-			//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
-			//							'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>累计金额:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.userOfficeReceiveTotal+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>首次开单:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+userOfficeDeta+' ">' +
+										'</div>' +
 										'<div class="app_font_cl content_part mui-row">' +
-//											'<div class="mui-col-xs-6">' +
-//											'</div>'+
 											'<div class="staReMoveBtn" staListId="'+ item.id +'">' +
-												'<div class="mui-row">移除</div>' +
+												'<div class="mui-row">解除关联</div>' +
 											'</div>'+
 										'</div>' +
 										'<div class="app_font_cl content_part mui-row">' +
@@ -169,7 +178,7 @@
 				var url = $(this).attr('url');
 				var hideul=$('#hideul').val();
 				alert(hideul)
-				
+
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
@@ -209,7 +218,7 @@
                 	mui.toast('子菜单不存在')
                 }else if(staListId==staListId) {
                 	var btnArray = ['取消', '确定'];
-					mui.confirm('您确定要移除该关联信息吗？', '系统提示！', btnArray, function(choice) {
+					mui.confirm('您确定要解除关联吗？', '系统提示！', btnArray, function(choice) {
 						if(choice.index == 1) {
 //							$.ajax({
 //				                type: "GET",
@@ -302,8 +311,8 @@
 				url: '/a/biz/custom/bizCustomCenterConsultant/listData4mobile',
 				data: {
 					pageNo: 1,
-					'customs.id':_this.userInfo.customsName, 
-					'consultants.id':3000,
+					'customs.id':_this.userInfo.customsName,
+					'consultants.id':$('#consultantsid').val(),
 					'consultants.mobile':_this.userInfo.consultantsMobile
 				},
 				dataType: 'json',
@@ -365,8 +374,8 @@
 					else {
 							$('#staReleList').html('<p class="noneTxt">暂无数据</p>');
 							$('#staReleSechBtn').hide();
-							
-					}	
+
+					}
 				}
 			});
 		}

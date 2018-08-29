@@ -96,26 +96,6 @@
 				<textarea id="staPoRemark" name="" rows="" cols="" disabled></textarea>
 			</div>
 			<div class="mui-input-row">
-				<div class="labelLf">进展信息：</div>
-				<div class="labelParent">
-					<ul class="labelRi ">
-					<li class="app_pr">
-						<div>首付款支付</div>
-						<div>全部支付</div>
-						<span class="mui-icon mui-icon-arrowthinright app_pa nextTxt01"></span>
-					</li>
-					<li class="app_pr app_t12">
-						<div class="app_pr">供货中</div>
-						<span class="mui-icon mui-icon-arrowthinright app_pa nextTxt02"></span>
-					</li>
-					<li>
-						<div>采购中</div>
-						<div>已发货</div>
-					</li>
-				</ul>
-				</div>
-			</div>
-			<div class="mui-input-row">
 				<div class="labelLf">状态流程：</div>
 				<ul class="" id="staStatusMenu">
 					
@@ -137,12 +117,83 @@
 					
 				</ul>
 			</div>
+			<div class="mui-input-row app_bline">
+				<div class="labelLf">付款约定：</div>
+				<div class="mui-input-row">
+					<label>付款时间：</label>
+					<input type="text" class="mui-input-clear" id="staPayTime" disabled>
+				</div>
+				<div class="mui-input-row">
+					<label>金额：</label>
+					<input type="text" class="mui-input-clear" id="staPayMoney" disabled>
+				</div>
+			</div>
+			<div class="app_cred3">
+				<div class="mui-row app_bline">
+					<div class="mui-input-row">
+						<label>甲方(经销店):</label>
+						<input type="text" class="mui-input-clear" id="firstPart" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>负责人:</label>
+						<input type="text" class="mui-input-clear" id="firstPrincipal" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>联系电话:</label>
+						<input type="text" class="mui-input-clear" id="firstMobile" disabled>
+					</div>
+				</div>
+				<div class="mui-row app_bline">
+					<div class="mui-input-row">
+						<label>乙方(供应商):</label>
+						<input type="text" class="mui-input-clear" id="partB" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>负责人:</label>
+						<input type="text" class="mui-input-clear" id="partBPrincipal" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>联系电话:</label>
+						<input type="text" class="mui-input-clear" id="partBMobile" disabled>
+					</div>
+				</div>
+				<div class="mui-row app_bline">
+					<div class="mui-input-row">
+						<label>丙方(万户通):</label>
+						<input type="text" class="mui-input-clear" value="万户通总公司" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>负责人:</label>
+						<input type="text" class="mui-input-clear" id="partCPrincipal" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>联系电话:</label>
+						<input type="text" class="mui-input-clear" id="partCMobile" disabled>
+					</div>
+				</div>
+				<div class="app_p15">
+					<ul>
+						<li>注：</li>
+						<li>一、甲方是万户通平台的运营商，乙方是箱包厂商，丙方是采购商。丙方委托甲方进行商品采购，并通过甲方向乙方支付货款。三方在友好协商、平等互利的基础上，就甲方提供商品采购服务事宜形成本订单。</li>
+						<li>二、自丙方下单完成起，至丙方支付完毕本订单所有费用时止。</li>
+						<li>三、乙、丙双方确定商品质量标准。丙方负责收货、验货，乙方负责提供质量达标的商品，如果商品达不到丙方要求，丙方有权要求乙方退换货。甲方不承担任何商品质量责任。</li>
+						<li>四、商品交付丙方前，丙方须支付全部货款。如果丙方不能及时付款，甲方有权利拒绝交付商品。</li>
+						<li>五、本订单商品价格为未含税价，如果丙方需要发票，乙方有义务提供正规发票，税点由丙方承担。</li>
+						<li>六、乙方保证其提供的商品具有完整的所有权，并达到国家相关质量标准要求。因乙方商品问题（包括但不限于质量问题、版权问题、款式不符、数量不符等）给甲方及（或）丙方或其他方造成损失的，须由乙方赔偿全部损失。</li>
+						<li>七、本订单在万户通平台经甲、乙、丙三方线上确认后生效，与纸质盖章订单具有同等的法律效力。在系统出现故障时，甲、乙、丙三方也可采用纸质订单并签字或盖章后生效。</li>
+					</ul>
+				</div>
+			</div>
 		</div>
-		<div class="app_p20">
+		<div id="staOrdCheckBtn" class="app_p20">
 		    <button id="checkBtn" type="submit" class="mui-btn mui-btn-blue">同意发货</button>
 			<button id="rejectBtn" type="submit" class="mui-btn mui-btn-blue">不同意发货</button>
 		</div>
 		<div class="clear"></div>
+		
+		<input type="hidden" name="ordId" id="ordId"/>
+		<input type="hidden" name="flag" id="flag"/>
+		<input type="hidden" name="localSendIds" id="localSendIds"/>
 		<script src="../../../js/component/mui.min.js"></script>	
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>

@@ -7,60 +7,11 @@
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
 		<style type="text/css">
-			.pre {
-				margin-bottom: 0;
-				padding-left: 0;
-				float: right;
-				width: 67%;
-			}
 			.mui-action-back{
 				touch-action: none;
 			}
-			.newinput {
-				width: 150px;
-				padding: 2px 0px 2px 0px;
-				margin-bottom: -1px;
-				background: url(./thumb.jpg) no-repeat scroll right center;
-				border: 1px solid #ccc;
-				box-shadow: 0 1px 0 0 #eee inset;
-				cursor: default;
-			}
-			
-			.newinput:focus {
-				cursor: text;
-			}
-			
-			.input_div {
-				width: 150px;
-				border: 1px solid #ddd;
-				border-bottom: none;
-				border-radius: 0 0 3px 3px;
-				display: none;
-			}
-			
-			.soption {
-				display: block;
-				padding: 2px 5px;
-			}
-			
-			.soption:hover {
-				background: #f9f9f9;
-				border-top: 1px dotted #ddd;
-				border-bottom: 1px dotted #ddd;
-				padding: 1px 5px;
-			}
-			
 			.mui-input-row label {
 				padding: 14px 14px;
-			}
-			
-			.comChoiceBtn {
-				padding: 5px;
-				border: none;
-				width: 50px;
-				position: absolute;
-				right: 10px;
-				top: 6px;
 			}
 			
 			.addBtn {
@@ -71,13 +22,6 @@
 			.saveBtn {
 			    width: 70%;
 				margin: 20px auto;
-			}
-			.mui-input-row font {
-				color: red;
-				position: absolute;
-				right: 60px;
-				top: 38%;
-				font-size: 20px;
 			}
 			
 			.addBtnClass {
@@ -107,17 +51,6 @@
 				padding: 0;
 				font-size: 10px;
 			}
-			.inputClassAdd>label.commodityName {
-				padding: 0;
-				width: 15%;
-			}
-			.inputClassAdd>input.commodityTxt {
-				padding: 0;
-				font-size: 10px;
-				position: relative;
-				width: 85%;
-			}
-			
 			.mui-table-view-cell {
 				border-bottom: 1px solid #efeff4;
 			}
@@ -130,11 +63,8 @@
 				color:#40ABE9;
 			}
 			.inputClassAdd font {
-				color: red;
-			    position: absolute;
 			    right: 5px;
 			    top: 10%;
-			    font-size: 20px;
 			}
 			.mui-btn-blue, .mui-btn-primary, input[type=submit] {background-color: #40ABE9;border: none;}
 		</style>
@@ -185,7 +115,7 @@
 				<input type="date" class="mui-input-clear" id="inPoLastDa">
 				<font>*</font>
 			</div>
-			<div class="mui-input-row app_mb10" id="inAmendPoLastDaDiv">
+			<div class="mui-input-row" id="inAmendPoLastDaDiv">
 				<label class="commodityName">选择商品：</label>
 				<input type="text" class="mui-input-clear commodityTxt" id="inAmendPoLastDa" placeholder="请输入商品货号">
 				<button id="comChoiceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">查询</button>

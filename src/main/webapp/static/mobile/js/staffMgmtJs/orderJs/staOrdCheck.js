@@ -18,7 +18,6 @@
 		pageInit: function() {
 			var _this = this;
 			_this.getData()
-			_this.comfirDialig()
 		},
 		getData: function() {
 			var _this = this;
@@ -26,19 +25,47 @@
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
                 data: {
-                	id:_this.userInfo.staOrdListId,
+                	id: _this.userInfo.staOrdListId,
                 	orderDetails: 'details',
-                	statu: _this.userInfo.statuTxt,
-                	source: _this.userInfo.sourceTxt
+	                flag: _this.userInfo.flagTxt
                 },
                 dataType: "json",
                 success: function(res){
 					console.log(res)
+					$('#firstPart').val(res.data.entity2.customer.name);
+					$('#firstPrincipal').val(res.data.custUser.name);
+					$('#firstMobile').val(res.data.custUser.mobile);
+					
+					$('#partB').val(res.data.vendUser.vendor.name);
+					$('#partBPrincipal').val(res.data.vendUser.name);
+					$('#partBMobile').val(res.data.vendUser.mobile);
+					
+					$('#partCPrincipal').val(res.data.orderCenter.consultants.name);
+					$('#partCMobile').val(res.data.orderCenter.consultants.mobile);
+					if(res.data.appointedTimeList) {
+						$.each(res.data.appointedTimeList, function(n, v) {
+							$('#staPayTime').val(_this.formatDateTime(v.appointedDate));
+							$('#staPayMoney').val(v.appointedMoney);
+						})
+					}else {
+						$('#staPayTime').val();
+						$('#staPayMoney').val();
+					}
+					
+					
 					var item = res.data.bizOrderHeader;
+					console.log(item)
+					//选择供货方式
 					if(item.orderType==5){
 						$('#orderTypebox').hide();
 					}
-					console.log(item)
+					//本地发货 id
+					var localSendIds = '';
+					if(item.localSendIds) {
+						localSendIds = item.localSendIds
+					}else {
+						localSendIds = ''
+					}
 					var shouldPay = item.totalDetail + item.totalExp + item.freight;
 					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
 					//发票状态
@@ -73,9 +100,12 @@
 					_this.statusListHtml(res.data)
 //					_this.checkProcessHtml(res.data);
 					_this.commodityHtml(res.data)
+					_this.comfirDialig(res.data)
+
                 }
             });
 		},
+		//状态流程
 		statusListHtml:function(data){
 			var _this = this;
 			console.log(data)
@@ -105,6 +135,7 @@
 				$("#staStatusMenu").html(pHtmlList)
 			}
 		},
+		//审核流程
 //		checkProcessHtml:function(data){
 //			var _this = this;
 //			console.log(data)
@@ -258,7 +289,7 @@
 				$("#staCheckCommodity").html(htmlCommodity)
 			}
 		},
-		comfirDialig: function() {
+		comfirDialig: function(data) {
 			var _this = this;
 			document.getElementById("inRejectBtn").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
@@ -317,13 +348,20 @@
 		ajaxData:function(inText,num) {
 			var _this = this;
 			$.ajax({
-				type: "GET",
-				url: "/a/biz/request/bizRequestHeader/audit",
+				type: "POST",
+				url: "/a/biz/order/bizOrderHeader/Commissioner",
 				data: {
-					id:_this.userInfo.inListId,
-					currentType:$('#currentType').val(),
-					auditType:num,
-					description:inText
+					id:$('#ordId').val(),
+					flag:$('#flag').val(),
+					objJsp:num,
+					'bizLocation.address':$('#staDateilAddress').val(),
+					'bizLocation.appointedTime': $('#staPayTime').val(),
+//					localSendIds
+//					'bizLocation.province.id'
+//					'bizLocation.city.id'
+//					'bizLocation.region.id'
+//					boo
+//					localOriginType
 				},
 				dataType: "json",
 				success: function(res) {

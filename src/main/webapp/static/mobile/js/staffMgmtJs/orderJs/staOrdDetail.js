@@ -24,8 +24,6 @@
                 data: {
                 	id:_this.userInfo.staOrdListId,
                 	orderDetails: 'details',
-                	statu: _this.userInfo.statuTxt,
-                	source: _this.userInfo.sourceTxt
                 },
                 dataType: "json",
                 success: function(res){

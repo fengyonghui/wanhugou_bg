@@ -54,7 +54,7 @@
 			GHUTILS.OPENPAGE({
 				url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
 				extras: {
-					customsName: $('.hasoid').attr('id'),
+					customsId: $('.hasoid').attr('id'),
 					consultantsMobile: $('#staRelMobile').val(),
 //					consultantsid:_this.userInfo.hideul,
 					isFunc: true

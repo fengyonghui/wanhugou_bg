@@ -581,12 +581,14 @@ body{font-size: 15px;color:#3b3b3b;}
 .oneBtn {left: 50%;margin-left: -41px;}
 .list-padding {padding: 10px 10px 0 10px;}
 
+
+
 /*红色 * 号，必填必选*/
 .mui-input-row font {color: red;position: absolute;right: 60px;top: 38%;font-size: 20px;}
 
 
-/*查询页面和经销店添加公共样式*/
-.SearchBtnClass {margin: 60px auto;width: 70%;}
+/*模糊查询列表显示---查询页面和经销店添加公共样式*/
+
 .pre {margin-bottom: 0;padding-left: 0;float: right;width: 67%;}
 .newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;background: url(./thumb.jpg) no-repeat scroll right center;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
 .input_div {width: 150px;border: 1px solid #ddd;border-bottom: none;border-radius: 0 0 3px 3px;display: none;}
@@ -596,10 +598,25 @@ body{font-size: 15px;color:#3b3b3b;}
 .soption {display: block;padding: 2px 5px;}
 .soption:hover {background: #f9f9f9;border-top: 1px dotted #ddd;border-bottom: 1px dotted #ddd;padding: 1px 5px;}
 .mui-input-row input.newinput {padding-left: 0;}
-.app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;background-color: #40ABE9;border: none;}
-.app_btn_search:active {color: #fff;border: 1px solid #046d90;background-color: #007aff !important;}
+
 #inCheckAddMenu,#addCheckMen,#addDetailMen{padding-left:0;}
 
+
+/*查询、保存大按钮*/
+.SearchBtnClass {margin: 60px auto;width: 70%;}
+.app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;background-color: #40ABE9;border: none;}
+.app_btn_search:active {color: #fff;border: 1px solid #046d90;background-color: #007aff !important;}
+
+
+/*查询小按钮--备货单添加、修改  和  经销店添加*/
+.comChoiceBtn {padding: 5px;border: none;width: 50px;position: absolute;right: 10px;top: 6px;background-color: #40ABE9;}
+.inputClassAdd>label.commodityName {padding: 0;width: 15%;}
+.inputClassAdd>input.commodityTxt {padding: 0;font-size: 10px;position: relative;width: 85%;}
+			
+
+/*添加、移除、删除小按钮*/
+
+			
 /*运营管理后台*/
 .appQuitBtn {background-color: #dd5563;border: none;border-radius: 8px;}
 .quitBtn {position: absolute;width: 80%;bottom: 50px;left: 50%;margin-left: -40%;}

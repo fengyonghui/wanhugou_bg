@@ -55,6 +55,7 @@
 //				                console.log('222')
 //				                console.log(pager)
 				                $('#consultantId').val(pager.consultantId);
+				                $('#flag').val(pager.flag);
 				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
 			            }
@@ -243,10 +244,11 @@
 					}
 				})
 			}),
-		 /*审核*/
+		 /*待审核*/
 	       $('#staOrdList').on('tap', '.waitCheckBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdListId = $(this).attr('staOrdListId');
+				var flagTxt = $('#flag').val();
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdListId == staOrdListId) {
@@ -254,6 +256,7 @@
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdCheck.html",
 						extras: {
 							staOrdListId: staOrdListId,
+							flagTxt: flagTxt,
 						}
 					})
 				}
