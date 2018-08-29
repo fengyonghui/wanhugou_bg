@@ -366,6 +366,45 @@ public class BizCustomCenterConsultantController extends BaseController {
         return "modules/biz/custom/bizCustomMembershipVolumeDATE";
     }
 
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
+    @RequestMapping(value = "connOfficeForm4mobile")
+    @ResponseBody
+    public String connOfficeForm4mobile(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        Office off = new Office();
+        String center = DictUtils.getDictValue("采购中心", "sys_office_type", "");
+        off.setType(center);
+        off.setCustomerTypeTen("10");
+        off.setCustomerTypeEleven("11");
+        List<Office> officeList = officeService.queryCenterList(off);
+        for (int i = 0; i < officeList.size(); i++) {
+            if (officeList.get(i).getId().equals(user.getOffice().getId())) {//关联时，判断采购中心
+                officeList.add(officeList.get(i));//把采购中心放到集合最后一位，保证能默认显示采购中心
+                officeList.remove(i);//删除之前采购中心
+                break;
+            }
+        }
+        user = systemService.getUser(user.getId());
+        BizCustomCenterConsultant bc = new BizCustomCenterConsultant();
+        bc.setCenters(user.getOffice());//采购中心
+        bc.setConsultants(user);
+        List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(bc);
+        if (CollectionUtils.isNotEmpty(list)) {
+            bc.setConsultants(systemService.getUser(user.getId()));
+            bc.setCenters(officeService.get(user.getOffice()));
+        }
+        model.addAttribute("office", user);
+        model.addAttribute("bcc", bc);
+        model.addAttribute("officeList", officeList);
+
+        resultMap.put("office", user);
+        resultMap.put("bcc", bc);
+        resultMap.put("officeList", officeList);
+
+        //return "modules/biz/custom/bizCustomMembershipVolumeDATE";
+        return JsonUtil.generateData(resultMap, request.getParameter("callback"));
+    }
+
     //    保存状态给 officeController
     @RequiresPermissions("biz:custom:bizCustomCenterConsultant:edit")
     @RequestMapping(value = "save")
@@ -390,6 +429,21 @@ public class BizCustomCenterConsultantController extends BaseController {
         bizCustomCenterConsultantService.delete(bizCustomCenterConsultant);
         addMessage(redirectAttributes, "删除客户专员成功");
         return "redirect:"+Global.getAdminPath()+"/biz/custom/bizCustomCenterConsultant/list?consultants.id="+bizCustomCenterConsultant.getConsultants().getId();
+    }
+
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:edit")
+    @RequestMapping(value = "delete4mobile")
+    @ResponseBody
+    public String delete4mobile(BizCustomCenterConsultant bizCustomCenterConsultant, RedirectAttributes redirectAttributes) {
+        String message = "error";
+        try {
+            bizCustomCenterConsultantService.delete(bizCustomCenterConsultant);
+            addMessage(redirectAttributes, "删除客户专员成功");
+            message = "ok";
+        } catch (Exception e) {
+            logger.error("删除客户专员失败", e);
+        }
+        return message;
     }
 
 }
