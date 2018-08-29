@@ -1604,6 +1604,14 @@
                                     <c:if test="${v.objectName == 'biz_po_header'}">
                                         ${v.purchaseOrderProcess.name}
                                     </c:if>
+                                    <c:if test="${v.objectName == 'biz_order_header'}">
+                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
+                                            ${v.doOrderHeaderProcessFifth.name}
+                                        </c:if>
+                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">
+                                            ${v.doOrderHeaderProcessAll.name}
+                                        </c:if>
+                                    </c:if>
                                     <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     <div class="help_step_right"></div>
@@ -1613,7 +1621,6 @@
                                 <div class="help_step_item help_step_set">
                                     <div class="help_step_left"></div>
                                     <div class="help_step_num">${stat.index + 1}</div>
-
                                     当前状态:
                                     <c:if test="${v.objectName == 'ORDER_HEADER_SO_LOCAL'}">
                                         ${v.jointOperationLocalProcess.name}
@@ -1623,12 +1630,6 @@
                                     </c:if>
                                     <c:if test="${v.objectName == 'biz_po_header'}">
                                         ${v.purchaseOrderProcess.name}
-                                    </c:if>
-                                    <c:if test="${v.objectName == 'biz_order_header'}">
-                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-                                        </c:if>
-                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-                                        </c:if>
                                     </c:if>
                                     <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
