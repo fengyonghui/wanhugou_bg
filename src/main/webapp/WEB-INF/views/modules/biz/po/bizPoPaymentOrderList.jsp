@@ -94,6 +94,7 @@
 					<shiro:hasPermission name="biz:po:payment:sure:pay">
 						<c:if test="${bizPoPaymentOrder.orderType == PoPayMentOrderTypeEnum.PO_TYPE.type && bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id
 						&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
+						&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 						}">
 						<c:if test="${fromPage != null && fromPage == 'requestHeader'}">
 							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认付款</a>
