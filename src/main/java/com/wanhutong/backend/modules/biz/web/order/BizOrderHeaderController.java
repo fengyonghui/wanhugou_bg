@@ -508,8 +508,10 @@ public class BizOrderHeaderController extends BaseController {
                 model.addAttribute("custUser", user);
             }
             //供应商
-            User vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
-            model.addAttribute("vendUser", vendUser);
+            List<User> vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
+            if (CollectionUtils.isNotEmpty(vendUser)) {
+                model.addAttribute("vendUser", vendUser.get(0));
+            }
 
             //代采
             if (bizOrderHeaderTwo != null && BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
@@ -1768,8 +1770,10 @@ public class BizOrderHeaderController extends BaseController {
                 model.addAttribute("custUser", user);
             }
             //供应商
-            User vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
-            model.addAttribute("vendUser", vendUser);
+            List<User> vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
+            if (CollectionUtils.isNotEmpty(vendUser)) {
+                model.addAttribute("vendUser", vendUser.get(0));
+            }
 
             //代采
             if (bizOrderHeaderTwo != null) {

@@ -661,7 +661,7 @@
 		GROUP BY u.id
 	</select>
 
-<select id="findVendUserV2" resultType="User">
+	<select id="findVendUserV2" resultType="User">
 		select
 		su.id,
 			su.name AS "name",
