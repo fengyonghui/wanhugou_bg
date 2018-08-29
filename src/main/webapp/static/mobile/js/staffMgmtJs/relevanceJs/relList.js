@@ -73,6 +73,7 @@
 						var arrLen = res.data.resultData.length;						
                         if(arrLen > 0) {
                         $.each(res.data.resultData, function(i, item) {
+//                      	console.log(item)
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
 											'<label>采购中心:</label>' +
@@ -116,6 +117,9 @@
 											'<div class="staReMoveBtn" staListId="'+ item.id +'">' +
 												'<div class="mui-row">移除</div>' +
 											'</div>'+
+										'</div>' +
+										'<div class="app_font_cl content_part mui-row">' +
+											'<input type="hidden" id="hideul" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsId+' ">' +
 										'</div>' +
 									'</div>'
 								});
@@ -163,12 +167,16 @@
 		/*查询*/
 			$('.header').on('tap', '#staReleSechBtn', function() {
 				var url = $(this).attr('url');
+				var hideul=$('#hideul').val();
+				alert(hideul)
+				
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/relevanceHtml/relSech.html",
 						extras:{
+							hideul:hideul
 						}
 					})
 				}
@@ -289,14 +297,14 @@
 //			}else {
 //				nameTxt = ''
 //			}
-			
 			$.ajax({
 				type: 'GET',
 				url: '/a/biz/custom/bizCustomCenterConsultant/listData4mobile',
 				data: {
-					'pageNo': 1,
-					'customsName':_this.userInfo.customsName,
-					'consultantsMobile':_this.userInfo.consultantsMobile
+					pageNo: 1,
+					'customs.id':_this.userInfo.customsName, 
+					'consultants.id':3000,
+					'consultants.mobile':_this.userInfo.consultantsMobile
 				},
 				dataType: 'json',
 				success: function(res) {
@@ -356,6 +364,8 @@
 					} 
 					else {
 							$('#staReleList').html('<p class="noneTxt">暂无数据</p>');
+							$('#staReleSechBtn').hide();
+							
 					}	
 				}
 			});

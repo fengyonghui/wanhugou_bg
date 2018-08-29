@@ -19,12 +19,10 @@
 		},
 		getData: function() {
 			var _this = this;
-			$('#staRelSerhBtn').on('tap', function() {
-				
+			$('#staRelSerhBtn').on('tap', function() {	
+//				alert(_this.userInfo.hideul)
 				var customsNamVal=$('.newinput').val();
 				var consultantsMobileVal=$('#staRelMobile').val();
-//	alert($('.newinput').val())			
-                alert(consultantsMobileVal)
 				if(customsNamVal == null||customsNamVal == undefined){
 					customsNamVal == "";
                 }
@@ -52,11 +50,13 @@
 		sureSelect:function(){
 			var _this = this;
 			_this.selectOpen = false
+			
 			GHUTILS.OPENPAGE({
 				url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
 				extras: {
 					customsName: $('.hasoid').attr('id'),
 					consultantsMobile: $('#staRelMobile').val(),
+//					consultantsid:_this.userInfo.hideul,
 					isFunc: true
 				}
 			})
