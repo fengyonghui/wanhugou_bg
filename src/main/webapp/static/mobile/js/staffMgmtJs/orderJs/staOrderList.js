@@ -472,6 +472,7 @@
 								_this.stOrdHrefHtml()
 					}else{
 						$('#staOrdList').append('<p class="noneTxt">暂无数据</p>');
+						$('#staOrdSechBtn').hide();
 					}
 				}
 			});
