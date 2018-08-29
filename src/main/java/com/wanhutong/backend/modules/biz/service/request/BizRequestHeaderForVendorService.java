@@ -125,9 +125,10 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 				}
 			}
 		}
-		if (!user.isAdmin() && !oflag) {
+		if (!user.isAdmin() && !oflag && !flag) {
             bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
 		} else if (!user.isAdmin() && flag) {
+			bizRequestHeader.setVendorId(user.getCompany().getId());
 			bizRequestHeader.getSqlMap().put("request",BaseService.dataScopeFilter(user,"sv","su"));
 		}
 		return super.findList(bizRequestHeader);

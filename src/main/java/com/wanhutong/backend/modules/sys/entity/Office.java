@@ -97,6 +97,11 @@ public class Office extends TreeEntity<Office> {
 	 */
 	private User user;
 
+	/**
+	 * 用于供应商查询会员传参
+	 */
+	private String vendor;
+
 	public User getUser() {
 		return user;
 	}
@@ -431,5 +436,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setVendorId(Integer vendorId) {
 		this.vendorId = vendorId;
+	}
+
+	public String getVendor() {
+		return vendor;
+	}
+
+	public void setVendor(String vendor) {
+		this.vendor = vendor;
 	}
 }

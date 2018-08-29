@@ -535,7 +535,7 @@
                         <th>商品名称</th>
                         <th>商品货号</th>
                         <c:if test="${bizPoHeader.id!=null}">
-                            <th>所属单号</th>
+                            <th style="display: none">所属单号</th>
                         </c:if>
                         <th>采购数量</th>
                         <th>结算价</th>
@@ -553,7 +553,7 @@
                                 <td>${poDetail.skuInfo.name}</td>
                                 <td>${poDetail.skuInfo.itemNo}</td>
                                 <c:if test="${bizPoHeader.id!=null}">
-                                    <td>
+                                    <td style="display: none">
                                         <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}"
                                                    var="orderNumStr"
                                                    varStatus="orderStatus">
@@ -565,6 +565,7 @@
                                                 </c:if>
                                                     ${orderNumStr.orderNumStr}
                                             </a>
+                                                <span id="orderNumStr_${orderStatus.index+1}" style="display:none" value="${orderNumStr.orderNumStr}" />
                                             </c:forEach>
                                     </td>
                                 </c:if>

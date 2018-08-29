@@ -437,12 +437,12 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     }
                 }
             }
-            if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
-                //发货短信提醒
-                sendSmsForDeliver(bizOrderHeader.getOrderNum(), "");
-                //发货邮件提醒
-                sendMailForDeliver(bizOrderHeader.getOrderNum(), "");
-            }
+//            if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
+//                //发货短信提醒
+//                sendSmsForDeliver(bizOrderHeader.getOrderNum(), "");
+//                //发货邮件提醒
+//                sendMailForDeliver(bizOrderHeader.getOrderNum(), "");
+//            }
         }
         for (Map.Entry<Integer, List<BizPoOrderReq>> entry : collectReq.entrySet()) {
             BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(entry.getKey());
@@ -477,12 +477,12 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
                 bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
             }
-            if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
-                //发货短信提醒
-                sendSmsForDeliver("", bizRequestHeader.getReqNo());
-                //发货邮件提醒
-                sendMailForDeliver("", bizRequestHeader.getReqNo());
-            }
+//            if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
+//                //发货短信提醒
+//                sendSmsForDeliver("", bizRequestHeader.getReqNo());
+//                //发货邮件提醒
+//                sendMailForDeliver("", bizRequestHeader.getReqNo());
+//            }
         }
 
     }
@@ -1096,12 +1096,12 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 }
             }
             if (StringUtils.isNotBlank(orderNum)) {
-                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), phones.toString(), ImmutableMap.of("order", "订单"));
-//                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "订单","number",orderNum.substring(3)));
+//                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), phones.toString(), ImmutableMap.of("order", "订单","number",orderNum.substring(3)));
+                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "订单","number",orderNum.substring(3)));
             }
             if (StringUtils.isNotBlank(reqNum)) {
-                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), phones.toString(), ImmutableMap.of("order", "备货单"));
-//                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "备货单","number",reqNum.substring(3)));
+//                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), phones.toString(), ImmutableMap.of("order", "备货单","number",reqNum.substring(3)));
+                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "备货单","number",reqNum.substring(3)));
             }
 
         } catch (Exception e) {

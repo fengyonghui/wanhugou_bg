@@ -1141,7 +1141,7 @@ public class BizPoHeaderController extends BaseController {
 
     @RequestMapping(value = "confirm")
     @ResponseBody
-    public boolean confirm(HttpServletRequest request, @RequestBody String params) {
+    public boolean confirm(HttpServletRequest request, @RequestBody String params, Integer poHeaderId) {
         Boolean resultFlag = false;
         JSONArray jsonArray = JSONArray.fromObject(params);
         System.out.println(jsonArray);
@@ -1154,7 +1154,7 @@ public class BizPoHeaderController extends BaseController {
             paramList.add(String.valueOf(item));
         }
         try {
-            bizCompletePalnService.batchUpdateCompleteStatus(paramList);
+            bizCompletePalnService.batchUpdateCompleteStatus(paramList, poHeaderId);
             resultFlag = true;
 
 //				//供应商已确认排产，发短息通知采销部经理

@@ -144,8 +144,9 @@ public class OfficeController extends BaseController {
         List<Role> roleList = user.getRoleList();
         Role role = new Role();
         role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
-        if (roleList.contains(role)) {
+        if (!user.isAdmin() && roleList.contains(role)) {
             customer.setVendorId(user.getCompany().getId());
+            customer.setVendor("vendor");
             model.addAttribute("vendor","vendor");
         }
 
@@ -161,7 +162,7 @@ public class OfficeController extends BaseController {
         }
         Page<Office> page = officeService.findPage(new Page<Office>(request, response), customer);
         if (page.getList().size() == 0) {
-            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && !office.getMoblieMoeny().getMobile().equals("")) {
+            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
                 //列表页输入2个条件查询时
                 Office officeUser = new Office();
                 officeUser.setQueryMemberGys(office.getName()+"");
