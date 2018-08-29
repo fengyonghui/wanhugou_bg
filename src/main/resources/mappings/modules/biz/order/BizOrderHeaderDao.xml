@@ -275,6 +275,7 @@
 		FROM biz_order_header a
 		<include refid="bizOrderHeaderJoins"/>
 		WHERE a.order_num = #{orderNum}
+		group by a.id
 	</select>
 
 
@@ -543,6 +544,9 @@
 				GROUP  BY a.id
 			</otherwise>
 		</choose>
+        <if test="waitPay == 1 or waitPay == '1'">
+            having sum(bppo.total - bppo.pay_total) > 0
+        </if>
 		ORDER BY updateDate DESC
 	</select>
 
