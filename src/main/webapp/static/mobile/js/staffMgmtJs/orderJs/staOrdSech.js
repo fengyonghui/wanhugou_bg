@@ -23,7 +23,7 @@
 			var _this = this;
 			$('#staOrdSechBtn').on('tap', function() {
 //				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
-				var optionsBusiness = $("#input_div_orderStatus option").eq($("#input_div_orderStatus").attr("selectedIndex"));
+				var optionsBusiness = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
 				var ordNumVal = $("#staOrderNum").val(); 
                 var reqNumVal = $("#staOrdPurchasing").val(); 
                 var OrdMobileVal = $('#staOrdMobile').val(); 
@@ -76,7 +76,12 @@
 			var _this = this;
 			_this.selectOpen = false
 //			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
-//			var optionsClass = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
+			var optionsClass = $("#input_div_orderStatus option").eq($("#input_div_orderStatus").attr("selectedIndex"));
+			var optionsBusiness = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
+			console.log('-------------')
+			console.log(optionsClass)
+//			alert(optionsClass.val())
+//			alert(optionsBusiness.val())
 			GHUTILS.OPENPAGE({
 				url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
 				extras: {
@@ -85,9 +90,9 @@
 					OrdMobile: $('#staOrdMobile').val(),
 					OrdNumbers: $('#staOrdNumbers').val(),
 					OrdClient: $('#staOrdClient').val(),
-					orderStatus: $('#input_div_orderStatus').val(),
-					checkStatus: $('#input_div_checkStatus').val(),
-					newinput: $('.newinput').val(),
+					orderStatus: optionsClass.val(),
+					checkStatus: optionsBusiness.val(),
+					newinput: $('.hasoid').attr('id'),
 					isFunc: true
 				}
 			})
@@ -194,7 +199,8 @@
 					console.log('====')
 					console.log(res)
 					$.each(res.data.originConfigMap, function(i, item) {
-						htmlClass += '<option class="soption" value="">' + item + '</option>'
+						console.log(item)
+						htmlClass += '<option class="soption" value="' + item + '">' + item + '</option>'
 					});
 					$('#input_div_checkStatus').append(htmlClass)
 					_this.getData()

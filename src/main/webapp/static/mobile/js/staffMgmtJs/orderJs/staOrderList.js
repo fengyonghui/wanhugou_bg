@@ -351,7 +351,7 @@
 			var staffHtmlList = '';
 			var nameTxt = '';
 			if(_this.userInfo.newinput) {
-				nameTxt = decodeURIComponent(_this.userInfo.newinput)
+				nameTxt = decodeURIComponent(_this.userInfo.checkStatus)
 			}else {
 				nameTxt = ''
 			}
@@ -366,9 +366,9 @@
                     'customer.phone': _this.userInfo.OrdMobile,
                     'itemNo': _this.userInfo.OrdNumbers,
                     'con.name': _this.userInfo.OrdClient,
-                    '': _this.userInfo.orderStatus,
-                    'purchaseOrderProcess.name': _this.userInfo.checkStatus, //originConfigMap
-                    name: nameTxt
+                    'bizStatus': _this.userInfo.orderStatus,
+                    'selectAuditStatus': nameTxt, //originConfigMap
+                    'customer.id':_this.userInfo.newinput
 				},
 				dataType: 'json',
 				success: function(res) {

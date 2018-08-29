@@ -294,8 +294,9 @@
 				type: 'GET',
 				url: '/a/biz/custom/bizCustomCenterConsultant/listData4mobile',
 				data: {
-					pageNo: 1,
-					consultantsMobile:_this.userInfo.consultantsMobile,
+					'pageNo': 1,
+					'customsName':_this.userInfo.customsName,
+					'consultantsMobile':_this.userInfo.consultantsMobile
 				},
 				dataType: 'json',
 				success: function(res) {

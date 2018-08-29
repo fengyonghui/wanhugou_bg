@@ -20,6 +20,21 @@
 		getData: function() {
 			var _this = this;
 			$('#staRelSerhBtn').on('tap', function() {
+				
+				var customsNamVal=$('.newinput').val();
+				var consultantsMobileVal=$('#staRelMobile').val();
+//	alert($('.newinput').val())			
+                alert(consultantsMobileVal)
+				if(customsNamVal == null||customsNamVal == undefined){
+					customsNamVal == "";
+                }
+                if(consultantsMobileVal == null||consultantsMobileVal == undefined) {
+                	consultantsMobileVal == "";
+                }
+                if(customsNamVal == ""&&consultantsMobileVal == ""){
+                	 mui.toast("请输入查询条件！");
+                	 return;
+                }
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
 							_this.sureSelect()
@@ -31,13 +46,16 @@
 				}
 			})
 		},
+		trim:function(str) {
+			return str.replace(/(^\s+)|(\s+$)/g, "");
+		},
 		sureSelect:function(){
 			var _this = this;
 			_this.selectOpen = false
 			GHUTILS.OPENPAGE({
 				url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
 				extras: {
-//					customsName: $('.hasoid').attr('id'),
+					customsName: $('.hasoid').attr('id'),
 					consultantsMobile: $('#staRelMobile').val(),
 					isFunc: true
 				}
