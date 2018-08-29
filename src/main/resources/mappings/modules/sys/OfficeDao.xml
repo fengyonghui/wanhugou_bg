@@ -292,6 +292,9 @@
 		<if test="name != null and name != ''">
 			AND a.name = #{name}
 		</if>
+		<if test="phone != null and phone != ''">
+			AND a.phone = #{phone}
+		</if>
 		<if test="parent != null and parent.id != null">
 			AND a.parent_id = #{parent.id}
 		</if>

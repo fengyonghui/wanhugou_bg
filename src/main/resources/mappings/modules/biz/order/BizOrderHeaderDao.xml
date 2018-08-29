@@ -33,6 +33,10 @@
 		<association property="sellers" javaType="Office" column="sellers.id">
 			<id property="id" column="sellers.id"/>
 			<result property="name" column="sellers.name"/>
+			<association property="bizVendInfo" javaType="BizVendInfo" column="bizVendInfo.office.id">
+				<id property="id" column="bizVendInfo.office.id"/>
+				<result property="name" column="bizVendInfo.name"/>
+			</association>
 		</association>
 
 		<association property="bizLocation" javaType="BizOrderAddress" column="bizLocation.id">
@@ -184,7 +188,9 @@
 		cp.processor AS "bizPoHeader.commonProcess.processor",
 		cp.description AS "bizPoHeader.commonProcess.description",
 		cp.type AS "bizPoHeader.commonProcess.type",
-		bsp.po_sch_type AS "bizPoHeader.poSchType"
+		bsp.po_sch_type AS "bizPoHeader.poSchType",
+		vendi.office_id AS "sellers.bizVendInfo.office.id",
+		vendi.vend_name AS "sellers.bizVendInfo.vendName"
 	</sql>
 
 	<!-- C端订单管理 -->
@@ -230,6 +236,7 @@
 	<sql id="bizOrderHeaderJoins">
 		left join sys_office as so on a.cust_id=so.id
 		LEFT JOIN sys_office vend ON vend.id = a.seller_id
+		LEFT JOIN biz_vend_info vendi ON vendi.office_id = vend.id
 		LEFT JOIN biz_order_address c ON c.id = a.ship_to_addr
         LEFT JOIN sys_region province ON c.province_id = province.id
         LEFT JOIN sys_region city ON c.city_id = city.id
