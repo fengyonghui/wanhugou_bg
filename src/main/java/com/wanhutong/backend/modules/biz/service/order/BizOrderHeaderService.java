@@ -597,7 +597,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
      *
      * @return
      */
-    public User findVendUserV2(Integer orderId) {
+    public List<User> findVendUserV2(Integer orderId) {
         return userDao.findVendUserV2(orderId);
     }
 

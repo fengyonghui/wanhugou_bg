@@ -140,7 +140,7 @@ public interface UserDao extends CrudDao<User> {
 	 * 查询供应商和主负责人信息
 	 * @return
 	 */
-	User findVendUserV2(@Param("orderId") Integer orderId);
+	List<User> findVendUserV2(@Param("orderId") Integer orderId);
 
 	/**
 	 * 品类主管 管理

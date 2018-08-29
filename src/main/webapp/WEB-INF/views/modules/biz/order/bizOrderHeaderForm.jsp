@@ -63,6 +63,12 @@
             if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state}) {
                 $("#totalExp").attr("disabled","disabled");
             }
+
+            if ($("#vendId").val() != "") {
+                $("#vendor").removeAttr("style");
+                deleteStyle();
+            }
+
             $("#inputForm").validate({
                 submitHandler: function(form){
                     if($("#address").val()==''){
@@ -866,6 +872,39 @@
         }
 
 
+        function deleteStyle() {
+            $("#remark").removeAttr("style");
+            $("#cardNumber").removeAttr("style");
+            $("#payee").removeAttr("style");
+            $("#bankName").removeAttr("style");
+            $("#compact").removeAttr("style");
+            $("#identityCard").removeAttr("style");
+            var officeId = $("#officeVendorId").val();
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/order/bizOrderHeader/selectVendInfo?vendorId="+officeId,
+                success:function (data) {
+                    if (data == null) {
+                        return false;
+                    }
+                    $("#cardNumberInput").val(data.cardNumber);
+                    $("#payeeInput").val(data.payee);
+                    $("#bankNameInput").val(data.bankName);
+                    if (data.compactImgList != undefined) {
+                        $.each(data.compactImgList,function (index, compact) {
+                            $("#compactImgs").append("<a href=\"" + compact.imgServer + compact.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + compact.imgServer + compact.imgPath + "\"></a>");
+                        });
+                    }
+                    if (data.identityCardImgList != undefined) {
+                        $.each(data.identityCardImgList,function (index, identity) {
+                            $("#identityCards").append("<a href=\"" + identity.imgServer + identity.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + identity.imgServer + identity.imgPath + "\"></a>");
+                        });
+                    }
+                    $("#remark").val(data.remarks);
+                }
+            });
+        }
+
     </script>
 </head>
 <body>
@@ -920,6 +959,7 @@
     <input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
     <input type="hidden" value="${entity.bizPoPaymentOrder.id}" id="paymentOrderId"/>
     <input type="hidden" name="receiveTotal" value="${bizOrderHeader.receiveTotal}" />
+    <input id="vendId" type="hidden" value="${entity.sellers.bizVendInfo.office.id}"/>
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
@@ -1003,6 +1043,52 @@
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
+
+
+    <div id="vendor" class="control-group" >
+        <label class="control-label">供应商：</label>
+        <div class="controls">
+            <sys:treeselect id="officeVendor" name="bizVendInfo.office.id" value="${entity.sellers.bizVendInfo.office.id}" labelName="bizVendInfo.office.name"
+                            labelValue="${entity.sellers.bizVendInfo.vendName}" notAllowSelectParent="true"
+                            title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium required"
+                            allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息" onchange="deleteStyle()"/>
+            <span class="help-inline"><font color="red">*</font> </span>
+            <a href="#" id="remark" onclick="selectRemark()" style="display: none">《厂家退换货流程》</a>
+        </div>
+    </div>
+    <div id="cardNumber" class="control-group" style="display: none">
+        <label class="control-label">供应商卡号：</label>
+        <div class="controls">
+            <input id="cardNumberInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+                   class="input-xlarge "/>
+        </div>
+    </div>
+    <div id="payee" class="control-group" style="display: none">
+        <label class="control-label">供应商收款人：</label>
+        <div class="controls">
+            <input id="payeeInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+                   class="input-xlarge "/>
+        </div>
+    </div>
+    <div id="bankName" class="control-group" style="display: none">
+        <label class="control-label">供应商开户行：</label>
+        <div class="controls">
+            <input id="bankNameInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+                   class="input-xlarge "/>
+        </div>
+    </div>
+    <div id="compact" class="control-group" style="display: none">
+        <label class="control-label">供应商合同：</label>
+        <div id="compactImgs" class="controls">
+
+        </div>
+    </div>
+    <div id="identityCard" class="control-group" style="display: none">
+        <label class="control-label">供应商身份证：</label>
+        <div id="identityCards" class="controls">
+
+        </div>
+    </div>
 
     <c:if test="${entity.bizPoPaymentOrder.id != null || entity.str == 'createPay'}">
         <div class="control-group">
@@ -1518,6 +1604,14 @@
                                     <c:if test="${v.objectName == 'biz_po_header'}">
                                         ${v.purchaseOrderProcess.name}
                                     </c:if>
+                                    <c:if test="${v.objectName == 'biz_order_header'}">
+                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
+                                            ${v.doOrderHeaderProcessFifth.name}
+                                        </c:if>
+                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">
+                                            ${v.doOrderHeaderProcessAll.name}
+                                        </c:if>
+                                    </c:if>
                                     <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     <div class="help_step_right"></div>
@@ -1527,7 +1621,6 @@
                                 <div class="help_step_item help_step_set">
                                     <div class="help_step_left"></div>
                                     <div class="help_step_num">${stat.index + 1}</div>
-
                                     当前状态:
                                     <c:if test="${v.objectName == 'ORDER_HEADER_SO_LOCAL'}">
                                         ${v.jointOperationLocalProcess.name}
@@ -1542,44 +1635,6 @@
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     <div class="help_step_right"></div>
                                     <input type="hidden" value="${v.type}" id="currentJoType"/>
-                                </div>
-                            </c:if>
-                        </c:forEach>
-                    </div>
-                </div>
-            </div>
-        </c:if>
-
-        <c:if test="${fn:length(doComPList) > 0}">
-            <div class="control-group">
-                <label class="control-label">审核流程：</label>
-                <div class="controls help_wrap">
-                    <div class="help_step_box fa">
-                        <c:forEach items="${doComPList}" var="v" varStatus="stat">
-                            <c:if test="${!stat.last}">
-                                <div class="help_step_item">
-                                    <div class="help_step_left"></div>
-                                    <div class="help_step_num">${stat.index + 1}</div>
-                                    处理人:${v.user.name}<br/><br/>
-                                    批注:${v.description}<br/><br/>
-                                    状态:
-                                    <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-                                    <div class="help_step_right"></div>
-                                </div>
-                            </c:if>
-                            <c:if test="${stat.last && entity.bizPoHeader.commonProcessList == null}">
-                                <div class="help_step_item help_step_set">
-                                    <div class="help_step_left"></div>
-                                    <div class="help_step_num">${stat.index + 1}</div>
-                                    <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-                                        当前状态:${v.doOrderHeaderProcessFifth.name}
-                                            ${v.user.name}<br/>
-                                    </c:if>
-                                    <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-                                        当前状态:${v.doOrderHeaderProcessAll.name}
-                                            ${v.user.name}<br/>
-                                    </c:if>
-                                    <div class="help_step_right"></div>
                                 </div>
                             </c:if>
                         </c:forEach>

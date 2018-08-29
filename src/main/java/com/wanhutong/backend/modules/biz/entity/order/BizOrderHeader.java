@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -213,6 +214,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private List<String> doAllCode;
     private List<String> doFifthCode;
     private List<String> poAuditCode;
+
+    private Integer waitPay;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -935,5 +938,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setPoAuditCode(List<String> poAuditCode) {
         this.poAuditCode = poAuditCode;
+    }
+
+    public Integer getWaitPay() {
+        return waitPay;
+    }
+
+    public void setWaitPay(Integer waitPay) {
+        this.waitPay = waitPay;
     }
 }
