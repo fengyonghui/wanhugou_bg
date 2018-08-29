@@ -405,7 +405,7 @@ public class BizOrderHeaderController extends BaseController {
         try {
             ThreadPoolManager.getDefaultThreadPool().invokeAll(tasks);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error("init order list data error", e);
         }
 
         User user = UserUtils.getUser();
