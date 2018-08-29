@@ -1624,48 +1624,16 @@
                                     <c:if test="${v.objectName == 'biz_po_header'}">
                                         ${v.purchaseOrderProcess.name}
                                     </c:if>
+                                    <c:if test="${v.objectName == 'biz_order_header'}">
+                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
+                                        </c:if>
+                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">
+                                        </c:if>
+                                    </c:if>
                                     <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     <div class="help_step_right"></div>
                                     <input type="hidden" value="${v.type}" id="currentJoType"/>
-                                </div>
-                            </c:if>
-                        </c:forEach>
-                    </div>
-                </div>
-            </div>
-        </c:if>
-
-        <c:if test="${fn:length(doComPList) > 0}">
-            <div class="control-group">
-                <label class="control-label">审核流程：</label>
-                <div class="controls help_wrap">
-                    <div class="help_step_box fa">
-                        <c:forEach items="${doComPList}" var="v" varStatus="stat">
-                            <c:if test="${!stat.last}">
-                                <div class="help_step_item">
-                                    <div class="help_step_left"></div>
-                                    <div class="help_step_num">${stat.index + 1}</div>
-                                    处理人:${v.user.name}<br/><br/>
-                                    批注:${v.description}<br/><br/>
-                                    状态:
-                                    <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-                                    <div class="help_step_right"></div>
-                                </div>
-                            </c:if>
-                            <c:if test="${stat.last && entity.bizPoHeader.commonProcessList == null}">
-                                <div class="help_step_item help_step_set">
-                                    <div class="help_step_left"></div>
-                                    <div class="help_step_num">${stat.index + 1}</div>
-                                    <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-                                        当前状态:${v.doOrderHeaderProcessFifth.name}
-                                            ${v.user.name}<br/>
-                                    </c:if>
-                                    <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-                                        当前状态:${v.doOrderHeaderProcessAll.name}
-                                            ${v.user.name}<br/>
-                                    </c:if>
-                                    <div class="help_step_right"></div>
                                 </div>
                             </c:if>
                         </c:forEach>

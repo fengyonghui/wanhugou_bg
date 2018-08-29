@@ -539,11 +539,11 @@ public class BizOrderHeaderController extends BaseController {
                     model.addAttribute("orderHeaderProcess", orderHeaderProcess);
                 }
 
-                CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-                commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
-                commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
-                List<CommonProcessEntity> DoComPList = commonProcessService.findList(commonProcessEntity);
-                request.setAttribute("doComPList", DoComPList);
+//                CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+//                commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
+//                commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+//                List<CommonProcessEntity> DoComPList = commonProcessService.findList(commonProcessEntity);
+//                request.setAttribute("doComPList", DoComPList);
 
             }
 
@@ -658,12 +658,15 @@ public class BizOrderHeaderController extends BaseController {
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
-//        if ("audit".equals(str) && ("0".equals(type) || "1".equals(type))) {
         // type = 0 产地直发
         // type = 1 本地备货
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
         commonProcessEntity.setObjectName("0".equals(type) ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+        if (bizOrderHeader.getOrderNum().startsWith("DO")) {
+            commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+        }
+
         List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
 
         BizPoHeader bizPoHeader = new BizPoHeader();
@@ -695,7 +698,6 @@ public class BizOrderHeaderController extends BaseController {
         request.setAttribute("processMap", "0".equals(type) ?
                 ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap()
                 : ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap());
-//        }
 
         return "modules/biz/order/bizOrderHeaderForm";
     }
