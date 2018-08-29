@@ -215,6 +215,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private List<String> doFifthCode;
     private List<String> poAuditCode;
 
+    private Integer waitPay;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -936,5 +938,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setPoAuditCode(List<String> poAuditCode) {
         this.poAuditCode = poAuditCode;
+    }
+
+    public Integer getWaitPay() {
+        return waitPay;
+    }
+
+    public void setWaitPay(Integer waitPay) {
+        this.waitPay = waitPay;
     }
 }

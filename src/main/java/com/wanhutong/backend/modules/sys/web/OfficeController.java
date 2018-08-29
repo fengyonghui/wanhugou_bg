@@ -626,7 +626,7 @@ public class OfficeController extends BaseController {
 
     @RequiresPermissions("user")
     @ResponseBody
-    @RequestMapping(value = "getImgTreeListByPhone")
+    @RequestMapping(value = "queryTreeListByPhone")
     public List<Map<String, Object>> getImgTreeListByPhone(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes, String phone) {
         List<Office> list = null;
         if (StringUtils.isNotBlank(type)) {
