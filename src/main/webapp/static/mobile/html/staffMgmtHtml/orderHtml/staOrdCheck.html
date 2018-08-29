@@ -18,6 +18,15 @@
 			.photoParent img {top: 50%;margin-top: -8px;width: 50px;}
 			.listBlue>li {border-bottom: 1px solid #40ABE9;}
 			#staEvoMenu>li:last-child {color: #40ABE9;}
+			.mui-input-row label~input {width: 60%;}
+			.mui-table-view-cell {
+				border-bottom: 1px solid #efeff4;
+			}
+			.mui-content div.mui-row li {
+				padding: 5px;
+				list-style: none;
+				height: 30px;
+			}
 		</style>
 	</head>
 	<body>
@@ -28,67 +37,63 @@
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
 				<label>订单编号：</label>
-				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
+				<input type="text" class="mui-input-clear" id="staPoordNum" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>经销店名称：</label>
-				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
+				<input type="text" class="mui-input-clear" id="staRelNum" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>商品总价：</label>
-				<input type="text" class="mui-input-clear" id="inPototal" disabled>
+				<input type="text" class="mui-input-clear" id="staPototal" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>调整金额：</label>
-				<input type="text" class="mui-input-clear" id="inMoneyReceive">
+				<input type="text" class="mui-input-clear" id="staAdjustmentMoney">
 			</div>
 			<div class="mui-input-row">
 				<label>运费：</label>
-				<input type="text" class="mui-input-clear" id="inMarginLevel" disabled>
+				<input type="text" class="mui-input-clear" id="staFreight" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>应付金额：</label>
-				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
+				<input type="text" class="mui-input-clear" id="staShouldPay" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>已付金额：</label>
-				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
+				<input type="text" class="mui-input-clear" id="staPoLastDa" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>服务费：</label>
-				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
+				<input type="text" id="staServerPrice" class="mui-input-clear" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>发票状态：</label>
-				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
+				<input type="text" id="staInvoice" class="mui-input-clear" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>业务状态：</label>
-				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
+				<input type="text" id="staStatus" class="mui-input-clear" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>收货人：</label>
-				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
+				<input type="text" id="staConsignee" class="mui-input-clear" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>联系电话：</label>
-				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
+				<input type="text" id="staMobile" class="mui-input-clear" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>收货地址：</label>
-				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
+				<input type="text" id="staShippAddress" class="mui-input-clear" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>详细地址：</label>
-				<input type="text" id="inPoDizstatus" class="mui-input-clear">
-			</div>
-			<div class="mui-input-row">
-				<label>交货时间：</label>
-				<input type="date" id="inPoDizstatus" class="mui-input-clear">
+				<input type="text" id="staDateilAddress" class="mui-input-clear">
 			</div>
 			<div class="mui-input-row">
 				<label>备注：</label>
-				<textarea id="inPoRemark" name="" rows="" cols="" disabled></textarea>
+				<textarea id="staPoRemark" name="" rows="" cols="" disabled></textarea>
 			</div>
 			<div class="mui-input-row">
 				<div class="labelLf">进展信息：</div>
@@ -112,13 +117,23 @@
 			</div>
 			<div class="mui-input-row">
 				<div class="labelLf">状态流程：</div>
-				<ul class="" id="staEvoMenu">
+				<ul class="" id="staStatusMenu">
 					
 				</ul>
 			</div>
-			<div class="mui-input-row">
+			
+			<div class="mui-input-row" id="orderTypebox">
+				<label>供货方式：</label>
+		    	<div id="changeTxt" class="labelri" style="padding: 14px 8px;">
+		        	产地直发
+			        <input checked type="radio" name="apply" />
+			                本地备货
+	                <input id="yes" type="radio" name="apply" />
+		    	</div>
+		    </div>
+			<div class="mui-input-row staCommodity">
 				<div class="labelLf">商品信息：</div>
-				<ul id="staCommodity" class="listBlue mui-table-view">
+				<ul id="staCheckCommodity" class="mui-table-view app_pl10">
 					
 				</ul>
 			</div>
@@ -131,6 +146,6 @@
 		<script src="../../../js/component/mui.min.js"></script>	
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>
-		<script src="../../../js/staffMgmtJs/orderJs/staOrdDetail.js"></script>
+		<script src="../../../js/staffMgmtJs/orderJs/staOrdCheck.js"></script>
 	</body>
 </html>

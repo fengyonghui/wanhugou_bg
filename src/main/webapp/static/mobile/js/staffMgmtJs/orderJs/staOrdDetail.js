@@ -30,6 +30,11 @@
                 dataType: "json",
                 success: function(res){
 					console.log(res)
+					$.each(res.data.appointedTimeList, function(n, v) {
+						$('#staPayTime').val(_this.formatDateTime(v.appointedDate));
+						$('#staPayMoney').val(v.appointedMoney);
+					})
+					
 					var item = res.data.bizOrderHeader;
 					console.log(item)
 					var shouldPay = item.totalDetail + item.totalExp + item.freight;
@@ -58,9 +63,12 @@
 					$('#staStatus').val(statusTxt);
 					$('#staConsignee').val(item.bizLocation.receiver);
 					$('#staMobile').val(item.bizLocation.phone);
-					$('#staShippAddress').val();
+					$('#staShippAddress').val(item.bizLocation.pcrName);
 					$('#staDateilAddress').val(item.bizLocation.address);
+					$('#staPoRemark').val();
 					$('#staEvolve').val();
+					
+					
 					
 					_this.statusListHtml(res.data)
 					_this.checkProcessHtml(res.data);
@@ -247,17 +255,7 @@
 //	                    '<div class="mui-input-row ">' +
 //	                    '<label class="commodityName">已生成的采购单:</label>' +
 //	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div>'+
-//	                   
-                    
-                    
-                    
-                    
                     '</div>'
-	                    
-	                    
-	                  
-						
-//	                    
 				});
 				$("#staCommodity").html(htmlCommodity)
 			}

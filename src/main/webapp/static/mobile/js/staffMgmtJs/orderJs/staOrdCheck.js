@@ -24,169 +24,239 @@
 			var _this = this;
 			$.ajax({
                 type: "GET",
-                url: "/a/biz/request/bizRequestHeader/form4Mobile",
-                data: {id:_this.userInfo.inListId},
+                url: "/a/biz/order/bizOrderHeader/form4Mobile",
+                data: {
+                	id:_this.userInfo.staOrdListId,
+                	orderDetails: 'details',
+                	statu: _this.userInfo.statuTxt,
+                	source: _this.userInfo.sourceTxt
+                },
                 dataType: "json",
                 success: function(res){
-//					console.log(res)
-					/*业务状态*/
-					var bizstatus = res.data.entity.bizStatus;
-					var bizstatusTxt = '';
-					if(bizstatus==0) {
-						bizstatusTxt = "未审核"
-					}else if(bizstatus==1) {
-						bizstatusTxt = "首付支付"
-					}else if(bizstatus==2) {
-						bizstatusTxt = "全部支付"
-						inCheck = "审核"
-					}else if(bizstatus==5) {
-						bizstatusTxt = "审核通过"
-					}else if(bizstatus==6) {
-						bizstatusTxt = "审批中"
-					}else if(bizstatus==7) {
-						bizstatusTxt = "审批完成"
-					}else if(bizstatus==10) {
-						bizstatusTxt = "采购中"
-					}else if(bizstatus==15) {
-						bizstatusTxt = "采购完成"
-					}else if(bizstatus==20) {
-						bizstatusTxt = "备货中"
-					}else if(bizstatus==25) {
-						bizstatusTxt = "供货完成"
-					}else if(bizstatus==30) {
-						bizstatusTxt = "收货完成"
-					}else if(bizstatus==35) {
-						bizstatusTxt = "部分结算"
-					}else if(bizstatus==37) {
-						bizstatusTxt = "结算完成"
-					}else if(bizstatus==40) {
-						bizstatusTxt = "取消"
-					}else {
-						bizstatusTxt = '未知类型'
+					console.log(res)
+					var item = res.data.bizOrderHeader;
+					if(item.orderType==5){
+						$('#orderTypebox').hide();
+					}
+					console.log(item)
+					var shouldPay = item.totalDetail + item.totalExp + item.freight;
+					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
+					//发票状态
+					var invStatusTxt = '';
+					if(item.invStatus==0) {
+						invStatusTxt = "不开发票"					
+					}
+					//业务状态
+					var statusTxt = '';
+					if(item.staStatus=15) {
+						statusTxt = "供货中"
 					}
 					
-					$('#checkPoDizstatus').val(bizstatusTxt)
-					$('#checkPoordNum').val(res.data.entity.reqNo)
-					$('#checkOrordNum').val(res.data.entity.fromOffice.name)
-					$('#inPoLastDa').val(_this.formatDateTime(res.data.entity.recvEta))
-					$('#currentType').val(res.data.entity.commonProcess.type)
-					_this.commodityHtml(res.data)
+					$('#staPoordNum').val(item.orderNum);
+					$('#staRelNum').val(item.customer.name);
+					$('#staPototal').val(item.totalDetail);
+					$('#staAdjustmentMoney').val(item.totalExp);
+					$('#staFreight').val(item.freight);
+					$('#staShouldPay').val(shouldPay);
+					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
+//						console.log(poLastDa)
+					$('#staPoLastDa').val(item.receiveTotal);
+					$('#staServerPrice').val(serverPrice);
+					$('#staInvoice').val(invStatusTxt);
+					$('#staStatus').val(statusTxt);
+					$('#staConsignee').val(item.bizLocation.receiver);
+					$('#staMobile').val(item.bizLocation.phone);
+					$('#staShippAddress').val(item.bizLocation.pcrName);
+					$('#staDateilAddress').val(item.bizLocation.address);
+					$('#staEvolve').val();
+					
 					_this.statusListHtml(res.data)
+//					_this.checkProcessHtml(res.data);
+					_this.commodityHtml(res.data)
                 }
             });
 		},
 		statusListHtml:function(data){
 			var _this = this;
-//			console.log(data)
-			var pHtmlList = '';
-//			var len = data.bizPoHeader.commonProcessList.length
-			$.each(data.statusList, function(i, item) {
-//				console.log(item)
-				var checkBizStatus = '';
-				if(item.bizStatus==0) {
-					checkBizStatus = '未审核'
-				}else if(item.bizStatus==1) {
-					checkBizStatus = '首付款支付'
-				}else if(item.bizStatus==2) {
-					checkBizStatus = '全部支付'
-				}else if(item.bizStatus==5) {
-					checkBizStatus = '审核通过'
-				}else if(item.bizStatus==10) {
-					checkBizStatus = '采购中'
-				}else if(item.bizStatus==15) {
-					checkBizStatus = '采购完成'
-				}else if(item.bizStatus==20) {
-					checkBizStatus = '备货中'
-				}else if(item.bizStatus==25) {
-					checkBizStatus = '供货完成'
-				}else if(item.bizStatus==30) {
-					checkBizStatus = '收货完成'
-				}else if(item.bizStatus==35) {
-					checkBizStatus = '关闭'
-				}else {
-					checkBizStatus = ''
-				}
-				var step = i + 1;
-				pHtmlList +='<li class="step_item">'+
-					'<div class="step_num">'+ step +' </div>'+
-					'<div class="step_num_txt">'+
-						'<div class="mui-input-row">'+
-							'<label>处理人:</label>'+
-					        '<textarea name="" rows="" cols="" disabled>'+ item.createBy.name +'</textarea>'+
-					    '</div>'+
-						'<br />'+
-						'<div class="mui-input-row">'+
-					        '<label>状态:</label>'+
-					        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
-					    	'<label>时间:</label>'+
-					        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
-					    '</div>'+
-					'</div>'+
-				'</li>'
-			});
-			$("#inCheckMen").html(pHtmlList)
+			console.log(data)
+			var statusLen = data.statusList.length;
+			if(statusLen > 0) {
+				var pHtmlList = '';
+				$.each(data.statusList, function(i, item) {
+					console.log(item)
+					var step = i + 1;
+					pHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ step +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+								'<label>处理人:</label>'+
+								'<input type="text" value="'+ item.createBy.name +'" class="mui-input-clear" disabled>'+
+						    '</div>'+
+							'<div class="mui-input-row">'+
+						        '<label>状态:</label>'+
+						        '<input type="text" class="mui-input-clear" disabled>'+
+//						         value="'++'"
+						    	'<label>时间:</label>'+
+						        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+				});
+				$("#staStatusMenu").html(pHtmlList)
+			}
 		},
+//		checkProcessHtml:function(data){
+//			var _this = this;
+//			console.log(data)
+//			var auditLen = data.auditList.length;
+//			if(auditLen > 0) {
+//				var CheckHtmlList ='';
+//				$.each(data.auditList, function(i, item) {
+//					console.log(item)
+//					var step = i + 1;
+//					var current = item.current;
+//					if(current !== 1) {
+//						CheckHtmlList +='<li class="step_item">'+
+//						'<div class="step_num">'+ step +' </div>'+
+//						'<div class="step_num_txt">'+
+//							'<div class="mui-input-row">'+
+//								'<label>处理人:</label>'+
+//								'<input type="text" value="'+ item.user.name +'" class="mui-input-clear" disabled>'+
+//						    '</div>'+
+//							'<div class="mui-input-row">'+
+//						        '<label>批注:</label>'+
+//						        '<input type="text" value="'+ item.description +'" class="mui-input-clear" disabled>'+
+//						    	'<label>状态:</label>'+
+//						        '<input type="text" value=" '+ item.jointOperationLocalProcess.name +' " class="mui-input-clear" disabled>'+
+//						    '</div>'+
+//						'</div>'+
+//					'</li>'
+//					}
+//					if(current == 1) {
+//						CheckHtmlList +='<li class="step_item">'+
+//						'<div class="step_num">'+ step +' </div>'+
+//						'<div class="step_num_txt">'+
+//							'<div class="mui-input-row">'+
+//								'<label>当前状态:</label>'+
+//								'<input type="text" value="'+ item.jointOperationLocalProcess.name +'" class="mui-input-clear" disabled>'+
+//						   		'<label>时间:</label>'+
+//						        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
+//						    '</div>'+
+//						'</div>'+
+//					'</li>'
+//					}
+//				});
+//				$("#staCheckMenu").html(CheckHtmlList)
+//			}
+//		},
 		commodityHtml: function(data) {
 			var _this = this;
-//			console.log(data)
-			var htmlCommodity = '';
-			$.each(data.reqDetailList, function(i, item) {
-//				console.log(item)
-				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
-//		产品图片
-					'<div class="photoParent mui-pull-left app_pr">'+
-						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+
-					'</div>'+
-//		产品信息
-					'<div class="mui-media-body commodity">'+
-						'<div class="mui-input-row">'+
-							'<label>品牌名称：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>供应商：</label>'+
-							'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuInfo.productInfo.vendorName +'" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>商品名称：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.name +'" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>商品编码：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.prodCode +'" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>商品货号：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>单价：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>申报数量：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" reqQty disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>仓库名称：</label>'+
-							'<input type="text" class="mui-input-clear" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>库存数量：</label>'+
-							'<input type="text" class="mui-input-clear" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>商品总库存数量：</label>'+
-							'<input type="text" class="mui-input-clear" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>已收货数量：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.recvQty +'" disabled>'+
-						'</div>'+
-					'</div>'+
-				'</li>'
-			});
-			$("#checkCommodityMenu").html(htmlCommodity)
+			console.log(data)
+			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
+			if(orderDetailLen > 0) {
+				var htmlCommodity = '';
+				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
+					console.log(item)
+					var opShelfInfo = '';
+					if(item.shelfInfo.opShelfInfo) {
+						opShelfInfo = item.shelfInfo.opShelfInfo.name
+					}else {
+						opShelfInfo = ''
+					}
+					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
+	                    '<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>详情行号:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>货架名称:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + opShelfInfo + '" disabled></div></li></div></div>' +
+                    
+                    	'<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>商品名称:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuName + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>创建时间:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div></div>' +
+	                   
+                    	'<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>商品出厂价:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>供应商:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div></div>' +
+	                   
+                    	 '<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>供应商电话:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.primary.mobile + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>商品单价:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div></div>'+
+					
+						'<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>采购数量:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.ordQty + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>总 额:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice * item.ordQty + '" disabled></div></li></div></div>'+
+					
+						'<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>已发货数量:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.sentQty + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>发货方:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.suplyis.name + '" disabled></div></li></div></div>'+
+						
+                    	'<div class="mui-row lineStyle">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label class="commodityName">商品货号:</label>' +
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.itemNo + '" disabled></div></li></div>' +
+	                    
+	                    '<div class="mui-row lineStyle">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label class="commodityName">商品编号:</label>' +
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.partNo + '" disabled></div></li></div>' +
+	                    
+//                  	'<div class="mui-row">' +
+//	                    '<li class="mui-table-view-cell">' +
+//	                    '<div class="mui-input-row ">' +
+//	                    '<label class="commodityName">已生成的采购单:</label>' +
+//	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div>'+
+                    '</div>'
+				});
+				$("#staCheckCommodity").html(htmlCommodity)
+			}
 		},
 		comfirDialig: function() {
 			var _this = this;

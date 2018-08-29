@@ -95,8 +95,7 @@
 				type: 'GET',
 				url: '/a/sys/office/queryTreeList',
 				data: {
-					type: 8,
-					customerTypeTen: 10
+					type: 6,
 				},
 				dataType: 'json',
 				success: function(res) {

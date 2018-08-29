@@ -79,13 +79,13 @@
 			                async:false,
 			                success: function(res){                 
 				                ass=res;
+				                console.log(ass)
 			                }
 			            });
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						var arrLen = res.data.page.list.length;	
                         var that=this;
                         if(arrLen > 0) {
-
                             $.each(res.data.page.list, function(i, item) {
                         	console.log(item)
 							$('#statu').val(item.statu);
@@ -111,7 +111,7 @@
                             $.each(ass,function(i,items){
 //                          	console.log('=============')
 //                          	console.log(item.orderType)
-//                          	console.log(items.value)
+                            	console.log(items.value)
 //                          	console.log('ppp')
 //                          	console.log(items.label)
 //                          	console.log('=============')
@@ -372,8 +372,8 @@
 			var _this = this;
 			var staffHtmlList = '';
 			var nameTxt = '';
-			if(_this.userInfo.name) {
-				nameTxt = decodeURIComponent(_this.userInfo.name)
+			if(_this.userInfo.newinput) {
+				nameTxt = decodeURIComponent(_this.userInfo.newinput)
 			}else {
 				nameTxt = ''
 			}
@@ -388,9 +388,9 @@
                     'customer.phone': _this.userInfo.OrdMobile,
                     'itemNo': _this.userInfo.OrdNumbers,
                     'con.name': _this.userInfo.OrdClient,
-                    'biz_order_status': _this.userInfo.orderStatus,
-                    'originConfigMap': _this.userInfo.checkStatus,
-                    'bizOrderHeader.customer.name':_this.userInfo.newinput
+                    '': _this.userInfo.orderStatus,
+                    'purchaseOrderProcess.name': _this.userInfo.checkStatus, //originConfigMap
+                    name: nameTxt
 				},
 				dataType: 'json',
 				success: function(res) {
@@ -404,7 +404,7 @@
 				                ass=res;
 			                }
 			            });
-//		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						var arrLen = res.data.page.list.length;	
                         var that=this;
                         if(arrLen > 0) {

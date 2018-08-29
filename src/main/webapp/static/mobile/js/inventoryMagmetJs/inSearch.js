@@ -90,6 +90,8 @@
 				}else{
 					_this.selectOpen = true
 				}
+				console.log($(this).val())
+				
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
 			

@@ -108,7 +108,7 @@
 				}else{
 					_this.selectOpen = true
 				}
-				_this.rendHtml(jrollVip,$(this).val())
+				_this.rendHtml(_this.datagood,$(this).val())
 			})
 			
 			$(staOrdHideSpan).on('click', function() {
@@ -126,20 +126,20 @@
 			})
 		},
 		//选择经销店
-//		rendHtml: function(data, key) {
-//			var _this = this;
-//			var reult = [];
-//			var htmlList=''
-//				$.each(data, function(i, item) {
-//					if(item.name.indexOf(key) > -1) {
-//						reult.push(item)
-//					}
-//				})
-//			$.each(reult, function(i, item) {
-//				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
-//			});
-//			$('.input_div').html(htmlList)
-//		},
+		rendHtml: function(data, key) {
+			var _this = this;
+			var reult = [];
+			var htmlList=''
+				$.each(data, function(i, item) {
+					if(item.name.indexOf(key) > -1) {
+						reult.push(item)
+					}
+				})
+			$.each(reult, function(i, item) {
+				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
+			});
+			$('.input_div').html(htmlList)
+		},
 		//经销店名称
 		ajaxGoodList: function() {
 			var _this = this;
@@ -168,7 +168,7 @@
 			$.ajax({
 				type: 'GET',
 				url: '/a/sys/dict/listData',
-				data: {type:'biz_req_status'},
+				data: {type:'biz_order_status'},
 				dataType: 'json',
 				success: function(res) {
 					$.each(res, function(i, item) {
