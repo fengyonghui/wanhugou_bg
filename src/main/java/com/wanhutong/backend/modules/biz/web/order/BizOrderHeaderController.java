@@ -1614,6 +1614,98 @@ public class BizOrderHeaderController extends BaseController {
         return commis;
     }
 
+
+    /**
+     * 用于客户专员页面-订单管理列表中的待审核验证
+     **/
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "Commissioner4mobile")
+    public String commissioner4mobile(BizOrderHeader bizOrderHeader, String localOriginType, Integer objJsp) {
+        String commis = "comError";
+        try {
+            if (bizOrderHeader.getId() != null) {
+                BizOrderHeader order = bizOrderHeaderService.get(bizOrderHeader);
+                OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(order.getTotalDetail(), order.getReceiveTotal());
+                if (order != null) {
+                    if (objJsp.equals(OrderHeaderBizStatusEnum.SUPPLYING.getState())) {
+
+                        order.setPayProportion(orderPayProportionStatusEnum.getState());
+                        order.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+                        bizOrderHeaderService.saveOrderHeader(order);
+                        bizOrderStatusService.saveOrderStatus(order);
+                        BizOrderAddress orderAddres = new BizOrderAddress();
+                        orderAddres.setOrderHeaderID(order);
+                        List<BizOrderAddress> list = bizOrderAddressService.findList(orderAddres);
+                        for (BizOrderAddress bizOrderAddress : list) {
+                            if (bizOrderAddress.getType() == 2) {
+                                orderAddres.setId(bizOrderAddress.getId());
+                                break;
+                            }
+                        }
+                        orderAddres.setAppointedTime(bizOrderHeader.getBizLocation().getAppointedTime());
+                        if (bizOrderHeader.getBizLocation() != null && bizOrderHeader.getBizLocation().getProvince() != null && bizOrderHeader.getBizLocation().getCity() != null
+                                && bizOrderHeader.getBizLocation().getRegion() != null) {
+                            orderAddres.setProvince(bizOrderHeader.getBizLocation().getProvince());
+                            orderAddres.setCity(bizOrderHeader.getBizLocation().getCity());
+                            orderAddres.setRegion(bizOrderHeader.getBizLocation().getRegion());
+                        }
+                        if (bizOrderHeader.getBizLocation() != null && bizOrderHeader.getBizLocation().getAddress() != null) {
+                            orderAddres.setAddress(bizOrderHeader.getBizLocation().getAddress());
+                        } else {
+                            orderAddres.setAddress(StringUtils.EMPTY);
+                        }
+                        if (bizOrderHeader.getBizLocation() != null && bizOrderHeader.getBizLocation().getReceiver() != null) {
+                            orderAddres.setReceiver(bizOrderHeader.getBizLocation().getReceiver());
+                        } else {
+                            orderAddres.setReceiver(StringUtils.EMPTY);
+                        }
+                        if (bizOrderHeader.getBizLocation() != null && bizOrderHeader.getBizLocation().getPhone() != null) {
+                            orderAddres.setPhone(bizOrderHeader.getBizLocation().getPhone());
+                        } else {
+                            orderAddres.setPhone(StringUtils.EMPTY);
+                        }
+                        orderAddres.setType(2);
+                        bizOrderAddressService.save(orderAddres);
+
+                        BizOrderDetail bizOrderDetail = new BizOrderDetail();
+                        bizOrderDetail.setOrderHeader(order);
+                        List<BizOrderDetail> detailList = bizOrderDetailService.findList(bizOrderDetail);
+                        for (BizOrderDetail b : detailList) {
+                            if ("0".equals(localOriginType)) {
+                                b.setSuplyis(officeService.get(0));
+                            } else {
+                                BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(order.getCustomer().getId());
+                                b.setSuplyis(officeService.get(bizCustomCenterConsultant.getCenters().getId()));
+                            }
+                            bizOrderDetailService.saveStatus(b);
+                        }
+
+                        commis = "ok";
+                    } else if (objJsp.equals(OrderHeaderBizStatusEnum.UNAPPROVE.getState())) {
+                        order.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());
+                        bizOrderHeaderService.saveOrderHeader(order);
+                        bizOrderStatusService.saveOrderStatus(order);
+                    }
+                }
+                if ("ok".equals(commis)) {
+                    if (BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
+                        Integer processId = 0;
+                        BizOrderHeader orderheader = bizOrderHeaderService.get(bizOrderHeader.getId());
+                        processId = bizOrderHeaderService.saveCommonProcess(orderheader);
+                        bizOrderHeaderService.updateProcessId(orderheader.getId(), processId);
+                    } else {
+                        genAuditProcess(orderPayProportionStatusEnum, bizOrderHeader);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            commis = "comError";
+            e.printStackTrace();
+        }
+        return JsonUtil.generateData(commis, null);
+    }
+
     /**
      * 生成审批流程
      *
