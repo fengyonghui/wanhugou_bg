@@ -111,7 +111,7 @@
                             $.each(ass,function(i,items){
 //                          	console.log('=============')
 //                          	console.log(item.orderType)
-                            	console.log(items.value)
+//                          	console.log(items.value)
 //                          	console.log('ppp')
 //                          	console.log(items.label)
 //                          	console.log('=============')
@@ -403,7 +403,7 @@
 			                success: function(res){                 
 				                ass=res;
 			                }
-			            });
+			        });
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						var arrLen = res.data.page.list.length;	
                         var that=this;
