@@ -30,13 +30,26 @@
                 dataType: "json",
                 success: function(res){
 					console.log(res)
+					$('#firstPart').val(res.data.entity2.customer.name);
+					$('#firstPrincipal').val(res.data.custUser.name);
+					$('#firstMobile').val(res.data.custUser.mobile);
+					
+					$('#partB').val(res.data.vendUser.vendor.name);
+					$('#partBPrincipal').val(res.data.vendUser.name);
+					$('#partBMobile').val(res.data.vendUser.mobile);
+					
+					$('#partCPrincipal').val(res.data.orderCenter.consultants.name);
+					$('#partCMobile').val(res.data.orderCenter.consultants.mobile);
+					
 					$.each(res.data.appointedTimeList, function(n, v) {
 						$('#staPayTime').val(_this.formatDateTime(v.appointedDate));
 						$('#staPayMoney').val(v.appointedMoney);
 					})
-					
+					$.each(res.data.commentList, function(q, w) {
+						$('#staPoRemark').val(w.comments);
+					})
 					var item = res.data.bizOrderHeader;
-					console.log(item)
+//					console.log(item)
 					var shouldPay = item.totalDetail + item.totalExp + item.freight;
 					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
 					//发票状态
@@ -65,10 +78,6 @@
 					$('#staMobile').val(item.bizLocation.phone);
 					$('#staShippAddress').val(item.bizLocation.pcrName);
 					$('#staDateilAddress').val(item.bizLocation.address);
-					$('#staPoRemark').val();
-					$('#staEvolve').val();
-					
-					
 					
 					_this.statusListHtml(res.data)
 					_this.checkProcessHtml(res.data);
@@ -78,12 +87,12 @@
 		},
 		statusListHtml:function(data){
 			var _this = this;
-			console.log(data)
+//			console.log(data)
 			var statusLen = data.statusList.length;
 			if(statusLen > 0) {
 				var pHtmlList = '';
 				$.each(data.statusList, function(i, item) {
-					console.log(item)
+//					console.log(item)
 					var step = i + 1;
 					pHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
@@ -107,12 +116,12 @@
 		},
 		checkProcessHtml:function(data){
 			var _this = this;
-			console.log(data)
+//			console.log(data)
 			var auditLen = data.auditList.length;
 			if(auditLen > 0) {
 				var CheckHtmlList ='';
 				$.each(data.auditList, function(i, item) {
-					console.log(item)
+//					console.log(item)
 					var step = i + 1;
 					var current = item.current;
 					if(current !== 1) {
@@ -151,12 +160,12 @@
 		},
 		commodityHtml: function(data) {
 			var _this = this;
-			console.log(data)
+//			console.log(data)
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-					console.log(item)
+//					console.log(item)
 					var opShelfInfo = '';
 					if(item.shelfInfo.opShelfInfo) {
 						opShelfInfo = item.shelfInfo.opShelfInfo.name

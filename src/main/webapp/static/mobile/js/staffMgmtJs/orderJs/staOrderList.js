@@ -52,8 +52,8 @@
 				                for(var i = childs.length - 1; i >= 0; i--) {
 				                    f.removeChild(childs[i]);
 				                }
-				                console.log('222')
-				                console.log(pager)
+//				                console.log('222')
+//				                console.log(pager)
 				                $('#consultantId').val(pager.consultantId);
 				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
@@ -70,7 +70,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		          	    console.log(res)
+//		          	    console.log(res)
 		          	    $.ajax({
 			                type: "GET",
 			                url: "/a/sys/dict/listData",
@@ -79,7 +79,7 @@
 			                async:false,
 			                success: function(res){                 
 				                ass=res;
-				                console.log(ass)
+//				                console.log(ass)
 			                }
 			            });
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
@@ -87,34 +87,12 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-                        	console.log(item)
+//                      	console.log(item)
 							$('#statu').val(item.statu);
 							$('#source').val(item.source);
                         	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
-//                      	var orderTypeTxt = '';
-//                      	if(item.orderType==1) {
-//                      		orderTypeTxt = '普通订单'
-//                      	}else if(item.orderType==2) {
-//                      		orderTypeTxt = '帐期采购'
-//                      	}else if(item.orderType==3) {
-//                      		orderTypeTxt = '配资采购'
-//                      	}else if(item.orderType==4) {
-//                      		orderTypeTxt = '微商订单'
-//                      	}else if(item.orderType==5) {
-//                      		orderTypeTxt = '代采订单'
-//                      	}else if(item.orderType==6) {
-//                      		orderTypeTxt = '拍照下单'
-//                      	}
-//                      	console.log('-----')
-//                      	console.log(item.orderType)
                             var orderTypeTxt = '';
                             $.each(ass,function(i,items){
-//                          	console.log('=============')
-//                          	console.log(item.orderType)
-//                          	console.log(items.value)
-//                          	console.log('ppp')
-//                          	console.log(items.label)
-//                          	console.log('=============')
 	                        	if(item.orderType==items.value) {
 	                        		orderTypeTxt = items.label
 	                        	}else if(item.orderType==items.value) {
@@ -209,7 +187,7 @@
 			            } 			           
 			        },
 		            error:function(xhr,type,errorThrown){
-			            console.log(type);
+//			            console.log(type);
 		            }
 		        })
 		    }
@@ -224,7 +202,7 @@
                 async:false,
                 success: function(res){
                     _this.staCheckFlag = res.data;
-                    console.log(_this.staCheckFlag)
+//                  console.log(_this.staCheckFlag)
                 }
             });
         },
@@ -409,7 +387,7 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-	                        	console.log(item)
+//	                        	console.log(item)
 								$('#statu').val(item.statu);
 								$('#source').val(item.source);
 	                        	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单

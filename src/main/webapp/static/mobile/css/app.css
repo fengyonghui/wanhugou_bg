@@ -383,7 +383,7 @@ input[type=time],
 input[type=url],
 input[type=week],
 select, textarea{height: auto;padding:14px 15px;}
-.mui-input-group .mui-input-row{height: auto;background-color: #fff;border-radius: 5px;}
+.mui-input-group .mui-input-row{height: auto;background-color: #fff;}
 .mui-input-row label{padding:14px 15px;padding-left: 20px;padding-right: 10px;line-height:21px;width: 33%;}
 .mui-input-row label~input, .mui-input-row label~select, .mui-input-row label~textarea{width:67%}
 
