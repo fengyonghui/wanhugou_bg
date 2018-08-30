@@ -92,6 +92,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 采购订单表Controller
@@ -347,12 +348,7 @@ public class BizPoHeaderController extends BaseController {
 
         if (StringUtils.isNotBlank(bizPoHeader.getProcessTypeStr())) {
             List<Process> processList = purchaseOrderProcessConfig.getNameProcessMap().get(bizPoHeader.getProcessTypeStr());
-            List<String> transform = Lists.transform(processList, new Function<Process, String>() {
-                @Override
-                public String apply(Process process) {
-                    return String.valueOf(process.getCode());
-                }
-            });
+            List<String> transform = processList.stream().map(process -> String.valueOf(process.getCode())).collect(Collectors.toList());
             bizPoHeader.setProcessTypeList(transform);
         }
 
