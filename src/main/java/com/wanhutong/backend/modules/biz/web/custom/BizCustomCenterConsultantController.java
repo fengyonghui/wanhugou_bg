@@ -424,6 +424,25 @@ public class BizCustomCenterConsultantController extends BaseController {
         return "1";
     }
 
+    //    保存状态给 officeController
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:edit")
+    @RequestMapping(value = "save4mobile")
+    @ResponseBody
+    public String save4mobile(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model, String phone) {
+        List<Office> officeList = officeService.getImgTreeListByPhone(OfficeTypeEnum.CUSTOMER.getType(), "con", phone);
+        Office customs = new Office();
+        if (officeList != null) {
+            Integer customsId = officeList.get(0).getId();
+            customs.setId(customsId);
+        }
+        bizCustomCenterConsultant.setCustoms(customs);
+        if (bizCustomCenterConsultant == null || bizCustomCenterConsultant.getCustoms() == null || bizCustomCenterConsultant.getConsultants() == null) {
+            return "0";
+        }
+        bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
+        return "1";
+    }
+
     @RequiresPermissions("biz:custom:bizCustomCenterConsultant:edit")
     @RequestMapping(value = "delete")
     public String delete(BizCustomCenterConsultant bizCustomCenterConsultant, RedirectAttributes redirectAttributes) {

@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.sys.service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.TreeService;
@@ -803,4 +804,12 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     }
 
 
+    public List<Office> getImgTreeListByPhone(String type, String source, String phone) {
+        List<Office> list = null;
+        if (StringUtils.isNotBlank(type)) {
+            String defType = type;
+            list = this.filerOfficeByPhone(null, source, OfficeTypeEnum.stateOf(defType), phone);
+        }
+        return list;
+    }
 }
