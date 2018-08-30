@@ -319,7 +319,7 @@ public class BizPoHeaderController extends BaseController {
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:view")
-    @RequestMapping(value = {"listV2", ""})
+    @RequestMapping(value = {"listV2"})
     public String listV2(BizPoHeader bizPoHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         User user = UserUtils.getUser();
         List<Role> roleList = user.getRoleList();
@@ -356,7 +356,7 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        List<com.wanhutong.backend.modules.config.parse.Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getShowFilterProcessList();
 
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("processList", processList);
