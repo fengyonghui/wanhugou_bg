@@ -1601,9 +1601,9 @@
                                     <c:if test="${v.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
                                         ${v.jointOperationOriginProcess.name}
                                     </c:if>
-                                    <%--<c:if test="${v.objectName == 'biz_po_header'}">--%>
-                                        <%--${v.purchaseOrderProcess.name}--%>
-                                    <%--</c:if>--%>
+                                    <c:if test="${v.objectName == 'biz_po_header'}">
+                                        ${v.purchaseOrderProcess.name}
+                                    </c:if>
                                     <c:if test="${v.objectName == 'biz_order_header'}">
                                         <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
                                             ${v.doOrderHeaderProcessFifth.name}
@@ -1628,9 +1628,9 @@
                                     <c:if test="${v.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
                                         ${v.jointOperationOriginProcess.name}
                                     </c:if>
-                                    <%--<c:if test="${v.objectName == 'biz_po_header'}">--%>
-                                        <%--${v.purchaseOrderProcess.name}--%>
-                                    <%--</c:if>--%>
+                                    <c:if test="${v.objectName == 'biz_po_header'}">
+                                        ${v.purchaseOrderProcess.name}
+                                    </c:if>
                                     <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     <div class="help_step_right"></div>

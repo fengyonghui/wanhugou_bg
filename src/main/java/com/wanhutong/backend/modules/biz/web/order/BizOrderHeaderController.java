@@ -286,18 +286,33 @@ public class BizOrderHeaderController extends BaseController {
                    List<CommonProcessEntity> list = null;
                    if (b.getOrderNum().startsWith("SO")) {
 
+//                       CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+//                       commonProcessEntity.setObjectId(String.valueOf(b.getId()));
+//                       commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+//                       if (CollectionUtils.isNotEmpty(poList)) {
+//                           bizPoHeader = poList.get(0);
+//                           commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+//                           commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+//                       } else {
+//                           if (b.getSuplys() == null || b.getSuplys() == 0 || b.getSuplys() == 721) {
+//                               commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
+//                           }
+//                       }
+
+
+//                       list = commonProcessService.findList(commonProcessEntity);
+
+
+                       String type = "1";
+                       if (b.getSuplys() == 0 || b.getSuplys() == 721) {
+                           type = "0";
+                       }
+
+                        // type = 0 产地直发
+                       // type = 1 本地备货
                        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
                        commonProcessEntity.setObjectId(String.valueOf(b.getId()));
-                       commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
-                       if (CollectionUtils.isNotEmpty(poList)) {
-                           bizPoHeader = poList.get(0);
-                           commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-                           commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-                       } else {
-                           if (b.getSuplys() == null || b.getSuplys() == 0 || b.getSuplys() == 721) {
-                               commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
-                           }
-                       }
+                       commonProcessEntity.setObjectName("0".equals(type) ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
                        list = commonProcessService.findList(commonProcessEntity);
 
                        if (CollectionUtils.isNotEmpty(list)) {
@@ -328,20 +343,20 @@ public class BizOrderHeaderController extends BaseController {
                            }
                        }
 
-                       CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-                       commonProcessEntity.setObjectId(String.valueOf(b.getId()));
-                       commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
-                       if (CollectionUtils.isNotEmpty(poList)) {
-                           bizPoHeader = poList.get(0);
-                           commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-                           commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-                       }
-
-                       list = commonProcessService.findList(commonProcessEntity);
-
-                       if (CollectionUtils.isNotEmpty(list)) {
-                           b.setCommonProcess(list.get(list.size() - 1));
-                       }
+//                       CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+//                       commonProcessEntity.setObjectId(String.valueOf(b.getId()));
+//                       commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+//                       if (CollectionUtils.isNotEmpty(poList)) {
+//                           bizPoHeader = poList.get(0);
+//                           commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+//                           commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+//                       }
+//
+//                       list = commonProcessService.findList(commonProcessEntity);
+//
+//                       if (CollectionUtils.isNotEmpty(list)) {
+//                           b.setCommonProcess(list.get(list.size() - 1));
+//                       }
                    }
                    BizInvoice bizInvoice = new BizInvoice();
                    bizInvoice.setOrderNum(b.getOrderNum());
@@ -634,24 +649,24 @@ public class BizOrderHeaderController extends BaseController {
 
         List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
 
-//        BizPoHeader bizPoHeader = new BizPoHeader();
-//        bizPoHeader.setBizOrderHeader(bizOrderHeader);
-//        List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
-//        List<CommonProcessEntity> poAuditList = null;
-//
-//        if (CollectionUtils.isNotEmpty(poList)) {
-//            bizPoHeader = poList.get(0);
-//            CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
-//            poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-//            poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-//            poAuditList = commonProcessService.findList(poCommonProcessEntity);
-//        }
-//
-//        if (CollectionUtils.isNotEmpty(poAuditList) && CollectionUtils.isNotEmpty(list)) {
-//            list.remove(list.size() - 1);
-//            list.addAll(poAuditList);
-//            list.get(list.size() - 1).setCurrent(1);
-//        }
+        BizPoHeader bizPoHeader = new BizPoHeader();
+        bizPoHeader.setBizOrderHeader(bizOrderHeader);
+        List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+        List<CommonProcessEntity> poAuditList = null;
+
+        if (CollectionUtils.isNotEmpty(poList)) {
+            bizPoHeader = poList.get(0);
+            CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
+            poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+            poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+            poAuditList = commonProcessService.findList(poCommonProcessEntity);
+        }
+
+        if (CollectionUtils.isNotEmpty(poAuditList) && CollectionUtils.isNotEmpty(list)) {
+            list.remove(list.size() - 1);
+            list.addAll(poAuditList);
+            list.get(list.size() - 1).setCurrent(1);
+        }
 
         commonProcessEntity.setCurrent(1);
         List<CommonProcessEntity> currentList = commonProcessService.findList(commonProcessEntity);
