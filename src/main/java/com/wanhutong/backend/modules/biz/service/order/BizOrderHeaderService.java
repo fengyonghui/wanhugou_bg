@@ -198,7 +198,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         return super.findPage(page, bizOrderHeader);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     @Override
     public void save(BizOrderHeader bizOrderHeader) {
         if (bizOrderHeader.getBizType() == null) {

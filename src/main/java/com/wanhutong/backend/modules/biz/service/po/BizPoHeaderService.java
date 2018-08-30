@@ -248,7 +248,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         this.updateProcessId(bizPoHeader.getId(), commonProcessEntity.getId());
     }
 
-    private void updateProcessToInitAudit(BizPoHeader bizPoHeader, String mark) {
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void updateProcessToInitAudit(BizPoHeader bizPoHeader, String mark) {
         PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         Byte soType = getBizPoOrderReqByPo(bizPoHeader);
         Integer code = 0;
@@ -267,9 +268,12 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
         commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
         commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
-        commonProcessService.save(commonProcessEntity);
+        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+        if (CollectionUtils.isEmpty(list)) {
+            commonProcessService.save(commonProcessEntity);
+            this.updateProcessId(bizPoHeader.getId(), commonProcessEntity.getId());
+        }
 
-        this.updateProcessId(bizPoHeader.getId(), commonProcessEntity.getId());
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
