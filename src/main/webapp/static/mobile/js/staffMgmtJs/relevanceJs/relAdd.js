@@ -15,7 +15,7 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			
+			_this.staRelAdd();
 		},
 //		getData: function() {
 //			var _this = this;
@@ -51,12 +51,14 @@
 				dataType: 'json',
 				success: function(res) {
 								console.log(res)
-					htmlBusiness = '<option class="soption"  value="' + res.data.office.name + '">' + res.data.office.name + '</option>'
+					htmlBusiness = '<option class="soption"  value="' + res.data.office.id + '">' + res.data.office.name + '</option>'
 					$('#cosultasName').html(htmlBusiness);
 					htmloffice = '<option class="soption"  value="' + res.data.office.office.id + '">' + res.data.office.office.name + '</option>'
 					$('#officeName').html(htmloffice);
 					$.each(res.data.officeList,function(i,item){
 						console.log(item)
+						$('#centersId').val(item.id)
+						
 		                 htmloffice += '<option class="soption"  value="' + item.id + '">' + item.name + '</option>'
 					});
 					 $('#officeName').html(htmloffice); 
@@ -67,7 +69,7 @@
 		},
 		officeNamechoice:function(){
 			$('#officeName').on('change',function(){
-				alert($(this).val())
+//				alert($(this).val())
 				 $("#cosultasName").html("");
 				 $("#cosultasName").append("<option value='' selected = 'selected'>请选择客户专员</option>");
 				if($(this).val()!= null && $(this).val() !=undefined && $(this).val().trim() != ""){
@@ -77,9 +79,9 @@
 						type:"POST",
 						dataType:'json',
 						success:function(data){
-							console.log(data)
-							for(var i =0;i<data.length;i++){
-								$("#cosultasName").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+							$('#consultantsId').val(data.data.id)
+							for(var i =0;i<data.data.length;i++){
+								$("#cosultasName").append("<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>");
 							}
 						},
 						error:function(er){
@@ -87,6 +89,33 @@
 						}
 					});
 				}
+			})
+		},
+		staRelAdd:function() {
+			var _this = this;
+			
+			$('#staRelSaveBtn').on('tap', function() {
+				$.ajax({
+					type: "GET",
+					url: "/a/biz/custom/bizCustomCenterConsultant/save4mobile",
+					data: {
+//						mobeil: ,
+						'centers.id':$('#currentType').val(),
+						'consultants.id':num,
+					},
+					dataType: "json",
+					success: function(res) {
+						console.log(res)
+						if(res.ret==true){
+							alert('操作成功!')
+							GHUTILS.OPENPAGE({
+							url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
+							extras: {
+								}
+							})
+						}
+					}
+				});
 			})
 		}
 	}
