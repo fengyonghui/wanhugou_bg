@@ -244,7 +244,7 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
 
-        for (PurchaseOrderProcessConfig.PurchaseOrderProcess process : purchaseOrderProcessConfig.getProcessList()) {
+        for (com.wanhutong.backend.modules.config.parse.Process process : purchaseOrderProcessConfig.getProcessList()) {
             if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus)) {
                 poConfigValue.add(String.valueOf(process.getCode()));
             }
@@ -619,7 +619,7 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() != null && bizOrderHeaderTwo.getBizPoHeader().getCommonProcess() != null) {
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizOrderHeaderTwo.getBizPoHeader().getCommonProcess().getType()));
+            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizOrderHeaderTwo.getBizPoHeader().getCommonProcess().getType()));
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 

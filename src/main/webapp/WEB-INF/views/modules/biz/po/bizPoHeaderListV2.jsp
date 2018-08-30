@@ -32,9 +32,9 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
+		<li class="active"><a href="${ctx}/biz/po/bizPoHeader/listV2">采购订单列表</a></li>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/listV2" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
         <input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
@@ -85,9 +85,9 @@
 				</form:select>
 			</li>
 			<li><label>审核状态：</label>
-				<form:select path="commonProcess.type" class="input-medium">
+				<form:select path="processTypeStr" class="input-medium">
 					<form:option value="" label="请选择"/>
-					<form:options items="${processList}" itemLabel="name" itemValue="code" htmlEscape="false"/>
+					<form:options items="${processList}" htmlEscape="false"/>
 				</form:select>
 			</li>
             <li><label>测试数据</label>

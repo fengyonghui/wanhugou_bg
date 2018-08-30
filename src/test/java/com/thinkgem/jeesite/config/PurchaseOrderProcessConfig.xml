@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PurchaseOrderProcessConfig>
-    <defaultProcessId>1</defaultProcessId>
-    <orderHeaderDefaultProcessId>3</orderHeaderDefaultProcessId>
-    <payProcessId>10</payProcessId>
-    <endProcessId>-1</endProcessId>
+    <defaultProcessId>8</defaultProcessId>
+    <defaultNewProcessId>1</defaultNewProcessId>
+    <orderHeaderDefaultProcessId>10</orderHeaderDefaultProcessId>
+    <payProcessId>7</payProcessId>
 
     <!--流程节点-->
     <!--财务经理审批-->
@@ -11,30 +11,89 @@
         <name>待财务经理审批</name>
         <code>1</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <showFilter>true</showFilter>
+        <passCode>9</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>待采销部审批</name>
+        <code>8</code>
+        <roleEnNameEnum>PAYMENT_SPECIALIST_SUBMIT</roleEnNameEnum>
+        <showFilter>false</showFilter>
         <passCode>2</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <!--供货部-->
+    <process>
+        <name>待供货部负责人审批</name>
+        <code>2</code>
+        <roleEnNameEnum>PROVIDER_MANAGER</roleEnNameEnum>
+        <showFilter>false</showFilter>
+        <passCode>3</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <!--会计-->
+    <process>
+        <name>待财务经理审批</name>
+        <code>3</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <showFilter>false</showFilter>
+        <passCode>5</passCode>
         <rejectCode>-1</rejectCode>
     </process>
     <!--运营总监-->
     <process>
         <name>待运营总监审批</name>
-        <code>2</code>
+        <code>4</code>
         <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
-        <passCode>10</passCode>
+        <showFilter>false</showFilter>
+        <passCode>5</passCode>
         <rejectCode>-1</rejectCode>
     </process>
-    <!--财务经理审批-->
+    <!--总经理-->
+    <process>
+        <name>待运营总监或总经理审批</name>
+        <code>5</code>
+        <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
+        <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
+        <showFilter>false</showFilter>
+        <passCode>7</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <!--财会待付款-->
+    <process>
+        <name>财会待付款</name>
+        <code>6</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <showFilter>false</showFilter>
+        <passCode>7</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <!--支付完成-->
+    <!--运营总监-->
+    <process>
+        <name>待运营总监审批</name>
+        <code>9</code>
+        <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
+        <showFilter>true</showFilter>
+        <passCode>7</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <!--待财务经理审批-->
     <process>
         <name>待财务经理审批</name>
-        <code>3</code>
+        <code>10</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
-        <passCode>10</passCode>
+        <showFilter>true</showFilter>
+        <passCode>7</passCode>
         <rejectCode>-1</rejectCode>
     </process>
-    <!--审批完成-->
     <process>
         <name>审批完成</name>
-        <code>10</code>
+        <code>7</code>
         <roleEnNameEnum></roleEnNameEnum>
+        <showFilter>true</showFilter>
         <passCode>0</passCode>
         <rejectCode>0</rejectCode>
     </process>
@@ -43,6 +102,7 @@
         <name>驳回</name>
         <code>-1</code>
         <roleEnNameEnum></roleEnNameEnum>
+        <showFilter>true</showFilter>
         <passCode>0</passCode>
         <rejectCode>0</rejectCode>
     </process>

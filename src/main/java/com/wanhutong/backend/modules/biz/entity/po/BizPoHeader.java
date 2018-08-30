@@ -144,6 +144,20 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 */
 	private Date filteringDate;
 
+	/**
+	 * type 拼接字符串
+	 *
+	 * @return
+	 */
+	private String processTypeStr;
+
+	/**
+	 * type 拼接字符串
+	 *
+	 * @return
+	 */
+	private List<String> processTypeList;
+
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
 	}
@@ -593,5 +607,21 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setFilteringDate(Date filteringDate) {
 		this.filteringDate = filteringDate;
+	}
+
+	public String getProcessTypeStr() {
+		return processTypeStr;
+	}
+
+	public void setProcessTypeStr(String processTypeStr) {
+		this.processTypeStr = processTypeStr;
+	}
+
+	public List<String> getProcessTypeList() {
+		return processTypeList;
+	}
+
+	public void setProcessTypeList(List<String> processTypeList) {
+		this.processTypeList = processTypeList;
 	}
 }
