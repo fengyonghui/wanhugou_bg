@@ -26,6 +26,12 @@ public class Process {
     private List<String> roleEnNameEnum;
 
     /**
+     * 列表筛选过滤条件是否显示
+     */
+    @XStreamAlias("showFilter")
+    private String showFilter;
+
+    /**
      * 通过之后的状态
      */
     @XStreamAlias("passCode")
@@ -57,4 +63,7 @@ public class Process {
         return rejectCode;
     }
 
+    public String getShowFilter() {
+        return showFilter;
+    }
 }

@@ -308,7 +308,7 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        List<PurchaseOrderProcessConfig.PurchaseOrderProcess> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
 
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("processList", processList);
@@ -356,7 +356,7 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        List<PurchaseOrderProcessConfig.PurchaseOrderProcess> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
 
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("processList", processList);
@@ -390,7 +390,7 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        List<PurchaseOrderProcessConfig.PurchaseOrderProcess> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
 
         List<Map<String, Object>> resultList = Lists.newArrayList();
         List<BizPoHeader> list = page.getList();
@@ -433,7 +433,7 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
@@ -505,7 +505,7 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
