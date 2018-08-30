@@ -106,9 +106,9 @@
 				<label>供货方式：</label>
 		    	<div id="changeTxt" class="labelri" style="padding: 14px 8px;">
 		        	产地直发
-			        <input checked type="radio" name="apply" />
+			        <input checked type="radio" name="localOriginType" value="0" />
 			                本地备货
-	                <input id="yes" type="radio" name="apply" />
+	                <input id="yes" type="radio" name="localOriginType" value="1" />
 		    	</div>
 		    </div>
 			<div class="mui-input-row staCommodity">
@@ -186,14 +186,18 @@
 			</div>
 		</div>
 		<div id="staOrdCheckBtn" class="app_p20">
-		    <button id="checkBtn" type="submit" class="mui-btn mui-btn-blue">同意发货</button>
-			<button id="rejectBtn" type="submit" class="mui-btn mui-btn-blue">不同意发货</button>
+		    <button id="checkBtns" type="submit" class="mui-btn mui-btn-blue">同意发货</button>
+			<button id="rejectBtns" type="submit" class="mui-btn mui-btn-blue">不同意发货</button>
 		</div>
 		<div class="clear"></div>
 		
 		<input type="hidden" name="ordId" id="ordId"/>
 		<input type="hidden" name="flag" id="flag"/>
 		<input type="hidden" name="localSendIds" id="localSendIds"/>
+		<input type="hidden" name="provinceId" id="provinceId"/>
+		<input type="hidden" name="cityId" id="cityId"/>
+		<input type="hidden" name="regionId" id="regionId"/>
+		<input type="hidden" name="appointedTime" id="appointedTime"/>
 		<script src="../../../js/component/mui.min.js"></script>	
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>

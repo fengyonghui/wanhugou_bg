@@ -70,11 +70,15 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
+		            	$('#cosultasId').val(res.data.bcUser.consultants.id)
+		            	$('#officeId').val(res.data.bcUser.centers.id)
+		            	
 		          	    console.log(res)
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						var arrLen = res.data.resultData.length;						
                         if(arrLen > 0) {
                         $.each(res.data.resultData, function(i, item) {
+                        	$('#consultantsId').val(item.consultantsId)
                         	var userOfficeDeta = '';
 			                if(item.userOfficeDeta) {
 			                	userOfficeDeta = _this.formatDateTime(item.userOfficeDeta)
@@ -125,13 +129,11 @@
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+userOfficeDeta+' ">' +
 										'</div>' +
 										'<div class="app_font_cl content_part mui-row">' +
-											'<div class="staReMoveBtn" staListId="'+ item.id +'">' +
-												'<div class="mui-row">解除关联</div>' +
-											'</div>'+
+											'<div class="staReMoveBtn" customsId="'+item.customsId +'"  consultantsId="'+ item.consultantsId +'">解除关联</div>'+
 										'</div>' +
-										'<div class="app_font_cl content_part mui-row">' +
-											'<input type="hidden" id="hideul" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsId+' ">' +
-										'</div>' +
+//										'<div class="app_font_cl content_part mui-row">' +
+//											'<input type="hidden" id="hideul" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsId+' ">' +
+//										'</div>' +
 									'</div>'
 								});
 								$('#staReleList').html(staffHtmlList);
@@ -178,8 +180,8 @@
 		/*查询*/
 			$('.header').on('tap', '#staReleSechBtn', function() {
 				var url = $(this).attr('url');
-				var hideul=$('#hideul').val();
-				alert(hideul)
+				var consultantsIdTxt = $('#consultantsId').val();
+//				alert(hideul)
 
 				if(url) {
 					mui.toast('子菜单不存在')
@@ -187,7 +189,7 @@
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/relevanceHtml/relSech.html",
 						extras:{
-							hideul:hideul
+							consultantsIdTxt: consultantsIdTxt,
 						}
 					})
 				}
@@ -205,43 +207,50 @@
 		/*经销店添加*/
 			$('#nav').on('tap','.staRelAddBtn', function() {
 				var url = $(this).attr('url');
+				
+		            	
+		            	var cosultasIdTxt=$('#cosultasId').val()
+		            	var officeIdTxt=$('#officeId').val()
 				GHUTILS.OPENPAGE({
 					url: "../../../html/staffMgmtHtml/relevanceHtml/relAdd.html",
 					extras: {
-						
+						cosultasIdTxt:cosultasIdTxt,
+						officeIdTxt:officeIdTxt
 					}
 				})
 			}),
-		/*移除*/	
+		/*解除关联*/	
+//			$('.staReMoveBtn').on('tap',function(){
             $('.content').on('tap','.staReMoveBtn',function(){
             	var url = $(this).attr('url');
-				var staListId = $(this).attr('staListId');
-                if(url) {
-                	mui.toast('子菜单不存在')
-                }else if(staListId==staListId) {
-                	var btnArray = ['取消', '确定'];
-					mui.confirm('您确定要解除关联吗？', '系统提示！', btnArray, function(choice) {
-						if(choice.index == 1) {
-//							$.ajax({
-//				                type: "GET",
-//				                url: "",
-//				                data: {id:staListId},
-//				                dataType: "json",
-//				                success: function(res){
-//				                	alert('操作成功！')
-//				                	GHUTILS.OPENPAGE({
-//										url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
-//										extras: {
-//												staListId:staListId,
-//										}
-//									})
-//			                	}
-//			            	})
-						}else {
-							
-						}
-					})	
-                }
+				var customsId = $(this).attr('customsId');
+				var consultantsId = $(this).attr('consultantsId');
+            	var btnArray = ['取消', '确定'];
+				mui.confirm('您确定要解除关联吗？', '系统提示！', btnArray, function(choice) {
+					if(choice.index == 1) {
+						$.ajax({
+			                type: "GET",
+			                url: "/a/biz/custom/bizCustomCenterConsultant/delete4mobile",
+			                data: {
+			                	'customs.id': customsId ,
+			                	'consultants.id': consultantsId
+			                },
+			                dataType: "json",
+			                success: function(res){
+			                	console.log(res)
+			                	if(res.data == "ok") {
+			                		mui.toast("操作成功")
+			                		 window.setTimeout(function(){
+					                    _this.pageInit();
+					                },1000);
+			                		
+			                	}
+		                	}
+		            	})
+					}else {
+						
+					}
+				})	
 			})
         },
 		formatDateTime: function(unix) {
@@ -315,8 +324,8 @@
 				data: {
 					pageNo: 1,
 					'customs.id':_this.userInfo.customsId,
-					'consultants.id':$('#hideul').val(),
-//					'consultants.id':_this.userInfo.consultantsid,
+//					'consultants.id':$('#hideul').val(),
+					'consultants.id':_this.userInfo.sehConsultantsid,
 					'consultants.mobile':_this.userInfo.consultantsMobile
 				},
 				dataType: 'json',
@@ -326,55 +335,63 @@
 						var arrLen = res.data.resultData.length;						
                         if(arrLen > 0) {
                         $.each(res.data.resultData, function(i, item) {
-								staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
-									'<div class="mui-input-row">' +
-										'<label>采购中心:</label>' +
-										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.centersName+' ">' +
-									'</div>' +
-									'<div class="mui-input-row">' +
-										'<label>客户专员:</label>' +
-										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsName+' ">' +
-									'</div>' +
-									'<div class="mui-input-row">' +
-										'<label>电话:</label>' +
-										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsMobile+' ">' +
-									'</div>' +
-									'<div class="mui-input-row">' +
-										'<label>经销店名称:</label>' +
-										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.customsName +' ">' +
-									'</div>' +
-									'<div class="mui-input-row">' +
-										'<label>负责人:</label>' +
-										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customsPrimaryPersonName+' ">' +
-									'</div>' +
-		//							'<div class="mui-input-row">' +
-		//								'<label>详细地址:</label>' +
-		//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+varietyInfoName+' ">' +
-		//							'</div>' +
-									'<div class="mui-input-row">' +
-										'<label>采购频次:</label>' +
-										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.orderCount+' ">' +
-									'</div>' +
-		//							'<div class="mui-input-row">' +
-		//								'<label>累计金额:</label>' +
-		//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
-		//							'</div>' +
-		//							'<div class="mui-input-row">' +
-		//								'<label>首次开单:</label>' +
-		//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
-		//							'</div>' +
-									'<div class="app_font_cl content_part mui-row">' +
-//											'<div class="mui-col-xs-6">' +
-//											'</div>'+
-										'<div class="staReMoveBtn" staListId="'+ item.id +'">' +
-											'<div class="mui-row">移除</div>' +
-										'</div>'+
-									'</div>' +
-									'<div class="app_font_cl content_part mui-row">' +
-											'<input type="hidden" id="hideul" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsId+' ">' +
+							var userOfficeDeta = '';
+			                if(item.userOfficeDeta) {
+			                	userOfficeDeta = _this.formatDateTime(item.userOfficeDeta)
+			                }else {
+			                	userOfficeDeta = ''
+			                }
+			                var reAddress = '';
+			                if(item.userOfficeReceiveTotal) {
+			                	reAddress = item.provinceName + item.cityName + item.regionName + item.address
+			                }else {
+			                	reAddress = ''
+			                }
+									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
+										'<div class="mui-input-row">' +
+											'<label>采购中心:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.centersName+' ">' +
 										'</div>' +
-								'</div>'
-							});
+										'<div class="mui-input-row">' +
+											'<label>客户专员:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsName+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>电话:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsMobile+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>经销店名称:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.customsName +' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>负责人:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customsPrimaryPersonName+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>详细地址:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+reAddress+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>采购频次:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.orderCount+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>累计金额:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.userOfficeReceiveTotal+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>首次开单:</label>' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+userOfficeDeta+' ">' +
+										'</div>' +
+										'<div class="app_font_cl content_part mui-row">' +
+											'<div class="staReMoveBtn" customsId="'+item.customsId +'"  consultantsId="'+ item.consultantsId +'">解除关联</div>'+
+										'</div>' +
+//										'<div class="app_font_cl content_part mui-row">' +
+//											'<input type="hidden" id="hideul" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsId+' ">' +
+//										'</div>' +
+									'</div>'
+                        });
 							$('#staReleList').html(staffHtmlList);
 							_this.stHrefHtml()
 					} 

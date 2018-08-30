@@ -74,6 +74,7 @@
 		},
 		sureSelect:function(){
 			var _this = this;
+			var staListSehId = _this.userInfo.staListId;
 			_this.selectOpen = false
 //			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
 			var optionsClass = $("#input_div_orderStatus option").eq($("#input_div_orderStatus").attr("selectedIndex"));
@@ -85,6 +86,7 @@
 			GHUTILS.OPENPAGE({
 				url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
 				extras: {
+					staListSehId: staListSehId,
 					staOrder: $('#staOrderNum').val(),
 					Purchasing: $('#staOrdPurchasing').val(),
 					OrdMobile: $('#staOrdMobile').val(),

@@ -35,7 +35,6 @@
 			.mui-content li {padding: 0;list-style: none;height: 30px;}
  			.mui-input-group>p {height: 30px;line-height: 30px;text-indent: 15px;color: #000;background-color: #374761;color: #fff;font-size: 16px;}
  			.mui-table-view:before {background-color: #FFF;}
- 			.listBlue>div {border-bottom: 1px solid #40ABE9;}
  			.mui-input-group div.mui-input-row {background-color:#fff;}
  			.noneTxt {position: absolute;top: 50%;left: 50%;margin-left: -28px;}
  			.footClass {background-color: #40ABE9;}
@@ -61,8 +60,8 @@
 				<span class="mui-tab-label">客户专员列表</span>
 			</a>
 		</nav>
-		<div class="content mui-content mui-scroll-wrapper" id="refreshContainer">
-			<div class="listBlue mui-scroll">
+		<div class="content mui-content mui-scroll-wrapper" id="refreshContainer">			
+			<div class="mui-scroll">
 				<ul class="mui-table-view mui-table-view-chevron" id="staOrdList">
                         
                 </ul>
@@ -70,8 +69,9 @@
 		</div>
 		<input type="hidden" name="statu" id="statu"/>
 		<input type="hidden" name="source" id="source"/>
-		<input type="hidden" name="consultantId" id="consultantId"/>
+		<input type="text" name="consultantId" id="consultantId"/>
 		<input type="hidden" name="flag" id="flag"/>
+		<input type="hidden" name="staListIdTxt" id="staListIdTxt"/>
 		<script src="../../../js/component/mui.min.js"></script>	
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>

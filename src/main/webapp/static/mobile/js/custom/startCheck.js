@@ -63,7 +63,7 @@
 		comfirDialig: function() {
 			var _this = this;
 			var rejectBtn = document.getElementById("rejectBtn");
-			var prewStatus = -this.prew;
+			var prewStatus = _this.prew;
 			document.getElementById("rejectBtn").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回流程吗？', '系统提示！', btnArray, function(choice) {

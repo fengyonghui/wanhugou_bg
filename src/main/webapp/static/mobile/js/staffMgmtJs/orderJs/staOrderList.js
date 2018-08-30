@@ -23,6 +23,7 @@
 		pageInit: function() {
 			var _this = this;
 			
+			
 			var pager = {};//分页 
 		    var totalPage;//总页码
 		    pullRefresh(pager);//启用上拉下拉 
@@ -54,8 +55,11 @@
 				                }
 //				                console.log('222')
 //				                console.log(pager)
+//alert(pager.consultantId)
 				                $('#consultantId').val(pager.consultantId);
 				                $('#flag').val(pager.flag);
+				                
+//                               alert($('#consultantId').val())
 				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
 			            }
@@ -71,7 +75,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		          	    console.log(res)
+		          	    console.log(res)
 		          	    $.ajax({
 			                type: "GET",
 			                url: "/a/sys/dict/listData",
@@ -88,7 +92,7 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-//                      	console.log(item)
+                        	console.log(item)
 							$('#statu').val(item.statu);
 							$('#source').val(item.source);
                         	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
@@ -155,7 +159,7 @@
 //											'<label>业务状态:</label>' +
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center">' +
+										'<div class="app_font_cl content_part mui-row app_text_center hhh">' +
 											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
@@ -213,6 +217,7 @@
 			$('.header').on('tap', '#staOrdSechBtn', function() {
 				var url = $(this).attr('url');
 				var staListId = $('#consultantId').val();
+				alert(staListId)
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
@@ -245,10 +250,12 @@
 				})
 			}),
 		 /*待审核*/
-	       $('#staOrdList').on('tap', '.waitCheckBtn', function() {
+	       $('.hhh').on('tap', '.waitCheckBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdListId = $(this).attr('staOrdListId');
 				var flagTxt = $('#flag').val();
+				var staListIdTxts = $('#staListIdTxt').val();
+				console.log(staListIdTxts)
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdListId == staOrdListId) {
@@ -257,6 +264,7 @@
 						extras: {
 							staOrdListId: staOrdListId,
 							flagTxt: flagTxt,
+							staListIdTxt: staListIdTxts
 						}
 					})
 				}
@@ -371,10 +379,13 @@
                     'con.name': _this.userInfo.OrdClient,
                     'bizStatus': _this.userInfo.orderStatus,
                     'selectAuditStatus': nameTxt, //originConfigMap
-                    'customer.id':_this.userInfo.newinput
+                    'customer.id':_this.userInfo.newinput,
+//                  consultantId: _this.userInfo.staListSehId
 				},
 				dataType: 'json',
 				success: function(res) {
+					$('#staListIdTxt').val(_this.userInfo.staListSehId)
+//					console.log($('#staListIdTxt').val())
 					$.ajax({
 			                type: "GET",
 			                url: "/a/sys/dict/listData",
@@ -429,6 +440,7 @@
 				                }
 	                        	var staCheckSucBtn = '';
 	                        	var staCheckSuc = '';
+	                
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
 											'<label>订单编号:</label>' +
@@ -455,7 +467,7 @@
 //											'<label>业务状态:</label>' +
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center">' +
+										'<div class="app_font_cl content_part mui-row app_text_center hhh">' +
 											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
