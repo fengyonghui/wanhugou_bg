@@ -39,9 +39,9 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
         <input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
         <ul class="ul-form">
-			<li><label>采购单号</label>
-				<form:input path="orderNum" htmlEscape="false" maxlength="25" class="input-medium"/>
-			</li>
+			<%--<li><label>采购单号</label>--%>
+				<%--<form:input path="orderNum" htmlEscape="false" maxlength="25" class="input-medium"/>--%>
+			<%--</li>--%>
 			<li><span style="margin-left: 10px"><label>订单/备货清单编号</label></span>
 				<form:input path="num"  htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
@@ -104,7 +104,7 @@
 		<thead>
 			<tr>
 				<td>序号</td>
-				<th>采购单号</th>
+				<th>订单/备货单号</th>
 				<th>供应商</th>
 				<th>采购总价</th>
 				<%--<th>交易费用</th>--%>
@@ -124,7 +124,18 @@
 			<tr>
 				<td>${state.index+1}</td>
 				<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">
-					${bizPoHeader.orderNum}
+					<c:choose>
+						<c:when test="${bizPoHeader.bizOrderHeader!=null}">
+							${bizPoHeader.bizOrderHeader.orderNum}
+						</c:when>
+						<c:otherwise>
+							${bizPoHeader.bizRequestHeader.reqNo}
+						</c:otherwise>
+					</c:choose>
+					<c:if test="">
+
+					</c:if>
+
 				</a></td>
 				<td>
 					${bizPoHeader.vendOffice.name}
@@ -138,22 +149,9 @@
 				<td>
 					${bizPoHeader.totalDetail+bizPoHeader.totalExp}
 				</td>
-				<%--<td>--%>
-					<%--<c:if test="${bizPoHeader.totalDetail+bizPoHeader.totalExp == 0 || bizPoHeader.totalDetail+bizPoHeader.totalExp == ''}">0</c:if>--%>
-					<%--<c:if test="${bizPoHeader.totalDetail+bizPoHeader.totalExp > 0}">--%>
-						<%--<fmt:formatNumber value="${bizPoHeader.payTotal == 0 ? 0 : bizPoHeader.payTotal/(bizPoHeader.totalDetail+bizPoHeader.totalExp)*100}" pattern="0.00"/>%--%>
-					<%--</c:if>--%>
-				<%--</td>--%>
 				<td>
 						${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}
 				</td>
-				<%--<div style="display:none;">--%>
-					<%--<td style="display:none;">--%>
-						<%--<fmt:formatDate value="${bizPoHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>--%>
-				<%--</div>--%>
-				<%--<td>--%>
-					<%--${fns:getPlatFormName(bizPoHeader.plateformInfo.id, '未知平台')}--%>
-				<%--</td>--%>
 				<td>
 					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
@@ -184,37 +182,6 @@
 									</c:if>
 								</c:otherwise>
 							</c:choose>
-							<%--<c:if test="${bizPoHeader.schedulingType == 0}">--%>
-								<%--<c:choose>--%>
-									<%--<c:when test="${bizPoHeader.poSchType == 0}">--%>
-										<%--${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}--%>
-									<%--</c:when>--%>
-									<%--<c:otherwise>--%>
-										<%--<c:if test="${bizPoHeader.poSchType == 1}">--%>
-											<%--${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}--%>
-										<%--</c:if>--%>
-										<%--<c:if test="${bizPoHeader.poSchType == 2}">--%>
-											<%--${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}--%>
-										<%--</c:if>--%>
-									<%--</c:otherwise>--%>
-								<%--</c:choose>--%>
-							<%--</c:if>--%>
-
-							<%--<c:if test="${bizPoHeader.schedulingType == 1}">--%>
-								<%--<c:choose>--%>
-									<%--<c:when test="${bizPoHeader.totalSchedulingDetailNum == null || bizPoHeader.totalSchedulingDetailNum == 0}">--%>
-										<%--${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}--%>
-									<%--</c:when>--%>
-									<%--<c:otherwise>--%>
-										<%--<c:if test="${bizPoHeader.totalOrdQty != bizPoHeader.totalSchedulingDetailNum}">--%>
-											<%--${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}--%>
-										<%--</c:if>--%>
-										<%--<c:if test="${bizPoHeader.totalOrdQty == bizPoHeader.totalSchedulingDetailNum}">--%>
-											<%--${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}--%>
-										<%--</c:if>--%>
-									<%--</c:otherwise>--%>
-								<%--</c:choose>--%>
-							<%--</c:if>--%>
 						</c:otherwise>
 					</c:choose>
 					</c:if>
