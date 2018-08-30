@@ -321,6 +321,21 @@ public class UserController extends BaseController {
 		return list;
 	}
 
+    @RequestMapping(value = "getAdvisers4mobile")
+    @ResponseBody
+    public String getAdvisers4mobile(User user, HttpServletRequest request, HttpServletResponse response, Model model){
+        List<User> list;
+        if(user.getOffice().getId() == null){
+            list = new ArrayList<>();
+        }else{
+            Role role = new Role();
+            role.setId(Integer.valueOf(DictUtils.getDictValue("角色", "sys_user_role_adviser","")));
+            user.setRole(role);
+            list = systemService.selectUserByOfficeId(user);
+        }
+        return JsonUtil.generateData(list, request.getParameter("callback"));
+    }
+
 	@RequiresPermissions("sys:user:edit")
 	@RequestMapping(value = "save")
 	public String save(User user, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
