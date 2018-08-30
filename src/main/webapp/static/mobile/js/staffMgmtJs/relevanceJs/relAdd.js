@@ -49,7 +49,8 @@
 					'office.id': _this.userInfo.officeIdTxt,
 				},
 				dataType: 'json',
-				success: function(res) {										
+				success: function(res) {	
+					console.log(res)
 					htmlBusiness = '<option class="soption"  value="' + res.data.office.name + '">' + res.data.office.name + '</option>'
 					$('#cosultasName').html(htmlBusiness);
 					htmloffice = '<option class="soption"  value="' + res.data.office.office.id + '">' + res.data.office.office.name + '</option>'
@@ -68,23 +69,24 @@
 			$('#officeName').on('change',function(){
 				alert($(this).val())
 				 $("#cosultasName").html("");
-				 $("#cosultasName").append("<option value='' selected = 'selected'>==请选择客户专员==</option>");
-//				if($(this).val()!= null && $(this).val() !=undefined && $(this).val().trim() != ""){
-//					 $.ajax({
-//						url:"${ctx}/sys/user/getAdvisers",
-//						data:{"office.id":$(this).val()},
-//						type:"POST",
-//						dataType:'json',
-//						success:function(data){
-//							for(var i =0;i<data.length;i++){
-//								$("#cosultasName").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
-//							}
-//						},
-//						error:function(er){
-//							alert("查询失败");
-//						}
-//					});
-//				}
+				 $("#cosultasName").append("<option value='' selected = 'selected'>请选择客户专员</option>");
+				if($(this).val()!= null && $(this).val() !=undefined && $(this).val().trim() != ""){
+					 $.ajax({
+						url:"/a/sys/user/getAdvisers4mobile",
+						data:{"office.id":$(this).val()},
+						type:"POST",
+						dataType:'json',
+						success:function(data){
+							console.log(data)
+							for(var i =0;i<data.length;i++){
+								$("#cosultasName").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+							}
+						},
+						error:function(er){
+							alert("查询失败");
+						}
+					});
+				}
 			})
 		}
 	}
