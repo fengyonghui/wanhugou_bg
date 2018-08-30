@@ -66,4 +66,28 @@ public class Process {
     public String getShowFilter() {
         return showFilter;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public void setRoleEnNameEnum(List<String> roleEnNameEnum) {
+        this.roleEnNameEnum = roleEnNameEnum;
+    }
+
+    public void setShowFilter(String showFilter) {
+        this.showFilter = showFilter;
+    }
+
+    public void setPassCode(int passCode) {
+        this.passCode = passCode;
+    }
+
+    public void setRejectCode(int rejectCode) {
+        this.rejectCode = rejectCode;
+    }
 }

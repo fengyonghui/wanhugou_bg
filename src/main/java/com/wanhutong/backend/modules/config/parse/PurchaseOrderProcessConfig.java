@@ -49,6 +49,10 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
      */
     private Map<Integer, Process> processMap;
     /**
+     * 数据MAP
+     */
+    private Map<String, List<Process>> nameProcessMap;
+    /**
      * 过滤条件显示
      */
     private Map<Integer, Process> showFilterProcessMap;
@@ -58,13 +62,18 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
         PurchaseOrderProcessConfig purchaseOrderProcessConfig = XmlUtils.fromXml(content);
         purchaseOrderProcessConfig.processMap = Maps.newHashMap();
         purchaseOrderProcessConfig.showFilterProcessMap = Maps.newHashMap();
+        purchaseOrderProcessConfig.nameProcessMap = Maps.newHashMap();
         purchaseOrderProcessConfig.showFilterProcessList = Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(purchaseOrderProcessConfig.processList)) {
             for (Process e : purchaseOrderProcessConfig.processList) {
                 purchaseOrderProcessConfig.processMap.put(e.getCode(), e);
+                List<Process> processes = purchaseOrderProcessConfig.nameProcessMap.putIfAbsent(e.getName(), Lists.newArrayList(e));
+                if (CollectionUtils.isNotEmpty(processes)) {
+                    processes.add(e);
+                }
                 if (Boolean.valueOf(e.getShowFilter())) {
                     purchaseOrderProcessConfig.showFilterProcessMap.put(e.getCode(), e);
-                    showFilterProcessList.add(e);
+                    purchaseOrderProcessConfig.showFilterProcessList.add(e);
                 }
             }
         }
@@ -95,6 +104,10 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
 
     public List<Process> getShowFilterProcessList() {
         return showFilterProcessList;
+    }
+
+    public Map<String, List<Process>> getNameProcessMap() {
+        return nameProcessMap;
     }
 
     /**

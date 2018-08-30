@@ -11,7 +11,7 @@
         <name>待财务经理审批</name>
         <code>1</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
-        <showFilter>false</showFilter>
+        <showFilter>true</showFilter>
         <passCode>9</passCode>
         <rejectCode>-1</rejectCode>
     </process>
@@ -76,7 +76,7 @@
         <name>待运营总监审批</name>
         <code>9</code>
         <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
-        <showFilter>false</showFilter>
+        <showFilter>true</showFilter>
         <passCode>7</passCode>
         <rejectCode>-1</rejectCode>
     </process>
@@ -85,7 +85,7 @@
         <name>待财务经理审批</name>
         <code>10</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
-        <showFilter>false</showFilter>
+        <showFilter>true</showFilter>
         <passCode>7</passCode>
         <rejectCode>-1</rejectCode>
     </process>
