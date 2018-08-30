@@ -282,6 +282,85 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	}
 
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
+	@RequestMapping(value = {"list4MobileNew"})
+	@ResponseBody
+	public String list4MobileNew(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		User user = UserUtils.getUser();
+		List<String> enNameList = Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(user.getRoleList())) {
+			for (Role role : user.getRoleList()) {
+				enNameList.add(role.getEnname());
+			}
+		}
+
+		Map<Integer, PurchaseOrderProcessConfig.PurchaseOrderProcess> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
+		Integer currentCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getDefaultNewProcessId();
+		Integer lastCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId();
+		Map<String,Integer> poMap = new LinkedHashMap<>();
+		Set<String> processSet = new HashSet<>();
+		while (true) {
+			PurchaseOrderProcessConfig.PurchaseOrderProcess current = purMap.get(currentCode);
+			PurchaseOrderProcessConfig.PurchaseOrderProcess next = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPassProcess(current);
+			poMap.put(current.getName(),currentCode);
+			processSet.add(current.getName());
+			if (lastCode.equals(currentCode)) {
+				break;
+			}
+			currentCode = next.getCode();
+		}
+		Map<Integer, RequestOrderProcessConfig.RequestOrderProcess> reqMap = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap;
+		Map<String,Integer> requestMap = new LinkedHashMap<>();
+
+
+		for (Map.Entry<Integer,RequestOrderProcessConfig.RequestOrderProcess> map : reqMap.entrySet()) {
+			requestMap.put(map.getValue().getName(),map.getKey());
+			processSet.add(map.getValue().getName());
+		}
+		requestMap.remove("审核完成");
+		requestMap.remove("驳回");
+		processSet.remove("审核完成");
+		poMap.remove("驳回");
+		if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && requestMap.get(bizRequestHeader.getProcess()) != null) {
+			bizRequestHeader.setReqCode(requestMap.get(bizRequestHeader.getProcess()));
+		} else if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && poMap.get(bizRequestHeader.getProcess()) != null){
+			bizRequestHeader.setPoCode(poMap.get(bizRequestHeader.getProcess()));
+		}
+		String dataFrom = "biz_request_bizRequestHeader";
+		bizRequestHeader.setDataFrom(dataFrom);
+		Page<BizRequestHeader> page = bizRequestHeaderForVendorService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
+		model.addAttribute("page", page);
+		resultMap.put("page",page);
+		//品类名称
+		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
+		List<Role> roleList = user.getRoleList();
+		Set<String> roleSet = Sets.newHashSet();
+		if (CollectionUtils.isNotEmpty(roleList)) {
+			for (Role r : roleList) {
+				RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+				if (parse != null) {
+					roleSet.add(parse.name());
+				}
+			}
+		}
+
+		model.addAttribute("processSet",processSet);
+		model.addAttribute("roleSet",roleSet);
+		model.addAttribute("varietyInfoList", varietyInfoList);
+		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
+		model.addAttribute("vendAuditStatus",ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
+
+		resultMap.put("processSet",processSet);
+		resultMap.put("roleSet",roleSet);
+		resultMap.put("varietyInfoList",varietyInfoList);
+		resultMap.put("auditStatus",ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
+		resultMap.put("vendAuditStatus",ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
+
+		//return "modules/biz/request/bizRequestHeaderForVendorList";
+		return JsonUtil.generateData(resultMap, null);
+	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "form")
 	public String form(BizRequestHeader bizRequestHeader, Model model) {
 		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
