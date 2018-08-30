@@ -245,7 +245,6 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         for (PurchaseOrderProcessConfig.PurchaseOrderProcess process : purchaseOrderProcessConfig.getProcessList()) {
-            originConfigMap.put(process.getName(), process.getName());
             if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus)) {
                 poConfigValue.add(String.valueOf(process.getCode()));
             }
