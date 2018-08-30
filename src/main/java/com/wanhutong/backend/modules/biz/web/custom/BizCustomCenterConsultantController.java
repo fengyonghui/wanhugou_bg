@@ -214,6 +214,7 @@ public class BizCustomCenterConsultantController extends BaseController {
             userBcc.setId(user.getId());
             centersCust.setConsultants(userBcc);//客户专员
             model.addAttribute("bcUser", centersCust);
+            jsonResuleMap.put("bcUser", centersCust);
             if (ordrHeaderStartTime != null) {
                 centersCust.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
             }
