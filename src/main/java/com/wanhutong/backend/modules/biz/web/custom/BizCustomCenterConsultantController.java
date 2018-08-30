@@ -443,7 +443,7 @@ public class BizCustomCenterConsultantController extends BaseController {
         } catch (Exception e) {
             logger.error("删除客户专员失败", e);
         }
-        return message;
+        return JsonUtil.generateData(message, null);
     }
 
 }
