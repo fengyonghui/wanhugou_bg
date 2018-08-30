@@ -179,7 +179,7 @@
 			$('.header').on('tap', '#staReleSechBtn', function() {
 				var url = $(this).attr('url');
 				var hideul=$('#hideul').val();
-//				alert(hideul)
+				alert(hideul)
 
 				if(url) {
 					mui.toast('子菜单不存在')
@@ -308,14 +308,14 @@
 //			}else {
 //				nameTxt = ''
 //			}
-//          alert($('#consultantsid').val())
+//          alert($('#hideul').val())
 			$.ajax({
 				type: 'GET',
 				url: '/a/biz/custom/bizCustomCenterConsultant/listData4mobile',
 				data: {
 					pageNo: 1,
-					'customs.id':_this.userInfo.customsName,
-					'consultants.id':$('#consultantsid').val(),
+					'customs.id':_this.userInfo.customsId,
+					'consultants.id':$('#hideul').val(),
 //					'consultants.id':_this.userInfo.consultantsid,
 					'consultants.mobile':_this.userInfo.consultantsMobile
 				},
@@ -370,6 +370,9 @@
 											'<div class="mui-row">移除</div>' +
 										'</div>'+
 									'</div>' +
+									'<div class="app_font_cl content_part mui-row">' +
+											'<input type="hidden" id="hideul" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsId+' ">' +
+										'</div>' +
 								'</div>'
 							});
 							$('#staReleList').html(staffHtmlList);
