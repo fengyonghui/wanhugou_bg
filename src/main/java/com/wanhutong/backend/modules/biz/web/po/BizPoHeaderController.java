@@ -319,6 +319,54 @@ public class BizPoHeaderController extends BaseController {
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:view")
+    @RequestMapping(value = {"listV2", ""})
+    public String listV2(BizPoHeader bizPoHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (roleList.contains(role)) {
+            bizPoHeader.setVendOffice(user.getCompany());
+        }
+        try {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
+            Date date = df.parse(filteringDate);
+            bizPoHeader.setFilteringDate(date);
+        } catch (ParseException e) {
+            LOGGER.error("日期解析失败",e);
+        }
+
+        String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
+        try {
+            Date parse = SimpleDateFormat.getInstance().parse(filteringDate);
+            bizPoHeader.setFilteringDate(parse);
+        } catch (ParseException e) {
+            LOGGER.error("po list parse data error", e);
+        }
+
+        Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<BizPoHeader>(request, response), bizPoHeader);
+        Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
+            }
+        }
+
+        List<PurchaseOrderProcessConfig.PurchaseOrderProcess> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+
+        model.addAttribute("roleSet", roleSet);
+        model.addAttribute("processList", processList);
+        model.addAttribute("roleEnNameSet", roleEnNameSet);
+        model.addAttribute("page", page);
+        model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
+        return "modules/biz/po/bizPoHeaderListV2";
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = {"listData4Mobile"})
     @ResponseBody
     public String listData4Mobile(BizPoHeader bizPoHeader, @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo, HttpServletRequest request, HttpServletResponse response) {
