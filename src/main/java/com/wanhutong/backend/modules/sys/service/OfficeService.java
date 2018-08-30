@@ -724,4 +724,12 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     }
 
 
+    public List<String> getCustParentIdByVendorId(Integer vendorId) {
+        return dao.getCustParentIdByVendorId(vendorId);
+    }
+    public List<String> getCustIdByVendorId(Integer vendorId) {
+        return dao.getCustIdByVendorId(vendorId);
+    }
+
+
 }
