@@ -49,31 +49,44 @@
 					'office.id': _this.userInfo.officeIdTxt,
 				},
 				dataType: 'json',
-				success: function(res) {
-										
+				success: function(res) {										
 					htmlBusiness = '<option class="soption"  value="' + res.data.office.name + '">' + res.data.office.name + '</option>'
 					$('#cosultasName').html(htmlBusiness);
-					htmloffice = '<option class="soption"  value="' + res.data.office.office.name + '">' + res.data.office.office.name + '</option>'
+					htmloffice = '<option class="soption"  value="' + res.data.office.office.id + '">' + res.data.office.office.name + '</option>'
 					$('#officeName').html(htmloffice);
-
-//$('#officeName').on('tap',function(){
-//alert(1)
-//});
 					$.each(res.data.officeList,function(i,item){
-						console.log(res.data.bcc.centers.id)
-//						console.log(item)
-//						var aa = '';
-//						if(item.id==res.data.bcc.centers.id){
-//							htmloffice = '<option class="soption"  value="' + res.data.office.office.name + '">' + res.data.office.office.name + '</option>'
-//						}
-		                 htmloffice += '<option class="soption"  value="' + item.name + '">' + item.name + '</option>'
-		                
+						console.log(item)
+		                 htmloffice += '<option class="soption"  value="' + item.id + '">' + item.name + '</option>'                                                                                                	              	
 					});
 					 $('#officeName').html(htmloffice); 
+					  _this.officeNamechoice();
 				}
 			});
 			
 		},
+		officeNamechoice:function(){
+			$('#officeName').on('change',function(){
+				alert($(this).val())
+				 $("#cosultasName").html("");
+				 $("#cosultasName").append("<option value='' selected = 'selected'>==请选择客户专员==</option>");
+//				if($(this).val()!= null && $(this).val() !=undefined && $(this).val().trim() != ""){
+//					 $.ajax({
+//						url:"${ctx}/sys/user/getAdvisers",
+//						data:{"office.id":$(this).val()},
+//						type:"POST",
+//						dataType:'json',
+//						success:function(data){
+//							for(var i =0;i<data.length;i++){
+//								$("#cosultasName").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+//							}
+//						},
+//						error:function(er){
+//							alert("查询失败");
+//						}
+//					});
+//				}
+			})
+		}
 	}
 	$(function() {
 
