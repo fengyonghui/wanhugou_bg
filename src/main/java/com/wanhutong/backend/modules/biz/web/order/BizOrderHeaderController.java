@@ -538,6 +538,7 @@ public class BizOrderHeaderController extends BaseController {
         boolean flag = false;
         User user = UserUtils.getUser();
         if (user.getRoleList() != null) {
+
             for (Role role : user.getRoleList()) {
                 if (RoleEnNameEnum.FINANCE.getState().equals(role.getEnname())) {
                     flag = true;
