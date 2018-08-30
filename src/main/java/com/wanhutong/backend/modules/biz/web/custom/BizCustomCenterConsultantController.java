@@ -429,18 +429,28 @@ public class BizCustomCenterConsultantController extends BaseController {
     @RequestMapping(value = "save4mobile")
     @ResponseBody
     public String save4mobile(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model, String phone) {
-        List<Office> officeList = officeService.getImgTreeListByPhone(OfficeTypeEnum.CUSTOMER.getType(), "con", phone);
         Office customs = new Office();
-        if (officeList != null) {
-            Integer customsId = officeList.get(0).getId();
-            customs.setId(customsId);
+        String result = "0";
+        if (StringUtils.isNotBlank(phone)) {
+            List<Office> officeList = officeService.getImgTreeListByPhone(OfficeTypeEnum.CUSTOMER.getType(), "con", phone);
+
+            if (officeList != null) {
+                Integer customsId = officeList.get(0).getId();
+                customs.setId(customsId);
+            }
         }
         bizCustomCenterConsultant.setCustoms(customs);
         if (bizCustomCenterConsultant == null || bizCustomCenterConsultant.getCustoms() == null || bizCustomCenterConsultant.getConsultants() == null) {
-            return "0";
+            return result;
         }
-        bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
-        return "1";
+
+        try {
+            bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
+            result = "1";
+        } catch (Exception e) {
+            logger.error("通过电话号码关联经销店失败", e);
+        }
+        return result;
     }
 
     @RequiresPermissions("biz:custom:bizCustomCenterConsultant:edit")
