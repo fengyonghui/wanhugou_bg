@@ -356,6 +356,14 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		resultMap.put("auditStatus",ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 		resultMap.put("vendAuditStatus",ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
+		//常量值添加到json结果集
+		resultMap.put("approveState",ReqHeaderStatusEnum.APPROVE.getState());
+		resultMap.put("closeState",ReqHeaderStatusEnum.CLOSE.getState());
+		resultMap.put("inReviewState",ReqHeaderStatusEnum.IN_REVIEW.getState());
+		resultMap.put("vendAllPayState",ReqHeaderStatusEnum.VEND_ALL_PAY.getState());
+
+		resultMap.put("poType",PoPayMentOrderTypeEnum.PO_TYPE.getType());
+
 		//return "modules/biz/request/bizRequestHeaderForVendorList";
 		return JsonUtil.generateData(resultMap, null);
 	}
