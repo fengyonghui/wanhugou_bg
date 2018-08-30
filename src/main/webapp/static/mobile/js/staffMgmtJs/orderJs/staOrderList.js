@@ -22,8 +22,6 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			
-			
 			var pager = {};//分页 
 		    var totalPage;//总页码
 		    pullRefresh(pager);//启用上拉下拉 
@@ -53,13 +51,9 @@
 				                for(var i = childs.length - 1; i >= 0; i--) {
 				                    f.removeChild(childs[i]);
 				                }
-//				                console.log('222')
-//				                console.log(pager)
-//alert(pager.consultantId)
 				                $('#consultantId').val(pager.consultantId);
 				                $('#flag').val(pager.flag);
 				                
-//                               alert($('#consultantId').val())
 				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
 			            }
@@ -93,6 +87,7 @@
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
                         	console.log(item)
+                        	$('#consultantIda').val(item.consultantId);
 							$('#statu').val(item.statu);
 							$('#source').val(item.source);
                         	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
@@ -160,16 +155,16 @@
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center hhh">' +
-											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdListId="'+ item.id +'">' +
+											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
-//											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
+//											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
 //												'<li class="mui-table-view-cell">出库确认</li>' +
 //											'</div>'+
-//											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
+//											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
 //												'<li class="mui-table-view-cell">审核成功</li>' +
 //											'</div>'+
-											'<div class="mui-col-xs-6 staOrDetailBtn" staOrdListId="'+ item.id +'">' +
+											'<div class="mui-col-xs-6 staOrDetailBtn" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">详情</li>' +
 											'</div>'+
 										'</div>' +
@@ -217,7 +212,6 @@
 			$('.header').on('tap', '#staOrdSechBtn', function() {
 				var url = $(this).attr('url');
 				var staListId = $('#consultantId').val();
-				alert(staListId)
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
@@ -252,49 +246,57 @@
 		 /*待审核*/
 	       $('.hhh').on('tap', '.waitCheckBtn', function() {
 				var url = $(this).attr('url');
-				var staOrdListId = $(this).attr('staOrdListId');
+				var staOrdId = $(this).attr('staOrdId');//订单 ID
 				var flagTxt = $('#flag').val();
-				var staListIdTxts = $('#staListIdTxt').val();
+				var staListIdTxts = $('#staListIdTxt').val();//查询出来的客户专员 ID
+				var consultantIda = $('#consultantIda').val();//客户专员 ID
+				var stcheckIdTxt = '';
+				if(staListIdTxts) {
+					stcheckIdTxt = staListIdTxts
+				}
+				if(consultantIda) {
+					stcheckIdTxt = consultantIda
+				}
 				console.log(staListIdTxts)
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(staOrdListId == staOrdListId) {
+				} else if(staOrdId == staOrdId) {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdCheck.html",
 						extras: {
-							staOrdListId: staOrdListId,
+							staOrdId: staOrdId,
 							flagTxt: flagTxt,
-							staListIdTxt: staListIdTxts
+							stcheckIdTxt: stcheckIdTxt,
 						}
 					})
 				}
 			}),
 		/*修改*/
-	       $('.listBlue').on('tap', '.staOraAmendBtn', function() {
+	       $('.hhh').on('tap', '.staOraAmendBtn', function() {
 				var url = $(this).attr('url');
-				var staOrdListId = $(this).attr('staOrdListId');
+				var staOrdId = $(this).attr('staOrdId');
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(staOrdListId == staOrdListId) {
+				} else if(staOrdId == staOrdId) {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdAmend.html",
 						extras: {
-							staOrdListId: staOrdListId,
+							staOrdId: staOrdId,
 						}
 					})
 				}
 			}),	
 		/*详情*/
-			$('.listBlue').on('tap', '.staOrDetailBtn', function() {
+			$('.hhh').on('tap', '.staOrDetailBtn', function() {
 				var url = $(this).attr('url');
-				var staOrdListId = $(this).attr('staOrdListId');
+				var staOrdId = $(this).attr('staOrdId');
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(staOrdListId == staOrdListId) {
+				} else if(staOrdId == staOrdId) {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdDetail.html",
 						extras: {
-							staOrdListId: staOrdListId,
+							staOrdId: staOrdId,
 						}
 					})
 				}
@@ -384,7 +386,7 @@
 				},
 				dataType: 'json',
 				success: function(res) {
-					$('#staListIdTxt').val(_this.userInfo.staListSehId)
+					$('#staListIdTxt').val(_this.userInfo.staListSehId)//查询出来的客户专员 ID
 //					console.log($('#staListIdTxt').val())
 					$.ajax({
 			                type: "GET",
@@ -468,13 +470,13 @@
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center hhh">' +
-											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdListId="'+ item.id +'">' +
+											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
-//											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
+//											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
 //												'<li class="mui-table-view-cell">出库确认</li>' +
 //											'</div>'+
-//											'<div class="mui-col-xs-3"  staOrdListId="'+ item.id +'">' +
+//											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
 //												'<li class="mui-table-view-cell">审核成功</li>' +
 //											'</div>'+
 											'<div class="mui-col-xs-6 staOrDetailBtn" staOrdListId="'+ item.id +'">' +

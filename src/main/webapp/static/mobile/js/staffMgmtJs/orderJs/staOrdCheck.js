@@ -22,7 +22,7 @@
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
                 data: {
-                	id: _this.userInfo.staOrdListId,
+                	id: _this.userInfo.staOrdId,
                 	orderDetails: 'details',
 	                flag: _this.userInfo.flagTxt
                 },
@@ -49,7 +49,7 @@
 						$('#staPayMoney').val();
 					}
 					//订单id
-					$('#ordId').val(_this.userInfo.staOrdListId);
+					$('#ordId').val(_this.userInfo.staOrdId);
 					
 					
 					
@@ -305,24 +305,9 @@
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
-						
-//						var btnArray = ['取消', '确定'];
-//						mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
-//							if(a.index == 1) {
-//								var rejectTxt = a.value;
-////								console.log(rejectTxt)
-//								if(a.value=='') {
-//									mui.toast('驳货理由不能为空！')
-//								}else {
-//									_this.rejectData(rejectTxt,2)
-//								}
-//							} else {
-//								//		            info.innerText = '你点了取消按钮';
-//							}
-//						})
-//						//		            info.innerText = '你刚确认MUI是个好框架';
+						_this.ajaxData(0)
 					} else {
-						//		            info.innerText = 'MUI没有得到你的认可，继续加油'
+						
 					}
 				})
 			});
@@ -331,44 +316,24 @@
 				var btnArray = ['否', '是'];
 				mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
-		//								console.log(inText)
-						_this.ajaxData()
+//								console.log(inText)
+						_this.ajaxData(1)
 					} else {
-						//		            info.innerText = '你点了取消按钮';
+						
 					}
-	//				var btnArray = ['取消', '确定'];
-	//				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
-	//					if(e.index == 1) {
-	//						var inText = e.value;
-	//						if(e.value=='') {
-	//							mui.toast('通过理由不能为空！')
-	//							return;
-	//						}else {
-	//							
-	//						})
-	//						}
-	//
-	//						//		            info.innerText = '你刚确认MUI是个好框架';
-	//					} else {
-	//						//		            info.innerText = 'MUI没有得到你的认可，继续加油'
-	//					}
 				})
 			});
-//			alert("操作成功")
 		},
-
-		ajaxData:function() {
-			
+		ajaxData:function(num) {
 			var _this = this;
 			var r2 = document.getElementsByName("localOriginType");
-                var localOriginType = "";
-                for (var i = 0; i < r2.length; i++) {
-                    if (r2[i].checked == true) {
-                        localOriginType = r2[i].value;
-                    }
+            var localOriginType = "";
+            for (var i = 0; i < r2.length; i++) {
+                if (r2[i].checked == true) {
+                    localOriginType = r2[i].value;
+                }
             }
             console.log(localOriginType)
-				
 			$.ajax({
 				type: "POST",
 				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
@@ -387,7 +352,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					var stcheckIdTxt = _this.userInfo.staListIdTxt;
+					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;
 					console.log(res)
 					if(res.data=='ok'){
 						alert('操作成功!')
@@ -404,10 +369,8 @@
 //				    console.info(data);
 //				    console.info(status);
 				    console.info(e);
-				    
 				}
 			});
-			
 		},
 		rejectData:function(rejectTxt,num) {
 			var _this = this;
@@ -431,14 +394,10 @@
 							}
 						})
 					}
-					
 				}
 			});
-			
 		},
-		
 		formatDateTime: function(unix) {
-
     		var now = new Date(parseInt(unix) * 1);
 	        now =  now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
 	        if(now.indexOf("下午") > 0) {
@@ -492,22 +451,6 @@
 	        }
 	        return now;
 		}
-		//			var data = _this.getData()
-//			console.log(data)
-//			$('#ordNum').val(data.bizOrderHeader.orderNumber)
-//			if(data.bizOrderHeader.orderNumber){
-//				
-//			}
-//			$.each(data.bizOrderHeader.orderNumber, function(i, item) {
-//						console.log(item.orderNumber)
-//                       var orderNumber = item.orderNumber;
-//					$('#ordNum').html(orderNumber)
-////                        htmlList += 
-//			});
-////		                    $('#htmlMenu').html(htmlList)
-//		}
-							
-		
 	}
 	$(function() {
 

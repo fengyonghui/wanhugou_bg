@@ -22,7 +22,7 @@
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
                 data: {
-                	id:_this.userInfo.staOrdListId,
+                	id:_this.userInfo.staOrdId,
                 	orderDetails: 'details',
                 },
                 dataType: "json",

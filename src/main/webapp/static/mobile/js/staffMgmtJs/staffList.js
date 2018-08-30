@@ -172,6 +172,7 @@
 					GHUTILS.OPENPAGE({
 						url: "../../html/staffMgmtHtml/staSearch.html",
 						extras:{
+							
 						}
 					})
 				}
