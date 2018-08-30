@@ -305,7 +305,7 @@
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
-						_this.ajaxData(0)
+						_this.ajaxData(15)
 					} else {
 						
 					}
@@ -317,7 +317,7 @@
 				mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
 //								console.log(inText)
-						_this.ajaxData(1)
+						_this.ajaxData(45)
 					} else {
 						
 					}
@@ -334,13 +334,11 @@
                 }
             }
             console.log(localOriginType)
-			$.ajax({
-				type: "POST",
-				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
-				data: {
+            if(num==15){
+            	datas: {
 					id:$('#ordId').val(),
 					flag:$('#flag').val(),
-					objJsp:15,
+					objJsp:num,
 					'bizLocation.address':$('#staDateilAddress').val(),
 					'bizLocation.appointedTime': $('#appointedTime').val(),
 					localSendIds: $('#localSendIds').val(),
@@ -349,7 +347,26 @@
 					'bizLocation.region.id': $('#regionId').val(),
 					boo: _this.prew,
 					localOriginType:localOriginType
-				},
+				}
+            }
+            if(num==45){
+            	datas: {
+					id:$('#ordId').val(),
+					flag:$('#flag').val(),
+					objJsp:num,
+					'bizLocation.address':$('#staDateilAddress').val(),
+					'bizLocation.appointedTime': $('#appointedTime').val(),
+					localSendIds: $('#localSendIds').val(),
+					'bizLocation.province.id': $('#provinceId').val() ,
+					'bizLocation.city.id': $('#cityId').val(), 
+					'bizLocation.region.id': $('#regionId').val(),
+					localOriginType:localOriginType
+				}
+            }
+			$.ajax({
+				type: "POST",
+				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
+				data: datas,
 				dataType: "json",
 				success: function(res) {
 					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;

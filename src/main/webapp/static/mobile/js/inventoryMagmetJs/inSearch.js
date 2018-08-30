@@ -168,7 +168,7 @@
 			var htmlClass = '';
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/request/bizRequestHeader/list4Mobile',
+				url: '/a/biz/request/bizRequestHeaderForVendor/list4MobileNew',
 				data: {consultantId: _this.userInfo.staListId},
 				dataType: 'json',
 				success: function(res) {

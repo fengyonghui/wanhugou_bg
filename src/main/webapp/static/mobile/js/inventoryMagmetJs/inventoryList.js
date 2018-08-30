@@ -66,10 +66,9 @@
 			        }
 			    })
 		    }
-		    
 		    function getData(params){
 		    	var inPHtmlList = '';
-		        mui.ajax("/a/biz/request/bizRequestHeader/list4Mobile",{
+		        mui.ajax("/a/biz/request/bizRequestHeaderForVendor/list4MobileNew",{
 		            data:params,               
 		            dataType:'json',
 		            type:'get',
@@ -481,7 +480,7 @@
 			
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/request/bizRequestHeader/list4Mobile',
+				url: '/a/biz/request/bizRequestHeaderForVendor/list4MobileNew',
 				data: {
 					pageNo: 1,
 					reqNo:_this.userInfo.reqNo,

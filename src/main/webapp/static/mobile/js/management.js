@@ -54,8 +54,9 @@
                         	console.log(res)
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
-                                pHtmlList+='<p class="childMenu" purchId="'+item.id+'">'+ item.name+'</p>'
-
+                                if(item.id!==694){
+                                	pHtmlList += '<p class="childMenu" purchId="'+item.id+'">'+ item.name+'</p>'
+                                }
                             });
                             $(".childData"+indexNum).html(pHtmlList)
                         }

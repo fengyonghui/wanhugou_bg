@@ -49,15 +49,15 @@
 					'office.id': _this.userInfo.officeIdTxt,
 				},
 				dataType: 'json',
-				success: function(res) {	
-					console.log(res)
+				success: function(res) {
+								console.log(res)
 					htmlBusiness = '<option class="soption"  value="' + res.data.office.name + '">' + res.data.office.name + '</option>'
 					$('#cosultasName').html(htmlBusiness);
 					htmloffice = '<option class="soption"  value="' + res.data.office.office.id + '">' + res.data.office.office.name + '</option>'
 					$('#officeName').html(htmloffice);
 					$.each(res.data.officeList,function(i,item){
 						console.log(item)
-		                 htmloffice += '<option class="soption"  value="' + item.id + '">' + item.name + '</option>'                                                                                                	              	
+		                 htmloffice += '<option class="soption"  value="' + item.id + '">' + item.name + '</option>'
 					});
 					 $('#officeName').html(htmloffice); 
 					  _this.officeNamechoice();
