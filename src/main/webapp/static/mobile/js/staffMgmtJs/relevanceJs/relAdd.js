@@ -53,16 +53,19 @@
 										
 					htmlBusiness = '<option class="soption"  value="' + res.data.office.name + '">' + res.data.office.name + '</option>'
 					$('#cosultasName').html(htmlBusiness);
-//					htmloffice = '<option class="soption"  value="' + res.data.office.office.name + '">' + res.data.office.office.name + '</option>'
-//					$('#officeName').html(htmloffice);
-//					_this.choiceofficeName(res.data)
+					htmloffice = '<option class="soption"  value="' + res.data.office.office.name + '">' + res.data.office.office.name + '</option>'
+					$('#officeName').html(htmloffice);
+
+//$('#officeName').on('tap',function(){
+//alert(1)
+//});
 					$.each(res.data.officeList,function(i,item){
 						console.log(res.data.bcc.centers.id)
-						console.log(item)
-						var aa = '';
-						if(item.id==res.data.bcc.centers.id){
-							htmloffice = '<option class="soption"  value="' + res.data.office.office.name + '">' + res.data.office.office.name + '</option>'
-						}
+//						console.log(item)
+//						var aa = '';
+//						if(item.id==res.data.bcc.centers.id){
+//							htmloffice = '<option class="soption"  value="' + res.data.office.office.name + '">' + res.data.office.office.name + '</option>'
+//						}
 		                 htmloffice += '<option class="soption"  value="' + item.name + '">' + item.name + '</option>'
 		                
 					});
@@ -71,15 +74,6 @@
 			});
 			
 		},
-//		choiceofficeName:function(data){
-//			var htmloffice="";
-//			$.each(data.officeList,function(i,item){
-//				console.log(item)
-//               htmloffice += '<option class="soption"  value="' +  + '">' + item.name + '</option>'
-//               $('#officeName').append(htmloffice); 
-//			});
-//			
-//		}
 	}
 	$(function() {
 
