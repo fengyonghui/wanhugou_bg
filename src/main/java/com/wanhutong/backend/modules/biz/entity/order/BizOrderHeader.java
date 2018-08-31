@@ -217,6 +217,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     private Integer waitPay;
 
+    /**
+     *  采购单当前审核流程名字
+     */
+    private String poProcessName;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -946,5 +951,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setWaitPay(Integer waitPay) {
         this.waitPay = waitPay;
+    }
+
+    public String getPoProcessName() {
+        return poProcessName;
+    }
+
+    public void setPoProcessName(String poProcessName) {
+        this.poProcessName = poProcessName;
     }
 }

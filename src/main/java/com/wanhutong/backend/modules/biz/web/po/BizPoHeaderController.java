@@ -327,22 +327,22 @@ public class BizPoHeaderController extends BaseController {
         if (roleList.contains(role)) {
             bizPoHeader.setVendOffice(user.getCompany());
         }
-        try {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
-            Date date = df.parse(filteringDate);
-            bizPoHeader.setFilteringDate(date);
-        } catch (ParseException e) {
-            LOGGER.error("日期解析失败",e);
-        }
-
-        String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
-        try {
-            Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(filteringDate);
-            bizPoHeader.setFilteringDate(parse);
-        } catch (ParseException e) {
-            LOGGER.error("po list parse data error", e);
-        }
+//        try {
+//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
+//            Date date = df.parse(filteringDate);
+//            bizPoHeader.setFilteringDate(date);
+//        } catch (ParseException e) {
+//            LOGGER.error("日期解析失败",e);
+//        }
+//
+//        String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
+//        try {
+//            Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(filteringDate);
+//            bizPoHeader.setFilteringDate(parse);
+//        } catch (ParseException e) {
+//            LOGGER.error("po list parse data error", e);
+//        }
 
         PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
 

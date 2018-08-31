@@ -350,31 +350,38 @@
 				<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state
 								&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state
 								}">
-					<c:if test="${orderHeader.payProportion !=null
+                    <c:if test="${orderHeader.payProportion !=null
 									&& orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-						<c:choose>
-							<c:when test="${orderHeader.commonProcess.doOrderHeaderProcessAll.name == '审批完成'}">
-								支付列表审核
-							</c:when>
-							<c:otherwise>
-								${orderHeader.commonProcess.doOrderHeaderProcessAll.name}
-							</c:otherwise>
-						</c:choose>
-					</c:if>
-					<c:if test="${orderHeader.payProportion !=null
+                        <c:choose>
+                            <c:when test="${orderHeader.commonProcess.doOrderHeaderProcessAll.name == '审批完成'}">
+								<c:if test="${orderHeader.poProcessName != '审批完成'}">
+									待财务经理审核
+								</c:if>
+								<c:if test="${orderHeader.poProcessName == '审批完成'}">
+									审批完成
+								</c:if>
+                            </c:when>
+                            <c:otherwise>
+                                ${orderHeader.commonProcess.doOrderHeaderProcessAll.name}
+                            </c:otherwise>
+                        </c:choose>
+                    </c:if>
+                    <c:if test="${orderHeader.payProportion !=null
 									&& orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-						<c:if test="${orderHeader.payProportion !=null
-									&& orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-							<c:choose>
-								<c:when test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成'}">
-									支付列表审核
-								</c:when>
-								<c:otherwise>
-									${orderHeader.commonProcess.doOrderHeaderProcessFifth.name}
-								</c:otherwise>
-							</c:choose>
-						</c:if>
-					</c:if>
+                        <c:choose>
+                            <c:when test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成'}">
+								<c:if test="${orderHeader.poProcessName != '审批完成'}">
+									待财务经理审核
+								</c:if>
+								<c:if test="${orderHeader.poProcessName == '审批完成'}">
+									审批完成
+								</c:if>
+                            </c:when>
+                            <c:otherwise>
+                                ${orderHeader.commonProcess.doOrderHeaderProcessFifth.name}
+                            </c:otherwise>
+                        </c:choose>
+                    </c:if>
 				</c:if>
 				<%--<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>
 					<%--<c:if test="${orderHeader.commonProcess.objectName == 'biz_order_header'}">--%>
@@ -400,7 +407,7 @@
 					<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_LOCAL'}">
 						<c:choose>
 							<c:when test="${orderHeader.commonProcess.jointOperationLocalProcess.name == '审批完成'}">
-								支付列表审核
+								待财务经理审核
 							</c:when>
 							<c:otherwise>
 								${orderHeader.commonProcess.jointOperationLocalProcess.name}
@@ -410,7 +417,7 @@
 					<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
 						<c:choose>
 							<c:when test="${orderHeader.commonProcess.jointOperationOriginProcess.name == '审批完成'}">
-								支付列表审核
+								待财务经理审核
 							</c:when>
 							<c:otherwise>
 								${orderHeader.commonProcess.jointOperationOriginProcess.name}
@@ -439,22 +446,24 @@
 			<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 				<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
 					<!-- 100%首付款审核 -->
-					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum)  && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
-							&& orderHeader.commonProcess.doOrderHeaderProcessAll.code != auditAllStatus
+                    <c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">
+                        <c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum))
+                                        && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
+                                        && orderHeader.commonProcess.doOrderHeaderProcessAll.code != auditAllStatus
 							}">
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
-						</c:if>
-					</c:if>
+                            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
+                        </c:if>
+                    </c:if>
 
 					<!-- 20%首付款审核 -->
-					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) && orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
-							&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
+                    <c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
+                        <c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum))
+                                        && orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
+                                        && orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
 							}">
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
-						</c:if>
-					</c:if>
+                            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
+                        </c:if>
+                    </c:if>
                     <c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOriginProcess.roleEnNameEnum) && orderHeader.commonProcess.jointOperationOriginProcess.name != '驳回' && orderHeader.commonProcess.jointOperationOriginProcess.code != auditStatus
 							 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
                         <a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}">审核</a>
