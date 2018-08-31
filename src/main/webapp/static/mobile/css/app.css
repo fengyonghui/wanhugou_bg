@@ -9,7 +9,7 @@ ol, ul{list-style:none;}
 q:before, q:after{content:''}
 abbr, acronym,button{border:0;}
 a{color:#3d79f2;}
-input, select, textarea{font-size: 16px;}
+input, select, textarea{font-size: 15px;}
 
 /*==自定义图标==*/
 .mui-checkbox input[type=checkbox]:checked:before, .mui-radio input[type=radio]:checked:before{color:#aaa}
@@ -382,9 +382,9 @@ input[type=text],
 input[type=time],
 input[type=url],
 input[type=week],
-select, textarea{height: auto;padding:14px 15px;}
+select, textarea{height: auto;padding:10px 15px;}
 .mui-input-group .mui-input-row{height: auto;background-color: #fff;}
-.mui-input-row label{padding:14px 15px;padding-left: 20px;padding-right: 10px;line-height:21px;width: 33%;}
+.mui-input-row label{padding:10px 15px;padding-left: 20px;padding-right: 10px;line-height:21px;width: 33%;}
 .mui-input-row label~input, .mui-input-row label~select, .mui-input-row label~textarea{width:67%}
 
 .mui-input-row label~select{padding-left: 0;padding-top: 6px;}
