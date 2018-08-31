@@ -27,7 +27,6 @@
                 },
                 dataType: "json",
                 success: function(res){
-					console.log(res)
 					$('#firstPart').val(res.data.entity2.customer.name);
 					$('#firstPrincipal').val(res.data.custUser.name);
 					$('#firstMobile').val(res.data.custUser.mobile);
@@ -87,7 +86,6 @@
 		},
 		statusListHtml:function(data){
 			var _this = this;
-//			console.log(data)
 			var statusLen = data.statusList.length;
 			if(statusLen > 0) {
 				var pHtmlList = '';
@@ -103,7 +101,6 @@
 							'<div class="mui-input-row">'+
 						        '<label>状态:</label>'+
 						        '<input type="text" class="mui-input-clear" disabled>'+
-//						         value="'++'"
 						    	'<label>时间:</label>'+
 						        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
 						    '</div>'+
@@ -115,12 +112,10 @@
 		},
 		checkProcessHtml:function(data){
 			var _this = this;
-//			console.log(data)
 			var auditLen = data.auditList.length;
 			if(auditLen > 0) {
 				var CheckHtmlList ='';
 				$.each(data.auditList, function(i, item) {
-//					console.log(item)
 					var step = i + 1;
 					var current = item.current;
 					if(current !== 1) {
@@ -159,12 +154,10 @@
 		},
 		commodityHtml: function(data) {
 			var _this = this;
-//			console.log(data)
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-//					console.log(item)
 					var opShelfInfo = '';
 					if(item.shelfInfo.opShelfInfo) {
 						opShelfInfo = item.shelfInfo.opShelfInfo.name
