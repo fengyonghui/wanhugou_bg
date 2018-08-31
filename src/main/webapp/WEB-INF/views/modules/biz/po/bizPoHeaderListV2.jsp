@@ -243,24 +243,37 @@
 										<c:when test="${bizPoHeader.bizOrderHeader != null or bizPoHeader.bizRequestHeader != null}">
 											<c:if test="${bizPoHeader.bizOrderHeader != null}" >
 												<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoHeader.bizOrderHeader.id}&str=audit">审核</a>
-												<shiro:hasPermission name="biz:po:pay:list">
-													<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${bizPoHeader.bizOrderHeader.id}">支付申请列表</a>
-												</shiro:hasPermission>
 											</c:if>
 											<c:if test="${bizPoHeader.bizRequestHeader != null}" >
 												<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=audit">审核</a>
-												<shiro:hasPermission name="biz:po:pay:list">
-													<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.bizRequestHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${bizPoHeader.bizRequestHeader.id}">支付申请列表</a>
-												</shiro:hasPermission>
 											</c:if>
 										</c:when>
 										<c:otherwise>
 											<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
-											<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请列表</a>
 										</c:otherwise>
 									</c:choose>
 								</c:if>
 							</shiro:hasPermission>
+
+							<c:choose>
+								<c:when test="${bizPoHeader.bizOrderHeader != null or bizPoHeader.bizRequestHeader != null}">
+									<c:if test="${bizPoHeader.bizOrderHeader != null}" >
+										<shiro:hasPermission name="biz:po:pay:list">
+											<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${bizPoHeader.bizOrderHeader.id}">支付申请列表</a>
+										</shiro:hasPermission>
+									</c:if>
+									<c:if test="${bizPoHeader.bizRequestHeader != null}" >
+										<shiro:hasPermission name="biz:po:pay:list">
+											<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.bizRequestHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${bizPoHeader.bizRequestHeader.id}">支付申请列表</a>
+										</shiro:hasPermission>
+									</c:if>
+								</c:when>
+								<c:otherwise>
+									<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
+									<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请列表</a>
+								</c:otherwise>
+							</c:choose>
+
 							<shiro:hasPermission name="biz:po:bizPoHeader:edit">
 								<c:if test="${bizPoHeader.commonProcess.purchaseOrderProcess.name == null || bizPoHeader.commonProcess.purchaseOrderProcess.name == '驳回'}">
 									<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
