@@ -54,8 +54,6 @@
 				                for(var i = childs.length - 1; i >= 0; i--) {
 				                    f.removeChild(childs[i]);
 				                }
-//				                console.log('222')
-//				                console.log(pager)
 				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
 			            }
@@ -70,10 +68,8 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		            	$('#cosultasId').val(res.data.bcUser.consultants.id)
-		            	$('#officeId').val(res.data.bcUser.centers.id)
-		            	
-		          	    console.log(res)
+		            	$('#cosultasId').val(res.data.bcUser.consultants.id);
+		            	$('#officeId').val(res.data.bcUser.centers.id);
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						var arrLen = res.data.resultData.length;						
                         if(arrLen > 0) {
@@ -170,8 +166,6 @@
                 success: function(res){
                     _this.detileFlag = res.data;
 					_this.cancelAmendPayFlag = res.data;
-//                  console.log(_this.detileFlag)
-//					console.log(_this.cancelAmendPayFlag)
                 }
             });
         },
@@ -181,8 +175,6 @@
 			$('.header').on('tap', '#staReleSechBtn', function() {
 				var url = $(this).attr('url');
 				var consultantsIdTxt = $('#consultantsId').val();
-//				alert(hideul)
-
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
@@ -206,11 +198,9 @@
 			}),	
 		/*经销店添加*/
 			$('#nav').on('tap','.staRelAddBtn', function() {
-				var url = $(this).attr('url');
-				
-		            	
-		            	var cosultasIdTxt=$('#cosultasId').val()
-		            	var officeIdTxt=$('#officeId').val()
+				var url = $(this).attr('url');						            	
+		        var cosultasIdTxt=$('#cosultasId').val();
+		        var officeIdTxt=$('#officeId').val();
 				GHUTILS.OPENPAGE({
 					url: "../../../html/staffMgmtHtml/relevanceHtml/relAdd.html",
 					extras: {
@@ -220,7 +210,6 @@
 				})
 			}),
 		/*解除关联*/	
-//			$('.staReMoveBtn').on('tap',function(){
             $('.content').on('tap','.staReMoveBtn',function(){
             	var url = $(this).attr('url');
 				var customsId = $(this).attr('customsId');
@@ -237,7 +226,6 @@
 			                },
 			                dataType: "json",
 			                success: function(res){
-			                	console.log(res)
 			                	if(res.data == "ok") {
 			                		mui.toast("操作成功")
 			                		 window.setTimeout(function(){
@@ -330,7 +318,6 @@
 				},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						var arrLen = res.data.resultData.length;						
                         if(arrLen > 0) {

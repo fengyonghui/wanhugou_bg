@@ -46,7 +46,7 @@
 		                    pager['company.type'] = 8;
 		                    pager['company.customerTypeTen'] = 10;
 		                    pager['company.customerTypeEleven'] = 11;
-		                    pager['conn'] ="connIndex"//页码
+		                    pager['conn'] ="connIndex"
 			                var f = document.getElementById("staffList");
 			                var childs = f.childNodes;
 			                for(var i = childs.length - 1; i >= 0; i--) {
@@ -68,7 +68,6 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		          	    console.log(res)
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						var arrLen = res.data.page.list.length;						
                         if(arrLen > 0) {
@@ -142,7 +141,7 @@
 			            }          
 			        },
 		            error:function(xhr,type,errorThrown){
-			            console.log(type);
+//			            console.log(type);
 		            }
 		        })
 		    }
@@ -157,7 +156,6 @@
                 async:false,
                 success: function(res){
                     _this.staCheckFlag = res.data;
-					console.log(_this.staCheckFlag)
                 }
             });
         },
@@ -171,8 +169,7 @@
 				} else {
 					GHUTILS.OPENPAGE({
 						url: "../../html/staffMgmtHtml/staSearch.html",
-						extras:{
-							
+						extras:{							
 						}
 					})
 				}
@@ -354,7 +351,6 @@
 				},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
 					mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 					var arrLen = res.data.page.list.length;
 					if(arrLen > 0) {
@@ -435,7 +431,7 @@
 					}
 				}
 			});
-			_this.stHrefHtml()
+			_this.stHrefHtml();
 		}
 	}
 	$(function() {

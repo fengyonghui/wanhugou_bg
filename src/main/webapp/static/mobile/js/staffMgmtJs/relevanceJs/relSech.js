@@ -10,9 +10,6 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			this.hrefHtml('.newinput', '.input_div','#cpySchRelHideSpan');
-//			var _this=this;
-//			alert(_this.userInfo.hideul)
-//			$('#hideul').val(_this.userInfo.hideul)
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
@@ -23,7 +20,6 @@
 		getData: function() {
 			var _this = this;
 			$('#staRelSerhBtn').on('tap', function() {	
-//				alert(_this.userInfo.hideul)
 				var customsNamVal=$('.newinput').val();
 				var consultantsMobileVal=$('#staRelMobile').val();
 				if(customsNamVal == null||customsNamVal == undefined){
@@ -71,8 +67,8 @@
 
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
-				$(input_div).show()
-				$(cpySchRelHideSpan).show()
+				$(input_div).show();
+				$(cpySchRelHideSpan).show();
 			})
 			$(newinput).on('keyup', function() {
 				if($(this).val()==''){
@@ -80,18 +76,18 @@
 				}else{
 					_this.selectOpen = true
 				}
-				_this.rendHtml(_this.datagood,$(this).val())
+				_this.rendHtml(_this.datagood,$(this).val());
 			})
 			$(cpySchRelHideSpan).on('click', function() {
-				$(input_div).find('hasoid').removeClass('hasoid')
-				$(input_div).hide()
-				$(cpySchRelHideSpan).hide()
+				$(input_div).find('hasoid').removeClass('hasoid');
+				$(input_div).hide();
+				$(cpySchRelHideSpan).hide();
 			})
 			$(input_div).on('click', '.soption', function() {
-				$(this).addClass('hasoid').siblings().removeClass('hasoid')
-				$(newinput).val($(this).text())
-				$(input_div).hide()
-				$('#cpySchRelHideSpan').hide()
+				$(this).addClass('hasoid').siblings().removeClass('hasoid');
+				$(newinput).val($(this).text());
+				$(input_div).hide();
+				$('#cpySchRelHideSpan').hide();
 				_this.selectOpen = true
 			})
 		},
@@ -105,7 +101,6 @@
 					}
 				})
 			$.each(reult, function(i, item) {
-//				console.log(item)
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
@@ -123,7 +118,6 @@
 				success: function(res) {
 					_this.datagood = res
 					$.each(res, function(i, item) {
-//						console.log(item)
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlList)

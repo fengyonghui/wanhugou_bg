@@ -69,12 +69,11 @@
 		},
 		hrefHtml: function(newinput, input_div, cpySchHideSpan) {
 			var _this = this;
-			_this.ajaxGoodList()
-
+			_this.ajaxGoodList();
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
-				$(input_div).show()
-				$(cpySchHideSpan).show()
+				$(input_div).show();
+				$(cpySchHideSpan).show();
 			})
 			$(newinput).on('keyup', function() {
 				if($(this).val()==''){
@@ -82,18 +81,18 @@
 				}else{
 					_this.selectOpen = true
 				}
-				_this.rendHtml(_this.datagood,$(this).val())
+				_this.rendHtml(_this.datagood,$(this).val());
 			})
 			$(cpySchHideSpan).on('click', function() {
 //				$(input_div).find('hasoid').removeClass('hasoid')
-				$(input_div).hide()
-				$(cpySchHideSpan).hide()
+				$(input_div).hide();
+				$(cpySchHideSpan).hide();
 			})
 			$(input_div).on('click', '.soption', function() {
-				$(this).addClass('hasoid').siblings().removeClass('hasoid')
-				$(newinput).val($(this).text())
-				$(input_div).hide()
-				$('#cpySchHideSpan').hide()
+				$(this).addClass('hasoid').siblings().removeClass('hasoid');
+				$(newinput).val($(this).text());
+				$(input_div).hide();
+				$('#cpySchHideSpan').hide();
 				_this.selectOpen = true
 			})
 		},
@@ -103,14 +102,13 @@
 			var htmlList=''
 				$.each(data, function(i, item) {
 					if(item.name.indexOf(key) > -1) {
-						reult.push(item)
+						reult.push(item);
 					}
 				})
 			$.each(reult, function(i, item) {
-//				console.log(item)
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="'+item.name+'">' + item.name + '</span>'
 			});
-			$('.input_div').html(htmlList)
+			$('.input_div').html(htmlList);
 		},
 		ajaxGoodList: function() {
 			var _this = this;
@@ -126,17 +124,15 @@
 				success: function(res) {
 					_this.datagood = res
 					$.each(res, function(i, item) {
-//						console.log(item)
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="'+item.name+'">' + item.name + '</span>'
 					});
-					$('.input_div').html(htmlList)
+					$('.input_div').html(htmlList);
 				}
 			});
-		_this.getData()
+		_this.getData();
 		}
 	}
 	$(function() {
-
 		var ac = new ACCOUNT();
 		ac.init();
 	});

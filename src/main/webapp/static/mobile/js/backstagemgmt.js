@@ -21,8 +21,7 @@
 			},
 			pageInit: function() {
 				var _this = this;
-				_this.userajaxData()
-
+				_this.userajaxData();
 			},
 			userajaxData: function() {
 				var _this = this;
@@ -35,8 +34,7 @@
                     }
                 });
                 _this.userComfirDialig()
-			},
-			
+			},			
 			getData: function() {
 				var _this = this;
 
@@ -91,7 +89,6 @@
 			}
 		}
 	$(function() {
-
 		var ac = new ACCOUNT();
 		ac.init();
 	});

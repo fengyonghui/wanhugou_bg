@@ -13,9 +13,8 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			_this.ajaxData()
-			_this.getData()
-		    
+			_this.ajaxData();
+			_this.getData();		    
 		},
 		ajaxData: function() {
 			var _this = this;
@@ -42,8 +41,7 @@
 			var _this = this;
             $('#menuMaget').on('tap','.menuBtn',function(){
                 var dataId = $(this).attr('dataId');
-                var indexNum = $(this).attr('indexNum');
-                
+                var indexNum = $(this).attr('indexNum');               
                 if(dataId){
                     $.ajax({
                         type: "GET",
