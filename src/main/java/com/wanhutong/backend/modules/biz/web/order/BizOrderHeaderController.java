@@ -1180,7 +1180,7 @@ public class BizOrderHeaderController extends BaseController {
                 default:
                     break;
             }
-            List<CommonProcessEntity> list = commonProcessService.findList(originEntity);
+            List<CommonProcessEntity> list = commonProcessService.findList(localEntity);
             if (CollectionUtils.isEmpty(list)) {
                 commonProcessService.updateCurrentByObject(bizOrderHeader.getId(), JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME, 0);
                 commonProcessService.save(localEntity);
