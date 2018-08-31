@@ -264,7 +264,7 @@
 									</c:if>
 									<c:if test="${bizPoHeader.bizRequestHeader != null}" >
 										<shiro:hasPermission name="biz:po:pay:list">
-											<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.bizRequestHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${bizPoHeader.bizRequestHeader.id}">支付申请列表</a>
+											<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${bizPoHeader.bizRequestHeader.id}">支付申请列表-or</a>
 										</shiro:hasPermission>
 									</c:if>
 								</c:when>
