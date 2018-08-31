@@ -13,6 +13,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
@@ -38,6 +39,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -148,31 +150,38 @@ public class BizPoPaymentOrderController extends BaseController {
 	public String form(HttpServletRequest request, HttpServletResponse response,BizPoPaymentOrder bizPoPaymentOrder, Model model) {
 		String fromPage = request.getParameter("fromPage");
 		model.addAttribute("fromPage",fromPage);
+		bizPoPaymentOrder = bizPoPaymentOrderService.get(bizPoPaymentOrder.getId());
 		if (bizPoPaymentOrder.getPoHeaderId() != null) {
-			bizPoHeaderService.get(bizPoPaymentOrder.getId());
-			if (fromPage != null) {
-				switch (fromPage) {
-					case "requestHeader":
-						BizRequestHeader bizRequestHeader = new BizRequestHeader();
-						bizRequestHeader.setBizPoHeader(new BizPoHeader(bizPoPaymentOrder.getPoHeaderId()));
-						List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
-						if (CollectionUtils.isNotEmpty(requestHeaderList)) {
-							BizRequestHeader requestHeader = requestHeaderList.get(0);
-							model.addAttribute("requestHeader",requestHeader);
-						}
-						break;
-					case "orderHeader":
-						BizOrderHeader bizOrderHeader = new BizOrderHeader();
-						bizOrderHeader.setBizPoHeader(new BizPoHeader(bizPoPaymentOrder.getPoHeaderId()));
-						List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
-						if (CollectionUtils.isNotEmpty(orderHeaderList)) {
-							model.addAttribute("orderHeader", orderHeaderList.get(0));
-						}
-						break;
-					default:
-						break;
-				}
+			BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoPaymentOrder.getPoHeaderId());
+			if (bizPoHeader != null) {
+				BigDecimal totalDetail = bizPoHeader.getTotalDetail() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalDetail());
+				BigDecimal totalExp = bizPoHeader.getTotalExp() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalExp());
+				BigDecimal totalDetailResult = totalDetail.add(totalExp);
+				model.addAttribute("totalDetailResult",totalDetailResult);
 			}
+//			if (fromPage != null) {
+//				switch (fromPage) {
+//					case "requestHeader":
+//						BizRequestHeader bizRequestHeader = new BizRequestHeader();
+//						bizRequestHeader.setBizPoHeader(new BizPoHeader(bizPoPaymentOrder.getPoHeaderId()));
+//						List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
+//						if (CollectionUtils.isNotEmpty(requestHeaderList)) {
+//							BizRequestHeader requestHeader = requestHeaderList.get(0);
+//							model.addAttribute("requestHeader",requestHeader);
+//						}
+//						break;
+//					case "orderHeader":
+//						BizOrderHeader bizOrderHeader = new BizOrderHeader();
+//						bizOrderHeader.setBizPoHeader(new BizPoHeader(bizPoPaymentOrder.getPoHeaderId()));
+//						List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
+//						if (CollectionUtils.isNotEmpty(orderHeaderList)) {
+//							model.addAttribute("orderHeader", orderHeaderList.get(0));
+//						}
+//						break;
+//					default:
+//						break;
+//				}
+//			}
 		}
 		model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
 		return "modules/biz/po/bizPoPaymentOrderForm";
