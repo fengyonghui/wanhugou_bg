@@ -106,12 +106,10 @@
 		//状态流程
 		statusListHtml:function(data){
 			var _this = this;
-			console.log(data)
 			var statusLen = data.statusList.length;
 			if(statusLen > 0) {
 				var pHtmlList = '';
 				$.each(data.statusList, function(i, item) {
-					console.log(item)
 					var step = i + 1;
 					pHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
@@ -179,7 +177,6 @@
 //		},
 		commodityHtml: function(data) {
 			var _this = this;
-			console.log(data)
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
@@ -311,7 +308,6 @@
                     localOriginType = r2[i].value;
                 }
             }
-            console.log(localOriginType)
 			$.ajax({
 				type: "POST",
 				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
@@ -359,7 +355,6 @@
                     localOriginType = r2[i].value;
                 }
             }
-            console.log(localOriginType)
 			$.ajax({
 				type: "POST",
 				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
@@ -378,7 +373,6 @@
 				dataType: "json",
 				success: function(res) {
 					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;
-					console.log(res)
 					if(res.data=='comError'){
 						mui.toast('发货失败!')
 						window.setTimeout(function(){

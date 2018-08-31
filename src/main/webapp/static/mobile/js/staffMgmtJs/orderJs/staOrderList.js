@@ -78,7 +78,6 @@
 			                async:false,
 			                success: function(res){                 
 				                ass=res;
-//				                console.log(ass)
 			                }
 			            });
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
@@ -86,7 +85,6 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-                        	console.log(item)
                         	$('#consultantIda').val(item.consultantId);
 							$('#statu').val(item.statu);
 							$('#source').val(item.source);
@@ -202,7 +200,6 @@
                 async:false,
                 success: function(res){
                     _this.staCheckFlag = res.data;
-//                  console.log(_this.staCheckFlag)
                 }
             });
         },
@@ -387,7 +384,6 @@
 				dataType: 'json',
 				success: function(res) {
 					$('#staListIdTxt').val(_this.userInfo.staListSehId)//查询出来的客户专员 ID
-//					console.log($('#staListIdTxt').val())
 					$.ajax({
 			                type: "GET",
 			                url: "/a/sys/dict/listData",

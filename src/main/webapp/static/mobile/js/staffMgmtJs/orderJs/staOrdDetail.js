@@ -51,7 +51,6 @@
 						$('#staPoRemark').val(w.comments);
 					})
 					var item = res.data.bizOrderHeader;
-//					console.log(item)
 					var shouldPay = item.totalDetail + item.totalExp + item.freight;
 					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
 					//发票状态
@@ -71,7 +70,6 @@
 					$('#staFreight').val(item.freight);
 					$('#staShouldPay').val(shouldPay);
 					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
-//						console.log(poLastDa)
 					$('#staPoLastDa').val(item.receiveTotal);
 					$('#staServerPrice').val(serverPrice);
 					$('#staInvoice').val(invStatusTxt);
@@ -94,7 +92,6 @@
 			if(statusLen > 0) {
 				var pHtmlList = '';
 				$.each(data.statusList, function(i, item) {
-//					console.log(item)
 					var step = i + 1;
 					pHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+

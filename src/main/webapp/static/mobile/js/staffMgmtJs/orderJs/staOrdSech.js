@@ -22,7 +22,6 @@
 		getData: function() {
 			var _this = this;
 			$('#staOrdSechBtn').on('tap', function() {
-//				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
 				var optionsBusiness = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
 				var ordNumVal = $("#staOrderNum").val(); 
                 var reqNumVal = $("#staOrdPurchasing").val(); 
@@ -68,7 +67,6 @@
 						}
 				}else{
 					_this.sureSelect()
-//					optionsBusiness
 				}
 			})
 		},
@@ -76,13 +74,8 @@
 			var _this = this;
 			var staListSehId = _this.userInfo.staListId;
 			_this.selectOpen = false
-//			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
 			var optionsClass = $("#input_div_orderStatus option").eq($("#input_div_orderStatus").attr("selectedIndex"));
 			var optionsBusiness = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
-			console.log('-------------')
-			console.log(optionsClass)
-//			alert(optionsClass.val())
-//			alert(optionsBusiness.val())
 			GHUTILS.OPENPAGE({
 				url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
 				extras: {
@@ -101,13 +94,13 @@
 		},
 		hrefHtml: function(newinput, input_div,staOrdHideSpan) {
 			var _this = this;
-			_this.ajaxGoodList()
-			_this.ajaxCheckStatus()
+			_this.ajaxGoodList();
+			_this.ajaxCheckStatus();
 
 			$(newinput).on('focus', function() {
-				$(input_div).find('hasoid').removeClass('hasoid')
-				$(input_div).show()
-				$(staOrdHideSpan).show()
+				$(input_div).find('hasoid').removeClass('hasoid');
+				$(input_div).show();
+				$(staOrdHideSpan).show();
 			})
 			$(newinput).on('keyup', function() {
 				if($(this).val()==''){
@@ -115,20 +108,20 @@
 				}else{
 					_this.selectOpen = true
 				}
-				_this.rendHtml(_this.datagood,$(this).val())
+				_this.rendHtml(_this.datagood,$(this).val());
 			})
 			
 			$(staOrdHideSpan).on('click', function() {
-				$(input_div).find('hasoid').removeClass('hasoid')
-				$(input_div).hide()
-				$(staOrdHideSpan).hide()
+				$(input_div).find('hasoid').removeClass('hasoid');
+				$(input_div).hide();
+				$(staOrdHideSpan).hide();
 			})
 			$(input_div).on('click', '.soption', function() {
-				$(this).addClass('hasoid').siblings().removeClass('hasoid')
+				$(this).addClass('hasoid').siblings().removeClass('hasoid');
 //				_this.fromOfficeId = $(this).attr("id");
-				$(newinput).val($(this).text())
-				$(input_div).hide()
-				$('#staOrdHideSpan').hide()
+				$(newinput).val($(this).text());
+				$(input_div).hide();
+				$('#staOrdHideSpan').hide();
 				_this.selectOpen = true
 			})
 		},
@@ -145,7 +138,7 @@
 			$.each(reult, function(i, item) {
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
-			$('.input_div').html(htmlList)
+			$('.input_div').html(htmlList);
 		},
 		//经销店名称
 		ajaxGoodList: function() {
@@ -163,7 +156,7 @@
 					$.each(res, function(i, item) {
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type +  '" pIds="' + item.pIds + '">' + item.name + '</span>'
 					});
-					$('.input_div').html(htmlList)
+					$('.input_div').html(htmlList);
 				}
 			});
 		},
@@ -181,8 +174,8 @@
 					$.each(res, function(i, item) {
 						htmlBusiness += '<option class="soption"  value="' + item.value + '">' + item.label + '</option>'
 					});
-					$('#input_div_orderStatus').html(optHtml+htmlBusiness)
-					_this.getData()
+					$('#input_div_orderStatus').html(optHtml+htmlBusiness);
+					_this.getData();
 				}
 			});
 		},
@@ -202,8 +195,8 @@
 						console.log(item)
 						htmlClass += '<option class="soption" value="' + item + '">' + item + '</option>'
 					});
-					$('#input_div_checkStatus').append(htmlClass)
-					_this.getData()
+					$('#input_div_checkStatus').append(htmlClass);
+					_this.getData();
 				}
 			});
 		},

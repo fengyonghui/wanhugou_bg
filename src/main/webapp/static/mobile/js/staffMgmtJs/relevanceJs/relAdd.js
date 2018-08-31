@@ -10,33 +10,12 @@
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
-//			this.getData();
 			this.ajaxCheckStatus();
 		},
 		pageInit: function() {
 			var _this = this;
 			_this.staRelAdd();
 		},
-//		getData: function() {
-//			var _this = this;
-//			$.ajax({
-//				type: 'GET',
-//				url: '/a/biz/custom/bizCustomCenterConsultant/connOfficeForm4mobile',
-//				data: {
-//					id: _this.userInfo.cosultasIdTxt,
-//					'office.id': _this.userInfo.officeIdTxt,
-//				},
-//				dataType: 'json',
-//				success: function(res) {
-//					console.log(res)
-//					$('cosultasName').val(res.data.office.name);
-//					
-//					$().val()
-////					$('.input_div').html(htmlList)
-//				}
-//			});
-//		},
-
 		ajaxCheckStatus: function() {
 			var _this = this;
 			var htmlBusiness="";
@@ -50,7 +29,6 @@
 				},
 				dataType: 'json',
 				success: function(res) {
-//					console.log(res)
 					//采购中心默认值渲染
 					htmloffice = '<option class="soption"  value="' + res.data.office.office.id + '">' + res.data.office.office.name + '</option>'
 					$('#officeName').html(htmloffice);
@@ -60,13 +38,10 @@
 
 					// 客户专员默认值id
 					$('#consultantsId').val(res.data.office.id)
-					console.log($('#consultantsId').val())
                     //采购中心下拉列表默认值渲染
 					$.each(res.data.officeList,function(i,item){
-//						console.log(item)
 						// 采购中心认值id
 						$('#centersId').val(item.id)
-						console.log($('#centersId').val())
 		                htmloffice += '<option class="soption"  value="' + item.id + '">' + item.name + '</option>'
 					});
 					 $('#officeName').html(htmloffice); 
@@ -89,10 +64,6 @@
 						type:"POST",
 						dataType:'json',
 						success:function(res){
-							console.log(res)
-//                          $.each(res.data,function(i,item){
-//                              $("#cosultasName").append("<option value='"+item.id+"'>"+item.name+"</option>");
-//							});
 							for(var i =0;i<res.data.length;i++){
 								$("#cosultasName").append("<option value='"+res.data[i].id+"'>"+res.data[i].name+"</option>");
 							}
@@ -125,11 +96,8 @@
 					},
 					dataType: "json",
 					success: function(res) {
-						console.log(res)
 						var consultantsId = $('#consultantsId').val();//客户专员ID
 						var officeId = $('#centersId').val();//采购中心ID
-						console.log(consultantsId)//3000
-						console.log(officeId)//240
 						if(res==1){
 							alert('操作成功!')
 							GHUTILS.OPENPAGE({
