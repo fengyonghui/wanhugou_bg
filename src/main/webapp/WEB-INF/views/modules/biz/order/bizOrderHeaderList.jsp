@@ -68,7 +68,7 @@
 	</script>
 	<script type="text/javascript">
         function checkInfo(obj, val, hid) {
-            if (confirm("您确认同意驳回该订单的退款申请吗？")) {
+            if (confirm("您确认驳回该订单的退款申请吗？")) {
                 $.ajax({
                     type: "get",
                     url: "${ctx}/biz/order/bizOrderHeader/refundReject",
@@ -319,7 +319,7 @@
 				<c:choose>
 					<c:when test="${orderHeader.drawBack != null}">
 						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUND.state}">
-							退款申请
+							申请退款
 						</c:if>
 						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDING.state}">
 							退款中
