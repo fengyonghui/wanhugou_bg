@@ -437,4 +437,28 @@
 		group by su.id;
 	</select>
 
+	<select id="getCustParentIdByVendorId" resultType="String">
+				select parent_ids from sys_office vendor where vendor.id in (
+				select boh.cust_id
+				from biz_order_header boh
+				where boh.id in (select distinct bod.order_id
+								 from biz_order_detail bod left join biz_sku_info bsi on bod.sku_id = bsi.id
+								   left join biz_product_info bpi on bpi.id = bsi.prod_id
+								 where bpi.vendor_id = #{vendorId})
+				or boh.seller_id = #{vendorId}
+				)
+	</select>
+
+	<select id="getCustIdByVendorId" resultType="String">
+				select id from sys_office vendor where vendor.id in (
+				select boh.cust_id
+				from biz_order_header boh
+				where boh.id in (select distinct bod.order_id
+								 from biz_order_detail bod left join biz_sku_info bsi on bod.sku_id = bsi.id
+								   left join biz_product_info bpi on bpi.id = bsi.prod_id
+								 where bpi.vendor_id = #{vendorId})
+				or boh.seller_id = #{vendorId}
+				)
+	</select>
+
 </mapper>

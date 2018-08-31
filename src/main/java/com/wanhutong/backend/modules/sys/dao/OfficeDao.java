@@ -52,6 +52,10 @@ public interface OfficeDao extends TreeDao<Office> {
 
     List<Office> findCustomByOfficeId(Integer officeId);
 
+    List<String> getCustParentIdByVendorId(@Param("vendorId")Integer vendorId);
+
+    List<String> getCustIdByVendorId(@Param("vendorId")Integer vendorId);
+
     /**
      * 取新用户
      * @param startDate
