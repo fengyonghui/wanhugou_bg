@@ -302,7 +302,6 @@
 			${sqlMap.dsf}
 			OR a.id = #{currentUser.office.id}
 		</if>
-
 		<!--</if>-->
 		<!--<if test="currentUser != null and currentUser.UserOfficeList != null and currentUser.UserOfficeList.size() != 0">-->
 
@@ -312,7 +311,6 @@
 		<!--#{userOffice.office.id}-->
 		<!--</foreach>-->
 		<!--</if>-->
-		ORDER BY  a.parent_id
 	</select>
 
 	<!--用于分页查询会员列表-->
@@ -327,15 +325,15 @@
 			1 = 1
 
 			<if test="vendorId !=null and vendorId != 0">
-				and a.id in (
+				and (a.id in (
 				select boh.cust_id from biz_order_header boh where boh.id in (
 				select distinct bod.order_id
 				from biz_order_detail bod
 				left join biz_sku_info bsi on bod.sku_id = bsi.id
 				left join biz_product_info bpi on bpi.id = bsi.prod_id
 				where bpi.vendor_id = #{vendorId}
-				)
-				)
+				)) or a.id in (SELECT oh.cust_id FROM biz_order_header oh WHERE
+				oh.seller_id = #{vendorId}))
 			</if>
 
 			<if test="dataStatus==null or  dataStatus==''">

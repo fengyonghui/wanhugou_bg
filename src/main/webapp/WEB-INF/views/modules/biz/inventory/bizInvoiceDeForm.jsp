@@ -299,14 +299,14 @@
                         class="input-xlarge required"/>
         </div>
     </div>
-    <%--<c:if test="${bizInvoice.str == 'freight' || source == 'xq'}">--%>
-        <%--<div class="control-group">--%>
-            <%--<label class="control-label">运费：</label>--%>
-            <%--<div class="controls">--%>
-                <%--<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>--%>
-            <%--</div>--%>
-        <%--</div>--%>
-    <%--</c:if>--%>
+    <c:if test="${bizInvoice.str == 'freight' || source == 'xq'}">
+        <div class="control-group">
+            <label class="control-label">运费：</label>
+            <div class="controls">
+                <form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
+            </div>
+        </div>
+    </c:if>
     <%--<div class="control-group">--%>
         <%--<label class="control-label">配送服务费：</label>--%>
         <%--<div class="controls">--%>

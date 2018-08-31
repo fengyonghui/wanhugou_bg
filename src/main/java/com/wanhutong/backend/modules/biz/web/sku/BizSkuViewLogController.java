@@ -60,6 +60,7 @@ public class BizSkuViewLogController extends BaseController {
 	public String list(BizSkuViewLog bizSkuViewLog, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizSkuViewLog> page = bizSkuViewLogService.findPage(new Page<BizSkuViewLog>(request, response), bizSkuViewLog); 
 		model.addAttribute("page", page);
+		model.addAttribute("skuType",bizSkuViewLog.getSkuType());
 		return "modules/biz/sku/bizSkuViewLogList";
 	}
 

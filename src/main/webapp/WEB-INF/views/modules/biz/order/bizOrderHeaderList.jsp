@@ -383,19 +383,6 @@
                         </c:choose>
                     </c:if>
 				</c:if>
-				<%--<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>
-					<%--<c:if test="${orderHeader.commonProcess.objectName == 'biz_order_header'}">--%>
-						<%--<c:if test="${orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">--%>
-							<%--${orderHeader.commonProcess.doOrderHeaderProcessFifth.name}--%>
-						<%--</c:if>--%>
-						<%--<c:if test="${orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">--%>
-							<%--${orderHeader.commonProcess.doOrderHeaderProcessAll.name}--%>
-						<%--</c:if>--%>
-					<%--</c:if>--%>
-					<%--<c:if test="${orderHeader.commonProcess.objectName == 'biz_po_header'}">--%>
-						<%--${orderHeader.commonProcess.purchaseOrderProcess.name}--%>
-					<%--</c:if>--%>
-				<%--</c:if>--%>
 				<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state &&
 				 orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 					<%--<c:if test="${orderHeader.suplys == 0}">--%>
@@ -424,9 +411,6 @@
 							</c:otherwise>
 						</c:choose>
 					</c:if>
-					<%--<c:if test="${orderHeader.commonProcess.objectName == 'biz_po_header'}">--%>
-						<%--${orderHeader.commonProcess.purchaseOrderProcess.name}--%>
-					<%--</c:if>--%>
 				</c:if>
 			</td>
 

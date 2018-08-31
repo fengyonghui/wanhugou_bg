@@ -28,6 +28,10 @@
                 // rows:[0,2]
             });
 
+            //采购单所属单号
+            var orderNum = $("#orderNumStr_1").attr('value');
+            $("#orderNum").val(orderNum);
+
             var detailHeaderFlg = '${detailHeaderFlg}';
             var detailSchedulingFlg = '${detailSchedulingFlg}';
             if (detailHeaderFlg == 'true' || detailSchedulingFlg == 'true') {
@@ -274,6 +278,7 @@
         function confirmComplete() {
             var orderHtml = $(".orderChk");
             var params = new Array();
+            var poHeaderId = $("#poHeaderId").val();
             $(".orderChk").each(function () {
                 if(this.checked){
                     var completeId = $(this).attr("value")
@@ -290,7 +295,7 @@
             if(confirm("确定执行该确认排产吗？")) {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
-                    url: '${ctx}/biz/po/bizPoHeader/confirm',
+                    url: '${ctx}/biz/po/bizPoHeader/confirm?poHeaderId=' + poHeaderId,
                     contentType: 'application/json',
                     data:JSON.stringify(params),
                     type: 'post',
@@ -325,10 +330,15 @@
     <input type="hidden" name="vendOffice.id" value="${vendorId}">
     <input id="str" type="hidden" value="${bizPoHeader.str}"/>
     <input id="deliveryStatus" type="hidden" value="${bizPoHeader.deliveryStatus}"/>
+    <input id="poHeaderId" type="hidden" value="${bizPoHeader.id}"/>
     <c:if test="${bizPoHeader.id!=null}">
         <div class="control-group">
-            <label class="control-label">采购单编号：</label>
+            <label class="control-label">订单号/备货单号：</label>
             <div class="controls">
+                <input id="orderNum" readonly="readonly" class="input-xlarge" type='text'/>
+            </div>
+
+            <div class="controls" style="display: none">
                 <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
             </div>
         </div>
@@ -353,7 +363,7 @@
                         <th>商品名称</th>
                         <th>商品货号</th>
                         <c:if test="${bizPoHeader.id!=null}">
-                            <th>所属单号</th>
+                            <th style="display: none">所属单号</th>
                         </c:if>
                         <th>采购数量</th>
                         <th>结算价</th>
@@ -375,7 +385,7 @@
                                 <td>${poDetail.skuInfo.name}</td>
                                 <td>${poDetail.skuInfo.itemNo}</td>
                                 <c:if test="${bizPoHeader.id!=null}">
-                                    <td>
+                                    <td style="display: none">
                                         <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}"
                                                    var="orderNumStr"
                                                    varStatus="orderStatus">
@@ -387,6 +397,7 @@
                                             </c:if>
                                                  ${orderNumStr.orderNumStr}
                                                 </a>
+                                                <span id="orderNumStr_${orderStatus.index+1}" style="display:none" value="${orderNumStr.orderNumStr}" />
                                         </c:forEach>
                                     </td>
                                 </c:if>
@@ -463,7 +474,7 @@
                         <th>商品名称</th>
                         <th>商品货号</th>
                         <c:if test="${bizPoHeader.id!=null}">
-                            <th>所属单号</th>
+                            <th style="display: none">所属单号</th>
                         </c:if>
                         <th>采购数量</th>
                         <th>结算价</th>
@@ -481,7 +492,7 @@
                                 <td>${poDetail.skuInfo.name}</td>
                                 <td>${poDetail.skuInfo.itemNo}</td>
                                 <c:if test="${bizPoHeader.id!=null}">
-                                    <td>
+                                    <td style="display: none">
                                         <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}"
                                                    var="orderNumStr"
                                                    varStatus="orderStatus">
@@ -493,6 +504,7 @@
                                             </c:if>
                                                 ${orderNumStr.orderNumStr}
                                                 </a>
+                                                <span id="orderNumStr_${orderStatus.index+1}" style="display:none" value="${orderNumStr.orderNumStr}" />
                                         </c:forEach>
                                     </td>
                                 </c:if>
