@@ -431,7 +431,7 @@
 				<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
 					<!-- 100%首付款审核 -->
                     <c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-                        <c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum))
+                        <c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum) || fns:getUser().isAdmin())
                                         && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
                                         && orderHeader.commonProcess.doOrderHeaderProcessAll.code != auditAllStatus
 							}">
@@ -441,7 +441,7 @@
 
 					<!-- 20%首付款审核 -->
                     <c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-                        <c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum))
+                        <c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) || fns:getUser().isAdmin())
                                         && orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
                                         && orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
 							}">
