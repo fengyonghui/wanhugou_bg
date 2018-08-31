@@ -128,11 +128,11 @@
         <%--<th>交易费用</th>--%>
         <th>应付金额</th>
         <%--<th>支付比例</th>--%>
-        <th>订单状态</th>
+        <th>订单支出状态</th>
         <%--<th>采购单来源</th>--%>
         <th>创建时间</th>
         <th>累积支付金额</th>
-        <th>审核状态</th>
+        <th>订单支出审核状态</th>
         <th>排产状态</th>
         <th>操作</th>
     </tr>
@@ -274,7 +274,7 @@
 									</c:if>
 									<c:if test="${bizPoHeader.bizRequestHeader != null}" >
 										<shiro:hasPermission name="biz:po:pay:list">
-											<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${bizPoHeader.bizRequestHeader.id}">支付申请列表-or</a>
+											<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${bizPoHeader.bizRequestHeader.id}">支付申请列表</a>
 										</shiro:hasPermission>
 									</c:if>
 								</c:when>

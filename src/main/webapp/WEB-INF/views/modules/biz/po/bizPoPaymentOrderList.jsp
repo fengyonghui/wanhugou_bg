@@ -33,7 +33,7 @@
 				<th>最后付款时间</th>
 				<th>实际付款时间</th>
 				<th>当前状态</th>
-				<th>审批状态</th>
+				<th>单次支付审批状态</th>
 				<th>支付凭证</th>
 				<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
