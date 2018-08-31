@@ -3,10 +3,13 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+//		this.staffFlag = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
+//			biz:custom:bizCustomCenterConsultant:edit   保存
+//			this.getPermissionList('biz:custom:bizCustomCenterConsultant:edit','staRelAddFlag')
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
@@ -16,6 +19,20 @@
 			var _this = this;
 			_this.staRelAdd();
 		},
+//		getPermissionList: function (markVal,flag) {
+//          var _this = this;
+//          $.ajax({
+//              type: "GET",
+//              url: "/a/sys/menu/permissionList",
+//              dataType: "json",
+//              data: {"marking": markVal},
+//              async:false,
+//              success: function(res){
+//                  _this.staRelAddFlag = res.data;
+//					console.log(_this.staRelAddFlag)
+//              }
+//          });
+//      },
 		ajaxCheckStatus: function() {
 			var _this = this;
 			var htmlBusiness="";

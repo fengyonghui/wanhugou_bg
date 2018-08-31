@@ -3,15 +3,14 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
-		this.detileFlag = "false"
-		this.cancelAmendPayFlag = "false";
+		this.staOrdFlag = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			//权限添加
-//			biz:order:bizOrderHeader:edit     审核
-			this.getPermissionList('biz:order:bizOrderHeader:edit','staCheckFlag')
+//			biz:order:bizOrderHeader:view		操作
+			this.getPermissionList('biz:order:bizOrderHeader:view','staOrdFlag')
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -109,8 +108,8 @@
                         	//审核
                         	var staCheckBtn = '';
                         	var staCheckBtnTxt = '';
-			                if(_this.staCheckFlag == true) {
-			                	if(item.bizStatus==0 || item.bizStatus==5 || item.bizStatus==10) {
+			                if(_this.staOrdFlag == true) {
+			                	if(item.bizStatus < 15) {
 			                		staCheckBtn = 'waitCheckBtn'
 			                		staCheckBtnTxt = "待审核"
 			                	}

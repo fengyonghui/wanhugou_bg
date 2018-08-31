@@ -3,17 +3,13 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
-		this.detileFlag = "false"
-		this.cancelAmendPayFlag = "false"
+//		this.staRelFlag = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-//			biz:request:bizRequestHeader:view   详情
-//			biz:request:bizRequestHeader:edit    取消、修改、付款
-			this.getPermissionList('biz:request:bizRequestHeader:view','detileFlag')
-			this.getPermissionList('biz:request:bizRequestHeader:edit','cancelAmendPayFlag')
-//			 $('#consultantsid').val(this.userInfo.staListId)
+//			biz:custom:bizCustomCenterConsultant:edit 			操作、移除
+//			this.getPermissionList('biz:custom:bizCustomCenterConsultant:edit','staRelFlag')
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -150,25 +146,25 @@
 			            }          
 			        },
 		            error:function(xhr,type,errorThrown){
-			            console.log(type);
+//			            console.log(type);
 		            }
 		        })
 		    }
 		},
-		getPermissionList: function (markVal,flag) {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": markVal},
-                async:false,
-                success: function(res){
-                    _this.detileFlag = res.data;
-					_this.cancelAmendPayFlag = res.data;
-                }
-            });
-        },
+//		getPermissionList: function (markVal,flag) {
+//          var _this = this;
+//          $.ajax({
+//              type: "GET",
+//              url: "/a/sys/menu/permissionList",
+//              dataType: "json",
+//              data: {"marking": markVal},
+//              async:false,
+//              success: function(res){
+//                  _this.staRelFlag = res.data;
+//                  console.log(_this.staRelFlag)
+//              }
+//          });
+//      },
 		stHrefHtml: function() {
 			var _this = this;
 		/*查询*/
@@ -198,7 +194,7 @@
 			}),	
 		/*经销店添加*/
 			$('#nav').on('tap','.staRelAddBtn', function() {
-				var url = $(this).attr('url');						            	
+				var url = $(this).attr('url');
 		        var cosultasIdTxt=$('#cosultasId').val();
 		        var officeIdTxt=$('#officeId').val();
 				GHUTILS.OPENPAGE({
@@ -209,7 +205,7 @@
 					}
 				})
 			}),
-		/*解除关联*/	
+		/*解除关联*/
             $('.content').on('tap','.staReMoveBtn',function(){
             	var url = $(this).attr('url');
 				var customsId = $(this).attr('customsId');
@@ -241,71 +237,16 @@
 				})	
 			})
         },
-		formatDateTime: function(unix) {
-			var _this = this;
-			var now = new Date(parseInt(unix) * 1);
-			now = now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
-			if(now.indexOf("下午") > 0) {
-				if(now.length == 18) {
-					var temp1 = now.substring(0, now.indexOf("下午")); //2014/7/6
-					var temp2 = now.substring(now.indexOf("下午") + 2, now.length); // 5:17:43
-					var temp3 = temp2.substring(0, 1); //  5
-					var temp4 = parseInt(temp3); // 5
-					temp4 = 12 + temp4; // 17
-					var temp5 = temp4 + temp2.substring(1, temp2.length); // 17:17:43
-					//	                now = temp1 + temp5; // 2014/7/6 17:17:43
-					//	                now = now.replace("/", "-"); //  2014-7/6 17:17:43
-					now = now.replace("-"); //  2014-7-6 17:17:43
-				} else {
-					var temp1 = now.substring(0, now.indexOf("下午")); //2014/7/6
-					var temp2 = now.substring(now.indexOf("下午") + 2, now.length); // 5:17:43
-					var temp3 = temp2.substring(0, 2); //  5
-					if(temp3 == 12) {
-						temp3 -= 12;
-					}
-					var temp4 = parseInt(temp3); // 5
-					temp4 = 12 + temp4; // 17
-					var temp5 = temp4 + temp2.substring(2, temp2.length); // 17:17:43
-					//	                now = temp1 + temp5; // 2014/7/6 17:17:43
-					//	                now = now.replace("/", "-"); //  2014-7/6 17:17:43
-					now = now.replace("-"); //  2014-7-6 17:17:43
-				}
-			} else {
-				var temp1 = now.substring(0, now.indexOf("上午")); //2014/7/6
-				var temp2 = now.substring(now.indexOf("上午") + 2, now.length); // 5:17:43
-				var temp3 = temp2.substring(0, 1); //  5
-				var index = 1;
-				var temp4 = parseInt(temp3); // 5
-				if(temp4 == 0) { //  00
-					temp4 = "0" + temp4;
-				} else if(temp4 == 1) { // 10  11  12
-					index = 2;
-					var tempIndex = temp2.substring(1, 2);
-					if(tempIndex != ":") {
-						temp4 = temp4 + "" + tempIndex;
-					} else { // 01
-						temp4 = "0" + temp4;
-					}
-				} else { // 02 03 ... 09
-					temp4 = "0" + temp4;
-				}
-				var temp5 = temp4 + temp2.substring(index, temp2.length); // 07:17:43
-				//	            now = temp1 + temp5; // 2014/7/6 07:17:43
-				//	            now = now.replace("/","-"); //  2014-7/6 07:17:43
-				now = now.replace("-"); //  2014-7-6 07:17:43
-			}
-			return now;
-		},
 		seachFunc:function(){			
 			var _this = this;
 			var staffHtmlList = '';
+//			解码：
 //			var nameTxt = '';
 //			if(_this.userInfo.name) {
 //				nameTxt = decodeURIComponent(_this.userInfo.name)
 //			}else {
 //				nameTxt = ''
 //			}
-//          alert($('#hideul').val())
 			$.ajax({
 				type: 'GET',
 				url: '/a/biz/custom/bizCustomCenterConsultant/listData4mobile',

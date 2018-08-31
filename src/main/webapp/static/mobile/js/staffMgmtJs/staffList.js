@@ -3,14 +3,13 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
-		this.detileFlag = "false"
-		this.cancelAmendPayFlag = "false"
+		this.staffFlag = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-//			biz:order:bizOrderHeader:edit     审核
-//			this.getPermissionList('biz:order:bizOrderHeader:edit','staCheckFlag')
+//			sys:user:edit   用户列表,用户添加，关联经销店,订单管理,修改,删除,恢复
+			this.getPermissionList('sys:user:edit','staffFlag')
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -52,15 +51,17 @@
 			                for(var i = childs.length - 1; i >= 0; i--) {
 			                    f.removeChild(childs[i]);
 			                }
-			                console.log('222')
-			                console.log(pager)
-			                $('.mui-pull-caption-down').html('');				                
-			                getData(pager);
+//			                console.log('222')
+//			                console.log(pager)
+			                $('.mui-pull-caption-down').html('');
+			                if(_this.staffFlag == true) {
+			                	getData(pager);
+			                }
 			            }
 			        }
 			    })
 		    }
-		    function getData(params){
+	    	function getData(params){
 		    	var staffHtmlList = '';
 		        mui.ajax("/a/sys/user/listData4mobile",{
 		            data:params,               
@@ -162,14 +163,14 @@
 		stHrefHtml: function() {
 			var _this = this;
 		/*查询*/
-			$('.header').on('tap', '#staffSearchBtn', function() {
+			$('.app_header').on('tap', '#staffSearchBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
 						url: "../../html/staffMgmtHtml/staSearch.html",
-						extras:{							
+						extras:{
 						}
 					})
 				}
@@ -195,7 +196,7 @@
 				})
 			}),
 		/*关联经销店*/
-			$('.listBlue').on('tap', '.staRelevanBtn', function() {
+			$('.app_content').on('tap', '.staRelevanBtn', function() {
 				var url = $(this).attr('url');
 				var staListId = $(this).attr('staListId');
 				var dptmtId = $(this).attr('dptmtId');
@@ -212,7 +213,7 @@
 				}
 			}),
 		/*订单管理*/
-            $('.content').on('tap','.staOrdBtn', function() {
+            $('.app_content').on('tap','.staOrdBtn', function() {
 				var url = $(this).attr('url');
                 var staListId = $(this).attr('staListId');
 				GHUTILS.OPENPAGE({
@@ -223,7 +224,7 @@
 				})
 			})
         /*修改*/
-//	       $('.listBlue').on('tap', '.staAmendBtn', function() {
+//	       $('.app_content').on('tap', '.staAmendBtn', function() {
 //					var url = $(this).attr('url');
 //					var staListId = $(this).attr('staListId');
 //					if(url) {
@@ -238,7 +239,7 @@
 //					}
 //				}),
 		/*删除*/	
-//          $('.content').on('tap','.staDeletBtn',function(){
+//          $('.app_content').on('tap','.staDeletBtn',function(){
 //          	var url = $(this).attr('url');
 //				var staListId = $(this).attr('staListId');
 //              if(url) {
@@ -269,61 +270,6 @@
 //              }
 //			})
         },
-		formatDateTime: function(unix) {
-			var _this = this;
-			var now = new Date(parseInt(unix) * 1);
-			now = now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
-			if(now.indexOf("下午") > 0) {
-				if(now.length == 18) {
-					var temp1 = now.substring(0, now.indexOf("下午")); //2014/7/6
-					var temp2 = now.substring(now.indexOf("下午") + 2, now.length); // 5:17:43
-					var temp3 = temp2.substring(0, 1); //  5
-					var temp4 = parseInt(temp3); // 5
-					temp4 = 12 + temp4; // 17
-					var temp5 = temp4 + temp2.substring(1, temp2.length); // 17:17:43
-					//	                now = temp1 + temp5; // 2014/7/6 17:17:43
-					//	                now = now.replace("/", "-"); //  2014-7/6 17:17:43
-					now = now.replace("-"); //  2014-7-6 17:17:43
-				} else {
-					var temp1 = now.substring(0, now.indexOf("下午")); //2014/7/6
-					var temp2 = now.substring(now.indexOf("下午") + 2, now.length); // 5:17:43
-					var temp3 = temp2.substring(0, 2); //  5
-					if(temp3 == 12) {
-						temp3 -= 12;
-					}
-					var temp4 = parseInt(temp3); // 5
-					temp4 = 12 + temp4; // 17
-					var temp5 = temp4 + temp2.substring(2, temp2.length); // 17:17:43
-					//	                now = temp1 + temp5; // 2014/7/6 17:17:43
-					//	                now = now.replace("/", "-"); //  2014-7/6 17:17:43
-					now = now.replace("-"); //  2014-7-6 17:17:43
-				}
-			} else {
-				var temp1 = now.substring(0, now.indexOf("上午")); //2014/7/6
-				var temp2 = now.substring(now.indexOf("上午") + 2, now.length); // 5:17:43
-				var temp3 = temp2.substring(0, 1); //  5
-				var index = 1;
-				var temp4 = parseInt(temp3); // 5
-				if(temp4 == 0) { //  00
-					temp4 = "0" + temp4;
-				} else if(temp4 == 1) { // 10  11  12
-					index = 2;
-					var tempIndex = temp2.substring(1, 2);
-					if(tempIndex != ":") {
-						temp4 = temp4 + "" + tempIndex;
-					} else { // 01
-						temp4 = "0" + temp4;
-					}
-				} else { // 02 03 ... 09
-					temp4 = "0" + temp4;
-				}
-				var temp5 = temp4 + temp2.substring(index, temp2.length); // 07:17:43
-				//	            now = temp1 + temp5; // 2014/7/6 07:17:43
-				//	            now = now.replace("/","-"); //  2014-7/6 07:17:43
-				now = now.replace("-"); //  2014-7-6 07:17:43
-			}
-			return now;
-		},
 		seachFunc:function(){
 			var _this = this;
 			var staffHtmlList = '';
@@ -355,7 +301,7 @@
 					var arrLen = res.data.page.list.length;
 					if(arrLen > 0) {
                         $.each(res.data.page.list, function(i, item) {
-                        	console.log(item)
+//                      	console.log(item)
                         	var officeChatRecord = '';
                         	if(item.userOrder.officeChatRecord) {
                         		officeChatRecord = item.userOrder.officeChatRecord

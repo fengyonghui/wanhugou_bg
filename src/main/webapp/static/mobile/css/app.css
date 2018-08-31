@@ -511,7 +511,6 @@ body{font-size: 15px;color:#3b3b3b;}
 .mui-content{
 	background-color:#fff;
 }
-
 /*屏幕兼容*/
 @media only screen and (min-width:0px) and (max-width: 370px) {
  #app-frozen-detail-list .mui-table-view { margin: 10px 10px 0 10px; border-radius: 4px;}
@@ -561,6 +560,8 @@ body{font-size: 15px;color:#3b3b3b;}
 .app_dialog_list_box .app_lines span{background: #fff;padding: 0 15px;position: relative;top:-7px}
 
 /*自定义覆盖样式!*/
+.app_header{height: 44px;line-height: 44px;border-bottom: 1px solid #ccc;background-color: #40ABE9;}
+.app_content {padding-bottom: 40px;background-color: #fff;}
 .app_bgcolor {background-color: #374761;box-shadow: none;}
 .app_content_bgc_login {background-color: #374761;}
 .app_content_bgc_phs {background-color: #374761;}
@@ -588,7 +589,6 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*模糊查询列表显示---查询页面和经销店添加公共样式*/
-
 .pre {margin-bottom: 0;padding-left: 0;float: right;width: 67%;}
 .newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;background: url(./thumb.jpg) no-repeat scroll right center;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
 .input_div {width: 150px;border: 1px solid #ddd;border-bottom: none;border-radius: 0 0 3px 3px;display: none;}

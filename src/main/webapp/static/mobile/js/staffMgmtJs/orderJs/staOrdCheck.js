@@ -48,7 +48,7 @@
 					//订单id
 					$('#ordId').val(_this.userInfo.staOrdId);					
 					var item = res.data.bizOrderHeader;
-					console.log(item)
+//					console.log(item)
 					//交货时间
 					$('#appointedTime').val(item.bizLocation.appointedTime);
 					//标志位
@@ -181,7 +181,7 @@
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-					console.log(item)
+//					console.log(item)
 					var opShelfInfo = '';
 					if(item.shelfInfo.opShelfInfo) {
 						opShelfInfo = item.shelfInfo.opShelfInfo.name
@@ -327,7 +327,7 @@
 				dataType: "json",
 				success: function(res) {
 					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;
-					console.log(res)
+//					console.log(res)
 					if(res.data=='ok'){
 						mui.toast('发货成功!')
 						window.setTimeout(function(){
