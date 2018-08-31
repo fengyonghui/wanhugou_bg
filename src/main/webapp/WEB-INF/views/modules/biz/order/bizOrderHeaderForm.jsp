@@ -1813,8 +1813,8 @@
                     <div class="control-group">
                         <label class="control-label">供货方式:</label>
                         <div class="controls">
-                            产地直发:<input name="localOriginType" value="0" checked type="radio" readonly="readonly"/>
-                            本地备货:<input name="localOriginType" value="1" type="radio" readonly="readonly"/>
+                            本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>
+                            产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>
                         </div>
                     </div>
                 </c:if>
