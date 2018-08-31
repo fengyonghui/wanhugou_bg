@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.BizOrderSchedulingEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
@@ -213,7 +214,7 @@
                                 <shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">
                                     <c:if test="${bizPoHeader.bizRequestHeader != null}">
                                         <c:if test="${bizPoHeader.currentPaymentId == null
-												&& bizStatus >= ReqHeaderStatusEnum.APPROVE.state
+												&& bizPoHeader.bizRequestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state
 												&& bizPoHeader.bizRequestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state
 												&& (bizPoHeader.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : bizPoHeader.payTotal) < bizPoHeader.bizRequestHeader.totalDetail
 												}">
