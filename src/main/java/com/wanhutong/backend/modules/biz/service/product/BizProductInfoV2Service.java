@@ -27,10 +27,8 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.sys.entity.Dict;
-import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.PropValue;
-import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -40,12 +38,12 @@ import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,6 +116,10 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
 
     @Override
     public Page<BizProductInfo> findPage(Page<BizProductInfo> page, BizProductInfo bizProductInfo) {
+       User user= UserUtils.getUser();
+        if(user.getCompany()!=null && StringUtils.isNotBlank(user.getCompany().getType())&&user.getCompany().getType().equals(OfficeTypeEnum.VENDOR.getType())){
+            bizProductInfo.setOffice(user.getCompany());
+        }
         bizProductInfo.setDataStatus("filter");
         return super.findPage(page, bizProductInfo);
     }

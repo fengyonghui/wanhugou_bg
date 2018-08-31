@@ -5,6 +5,12 @@ package com.wanhutong.backend.modules.biz.service.sku;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +37,15 @@ public class BizSkuViewLogService extends CrudService<BizSkuViewLogDao, BizSkuVi
 	}
 	
 	public Page<BizSkuViewLog> findPage(Page<BizSkuViewLog> page, BizSkuViewLog bizSkuViewLog) {
+		User user = UserUtils.getUser();
+		List<String> enNameList = Lists.newArrayList();
+		List<Role> roleList = user.getRoleList();
+		for (Role role : roleList) {
+			enNameList.add(role.getEnname());
+		}
+		if (enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
+			bizSkuViewLog.getSqlMap().put("skuType", BaseService.dataScopeFilter(user, "vend", "su"));
+		}
 		return super.findPage(page, bizSkuViewLog);
 	}
 	

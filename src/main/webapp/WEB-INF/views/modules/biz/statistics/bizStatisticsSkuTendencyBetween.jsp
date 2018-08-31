@@ -9,6 +9,7 @@
 <body>
 <div>
     <input id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
 
     <label>
         <select class="input-medium" id="variId">
@@ -59,6 +60,7 @@
         salesVolumeChart.showLoading($Echarts.showLoadingStyle);
 
         var startDate = $("#startDate").val();
+        var endDate = $("#endDate").val();
         var itemNo = $("#itemNo").val();
 
         var variIdEle = $("#variId");
@@ -86,7 +88,7 @@
         $.ajax({
             type: 'GET',
             url: "${ctx}/biz/statistics/between/skuTendencyData",
-            data: {"startDate": startDate, "variId" : variId, "dataType" : dataType, "timeType" : timeType, "purchasingId" : purchasingId, "itemNo" : itemNo},
+            data: {"startDate": startDate,"endDate": endDate, "variId" : variId, "dataType" : dataType, "timeType" : timeType, "purchasingId" : purchasingId, "itemNo" : itemNo},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {

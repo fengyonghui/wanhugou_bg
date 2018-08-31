@@ -309,7 +309,7 @@ public class BizOrderHeaderController extends BaseController {
                            OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail(), b.getReceiveTotal());
                            b.setPayProportion(orderPayProportionStatusEnum.getState());
                            bizOrderHeaderService.saveOrderHeader(b);
-                           genAuditProcess(orderPayProportionStatusEnum, b);
+                           genAuditProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
                        }
                    }
                    if (b.getOrderNum().startsWith("DO")) {
@@ -648,9 +648,23 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         if (CollectionUtils.isNotEmpty(poAuditList) && CollectionUtils.isNotEmpty(list)) {
-            list.remove(list.size() - 1);
-            list.addAll(poAuditList);
-            list.get(list.size() - 1).setCurrent(1);
+            if (bizOrderHeader.getOrderNum().startsWith("DO")) {
+                if ((String.valueOf(ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().getAutProcessId()).equals(list.get(list.size() - 1).getType())
+                        && OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail(), bizOrderHeader.getReceiveTotal()) == OrderPayProportionStatusEnum.ALL
+                )
+                        || (String.valueOf(ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getAutProcessId()).equals(list.get(list.size() - 1).getType())
+                        && OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail(), bizOrderHeader.getReceiveTotal()) == OrderPayProportionStatusEnum.FIFTH)
+                        ) {
+                    list.remove(list.size() - 1);
+                    list.addAll(poAuditList);
+                    list.get(list.size() - 1).setCurrent(1);
+                }
+            }
+            if (bizOrderHeader.getOrderNum().startsWith("SO") && ("666".equals(list.get(list.size() - 1).getType()) || "777".equals(list.get(list.size() - 1).getType()))) {
+                list.remove(list.size() - 1);
+                list.addAll(poAuditList);
+                list.get(list.size() - 1).setCurrent(1);
+            }
         }
 
         commonProcessEntity.setCurrent(1);
@@ -764,6 +778,24 @@ public class BizOrderHeaderController extends BaseController {
             bizOrderHeader.getPlatformInfo().setId(6);
         }
         String statuPath = request.getParameter("statuPath");
+        if (bizOrderHeader.getId() != null) {
+            if (bizOrderHeader.getOrderNum().startsWith("DO")) {
+                Integer processId = bizOrderHeaderService.saveCommonProcess(bizOrderHeader);
+                bizOrderHeaderService.updateProcessId(bizOrderHeader.getId(), processId);
+            }
+
+            if (bizOrderHeader.getOrderNum().startsWith("SO")) {
+                genAuditProcess(OrderPayProportionStatusEnum.parse(bizOrderHeader.getPayProportion()), bizOrderHeader, Boolean.TRUE);
+            }
+
+            BizPoHeader bizPoHeader = new BizPoHeader();
+            bizPoHeader.setBizOrderHeader(bizOrderHeader);
+            List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+            if (CollectionUtils.isNotEmpty(poList)) {
+                bizPoHeaderService.updateProcessToInitAudit(poList.get(0), StringUtils.EMPTY);
+            }
+        }
+
         bizOrderHeaderService.save(bizOrderHeader);
         addMessage(redirectAttributes, "保存订单信息成功");
         if (bizOrderHeader.getClientModify() != null && "client_modify".equals(bizOrderHeader.getClientModify())) {
@@ -1061,7 +1093,7 @@ public class BizOrderHeaderController extends BaseController {
                         processId = bizOrderHeaderService.saveCommonProcess(orderheader);
                         bizOrderHeaderService.updateProcessId(orderheader.getId(), processId);
                     } else {
-                        genAuditProcess(orderPayProportionStatusEnum, bizOrderHeader);
+                        genAuditProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE);
                     }
                 }
             }
@@ -1078,7 +1110,7 @@ public class BizOrderHeaderController extends BaseController {
      * @param orderPayProportionStatusEnum
      * @param bizOrderHeader
      */
-    private void genAuditProcess(OrderPayProportionStatusEnum orderPayProportionStatusEnum, BizOrderHeader bizOrderHeader) {
+    private void genAuditProcess(OrderPayProportionStatusEnum orderPayProportionStatusEnum, BizOrderHeader bizOrderHeader, boolean reGen) {
         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
         JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
 
@@ -1087,7 +1119,7 @@ public class BizOrderHeaderController extends BaseController {
         originEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
         originEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
         List<CommonProcessEntity> originList = commonProcessService.findList(originEntity);
-        if (CollectionUtils.isEmpty(originList)) {
+        if (CollectionUtils.isEmpty(originList) || reGen) {
             originEntity.setCurrent(1);
             switch (orderPayProportionStatusEnum) {
                 case ZERO:
@@ -1102,7 +1134,12 @@ public class BizOrderHeaderController extends BaseController {
                 default:
                     break;
             }
-            commonProcessService.save(originEntity);
+            List<CommonProcessEntity> list = commonProcessService.findList(originEntity);
+            if (CollectionUtils.isEmpty(list)) {
+                commonProcessService.updateCurrentByObject(bizOrderHeader.getId(), JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME, 0);
+                commonProcessService.save(originEntity);
+            }
+
         }
 
         // 本地备货
@@ -1110,7 +1147,7 @@ public class BizOrderHeaderController extends BaseController {
         localEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
         localEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
         List<CommonProcessEntity> localList = commonProcessService.findList(localEntity);
-        if (CollectionUtils.isEmpty(localList)) {
+        if (CollectionUtils.isEmpty(localList) || reGen) {
             localEntity.setCurrent(1);
             switch (orderPayProportionStatusEnum) {
                 case ZERO:
@@ -1125,7 +1162,12 @@ public class BizOrderHeaderController extends BaseController {
                 default:
                     break;
             }
-            commonProcessService.save(localEntity);
+            List<CommonProcessEntity> list = commonProcessService.findList(originEntity);
+            if (CollectionUtils.isEmpty(list)) {
+                commonProcessService.updateCurrentByObject(bizOrderHeader.getId(), JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME, 0);
+                commonProcessService.save(localEntity);
+            }
+
         }
     }
 

@@ -411,7 +411,7 @@
 				<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
 					<!-- 100%首付款审核 -->
 					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum)  && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
+						<c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessAll.roleEnNameEnum) || fns:getUser().isAdmin())  && orderHeader.commonProcess.doOrderHeaderProcessAll.name != '驳回'
 							&& orderHeader.commonProcess.doOrderHeaderProcessAll.code != auditAllStatus
 							}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
@@ -420,13 +420,13 @@
 
 					<!-- 20%首付款审核 -->
 					<c:if test="${orderHeader.payProportion !=null && orderHeader.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-						<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) && orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
+						<c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) || fns:getUser().isAdmin()) && orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
 							&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
 							}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
 						</c:if>
 					</c:if>
-                    <c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOriginProcess.roleEnNameEnum) && orderHeader.commonProcess.jointOperationOriginProcess.name != '驳回' && orderHeader.commonProcess.jointOperationOriginProcess.code != auditStatus
+                    <c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOriginProcess.roleEnNameEnum) || fns:getUser().isAdmin()) && orderHeader.commonProcess.jointOperationOriginProcess.name != '驳回' && orderHeader.commonProcess.jointOperationOriginProcess.code != auditStatus
 							 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
                         <a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}">审核</a>
                     </c:if>

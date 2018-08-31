@@ -551,6 +551,14 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		if (!beanValidator(model, bizRequestHeader)){
 			return form(bizRequestHeader, model);
 		}
+		if (bizRequestHeader.getId() != null) {
+			BizPoHeader bizPoHeader = new BizPoHeader();
+			bizPoHeader.setBizRequestHeader(bizRequestHeader);
+			List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+			if (CollectionUtils.isNotEmpty(poList)) {
+				bizPoHeaderService.updateProcessToInitAudit(poList.get(0), StringUtils.EMPTY);
+			}
+		}
 		bizRequestHeaderForVendorService.save(bizRequestHeader);
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeaderForVendor/?repage";
@@ -1086,46 +1094,5 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		resultMap.put("totalCompleteScheduHeaderNum", bizRequestHeader.getTotalCompleteScheduHeaderNum());
 
 		return JSONObject.fromObject(resultMap).toString();
-	}
-
-	@RequestMapping(value = "confirm")
-	@ResponseBody
-	public boolean confirm(HttpServletRequest request, @RequestBody String params) {
-		Boolean resultFlag = false;
-		JSONArray jsonArray = JSONArray.fromObject(params);
-		System.out.println(jsonArray);
-		//备货单号
-		String reqNo = (String) jsonArray.get(0);
-
-		List<String> paramList = Lists.newArrayList();
-		for (int i = 1; i < jsonArray.size(); i++) {
-			Object item = jsonArray.get(i);
-			paramList.add(String.valueOf(item));
-		}
-		try {
-			bizCompletePalnService.batchUpdateCompleteStatus(paramList);
-			resultFlag = true;
-
-//				//供应商已确认排产，发短息通知采销部经理
-//			List<User> userList = systemService.findUserByRoleEnName(MARKETING_MANAGER);
-//			if (!CollectionUtils.isEmpty(userList)) {
-//				String reqNo_1 = reqNo.substring(0,11);
-//				String reqNo_2 = reqNo.substring(11);
-//				StringBuilder phones = new StringBuilder();
-//				for (User user : userList) {
-//					if (StringUtils.isNotBlank(user.getMobile())) {
-//						phones.append(user.getMobile()).append(",");
-//					}
-//				}
-//				AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.COMPLETE_SCHEDULING.getCode(), phones.toString(), ImmutableMap.of("order", "备货单", "reqNo_1", reqNo_1, "reqNo_2", reqNo_2));
-//			}
-
-
-		} catch (Exception e) {
-			resultFlag = false;
-			logger.error(e.getMessage());
-		}
-
-		return resultFlag;
 	}
 }
