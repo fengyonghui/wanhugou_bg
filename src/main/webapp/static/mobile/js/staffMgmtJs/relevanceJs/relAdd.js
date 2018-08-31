@@ -102,7 +102,21 @@
 		staRelAdd:function() {
 			var _this = this;			
 			$('.staRelSave').on('tap','#staRelSaveBtn', function() {
-			
+				var officeNameVal = $('#officeName').val();
+				var cosultasNameVal = $('#cosultasName').val();
+				var phoneVal = $('#phpneId').val();
+				if(officeNameVal == null || officeNameVal ==undefined || officeNameVal.trim() == ""){
+					mui.toast("请选择采购中心！")
+					return false;
+				}
+				if(cosultasNameVal == null || cosultasNameVal ==undefined || cosultasNameVal.trim() == ""){
+					mui.toast("请选择客户专员！")
+					return false;
+				}
+				if(phoneVal == null || phoneVal ==undefined || phoneVal.trim() == ""){
+					mui.toast("请输入登录名！")
+					return false;
+				}
 				$.ajax({
 					type: "GET",
 					url: "/a/biz/custom/bizCustomCenterConsultant/save4mobile",
@@ -116,14 +130,18 @@
 						var consultantsId = $('#consultantsId').val();//客户专员ID
 						var officeId = $('#centersId').val();//采购中心ID
 						if(res==1){
-							alert('操作成功!')
-							GHUTILS.OPENPAGE({
-							url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
-							extras: {
-								staListId: consultantsId,//客户专员ID
-								dptmtId: officeId,//采购中心ID
-								}
-							})
+							mui.toast('关联成功!')
+							window.setTimeout(function(){
+				                GHUTILS.OPENPAGE({
+									url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
+									extras: {
+										staListId: consultantsId,//客户专员ID
+										dptmtId: officeId,//采购中心ID
+									}
+								})
+			                },800);							
+						}else{							
+							mui.toast('关联失败，请输入内容！')
 						}
 					}
 				});
