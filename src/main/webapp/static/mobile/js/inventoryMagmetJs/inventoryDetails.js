@@ -141,7 +141,7 @@
 						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+
 					'</div>'+
 //		产品信息
-					'<div class="mui-media-body commodity">'+
+					'<div class="mui-media-body commoditys">'+
 						'<div class="mui-input-row">'+
 							'<label>品牌名称：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled>'+

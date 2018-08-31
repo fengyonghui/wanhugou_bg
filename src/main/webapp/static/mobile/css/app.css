@@ -8,7 +8,7 @@ address, caption, cite, code, dfn, em, th, var{font-style:normal;font-weight:nor
 ol, ul{list-style:none;}
 q:before, q:after{content:''}
 abbr, acronym,button{border:0;}
-a{color:#3d79f2;}
+a{color:#3d79f2;touch-action: none;}
 input, select, textarea{font-size: 15px;}
 
 /*==自定义图标==*/
@@ -384,7 +384,7 @@ input[type=url],
 input[type=week],
 select, textarea{height: auto;padding:10px 15px;}
 .mui-input-group .mui-input-row{height: auto;background-color: #fff;}
-.mui-input-row label{padding:10px 15px;padding-left: 20px;padding-right: 10px;line-height:21px;width: 33%;}
+.mui-input-row label{padding:10px 15px;padding-left: 20px;padding-right: 10px;line-height:21px;width: 33%;font-weight: bold;}
 .mui-input-row label~input, .mui-input-row label~select, .mui-input-row label~textarea{width:67%}
 
 .mui-input-row label~select{padding-left: 0;padding-top: 6px;}
@@ -572,7 +572,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .app_text_indt10 {text-indent: 10px;}
 .app_text_indt15 {text-indent: 15px;}
 .app_text_alg_r {text-align: right;}
-.labelLf {padding: 14px 14px;line-height: 21px;width: 33%}
+.labelLf {padding: 10px 14px;line-height: 21px;width: 33%;font-weight: bold;}
 .labelri {width: 67%;float: right;padding: 14px 15px;height: auto;line-height: 21px;font-size: 16px;text-align: center;}
 .labelPto {width:30%}
 .labelri input {margin-right: 15px;}
@@ -609,7 +609,7 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*查询小按钮--备货单添加、修改  和  经销店添加*/
-.comChoiceBtn {padding: 5px;border: none;width: 50px;position: absolute;right: 10px;top: 6px;background-color: #40ABE9;}
+.comChoiceBtn {padding: 5px;border: none;width: 50px;position: absolute;right: 10px;top: 2px;background-color: #40ABE9;}
 .inputClassAdd>label.commodityName {padding: 0;width: 15%;}
 .inputClassAdd>input.commodityTxt {padding: 0;font-size: 10px;position: relative;width: 85%;}
 			

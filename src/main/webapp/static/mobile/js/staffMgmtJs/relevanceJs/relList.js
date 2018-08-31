@@ -15,6 +15,7 @@
 			}else{
 				this.pageInit(); //页面初始化
 			}
+			this.backbtn();
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
@@ -29,7 +30,7 @@
 //			            contentnomore:'没 有 更 多 数 据 了',
 //			            callback:function(){
 //			                window.setTimeout(function(){
-//			                    getData(pager);
+//			                    _this.getData(pager);
 //			                },500);
 //			            }
 //			         },
@@ -39,11 +40,11 @@
 			            contentover : "",
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
-			                    pager['size']= 10;//条数
-			                    pager['pageNo'] = 1;
-			                    pager['consultants.id'] = _this.userInfo.staListId;//客户专员
-			                    pager['office.id'] = _this.userInfo.dptmtId;//采购中心ID
-			                    pager['conn'] ="connIndex"
+//			                    pager['size']= 10;//条数
+//			                    pager['pageNo'] = 1;
+//			                    pager['consultants.id'] = _this.userInfo.staListId;//客户专员
+//			                    pager['office.id'] = _this.userInfo.dptmtId;//采购中心ID
+//			                    pager['conn'] ="connIndex"
 			                   
 				                var f = document.getElementById("staReleList");
 				                var childs = f.childNodes;
@@ -51,15 +52,26 @@
 				                    f.removeChild(childs[i]);
 				                }
 				                $('.mui-pull-caption-down').html('');				                
-				                getData(pager);
+//				                _this.getData(pager);params
+				                _this.getData();
 			            }
 			        }
-			    })
+			   })
+
 		    }
-		    function getData(params){
+		},
+	    getData: function() {
+//		    function getData(params){
 		    	var staffHtmlList = '';
+		    	var _this=this;
 		        mui.ajax("/a/biz/custom/bizCustomCenterConsultant/listData4mobile",{
-		            data:params,               
+		            data:{
+		            		pageNo : 1,
+			                'consultants.id' :_this.userInfo.staListId,//客户专员
+			                'office.id' : _this.userInfo.dptmtId,//采购中心ID
+			                conn :"connIndex",
+		            },
+               
 		            dataType:'json',
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
@@ -123,9 +135,6 @@
 										'<div class="app_font_cl content_part mui-row">' +
 											'<div class="staReMoveBtn" customsId="'+item.customsId +'"  consultantsId="'+ item.consultantsId +'">解除关联</div>'+
 										'</div>' +
-//										'<div class="app_font_cl content_part mui-row">' +
-//											'<input type="hidden" id="hideul" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsId+' ">' +
-//										'</div>' +
 									'</div>'
 								});
 								$('#staReleList').html(staffHtmlList);
@@ -138,10 +147,11 @@
 //		                parseInt(res.data.page.count/pager.size)+1:
 //		                res.data.page.count/pager.size;
                         var totalPage=1;
-		                if(totalPage==pager.pageNo){
+                        
+		                if(totalPage==1){
 			                mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 			            }else{
-			                pager.pageNo++;
+			                pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
 			            }          
 			        },
@@ -149,8 +159,7 @@
 //			            console.log(type);
 		            }
 		        })
-		    }
-		},
+		    },
 //		getPermissionList: function (markVal,flag) {
 //          var _this = this;
 //          $.ajax({
@@ -165,6 +174,18 @@
 //              }
 //          });
 //      },
+        backbtn:function(){
+        	/*返回客户专员列表*/
+			$('#nav').on('tap','.staRelStaBtn', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../../html/staffMgmtHtml/staffList.html",
+					extras: {
+						
+					}
+				})
+			})
+       },
 		stHrefHtml: function() {
 			var _this = this;
 		/*查询*/
@@ -182,16 +203,7 @@
 					})
 				}
 			}),
-		/*返回客户专员列表*/
-			$('#nav').on('tap','.staRelStaBtn', function() {
-				var url = $(this).attr('url');
-				GHUTILS.OPENPAGE({
-					url: "../../../html/staffMgmtHtml/staffList.html",
-					extras: {
-						
-					}
-				})
-			}),	
+			
 		/*经销店添加*/
 			$('#nav').on('tap','.staRelAddBtn', function() {
 				var url = $(this).attr('url');
@@ -225,9 +237,15 @@
 			                	if(res.data == "ok") {
 			                		mui.toast("操作成功")
 			                		 window.setTimeout(function(){
-					                    _this.pageInit();
+//					                    _this.getData(consultantsId,customsId);
+										GHUTILS.OPENPAGE({
+										url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
+										extras: {
+											staListId: consultantsId,//客户专员ID
+											dptmtId: customsId,//采购中心ID
+											}
+										})
 					                },1000);
-			                		
 			                	}
 		                	}
 		            	})
@@ -263,7 +281,6 @@
 						var arrLen = res.data.resultData.length;						
                         if(arrLen > 0) {
                         $.each(res.data.resultData, function(i, item) {
-                        	
                         	$('#consultantsId').val(item.consultantsId)
 							var userOfficeDeta = '';
 			                if(item.userOfficeDeta) {
@@ -317,9 +334,6 @@
 										'<div class="app_font_cl content_part mui-row">' +
 											'<div class="staReMoveBtn" customsId="'+item.customsId +'"  consultantsId="'+ item.consultantsId +'">解除关联</div>'+
 										'</div>' +
-//										'<div class="app_font_cl content_part mui-row">' +
-//											'<input type="hidden" id="hideul" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsId+' ">' +
-//										'</div>' +
 									'</div>'
                         });
 							$('#staReleList').html(staffHtmlList);

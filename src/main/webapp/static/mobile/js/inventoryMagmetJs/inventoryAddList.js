@@ -13,7 +13,6 @@
 		return this;
 	}
 
-
 	ACCOUNT.prototype = {
 		init: function() {
 			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAdd01');
@@ -278,8 +277,8 @@
 				},
 				dataType: 'json',
 				success: function(res) {
-					console.log('777');
-					console.log(res)
+//					console.log('777');
+//					console.log(res)
 					_this.datagood = res
 					$.each(res, function(i, item) {
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
