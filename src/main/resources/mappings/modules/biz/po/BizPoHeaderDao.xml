@@ -88,6 +88,9 @@
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			AND a.is_prew = 0
+			<if test="poSchType != null">
+				AND bslp.po_sch_type = #{poSchType}
+			</if>
 			<if test="num != null and num != ''">
 				AND (oh.order_num LIKE
 				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
