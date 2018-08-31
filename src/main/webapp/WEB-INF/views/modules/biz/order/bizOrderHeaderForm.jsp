@@ -815,7 +815,8 @@
                     result = JSON.parse(result);
                     if(result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        window.history.go(-1);
+                        // window.history.go(-1);
+                        window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
                     }else {
                         alert(result.errmsg);
                     }
