@@ -75,10 +75,12 @@
 				rh.req_no AS "bizRequestHeader.reqNo",
 				rh.biz_status AS "bizRequestHeader.bizStatus",
                 rh.create_time AS "bizRequestHeader.createDate",
+				rh.total_detail AS "bizRequestHeader.totalDetail",
 				oh.id AS "bizOrderHeader.id",
 				oh.order_num AS "bizOrderHeader.orderNum",
 				oh.biz_status AS "bizOrderHeader.bizStatus",
-				oh.create_time AS "bizOrderHeader.createDate"
+				oh.create_time AS "bizOrderHeader.createDate",
+				oh.total_detail AS "bizOrderHeader.totalDetail"
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
 		LEFT JOIN biz_po_payment_order ppo ON ppo.po_header_id = a.id
