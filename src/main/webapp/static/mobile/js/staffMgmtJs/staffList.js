@@ -156,7 +156,7 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                    _this.staCheckFlag = res.data;
+                    _this.staffFlag = res.data;
                 }
             });
         },
