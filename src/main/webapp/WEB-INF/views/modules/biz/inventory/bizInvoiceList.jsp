@@ -111,7 +111,11 @@
 					<fmt:formatNumber type="number" value="${bizInvoice.freight*100/bizInvoice.valuePrice}" maxFractionDigits="0"/>%
 					</c:if>
 				</td>
-				<td>${bizInvoice.carrier}</td>
+				<td>
+					<c:if test="${bizInvoice.isConfirm != 0}">
+						${bizInvoice.carrier}
+					</c:if>
+				</td>
 				<td>${fns:getDictLabel(bizInvoice.settlementStatus, 'biz_settlement_status', '未知状态')}</td>
 				<td>${bizInvoice.remarks}</td>
 				<td>
