@@ -53,12 +53,17 @@
 								console.log(res)
 					htmlBusiness = '<option class="soption"  value="' + res.data.office.id + '">' + res.data.office.name + '</option>'
 					$('#cosultasName').html(htmlBusiness);
+					// 客户专员
+					$('#consultantsId').val(res.data.office.id)
+					
+					console.log($('#consultantsId').val())
 					htmloffice = '<option class="soption"  value="' + res.data.office.office.id + '">' + res.data.office.office.name + '</option>'
 					$('#officeName').html(htmloffice);
 					$.each(res.data.officeList,function(i,item){
 						console.log(item)
+						// 采购中心
 						$('#centersId').val(item.id)
-						
+						console.log($('#centersId').val())
 		                 htmloffice += '<option class="soption"  value="' + item.id + '">' + item.name + '</option>'
 					});
 					 $('#officeName').html(htmloffice); 
@@ -69,7 +74,9 @@
 		},
 		officeNamechoice:function(){
 			$('#officeName').on('change',function(){
-//				alert($(this).val())
+				alert($(this).val())
+				$('#consultantsId').val($(this).val())
+				console.log($('#consultantsId').val())
 				 $("#cosultasName").html("");
 				 $("#cosultasName").append("<option value='' selected = 'selected'>请选择客户专员</option>");
 				if($(this).val()!= null && $(this).val() !=undefined && $(this).val().trim() != ""){
@@ -79,7 +86,7 @@
 						type:"POST",
 						dataType:'json',
 						success:function(data){
-							$('#consultantsId').val(data.data.id)
+                             
 							for(var i =0;i<data.data.length;i++){
 								$("#cosultasName").append("<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>");
 							}
@@ -92,25 +99,29 @@
 			})
 		},
 		staRelAdd:function() {
-			var _this = this;
-			
-			$('#staRelSaveBtn').on('tap', function() {
+			var _this = this;			
+			$('.staRelSave').on('tap','#staRelSaveBtn', function() {
+				alert(999)
 				$.ajax({
 					type: "GET",
 					url: "/a/biz/custom/bizCustomCenterConsultant/save4mobile",
 					data: {
-//						mobeil: ,
-						'centers.id':$('#currentType').val(),
-						'consultants.id':num,
+						 phone:$('#phpneId').val() ,
+						'centers.id':$('#centersId').val(),
+						'consultants.id':$('#consultantsId').val()
 					},
 					dataType: "json",
 					success: function(res) {
 						console.log(res)
-						if(res.ret==true){
+						var consultantsId = $('#consultantsId').val();
+						var officeId = $('#centersId').val();
+						if(res==1){
 							alert('操作成功!')
 							GHUTILS.OPENPAGE({
 							url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
 							extras: {
+								staListId: consultantsId,
+								dptmtId: officeId,
 								}
 							})
 						}
