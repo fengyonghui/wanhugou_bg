@@ -181,21 +181,19 @@
                             '当前无审批流程' : bizPoHeader.commonProcess.purchaseOrderProcess.name}
             </td>
             <td>
-                <c:if test="${bizPoHeader.bizStatus != 10}">
-                    <c:choose>
-                        <c:when test="${bizPoHeader.poSchType == 0 || bizPoHeader.poSchType == null}">
-                            ${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}
-                        </c:when>
-                        <c:otherwise>
-                            <c:if test="${bizPoHeader.poSchType == 1}">
-                                ${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}
-                            </c:if>
-                            <c:if test="${bizPoHeader.poSchType == 2}">
-                                ${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}
-                            </c:if>
-                        </c:otherwise>
-                    </c:choose>
-                </c:if>
+                <c:choose>
+                    <c:when test="${bizPoHeader.poSchType == 0 || bizPoHeader.poSchType == null}">
+                        ${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}
+                    </c:when>
+                    <c:otherwise>
+                        <c:if test="${bizPoHeader.poSchType == 1}">
+                            ${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}
+                        </c:if>
+                        <c:if test="${bizPoHeader.poSchType == 2}">
+                            ${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
             </td>
             <shiro:hasPermission name="biz:po:bizPoHeader:view">
                 <td>
