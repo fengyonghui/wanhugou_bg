@@ -297,7 +297,8 @@
                     result = JSON.parse(result);
                     if(result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
+                        <%--window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";--%>
+                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
                     }else {
                         alert(result.errmsg);
                     }

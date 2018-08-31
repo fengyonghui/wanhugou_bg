@@ -244,8 +244,7 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
 
-        for (PurchaseOrderProcessConfig.PurchaseOrderProcess process : purchaseOrderProcessConfig.getProcessList()) {
-            originConfigMap.put(process.getName(), process.getName());
+        for (com.wanhutong.backend.modules.config.parse.Process process : purchaseOrderProcessConfig.getProcessList()) {
             if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus)) {
                 poConfigValue.add(String.valueOf(process.getCode()));
             }
@@ -284,22 +283,38 @@ public class BizOrderHeaderController extends BaseController {
                    bizPoHeader.setBizOrderHeader(b);
                    List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
 
+                   List<CommonProcessEntity> poAuditList = null;
+                   if (CollectionUtils.isNotEmpty(poList)) {
+                       bizPoHeader = poList.get(0);
+                       CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
+                       poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+                       poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+                       poAuditList = commonProcessService.findList(poCommonProcessEntity);
+                   }
+
+                   if (CollectionUtils.isNotEmpty(poAuditList)) {
+                       CommonProcessEntity commonProcessEntityPo = poAuditList.get(poAuditList.size() - 1);
+                       b.setPoProcessName(commonProcessEntityPo.getPurchaseOrderProcess().getName());
+                   }
+
                    List<CommonProcessEntity> list = null;
                    if (b.getOrderNum().startsWith("SO")) {
 
-                       CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-                       commonProcessEntity.setObjectId(String.valueOf(b.getId()));
-                       commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
-                       if (CollectionUtils.isNotEmpty(poList)) {
-                           bizPoHeader = poList.get(0);
-                           commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-                           commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-                       } else {
-                           if (b.getSuplys() == null || b.getSuplys() == 0 || b.getSuplys() == 721) {
-                               commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
-                           }
+                   CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+                   commonProcessEntity.setObjectId(String.valueOf(b.getId()));
+                   commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+                   if (CollectionUtils.isNotEmpty(poList)) {
+                       bizPoHeader = poList.get(0);
+                       commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+                       commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+                   } else {
+                       if (b.getSuplys() == null || b.getSuplys() == 0 || b.getSuplys() == 721) {
+                           commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
                        }
-                       list = commonProcessService.findList(commonProcessEntity);
+                   }
+                   list = commonProcessService.findList(commonProcessEntity);
+
+
 
                        if (CollectionUtils.isNotEmpty(list)) {
                            b.setCommonProcess(list.get(list.size() - 1));
@@ -538,6 +553,7 @@ public class BizOrderHeaderController extends BaseController {
         boolean flag = false;
         User user = UserUtils.getUser();
         if (user.getRoleList() != null) {
+
             for (Role role : user.getRoleList()) {
                 if (RoleEnNameEnum.FINANCE.getState().equals(role.getEnname())) {
                     flag = true;
@@ -619,7 +635,7 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() != null && bizOrderHeaderTwo.getBizPoHeader().getCommonProcess() != null) {
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizOrderHeaderTwo.getBizPoHeader().getCommonProcess().getType()));
+            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizOrderHeaderTwo.getBizPoHeader().getCommonProcess().getType()));
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 

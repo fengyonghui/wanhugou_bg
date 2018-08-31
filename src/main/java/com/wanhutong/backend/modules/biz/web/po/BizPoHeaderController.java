@@ -3,7 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.po;
 
-import com.alibaba.fastjson.JSON;
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -17,14 +17,12 @@ import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.BizHeaderSchedulingDto;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
@@ -46,8 +44,8 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
-import com.wanhutong.backend.modules.config.parse.SystemConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -94,6 +92,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 采购订单表Controller
@@ -308,7 +307,7 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        List<PurchaseOrderProcessConfig.PurchaseOrderProcess> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
 
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("processList", processList);
@@ -316,6 +315,67 @@ public class BizPoHeaderController extends BaseController {
         model.addAttribute("page", page);
         model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
         return "modules/biz/po/bizPoHeaderList";
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:view")
+    @RequestMapping(value = {"listV2"})
+    public String listV2(BizPoHeader bizPoHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (roleList.contains(role)) {
+            bizPoHeader.setVendOffice(user.getCompany());
+        }
+//        try {
+//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
+//            Date date = df.parse(filteringDate);
+//            bizPoHeader.setFilteringDate(date);
+//        } catch (ParseException e) {
+//            LOGGER.error("日期解析失败",e);
+//        }
+//
+//        String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
+//        try {
+//            Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(filteringDate);
+//            bizPoHeader.setFilteringDate(parse);
+//        } catch (ParseException e) {
+//            LOGGER.error("po list parse data error", e);
+//        }
+
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+
+        if (StringUtils.isNotBlank(bizPoHeader.getProcessTypeStr())) {
+            List<Process> processList = purchaseOrderProcessConfig.getNameProcessMap().get(bizPoHeader.getProcessTypeStr());
+            List<String> transform = processList.stream().map(process -> String.valueOf(process.getCode())).collect(Collectors.toList());
+            bizPoHeader.setProcessTypeList(transform);
+        }
+
+        Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<BizPoHeader>(request, response), bizPoHeader);
+        Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
+            }
+        }
+
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
+
+        Set<String> processSet = Sets.newHashSet();
+        for (com.wanhutong.backend.modules.config.parse.Process process : processList) {
+            processSet.add(process.getName());
+        }
+
+        model.addAttribute("roleSet", roleSet);
+        model.addAttribute("processList", processSet);
+        model.addAttribute("roleEnNameSet", roleEnNameSet);
+        model.addAttribute("page", page);
+        model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
+        return "modules/biz/po/bizPoHeaderListV2";
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:view")
@@ -342,7 +402,7 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        List<PurchaseOrderProcessConfig.PurchaseOrderProcess> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
 
         List<Map<String, Object>> resultList = Lists.newArrayList();
         List<BizPoHeader> list = page.getList();
@@ -385,7 +445,7 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
@@ -457,7 +517,7 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
