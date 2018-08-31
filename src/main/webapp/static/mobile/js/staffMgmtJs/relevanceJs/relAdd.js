@@ -57,9 +57,9 @@
 					//客户专员默认值渲染
 					htmlBusiness = '<option class="soption"  value="' + res.data.office.id + '">' + res.data.office.name + '</option>'
 					$('#cosultasName').html(htmlBusiness);
-					
+
 					// 客户专员默认值id
-					$('#consultantsId').val(res.data.office.id)					
+					$('#consultantsId').val(res.data.office.id)
 					console.log($('#consultantsId').val())
                     //采购中心下拉列表默认值渲染
 					$.each(res.data.officeList,function(i,item){
@@ -77,13 +77,11 @@
 		},
 		//采购中心点击时事件方法
 		officeNamechoice:function(){
+			var _this = this;
 			$('#officeName').on('change',function(){
-				alert($(this).val())
-//				$('#consultantsId').val($(this).val())
-//				console.log($('#consultantsId').val())
+				 $('#centersId').val($(this).val())
 				 $("#cosultasName").html("");
 				 $("#cosultasName").append("<option value='' selected = 'selected'>请选择客户专员</option>");
-//				 var htmlBusiness="";
 				if($(this).val()!= null && $(this).val() !=undefined && $(this).val().trim() != ""){
 					 $.ajax({
 						url:"/a/sys/user/getAdvisers4mobile",
@@ -95,7 +93,7 @@
 //                          $.each(res.data,function(i,item){
 //                              $("#cosultasName").append("<option value='"+item.id+"'>"+item.name+"</option>");
 //							});
-							for(var i =0;i<data.length;i++){
+							for(var i =0;i<res.data.length;i++){
 								$("#cosultasName").append("<option value='"+res.data[i].id+"'>"+res.data[i].name+"</option>");
 							}
 						},
@@ -104,12 +102,19 @@
 						}
 					});
 				}
+				
+			})
+			_this.cosultasNamechoice();
+		},
+		cosultasNamechoice:function(){
+			$('#cosultasName').on('change',function(){
+				 $('#consultantsId').val($(this).val());					
 			})
 		},
 		staRelAdd:function() {
 			var _this = this;			
 			$('.staRelSave').on('tap','#staRelSaveBtn', function() {
-				alert(999)
+			
 				$.ajax({
 					type: "GET",
 					url: "/a/biz/custom/bizCustomCenterConsultant/save4mobile",
@@ -121,15 +126,17 @@
 					dataType: "json",
 					success: function(res) {
 						console.log(res)
-						var consultantsId = $('#consultantsId').val();
-						var officeId = $('#centersId').val();
+						var consultantsId = $('#consultantsId').val();//客户专员ID
+						var officeId = $('#centersId').val();//采购中心ID
+						console.log(consultantsId)//3000
+						console.log(officeId)//240
 						if(res==1){
 							alert('操作成功!')
 							GHUTILS.OPENPAGE({
 							url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
 							extras: {
-								staListId: consultantsId,
-								dptmtId: officeId,
+								staListId: consultantsId,//客户专员ID
+								dptmtId: officeId,//采购中心ID
 								}
 							})
 						}

@@ -45,8 +45,8 @@
 			            callback :function(){ 
 			                    pager['size']= 10;//条数
 			                    pager['pageNo'] = 1;
-			                    pager['consultants.id'] = _this.userInfo.staListId;
-			                    pager['office.id'] = _this.userInfo.dptmtId;
+			                    pager['consultants.id'] = _this.userInfo.staListId;//客户专员
+			                    pager['office.id'] = _this.userInfo.dptmtId;//采购中心ID
 			                    pager['conn'] ="connIndex"
 			                   
 				                var f = document.getElementById("staReleList");
@@ -323,10 +323,10 @@
 				url: '/a/biz/custom/bizCustomCenterConsultant/listData4mobile',
 				data: {
 					pageNo: 1,
-					'customs.id':_this.userInfo.customsId,
-//					'consultants.id':$('#hideul').val(),
+					'customs.id':_this.userInfo.customsIds,
 					'consultants.id':_this.userInfo.sehConsultantsid,
-					'consultants.mobile':_this.userInfo.consultantsMobile
+					'consultants.mobile':_this.userInfo.consultantsMobile,
+					queryCustomes: 'query_Custome'
 				},
 				dataType: 'json',
 				success: function(res) {
@@ -335,6 +335,8 @@
 						var arrLen = res.data.resultData.length;						
                         if(arrLen > 0) {
                         $.each(res.data.resultData, function(i, item) {
+                        	
+                        	$('#consultantsId').val(item.consultantsId)
 							var userOfficeDeta = '';
 			                if(item.userOfficeDeta) {
 			                	userOfficeDeta = _this.formatDateTime(item.userOfficeDeta)

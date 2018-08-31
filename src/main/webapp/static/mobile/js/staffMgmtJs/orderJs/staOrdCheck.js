@@ -28,15 +28,12 @@
                 },
                 dataType: "json",
                 success: function(res){
-					console.log(res)
 					$('#firstPart').val(res.data.entity2.customer.name);
 					$('#firstPrincipal').val(res.data.custUser.name);
-					$('#firstMobile').val(res.data.custUser.mobile);
-					
+					$('#firstMobile').val(res.data.custUser.mobile);					
 					$('#partB').val(res.data.vendUser.vendor.name);
 					$('#partBPrincipal').val(res.data.vendUser.name);
-					$('#partBMobile').val(res.data.vendUser.mobile);
-					
+					$('#partBMobile').val(res.data.vendUser.mobile);					
 					$('#partCPrincipal').val(res.data.orderCenter.consultants.name);
 					$('#partCMobile').val(res.data.orderCenter.consultants.mobile);
 					if(res.data.appointedTimeList) {
@@ -49,10 +46,7 @@
 						$('#staPayMoney').val();
 					}
 					//订单id
-					$('#ordId').val(_this.userInfo.staOrdId);
-					
-					
-					
+					$('#ordId').val(_this.userInfo.staOrdId);					
 					var item = res.data.bizOrderHeader;
 					console.log(item)
 					//交货时间
@@ -75,7 +69,6 @@
 						$('#cityId').val(item.bizLocation.city.id); 
 						$('#regionId').val(item.bizLocation.region.id); 
 					}
-
 					var shouldPay = item.totalDetail + item.totalExp + item.freight;
 					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
 					//发票状态
@@ -87,8 +80,7 @@
 					var statusTxt = '';
 					if(item.staStatus=15) {
 						statusTxt = "供货中"
-					}
-					
+					}					
 					$('#staPoordNum').val(item.orderNum);
 					$('#staRelNum').val(item.customer.name);
 					$('#staPototal').val(item.totalDetail);
@@ -96,7 +88,6 @@
 					$('#staFreight').val(item.freight);
 					$('#staShouldPay').val(shouldPay);
 					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
-//						console.log(poLastDa)
 					$('#staPoLastDa').val(item.receiveTotal);
 					$('#staServerPrice').val(serverPrice);
 					$('#staInvoice').val(invStatusTxt);
@@ -105,13 +96,10 @@
 					$('#staMobile').val(item.bizLocation.phone);
 					$('#staShippAddress').val(item.bizLocation.pcrName);
 					$('#staDateilAddress').val(item.bizLocation.address);
-					$('#staEvolve').val();
-					
-					_this.statusListHtml(res.data)
-//					_this.checkProcessHtml(res.data);
-					_this.commodityHtml(res.data)
-					_this.comfirDialig(res.data)
-
+					$('#staEvolve').val();					
+					_this.statusListHtml(res.data);
+					_this.commodityHtml(res.data);
+					_this.comfirDialig(res.data);
                 }
             });
 		},
@@ -135,7 +123,6 @@
 							'<div class="mui-input-row">'+
 						        '<label>状态:</label>'+
 						        '<input type="text" class="mui-input-clear" disabled>'+
-//						         value="'++'"
 						    	'<label>时间:</label>'+
 						        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
 						    '</div>'+
@@ -287,13 +274,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label class="commodityName">商品编号:</label>' +
-	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.partNo + '" disabled></div></li></div>' +
-	                    
-//                  	'<div class="mui-row">' +
-//	                    '<li class="mui-table-view-cell">' +
-//	                    '<div class="mui-input-row ">' +
-//	                    '<label class="commodityName">已生成的采购单:</label>' +
-//	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div>'+
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.partNo + '" disabled></div></li></div>' +	                    
                     '</div>'
 				});
 				$("#staCheckCommodity").html(htmlCommodity)
@@ -303,23 +284,20 @@
 			var _this = this;
 			document.getElementById("rejectBtns").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
-				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
+				mui.confirm('确定不同意发货吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
-						_this.ajaxData(15)
-					} else {
-						
+						_this.rejectData(45)
+					} else {						
 					}
 				})
 			});
 			document.getElementById("checkBtns").addEventListener('tap', function(e) {
 				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
 				var btnArray = ['否', '是'];
-				mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
+				mui.confirm('确定同意发货吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
-//								console.log(inText)
-						_this.ajaxData(45)
-					} else {
-						
+						_this.ajaxData(15)
+					} else {						
 					}
 				})
 			});
@@ -334,8 +312,10 @@
                 }
             }
             console.log(localOriginType)
-            if(num==15){
-            	datas: {
+			$.ajax({
+				type: "POST",
+				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
+				data:{
 					id:$('#ordId').val(),
 					flag:$('#flag').val(),
 					objJsp:num,
@@ -347,10 +327,43 @@
 					'bizLocation.region.id': $('#regionId').val(),
 					boo: _this.prew,
 					localOriginType:localOriginType
+				},
+				dataType: "json",
+				success: function(res) {
+					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;
+					console.log(res)
+					if(res.data=='ok'){
+						mui.toast('发货成功!')
+						window.setTimeout(function(){
+			                GHUTILS.OPENPAGE({
+							url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+							extras: {
+								staListId:stcheckIdTxt,
+								}
+							})
+			            },800);						
+					}
+				},
+				error: function (e) {
+				    //服务器响应失败处理函数
+//				    console.info(e);
 				}
+			});
+		},
+		rejectData:function(num) {
+			var _this = this;
+			var r2 = document.getElementsByName("localOriginType");
+            var localOriginType = "";
+            for (var i = 0; i < r2.length; i++) {
+                if (r2[i].checked == true) {
+                    localOriginType = r2[i].value;
+                }
             }
-            if(num==45){
-            	datas: {
+            console.log(localOriginType)
+			$.ajax({
+				type: "POST",
+				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
+				data: {
 					id:$('#ordId').val(),
 					flag:$('#flag').val(),
 					objJsp:num,
@@ -361,55 +374,22 @@
 					'bizLocation.city.id': $('#cityId').val(), 
 					'bizLocation.region.id': $('#regionId').val(),
 					localOriginType:localOriginType
-				}
-            }
-			$.ajax({
-				type: "POST",
-				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
-				data: datas,
+				},
 				dataType: "json",
 				success: function(res) {
 					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;
 					console.log(res)
-					if(res.data=='ok'){
-						alert('操作成功!')
-						GHUTILS.OPENPAGE({
-						url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
-						extras: {
-							staListId:stcheckIdTxt,
-							}
-						})
-					}
-				},
-				error: function (e) {
-				    //服务器响应失败处理函数
-//				    console.info(data);
-//				    console.info(status);
-				    console.info(e);
-				}
-			});
-		},
-		rejectData:function(rejectTxt,num) {
-			var _this = this;
-			$.ajax({
-				type: "GET",
-				url: "/a/biz/request/bizRequestHeader/audit",
-				data: {
-					id:_this.userInfo.inListId,
-					currentType:$('#currentType').val(),
-					auditType:num,
-					description:rejectTxt
-				},
-				dataType: "json",
-				success: function(res) {
-//					console.log(res)
-					if(res.ret==true){
-						alert('操作成功!')
-						GHUTILS.OPENPAGE({
-						url: "../../html/inventoryMagmetHtml/inventoryList.html",
-						extras: {
-							}
-						})
+					if(res.data=='comError'){
+						mui.toast('发货失败!')
+						window.setTimeout(function(){
+			                GHUTILS.OPENPAGE({
+								url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+								extras: {
+									staListId:stcheckIdTxt,
+									}
+							})
+			            },800);
+						
 					}
 				}
 			});

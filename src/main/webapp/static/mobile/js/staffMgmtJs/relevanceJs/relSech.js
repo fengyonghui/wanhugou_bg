@@ -58,7 +58,7 @@
 			GHUTILS.OPENPAGE({
 				url: "../../../html/staffMgmtHtml/relevanceHtml/relList.html",
 				extras: {
-					customsId: $('.hasoid').attr('id'),
+					customsIds: $('.hasoid').attr('id'),
 					consultantsMobile: $('#staRelMobile').val(),
 					sehConsultantsid:consultantsid,
 					isFunc: true
@@ -123,7 +123,7 @@
 				success: function(res) {
 					_this.datagood = res
 					$.each(res, function(i, item) {
-						console.log(item)
+//						console.log(item)
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlList)
