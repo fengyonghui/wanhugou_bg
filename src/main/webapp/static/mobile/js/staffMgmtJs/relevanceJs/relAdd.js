@@ -50,45 +50,53 @@
 				},
 				dataType: 'json',
 				success: function(res) {
-								console.log(res)
-					htmlBusiness = '<option class="soption"  value="' + res.data.office.id + '">' + res.data.office.name + '</option>'
-					$('#cosultasName').html(htmlBusiness);
-					// 客户专员
-					$('#consultantsId').val(res.data.office.id)
-					
-					console.log($('#consultantsId').val())
+//					console.log(res)
+					//采购中心默认值渲染
 					htmloffice = '<option class="soption"  value="' + res.data.office.office.id + '">' + res.data.office.office.name + '</option>'
 					$('#officeName').html(htmloffice);
+					//客户专员默认值渲染
+					htmlBusiness = '<option class="soption"  value="' + res.data.office.id + '">' + res.data.office.name + '</option>'
+					$('#cosultasName').html(htmlBusiness);
+					
+					// 客户专员默认值id
+					$('#consultantsId').val(res.data.office.id)					
+					console.log($('#consultantsId').val())
+                    //采购中心下拉列表默认值渲染
 					$.each(res.data.officeList,function(i,item){
-						console.log(item)
-						// 采购中心
+//						console.log(item)
+						// 采购中心认值id
 						$('#centersId').val(item.id)
 						console.log($('#centersId').val())
-		                 htmloffice += '<option class="soption"  value="' + item.id + '">' + item.name + '</option>'
+		                htmloffice += '<option class="soption"  value="' + item.id + '">' + item.name + '</option>'
 					});
 					 $('#officeName').html(htmloffice); 
-					  _this.officeNamechoice();
+					 _this.officeNamechoice();
 				}
 			});
 			
 		},
+		//采购中心点击时事件方法
 		officeNamechoice:function(){
 			$('#officeName').on('change',function(){
 				alert($(this).val())
-				$('#consultantsId').val($(this).val())
-				console.log($('#consultantsId').val())
+//				$('#consultantsId').val($(this).val())
+//				console.log($('#consultantsId').val())
 				 $("#cosultasName").html("");
 				 $("#cosultasName").append("<option value='' selected = 'selected'>请选择客户专员</option>");
+//				 var htmlBusiness="";
 				if($(this).val()!= null && $(this).val() !=undefined && $(this).val().trim() != ""){
 					 $.ajax({
 						url:"/a/sys/user/getAdvisers4mobile",
 						data:{"office.id":$(this).val()},
 						type:"POST",
 						dataType:'json',
-						success:function(data){
-                             
-							for(var i =0;i<data.data.length;i++){
-								$("#cosultasName").append("<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>");
+						success:function(res){
+							console.log(res)
+//                          $.each(res.data,function(i,item){
+//                              $("#cosultasName").append("<option value='"+item.id+"'>"+item.name+"</option>");
+//							});
+							for(var i =0;i<data.length;i++){
+								$("#cosultasName").append("<option value='"+res.data[i].id+"'>"+res.data[i].name+"</option>");
 							}
 						},
 						error:function(er){
