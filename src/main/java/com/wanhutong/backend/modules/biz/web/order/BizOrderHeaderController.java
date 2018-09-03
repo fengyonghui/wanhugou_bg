@@ -457,8 +457,7 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
 
-        for (PurchaseOrderProcessConfig.PurchaseOrderProcess process : purchaseOrderProcessConfig.getProcessList()) {
-            originConfigMap.put(process.getName(), process.getName());
+        for (com.wanhutong.backend.modules.config.parse.Process process : purchaseOrderProcessConfig.getProcessList()) {
             if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus)) {
                 poConfigValue.add(String.valueOf(process.getCode()));
             }
