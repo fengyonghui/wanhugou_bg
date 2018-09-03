@@ -501,7 +501,7 @@
 			</if>
 
 			<if test="centerId!=null">
-				and ccs.center_id = #{centerId}
+				and (ccs.center_id = #{centerId} or s.parent_ids like concat('%',#{centerId},',%'))
 			</if>
 
 			<if test="itemNo !=null and itemNo !=''">
