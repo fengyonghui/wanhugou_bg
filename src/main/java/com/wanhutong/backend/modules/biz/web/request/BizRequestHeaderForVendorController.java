@@ -294,14 +294,14 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 
-		Map<Integer, PurchaseOrderProcessConfig.PurchaseOrderProcess> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
+		Map<Integer, com.wanhutong.backend.modules.config.parse.Process> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
 		Integer currentCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getDefaultNewProcessId();
 		Integer lastCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId();
 		Map<String,Integer> poMap = new LinkedHashMap<>();
 		Set<String> processSet = new HashSet<>();
 		while (true) {
-			PurchaseOrderProcessConfig.PurchaseOrderProcess current = purMap.get(currentCode);
-			PurchaseOrderProcessConfig.PurchaseOrderProcess next = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPassProcess(current);
+			com.wanhutong.backend.modules.config.parse.Process current = purMap.get(currentCode);
+			com.wanhutong.backend.modules.config.parse.Process next = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPassProcess(current);
 			poMap.put(current.getName(),currentCode);
 			processSet.add(current.getName());
 			if (lastCode.equals(currentCode)) {
@@ -583,7 +583,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			resultMap.put("requestOrderProcess", requestOrderProcess);
 		}
 		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getBizPoHeader().getCommonProcess() != null) {
-			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
+			com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
 			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
 			resultMap.put("purchaseOrderProcess", purchaseOrderProcess);
 		}
