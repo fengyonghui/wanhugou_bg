@@ -445,12 +445,4 @@ public class Office extends TreeEntity<Office> {
 	public void setVendor(String vendor) {
 		this.vendor = vendor;
 	}
-
-	public String getVendVideo() {
-		return vendVideo;
-	}
-
-	public void setVendVideo(String vendVideo) {
-		this.vendVideo = vendVideo;
-	}
 }
