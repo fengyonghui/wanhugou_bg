@@ -384,8 +384,8 @@ input[type=url],
 input[type=week],
 select, textarea{height: auto;padding:10px 15px;}
 .mui-input-group .mui-input-row{height: auto;background-color: #fff;}
-.mui-input-row label{padding:10px 15px;padding-left: 20px;padding-right: 10px;line-height:21px;width: 33%;font-weight: bold;}
-.mui-input-row label~input, .mui-input-row label~select, .mui-input-row label~textarea{width:67%}
+.mui-input-row label{padding:10px 15px;padding-left: 20px;padding-right: 10px;line-height:21px;width: 40%;font-weight: bold;}
+.mui-input-row label~input, .mui-input-row label~select, .mui-input-row label~textarea{width:60%}
 
 .mui-input-row label~select{padding-left: 0;padding-top: 6px;}
 
@@ -572,8 +572,8 @@ body{font-size: 15px;color:#3b3b3b;}
 .app_text_indt10 {text-indent: 10px;}
 .app_text_indt15 {text-indent: 15px;}
 .app_text_alg_r {text-align: right;}
-.labelLf {padding: 10px 14px;padding-left: 20px;line-height: 21px;width: 33%;font-weight: bold;}
-.labelri {width: 67%;float: right;padding: 14px 15px;height: auto;line-height: 21px;font-size: 16px;text-align: center;}
+.labelLf {padding: 10px 14px;padding-left: 20px;line-height: 21px;width: 35%;font-weight: bold;}
+.labelri {width: 60%;float: right;padding: 14px 15px;height: auto;line-height: 21px;font-size: 16px;}
 .labelPto {width:30%}
 .labelri input {margin-right: 15px;}
 .photoList {margin-left: 33%;}
@@ -589,7 +589,7 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*模糊查询列表显示---查询页面和经销店添加公共样式*/
-.pre {margin-bottom: 0;padding-left: 0;float: right;width: 67%;}
+.pre {margin-bottom: 0;padding-left: 0;float: right;width: 60%;}
 .newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;background: url(./thumb.jpg) no-repeat scroll right center;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
 .input_div {width: 150px;border: 1px solid #ddd;border-bottom: none;border-radius: 0 0 3px 3px;display: none;}
 .hideSpan {position: absolute;right: 52px;top: 11px;border: 1px solid rgb(204, 204, 204);border-radius: 13px;display: none;}
@@ -656,3 +656,12 @@ body{font-size: 15px;color:#3b3b3b;}
 .labelParent{display: flex;justify-content: center;}
 .labelRi>li {float: left;}
 .labelRi div {width: 70px;margin: 5px 15px;border: 1px solid #40ABE9;border-radius: 5px;font-size: 13px;text-align: center;}
+
+
+/*字体颜色不兼容的解决:*/
+input[disabled],input:disabled,input.disabled{
+	color: #000;
+	/*-webkit-text-fill-color:#3b3b3b;*/
+	-webkit-opacity:1;
+	opacity: 1;
+}

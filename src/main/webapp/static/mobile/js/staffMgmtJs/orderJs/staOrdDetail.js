@@ -61,7 +61,7 @@
 					$('#staShouldPay').val(shouldPay);
 					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
 					$('#staPoLastDa').val(item.receiveTotal);
-					$('#staServerPrice').val(serverPrice);
+					$('#staServerPrice').val(serverPrice.toFixed(2));
 					$('#staConsignee').val(item.bizLocation.receiver);
 					$('#staMobile').val(item.bizLocation.phone);
 					$('#staShippAddress').val(item.bizLocation.pcrName);

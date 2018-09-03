@@ -8,7 +8,7 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-//			sys:user:edit   用户列表,用户添加，关联经销店,订单管理,修改,删除,恢复
+//	权限		sys:user:edit   用户列表,用户添加，关联经销店,订单管理,修改,删除,恢复
 			this.getPermissionList('sys:user:edit','staffFlag')
 			if(this.userInfo.isFunc){
 				this.seachFunc()
@@ -135,7 +135,9 @@
 		                parseInt(res.data.page.count/pager.size)+1:
 		                res.data.page.count/pager.size;
 		                if(totalPage==pager.pageNo){		                	
-			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+//			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+//			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+			                mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
