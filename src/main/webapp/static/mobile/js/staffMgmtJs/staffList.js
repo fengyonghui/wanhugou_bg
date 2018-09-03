@@ -40,7 +40,7 @@
 			            contentover : "",
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
-		                    pager['size']= 10;//条数
+		                    pager['size']= 20;
 		                    pager['pageNo'] = 1;
 		                    pager['company.type'] = 8;
 		                    pager['company.customerTypeTen'] = 10;
@@ -69,7 +69,8 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+//		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+		                mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						var arrLen = res.data.page.list.length;						
                         if(arrLen > 0) {
                         $.each(res.data.page.list, function(i, item) {

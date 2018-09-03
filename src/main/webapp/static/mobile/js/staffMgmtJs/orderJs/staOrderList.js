@@ -28,7 +28,7 @@
 		        mui("#refreshContainer").pullRefresh({
 			        up:{
 			            contentnomore:'没 有 更 多 数 据 了',
-			            callback:function(){
+			            callback:function(){			            	
 			                window.setTimeout(function(){
 			                    getData(pager);
 			                },500);
