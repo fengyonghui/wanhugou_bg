@@ -144,8 +144,9 @@ public class OfficeController extends BaseController {
         List<Role> roleList = user.getRoleList();
         Role role = new Role();
         role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
-        if (roleList.contains(role)) {
+        if (!user.isAdmin() && roleList.contains(role)) {
             customer.setVendorId(user.getCompany().getId());
+            customer.setVendor("vendor");
             model.addAttribute("vendor","vendor");
         }
 
@@ -161,7 +162,7 @@ public class OfficeController extends BaseController {
         }
         Page<Office> page = officeService.findPage(new Page<Office>(request, response), customer);
         if (page.getList().size() == 0) {
-            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && !office.getMoblieMoeny().getMobile().equals("")) {
+            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
                 //列表页输入2个条件查询时
                 Office officeUser = new Office();
                 officeUser.setQueryMemberGys(office.getName()+"");
@@ -311,9 +312,35 @@ public class OfficeController extends BaseController {
     public List<Map<String, Object>> purchaserTreeData(@RequestParam(required = false) String extId, @RequestParam(required = false) String type,
                                                        @RequestParam(required = false) Long grade, @RequestParam(required = false) Boolean isAll, HttpServletResponse response) {
 
+
+
         List<Map<String, Object>> mapList = Lists.newArrayList();
 
         List<Office> list = officeService.filerOffice(null, "purchaser", OfficeTypeEnum.CUSTOMER);
+
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (roleList.contains(role)) {
+            List<String> custParentIdByVendorId = officeService.getCustParentIdByVendorId(user.getCompany().getId());
+            List<String> custIdByVendorId = officeService.getCustIdByVendorId(user.getCompany().getId());
+            List<Office> temp = Lists.newArrayList();
+            for (Office o1 : list) {
+                for (String o : custParentIdByVendorId) {
+                    if (o.contains(String.valueOf(o1.getId()))) {
+                        temp.add(o1);
+                    }
+                }
+                for (String o : custIdByVendorId) {
+                    if (o.equals(String.valueOf(o1.getId()))) {
+                        temp.add(o1);
+                    }
+                }
+            }
+            list = temp;
+        }
+
         for (int i = 0; i < list.size(); i++) {
             Office e = list.get(i);
             if ((StringUtils.isBlank(extId) || (extId != null && !extId.equals(e.getId()) && e.getParentIds().indexOf("," + extId + ",") == -1))

@@ -224,14 +224,14 @@ public class BizRequestHeaderForVendorController extends BaseController {
             }
         }
 
-		Map<Integer, PurchaseOrderProcessConfig.PurchaseOrderProcess> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
+		Map<Integer, com.wanhutong.backend.modules.config.parse.Process> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
 		Integer currentCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getDefaultNewProcessId();
 		Integer lastCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId();
 		Map<String,Integer> poMap = new LinkedHashMap<>();
 		Set<String> processSet = new HashSet<>();
 		while (true) {
-			PurchaseOrderProcessConfig.PurchaseOrderProcess current = purMap.get(currentCode);
-			PurchaseOrderProcessConfig.PurchaseOrderProcess next = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPassProcess(current);
+			com.wanhutong.backend.modules.config.parse.Process current = purMap.get(currentCode);
+			com.wanhutong.backend.modules.config.parse.Process next = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPassProcess(current);
 			poMap.put(current.getName(),currentCode);
 			processSet.add(current.getName());
 			if (lastCode.equals(currentCode)) {
@@ -294,14 +294,14 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 
-		Map<Integer, PurchaseOrderProcessConfig.PurchaseOrderProcess> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
+		Map<Integer, com.wanhutong.backend.modules.config.parse.Process> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
 		Integer currentCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getDefaultNewProcessId();
 		Integer lastCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId();
 		Map<String,Integer> poMap = new LinkedHashMap<>();
 		Set<String> processSet = new HashSet<>();
 		while (true) {
-			PurchaseOrderProcessConfig.PurchaseOrderProcess current = purMap.get(currentCode);
-			PurchaseOrderProcessConfig.PurchaseOrderProcess next = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPassProcess(current);
+			com.wanhutong.backend.modules.config.parse.Process current = purMap.get(currentCode);
+			com.wanhutong.backend.modules.config.parse.Process next = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPassProcess(current);
 			poMap.put(current.getName(),currentCode);
 			processSet.add(current.getName());
 			if (lastCode.equals(currentCode)) {
@@ -438,7 +438,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
             model.addAttribute("requestOrderProcess", requestOrderProcess);
         }
         if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getBizPoHeader().getCommonProcess() != null) {
-			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
+			com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
 			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
 		}
 		if (bizRequestHeader.getBizPoHeader() != null) {
@@ -583,7 +583,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			resultMap.put("requestOrderProcess", requestOrderProcess);
 		}
 		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getBizPoHeader().getCommonProcess() != null) {
-			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
+			com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
 			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
 			resultMap.put("purchaseOrderProcess", purchaseOrderProcess);
 		}
@@ -700,6 +700,14 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	public String save(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, bizRequestHeader)){
 			return form(bizRequestHeader, model);
+		}
+		if (bizRequestHeader.getId() != null) {
+			BizPoHeader bizPoHeader = new BizPoHeader();
+			bizPoHeader.setBizRequestHeader(bizRequestHeader);
+			List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+			if (CollectionUtils.isNotEmpty(poList)) {
+				bizPoHeaderService.updateProcessToInitAudit(poList.get(0), StringUtils.EMPTY);
+			}
 		}
 		bizRequestHeaderForVendorService.save(bizRequestHeader);
 		addMessage(redirectAttributes, "保存备货清单成功");
@@ -1236,46 +1244,5 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		resultMap.put("totalCompleteScheduHeaderNum", bizRequestHeader.getTotalCompleteScheduHeaderNum());
 
 		return JSONObject.fromObject(resultMap).toString();
-	}
-
-	@RequestMapping(value = "confirm")
-	@ResponseBody
-	public boolean confirm(HttpServletRequest request, @RequestBody String params) {
-		Boolean resultFlag = false;
-		JSONArray jsonArray = JSONArray.fromObject(params);
-		System.out.println(jsonArray);
-		//备货单号
-		String reqNo = (String) jsonArray.get(0);
-
-		List<String> paramList = Lists.newArrayList();
-		for (int i = 1; i < jsonArray.size(); i++) {
-			Object item = jsonArray.get(i);
-			paramList.add(String.valueOf(item));
-		}
-		try {
-			bizCompletePalnService.batchUpdateCompleteStatus(paramList);
-			resultFlag = true;
-
-//				//供应商已确认排产，发短息通知采销部经理
-//			List<User> userList = systemService.findUserByRoleEnName(MARKETING_MANAGER);
-//			if (!CollectionUtils.isEmpty(userList)) {
-//				String reqNo_1 = reqNo.substring(0,11);
-//				String reqNo_2 = reqNo.substring(11);
-//				StringBuilder phones = new StringBuilder();
-//				for (User user : userList) {
-//					if (StringUtils.isNotBlank(user.getMobile())) {
-//						phones.append(user.getMobile()).append(",");
-//					}
-//				}
-//				AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.COMPLETE_SCHEDULING.getCode(), phones.toString(), ImmutableMap.of("order", "备货单", "reqNo_1", reqNo_1, "reqNo_2", reqNo_2));
-//			}
-
-
-		} catch (Exception e) {
-			resultFlag = false;
-			logger.error(e.getMessage());
-		}
-
-		return resultFlag;
 	}
 }

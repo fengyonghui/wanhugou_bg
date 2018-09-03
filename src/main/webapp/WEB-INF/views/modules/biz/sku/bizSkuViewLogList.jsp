@@ -27,10 +27,10 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/sku/bizSkuViewLog/">出厂价日志列表</a></li>
+		<li class="active"><a href="${ctx}/biz/sku/bizSkuViewLog?skuType=${skuType}">出厂价日志列表</a></li>
 		<%--<shiro:hasPermission name="biz:sku:bizSkuViewLog:edit"><li><a href="${ctx}/biz/sku/bizSkuViewLog/form">出厂价日志添加</a></li></shiro:hasPermission>--%>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizSkuViewLog" action="${ctx}/biz/sku/bizSkuViewLog/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="bizSkuViewLog" action="${ctx}/biz/sku/bizSkuViewLog?skuType=${skuType}" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">

@@ -48,5 +48,9 @@ public class CommonProcessService extends CrudService<CommonProcessDao, CommonPr
 	public void delete(CommonProcessEntity commonProcessEntity) {
 		super.delete(commonProcessEntity);
 	}
-	
+
+	@Transactional(readOnly = false)
+	public void updateCurrentByObject(Integer objectId, String objectName, int current) {
+		dao.updateCurrentByObject(objectId, objectName, current);
+	}
 }

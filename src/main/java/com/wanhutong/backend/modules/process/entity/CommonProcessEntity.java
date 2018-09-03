@@ -38,8 +38,8 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	private Date updateTime;
 	private Integer current;
 
-	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess;
-	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderForOrderHeaderProcess;
+	private com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess;
+	private com.wanhutong.backend.modules.config.parse.Process purchaseOrderForOrderHeaderProcess;
 	private RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess;
 	private PaymentOrderProcessConfig.Process paymentOrderProcess;
 	private VendorRequestOrderProcessConfig.RequestOrderProcess vendRequestOrderProcess;
@@ -158,11 +158,11 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 		this.updateTime = updateTime;
 	}
 
-	public PurchaseOrderProcessConfig.PurchaseOrderProcess getPurchaseOrderProcess() {
+	public com.wanhutong.backend.modules.config.parse.Process getPurchaseOrderProcess() {
 		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
-//	public PurchaseOrderProcessConfig.PurchaseOrderProcess getPurchaseOrderForOrderHeaderProcess() {
+//	public com.wanhutong.backend.modules.config.parse.Process getPurchaseOrderForOrderHeaderProcess() {
 //		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG_FOR_ORDER_HEADER.get().getProcessMap().get(Integer.valueOf(type));
 //	}
 

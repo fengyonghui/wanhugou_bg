@@ -79,6 +79,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY a.id
 			</otherwise>
 		</choose>
 	</select>
@@ -96,6 +97,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY a.id
 			</otherwise>
 		</choose>
 	</select>
@@ -142,7 +144,7 @@
 		WHERE id = #{id}
 	</update>
 
-	<update id="updateCurrent">
+	<update id="updateCurrentByObject">
 		UPDATE common_process SET
 			current = #{current}
 		WHERE object_id = #{objectId} and
@@ -153,5 +155,5 @@
 		DELETE FROM common_process
 		WHERE id = #{id}
 	</update>
-	
+
 </mapper>

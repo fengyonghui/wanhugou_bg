@@ -148,9 +148,7 @@
                         </c:if>
                     </shiro:hasPermission>
 					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit">
-						<c:if test="${bizProductInfo.bizStatus == 1 || bizProductInfo.bizStatus == 3}">
-							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">修改</a>&nbsp;&nbsp;
-						</c:if>
+						<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">修改</a>&nbsp;&nbsp;
 						<c:if test="${bizProductInfo.bizStatus != 1}">
 							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}&view=true">查看</a>&nbsp;&nbsp;
 						</c:if>

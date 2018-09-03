@@ -4,7 +4,6 @@
 package com.wanhutong.backend.modules.sys.service;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.TreeService;
@@ -812,4 +811,12 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         }
         return list;
     }
+    public List<String> getCustParentIdByVendorId(Integer vendorId) {
+        return dao.getCustParentIdByVendorId(vendorId);
+    }
+    public List<String> getCustIdByVendorId(Integer vendorId) {
+        return dao.getCustIdByVendorId(vendorId);
+    }
+
+
 }

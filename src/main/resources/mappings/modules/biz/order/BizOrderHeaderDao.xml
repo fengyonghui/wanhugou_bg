@@ -24,7 +24,7 @@
 		<result property="sellersId" column="sellersId"/>
 		<result property="payProportion" column="payProportion"/>
 		<result property="suplys" column="suplys"/>
-		<result property="consultantId" column="consultantId"/>
+        <result property="consultantId" column="consultantId"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -156,7 +156,6 @@
 		a.biz_status AS "bizStatus",
 		a.biz_type as "bizType",
 		a.plateform_id AS "platformInfo.id",
-		bpi.name as "platformInfo.name",
 		a.ship_to_addr AS "bizLocation.id",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
@@ -218,7 +217,6 @@
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
 		wxsu.name AS "customer.name",
-		bpi.name as "platformInfo.name",
 		su.name as "createBy.name",
 		suu.name as "updateBy.name",
 		boc.id as "orderComment.id",
@@ -244,8 +242,29 @@
         LEFT JOIN sys_region reg ON c.region_id = reg.id
 		left join sys_user su on a.create_id=su.id
 		left join sys_user us on a.update_id=us.id
-		left join biz_cms_platform_info bpi on a.plateform_id=bpi.id
     	LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
+		LEFT JOIN sys_office s on s.id=ccs.center_id
+		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
+		LEFT JOIN  common_process process on process.id = a.process_id
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 1
+		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
+		LEFT JOIN common_process cp ON cp.id = bph.process_id
+		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
+		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bph.current_payment_id
+	</sql>
+
+
+	<sql id="bizOrderHeaderVendJoins">
+		left join sys_office as so on a.cust_id=so.id
+		LEFT JOIN sys_office vend ON vend.id = pi.vendor_id
+		LEFT JOIN biz_vend_info vendi ON vendi.office_id = vend.id
+		LEFT JOIN biz_order_address c ON c.id = a.ship_to_addr
+		LEFT JOIN sys_region province ON c.province_id = province.id
+		LEFT JOIN sys_region city ON c.city_id = city.id
+		LEFT JOIN sys_region reg ON c.region_id = reg.id
+		left join sys_user su on a.create_id=su.id
+		left join sys_user us on a.update_id=us.id
+		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
 		LEFT JOIN  common_process process on process.id = a.process_id
@@ -330,7 +349,18 @@
 		</if>
 
 		<!-- end  -->
-		<include refid="bizOrderHeaderJoins"/>
+		<choose>
+			<when test="source != null and source == 'vendor'">
+				<include refid="bizOrderHeaderVendJoins"/>
+			</when>
+			<otherwise>
+				<include refid="bizOrderHeaderJoins"/>
+			</otherwise>
+		</choose>
+
+
+
+
 		<where> 1=1 and a.order_type !=4
 			<if test="poAuditCode != null and poAuditCode != ''">
 				and cp.type in
@@ -380,7 +410,8 @@
 			</if>
 
 			<if test="source != null and source == 'vendor'">
-				AND (a.order_type = 5 OR a.order_type = 6)
+
+				AND (a.order_type = 1 OR a.order_type = 5)
 			</if>
 			<if test="dataStatus==null">
 				and a.status = 1
@@ -2132,7 +2163,6 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 	a.biz_status AS "bizStatus",
 	a.biz_type AS "bizType",
 	a.plateform_id AS "platformInfo.id",
-	bpi.NAME AS "platformInfo.name",
 	a.ship_to_addr AS "bizLocation.id",
 		c.province_id as "bizLocation.province.id",
 		province.name as "bizLocation.province.name",
@@ -2158,7 +2188,6 @@ FROM
 	LEFT JOIN sys_office so ON a.cust_id = so.id
 	LEFT JOIN sys_user su ON a.create_id = su.id
 	LEFT JOIN sys_user us ON a.update_id = us.id
-	LEFT JOIN biz_cms_platform_info bpi ON a.plateform_id = bpi.id
 	LEFT JOIN common_location cl on a.ship_to_addr = cl.id
 	INNER JOIN biz_order_detail bod on bod.order_id = a.id
 	INNER JOIN biz_sku_info bsi on bod.sku_id = bsi.id
@@ -2238,7 +2267,6 @@ FROM
 	a.biz_status AS "bizStatus",
 	a.biz_type AS "bizType",
 	a.plateform_id AS "platformInfo.id",
-	bpi.NAME AS "platformInfo.name",
 	a.ship_to_addr AS "bizLocation.id",
 		c.province_id as "bizLocation.province.id",
 		province.name as "bizLocation.province.name",
@@ -2262,7 +2290,6 @@ FROM
 	LEFT JOIN sys_office so ON a.cust_id = so.id
 	LEFT JOIN sys_user su ON a.create_id = su.id
 	LEFT JOIN sys_user us ON a.update_id = us.id
-	LEFT JOIN biz_cms_platform_info bpi ON a.plateform_id = bpi.id
 	LEFT JOIN common_location cl on a.ship_to_addr = cl.id
 	<!-- 订单地址 -->
 		LEFT JOIN biz_order_address c ON c.id = a.ship_to_addr

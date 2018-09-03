@@ -309,7 +309,7 @@ public class BizPoHeaderReqController extends BaseController {
             }
         }
 
-        List<PurchaseOrderProcessConfig.PurchaseOrderProcess> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
 
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("processList", processList);
@@ -343,7 +343,7 @@ public class BizPoHeaderReqController extends BaseController {
             }
         }
 
-        List<PurchaseOrderProcessConfig.PurchaseOrderProcess> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
 
         List<Map<String, Object>> resultList = Lists.newArrayList();
         List<BizPoHeader> list = page.getList();
@@ -386,7 +386,7 @@ public class BizPoHeaderReqController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
@@ -475,7 +475,7 @@ public class BizPoHeaderReqController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
@@ -1138,44 +1138,44 @@ public class BizPoHeaderReqController extends BaseController {
         return boo;
     }
 
-    @RequestMapping(value = "confirm")
-    @ResponseBody
-    public boolean confirm(HttpServletRequest request, @RequestBody String params) {
-        Boolean resultFlag = false;
-        JSONArray jsonArray = JSONArray.fromObject(params);
-        System.out.println(jsonArray);
-        //备货单号
-        String reqNo = (String) jsonArray.get(0);
-
-        List<String> paramList = Lists.newArrayList();
-        for (int i = 1; i < jsonArray.size(); i++) {
-            Object item = jsonArray.get(i);
-            paramList.add(String.valueOf(item));
-        }
-        try {
-            bizCompletePalnService.batchUpdateCompleteStatus(paramList);
-            resultFlag = true;
-
-//				//供应商已确认排产，发短息通知采销部经理
-//			List<User> userList = systemService.findUserByRoleEnName(MARKETING_MANAGER);
-//			if (!CollectionUtils.isEmpty(userList)) {
-//				String reqNo_1 = reqNo.substring(0,11);
-//				String reqNo_2 = reqNo.substring(11);
-//				StringBuilder phones = new StringBuilder();
-//				for (User user : userList) {
-//					if (StringUtils.isNotBlank(user.getMobile())) {
-//						phones.append(user.getMobile()).append(",");
-//					}
-//				}
-//				AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.COMPLETE_SCHEDULING.getCode(), phones.toString(), ImmutableMap.of("order", "备货单", "reqNo_1", reqNo_1, "reqNo_2", reqNo_2));
-//			}
-
-
-        } catch (Exception e) {
-            resultFlag = false;
-            logger.error(e.getMessage());
-        }
-
-        return resultFlag;
-    }
+//    @RequestMapping(value = "confirm")
+//    @ResponseBody
+//    public boolean confirm(HttpServletRequest request, @RequestBody String params) {
+//        Boolean resultFlag = false;
+//        JSONArray jsonArray = JSONArray.fromObject(params);
+//        System.out.println(jsonArray);
+//        //备货单号
+//        String reqNo = (String) jsonArray.get(0);
+//
+//        List<String> paramList = Lists.newArrayList();
+//        for (int i = 1; i < jsonArray.size(); i++) {
+//            Object item = jsonArray.get(i);
+//            paramList.add(String.valueOf(item));
+//        }
+//        try {
+//            bizCompletePalnService.batchUpdateCompleteStatus(paramList);
+//            resultFlag = true;
+//
+////				//供应商已确认排产，发短息通知采销部经理
+////			List<User> userList = systemService.findUserByRoleEnName(MARKETING_MANAGER);
+////			if (!CollectionUtils.isEmpty(userList)) {
+////				String reqNo_1 = reqNo.substring(0,11);
+////				String reqNo_2 = reqNo.substring(11);
+////				StringBuilder phones = new StringBuilder();
+////				for (User user : userList) {
+////					if (StringUtils.isNotBlank(user.getMobile())) {
+////						phones.append(user.getMobile()).append(",");
+////					}
+////				}
+////				AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.COMPLETE_SCHEDULING.getCode(), phones.toString(), ImmutableMap.of("order", "备货单", "reqNo_1", reqNo_1, "reqNo_2", reqNo_2));
+////			}
+//
+//
+//        } catch (Exception e) {
+//            resultFlag = false;
+//            logger.error(e.getMessage());
+//        }
+//
+//        return resultFlag;
+//    }
 }

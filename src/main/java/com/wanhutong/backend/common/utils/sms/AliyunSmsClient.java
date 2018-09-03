@@ -79,7 +79,7 @@ public class AliyunSmsClient {
      *                     ”,此参数传递{“no”:”123456”}，用户将接收到[短信签名]接受短信验证码123456
      */
     public void sendSMS(String templateCode, String recNum, Map<String, String> paramsMap) {
-//        sendSMS(DEF_SMS_SIGN, templateCode, recNum, paramsMap);
+        sendSMS(DEF_SMS_SIGN, templateCode, recNum, paramsMap);
     }
 
     /**

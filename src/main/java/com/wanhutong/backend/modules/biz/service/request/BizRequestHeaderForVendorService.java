@@ -57,7 +57,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -71,7 +70,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BizRequestHeaderForVendorService extends CrudService<BizRequestHeaderForVendorDao, BizRequestHeader> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BizRequestHeaderForVendorService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BizRequestHeaderForVendorService.class);
 	/**
 	 * 默认表名
 	 */
@@ -93,7 +92,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 	@Resource
 	private BizOrderHeaderDao bizOrderHeaderDao;
 	@Resource
-    private BizPoPaymentOrderService bizPoPaymentOrderService;
+	private BizPoPaymentOrderService bizPoPaymentOrderService;
 	@Resource
 	private BizRequestExpandDao bizRequestExpandDao;
 	@Resource
@@ -126,9 +125,10 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 				}
 			}
 		}
-		if (!user.isAdmin() && !oflag) {
+		if (!user.isAdmin() && !oflag && !flag) {
             bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
 		} else if (!user.isAdmin() && flag) {
+			bizRequestHeader.setVendorId(user.getCompany().getId());
 			bizRequestHeader.getSqlMap().put("request",BaseService.dataScopeFilter(user,"sv","su"));
 		}
 		return super.findList(bizRequestHeader);
@@ -138,12 +138,10 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		User user = UserUtils.getUser();
 		boolean oflag = false;
 		boolean flag=false;
-		if(user.getRoleList()!=null){
-			for(Role role:user.getRoleList()){
-				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
-					flag=true;
-				}
-			}
+		List<Role> roleList = user.getRoleList();
+		List<String> enNameList = Lists.newArrayList();
+		for (Role role : roleList) {
+			enNameList.add(role.getEnname());
 		}
 		if (UserUtils.getOfficeList() != null){
 			for (Office office:UserUtils.getOfficeList()){
@@ -152,13 +150,14 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 				}
 			}
 		}
-		if (!user.isAdmin()) {
-			if(!oflag) {
-				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
-			}
+		if (!user.isAdmin() && !oflag && !enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
+			bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
+		} else if (!user.isAdmin() && enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
+			bizRequestHeader.setVendorId(user.getCompany().getId());
+			bizRequestHeader.getSqlMap().put("request",BaseService.dataScopeFilter(user,"sv","su"));
 		}
-        return super.findPage(page,bizRequestHeader);
-    }
+		return super.findPage(page,bizRequestHeader);
+	}
 
 	@Override
 	public Page<BizRequestHeader> findPage(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
@@ -178,22 +177,22 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		}
 		User user = UserUtils.getUser();
 		boolean sflag = false;
-        for (Role role : user.getRoleList()) {
-            if (RoleEnNameEnum.SUPPLY_CHAIN.getState().equals(role.getEnname())) {
-                sflag = true;
-            }
-        }
-        if (!user.isAdmin()) {
-        	bizRequestHeader.setDataStatus("filter");
-            if (sflag) {
-                bizRequestHeader.setVendorId(user.getCompany().getId());
-                bizRequestHeader.getSqlMap().put("request",BaseService.dataScopeFilter(user,"sv","su"));
-            } else {
-                bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
-            }
+		for (Role role : user.getRoleList()) {
+			if (RoleEnNameEnum.SUPPLY_CHAIN.getState().equals(role.getEnname())) {
+				sflag = true;
+			}
 		}
-        return super.findPage(page, bizRequestHeader);
-    }
+		if (!user.isAdmin()) {
+			bizRequestHeader.setDataStatus("filter");
+			if (sflag) {
+				bizRequestHeader.setVendorId(user.getCompany().getId());
+				bizRequestHeader.getSqlMap().put("request",BaseService.dataScopeFilter(user,"sv","su"));
+			} else {
+				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
+			}
+		}
+		return super.findPage(page, bizRequestHeader);
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -306,12 +305,12 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		User user=UserUtils.getUser();
 		User sendUser=new User(systemService.getRoleByEnname(purchaseOrderProcess.getRoleEnNameEnum()==null?"":purchaseOrderProcess.getRoleEnNameEnum().toLowerCase()));
 		sendUser.setCent(user.getCompany());
-			List<User> userList = systemService.findUser(sendUser);
-			if (CollectionUtils.isNotEmpty(userList)) {
-				for (User u : userList) {
-					phone.append(u.getMobile()).append(",");
-				}
+		List<User> userList = systemService.findUser(sendUser);
+		if (CollectionUtils.isNotEmpty(userList)) {
+			for (User u : userList) {
+				phone.append(u.getMobile()).append(",");
 			}
+		}
 
 		if (StringUtils.isNotBlank(phone.toString())) {
 			AliyunSmsClient.getInstance().sendSMS(
@@ -772,90 +771,90 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		return bizOrderHeaderDao.findOrderForVendReq(skuIdList, centId);
 	}
 
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public int incrPayTotal(int id, BigDecimal payTotal) {
-        return bizRequestExpandDao.incrPayTotal(id, payTotal);
-    }
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public int incrPayTotal(int id, BigDecimal payTotal) {
+		return bizRequestExpandDao.incrPayTotal(id, payTotal);
+	}
 
-    /**
-     * 生成支付申请单
-     *
-     * @param bizRequestHeader
-     * @return
-     */
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> genPaymentOrder(BizRequestHeader bizRequestHeader) {
-        if (bizRequestHeader.getBizPoPaymentOrder() != null && bizRequestHeader.getBizPoPaymentOrder().getId() != null && bizRequestHeader.getBizPoPaymentOrder().getId() != 0) {
-            return Pair.of(Boolean.FALSE, "操作失败,该订单已经有正在申请的支付单!");
-        }
-        PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
-        PaymentOrderProcessConfig.Process purchaseOrderProcess = null;
-        if (paymentOrderProcessConfig.getDefaultBaseMoney().compareTo(bizRequestHeader.getPlanPay()) > 0) {
-            purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getPayProcessId());
-        } else {
-            purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getDefaultProcessId());
-        }
+	/**
+	 * 生成支付申请单
+	 *
+	 * @param bizRequestHeader
+	 * @return
+	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public Pair<Boolean, String> genPaymentOrder(BizRequestHeader bizRequestHeader) {
+		if (bizRequestHeader.getBizPoPaymentOrder() != null && bizRequestHeader.getBizPoPaymentOrder().getId() != null && bizRequestHeader.getBizPoPaymentOrder().getId() != 0) {
+			return Pair.of(Boolean.FALSE, "操作失败,该订单已经有正在申请的支付单!");
+		}
+		PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
+		PaymentOrderProcessConfig.Process purchaseOrderProcess = null;
+		if (paymentOrderProcessConfig.getDefaultBaseMoney().compareTo(bizRequestHeader.getPlanPay()) > 0) {
+			purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getPayProcessId());
+		} else {
+			purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getDefaultProcessId());
+		}
 
-        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-        commonProcessEntity.setObjectId(bizRequestHeader.getId().toString());
-        commonProcessEntity.setObjectName(BizPoPaymentOrderService.DATABASE_TABLE_NAME);
-        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
-        commonProcessService.save(commonProcessEntity);
+		CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+		commonProcessEntity.setObjectId(bizRequestHeader.getId().toString());
+		commonProcessEntity.setObjectName(BizPoPaymentOrderService.DATABASE_TABLE_NAME);
+		commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+		commonProcessService.save(commonProcessEntity);
 
-        BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
-        bizPoPaymentOrder.setPoHeaderId(bizRequestHeader.getId());
-        bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
-        bizPoPaymentOrder.setTotal(bizRequestHeader.getPlanPay());
-        bizPoPaymentOrder.setDeadline(bizRequestHeader.getPayDeadline());
-        bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
-        bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.REQ_TYPE.getType());
-        bizPoPaymentOrderService.save(bizPoPaymentOrder);
+		BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+		bizPoPaymentOrder.setPoHeaderId(bizRequestHeader.getId());
+		bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
+		bizPoPaymentOrder.setTotal(bizRequestHeader.getPlanPay());
+		bizPoPaymentOrder.setDeadline(bizRequestHeader.getPayDeadline());
+		bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
+		bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.REQ_TYPE.getType());
+		bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
-        bizRequestHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
-        this.updatePaymentOrderId(bizRequestExpandDao.getIdByRequestHeaderId(bizRequestHeader.getId()), bizPoPaymentOrder.getId());
-        return Pair.of(Boolean.TRUE, "操作成功!");
-    }
+		bizRequestHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
+		this.updatePaymentOrderId(bizRequestExpandDao.getIdByRequestHeaderId(bizRequestHeader.getId()), bizPoPaymentOrder.getId());
+		return Pair.of(Boolean.TRUE, "操作成功!");
+	}
 
-    /**
-     * 开始审核流程
-     *
-     * @return
-     */
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> startAudit(Integer id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, int auditType, String desc) {
-        RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
-        BizRequestHeader bizRequestHeader = this.get(id);
-        if (bizRequestHeader == null) {
-            LOGGER.error("start audit error [{}]", id);
-            return Pair.of(Boolean.FALSE,   "操作失败!参数错误[id]");
-        }
+	/**
+	 * 开始审核流程
+	 *
+	 * @return
+	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public Pair<Boolean, String> startAudit(Integer id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, int auditType, String desc) {
+		RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
+		BizRequestHeader bizRequestHeader = this.get(id);
+		if (bizRequestHeader == null) {
+			LOGGER.error("start audit error [{}]", id);
+			return Pair.of(Boolean.FALSE,   "操作失败!参数错误[id]");
+		}
 
-        if (prew) {
-            bizRequestHeader.setPayDeadline(prewPayDeadline);
-            bizRequestHeader.setPlanPay(prewPayTotal);
-            this.genPaymentOrder(bizRequestHeader);
-        }
+		if (prew) {
+			bizRequestHeader.setPayDeadline(prewPayDeadline);
+			bizRequestHeader.setPlanPay(prewPayTotal);
+			this.genPaymentOrder(bizRequestHeader);
+		}
 //        Byte bizStatus = bizRequestHeader.getBizStatus().byteValue();
 //        this.updateBizStatus(bizRequestHeader.getId(), ReqHeaderStatusEnum.PROCESS.getState());
 //        if (!bizStatus.equals(ReqHeaderStatusEnum.PROCESS.getState().byteValue())) {
 //            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 //        }
 //        this.updateProcessToInit(bizRequestHeader);
-        auditRe(id, String.valueOf(requestOrderProcessConfig.getAutProcessId()), auditType, desc);
-        return Pair.of(Boolean.TRUE,   "操作成功!");
-    }
+		auditRe(id, String.valueOf(requestOrderProcessConfig.getAutProcessId()), auditType, desc);
+		return Pair.of(Boolean.TRUE,   "操作成功!");
+	}
 
-    /**
-     * 审批RE
-     *
-     * @param id
-     * @param currentType
-     * @param auditType
-     * @param description
-     * @return
-     */
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> auditRe(int id, String currentType, int auditType, String description) {
+	/**
+	 * 审批RE
+	 *
+	 * @param id
+	 * @param currentType
+	 * @param auditType
+	 * @param description
+	 * @return
+	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public Pair<Boolean, String> auditRe(int id, String currentType, int auditType, String description) {
 //        BizRequestHeader bizRequestHeader = this.get(id);
 //        CommonProcessEntity cureentProcessEntity = bizRequestHeader.getCommonProcess();
 		String s = vendAudit(id, currentType, auditType, description);
@@ -870,31 +869,31 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		} else {
 			return Pair.of(Boolean.FALSE, "操作失败,当前流程已经结束!");
 		}
-    }
+	}
 
-    private void updateProcessToInit(BizRequestHeader bizRequestHeader) {
-        VendorRequestOrderProcessConfig vendorRequestOrderProcessConfig = ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get();
+	private void updateProcessToInit(BizRequestHeader bizRequestHeader) {
+		VendorRequestOrderProcessConfig vendorRequestOrderProcessConfig = ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get();
 		VendorRequestOrderProcessConfig.RequestOrderProcess currentProcess = vendorRequestOrderProcessConfig.processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 		VendorRequestOrderProcessConfig.RequestOrderProcess requestOrderProcess = vendorRequestOrderProcessConfig.processMap.get(currentProcess.getPassCode());
 
-        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-        commonProcessEntity.setObjectId(bizRequestHeader.getId().toString());
-        commonProcessEntity.setObjectName(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc());
-        commonProcessEntity.setType(String.valueOf(requestOrderProcess.getCode()));
-        commonProcessService.save(commonProcessEntity);
+		CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+		commonProcessEntity.setObjectId(bizRequestHeader.getId().toString());
+		commonProcessEntity.setObjectName(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc());
+		commonProcessEntity.setType(String.valueOf(requestOrderProcess.getCode()));
+		commonProcessService.save(commonProcessEntity);
 
-        this.updateProcessId(bizRequestHeader.getId(), commonProcessEntity.getId());
-    }
+		this.updateProcessId(bizRequestHeader.getId(), commonProcessEntity.getId());
+	}
 
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public int updatePaymentOrderId(Integer id, Integer paymentId) {
-        return bizRequestExpandDao.updatePaymentOrderId(id, paymentId);
-    }
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public int updatePaymentOrderId(Integer id, Integer paymentId) {
+		return bizRequestExpandDao.updatePaymentOrderId(id, paymentId);
+	}
 
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public int updateBizStatus(Integer id, Integer status) {
-        return dao.updateBizStatus(id, status,UserUtils.getUser(),new Date());
-    }
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public int updateBizStatus(Integer id, Integer status) {
+		return dao.updateBizStatus(id, status,UserUtils.getUser(),new Date());
+	}
 
 	/**
 	 * 该备货单下所有商品的总采购数量，总排产数量（分为按订单排产的总排产量和按商品排产的总排产量）
@@ -909,9 +908,9 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 	 * 供应商确认排产后，更新排产表中排产状态
 	 * @param requestHeader
 	 */
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void updateSchedulingType(BizRequestHeader requestHeader) {
-        bizRequestHeaderForVendorDao.updateSchedulingType(requestHeader);
-    }
+		bizRequestHeaderForVendorDao.updateSchedulingType(requestHeader);
+	}
 
 }

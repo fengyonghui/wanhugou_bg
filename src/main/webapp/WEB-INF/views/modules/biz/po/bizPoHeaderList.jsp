@@ -166,57 +166,19 @@
 				</td>
 				<td>
 					<c:if test="${bizPoHeader.bizStatus != 10}">
-					<c:choose>
-						<c:when test="${bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成' || bizPoHeader.totalOrdQty == null || bizPoHeader.totalOrdQty == 0}">
-							<%--${BizOrderSchedulingEnum.UNABLE_SCHEDULING.desc}--%>
-						</c:when>
-						<c:otherwise>
-							<c:choose>
-								<c:when test="${bizPoHeader.poSchType == 0}">
-									${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}
-								</c:when>
-								<c:otherwise>
-									<c:if test="${bizPoHeader.poSchType == 1}">
-										${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}
-									</c:if>
-									<c:if test="${bizPoHeader.poSchType == 2}">
-										${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}
-									</c:if>
-								</c:otherwise>
-							</c:choose>
-							<%--<c:if test="${bizPoHeader.schedulingType == 0}">--%>
-								<%--<c:choose>--%>
-									<%--<c:when test="${bizPoHeader.poSchType == 0}">--%>
-										<%--${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}--%>
-									<%--</c:when>--%>
-									<%--<c:otherwise>--%>
-										<%--<c:if test="${bizPoHeader.poSchType == 1}">--%>
-											<%--${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}--%>
-										<%--</c:if>--%>
-										<%--<c:if test="${bizPoHeader.poSchType == 2}">--%>
-											<%--${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}--%>
-										<%--</c:if>--%>
-									<%--</c:otherwise>--%>
-								<%--</c:choose>--%>
-							<%--</c:if>--%>
-
-							<%--<c:if test="${bizPoHeader.schedulingType == 1}">--%>
-								<%--<c:choose>--%>
-									<%--<c:when test="${bizPoHeader.totalSchedulingDetailNum == null || bizPoHeader.totalSchedulingDetailNum == 0}">--%>
-										<%--${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}--%>
-									<%--</c:when>--%>
-									<%--<c:otherwise>--%>
-										<%--<c:if test="${bizPoHeader.totalOrdQty != bizPoHeader.totalSchedulingDetailNum}">--%>
-											<%--${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}--%>
-										<%--</c:if>--%>
-										<%--<c:if test="${bizPoHeader.totalOrdQty == bizPoHeader.totalSchedulingDetailNum}">--%>
-											<%--${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}--%>
-										<%--</c:if>--%>
-									<%--</c:otherwise>--%>
-								<%--</c:choose>--%>
-							<%--</c:if>--%>
-						</c:otherwise>
-					</c:choose>
+						<c:choose>
+							<c:when test="${bizPoHeader.poSchType == 0 || bizPoHeader.poSchType == null}">
+								${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}
+							</c:when>
+							<c:otherwise>
+								<c:if test="${bizPoHeader.poSchType == 1}">
+									${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}
+								</c:if>
+								<c:if test="${bizPoHeader.poSchType == 2}">
+									${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}
+								</c:if>
+							</c:otherwise>
+						</c:choose>
 					</c:if>
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">

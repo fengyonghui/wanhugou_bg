@@ -37,12 +37,13 @@
 		<div class="control-group">
 			<label class="control-label">订单总金额：</label>
 			<div class="controls">
-				<c:if test="${fromPage == 'requestHeader' }">
-					<input class="totalDetail" value="${requestHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
-				</c:if>
-				<c:if test="${fromPage == 'orderHeader' }">
-					<input class="totalDetail" value="${orderHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
-				</c:if>
+				<input class="totalDetail" value="${totalDetailResult}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
+				<%--<c:if test="${fromPage == 'requestHeader' }">--%>
+					<%--<input class="totalDetail" value="${requestHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>--%>
+				<%--</c:if>--%>
+				<%--<c:if test="${fromPage == 'orderHeader' }">--%>
+					<%--<input class="totalDetail" value="${orderHeader.totalDetail}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>--%>
+				<%--</c:if>--%>
 			</div>
 		</div>
 		<div class="control-group">
