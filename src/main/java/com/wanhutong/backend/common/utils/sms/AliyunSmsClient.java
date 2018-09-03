@@ -9,9 +9,9 @@ import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -92,6 +92,10 @@ public class AliyunSmsClient {
      *                     ”,此参数传递{“no”:”123456”}，用户将接收到[短信签名]接受短信验证码123456
      */
     private Future<Boolean> sendSMS(String signName, String templateCode, String recNum, Map<String, String> paramsMap) {
+        if (!ConfigGeneral.SYSTEM_CONFIG.get().getSendMessageSwitch()) {
+            return null;
+        }
+
 		return ThreadPoolManager.getDefaultThreadPool().submit(new Callable<Boolean>() {
 			@Override
 			public Boolean call() {

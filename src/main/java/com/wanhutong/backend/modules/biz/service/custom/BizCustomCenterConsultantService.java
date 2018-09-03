@@ -82,4 +82,11 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 		return dao.userFindList(bizCustomCenterConsultant);
 	}
 
+	@Transactional(readOnly = false)
+	public Page<BizCustomCenterConsultant> userFindListForPage(Page<BizCustomCenterConsultant> page, BizCustomCenterConsultant bizCustomCenterConsultant) {
+		bizCustomCenterConsultant.setPage(page);
+		page.setList(dao.userFindList(bizCustomCenterConsultant));
+		return page;
+	}
+
 }

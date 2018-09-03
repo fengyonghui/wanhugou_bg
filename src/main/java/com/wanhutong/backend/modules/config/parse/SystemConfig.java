@@ -81,6 +81,13 @@ public class SystemConfig extends ConfigGeneral {
     private String filteringDate;
 
 
+    /**
+     * 短信发送开关
+     */
+    @XStreamAlias("sendMessageSwitch")
+    private Boolean sendMessageSwitch;
+
+
 
 
 
@@ -121,5 +128,9 @@ public class SystemConfig extends ConfigGeneral {
 
     public String getFilteringDate() {
         return filteringDate;
+    }
+
+    public Boolean getSendMessageSwitch() {
+        return sendMessageSwitch;
     }
 }
