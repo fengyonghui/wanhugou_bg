@@ -40,7 +40,7 @@
 			            contentover : "",
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
-		                    pager['size']= 10;//条数
+		                    pager['size']= 20;
 		                    pager['pageNo'] = 1;
 		                    pager['company.type'] = 8;
 		                    pager['company.customerTypeTen'] = 10;
