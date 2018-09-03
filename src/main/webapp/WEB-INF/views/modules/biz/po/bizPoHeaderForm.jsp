@@ -172,7 +172,9 @@
     <li><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
     <li class="active">
         <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">采购订单
-            <shiro:hasPermission name="biz:po:bizPoHeader:edit">${not empty bizPoHeader.id?'修改':'添加'}</shiro:hasPermission>
+            <shiro:hasPermission name="biz:po:bizPoHeader:edit">
+                ${not empty bizPoHeader.id ? ( bizPoHeader.str == 'detail' ? "详情":'修改'):'添加'}
+            </shiro:hasPermission>
             <shiro:lacksPermission name="biz:po:bizPoHeader:edit">查看</shiro:lacksPermission></a>
     </li>
 </ul>

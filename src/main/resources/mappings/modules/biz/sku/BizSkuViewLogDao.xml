@@ -15,15 +15,15 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
+		a.sku_type AS "skuType",
 		su.name as "createBy.name",
-		us.name as "updateBy.name",
-		bsi.name AS "skuInfo.name"
+		us.name as "updateBy.name"
 	</sql>
 	
 	<sql id="bizSkuViewLogJoins">
 		LEFT JOIN sys_user su on su.id = a.create_id
 		LEFT JOIN sys_user us on us.id = a.update_id
-		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
+		LEFT JOIN biz_sku_info bsi ON bsi.id = a.sku_id AND a.sku_type = 0
 	</sql>
     
 	<select id="get" resultType="BizSkuViewLog">
@@ -36,9 +36,20 @@
 	
 	<select id="findList" resultType="BizSkuViewLog">
 		SELECT 
-			<include refid="bizSkuViewLogColumns"/>
+			<include refid="bizSkuViewLogColumns"/>,
+		<if test="skuType != null and skuType == 0">
+			bsi.name AS "skuInfo.name"
+		</if>
+		<if test="skuType != null and skuType == 1">
+			bvsi.name AS "skuInfo.name"
+		</if>
 		FROM biz_sku_view_price_log a
 		<include refid="bizSkuViewLogJoins"/>
+		<if test="skuType != null and skuType == 1">
+			LEFT JOIN biz_vendor_sku_info bvsi ON bvsi.id = a.sku_id AND a.sku_type = 1
+			LEFT JOIN biz_vendor_product_info bvpi ON bvpi.id = bvsi.prod_id
+			LEFT JOIN sys_office vend ON vend.id = bvpi.vendor_id
+		</if>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
@@ -52,6 +63,12 @@
 				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+			</if>
+			<if test="skuType != null">
+				AND a.sku_type = #{skuType}
+			</if>
+			<if test="sqlMap != null and sqlMap.skuType != null and sqlMap.skuType != ''">
+				${sqlMap.skuType}
 			</if>
 		</where>
 		<choose>
@@ -94,7 +111,8 @@
 			create_time,
 			u_version,
 			update_id,
-			update_time
+			update_time,
+			sku_type
 		) VALUES (
 			#{id},
 			#{skuInfo.id},
@@ -107,7 +125,8 @@
 			#{createDate},
 			#{uVersion},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+			#{skuType}
 		)
 	</insert>
 	
@@ -120,7 +139,8 @@
 			after_buy_price = #{afterBuyPrice},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+			update_time = #{updateDate},
+			sku_type = #{skuType}
 		WHERE id = #{id}
 	</update>
 	

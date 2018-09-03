@@ -2,6 +2,7 @@ package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -104,37 +105,15 @@ public class BizRequestAllController {
     @RequestMapping(value = {"list", ""})
     public String list(String source, Integer bizStatu, String ship, HttpServletRequest request, HttpServletResponse response, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader) {
         User user = UserUtils.getUser();
-        DefaultProp defaultProp = new DefaultProp();
-        defaultProp.setPropKey("vend_center");
-        Integer vendId = 0;
-        List<DefaultProp> defaultPropList = defaultPropService.findList(defaultProp);
-        if (defaultPropList != null && defaultPropList.size() > 0) {
-            DefaultProp prop = defaultPropList.get(0);
-            vendId = Integer.parseInt(prop.getPropValue());
+        List<Role> roleList = user.getRoleList();
+        List<String> enNameList = Lists.newArrayList();
+        for (Role role : roleList) {
+            enNameList.add(role.getEnname());
         }
-        //用户属于供应中心或管理员
-
-       /*String type= user.getCompany().getType();
-        System.out.println(type);
-
-        boolean flag=false;
-        if(user.getRoleList()!=null) {
-            for (Role role : user.getRoleList()) {
-                if (!RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
-                    flag = true;
-                    break;
-                }
-            }
+        if (!user.isAdmin() && enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
+            model.addAttribute("vendor","vendor");
         }
-        if(flag){
-            model.addAttribute("ship",ship);
-        }*/
-//        String type = officeService.get(user.getCompany().getId()).getType();
-//        if (type.equals(OfficeTypeEnum.SUPPLYCENTER.getType())  || user.isAdmin()){
         model.addAttribute("ship", ship);
-//        }else {
-//            model.addAttribute("ship","");
-//        }
         model.addAttribute("source", source);
         if (bizOrderHeader == null) {
             bizOrderHeader = new BizOrderHeader();
@@ -224,6 +203,15 @@ public class BizRequestAllController {
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = "form")
     public String form(String source, Integer id, Model model, Integer bizStatu, String ship) {
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        List<String> enNameList = Lists.newArrayList();
+        for (Role role : roleList) {
+            enNameList.add(role.getEnname());
+        }
+        if (!user.isAdmin() && enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
+            model.addAttribute("vendor","vendor");
+        }
         List<BizRequestDetail> reqDetailList = Lists.newArrayList();
         List<BizOrderDetail> ordDetailList = Lists.newArrayList();
         BizOrderHeader orderHeader = null;
@@ -239,20 +227,15 @@ public class BizRequestAllController {
             //取出用户所属采购中心
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
             BizLogistics bizLogistics = new BizLogistics();
-            User user = UserUtils.getUser();
-            if (user.isAdmin()) {
-                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList", invInfoList);
-                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList", logisticsList);
-            } else {
+            if (!user.isAdmin()) {
                 Office company = officeService.get(user.getCompany().getId());
                 bizInventoryInfo.setCustomer(company);
-                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList", invInfoList);
-                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList", logisticsList);
             }
+            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+            model.addAttribute("invInfoList", invInfoList);
+            List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
+            model.addAttribute("logisticsList", logisticsList);
+
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
             bizRequestDetail.setRequestHeader(bizRequestHeader);
             List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
@@ -283,20 +266,15 @@ public class BizRequestAllController {
             //取出用户所属采购中心
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
             BizLogistics bizLogistics = new BizLogistics();
-            User user = UserUtils.getUser();
-            if (user.isAdmin()) {
-                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList", invInfoList);
-                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList", logisticsList);
-            } else {
+            if (!user.isAdmin()) {
                 Office company = officeService.get(user.getCompany().getId());
                 bizInventoryInfo.setCustomer(company);
-                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList", invInfoList);
-                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList", logisticsList);
             }
+            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+            model.addAttribute("invInfoList", invInfoList);
+            List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
+            model.addAttribute("logisticsList", logisticsList);
+
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
             List<BizOrderDetail> orderDetailList;

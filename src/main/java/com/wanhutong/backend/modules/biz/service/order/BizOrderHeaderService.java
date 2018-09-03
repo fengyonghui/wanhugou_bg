@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.service.order;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
@@ -22,27 +23,19 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderComment;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.order.*;
-import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
-import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
-import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
-import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderPayProportionStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
-import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
-import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.dao.UserDao;
@@ -184,16 +177,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     public Page<BizOrderHeader> findPageForSendGoods(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user = UserUtils.getUser();
-//        boolean flag=false;
         boolean oflag = false;
-        /*if(user.getRoleList()!=null){
-            for(Role role:user.getRoleList()){
-                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
-                    flag=true;
-                    break;
-                }
-            }
-        }*/
         if (UserUtils.getOfficeList() != null) {
             for (Office office : UserUtils.getOfficeList()) {
                 if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
@@ -201,19 +185,20 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 }
             }
         }
-        if (user.isAdmin()) {
-            return super.findPage(page, bizOrderHeader);
-        } else {
-            if (oflag) {
-
-            } else {
-                bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
-            }
-            return super.findPage(page, bizOrderHeader);
+        List<Role> roleList = user.getRoleList();
+        List<String> enNameList = Lists.newArrayList();
+        for (Role role : roleList) {
+            enNameList.add(role.getEnname());
         }
+        if (!user.isAdmin() && !oflag && !enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
+            bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+        } else if (!user.isAdmin() && enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
+            bizOrderHeader.getSqlMap().put("order",BaseService.dataScopeFilter(user,"vend","su"));
+        }
+        return super.findPage(page, bizOrderHeader);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     @Override
     public void save(BizOrderHeader bizOrderHeader) {
         if (bizOrderHeader.getBizType() == null) {

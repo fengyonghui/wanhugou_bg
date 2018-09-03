@@ -786,7 +786,8 @@
                     result = JSON.parse(result);
                     if(result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        window.location.href = "${ctx}/biz/order/bizOrderHeader";
+                        <%--window.location.href = "${ctx}/biz/order/bizOrderHeader";--%>
+                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
                     }else {
                         alert(result.errmsg);
                     }
@@ -814,7 +815,8 @@
                     result = JSON.parse(result);
                     if(result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        window.history.go(-1);
+                        // window.history.go(-1);
+                        window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
                     }else {
                         alert(result.errmsg);
                     }
@@ -1811,8 +1813,8 @@
                     <div class="control-group">
                         <label class="control-label">供货方式:</label>
                         <div class="controls">
-                            产地直发:<input name="localOriginType" value="0" checked type="radio" readonly="readonly"/>
-                            本地备货:<input name="localOriginType" value="1" type="radio" readonly="readonly"/>
+                            本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>
+                            产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>
                         </div>
                     </div>
                 </c:if>
@@ -1905,11 +1907,11 @@
                 <c:if test="${(empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails) || (refundSkip eq 'refundSkip')}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
                         <c:if test='${entity.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUND.state}'>
-                            <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('${OrderHeaderDrawBackStatusEnum.REFUNDING.state}','退款申请',${bizOrderHeader.id})"/>
+                            <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('${OrderHeaderDrawBackStatusEnum.REFUNDING.state}','申请退款',${bizOrderHeader.id})"/>
                         </c:if>
                     </shiro:hasPermission>
                 </c:if>
-                    <%--<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${orderHeader.id})">退款</a>--%>
+                    <%--<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','申请退款',${orderHeader.id})">退款</a>--%>
             </div>
         </c:otherwise>
     </c:choose>
