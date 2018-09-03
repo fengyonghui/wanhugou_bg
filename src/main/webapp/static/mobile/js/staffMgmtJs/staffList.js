@@ -69,7 +69,8 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+//		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+		                mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						var arrLen = res.data.page.list.length;						
                         if(arrLen > 0) {
                         $.each(res.data.page.list, function(i, item) {
