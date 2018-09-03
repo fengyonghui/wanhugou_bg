@@ -10,6 +10,12 @@
 			this.pageInit(); //页面初始化
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
+			(function($){
+		    $(".mui-scroll-wrapper").scroll({
+		          bounce: false,//滚动条是否有弹力默认是true
+		          indicators: true, //是否显示滚动条,默认是true
+		    }); 
+})(mui);
 		},
 		pageInit: function() {
 			var _this = this;

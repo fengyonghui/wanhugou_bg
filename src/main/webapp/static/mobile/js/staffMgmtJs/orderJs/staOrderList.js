@@ -394,6 +394,7 @@
 	                        	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
 	                            var orderTypeTxt = '';
 	                            $.each(ass,function(i,items){
+	                            	console.log(items.value)
 		                        	if(item.orderType==items.value) {
 		                        		orderTypeTxt = items.label
 		                        	}
