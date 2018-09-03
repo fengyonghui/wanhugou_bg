@@ -192,7 +192,7 @@
 				dataType: 'json',
 				success: function(res) {
 					$.each(res.data.originConfigMap, function(i, item) {
-						console.log(item)
+//						console.log(item)
 						htmlClass += '<option class="soption" value="' + item + '">' + item + '</option>'
 					});
 					$('#input_div_checkStatus').append(htmlClass);
