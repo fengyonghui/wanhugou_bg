@@ -821,7 +821,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             List<PaymentOrderProcessConfig.MoneyRole> nextMoneyRoleList = nextProcess.getMoneyRole();
             PaymentOrderProcessConfig.MoneyRole nextMoneyRole = null;
             for (PaymentOrderProcessConfig.MoneyRole role : nextMoneyRoleList) {
-                if (role.getEndMoney().compareTo(money) > 0 && role.getStartMoney().compareTo(money) <= 0) {
+                if (role.getEndMoney() != null && role.getStartMoney() != null && role.getEndMoney().compareTo(money) > 0 && role.getStartMoney().compareTo(money) <= 0) {
                     nextMoneyRole = role;
                 }
             }
