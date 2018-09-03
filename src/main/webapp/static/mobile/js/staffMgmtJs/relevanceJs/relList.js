@@ -26,14 +26,14 @@
 		    pullRefresh(pager);//启用上拉下拉 
 		    function pullRefresh(){
 		        mui("#refreshContainer").pullRefresh({
-//			        up:{
-//			            contentnomore:'没 有 更 多 数 据 了',
-//			            callback:function(){
-//			                window.setTimeout(function(){
-//			                    _this.getData(pager);
-//			                },500);
-//			            }
-//			         },
+			        up:{
+			            contentnomore:'没 有 更 多 数 据 了',
+			            callback:function(){
+			                window.setTimeout(function(){
+			                    this.getData();
+			                },500);
+			            }
+			         },
 			        down : {
 			            auto: true,
 			            contentdown : "",
@@ -65,6 +65,7 @@
 		    	var staffHtmlList = '';
 		    	var _this=this;
 		        mui.ajax("/a/biz/custom/bizCustomCenterConsultant/listData4mobile",{
+		        
 		            data:{
 		            		pageNo : 1,
 			                'consultants.id' :_this.userInfo.staListId,//客户专员
@@ -76,9 +77,10 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
+		            	console.log(res.data)
+		            	mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 		            	$('#cosultasId').val(res.data.bcUser.consultants.id);
 		            	$('#officeId').val(res.data.bcUser.centers.id);
-		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						var arrLen = res.data.resultData.length;						
                         if(arrLen > 0) {
                         $.each(res.data.resultData, function(i, item) {
@@ -137,20 +139,26 @@
 										'</div>' +
 									'</div>'
 								});
-								$('#staReleList').html(staffHtmlList);
+								$('#staReleList').append(staffHtmlList);
 								_this.stHrefHtml()
 						} 
 						else {
-								$('.mui-pull-caption').html('');
+								$('.mui-pull-bottom-pocket').html('');
+								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}								                	
 //			           totalPage = res.data.page.count%pager.size!=0?
 //		                parseInt(res.data.page.count/pager.size)+1:
 //		                res.data.page.count/pager.size;
-                        var totalPage=1;
+//                      var totalPage=1;
+                        var pageNo=1;
                         
-		                if(totalPage==1){
-			                mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+		                if(pageNo==1){
+//                            console.log('1')	
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+//			                mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
+			               
 			            }else{
+//			            	console.log('2')	
 			                pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
 			            }          

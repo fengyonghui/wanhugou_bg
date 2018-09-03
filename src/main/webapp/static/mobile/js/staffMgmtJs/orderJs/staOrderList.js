@@ -80,6 +80,7 @@
 			                }
 			            });
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+
 						var arrLen = res.data.page.list.length;	
                         var that=this;
                         if(arrLen > 0) {
@@ -94,7 +95,20 @@
 	                        		orderTypeTxt = items.label
 	                        	}
                            })
-
+//							if(item.orderType == 1) {
+//								orderTypeTxt = '普通订单'
+//							}else if(item.orderType == 2) {
+//								orderTypeTxt = '帐期采购'
+//							}else if(item.orderType == 3) {
+//								orderTypeTxt = '配资采购'
+//							}else if(item.orderType == 4) {
+//								orderTypeTxt = '微商订单'
+//							}else if(item.orderType == 5) {
+//								orderTypeTxt = '代采订单'
+//							}else if(item.orderType == 6) {
+//								orderTypeTxt = '拍照下单'
+//							}
+							
                         	//审核
                         	var staCheckBtn = '';
                         	var staCheckBtnTxt = '';
@@ -168,6 +182,7 @@
 		                res.data.page.count/pager.size;
 		                if(totalPage==pager.pageNo){		                	
 			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+			                
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
