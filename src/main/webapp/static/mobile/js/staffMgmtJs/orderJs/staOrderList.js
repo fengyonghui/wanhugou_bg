@@ -92,16 +92,6 @@
                             $.each(ass,function(i,items){
 	                        	if(item.orderType==items.value) {
 	                        		orderTypeTxt = items.label
-	                        	}else if(item.orderType==items.value) {
-	                        		orderTypeTxt = items.label
-	                        	}else if(item.orderType==items.value) {
-	                        		orderTypeTxt = items.label
-	                        	}else if(item.orderType==items.value) {
-	                        		orderTypeTxt = items.label
-	                        	}else if(item.orderType==items.value) {
-	                        		orderTypeTxt = items.label
-	                        	}else if(item.orderType==items.value) {
-	                        		orderTypeTxt = items.label
 	                        	}
                            })
 
@@ -405,16 +395,6 @@
 	                            var orderTypeTxt = '';
 	                            $.each(ass,function(i,items){
 		                        	if(item.orderType==items.value) {
-		                        		orderTypeTxt = items.label
-		                        	}else if(item.orderType==items.value) {
-		                        		orderTypeTxt = items.label
-		                        	}else if(item.orderType==items.value) {
-		                        		orderTypeTxt = items.label
-		                        	}else if(item.orderType==items.value) {
-		                        		orderTypeTxt = items.label
-		                        	}else if(item.orderType==items.value) {
-		                        		orderTypeTxt = items.label
-		                        	}else if(item.orderType==items.value) {
 		                        		orderTypeTxt = items.label
 		                        	}
 	                            })
