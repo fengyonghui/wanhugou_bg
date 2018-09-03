@@ -178,16 +178,22 @@
                 }
             }
 
+            var totalTotalSchedulingNum = 0;
             if (schedulingType == "0"){
                 var toalSchedulingNum = $('#toalSchedulingNum').val();
                 poSchType = originalNum >  parseInt(totalSchedulingHeaderNum) + parseInt(toalSchedulingNum)  ? 1 : 2;
-                console.log(originalNum)
-                console.log(totalSchedulingHeaderNum)
-                console.log(toalSchedulingNum)
-                console.log(poSchType)
+                totalTotalSchedulingNum = parseInt(totalSchedulingHeaderNum) + parseInt(toalSchedulingNum);
             } else {
                 var toalSchedulingNumForSku = $('#toalSchedulingNumForSku').val();
                 poSchType = originalNum > parseInt(totalSchedulingDetailNum) + parseInt(toalSchedulingNumForSku) ? 1 : 2;
+                totalTotalSchedulingNum = parseInt(totalSchedulingDetailNum) + parseInt(toalSchedulingNumForSku);
+            }
+            console.log("originalNum=" + originalNum);
+            console.log("totalTotalSchedulingNum=" + totalTotalSchedulingNum);
+
+            if(parseInt(totalTotalSchedulingNum) > parseInt(originalNum)) {
+                alert("排产量总和太大，请从新输入!")
+                return false
             }
 
             for(i=0;i<trArray.length;i++){
@@ -224,10 +230,7 @@
 
                 totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
             }
-            if(parseInt(totalSchedulingNum) > parseInt(originalNum)) {
-                alert("排产量总和太大，请从新输入!")
-                return false
-            }
+
             if(confirm("确定执行该排产确认吗？")) {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
