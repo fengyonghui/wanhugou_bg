@@ -393,7 +393,7 @@ input[type=url],
 input[type=week],
 select, textarea{height: auto;padding:10px 15px;}
 .mui-input-group .mui-input-row{height: auto;background-color: #fff;}
-.mui-input-row label{padding:10px 15px;padding-right: 10px;line-height:21px;font-weight: bold;}
+.mui-input-row label{padding:10px 15px;line-height:21px;font-weight: bold;}
 
 .mui-input-row label~select{padding-left: 0;padding-top: 6px;}
 
@@ -476,7 +476,6 @@ select, textarea{height: auto;padding:10px 15px;}
 
 
 /*==自定义公共样式==*/
-.app_header{height: 44px;box-shadow: none;background: #374761;border-bottom: 1px solid #EEEEEE;color: #000;}
 .app_header.app_nbborder{border-bottom: none;background-color: #374761;}
 .mui-table-view.mui-grid-view.app_bgn{background: none; }
 .mui-table-view.mui-grid-view.app_bgn:last-child {padding-top: 10px;}
@@ -580,16 +579,16 @@ body{font-size: 15px;color:#3b3b3b;}
 .app_bgcolor {background-color: #374761;box-shadow: none;}
 .app_content_bgc_login {background-color: #374761;}
 .app_content_bgc_phs {background-color: #374761;}
-.labelLf {padding: 10px 14px;padding-left: 20px;line-height: 21px;width: 35%;font-weight: bold;}
-.labelri {width: 60%;float: right;padding: 14px 15px;height: auto;line-height: 21px;font-size: 16px;}
+.labelLf {padding: 10px 14px;line-height: 21px;width: 38%;font-weight: bold;}
+.labelri {width: 62%;float: right;padding: 10px 15px;height: auto;line-height: 21px;font-size: 16px;}
 .labelPto {width:30%}
-.labelri input {margin-right: 15px;}
+/*.labelri input {margin-left: 15px;}*//*redio*/
 .photoList {margin-left: 33%;}
 .step_num {text-align: center;color: #007aff;}
 .step_item {border: 1px #3daae9 solid;margin: 15px 15px;}
 .oneBtn {left: 50%;margin-left: -41px;}
 .list-padding {padding: 10px 10px 0 10px;}
-.mui-input-row label~input.doubleInput {width: 30%;}/*一行有两个input*/
+.mui-input-row label~input.doubleInput {width: 31%;}/*一行有两个input*/
 
 
 /*红色 * 号，必填必选*/
@@ -597,7 +596,7 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*模糊查询列表显示---查询页面和经销店添加公共样式*/
-.pre {margin-bottom: 0;padding-left: 0;float: right;width: 60%;}
+.pre {margin-bottom: 0;padding-left: 0;float: right;width: 62%;}
 .newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;background: url(./thumb.jpg) no-repeat scroll right center;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
 .input_div {width: 150px;border: 1px solid #ddd;border-bottom: none;border-radius: 0 0 3px 3px;display: none;}
 .hideSpan {position: absolute;right: 52px;top: 11px;border: 1px solid rgb(204, 204, 204);border-radius: 13px;display: none;}
@@ -652,7 +651,7 @@ body{font-size: 15px;color:#3b3b3b;}
 
 /*订单详情---产品信息*/
 .commodity label {width: 40%;}
-.commodity input {width: 60%;color: #40ABE9;}/*--被覆盖了*/
+.mui-input-row label~input, .commodity input {width: 60%;}/*--被覆盖了*/
 /*订单详情---产品信息---一列样式:*/
 .commodity div.lineStyle label {width:20%}
 .commodity div.lineStyle input {width:80%}

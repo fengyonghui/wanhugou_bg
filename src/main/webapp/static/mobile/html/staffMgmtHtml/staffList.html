@@ -8,26 +8,9 @@
 		<title>客户专员管理</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
-		<link href="../../css/drop.css" rel="stylesheet" />
     	<style type="text/css">
-			.dropload-down{display: none;}
-			.mui-content li {padding: 0;list-style: none;height: 30px;}
- 			.mui-input-group>p {height: 30px;line-height: 30px;text-indent: 15px;color: #000;background-color: #374761;color: #fff;font-size: 16px;}
- 			.mui-table-view:before {background-color: #FFF;}
- 			.mui-input-group div.mui-input-row {background-color:#fff;}
- 			.noneTxt {position: absolute;top: 50%;left: 50%;margin-left: -28px;}
- 			.footClass {background-color: #40ABE9;} 
- 			#refreshContainer{
-				touch-action: none;
-			}  
-			.mui-table-view-chevron .mui-table-view-cell {
-			     padding-right: 0px; 
-			}
-		#refreshContainer .hide {
-		    visibility: visible!important;   
-		    /*display: none!important;*/    
-          } 
-
+ 			#refreshContainer{touch-action: none;}  
+			#refreshContainer .hide {visibility: visible!important;} 
 		</style>
 	</head>
 	<body>
@@ -41,10 +24,6 @@
 				<span class="mui-icon mui-icon-home"></span>
 				<span class="mui-tab-label">返回首页</span>
 			</a>
-			<!--<a class="mui-tab-item app_cf staAddBtn">
-				<span class="mui-icon mui-icon-plus"></span>
-				<span class="mui-tab-label">用户添加</span>
-			</a>-->
 		</nav>
 		<div class="app_content mui-content mui-scroll-wrapper" id="refreshContainer">
 			<div class="mui-scroll">
@@ -57,7 +36,6 @@
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/component/dropload.js"></script>
 		<script src="../../js/staffMgmtJs/staffList.js"></script>
 	</body>
 </html>

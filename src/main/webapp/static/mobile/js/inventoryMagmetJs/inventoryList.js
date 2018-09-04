@@ -225,7 +225,7 @@
 											'<label>更新时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 										'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center">' +
+										'<div class="app_color40 content_part mui-row app_text_center operation">' +
 											'<div class="mui-col-xs-2">' +
 												'<li class="mui-table-view-cell" ></li>' +
 											'</div>'+
@@ -289,7 +289,7 @@
 		inHrefHtml: function() {
 			var _this = this;
 		/*查询*/
-			$('.header').on('tap', '#searchBtn', function() {
+			$('.app_header').on('tap', '#searchBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
 					mui.toast('子菜单不存在')
@@ -339,7 +339,7 @@
 				}
 			}),
 		/*修改*/
-            $('.content').on('tap','.inAmendBtn', function() {
+            $('.content_part').on('tap','.inAmendBtn', function() {
 				var url = $(this).attr('url');
                 var reqId = $(this).attr('inListId');
 				GHUTILS.OPENPAGE({
@@ -641,7 +641,7 @@
 									'<label>更新时间:</label>' +
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 								'</div>' +
-								'<div class="app_font_cl content_part mui-row app_text_center">' +
+								'<div class="app_color40 content_part mui-row app_text_center operation">' +
 									'<div class="mui-col-xs-2">' +
 									'</div>'+
 									'<div class="mui-col-xs-2 '+inDetailBtn+'" inListId="'+ item.id +'">' +
