@@ -579,7 +579,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .app_content_bgc_login {background-color: #374761;}
 .app_content_bgc_phs {background-color: #374761;}
 .labelLf {padding: 10px 14px;line-height: 21px;width: 38%;font-weight: bold;}
-.labelri {width: 62%;float: right;padding: 10px 15px;height: auto;line-height: 21px;font-size: 16px;}
+.labelri {width: 62%;float: right;padding: 10px 15px 10px 0;height: auto;line-height: 21px;font-size: 16px;}
 .labelPto {width:30%}
 /*.labelri input {margin-left: 15px;}*//*redio*/
 .photoList {margin-left: 33%;}
@@ -591,7 +591,7 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*红色 * 号，必填必选*/
-.mui-input-row font {color: red;position: absolute;right: 60px;top: 38%;font-size: 20px;}
+.mui-input-row font {color: red;position: absolute;right: 60px;top: 37%;font-size: 20px;}
 
 
 /*模糊查询列表显示---查询页面和经销店添加公共样式*/
@@ -655,6 +655,8 @@ body{font-size: 15px;color:#3b3b3b;}
 .commodity div.lineStyle label {width:20%}
 .commodity div.lineStyle input {width:80%}
 
+/*订单审核商品信息*/
+.commodity div.mui-row li {padding: 5px;list-style: none;height: 30px;border-bottom: 1px solid #efeff4;}
 
 /*进展信息*/
 .nextTxt01 {top: 17px;left: 88px;}
@@ -677,17 +679,5 @@ a, #list {touch-action: none;}
 
 
 /*radio*/
-input[type=radio].inputRadio {-webkit-appearance: none;
-position: relative;
-top: -2px;
-width: 14px;
-height: 14px;
-border: 1px solid #999;
--webkit-border-radius: 7px;
-border-radius: 7px;
-background-color: #fff;
-vertical-align: middle;}
-input[type="radio"].inputRadio:checked {
--webkit-appearance: none; 
-border-color: #40ABE9;
-background-color: #40ABE9;}
+input[type=radio].inputRadio {-webkit-appearance: none;position: relative;top: -1px;width: 14px;height: 14px;border: 1px solid #999;-webkit-border-radius: 7px;border-radius: 7px;background-color: #fff;vertical-align: middle;}
+input[type="radio"].inputRadio:checked {-webkit-appearance: none; border-color: #40ABE9;background-color: #40ABE9;}
