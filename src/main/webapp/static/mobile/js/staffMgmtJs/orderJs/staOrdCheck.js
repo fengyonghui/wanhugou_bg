@@ -14,7 +14,21 @@
 		},
 		pageInit: function() {
 			var _this = this;
+			_this.btnshow()
 			_this.getData()
+		},
+		btnshow: function() {
+			var _this = this;
+//			$('#showMoney').hide()
+			$('input[type=radio]').on('change', function() {
+				if(this.id && this.checked) {
+//					$('#showMoney').show()
+					_this.prew = true
+				} else {
+//					$('#showMoney').hide()
+					_this.prew = false
+				}
+			})
 		},
 		getData: function() {
 			var _this = this;
@@ -78,8 +92,6 @@
 					if(item.invStatus==0) {
 						invStatusTxt = "不开发票"					
 					}
-					
-					
 					//业务状态
 					var statusTxt = '';
 					if(item.staStatus=15) {
