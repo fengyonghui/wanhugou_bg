@@ -70,8 +70,14 @@
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
 		            	console.log(res)
-		                mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
-						var arrLen = res.data.page.list.length;						
+		            	
+//		                mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+						var arrLen = res.data.page.list.length;	
+						if(arrLen <20 ){
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true)
+						}else{
+							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true)
+						}
                         if(arrLen > 0) {
                         $.each(res.data.page.list, function(i, item) {
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
@@ -136,7 +142,7 @@
 		                parseInt(res.data.page.count/pager.size)+1:
 		                res.data.page.count/pager.size;
 		                if(totalPage==pager.pageNo){		                	
-			                mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 //			                mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
 			            }else{
 			                pager.pageNo++;

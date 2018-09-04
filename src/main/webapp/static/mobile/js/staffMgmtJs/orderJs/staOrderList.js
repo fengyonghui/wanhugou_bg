@@ -78,9 +78,14 @@
 				                ass=res;
 			                }
 			            });
-		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+//		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 
-						var arrLen = res.data.page.list.length;	
+						var arrLen = res.data.page.list.length;
+						if(arrLen <20 ){
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true)
+						}else{
+							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true)
+						}
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
