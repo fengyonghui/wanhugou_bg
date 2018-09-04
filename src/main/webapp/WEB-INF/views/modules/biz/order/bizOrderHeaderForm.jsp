@@ -105,11 +105,11 @@
                             if (data == "serviceCharge") {
                                 alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
                             } else if (data == "orderLoss") {
-                                alert("优惠后订单金额不能低于出厂价，请修改调整金额");
+                                alert("优惠后订单金额不能低于结算价，请修改调整金额");
                             } else if (data == "orderLowest") {
-                                alert("优惠后订单金额不能低于出厂价的95%，请修改调整金额");
+                                alert("优惠后订单金额不能低于结算价的95%，请修改调整金额");
                             } else if (data == "orderLowest8") {
-                                alert("优惠后订单金额不能低于出厂价的80%，请修改调整金额");
+                                alert("优惠后订单金额不能低于结算价的80%，请修改调整金额");
                             } else if (data == "ok") {
                                 loading('正在提交，请稍等...');
                                 form.submit();
@@ -457,11 +457,11 @@
                         if (data == "serviceCharge") {
                             alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
                         } else if (data == "orderLoss") {
-                            alert("优惠后订单金额不能低于出厂价，请修改调整金额");
+                            alert("优惠后订单金额不能低于结算价，请修改调整金额");
                         } else if (data == "orderLowest") {
-                            alert("优惠后订单金额不能低于出厂价的95%，请修改调整金额");
+                            alert("优惠后订单金额不能低于结算价的95%，请修改调整金额");
                         } else if (data == "orderLowest8") {
-                            alert("优惠后订单金额不能低于出厂价的80%，请修改调整金额");
+                            alert("优惠后订单金额不能低于结算价的80%，请修改调整金额");
                         } else if (data == "ok") {
                             $.ajax({
                                 type:"post",
@@ -2172,7 +2172,7 @@
         <th>商品货号</th>
         <%--<th>已生成的采购单</th>--%>
         <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
-            <th>商品出厂价</th>
+            <th>商品结算价</th>
         </c:if>
         <th>供应商</th>
         <th>供应商电话</th>

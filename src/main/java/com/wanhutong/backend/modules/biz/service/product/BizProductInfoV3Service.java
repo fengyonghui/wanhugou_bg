@@ -222,6 +222,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                             skuViewLog.setItemNo(skuInfo.getItemNo());//货号
                             skuViewLog.setUpdateDate(skuInfo.getUpdateDate());//商品修改时间
                             skuViewLog.setUpdateBy(skuInfo.getCreateBy());//商品修改人
+                            skuViewLog.setSkuType(BizSkuViewLog.SkuType.PLATFORM.getType());
                             Double buyPrice = 0.0;
                             if (skuInfo.getBuyPrice() != null) {
                                 buyPrice = skuInfo.getBuyPrice();
