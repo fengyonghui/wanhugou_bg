@@ -438,9 +438,12 @@ public class BizCustomCenterConsultantController extends BaseController {
         if (StringUtils.isNotBlank(phone)) {
             List<Office> officeList = officeService.getImgTreeListByPhone(OfficeTypeEnum.CUSTOMER.getType(), "con", phone);
 
-            if (officeList != null) {
+            if (CollectionUtils.isNotEmpty(officeList)) {
                 Integer customsId = officeList.get(0).getId();
                 customs.setId(customsId);
+            } else {
+                logger.warn("未找到相应经销店");
+                return result;
             }
         }
         bizCustomCenterConsultant.setCustoms(customs);
