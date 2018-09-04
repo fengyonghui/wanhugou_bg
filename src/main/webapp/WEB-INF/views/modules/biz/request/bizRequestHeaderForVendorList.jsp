@@ -295,7 +295,9 @@
 								<a href="${ctx}/biz/request/bizRequestHeaderForVendor/recovery?id=${requestHeader.id}" onclick="return confirmx('确认要恢复该备货清单吗？', this.href)">恢复</a>
 							</c:if>
 						</c:when>
-						<c:when test="${!fns:getUser().isAdmin() && requestHeader.bizStatus<ReqHeaderStatusEnum.IN_REVIEW.state}">
+						<c:when test="${!fns:getUser().isAdmin() && requestHeader.bizStatus<ReqHeaderStatusEnum.IN_REVIEW.state ||
+						(requestHeader.commonProcess.requestOrderProcess.name == '驳回' && fns:getUser().id == requestHeader.createBy.id) ||
+						(requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '驳回' && fns:getUser().id == requestHeader.createBy.id)}">
 							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}">修改</a>
 							<shiro:hasPermission name="biz:request:bizRequestHeader:delete">
 								<a href="${ctx}/biz/request/bizRequestHeaderForVendor/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
