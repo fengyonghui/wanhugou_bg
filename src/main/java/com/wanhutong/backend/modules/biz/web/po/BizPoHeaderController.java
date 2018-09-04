@@ -1211,6 +1211,7 @@ public class BizPoHeaderController extends BaseController {
                         schedulingPlan.setObjectId(dto.getObjectId());
                         schedulingPlan.setObjectName(objectName);
                         schedulingPlan.setOriginalNum(dto.getOriginalNum());
+                        schedulingPlan.setPoSchType(Integer.valueOf(dto.getPoSchType()));
                         bizSchedulingPlanService.save(schedulingPlan);
                     }
 
