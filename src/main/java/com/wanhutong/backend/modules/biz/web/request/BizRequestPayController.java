@@ -77,7 +77,7 @@ public class BizRequestPayController extends BaseController {
         String photoName=null;
         String payNum = null;
         try {
-            Pair<String, Map<String, Object>> response = unifiedOrder(payMoney, reqId, payMethod, WechatPayTradeType.MWEB.getType(), null);
+            Pair<String, Map<String, Object>> response = unifiedOrder(payMoney, reqId, payMethod, WechatPayTradeType.NATIVE.getType(), null);
             Map<String, Object> map1 = response.getRight();
 
             payNum = response.getLeft();
