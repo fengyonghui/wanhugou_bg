@@ -203,31 +203,19 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>货架名称:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + opShelfInfo + '" disabled></div></li></div></div>' +
-                    
-                    	'<div class="mui-row">' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
-	                    '<li class="mui-table-view-cell">' +
-	                    '<div class="mui-input-row ">' +
-	                    '<label>商品名称:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuName + '" disabled></div></li></div>' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
-	                    '<li class="mui-table-view-cell">' +
-	                    '<div class="mui-input-row ">' +
-	                    '<label>创建时间:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div></div>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + opShelfInfo  + '" disabled></div></li></div></div>' +
 	                   
                     	'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
-	                    '<label>商品出厂价:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div>' +
+	                    '<label>供应商:</label>' + 
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div>' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
-	                    '<label>供应商:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div></div>' +
+	                    '<label>商品出厂价:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div></div>' +
 	                   
                     	 '<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
@@ -265,6 +253,12 @@
 	                    '<label>发货方:</label>' +
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.suplyis.name + '" disabled></div></li></div></div>'+
 						
+						'<div class="mui-row lineStyle">' +
+	                    '<li class="mui-table-view-cell">' +   
+	                    '<div class="mui-input-row ">' +
+	                    '<label class="commodityName">商品名称:</label>' +
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuName + '" disabled></div></li></div>'+
+						
                     	'<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
@@ -275,7 +269,14 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label class="commodityName">商品编号:</label>' +
-	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.partNo + '" disabled></div></li></div>' +	                    
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.partNo + '" disabled></div></li></div>' +
+	                   
+	                    '<div class="mui-row lineStyle">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label class="commodityName">创建时间:</label>' +
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + _this.formatDateTime(item.createDate) + '" disabled></div></li></div>' +
+	                    
                     '</div>'
 				});
 				$("#staCheckCommodity").html(htmlCommodity)

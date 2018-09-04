@@ -152,7 +152,7 @@
 										'<label>审核状态:</label>' +
 										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + processName + ' ">' +
 										'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center">' +
+										'<div class="app_color40 content_part mui-row app_text_center operation">' +
 										'<div class="mui-col-xs-3">' +
 										'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
 										'</div>' +
@@ -190,161 +190,6 @@
 		        })
 		    }
 		},
-//		pageInit: function() {
-//			var _this = this;
-//			// 页数
-//			var page = 0;
-//			// 每页展示10个
-//			var size = 10;
-//			//下拉刷新
-//			$('.listBlue').dropload({
-//				scrollArea: window,
-//				domDown: {
-//					domClass: 'dropload-down',
-//					domRefresh: '<div class="dropload-refresh">↑上拉加载更多内容</div>',
-//					domLoad: '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
-//					domNoData: '<div class="dropload-noData">暂无更多内容</div>'
-//				},
-//				 distance: 50,
-//
-//				loadDownFn: function(me) {
-//				    page++;
-//					// 拼接HTML
-//					var pHtmlList = '';
-//					$.ajax({
-//						type: 'GET',
-//						url: '/a/biz/po/bizPoHeader/listData4Mobile?page2='+page+'&size='+size,
-//						data: {
-//							pageNo: page
-//						},
-//						dataType: 'json',
-//						success: function(res) {
-//							var arrLen = res.data.resultList.length;
-//							var dataRow = res.data.roleSet;
-////							console.log(res)
-//							if(arrLen > 0) {
-////								$('.dropload-down').css('display','block')
-//								$.each(res.data.resultList, function(i, item) {
-////									console.log(item)
-//									var startBtn = '';
-//									var classBtn = '';
-//									var processName = '';
-//								//开启审核   、   审核
-//									if(item.process.purchaseOrderProcess) {
-//										processName = item.process.purchaseOrderProcess.name
-//										var code = item.process.purchaseOrderProcess.code;
-//										if(item.process.purchaseOrderProcess.roleEnNameEnum) {
-//											var DataRoleGener = item.process.purchaseOrderProcess.roleEnNameEnum;
-//											var fileRoleData =  dataRow.filter(v => DataRoleGener.includes(v));
-//											if(item.process && fileRoleData.length>0 || dataRow[0]== 'DEPT' && code != 7 && code != -1) {
-//												startBtn = '审核'
-//												classBtn = 'shenHe'
-//											}
-//										}else {
-//											startBtn = ''
-//											classBtn = ''
-//										}
-//									} else {
-//										processName = ''
-//										startBtn = '开启审核'
-//										classBtn = 'startShenhe'
-//									}
-//								//申请支付
-//									var bizStatus = item.bizStatus;
-//									var payment = item.currentPaymentId;
-//									var applyStatus = item.process.bizStatus;
-//									var applyPay = '';
-//									var applyPayBtn ='';
-//									if(_this.payFlag == true) {
-//										if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
-//											applyPay = '申请付款';
-//											applyPayBtn = 'applyPayBtn'
-//										} else {
-//											applyPay = ''
-//											applyPayBtn = ''
-//										}
-//									}
-//								//支付申请列表
-//									var payList = ''
-//									var payListBtn = ''
-//									if(_this.payListFlag == true) {
-//										payList = '支付申请列表'
-//										payListBtn = 'payListBtn'
-//									}else {
-//										payList = ''
-//										payListBtn = ''
-//									}
-//								//详情
-//									var detail = '';
-//									var detailBtn = '';
-//									if(_this.detileFlag == true ) {
-//										detail = '详情'
-//										detailBtn = 'detailBtn'
-//									}else {
-//										detail = ''
-//										detailBtn = ''
-//									}
-//									
-//									pHtmlList += '<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">' +
-//										'<div class="mui-input-row">' +
-//										'<label>采购单号:</label>' +
-//										'<input id="orderNum" name="orderNum" type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.orderNum + ' ">' +
-//										'</div>' +
-//										'<div class="mui-input-row">' +
-//										'<label>供应商:</label>' +
-//										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.vendOffice + ' ">' +
-//										'</div>' +
-//										'<div class="mui-input-row">' +
-//										'<label>订单状态:</label>' +
-//										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.bizStatus + ' ">' +
-//										'</div>' +
-//										'<div class="mui-input-row">' +
-//										'<label>审核状态:</label>' +
-//										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + processName + ' ">' +
-//										'</div>' +
-//										'<div class="app_font_cl content_part mui-row app_text_center">' +
-//										'<div class="mui-col-xs-3">' +
-//										'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
-//										'</div>' +
-//										'<div class="mui-col-xs-3 '+applyPayBtn+'">' +
-//										'<li class="mui-table-view-cell" listId="' + item.id + '" poId="' + item.id + '">' + applyPay + '</li>' +
-//										'</div>' +
-//										'<div class="mui-col-xs-4 '+payListBtn+'" listId="' + item.id + '">' +
-//										'<li class="mui-table-view-cell">'+payList+'</li>' +
-//										'</div>' +
-//										'<div class="mui-col-xs-2 '+detailBtn+'" listId="' + item.id + '">' +
-//										'<li class="mui-table-view-cell">'+detail+'</li>' +
-//										'</div>' +
-//										'</div>' +
-//										'</div>'
-//								});
-//							} else {
-////								$('.dropload-down').css('display','none')
-//								// 锁定
-//								me.lock();
-//								// 无数据
-//								me.noData();
-//							}
-//							// 为了测试，延迟1秒加载
-////							setTimeout(function() {
-//								// 插入数据到页面，放到最后面
-//								$('.listBlue').append(pHtmlList);
-//								_this.hrefHtml()
-//								// 每次数据插入，必须重置
-//								me.resetload();
-////							}, 1000);
-//						},
-//						error: function(xhr, type) {
-//							alert('Ajax error!');
-//							// 即使加载出错，也得重置
-//							me.resetload();
-//						}
-//					});
-//				},
-//				threshold: 50
-//			});
-//			
-//		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
             $.ajax({
@@ -382,7 +227,7 @@
 					
 			}),
 			/*申请付款*/
-			$('.listBlue').on('tap', '.applyPayBtn', function() {
+			$('.content_part').on('tap', '.applyPayBtn', function() {
 				var url = $(this).attr('url');
 				var poId = $(this).attr('poId');
 				if(url) {
@@ -397,7 +242,7 @@
 				}
 			}),
 			/*支付申请列表*/
-			$('.listBlue').on('tap', '.payListBtn', function() {
+			$('.content_part').on('tap', '.payListBtn', function() {
 				var url = $(this).attr('url');
 				var listId = $(this).attr('listId');
 				var poId = $(this).attr('poId');
@@ -414,7 +259,7 @@
 				}
 			}),
 			/*详情*/
-			$('.listBlue').on('tap', '.detailBtn', function() {
+			$('.content_part').on('tap', '.detailBtn', function() {
 				var url = $(this).attr('url');
 				var listId = $(this).attr('listId');
 				if(url) {
@@ -429,7 +274,7 @@
 				}
 			})
 			//审核
-			$('.listBlue').on('tap', '.shenHe', function() {
+			$('.content_part').on('tap', '.shenHe', function() {
 				var url = $(this).attr('url');
 				var listId = $(this).attr('listId');
 				var codeId = $(this).attr('codeId');
@@ -446,7 +291,7 @@
 				}
 			})
 			//开启审核
-			$('.listBlue').on('tap', '.startShenhe', function() {
+			$('.content_part').on('tap', '.startShenhe', function() {
 				var url = $(this).attr('url');
 				var listId = $(this).attr('listId');
 				if(url) {
@@ -622,7 +467,7 @@
 								'<label>审核状态:</label>' +
 								'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + processName + ' ">' +
 								'</div>' +
-								'<div class="app_font_cl content_part mui-row app_text_center">' +
+								'<div class="app_color40 content_part mui-row app_text_center operation">' +
 								'<div class="mui-col-xs-3">' +
 								'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
 								'</div>' +
@@ -638,9 +483,9 @@
 								'</div>' +
 								'</div>'
 						});
-						$('.listBlue').append(pHtmlList);
+						$('#list').append(pHtmlList);
 					}else{
-						$('.listBlue').append('<p class="noneTxt">暂无数据</p>');
+						$('#list').append('<p class="noneTxt">暂无数据</p>');
 					}
 				}
 			});

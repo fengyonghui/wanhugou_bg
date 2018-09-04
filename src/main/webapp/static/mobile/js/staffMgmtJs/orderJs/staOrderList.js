@@ -418,7 +418,7 @@
 	                            })
 								var staCheckBtn = '';
 	                        	var staCheckBtnTxt = '';
-				                if(_this.staCheckFlag == true) {
+				                if(_this.staOrdFlag == true) {
 				                	if(item.bizStatus==0 || item.bizStatus==5 || item.bizStatus==10) {
 				                		staCheckBtn = 'waitCheckBtn'
 				                		staCheckBtnTxt = "待审核"
@@ -462,7 +462,7 @@
 //											'<label>业务状态:</label>' +
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
-										'<div class="app_color40 mui-row app_text_center content_part">' +
+										'<div class="app_color40 mui-row app_text_center content_part operation">' +
 											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
