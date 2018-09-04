@@ -103,11 +103,7 @@
 		select *
 		from sys_office a
 		where
-		1 = 1
-		<if test="phone != null and phone != ''">
-			AND a.phone = #{phone}
-		</if>
-		AND FIND_IN_SET(id,
+		FIND_IN_SET(id,
 		(select GROUP_CONCAT(distinct parent_ids,'0')
 		from biz_custom_center_consultant ccc, sys_office so
 		where ccc.cust_id = so.id and ccc.status=1
@@ -136,9 +132,6 @@
 		</if>
 		<if test="parentIds!=null and parentIds !=''">
 			AND so.parent_ids LIKE #{parentIds}
-		</if>
-		<if test="phone != null and phone != ''">
-			AND so.phone = #{phone}
 		</if>
 		order by parent_ids
 	</select>
