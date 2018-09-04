@@ -121,7 +121,7 @@
 
         function addSchedulingHeaderPlan(head, id) {
             var appendTr = $("#" + head + id);
-            var html = '<tr><td><div name="' + id + '"><label>排产日期' + '：' + '</label><input name="' + id + '_date' + '" type="text" maxlength="20" class="input-medium Wdate" ';
+            var html = '<tr><td><div name="' + id + '"><label>完成日期' + '：' + '</label><input name="' + id + '_date' + '" type="text" maxlength="20" class="input-medium Wdate" ';
             html += ' onclick="' + "WdatePicker({dateFmt:'" + "yyyy-MM-dd HH:mm:ss',isShowClear" + ":" + 'true});"/>' + ' &nbsp; '
             html += ' <label>排产数量：</label> ';
             html += ' <input name="' + id + "_value" + '" class="input-medium" type="text" maxlength="30"/>';
@@ -178,16 +178,22 @@
                 }
             }
 
+            var totalTotalSchedulingNum = 0;
             if (schedulingType == "0"){
                 var toalSchedulingNum = $('#toalSchedulingNum').val();
                 poSchType = originalNum >  parseInt(totalSchedulingHeaderNum) + parseInt(toalSchedulingNum)  ? 1 : 2;
-                console.log(originalNum)
-                console.log(totalSchedulingHeaderNum)
-                console.log(toalSchedulingNum)
-                console.log(poSchType)
+                totalTotalSchedulingNum = parseInt(totalSchedulingHeaderNum) + parseInt(toalSchedulingNum);
             } else {
                 var toalSchedulingNumForSku = $('#toalSchedulingNumForSku').val();
                 poSchType = originalNum > parseInt(totalSchedulingDetailNum) + parseInt(toalSchedulingNumForSku) ? 1 : 2;
+                totalTotalSchedulingNum = parseInt(totalSchedulingDetailNum) + parseInt(toalSchedulingNumForSku);
+            }
+            console.log("originalNum=" + originalNum);
+            console.log("totalTotalSchedulingNum=" + totalTotalSchedulingNum);
+
+            if(parseInt(totalTotalSchedulingNum) > parseInt(originalNum)) {
+                alert("排产量总和太大，请从新输入!")
+                return false
             }
 
             for(i=0;i<trArray.length;i++){
@@ -196,7 +202,7 @@
                 var date = jqDiv.find("[name='" + id + "_date']").val();
                 var value = jqDiv.find("[name='" + id + "_value']").val();
                 if(date == null || date == ""){
-                    alert("排产日期不能为空!")
+                    alert("完成日期不能为空!")
                     return false;
                 }
                 var reg= /^[0-9]+[0-9]*]*$/;
@@ -224,10 +230,7 @@
 
                 totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
             }
-            if(parseInt(totalSchedulingNum) > parseInt(originalNum)) {
-                alert("排产量总和太大，请从新输入!")
-                return false
-            }
+
             if(confirm("确定执行该排产确认吗？")) {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
@@ -300,7 +303,7 @@
                     var date = jqDiv.find("[name='" + reqDetailId + "_date']").val();
                     var value = jqDiv.find("[name='" + reqDetailId + "_value']").val();
                     if (date == null || date == "") {
-                        alert("第" + count + "个商品排产日期不能为空!")
+                        alert("第" + count + "个商品完成日期不能为空!")
                         return false;
                     }
                     var reg = /^[0-9]+[0-9]*]*$/;
@@ -351,7 +354,7 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
+    <li><a href="${ctx}/biz/po/bizPoHeader/listV2">订单支出信息</a></li>
     <li class="active">
         <a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}">排产</a>
     </li>
@@ -479,7 +482,7 @@
                             <tr>
                                 <td>
                                     <div>
-                                        <label>排产日期：</label>
+                                        <label>完成日期：</label>
                                         <input type="text" maxlength="20" class="input-medium Wdate" readonly="readonly"
                                                value="<fmt:formatDate value="${bizCompletePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"/>
                                         &nbsp;
@@ -500,7 +503,7 @@
                     <tr id="header_${bizPoHeader.id}" class="headerScheduling">
                         <td>
                             <div name="${bizPoHeader.id}">
-                                <label>排产日期：</label>
+                                <label>完成日期：</label>
                                 <input name="${bizPoHeader.id}_date" type="text" maxlength="20"
                                        class="input-medium Wdate"
                                        onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/> &nbsp;
@@ -614,7 +617,7 @@
                                                 <tr >
                                                     <td>
                                                         <div>
-                                                            <label>排产日期：</label>
+                                                            <label>完成日期：</label>
                                                             <input type="text" maxlength="20" readonly="readonly" value="<fmt:formatDate value="${completePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" class="input-medium Wdate"  /> &nbsp;
                                                             <label>排产数量：</label>
                                                             <input class="input-medium" readonly="readonly" value="${completePaln.completeNum}" type="text" maxlength="30" />
@@ -633,7 +636,7 @@
                                             <tr id="detail_${poDetail.id}" name="detailScheduling">
                                                 <td>
                                                     <div name="${poDetail.id}">
-                                                        <label>排产日期：</label>
+                                                        <label>完成日期：</label>
                                                         <input name="${poDetail.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;
                                                         <label>排产数量：</label>
                                                         <input name="${poDetail.id}_value" class="input-medium" type="text" maxlength="30" />
