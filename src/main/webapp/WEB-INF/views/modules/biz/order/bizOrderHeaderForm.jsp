@@ -2108,47 +2108,14 @@
                             <label>排产记录：</label>
                         </td>
                     </tr>
-                    <%--<c:forEach items="${bizCompletePalns}" var="bizCompletePaln" varStatus="stat">--%>
-                        <%--<tr>--%>
-                            <%--<td>--%>
-                                <%--<div>--%>
-                                    <%--<label>排产日期：</label>--%>
-                                    <%--<input type="text" maxlength="20" class="input-medium Wdate" readonly="readonly"--%>
-                                           <%--value="<fmt:formatDate value="${bizCompletePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"/>--%>
-                                    <%--&nbsp;--%>
-                                    <%--<label>排产数量：</label>--%>
-                                    <%--<input class="input-medium" type="text" readonly="readonly"--%>
-                                           <%--value="${bizCompletePaln.completeNum}" maxlength="30"/>--%>
-                                <%--</div>--%>
-                            <%--</td>--%>
-                        <%--</tr>--%>
-                    <%--</c:forEach>--%>
 
-                    <%--<tr class="headerScheduling">--%>
-                        <%--<td>--%>
-                            <%--<label>排产计划：</label>--%>
-                        <%--</td>--%>
-                    <%--</tr>--%>
-                    <%--<tr id="header_${bizPoHeader.id}" class="headerScheduling">--%>
-                        <%--<td>--%>
-                            <%--<div name="${bizPoHeader.id}">--%>
-                                <%--<label>排产日期：</label>--%>
-                                <%--<input name="${bizPoHeader.id}_date" type="text" maxlength="20"--%>
-                                       <%--class="input-medium Wdate"--%>
-                                       <%--onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/> &nbsp;--%>
-                                <%--<label>排产数量：</label>--%>
-                                <%--<input name="${bizPoHeader.id}_value" class="input-medium" type="text" maxlength="30"/>--%>
-                            <%--</div>--%>
-                        <%--</td>--%>
-                    <%--</tr>--%>
                 </table>
                 <table style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
                     <tr>
                         <td>
                             <div id="schedulingHeaderRemark">
                                 <label>备注：</label>
-                                <%--<textarea id="schRemarkOrder" maxlength="200"--%>
-                                          <%--class="input-xlarge ">${bizPoHeader.bizSchedulingPlan.remark}</textarea>--%>
+
                             </div>
                         </td>
                     </tr>
@@ -2173,99 +2140,14 @@
                     </thead>
                     <tbody id="prodInfo2">
                     <c:forEach items="${bizPoHeader.poDetailList}" var="poDetail" varStatus="state">
-                        <%--<tr>--%>
-                            <%--<td style="display: none">${state.index+1}</td>--%>
-                            <%--<td id="detailId_${state.index+1}" style="display: none">${poDetail.id}</td>--%>
-                            <%--<td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>--%>
-                            <%--<td>${poDetail.skuInfo.productInfo.brandName}</td>--%>
-                            <%--<td>${poDetail.skuInfo.name}</td>--%>
-                            <%--<td>${poDetail.skuInfo.itemNo}</td>--%>
-                            <%--<td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>--%>
-                            <%--<td>${poDetail.unitPrice}</td>--%>
-                            <%--<td>${poDetail.ordQty * poDetail.unitPrice}</td>--%>
-                        <%--</tr>--%>
-                        <%--<c:if test="${state.last}">--%>
-                            <%--<c:set var="aa" value="${state.index}" scope="page"/>--%>
-                        <%--</c:if>--%>
-
                         <tr>
                             <td colspan="7">
                                 <table id="schedulingForDetail_${poDetail.id}" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
-                                    <%--<tr>--%>
-                                        <%--<td>--%>
-                                            <%--<label>总申报数量：</label>--%>
-                                            <%--<input id="totalOrdQtyForSku_${poDetail.id}"  name='reqQtys' readonly="readonly" value="${poDetail.ordQty}" class="input-mini" type='text'/>--%>
-                                            <%--&nbsp;--%>
-                                            <%--<label>待排产量：</label>--%>
-                                            <%--<input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${poDetail.ordQty - poDetail.sumCompleteNum}" class="input-mini" type='text'/>--%>
-                                            <%--&nbsp;--%>
-                                            <%--<label>已排产数量：</label>--%>
-                                            <%--<input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${poDetail.sumCompleteNum}" class="input-mini" type='text'/>--%>
-                                            <%--&nbsp;--%>
-                                            <%--<c:choose>--%>
-                                                <%--<c:when test="${poDetail.ordQty == poDetail.sumCompleteNum}">--%>
-                                                    <%--<span style="color:red; ">已排产完成</span>--%>
-                                                <%--</c:when>--%>
-                                                <%--<c:otherwise>--%>
-                                                    <%--<input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('schedulingForDetail_', ${poDetail.id})"/>--%>
-                                                    <%--<input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete('1',${poDetail.id})" value="保存"/>--%>
-                                                    <%--<span id="schedulingPanAlertForSku" style="color:red; display:none" >已排产完成</span>--%>
-                                                <%--</c:otherwise>--%>
-                                            <%--</c:choose>--%>
-                                        <%--</td>--%>
-                                    <%--</tr>--%>
 
-                                    <%--<c:if test="${poDetail.bizSchedulingPlan != null}">--%>
-                                        <%--<tr>--%>
-                                            <%--<td>--%>
-                                                <%--<label>排产记录：</label>--%>
-                                            <%--</td>--%>
-                                        <%--</tr>--%>
-                                        <%--<c:forEach items="${poDetail.bizSchedulingPlan.completePalnList}" var="completePaln">--%>
-                                            <%--<tr >--%>
-                                                <%--<td>--%>
-                                                    <%--<div>--%>
-                                                        <%--<label>完成日期：</label>--%>
-                                                        <%--<input type="text" maxlength="20" readonly="readonly" value="<fmt:formatDate value="${completePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" class="input-medium Wdate"  /> &nbsp;--%>
-                                                        <%--<label>排产数量：</label>--%>
-                                                        <%--<input class="input-medium" readonly="readonly" value="${completePaln.completeNum}" type="text" maxlength="30" />--%>
-                                                    <%--</div>--%>
-                                                <%--</td>--%>
-                                            <%--</tr>--%>
-                                        <%--</c:forEach>--%>
-                                    <%--</c:if>--%>
-
-                                    <%--<c:if test="${poDetail.ordQty != poDetail.sumCompleteNum}">--%>
-                                        <%--<tr>--%>
-                                            <%--<td>--%>
-                                                <%--<label>排产计划：</label>--%>
-                                            <%--</td>--%>
-                                        <%--</tr>--%>
-                                        <%--<tr id="detail_${poDetail.id}" name="detailScheduling">--%>
-                                            <%--<td>--%>
-                                                <%--<div name="${poDetail.id}">--%>
-                                                    <%--<label>完成日期：</label>--%>
-                                                    <%--<input name="${poDetail.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;--%>
-                                                    <%--<label>排产数量：</label>--%>
-                                                    <%--<input name="${poDetail.id}_value" class="input-medium" type="text" maxlength="30" />--%>
-                                                <%--</div>--%>
-                                            <%--</td>--%>
-                                        <%--</tr>--%>
-                                    <%--</c:if>--%>
                                 </table>
                             </td>
                         </tr>
                     </c:forEach>
-                    <%--<input id="aaId" value="${aa}" type="hidden"/>--%>
-
-                    <%--<tr>--%>
-                        <%--<td colspan="10">--%>
-                            <%--<div>--%>
-                                <%--<label>备注：</label>--%>
-                                <%--&lt;%&ndash;<textarea id="schRemarkSku" maxlength="200" class="input-xlarge " >${bizPoHeader.bizSchedulingPlan.remark}</textarea>&ndash;%&gt;--%>
-                            <%--</div>--%>
-                        <%--</td>--%>
-                    <%--</tr>--%>
                     </tbody>
                 </table>
             </div>
