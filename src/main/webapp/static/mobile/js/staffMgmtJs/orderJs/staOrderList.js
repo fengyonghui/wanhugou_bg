@@ -67,7 +67,6 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		          	    console.log(res)
 		          	    $.ajax({
 			                type: "GET",
 			                url: "/a/sys/dict/listData",
@@ -79,7 +78,6 @@
 			                }
 			            });
 //		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true)
