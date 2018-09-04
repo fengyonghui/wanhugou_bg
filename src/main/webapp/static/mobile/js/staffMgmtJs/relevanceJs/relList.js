@@ -29,9 +29,9 @@
 			        up:{
 			            contentnomore:'没 有 更 多 数 据 了',
 			            callback:function(){
-			                window.setTimeout(function(){
-			                    this.getData();
-			                },500);
+//			                window.setTimeout(function(){
+			                    _this.getData();
+//			                },500);
 			            }
 			         },
 			        down : {
@@ -64,15 +64,14 @@
 //		    function getData(params){
 		    	var staffHtmlList = '';
 		    	var _this=this;
-		        mui.ajax("/a/biz/custom/bizCustomCenterConsultant/listData4mobile",{
-		        
+		        mui.ajax("/a/biz/custom/bizCustomCenterConsultant/listData4mobile",{		        
 		            data:{
+		            	    
 		            		pageNo : 1,
 			                'consultants.id' :_this.userInfo.staListId,//客户专员
 			                'office.id' : _this.userInfo.dptmtId,//采购中心ID
 			                conn :"connIndex",
-		            },
-               
+		            },              
 		            dataType:'json',
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
@@ -146,25 +145,24 @@
 								$('.mui-pull-bottom-pocket').html('');								
 								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 								$('#staReleList').html('<p class="noneTxt">暂无数据</p>');
-						}								                	
-//			           totalPage = res.data.page.count%pager.size!=0?
-//		                parseInt(res.data.page.count/pager.size)+1:
-//		                res.data.page.count/pager.size;
-//                      var totalPage=1;
-                        var totalPage=1; 
+						}	
+					    var size=20;
+			            totalPage = res.data.listSize%size!=0?
+		                parseInt(res.data.listSize/size)+1:
+		                res.data.listSize/size;
+		                console.log(totalPage)
                         var pageNo=1;
-		                if(totalPage==1){
-                            console.log('1')	
+		                if(totalPage==pageNo){	
+		                	console.log('1')
 			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-			               
+//			                mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
 			            }else{
-			            	console.log('2')	
+			            	console.log('2')
 			                pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
 			            }          
 			        },
 		            error:function(xhr,type,errorThrown){
-//			            console.log(type);
 		            }
 		        })
 		    },

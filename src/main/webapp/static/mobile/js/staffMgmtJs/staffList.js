@@ -136,7 +136,7 @@
 		                parseInt(res.data.page.count/pager.size)+1:
 		                res.data.page.count/pager.size;
 		                if(totalPage==pager.pageNo){		                	
-			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 //			                mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
 			            }else{
 			                pager.pageNo++;
