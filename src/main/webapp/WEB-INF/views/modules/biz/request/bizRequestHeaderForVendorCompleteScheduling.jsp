@@ -448,7 +448,7 @@
 								</td>
 								<td>
 									<div>
-										<label>排产日期：</label>
+										<label>完成日期：</label>
 										<input type="text" maxlength="20" class="input-medium Wdate" readonly="readonly" value="<fmt:formatDate value="${bizCompletePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" /> &nbsp;
 										<label>排产数量：</label>
 										<input class="input-medium" type="text" readonly="readonly" value="${bizCompletePaln.completeNum}" maxlength="30" />
@@ -542,7 +542,7 @@
 													</td>
 													<td>
 														<div>
-															<label>排产日期：</label>
+															<label>完成日期：</label>
 															<input type="text" maxlength="20" readonly="readonly" value="<fmt:formatDate value="${completePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" class="input-medium Wdate"  /> &nbsp;
 															<label>排产数量：</label>
 															<input class="input-medium" readonly="readonly" value="${completePaln.completeNum}" type="text" maxlength="30" />
