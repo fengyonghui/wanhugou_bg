@@ -253,7 +253,157 @@
                     $("#already_delete40").addClass("btn-primary");
                 }
             }
+
+
         });
+
+        $(function(){
+            if('${entity.orderDetails eq 'details'}'){
+                var poheaderId = "${entity.bizPoHeader.id}";
+                if (poheaderId == null || poheaderId == "") {
+                    $("#schedulingType").val("未排产")
+                    $("#stockGoods").hide();
+                    $("#schedulingPlan_forHeader").hide();
+                    $("#schedulingPlan_forSku").hide();
+                }
+                if (poheaderId != null && poheaderId != "") {
+                    getScheduling(poheaderId);
+                }
+
+            }
+        })
+        
+        function getScheduling(poheaderId) {
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/po/bizPoHeader/scheduling4Mobile",
+                data: {"id": poheaderId},
+                dataType:'json',
+                success:function(result){
+                    var data = result['data'];
+                    var detailHeaderFlg = data['detailHeaderFlg'];
+                    var detailSchedulingFlg = data['detailSchedulingFlg'];
+                    if (detailHeaderFlg != true && detailSchedulingFlg != true) {
+                        $("#schedulingType").val("未排产")
+                        $("#stockGoods").hide();
+                        $("#schedulingPlan_forHeader").hide();
+                        $("#schedulingPlan_forSku").hide();
+                    }
+
+                    if (detailHeaderFlg == true) {
+                        $("#schedulingType").val("按订单排产")
+                        $("#stockGoods").show();
+                        $("#schedulingPlan_forHeader").show();
+                        $("#schedulingPlan_forSku").hide();
+
+                        var bizPoHeader = data['bizPoHeader'];
+                        var poDetailList = bizPoHeader['poDetailList'];
+                        var poDetailHtml = ""
+                        for (var i=0; i<poDetailList.length; i++) {
+                            var poDetail = poDetailList[i];
+                            poDetailHtml += "<tr>";
+                            poDetailHtml += "<td><img style='max-width: 120px' src='" + poDetail.skuInfo.productInfo.imgUrl + "'/></td>";
+                            poDetailHtml += "<td>" + poDetail.skuInfo.productInfo.brandName + "</td>";
+                            poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
+                            poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
+                            poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
+                            poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
+                            poDetailHtml += "</tr>";
+                        }
+
+                        var prodInfo = $("#prodInfo");
+                        prodInfo.append(poDetailHtml);
+
+                        var bizCompletePalns = data['bizCompletePalns'];
+                        var schedulingHeaderHtml = "";
+                        for (var i=0; i<bizCompletePalns.length; i++) {
+                            var bizCompletePaln = bizCompletePalns[i];
+                            var dateTime = formatDate(bizCompletePaln.planDate);
+
+                            schedulingHeaderHtml += "<tr><td><div><label>完成日期：</label>";
+                            schedulingHeaderHtml += "<input type='text' maxlength='20' class='input-medium Wdate' readonly='readonly' " + "value='" + dateTime + "'/>" + '&nbsp;';
+                            schedulingHeaderHtml += "<label>排产数量：</label>";
+                            schedulingHeaderHtml += "<input class='input-medium' type='text' readonly='readonly'";
+                            schedulingHeaderHtml += "value='" + bizCompletePaln.completeNum + "' maxlength='30'/>";
+                            schedulingHeaderHtml += "</div></td></tr>";
+                        }
+                        var schedulingForHeader = $("#schedulingForHeader");
+                        schedulingForHeader.append(schedulingHeaderHtml);
+
+                        var remarkHtml = "<textarea id='schRemarkOrder' maxlength='200' class='input-xlarge '>" + bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
+                        var schedulingHeaderRemark = $("#schedulingHeaderRemark");
+                        schedulingHeaderRemark.append(remarkHtml);
+                    }
+                    if (detailSchedulingFlg == true) {
+                        $("#schedulingType").val("按商品排产")
+                        $("#stockGoods").hide();
+                        $("#schedulingPlan_forHeader").hide();
+                        $("#schedulingPlan_forSku").show();
+
+                        var bizPoHeader = data['bizPoHeader'];
+                        var poDetailList = bizPoHeader['poDetailList'];
+
+                        var poDetailHtml = ""
+                        var prodInfo2 = $("#prodInfo2");
+                        for (var i=0; i<poDetailList.length; i++) {
+                            var poDetail = poDetailList[i];
+                            poDetailHtml += "<tr>";
+                            poDetailHtml += "<td><img style='max-width: 120px' src='" + poDetail.skuInfo.productInfo.imgUrl + "'/></td>";
+                            poDetailHtml += "<td>" + poDetail.skuInfo.productInfo.brandName + "</td>";
+                            poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
+                            poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
+                            poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
+                            poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
+                            poDetailHtml += "</tr>";
+
+                            poDetailHtml += "<tr><td colspan='7'><label>排产记录：</label></td></tr>";
+
+                            var completePalnHtml = "";
+                            var completePalnList = poDetail.bizSchedulingPlan.completePalnList;
+                            for (var j=0; j<completePalnList.length; j++) {
+                                var completePaln = completePalnList[j];
+                                var dateTime = formatDate(completePaln.planDate);
+
+                                completePalnHtml += "<tr><td colspan='7'><div><label>完成日期：</label>";
+                                completePalnHtml += "<input type='text' maxlength='20' class='input-medium Wdate' readonly='readonly' " + "value='" + dateTime + "'/>" + '&nbsp;';
+                                completePalnHtml += "<label>排产数量：</label>";
+                                completePalnHtml += "<input class='input-medium' readonly='readonly' value='" + completePaln.completeNum + "' type='text' maxlength='30'";
+                                completePalnHtml += "</div></td></tr>";
+                            }
+                            poDetailHtml += completePalnHtml;
+                            prodInfo2.append(poDetailHtml)
+                        }
+
+                        var schedulingDetailRemarkHtml = "<tr><td colspan='7'><div><label>备注：</label>";
+                        schedulingDetailRemarkHtml += "<textarea id='schRemarkOrder' maxlength='200' class='input-xlarge '>" + bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
+                        schedulingDetailRemarkHtml += "</div></td></tr>"
+                        prodInfo2.append(schedulingDetailRemarkHtml);
+                    }
+                }
+            });
+        }
+
+
+        function formatDate(jsonDate) {
+            //json日期格式转换为正常格式
+            var jsonDateStr = jsonDate.toString();
+            try {
+                var date = new Date(parseInt(jsonDateStr.replace("/Date(", "").replace(")/", ""), 10));
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+                var seconds = date.getSeconds();
+                var milliseconds = date.getMilliseconds()/1000;
+                //return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + "." + milliseconds;//年月日时分秒
+                return date.getFullYear() + "-" + month + "-" + day;
+                //return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;//年月日时分秒
+            } catch (ex) {
+                return "时间格式转换错误";
+            }
+        }
 
         function clickBut(){
             var officeId=$("#officeId").val();
@@ -1915,7 +2065,97 @@
             </div>
         </c:otherwise>
     </c:choose>
-    <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
+
+
+
+
+    <!-- 详情页面显示排产信息 -->
+    <div class="control-group">
+        <label class="control-label">排产类型：</label>
+        <div class="controls">
+            <input type="text" readonly="readonly" id="schedulingType" value="" pattern="0.00"/>
+        </div>
+    </div>
+    <c:if test="${entity.orderDetails eq 'details'}">
+        <div class="control-group" id="stockGoods" >
+            <label class="control-label">采购商品：</label>
+            <div class="controls">
+                <table id="contentTable2" style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+                    <thead>
+                    <tr>
+                        <th>产品图片</th>
+                        <th>品牌名称</th>
+                        <th>商品名称</th>
+                        <th>商品货号</th>
+                        <th>采购数量</th>
+                        <th>结算价</th>
+                        <th>总金额</th>
+                    </tr>
+                    </thead>
+                    <tbody id="prodInfo">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="control-group" id="schedulingPlan_forHeader" >
+            <label class="control-label">按订单排产：</label>
+            <div class="controls">
+                <table id="schedulingForHeader" style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+                    <tr id="schedulingHeader">
+                        <td>
+                            <label>排产记录：</label>
+                        </td>
+                    </tr>
+
+                </table>
+                <table style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+                    <tr>
+                        <td>
+                            <div id="schedulingHeaderRemark">
+                                <label>备注：</label>
+
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="control-group" id="schedulingPlan_forSku" >
+            <label class="control-label">按商品排产：</label>
+            <div class="controls">
+                <table id="" style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+                    <thead>
+                    <tr>
+                        <th>产品图片</th>
+                        <th>品牌名称</th>
+                        <th>商品名称</th>
+                        <th>商品货号</th>
+                        <th>采购数量</th>
+                        <th>结算价</th>
+                        <th>总金额</th>
+                    </tr>
+                    </thead>
+                    <tbody id="prodInfo2">
+                    <c:forEach items="${bizPoHeader.poDetailList}" var="poDetail" varStatus="state">
+                        <tr>
+                            <td colspan="7">
+                                <table id="schedulingForDetail_${poDetail.id}" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
+
+                                </table>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </c:if>
+
+
 </form:form>
 
 <%--详情列表--%>
@@ -2045,6 +2285,7 @@
 </table>
 
 
+
 <div class="form-actions">
     <c:if test="${entity.str != 'audit'}">
     <c:if test="${empty entity.orderNoEditable}">
@@ -2066,6 +2307,8 @@
             </c:if>
             <c:if test="${not empty entity.orderDetails}">
                 <input onclick="window.print();" type="button" class="btn btn-primary" value="打印订单" style="background:#F78181;"/>
+                &nbsp;
+                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </c:if>
         </c:if>
     </c:if>

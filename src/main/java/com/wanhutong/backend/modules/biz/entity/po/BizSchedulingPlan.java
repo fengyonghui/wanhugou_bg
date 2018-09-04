@@ -46,9 +46,9 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
     private List<BizCompletePaln> completePalnList;
 
 	/**
-	 * 排产日期
+	 * 完成日期
 	 */
-	private Date planDate;		// 排产日期
+	private Date planDate;		// 完成日期
 
 	/**
 	 * 排产是否已确认 0：未确认，1：已确认

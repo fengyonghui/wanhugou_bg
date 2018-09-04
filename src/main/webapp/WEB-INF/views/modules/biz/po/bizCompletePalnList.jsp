@@ -28,7 +28,7 @@
 			<li><label>排产ID：</label>
 				<form:input path="schedulingId" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li><label>排产日期：</label>
+			<li><label>完成日期：</label>
 				<input name="planDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					value="<fmt:formatDate value="${bizCompletePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
