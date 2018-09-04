@@ -33,18 +33,22 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 	@Autowired
 	private SystemService systemService;
 
+	@Override
 	public BizCustomCenterConsultant get(Integer id) {
 		return super.get(id);
 	}
-	
+
+	@Override
 	public List<BizCustomCenterConsultant> findList(BizCustomCenterConsultant bizCustomCenterConsultant) {
 		return super.findList(bizCustomCenterConsultant);
 	}
-	
+
+	@Override
 	public Page<BizCustomCenterConsultant> findPage(Page<BizCustomCenterConsultant> page, BizCustomCenterConsultant bizCustomCenterConsultant) {
 		return super.findPage(page, bizCustomCenterConsultant);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public void save(BizCustomCenterConsultant bizCustomCenterConsultant) {
 		Office centers = bizCustomCenterConsultant.getCenters();
@@ -77,12 +81,11 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 		super.delete(bizCustomCenterConsultant);
 	}
 
-	@Transactional(readOnly = false)
+
 	public List<BizCustomCenterConsultant> userFindList(BizCustomCenterConsultant bizCustomCenterConsultant) {
 		return dao.userFindList(bizCustomCenterConsultant);
 	}
 
-	@Transactional(readOnly = false)
 	public Page<BizCustomCenterConsultant> userFindListForPage(Page<BizCustomCenterConsultant> page, BizCustomCenterConsultant bizCustomCenterConsultant) {
 		bizCustomCenterConsultant.setPage(page);
 		page.setList(dao.userFindList(bizCustomCenterConsultant));
