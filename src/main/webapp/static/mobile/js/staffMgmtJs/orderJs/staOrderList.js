@@ -29,9 +29,9 @@
 			        up:{
 			            contentnomore:'没 有 更 多 数 据 了',
 			            callback:function(){			            	
-			                window.setTimeout(function(){
+//			                window.setTimeout(function(){
 			                    getData(pager);
-			                },500);
+//			                },500);
 			            }
 			         },
 			        down : {
@@ -41,7 +41,7 @@
 			            contentover : "",
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
-			                    pager['size']= 10;//条数
+			                    pager['size']= 20;
 			                    pager['pageNo'] = 1;
 			                    pager['flag'] = "check_pending";
 			                    pager['consultantId'] = _this.userInfo.staListId;
@@ -51,8 +51,7 @@
 				                    f.removeChild(childs[i]);
 				                }
 				                $('#consultantId').val(pager.consultantId);
-				                $('#flag').val(pager.flag);
-				                
+				                $('#flag').val(pager.flag);				                
 				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
 			            }
@@ -68,7 +67,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		          	    console.log(res)
+		          	    console.log(res)
 		          	    $.ajax({
 			                type: "GET",
 			                url: "/a/sys/dict/listData",
@@ -180,9 +179,9 @@
 						totalPage = res.data.page.count%pager.size!=0?
 		                parseInt(res.data.page.count/pager.size)+1:
 		                res.data.page.count/pager.size;
+//		                console.log(totalPage)
 		                if(totalPage==pager.pageNo){		                	
-			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
-			                
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();			                
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);

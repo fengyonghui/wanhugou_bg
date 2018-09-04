@@ -28,9 +28,9 @@
 			        up:{
 			            contentnomore:'没 有 更 多 数 据 了',
 			            callback:function(){
-			                window.setTimeout(function(){
+//			                window.setTimeout(function(){
 			                    getData(pager);
-			                },500);
+//			                },500);
 			            }
 			         },
 			        down : {
@@ -40,7 +40,7 @@
 			            contentover : "",
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
-		                    pager['size']= 20;
+		                    pager['size']= 10;
 		                    pager['pageNo'] = 1;
 		                    pager['company.type'] = 8;
 		                    pager['company.customerTypeTen'] = 10;
@@ -69,7 +69,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+		            	console.log(res)
 		                mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						var arrLen = res.data.page.list.length;						
                         if(arrLen > 0) {
@@ -136,9 +136,8 @@
 		                parseInt(res.data.page.count/pager.size)+1:
 		                res.data.page.count/pager.size;
 		                if(totalPage==pager.pageNo){		                	
-//			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
-//			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
-			                mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+//			                mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);

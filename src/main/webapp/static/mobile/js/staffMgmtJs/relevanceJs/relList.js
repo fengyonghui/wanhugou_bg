@@ -78,7 +78,7 @@
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
 		            	console.log(res.data)
-		            	mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+		            	mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);		            	
 		            	$('#cosultasId').val(res.data.bcUser.consultants.id);
 		            	$('#officeId').val(res.data.bcUser.centers.id);
 						var arrLen = res.data.resultData.length;						
@@ -143,22 +143,22 @@
 								_this.stHrefHtml()
 						} 
 						else {
-								$('.mui-pull-bottom-pocket').html('');
+								$('.mui-pull-bottom-pocket').html('');								
 								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+								$('#staReleList').html('<p class="noneTxt">暂无数据</p>');
 						}								                	
 //			           totalPage = res.data.page.count%pager.size!=0?
 //		                parseInt(res.data.page.count/pager.size)+1:
 //		                res.data.page.count/pager.size;
 //                      var totalPage=1;
+                        var totalPage=1; 
                         var pageNo=1;
-                        
-		                if(pageNo==1){
-//                            console.log('1')	
+		                if(totalPage==1){
+                            console.log('1')	
 			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-//			                mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
 			               
 			            }else{
-//			            	console.log('2')	
+			            	console.log('2')	
 			                pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
 			            }          
