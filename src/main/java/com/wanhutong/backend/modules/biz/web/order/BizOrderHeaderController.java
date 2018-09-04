@@ -1957,11 +1957,16 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "auditSo")
     @ResponseBody
     public String auditSo(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType) {
-        Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType);
-        if (audit.getLeft()) {
-            return JsonUtil.generateData(audit.getRight(), null);
+        try {
+            Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType);
+            if (audit.getLeft()) {
+                return JsonUtil.generateData(audit.getRight(), null);
+            }
+            return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);
+        }catch (Exception e) {
+            LOGGER.error("audit so error ", e);
         }
-        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, "操作失败,发生异常,请联系技术部", null);
     }
 
 
@@ -1999,43 +2004,34 @@ public class BizOrderHeaderController extends BaseController {
 
         BizOrderHeader orderHeader = bizOrderHeaderService.get(id);
 
+        Map<Integer, Process> processMap = null;
+
         if (orderType == 0) {
-            currentProcess = originConfig.getProcessMap().get(Integer.valueOf(currentType));
-
-            switch (OrderPayProportionStatusEnum.parse(orderHeader.getTotalDetail(), orderHeader.getReceiveTotal())) {
-                case ZERO:
-                    passProcessCode = currentProcess.getZeroPassCode();
-                    break;
-                case FIFTH:
-                    passProcessCode = currentProcess.getZeroPassCode();
-                    break;
-                case ALL:
-                    passProcessCode = currentProcess.getZeroPassCode();
-                    break;
-                default:
-                    break;
-            }
-
-            nextProcess = originConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? passProcessCode : currentProcess.getRejectCode());
+            processMap = originConfig.getProcessMap();
         } else {
-            currentProcess = localConfig.getProcessMap().get(Integer.valueOf(currentType));
-
-            switch (OrderPayProportionStatusEnum.parse(orderHeader.getTotalDetail(), orderHeader.getReceiveTotal())) {
-                case ZERO:
-                    passProcessCode = currentProcess.getZeroPassCode();
-                    break;
-                case FIFTH:
-                    passProcessCode = currentProcess.getZeroPassCode();
-                    break;
-                case ALL:
-                    passProcessCode = currentProcess.getZeroPassCode();
-                    break;
-                default:
-                    break;
-            }
-
-            nextProcess = localConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? passProcessCode : currentProcess.getRejectCode());
+            processMap = localConfig.getProcessMap();
         }
+
+        currentProcess = processMap.get(Integer.valueOf(currentType));
+        switch (OrderPayProportionStatusEnum.parse(orderHeader.getTotalDetail(), orderHeader.getReceiveTotal())) {
+            case ZERO:
+                passProcessCode = currentProcess.getZeroPassCode();
+                break;
+            case FIFTH:
+                passProcessCode = currentProcess.getFifthPassCode();
+                break;
+            case ALL:
+                passProcessCode = currentProcess.getAllPassCode();
+                break;
+            default:
+                break;
+        }
+
+        if (passProcessCode == null || passProcessCode == 0) {
+            return Pair.of(Boolean.FALSE, "操作失败,没有下级流程!");
+        }
+
+        nextProcess = processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? passProcessCode : currentProcess.getRejectCode());
 
         // 当前流程
         // 下一流程
