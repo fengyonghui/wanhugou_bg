@@ -17,43 +17,62 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			
 		},
 		getData: function() {
 			var _this = this;
 			$('#inSearchBtn').on('tap', function() {
-				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"))
+				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
+				var ordNumVal = $(".inOrdNum").val(); 
+                var reqNumVal = $(".inReqNum").val(); 
+                var newInputVal = $('.newinput').val(); 
+                var secStyleVal = $('.secStyle').val();
+                var cateGoryVal = $('#input_div_class').val();
 //				console.log(optionsBusiness)
+               if(ordNumVal == null||ordNumVal == undefined){
+					ordNumVal == "";
+                }
+                if(reqNumVal == null||reqNumVal == undefined) {
+                	reqNumVal == "";
+                }
+                if(newInputVal == null||newInputVal == undefined) {
+                	newInputVal == "";
+                }
+                if(secStyleVal == null||secStyleVal == undefined) {
+                	secStyleVal == "";
+                }
+                if(cateGoryVal == null||cateGoryVal == undefined) {
+                	cateGoryVal == "";
+                }
+                if(ordNumVal == ""&&reqNumVal == ""&&newInputVal == ""&&secStyleVal == ""&&cateGoryVal == ""){
+                	 mui.toast("请输入查询条件！");
+                	 return;
+                }
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
 							_this.sureSelect(optionsBusiness)
 						}else{
 							mui.toast('请选择匹配的选项')
 						}
-					
 				}else{
 					_this.sureSelect(optionsBusiness)
-					
 				}
-				
-
 			})
 		},
 		sureSelect:function(optionsBusiness){
 			var _this = this;
-				_this.selectOpen = false
-				var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
-				GHUTILS.OPENPAGE({
-					url: "../../html/inventoryMagmetHtml/inventoryList.html",
-					extras: {
-						reqNo: $('.inOrdNum').val(),
-						name: $('.inReqNum').val(),
-						fromOffice: $('.hasoid').attr('id'),
-						bizStatusid: optionsBusiness.val(),
-						varietyInfoid: optionsClass.val(),
-						isFunc: true
-						}
-					})
+			_this.selectOpen = false
+			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
+			GHUTILS.OPENPAGE({
+				url: "../../html/inventoryMagmetHtml/inventoryList.html",
+				extras: {
+					reqNo: $('.inOrdNum').val(),
+					name: $('.inReqNum').val(),
+					fromOffice: $('.hasoid').attr('id'),
+					bizStatusid: optionsBusiness.val(),
+					varietyInfoid: optionsClass.val(),
+					isFunc: true
+				}
+			})
 		},
 		hrefHtml: function(newinput, input_div,inHideSpan) {
 			var _this = this;
@@ -61,7 +80,7 @@
 			_this.ajaxCheckStatus()
 
 			$(newinput).on('focus', function() {
-				//$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
 				$(inHideSpan).show()
 			})
@@ -71,6 +90,7 @@
 				}else{
 					_this.selectOpen = true
 				}
+				console.log($(this).val())
 				
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
@@ -80,9 +100,9 @@
 				$(input_div).hide()
 				$(inHideSpan).hide()
 			})
-
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
+//				_this.fromOfficeId = $(this).attr("id");
 				$(newinput).val($(this).text())
 				$(input_div).hide()
 				$('#inHideSpan').hide()
@@ -96,7 +116,6 @@
 				$.each(data, function(i, item) {
 					if(item.name.indexOf(key) > -1) {
 						reult.push(item)
-
 					}
 				})
 			$.each(reult, function(i, item) {
@@ -104,7 +123,6 @@
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
-
 		},
 		ajaxGoodList: function() {
 			var _this = this;
@@ -125,7 +143,6 @@
 					$('.input_div').html(htmlList)
 				}
 			});
-
 		},
 		ajaxCheckStatus: function() {
 			var _this = this;
@@ -137,9 +154,7 @@
 				data: {type:'biz_req_status'},
 				dataType: 'json',
 				success: function(res) {
-//					console.log(res)
 					$.each(res, function(i, item) {
-//						console.log(item)
 						htmlBusiness += '<option class="soption"  value="' + item.value + '">' + item.label + '</option>'
 					});
 					$('#input_div_business').html(optHtml+htmlBusiness)
@@ -153,8 +168,8 @@
 			var htmlClass = '';
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/request/bizRequestHeader/list4Mobile',
-				data: {},
+				url: '/a/biz/request/bizRequestHeaderForVendor/list4MobileNew',
+				data: {consultantId: _this.userInfo.staListId},
 				dataType: 'json',
 				success: function(res) {
 //					console.log(res)
@@ -166,12 +181,9 @@
 					_this.getData()
 				}
 			});
-
 		},
-		
 	}
 	$(function() {
-
 		var ac = new ACCOUNT();
 		ac.init();
 	});

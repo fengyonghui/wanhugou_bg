@@ -2,14 +2,10 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<meta name="full-screen" content="yes">
-		<meta name="x5-fullscreen" content="true">
 		<title>付款</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
-		<link href="../../css/drop.css" rel="stylesheet" />
 		<style>
 			.mui-input-row font {color:red;position: absolute;right: 60px;top: 36%;}
 			.pay-logo {width: 40px;}
@@ -25,7 +21,7 @@
 			<p class="app_cf app_nav_text_center">付款</p>
 		</header>
 		<div class="mui-content">
-			<div class="mui-input-group border-btm5">
+			<div class="mui-input-group app_bline2">
 				<div class="mui-input-row">
 					<label>应付金额：</label>
 					<input id="shouldPay" type="text" class="ordNum" disabled>
@@ -36,7 +32,7 @@
 					<font>*</font>
 				</div>
 			</div>
-			<ul class="mui-table-view border-btm5">
+			<ul class="mui-table-view app_bline2">
 				<div class="mui-input-row">
 					<label>支付方式：</label>
 				</div>
@@ -53,15 +49,11 @@
 					</div>
 				</li>
 			</ul>
-			<!--<div class="mui-input-row border-btm5">
-				<button id="inPayBtn" type="submit" class="mui-btn-blue mui-btn-block inPayBtnStyle">确认支付</button>
-			</div>-->
 		</div>
 		
 	<script src="../../js/component/zepto.min.js"></script>
 	<script src="../../js/component/mui.min.js"></script>
 	<script src="../../js/component/GHutils.js"></script>
-	<script src="../../js/component/dropload.js"></script>
 	<script src="../../js/inventoryMagmetJs/inPay.js"></script>	
 	</body>
 </html>

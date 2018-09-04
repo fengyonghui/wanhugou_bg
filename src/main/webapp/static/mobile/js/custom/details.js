@@ -51,8 +51,6 @@
                    $('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
                    $('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
 /*最后付款时间*/ 	   $('#PoLastDa').val(_this.formatDateTime(res.data.bizPoHeader.lastPayDate))
-//				   $('#planPayDetails').val(res.data.bizPoHeader.total)
-//                   $('#nowDateDetails').val(_this.formatDateTime(res.data.bizPoHeader.lastPayDate))
 					_this.processHtml(res.data)              
                 }
             });
@@ -101,25 +99,10 @@
 					'</div>'+
 				'</li>'
 				}
-				
 			});
 			$("#addDetailMen").html(pHtmlList)
-//			var purchaseOrderProcess = data.bizPoHeader.process.purchaseOrderProcess;
-//			if(purchaseOrderProcess.code==5) {
-//				$('#streeTxt').val(purchaseOrderProcess.name)
-//			}
-			
-//			$('#addCheckMen').html(data.bizPoHeader.process.bizStatus)
-//			$.each(data.bizPoHeader.process, function(i, item) {
-//				console.log(item)
-//              var orderNumber = item.purchaseOrderProcess;
-////					$('#ordNum').html(orderNumber)
-				
-//			});
-           // $('#addCheckMen').html(pHtmlList)
 		},
 		formatDateTime: function(unix) {
-
     		var now = new Date(parseInt(unix) * 1);
 	        now =  now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
 	        if(now.indexOf("下午") > 0) {
@@ -175,7 +158,6 @@
 		}
 	}
 	$(function() {
-
 		var ac = new ACCOUNT();
 		ac.init();
 	});

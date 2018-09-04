@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>订单审核</title>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/app.css" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">订单审核</p>
+		</header>
+		<div class="mui-content mui-input-group">
+			<div class="mui-input-row">
+				<label>订单编号：</label>
+				<input type="text" class="mui-input-clear" id="staPoordNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>经销店名称：</label>
+				<input type="text" class="mui-input-clear" id="staRelNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>商品总价：</label>
+				<input type="text" class="mui-input-clear" id="staPototal" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>调整金额：</label>
+				<input type="text" class="mui-input-clear" id="staAdjustmentMoney">
+			</div>
+			<div class="mui-input-row">
+				<label>运费：</label>
+				<input type="text" class="mui-input-clear" id="staFreight" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>应付金额：</label>
+				<input type="text" class="mui-input-clear" id="staShouldPay" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>已付金额：</label>
+				<input type="text" class="mui-input-clear" id="staPoLastDa" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>服务费：</label>
+				<input type="text" id="staServerPrice" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>发票状态：</label>
+				<input type="text" id="staInvoice" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>业务状态：</label>
+				<input type="text" id="staStatus" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>收货人：</label>
+				<input type="text" id="staConsignee" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>联系电话：</label>
+				<input type="text" id="staMobile" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>收货地址：</label>
+				<input type="text" id="staShippAddress" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>详细地址：</label>
+				<input type="text" id="staDateilAddress" class="mui-input-clear">
+			</div>
+			<div class="mui-input-row">
+				<label>备注：</label>
+				<textarea id="staPoRemark" name="" rows="" cols="" disabled></textarea>
+			</div>
+			<div class="mui-input-row">
+				<div class="labelLf">状态流程：</div>
+				<ul class="flowPath" id="staStatusMenu">
+					
+				</ul>
+			</div>
+			<div class="mui-input-row staCommodity">
+				<div class="labelLf">商品信息：</div>
+				<ul id="staCheckCommodity" class="mui-table-view app_pl10">
+					
+				</ul>
+			</div>
+			<div class="mui-input-row app_bline">
+				<div class="labelLf">付款约定：</div>
+				<div class="mui-input-row">
+					<label>付款时间：</label>
+					<input type="text" class="mui-input-clear" id="staPayTime" disabled>
+				</div>
+				<div class="mui-input-row">
+					<label>金额：</label>
+					<input type="text" class="mui-input-clear" id="staPayMoney" disabled>
+				</div>
+			</div>
+			<div class="mui-input-row app_bline" id="orderTypebox">
+				<label>供货方式：</label>
+		    	<div id="changeTxt" class="labelri">
+		    		本地备货
+			        <input checked type="radio" name="localOriginType" value="0" class="inputRadio"/>
+		        	产地直发
+		        	 <input id="yes" type="radio" name="localOriginType" value="1"  class="inputRadio"/>
+	        	</div>
+		    </div>
+			<div class="app_cred3">
+				<div class="mui-row app_bline">
+					<div class="mui-input-row">
+						<label>甲方(经销店):</label>
+						<input type="text" class="mui-input-clear" id="firstPart" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>负责人:</label>
+						<input type="text" class="mui-input-clear" id="firstPrincipal" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>联系电话:</label>
+						<input type="text" class="mui-input-clear" id="firstMobile" disabled>
+					</div>
+				</div>
+				<div class="mui-row app_bline">
+					<div class="mui-input-row">
+						<label>乙方(供应商):</label>
+						<input type="text" class="mui-input-clear" id="partB" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>负责人:</label>
+						<input type="text" class="mui-input-clear" id="partBPrincipal" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>联系电话:</label>
+						<input type="text" class="mui-input-clear" id="partBMobile" disabled>
+					</div>
+				</div>
+				<div class="mui-row app_bline">
+					<div class="mui-input-row">
+						<label>丙方(万户通):</label>
+						<input type="text" class="mui-input-clear" value="万户通总公司" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>负责人:</label>
+						<input type="text" class="mui-input-clear" id="partCPrincipal" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>联系电话:</label>
+						<input type="text" class="mui-input-clear" id="partCMobile" disabled>
+					</div>
+				</div>
+				<div class="app_p15 app_f12" id="notes">
+					
+				</div>
+			</div>
+		</div>
+		<div id="staOrdCheckBtn" class="app_p20">
+		    <button id="checkBtns" type="submit" class="mui-btn mui-btn-blue">同意发货</button>
+			<button id="rejectBtns" type="submit" class="mui-btn mui-btn-blue">不同意发货</button>
+		</div>
+		<div class="clear"></div>
+		
+		<input type="hidden" name="ordId" id="ordId"/>
+		<input type="hidden" name="flag" id="flag"/>
+		<input type="hidden" name="localSendIds" id="localSendIds"/>
+		<input type="hidden" name="provinceId" id="provinceId"/>
+		<input type="hidden" name="cityId" id="cityId"/>
+		<input type="hidden" name="regionId" id="regionId"/>
+		<input type="hidden" name="appointedTime" id="appointedTime"/>
+		<script src="../../../js/component/mui.min.js"></script>	
+		<script src="../../../js/component/zepto.min.js"></script>
+		<script src="../../../js/component/GHutils.js"></script>
+		<script src="../../../js/staffMgmtJs/orderJs/staOrdCheck.js"></script>
+	</body>
+</html>

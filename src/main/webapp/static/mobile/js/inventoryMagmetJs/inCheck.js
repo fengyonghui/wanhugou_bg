@@ -134,8 +134,8 @@
 //				console.log(item)
 				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
 //		产品图片
-					'<div class="photoParent mui-pull-left position_Re">'+
-						'<img class="position_Ab" src="'+item.skuInfo.productInfo.imgUrl+'">'+
+					'<div class="photoParent mui-pull-left app_pr">'+
+						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+
 					'</div>'+
 //		产品信息
 					'<div class="mui-media-body commodity">'+
@@ -145,7 +145,7 @@
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>供应商：</label>'+
-							'<input type="text" class="font-color mui-input-clear" value="'+ item.skuInfo.productInfo.vendorName +'" disabled>'+
+							'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuInfo.productInfo.vendorName +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>商品名称：</label>'+
@@ -300,7 +300,6 @@
 							}
 						})
 					}
-					
 				}
 			});
 			

@@ -13,10 +13,10 @@
 		return this;
 	}
 
-
 	ACCOUNT.prototype = {
 		init: function() {
-			this.hrefHtml('.newinput', '.input_div');
+			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAdd01');
+			this.hrefHtml('.newinput02', '.input_div02','#hideSpanAdd02');
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
@@ -45,7 +45,6 @@
                 }
                 _this.skuInfoIds = skuInfoIdsTemp.substring(1);
 
-
                 var skuIds2 = _this.skuInfoIds.split(",");
 
                 var reqQtysTemp = "";
@@ -53,7 +52,7 @@
                     var cheId = skuIds2[j];
                     var reqQty = $("#reqQty_" + cheId).val()
                     if (reqQty == null || reqQty == "") {
-                        alert("请输入申报数量！")
+                        mui.toast("请输入申报数量！")
                         return;
                     }
                     reqQtysTemp += "," + reqQty;
@@ -68,15 +67,15 @@
                 var bizStatusVal = $("#inputDivAdd")[0].value; //业务状态
 
                 if(_this.fromOfficeId == null || _this.fromOfficeId == ""){
-				    alert("请选择采购中心！")
+				    mui.toast("请选择采购中心！")
                     return;
                 }
                 if(inPoLastDaVal == null || inPoLastDaVal == "") {
-                    alert("请选择收货时间！")
+                    mui.toast("请选择收货时间！")
                     return;
                 }
                 if(bizStatusVal == null || bizStatusVal == "") {
-                    alert("请选择业务状态！")
+                    mui.toast("请选择业务状态！")
                     return;
                 }
 
@@ -87,7 +86,7 @@
                     data: {"id":"", "fromOffice.id": _this.fromOfficeId, "recvEta":inPoLastDaVal, "remark": inPoRemarkVal, "bizStatus": bizStatusVal, "skuInfoIds": _this.skuInfoIds, "reqQtys": _this.reqQtys, "reqDetailIds":_this.reqDetailIds, "LineNos":_this.LineNos},
                     success: function (resule) {
                         if (resule.data.value == '操作成功!') {
-                            alert("添加备货单成功！");
+                            mui.toast("添加备货单成功！");
                             GHUTILS.OPENPAGE({
                                 url: "../../html/inventoryMagmetHtml/inventoryList.html",
                                 extras: {
@@ -139,42 +138,53 @@
                                 if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
                                     return;
                                 }
-                                resultListHtml += '<div class="mui-row border-btm5" id="serskudiv_' + skuInfo.id + '">' +
+                                resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
                                     '<div class="mui-row mui-checkbox mui-left">' +
-                                    '<input style="top: 30px;" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
+                                    '<input style="top: 45px;" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
                                     '<div class="mui-row">' +
+                                    
                                     '<div class="mui-row">' +
                                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
-                                    '<li class="mui-table-view-cell">' +
+                                    '<li class="mui-table-view-cell app_bline3">' +
                                     '<div class="mui-input-row inputClassAdd">' +
                                     '<label class="commodityName">商品名称:</label>' +
                                     '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.name + '" disabled>' +
                                     '</div></li></div></div>' +
+                                   
+                                  	'<div class="mui-row">' +
+                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
+                                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
+                                    '<li class="mui-table-view-cell app_bline3">' +
+                                    '<div class="mui-input-row inputClassAdd">' +
+                                    '<label class="commodityName">商品货号:</label>' +
+                                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.itemNo + '" disabled>' +
+                                    '</div></li></div></div>' +
+                                   
                                     '<div class="mui-row">' +
                                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                    '<li class="mui-table-view-cell">' +
+                                    '<li class="mui-table-view-cell app_bline3">' +
                                     '<div class="mui-input-row inputClassAdd">' +
                                     '<label>品牌名称:</label>' +
-                                    '<input type="text" class="mui-input-clear" id="" value="' + brandName +'" disabled>' +
+                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.productInfo.brandName +'" disabled>' +
                                     '</div></li></div>' +
                                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                    '<li class="mui-table-view-cell">' +
+                                    '<li class="mui-table-view-cell app_bline3">' +
                                     '<div class="mui-input-row inputClassAdd">' +
-                                    '<label>结算价:</label>' +
-                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled>' +
+                                    '<label>商品编码:</label>' +
+                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.partNo + '" disabled>' +
                                     '</div></li></div></div>' +
+                                   
                                     '<div class="mui-row">' +
                                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                    '<li class="mui-table-view-cell">' +
+                                    '<li class="mui-table-view-cell app_bline3">' +
                                     '<div class="mui-input-row inputClassAdd">' +
-                                    '<label>商品货号:</label>' +
-                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.itemNo + '" disabled>' +
-                                    '</div></li></div>' +
+                                    '<label>结算价:</label>' +
+                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled></div></li></div>' +
                                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                    '<li class="mui-table-view-cell">' +
+                                    '<li class="mui-table-view-cell app_bline3">' +
                                     '<div class="mui-input-row inputClassAdd">' +
                                     '<label>申报数量:</label>' +
                                     '<input type="hidden" class="mui-input-clear" value="' + skuInfo.id + '">' +
@@ -206,18 +216,17 @@
                         var cheDiv = $("#serskudiv_" + cheId);
                         $("#" + cheId).prop('checked',false);
                         $("#" + cheId).hide();
-                        $("#commodityMenu").append(cheDiv)
-
                         var removeButtonHtml = '<div class="addBtn" id="removeBtn_' + cheId + '">' +
                             '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">移除' +
                             '</button></div>';
-                        $("#commodityMenu").append(removeButtonHtml)
+                            cheDiv.append(removeButtonHtml)
+                        $("#commodityMenu").append(cheDiv)
                         _this.skuInfoIds += cheId + ",";
                     }
                 })
             });
         },
-		hrefHtml: function(newinput, input_div) {
+		hrefHtml: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
 			_this.ajaxGoodList()
 			_this.ajaxCheckStatus()
@@ -225,7 +234,7 @@
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
-				$('#hideSpanAdd').show()
+				$(hideSpanAdd).show();
 			})
 			$(newinput).on('keyup', function() {
 				if($(this).val()==''){
@@ -237,10 +246,10 @@
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
 			
-			$('#hideSpanAdd').on('click', function() {
+			$(hideSpanAdd).on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
-				$('#hideSpanAdd').hide()
+				$(hideSpanAdd).hide()
 			})
 
 			$(input_div).on('click', '.soption', function() {
@@ -248,7 +257,7 @@
                 _this.fromOfficeId = $(this).attr("id");
 				$(newinput).val($(this).text())
 				$(input_div).hide()
-				$('#hideSpanAdd').hide()
+				$(hideSpanAdd).hide()
 				_this.selectOpen = true
 			})
 		},
@@ -279,6 +288,8 @@
 				},
 				dataType: 'json',
 				success: function(res) {
+//					console.log('777');
+//					console.log(res)
 					_this.datagood = res
 					$.each(res, function(i, item) {
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'

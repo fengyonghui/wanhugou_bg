@@ -31,10 +31,15 @@
 			                data: {
 			                	payMoney:$('#inPayNum').val(),
 			                	reqId:_this.userInfo.inListId,
+			                	openid:oYFKb0Sy0Hs7c6iSvoUOFS4RbIMo
 			                },
 			                dataType: "json",
 			                success: function(res){
 		                    	console.log(res)
+		                    	var btnArray = ['是','否']
+		                    	mui.confirm('你好',res,btnArray,function(){
+		                    		
+		                    	})
 			                }
 			            })
 					})
@@ -48,26 +53,25 @@
 						mui.toast('请输入支付金额！')
 					}else {
 						alert('支付宝支付')
-						$.ajax({
-		                    type: "GET",
-		                    url: "/a/biz/request/bizRequestPay/alipayForH5",
-		                    data: {
-		                    	payMoney:$('#inPayNum').val(),
-			                	reqId:_this.userInfo.inListId,
-		                    },
-		                    dataType: "json",
-		                    success: function(res){
-		                  		console.log(res)
-		                  		GHUTILS.OPENPAGE({
-									url: "https://openapi.alipay.com/gateway.do?charset=UTF-8&method=alipay.trade.wap.pay&sign=sSZPztJA7RgtVmn%2FknHdEjjFprxgvsWxeEQutn8qwRF9cCIGy1UMlBlq0q3InUNd1PuW%2BpDZYGSu081e3ibPmBoxclc%2Bto0OLMqGn55BRAhI36Gggn6mSnhb4aaDDSIMLHdNctuekqnA5JW3qZaMkUMmjrn0hc0LENb2nQ0hM2dji7kseA38wsDh0jQTBZ9QODLHfrzezeBd1ut2%2FuOY7PniYe1zvzvrHE3KR7Ozt1GhM%2BhPs7nOmQLLZWUaeyII9ccrdV8wSfIIR1JUh2Q6GKlMRYxM5%2BMBUPBS2PlCsDKFhlQrEb8huBmxx4n125PDpQKPNDFFAgCK8%2F5hKWt1QA%3D%3D&notify_url=http%3A%2F%2Fdreamer.ngrok.xiaomiqiu.cn%2Fpayment%2Falipay%2Fnotify&version=1.0&app_id=2017121200617602&sign_type=RSA2&timestamp=2018-08-02+17%3A00%3A44&alipay_sdk=alipay-sdk-java-dynamicVersionNo&format=json",
-									extras: {
-										payMoney:payMoney,
-										reqId:reqId
-									}
-								})
-		                    }
-		                })
+						var payMoney = $('#inPayNum').val();
+						var reqId = _this.userInfo.inListId;
+						window.open('/a/biz/request/bizRequestPay/alipayForH5?payMoney='+payMoney+'&reqId='+reqId)
 					}
+					
+					//实时刷新时间单位为毫秒
+//					setInterval('refreshQuery()',5000); 
+					/* 刷新查询 */
+//					function refreshQuery(){
+//					   $.ajax({
+//					   	type:"post",
+//					   	url: '/a/biz/request/bizRequestPay/checkCondition',
+//					   	data: payNum: ,
+//					   	dataType:'json',
+//					   	success: function() {
+//					   		
+//					   	}
+//					   })
+//					}
 				}),
 				//微信支付
 				$('#wxPayBtn').on('tap', function() {
@@ -75,18 +79,9 @@
 						mui.toast('请输入支付金额！')
 					}else {
 						alert('微信支付')
-						$.ajax({
-		                    type: "GET",
-		                    url: "/a/biz/request/bizRequestPay/genPayQRCode",
-		                    data: {
-		                    	payMoney:$('#inPayNum').val(),
-			                	reqId:_this.userInfo.inListId,
-		                    },
-		                    dataType: "json",
-		                    success: function(res){
-		                  	console.log(res)
-		                    }
-		                })
+						var payMoney = $('#inPayNum').val();
+						var reqId = _this.userInfo.inListId;
+						window.open('/a/biz/request/bizRequestPay/wechatPay4MWEB?payMoney='+payMoney+'&reqId='+reqId)
 					}
 				})
 			}

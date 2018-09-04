@@ -36,9 +36,6 @@
             this.hrefHtml('.newinput', '.input_div');
             this.pageInit(); //页面初始化
             //this.getData();//获取数据
-
-
-
             GHUTILS.nativeUI.closeWaiting();//关闭等待状态
             //GHUTILS.nativeUI.showWaiting()//开启
         },
@@ -100,20 +97,6 @@
                 }
             });
         },
-
-//	$(function() {
-//          //业务状态select初始化
-//          var bizStatusSelect = $("#bizStatusSelect");
-//          var bizStatusOptionHtml = '<select class="secStyle" name="" id="bizStatusShow">' +
-//              '<option value="">请选择</option>';
-//
-//          $.each(bizStatusDesc, function(i, item) {
-//              bizStatusOptionHtml += '<option value="' + item.value + '">' + item.label + '</option>'
-//          });
-//          bizStatusOptionHtml += '</select><input class="savedata" type="hidden" value="" />' +
-//              '<div style="clear:both"></div>';
-//          bizStatusSelect.append(bizStatusOptionHtml);
-//      },
         getData: function() {
             var _this = this;
             $.ajax({
@@ -154,7 +137,9 @@
         saveDetail: function () {
             var _this = this;
             mui('.saveDetailBtn').on('tap','#saveDetailBtn',function(){
-                var skuIds = _this.skuInfoIds_2.split(",");
+            	console.log('获取_this.skuInfoIds_2的值');//加个判断 判断是初始化修改数量还是查询按钮添加的修改数量
+            	console.log(_this.skuInfoIds_2);
+    		    var skuIds = _this.skuInfoIds_2.split(",");
                 var skuInfoIdsTemp = ""
                 for (var i=0; i<skuIds.length; i++){
                     var skuId = skuIds[i];
@@ -170,7 +155,7 @@
                     var cheId = skuIds2[j];
                     var reqQty = $("#reqQty_" + cheId).val()
                     if (reqQty == null || reqQty == "") {
-                        alert("请输入申报数量！")
+                    	mui.toast("请输入申报数量！")
                         return;
                     }
                     reqQtysTemp += "," + reqQty;
@@ -195,15 +180,15 @@
                 }
 
                 if(_this.fromOfficeId == null || _this.fromOfficeId == ""){
-                    alert("请选择采购中心！")
+                    mui.toast("请选择采购中心！")
                     return;
                 }
                 if(inPoLastDaVal == null || inPoLastDaVal == "") {
-                    alert("请选择收货时间！")
+                    mui.toast("请选择收货时间！")
                     return;
                 }
                 if(bizStatusVal == null || bizStatusVal == "") {
-                    alert("请选择业务状态！")
+                    mui.toast("请选择业务状态！")
                     return;
                 }
 
@@ -223,7 +208,7 @@
                         }
                     }
                 })
-            })
+           })
         },
         getPermissionList: function () {
             var _this = this;
@@ -299,9 +284,8 @@
                     '<div class="step_num_txt">'+
                     '<div class="mui-input-row">'+
                     '<label>处理人:</label>'+
-                    '<textarea name="" rows="" cols="" disabled>'+ item.createBy.name +'</textarea>'+
+                    '<input type="text" value="'+ item.createBy.name +'" class="mui-input-clear" disabled>'+
                     '</div>'+
-                    '<br />'+
                     '<div class="mui-input-row">'+
                     '<label>状态:</label>'+
                     '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
@@ -314,45 +298,60 @@
             $("#inCheckAddMenu").html(pHtmlList)
         },
         commodityHtml: function(data) {
+        	//备货商品初始化反填
             var _this = this;
             var htmlCommodity = '';
             $.each(data.reqDetailList, function(i, item) {
+            	console.log(item)
                 _this.skuInfoIds_1 += item.skuInfo.id + ","
                 _this.reqQtys_1 += item.reqQty + ","
                 _this.reqDetailIds += item.id + ","
                 _this.LineNos += item.lineNo + ","
-                htmlCommodity += '<div class="mui-row border-btm5" id="' + item.id + '">' +
+                htmlCommodity += '<div class="mui-row app_bline" id="' + item.id + '">' +
+                '<input style="display:none;" name="" class="skuinfo_check" id="' + item.skuInfo.id + '" type="checkbox">' +
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
-                    '<li class="mui-table-view-cell">' +
+                    '<li class="mui-table-view-cell app_bline3">' +
                     '<div class="mui-input-row inputClassAdd">' +
                     '<label class="commodityName">商品名称:</label>' +
                     '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div></div>' +
+                    
+                    '<div class="mui-row">' +
+                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
+                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
+                    '<li class="mui-table-view-cell app_bline3">' +
+                    '<div class="mui-input-row inputClassAdd">' +
+                    '<label class="commodityName">商品货号:</label>' +
+                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.itemNo + '" disabled></div></li></div></div>' +
+                    
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
+                    '<li class="mui-table-view-cell app_bline3">' +
                     '<div class="mui-input-row inputClassAdd">' +
-                    '<label>品牌名称:</label>' +
+                    '<label>品牌名称:</label>' + 
                     '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.productInfo.brandName + '" disabled></div></li></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
+                    '<li class="mui-table-view-cell app_bline3">' +
                     '<div class="mui-input-row inputClassAdd">' +
-                    '<label>结算价:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div></div>' +
-                    '<div class="mui-row">' +
+                    '<label>商品编码:</label>' +
+                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.partNo + '" disabled></div></li></div></div>' +
+                   
+                   '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
+                    '<li class="mui-table-view-cell app_bline3">' +
                     '<div class="mui-input-row inputClassAdd">' +
-                    '<label>商品货号:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.itemNo + '" disabled></div></li></div>' +
+                    '<label>结算价:</label>' +  
+                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell">' +
+                    '<li class="mui-table-view-cell app_bline3">' +
                     '<div class="mui-input-row inputClassAdd">' +
                     '<label>申报数量:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.reqQty + '" disabled></div></li></div></div>';
+                    '<input type="text" class="mui-input-clear inDeclareNum" id="reqQty_'+ item.skuInfo.id + '" value="' + item.reqQty + '">'+
+                    '<font>*</font>'+
+                    '</div></li></div></div></div>';
 
                 if (_this.deleteBtnFlag == true) {
                     htmlCommodity += '<div class="addBtn">' +
@@ -365,21 +364,40 @@
             _this.removeItem()
         },
         delItem:function () {
+        	var that=this;
             mui('#commodityMenu').on('tap','.deleteSkuButton',function(e){
                 var obj = e.detail.target.id;
-                if (confirm("此删除不需点保存,即可生效.确认删除此条信息吗？")) {
-                    $.ajax({
-                        type: "post",
-                        url: "/a/biz/request/bizRequestDetail/delItem",
-                        data: {id: obj},
-                        success: function (data) {
-                            if (data == 'ok') {
-                                alert("删除成功！");
-                                $("#" + obj).remove();
-                            }
-                        }
-                    })
-                }
+                mui.confirm("此删除不需点保存,即可生效.确认删除此条信息吗？",'系统提示！',function (choice){
+                	console.log(choice)
+					if(choice.index==1){
+                        $.ajax({
+                            type: "post",
+	                        url: "/a/biz/request/bizRequestDetail/delItem",
+	                        data: {id: obj},
+	                        success: function (data) {
+	                            if (data == 'ok') {
+	                                mui.toast("删除成功！");
+	                                $("#" + obj).remove();
+	                            }
+	                        }
+	                    })
+					}else{
+	
+                    }
+               });
+//              if (confirm("此删除不需点保存,即可生效.确认删除此条信息吗？")) {
+//                  $.ajax({
+//                      type: "post",
+//                      url: "/a/biz/request/bizRequestDetail/delItem",
+//                      data: {id: obj},
+//                      success: function (data) {
+//                          if (data == 'ok') {
+//                              mui.toast("删除成功！");
+//                              $("#" + obj).remove();
+//                          }
+//                      }
+//                  })
+//              }
             });
         },
         removeItem:function () {
@@ -403,6 +421,7 @@
                     url: "/a/biz/sku/bizSkuInfo/findSkuList",
                     data: {itemNo: itemNo},
                     success: function (result) {
+                    	console.log('修改查询数据')  
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
                         $.each(data,function (keys,skuInfoList) {
@@ -420,45 +439,61 @@
                             var t=0;
                             $.each(skuInfoList,function (index,skuInfo) {
                                 //skuInfoId+=","+skuInfo.id;
+                                console.log(skuInfo)
                                 if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
                                     return;
                                 }
-                                resultListHtml += '<div class="mui-row border-btm5" id="serskudiv_' + skuInfo.id + '">' +
+//                              if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length<0){
+//                                  alert(1)
+//		                            return;
+//		                        }
+                                resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
                                         '<div class="mui-row mui-checkbox mui-left">' +
-                                        '<input style="top: 30px;" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
+                                        '<input style="top:45px" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
                                         '<div class="mui-row">' +
+                                        
                                         '<div class="mui-row">' +
                                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                                         '<div class="mui-col-sm-10 mui-col-xs-10">' +
-                                        '<li class="mui-table-view-cell">' +
+                                        '<li class="mui-table-view-cell app_bline3">' +
                                         '<div class="mui-input-row inputClassAdd">' +
                                         '<label class="commodityName">商品名称:</label>' +
                                         '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.name + '" disabled>' +
                                         '</div></li></div></div>' +
+                                       
+                                      	'<div class="mui-row">' +
+                                        '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
+                                        '<div class="mui-col-sm-10 mui-col-xs-10">' +
+                                        '<li class="mui-table-view-cell app_bline3">' +
+                                        '<div class="mui-input-row inputClassAdd">' +
+                                        '<label class="commodityName">商品货号:</label>' +
+                                        '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.itemNo + '" disabled>' +
+                                        '</div></li></div></div>' +
+                                       
                                         '<div class="mui-row">' +
                                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                                         '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                        '<li class="mui-table-view-cell">' +
+                                        '<li class="mui-table-view-cell app_bline3">' +
                                         '<div class="mui-input-row inputClassAdd">' +
                                         '<label>品牌名称:</label>' +
-                                        '<input type="text" class="mui-input-clear" id="" value="' + brandName +'" disabled>' +
+                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.productInfo.brandName +'" disabled>' +
                                         '</div></li></div>' +
                                         '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                        '<li class="mui-table-view-cell">' +
+                                        '<li class="mui-table-view-cell app_bline3">' +
                                         '<div class="mui-input-row inputClassAdd">' +
-                                        '<label>结算价:</label>' +
-                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled>' +
+                                        '<label>商品编码:</label>' +
+                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.partNo + '" disabled>' +
                                         '</div></li></div></div>' +
+                                       
                                         '<div class="mui-row">' +
                                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                                         '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                        '<li class="mui-table-view-cell">' +
+                                        '<li class="mui-table-view-cell app_bline3">' +
                                         '<div class="mui-input-row inputClassAdd">' +
-                                        '<label>商品货号:</label>' +
-                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.itemNo + '" disabled>' +
-                                        '</div></li></div>' +
+                                        '<label>结算价:</label>' +
+                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled></div></li></div>' +
                                         '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                        '<li class="mui-table-view-cell">' +
+                                        '<li class="mui-table-view-cell app_bline3">' +
                                         '<div class="mui-input-row inputClassAdd">' +
                                         '<label>申报数量:</label>' +
                                         '<input type="hidden" class="mui-input-clear" value="' + skuInfo.id + '">' +
@@ -466,13 +501,31 @@
                                         '<font>*</font>'+
                                         '</div></li></div></div></div></div>';
                             });
-                            t++;
+                            t++;                          
                             $("#searchInfo").append(resultListHtml);
+//                          console.log('=========')
+                            var dis=$("#searchInfo .skuinfo_check");
+                            var dos=$("#commodityMenu .skuinfo_check");
+                            $.each(dis,function(n,v){
+                            	var s=$(this).attr('id')
+                            	$.each(dos,function(n,v){
+                            		var that=this;	                            	
+	                            	var y=$(that).attr('id')
+	                            	var divs=$("#serskudiv_"+s);
+	                            	if (s==y) {
+	                            		divs.html('');
+	                            	} else{
+	                            		
+	                            	}
+	                            })
+                            })
+//                          console.log('=========')
                         })
                         var addButtonHtml = '<div class="addBtn" id="batchAddDiv">' +
                                 '<button id="batchAdd" type="submit" class="addSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">添加' +
                                 '</button></div>';
                         $("#searchInfo").append(addButtonHtml);
+                        
                     }
                 })
             });
@@ -490,12 +543,11 @@
                         var cheDiv = $("#serskudiv_" + cheId);
                         $("#" + cheId).prop('checked',false);
                         $("#" + cheId).hide();
-                        $("#commodityMenu").append(cheDiv)
-
-                        var removeButtonHtml = '<div class="addBtn" id="removeBtn_' + cheId + '">' +
+                        var resultHtml = '<div class="addBtn" id="removeBtn_' + cheId + '">' +
                             '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">移除' +
                             '</button></div>';
-                        $("#commodityMenu").append(removeButtonHtml)
+                            cheDiv.append(resultHtml)
+                        $("#commodityMenu").append($(cheDiv))
                         _this.skuInfoIds_2 += cheId + ",";
                     }
                 })
