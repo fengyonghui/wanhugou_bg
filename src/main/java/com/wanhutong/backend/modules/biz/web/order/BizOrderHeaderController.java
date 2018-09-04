@@ -1995,12 +1995,46 @@ public class BizOrderHeaderController extends BaseController {
         JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
         Process currentProcess = null;
         Process nextProcess = null;
+        Integer passProcessCode = null;
+
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(id);
+
         if (orderType == 0) {
             currentProcess = originConfig.getProcessMap().get(Integer.valueOf(currentType));
-            nextProcess = originConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
+
+            switch (OrderPayProportionStatusEnum.parse(orderHeader.getTotalDetail(), orderHeader.getReceiveTotal())) {
+                case ZERO:
+                    passProcessCode = currentProcess.getZeroPassCode();
+                    break;
+                case FIFTH:
+                    passProcessCode = currentProcess.getZeroPassCode();
+                    break;
+                case ALL:
+                    passProcessCode = currentProcess.getZeroPassCode();
+                    break;
+                default:
+                    break;
+            }
+
+            nextProcess = originConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? passProcessCode : currentProcess.getRejectCode());
         } else {
             currentProcess = localConfig.getProcessMap().get(Integer.valueOf(currentType));
-            nextProcess = localConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
+
+            switch (OrderPayProportionStatusEnum.parse(orderHeader.getTotalDetail(), orderHeader.getReceiveTotal())) {
+                case ZERO:
+                    passProcessCode = currentProcess.getZeroPassCode();
+                    break;
+                case FIFTH:
+                    passProcessCode = currentProcess.getZeroPassCode();
+                    break;
+                case ALL:
+                    passProcessCode = currentProcess.getZeroPassCode();
+                    break;
+                default:
+                    break;
+            }
+
+            nextProcess = localConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? passProcessCode : currentProcess.getRejectCode());
         }
 
         // 当前流程

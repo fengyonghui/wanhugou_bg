@@ -38,6 +38,25 @@ public class Process {
     private int passCode;
 
     /**
+     * 通过之后的状态 全部支付
+     */
+    @XStreamAlias("allPassCode")
+    private int allPassCode;
+
+    /**
+     * 通过之后的状态 20%支付
+     */
+    @XStreamAlias("fifthPassCode")
+    private int fifthPassCode;
+
+    /**
+     * 通过之后的状态 0%支付
+     */
+    @XStreamAlias("zeroPassCode")
+    private int zeroPassCode;
+
+
+    /**
      * 拒绝之后的状态
      */
     @XStreamAlias("rejectCode")
@@ -89,5 +108,29 @@ public class Process {
 
     public void setRejectCode(int rejectCode) {
         this.rejectCode = rejectCode;
+    }
+
+    public int getAllPassCode() {
+        return allPassCode;
+    }
+
+    public void setAllPassCode(int allPassCode) {
+        this.allPassCode = allPassCode;
+    }
+
+    public int getFifthPassCode() {
+        return fifthPassCode;
+    }
+
+    public void setFifthPassCode(int fifthPassCode) {
+        this.fifthPassCode = fifthPassCode;
+    }
+
+    public int getZeroPassCode() {
+        return zeroPassCode;
+    }
+
+    public void setZeroPassCode(int zeroPassCode) {
+        this.zeroPassCode = zeroPassCode;
     }
 }

@@ -4,7 +4,7 @@
 
     <zeroDefaultProcessId>30001</zeroDefaultProcessId>
     <fifthDefaultProcessId>20001</fifthDefaultProcessId>
-    <allDefaultProcessId>10001</allDefaultProcessId>
+    <allDefaultProcessId>666</allDefaultProcessId>
     <payProcessId>666</payProcessId>
     <payProcessId>777</payProcessId>
     <endProcessId>-1</endProcessId>
@@ -15,14 +15,20 @@
         <code>10001</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
         <passCode>777</passCode>
+        <zeroPassCode>777</zeroPassCode>
+        <fifthPassCode>777</fifthPassCode>
+        <allPassCode>777</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
 
     <process>
-        <name>渠道总监审批</name>
+        <name>渠道经理审批</name>
         <code>20001</code>
         <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
         <passCode>20002</passCode>
+        <zeroPassCode>20002</zeroPassCode>
+        <fifthPassCode>20002</fifthPassCode>
+        <allPassCode>777</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
 
@@ -31,14 +37,20 @@
         <code>20002</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
         <passCode>777</passCode>
+        <zeroPassCode>777</zeroPassCode>
+        <fifthPassCode>777</fifthPassCode>
+        <allPassCode>777</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
 
     <process>
-        <name>渠道总监审批</name>
+        <name>渠道经理审批</name>
         <code>30001</code>
         <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
         <passCode>30002</passCode>
+        <zeroPassCode>30002</zeroPassCode>
+        <fifthPassCode>30003</fifthPassCode>
+        <allPassCode>777</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
 
@@ -47,6 +59,9 @@
         <code>30002</code>
         <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
         <passCode>30003</passCode>
+        <zeroPassCode>30003</zeroPassCode>
+        <fifthPassCode>30003</fifthPassCode>
+        <allPassCode>777</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
 
@@ -55,6 +70,9 @@
         <code>30003</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
         <passCode>777</passCode>
+        <zeroPassCode>777</zeroPassCode>
+        <fifthPassCode>777</fifthPassCode>
+        <allPassCode>777</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
 

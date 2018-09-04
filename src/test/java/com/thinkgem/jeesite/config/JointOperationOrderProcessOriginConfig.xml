@@ -13,7 +13,10 @@
         <name>品类主管审核</name>
         <code>3001</code>
         <roleEnNameEnum>SELECTION_OF_SPECIALIST</roleEnNameEnum>
-        <passCode>666</passCode>
+        <passCode>3002</passCode>
+        <zeroPassCode>3002</zeroPassCode>
+        <fifthPassCode>3002</fifthPassCode>
+        <allPassCode>3002</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
@@ -21,14 +24,20 @@
         <code>3002</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
         <passCode>666</passCode>
+        <zeroPassCode>666</zeroPassCode>
+        <fifthPassCode>666</fifthPassCode>
+        <allPassCode>666</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
 
     <process>
-        <name>渠道主管审核</name>
+        <name>渠道经理审核</name>
         <code>2001</code>
         <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
         <passCode>2002</passCode>
+        <zeroPassCode>2002</zeroPassCode>
+        <fifthPassCode>2002</fifthPassCode>
+        <allPassCode>2002</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
@@ -36,6 +45,9 @@
         <code>2002</code>
         <roleEnNameEnum>SELECTION_OF_SPECIALIST</roleEnNameEnum>
         <passCode>666</passCode>
+        <zeroPassCode>666</zeroPassCode>
+        <fifthPassCode>666</fifthPassCode>
+        <allPassCode>666</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
@@ -43,15 +55,21 @@
         <code>2003</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
         <passCode>666</passCode>
+        <zeroPassCode>666</zeroPassCode>
+        <fifthPassCode>666</fifthPassCode>
+        <allPassCode>666</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
 
 
     <process>
-        <name>渠道主管审核</name>
+        <name>渠道经理审核</name>
         <code>1001</code>
         <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
         <passCode>1002</passCode>
+        <zeroPassCode>1002</zeroPassCode>
+        <fifthPassCode>1003</fifthPassCode>
+        <allPassCode>1003</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
@@ -59,6 +77,9 @@
         <code>1002</code>
         <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
         <passCode>1003</passCode>
+        <zeroPassCode>1003</zeroPassCode>
+        <fifthPassCode>1003</fifthPassCode>
+        <allPassCode>1003</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
@@ -66,6 +87,9 @@
         <code>1003</code>
         <roleEnNameEnum>SELECTION_OF_SPECIALIST</roleEnNameEnum>
         <passCode>666</passCode>
+        <zeroPassCode>666</zeroPassCode>
+        <fifthPassCode>666</fifthPassCode>
+        <allPassCode>666</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
@@ -73,6 +97,9 @@
         <code>1004</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
         <passCode>666</passCode>
+        <zeroPassCode>666</zeroPassCode>
+        <fifthPassCode>666</fifthPassCode>
+        <allPassCode>666</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
 
