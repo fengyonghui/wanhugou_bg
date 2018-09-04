@@ -147,11 +147,11 @@
 								$('#staReleList').html('<p class="noneTxt">暂无数据</p>');
 						}	
 					    var size=20;
+					    var pageNo=1;
 			            totalPage = res.data.listSize%size!=0?
 		                parseInt(res.data.listSize/size)+1:
 		                res.data.listSize/size;
-		                console.log(totalPage)
-                        var pageNo=1;
+		                console.log(totalPage)                       
 		                if(totalPage==pageNo){	
 		                	console.log('1')
 			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
