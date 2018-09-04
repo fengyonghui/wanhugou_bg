@@ -130,7 +130,7 @@
 											'<label>首次开单:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+userOfficeDeta+' ">' +
 										'</div>' +
-										'<div class="app_font_cl content_part mui-row">' +
+										'<div class="app_color40 content_part mui-row app_text_center">' +
 											'<div class="staReMoveBtn" customsId="'+item.customsId +'"  consultantsId="'+ item.consultantsId +'">解除关联</div>'+
 										'</div>' +
 									'</div>'
@@ -295,7 +295,7 @@
 		stHrefHtml: function() {
 			var _this = this;
 		/*查询*/
-			$('.header').on('tap', '#staReleSechBtn', function() {
+			$('.app_header').on('tap', '#staReleSechBtn', function() {
 				var url = $(this).attr('url');
 				var consultantsIdTxt = $('#consultantsId').val();
 				if(url) {
@@ -324,7 +324,7 @@
 				})
 			}),
 		/*解除关联*/
-            $('.content').on('tap','.staReMoveBtn',function(){
+            $('.content_part').on('tap','.staReMoveBtn',function(){
             	var url = $(this).attr('url');
 				var customsId = $(this).attr('customsId');
 				var consultantsId = $(this).attr('consultantsId');
@@ -437,7 +437,7 @@
 											'<label>首次开单:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+userOfficeDeta+' ">' +
 										'</div>' +
-										'<div class="app_font_cl content_part mui-row">' +
+										'<div class="app_color40 app_text_center content_part mui-row">' +
 											'<div class="staReMoveBtn" customsId="'+item.customsId +'"  consultantsId="'+ item.consultantsId +'">解除关联</div>'+
 										'</div>' +
 									'</div>'

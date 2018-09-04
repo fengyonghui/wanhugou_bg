@@ -117,7 +117,7 @@
 											'<label>新增会员:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.officeCount+'">' +
 										'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center">' +
+										'<div class="app_color40 content_part mui-row app_text_center">' +
 											'<div class="mui-col-xs-6 staRelevanBtn" staListId="'+ item.id +'" dptmtId="'+ item.office.id +'">' +
 												'<li class="mui-table-view-cell">关联经销店</li>' +
 											'</div>' +
@@ -363,7 +363,7 @@
 									'<label>新增会员:</label>' +
 									'<input type="text" class="mui-input-clear" disabled="disabled" value="'+officeCount+'">' +
 								'</div>' +
-								'<div class="app_font_cl content_part mui-row app_text_center">' +
+								'<div class="app_color40 content_part mui-row app_text_center">' +
 									'<div class="mui-col-xs-6 staRelevanBtn" staListId="'+ item.id +'" dptmtId="'+ item.office.id +'">' +
 										'<li class="mui-table-view-cell">关联经销店</li>' +
 									'</div>' +

@@ -159,7 +159,7 @@
 //											'<label>业务状态:</label>' +
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center hhh">' +
+										'<div class="app_color40 mui-row app_text_center content_part operation">' +
 											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
@@ -214,7 +214,7 @@
 		stOrdHrefHtml: function() {
 			var _this = this;
 		/*查询*/
-			$('.header').on('tap', '#staOrdSechBtn', function() {
+			$('.app_header').on('tap', '#staOrdSechBtn', function() {
 				var url = $(this).attr('url');
 				var staListId = $('#consultantId').val();
 				if(url) {
@@ -249,7 +249,7 @@
 				})
 			}),
 		 /*待审核*/
-	       $('.hhh').on('tap', '.waitCheckBtn', function() {
+	       $('.content_part').on('tap', '.waitCheckBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');//订单 ID
 				var flagTxt = $('#flag').val();
@@ -277,7 +277,7 @@
 				}
 			}),
 		/*修改*/
-	       $('.hhh').on('tap', '.staOraAmendBtn', function() {
+	       $('.content_part').on('tap', '.staOraAmendBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
 				if(url) {
@@ -292,7 +292,7 @@
 				}
 			}),	
 		/*详情*/
-			$('.hhh').on('tap', '.staOrDetailBtn', function() {
+			$('.content_part').on('tap', '.staOrDetailBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
 				if(url) {
@@ -464,7 +464,7 @@
 //											'<label>业务状态:</label>' +
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center hhh">' +
+										'<div class="app_color40 mui-row app_text_center content_part">' +
 											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
