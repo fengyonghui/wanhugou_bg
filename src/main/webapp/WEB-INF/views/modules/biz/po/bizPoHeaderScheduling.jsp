@@ -354,7 +354,7 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
+    <li><a href="${ctx}/biz/po/bizPoHeader/listV2">订单支出信息</a></li>
     <li class="active">
         <a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}">排产</a>
     </li>
