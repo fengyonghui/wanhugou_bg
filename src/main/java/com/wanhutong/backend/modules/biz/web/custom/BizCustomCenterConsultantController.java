@@ -221,7 +221,9 @@ public class BizCustomCenterConsultantController extends BaseController {
             if (orderHeaderEedTime != null) {
                 centersCust.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
             }
-            //List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.userFindList(centersCust);
+            List<BizCustomCenterConsultant> listTemp = bizCustomCenterConsultantService.userFindList(centersCust);
+            Integer listSize = listTemp.size();
+            jsonResuleMap.put("listSize", listSize);
             Page<BizCustomCenterConsultant> page = bizCustomCenterConsultantService.userFindListForPage(new Page<BizCustomCenterConsultant>(request, response),centersCust);
             List<BizCustomCenterConsultant> list = page.getList();
 
