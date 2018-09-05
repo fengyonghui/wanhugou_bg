@@ -11,7 +11,7 @@ public enum ReqHeaderStatusEnum {
     INITIAL_PAY(1, "首付款支付"),
     ALL_PAY(2, "全部支付"),
     IN_REVIEW(4,"审核中"),
-    APPROVE(5, "采销部审核通过"),
+    APPROVE(5, "审核通过"),
     PURCHASING(10, "采购中"),
     ACCOMPLISH_PURCHASE(15, "待供货"),
     STOCKING(20, "供货中"),

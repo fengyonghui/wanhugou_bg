@@ -720,16 +720,16 @@
 					<%--<input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" />是--%>
 				<%--</div>--%>
 			<%--</div>--%>
-			<div class="control-group prewTimeTotal" style="display: none;">
-				<label class="control-label">最后付款时间：</label>
-				<div class="controls">
-					<input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"
-						   class="input-medium Wdate required"
-						   value="<fmt:formatDate value="${entity.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
-						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
-						   placeholder="必填！"/>
-				</div>
-			</div>
+			<%--<div class="control-group prewTimeTotal" style="display: none;">--%>
+				<%--<label class="control-label">最后付款时间：</label>--%>
+				<%--<div class="controls">--%>
+					<%--<input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"--%>
+						   <%--class="input-medium Wdate required"--%>
+						   <%--value="<fmt:formatDate value="${entity.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"--%>
+						   <%--onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"--%>
+						   <%--placeholder="必填！"/>--%>
+				<%--</div>--%>
+			<%--</div>--%>
 			<%--<div class="control-group prewTimeTotal" style="display: none;">--%>
 				<%--<label class="control-label">申请金额：</label>--%>
 				<%--<div class="controls">--%>
@@ -799,21 +799,21 @@
 		</div>
 
 		<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-			<c:if test="${entity.str == 'audit'}">
-				<c:if test="${entity.bizStatus == ReqHeaderStatusEnum.IN_REVIEW.state}">
-					<div class="control-group">
-						<label class="control-label">最后付款时间：</label>
-						<div class="controls">
-							<input name="lastPayDate" id="lastPayDate" type="text" readonly="readonly" maxlength="20"
-								   class="input-medium Wdate required"
-								   value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
-								   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
-								   placeholder="必填！"/>
-							<span class="help-inline"><font color="red">*</font></span>
-						</div>
-					</div>
-				</c:if>
-			</c:if>
+			<%--<c:if test="${entity.str == 'audit'}">--%>
+				<%--<c:if test="${entity.bizStatus == ReqHeaderStatusEnum.IN_REVIEW.state}">--%>
+					<%--<div class="control-group">--%>
+						<%--<label class="control-label">最后付款时间：</label>--%>
+						<%--<div class="controls">--%>
+							<%--<input name="lastPayDate" id="lastPayDate" type="text" readonly="readonly" maxlength="20"--%>
+								   <%--class="input-medium Wdate required"--%>
+								   <%--value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"--%>
+								   <%--onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"--%>
+								   <%--placeholder="必填！"/>--%>
+							<%--<span class="help-inline"><font color="red">*</font></span>--%>
+						<%--</div>--%>
+					<%--</div>--%>
+				<%--</c:if>--%>
+			<%--</c:if>--%>
 		</shiro:hasPermission>
 
 		<c:if test="${entity.str!='detail' && entity.str!='audit' }">
@@ -1095,9 +1095,16 @@
 			<div class="control-group">
 				<label class="control-label">审核状态：</label>
 				<div class="controls">
-					<input type="text" disabled="disabled"
-						   value="${requestOrderProcess.name}" htmlEscape="false"
-						   maxlength="30" class="input-xlarge "/>
+                    <c:if test="${requestOrderProcess.name != '审核完成'}">
+                        <input type="text" disabled="disabled"
+                               value="${requestOrderProcess.name}" htmlEscape="false"
+                               maxlength="30" class="input-xlarge "/>
+                    </c:if>
+                    <c:if test="${requestOrderProcess.name == '审核完成'}">
+                        <input type="text" disabled="disabled"
+                               value="订单支出信息审核" htmlEscape="false"
+                               maxlength="30" class="input-xlarge "/>
+                    </c:if>
 					<input id="currentType" type="hidden" disabled="disabled"
 						   value="${requestOrderProcess.code}" htmlEscape="false"
 						   maxlength="30" class="input-xlarge "/>
@@ -1277,7 +1284,12 @@
 								<div class="help_step_item help_step_set">
 									<div class="help_step_left"></div>
 									<div class="help_step_num">${stat.index + 1}</div>
-									当前状态:${v.requestOrderProcess.name}<br/><br/>
+                                    <c:if test="${v.requestOrderProcess.name != '审核完成'}">
+									    当前状态:${v.requestOrderProcess.name}<br/><br/>
+                                    </c:if>
+                                    <c:if test="${v.requestOrderProcess.name == '审核完成'}">
+                                        当前状态:订单支出信息审核<br/><br/>
+                                    </c:if>
 										${v.user.name}<br/>
 									<div class="help_step_right"></div>
 								</div>
