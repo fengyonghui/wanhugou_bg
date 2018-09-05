@@ -1514,7 +1514,7 @@
             success: function (result) {
                 alert(result);
                 if(result == '操作成功!') {
-                    window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
+                    window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
                 }
             },
             error: function (error) {

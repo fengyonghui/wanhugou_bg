@@ -691,10 +691,11 @@ public class BizPoHeaderReqController extends BaseController {
         if ("createPay".equalsIgnoreCase(type)) {
             String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
             addMessage(redirectAttributes, msg);
-            String toPage = "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";
-            if ("orderHeader".equals(fromPage)) {
-                toPage = "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage";
-            }
+            String toPage = "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/listV2/?repage";
+//            String toPage = "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";
+//            if ("orderHeader".equals(fromPage)) {
+//                toPage = "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage";
+//            }
             return toPage;
         }
 
