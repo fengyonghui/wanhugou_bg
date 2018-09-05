@@ -603,6 +603,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			model.addAttribute("statusList", statusList);
 			model.addAttribute("statusMap", statusMap);
 
+			Map<Integer, String> stateDescMap = ReqHeaderStatusEnum.getStateDescMap();
+			resultMap.put("stateDescMap", stateDescMap);
 			resultMap.put("paymentOrderList", paymentOrderList);
 			resultMap.put("statusList", statusList);
 			resultMap.put("statusMap", statusMap);
