@@ -55,7 +55,10 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/">商品上架列表</a></li>
-		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><li><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?shelfSign=0">商品上架添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">
+			<li><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?shelfSign=0">商品上架添加</a></li>
+			<li><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/downShelfAdd">批量下架</a></li>
+		</shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSkuV2/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

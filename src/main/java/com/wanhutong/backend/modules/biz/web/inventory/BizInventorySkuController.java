@@ -129,7 +129,7 @@ public class BizInventorySkuController extends BaseController {
         if (!user.isAdmin()) {
             bizInventorySku.setDataStatus(BaseEntity.DEL_FLAG_NORMAL);
             if (flag) {
-                Office company = systemService.getUser(user.getId()).getCompany();
+                Office company = systemService.getUser(user.getId()).getOffice();
                 //根据采购中心取出仓库
                 BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
                 if (bizInventorySku.getInvInfo() != null) {

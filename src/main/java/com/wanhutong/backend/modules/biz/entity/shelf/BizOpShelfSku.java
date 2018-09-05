@@ -64,6 +64,11 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	 * C端商品上下架
 	 * */
 	private String cendShelf;
+
+    /**
+     * 批量下架的上架商品ID
+     */
+	private String opShelfSkuIds;
 	
 	public BizOpShelfSku() {
 		super();
@@ -276,4 +281,12 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	public void setCendShelf(String cendShelf) {
 		this.cendShelf = cendShelf;
 	}
+
+    public String getOpShelfSkuIds() {
+        return opShelfSkuIds;
+    }
+
+    public void setOpShelfSkuIds(String opShelfSkuIds) {
+        this.opShelfSkuIds = opShelfSkuIds;
+    }
 }
