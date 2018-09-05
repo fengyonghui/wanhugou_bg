@@ -34,6 +34,7 @@ public enum OrderHeaderBizStatusEnum {
     private String desc;
 
     private static Map<Integer, OrderHeaderBizStatusEnum> statusMap;
+    private static Map<Integer, String> stateDescMap;
 
     OrderHeaderBizStatusEnum(int st, String desc) {
         this.state=st;
@@ -49,6 +50,17 @@ public enum OrderHeaderBizStatusEnum {
             statusMap = mapTemp;
         }
         return statusMap;
+    }
+
+    public static Map<Integer, String> getStateDescMap() {
+        if (stateDescMap == null) {
+            Map<Integer, String> mapTemp = Maps.newHashMap();
+            for (OrderHeaderBizStatusEnum statusEnum : values()) {
+                mapTemp.put(statusEnum.getState(), statusEnum.getDesc());
+            }
+            stateDescMap = mapTemp;
+        }
+        return stateDescMap;
     }
 
     public static OrderHeaderBizStatusEnum stateOf(Integer index) {
