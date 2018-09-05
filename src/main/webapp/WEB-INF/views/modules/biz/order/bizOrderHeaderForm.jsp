@@ -588,7 +588,7 @@
             //     return false;
             // }
 
-            if ($String.isNullOrBlank(payTotal)) {
+            if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                 alert("错误提示:请输入支付金额");
                 return false;
             }
