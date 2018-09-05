@@ -120,12 +120,14 @@
                 }
             });
 		},
+		//状态流程
 		statusListHtml:function(data){
 			var _this = this;
 			var statusLen = data.statusList.length;
 			if(statusLen > 0) {
 				var pHtmlList = '';
 				$.each(data.statusList, function(i, item) {
+					console.log(item)
 					var step = i + 1;
 					pHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+

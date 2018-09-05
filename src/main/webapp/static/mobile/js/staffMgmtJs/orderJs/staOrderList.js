@@ -366,19 +366,23 @@
 			var _this = this;
 			var staffHtmlList = '';
 			var nameTxt = '';
-			if(_this.userInfo.newinput) {
+			if(_this.userInfo.checkStatus) {
 				nameTxt = decodeURIComponent(_this.userInfo.checkStatus)
 			}else {
 				nameTxt = ''
 			}
-			
+			if(_this.userInfo.Purchasing) {
+				nameTxts = decodeURIComponent(_this.userInfo.Purchasing)
+			}else {
+				nameTxts = ''
+			}
 			$.ajax({
 				type: 'GET',
                 url: '/a/biz/order/bizOrderHeader/listData4mobile',
 				data: {
 					'pageNo': 1,
 					'orderNum' : _this.userInfo.staOrder,
-                    'centersName': _this.userInfo.Purchasing,
+                    'centersName': nameTxts,
                     'customer.phone': _this.userInfo.OrdMobile,
                     'itemNo': _this.userInfo.OrdNumbers,
                     'con.name': _this.userInfo.OrdClient,

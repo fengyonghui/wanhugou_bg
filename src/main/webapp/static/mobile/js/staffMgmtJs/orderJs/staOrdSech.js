@@ -74,7 +74,6 @@
 		},
 		sureSelect:function(){
 			var _this = this;
-			
 			var staListSehId = _this.userInfo.staListId;
 			_this.selectOpen = false
 			var optionsClass = $("#input_div_orderStatus option").eq($("#input_div_orderStatus").attr("selectedIndex"));
