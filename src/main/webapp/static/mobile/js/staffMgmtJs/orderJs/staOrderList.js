@@ -214,14 +214,22 @@
 		/*查询*/
 			$('.app_header').on('tap', '#staOrdSechBtn', function() {
 				var url = $(this).attr('url');
-				var staListId = $('#consultantId').val();
+				var staListIds = $('#consultantId').val();
+				var staListIdTxts = $('#staListIdTxt').val(); 
+				var conId = '';
+				if(staListIdTxts) {
+					conId = $('#staListIdTxt').val();
+				}
+				if(staListIds) {
+					conId = $('#consultantId').val();
+				}
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdSech.html",
 						extras:{
-							staListId: staListId,
+							staListId: conId,
 						}
 					})
 				}
@@ -389,7 +397,7 @@
                     'bizStatus': _this.userInfo.orderStatus,
                     'selectAuditStatus': nameTxt, //originConfigMap
                     'customer.id':_this.userInfo.newinput,
-//                  consultantId: _this.userInfo.staListSehId,
+                    consultantId: _this.userInfo.staListSehId,
 					includeTestData: _this.userInfo.includeTestData
 				},
 				dataType: 'json',
@@ -416,7 +424,6 @@
 	                        	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
 	                            var orderTypeTxt = '';
 	                            $.each(ass,function(i,items){
-	                            	console.log(items.value)
 		                        	if(item.orderType==items.value) {
 		                        		orderTypeTxt = items.label
 		                        	}

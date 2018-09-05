@@ -439,7 +439,7 @@ select, textarea{height: auto;padding:10px 15px;}
 .mui-title{font-size: 20px;line-height:42px;color: #000;}
 .mui-bar .mui-icon{font-size: 20px;padding-top: 12px;padding-bottom: 12px;}
 /*==消除符号==*/
-.mui-input-row .mui-input-clear~.mui-icon-clear{right: .5em;color: #ccc;width: 30px;height: 30px;font-size: 16px;line-height: 2;top:9px}
+.mui-input-row .mui-input-clear~.mui-icon-clear{right: .5em;color: #ccc;width: 30px;height: 30px;font-size: 16px;line-height: 2;top:5px}
 .mui-table-view-cell.noborder:after{height: 0}
 .mui-grid-view.mui-grid-9 .mui-table-view-cell.noborder{border: none;}
 

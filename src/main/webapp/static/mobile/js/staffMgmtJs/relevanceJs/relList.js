@@ -448,7 +448,6 @@
 					else {
 							$('#staReleList').html('<p class="noneTxt">暂无数据</p>');
 							$('#staReleSechBtn').hide();
-
 					}
 				}
 			});
