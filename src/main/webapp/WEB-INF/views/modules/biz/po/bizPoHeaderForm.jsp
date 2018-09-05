@@ -190,31 +190,50 @@
     <input id="str" type="hidden" value="${bizPoHeader.str}"/>
     <input id="deliveryStatus" type="hidden" value="${bizPoHeader.deliveryStatus}"/>
     <c:if test="${bizPoHeader.id!=null}">
-        <div class="control-group">
-            <label class="control-label">采购单编号：</label>
-            <div class="controls">
-                <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+        <c:if test="${bizPoHeader.fromPage == 'poHeader'}">
+            <div class="control-group" >
+                <label class="control-label">采购单编号：</label>
+                <div class="controls">
+                    <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                </div>
             </div>
-        </div>
 
-        <div class="control-group">
-            <label class="control-label">采购单来源：</label>
-            <div class="controls">
-                <c:forEach items="${bizPoHeader.orderSourceMap}" var="so">
-                    <%--<c:if test="${so.orderHeader!=null}">--%>
-                    <%--<input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.orderHeader.orderNum}" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-                    <%--<br/>--%>
-                    <%--</c:if>--%>
-                    <%--<c:if test="${so.requestHeader!=null}">--%>
-                    <input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.key}"
-                           htmlEscape="false" maxlength="30" class="input-xlarge "/>
-                    <br/>
-                    <%--</c:if>--%>
-
-                </c:forEach>
-
+            <div class="control-group">
+                <label class="control-label">采购单来源：</label>
+                <div class="controls">
+                    <c:forEach items="${bizPoHeader.orderSourceMap}" var="so">
+                        <%--<c:if test="${so.orderHeader!=null}">--%>
+                        <%--<input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.orderHeader.orderNum}" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+                        <%--<br/>--%>
+                        <%--</c:if>--%>
+                        <%--<c:if test="${so.requestHeader!=null}">--%>
+                        <input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.key}"
+                               htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                        <br/>
+                        <%--</c:if>--%>
+                    </c:forEach>
+                </div>
             </div>
-        </div>
+        </c:if>
+
+        <c:if test="${bizPoHeader.fromPage == 'orderHeader'}">
+            <div class="control-group">
+                <label class="control-label">订单/备货单号</label>
+                <div class="controls">
+                    <c:forEach items="${bizPoHeader.orderSourceMap}" var="so">
+                        <%--<c:if test="${so.orderHeader!=null}">--%>
+                        <%--<input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.orderHeader.orderNum}" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+                        <%--<br/>--%>
+                        <%--</c:if>--%>
+                        <%--<c:if test="${so.requestHeader!=null}">--%>
+                        <input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.key}"
+                               htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                        <br/>
+                        <%--</c:if>--%>
+                    </c:forEach>
+                </div>
+            </div>
+        </c:if>
 
         <div class="control-group">
             <label class="control-label">订单总价：</label>
