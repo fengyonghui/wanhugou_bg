@@ -95,7 +95,7 @@
 				AND a.vend_id = #{vendor.id}
 			</if>
 			<if test="invInfo != null and invInfo.customer!= null and invInfo.customer.id !=null and invInfo.customer.id != ''">
-				AND i.cust_id = #{invInfo.customer.id}
+				AND (i.cust_id =  #{invInfo.customer.id} or s.parent_ids LIKE concat('%',#{invInfo.customer.id},',%'))
 			</if>
 
 			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
