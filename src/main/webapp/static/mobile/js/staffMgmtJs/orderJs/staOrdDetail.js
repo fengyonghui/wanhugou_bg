@@ -138,7 +138,7 @@
 						    '</div>'+
 							'<div class="mui-input-row">'+
 						        '<label>状态:</label>'+
-						        '<input type="text" class="mui-input-clear" disabled>'+
+						        '<input type="text" class="mui-input-clear" disabled value="'+ data.statusMap[item.bizStatus] +'">'+
 						    	'<label>时间:</label>'+
 						        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
 						    '</div>'+

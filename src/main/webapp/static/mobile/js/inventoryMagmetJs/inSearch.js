@@ -21,7 +21,6 @@
 		getData: function() {
 			var _this = this;
 			$('#inSearchBtn').on('tap', function() {
-				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
 				var ordNumVal = $(".inOrdNum").val(); 
                 var reqNumVal = $(".inReqNum").val(); 
                 var newInputVal = $('.newinput').val(); 
@@ -61,7 +60,9 @@
 		sureSelect:function(optionsBusiness){
 			var _this = this;
 			_this.selectOpen = false
+			var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
 			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
+			var optionscheck = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"));
 			GHUTILS.OPENPAGE({
 				url: "../../html/inventoryMagmetHtml/inventoryList.html",
 				extras: {
@@ -70,6 +71,7 @@
 					fromOffice: $('.hasoid').attr('id'),
 					bizStatusid: optionsBusiness.val(),
 					varietyInfoid: optionsClass.val(),
+					process:optionscheck.val(),
 					isFunc: true
 				}
 			})
@@ -77,6 +79,7 @@
 		hrefHtml: function(newinput, input_div,inHideSpan) {
 			var _this = this;
 			_this.ajaxGoodList()
+			_this.ajaxServiceStates()
 			_this.ajaxCheckStatus()
 
 			$(newinput).on('focus', function() {
@@ -147,6 +150,25 @@
 		ajaxCheckStatus: function() {
 			var _this = this;
 			var optHtml ='<option value="">全部</option>';
+			var htmlCheckStatus = ''
+			$.ajax({
+				type: 'GET',
+				url: '/a/biz/request/bizRequestHeaderForVendor/list4MobileNew',
+				data: {consultantId: _this.userInfo.staListId},
+				dataType: 'json',
+				success: function(res) {
+					$.each(res.data.processSet, function(i, item) {
+//						console.log(item)
+						htmlCheckStatus += '<option class="soption"  value="' + item + '">' + item + '</option>'
+					});
+					$('#input_div_check').html(optHtml+htmlCheckStatus)
+					_this.getData()
+				}
+			});
+		},
+		ajaxServiceStates: function() {
+			var _this = this;
+			var optHtml ='<option value="">全部</option>';
 			var htmlBusiness = ''
 			$.ajax({
 				type: 'GET',
@@ -172,7 +194,7 @@
 				data: {consultantId: _this.userInfo.staListId},
 				dataType: 'json',
 				success: function(res) {
-//					console.log(res)
+					console.log(res)
 					$.each(res.data.varietyInfoList, function(i, item) {
 //						console.log(item)
 						htmlClass += '<option class="soption" value="' + item.id + '">' + item.name + '</option>'
