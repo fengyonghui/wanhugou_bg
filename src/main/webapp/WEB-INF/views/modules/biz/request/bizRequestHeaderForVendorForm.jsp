@@ -1509,7 +1509,7 @@
             img += $(mainImg[i]).attr("src") + ",";
         }
 
-        if ($String.isNullOrBlank(payTotal)) {
+        if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
             alert("错误提示:请输入支付金额");
             return false;
         }
@@ -1526,7 +1526,7 @@
             success: function (result) {
                 alert(result);
                 if(result == '操作成功!') {
-                    window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
+                    window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
                 }
             },
             error: function (error) {
