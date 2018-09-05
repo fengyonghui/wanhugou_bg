@@ -139,7 +139,7 @@
 
         function addSchedulingHeaderPlan(head, id) {
             var appendTr = $("#" + head + id);
-            var html = '<tr><td><div name="' + id + '"><label>排产日期' + '：' + '</label><input name="' + id + '_date' + '" type="text" maxlength="20" class="input-medium Wdate" ';
+            var html = '<tr><td><div name="' + id + '"><label>完成日期' + '：' + '</label><input name="' + id + '_date' + '" type="text" maxlength="20" class="input-medium Wdate" ';
             html += ' onclick="' + "WdatePicker({dateFmt:'" + "yyyy-MM-dd HH:mm:ss',isShowClear" + ":" + 'true});"/>' + ' &nbsp; '
             html += ' <label>排产数量：</label> ';
             html += ' <input name="' + id + "_value" + '" class="input-medium" type="text" maxlength="30"/>';
@@ -167,7 +167,7 @@
                 var date = jqDiv.find("[name='" + id + "_date']").val();
                 var value = jqDiv.find("[name='" + id + "_value']").val();
                 if(date == null || date == ""){
-                    alert("排产日期不能为空!")
+                    alert("完成日期不能为空!")
                     return false;
                 }
                 var reg= /^[0-9]+[0-9]*]*$/;
@@ -230,7 +230,7 @@
                     var date = jqDiv.find("[name='" + reqDetailId + "_date']").val();
                     var value = jqDiv.find("[name='" + reqDetailId + "_value']").val();
                     if (date == null || date == "") {
-                        alert("第" + count + "个商品排产日期不能为空!")
+                        alert("第" + count + "个商品完成日期不能为空!")
                         return false;
                     }
                     var reg = /^[0-9]+[0-9]*]*$/;
@@ -543,7 +543,7 @@
 							<tr>
 								<td>
 									<div>
-										<label>排产日期：</label>
+										<label>完成日期：</label>
 										<input type="text" maxlength="20" class="input-medium Wdate" readonly="readonly" value="<fmt:formatDate value="${bizCompletePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" /> &nbsp;
 										<label>排产数量：</label>
 										<input class="input-medium" type="text" readonly="readonly" value="${bizCompletePaln.completeNum}" maxlength="30" />
@@ -561,7 +561,7 @@
 					<tr id="header_${entity.id}" class="headerScheduling">
 						<td>
 							<div name="${entity.id}">
-								<label>排产日期：</label>
+								<label>完成日期：</label>
 								<input name="${entity.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;
 								<label>排产数量：</label>
 								<input name="${entity.id}_value" class="input-medium" type="text" maxlength="30" />
@@ -659,7 +659,7 @@
 												<tr >
 													<td>
 														<div>
-															<label>排产日期：</label>
+															<label>完成日期：</label>
 															<input type="text" maxlength="20" readonly="readonly" value="<fmt:formatDate value="${completePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" class="input-medium Wdate"  /> &nbsp;
 															<label>排产数量：</label>
 															<input class="input-medium" readonly="readonly" value="${completePaln.completeNum}" type="text" maxlength="30" />
@@ -678,7 +678,7 @@
 										<tr id="detail_${reqDetail.id}" name="detailScheduling">
 											<td>
 												<div name="${reqDetail.id}">
-													<label>排产日期：</label>
+													<label>完成日期：</label>
 													<input name="${reqDetail.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;
 													<label>排产数量：</label>
 													<input name="${reqDetail.id}_value" class="input-medium" type="text" maxlength="30" />

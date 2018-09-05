@@ -102,7 +102,8 @@
 	<select id="findOfficeByIdToParent" resultType="Office">
 		select *
 		from sys_office a
-		where FIND_IN_SET(id,
+		where
+		FIND_IN_SET(id,
 		(select GROUP_CONCAT(distinct parent_ids,'0')
 		from biz_custom_center_consultant ccc, sys_office so
 		where ccc.cust_id = so.id and ccc.status=1
@@ -141,7 +142,11 @@
 		FROM
 		sys_office a
 		WHERE
-		FIND_IN_SET(
+		1 = 1
+		<if test="phone != null and phone != ''">
+			AND a.phone = #{phone}
+		</if>
+		AND FIND_IN_SET(
 		id,
 		(
 		SELECT
@@ -164,6 +169,9 @@
 		so.status = #{DEL_FLAG_NORMAL}
 		<if test="type != null and type != ''">
 			AND so.type = #{type}
+		</if>
+		<if test="phone != null and phone != ''">
+			AND so.phone = #{phone}
 		</if>
 		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1
 		and ccc.consultant_id != (SELECT prop_value FROM sys_default_prop WHERE prop_desc = '超级客户专员'))
@@ -291,6 +299,9 @@
 		</if>
 		<if test="name != null and name != ''">
 			AND a.name = #{name}
+		</if>
+		<if test="phone != null and phone != ''">
+			AND a.phone = #{phone}
 		</if>
 		<if test="parent != null and parent.id != null">
 			AND a.parent_id = #{parent.id}

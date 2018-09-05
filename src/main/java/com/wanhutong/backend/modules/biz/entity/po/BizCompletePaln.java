@@ -19,7 +19,7 @@ public class BizCompletePaln extends DataEntity<BizCompletePaln> {
 	private static final long serialVersionUID = 1L;
 	private Integer schedulingId;		// 排产ID
 	private Integer completeNum;		// 完成排产数量
-	private Date planDate;		// 排产日期
+	private Date planDate;		// 完成日期
 
 	/**
 	 * 排产计划enity

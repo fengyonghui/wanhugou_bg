@@ -36,7 +36,7 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li class="active"><a href="${ctx}/biz/po/bizPoHeader/listV2">采购订单列表</a></li>
+    <li class="active"><a href="${ctx}/biz/po/bizPoHeader/listV2">订单支出信息</a></li>
 </ul>
 <form:form id="searchForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/listV2" method="post"
            class="breadcrumb form-search">

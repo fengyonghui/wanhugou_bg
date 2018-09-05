@@ -1,162 +1,23 @@
 <!DOCTYPE html>
 <html>
-
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title>详情</title>
+		<title>备货单添加</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
 		<style type="text/css">
-			.pre {
-				margin-bottom: 0;
-				padding-left: 0;
-				float: right;
-				width: 67%;
+			.mui-action-back{
+				touch-action: none;
 			}
-			
-			#select {
-				top: 6px;
-				height: 50px;
-				width: 100%;
-			}
-			
-			.selectStyle {
-				margin: 0;
-			}
-			
-			.puSearchBtn {
-				margin: 60px auto;
-				width: 80%;
-			}
-			
-			.suppChoice {
-				padding: 5px;
-			}
-			
-			#inputselect {
-				width: 80%;
-				height: 50px;
-				position: relative;
-				top: -50px;
-				padding: 0;
-			}
-			
-			.newinput {
-				width: 150px;
-				padding: 2px 0px 2px 0px;
-				margin-bottom: -1px;
-				background: url(./thumb.jpg) no-repeat scroll right center;
-				border: 1px solid #ccc;
-				box-shadow: 0 1px 0 0 #eee inset;
-				cursor: default;
-			}
-			
-			.newinput:focus {
-				cursor: text;
-			}
-			
-			.input_div {
-				width: 150px;
-				border: 1px solid #ddd;
-				border-bottom: none;
-				border-radius: 0 0 3px 3px;
-				display: none;
-			}
-			
-			.soption {
-				display: block;
-				padding: 2px 5px;
-			}
-			
-			.soption:hover {
-				background: #f9f9f9;
-				border-top: 1px dotted #ddd;
-				border-bottom: 1px dotted #ddd;
-				padding: 1px 5px;
-			}
-			.mui-content div.content_part li {
-				padding: 0;
-				list-style: none;
-			}
-			
-			.mui-content div.ctn_li_h li {
-				height: 30px;
-			}
-			
-			.mui-input-row label {
-				padding: 14px 14px;
-			}
-			
-			#Date {
-				text-indent: 30px;
-			}
-			
-			.sucessColor {
-				color: #40ABE9;
-			}
-			
-			#addCommodity {
-				font-size: 13px;
-			}
-			
-			#addCommodity div.mui-input-row>input {
-				padding: 0;
-			}
-			
-			#addCommodity div.mui-input-row>label {
-				padding: 0;
-			}
-			
-			.photoTop {
-				width: 15%;
-				height: 140px;
-			}
-			
-			.photoTop img {
-				top: 50%;
-				margin-top: -8px;
-				width: 50px;
-			}
-			
-			.photoParent {
-				width: 15%;
-				height: 220px;
-			}
-			
-			.photoParent img {
-				top: 50%;
-				margin-top: -8px;
-				width: 50px;
-			}
-			
-			.comChoiceBtn {
-				padding: 5px;
-				border: none;
-				width: 50px;
-				position: absolute;
-				right: 10px;
-				top: 6px;
-			}
-			.mui-input-row>ul>li {
-				border-bottom: 1px solid #40ABE9;
-			}
-			
 			.addBtn {
 				width: 30%;
 				margin: 5px auto;
 			}
 			
 			.saveBtn {
-			    width: 80%;
+			    width: 70%;
 				margin: 20px auto;
-			}
-			.mui-input-row font {
-				color: red;
-				position: absolute;
-				right: 60px;
-				top: 38%;
-				font-size: 20px;
 			}
 			
 			.addBtnClass {
@@ -173,19 +34,6 @@
 			.secStyle {
 				margin: 5px 0;
 			}
-			
-			.inputClass {
-				font-size: 10px;
-			}
-			
-			.inputClass>label {
-				padding: 0;
-			}
-			
-			.inputClass>input {
-				padding: 0;
-				font-size: 10px;
-			}
 
 			.inputClassAdd {
 				font-size: 10px;
@@ -199,56 +47,21 @@
 				padding: 0;
 				font-size: 10px;
 			}
-			.inputClassAdd>label.commodityName {
-				padding: 0;
-				width: 15%;
-			}
-			.inputClassAdd>input.commodityTxt {
-				padding: 0;
-				font-size: 10px;
-				position: relative;
-				width: 85%;
-			}
-			
-			#hideSpanAdd {
-			    position: absolute;
-			    right: 52px;
-			    top: 11px;
-			    border: 1px solid rgb(204, 204, 204);
-			    border-radius: 13px;
-				display: none;
-			}
-			
-			.details {
-				width: 90%;
-				float: right;
-			}
-			
-			.detailsChoice {
-				float: left;
-			}
-			
 			.mui-table-view-cell {
 				border-bottom: 1px solid #efeff4;
 			}
 			
 			.mui-input-row .mui-input-clear~.mui-icon-clear {
 				right: 4.5em;
-    			top: 10px;
-			}
-			.inputClassAdd label {
-				color:#40ABE9;
+    			top: 4px;
 			}
 			.inputClassAdd font {
-				color: red;
-			    position: absolute;
 			    right: 5px;
 			    top: 10%;
-			    font-size: 20px;
 			}
+			.mui-btn-blue, .mui-btn-primary, input[type=submit] {background-color: #40ABE9;border: none;}
 		</style>
 	</head>
-
 	<body>
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
@@ -256,31 +69,54 @@
 		</header>
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
+				<label>备货方：</label>
+		    	<div id="changeTxt" class="labelri" style="padding: 10px 14px 10px 0;text-align: left;">
+		    		采购中心备货
+		        	<input checked type="radio" name="apply" class="inputRadio"/>
+		        	厂商备货
+		        	<input id="yes" type="radio" name="apply" class="inputRadio" />    
+	        	</div>
+		        <!--<div id="changeTxt" class="labelri" style="padding: 10px 14px 10px 0;text-align: left;">	
+                	
+		    	</div>-->
+		    </div>
+			<div class="mui-input-row">
 				<label>采购中心：</label>
 				<div class="pre">
-					<input class="newinput" type="text" placeholder="请选择采购中心">
+					<input class="newinput newinput01" type="text" placeholder="请选择采购中心">
 					<font>*</font>
-					<span class="mui-icon mui-icon-closeempty" id="hideSpanAdd"></span>
-					<div class="input_div" style="display: none;">
+					<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAdd01"></span>
+					<div class="input_div input_div01" style="display: none;">
 
 					</div>
 					<input class="savedata" type="hidden" value=''>
 					<div style="clear:both"></div>
 				</div>
-				
 			</div>
+			<div class="mui-input-row">
+				<label>供应商：</label>
+				<div class="pre">
+					<input class="newinput newinput02" type="text" placeholder="请选择供应商">
+					<font>*</font>
+					<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAdd02"></span>
+					<div class="input_div input_div02" style="display: none;">
 
+					</div>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
 			<div class="mui-input-row">
 				<label>收货时间：</label>
 				<input type="date" class="mui-input-clear" id="inPoLastDa">
 				<font>*</font>
 			</div>
-			<div class="mui-input-row app_mb10" id="inAmendPoLastDaDiv">
+			<div class="mui-input-row" id="inAmendPoLastDaDiv">
 				<label class="commodityName">选择商品：</label>
 				<input type="text" class="mui-input-clear commodityTxt" id="inAmendPoLastDa" placeholder="请输入商品货号">
 				<button id="comChoiceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">查询</button>
 			</div>
-			<div class="mui-row border-btm5" id="searchInfo">
+			<div class="mui-row app_bline2" id="searchInfo">
 
 			</div>
 
@@ -288,7 +124,7 @@
 				<div class="labelLf">备货商品：</div>
 			</div>
 
-			<div class="mui-row border-btm5" id="commodityMenu">
+			<div class="mui-row app_bline2" id="commodityMenu">
 
 			</div>
 
@@ -307,10 +143,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="inSaveBtn saveBtn">
+		<div class="saveBtn inSaveBtn">
 			<button id="inSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>
 		</div>
-		<input id="inStatus" name="inStatus" type="hidden" />
 		<div class="clear"></div>
 
 		<script src="../../js/component/mui.min.js"></script>

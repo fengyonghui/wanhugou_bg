@@ -22,40 +22,65 @@
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
-		pageInit: function() {
+		pageInit:function(){
 			var _this = this;
-			// 页数
-			var page = 0;
-			// 每页展示10个
-			var size = 10;
-			//下拉刷新
-			$('.inListAdd').dropload({
-				scrollArea: window,
-				domDown: {
-					domClass: 'dropload-down',
-					domRefresh: '<div class="dropload-refresh">↑上拉加载更多内容</div>',
-					domLoad: '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
-					domNoData: '<div class="dropload-noData">暂无更多内容</div>'
-				},
-				loadDownFn: function(me) {
-				    page++;
-					// 拼接HTML
-					//'/a/biz/request/bizRequestHeader/list4Mobile?page2='+page+'&size='+size
-					var inPHtmlList = '';
-					$.ajax({
-						type: 'GET',
-						url: '/a/biz/request/bizRequestHeader/list4Mobile?page2='+page+'&size='+size,
-						data: {
-							pageNo: page
-						},
-						dataType: 'json',
-						success: function(res) {
-							console.log(res)
-							var dataRow = res.data.roleSet;
-							var arrLen = res.data.page.list.length;
-							
-							if(arrLen > 0) {
-								$.each(res.data.page.list, function(i, item) {
+			var pager = {};//分页 
+		    var totalPage;//总页码
+		    pullRefresh(pager);//启用上拉下拉 
+		    function pullRefresh(){
+		        mui("#refreshContainer").pullRefresh({
+			        up:{
+//			            contentrefresh : "正在加载...",
+			            contentnomore:'没 有 更 多 数 据 了',
+			            callback:function(){
+			                window.setTimeout(function(){
+			                    getData(pager);
+			                },500);
+			            }
+			         },
+			        down : {
+			            height:50,
+			            auto: true,
+			            contentdown : "",
+			            contentover : "",
+			            contentrefresh : "正在加载...",
+			            callback :function(){ 
+//			                window.setTimeout(function(){
+			                    pager['size']= 10;//条数
+			                    pager['pageNo'] = 1;//页码      
+			                    //刷新要先清空父节点里面的子节点
+				                var f = document.getElementById("list");
+				                var childs = f.childNodes;
+				                for(var i = childs.length - 1; i >= 0; i--) {
+				                    f.removeChild(childs[i]);
+				                }
+				                console.log('222')
+				                console.log(pager)
+				                $('.mui-pull-caption-down').html('');
+				                
+				                getData(pager);
+				                
+				                
+//				            },500);
+			            }
+			        }
+			    })
+		    }
+		    function getData(params){
+		    	var inPHtmlList = '';
+		        mui.ajax("/a/biz/request/bizRequestHeaderForVendor/list4MobileNew",{
+		            data:params,               
+		            dataType:'json',
+		            type:'get',
+		            headers:{'Content-Type':'application/json'},
+		            success:function(res){
+		          	    console.log(res)
+		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+			            var returnData = res.data.page.list;
+			            var dataRow = res.data.roleSet;
+						var arrLen = res.data.page.list.length; 
+                        if(arrLen > 0) {
+								$.each(returnData, function(i, item) {
 									console.log(item)
 								/*业务状态*/
 									var bizstatus = item.bizStatus;
@@ -200,8 +225,9 @@
 											'<label>更新时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 										'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center">' +
+										'<div class="app_color40 content_part mui-row app_text_center operation">' +
 											'<div class="mui-col-xs-2">' +
+												'<li class="mui-table-view-cell" ></li>' +
 											'</div>'+
 											'<div class="mui-col-xs-2 '+inDetailBtn+'" inListId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell" >'+inDetail+'</li>' +
@@ -221,31 +247,28 @@
 										'</div>' +
 									'</div>'
 								});
-							} else {
-								// 锁定
-								me.lock();
-								// 无数据
-								me.noData();
-							}
-							// 为了测试，延迟1秒加载
-							setTimeout(function() {
-								// 插入数据到页面，放到最后面
-								$('.inListAdd').append(inPHtmlList);
+								$('#list').append(inPHtmlList);
 								_this.inHrefHtml()
-								// 每次数据插入，必须重置
-								me.resetload();
-							}, 1000);
-						},
-						error: function(xhr, type) {
-							alert('Ajax error!222222');
-							// 即使加载出错，也得重置
-							me.resetload();
-						}
-					});
-				},
-				threshold: 50
-			});
-//			_this.comfirDialig()
+							} else {
+								$('.mui-pull-caption').html('');
+							}
+						totalPage = res.data.page.count%pager.size!=0?
+		                parseInt(res.data.page.count/pager.size)+1:
+		                res.data.page.count/pager.size;
+		                console.log('222333')
+			            console.log(res.data.page.count/pager.size)
+		                if(totalPage==pager.pageNo){		                	
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+			            }else{
+			                pager.pageNo++;
+			                mui('#refreshContainer').pullRefresh().refresh(true);
+			            }          
+			        },
+		            error:function(xhr,type,errorThrown){
+			            console.log(type);
+		            }
+		        })
+		    } 
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
@@ -266,7 +289,7 @@
 		inHrefHtml: function() {
 			var _this = this;
 		/*查询*/
-			$('.header').on('tap', '#searchBtn', function() {
+			$('.app_header').on('tap', '#searchBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
 					mui.toast('子菜单不存在')
@@ -301,7 +324,7 @@
 				})
 			}),
 		/*详情*/
-			$('.listBlue').on('tap', '.inDetailBtn', function() {
+			$('#list').on('tap', '.inDetailBtn', function() {
 				var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
 				if(url) {
@@ -316,7 +339,7 @@
 				}
 			}),
 		/*修改*/
-            $('.content').on('tap','.inAmendBtn', function() {
+            $('.content_part').on('tap','.inAmendBtn', function() {
 				var url = $(this).attr('url');
                 var reqId = $(this).attr('inListId');
 				GHUTILS.OPENPAGE({
@@ -327,7 +350,7 @@
 				})
 			}),
         /*付款*/
-	       $('.listBlue').on('tap', '.inPayBtn', function() {
+	       $('#list').on('tap', '.inPayBtn', function() {
 					var url = $(this).attr('url');
 					var inListId = $(this).attr('inListId');
 					if(url) {
@@ -374,7 +397,7 @@
 				                data: {id:inListId},
 				                dataType: "json",
 				                success: function(res){
-				                	alert('操作成功！')
+				                	mui.toast('操作成功！')
 				                	GHUTILS.OPENPAGE({
 										url: "../../html/inventoryMagmetHtml/inventoryList.html",
 										extras: {
@@ -457,7 +480,7 @@
 			
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/request/bizRequestHeader/list4Mobile',
+				url: '/a/biz/request/bizRequestHeaderForVendor/list4MobileNew',
 				data: {
 					pageNo: 1,
 					reqNo:_this.userInfo.reqNo,
@@ -469,6 +492,7 @@
 				dataType: 'json',
 				success: function(res) {
 //							console.log(res)
+					mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 					var dataRow = res.data.roleSet;
 					var arrLen = res.data.page.list.length;
 					if(arrLen > 0) {
@@ -617,7 +641,7 @@
 									'<label>更新时间:</label>' +
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 								'</div>' +
-								'<div class="app_font_cl content_part mui-row app_text_center">' +
+								'<div class="app_color40 content_part mui-row app_text_center operation">' +
 									'<div class="mui-col-xs-2">' +
 									'</div>'+
 									'<div class="mui-col-xs-2 '+inDetailBtn+'" inListId="'+ item.id +'">' +
@@ -638,13 +662,13 @@
 								'</div>' +
 							'</div>'
 						});
-						$('.inListAdd').append(inPHtmlList);
-						_this.inHrefHtml()
+						$('#list').append(inPHtmlList);
 					}else{
-						$('.inListAdd').append('<p class="noneTxt">暂无数据</p>');
+						$('#list').append('<p class="noneTxt">暂无数据</p>');
 					}
 				}
 			});
+		_this.inHrefHtml()	
 		}
 	}
 	$(function() {
