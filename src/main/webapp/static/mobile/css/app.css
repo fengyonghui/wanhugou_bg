@@ -675,14 +675,14 @@ body{font-size: 15px;color:#3b3b3b;}
 input[disabled],input:disabled,input.disabled{color: #000;/*-webkit-text-fill-color:#3b3b3b;*/-webkit-opacity:1;opacity: 1;}
 
 /*滑动---阻止默认事件*/
-a, #list,  {touch-action: none;}
+a, #list  {touch-action: none;}
 
 /*改变 ios 默认radio样式 */
-input[type=radio].inputRadio {-webkit-appearance: none;position: relative;top: -1px;width: 14px;height: 14px;border: 1px solid #999;-webkit-border-radius: 7px;border-radius: 7px;background-color: #fff;vertical-align: middle;}
+input[type=radio].inputRadio {-webkit-appearance: none;position: relative;top: -1px;width: 15px;height: 15px;border: 1px solid #999;-webkit-border-radius: 7px;border-radius: 7px;background-color: #fff;vertical-align: middle;}
 input[type="radio"].inputRadio:checked {-webkit-appearance: none; border-color: #40ABE9;background-color: #40ABE9;}
 /*查询---测试数据*/
 /*改变 ios 默认checkbox样式 */
 input[type=checkbox].testCheckbox {-webkit-appearance: none;position: relative;top: 10px;width: 20px;height: 20px;border: 1px solid #999;-webkit-border-radius: 10px;border-radius: 10px;background-color: #fff;vertical-align: middle;float: left;}
-input[type="checkbox"].testCheckbox:checked {-webkit-appearance: none; border-color: #40ABE9;background-color: #40ABE9;}
+input[type="checkbox"].testCheckbox:checked {-webkit-appearance: none;background-color: #ccc;}
 
 /*.mui-input-row input.testCheckbox {height: 20px;margin: 10px 210px 10px 0;width: 20px;}*/
