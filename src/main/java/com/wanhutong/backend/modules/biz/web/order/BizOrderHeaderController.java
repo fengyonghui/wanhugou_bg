@@ -1099,6 +1099,7 @@ public class BizOrderHeaderController extends BaseController {
         statusList.sort(Comparator.comparing(BizOrderStatus::getCreateDate).thenComparing(BizOrderStatus::getId));
 
         Map<Integer, OrderHeaderBizStatusEnum> statusMap = OrderHeaderBizStatusEnum.getStatusMap();
+        Map<Integer, String> stateDescMap = OrderHeaderBizStatusEnum.getStateDescMap();
 
         String statuPath = request.getParameter("statu");
         model.addAttribute("statuPath", statuPath);
@@ -1131,6 +1132,7 @@ public class BizOrderHeaderController extends BaseController {
         resultMap.put("orderNumMap", orderNumMap);
         resultMap.put("detailIdMap", detailIdMap);
         resultMap.put("statusMap", statusMap);
+        resultMap.put("stateDescMap", stateDescMap);
 
         //图片处理
         CommonImg commonImg = new CommonImg();
