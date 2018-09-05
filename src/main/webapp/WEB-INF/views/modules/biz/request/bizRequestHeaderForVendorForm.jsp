@@ -799,21 +799,21 @@
 		</div>
 
 		<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-			<c:if test="${entity.str == 'audit'}">
-				<c:if test="${entity.bizStatus == ReqHeaderStatusEnum.IN_REVIEW.state}">
-					<div class="control-group">
-						<label class="control-label">最后付款时间：</label>
-						<div class="controls">
-							<input name="lastPayDate" id="lastPayDate" type="text" readonly="readonly" maxlength="20"
-								   class="input-medium Wdate required"
-								   value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
-								   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
-								   placeholder="必填！"/>
-							<span class="help-inline"><font color="red">*</font></span>
-						</div>
-					</div>
-				</c:if>
-			</c:if>
+			<%--<c:if test="${entity.str == 'audit'}">--%>
+				<%--<c:if test="${entity.bizStatus == ReqHeaderStatusEnum.IN_REVIEW.state}">--%>
+					<%--<div class="control-group">--%>
+						<%--<label class="control-label">最后付款时间：</label>--%>
+						<%--<div class="controls">--%>
+							<%--<input name="lastPayDate" id="lastPayDate" type="text" readonly="readonly" maxlength="20"--%>
+								   <%--class="input-medium Wdate required"--%>
+								   <%--value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"--%>
+								   <%--onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"--%>
+								   <%--placeholder="必填！"/>--%>
+							<%--<span class="help-inline"><font color="red">*</font></span>--%>
+						<%--</div>--%>
+					<%--</div>--%>
+				<%--</c:if>--%>
+			<%--</c:if>--%>
 		</shiro:hasPermission>
 
 		<c:if test="${entity.str!='detail' && entity.str!='audit' }">
