@@ -158,6 +158,11 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 */
 	private List<String> processTypeList;
 
+	/**
+	 * 页面来源
+	 */
+	private String fromPage;
+
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
 	}
@@ -623,5 +628,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setProcessTypeList(List<String> processTypeList) {
 		this.processTypeList = processTypeList;
+	}
+
+	public String getFromPage() {
+		return fromPage;
+	}
+
+	public void setFromPage(String fromPage) {
+		this.fromPage = fromPage;
 	}
 }
