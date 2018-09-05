@@ -385,7 +385,8 @@
                     'bizStatus': _this.userInfo.orderStatus,
                     'selectAuditStatus': nameTxt, //originConfigMap
                     'customer.id':_this.userInfo.newinput,
-//                  consultantId: _this.userInfo.staListSehId
+//                  consultantId: _this.userInfo.staListSehId,
+					includeTestData: _this.userInfo.includeTestData
 				},
 				dataType: 'json',
 				success: function(res) {
