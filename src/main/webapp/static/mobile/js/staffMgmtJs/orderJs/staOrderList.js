@@ -78,7 +78,7 @@
 			                }
 			            });		 
 						var arrLen = res.data.page.list.length;
-						if(arrLen <=20 ){
+						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}else{
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true)
@@ -176,6 +176,7 @@
 								_this.stOrdHrefHtml()
 					} else {
 								$('.mui-pull-bottom-pocket').html('');
+								$('#staOrdList').append('<p class="noneTxt">暂无数据</p>');
 								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);							
 							}
 						totalPage = res.data.page.count%pager.size!=0?
