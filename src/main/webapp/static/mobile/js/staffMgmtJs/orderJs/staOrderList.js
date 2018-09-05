@@ -76,11 +76,10 @@
 			                success: function(res){                 
 				                ass=res;
 			                }
-			            });
-//		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+			            });		 
 						var arrLen = res.data.page.list.length;
-						if(arrLen <20 ){
-							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true)
+						if(arrLen <=20 ){
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}else{
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true)
 						}
@@ -184,7 +183,7 @@
 		                res.data.page.count/pager.size;
 //		                console.log(totalPage)
 		                if(totalPage==pager.pageNo){		                	
-			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();			                
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
