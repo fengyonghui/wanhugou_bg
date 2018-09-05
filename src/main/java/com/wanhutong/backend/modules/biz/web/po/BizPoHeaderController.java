@@ -1380,9 +1380,12 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeader = bizPoHeaderService.get(poHeaderIdid);
         bizPoHeader.setDeliveryStatus(0);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date lastPayDate = sdf.parse(lastPayDateVal);
-        bizPoHeader.setLastPayDate(lastPayDate);
-
+        if (StringUtils.isBlank(lastPayDateVal)) {
+            bizPoHeader.setLastPayDate(new Date());
+        } else {
+            Date lastPayDate = sdf.parse(lastPayDateVal);
+            bizPoHeader.setLastPayDate(lastPayDate);
+        }
         bizPoHeader.setIsPrew(0);
         bizPoHeader.setType("createPo");
         bizPoHeaderService.savePoHeader(bizPoHeader);
