@@ -75,7 +75,7 @@
 						var arrLen = res.data.resultData.length;
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true)
-						}else{
+						}else{							
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true)
 						}
                         if(arrLen > 0) {
@@ -448,7 +448,6 @@
 					else {
 							$('#staReleList').html('<p class="noneTxt">暂无数据</p>');
 							$('#staReleSechBtn').hide();
-
 					}
 				}
 			});

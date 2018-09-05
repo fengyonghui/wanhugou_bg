@@ -20,7 +20,7 @@
 			var _this = this;
 			$.ajax({
                 type: "GET",
-                url: "/a/biz/request/bizRequestHeader/form4Mobile",
+                url: "/a/biz/request/bizRequestHeaderForVendor/form4MobileNew",
                 data: {id:_this.userInfo.inListId},
                 dataType: "json",
                 success: function(res){

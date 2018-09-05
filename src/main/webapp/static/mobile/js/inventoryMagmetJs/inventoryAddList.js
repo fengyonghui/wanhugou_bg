@@ -195,7 +195,7 @@
                             t++;
                             $("#searchInfo").append(resultListHtml);
                         })
-                        var addButtonHtml = '<div class="addBtn" id="batchAddDiv">' +
+                        var addButtonHtml = '<div class="inAddBtn" id="batchAddDiv">' +
                             '<button id="batchAdd" type="submit" class="addSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">添加' +
                             '</button></div>';
                         $("#searchInfo").append(addButtonHtml);
@@ -216,7 +216,7 @@
                         var cheDiv = $("#serskudiv_" + cheId);
                         $("#" + cheId).prop('checked',false);
                         $("#" + cheId).hide();
-                        var removeButtonHtml = '<div class="addBtn" id="removeBtn_' + cheId + '">' +
+                        var removeButtonHtml = '<div class="inAddBtn" id="removeBtn_' + cheId + '">' +
                             '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">移除' +
                             '</button></div>';
                             cheDiv.append(removeButtonHtml)

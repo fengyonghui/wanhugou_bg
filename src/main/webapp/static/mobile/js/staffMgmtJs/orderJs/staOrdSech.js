@@ -5,6 +5,7 @@
 		this.expTipNum = 0;
 		this.datagood = [];
 		this.selectOpen = false
+		this.includeTestData = false
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -17,6 +18,7 @@
 		},
 		pageInit: function() {
 			var _this = this;
+			_this.testData()
 		},
 		//点击查询
 		getData: function() {
@@ -55,7 +57,7 @@
                 if(newinputVal == null||newinputVal == undefined) {
                 	newinputVal == "";
                 }
-                if(ordNumVal == ""&&reqNumVal == ""&&OrdMobileVal == ""&&secStyleVal == ""&&cateGoryVal == ""&&orderStatusVal == ""&&checkStatusVal == ""&&newinputVal == ""){
+                if(ordNumVal == ""&&reqNumVal == ""&&OrdMobileVal == ""&&secStyleVal == ""&&cateGoryVal == ""&&orderStatusVal == ""&&checkStatusVal == ""&&newinputVal == ""&&_this.includeTestData == false){
                 	 mui.toast("请输入查询条件！");
                 	 return;
                 }
@@ -66,7 +68,7 @@
 							mui.toast('请选择匹配的选项')
 						}
 				}else{
-					_this.sureSelect()
+					_this.sureSelect();
 				}
 			})
 		},
@@ -88,10 +90,21 @@
 					orderStatus: optionsClass.val(),
 					checkStatus: optionsBusiness.val(),
 					newinput: $('.hasoid').attr('id'),
+					includeTestData: _this.includeTestData,
 					isFunc: true
 				}
 			})
 		},
+		testData:function() {
+			var _this = this;
+            $('.testCheckbox').on('change',function(){
+            	if(this.checked){
+            		_this.includeTestData = true
+            	}else {
+            		_this.includeTestData = false
+            	}
+	        })
+        },       
 		hrefHtml: function(newinput, input_div,staOrdHideSpan) {
 			var _this = this;
 			_this.ajaxGoodList();

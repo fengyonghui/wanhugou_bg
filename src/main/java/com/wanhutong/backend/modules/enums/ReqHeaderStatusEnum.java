@@ -32,6 +32,7 @@ public enum ReqHeaderStatusEnum {
     private String desc;
 
     private static Map<Integer, ReqHeaderStatusEnum> statusMap;
+    private static Map<Integer, String> stateDescMap;
 
     ReqHeaderStatusEnum(int st, String desc) {
         this.state=st;
@@ -46,6 +47,17 @@ public enum ReqHeaderStatusEnum {
         return null;
     }
 
+
+    public static Map<Integer, String> getStateDescMap() {
+        if (stateDescMap == null) {
+            Map<Integer, String> mapTemp = Maps.newHashMap();
+            for (ReqHeaderStatusEnum statusEnum : values()) {
+                mapTemp.put(statusEnum.getState(), statusEnum.getDesc());
+            }
+            stateDescMap = mapTemp;
+        }
+        return stateDescMap;
+    }
 
     public static Map<Integer, ReqHeaderStatusEnum> getStatusMap() {
         if (statusMap == null) {

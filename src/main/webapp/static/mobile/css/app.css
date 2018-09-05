@@ -136,13 +136,13 @@ input, select, textarea{font-size: 15px;}
 .app_text_alg_r {text-align: right;}
 
 /*边框颜色*/
-.app_tline{border-top: 1px solid #ececec;}
 .app_bline{border-bottom: 1px solid #40ABE9;}
+.app_tline{border-top: 1px solid #ececec;}
 .app_lline{border-left: 1px solid #ececec;}
 .app_rline{border-right: 1px solid #ececec;}
 
-.app_tline2{border-top: 1px solid #ececec;}
 .app_bline2{border-bottom: 5px solid #efeff4;}
+.app_tline2{border-top: 1px solid #ececec;}
 .app_lline2{border-left: 1px solid #ececec;}
 .app_rline2{border-right: 1px solid rgba(255,255,255,.5);}
 
@@ -163,14 +163,15 @@ input, select, textarea{font-size: 15px;}
 .app_bgtop2{background: #0D84F2 !important;}
 
 /*定位*/
+.app_pr{position:relative}
+.app_pa{position:absolute}
 .app_bc{margin-left:auto;margin-right:auto;}
 .app_fl{float:left;display:inline}
 .app_fr{float:right;display:inline}
 
 .app_clearfix:after{content:".";display:block;clear:both;visibility:hidden;line-height: 0;font-size: 0;height: 0}
 .app_vm{vertical-align:middle}
-.app_pr{position:relative}
-.app_pa{position:absolute}
+
 .app_abs-right{position:absolute;right:0}
 .app_zoom{zoom:1}
 .app_hidden{visibility:hidden}
@@ -438,7 +439,7 @@ select, textarea{height: auto;padding:10px 15px;}
 .mui-title{font-size: 20px;line-height:42px;color: #000;}
 .mui-bar .mui-icon{font-size: 20px;padding-top: 12px;padding-bottom: 12px;}
 /*==消除符号==*/
-.mui-input-row .mui-input-clear~.mui-icon-clear{right: .5em;color: #ccc;width: 30px;height: 30px;font-size: 16px;line-height: 2;top:9px}
+.mui-input-row .mui-input-clear~.mui-icon-clear{right: .5em;color: #ccc;width: 30px;height: 30px;font-size: 16px;line-height: 2;top:5px}
 .mui-table-view-cell.noborder:after{height: 0}
 .mui-grid-view.mui-grid-9 .mui-table-view-cell.noborder{border: none;}
 
@@ -612,18 +613,34 @@ body{font-size: 15px;color:#3b3b3b;}
 .SearchBtnClass {margin: 60px auto;width: 70%;}
 .app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;background-color: #40ABE9;border: none;}
 .app_btn_search:active {color: #fff;border: 1px solid #046d90;background-color: #007aff !important;}
+/*备货单保存按钮*/
+.inSaveBtn {width: 70%;margin: 20px auto;}
 
+/*移除、添加、删除---小按钮*/
+.inAddBtn {width: 30%;margin: 5px auto;}
 
 /*查询小按钮--备货单添加、修改  和  经销店添加*/
 .comChoiceBtn {padding: 5px;border: none;width: 50px;position: absolute;right: 10px;top: 2px;background-color: #40ABE9;}
 .inputClassAdd>label.commodityName {padding: 0;width: 15%;}
 .inputClassAdd>input.commodityTxt {padding: 0;font-size: 10px;position: relative;width: 85%;}
-			
 
-/*添加、移除、删除小按钮*/
+/*备货单审核 和 订单详情公用---产品信息*/
+.commodity div.mui-input-row input, .commodity div.mui-input-row label {padding: 0;font-size: 12px;}
 
+
+/*======备货单======*/
+/*备货单审核*/
+.photoParent {width: 15%;height: 220px;margin-right: 15px;}
+.photoParent img {top: 50%;margin-top: -8px;width: 50px;}
+.listBlue>li {border-bottom: 1px solid #40ABE9;}
+		
+/*备货单支付*/		
+.pay-logo {width: 40px;}
+.pay-txt {float: right;padding: 9px;width: 80%;}
+.pay-txt>input {position: absolute;right: 55px;}		
 			
-/*运营管理后台*/
+			
+/*=======运营管理后台=======*/
 .appQuitBtn {background-color: #dd5563;border: none;border-radius: 8px;}
 .quitBtn {position: absolute;width: 80%;bottom: 50px;left: 50%;margin-left: -40%;}
 .app_border_rb {border-right: 1px solid #e5e5e5;border-bottom: 1px solid #e5e5e5;}
@@ -631,22 +648,11 @@ body{font-size: 15px;color:#3b3b3b;}
 .clear {clear: both;}
 .app_bnp {padding: 0 !important;}
 
-
 /*运营管理*/
 .mui-table-view-cell p {border-bottom: 1px solid #e8e8e8;padding: 8px 0 8px;}
 
-
 /*审核公共样式*/
 .app_p20 button {margin-left: 17%;background-color: #40ABE9;color: #fff;}
-
-/*备货单审核 和 订单详情公用---产品信息*/
-.commodity div.mui-input-row input, .commodity div.mui-input-row label {padding: 0;font-size: 12px;}
-
-/*备货单审核*/
-.photoParent {width: 15%;height: 220px;margin-right: 15px;}
-.photoParent img {top: 50%;margin-top: -8px;width: 50px;}
-.listBlue>li {border-bottom: 1px solid #40ABE9;}
-
 
 /*订单详情---产品信息----两列样式：*/
 .commodity div.mui-input-row label {width: 40%;}
@@ -665,19 +671,18 @@ body{font-size: 15px;color:#3b3b3b;}
 .labelRi>li {float: left;}
 .labelRi div {width: 70px;margin: 5px 15px;border: 1px solid #40ABE9;border-radius: 5px;font-size: 13px;text-align: center;}
 
-
 /*字体颜色不兼容的解决:*/
-input[disabled],input:disabled,input.disabled{
-	color: #000;
-	/*-webkit-text-fill-color:#3b3b3b;*/
-	-webkit-opacity:1;
-	opacity: 1;
-}
+input[disabled],input:disabled,input.disabled{color: #000;/*-webkit-text-fill-color:#3b3b3b;*/-webkit-opacity:1;opacity: 1;}
 
 /*滑动---阻止默认事件*/
-a, #list {touch-action: none;}
+a, #list  {touch-action: none;}
 
-
-/*radio*/
-input[type=radio].inputRadio {-webkit-appearance: none;position: relative;top: -1px;width: 14px;height: 14px;border: 1px solid #999;-webkit-border-radius: 7px;border-radius: 7px;background-color: #fff;vertical-align: middle;}
+/*改变 ios 默认radio样式 */
+input[type=radio].inputRadio {-webkit-appearance: none;position: relative;top: -1px;width: 15px;height: 15px;border: 1px solid #999;-webkit-border-radius: 7px;border-radius: 7px;background-color: #fff;vertical-align: middle;}
 input[type="radio"].inputRadio:checked {-webkit-appearance: none; border-color: #40ABE9;background-color: #40ABE9;}
+/*查询---测试数据*/
+/*改变 ios 默认checkbox样式 */
+input[type=checkbox].testCheckbox {-webkit-appearance: none;position: relative;top: 10px;width: 20px;height: 20px;border: 1px solid #999;-webkit-border-radius: 10px;border-radius: 10px;background-color: #fff;vertical-align: middle;float: left;}
+input[type="checkbox"].testCheckbox:checked {-webkit-appearance: none;background-color: #ccc;}
+
+/*.mui-input-row input.testCheckbox {height: 20px;margin: 10px 210px 10px 0;width: 20px;}*/

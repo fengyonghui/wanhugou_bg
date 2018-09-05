@@ -94,8 +94,8 @@
 		                },
 		                dataType: "json",
 		                success: function(res){
-		                	console.log(res)
-		                	console.log(item.bizStatus)
+//		                	console.log(res)
+//		                	console.log(item.bizStatus)
 		                	$.each(res,function(i,itemaa){
 		                		 if(itemaa.value==item.bizStatus){
 		                		 	  statusTxt = itemaa.label 
@@ -120,12 +120,14 @@
                 }
             });
 		},
+		//状态流程
 		statusListHtml:function(data){
 			var _this = this;
 			var statusLen = data.statusList.length;
 			if(statusLen > 0) {
 				var pHtmlList = '';
 				$.each(data.statusList, function(i, item) {
+					console.log(item)
 					var step = i + 1;
 					pHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
@@ -136,7 +138,7 @@
 						    '</div>'+
 							'<div class="mui-input-row">'+
 						        '<label>状态:</label>'+
-						        '<input type="text" class="mui-input-clear" disabled>'+
+						        '<input type="text" class="mui-input-clear" disabled value="'+ data.stateDescMap[item.bizStatus] +'">'+
 						    	'<label>时间:</label>'+
 						        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
 						    '</div>'+
@@ -152,9 +154,28 @@
 			if(auditLen > 0) {
 				var CheckHtmlList ='';
 				$.each(data.auditList, function(i, item) {
+					var ProcessName = '';
+					console.log(item)
 					var step = i + 1;
 					var current = item.current;
 					if(current !== 1) {
+						if(item.objectName == 'ORDER_HEADER_SO_LOCAL') {
+							ProcessName = item.jointOperationLocalProcess.name
+						}
+						if(item.objectName == 'ORDER_HEADER_SO_ORIGIN') {
+							ProcessName = item.jointOperationOriginProcess.name
+						}
+						if(item.objectName == 'biz_po_header') {
+							ProcessName = item.purchaseOrderProcess.name
+						}
+						if(item.objectName == 'biz_order_header') {
+							if(data.entity2.payProportion == 1) {
+								ProcessName = item.doOrderHeaderProcessFifth.name
+							}
+							if(entity2.payProportion == 2) {
+								ProcessName = item.doOrderHeaderProcessAll.name
+							}
+						}
 						CheckHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
 						'<div class="step_num_txt">'+
@@ -166,18 +187,27 @@
 						        '<label>批注:</label>'+
 						        '<input type="text" value="'+ item.description +'" class="mui-input-clear" disabled>'+
 						    	'<label>状态:</label>'+
-						        '<input type="text" value=" '+ item.jointOperationLocalProcess.name +' " class="mui-input-clear" disabled>'+
+						        '<input type="text" value=" '+ ProcessName +' " class="mui-input-clear" disabled>'+
 						    '</div>'+
 						'</div>'+
 					'</li>'
 					}
 					if(current == 1) {
+						if(item.objectName == 'ORDER_HEADER_SO_LOCAL') {
+							ProcessName = item.jointOperationLocalProcess.name
+						}
+						if(item.objectName == 'ORDER_HEADER_SO_ORIGIN') {
+							ProcessName = item.jointOperationOriginProcess.name
+						}
+						if(item.objectName == 'biz_po_header') {
+							ProcessName = item.purchaseOrderProcess.name
+						}
 						CheckHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
 						'<div class="step_num_txt">'+
 							'<div class="mui-input-row">'+
 								'<label>当前状态:</label>'+
-								'<input type="text" value="'+ item.jointOperationLocalProcess.name +'" class="mui-input-clear" disabled>'+
+								'<input type="text" value="'+ ProcessName +'" class="mui-input-clear" disabled>'+
 						   		'<label>时间:</label>'+
 						        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
 						    '</div>'+
@@ -201,7 +231,6 @@
 					}else {
 						opShelfInfo = ''
 					}
-					
 					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
 	                    
                     	'<div class="mui-row">' +
