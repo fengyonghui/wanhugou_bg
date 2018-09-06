@@ -27,7 +27,7 @@
                 },
                 dataType: "json",
                 success: function(res){
-                	console.log(res)
+//              	console.log(res)
 					$('#firstPart').val(res.data.entity2.customer.name);
 					$('#firstPrincipal').val(res.data.custUser.name);
 					$('#firstMobile').val(res.data.custUser.mobile);
@@ -127,7 +127,7 @@
 			if(statusLen > 0) {
 				var pHtmlList = '';
 				$.each(data.statusList, function(i, item) {
-					console.log(item)
+//					console.log(item)
 					var step = i + 1;
 					pHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
@@ -155,7 +155,7 @@
 				var CheckHtmlList ='';
 				$.each(data.auditList, function(i, item) {
 					var ProcessName = '';
-					console.log(item)
+//					console.log(item)
 					var step = i + 1;
 					var current = item.current;
 					if(current !== 1) {
@@ -224,12 +224,18 @@
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-					console.log(item)
+//					console.log(item)
 					var opShelfInfo = '';
 					if(item.shelfInfo.opShelfInfo) {
 						opShelfInfo = item.shelfInfo.opShelfInfo.name
 					}else {
 						opShelfInfo = ''
+					}
+					var primaryMobile = '';
+					if(item.primary.mobile) {
+						primaryMobile = item.primary.mobile
+					}else {
+						primaryMobile = ''
 					}
 					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
 	                    
@@ -262,7 +268,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>供应商电话:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.primary.mobile + '" disabled></div></li></div>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + primaryMobile + '" disabled></div></li></div>' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +

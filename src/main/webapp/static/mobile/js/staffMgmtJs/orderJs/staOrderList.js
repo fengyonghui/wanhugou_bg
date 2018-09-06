@@ -268,7 +268,7 @@
 				if(consultantIda) {
 					stcheckIdTxt = consultantIda
 				}
-				console.log(staListIdTxts)
+//				console.log(staListIdTxts)
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {

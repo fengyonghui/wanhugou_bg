@@ -42,6 +42,7 @@
                 },
                 dataType: "json",
                 success: function(res){
+//              	console.log(res)
 					$('#firstPart').val(res.data.entity2.customer.name);
 					$('#firstPrincipal').val(res.data.custUser.name);
 					$('#firstMobile').val(res.data.custUser.mobile);					
@@ -105,7 +106,7 @@
 					$('#staShouldPay').val(shouldPay);
 					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
 					$('#staPoLastDa').val(item.receiveTotal);
-					$('#staServerPrice').val(serverPrice);
+					$('#staServerPrice').val(serverPrice.toFixed(2));
 					$('#staInvoice').val(invStatusTxt);
 					$('#staStatus').val(statusTxt);
 					$('#staConsignee').val(item.bizLocation.receiver);
@@ -126,6 +127,7 @@
 			if(statusLen > 0) {
 				var pHtmlList = '';
 				$.each(data.statusList, function(i, item) {
+//					console.log(item)
 					var step = i + 1;
 					pHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
@@ -136,7 +138,7 @@
 						    '</div>'+
 							'<div class="mui-input-row">'+
 						        '<label>状态:</label>'+
-						        '<input type="text" class="mui-input-clear" disabled>'+
+						        '<input type="text" class="mui-input-clear" value="'+ data.stateDescMap[item.bizStatus] +'" disabled>'+
 						    	'<label>时间:</label>'+
 						        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
 						    '</div>'+
@@ -146,51 +148,6 @@
 				$("#staStatusMenu").html(pHtmlList)
 			}
 		},
-		//审核流程
-//		checkProcessHtml:function(data){
-//			var _this = this;
-//			console.log(data)
-//			var auditLen = data.auditList.length;
-//			if(auditLen > 0) {
-//				var CheckHtmlList ='';
-//				$.each(data.auditList, function(i, item) {
-//					console.log(item)
-//					var step = i + 1;
-//					var current = item.current;
-//					if(current !== 1) {
-//						CheckHtmlList +='<li class="step_item">'+
-//						'<div class="step_num">'+ step +' </div>'+
-//						'<div class="step_num_txt">'+
-//							'<div class="mui-input-row">'+
-//								'<label>处理人:</label>'+
-//								'<input type="text" value="'+ item.user.name +'" class="mui-input-clear" disabled>'+
-//						    '</div>'+
-//							'<div class="mui-input-row">'+
-//						        '<label>批注:</label>'+
-//						        '<input type="text" value="'+ item.description +'" class="mui-input-clear" disabled>'+
-//						    	'<label>状态:</label>'+
-//						        '<input type="text" value=" '+ item.jointOperationLocalProcess.name +' " class="mui-input-clear" disabled>'+
-//						    '</div>'+
-//						'</div>'+
-//					'</li>'
-//					}
-//					if(current == 1) {
-//						CheckHtmlList +='<li class="step_item">'+
-//						'<div class="step_num">'+ step +' </div>'+
-//						'<div class="step_num_txt">'+
-//							'<div class="mui-input-row">'+
-//								'<label>当前状态:</label>'+
-//								'<input type="text" value="'+ item.jointOperationLocalProcess.name +'" class="mui-input-clear" disabled>'+
-//						   		'<label>时间:</label>'+
-//						        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
-//						    '</div>'+
-//						'</div>'+
-//					'</li>'
-//					}
-//				});
-//				$("#staCheckMenu").html(CheckHtmlList)
-//			}
-//		},
 		commodityHtml: function(data) {
 			var _this = this;
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
@@ -203,6 +160,12 @@
 						opShelfInfo = item.shelfInfo.opShelfInfo.name
 					}else {
 						opShelfInfo = ''
+					}
+					var primaryMobile = '';
+					if(item.primary.mobile) {
+						primaryMobile = item.primary.mobile
+					}else {
+						primaryMobile = ''
 					}
 					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
 	                    '<div class="mui-row">' +
@@ -234,7 +197,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>供应商电话:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.primary.mobile + '" disabled></div></li></div>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + primaryMobile + '" disabled></div></li></div>' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
