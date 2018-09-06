@@ -2308,11 +2308,11 @@
             <c:if test="${not empty entity.orderDetails}">
                 <input onclick="window.print();" type="button" class="btn btn-primary" value="打印订单" style="background:#F78181;"/>
                 &nbsp;
-                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </c:if>
         </c:if>
     </c:if>
     </c:if>
+                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
 </div>
 
 <c:if test="${bizOrderHeader.flag=='check_pending'}">

@@ -1329,7 +1329,7 @@ public class BizOrderHeaderController extends BaseController {
         }
         String statuPath = request.getParameter("statuPath");
         if (bizOrderHeader.getId() != null) {
-            if (bizOrderHeader.getOrderNum().startsWith("DO")) {
+            if (bizOrderHeader.getOrderNum().startsWith("DO") && bizOrderHeader.getReceiveTotal() > 0) {
                 Integer processId = bizOrderHeaderService.saveCommonProcess(bizOrderHeader);
                 bizOrderHeaderService.updateProcessId(bizOrderHeader.getId(), processId);
             }
