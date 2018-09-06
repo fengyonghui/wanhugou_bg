@@ -472,7 +472,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     if (requestHeader.getBizStatus() < ReqHeaderStatusEnum.STOCKING.getState()) {
                         requestHeader.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());
                         bizRequestHeaderService.saveInfo(requestHeader);
-                        if (bizStatus == null || !bizStatus.equals(requestHeader.getBizStatus())) {
+                        if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.STOCKING.getState())) {
                             bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), requestHeader.getId());
                         }
                     }

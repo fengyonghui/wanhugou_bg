@@ -194,6 +194,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 */
 	private Integer poCode;
 
+	/**
+	 * 审核是用来判断审核的是RE还是PO
+	 */
+	private String processPo;
+
 	public BizRequestHeader() {
 		super();
 	}
@@ -691,5 +696,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setPoCode(Integer poCode) {
 		this.poCode = poCode;
+	}
+
+	public String getProcessPo() {
+		return processPo;
+	}
+
+	public void setProcessPo(String processPo) {
+		this.processPo = processPo;
 	}
 }
