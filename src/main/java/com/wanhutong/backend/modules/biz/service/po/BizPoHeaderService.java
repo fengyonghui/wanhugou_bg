@@ -906,17 +906,18 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         this.updateProcessToInitAudit(bizPoHeader, mark);
         Byte soType = getBizPoOrderReqByPo(bizPoHeader);
         String currentType = "";
-        if (soType == Byte.parseByte("1")) {
-            currentType = String.valueOf(purchaseOrderProcessConfig.getOrderHeaderDefaultProcessId());
-        } else {
-            if ("oldAudit".equals(mark)) {
-                currentType = String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId());
+
+        if ("oldAudit".equals(mark)) {
+            currentType = String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId());
+            auditPo(id, currentType, auditType, desc);
+        }else {
+            if (soType == Byte.parseByte("1")) {
+                currentType = String.valueOf(purchaseOrderProcessConfig.getOrderHeaderDefaultProcessId());
             } else {
                 currentType = String.valueOf(purchaseOrderProcessConfig.getDefaultNewProcessId());
             }
-
         }
-        auditPo(id, currentType, auditType, desc);
+
         return Pair.of(Boolean.TRUE,   "操作成功!");
     }
 
