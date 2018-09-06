@@ -893,7 +893,8 @@
 
         function audit(auditType, description) {
             var id = $("#id").val();
-            var currentType = $("#currentType").val();
+            //var currentType = $("#currentType").val();
+            var currentType = $("#currentJoType").val();
 
             $.ajax({
                 url: '${ctx}/biz/order/bizOrderHeader/audit',
@@ -1291,20 +1292,6 @@
                 </c:if>
             </div>
         </div>
-
-    <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList == null}">
-        <div class="control-group" style="display: none" >
-            <label class="control-label">审核状态：</label>
-            <div class="controls">
-                <input type="text" disabled="disabled"
-                       value="${orderHeaderProcess.name}" htmlEscape="false"
-                       maxlength="30" class="input-xlarge "/>
-                <input id="currentType" type="hidden" disabled="disabled"
-                       value="${orderHeaderProcess.code}" htmlEscape="false"
-                       maxlength="30" class="input-xlarge "/>
-            </div>
-        </div>
-    </c:if>
 
     <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
         <div class="control-group" style="display: none">
@@ -1756,12 +1743,13 @@
                                         ${v.purchaseOrderProcess.name}
                                     </c:if>
                                     <c:if test="${v.objectName == 'biz_order_header'}">
-                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-                                            ${v.doOrderHeaderProcessFifth.name}
-                                        </c:if>
-                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-                                            ${v.doOrderHeaderProcessAll.name}
-                                        </c:if>
+                                        ${v.doOrderHeaderProcessFifth.name}
+                                        <%--<c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">--%>
+                                            <%--${v.doOrderHeaderProcessFifth.name}--%>
+                                        <%--</c:if>--%>
+                                        <%--<c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">--%>
+                                            <%--${v.doOrderHeaderProcessAll.name}--%>
+                                        <%--</c:if>--%>
                                     </c:if>
                                     <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
@@ -1781,6 +1769,9 @@
                                     </c:if>
                                     <c:if test="${v.objectName == 'biz_po_header'}">
                                         ${v.purchaseOrderProcess.name}
+                                    </c:if>
+                                    <c:if test="${v.objectName == 'biz_order_header'}">
+                                        ${v.doOrderHeaderProcessFifth.name}
                                     </c:if>
                                     <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>

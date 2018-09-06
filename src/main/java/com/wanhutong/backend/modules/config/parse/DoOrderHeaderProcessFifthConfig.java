@@ -27,9 +27,13 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoOrderHeaderProcessFifthConfig.class);
 
-
     @XStreamAlias("defaultProcessId")
     private Integer defaultProcessId;
+
+    @XStreamAlias("fifthDefaultProcessId")
+    private int fifthDefaultProcessId;
+    @XStreamAlias("allDefaultProcessId")
+    private int allDefaultProcessId;
 
     @XStreamAlias("autProcessId")
     private Integer autProcessId;
@@ -76,6 +80,22 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
 
     public Integer getDefaultProcessId() {
         return defaultProcessId;
+    }
+
+    public int getFifthDefaultProcessId() {
+        return fifthDefaultProcessId;
+    }
+
+    public void setFifthDefaultProcessId(int fifthDefaultProcessId) {
+        this.fifthDefaultProcessId = fifthDefaultProcessId;
+    }
+
+    public int getAllDefaultProcessId() {
+        return allDefaultProcessId;
+    }
+
+    public void setAllDefaultProcessId(int allDefaultProcessId) {
+        this.allDefaultProcessId = allDefaultProcessId;
     }
 
     public Integer getAutProcessId() {

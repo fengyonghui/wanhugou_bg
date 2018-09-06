@@ -274,32 +274,38 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Integer saveCommonProcess(BizOrderHeader bizOrderHeader){
+    public void saveCommonProcess(OrderPayProportionStatusEnum orderPayProportionStatusEnum, BizOrderHeader bizOrderHeader, boolean reGen){
         Integer code = null;
         //处理角色
         String roleEnNameEnum = null;
-        if (OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeader.getPayProportion())) {
-            DoOrderHeaderProcessAllConfig doOrderHeaderProcessAllConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
-            DoOrderHeaderProcessAllConfig.OrderHeaderProcess purchaseOrderProcess = doOrderHeaderProcessAllConfig.processMap.get(doOrderHeaderProcessAllConfig.getDefaultProcessId());
-            code = purchaseOrderProcess.getCode();
-            roleEnNameEnum = purchaseOrderProcess.getRoleEnNameEnum();
-        } else if (OrderPayProportionStatusEnum.FIFTH.getState().equals(bizOrderHeader.getPayProportion())) {
-            DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
-            DoOrderHeaderProcessFifthConfig.OrderHeaderProcess purchaseOrderProcess = doOrderHeaderProcessFifthConfig.processMap.get(doOrderHeaderProcessFifthConfig.getDefaultProcessId());
-            code = purchaseOrderProcess.getCode();
-            roleEnNameEnum = purchaseOrderProcess.getRoleEnNameEnum();
-        }
-//        RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
-//        RequestOrderProcessConfig.RequestOrderProcess purchaseOrderProcess = requestOrderProcessConfig.processMap.get(requestOrderProcessConfig.getDefaultProcessId());
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectId(bizOrderHeader.getId().toString());
         commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
-        commonProcessEntity.setType(String.valueOf(code));
-        commonProcessService.save(commonProcessEntity);
+        List<CommonProcessEntity> processList = commonProcessService.findList(commonProcessEntity);
+        if (CollectionUtils.isEmpty(processList) || reGen) {
+            commonProcessEntity.setCurrent(1);
+            DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
+            Integer processCode = null;
+            switch (orderPayProportionStatusEnum) {
+                case FIFTH:
+                    processCode = doOrderHeaderProcessFifthConfig.getFifthDefaultProcessId();
+                    break;
+                case ALL:
+                    processCode = doOrderHeaderProcessFifthConfig.getAllDefaultProcessId();
+                    break;
+                default:
+                    break;
+            }
+            commonProcessEntity.setType(String.valueOf(processCode));
+            List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+            if (CollectionUtils.isEmpty(list)) {
+                commonProcessService.updateCurrentByObject(bizOrderHeader.getId(), BizOrderHeaderService.DATABASE_TABLE_NAME, 0);
+                commonProcessService.save(commonProcessEntity);
+            }
+            DoOrderHeaderProcessFifthConfig.OrderHeaderProcess purchaseOrderProcess = doOrderHeaderProcessFifthConfig.processMap.get(processCode);
+            roleEnNameEnum = purchaseOrderProcess.getRoleEnNameEnum();
+        }
 
-		/*String desc = purchaseOrderProcess.getName();
-		Integer bizStatus = ReqHeaderStatusEnum.getEnum(desc).getState();
-		bizOrderStatusService.insertAfterBizStatusChangedNew(bizStatus, BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());*/
         StringBuilder phone = new StringBuilder();
         User user=UserUtils.getUser();
         User sendUser=new User(systemService.getRoleByEnname(roleEnNameEnum==null?"":roleEnNameEnum.toLowerCase()));
@@ -317,8 +323,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                     phone.toString(),
                     ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
         }
-
-        return commonProcessEntity.getId();
     }
 
     @Transactional(readOnly = false)
