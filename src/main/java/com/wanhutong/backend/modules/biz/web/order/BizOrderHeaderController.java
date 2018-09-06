@@ -707,13 +707,21 @@ public class BizOrderHeaderController extends BaseController {
     @ResponseBody
     public String audit(int id, String currentType, int auditType, String description, Model model) {
         BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
-        String result = "";
-        if (OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeader.getPayProportion())) {
-            result = bizOrderHeaderService.auditAll(id, currentType, auditType, description);
-        } else {
-            result = bizOrderHeaderService.auditFifty(id, currentType, auditType, description);
+        try {
+            Pair<Boolean, String> audit = null;
+            if (OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeader.getPayProportion())) {
+                audit = bizOrderHeaderService.auditAll(id, currentType, auditType, description);
+            } else {
+                audit = bizOrderHeaderService.auditFifty(id, currentType, auditType, description);
+            }
+            if (audit.getLeft()) {
+                return JsonUtil.generateData(audit.getRight(), null);
+            }
+            return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);
+        }catch (Exception e) {
+            LOGGER.error("audit so error ", e);
         }
-        return result;
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, "操作失败,发生异常,请联系技术部", null);
     }
 
     @ResponseBody

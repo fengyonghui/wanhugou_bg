@@ -118,6 +118,18 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
         @XStreamAlias("rejectCode")
         private Integer rejectCode;
 
+        /**
+         * 通过之后的状态 全部支付
+         */
+        @XStreamAlias("allPassCode")
+        private int allPassCode;
+
+        /**
+         * 通过之后的状态 20%支付
+         */
+        @XStreamAlias("fifthPassCode")
+        private int fifthPassCode;
+
         public String getName() {
             return name;
         }
@@ -138,7 +150,21 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
             return rejectCode;
         }
 
+        public int getAllPassCode() {
+            return allPassCode;
+        }
 
+        public void setAllPassCode(int allPassCode) {
+            this.allPassCode = allPassCode;
+        }
+
+        public int getFifthPassCode() {
+            return fifthPassCode;
+        }
+
+        public void setFifthPassCode(int fifthPassCode) {
+            this.fifthPassCode = fifthPassCode;
+        }
     }
 
 

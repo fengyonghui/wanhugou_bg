@@ -752,8 +752,9 @@
                 type: 'get',
                 async: false,
                 success: function (result) {
-                    alert("操作成功！");
-                    if(result == 'ok') {
+                    result = JSON.parse(result);
+                    if(result.ret == true || result.ret == 'true') {
+                        alert('操作成功!');
                         if(auditType==1){
                             //自动生成采购单
                             var id = $("#id").val();
@@ -763,8 +764,6 @@
                             }
                         }
                         window.location.href = "${ctx}/biz/order/bizOrderHeader";
-                    }else {
-                        alert("操作失败！");
                     }
                 },
                 error: function (error) {
