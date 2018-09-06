@@ -1329,9 +1329,11 @@ public class BizOrderHeaderController extends BaseController {
         }
         String statuPath = request.getParameter("statuPath");
         if (bizOrderHeader.getId() != null) {
-            if (bizOrderHeader.getOrderNum().startsWith("DO") && bizOrderHeader.getReceiveTotal() > 0) {
-                Integer processId = bizOrderHeaderService.saveCommonProcess(bizOrderHeader);
-                bizOrderHeaderService.updateProcessId(bizOrderHeader.getId(), processId);
+            if (bizOrderHeader.getOrderNum().startsWith("DO")) {
+                if (OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeader.getPayProportion()) || OrderPayProportionStatusEnum.FIFTH.getState().equals(bizOrderHeader.getPayProportion())) {
+                    Integer processId = bizOrderHeaderService.saveCommonProcess(bizOrderHeader);
+                    bizOrderHeaderService.updateProcessId(bizOrderHeader.getId(), processId);
+                }
             }
 
             if (bizOrderHeader.getOrderNum().startsWith("SO")) {
