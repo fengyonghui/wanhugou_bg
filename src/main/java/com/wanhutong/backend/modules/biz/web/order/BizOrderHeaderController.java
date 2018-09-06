@@ -1329,13 +1329,16 @@ public class BizOrderHeaderController extends BaseController {
         }
         String statuPath = request.getParameter("statuPath");
         if (bizOrderHeader.getId() != null) {
+            OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail(), bizOrderHeader.getReceiveTotal());
             if (bizOrderHeader.getOrderNum().startsWith("DO")) {
-                Integer processId = bizOrderHeaderService.saveCommonProcess(bizOrderHeader);
-                bizOrderHeaderService.updateProcessId(bizOrderHeader.getId(), processId);
+                if (OrderPayProportionStatusEnum.ALL == statusEnum || OrderPayProportionStatusEnum.FIFTH == statusEnum) {
+                    Integer processId = bizOrderHeaderService.saveCommonProcess(bizOrderHeader);
+                    bizOrderHeaderService.updateProcessId(bizOrderHeader.getId(), processId);
+                }
             }
 
             if (bizOrderHeader.getOrderNum().startsWith("SO")) {
-                genAuditProcess(OrderPayProportionStatusEnum.parse(bizOrderHeader.getPayProportion()), bizOrderHeader, Boolean.TRUE);
+                genAuditProcess(statusEnum, bizOrderHeader, Boolean.TRUE);
             }
 
             BizPoHeader bizPoHeader = new BizPoHeader();
