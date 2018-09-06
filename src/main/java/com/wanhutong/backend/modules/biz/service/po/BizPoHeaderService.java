@@ -455,8 +455,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             Integer bizStatus = bizRequestHeader.getBizStatus();
             if (requestDetailList.size() == entry.getValue().size()) {
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
-                    bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
-                    bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+//                    bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+//                    bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
                 }
             } else if (requestDetailList.size() > entry.getValue().size()) {
                 bizPoOrderReq.setRequestHeader(bizRequestHeader);
@@ -470,8 +470,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 int commonPoOrderSize = poOrderReqNotPrew == null ? 0 : poOrderReqNotPrew.size();
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
                     if (poOrderReqs.size() + commonPoOrderSize == requestDetailList.size()) {
-                        bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
-                        bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+//                        bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+//                        bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
                     } else {
                         bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.PURCHASING.getState());
                         bizRequestHeaderService.saveRequestHeader(bizRequestHeader);

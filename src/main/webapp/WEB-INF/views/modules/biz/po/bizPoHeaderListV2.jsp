@@ -254,7 +254,7 @@
                                             <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoHeader.bizOrderHeader.id}&str=audit">审核</a>
                                         </c:if>
                                         <c:if test="${bizPoHeader.bizRequestHeader != null}">
-                                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=audit">审核</a>
+                                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=audit&processPo=processPo">审核</a>
                                         </c:if>
                                     </c:when>
                                     <c:otherwise>
