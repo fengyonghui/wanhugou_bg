@@ -11,7 +11,7 @@ public enum ReqHeaderStatusEnum {
     INITIAL_PAY(1, "首付款支付"),
     ALL_PAY(2, "全部支付"),
     IN_REVIEW(4,"审核中"),
-    APPROVE(5, "采销部审核通过"),
+    APPROVE(5, "审核通过"),
     PURCHASING(10, "采购中"),
     ACCOMPLISH_PURCHASE(15, "待供货"),
     STOCKING(20, "供货中"),
@@ -32,6 +32,7 @@ public enum ReqHeaderStatusEnum {
     private String desc;
 
     private static Map<Integer, ReqHeaderStatusEnum> statusMap;
+    private static Map<Integer, String> stateDescMap;
 
     ReqHeaderStatusEnum(int st, String desc) {
         this.state=st;
@@ -46,6 +47,17 @@ public enum ReqHeaderStatusEnum {
         return null;
     }
 
+
+    public static Map<Integer, String> getStateDescMap() {
+        if (stateDescMap == null) {
+            Map<Integer, String> mapTemp = Maps.newHashMap();
+            for (ReqHeaderStatusEnum statusEnum : values()) {
+                mapTemp.put(statusEnum.getState(), statusEnum.getDesc());
+            }
+            stateDescMap = mapTemp;
+        }
+        return stateDescMap;
+    }
 
     public static Map<Integer, ReqHeaderStatusEnum> getStatusMap() {
         if (statusMap == null) {

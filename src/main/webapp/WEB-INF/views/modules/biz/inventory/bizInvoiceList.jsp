@@ -44,6 +44,7 @@
 		<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
 			<li><a href="${ctx}/biz/inventory/bizInvoice/form?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单添加</a></li>
 		</shiro:hasPermission>
+		<li class=""><a href="${ctx}/biz/order/bizOrderHeader/list">订单列表</a></li>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

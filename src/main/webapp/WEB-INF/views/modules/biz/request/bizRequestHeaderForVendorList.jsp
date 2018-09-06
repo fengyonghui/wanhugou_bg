@@ -168,11 +168,11 @@
 			<li><label>审核状态</label>
 				<form:select class="input-medium" path="process">
 					<%--<option value="">请选择</option>--%>
-					<%--<c:forEach items="${processSet}" var="process">--%>
-						<%--<option value="${process}">${process}</option>--%>
+					<%--<c:forEach items="${requestMap}" var="req">--%>
+						<%--<option value="${req.key}">${req.value}</option>--%>
 					<%--</c:forEach>--%>
 					<form:option value="" label="请选择"/>
-					<form:options items="${processSet}" htmlEscape="false"/>
+					<form:options items="${requestMap}" htmlEscape="false"/>
 				</form:select>
 			</li>
 			<li><label>品类名称：</label>
@@ -257,11 +257,11 @@
 
 				</td>
 				<td>
-					<c:if test="${requestHeader.bizStatus < ReqHeaderStatusEnum.APPROVE.state}">
+					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name != '审核完成'}">
 						${requestHeader.commonProcess.requestOrderProcess.name}
 					</c:if>
-					<c:if test="${requestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state}">
-						${requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name}
+					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">
+						订单支出信息审核
 					</c:if>
 				</td>
 				<td>
@@ -295,7 +295,9 @@
 								<a href="${ctx}/biz/request/bizRequestHeaderForVendor/recovery?id=${requestHeader.id}" onclick="return confirmx('确认要恢复该备货清单吗？', this.href)">恢复</a>
 							</c:if>
 						</c:when>
-						<c:when test="${!fns:getUser().isAdmin() && requestHeader.bizStatus<ReqHeaderStatusEnum.IN_REVIEW.state}">
+						<c:when test="${!fns:getUser().isAdmin() && requestHeader.bizStatus<ReqHeaderStatusEnum.IN_REVIEW.state ||
+						(requestHeader.commonProcess.requestOrderProcess.name == '驳回' && fns:getUser().id == requestHeader.createBy.id) ||
+						(requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '驳回' && fns:getUser().id == requestHeader.createBy.id)}">
 							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}">修改</a>
 							<shiro:hasPermission name="biz:request:bizRequestHeader:delete">
 								<a href="${ctx}/biz/request/bizRequestHeaderForVendor/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>

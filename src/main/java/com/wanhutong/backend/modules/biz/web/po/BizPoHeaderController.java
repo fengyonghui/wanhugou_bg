@@ -1081,7 +1081,84 @@ public class BizPoHeaderController extends BaseController {
         }
         model.addAttribute("roleFlag", roleFlag);
         return forwardPage;
+    }
 
+    @RequestMapping(value = "scheduling4Mobile")
+    @ResponseBody
+    public String scheduling4Mobile(HttpServletRequest request, BizPoHeader bizPoHeader, Model model, String prewStatus, String type) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null && bizPoHeader.getDeliveryOffice().getId() != 0) {
+            Office office = officeService.get(bizPoHeader.getDeliveryOffice().getId());
+            if ("8".equals(office.getType())) {
+                bizPoHeader.setDeliveryStatus(0);
+            } else {
+                bizPoHeader.setDeliveryStatus(1);
+            }
+        }
+
+        //按订单排产时，获取排产记录
+        Integer schedulingType = bizPoHeader.getSchedulingType();
+        Boolean detailHeaderFlg = false;
+        List<BizCompletePaln> bizCompletePalns = new ArrayList<BizCompletePaln>();
+        if (SCHEDULING_FOR_HEADER.equals(schedulingType)) {
+            BizSchedulingPlan bizSchedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(bizPoHeader.getId(), PO_HEADER_TABLE_NAME);
+            if (bizSchedulingPlan != null) {
+                bizCompletePalns = bizSchedulingPlan.getCompletePalnList();
+            }
+            if (bizSchedulingPlan != null) {
+                detailHeaderFlg = true;
+            }
+        }
+        model.addAttribute("detailHeaderFlg", detailHeaderFlg);
+        model.addAttribute("bizCompletePalns", bizCompletePalns);
+        resultMap.put("detailHeaderFlg", detailHeaderFlg);
+        resultMap.put("bizCompletePalns", bizCompletePalns);
+
+        List<Integer> poDetailIdList = Lists.newArrayList();
+        Boolean detailSchedulingFlg = false;
+        List<BizPoDetail> bizPoDetailList = bizPoHeader.getPoDetailList();
+        List<BizPoDetail> poDetailList = Lists.newArrayList();
+        if (CollectionUtils.isNotEmpty(bizPoDetailList)) {
+            for (BizPoDetail bizpodetail : bizPoDetailList) {
+                //排产类型为按商品排产时，获取排产记录
+                if (SCHEDULING_FOR_DETAIL.equals(schedulingType)) {
+                    BizSchedulingPlan bizSchedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(bizpodetail.getId(), PO_DETAIL_TABLE_NAME);
+                    if (bizSchedulingPlan != null) {
+                        detailSchedulingFlg = true;
+                    }
+                    bizpodetail.setBizSchedulingPlan(bizSchedulingPlan);
+                }
+                poDetailList.add(bizpodetail);
+                poDetailIdList.add(bizpodetail.getId());
+            }
+        }
+        bizPoHeader.setPoDetailList(poDetailList);
+
+        model.addAttribute("poDetailIdListJson", poDetailIdList);
+        model.addAttribute("detailHeaderFlg", detailHeaderFlg);
+        model.addAttribute("detailSchedulingFlg", detailSchedulingFlg);
+        model.addAttribute("bizPoHeader", bizPoHeader);
+
+        resultMap.put("poDetailIdListJson", poDetailIdList);
+        resultMap.put("detailHeaderFlg", detailHeaderFlg);
+        resultMap.put("detailSchedulingFlg", detailSchedulingFlg);
+        resultMap.put("bizPoHeader", bizPoHeader);
+
+        //判断当前用户是否为供应商
+        Boolean roleFlag = false;
+        List<Role> roleList = UserUtils.getUser().getRoleList();
+        if (roleList != null) {
+            for (Role role : roleList) {
+                String roleName = role.getEnname();
+                if (RoleEnNameEnum.SUPPLY_CHAIN.getDesc().equals(roleName)) {
+                    roleFlag = true;
+                    break;
+                }
+            }
+        }
+        model.addAttribute("roleFlag", roleFlag);
+        resultMap.put("roleFlag", roleFlag);
+        return JsonUtil.generateData(resultMap, null);
     }
 
     @RequestMapping(value = "checkSchedulingNum")
@@ -1134,6 +1211,7 @@ public class BizPoHeaderController extends BaseController {
                         schedulingPlan.setObjectId(dto.getObjectId());
                         schedulingPlan.setObjectName(objectName);
                         schedulingPlan.setOriginalNum(dto.getOriginalNum());
+                        schedulingPlan.setPoSchType(Integer.valueOf(dto.getPoSchType()));
                         bizSchedulingPlanService.save(schedulingPlan);
                     }
 
@@ -1302,9 +1380,12 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeader = bizPoHeaderService.get(poHeaderIdid);
         bizPoHeader.setDeliveryStatus(0);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date lastPayDate = sdf.parse(lastPayDateVal);
-        bizPoHeader.setLastPayDate(lastPayDate);
-
+        if (StringUtils.isBlank(lastPayDateVal)) {
+            bizPoHeader.setLastPayDate(new Date());
+        } else {
+            Date lastPayDate = sdf.parse(lastPayDateVal);
+            bizPoHeader.setLastPayDate(lastPayDate);
+        }
         bizPoHeader.setIsPrew(0);
         bizPoHeader.setType("createPo");
         bizPoHeaderService.savePoHeader(bizPoHeader);

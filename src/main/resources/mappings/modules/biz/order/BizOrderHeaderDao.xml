@@ -903,6 +903,7 @@
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		AND
 		header1.create_time LIKE #{month}
+		AND header1.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>机构添加</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/app.css" rel="stylesheet" />
+		<style type="text/css">
+			.pre {
+				margin-bottom: 0;
+				padding-left: 0;
+				float: right;
+				width: 67%;
+			}
+			
+			.newinput {
+				width: 150px;
+				padding: 2px 0px 2px 0px;
+				margin-bottom: -1px;
+				background: url(./thumb.jpg) no-repeat scroll right center;
+				border: 1px solid #ccc;
+				box-shadow: 0 1px 0 0 #eee inset;
+				cursor: default;
+			}
+			
+			.newinput:focus {
+				cursor: text;
+			}
+			
+			.input_div {
+				width: 150px;
+				border: 1px solid #ddd;
+				border-bottom: none;
+				border-radius: 0 0 3px 3px;
+				display: none;
+			}
+			
+			.soption {
+				display: block;
+				padding: 2px 5px;
+			}
+			
+			.soption:hover {
+				background: #f9f9f9;
+				border-top: 1px dotted #ddd;
+				border-bottom: 1px dotted #ddd;
+				padding: 1px 5px;
+			}
+			
+			.mui-input-row label {
+				padding: 14px 14px;
+			}
+			
+			.addBtn {
+				width: 30%;
+				margin: 5px auto;
+			}
+			
+			.saveBtn {
+			    width: 80%;
+				margin: 20px auto;
+			}
+			.mui-input-row font {
+				color: red;
+				position: absolute;
+				right: 60px;
+				top: 38%;
+				font-size: 20px;
+			}
+			
+			.addBtnClass {
+				padding: 0;
+				font-size: 15px;
+			}
+			
+			.mui-content div.mui-row li {
+				padding: 5px;
+				list-style: none;
+				height: 30px;
+			}
+			
+			.secStyle {
+				margin: 5px 0;
+			}
+
+			.inputClassAdd {
+				font-size: 10px;
+			}
+
+			.inputClassAdd>label {
+				padding: 0;
+			}
+
+			.inputClassAdd>input {
+				padding: 0;
+				font-size: 10px;
+			}
+			.inputClassAdd>label.commodityName {
+				padding: 0;
+				width: 15%;
+			}
+			.inputClassAdd>input.commodityTxt {
+				padding: 0;
+				font-size: 10px;
+				position: relative;
+				width: 85%;
+			}
+			
+			#hideSpanAdd {
+			    position: absolute;
+			    right: 52px;
+			    top: 11px;
+			    border: 1px solid rgb(204, 204, 204);
+			    border-radius: 13px;
+				display: none;
+			}
+			
+			.mui-table-view-cell {
+				border-bottom: 1px solid #efeff4;
+			}
+			
+			.mui-input-row .mui-input-clear~.mui-icon-clear {
+				right: 4.5em;
+    			top: 10px;
+			}
+			.inputClassAdd label {
+				color:#40ABE9;
+			}
+			.inputClassAdd font {
+				color: red;
+			    position: absolute;
+			    right: 5px;
+			    top: 10%;
+			    font-size: 20px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">机构添加</p>
+		</header>
+		<div class="mui-content mui-input-group">
+			<div class="mui-input-row">
+				<label>上级机构：</label>
+				<div class="pre">
+					<input class="newinput" type="text" placeholder="请选择经销店">
+					<font>*</font>
+					<span class="mui-icon mui-icon-closeempty" id="hideSpanAdd"></span>
+					<div class="input_div" style="display: none;">
+
+					</div>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>归属区域：</label>
+				<div class="pre">
+					<input class="newinput" type="text" placeholder="请选择市辖区">
+					<font>*</font>
+					<span class="mui-icon mui-icon-closeempty" id="hideSpanAdd"></span>
+					<div class="input_div" style="display: none;">
+
+					</div>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>机构名称：</label>
+				<input type="text" class="mui-input-clear" id="inPoLastDa">
+				<font>*</font>
+			</div>
+			<div class="mui-input-row">
+				<label>机构编码：</label>
+				<input type="text" class="mui-input-clear" id="inPoLastDa">
+			</div>
+			<div class="mui-input-row">
+				<label>机构类型：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="inputDivAdd">
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>机构级别：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="inputDivAdd">
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>是否可用：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="inputDivAdd">
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>钱包账户：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="inputDivAdd">
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row app_mb10" id="inAmendPoLastDaDiv">
+				<label class="commodityName">主负责人：</label>
+				<input type="text" class="mui-input-clear commodityTxt" id="inAmendPoLastDa" placeholder="请选择主负责人">
+				<button id="mainHeadBtn" type="submit" class="mainHead mui-btn-blue mui-btn-block">添加新负责人</button>
+			</div>
+			<div class="mui-input-row">
+				<label>副负责人：</label>
+				<div class="pre">
+					<input class="newinput" type="text" placeholder="请选择副负责人">
+					<font>*</font>
+					<span class="mui-icon mui-icon-closeempty" id="hideSpanAdd"></span>
+					<div class="input_div" style="display: none;">
+
+					</div>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>联系地址：</label>
+				<input type="text" class="mui-input-clear" id="inPoLastDa">
+			</div>
+			<div class="mui-input-row">
+				<label>邮政编码：</label>
+				<input type="text" class="mui-input-clear" id="inPoLastDa">
+			</div>
+			<div class="mui-input-row">
+				<label>负责人：</label>
+				<input type="text" class="mui-input-clear" id="inPoLastDa">
+			</div>
+			<div class="mui-input-row">
+				<label>电话：</label>
+				<input type="text" class="mui-input-clear" id="inPoLastDa">
+			</div>
+			<div class="mui-input-row">
+				<label>传真：</label>
+				<input type="text" class="mui-input-clear" id="inPoLastDa">
+			</div>
+			<div class="mui-input-row">
+				<label>邮箱：</label>
+				<input type="text" class="mui-input-clear" id="inPoLastDa">
+			</div>
+			<div class="mui-input-row">
+				<label>备注：</label>
+				<textarea id="membRemark" name="" rows="" cols=""></textarea>
+			</div>
+			<div class="mui-input-row">
+				<label>快速添加下级部门：</label>
+				
+			</div>
+		</div>
+		<div class="inSaveBtn saveBtn">
+			<button id="inSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>
+		</div>
+		<div class="clear"></div>
+
+		<script src="../../js/component/mui.min.js"></script>
+		<script src="../../js/component/zepto.min.js"></script>
+		<script src="../../js/component/GHutils.js"></script>
+		<script src="../../js/memberMgmtJs/memberAdd.js"></script>
+	</body>
+
+</html>

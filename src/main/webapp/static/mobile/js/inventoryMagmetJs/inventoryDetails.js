@@ -20,48 +20,47 @@
 			var _this = this;
 			$.ajax({
                 type: "GET",
-                url: "/a/biz/request/bizRequestHeader/form4Mobile",
+                url: "/a/biz/request/bizRequestHeaderForVendor/form4MobileNew",
                 data: {id:_this.userInfo.inListId},
                 dataType: "json",
                 success: function(res){
-//					console.log(res)
-					/*业务状态*/
-						var bizstatus = res.bizStatus;
-						var bizstatusTxt = '';
-						if(bizstatus==0) {
-							bizstatusTxt = "未审核"
-						}else if(bizstatus==1) {
-							bizstatusTxt = "首付支付"
-						}else if(bizstatus==2) {
-							bizstatusTxt = "全部支付"
-						}else if(bizstatus==4) {
-							bizstatusTxt = "审核中"
-						}else if(bizstatus==5) {
-							bizstatusTxt = "审核通过"
-						}else if(bizstatus==6) {
-							bizstatusTxt = "审批中"
-						}else if(bizstatus==7) {
-							bizstatusTxt = "审批完成"
-						}else if(bizstatus==10) {
-							bizstatusTxt = "采购中"
-						}else if(bizstatus==13) {
-							bizstatusTxt = "部分结算"
-						}else if(bizstatus==15) {
-							bizstatusTxt = "采购完成"
-						}else if(bizstatus==20) {
-							bizstatusTxt = "备货中"
-						}else if(bizstatus==25) {
-							bizstatusTxt = "供货完成"
-						}else if(bizstatus==30) {
-							bizstatusTxt = "收货完成"
-						}else if(bizstatus==37) {
-							bizstatusTxt = "结算完成"
-						}else if(bizstatus==40) {
-							bizstatusTxt = "取消"
-						}else {
-							bizstatusTxt = "未知类型"
-						}
-					
+					console.log(res)
+				/*业务状态*/
+					var bizstatus = res.bizStatus;
+					var bizstatusTxt = '';
+					if(bizstatus==0) {
+						bizstatusTxt = "未审核"
+					}else if(bizstatus==1) {
+						bizstatusTxt = "首付支付"
+					}else if(bizstatus==2) {
+						bizstatusTxt = "全部支付"
+					}else if(bizstatus==4) {
+						bizstatusTxt = "审核中"
+					}else if(bizstatus==5) {
+						bizstatusTxt = "审核通过"
+					}else if(bizstatus==6) {
+						bizstatusTxt = "审批中"
+					}else if(bizstatus==7) {
+						bizstatusTxt = "审批完成"
+					}else if(bizstatus==10) {
+						bizstatusTxt = "采购中"
+					}else if(bizstatus==13) {
+						bizstatusTxt = "部分结算"
+					}else if(bizstatus==15) {
+						bizstatusTxt = "采购完成"
+					}else if(bizstatus==20) {
+						bizstatusTxt = "备货中"
+					}else if(bizstatus==25) {
+						bizstatusTxt = "供货完成"
+					}else if(bizstatus==30) {
+						bizstatusTxt = "收货完成"
+					}else if(bizstatus==37) {
+						bizstatusTxt = "结算完成"
+					}else if(bizstatus==40) {
+						bizstatusTxt = "取消"
+					}else {
+						bizstatusTxt = "未知类型"
+					}
 					$('#inPoDizstatus').val(bizstatusTxt)
 					$('#inPoordNum').val(res.data.entity.reqNo)
 					$('#inOrordNum').val(res.data.entity.fromOffice.name)
@@ -76,11 +75,10 @@
 		},
 		statusListHtml:function(data){
 			var _this = this;
-//			console.log(data)
+			console.log(data)
 			var pHtmlList = '';
-//			var len = data.bizPoHeader.commonProcessList.length
 			$.each(data.statusList, function(i, item) {
-//				console.log(item)
+				console.log(item)
 //				0未审核 1首付款支付,2是全部支付 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
 				var checkBizStatus = '';
 				if(item.bizStatus==0) {
@@ -112,9 +110,8 @@
 					'<div class="step_num_txt">'+
 						'<div class="mui-input-row">'+
 							'<label>处理人:</label>'+
-					        '<textarea name="" rows="" cols="" disabled>'+ item.createBy.name +'</textarea>'+
+							'<input type="text" value="'+ item.createBy.name +'" class="mui-input-clear" disabled>'+
 					    '</div>'+
-						'<br />'+
 						'<div class="mui-input-row">'+
 					        '<label>状态:</label>'+
 					        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
@@ -132,20 +129,26 @@
 			var htmlCommodity = '';
 			$.each(data.reqDetailList, function(i, item) {
 //				console.log(item)
+				var orderNum = '';
+				if(item.bizPoHeader) {
+					orderNum = item.bizPoHeader.orderNum;
+				}else {
+					orderNum = ''
+				}
 				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
 //		产品图片
-					'<div class="photoParent mui-pull-left position_Re">'+
-						'<img class="position_Ab" src="'+item.skuInfo.productInfo.imgUrl+'">'+
+					'<div class="photoParent mui-pull-left app_pr">'+
+						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+
 					'</div>'+
 //		产品信息
-					'<div class="mui-media-body commodity">'+
+					'<div class="mui-media-body commoditys">'+
 						'<div class="mui-input-row">'+
 							'<label>品牌名称：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>供应商：</label>'+
-							'<input type="text" class="font-color mui-input-clear" value="'+ item.skuInfo.productInfo.vendorName +'" disabled>'+
+							'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuInfo.productInfo.vendorName +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>商品名称：</label>'+
@@ -169,19 +172,27 @@
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>仓库名称：</label>'+
-							'<input type="text" class="mui-input-clear" disabled>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.invName +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>库存数量：</label>'+
-							'<input type="text" class="mui-input-clear" disabled>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.skuInvQty +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>总库存数量：</label>'+
-							'<input type="text" class="mui-input-clear" disabled>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.invenSkuOrd +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>已收货数量：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.recvQty +'" disabled>'+
+						'</div>'+
+						'<div class="mui-input-row">'+
+							'<label>已生成采购单：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ orderNum +'" disabled>'+
+						'</div>'+
+						'<div class="mui-input-row">'+
+							'<label>采购数量：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" disabled>'+
 						'</div>'+
 					'</div>'+
 				'</li>'
