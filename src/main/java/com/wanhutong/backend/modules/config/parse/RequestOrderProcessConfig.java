@@ -34,6 +34,9 @@ public class RequestOrderProcessConfig extends ConfigGeneral {
     @XStreamImplicit(itemFieldName = "process")
     private List<RequestOrderProcess> processList;
 
+    @XStreamAlias("createPoProcessId")
+    private Integer createPoProcessId;
+
     /**
      * 数据MAP
      */
@@ -77,6 +80,10 @@ public class RequestOrderProcessConfig extends ConfigGeneral {
 
     public Integer getAutProcessId() {
         return autProcessId;
+    }
+
+    public Integer getCreatePoProcessId() {
+        return createPoProcessId;
     }
 
     @XStreamAlias("process")

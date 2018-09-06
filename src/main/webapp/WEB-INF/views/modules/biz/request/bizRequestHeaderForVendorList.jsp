@@ -328,7 +328,7 @@
 					<%--</c:if>--%>
 				<%--</shiro:hasPermission>--%>
 				<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
+					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
 							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
 							}">
 						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
