@@ -297,8 +297,8 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 //		System.out.println(df.format(day));
 		bizOpShelfSku.setUnshelfTime(day);
 		bizOpShelfSkuV2Service.updateDateTime(bizOpShelfSku);
-		bizOpShelfSkuV2Service.saveShelfProdInfoPrice(bizOpShelfSku);
-		addMessage(redirectAttributes, "下架成功");
+		String message = bizOpShelfSkuV2Service.saveShelfProdInfoPrice(bizOpShelfSku, 2);
+		addMessage(redirectAttributes, message);
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSkuV2/?repage";
 	}
 
@@ -318,8 +318,8 @@ public class BizOpShelfSkuV2Controller extends BaseController {
         bizOpShelfSku.setShelfTime(new Date());
         bizOpShelfSku.setUnshelfTime(null);
 		bizOpShelfSkuV2Service.updateShelves(bizOpShelfSku);
-		bizOpShelfSkuV2Service.saveShelfProdInfoPrice(bizOpShelfSku);
-		addMessage(redirectAttributes, "上架成功");
+		String message = bizOpShelfSkuV2Service.saveShelfProdInfoPrice(bizOpShelfSku, 1);
+		addMessage(redirectAttributes, message);
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSkuV2/?repage";
 	}
 
@@ -423,13 +423,15 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		}
 		String[] opShelfSkuIdAttr = bizOpShelfSku.getOpShelfSkuIds().split(",");
 		Date day=new Date();//当前时间
+		StringBuilder message = new StringBuilder();
 		for (String opShelfSkuId : opShelfSkuIdAttr) {
 			BizOpShelfSku opShelfSku = bizOpShelfSkuV2Service.get(Integer.valueOf(opShelfSkuId));
 			opShelfSku.setUnshelfTime(day);
 			bizOpShelfSkuV2Service.updateDateTime(opShelfSku);
-			bizOpShelfSkuV2Service.saveShelfProdInfoPrice(opShelfSku);
+			String s = bizOpShelfSkuV2Service.saveShelfProdInfoPrice(opShelfSku, 2);
+			message.append(s).append("===========================");
 		}
-		addMessage(redirectAttributes,"下架成功");
+		addMessage(redirectAttributes,message.toString());
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSkuV2/?repage";
     }
 }
