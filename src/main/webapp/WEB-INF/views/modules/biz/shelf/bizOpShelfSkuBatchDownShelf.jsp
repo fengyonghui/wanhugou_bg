@@ -51,6 +51,8 @@
             $("#searchData").click(function () {
                 var prodBrandName=$("#prodBrandName").val();
                 $("#prodBrandNameCopy").val(prodBrandName);
+                var opShelfInfo = $("#opShelfInfo").val();
+                $("#opShelfInfoCopy").val(opShelfInfo);
                 var skuName=$("#skuName").val();
                 $("#skuNameCopy").val(skuName);
                 var skuCode =$("#skuCode").val();
@@ -130,6 +132,9 @@
 				<li><label>品牌名称：</label>
 					<input id="prodBrandName" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
 				</li>
+                <li><label>货架名称：</label>
+                    <input id="opShelfInfo" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
+                </li>
 				<li><label>商品名称：</label>
 					<input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
 				</li>
@@ -209,6 +214,7 @@
 
 <form:form id="searchForm" modelAttribute="bizOpShelfSku" >
 	<form:hidden id="prodBrandNameCopy" path="productInfo.brandName"/>
+	<form:hidden id="opShelfInfoCopy" path="opShelfInfo.name"/>
 	<form:hidden id="skuNameCopy" path="skuInfo.name"/>
 	<form:hidden id="skuCodeCopy" path="skuInfo.partNo"/>
 	<form:hidden id="itemNoCopy" path="skuInfo.itemNo"/>

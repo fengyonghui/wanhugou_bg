@@ -69,6 +69,11 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
      * 批量下架的上架商品ID
      */
 	private String opShelfSkuIds;
+
+	/**
+	 * 用来筛选查询未下架的商品
+	 */
+	private String batchDownShelf;
 	
 	public BizOpShelfSku() {
 		super();
@@ -289,4 +294,12 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
     public void setOpShelfSkuIds(String opShelfSkuIds) {
         this.opShelfSkuIds = opShelfSkuIds;
     }
+
+	public String getBatchDownShelf() {
+		return batchDownShelf;
+	}
+
+	public void setBatchDownShelf(String batchDownShelf) {
+		this.batchDownShelf = batchDownShelf;
+	}
 }

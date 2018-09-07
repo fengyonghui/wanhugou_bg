@@ -409,6 +409,7 @@ public class BizOpShelfSkuV2Controller extends BaseController {
                 && bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getProductInfo().getBrandName().isEmpty()) {
             return null;
         }
+        bizOpShelfSku.setBatchDownShelf("batch");
         return bizOpShelfSkuV2Service.findList(bizOpShelfSku);
     }
 
