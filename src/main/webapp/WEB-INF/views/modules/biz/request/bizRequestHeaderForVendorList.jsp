@@ -168,11 +168,11 @@
 			<li><label>审核状态</label>
 				<form:select class="input-medium" path="process">
 					<%--<option value="">请选择</option>--%>
-					<%--<c:forEach items="${processSet}" var="process">--%>
-						<%--<option value="${process}">${process}</option>--%>
+					<%--<c:forEach items="${requestMap}" var="req">--%>
+						<%--<option value="${req.key}">${req.value}</option>--%>
 					<%--</c:forEach>--%>
 					<form:option value="" label="请选择"/>
-					<form:options items="${processSet}" htmlEscape="false"/>
+					<form:options items="${requestMap}" htmlEscape="false"/>
 				</form:select>
 			</li>
 			<li><label>品类名称：</label>
@@ -257,11 +257,11 @@
 
 				</td>
 				<td>
-					<c:if test="${requestHeader.bizStatus < ReqHeaderStatusEnum.APPROVE.state}">
+					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name != '审核完成'}">
 						${requestHeader.commonProcess.requestOrderProcess.name}
 					</c:if>
-					<c:if test="${requestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state}">
-						${requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name}
+					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">
+						订单支出信息审核
 					</c:if>
 				</td>
 				<td>
@@ -328,7 +328,7 @@
 					<%--</c:if>--%>
 				<%--</shiro:hasPermission>--%>
 				<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
+					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
 							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
 							}">
 						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>

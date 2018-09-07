@@ -254,7 +254,7 @@
                                             <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoHeader.bizOrderHeader.id}&str=audit">审核</a>
                                         </c:if>
                                         <c:if test="${bizPoHeader.bizRequestHeader != null}">
-                                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=audit">审核</a>
+                                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=audit&processPo=processPo">审核</a>
                                         </c:if>
                                     </c:when>
                                     <c:otherwise>
@@ -290,7 +290,7 @@
                             <a href="javascript:void(0);" onclick="cancel(${bizPoHeader.id});">取消</a>
                         </shiro:hasPermission>
                         <shiro:hasPermission name="biz:po:bizPoHeader:view">
-                            <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
+                            <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail&fromPage=orderHeader">详情</a>
                         </shiro:hasPermission>
                         <%--<c:if test="${bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">--%>
                         <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">

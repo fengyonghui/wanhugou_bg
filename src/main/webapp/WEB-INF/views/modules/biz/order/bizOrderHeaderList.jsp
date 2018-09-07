@@ -132,6 +132,13 @@
 			</form:select>
 		</li>
 
+		<li><label>尾款：</label>
+			<form:select path="retainage" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:option value="1" label="有尾款"/>
+			</form:select>
+		</li>
+
 		<c:if test="${source ne 'vendor'}">
 			<li><label>经销店电话：</label>
 				<form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
@@ -196,6 +203,7 @@
 		<li><label>测试数据</label>
 			<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
 		</li>
+
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">

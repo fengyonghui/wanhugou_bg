@@ -93,6 +93,7 @@ public class AliyunSmsClient {
      */
     private Future<Boolean> sendSMS(String signName, String templateCode, String recNum, Map<String, String> paramsMap) {
         if (!ConfigGeneral.SYSTEM_CONFIG.get().getSendMessageSwitch()) {
+            LOGGER.info("测试短信发送,signName[{}],templateCode[{}],recNum[{}],paramsMap[{}]",signName,templateCode,recNum,paramsMap);
             return null;
         }
 

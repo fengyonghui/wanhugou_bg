@@ -204,6 +204,11 @@ public class BizRequestOrderController extends BaseController {
         return requestHeaderList;
     }
 
+    private Page<BizRequestHeader> findBizRequestV3(BizRequestHeader bizRequestHeader,HttpServletRequest request, HttpServletResponse response) {
+        bizRequestHeader.setFromType(ReqFromTypeEnum.CENTER_TYPE.getType());
+        return bizRequestHeaderService.pageFindListV2(new Page<BizRequestHeader>(request, response), bizRequestHeader);
+    }
+
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"form", ""})
@@ -686,7 +691,7 @@ public class BizRequestOrderController extends BaseController {
         if (REQUEST_HEADER_TYPE.equals(type)) {
             BizRequestHeader requestHeader = new BizRequestHeader();
             requestHeader.setId(orderId);
-            Page<BizRequestHeader> requestHeaderList = findBizRequestV2(requestHeader,request,response);
+            Page<BizRequestHeader> requestHeaderList = findBizRequestV3(requestHeader,request,response);
             if (requestHeaderList.getList().size() > 0) {
                 requestHeader = requestHeaderList.getList().get(0);
                 String reqDetailIds = requestHeader.getReqDetailIds();

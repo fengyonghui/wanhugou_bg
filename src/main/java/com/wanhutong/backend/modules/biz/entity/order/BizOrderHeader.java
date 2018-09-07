@@ -217,6 +217,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     private Integer waitPay;
 
+    private Integer retainage;
+
     /**
      *  采购单当前审核流程名字
      */
@@ -959,5 +961,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setPoProcessName(String poProcessName) {
         this.poProcessName = poProcessName;
+    }
+
+    public Integer getRetainage() {
+        return retainage;
+    }
+
+    public void setRetainage(Integer retainage) {
+        this.retainage = retainage;
     }
 }

@@ -471,6 +471,7 @@
 		seachFunc:function(){
 			var _this = this;
 			var inPHtmlList = '';
+			//解码
 			var nameTxt = '';
 			if(_this.userInfo.name) {
 				nameTxt = decodeURIComponent(_this.userInfo.name)
@@ -488,6 +489,7 @@
 					'fromOffice.id':_this.userInfo.fromOffice,
 					bizStatus:_this.userInfo.bizStatusid,
 					'varietyInfo.id':_this.userInfo.varietyInfoid
+//					process:
 				},
 				dataType: 'json',
 				success: function(res) {

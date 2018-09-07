@@ -1099,6 +1099,7 @@ public class BizOrderHeaderController extends BaseController {
         statusList.sort(Comparator.comparing(BizOrderStatus::getCreateDate).thenComparing(BizOrderStatus::getId));
 
         Map<Integer, OrderHeaderBizStatusEnum> statusMap = OrderHeaderBizStatusEnum.getStatusMap();
+        Map<Integer, String> stateDescMap = OrderHeaderBizStatusEnum.getStateDescMap();
 
         String statuPath = request.getParameter("statu");
         model.addAttribute("statuPath", statuPath);
@@ -1131,6 +1132,7 @@ public class BizOrderHeaderController extends BaseController {
         resultMap.put("orderNumMap", orderNumMap);
         resultMap.put("detailIdMap", detailIdMap);
         resultMap.put("statusMap", statusMap);
+        resultMap.put("stateDescMap", stateDescMap);
 
         //图片处理
         CommonImg commonImg = new CommonImg();
@@ -1327,13 +1329,16 @@ public class BizOrderHeaderController extends BaseController {
         }
         String statuPath = request.getParameter("statuPath");
         if (bizOrderHeader.getId() != null) {
+            OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail(), bizOrderHeader.getReceiveTotal());
             if (bizOrderHeader.getOrderNum().startsWith("DO")) {
-                Integer processId = bizOrderHeaderService.saveCommonProcess(bizOrderHeader);
-                bizOrderHeaderService.updateProcessId(bizOrderHeader.getId(), processId);
+                if (OrderPayProportionStatusEnum.ALL == statusEnum || OrderPayProportionStatusEnum.FIFTH == statusEnum) {
+                    Integer processId = bizOrderHeaderService.saveCommonProcess(bizOrderHeader);
+                    bizOrderHeaderService.updateProcessId(bizOrderHeader.getId(), processId);
+                }
             }
 
             if (bizOrderHeader.getOrderNum().startsWith("SO")) {
-                genAuditProcess(OrderPayProportionStatusEnum.parse(bizOrderHeader.getPayProportion()), bizOrderHeader, Boolean.TRUE);
+                genAuditProcess(statusEnum, bizOrderHeader, Boolean.TRUE);
             }
 
             BizPoHeader bizPoHeader = new BizPoHeader();

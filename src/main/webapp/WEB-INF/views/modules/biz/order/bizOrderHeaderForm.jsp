@@ -588,7 +588,7 @@
             //     return false;
             // }
 
-            if ($String.isNullOrBlank(payTotal)) {
+            if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                 alert("错误提示:请输入支付金额");
                 return false;
             }
@@ -605,7 +605,7 @@
                 success: function (result) {
                     alert(result);
                     if (result == '操作成功!') {
-                        window.location.href = "${ctx}/biz/order/bizOrderHeader";
+                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
                     }
                 },
                 error: function (error) {
@@ -2308,11 +2308,11 @@
             <c:if test="${not empty entity.orderDetails}">
                 <input onclick="window.print();" type="button" class="btn btn-primary" value="打印订单" style="background:#F78181;"/>
                 &nbsp;
-                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </c:if>
         </c:if>
     </c:if>
     </c:if>
+                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
 </div>
 
 <c:if test="${bizOrderHeader.flag=='check_pending'}">

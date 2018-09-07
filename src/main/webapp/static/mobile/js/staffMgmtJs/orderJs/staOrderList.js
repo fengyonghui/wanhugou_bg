@@ -76,11 +76,10 @@
 			                success: function(res){                 
 				                ass=res;
 			                }
-			            });
-//		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+			            });		 
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20 ){
-							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true)
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}else{
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true)
 						}
@@ -177,6 +176,7 @@
 								_this.stOrdHrefHtml()
 					} else {
 								$('.mui-pull-bottom-pocket').html('');
+								$('#staOrdList').append('<p class="noneTxt">暂无数据</p>');
 								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);							
 							}
 						totalPage = res.data.page.count%pager.size!=0?
@@ -184,7 +184,7 @@
 		                res.data.page.count/pager.size;
 //		                console.log(totalPage)
 		                if(totalPage==pager.pageNo){		                	
-			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();			                
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
@@ -214,14 +214,22 @@
 		/*查询*/
 			$('.app_header').on('tap', '#staOrdSechBtn', function() {
 				var url = $(this).attr('url');
-				var staListId = $('#consultantId').val();
+				var staListIds = $('#consultantId').val();
+				var staListIdTxts = $('#staListIdTxt').val(); 
+				var conId = '';
+				if(staListIdTxts) {
+					conId = $('#staListIdTxt').val();
+				}
+				if(staListIds) {
+					conId = $('#consultantId').val();
+				}
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdSech.html",
 						extras:{
-							staListId: staListId,
+							staListId: conId,
 						}
 					})
 				}
@@ -366,26 +374,31 @@
 			var _this = this;
 			var staffHtmlList = '';
 			var nameTxt = '';
-			if(_this.userInfo.newinput) {
+			if(_this.userInfo.checkStatus) {
 				nameTxt = decodeURIComponent(_this.userInfo.checkStatus)
 			}else {
 				nameTxt = ''
 			}
-			
+			if(_this.userInfo.Purchasing) {
+				nameTxts = decodeURIComponent(_this.userInfo.Purchasing)
+			}else {
+				nameTxts = ''
+			}
 			$.ajax({
 				type: 'GET',
                 url: '/a/biz/order/bizOrderHeader/listData4mobile',
 				data: {
 					'pageNo': 1,
 					'orderNum' : _this.userInfo.staOrder,
-                    'centersName': _this.userInfo.Purchasing,
+                    'centersName': nameTxts,
                     'customer.phone': _this.userInfo.OrdMobile,
                     'itemNo': _this.userInfo.OrdNumbers,
                     'con.name': _this.userInfo.OrdClient,
                     'bizStatus': _this.userInfo.orderStatus,
                     'selectAuditStatus': nameTxt, //originConfigMap
                     'customer.id':_this.userInfo.newinput,
-//                  consultantId: _this.userInfo.staListSehId
+                    consultantId: _this.userInfo.staListSehId,
+					includeTestData: _this.userInfo.includeTestData
 				},
 				dataType: 'json',
 				success: function(res) {
@@ -411,7 +424,6 @@
 	                        	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
 	                            var orderTypeTxt = '';
 	                            $.each(ass,function(i,items){
-	                            	console.log(items.value)
 		                        	if(item.orderType==items.value) {
 		                        		orderTypeTxt = items.label
 		                        	}

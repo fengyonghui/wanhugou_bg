@@ -68,10 +68,7 @@
 		            dataType:'json',
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
-		            success:function(res){
-		            	console.log(res)
-		            	
-//		                mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+		            success:function(res){		            	
 						var arrLen = res.data.page.list.length;	
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true)
@@ -137,6 +134,7 @@
 								_this.stHrefHtml()
 						} else {
 								$('.mui-pull-caption').html('');
+								$('#staffList').append('<p class="noneTxt">暂无数据</p>');
 							}
 						totalPage = res.data.page.count%pager.size!=0?
 		                parseInt(res.data.page.count/pager.size)+1:
