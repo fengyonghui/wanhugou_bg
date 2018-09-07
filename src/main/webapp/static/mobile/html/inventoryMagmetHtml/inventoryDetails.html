@@ -8,7 +8,6 @@
 		<link href="../../css/app.css" rel="stylesheet" />
 		<style type="text/css">
 			.mui-input-group .mui-input-row:after {left: 0px;}
-			.mui-table-view-cell {padding: 0 15px;}
 		</style>
 	</head>
 	<body>
@@ -24,10 +23,12 @@
 			<div class="mui-input-row" id="orderTypebox">
 				<label>备货方：</label>
 		    	<div id="changeTxt" class="labelri">
-		    		采购中心备货
 			        <input id="fromType1" type="radio" name="fromType" value="1" checked  disabled="disabled" class="inputRadio"/>
-		        	厂商备货
+			                采购中心备货
+		        </div>	
+		        <div id="changeTxt" class="labelri">
 		        	<input id="fromType2" type="radio" name="fromType" value="2"  disabled="disabled" class="inputRadio"/>
+		        	厂商备货
 	        	</div>
 		    </div>
 			<div class="mui-input-row">
@@ -59,10 +60,8 @@
 				<ul id="commodityMenu" class="mui-table-view"></ul>									
 			</div>
 			<div class="mui-input-row">
-				<label>支付列表：</label>								
-			</div>
-			<div class="mui-input-row">
-				<ul id="inPaylist" class="mui-table-view"></ul>									
+				<div class="labelLf">支付列表：</div>
+				<ul id="inPaylist" class="mui-table-view"></ul>
 			</div>
 			<div class="mui-input-row">
 				<label>备注：</label>

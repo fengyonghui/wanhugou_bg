@@ -68,7 +68,7 @@
 					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);
 					$('#inPototal').val(res.data.bizRequestHeader.totalMoney.toFixed(1));
 					$('#inMoneyReceive').val(res.data.bizRequestHeader.recvTotal.toFixed(1));//已收保证金entity.recvQtys
-					$('#inMarginLevel').val((res.data.bizRequestHeader.recvTotal*100/res.data.bizRequestHeader.totalMoney) .toFixed(2)+ '%');//保证金比例           
+					$('#inMarginLevel').val((res.data.bizRequestHeader.recvTotal*100/res.data.bizRequestHeader.totalMoney) .toFixed(2)+ '%');//保证金比例
 					$('#inMoneyPay').val(res.data.bizRequestHeader.bizPoHeader.payTotal.toFixed(2));
 					$('#inPoLastDa').val(_this.formatDateTime(res.data.bizRequestHeader.recvEta));
 					_this.commodityHtml(res.data);
@@ -97,8 +97,9 @@
         paylistHtml:function(data){
         	var _this = this;
         	var htmlPaylist = '';
-        	$.each(data.paymentOrderList, function(i, item) {		
-				htmlPaylist +='<li class="mui-table-view-cell mui-media step_items">'+					
+        	$.each(data.paymentOrderList, function(i, item) {
+				console.log(item)			
+				htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
 					'<div class="mui-media-body">'+
 						'<div class="mui-input-row">'+
 							'<label>付款金额：</label>'+
@@ -199,15 +200,14 @@
 		checkProcessHtml:function(data){
 			var _this = this;
 			var auditLen = data.bizRequestHeader.commonProcessList.length;
-			if(auditLen > 0) {
+			if(data.bizRequestHeader.commonProcessList) {
 				var CheckHtmlList ='';
 				$.each(data.bizRequestHeader.commonProcessList, function(i, item) {
-					var ProcessName = '';
 					console.log(item)
+					var auditLen = data.bizRequestHeader.commonProcessList.length;
+					console.log(auditLen-1)
 					var step = i + 1;
-					var current = i;
-					console.log(current)
-					if(current !== auditLen) {
+					if(i!=auditLen-1) {
 						CheckHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
 						'<div class="step_num_txt">'+
@@ -216,36 +216,68 @@
 						        '<input type="text" value="'+ item.description +'" class="mui-input-clear" disabled>'+
 						    	'<label>审批人:</label>'+
 						        '<input type="text" value=" '+ item.user.name +' " class="mui-input-clear" disabled>'+
+						        '<label>时间:</label>'+
 						        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
 						    '</div>'+
 						'</div>'+
 					'</li>'
 					}
-//					if(current == auditLen&& data.bizRequestHeader.bizPoHeader.commonProcessList == null) {
-//						if(item.requestOrderProcess.name != '审核完成'){
-//							CheckHtmlList +='<li class="step_item">'+
-//								'<div class="step_num">'+ step +' </div>'+
-//								'<div class="step_num_txt">'+
-//									'<div class="mui-input-row">'+
-//								        '<label>当前状态:</label>'+
-//								        '<input type="text" value="'+ item.requestOrderProcess.name +'" class="mui-input-clear" disabled>'+
-//								    '</div>'+
-//								'</div>'+
-//							'</li>'
-//						}
-//						if(item.requestOrderProcess.name == '审核完成'){
-//							CheckHtmlList +='<li class="step_item">'+
-//								'<div class="step_num">'+ step +' </div>'+
-//								'<div class="step_num_txt">'+
-//									'<div class="mui-input-row">'+
-//								        '<label>当前状态:</label>'+
-//								        '<input type="text" value="'+ 订单支出信息审核 +'" class="mui-input-clear" disabled>'+
-//								    '</div>'+
-//								'</div>'+
-//							'</li>'
-//						}
-//					}
+					if(auditLen = 1 && data.bizRequestHeader.bizPoHeader.commonProcessList == null) {
+						if(item.requestOrderProcess.name != '审核完成'){
+							CheckHtmlList +='<li class="step_item">'+
+								'<div class="step_num">'+ step +' </div>'+
+								'<div class="step_num_txt">'+
+									'<div class="mui-input-row">'+
+								        '<label>当前状态:</label>'+
+								        '<input type="text" value="'+ item.requestOrderProcess.name +'" class="mui-input-clear" disabled>'+
+								    '</div>'+
+								'</div>'+
+							'</li>'
+						}
+						if(item.requestOrderProcess.name == '审核完成'){
+							CheckHtmlList +='<li class="step_item">'+
+								'<div class="step_num">'+ step +' </div>'+
+								'<div class="step_num_txt">'+
+									'<div class="mui-input-row">'+
+								        '<label>当前状态:</label>'+
+								        '<input type="text" value="订单支出信息审核 " class="mui-input-clear" disabled>'+
+								    '</div>'+
+								'</div>'+
+							'</li>'
+						}
+					}
 				});
+				$.each(data.bizRequestHeader.bizPoHeader.commonProcessList, function(a, items) {
+					console.log(items)
+					var len = data.bizRequestHeader.bizPoHeader.commonProcessList.length;
+					var totalStep = auditLen + a;
+					if(len-a != 1) {                                          
+						CheckHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ totalStep +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+						        '<label>批注:</label>'+
+						        '<input type="text" value="'+ items.description +'" class="mui-input-clear" disabled>'+
+						    	'<label>审批人:</label>'+
+						        '<input type="text" value=" '+ items.user.name +' " class="mui-input-clear" disabled>'+
+						        '<label>时间:</label>'+
+						        '<input type="text" value=" '+ _this.formatDateTime(items.updateTime) +' " class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+					}
+					if(len-a == 1) {
+						CheckHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ totalStep +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+						        '<label>当前状态:</label>'+
+						        '<input type="text" value="'+ items.purchaseOrderProcess.name +'" class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+					}
+				});	
 				$("#inapprovalAddMenu").html(CheckHtmlList)
 			}
 		},
