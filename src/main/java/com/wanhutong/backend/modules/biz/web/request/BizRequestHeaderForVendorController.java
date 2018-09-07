@@ -634,7 +634,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		model.addAttribute("bizSkuInfo", new BizSkuInfo());
 
 		resultMap.put("roleChanne", roleName);
-		resultMap.put("entity", bizRequestHeader);
+		resultMap.put("bizRequestHeader", bizRequestHeader);
 		resultMap.put("reqDetailList", reqDetailList);
 		resultMap.put("bizSkuInfo", new BizSkuInfo());
 

@@ -21,12 +21,12 @@
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/request/bizRequestHeaderForVendor/form4MobileNew",
-                data: {id:_this.userInfo.inListId},
+                data: {id:_this.userInfo.inListId,str:'detail'},
                 dataType: "json",
                 success: function(res){
-					console.log(res)
+					console.log(res.data.bizRequestHeader)
 				/*业务状态*/
-					var bizstatus = res.bizStatus;
+					var bizstatus = res.data.bizRequestHeader.bizStatus;
 					var bizstatusTxt = '';
 					if(bizstatus==0) {
 						bizstatusTxt = "未审核"
@@ -62,12 +62,12 @@
 						bizstatusTxt = "未知类型"
 					}
 					$('#inPoDizstatus').val(bizstatusTxt)
-					$('#inPoordNum').val(res.data.entity.reqNo)
-					$('#inOrordNum').val(res.data.entity.fromOffice.name)
-					$('#inPototal').val(res.data.entity.totalMoney)
-					$('#inMoneyReceive').val(res.data.entity.recvQtys)
-					$('#inMarginLevel').val(res.data.entity.recvTotal + '%')
-					$('#inPoLastDa').val(_this.formatDateTime(res.data.entity.recvEta))
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo)
+					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name)
+					$('#inPototal').val(res.data.bizRequestHeader.totalMoney)
+					$('#inMoneyReceive').val(res.data.bizRequestHeader.recvQtys)
+					$('#inMarginLevel').val(res.data.bizRequestHeader.recvTotal + '%')
+					$('#inPoLastDa').val(_this.formatDateTime(res.data.bizRequestHeader.recvEta))
 					_this.commodityHtml(res.data)
 					_this.statusListHtml(res.data)
                 }

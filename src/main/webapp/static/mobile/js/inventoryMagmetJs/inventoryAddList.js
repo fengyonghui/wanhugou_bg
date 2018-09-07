@@ -113,6 +113,13 @@
             var _this = this;
             mui('#inAmendPoLastDaDiv').on('tap','#comChoiceBtn',function(){
                 var itemNo = $("#inAmendPoLastDa").val();
+                if(itemNo == null||itemNo == undefined){
+					itemNo == "";
+                }
+                if(itemNo == ""){
+                	 mui.toast("请输入查询商品的货号！");
+                	 return;
+                }
                 $.ajax({
                     type: "post",
                     url: "/a/biz/sku/bizSkuInfo/findSkuList",
