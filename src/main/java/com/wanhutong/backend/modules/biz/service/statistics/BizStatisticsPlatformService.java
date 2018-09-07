@@ -222,7 +222,7 @@ public class BizStatisticsPlatformService {
                 bizOpPlan = planList.get(0);
             }
 
-            BizUserStatisticsDto userStatisticDataByOfficeId = bizOrderHeaderDao.getUserStatisticDataByOfficeId(sdfMonth.format(sDate), o.getOfficeId());
+            BizUserStatisticsDto userStatisticDataByOfficeId = bizOrderHeaderDao.getValidUserStatisticDataByOfficeId(sdfMonth.format(sDate), o.getOfficeId());
             o.setNewUser(userStatisticDataByOfficeId == null ? BigDecimal.ZERO : BigDecimal.valueOf(userStatisticDataByOfficeId.getCount()));
             o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
             BizOrderStatisticsDto serviceChargeDto = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonthOfficeId(sdfMonth.format(sDate) + "%", o.getOfficeId());

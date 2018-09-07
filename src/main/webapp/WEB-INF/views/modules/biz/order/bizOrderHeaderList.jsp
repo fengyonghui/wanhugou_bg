@@ -237,6 +237,7 @@
 		<th>应付金额</th>
 		<c:if test="${source ne 'vendor'}">
 			<th>服务费</th>
+			<th>佣金</th>
 		</c:if>
 		<th>发票状态</th>
 		<th>业务状态</th>
@@ -307,16 +308,17 @@
 				<fmt:formatNumber type="number" value="${orderHeader.freight}" pattern="0.00"/>
 			</font></td>
 			<td><font color="#0A2A0A">
-				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
+				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee}" pattern="0.00"/>
 			</font></td>
 			<c:if test="${source ne 'vendor'}">
 				<td>
 					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
-						${orderHeader.totalExp}
+						${orderHeader.totalExp+orderHeader.serviceFee}
 					</c:if>
 					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
-						<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight-orderHeader.totalBuyPrice}" pattern="0.00"/>
+						<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.totalBuyPrice}" pattern="0.00"/>
 					</c:if>
+					<fmt:formatNumber type="number" value="${orderHeader.totalDetail-orderHeader.totalBuyPrice}" pattern="0.00"/>
 				</td>
 			</c:if>
 			<td>
