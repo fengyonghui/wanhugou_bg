@@ -99,7 +99,7 @@
         	$.each(data.paymentOrderList, function(i, item) {
 				console.log(item)			
 				htmlPaylist +='<li class="mui-table-view-cell mui-media step_items">'+					
-					'<div class="mui-media-body commoditys">'+
+					'<div class="mui-media-body">'+
 						'<div class="mui-input-row">'+
 							'<label>付款金额：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.total.toFixed(2) +'" disabled>'+
@@ -133,11 +133,11 @@
 				}else {
 					orderNum = ''
 				}
-				htmlPurchase +='<li class="mui-table-view-cell mui-media">'+
-					'<div class="photoParent mui-pull-left app_pr">'+
+				htmlPurchase +='<li class="mui-table-view-cell mui-media app_pr">'+
+					'<div class="photoParent mui-pull-left app_pa">'+
 						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+
 					'</div>'+
-					'<div class="mui-media-body commoditys">'+
+					'<div class="mui-media-body app_w80p app_fr">'+
 						'<div class="mui-input-row">'+
 							'<label>品牌名称：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled>'+
@@ -230,13 +230,13 @@
 				}else {
 					orderNum = ''
 				}
-				htmlCommodity +='<li class="mui-table-view-cell mui-media app_bline">'+
+				htmlCommodity +='<li class="mui-table-view-cell mui-media app_bline app_pr">'+
 //		产品图片
-					'<div class="photoParent mui-pull-left app_pr">'+
+					'<div class="photoParent mui-pull-left app_pa">'+
 						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+
 					'</div>'+
 //		产品信息
-					'<div class="mui-media-body commoditys">'+
+					'<div class="mui-media-body app_w80p app_fr">'+
 						'<div class="mui-input-row">'+
 							'<label>品牌名称：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled>'+

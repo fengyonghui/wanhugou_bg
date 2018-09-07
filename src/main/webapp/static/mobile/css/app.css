@@ -594,7 +594,7 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*红色 * 号，必填必选*/
-.mui-input-row font {color: red;position: absolute;right: 60px;top: 37%;font-size: 20px;}
+.mui-input-row font {color: red;position: absolute;right: 60px;top: 36%;font-size: 20px;}
 
 
 /*模糊查询列表显示---查询页面和经销店添加公共样式*/
@@ -628,21 +628,21 @@ body{font-size: 15px;color:#3b3b3b;}
 
 /*======备货单======*/
 /*备货单审核、详情---商品信息图片*/
-.photoParent {width: 15%;height: 220px;margin-right: 15px;}
-.photoParent img {top: 50%;margin-top: -50%;;width: 50px;}
+.photoParent {position: absolute;top: 50%;margin-top: -13%;}
+.photoParent img {width: 50px;}
 /*备货单支付*/		
-.pay-logo {width: 40px;}
-.pay-txt {float: right;padding: 9px;width: 80%;}
-.pay-txt>input {position: absolute;right: 55px;}
-
-/*备货单添加和修改--备货商品	*/
+.pay-logo {width: 40px;margin-left: 20px;}
+.pay-txt {float: right;padding: 9px;width: 65%;}
+.pay-txt>input {position: absolute;right: 55px;}	
+	
+/*备货单添加和修改--备货商品	*/		
 /*.inputClassAdd>label.commodityName {padding: 0;font-size: 10px;width: 20%;}
 .inputClassAdd>input.commodityTxt {padding: 0;font-size: 10px;width: 80%;position: relative;}*/
 /*备货单所有备货商品*/
 .inComdty div.mui-input-row input, .inComdty div.mui-input-row label {padding: 0;font-size: 12px;}
 /*备货单详情---备货商品*/
-.inDetailComdty div.mui-input-row label {width: 37%;}
-.inDetailComdty div.mui-input-row input {width: 63%;}
+.inDetailComdty div.mui-input-row label {width: 32%;}
+.inDetailComdty div.mui-input-row input {width: 68%;}
 /*备货单添加、修改---备货商品*/
 .inAddComdty div.mui-row li {padding: 5px;list-style: none;height: 30px;border-bottom: 1px solid #efeff4;}
 .inAddFont .mui-input-row  font {right: 8px;top: 18%;}/*申报数量 font*/
