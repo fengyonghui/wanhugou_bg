@@ -34,6 +34,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Integer orderType;        // 1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单
     private Office customer;        // 客户ID sys_office.id &amp;  type=customer
     private Double totalDetail;        // 订单详情总价
+    private Double serviceFee;        // 增值服务费
     private Double receiveTotal;    //订单已收货款
     private Double totalExp;        // 订单总费用
     private Double freight;            // 运费
@@ -969,5 +970,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setRetainage(Integer retainage) {
         this.retainage = retainage;
+    }
+
+    public Double getServiceFee() {
+        return serviceFee;
+    }
+
+    public void setServiceFee(Double serviceFee) {
+        this.serviceFee = serviceFee;
     }
 }
