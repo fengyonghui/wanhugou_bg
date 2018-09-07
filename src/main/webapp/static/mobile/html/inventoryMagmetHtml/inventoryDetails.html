@@ -21,6 +21,15 @@
 				<label>备货单编号：</label>
 				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
 			</div>
+			<div class="mui-input-row" id="orderTypebox">
+				<label>备货方：</label>
+		    	<div id="changeTxt" class="labelri">
+		    		采购中心备货
+			        <input id="fromType1" type="radio" name="fromType" value="1" checked  disabled="disabled" class="inputRadio"/>
+		        	厂商备货
+		        	<input id="fromType2" type="radio" name="fromType" value="2"  disabled="disabled" class="inputRadio"/>
+	        	</div>
+		    </div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
 				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
@@ -38,14 +47,22 @@
 				<input type="text" class="mui-input-clear" id="inMarginLevel" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>收货时间：</label>
+				<label>已支付厂商保证金：</label>
+				<input type="text" class="mui-input-clear" id="inMoneyPay" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>期望收货时间：</label>
 				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
 			</div>
 			<div class="mui-input-row inComdty inDetailComdty">
 				<div class="labelLf">备货商品：</div>
-				<ul id="commodityMenu" class="mui-table-view">
-					
-				</ul>
+				<ul id="commodityMenu" class="mui-table-view"></ul>									
+			</div>
+			<div class="mui-input-row">
+				<label>支付列表：</label>								
+			</div>
+			<div class="mui-input-row">
+				<ul id="inPaylist" class="mui-table-view"></ul>									
 			</div>
 			<div class="mui-input-row">
 				<label>备注：</label>
@@ -54,6 +71,20 @@
 			<div class="mui-input-row">
 				<label>业务状态：</label>
 				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>排产状态：</label>
+				<input type="text" id="inSchedulstatus" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>排产类型：</label>
+				<input type="text" id="inSchedultype" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<div class="labelLf">采购商品：</div>
+				<ul id="purchaseMenu" class="mui-table-view">
+					
+				</ul>
 			</div>
 			<!--审批流程块 有的话显示-->
 			<div class="mui-input-row">
