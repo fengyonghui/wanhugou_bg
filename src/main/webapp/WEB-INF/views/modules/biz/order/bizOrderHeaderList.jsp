@@ -235,10 +235,10 @@
 		<th>调整金额</th>
 		<th>运费</th>
 		<th>应付金额</th>
-		<%--<c:if test="${source ne 'vendor'}">--%>
+		<c:if test="${source ne 'vendor'}">
 			<th>服务费</th>
 			<th>佣金</th>
-		<%--</c:if>--%>
+		</c:if>
 		<th>发票状态</th>
 		<th>业务状态</th>
 		<th>审核状态</th>
@@ -310,7 +310,7 @@
 			<td><font color="#0A2A0A">
 				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee}" pattern="0.00"/>
 			</font></td>
-			<%--<c:if test="${source ne 'vendor'}">--%>
+			<c:if test="${source ne 'vendor'}">
 				<td>
 					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
 						${orderHeader.totalExp+orderHeader.serviceFee}
@@ -320,7 +320,7 @@
 					</c:if>
 					<fmt:formatNumber type="number" value="${orderHeader.totalDetail-orderHeader.totalBuyPrice}" pattern="0.00"/>
 				</td>
-			<%--</c:if>--%>
+			</c:if>
 			<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 			</td>

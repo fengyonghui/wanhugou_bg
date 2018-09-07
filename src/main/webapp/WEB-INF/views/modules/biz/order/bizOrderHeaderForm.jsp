@@ -1276,7 +1276,17 @@
         <div class="control-group">
             <label class="control-label">服务费：</label>
             <div class="controls">
-                <fmt:formatNumber type="number" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight+bizOrderHeader.serviceFee)-bizOrderHeader.totalBuyPrice}" pattern="0.00"/>
+                <fmt:formatNumber type="number" value="${bizOrderHeader.totalExp+bizOrderHeader.serviceFee}" pattern="0.00"/>
+                <%--<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">--%>
+            </div>
+        </div>
+    </c:if>
+
+    <c:if test="${source ne 'vendor'}">
+        <div class="control-group">
+            <label class="control-label">佣金：</label>
+            <div class="controls">
+                <fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail-bizOrderHeader.totalBuyPrice}" pattern="0.00"/>
                 <%--<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">--%>
             </div>
         </div>
