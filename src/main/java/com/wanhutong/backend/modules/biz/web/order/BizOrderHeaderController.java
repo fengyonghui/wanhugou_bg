@@ -972,31 +972,6 @@ public class BizOrderHeaderController extends BaseController {
                         resultMap.put("appointedTimeList", appointedTimeList);
                     }
                 }
-
-                //100%首付款
-                if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() == null &&
-                        OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeaderTwo.getPayProportion())) {
-                    DoOrderHeaderProcessAllConfig.OrderHeaderProcess orderHeaderProcess =
-                            ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().processMap.get(Integer.valueOf(bizOrderHeaderTwo.getCommonProcess().getType()));
-                    model.addAttribute("orderHeaderProcess", orderHeaderProcess);
-                    resultMap.put("orderHeaderProcess", orderHeaderProcess);
-                }
-                //20%首付款
-                if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() == null &&
-                        OrderPayProportionStatusEnum.FIFTH.getState().equals(bizOrderHeaderTwo.getPayProportion())) {
-                    DoOrderHeaderProcessFifthConfig.OrderHeaderProcess orderHeaderProcess =
-                            ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().processMap.get(Integer.valueOf(bizOrderHeaderTwo.getCommonProcess().getType()));
-                    model.addAttribute("orderHeaderProcess", orderHeaderProcess);
-                    resultMap.put("orderHeaderProcess", orderHeaderProcess);
-                }
-
-                CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-                commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
-                commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
-                List<CommonProcessEntity> DoComPList = commonProcessService.findList(commonProcessEntity);
-                request.setAttribute("doComPList", DoComPList);
-                resultMap.put("doComPList", DoComPList);
-
             }
 
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
