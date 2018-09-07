@@ -455,8 +455,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             Integer bizStatus = bizRequestHeader.getBizStatus();
             if (requestDetailList.size() == entry.getValue().size()) {
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
-                    bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
-                    bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+//                    bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+//                    bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
                 }
             } else if (requestDetailList.size() > entry.getValue().size()) {
                 bizPoOrderReq.setRequestHeader(bizRequestHeader);
@@ -470,8 +470,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 int commonPoOrderSize = poOrderReqNotPrew == null ? 0 : poOrderReqNotPrew.size();
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
                     if (poOrderReqs.size() + commonPoOrderSize == requestDetailList.size()) {
-                        bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
-                        bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+//                        bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+//                        bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
                     } else {
                         bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.PURCHASING.getState());
                         bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
@@ -906,17 +906,18 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         this.updateProcessToInitAudit(bizPoHeader, mark);
         Byte soType = getBizPoOrderReqByPo(bizPoHeader);
         String currentType = "";
-        if (soType == Byte.parseByte("1")) {
-            currentType = String.valueOf(purchaseOrderProcessConfig.getOrderHeaderDefaultProcessId());
-        } else {
-            if ("oldAudit".equals(mark)) {
-                currentType = String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId());
+
+        if ("oldAudit".equals(mark)) {
+            currentType = String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId());
+            auditPo(id, currentType, auditType, desc);
+        }else {
+            if (soType == Byte.parseByte("1")) {
+                currentType = String.valueOf(purchaseOrderProcessConfig.getOrderHeaderDefaultProcessId());
             } else {
                 currentType = String.valueOf(purchaseOrderProcessConfig.getDefaultNewProcessId());
             }
-
         }
-        auditPo(id, currentType, auditType, desc);
+
         return Pair.of(Boolean.TRUE,   "操作成功!");
     }
 

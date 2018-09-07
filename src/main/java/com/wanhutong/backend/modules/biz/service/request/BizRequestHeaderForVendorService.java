@@ -554,6 +554,11 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.APPROVE.getState())) {
 				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 			}
+			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+			saveRequestHeader(bizRequestHeader);
+			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState())) {
+				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+			}
 		}
 		commonProcessService.save(nextProcessEntity);
 
@@ -646,6 +651,10 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 			Integer bizStatus = bizRequestHeader.getBizStatus();
 			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.APPROVE.getState());
 			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.APPROVE.getState())) {
+				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+			}
+			this.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState())) {
 				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
 			}
 		}
