@@ -93,6 +93,7 @@
 			<id property="orderNum" column="bizPoHeader.orderNum"/>
 			<id property="currentPaymentId" column="bizPoHeader.currentPaymentId"/>
 			<id property="poSchType" column="bizPoHeader.poSchType"/>
+			<id property="payTotal" column="bizPoHeader.payTotal"/>
 			<association property="commonProcess" javaType="CommonProcessEntity" column="bizPoHeader.commonProcess">
 				<id property="id" column="bizPoHeader.commonProcess.id"/>
 				<id property="objectId" column="bizPoHeader.commonProcess.objectId"/>
@@ -102,6 +103,10 @@
 				<id property="processor" column="bizPoHeader.commonProcess.processor"/>
 				<id property="description" column="bizPoHeader.commonProcess.description"/>
 				<id property="type" column="bizPoHeader.commonProcess.type"/>
+			</association>
+			<association property="bizPoPaymentOrder" javaType="BizPoPaymentOrder" column="bizPoHeader.bizPoPaymentOrder">
+				<id property="poHeaderId" column="bizPoHeader.bizPoPaymentOrder.poHeaderId"/>
+				<id property="remark" column="bizPoHeader.bizPoPaymentOrder.remark"/>
 			</association>
 		</association>
 
@@ -181,6 +186,8 @@
 		bph.id AS "bizPoHeader.id",
 		bph.process_id AS "bizPoHeader.processId",
 		bph.current_payment_id AS "bizPoHeader.currentPaymentId",
+		bph.pay_total AS "bizPoHeader.payTotal",
+		bppo.remark AS "bizPoHeader.bizPoPaymentOrder.remark",
 		cp.id AS "bizPoHeader.commonProcess.id",
 		cp.object_id AS "bizPoHeader.commonProcess.objectId",
 		cp.object_name AS "bizPoHeader.commonProcess.objectName",

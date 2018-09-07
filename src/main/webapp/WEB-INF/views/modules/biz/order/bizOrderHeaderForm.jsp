@@ -597,10 +597,12 @@
                 return false;
             }
 
+            var paymentRemark = $("#paymentRemark").val();
+
             $.ajax({
                 url: '${ctx}/biz/po/bizPoHeader/payOrder',
                 contentType: 'application/json',
-                data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img},
+                data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img, "paymentRemark":paymentRemark},
                 type: 'get',
                 success: function (result) {
                     alert(result);
@@ -630,6 +632,9 @@
                     return false;
                 }
             }
+
+            var paymentApplyRemark = $("#paymentApplyRemark").val();
+
 
             window.location.href="${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal  + "&payDeadline=" + payDeadline + "&fromPage=orderHeader";
 
@@ -1270,6 +1275,13 @@
                        placeholder="必填！"/>
             </div>
         </div>
+
+        <div class="control-group">
+            <label class="control-label">支付备注：</label>
+            <div class="controls">
+					<textarea id="paymentApplyRemark" maxlength="200" class="input-xlarge"></textarea>
+            </div>
+        </div>
     </c:if>
 
     <c:if test="${source ne 'vendor'}">
@@ -1391,6 +1403,13 @@
                 </div>
                 <div id="payImgDiv">
                     <img src="${entity.bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">支付备注：</label>
+                <div class="controls">
+					<textarea id="paymentRemark" maxlength="200"
+                              class="input-xlarge">${entity.bizPoHeader.bizPoPaymentOrder.remark}</textarea>
                 </div>
             </div>
         </c:if>

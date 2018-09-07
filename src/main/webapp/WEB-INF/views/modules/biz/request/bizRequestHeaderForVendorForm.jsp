@@ -764,6 +764,13 @@
 					<img src="${entity.bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
 				</div>
 			</div>
+			<div class="control-group">
+				<label class="control-label">支付备注：</label>
+				<div class="controls">
+					<textarea id="paymentRemark" maxlength="200"
+							  class="input-xlarge">${entity.bizPoHeader.bizPoPaymentOrder.remark}</textarea>
+				</div>
+			</div>
 		</c:if>
 		<c:if test="${entity.str=='detail'}">
 			<div class="control-group">
@@ -1519,10 +1526,12 @@
             return false;
         }
 
+        var paymentRemark = $("#paymentRemark").val();
+
         $.ajax({
             url: '${ctx}/biz/po/bizPoHeader/payOrder',
             contentType: 'application/json',
-            data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img},
+            data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img, "paymentRemark":paymentRemark},
             type: 'get',
             success: function (result) {
                 if(result == '操作成功!') {

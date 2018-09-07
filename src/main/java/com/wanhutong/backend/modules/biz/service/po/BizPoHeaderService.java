@@ -927,7 +927,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public String payOrder(Integer poHeaderId,Integer reqHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
+    public String payOrder(Integer poHeaderId,Integer reqHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img, String paymentRemark) {
         // 当前流程
         User user = UserUtils.getUser();
         Role role = new Role();
@@ -952,6 +952,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         bizPoPaymentOrder.setImg(img);
         bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.ALL_PAY.getStatus());
         bizPoPaymentOrder.setPayTime(new Date());
+        bizPoPaymentOrder.setRemark(paymentRemark);
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
 
