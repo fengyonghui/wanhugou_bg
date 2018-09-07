@@ -5,6 +5,7 @@
 <head>
 	<title>${productName} 登录</title>
 	<meta name="decorator" content="blank"/>
+	<link rel="shortcut icon" href="/static/images/logo.ico" />
 	<style type="text/css">
       html,body,table{background-color:#f5f5f5;width:100%;text-align:center;}.form-signin-heading{font-family:Helvetica, Georgia, Arial, sans-serif, 黑体;font-size:36px;margin-bottom:20px;color:#0663a2;}
       .form-signin{position:relative;text-align:left;width:300px;padding:25px 29px 29px;margin:0 auto 20px;background-color:#fff;border:1px solid #e5e5e5;

@@ -1169,6 +1169,13 @@
         </div>
     </div>
     <div class="control-group">
+        <label class="control-label">增值服务费：</label>
+        <div class="controls">
+                <form:input path="serviceFee" htmlEscape="false" readonly="true" class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font></span>
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label">运费：</label>
         <div class="controls">
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
@@ -1183,7 +1190,7 @@
         <div class="control-group">
             <label class="control-label">应付金额：</label>
             <div class="controls">
-                <input type="text" id="ecpectPay" value="<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight}" pattern="0.00"/>"
+                <input type="text" id="ecpectPay" value="<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight+bizOrderHeader.serviceFee}" pattern="0.00"/>"
                        disabled="true" class="input-xlarge">
             </div>
         </div>
@@ -1191,7 +1198,7 @@
             <label class="control-label">已付金额：</label>
             <div class="controls">
                 <font color="#088A29">
-                    <fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />
+                    <fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight+bizOrderHeader.serviceFee)}" maxFractionDigits="2" />
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
@@ -1269,7 +1276,17 @@
         <div class="control-group">
             <label class="control-label">服务费：</label>
             <div class="controls">
-                <fmt:formatNumber type="number" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" pattern="0.00"/>
+                <fmt:formatNumber type="number" value="${bizOrderHeader.totalExp+bizOrderHeader.serviceFee}" pattern="0.00"/>
+                <%--<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">--%>
+            </div>
+        </div>
+    </c:if>
+
+    <c:if test="${source ne 'vendor'}">
+        <div class="control-group">
+            <label class="control-label">佣金：</label>
+            <div class="controls">
+                <fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail-bizOrderHeader.totalBuyPrice}" pattern="0.00"/>
                 <%--<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">--%>
             </div>
         </div>
