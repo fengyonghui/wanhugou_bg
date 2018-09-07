@@ -22,7 +22,6 @@
 		<result property="updateDate" column="updateDate"/>
 		<result property="totalBuyPrice" column="totalBuyPrice"/>
 		<result property="sellersId" column="sellersId"/>
-		<result property="payProportion" column="payProportion"/>
 		<result property="suplys" column="suplys"/>
         <result property="consultantId" column="consultantId"/>
 
@@ -131,7 +130,6 @@
 		a.id AS "id",
 		a.order_num AS "orderNum",
 		a.order_type AS "orderType",
-		a.pay_proportion AS "payProportion",
 		a.cust_id AS "customer.id",
 		a.consultant_id AS "consultantId",
 		so.name as "customer.name",
@@ -794,8 +792,7 @@
 		ship_to_addr = #{bizLocation.id},
 		u_version = #{uVersion},
 		update_id = #{updateBy.id},
-		update_time = #{updateDate},
-		pay_proportion = #{payProportion}
+		update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 
@@ -2878,12 +2875,6 @@ FROM
 		update_id = #{updateBy.id},
 		update_time = #{updateDate}
 		WHERE id = #{id}
-	</update>
-
-	<update id="updateProcessId">
-		UPDATE biz_order_header SET
-		process_id  = #{processId}
-		WHERE id = #{headerId}
 	</update>
 
 </mapper>
