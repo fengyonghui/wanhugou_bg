@@ -155,7 +155,6 @@
 				var CheckHtmlList ='';
 				$.each(data.auditList, function(i, item) {
 					var ProcessName = '';
-//					console.log(item)
 					var step = i + 1;
 					var current = item.current;
 					if(current !== 1) {
