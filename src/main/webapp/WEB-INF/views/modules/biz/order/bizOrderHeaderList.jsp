@@ -321,6 +321,9 @@
 				</td>
 			</c:if>
 			<td>
+				<fmt:formatNumber type="number" value="${orderHeader.totalDetail-orderHeader.totalBuyPrice}" pattern="0.00"/>
+			</td>
+			<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 			</td>
 			<td>
