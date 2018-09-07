@@ -337,8 +337,9 @@
                 console.log(_this.reqDetailIds)
                 console.log(_this.LineNos)
                 htmlCommodity += '<div class="mui-row app_bline" id="' + item.id + '">' +
-                '<input style="display:none;" name="" class="skuinfo_check" id="' + item.skuInfo.id + '" type="checkbox">' +
-                    '<div class="mui-row">' +
+                	'<input style="display:none;" name="" class="skuinfo_check" id="' + item.skuInfo.id + '" type="checkbox">' +
+                    
+                    '<div class="mui-row lineStyle">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
                     '<li class="mui-table-view-cell app_bline3">' +
@@ -346,13 +347,22 @@
                     '<label class="commodityName">商品名称:</label>' +
                     '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div></div>' +
                     
-                    '<div class="mui-row">' +
+                    '<div class="mui-row lineStyle">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
                     '<li class="mui-table-view-cell app_bline3">' +
                     '<div class="mui-input-row inputClassAdd">' +
                     '<label class="commodityName">商品货号:</label>' +
                     '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.itemNo + '" disabled></div></li></div></div>' +
+                    
+                    '<div class="mui-row lineStyle">' +
+                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
+                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
+                    '<li class="mui-table-view-cell app_bline3">' +
+                    '<div class="mui-input-row ">' +
+                    '<label class="">商品编码:</label>' +
+                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.partNo + '" disabled>' +
+                    '</div></li></div></div>' +
                     
                     '<div class="mui-row">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
@@ -364,10 +374,10 @@
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
                     '<li class="mui-table-view-cell app_bline3">' +
                     '<div class="mui-input-row inputClassAdd">' +
-                    '<label>商品编码:</label>' +
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.partNo + '" disabled></div></li></div></div>' +
+                    '<label>供应商:</label>' +
+                    '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.productInfo.brandName + '" disabled></div></li></div></div>' +
                    
-                   '<div class="mui-row">' +
+                    '<div class="mui-row inAddFont">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
                     '<li class="mui-table-view-cell app_bline3">' +
@@ -380,11 +390,11 @@
                     '<label>申报数量:</label>' +
                     '<input type="text" class="mui-input-clear inDeclareNum" id="reqQty_'+ item.skuInfo.id + '" value="' + item.reqQty + '">'+
                     '<font>*</font>'+
-                    '</div></li></div></div></div>';
+                    '</div></li></div></div>';
 
                 if (_this.deleteBtnFlag == true) {
-                    htmlCommodity += '<div class="addBtn">' +
-                    '<button id="' + item.id +'" type="button" class="deleteSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block" >删除</button></div>';
+                    htmlCommodity += '<div class="inAddBtnParent">' +
+                    '<button id="' + item.id +'" type="button" class="deleteSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block" >删除</button></div>';
                     }
                 htmlCommodity += '</div>';
             });
@@ -470,10 +480,10 @@
                                 }
                                 resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
                                         '<div class="mui-row mui-checkbox mui-left">' +
-                                        '<input style="top:45px" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
+                                        '<input style="top:61px" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
                                         '<div class="mui-row">' +
                                         
-                                        '<div class="mui-row">' +
+                                        '<div class="mui-row lineStyle">' +
                                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                                         '<div class="mui-col-sm-10 mui-col-xs-10">' +
                                         '<li class="mui-table-view-cell app_bline3">' +
@@ -482,7 +492,7 @@
                                         '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.name + '" disabled>' +
                                         '</div></li></div></div>' +
                                        
-                                      	'<div class="mui-row">' +
+                                      	'<div class="mui-row lineStyle">' +
                                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                                         '<div class="mui-col-sm-10 mui-col-xs-10">' +
                                         '<li class="mui-table-view-cell app_bline3">' +
@@ -490,7 +500,16 @@
                                         '<label class="commodityName">商品货号:</label>' +
                                         '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.itemNo + '" disabled>' +
                                         '</div></li></div></div>' +
-                                       
+                                        
+                                        '<div class="mui-row lineStyle">' +
+					                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
+					                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
+					                    '<li class="mui-table-view-cell app_bline3">' +
+					                    '<div class="mui-input-row ">' +
+					                    '<label class="">商品编码:</label>' +
+					                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.partNo + '" disabled>' +
+					                    '</div></li></div></div>' +
+                                        
                                         '<div class="mui-row">' +
                                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                                         '<div class="mui-col-sm-5 mui-col-xs-5">' +
@@ -502,11 +521,11 @@
                                         '<div class="mui-col-sm-5 mui-col-xs-5">' +
                                         '<li class="mui-table-view-cell app_bline3">' +
                                         '<div class="mui-input-row inputClassAdd">' +
-                                        '<label>商品编码:</label>' +
-                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.partNo + '" disabled>' +
+                                        '<label>供应商:</label>' +
+                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.productInfo.brandName + '" disabled>' +
                                         '</div></li></div></div>' +
                                        
-                                        '<div class="mui-row">' +
+                                        '<div class="mui-row inAddFont">' +
                                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                                         '<div class="mui-col-sm-5 mui-col-xs-5">' +
                                         '<li class="mui-table-view-cell app_bline3">' +
@@ -518,7 +537,7 @@
                                         '<div class="mui-input-row inputClassAdd">' +
                                         '<label>申报数量:</label>' +
                                         '<input type="hidden" class="mui-input-clear" value="' + skuInfo.id + '">' +
-                                        '<input type="text" class="mui-input-clear" placeholder="请输入申报数量" id="reqQty_'+ skuInfo.id +'">' +
+                                        '<input type="text" class="mui-input-clear" placeholder="请输入数量" id="reqQty_'+ skuInfo.id +'">' +
                                         '<font>*</font>'+
                                         '</div></li></div></div></div></div>';
                             });
@@ -539,8 +558,8 @@
 	                            })
                             })
                         })
-                        var addButtonHtml = '<div class="addBtn" id="batchAddDiv">' +
-                                '<button id="batchAdd" type="submit" class="addSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">添加' +
+                        var addButtonHtml = '<div class="inAddBtnParent" id="batchAddDiv">' +
+                                '<button id="batchAdd" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加' +
                                 '</button></div>';
                         $("#searchInfo").append(addButtonHtml);
                         
@@ -562,8 +581,8 @@
                         var cheDiv = $("#serskudiv_" + cheId);
                         $("#" + cheId).prop('checked',false);
                         $("#" + cheId).hide();
-                        var resultHtml = '<div class="addBtn" id="removeBtn_' + cheId + '">' +
-                            '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton addBtnClass app_btn_search mui-btn-blue mui-btn-block">移除' +
+                        var resultHtml = '<div class="inAddBtnParent" id="removeBtn_' + cheId + '">' +
+                            '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除' +
                             '</button></div>';
                             cheDiv.append(resultHtml)
                         $("#commodityMenu").append($(cheDiv))

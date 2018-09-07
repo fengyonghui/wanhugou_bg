@@ -362,7 +362,7 @@
 					}
 				}),
         /* 审核*/
-            $('.content').on('tap','.inCheckBtn',function(){
+            $('.content_part').on('tap','.inCheckBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
 				var bizStatus = $(this).attr('bizStatus');
@@ -379,7 +379,7 @@
                 }
 			}),
 		/*取消*/	
-            $('.content').on('tap','.inCancelBtn',function(){
+            $('.content_part').on('tap','.inCancelBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
                 if(url) {
@@ -485,8 +485,9 @@
 					name:nameTxt,
 					'fromOffice.id':_this.userInfo.fromOffice,
 					bizStatus:_this.userInfo.bizStatusid,
-					'varietyInfo.id':_this.userInfo.varietyInfoid
-//					process:
+					'varietyInfo.id':_this.userInfo.varietyInfoid,
+					includeTestData: _this.userInfo.includeTestData,
+					process:_this.userInfo.process
 				},
 				dataType: 'json',
 				success: function(res) {

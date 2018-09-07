@@ -135,7 +135,7 @@
 				}else {
 					orderNum = ''
 				}
-				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
+				htmlCommodity +='<li class="mui-table-view-cell mui-media app_bline">'+
 //		产品图片
 					'<div class="photoParent mui-pull-left app_pr">'+
 						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+

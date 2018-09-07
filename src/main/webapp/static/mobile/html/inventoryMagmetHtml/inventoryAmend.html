@@ -8,127 +8,9 @@
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
 		<style type="text/css">
-			.pre {
-				margin-bottom: 0;
-				padding-left: 0;
-				float: right;
-				width: 60%;
-			}
-
-			.newinput {
-				width: 150px;
-				padding: 2px 0px 2px 0px;
-				margin-bottom: -1px;
-				background: url(./thumb.jpg) no-repeat scroll right center;
-				border: 1px solid #ccc;
-				box-shadow: 0 1px 0 0 #eee inset;
-				cursor: default;
-			}
-
-			.newinput:focus {
-				cursor: text;
-			}
-
-			.input_div {
-				width: 150px;
-				border: 1px solid #ddd;
-				border-bottom: none;
-				border-radius: 0 0 3px 3px;
-				display: none;
-			}
-
-			.soption {
-				display: block;
-				padding: 2px 5px;
-			}
-
-			.soption:hover {
-				background: #f9f9f9;
-				border-top: 1px dotted #ddd;
-				border-bottom: 1px dotted #ddd;
-				padding: 1px 5px;
-			}
-			.addBtn {
-				width: 30%;
-				margin: 5px auto;
-			}
-			
-			.saveBtn {
-				width: 70%;
-				margin: 20px auto;
-			}
-			
-			.addBtnClass {
-				padding: 0;
-				font-size: 15px;
-			}
-
-			.mui-content div.mui-row li {
-				padding: 5px;
-				list-style: none;
-				height: 30px;
-			}
-			
-			.inputClass {
-				font-size: 10px;
-			}
-			
-			.inputClass>label {
-				padding: 0;
-			}
-			
-			.inputClass>input {
-				padding: 0;
-				font-size: 10px;
-			}
-
-			.inputClassAdd {
-				font-size: 10px;
-			}
-
-			.inputClassAdd>label {
-				padding: 0;
-			}
-
-			.inputClassAdd>input {
-				padding: 0;
-				font-size: 10px;
-			}
-			.inputClassAdd>label.commodityName {
-				padding: 0;
-			    width: 15%;
-			}
-			.inputClassAdd>input.commodityTxt {
-				padding: 0;
-			    font-size: 10px;
-			    position: relative;
-			    width: 84%;
-			}
-			
-			#hideSpanAmend {
-				position: absolute;
-				right: 52px;
-				top: 11px;
-				border: 1px solid rgb(204, 204, 204);
-				border-radius: 13px;
-				display: none;
-			}
-			.mui-input-row .mui-input-clear~.mui-icon-clear {
-				right: 4.5em;
-    			top: 4px;
-			}
-			.inputClassAdd font {
-				color: red;
-			    position: absolute;
-			    right: 5px;
-			    top: 10%;
-			    font-size: 20px;
-			}
-			.mui-btn-blue, .mui-btn-primary, input[type=submit] {background-color: #40ABE9;border: none;}
-			.mui-input-row select {height: 31px;font-size: 15px}
+			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 4em;}
 		</style>
 	</head>
-
 	<body>
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
@@ -143,7 +25,7 @@
 				<label>采购中心：</label>
 				<div class="pre">
 					<input class="newinput" type="text" id="inOrordNum" placeholder="请选择采购中心">
-					<span class="mui-icon mui-icon-closeempty" id="hideSpanAmend"></span>
+					<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAmend"></span>
 					<div class="input_div" style="display: none;">
 
 					</div>
@@ -163,7 +45,7 @@
 				<button id="comChoiceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">查询</button>
 			</div>
 
-			<div class="mui-row app_bline2" id="searchInfo">
+			<div class="mui-row app_bline2 inComdty inAddComdty" id="searchInfo">
 
 			</div>
 
@@ -171,7 +53,7 @@
 				<div class="labelLf">备货商品：</div>
 			</div>
 
-			<div class="mui-row app_bline2" id="commodityMenu">
+			<div class="mui-row app_bline2 inComdty inAddComdty" id="commodityMenu">
 
 			</div>
 			<div class="mui-input-row">
@@ -197,7 +79,7 @@
                 </ul>
             </div>
 		</div>
-		<div class="saveDetailBtn saveBtn">
+		<div class="inSaveBtn">
 			<button id="saveDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>
 		</div>
 		<input id="inStatus" name="inStatus" type="hidden" />
