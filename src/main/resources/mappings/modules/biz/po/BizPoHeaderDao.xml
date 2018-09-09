@@ -33,6 +33,7 @@
 		payment.pay_total AS "bizPoPaymentOrder.payTotal",
 		payment.biz_status AS "bizPoPaymentOrder.bizStatus",
 		payment.deadline AS "bizPoPaymentOrder.deadline",
+		payment.remark AS "bizPoPaymentOrder.remark",
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
 		process.object_name AS "commonProcess.objectName",

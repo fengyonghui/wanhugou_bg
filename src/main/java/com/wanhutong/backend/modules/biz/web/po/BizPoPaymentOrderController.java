@@ -159,29 +159,6 @@ public class BizPoPaymentOrderController extends BaseController {
 				BigDecimal totalDetailResult = totalDetail.add(totalExp);
 				model.addAttribute("totalDetailResult",totalDetailResult);
 			}
-//			if (fromPage != null) {
-//				switch (fromPage) {
-//					case "requestHeader":
-//						BizRequestHeader bizRequestHeader = new BizRequestHeader();
-//						bizRequestHeader.setBizPoHeader(new BizPoHeader(bizPoPaymentOrder.getPoHeaderId()));
-//						List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
-//						if (CollectionUtils.isNotEmpty(requestHeaderList)) {
-//							BizRequestHeader requestHeader = requestHeaderList.get(0);
-//							model.addAttribute("requestHeader",requestHeader);
-//						}
-//						break;
-//					case "orderHeader":
-//						BizOrderHeader bizOrderHeader = new BizOrderHeader();
-//						bizOrderHeader.setBizPoHeader(new BizPoHeader(bizPoPaymentOrder.getPoHeaderId()));
-//						List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
-//						if (CollectionUtils.isNotEmpty(orderHeaderList)) {
-//							model.addAttribute("orderHeader", orderHeaderList.get(0));
-//						}
-//						break;
-//					default:
-//						break;
-//				}
-//			}
 		}
 		model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
 		return "modules/biz/po/bizPoPaymentOrderForm";

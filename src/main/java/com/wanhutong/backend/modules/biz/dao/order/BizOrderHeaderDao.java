@@ -78,6 +78,16 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      */
     BizUserStatisticsDto getUserStatisticDataByOfficeId(@Param("month")String month, @Param("officeId")Integer officeId);
 
+
+    /**
+     * 按月获取有效用户相关的注册信息
+     *
+     * @param month 月份
+     * @return 用户统计数据
+     */
+    BizUserStatisticsDto getValidUserStatisticDataByOfficeId(@Param("month")String month, @Param("officeId")Integer officeId);
+
+
     /**
      * 根据月份取用户业绩统计相关数据
      *
@@ -392,11 +402,11 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      */
     int updateBizStatus(@Param("id") Integer id,@Param("status") Integer status, @Param("updateBy") User updateBy, @Param("updateDate") Date updateDate);
 
-    /**
-     * 更新审核流程id
-     * @param headerId
-     * @param processId
-     * @return
-     */
-    int updateProcessId(@Param("headerId") Integer headerId, @Param("processId") Integer processId);
+//    /**
+//     * 更新审核流程id
+//     * @param headerId
+//     * @param processId
+//     * @return
+//     */
+//    int updateProcessId(@Param("headerId") Integer headerId, @Param("processId") Integer processId);
 }

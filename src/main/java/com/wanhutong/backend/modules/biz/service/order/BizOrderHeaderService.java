@@ -346,10 +346,10 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     }
 
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public int updateProcessId(Integer headerId, Integer processId) {
-        return dao.updateProcessId(headerId, processId);
-    }
+//    @Transactional(readOnly = false, rollbackFor = Exception.class)
+//    public int updateProcessId(Integer headerId, Integer processId) {
+//        return dao.updateProcessId(headerId, processId);
+//    }
 
     public void getCommonProcessListFromDB(Integer id, List<CommonProcessEntity> list) {
         if (id == null || id == 0) {
@@ -775,84 +775,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     /**
-     * 100%首付款代采订单审核
-     * @param orderHeaderId
-     * @param currentType
-     * @param auditType
-     * @param description
-     * @return
-     */
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> auditAll(Integer orderHeaderId, String currentType, int auditType, String description) {
-        BizOrderHeader bizOrderHeader = this.get(orderHeaderId);
-        CommonProcessEntity cureentProcessEntity  = bizOrderHeader.getCommonProcess();
-
-        if (cureentProcessEntity == null) {
-             return Pair.of(Boolean.FALSE, "操作失败,当前订单无审核状态!");
-        }
-        cureentProcessEntity = commonProcessService.get(bizOrderHeader.getCommonProcess().getId());
-        if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
-            logger.warn("[exception]BizOrderHeaderController audit currentType mismatching [{}][{}]", orderHeaderId, currentType);
-            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常!");
-        }
-
-        DoOrderHeaderProcessAllConfig doOrderHeaderProcessConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
-
-        // 当前流程
-        DoOrderHeaderProcessAllConfig.OrderHeaderProcess currentProcess = doOrderHeaderProcessConfig.processMap.get(Integer.valueOf(currentType));
-        // 下一流程
-        DoOrderHeaderProcessAllConfig.OrderHeaderProcess nextProcess = doOrderHeaderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
-        if (nextProcess == null) {
-            return Pair.of(Boolean.FALSE, "操作失败,当前流程已经结束!");
-        }
-        User user = UserUtils.getUser();
-        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
-        Role role = new Role();
-        role.setEnname(roleEnNameEnum.getState());
-        if (!user.isAdmin() && !user.getRoleList().contains(role)) {
-            return Pair.of(Boolean.FALSE, "操作失败,该用户没有权限!");
-        }
-
-        if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
-            return Pair.of(Boolean.FALSE, "请输入驳回理由!");
-        }
-
-        cureentProcessEntity.setBizStatus(auditType);
-        cureentProcessEntity.setProcessor(user.getId().toString());
-        cureentProcessEntity.setDescription(description);
-        commonProcessService.save(cureentProcessEntity);
-
-        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
-        nextProcessEntity.setObjectId(bizOrderHeader.getId().toString());
-        nextProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
-        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
-        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
-
-        commonProcessService.save(nextProcessEntity);
-
-        this.updateProcessId(orderHeaderId, nextProcessEntity.getId());
-
-        StringBuilder phone = new StringBuilder();
-
-        User sendUser=new User(systemService.getRoleByEnname(nextProcess.getRoleEnNameEnum()==null?"":nextProcess.getRoleEnNameEnum().toLowerCase()));
-        List<User> userList = systemService.findUser(sendUser);
-        if (CollectionUtils.isNotEmpty(userList)) {
-            for (User u : userList) {
-                phone.append(u.getMobile()).append(",");
-            }
-        }
-        if (StringUtils.isNotBlank(phone.toString())) {
-            AliyunSmsClient.getInstance().sendSMS(
-                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
-                    phone.toString(),
-                    ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
-        }
-
-        return Pair.of(Boolean.TRUE, "操作成功!");
-    }
-
-    /**
-     * 20%首付款代采订单审核
+     * 代采订单审核
      * @param orderHeaderId
      * @param currentType
      * @param auditType
@@ -861,18 +784,23 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public Pair<Boolean, String> auditFifty(Integer orderHeaderId, String currentType, int auditType, String description) {
-        BizOrderHeader bizOrderHeader = this.get(orderHeaderId);
-        CommonProcessEntity cureentProcessEntity  = bizOrderHeader.getCommonProcess();
-
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(String.valueOf(orderHeaderId));
+        commonProcessEntity.setObjectName(DATABASE_TABLE_NAME);
+        commonProcessEntity.setCurrent(1);
+        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+        if (list.size() != 1) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常! current process 不为 1");
+        }
+        CommonProcessEntity cureentProcessEntity = list.get(0);
+        if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常!");
+        }
         if (cureentProcessEntity == null) {
             return Pair.of(Boolean.FALSE, "操作失败,当前订单无审核状态!");
         }
-        cureentProcessEntity = commonProcessService.get(bizOrderHeader.getCommonProcess().getId());
-        if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
-            logger.warn("[exception]BizOrderHeaderController audit currentType mismatching [{}][{}]", orderHeaderId, currentType);
-            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常!");
-        }
 
+        BizOrderHeader bizOrderHeader = this.get(orderHeaderId);
         DoOrderHeaderProcessFifthConfig doOrderHeaderProcessConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
 
         Integer passProcessCode = null;
@@ -912,17 +840,17 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         cureentProcessEntity.setBizStatus(auditType);
         cureentProcessEntity.setProcessor(user.getId().toString());
         cureentProcessEntity.setDescription(description);
+        cureentProcessEntity.setCurrent(0);
         commonProcessService.save(cureentProcessEntity);
 
         CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
         nextProcessEntity.setObjectId(bizOrderHeader.getId().toString());
         nextProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
         nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+        nextProcessEntity.setCurrent(1);
         nextProcessEntity.setPrevId(cureentProcessEntity.getId());
 
         commonProcessService.save(nextProcessEntity);
-
-        this.updateProcessId(orderHeaderId, nextProcessEntity.getId());
 
         StringBuilder phone = new StringBuilder();
 
