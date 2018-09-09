@@ -687,9 +687,10 @@ public class BizPoHeaderReqController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "savePoHeader")
     public String savePoHeader(HttpServletRequest request, BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
+        String paymentApplyRemark = request.getParameter("paymentApplyRemark");
         String fromPage = request.getParameter("fromPage");
         if ("createPay".equalsIgnoreCase(type)) {
-            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
+            String msg = bizPoHeaderService.genPaymentOrderForApply(bizPoHeader, paymentApplyRemark).getRight();
             addMessage(redirectAttributes, msg);
             String toPage = "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/listV2/?repage";
             return toPage;

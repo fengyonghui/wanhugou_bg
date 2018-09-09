@@ -540,8 +540,13 @@
                 }
             }
 
-            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=requestHeader");
-            $("#inputForm").submit();
+            var paymentApplyRemark = $("#paymentApplyRemark").val();
+
+            window.location.href="${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal
+                + "&payDeadline=" + payDeadline + "&fromPage=requestHeader" + "&paymentApplyRemark=" + paymentApplyRemark;
+
+            <%--$("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=requestHeader");--%>
+            <%--$("#inputForm").submit();--%>
         }
 
 	</script>
@@ -712,6 +717,13 @@
 						   value="<fmt:formatDate value="${entity.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
 							<c:if test="${entity.str == 'createPay'}"> onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"</c:if>
 						   placeholder="必填！"/>
+				</div>
+			</div>
+			<!-- 申请付款备注 -->
+			<div class="control-group">
+				<label class="control-label">支付备注：</label>
+				<div class="controls">
+					<textarea id="paymentApplyRemark" maxlength="200" class="input-xlarge"></textarea>
 				</div>
 			</div>
 		</c:if>

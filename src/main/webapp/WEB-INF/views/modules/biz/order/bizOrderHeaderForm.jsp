@@ -635,8 +635,8 @@
 
             var paymentApplyRemark = $("#paymentApplyRemark").val();
 
-
-            window.location.href="${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal  + "&payDeadline=" + payDeadline + "&fromPage=orderHeader";
+            window.location.href="${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal
+                + "&payDeadline=" + payDeadline + "&fromPage=orderHeader" + "&paymentApplyRemark=" + paymentApplyRemark;
 
             <%--$("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader");--%>
             <%--$("#inputForm").submit();--%>
