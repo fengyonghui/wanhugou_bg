@@ -16,13 +16,11 @@
                 submitHandler: function(form){
                     var opShelfSkuId = "";
                     $("#prodInfo2").find("input[checked='checked']").each(function (i) {
-                        alert($(this).val()+"---");
 						if ($(this).val() != "") {
 						    opShelfSkuId += $(this).val() + ",";
 						}
                     });
                     $("#opShelfSkuIds").val(opShelfSkuId);
-                    alert(opShelfSkuId);
                     if (opShelfSkuId != "") {
                         loading('正在提交，请稍等...');
                         form.submit();

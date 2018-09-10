@@ -429,7 +429,7 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 			opShelfSku.setUnshelfTime(day);
 			bizOpShelfSkuV2Service.updateDateTime(opShelfSku);
 			String s = bizOpShelfSkuV2Service.saveShelfProdInfoPrice(opShelfSku, 2);
-			message.append(s).append("===========================");
+			message.append(s).append("<br>");
 		}
 		addMessage(redirectAttributes,message.toString());
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSkuV2/?repage";
