@@ -898,7 +898,6 @@
 
         function audit(auditType, description) {
             var id = $("#id").val();
-            //var currentType = $("#currentType").val();
             var currentType = $("#currentJoType").val();
 
             $.ajax({
