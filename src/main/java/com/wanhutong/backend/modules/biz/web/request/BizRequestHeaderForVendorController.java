@@ -414,7 +414,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 //			List<Office> centList = officeService.findListByTypeList(typeList);
 //			model.addAttribute("centList",centList);
 			for (BizRequestDetail requestDetail : requestDetailList) {
-				//skuIdList.add(requestDetail.getSkuInfo().getId());
+				skuIdList.add(requestDetail.getSkuInfo().getId());
 				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
 				List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
 				inventorySkuList.addAll(list);
@@ -436,14 +436,15 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 			RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
 			model.addAttribute("defaultProcessId",requestOrderProcessConfig.getDefaultProcessId().toString());
+			model.addAttribute("autProcessId",requestOrderProcessConfig.getAutProcessId().toString());
 		}
 
-        if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() == null) {
+        if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && !"processPo".equals(bizRequestHeader.getProcessPo())) {
             RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
             model.addAttribute("requestOrderProcess", requestOrderProcess);
         }
-        if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getBizPoHeader().getCommonProcess() != null) {
+        if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getBizPoHeader().getCommonProcess() != null && "processPo".equals(bizRequestHeader.getProcessPo())) {
 			com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
 			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
 		}
@@ -461,6 +462,11 @@ public class BizRequestHeaderForVendorController extends BaseController {
 //					ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 //			model.addAttribute("requestOrderProcess", requestOrderProcess);
 //		}
+		String createPo = "no";
+		if (bizRequestHeader.getCommonProcess() != null && ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getCreatePoProcessId().toString().equals(bizRequestHeader.getCommonProcess().getType())) {
+			createPo = "yes";
+		}
+		model.addAttribute("createPo",createPo);
 
 		if (bizRequestHeader.getId() != null && bizRequestHeader.getId() != 0) {
 			BizOrderStatus bizOrderStatus = new BizOrderStatus();
@@ -1082,13 +1088,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequestMapping(value = "audit")
 	@ResponseBody
 	public String audit(int id, String currentType, int auditType, String description) {
-		BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(id);
 		String result = bizRequestHeaderForVendorService.audit(id, currentType, auditType, description);
-//		if (ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
-//            result = bizRequestHeaderForVendorService.vendAudit(id, currentType, auditType, description);
-//		}else {
-//            result =bizRequestHeaderForVendorService.audit(id, currentType, auditType, description);
-//		}
 		return result;
 	}
 

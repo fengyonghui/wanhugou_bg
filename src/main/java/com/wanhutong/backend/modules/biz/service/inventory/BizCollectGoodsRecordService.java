@@ -170,7 +170,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			Integer bizStatus = bizRequestHeader.getBizStatus();
 			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.COMPLETE.getState());
 			bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
-			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+			if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.COMPLETE.getState())) {
 				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizCollectGoodsRecord.getBizRequestHeader().getId());
 			}
 		}

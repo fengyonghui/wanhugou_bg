@@ -406,6 +406,7 @@
         function audit(auditType, description) {
             var id = $("#id").val();
             var currentType = $("#currentType").val();
+            var createPo = $("#createPo").val();
             $.ajax({
                 url: '${ctx}/biz/request/bizRequestHeaderForVendor/audit',
                 contentType: 'application/json',
@@ -419,7 +420,8 @@
                             //自动生成采购单
                             var id = $("#id").val();
                             var bizStatus = getCurrentBizStatus(id);
-                            if ('${ReqHeaderStatusEnum.APPROVE.state}' == bizStatus) {
+                            <%--if ('${ReqHeaderStatusEnum.APPROVE.state}' == bizStatus) {--%>
+                            if (createPo == 'yes') {
                                 getPoHeaderPara(id);
                             }
                         }
@@ -610,6 +612,7 @@
 		<input id="fromType" type="hidden" value="${entity.fromType}"/>
 		<input id="vendId" type="hidden" value="${entity.bizVendInfo.office.id}"/>
 		<input id="remarkInput" type="hidden" value=""/>
+		<input id="createPo" type="hidden" value="${createPo}"/>
 		<c:forEach items="${fns:getUser().roleList}" var="role">
 			<c:if test="${role.enname==RoleEnNameEnum.STOCKREADYCOMMISSIONER.state}">
 				<c:set var="flag" value="true"/>
@@ -799,21 +802,21 @@
 		</div>
 
 		<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-			<%--<c:if test="${entity.str == 'audit'}">--%>
-				<%--<c:if test="${entity.bizStatus == ReqHeaderStatusEnum.IN_REVIEW.state}">--%>
-					<%--<div class="control-group">--%>
-						<%--<label class="control-label">最后付款时间：</label>--%>
-						<%--<div class="controls">--%>
-							<%--<input name="lastPayDate" id="lastPayDate" type="text" readonly="readonly" maxlength="20"--%>
-								   <%--class="input-medium Wdate required"--%>
-								   <%--value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"--%>
-								   <%--onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"--%>
-								   <%--placeholder="必填！"/>--%>
-							<%--<span class="help-inline"><font color="red">*</font></span>--%>
-						<%--</div>--%>
-					<%--</div>--%>
-				<%--</c:if>--%>
-			<%--</c:if>--%>
+			<c:if test="${entity.str == 'audit'}">
+				<c:if test="${entity.bizStatus == ReqHeaderStatusEnum.IN_REVIEW.state && createPo == 'yes'}">
+					<div class="control-group">
+						<label class="control-label">最后付款时间：</label>
+						<div class="controls">
+							<input name="lastPayDate" id="lastPayDate" type="text" readonly="readonly" maxlength="20"
+								   class="input-medium Wdate required"
+								   value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
+								   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
+								   placeholder="必填！"/>
+							<span class="help-inline"><font color="red">*</font></span>
+						</div>
+					</div>
+				</c:if>
+			</c:if>
 		</shiro:hasPermission>
 
 		<c:if test="${entity.str!='detail' && entity.str!='audit' }">
@@ -1090,8 +1093,7 @@
 				<form:textarea path="remark" htmlEscape="false" maxlength="200" class="input-xlarge "/>
 			</div>
 		</div>
-
-		<c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList == null}">
+		<c:if test="${entity.str == 'audit' && entity.processPo != 'processPo'}">
 			<div class="control-group">
 				<label class="control-label">审核状态：</label>
 				<div class="controls">
@@ -1111,7 +1113,7 @@
 				</div>
 			</div>
 		</c:if>
-		<c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
+		<c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0 && entity.processPo == 'processPo'}">
 			<div class="control-group">
 				<label class="control-label">审核状态：</label>
 				<div class="controls">
@@ -1280,16 +1282,16 @@
 									<div class="help_step_right"></div>
 								</div>
 							</c:if>
-							<c:if test="${stat.last && entity.bizPoHeader.commonProcessList == null}">
+							<c:if test="${stat.last && entity.processPo != 'processPo' && v.requestOrderProcess.name != '审核完成'}">
 								<div class="help_step_item help_step_set">
 									<div class="help_step_left"></div>
 									<div class="help_step_num">${stat.index + 1}</div>
                                     <c:if test="${v.requestOrderProcess.name != '审核完成'}">
 									    当前状态:${v.requestOrderProcess.name}<br/><br/>
                                     </c:if>
-                                    <c:if test="${v.requestOrderProcess.name == '审核完成'}">
-                                        当前状态:订单支出信息审核<br/><br/>
-                                    </c:if>
+                                    <%--<c:if test="${v.requestOrderProcess.name == '审核完成'}">--%>
+                                        <%--当前状态:订单支出信息审核<br/><br/>--%>
+                                    <%--</c:if>--%>
 										${v.user.name}<br/>
 									<div class="help_step_right"></div>
 								</div>
@@ -1343,7 +1345,7 @@
 					<%--<input id="btnSubmit" type="button" onclick="startRejectAudit()" class="btn btn-primary" value="驳回"/>--%>
 				<%--</c:if>--%>
 				<c:if test="${entity.str == 'audit'}">
-					<c:if test="${entity.bizPoHeader.commonProcessList == null}">
+					<c:if test="${entiry.commonProcess.type != autProcessId && entity.processPo != 'processPo'}">
 						<input id="btnSubmit" type="button" onclick="checkPass('RE')" class="btn btn-primary" value="审核通过"/>
 						<input id="btnSubmit" type="button" onclick="checkReject('RE')" class="btn btn-primary" value="审核驳回"/>
 					</c:if>
@@ -1359,7 +1361,7 @@
 			<!-- 一单到底，采购单审核 -->
 			<shiro:hasPermission name="biz:po:bizPoHeader:audit">
 				<c:if test="${entity.str == 'audit'}">
-					<c:if test="${entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
+					<c:if test="${entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0 && entity.processPo == 'processPo'}">
 						<input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary" value="审核通过"/>
 						<input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary" value="审核驳回"/>
 					</c:if>
@@ -1470,7 +1472,6 @@
                         data: {"id": id, "prew":prew,  "auditType":2, "desc": f.description},
                         type: 'get',
                         success: function (result) {
-                            alert(result);
                             if(result == '操作成功!') {
                                 window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                             }
@@ -1524,7 +1525,6 @@
             data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img},
             type: 'get',
             success: function (result) {
-                alert(result);
                 if(result == '操作成功!') {
                     window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
                 }

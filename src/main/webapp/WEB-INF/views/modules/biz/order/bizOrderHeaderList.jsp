@@ -132,6 +132,13 @@
 			</form:select>
 		</li>
 
+		<li><label>尾款：</label>
+			<form:select path="retainage" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:option value="1" label="有尾款"/>
+			</form:select>
+		</li>
+
 		<c:if test="${source ne 'vendor'}">
 			<li><label>经销店电话：</label>
 				<form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
@@ -196,6 +203,7 @@
 		<li><label>测试数据</label>
 			<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
 		</li>
+
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
@@ -229,6 +237,7 @@
 		<th>应付金额</th>
 		<c:if test="${source ne 'vendor'}">
 			<th>服务费</th>
+			<th>佣金</th>
 		</c:if>
 		<th>发票状态</th>
 		<th>业务状态</th>
@@ -299,18 +308,21 @@
 				<fmt:formatNumber type="number" value="${orderHeader.freight}" pattern="0.00"/>
 			</font></td>
 			<td><font color="#0A2A0A">
-				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
+				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee}" pattern="0.00"/>
 			</font></td>
 			<c:if test="${source ne 'vendor'}">
 				<td>
 					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
-						${orderHeader.totalExp}
+						${orderHeader.totalExp+orderHeader.serviceFee}
 					</c:if>
 					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
-						<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight-orderHeader.totalBuyPrice}" pattern="0.00"/>
+						<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.totalBuyPrice}" pattern="0.00"/>
 					</c:if>
 				</td>
 			</c:if>
+			<td>
+				<fmt:formatNumber type="number" value="${orderHeader.totalDetail-orderHeader.totalBuyPrice}" pattern="0.00"/>
+			</td>
 			<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 			</td>
