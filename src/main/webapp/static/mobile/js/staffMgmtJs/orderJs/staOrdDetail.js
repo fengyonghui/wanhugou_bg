@@ -171,7 +171,7 @@
 							if(data.entity2.payProportion == 1) {
 								ProcessName = item.doOrderHeaderProcessFifth.name
 							}
-							if(entity2.payProportion == 2) {
+							if(data.entity2.payProportion == 2) {
 								ProcessName = item.doOrderHeaderProcessAll.name
 							}
 						}
