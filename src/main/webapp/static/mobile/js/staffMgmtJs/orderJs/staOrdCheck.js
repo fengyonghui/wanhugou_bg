@@ -42,6 +42,7 @@
                 },
                 dataType: "json",
                 success: function(res){
+//              	console.log(res)
                 	if(res.data.bizOrderHeader.flag=='check_pending') {
                 		if(res.data.orderType == 5) {
                 			$('#orderTypebox').hide()
@@ -90,7 +91,7 @@
 						$('#cityId').val(item.bizLocation.city.id); 
 						$('#regionId').val(item.bizLocation.region.id); 
 					}
-					var shouldPay = item.totalDetail + item.totalExp + item.freight;
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
 					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
 					//发票状态
 					var invStatusTxt = '';
@@ -131,16 +132,18 @@
 					var total = item.totalDetail+item.totalExp+item.freight
 					if(total > item.receiveTotal && item.bizStatus!=10 && item.bizStatus!=35 && item.bizStatus!=40 && item.bizStatus!=45 && item.bizStatus!=60) {
 						$('#staFinal').val("(有尾款)");
-					}
+					}					
 					$('#staPoordNum').val(item.orderNum);
 					$('#staRelNum').val(item.customer.name);
-					$('#staPototal').val(item.totalDetail);
+					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp);
-					$('#staFreight').val(item.freight);
-					$('#staShouldPay').val(shouldPay);
+					$('#staFreight').val(item.freight.toFixed(2));
+					$('#staShouldPay').val(shouldPay.toFixed(2));
 					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
-					$('#staPoLastDa').val(item.receiveTotal);
-					$('#staServerPrice').val(serverPrice.toFixed(2));
+					$('#staPoLastDa').val(item.receiveTotal.toFixed(2));
+					$('#staServerPrice').val((item.totalExp + item.serviceFee).toFixed(2));
+					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));
+					$('#staAddprice').val(item.serviceFee.toFixed(2));
 					$('#staInvoice').val(invStatusTxt);
 					$('#staStatus').val(statusTxt);
 					$('#staConsignee').val(item.bizLocation.receiver);
@@ -203,17 +206,11 @@
 						primaryMobile = ''
 					}
 					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
-	                    '<div class="mui-row">' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+						'<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
-	                    '<label>详情行号:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
-	                    '<li class="mui-table-view-cell">' +
-	                    '<div class="mui-input-row ">' +
-	                    '<label>货架名称:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + opShelfInfo  + '" disabled></div></li></div></div>' +
+	                    '<label class="commodityName">详情行号:</label>' +
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
 	                   
                     	'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
@@ -260,8 +257,8 @@
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
-	                    '<label>发货方:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.suplyis.name + '" disabled></div></li></div></div>'+
+	                    '<label>货架名称:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + opShelfInfo + '" disabled></div></li></div></div>'+
 						
 						'<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +   
@@ -349,7 +346,7 @@
 									return false;
 								}
 							}else {
-								mui.toast("价格不能为空！");
+								alert("价格不能为空！");
 								return false;
 							}
 						}
@@ -464,7 +461,7 @@
 									}
 							})
 			            },800);
-						
+//						
 					}
 				}
 			});

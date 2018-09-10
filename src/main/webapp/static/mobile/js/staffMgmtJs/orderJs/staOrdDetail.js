@@ -51,17 +51,19 @@
 						$('#staPoRemark').val(w.comments);
 					})
 					var item = res.data.bizOrderHeader;
-					var shouldPay = item.totalDetail + item.totalExp + item.freight;
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
 					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
 					$('#staPoordNum').val(item.orderNum);
 					$('#staRelNum').val(item.customer.name);
-					$('#staPototal').val(item.totalDetail);
+					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp);
-					$('#staFreight').val(item.freight);
-					$('#staShouldPay').val(shouldPay);
+					$('#staFreight').val(item.freight.toFixed(2));
+					$('#staShouldPay').val(shouldPay.toFixed(2));
 					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
-					$('#staPoLastDa').val(item.receiveTotal);
-					$('#staServerPrice').val(serverPrice.toFixed(2));
+					$('#staPoLastDa').val(item.receiveTotal.toFixed(2));
+					$('#staServerPrice').val((item.totalExp + item.serviceFee).toFixed(2));
+					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));
+					$('#staAddprice').val(item.serviceFee.toFixed(2));
 					$('#staConsignee').val(item.bizLocation.receiver);
 					$('#staMobile').val(item.bizLocation.phone);
 					$('#staShippAddress').val(item.bizLocation.pcrName);
@@ -223,7 +225,7 @@
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-//					console.log(item)
+//					console.log(data)
 					var opShelfInfo = '';
 					if(item.shelfInfo.opShelfInfo) {
 						opShelfInfo = item.shelfInfo.opShelfInfo.name
@@ -235,6 +237,12 @@
 						primaryMobile = item.primary.mobile
 					}else {
 						primaryMobile = ''
+					}
+					var suplyisName = '';
+					if(data.bizOrderHeader.bizStatus>=15 && data.bizOrderHeader.bizStatus!=45) {
+						suplyisName = item.suplyis.name
+					}else {
+						suplyisName = ''
 					}
 					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
 	                    
@@ -296,7 +304,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>发货方:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.suplyis.name + '" disabled></div></li></div></div>'+
+	                    '<input type="text" class="mui-input-clear" id="" value="' + suplyisName + '" disabled></div></li></div></div>'+
 						
 						'<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +   
