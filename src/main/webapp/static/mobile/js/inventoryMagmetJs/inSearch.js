@@ -5,6 +5,7 @@
 		this.expTipNum = 0;
 		this.datagood = [];
 		this.selectOpen = false
+		this.includeTestData = false
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -17,6 +18,7 @@
 		},
 		pageInit: function() {
 			var _this = this;
+			_this.testData()
 		},
 		getData: function() {
 			var _this = this;
@@ -24,9 +26,10 @@
 				var ordNumVal = $(".inOrdNum").val(); 
                 var reqNumVal = $(".inReqNum").val(); 
                 var newInputVal = $('.newinput').val(); 
-                var secStyleVal = $('.secStyle').val();
+//              var secStyleVal = $('.secStyle').val();
+                var div_businessVal = $('#input_div_business').val();
+                var div_checkVal = $('#input_div_check').val();
                 var cateGoryVal = $('#input_div_class').val();
-//				console.log(optionsBusiness)
                if(ordNumVal == null||ordNumVal == undefined){
 					ordNumVal == "";
                 }
@@ -36,28 +39,34 @@
                 if(newInputVal == null||newInputVal == undefined) {
                 	newInputVal == "";
                 }
-                if(secStyleVal == null||secStyleVal == undefined) {
-                	secStyleVal == "";
+//              if(secStyleVal == null||secStyleVal == undefined) {
+//              	secStyleVal == "";
+//              }
+				if(div_businessVal == null||div_businessVal == undefined) {
+                	div_businessVal == "";
+                }
+				if(div_checkVal == null||div_checkVal == undefined) {
+                	div_checkVal == "";
                 }
                 if(cateGoryVal == null||cateGoryVal == undefined) {
                 	cateGoryVal == "";
                 }
-                if(ordNumVal == ""&&reqNumVal == ""&&newInputVal == ""&&secStyleVal == ""&&cateGoryVal == ""){
+                if(ordNumVal == ""&&reqNumVal == ""&&newInputVal == ""&&div_businessVal == ""&&div_checkVal == ""&&cateGoryVal == ""&&_this.includeTestData==false){
                 	 mui.toast("请输入查询条件！");
                 	 return;
                 }
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
-							_this.sureSelect(optionsBusiness)
+							_this.sureSelect()
 						}else{
 							mui.toast('请选择匹配的选项')
 						}
 				}else{
-					_this.sureSelect(optionsBusiness)
+					_this.sureSelect()
 				}
 			})
 		},
-		sureSelect:function(optionsBusiness){
+		sureSelect:function(){
 			var _this = this;
 			_this.selectOpen = false
 			var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
@@ -72,10 +81,21 @@
 					bizStatusid: optionsBusiness.val(),
 					varietyInfoid: optionsClass.val(),
 					process:optionscheck.val(),
+					includeTestData: _this.includeTestData,
 					isFunc: true
 				}
 			})
 		},
+		testData:function() {
+			var _this = this;
+            $('.testCheckbox').on('change',function(){
+            	if(this.checked){
+            		_this.includeTestData = true
+            	}else {
+            		_this.includeTestData = false
+            	}
+	        })
+        },
 		hrefHtml: function(newinput, input_div,inHideSpan) {
 			var _this = this;
 			_this.ajaxGoodList()
@@ -158,8 +178,8 @@
 				dataType: 'json',
 				success: function(res) {
 					$.each(res.data.processSet, function(i, item) {
-//						console.log(item)
-						htmlCheckStatus += '<option class="soption"  value="' + item + '">' + item + '</option>'
+//						console.log(i)
+						htmlCheckStatus += '<option class="soption"  value="' + i + '">' + item + '</option>'
 					});
 					$('#input_div_check').html(optHtml+htmlCheckStatus)
 					_this.getData()
