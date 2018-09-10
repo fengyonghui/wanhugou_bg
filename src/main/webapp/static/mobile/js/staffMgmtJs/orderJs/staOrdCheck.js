@@ -42,6 +42,12 @@
                 },
                 dataType: "json",
                 success: function(res){
+//              	console.log(res)
+                	if(res.data.bizOrderHeader.flag=='check_pending') {
+                		if(res.data.orderType == 5) {
+                			$('#orderTypebox').hide()
+                		}
+                	}
 					$('#firstPart').val(res.data.entity2.customer.name);
 					$('#firstPrincipal').val(res.data.custUser.name);
 					$('#firstMobile').val(res.data.custUser.mobile);					
@@ -85,27 +91,59 @@
 						$('#cityId').val(item.bizLocation.city.id); 
 						$('#regionId').val(item.bizLocation.region.id); 
 					}
-					var shouldPay = item.totalDetail + item.totalExp + item.freight;
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
 					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
 					//发票状态
 					var invStatusTxt = '';
-					if(item.invStatus==0) {
-						invStatusTxt = "不开发票"					
-					}
+					$.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {
+		                	type:"biz_order_invStatus"
+		                },
+		                dataType: "json",
+		                success: function(res){
+		                	$.each(res,function(i,itemss){
+		                		 if(itemss.value==item.invStatus){
+		                		 	  invStatusTxt = itemss.label 
+		                		 }
+		                	})
+		                	$('#staInvoice').val(invStatusTxt);
+						}
+					})
 					//业务状态
 					var statusTxt = '';
-					if(item.staStatus=15) {
-						statusTxt = "供货中"
+					$.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {
+		                	type:"biz_order_status"
+		                },
+		                dataType: "json",
+		                success: function(res){
+		                	$.each(res,function(i,itemaa){
+		                		 if(itemaa.value==item.bizStatus){
+		                		 	  statusTxt = itemaa.label 
+		                		 }
+		                	})
+		                	$('#staStatus').val(statusTxt);
+						}
+					})
+					var total = item.totalDetail+item.totalExp+item.freight
+					if(total > item.receiveTotal && item.bizStatus!=10 && item.bizStatus!=35 && item.bizStatus!=40 && item.bizStatus!=45 && item.bizStatus!=60) {
+						$('#staFinal').val("(有尾款)");
 					}					
 					$('#staPoordNum').val(item.orderNum);
 					$('#staRelNum').val(item.customer.name);
-					$('#staPototal').val(item.totalDetail);
+					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp);
-					$('#staFreight').val(item.freight);
-					$('#staShouldPay').val(shouldPay);
+					$('#staFreight').val(item.freight.toFixed(2));
+					$('#staShouldPay').val(shouldPay.toFixed(2));
 					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
-					$('#staPoLastDa').val(item.receiveTotal);
-					$('#staServerPrice').val(serverPrice);
+					$('#staPoLastDa').val(item.receiveTotal.toFixed(2));
+					$('#staServerPrice').val((item.totalExp + item.serviceFee).toFixed(2));
+					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));
+					$('#staAddprice').val(item.serviceFee.toFixed(2));
 					$('#staInvoice').val(invStatusTxt);
 					$('#staStatus').val(statusTxt);
 					$('#staConsignee').val(item.bizLocation.receiver);
@@ -116,6 +154,7 @@
 					_this.statusListHtml(res.data);
 					_this.commodityHtml(res.data);
 					_this.comfirDialig(res.data);
+					_this.changePrice();
                 }
             });
 		},
@@ -126,6 +165,7 @@
 			if(statusLen > 0) {
 				var pHtmlList = '';
 				$.each(data.statusList, function(i, item) {
+//					console.log(item)
 					var step = i + 1;
 					pHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
@@ -136,7 +176,7 @@
 						    '</div>'+
 							'<div class="mui-input-row">'+
 						        '<label>状态:</label>'+
-						        '<input type="text" class="mui-input-clear" disabled>'+
+						        '<input type="text" class="mui-input-clear" value="'+ data.stateDescMap[item.bizStatus] +'" disabled>'+
 						    	'<label>时间:</label>'+
 						        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
 						    '</div>'+
@@ -146,51 +186,6 @@
 				$("#staStatusMenu").html(pHtmlList)
 			}
 		},
-		//审核流程
-//		checkProcessHtml:function(data){
-//			var _this = this;
-//			console.log(data)
-//			var auditLen = data.auditList.length;
-//			if(auditLen > 0) {
-//				var CheckHtmlList ='';
-//				$.each(data.auditList, function(i, item) {
-//					console.log(item)
-//					var step = i + 1;
-//					var current = item.current;
-//					if(current !== 1) {
-//						CheckHtmlList +='<li class="step_item">'+
-//						'<div class="step_num">'+ step +' </div>'+
-//						'<div class="step_num_txt">'+
-//							'<div class="mui-input-row">'+
-//								'<label>处理人:</label>'+
-//								'<input type="text" value="'+ item.user.name +'" class="mui-input-clear" disabled>'+
-//						    '</div>'+
-//							'<div class="mui-input-row">'+
-//						        '<label>批注:</label>'+
-//						        '<input type="text" value="'+ item.description +'" class="mui-input-clear" disabled>'+
-//						    	'<label>状态:</label>'+
-//						        '<input type="text" value=" '+ item.jointOperationLocalProcess.name +' " class="mui-input-clear" disabled>'+
-//						    '</div>'+
-//						'</div>'+
-//					'</li>'
-//					}
-//					if(current == 1) {
-//						CheckHtmlList +='<li class="step_item">'+
-//						'<div class="step_num">'+ step +' </div>'+
-//						'<div class="step_num_txt">'+
-//							'<div class="mui-input-row">'+
-//								'<label>当前状态:</label>'+
-//								'<input type="text" value="'+ item.jointOperationLocalProcess.name +'" class="mui-input-clear" disabled>'+
-//						   		'<label>时间:</label>'+
-//						        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
-//						    '</div>'+
-//						'</div>'+
-//					'</li>'
-//					}
-//				});
-//				$("#staCheckMenu").html(CheckHtmlList)
-//			}
-//		},
 		commodityHtml: function(data) {
 			var _this = this;
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
@@ -204,18 +199,18 @@
 					}else {
 						opShelfInfo = ''
 					}
+					var primaryMobile = '';
+					if(item.primary.mobile) {
+						primaryMobile = item.primary.mobile
+					}else {
+						primaryMobile = ''
+					}
 					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
-	                    '<div class="mui-row">' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+						'<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
-	                    '<label>详情行号:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
-	                    '<li class="mui-table-view-cell">' +
-	                    '<div class="mui-input-row ">' +
-	                    '<label>货架名称:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + opShelfInfo  + '" disabled></div></li></div></div>' +
+	                    '<label class="commodityName">详情行号:</label>' +
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
 	                   
                     	'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
@@ -234,7 +229,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>供应商电话:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.primary.mobile + '" disabled></div></li></div>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + primaryMobile + '" disabled></div></li></div>' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
@@ -262,8 +257,8 @@
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
-	                    '<label>发货方:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.suplyis.name + '" disabled></div></li></div></div>'+
+	                    '<label>货架名称:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + opShelfInfo + '" disabled></div></li></div></div>'+
 						
 						'<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +   
@@ -293,6 +288,72 @@
 				});
 				$("#staCheckCommodity").html(htmlCommodity)
 			}
+		},
+		changePrice: function() {
+			var _this = this;
+			document.getElementById("changePriceBtn").addEventListener('tap', function(e) {
+				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+				var btnArray = ['取消', '确定'];
+				mui.confirm('确定修改价格吗？', '系统提示！', btnArray, function(choice) {
+					if(choice.index == 1) {
+						var ss = $('#staAdjustmentMoney').val();
+						IsNum(ss)
+						function IsNum(num) {
+							if (num) {
+								var reNum = /^\d+(\.\d+)?$/;
+								if(reNum.test(num)) {
+									var orderId = _this.userInfo.staOrdId;
+					                var totalExp = $('#staAdjustmentMoney').val();
+					                var totalDetail =$('#staPototal').val();
+					                $.ajax({
+					                    type:"post",
+					                    url:"/a/biz/order/bizOrderHeader/checkTotalExp4Mobile",
+					                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
+					                    success:function (data) {
+					                    	var dataVal=JSON.parse(data)
+					                        if (data == "serviceCharge") {
+					                            mui.toast("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
+					                        } else if (dataVal.data.resultValue == "orderLoss") {
+					                            mui.toast("优惠后订单金额不能低于结算价，请修改调整金额");
+					                        } else if (dataVal.data.resultValue == "orderLowest") {
+					                            mui.toast("优惠后订单金额不能低于结算价的95%，请修改调整金额");
+					                        } else if (dataVal.data.resultValue == "orderLowest8") {
+					                            mui.toast("优惠后订单金额不能低于结算价的80%，请修改调整金额");
+					                        } else if (dataVal.data.resultValue == "ok") {
+					                            $.ajax({
+					                                type:"post",
+					                                url:"/a/biz/order/bizOrderHeader/saveBizOrderHeader4Mobile",
+					                                data:{orderId:orderId,money:totalExp},					                              
+					                                success:function(flag){
+					                    	            var flagVal=JSON.parse(flag)
+					                                    if(flagVal.data.flag=="ok"){
+					                                        mui.toast("修改成功！");
+					                                    }else{
+					                                        mui.toast(" 修改失败 ");
+					                                    }
+					                                }
+					                            });
+					                        }
+					                    }
+					                });									
+									return true;
+								} else {
+									if(num < 0) {
+										mui.toast("价格不能为负数！");
+									}else {
+										mui.toast("价格必须为数字！");
+									}
+									return false;
+								}
+							}else {
+								alert("价格不能为空！");
+								return false;
+							}
+						}
+					} else {						
+					}
+				})
+			});
 		},
 		comfirDialig: function(data) {
 			var _this = this;
@@ -400,7 +461,7 @@
 									}
 							})
 			            },800);
-						
+//						
 					}
 				}
 			});

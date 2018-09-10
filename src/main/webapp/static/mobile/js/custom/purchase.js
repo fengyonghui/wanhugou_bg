@@ -53,8 +53,8 @@
 				                for(var i = childs.length - 1; i >= 0; i--) {
 				                    f.removeChild(childs[i]);
 				                }
-				                console.log('222')
-				                console.log(pager)
+//				                console.log('222')
+//				                console.log(pager)
 				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
 			            }

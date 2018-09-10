@@ -112,9 +112,8 @@
 					'<div class="step_num_txt">'+
 						'<div class="mui-input-row">'+
 							'<label>处理人:</label>'+
-					        '<textarea name="" rows="" cols="" disabled>'+ item.createBy.name +'</textarea>'+
+					        '<input type="text" value="'+ item.createBy.name +'" class="mui-input-clear" disabled>'+
 					    '</div>'+
-						'<br />'+
 						'<div class="mui-input-row">'+
 					        '<label>状态:</label>'+
 					        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+

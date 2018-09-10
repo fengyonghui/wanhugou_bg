@@ -6,6 +6,9 @@
 		<title>订单审核</title>
 		<link href="../../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../../css/app.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 4em;}
+		</style>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
@@ -28,6 +31,11 @@
 			<div class="mui-input-row">
 				<label>调整金额：</label>
 				<input type="text" class="mui-input-clear" id="staAdjustmentMoney">
+				<button id="changePriceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">修改</button>
+			</div>
+			<div class="mui-input-row">
+				<label>增值服务费：</label>
+				<input type="text" class="mui-input-clear" id="staAddprice">
 			</div>
 			<div class="mui-input-row">
 				<label>运费：</label>
@@ -46,12 +54,17 @@
 				<input type="text" id="staServerPrice" class="mui-input-clear" disabled>
 			</div>
 			<div class="mui-input-row">
+				<label>佣金：</label>
+				<input type="text" id="staCommission" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
 				<label>发票状态：</label>
 				<input type="text" id="staInvoice" class="mui-input-clear" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>业务状态：</label>
-				<input type="text" id="staStatus" class="mui-input-clear" disabled>
+				<input type="text" class="mui-input-clear doubleInput app_cred3" id="staFinal" disabled>
+				<input type="text" id="staStatus" class="mui-input-clear doubleInput" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>收货人：</label>
@@ -85,7 +98,7 @@
 					
 				</ul>
 			</div>
-			<div class="mui-input-row app_bline">
+			<!--<div class="mui-input-row app_bline">
 				<div class="labelLf">付款约定：</div>
 				<div class="mui-input-row">
 					<label>付款时间：</label>
@@ -95,14 +108,14 @@
 					<label>金额：</label>
 					<input type="text" class="mui-input-clear" id="staPayMoney" disabled>
 				</div>
-			</div>
+			</div>-->
 			<div class="mui-input-row app_bline" id="orderTypebox">
 				<label>供货方式：</label>
 		    	<div id="changeTxt" class="labelri">
 		    		本地备货
-			        <input checked type="radio" name="localOriginType" value="0" class="inputRadio"/>
+			        <input checked type="radio" name="localOriginType" value="1" class="inputRadio"/>
 		        	产地直发
-		        	 <input id="yes" type="radio" name="localOriginType" value="1"  class="inputRadio"/>
+		        	<input id="yes" type="radio" name="localOriginType" value="0"  class="inputRadio"/>
 	        	</div>
 		    </div>
 			<div class="app_cred3">
@@ -153,9 +166,9 @@
 				</div>
 			</div>
 		</div>
-		<div id="staOrdCheckBtn" class="app_p20">
+		<div id="staOrdCheckBtn" class="app_p20 app_pl25 app_pr25">
 		    <button id="checkBtns" type="submit" class="mui-btn mui-btn-blue">同意发货</button>
-			<button id="rejectBtns" type="submit" class="mui-btn mui-btn-blue">不同意发货</button>
+			<button id="rejectBtns" type="submit" class="mui-btn mui-btn-blue app_fr">不同意发货</button>
 		</div>
 		<div class="clear"></div>
 		
