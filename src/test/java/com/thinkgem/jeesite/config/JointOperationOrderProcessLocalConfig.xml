@@ -29,6 +29,7 @@
         <zeroPassCode>20002</zeroPassCode>
         <fifthPassCode>20002</fifthPassCode>
         <allPassCode>777</allPassCode>
+        <allPayCode>666</allPayCode>
         <rejectCode>-1</rejectCode>
     </process>
 
@@ -40,6 +41,7 @@
         <zeroPassCode>777</zeroPassCode>
         <fifthPassCode>777</fifthPassCode>
         <allPassCode>777</allPassCode>
+        <allPayCode>666</allPayCode>
         <rejectCode>-1</rejectCode>
     </process>
 
@@ -51,6 +53,7 @@
         <zeroPassCode>30002</zeroPassCode>
         <fifthPassCode>30003</fifthPassCode>
         <allPassCode>777</allPassCode>
+        <allPayCode>666</allPayCode>
         <rejectCode>-1</rejectCode>
     </process>
 
@@ -62,6 +65,8 @@
         <zeroPassCode>30003</zeroPassCode>
         <fifthPassCode>30003</fifthPassCode>
         <allPassCode>777</allPassCode>
+        <fifthPayCode>30003</fifthPayCode>
+        <allPayCode>666</allPayCode>
         <rejectCode>-1</rejectCode>
     </process>
 
@@ -73,6 +78,7 @@
         <zeroPassCode>777</zeroPassCode>
         <fifthPassCode>777</fifthPassCode>
         <allPassCode>777</allPassCode>
+        <allPayCode>666</allPayCode>
         <rejectCode>-1</rejectCode>
     </process>
 

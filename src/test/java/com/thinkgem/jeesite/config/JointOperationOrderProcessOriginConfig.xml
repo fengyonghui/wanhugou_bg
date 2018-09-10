@@ -38,16 +38,18 @@
         <zeroPassCode>2002</zeroPassCode>
         <fifthPassCode>2002</fifthPassCode>
         <allPassCode>2002</allPassCode>
+        <fifthPayCode>2002</fifthPayCode>
+        <allPayCode>2002</allPayCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
         <name>品类主管审核</name>
         <code>2002</code>
         <roleEnNameEnum>SELECTION_OF_SPECIALIST</roleEnNameEnum>
-        <passCode>666</passCode>
-        <zeroPassCode>666</zeroPassCode>
-        <fifthPassCode>666</fifthPassCode>
-        <allPassCode>666</allPassCode>
+        <passCode>2003</passCode>
+        <zeroPassCode>2003</zeroPassCode>
+        <fifthPassCode>2003</fifthPassCode>
+        <allPassCode>2003</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
@@ -70,6 +72,8 @@
         <zeroPassCode>1002</zeroPassCode>
         <fifthPassCode>1003</fifthPassCode>
         <allPassCode>1003</allPassCode>
+        <fifthPayCode>1003</fifthPayCode>
+        <allPayCode>1003</allPayCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
@@ -80,16 +84,18 @@
         <zeroPassCode>1003</zeroPassCode>
         <fifthPassCode>1003</fifthPassCode>
         <allPassCode>1003</allPassCode>
+        <fifthPayCode>1003</fifthPayCode>
+        <allPayCode>1003</allPayCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
         <name>品类主管审核</name>
         <code>1003</code>
         <roleEnNameEnum>SELECTION_OF_SPECIALIST</roleEnNameEnum>
-        <passCode>666</passCode>
-        <zeroPassCode>666</zeroPassCode>
-        <fifthPassCode>666</fifthPassCode>
-        <allPassCode>666</allPassCode>
+        <passCode>1004</passCode>
+        <zeroPassCode>1004</zeroPassCode>
+        <fifthPassCode>1004</fifthPassCode>
+        <allPassCode>1004</allPassCode>
         <rejectCode>-1</rejectCode>
     </process>
     <process>
