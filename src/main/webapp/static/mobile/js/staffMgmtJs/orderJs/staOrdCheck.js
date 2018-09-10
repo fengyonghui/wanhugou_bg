@@ -42,7 +42,11 @@
                 },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	if(res.data.bizOrderHeader.flag=='check_pending') {
+                		if(res.data.orderType == 5) {
+                			$('#orderTypebox').hide()
+                		}
+                	}
 					$('#firstPart').val(res.data.entity2.customer.name);
 					$('#firstPrincipal').val(res.data.custUser.name);
 					$('#firstMobile').val(res.data.custUser.mobile);					
@@ -90,14 +94,44 @@
 					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
 					//发票状态
 					var invStatusTxt = '';
-					if(item.invStatus==0) {
-						invStatusTxt = "不开发票"					
-					}
+					$.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {
+		                	type:"biz_order_invStatus"
+		                },
+		                dataType: "json",
+		                success: function(res){
+		                	$.each(res,function(i,itemss){
+		                		 if(itemss.value==item.invStatus){
+		                		 	  invStatusTxt = itemss.label 
+		                		 }
+		                	})
+		                	$('#staInvoice').val(invStatusTxt);
+						}
+					})
 					//业务状态
 					var statusTxt = '';
-					if(item.staStatus=15) {
-						statusTxt = "供货中"
-					}					
+					$.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {
+		                	type:"biz_order_status"
+		                },
+		                dataType: "json",
+		                success: function(res){
+		                	$.each(res,function(i,itemaa){
+		                		 if(itemaa.value==item.bizStatus){
+		                		 	  statusTxt = itemaa.label 
+		                		 }
+		                	})
+		                	$('#staStatus').val(statusTxt);
+						}
+					})
+					var total = item.totalDetail+item.totalExp+item.freight
+					if(total > item.receiveTotal && item.bizStatus!=10 && item.bizStatus!=35 && item.bizStatus!=40 && item.bizStatus!=45 && item.bizStatus!=60) {
+						$('#staFinal').val("(有尾款)");
+					}
 					$('#staPoordNum').val(item.orderNum);
 					$('#staRelNum').val(item.customer.name);
 					$('#staPototal').val(item.totalDetail);
@@ -269,9 +303,8 @@
 						IsNum(ss)
 						function IsNum(num) {
 							if (num) {
-								var reNum = /^\d*$/;
+								var reNum = /^\d+(\.\d+)?$/;
 								if(reNum.test(num)) {
-					
 									var orderId = _this.userInfo.staOrdId;
 					                var totalExp = $('#staAdjustmentMoney').val();
 					                var totalDetail =$('#staPototal').val();
@@ -310,7 +343,7 @@
 								} else {
 									if(num < 0) {
 										mui.toast("价格不能为负数！");
-									} else {
+									}else {
 										mui.toast("价格必须为数字！");
 									}
 									return false;
