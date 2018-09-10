@@ -214,8 +214,6 @@
 		/*查询*/
 			$('.app_header').on('tap', '#staOrdSechBtn', function() {
 				var url = $(this).attr('url');
-				var flagaa = $('#flag').val();
-				console.log(flagaa)
 				var staListIds = $('#consultantId').val();
 				var staListIdTxts = $('#staListIdTxt').val(); 
 				var conId = '';
@@ -232,7 +230,6 @@
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdSech.html",
 						extras:{
 							staListId: conId,
-							flagTxt: flagaa,
 						}
 					})
 				}
