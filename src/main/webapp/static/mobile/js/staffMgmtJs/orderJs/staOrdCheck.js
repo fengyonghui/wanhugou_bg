@@ -280,24 +280,24 @@
 					                    url:"/a/biz/order/bizOrderHeader/checkTotalExp4Mobile",
 					                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
 					                    success:function (data) {
-					                    	console.log(data)
+					                    	var dataVal=JSON.parse(data)
 					                        if (data == "serviceCharge") {
 					                            mui.toast("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
-					                        } else if (data == "orderLoss") {
+					                        } else if (dataVal.data.resultValue == "orderLoss") {
 					                            mui.toast("优惠后订单金额不能低于结算价，请修改调整金额");
-					                        } else if (data == "orderLowest") {
+					                        } else if (dataVal.data.resultValue == "orderLowest") {
 					                            mui.toast("优惠后订单金额不能低于结算价的95%，请修改调整金额");
-					                        } else if (data == "orderLowest8") {
+					                        } else if (dataVal.data.resultValue == "orderLowest8") {
 					                            mui.toast("优惠后订单金额不能低于结算价的80%，请修改调整金额");
-					                        } else if (data == "ok") {
-					                        	alert(1)
+					                        } else if (dataVal.data.resultValue == "ok") {
 					                            $.ajax({
 					                                type:"post",
 					                                url:"/a/biz/order/bizOrderHeader/saveBizOrderHeader4Mobile",
 					                                data:{orderId:orderId,money:totalExp},					                              
 					                                success:function(flag){
-					                                    if(flag=="ok"){
-					                                        mui.toast("成功！");
+					                    	            var flagVal=JSON.parse(flag)
+					                                    if(flagVal.data.flag=="ok"){
+					                                        mui.toast("修改成功！");
 					                                    }else{
 					                                        mui.toast(" 修改失败 ");
 					                                    }

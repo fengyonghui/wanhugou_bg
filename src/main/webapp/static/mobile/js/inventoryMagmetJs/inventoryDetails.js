@@ -97,30 +97,33 @@
         paylistHtml:function(data){
         	var _this = this;
         	var htmlPaylist = '';
-        	$.each(data.paymentOrderList, function(i, item) {
-				console.log(item)			
-				htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
-					'<div class="mui-media-body">'+
-						'<div class="mui-input-row">'+
-							'<label>付款金额：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.total.toFixed(2) +'" disabled>'+
+        	if(data.paymentOrderList != null && data.paymentOrderList.length > 0){
+        		$.each(data.paymentOrderList, function(i, item) {
+					console.log(item)			
+					htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
+						'<div class="mui-media-body">'+
+							'<div class="mui-input-row">'+
+								'<label>付款金额：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.total.toFixed(2) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>实际付款金额：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.payTotal.toFixed(2) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>最后付款时间：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.deadline) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>实际付款时间：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.payTime) +'" disabled>'+
+							'</div>'+
 						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>实际付款金额：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.payTotal.toFixed(2) +'" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>最后付款时间：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.deadline) +'" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>实际付款时间：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.payTime) +'" disabled>'+
-						'</div>'+
-					'</div>'+
-				'</li>'
-			});
-			$("#inPaylist").html(htmlPaylist);
+					'</li>'
+			   });
+			   $("#inPaylist").html(htmlPaylist);
+        	}
+        	
         },
 		//采购商品
 		purchaseHtml: function(data) {

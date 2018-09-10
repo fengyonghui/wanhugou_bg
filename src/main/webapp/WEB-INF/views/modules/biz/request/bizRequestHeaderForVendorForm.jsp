@@ -1270,7 +1270,7 @@
 				<div class="controls help_wrap">
 					<div class="help_step_box fa">
 						<c:forEach items="${entity.commonProcessList}" var="v" varStatus="stat">
-							<c:if test="${!stat.last}" >
+							<c:if test="${ }" >
 								<div class="help_step_item">
 									<div class="help_step_left"></div>
 									<div class="help_step_num">${stat.index + 1}</div>
