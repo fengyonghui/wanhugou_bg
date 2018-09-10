@@ -25,6 +25,7 @@
 		<result property="payProportion" column="payProportion"/>
 		<result property="suplys" column="suplys"/>
         <result property="consultantId" column="consultantId"/>
+        <result property="serviceFee" column="serviceFee"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -151,6 +152,7 @@
 		a.total_detail AS "totalDetail",
 		a.receive_total as "receiveTotal",
 		a.total_exp AS "totalExp",
+		a.service_fee AS "serviceFee",
 		a.freight AS "freight",
 		a.inv_status AS "invStatus",
 		a.biz_status AS "bizStatus",
@@ -205,6 +207,7 @@
 		a.receive_total as "receiveTotal",
 		a.total_exp AS "totalExp",
 		a.freight AS "freight",
+		a.service_fee AS "serviceFee",
 		a.inv_status AS "invStatus",
 		a.biz_status AS "bizStatus",
 		a.biz_type as "bizType",
@@ -436,7 +439,7 @@
 			</if>
 
 			<if test="retainage == '1' || retainage == 1">
-				AND (a.total_detail + a.total_exp) > a.receive_total
+				AND (a.total_detail + a.total_exp + a.service_fee) > a.receive_total
 				AND (<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
 				a.biz_status != #{item.state}
 			</foreach>
@@ -2885,5 +2888,40 @@ FROM
 		process_id  = #{processId}
 		WHERE id = #{headerId}
 	</update>
+
+	<!-- 查询日期内新建的有效会员 -->
+	<select id="getValidUserStatisticDataByOfficeId" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
+		select t.*, COUNT(1) AS count from
+		(
+		SELECT
+		sox.name AS "name"
+		FROM biz_custom_center_consultant a
+		JOIN sys_office soc on soc.id=a.cust_id
+		JOIN sys_office sox on sox.id=a.center_id
+		JOIN sys_user suc on suc.id=a.create_id
+		JOIN sys_user sug on sug.id=a.consultant_id and sug.status=1
+		JOIN sys_user suu on suu.company_id=soc.id and suu.status=1
+		join biz_order_header boh on boh.cust_id = a.cust_id and boh.status=1
+		where
+		a.status = 1
+		and boh.order_type != 4
+		AND NOT EXISTS (
+		SELECT 1
+		FROM sys_test_account ta
+		WHERE boh.cust_id = ta.object_id
+		AND ta.object_name = 'sys_office'
+		)
+		AND ((biz_status != 45
+		AND biz_status != 35
+		AND biz_status != 0
+		AND biz_status != 40)
+		OR (biz_status = 40
+		AND receive_total > 0))
+		AND date_format(soc.create_date, '%Y-%m') = #{month}
+		AND a.center_id = #{officeId}
+		group by a.cust_id
+		) AS t
+	</select>
+
 
 </mapper>

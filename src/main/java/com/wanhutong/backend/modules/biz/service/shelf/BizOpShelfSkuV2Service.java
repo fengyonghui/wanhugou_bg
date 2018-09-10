@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfSkuV2Dao;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductMinMaxPrice;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
@@ -15,6 +16,8 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +35,8 @@ import java.util.Map;
 @Service
 @Transactional(readOnly = true)
 public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuV2Dao, BizOpShelfSku> {
+
+	private static Logger LOGGER = LoggerFactory.getLogger(BizOpShelfSkuV2Service.class);
 	@Resource
 	private BizProductInfoService bizProductInfoService;
 	@Resource
@@ -101,14 +106,32 @@ public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuV2Dao, BizO
 		bizOpShelfSkuV2Dao.dateTimeUpdate(bizOpShelfSku);
 	}
 	@Transactional(readOnly = false)
-	public  void saveShelfProdInfoPrice(BizOpShelfSku bizOpShelfSku){
+	public String saveShelfProdInfoPrice(BizOpShelfSku bizOpShelfSku,int i){
 		BizProductInfo productInfo=bizProductInfoService.get(bizOpShelfSku.getProductInfo().getId());
 		BizOpShelfSku opShelfSku =new BizOpShelfSku();
 		opShelfSku.setProductInfo(productInfo);
-		Map<String,BigDecimal> map=bizOpShelfSkuV2Dao.findMinMaxPrice(opShelfSku);
-		productInfo.setMaxPrice(map.get("maxPrice").doubleValue());
-		productInfo.setMinPrice(map.get("minPrice").doubleValue());
-		bizProductInfoService.saveProd(productInfo);
+		BizProductMinMaxPrice bizProductInfo = bizOpShelfSkuV2Dao.findMinMaxPrice(opShelfSku);
+		if (bizProductInfo != null) {
+			productInfo.setMaxPrice(bizProductInfo.getMaxPrice().doubleValue());
+			productInfo.setMinPrice(bizProductInfo.getMinPrice().doubleValue());
+			bizProductInfoService.saveProd(productInfo);
+			if (i == 2) {
+				return "货号为:" + bizOpShelfSku.getSkuInfo().getItemNo() + ",货架为:" + bizOpShelfSku.getOpShelfInfo().getName() + "的商品下架成功";
+			}
+			if (i == 1) {
+				return "货号为:" + bizOpShelfSku.getSkuInfo().getItemNo() + ",货架为:" + bizOpShelfSku.getOpShelfInfo().getName() + "的商品上架成功";
+			}
+		}else {
+			if (i == 1) {
+				LOGGER.error("[ERROR][上架商品失败]，货号[{}],货架[{}]",bizOpShelfSku.getSkuInfo().getItemNo(),bizOpShelfSku.getOpShelfInfo().getName());
+				return "货号为:" + bizOpShelfSku.getSkuInfo().getItemNo() + ",货架为:" + bizOpShelfSku.getOpShelfInfo().getName() + "的商品上架失败";
+			}
+			if (i == 2) {
+				LOGGER.error("[ERROR][下架商品失败]，货号[{}],货架[{}]",bizOpShelfSku.getSkuInfo().getItemNo(),bizOpShelfSku.getOpShelfInfo().getName());
+				return "货号为:" + bizOpShelfSku.getSkuInfo().getItemNo() + ",货架为:" + bizOpShelfSku.getOpShelfInfo().getName() + "的商品下架失败";
+			}
+		}
+		return "";
 	}
 
 	@Transactional(readOnly = false)

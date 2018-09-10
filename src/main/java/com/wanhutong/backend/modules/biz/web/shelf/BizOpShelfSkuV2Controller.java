@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.web.shelf;
 
 import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.BaseEntity;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.RoleUtils;
@@ -32,7 +33,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -294,8 +297,8 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 //		System.out.println(df.format(day));
 		bizOpShelfSku.setUnshelfTime(day);
 		bizOpShelfSkuV2Service.updateDateTime(bizOpShelfSku);
-		bizOpShelfSkuV2Service.saveShelfProdInfoPrice(bizOpShelfSku);
-		addMessage(redirectAttributes, "下架成功");
+		String message = bizOpShelfSkuV2Service.saveShelfProdInfoPrice(bizOpShelfSku, 2);
+		addMessage(redirectAttributes, message);
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSkuV2/?repage";
 	}
 
@@ -315,8 +318,8 @@ public class BizOpShelfSkuV2Controller extends BaseController {
         bizOpShelfSku.setShelfTime(new Date());
         bizOpShelfSku.setUnshelfTime(null);
 		bizOpShelfSkuV2Service.updateShelves(bizOpShelfSku);
-		bizOpShelfSkuV2Service.saveShelfProdInfoPrice(bizOpShelfSku);
-		addMessage(redirectAttributes, "上架成功");
+		String message = bizOpShelfSkuV2Service.saveShelfProdInfoPrice(bizOpShelfSku, 1);
+		addMessage(redirectAttributes, message);
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSkuV2/?repage";
 	}
 
@@ -381,6 +384,61 @@ public class BizOpShelfSkuV2Controller extends BaseController {
     public String sort() {
         bizOpShelfSkuV2Service.sort();
         return "success";
+    }
+
+	/**
+	 * 跳转批量下架页面
+	 * @return
+	 */
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
+	@RequestMapping(value = "downShelfAdd")
+    public String downShelfAdd() {
+		return "modules/biz/shelf/bizOpShelfSkuBatchDownShelf";
+	}
+
+    /**
+     * 批量下架商品查询
+     * @param bizOpShelfSku
+     * @return
+     */
+	@ResponseBody
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
+	@RequestMapping(value = "findDownOpShelfSku")
+	public List<BizOpShelfSku> findDownOpShelfSku(BizOpShelfSku bizOpShelfSku) {
+        if (bizOpShelfSku.getSkuInfo().getItemNo().isEmpty() && bizOpShelfSku.getSkuInfo().getPartNo().isEmpty()
+                && bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getProductInfo().getBrandName().isEmpty()) {
+            return null;
+        }
+        bizOpShelfSku.setBatchDownShelf("batch");
+        return bizOpShelfSkuV2Service.findList(bizOpShelfSku);
+    }
+
+    /**
+     * 批量下架
+     * @param bizOpShelfSku
+     * @param redirectAttributes
+     * @return
+     */
+    @RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
+    @RequestMapping(value = "batchDownShelf")
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
+    public String batchDownShelf(BizOpShelfSku bizOpShelfSku, RedirectAttributes redirectAttributes) {
+        if (StringUtils.isEmpty(bizOpShelfSku.getOpShelfSkuIds())) {
+            addMessage(redirectAttributes, "未选中下架商品");
+            return "redirect:" + Global.getAdminPath() + "/biz/shelf/bizOpShelfSkuV2/?repage";
+        }
+        String[] opShelfSkuIdAttr = bizOpShelfSku.getOpShelfSkuIds().split(",");
+        Date day = new Date();//当前时间
+        StringBuilder message = new StringBuilder();
+        for (String opShelfSkuId : opShelfSkuIdAttr) {
+            BizOpShelfSku opShelfSku = bizOpShelfSkuV2Service.get(Integer.valueOf(opShelfSkuId));
+            opShelfSku.setUnshelfTime(day);
+            bizOpShelfSkuV2Service.updateDateTime(opShelfSku);
+            String s = bizOpShelfSkuV2Service.saveShelfProdInfoPrice(opShelfSku, 2);
+            message.append(s).append("<br>");
+        }
+        addMessage(redirectAttributes, message.toString());
+        return "redirect:" + Global.getAdminPath() + "/biz/shelf/bizOpShelfSkuV2/?repage";
     }
 }
 
