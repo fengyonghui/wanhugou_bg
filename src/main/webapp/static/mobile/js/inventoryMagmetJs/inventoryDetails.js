@@ -15,140 +15,300 @@
 		},
 		pageInit: function() {
 			var _this = this;
+//			_this.scheduling();
 		},
 		getData: function() {
 			var _this = this;
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/request/bizRequestHeaderForVendor/form4MobileNew",
-                data: {id:_this.userInfo.inListId},
+                data: {id:_this.userInfo.inListId,str:'detail'},
                 dataType: "json",
                 success: function(res){
-					console.log(res)
-				/*业务状态*/
-					var bizstatus = res.bizStatus;
-					var bizstatusTxt = '';
-					if(bizstatus==0) {
-						bizstatusTxt = "未审核"
-					}else if(bizstatus==1) {
-						bizstatusTxt = "首付支付"
-					}else if(bizstatus==2) {
-						bizstatusTxt = "全部支付"
-					}else if(bizstatus==4) {
-						bizstatusTxt = "审核中"
-					}else if(bizstatus==5) {
-						bizstatusTxt = "审核通过"
-					}else if(bizstatus==6) {
-						bizstatusTxt = "审批中"
-					}else if(bizstatus==7) {
-						bizstatusTxt = "审批完成"
-					}else if(bizstatus==10) {
-						bizstatusTxt = "采购中"
-					}else if(bizstatus==13) {
-						bizstatusTxt = "部分结算"
-					}else if(bizstatus==15) {
-						bizstatusTxt = "采购完成"
-					}else if(bizstatus==20) {
-						bizstatusTxt = "备货中"
-					}else if(bizstatus==25) {
-						bizstatusTxt = "供货完成"
-					}else if(bizstatus==30) {
-						bizstatusTxt = "收货完成"
-					}else if(bizstatus==37) {
-						bizstatusTxt = "结算完成"
-					}else if(bizstatus==40) {
-						bizstatusTxt = "取消"
-					}else {
-						bizstatusTxt = "未知类型"
-					}
-					$('#inPoDizstatus').val(bizstatusTxt)
-					$('#inPoordNum').val(res.data.entity.reqNo)
-					$('#inOrordNum').val(res.data.entity.fromOffice.name)
-					$('#inPototal').val(res.data.entity.totalMoney)
-					$('#inMoneyReceive').val(res.data.entity.recvQtys)
-					$('#inMarginLevel').val(res.data.entity.recvTotal + '%')
-					$('#inPoLastDa').val(_this.formatDateTime(res.data.entity.recvEta))
-					_this.commodityHtml(res.data)
-					_this.statusListHtml(res.data)
+                	console.log(res)
+				    /*业务状态*/
+				    var itemStatus=res.data.bizRequestHeader.bizStatus;
+				    var bizstatusTxt = '';
+				    $.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {type:"biz_req_status"},		                
+		                dataType: "json",
+		                success: function(res){
+		                	$.each(res,function(i,item){
+		                		 if(item.value==itemStatus){
+		                		 	  bizstatusTxt = item.label 
+		                		 }
+		                	})
+		                	$('#inPoDizstatus').val(bizstatusTxt);
+						}
+					});
+				    //排产状态
+				    var itempoSchType=res.data.bizRequestHeader.bizPoHeader.poSchType;
+				    var SchedulstatusTxt = '';
+				    $.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {type:"poSchType"},		                
+		                dataType: "json",
+		                success: function(res){
+		                	$.each(res,function(i,item){
+		                		 if(item.value==itempoSchType){
+		                		 	  SchedulstatusTxt = item.label 
+		                		 }
+		                	})
+		                	$('#inSchedulstatus').val(SchedulstatusTxt);
+						}
+					})
+				    //排产类型
+				    $('#inSchedultype').val();
+				    
+					$('#inPoDizstatus').val(bizstatusTxt);
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);
+					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);
+					$('#inPototal').val(res.data.bizRequestHeader.totalMoney.toFixed(1));
+					$('#inMoneyReceive').val(res.data.bizRequestHeader.recvTotal.toFixed(1));//已收保证金entity.recvQtys
+					$('#inMarginLevel').val((res.data.bizRequestHeader.recvTotal*100/res.data.bizRequestHeader.totalMoney) .toFixed(2)+ '%');//保证金比例
+					$('#inMoneyPay').val(res.data.bizRequestHeader.bizPoHeader.payTotal.toFixed(2));
+					$('#inPoLastDa').val(_this.formatDateTime(res.data.bizRequestHeader.recvEta));
+					_this.commodityHtml(res.data);
+					_this.statusListHtml(res.data);//状态流程
+					_this.purchaseHtml(res.data);
+					_this.paylistHtml(res.data);//支付列表
+					_this.checkProcessHtml(res.data);//审批流程
                 }
             });
 		},
-		statusListHtml:function(data){
+		//排产信息接口
+//		scheduling:function(){
+//			var _this = this;
+//			$.ajax({
+//              type: "GET",
+//              url: "/a/biz/po/bizPoHeader/scheduling4Mobile",
+//              data: {id:},
+//              dataType: "json",
+//              success: function(res){
+//              	console.log('---')
+//              	console.log(res)
+//				}
+//			})
+//		},
+        //支付列表
+        paylistHtml:function(data){
+        	var _this = this;
+        	var htmlPaylist = '';
+        	if(data.paymentOrderList != null && data.paymentOrderList.length > 0){
+        		$.each(data.paymentOrderList, function(i, item) {
+					console.log(item)			
+					htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
+						'<div class="mui-media-body">'+
+							'<div class="mui-input-row">'+
+								'<label>付款金额：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.total.toFixed(2) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>实际付款金额：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.payTotal.toFixed(2) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>最后付款时间：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.deadline) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>实际付款时间：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.payTime) +'" disabled>'+
+							'</div>'+
+						'</div>'+
+					'</li>'
+			   });
+			   $("#inPaylist").html(htmlPaylist);
+        	}
+        	
+        },
+		//采购商品
+		purchaseHtml: function(data) {
 			var _this = this;
-			console.log(data)
-			var pHtmlList = '';
-			$.each(data.statusList, function(i, item) {
-				console.log(item)
-//				0未审核 1首付款支付,2是全部支付 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
-				var checkBizStatus = '';
-				if(item.bizStatus==0) {
-					checkBizStatus = '未审核'
-				}else if(item.bizStatus==1) {
-					checkBizStatus = '首付款支付'
-				}else if(item.bizStatus==2) {
-					checkBizStatus = '全部支付'
-				}else if(item.bizStatus==5) {
-					checkBizStatus = '审核通过'
-				}else if(item.bizStatus==10) {
-					checkBizStatus = '采购中'
-				}else if(item.bizStatus==15) {
-					checkBizStatus = '采购完成'
-				}else if(item.bizStatus==20) {
-					checkBizStatus = '备货中'
-				}else if(item.bizStatus==25) {
-					checkBizStatus = '供货完成'
-				}else if(item.bizStatus==30) {
-					checkBizStatus = '收货完成'
-				}else if(item.bizStatus==35) {
-					checkBizStatus = '关闭'
-				}else {
-					checkBizStatus = ''
-				}
-				var step = i + 1;
-				pHtmlList +='<li class="step_item">'+
-					'<div class="step_num">'+ step +' </div>'+
-					'<div class="step_num_txt">'+
-						'<div class="mui-input-row">'+
-							'<label>处理人:</label>'+
-							'<input type="text" value="'+ item.createBy.name +'" class="mui-input-clear" disabled>'+
-					    '</div>'+
-						'<div class="mui-input-row">'+
-					        '<label>状态:</label>'+
-					        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
-					    	'<label>时间:</label>'+
-					        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
-					    '</div>'+
-					'</div>'+
-				'</li>'
-			});
-			$("#inCheckAddMenu").html(pHtmlList)
-		},
-		commodityHtml: function(data) {
-			var _this = this;
-//			console.log(data)
-			var htmlCommodity = '';
+			var htmlPurchase = '';
 			$.each(data.reqDetailList, function(i, item) {
-//				console.log(item)
 				var orderNum = '';
 				if(item.bizPoHeader) {
 					orderNum = item.bizPoHeader.orderNum;
 				}else {
 					orderNum = ''
 				}
-				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
+				htmlPurchase +='<li class="mui-table-view-cell mui-media app_pr">'+
+					'<div class="photoParent mui-pull-left app_pa">'+
+						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+
+					'</div>'+
+					'<div class="mui-media-body app_w80p app_fr">'+
+						'<div class="mui-input-row">'+
+							'<label>品牌名称：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled>'+
+						'</div>'+
+						'<div class="mui-input-row">'+
+							'<label>商品名称：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.name +'" disabled>'+
+						'</div>'+
+						'<div class="mui-input-row">'+
+							'<label>商品货号：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled>'+
+						'</div>'+
+						'<div class="mui-input-row">'+
+							'<label>采购数量：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.unitPrice.toFixed(1) +'" disabled>'+
+						'</div>'+
+						'<div class="mui-input-row">'+
+							'<label>结算价：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.unitPrice.toFixed(1) +'" disabled>'+
+						'</div>'+
+						'<div class="mui-input-row">'+
+							'<label>总金额：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" reqQty disabled>'+
+						'</div>'+
+
+					'</div>'+
+				'</li>'
+			});
+			$("#purchaseMenu").html(htmlPurchase)
+		},		
+		//状态流程
+		statusListHtml:function(data){
+			var _this = this;
+			var statusLen = data.auditStatusList.length;
+			if(statusLen > 0) {
+				var pHtmlList = '';
+				$.each(data.auditStatusList, function(i, item) {
+					var step = i + 1;
+					pHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ step +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+								'<label>处理人:</label>'+
+								'<input type="text" value="'+ item.createBy.name +'" class="mui-input-clear" disabled>'+
+						    '</div>'+
+							'<div class="mui-input-row">'+
+						        '<label>状态:</label>'+
+						        '<input type="text" value="'+ data.stateDescMap
+	[item.bizStatus] +'" class="mui-input-clear" disabled>'+
+						    	'<label>时间:</label>'+
+						        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+				});
+				$("#inCheckAddMenu").html(pHtmlList);
+			}
+		},
+		//审批流程
+		checkProcessHtml:function(data){
+			var _this = this;
+			var auditLen = data.bizRequestHeader.commonProcessList.length;
+			if(data.bizRequestHeader.commonProcessList) {
+				var CheckHtmlList ='';
+				$.each(data.bizRequestHeader.commonProcessList, function(i, item) {
+					console.log(item)
+					var auditLen = data.bizRequestHeader.commonProcessList.length;
+					console.log(auditLen-1)
+					var step = i + 1;
+					if(i!=auditLen-1) {
+						CheckHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ step +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+						        '<label>批注:</label>'+
+						        '<input type="text" value="'+ item.description +'" class="mui-input-clear" disabled>'+
+						    	'<label>审批人:</label>'+
+						        '<input type="text" value=" '+ item.user.name +' " class="mui-input-clear" disabled>'+
+						        '<label>时间:</label>'+
+						        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+					}
+					if(auditLen = 1 && data.bizRequestHeader.bizPoHeader.commonProcessList == null) {
+						if(item.requestOrderProcess.name != '审核完成'){
+							CheckHtmlList +='<li class="step_item">'+
+								'<div class="step_num">'+ step +' </div>'+
+								'<div class="step_num_txt">'+
+									'<div class="mui-input-row">'+
+								        '<label>当前状态:</label>'+
+								        '<input type="text" value="'+ item.requestOrderProcess.name +'" class="mui-input-clear" disabled>'+
+								    '</div>'+
+								'</div>'+
+							'</li>'
+						}
+						if(item.requestOrderProcess.name == '审核完成'){
+							CheckHtmlList +='<li class="step_item">'+
+								'<div class="step_num">'+ step +' </div>'+
+								'<div class="step_num_txt">'+
+									'<div class="mui-input-row">'+
+								        '<label>当前状态:</label>'+
+								        '<input type="text" value="订单支出信息审核 " class="mui-input-clear" disabled>'+
+								    '</div>'+
+								'</div>'+
+							'</li>'
+						}
+					}
+				});
+				$.each(data.bizRequestHeader.bizPoHeader.commonProcessList, function(a, items) {
+					console.log(items)
+					var len = data.bizRequestHeader.bizPoHeader.commonProcessList.length;
+					var totalStep = auditLen + a;
+					if(len-a != 1) {                                          
+						CheckHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ totalStep +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+						        '<label>批注:</label>'+
+						        '<input type="text" value="'+ items.description +'" class="mui-input-clear" disabled>'+
+						    	'<label>审批人:</label>'+
+						        '<input type="text" value=" '+ items.user.name +' " class="mui-input-clear" disabled>'+
+						        '<label>时间:</label>'+
+						        '<input type="text" value=" '+ _this.formatDateTime(items.updateTime) +' " class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+					}
+					if(len-a == 1) {
+						CheckHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ totalStep +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+						        '<label>当前状态:</label>'+
+						        '<input type="text" value="'+ items.purchaseOrderProcess.name +'" class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+					}
+				});	
+				$("#inapprovalAddMenu").html(CheckHtmlList)
+			}
+		},
+		//备货商品
+		commodityHtml: function(data) {
+			var _this = this;
+			var htmlCommodity = '';
+			$.each(data.reqDetailList, function(i, item) {
+				var orderNum = '';
+				if(item.bizPoHeader) {
+					orderNum = item.bizPoHeader.orderNum;
+				}else {
+					orderNum = ''
+				}
+				htmlCommodity +='<li class="mui-table-view-cell mui-media app_bline app_pr">'+
 //		产品图片
-					'<div class="photoParent mui-pull-left app_pr">'+
+					'<div class="photoParent mui-pull-left app_pa">'+
 						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+
 					'</div>'+
 //		产品信息
-					'<div class="mui-media-body commoditys">'+
+					'<div class="mui-media-body app_w80p app_fr">'+
 						'<div class="mui-input-row">'+
 							'<label>品牌名称：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>供应商：</label>'+
-							'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuInfo.productInfo.vendorName +'" disabled>'+
+							'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuInfo.productInfo.office.name +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>商品名称：</label>'+
@@ -156,15 +316,15 @@
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>商品编码：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.prodCode +'" disabled>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.partNo +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>商品货号：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
-							'<label>单价：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled>'+
+							'<label>结算价：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.unitPrice.toFixed(1) +'" disabled>'+
 						'</div>'+
 						'<div class="mui-input-row">'+
 							'<label>申报数量：</label>'+
@@ -186,14 +346,14 @@
 							'<label>已收货数量：</label>'+
 							'<input type="text" class="mui-input-clear" value="'+ item.recvQty +'" disabled>'+
 						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>已生成采购单：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ orderNum +'" disabled>'+
-						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>采购数量：</label>'+
-							'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" disabled>'+
-						'</div>'+
+//						'<div class="mui-input-row">'+
+//							'<label>已生成采购单：</label>'+
+//							'<input type="text" class="mui-input-clear" value="'+ orderNum +'" disabled>'+
+//						'</div>'+
+//						'<div class="mui-input-row">'+
+//							'<label>采购数量：</label>'+
+//							'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" disabled>'+
+//						'</div>'+
 					'</div>'+
 				'</li>'
 			});
