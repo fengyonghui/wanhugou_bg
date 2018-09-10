@@ -91,6 +91,7 @@
 					checkStatus: optionsBusiness.val(),
 					newinput: $('.hasoid').attr('id'),
 					includeTestData: _this.includeTestData,
+					flagTxt:$('#flag').val(),
 					isFunc: true
 				}
 			})
