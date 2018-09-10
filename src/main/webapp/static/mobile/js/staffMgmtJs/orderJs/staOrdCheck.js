@@ -117,6 +117,7 @@
 					_this.statusListHtml(res.data);
 					_this.commodityHtml(res.data);
 					_this.comfirDialig(res.data);
+					_this.changePrice();
                 }
             });
 		},
@@ -256,6 +257,73 @@
 				});
 				$("#staCheckCommodity").html(htmlCommodity)
 			}
+		},
+		changePrice: function() {
+			var _this = this;
+			document.getElementById("changePriceBtn").addEventListener('tap', function(e) {
+				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+				var btnArray = ['取消', '确定'];
+				mui.confirm('确定修改价格吗？', '系统提示！', btnArray, function(choice) {
+					if(choice.index == 1) {
+						var ss = $('#staAdjustmentMoney').val();
+						IsNum(ss)
+						function IsNum(num) {
+							if (num) {
+								var reNum = /^\d*$/;
+								if(reNum.test(num)) {
+					
+									var orderId = _this.userInfo.staOrdId;
+					                var totalExp = $('#staAdjustmentMoney').val();
+					                var totalDetail =$('#staPototal').val();
+					                $.ajax({
+					                    type:"post",
+					                    url:"/a/biz/order/bizOrderHeader/checkTotalExp4Mobile",
+					                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
+					                    success:function (data) {
+					                    	console.log(data)
+					                        if (data == "serviceCharge") {
+					                            mui.toast("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
+					                        } else if (data == "orderLoss") {
+					                            mui.toast("优惠后订单金额不能低于结算价，请修改调整金额");
+					                        } else if (data == "orderLowest") {
+					                            mui.toast("优惠后订单金额不能低于结算价的95%，请修改调整金额");
+					                        } else if (data == "orderLowest8") {
+					                            mui.toast("优惠后订单金额不能低于结算价的80%，请修改调整金额");
+					                        } else if (data == "ok") {
+					                        	alert(1)
+					                            $.ajax({
+					                                type:"post",
+					                                url:"/a/biz/order/bizOrderHeader/saveBizOrderHeader4Mobile",
+					                                data:{orderId:orderId,money:totalExp},					                              
+					                                success:function(flag){
+					                                    if(flag=="ok"){
+					                                        mui.toast("成功！");
+					                                    }else{
+					                                        mui.toast(" 修改失败 ");
+					                                    }
+					                                }
+					                            });
+					                        }
+					                    }
+					                });									
+									return true;
+								} else {
+									if(num < 0) {
+										mui.toast("价格不能为负数！");
+									} else {
+										mui.toast("价格必须为数字！");
+									}
+									return false;
+								}
+							}else {
+								mui.toast("价格不能为空！");
+								return false;
+							}
+						}
+					} else {						
+					}
+				})
+			});
 		},
 		comfirDialig: function(data) {
 			var _this = this;

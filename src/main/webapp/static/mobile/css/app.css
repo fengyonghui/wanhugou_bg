@@ -11,7 +11,7 @@ abbr, acronym,button{border:0;}
 input, select, textarea{font-size: 15px;}
 
 /*==自定义图标==*/
-.mui-checkbox input[type=checkbox]:checked:before, .mui-radio input[type=radio]:checked:before{color:#aaa}
+.mui-checkbox input[type=checkbox]:checked:before, .mui-radio input[type=radio]:checked:before{color:#40ABE9}
 .app_img_icons{position: relative;top:2px}
 .app_header .app_img_icons{width:20px;}
 
@@ -672,8 +672,6 @@ body{font-size: 15px;color:#3b3b3b;}
 /*审核公共样式*/
 #staOrdCheckBtn button {background-color: #40ABE9;color: #fff;width: 35%;}
 
-
-
 /*订单审核产品信息*/
 .commodity div.mui-input-row input, .commodity div.mui-input-row label {padding: 0;font-size: 12px;}
 .commodity div.mui-row li {padding: 5px;list-style: none;height: 30px;border-bottom: 1px solid #efeff4;}
@@ -683,7 +681,6 @@ body{font-size: 15px;color:#3b3b3b;}
 /*订单详情---产品信息--- 一列样式:*/
 .commodity div.lineStyle label {width:20%}
 .commodity div.lineStyle input {width:80%}
-
 /*进展信息*/
 .nextTxt01 {top: 17px;left: 88px;}
 .nextTxt02 {top: 6px;left: 87px;}
@@ -691,7 +688,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .labelRi>li {float: left;}
 .labelRi div {width: 70px;margin: 5px 15px;border: 1px solid #40ABE9;border-radius: 5px;font-size: 13px;text-align: center;}
 
-/*字体颜色不兼容的解决:*/
+/*ios 字体颜色不兼容的解决:*/
 input[disabled],input:disabled,input.disabled{color: #000;/*-webkit-text-fill-color:#3b3b3b;*/-webkit-opacity:1;opacity: 1;}
 
 /*滑动---阻止默认事件*/

@@ -1831,6 +1831,26 @@ public class BizOrderHeaderController extends BaseController {
         return flag;
     }
 
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "saveBizOrderHeader4Mobile")
+    public String saveBizOrderHeader4Mobile(BizOrderHeader bizOrderHeader, Integer orderId, Double money) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        String flag = "";
+        try {
+            BizOrderHeader orderHeader = bizOrderHeaderService.get(orderId);
+            orderHeader.setTotalExp(money);
+            bizOrderHeaderService.saveOrderHeader(orderHeader);
+            flag = "ok";
+
+        } catch (Exception e) {
+            flag = "error";
+            logger.error(e.getMessage());
+        }
+        resultMap.put("flag",flag);
+        return JsonUtil.generateData(resultMap, null);
+    }
+
     /**
      * 导出订单数据
      *
@@ -2338,6 +2358,109 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         return flag;
+    }
+
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "checkTotalExp4Mobile")
+    public String checkTotalExp4Mobile(BizOrderHeader bizOrderHeader) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        String flag = "ok".intern();
+        BigDecimal totalDetail = BigDecimal.valueOf(bizOrderHeader.getTotalDetail() == null ? 0 : bizOrderHeader.getTotalDetail());
+        BigDecimal freight = BigDecimal.valueOf(bizOrderHeader.getFreight() == null ? 0 : bizOrderHeader.getFreight());
+        BigDecimal totalExp = BigDecimal.valueOf(bizOrderHeader.getTotalExp() == null ? 0 : -bizOrderHeader.getTotalExp());
+
+        if (totalExp.compareTo(BigDecimal.ZERO) <= 0) {
+            resultMap.put("resultValue",flag);
+            return JsonUtil.generateData(resultMap, null);
+        }
+
+        if (bizOrderHeader.getId() == null) {
+            resultMap.put("resultValue",flag);
+            return JsonUtil.generateData(resultMap, null);
+        }
+
+        SystemConfig systemConfig = ConfigGeneral.SYSTEM_CONFIG.get();
+
+        BigDecimal photoOrderRatio = systemConfig.getPhotoOrderRatio();
+
+
+        boolean allActivityShlef = true;
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+        if (orderHeader != null && BizOrderTypeEnum.PHOTO_ORDER.getState().equals(orderHeader.getOrderType())
+                && totalExp.compareTo(totalDetail.multiply(photoOrderRatio)) > 0) {
+            resultMap.put("resultValue","photoOrder");
+            return JsonUtil.generateData(resultMap, null);
+        }
+
+        BizOrderDetail orderDetail = new BizOrderDetail();
+        orderDetail.setOrderHeader(orderHeader);
+        List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(orderDetail);
+        BigDecimal totalBuyPrice = BigDecimal.ZERO;
+        if (orderDetailList != null && !orderDetailList.isEmpty()) {
+            for (BizOrderDetail bizOrderDetail : orderDetailList) {
+                totalBuyPrice = totalBuyPrice.add(BigDecimal.valueOf(bizOrderDetail.getBuyPrice()).multiply(BigDecimal.valueOf(bizOrderDetail.getOrdQty())));
+                if (!StringUtils.equals(String.valueOf(systemConfig.getActivityShelfId()), String.valueOf(bizOrderDetail.getShelfInfo().getOpShelfInfo().getId()))) {
+                    allActivityShlef = false;
+                }
+            }
+        }
+
+        String activityDate = systemConfig.getActivityDate();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Date parse = null;
+        try {
+            parse = simpleDateFormat.parse(activityDate);
+        } catch (ParseException e) {
+            LOGGER.error("order edit checkTotalExp error", e);
+        }
+
+
+        if (orderHeader == null || orderHeader.getCustomer() == null || orderHeader.getCustomer().getId() == null) {
+            resultMap.put("resultValue",flag);
+            return JsonUtil.generateData(resultMap, null);
+        }
+
+        BizOrderHeader header = new BizOrderHeader();
+        header.setCustomer(orderHeader.getCustomer());
+
+        User user = UserUtils.getUser();
+
+        BigDecimal resultPrice = totalDetail.subtract(totalExp);
+
+        if (parse != null && (System.currentTimeMillis() < parse.getTime()) && allActivityShlef) {
+            if (resultPrice.compareTo(totalBuyPrice.multiply(BigDecimal.valueOf(0.8))) < 0) {
+                resultMap.put("resultValue","orderLowest8");
+                return JsonUtil.generateData(resultMap, null);
+            }
+            resultMap.put("resultValue",flag);
+            return JsonUtil.generateData(resultMap, null);
+        }
+
+        List<String> serviceChargeAudit = systemConfig.getServiceChargeAudit();
+        List<String> orderLossAudit = systemConfig.getOrderLossAudit();
+        List<String> orderLowestAudit = systemConfig.getOrderLowestAudit();
+
+        boolean serviceChargeStatus = RoleUtils.hasRole(user, serviceChargeAudit);
+        if (!serviceChargeStatus && totalExp.compareTo(totalDetail.subtract(totalBuyPrice).multiply(BigDecimal.valueOf(0.5))) > 0) {
+            resultMap.put("resultValue","serviceCharge");
+            return JsonUtil.generateData(resultMap, null);
+        }
+
+        boolean orderLossStatus = RoleUtils.hasRole(user, orderLossAudit);
+        if (!orderLossStatus && resultPrice.compareTo(totalBuyPrice) < 0) {
+            resultMap.put("resultValue","orderLoss");
+            return JsonUtil.generateData(resultMap, null);
+        }
+
+        boolean orderLowestStatus = RoleUtils.hasRole(user, orderLowestAudit);
+        if (!orderLowestStatus && resultPrice.compareTo(totalBuyPrice.multiply(BigDecimal.valueOf(0.95))) < 0) {
+            resultMap.put("resultValue","orderLowest");
+            return JsonUtil.generateData(resultMap, null);
+        }
+
+        resultMap.put("resultValue",flag);
+        return JsonUtil.generateData(resultMap, null);
     }
 
     @ResponseBody
