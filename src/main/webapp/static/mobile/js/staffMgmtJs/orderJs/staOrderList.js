@@ -384,11 +384,6 @@
 			}else {
 				nameTxts = ''
 			}
-			if(_this.userInfo.OrdClient) {
-				nameTxtss = decodeURIComponent(_this.userInfo.OrdClient)
-			}else {
-				nameTxtss = ''
-			}
 			$.ajax({
 				type: 'GET',
                 url: '/a/biz/order/bizOrderHeader/listData4mobile',
@@ -398,7 +393,6 @@
                     'centersName': nameTxts,
                     'customer.phone': _this.userInfo.OrdMobile,
                     'itemNo': _this.userInfo.OrdNumbers,
-                    'con.name': nameTxtss,
                     'bizStatus': _this.userInfo.orderStatus,
                     'selectAuditStatus': nameTxt, //originConfigMap
                     'customer.id':_this.userInfo.newinput,

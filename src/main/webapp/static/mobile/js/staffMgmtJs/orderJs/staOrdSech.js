@@ -29,7 +29,6 @@
                 var reqNumVal = $("#staOrdPurchasing").val(); 
                 var OrdMobileVal = $('#staOrdMobile').val(); 
                 var secStyleVal = $('#staOrdNumbers').val();
-                var cateGoryVal = $('#staOrdClient').val();
                 var orderStatusVal = $('#input_div_orderStatus').val();
                 var checkStatusVal = $('#input_div_checkStatus').val();
                 var newinputVal = $('.newinput').val();
@@ -45,9 +44,6 @@
                 if(secStyleVal == null||secStyleVal == undefined) {
                 	secStyleVal == "";
                 }
-                if(cateGoryVal == null||cateGoryVal == undefined) {
-                	cateGoryVal == "";
-                }
                 if(orderStatusVal == null||orderStatusVal == undefined) {
                 	orderStatusVal == "";
                 }
@@ -57,7 +53,7 @@
                 if(newinputVal == null||newinputVal == undefined) {
                 	newinputVal == "";
                 }
-                if(ordNumVal == ""&&reqNumVal == ""&&OrdMobileVal == ""&&secStyleVal == ""&&cateGoryVal == ""&&orderStatusVal == ""&&checkStatusVal == ""&&newinputVal == ""&&_this.includeTestData == false){
+                if(ordNumVal == ""&&reqNumVal == ""&&OrdMobileVal == ""&&secStyleVal == ""&&orderStatusVal == ""&&checkStatusVal == ""&&newinputVal == ""&&_this.includeTestData == false){
                 	 mui.toast("请输入查询条件！");
                 	 return;
                 }
@@ -86,7 +82,6 @@
 					Purchasing: $('#staOrdPurchasing').val(),
 					OrdMobile: $('#staOrdMobile').val(),
 					OrdNumbers: $('#staOrdNumbers').val(),
-					OrdClient: $('#staOrdClient').val(),
 					orderStatus: optionsClass.val(),
 					checkStatus: optionsBusiness.val(),
 					newinput: $('.hasoid').attr('id'),

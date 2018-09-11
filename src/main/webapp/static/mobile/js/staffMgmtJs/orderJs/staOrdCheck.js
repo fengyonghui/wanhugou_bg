@@ -246,7 +246,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>总 额:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice * item.ordQty + '" disabled></div></li></div></div>'+
+	                    '<input type="text" class="mui-input-clear" id="" value="' + (item.unitPrice * item.ordQty).toFixed(2) + '" disabled></div></li></div></div>'+
 					
 						'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
