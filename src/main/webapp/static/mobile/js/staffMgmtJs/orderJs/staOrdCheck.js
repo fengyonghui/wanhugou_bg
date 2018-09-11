@@ -46,7 +46,9 @@
 //              	console.log(res)
                 	if(res.data.bizOrderHeader.flag=='check_pending') {
                 		if(res.data.orderType == 5) {
-                			$('#orderTypebox').hide()
+                			$('#orderTypebox').hide();
+                			$('#nochecked').attr("checked","false" );
+                			$('#yes').attr("checked","checked" );
                 		}
                 	}
 					$('#firstPart').val(res.data.entity2.customer.name);
