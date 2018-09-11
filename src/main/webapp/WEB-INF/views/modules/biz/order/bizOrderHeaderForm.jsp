@@ -2095,13 +2095,14 @@
 
 
     <!-- 详情页面显示排产信息 -->
-    <div class="control-group">
-        <label class="control-label">排产类型：</label>
-        <div class="controls">
-            <input type="text" readonly="readonly" id="schedulingType" value="" pattern="0.00"/>
-        </div>
-    </div>
     <c:if test="${entity.orderDetails eq 'details'}">
+        <div class="control-group">
+            <label class="control-label">排产类型：</label>
+            <div class="controls">
+                <input type="text" readonly="readonly" id="schedulingType" value="" pattern="0.00"/>
+            </div>
+        </div>
+
         <div class="control-group" id="stockGoods" >
             <label class="control-label">采购商品：</label>
             <div class="controls">
@@ -2182,132 +2183,367 @@
 
 
 </form:form>
+'${currentAuditStatus.type}'
+<c:if test="${currentAuditStatus.type == 2 || currentAuditStatus.type == 1003 || currentAuditStatus.type == 2002 || currentAuditStatus.type == 3001}">
 
-<%--详情列表--%>
-<sys:message content="${message}"/>
-<table id="contentTable" class="table table-striped table-bordered table-condensed">
-    <thead>
-    <tr>
-        <th>详情行号</th>
-        <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-            <th>货架名称</th>
-        </c:if>
-        <th>商品名称</th>
-        <th>商品编号</th>
-        <th>商品货号</th>
-        <%--<th>已生成的采购单</th>--%>
-        <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
-            <th>商品结算价</th>
-        </c:if>
-        <th>供应商</th>
-        <th>供应商电话</th>
-        <th>商品单价</th>
-        <th>采购数量</th>
-        <th>总 额</th>
-        <th>已发货数量</th>
-        <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
-            <th>发货方</th>
-        </c:if>
-        <th>创建时间</th>
-        <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-            <c:if test="${entity.str != 'audit' && entity.str!='detail' && entity.str!='createPay'}">
-                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                    <th>操作</th>
-                </c:if>
-            </c:if>
-        </shiro:hasPermission>
-    </tr>
-    </thead>
-    <tbody>
-    <c:forEach items="${bizOrderHeader.orderDetailList}" var="bizOrderDetail">
-        <tr>
-            <td>
-                    ${bizOrderDetail.lineNo}
-            </td>
-            <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-                <td>
-                        ${bizOrderDetail.shelfInfo.opShelfInfo.name}
-                </td>
-            </c:if>
-            <td>
-                <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
-                    ${bizOrderDetail.skuName}
-                </c:if>
-                <c:if test="${empty entity.orderNoEditable || empty entity.orderDetails || empty bizOrderHeader.flag}">
-                    <c:if test="${empty entity.orderNoEditable && empty entity.orderDetails && empty bizOrderHeader.flag && empty bizOrderHeader.clientModify}">
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
-                                ${bizOrderDetail.skuName}</a>
-                    </c:if>
-                    <c:if test="${not empty bizOrderHeader.clientModify && bizOrderHeader.clientModify eq 'client_modify'}">
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
-                            ${bizOrderDetail.skuName}</a>
-                    </c:if>
-                </c:if>
-            </td>
-            <td>
-                    ${bizOrderDetail.partNo}
-            </td>
-            <td>
-                ${bizOrderDetail.skuInfo.itemNo}
-            </td>
-            <%--<td>--%>
-                <%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>--%>
-            <%--</td>--%>
-            <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
-                <td>
-                        ${bizOrderDetail.buyPrice}
-                </td>
-            </c:if>
-            <td>
-                    ${bizOrderDetail.vendor.name}
-            </td>
-            <td>
-                    ${bizOrderDetail.primary.mobile}
-            </td>
-            <td>
-                    ${bizOrderDetail.unitPrice}
-            </td>
-            <td>
-                    ${bizOrderDetail.ordQty}
-            </td>
-            <td>
-                <c:if test="${bizOrderDetail.unitPrice !=null && bizOrderDetail.ordQty !=null}">
-                    <fmt:formatNumber type="number" value=" ${bizOrderDetail.unitPrice * bizOrderDetail.ordQty}" pattern="0.00"/>
-                </c:if>
-            </td>
-            <td>
-                    ${bizOrderDetail.sentQty}
-            </td>
-            <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
-                <td>
-                    ${bizOrderDetail.suplyis.name}
-                </td>
-            </c:if>
-            <td>
-                <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-            </td>
-            <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
-                <c:if test="${entity.str != 'audit'}">
-                    <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                        <td>
-                            <c:if test="${empty bizOrderHeader.clientModify}">
-                                <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}">修改</a>
-                                <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}"
-                                   onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+    <div class="form-horizontal">
+            <%--详情列表--%>
+        <sys:message content="${message}"/>
+
+        <div class="control-group">
+            <label class="control-label">排产类型：</label>
+            <div class="controls" id="schedulingPlanRadio">
+                <form:radiobutton id="deliveryStatus0" path="entity.bizPoHeader.schedulingType" checked="true"
+                                  onclick="choose(this)" value="0"/>按订单排产
+                <form:radiobutton id="deliveryStatus1" path="entity.bizPoHeader.schedulingType" onclick="choose(this)"
+                                  value="1"/>按商品排产
+            </div>
+        </div>
+        <div class="control-group" id="stockGoods_schedu">
+            <label class="control-label">采购商品：</label>
+            <div class="controls">
+                <table id="contentTable" class="table table-striped table-bordered table-condensed">
+                    <thead>
+                    <tr>
+                        <th>详情行号</th>
+                        <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                            <th>货架名称</th>
+                        </c:if>
+                        <th>商品名称</th>
+                        <th>商品编号</th>
+                        <th>商品货号</th>
+                            <%--<th>已生成的采购单</th>--%>
+                        <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+                            <th>商品结算价</th>
+                        </c:if>
+                        <th>供应商</th>
+                        <th>供应商电话</th>
+                        <th>商品单价</th>
+                        <th>采购数量</th>
+                        <th>总 额</th>
+                        <th>已发货数量</th>
+                        <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
+                            <th>发货方</th>
+                        </c:if>
+                        <th>创建时间</th>
+                        <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+                            <c:if test="${entity.str != 'audit' && entity.str!='detail' && entity.str!='createPay'}">
+                                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                                    <th>操作</th>
+                                </c:if>
                             </c:if>
-                            <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
-                                <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">修改</a>
-                                <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}"
-                                   onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+                        </shiro:hasPermission>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach items="${bizOrderHeader.orderDetailList}" var="bizOrderDetail">
+                    <tr>
+                        <td>
+                                ${bizOrderDetail.lineNo}
+                        </td>
+                            <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                        <td>
+                                ${bizOrderDetail.shelfInfo.opShelfInfo.name}
+                        </td>
+                        </c:if>
+                        <td>
+                            <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+                                ${bizOrderDetail.skuName}
+                            </c:if>
+                            <c:if test="${empty entity.orderNoEditable || empty entity.orderDetails || empty bizOrderHeader.flag}">
+                                <c:if test="${empty entity.orderNoEditable && empty entity.orderDetails && empty bizOrderHeader.flag && empty bizOrderHeader.clientModify}">
+                                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
+                                            ${bizOrderDetail.skuName}</a>
+                                </c:if>
+                                <c:if test="${not empty bizOrderHeader.clientModify && bizOrderHeader.clientModify eq 'client_modify'}">
+                                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
+                                            ${bizOrderDetail.skuName}</a>
+                                </c:if>
                             </c:if>
                         </td>
+                        <td>
+                                ${bizOrderDetail.partNo}
+                        </td>
+                        <td>
+                                ${bizOrderDetail.skuInfo.itemNo}
+                        </td>
+                        <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+                            <td>
+                                    ${bizOrderDetail.buyPrice}
+                            </td>
+                        </c:if>
+                        <td>
+                            ${bizOrderDetail.vendor.name}
+                        </td>
+                        <td>
+                                ${bizOrderDetail.primary.mobile}
+                        </td>
+                        <td>
+                                ${bizOrderDetail.unitPrice}
+                        </td>
+                        <td>
+                                ${bizOrderDetail.ordQty}
+                        </td>
+                        <td>
+                            <c:if test="${bizOrderDetail.unitPrice !=null && bizOrderDetail.ordQty !=null}">
+                                <fmt:formatNumber type="number" value=" ${bizOrderDetail.unitPrice * bizOrderDetail.ordQty}" pattern="0.00"/>
+                            </c:if>
+                        </td>
+                        <td>
+                                ${bizOrderDetail.sentQty}
+                        </td>
+                        <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
+                            <td>
+                                    ${bizOrderDetail.suplyis.name}
+                            </td>
+                        </c:if>
+                        <td>
+                            <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                        </td>
+                        <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
+                            <c:if test="${entity.str != 'audit'}">
+                                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                                    <td>
+                                        <c:if test="${empty bizOrderHeader.clientModify}">
+                                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}">修改</a>
+                                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}"
+                                               onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+                                        </c:if>
+                                        <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
+                                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">修改</a>
+                                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}"
+                                               onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+                                        </c:if>
+                                    </td>
+                                </c:if>
+                            </c:if>
+                        </shiro:hasPermission>
+                    </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="control-group" id="schedulingPlan_forHeader_schedu">
+            <label class="control-label">按订单排产：</label>
+            <div class="controls">
+                <table id="schedulingForHeader_${entity.bizPoHeader.id}" style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+                    <tr>
+                        <td>
+                            <label>总申报数量：</label>
+                            <input id="totalOrdQty" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
+                            &nbsp;
+                            <label>总待排产量：</label>
+                            <input id="totalSchedulingNumToDo" name='reqQtys' readonly="readonly" class="input-mini"
+                                   type='text'/>
+                            &nbsp;
+                            <label>已排产数量：</label>
+                            <input id="toalSchedulingNum" name='reqQtys' readonly="readonly" class="input-mini"
+                                   type='text'/>
+                            &nbsp;
+                            <input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划"
+                                   onclick="addSchedulingHeaderPlan('schedulingForHeader_', ${entity.bizPoHeader.id})"/>
+                            &nbsp;
+                            <span id="schedulingPanAlert" style="color:red; display:none">已排产完成</span>
+                        </td>
+                    </tr>
+
+
+                    <c:if test="${fn:length(bizCompletePalns) > 0}">
+                        <tr>
+                            <td>
+                                <label>排产记录：</label>
+                            </td>
+                        </tr>
+                        <c:forEach items="${bizCompletePalns}" var="bizCompletePaln" varStatus="stat">
+                            <tr>
+                                <td>
+                                    <div>
+                                        <label>完成日期：</label>
+                                        <input type="text" maxlength="20" class="input-medium Wdate" readonly="readonly"
+                                               value="<fmt:formatDate value="${bizCompletePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"/>
+                                        &nbsp;
+                                        <label>排产数量：</label>
+                                        <input class="input-medium" type="text" readonly="readonly"
+                                               value="${bizCompletePaln.completeNum}" maxlength="30"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </c:forEach>
                     </c:if>
-                </c:if>
-            </shiro:hasPermission>
-        </tr>
-    </c:forEach>
-    </tbody>
-</table>
+
+                    <tr class="headerScheduling">
+                        <td>
+                            <label>排产计划：</label>
+                        </td>
+                    </tr>
+                    <tr id="header_${entity.bizPoHeader.id}" class="headerScheduling">
+                        <td>
+                            <div name="${entity.bizPoHeader.id}">
+                                <label>完成日期：</label>
+                                <input name="${entity.bizPoHeader.id}_date" type="text" maxlength="20"
+                                       class="input-medium Wdate"
+                                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/> &nbsp;
+                                <label>排产数量：</label>
+                                <input name="${entity.bizPoHeader.id}_value" class="input-medium" type="text" maxlength="30"/>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <table style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+                    <tr>
+                        <td>
+                            <div>
+                                <label>备注：</label>
+                                <textarea id="schRemarkOrder" maxlength="200"
+                                          class="input-xlarge ">${entity.bizPoHeader.bizSchedulingPlan.remark}</textarea>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="control-group" id="schedulingPlan_forSku_schedu" style="display: none">
+            <label class="control-label">按商品排产：</label>
+            <div class="controls">
+                <table style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+                    <thead>
+                    <tr>
+                        <th>产品图片</th>
+                        <th>品牌名称</th>
+                        <th>商品名称</th>
+                        <th>商品货号</th>
+                        <c:if test="${bizPoHeader.id!=null}">
+                            <th style="display: none">所属单号</th>
+                        </c:if>
+                        <th>采购数量</th>
+                        <th>结算价</th>
+                        <th>总金额</th>
+                    </tr>
+                    </thead>
+                    <tbody id="prodInfo2_schedu">
+                    <c:if test="${bizPoHeader.poDetailList!=null}">
+                        <c:forEach items="${bizPoHeader.poDetailList}" var="poDetail" varStatus="state">
+                            <tr>
+                                <td style="display: none">${state.index+1}</td>
+                                <td id="detailId_${state.index+1}" style="display: none">${poDetail.id}</td>
+                                <td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>
+                                <td>${poDetail.skuInfo.productInfo.brandName}</td>
+                                <td>${poDetail.skuInfo.name}</td>
+                                <td>${poDetail.skuInfo.itemNo}</td>
+                                <c:if test="${bizPoHeader.id!=null}">
+                                    <td style="display: none">
+                                        <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}"
+                                                   var="orderNumStr"
+                                                   varStatus="orderStatus">
+                                        <c:if test="${orderNumStr.soType==1}">
+                                        <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
+                                            </c:if>
+                                            <c:if test="${orderNumStr.soType==2}">
+                                            <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
+                                                </c:if>
+                                                    ${orderNumStr.orderNumStr}
+                                            </a>
+                                            <span id="orderNumStr_${orderStatus.index+1}" style="display:none" value="${orderNumStr.orderNumStr}" />
+                                            </c:forEach>
+                                    </td>
+                                </c:if>
+                                <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
+                                <td>${poDetail.unitPrice}</td>
+                                <td>${poDetail.ordQty * poDetail.unitPrice}</td>
+                            </tr>
+                            <c:if test="${state.last}">
+                                <c:set var="aa" value="${state.index}" scope="page"/>
+                            </c:if>
+
+                            <tr>
+                                <td colspan="10">
+                                    <table id="schedulingForDetail_${poDetail.id}" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
+                                        <tr>
+                                            <td>
+                                                <label>总申报数量：</label>
+                                                <input id="totalOrdQtyForSku_${poDetail.id}"  name='reqQtys' readonly="readonly" value="${poDetail.ordQty}" class="input-mini" type='text'/>
+                                                &nbsp;
+                                                <label>待排产量：</label>
+                                                <input id="toalSchedulingNumToDoForSku" name='reqQtys' readonly="readonly" value="${poDetail.ordQty - poDetail.sumCompleteNum}" class="input-mini" type='text'/>
+                                                &nbsp;
+                                                <label>已排产数量：</label>
+                                                <input name="toalSchedulingNumForSku" name='reqQtys' readonly="readonly" value="${poDetail.sumCompleteNum}" class="input-mini" type='text'/>
+                                                &nbsp;
+                                                <c:choose>
+                                                    <c:when test="${poDetail.ordQty == poDetail.sumCompleteNum}">
+                                                        <span style="color:red; ">已排产完成</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('schedulingForDetail_', ${poDetail.id})"/>
+                                                        <input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete('1',${poDetail.id})" value="保存"/>
+                                                        <span id="schedulingPanAlertForSku" style="color:red; display:none" >已排产完成</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                        </tr>
+
+                                        <c:if test="${poDetail.bizSchedulingPlan != null}">
+                                            <tr>
+                                                <td>
+                                                    <label>排产记录：</label>
+                                                </td>
+                                            </tr>
+                                            <c:forEach items="${poDetail.bizSchedulingPlan.completePalnList}" var="completePaln">
+                                                <tr >
+                                                    <td>
+                                                        <div>
+                                                            <label>完成日期：</label>
+                                                            <input type="text" maxlength="20" readonly="readonly" value="<fmt:formatDate value="${completePaln.planDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" class="input-medium Wdate"  /> &nbsp;
+                                                            <label>排产数量：</label>
+                                                            <input class="input-medium" readonly="readonly" value="${completePaln.completeNum}" type="text" maxlength="30" />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </c:if>
+
+                                        <c:if test="${poDetail.ordQty != poDetail.sumCompleteNum}">
+                                            <tr>
+                                                <td>
+                                                    <label>排产计划：</label>
+                                                </td>
+                                            </tr>
+                                            <tr id="detail_${poDetail.id}" name="detailScheduling">
+                                                <td>
+                                                    <div name="${poDetail.id}">
+                                                        <label>完成日期：</label>
+                                                        <input name="${poDetail.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;
+                                                        <label>排产数量：</label>
+                                                        <input name="${poDetail.id}_value" class="input-medium" type="text" maxlength="30" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </c:if>
+                                    </table>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        <input id="aaId" value="${aa}" type="hidden"/>
+                    </c:if>
+
+                <tr>
+                    <td colspan="10">
+                        <div>
+                            <label>备注：</label>
+                            <textarea id="schRemarkSku" maxlength="200" class="input-xlarge " >${bizPoHeader.bizSchedulingPlan.remark}</textarea>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+    </div>
+</c:if>
+
 
 
 
