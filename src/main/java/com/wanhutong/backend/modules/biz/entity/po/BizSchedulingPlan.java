@@ -63,7 +63,7 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	/**
 	 * 采购单排产状态 0,未排产  1,排产中  2,排产完成
 	 */
-	public Integer poSchType;
+	private Integer poSchType;
 
 	public BizSchedulingPlan() {
 		super();
