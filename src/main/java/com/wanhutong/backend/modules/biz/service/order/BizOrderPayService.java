@@ -87,6 +87,10 @@ public class BizOrderPayService extends CrudService<BizOrderHeaderDao, BizOrderH
                 if (payCode == null || payCode == 0) {
                     return Pair.of(Boolean.TRUE, "payCode is null");
                 }
+                if(process.getCode() == payCode) {
+                    return Pair.of(Boolean.TRUE, "payCode == currentCode");
+                }
+
                 // 前一状态备注:订单支付比例更新自动通过
                 cureentProcessEntity.setBizStatus(CommonProcessEntity.AuditType.PASS.getCode());
                 cureentProcessEntity.setProcessor("0");
