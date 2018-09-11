@@ -8,37 +8,37 @@ public class BizHeaderSchedulingDto {
     /**
      * poHeaderId
      */
-    public Integer id;
+    private Integer id;
     /**
      * 表ID
      */
-    public Integer objectId;
+    private Integer objectId;
     /**
      * 单子原始数量
      */
-    public Integer originalNum;
+    private Integer originalNum;
     /**
      * 排产数量
      */
-    public Integer schedulingNum;
+    private Integer schedulingNum;
     /**
      * 排产日期
      */
-    public String planDate;
+    private String planDate;
     /**
      * 订单排产类型
      */
-    public String schedulingType;
+    private String schedulingType;
 
     /**
      * 订单排产类型
      */
-    public String remark;
+    private String remark;
 
     /**
      * 采购单排产状态 0,未排产  1,排产中  2,排产完成
      */
-    public String poSchType;
+    private String poSchType;
 
 
     public Integer getId() {
