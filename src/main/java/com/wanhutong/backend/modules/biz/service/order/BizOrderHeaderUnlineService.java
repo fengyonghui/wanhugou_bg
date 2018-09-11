@@ -90,6 +90,12 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 		bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 
 		/*用于 订单状态表 insert状态*/
+		if (money.compareTo(bizOrderHeaderUnline.getRealMoney())>=0) {
+			bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.INITIAL_PAY.getState());
+		}
+		if (money.compareTo(bizOrderHeaderUnline.getRealMoney())==0) {
+			bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
+		}
         bizOrderStatusService.saveOrderStatus(bizOrderHeader);
 	}
 
