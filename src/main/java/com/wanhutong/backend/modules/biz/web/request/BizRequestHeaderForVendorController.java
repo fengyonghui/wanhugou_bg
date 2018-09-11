@@ -560,7 +560,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				//requestDetail.setInvSkuMap(stockQtyMap);
 				reqDetailList.add(requestDetail);
 			}
-			model.addAttribute("inventorySkuList",inventorySkuList);
 			resultMap.put("inventorySkuList", inventorySkuList);
 //			List<BizOrderHeader> orderHeaderList = bizRequestHeaderForVendorService.findOrderForVendReq(skuIdList, bizRequestHeader.getFromOffice().getId());
 //			model.addAttribute("orderHeaderList",orderHeaderList);
@@ -569,36 +568,21 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				bizRequestHeader.setPoSource("poHeaderSource");
 			}
 			RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
-			model.addAttribute("defaultProcessId",requestOrderProcessConfig.getDefaultProcessId().toString());
 			resultMap.put("defaultProcessId", requestOrderProcessConfig.getDefaultProcessId().toString());
 		}
 
 		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() == null) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
-			model.addAttribute("requestOrderProcess", requestOrderProcess);
 			resultMap.put("requestOrderProcess", requestOrderProcess);
 		}
 		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getBizPoHeader().getCommonProcess() != null) {
 			com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
-			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
 			resultMap.put("purchaseOrderProcess", purchaseOrderProcess);
 		}
 		if (bizRequestHeader.getBizPoHeader() != null) {
-			model.addAttribute("poSchType", bizRequestHeader.getBizPoHeader().getPoSchType());
 			resultMap.put("poSchType", bizRequestHeader.getBizPoHeader().getPoSchType());
 		}
-
-//		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
-//			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
-//					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
-//			model.addAttribute("requestOrderProcess", requestOrderProcess);
-//		}
-//		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
-//			VendorRequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
-//					ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
-//			model.addAttribute("requestOrderProcess", requestOrderProcess);
-//		}
 
 		if (bizRequestHeader.getId() != null && bizRequestHeader.getId() != 0) {
 			BizOrderStatus bizOrderStatus = new BizOrderStatus();
@@ -611,15 +595,12 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 			Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
 			List<BizPoPaymentOrder> paymentOrderList = getPayMentOrderByReqId(bizRequestHeader.getId());
-			model.addAttribute("paymentOrderList",paymentOrderList);
-			model.addAttribute("statusList", statusList);
-			model.addAttribute("statusMap", statusMap);
 
 			Map<Integer, String> stateDescMap = ReqHeaderStatusEnum.getStateDescMap();
 			resultMap.put("stateDescMap", stateDescMap);
 			resultMap.put("paymentOrderList", paymentOrderList);
-			resultMap.put("statusList", statusList);
-			resultMap.put("statusMap", statusMap);
+			resultMap.put("auditStatusList", statusList);
+			resultMap.put("bizAuditStatusMap", statusMap);
 		}
 
 		User userAdmin = UserUtils.getUser();
@@ -633,14 +614,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				}
 			}
 		}
-		model.addAttribute("roleChanne", roleName);
-
-		model.addAttribute("entity", bizRequestHeader);
-		model.addAttribute("reqDetailList", reqDetailList);
-		model.addAttribute("bizSkuInfo", new BizSkuInfo());
-
 		resultMap.put("roleChanne", roleName);
-		resultMap.put("entity", bizRequestHeader);
+		resultMap.put("bizRequestHeader", bizRequestHeader);
 		resultMap.put("reqDetailList", reqDetailList);
 		resultMap.put("bizSkuInfo", new BizSkuInfo());
 

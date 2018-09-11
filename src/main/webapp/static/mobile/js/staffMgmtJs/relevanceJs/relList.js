@@ -68,8 +68,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		            	console.log(res.data)
-		            	;		            	
+//		            	console.log(res.data)
 		            	$('#cosultasId').val(res.data.bcUser.consultants.id);
 		            	$('#officeId').val(res.data.bcUser.centers.id);
 						var arrLen = res.data.resultData.length;
@@ -146,12 +145,12 @@
 						totalPage = res.data.listSize%pager.size!=0?
 		                parseInt(res.data.listSize/pager.size)+1:
 		                res.data.listSize/pager.size;
-		                console.log(totalPage)
+//		                console.log(totalPage)
 		                if(totalPage==pager.pageNo){
-		                	console.log('22')
+//		                	console.log('22')
 			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
 			            }else{
-			            	  console.log('2')
+//			            	  console.log('2')
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
 			            }         
@@ -161,125 +160,6 @@
 		        })
 		    }
 		},
-//	    getData: function() {
-//		    	var staffHtmlList = '';
-//		    	var _this=this;
-//		        mui.ajax("/a/biz/custom/bizCustomCenterConsultant/listData4mobile",{		        
-//		            data:{
-//		            	    
-//		            		pageNo : 1,
-//			                'consultants.id' :_this.userInfo.staListId,//客户专员
-//			                'office.id' : _this.userInfo.dptmtId,//采购中心ID
-//			                conn :"connIndex",
-//		            },              
-//		            dataType:'json',
-//		            type:'get',
-//		            headers:{'Content-Type':'application/json'},
-//		            success:function(res){
-//		            	console.log(res.data)
-//		            	mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);		            	
-//		            	$('#cosultasId').val(res.data.bcUser.consultants.id);
-//		            	$('#officeId').val(res.data.bcUser.centers.id);
-//						var arrLen = res.data.resultData.length;						
-//                      if(arrLen > 0) {
-//                      $.each(res.data.resultData, function(i, item) {
-//                      	$('#consultantsId').val(item.consultantsId)
-//                      	var userOfficeDeta = '';
-//			                if(item.userOfficeDeta) {
-//			                	userOfficeDeta = _this.formatDateTime(item.userOfficeDeta)
-//			                }else {
-//			                	userOfficeDeta = ''
-//			                }
-//			                var reAddress = '';
-//			                if(item.userOfficeReceiveTotal) {
-//			                	reAddress = item.provinceName + item.cityName + item.regionName + item.address
-//			                }else {
-//			                	reAddress = ''
-//			                }
-//									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
-//										'<div class="mui-input-row">' +
-//											'<label>采购中心:</label>' +
-//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.centersName+' ">' +
-//										'</div>' +
-//										'<div class="mui-input-row">' +
-//											'<label>客户专员:</label>' +
-//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsName+' ">' +
-//										'</div>' +
-//										'<div class="mui-input-row">' +
-//											'<label>电话:</label>' +
-//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.consultantsMobile+' ">' +
-//										'</div>' +
-//										'<div class="mui-input-row">' +
-//											'<label>经销店名称:</label>' +
-//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.customsName +' ">' +
-//										'</div>' +
-//										'<div class="mui-input-row">' +
-//											'<label>负责人:</label>' +
-//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customsPrimaryPersonName+' ">' +
-//										'</div>' +
-//										'<div class="mui-input-row">' +
-//											'<label>详细地址:</label>' +
-//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+reAddress+' ">' +
-//										'</div>' +
-//										'<div class="mui-input-row">' +
-//											'<label>采购频次:</label>' +
-//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.orderCount+' ">' +
-//										'</div>' +
-//										'<div class="mui-input-row">' +
-//											'<label>累计金额:</label>' +
-//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.userOfficeReceiveTotal+' ">' +
-//										'</div>' +
-//										'<div class="mui-input-row">' +
-//											'<label>首次开单:</label>' +
-//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+userOfficeDeta+' ">' +
-//										'</div>' +
-//										'<div class="app_font_cl content_part mui-row">' +
-//											'<div class="staReMoveBtn" customsId="'+item.customsId +'"  consultantsId="'+ item.consultantsId +'">解除关联</div>'+
-//										'</div>' +
-//									'</div>'
-//								});
-//								$('#staReleList').append(staffHtmlList);
-//								_this.stHrefHtml()
-//						} 
-//						else {
-//								$('.mui-pull-bottom-pocket').html('');								
-//								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
-//								$('#staReleList').html('<p class="noneTxt">暂无数据</p>');
-//						}	
-//					    var size=20;
-//					    var pageNo=1;
-//			            totalPage = res.data.listSize%size!=0?
-//		                parseInt(res.data.listSize/size)+1:
-//		                res.data.listSize/size;
-//		                console.log(totalPage)                       
-//		                if(totalPage==pageNo){	
-//		                	console.log('1')
-//			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-////			                mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
-//			            }else{
-//			            	console.log('2')
-//			                pageNo++;
-//			                mui('#refreshContainer').pullRefresh().refresh(true);
-//			            }          
-//			        },
-//		            error:function(xhr,type,errorThrown){
-//		            }
-//		        })
-//		    },
-//		getPermissionList: function (markVal,flag) {
-//          var _this = this;
-//          $.ajax({
-//              type: "GET",
-//              url: "/a/sys/menu/permissionList",
-//              dataType: "json",
-//              data: {"marking": markVal},
-//              async:false,
-//              success: function(res){
-//                  _this.staRelFlag = res.data;
-//                  console.log(_this.staRelFlag)
-//              }
-//          });
-//      },
         backbtn:function(){
         	/*返回客户专员列表*/
 			$('#nav').on('tap','.staRelStaBtn', function() {

@@ -268,7 +268,7 @@
 				if(consultantIda) {
 					stcheckIdTxt = consultantIda
 				}
-				console.log(staListIdTxts)
+//				console.log(staListIdTxts)
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
@@ -393,15 +393,16 @@
                     'centersName': nameTxts,
                     'customer.phone': _this.userInfo.OrdMobile,
                     'itemNo': _this.userInfo.OrdNumbers,
-                    'con.name': _this.userInfo.OrdClient,
                     'bizStatus': _this.userInfo.orderStatus,
                     'selectAuditStatus': nameTxt, //originConfigMap
                     'customer.id':_this.userInfo.newinput,
                     consultantId: _this.userInfo.staListSehId,
-					includeTestData: _this.userInfo.includeTestData
+					includeTestData: _this.userInfo.includeTestData,
+					flag: _this.userInfo.flagTxt
 				},
 				dataType: 'json',
 				success: function(res) {
+					$('#flag').val(_this.userInfo.flagTxt)
 					$('#staListIdTxt').val(_this.userInfo.staListSehId)//查询出来的客户专员 ID
 					$.ajax({
 			                type: "GET",
@@ -476,7 +477,7 @@
 //										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation">' +
 											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
+												'<li class="mui-table-view-cell" id="flagid">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
 //											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
 //												'<li class="mui-table-view-cell">出库确认</li>' +

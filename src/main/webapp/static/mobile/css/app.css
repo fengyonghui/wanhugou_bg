@@ -11,7 +11,7 @@ abbr, acronym,button{border:0;}
 input, select, textarea{font-size: 15px;}
 
 /*==自定义图标==*/
-.mui-checkbox input[type=checkbox]:checked:before, .mui-radio input[type=radio]:checked:before{color:#aaa}
+.mui-checkbox input[type=checkbox]:checked:before, .mui-radio input[type=radio]:checked:before{color:#40ABE9}
 .app_img_icons{position: relative;top:2px}
 .app_header .app_img_icons{width:20px;}
 
@@ -439,7 +439,7 @@ select, textarea{height: auto;padding:10px 15px;}
 .mui-title{font-size: 20px;line-height:42px;color: #000;}
 .mui-bar .mui-icon{font-size: 20px;padding-top: 12px;padding-bottom: 12px;}
 /*==消除符号==*/
-.mui-input-row .mui-input-clear~.mui-icon-clear{right: .5em;color: #ccc;width: 30px;height: 30px;font-size: 16px;line-height: 2;top:5px}
+.mui-input-row .mui-input-clear~.mui-icon-clear{right: .5em;color: #ccc;width: 30px;height: 30px;font-size: 16px;line-height: 2;top:4px}
 .mui-table-view-cell.noborder:after{height: 0}
 .mui-grid-view.mui-grid-9 .mui-table-view-cell.noborder{border: none;}
 
@@ -567,10 +567,10 @@ body{font-size: 15px;color:#3b3b3b;}
 .app_dialog_list_box .app_lines span{background: #fff;padding: 0 15px;position: relative;top:-7px}
 
 /*自定义覆盖样式!*/
+.mui-table-view-cell {list-style: none;}/*li 去掉默认样式*/
+.mui-table-view-cell.mui-collapse .mui-collapse-content {padding: 0 15px;}/*management.html*/
 .noneTxt {position: absolute;top: 50%;left: 50%;margin-left: -28px;}/*暂无数据样式*/
 .flowPath>li:last-child {color: #40ABE9;}/*流程最后一块内容*/
-.photoParent {width: 15%;height: 220px;margin-right: 15px;}
-.photoParent img {top: 50%;margin-top: -8px;width: 50px;}/*详情商品信息图片*/
 .operation li {padding: 0;list-style: none;height: 30px;}/*操作按钮栏*/
 .mui-table-view-chevron .mui-table-view-cell {padding-right: 0px;}
 
@@ -585,7 +585,8 @@ body{font-size: 15px;color:#3b3b3b;}
 /*.labelri input {margin-left: 15px;}*//*redio*/
 .photoList {margin-left: 33%;}
 .step_num {text-align: center;color: #007aff;}
-.step_item {border: 1px #3daae9 solid;margin: 15px 15px;}
+
+.step_item {border: 1px #3daae9 solid;margin: 15px;}/*流程蓝色边框*/
 .oneBtn {left: 50%;margin-left: -41px;}
 .list-padding {padding: 10px 10px 0 10px;}
 .mui-input-row label~input.doubleInput {width: 31%;}/*一行有两个input*/
@@ -609,37 +610,54 @@ body{font-size: 15px;color:#3b3b3b;}
 #inCheckAddMenu,#addCheckMen,#addDetailMen{padding-left:0;}
 
 
+/*按钮公用*/
+.app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;background-color: #40ABE9;border: none;}
 /*查询、保存大按钮*/
 .SearchBtnClass {margin: 60px auto;width: 70%;}
-.app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;background-color: #40ABE9;border: none;}
 .app_btn_search:active {color: #fff;border: 1px solid #046d90;background-color: #007aff !important;}
 /*备货单保存按钮*/
 .inSaveBtn {width: 70%;margin: 20px auto;}
 
 /*移除、添加、删除---小按钮*/
-.inAddBtn {width: 30%;margin: 5px auto;}
-
+.inAddBtnParent {width: 25%;margin: 5px auto;}
+.inAddBtn {font-size: 15px;padding: 0;}
 /*查询小按钮--备货单添加、修改  和  经销店添加*/
 .comChoiceBtn {padding: 5px;border: none;width: 50px;position: absolute;right: 10px;top: 2px;background-color: #40ABE9;}
-.inputClassAdd>label.commodityName {padding: 0;width: 15%;}
-.inputClassAdd>input.commodityTxt {padding: 0;font-size: 10px;position: relative;width: 85%;}
-
-/*备货单审核 和 订单详情公用---产品信息*/
-.commodity div.mui-input-row input, .commodity div.mui-input-row label {padding: 0;font-size: 12px;}
 
 
 /*======备货单======*/
-/*备货单审核*/
-.photoParent {width: 15%;height: 220px;margin-right: 15px;}
-.photoParent img {top: 50%;margin-top: -8px;width: 50px;}
-.listBlue>li {border-bottom: 1px solid #40ABE9;}
-		
+/*备货单审核、详情---商品信息图片*/
+.photoParent {position: absolute;top: 50%;margin-top: -13%;}
+.photoParent img {width: 50px;}
 /*备货单支付*/		
-.pay-logo {width: 40px;}
-.pay-txt {float: right;padding: 9px;width: 80%;}
-.pay-txt>input {position: absolute;right: 55px;}		
-			
-			
+.pay-logo {width: 40px;margin-left: 20px;}
+.pay-txt {float: right;padding: 9px;width: 65%;}
+.pay-txt>input {position: absolute;right: 55px;}	
+	
+/*备货单添加和修改--备货商品	*/		
+/*.inputClassAdd>label.commodityName {padding: 0;font-size: 10px;width: 20%;}
+.inputClassAdd>input.commodityTxt {padding: 0;font-size: 10px;width: 80%;position: relative;}*/
+/*备货单所有备货商品*/
+.inComdty div.mui-input-row input, .inComdty div.mui-input-row label {padding: 0;font-size: 12px;}
+/*备货单详情---支付列表*/
+.payList {border: 1px #3daae9 solid;margin:0 15px 15px 15px;padding: 0;}
+.payList div.mui-input-row label {width: 42%;padding-right: 0;}
+.payList div.mui-input-row input {width: 58%;}
+/*备货单详情---备货商品*/
+.inDetailComdty div.mui-input-row label {width: 32%;}
+.inDetailComdty div.mui-input-row input {width: 68%;}
+/*备货单添加、修改---备货商品*/
+.inAddComdty div.mui-row li {padding: 5px;list-style: none;height: 30px;border-bottom: 1px solid #efeff4;}
+.inAddFont .mui-input-row  font {right: 8px;top: 20%;}/*申报数量 font*/
+/*一列*/
+.inAddComdty div.lineStyle div.mui-input-row label {width:21%}
+.inAddComdty div.lineStyle div.mui-input-row input {width:79%}
+/*两列*/
+.inAddComdty div.mui-input-row label {width: 43%;}
+.inAddComdty div.mui-input-row input {width: 57%;}
+
+
+
 /*=======运营管理后台=======*/
 .appQuitBtn {background-color: #dd5563;border: none;border-radius: 8px;}
 .quitBtn {position: absolute;width: 80%;bottom: 50px;left: 50%;margin-left: -40%;}
@@ -649,21 +667,20 @@ body{font-size: 15px;color:#3b3b3b;}
 .app_bnp {padding: 0 !important;}
 
 /*运营管理*/
-.mui-table-view-cell p {border-bottom: 1px solid #e8e8e8;padding: 8px 0 8px;}
+.mui-table-view-cell p {border-bottom: 1px solid #e8e8e8;padding: 10px 15px 9px;}
 
 /*审核公共样式*/
-.app_p20 button {margin-left: 17%;background-color: #40ABE9;color: #fff;}
+#staOrdCheckBtn button {background-color: #40ABE9;color: #fff;width: 35%;}
 
+/*订单审核产品信息*/
+.commodity div.mui-input-row input, .commodity div.mui-input-row label {padding: 0;font-size: 12px;}
+.commodity div.mui-row li {padding: 5px;list-style: none;height: 30px;border-bottom: 1px solid #efeff4;}
 /*订单详情---产品信息----两列样式：*/
 .commodity div.mui-input-row label {width: 40%;}
 .commodity div.mui-input-row input {width: 60%;}
 /*订单详情---产品信息--- 一列样式:*/
 .commodity div.lineStyle label {width:20%}
 .commodity div.lineStyle input {width:80%}
-
-/*订单审核商品信息*/
-.commodity div.mui-row li {padding: 5px;list-style: none;height: 30px;border-bottom: 1px solid #efeff4;}
-
 /*进展信息*/
 .nextTxt01 {top: 17px;left: 88px;}
 .nextTxt02 {top: 6px;left: 87px;}
@@ -671,18 +688,18 @@ body{font-size: 15px;color:#3b3b3b;}
 .labelRi>li {float: left;}
 .labelRi div {width: 70px;margin: 5px 15px;border: 1px solid #40ABE9;border-radius: 5px;font-size: 13px;text-align: center;}
 
-/*字体颜色不兼容的解决:*/
+/*ios 字体颜色不兼容的解决:*/
 input[disabled],input:disabled,input.disabled{color: #000;/*-webkit-text-fill-color:#3b3b3b;*/-webkit-opacity:1;opacity: 1;}
 
 /*滑动---阻止默认事件*/
 a, #list  {touch-action: none;}
 
 /*改变 ios 默认radio样式 */
-input[type=radio].inputRadio {-webkit-appearance: none;position: relative;top: -1px;width: 15px;height: 15px;border: 1px solid #999;-webkit-border-radius: 7px;border-radius: 7px;background-color: #fff;vertical-align: middle;}
-input[type="radio"].inputRadio:checked {-webkit-appearance: none; border-color: #40ABE9;background-color: #40ABE9;}
+input[type=radio].inputRadio {-webkit-appearance: none;position: relative;top: -1px;width: 15px;height: 15px;border: 1px solid #999;-webkit-border-radius: 50%;border-radius: 50%;background-color: #fff;vertical-align: middle;}
+input[type="radio"].inputRadio:checked {-webkit-appearance: none;background-color: #40ABE9;}
 /*查询---测试数据*/
 /*改变 ios 默认checkbox样式 */
-input[type=checkbox].testCheckbox {-webkit-appearance: none;position: relative;top: 10px;width: 20px;height: 20px;border: 1px solid #999;-webkit-border-radius: 10px;border-radius: 10px;background-color: #fff;vertical-align: middle;float: left;}
-input[type="checkbox"].testCheckbox:checked {-webkit-appearance: none;background-color: #ccc;}
+input[type=checkbox].testCheckbox {-webkit-appearance: none;position: relative;top: 12px;width: 17px;height: 17px;border: 1px solid #999;-webkit-border-radius: 50%;border-radius: 50%;background-color: #fff;vertical-align: middle;float: left;}
+input[type="checkbox"].testCheckbox:checked {-webkit-appearance: none;background-color: #40ABE9;}
 
 /*.mui-input-row input.testCheckbox {height: 20px;margin: 10px 210px 10px 0;width: 20px;}*/

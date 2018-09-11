@@ -6,8 +6,11 @@ package com.wanhutong.backend.modules.biz.web.sku;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
@@ -22,12 +25,10 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
-import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -35,7 +36,10 @@ import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,7 +52,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,18 +66,16 @@ import java.util.Map;
 @RequestMapping(value = "${adminPath}/biz/sku/bizSkuInfo")
 public class BizSkuInfoController extends BaseController {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(BizSkuInfoController.class);
+
 	@Autowired
 	private BizSkuInfoV2Service bizSkuInfoService;
-	@Autowired
-	private BizProdPropertyInfoService bizProdPropertyInfoService;
 	@Autowired
 	private CommonImgService commonImgService;
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
 	@Autowired
 	private AttributeValueV2Service attributeValueV2Service;
-	@Autowired
-	private BizSkuViewLogService bizSkuViewLogService;
 	@Autowired
 	private BizProductInfoV2Service bizProductInfoV2Service;
 	@Autowired
@@ -449,5 +450,54 @@ public class BizSkuInfoController extends BaseController {
 		Page<BizSkuInfo> page = bizSkuInfoService.findPageForSkuInfo(new Page<BizSkuInfo>(request, response), bizSkuInfo);
 		model.addAttribute("page", page);
 		return "modules/biz/sku/pageForSkuInfoList";
+	}
+
+	/**
+	 * 导出
+	 * @param bizSkuInfo
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "skuOrderExport")
+	public String skuOrderExport(BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		Page<BizSkuInfo> page = bizSkuInfoService.findPageForSkuInfo(new Page<BizSkuInfo>(), bizSkuInfo);
+		List<BizSkuInfo> list = page.getList();
+		//列表数据
+		List<List<String>> data = Lists.newArrayList();
+		try {
+			if (CollectionUtils.isNotEmpty(list)) {
+                for (BizSkuInfo skuInfo : list) {
+					List<String> skuList = Lists.newArrayList();
+					skuList.add(skuInfo.getName() == null ? "未知" : skuInfo.getName());
+                    skuList.add(skuInfo.getItemNo() == null ? "" : skuInfo.getItemNo());
+                    skuList.add(skuInfo.getOrderDetail().getBuyPrice() == null ? "" : skuInfo.getOrderDetail().getBuyPrice().toString());
+                    skuList.add(skuInfo.getOrderDetail().getUnitPrice() == null ? "" : skuInfo.getOrderDetail().getUnitPrice().toString());
+                    skuList.add(skuInfo.getOrderDetail().getOrdQty() == null ? "" : skuInfo.getOrderDetail().getOrdQty().toString());
+                    skuList.add((skuInfo.getOrderDetail().getUnitPrice() == null || skuInfo.getOrderDetail().getOrdQty() == null) ? "" : String.valueOf(skuInfo.getOrderDetail().getUnitPrice() * skuInfo.getOrderDetail().getOrdQty()));
+                    skuList.add(skuInfo.getCustName() == null ? "" : skuInfo.getCustName());
+                    skuList.add(skuInfo.getOrderNum() == null ? "" : skuInfo.getOrderNum());
+                    skuList.add(skuInfo.getCentersName() == null ? "" : skuInfo.getCentersName());
+                    skuList.add((skuInfo.getInventorySku() == null || skuInfo.getInventorySku().getStockQty() == null) ? "" : skuInfo.getInventorySku().getStockQty().toString());
+                    data.add(skuList);
+                }
+            }
+			String headers[] = {"商品名称","商品货号","结算价","结算价","订单数量","应付金额","客户专员","订单号","采购中心","现有库存"};
+			ExportExcelUtils eeu = new ExportExcelUtils();
+			SXSSFWorkbook workbook = new SXSSFWorkbook();
+			String fileName = "商品订单" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			eeu.exportExcel(workbook, 0, "商品订单数据", headers, data, fileName);
+			response.reset();
+			response.setContentType("application/octet-stream; charset=utf-8");
+			response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
+			workbook.write(response.getOutputStream());
+			workbook.dispose();
+			return null;
+		} catch (Exception e) {
+			LOGGER.error("商品订单导出失败",e);
+		}
+		return "redirect:" + adminPath + "/biz/sku/bizSkuInfo/findPageForSkuInfo";
 	}
 }

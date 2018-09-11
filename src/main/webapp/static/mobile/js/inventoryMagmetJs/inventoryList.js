@@ -30,7 +30,6 @@
 		    function pullRefresh(){
 		        mui("#refreshContainer").pullRefresh({
 			        up:{
-//			            contentrefresh : "正在加载...",
 			            contentnomore:'没 有 更 多 数 据 了',
 			            callback:function(){
 			                window.setTimeout(function(){
@@ -45,10 +44,8 @@
 			            contentover : "",
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
-//			                window.setTimeout(function(){
-			                    pager['size']= 10;//条数
-			                    pager['pageNo'] = 1;//页码      
-			                    //刷新要先清空父节点里面的子节点
+			                    pager['size']= 20;
+			                    pager['pageNo'] = 1;
 				                var f = document.getElementById("list");
 				                var childs = f.childNodes;
 				                for(var i = childs.length - 1; i >= 0; i--) {
@@ -56,12 +53,8 @@
 				                }
 				                console.log('222')
 				                console.log(pager)
-				                $('.mui-pull-caption-down').html('');
-				                
+				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
-				                
-				                
-//				            },500);
 			            }
 			        }
 			    })
@@ -75,10 +68,15 @@
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
 		          	    console.log(res)
-		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+//		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 			            var returnData = res.data.page.list;
 			            var dataRow = res.data.roleSet;
 						var arrLen = res.data.page.list.length; 
+						if(arrLen <20 ){
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+						}else{
+							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+						}
                         if(arrLen > 0) {
 								$.each(returnData, function(i, item) {
 									console.log(item)
@@ -251,14 +249,13 @@
 								_this.inHrefHtml()
 							} else {
 								$('.mui-pull-caption').html('');
+								$('#list').append('<p class="noneTxt">暂无数据</p>');
 							}
-						totalPage = res.data.page.count%pager.size!=0?
-		                parseInt(res.data.page.count/pager.size)+1:
-		                res.data.page.count/pager.size;
-		                console.log('222333')
-			            console.log(res.data.page.count/pager.size)
-		                if(totalPage==pager.pageNo){		                	
-			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+//						totalPage = res.data.page.count%pager.size!=0?
+//		                parseInt(res.data.page.count/pager.size)+1:
+//		                res.data.page.count/pager.size;
+		                if(res.data.page.totalPage==pager.pageNo){		                	
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
@@ -365,7 +362,7 @@
 					}
 				}),
         /* 审核*/
-            $('.content').on('tap','.inCheckBtn',function(){
+            $('.content_part').on('tap','.inCheckBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
 				var bizStatus = $(this).attr('bizStatus');
@@ -382,7 +379,7 @@
                 }
 			}),
 		/*取消*/	
-            $('.content').on('tap','.inCancelBtn',function(){
+            $('.content_part').on('tap','.inCancelBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
                 if(url) {
@@ -488,8 +485,9 @@
 					name:nameTxt,
 					'fromOffice.id':_this.userInfo.fromOffice,
 					bizStatus:_this.userInfo.bizStatusid,
-					'varietyInfo.id':_this.userInfo.varietyInfoid
-//					process:
+					'varietyInfo.id':_this.userInfo.varietyInfoid,
+					includeTestData: _this.userInfo.includeTestData,
+					process:_this.userInfo.process
 				},
 				dataType: 'json',
 				success: function(res) {
