@@ -847,15 +847,15 @@
                             jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
                             return false;
                         }
-                        if (obj == "DO" ||  obj == 'SO') {
+                        if (obj == "DO") {
                             audit(1, f.description);
                         }
                         if (obj == "JO") {
                             auditJo(1, f.description);
                         }
-                        if (obj == "PO") {
-                            poAudit(1,f.description);
-                        }
+                        // if (obj == "PO") {
+                        //     poAudit(1,f.description);
+                        // }
                         return true;
                     }
                 },{buttonsFocus:1});
@@ -882,9 +882,9 @@
                         if (obj == "JO") {
                             auditJo(2, f.description);
                         }
-                        if (obj == "PO") {
-                            poAudit(2,f.description);
-                        }
+                        // if (obj == "PO") {
+                        //     poAudit(2,f.description);
+                        // }
                         return true;
                     }
                 },{buttonsFocus:1});
@@ -928,29 +928,29 @@
         }
 
         //采购单审核
-        function poAudit(auditType, description) {
-            var id = $("#poHeaderId").val();
-            var currentType = $("#poCurrentType").val();
-            $.ajax({
-                url: '${ctx}/biz/po/bizPoHeader/audit',
-                contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "fromPage": "orderHeader"},
-                type: 'get',
-                success: function (result) {
-                    result = JSON.parse(result);
-                    if(result.ret == true || result.ret == 'true') {
-                        alert('操作成功!');
-                        <%--window.location.href = "${ctx}/biz/order/bizOrderHeader";--%>
-                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
-                    }else {
-                        alert(result.errmsg);
-                    }
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-        }
+        <%--function poAudit(auditType, description) {--%>
+            <%--var id = $("#poHeaderId").val();--%>
+            <%--var currentType = $("#poCurrentType").val();--%>
+            <%--$.ajax({--%>
+                <%--url: '${ctx}/biz/po/bizPoHeader/audit',--%>
+                <%--contentType: 'application/json',--%>
+                <%--data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "fromPage": "orderHeader"},--%>
+                <%--type: 'get',--%>
+                <%--success: function (result) {--%>
+                    <%--result = JSON.parse(result);--%>
+                    <%--if(result.ret == true || result.ret == 'true') {--%>
+                        <%--alert('操作成功!');--%>
+                        <%--&lt;%&ndash;window.location.href = "${ctx}/biz/order/bizOrderHeader";&ndash;%&gt;--%>
+                        <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                    <%--}else {--%>
+                        <%--alert(result.errmsg);--%>
+                    <%--}--%>
+                <%--},--%>
+                <%--error: function (error) {--%>
+                    <%--console.info(error);--%>
+                <%--}--%>
+            <%--});--%>
+        <%--}--%>
 
         function auditJo(auditType, description) {
             var id = $("#id").val();
@@ -1059,6 +1059,23 @@
                     $("#remark").val(data.remarks);
                 }
             });
+        }
+
+        function choose(obj) {
+            $(obj).attr('checked', true);
+            if ($(obj).val() == 0) {
+                $("#stockGoods_schedu").show();
+                $("#schedulingPlan_forHeader_schedu").show();
+                $("#saveSubmit").show();
+                $("#schedulingPlan_forSku_schedu").hide();
+                $("#batchSubmit").hide();
+            } else {
+                $("#stockGoods_schedu").hide();
+                $("#schedulingPlan_forHeader_schedu").hide();
+                $("#saveSubmit").hide();
+                $("#schedulingPlan_forSku_schedu").show();
+                $("#batchSubmit").show();
+            }
         }
 
     </script>
@@ -2016,16 +2033,16 @@
                                    value="审核驳回"/>
                         </c:if>
                     </c:if>
-                    <c:if test="${entity.str == 'audit' && type != 0 && type != 1}">
-                        <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
-                            <c:if test="${entity.bizPoHeader.commonProcessList == null}">
-                                <input id="btnSubmit" type="button" onclick="checkPass('SO')" class="btn btn-primary"
-                                       value="审核通过"/>
-                                <input id="btnSubmit" type="button" onclick="checkReject('SO')" class="btn btn-primary"
-                                       value="审核驳回"/>
-                            </c:if>
-                        </c:if>
-                    </c:if>
+                    <%--<c:if test="${entity.str == 'audit' && type != 0 && type != 1}">--%>
+                        <%--<c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">--%>
+                            <%--<c:if test="${entity.bizPoHeader.commonProcessList == null}">--%>
+                                <%--<input id="btnSubmit" type="button" onclick="checkPass('SO')" class="btn btn-primary"--%>
+                                       <%--value="审核通过"/>--%>
+                                <%--<input id="btnSubmit" type="button" onclick="checkReject('SO')" class="btn btn-primary"--%>
+                                       <%--value="审核驳回"/>--%>
+                            <%--</c:if>--%>
+                        <%--</c:if>--%>
+                    <%--</c:if>--%>
 
                     <c:if test="${entity.str == 'audit' && (type != 0 || type != 1)}">
                         <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && currentAuditStatus.type != 777 && currentAuditStatus.type != 666}">
@@ -2046,32 +2063,32 @@
                 </shiro:hasPermission>
 
                     <!-- 一单到底，采购单审核 -->
-                    <shiro:hasPermission name="biz:po:bizPoHeader:audit">
-                        <c:if test="${entity.str == 'audit'}">
-                        <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-                            <c:if test="${entity.bizPoHeader.commonProcessList != null
-                            && fn:length(entity.bizPoHeader.commonProcessList) > 0
-                            && (currentAuditStatus.type == 777 || currentAuditStatus.type == 666)
-                            }">
-                                <input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"
-                                       value="审核通过"/>
-                                <input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"
-                                       value="审核驳回"/>
-                            </c:if>
-                        </c:if>
+                    <%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
+                        <%--<c:if test="${entity.str == 'audit'}">--%>
+                        <%--<c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">--%>
+                            <%--<c:if test="${entity.bizPoHeader.commonProcessList != null--%>
+                            <%--&& fn:length(entity.bizPoHeader.commonProcessList) > 0--%>
+                            <%--&& (currentAuditStatus.type == 777 || currentAuditStatus.type == 666)--%>
+                            <%--}">--%>
+                                <%--<input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"--%>
+                                       <%--value="审核通过"/>--%>
+                                <%--<input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"--%>
+                                       <%--value="审核驳回"/>--%>
+                            <%--</c:if>--%>
+                        <%--</c:if>--%>
 
-                        <c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">
-                            <c:if test="${entity.bizPoHeader.commonProcessList != null
-                            && fn:length(entity.bizPoHeader.commonProcessList) > 0
-                            }">
-                                <input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"
-                                       value="审核通过"/>
-                                <input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"
-                                       value="审核驳回"/>
-                            </c:if>
-                        </c:if>
-                        </c:if>
-                    </shiro:hasPermission>
+                        <%--<c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">--%>
+                            <%--<c:if test="${entity.bizPoHeader.commonProcessList != null--%>
+                            <%--&& fn:length(entity.bizPoHeader.commonProcessList) > 0--%>
+                            <%--}">--%>
+                                <%--<input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"--%>
+                                       <%--value="审核通过"/>--%>
+                                <%--<input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"--%>
+                                       <%--value="审核驳回"/>--%>
+                            <%--</c:if>--%>
+                        <%--</c:if>--%>
+                        <%--</c:if>--%>
+                    <%--</shiro:hasPermission>--%>
 
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails && entity.str!='audit'}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
@@ -2183,7 +2200,6 @@
 
 
 </form:form>
-'${currentAuditStatus.type}'
 <c:if test="${currentAuditStatus.type == 2 || currentAuditStatus.type == 1003 || currentAuditStatus.type == 2002 || currentAuditStatus.type == 3001}">
 
     <div class="form-horizontal">
@@ -2206,33 +2222,16 @@
                     <thead>
                     <tr>
                         <th>详情行号</th>
-                        <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-                            <th>货架名称</th>
-                        </c:if>
                         <th>商品名称</th>
                         <th>商品编号</th>
                         <th>商品货号</th>
-                            <%--<th>已生成的采购单</th>--%>
-                        <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
-                            <th>商品结算价</th>
-                        </c:if>
                         <th>供应商</th>
                         <th>供应商电话</th>
                         <th>商品单价</th>
                         <th>采购数量</th>
                         <th>总 额</th>
                         <th>已发货数量</th>
-                        <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
-                            <th>发货方</th>
-                        </c:if>
                         <th>创建时间</th>
-                        <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-                            <c:if test="${entity.str != 'audit' && entity.str!='detail' && entity.str!='createPay'}">
-                                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                                    <th>操作</th>
-                                </c:if>
-                            </c:if>
-                        </shiro:hasPermission>
                     </tr>
                     </thead>
                     <tbody>
@@ -2241,11 +2240,6 @@
                         <td>
                                 ${bizOrderDetail.lineNo}
                         </td>
-                            <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-                        <td>
-                                ${bizOrderDetail.shelfInfo.opShelfInfo.name}
-                        </td>
-                        </c:if>
                         <td>
                             <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
                                 ${bizOrderDetail.skuName}
@@ -2267,11 +2261,6 @@
                         <td>
                                 ${bizOrderDetail.skuInfo.itemNo}
                         </td>
-                        <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
-                            <td>
-                                    ${bizOrderDetail.buyPrice}
-                            </td>
-                        </c:if>
                         <td>
                             ${bizOrderDetail.vendor.name}
                         </td>
@@ -2292,32 +2281,9 @@
                         <td>
                                 ${bizOrderDetail.sentQty}
                         </td>
-                        <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
-                            <td>
-                                    ${bizOrderDetail.suplyis.name}
-                            </td>
-                        </c:if>
                         <td>
                             <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                         </td>
-                        <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
-                            <c:if test="${entity.str != 'audit'}">
-                                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                                    <td>
-                                        <c:if test="${empty bizOrderHeader.clientModify}">
-                                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}">修改</a>
-                                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}"
-                                               onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
-                                        </c:if>
-                                        <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
-                                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">修改</a>
-                                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}"
-                                               onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
-                                        </c:if>
-                                    </td>
-                                </c:if>
-                            </c:if>
-                        </shiro:hasPermission>
                     </tr>
                     </c:forEach>
                     </tbody>
@@ -2411,55 +2377,77 @@
                 <table style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
                     <thead>
                     <tr>
-                        <th>产品图片</th>
-                        <th>品牌名称</th>
+                        <th>详情行号</th>
                         <th>商品名称</th>
+                        <th>商品编号</th>
                         <th>商品货号</th>
-                        <c:if test="${bizPoHeader.id!=null}">
-                            <th style="display: none">所属单号</th>
-                        </c:if>
+                        <th>供应商</th>
+                        <th>供应商电话</th>
+                        <th>商品单价</th>
                         <th>采购数量</th>
-                        <th>结算价</th>
-                        <th>总金额</th>
+                        <th>总 额</th>
+                        <th>已发货数量</th>
+                        <th>创建时间</th>
                     </tr>
                     </thead>
                     <tbody id="prodInfo2_schedu">
-                    <c:if test="${bizPoHeader.poDetailList!=null}">
-                        <c:forEach items="${bizPoHeader.poDetailList}" var="poDetail" varStatus="state">
+                    <c:if test="${bizOrderHeader.orderDetailList!=null}">
+                        <c:forEach items="${bizOrderHeader.orderDetailList}" var="bizOrderDetail">
                             <tr>
-                                <td style="display: none">${state.index+1}</td>
-                                <td id="detailId_${state.index+1}" style="display: none">${poDetail.id}</td>
-                                <td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>
-                                <td>${poDetail.skuInfo.productInfo.brandName}</td>
-                                <td>${poDetail.skuInfo.name}</td>
-                                <td>${poDetail.skuInfo.itemNo}</td>
-                                <c:if test="${bizPoHeader.id!=null}">
-                                    <td style="display: none">
-                                        <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}"
-                                                   var="orderNumStr"
-                                                   varStatus="orderStatus">
-                                        <c:if test="${orderNumStr.soType==1}">
-                                        <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
-                                            </c:if>
-                                            <c:if test="${orderNumStr.soType==2}">
-                                            <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
-                                                </c:if>
-                                                    ${orderNumStr.orderNumStr}
-                                            </a>
-                                            <span id="orderNumStr_${orderStatus.index+1}" style="display:none" value="${orderNumStr.orderNumStr}" />
-                                            </c:forEach>
-                                    </td>
-                                </c:if>
-                                <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
-                                <td>${poDetail.unitPrice}</td>
-                                <td>${poDetail.ordQty * poDetail.unitPrice}</td>
+                                <td>
+                                        ${bizOrderDetail.lineNo}
+                                </td>
+                                <td>
+                                    <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+                                        ${bizOrderDetail.skuName}
+                                    </c:if>
+                                    <c:if test="${empty entity.orderNoEditable || empty entity.orderDetails || empty bizOrderHeader.flag}">
+                                        <c:if test="${empty entity.orderNoEditable && empty entity.orderDetails && empty bizOrderHeader.flag && empty bizOrderHeader.clientModify}">
+                                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
+                                                    ${bizOrderDetail.skuName}</a>
+                                        </c:if>
+                                        <c:if test="${not empty bizOrderHeader.clientModify && bizOrderHeader.clientModify eq 'client_modify'}">
+                                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
+                                                    ${bizOrderDetail.skuName}</a>
+                                        </c:if>
+                                    </c:if>
+                                </td>
+                                <td>
+                                        ${bizOrderDetail.partNo}
+                                </td>
+                                <td>
+                                        ${bizOrderDetail.skuInfo.itemNo}
+                                </td>
+                                <td>
+                                        ${bizOrderDetail.vendor.name}
+                                </td>
+                                <td>
+                                        ${bizOrderDetail.primary.mobile}
+                                </td>
+                                <td>
+                                        ${bizOrderDetail.unitPrice}
+                                </td>
+                                <td>
+                                        ${bizOrderDetail.ordQty}
+                                </td>
+                                <td>
+                                    <c:if test="${bizOrderDetail.unitPrice !=null && bizOrderDetail.ordQty !=null}">
+                                        <fmt:formatNumber type="number" value=" ${bizOrderDetail.unitPrice * bizOrderDetail.ordQty}" pattern="0.00"/>
+                                    </c:if>
+                                </td>
+                                <td>
+                                        ${bizOrderDetail.sentQty}
+                                </td>
+                                <td>
+                                    <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                </td>
                             </tr>
                             <c:if test="${state.last}">
                                 <c:set var="aa" value="${state.index}" scope="page"/>
                             </c:if>
 
                             <tr>
-                                <td colspan="10">
+                                <td colspan="11">
                                     <table id="schedulingForDetail_${poDetail.id}" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
                                         <tr>
                                             <td>
@@ -2530,7 +2518,7 @@
                     </c:if>
 
                 <tr>
-                    <td colspan="10">
+                    <td colspan="11">
                         <div>
                             <label>备注：</label>
                             <textarea id="schRemarkSku" maxlength="200" class="input-xlarge " >${bizPoHeader.bizSchedulingPlan.remark}</textarea>
