@@ -311,7 +311,7 @@
 					                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
 					                    success:function (data) {
 					                    	var dataVal=JSON.parse(data)
-					                        if (data == "serviceCharge") {
+					                        if (dataVal.data.resultValue == "serviceCharge") {
 					                            mui.toast("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
 					                        } else if (dataVal.data.resultValue == "orderLoss") {
 					                            mui.toast("优惠后订单金额不能低于结算价，请修改调整金额");
@@ -386,6 +386,7 @@
                     localOriginType = r2[i].value;
                 }
             }
+            console.log(localOriginType)
 			$.ajax({
 				type: "POST",
 				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
