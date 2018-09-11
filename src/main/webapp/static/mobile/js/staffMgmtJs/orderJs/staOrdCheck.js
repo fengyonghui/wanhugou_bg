@@ -16,6 +16,7 @@
 			var _this = this;
 			_this.btnshow()
 			_this.getData()
+			_this.changePrice();
 		},
 		btnshow: function() {
 			var _this = this;
@@ -91,8 +92,6 @@
 						$('#cityId').val(item.bizLocation.city.id); 
 						$('#regionId').val(item.bizLocation.region.id); 
 					}
-					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
-					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
 					//发票状态
 					var invStatusTxt = '';
 					$.ajax({
@@ -138,10 +137,12 @@
 					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp);
 					$('#staFreight').val(item.freight.toFixed(2));
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
 					$('#staShouldPay').val(shouldPay.toFixed(2));
-					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
-					$('#staPoLastDa').val(item.receiveTotal.toFixed(2));
-					$('#staServerPrice').val((item.totalExp + item.serviceFee).toFixed(2));
+					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');
+					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
+					$('#staPoLastDaPerent').val(poLastDa);
+					$('#staServerPrice').val((item.totalExp + item.serviceFee+item.freight).toFixed(2));
 					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));
 					$('#staAddprice').val(item.serviceFee.toFixed(2));
 					$('#staInvoice').val(invStatusTxt);
@@ -154,7 +155,7 @@
 					_this.statusListHtml(res.data);
 					_this.commodityHtml(res.data);
 					_this.comfirDialig(res.data);
-					_this.changePrice();
+					
                 }
             });
 		},
@@ -328,6 +329,7 @@
 					                    	            var flagVal=JSON.parse(flag)
 					                                    if(flagVal.data.flag=="ok"){
 					                                        mui.toast("修改成功！");
+					                                       _this.getData();
 					                                    }else{
 					                                        mui.toast(" 修改失败 ");
 					                                    }
@@ -346,7 +348,7 @@
 									return false;
 								}
 							}else {
-								alert("价格不能为空！");
+								mui.toast("价格不能为空！");
 								return false;
 							}
 						}
