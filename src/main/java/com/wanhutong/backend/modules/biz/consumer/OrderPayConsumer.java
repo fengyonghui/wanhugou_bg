@@ -33,7 +33,7 @@ public class OrderPayConsumer implements Runnable {
     private static MqttClient getClient() {
         // 1.设置mqtt连接属性
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setCleanSession(true);
+        options.setCleanSession(false);
         MqttClient client = null;
         try {
             // 2.实例化mqtt客户端
@@ -54,7 +54,7 @@ public class OrderPayConsumer implements Runnable {
     @Override
     public void run() {
         try {
-            CLIENT.subscribe(TOPIC, 2);
+            CLIENT.subscribe(TOPIC);
         } catch (Exception e) {
             LOGGER.error("OrderPayConsumer client subscribe error", e);
         }
