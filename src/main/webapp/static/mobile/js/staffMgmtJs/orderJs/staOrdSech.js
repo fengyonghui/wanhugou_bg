@@ -14,7 +14,7 @@
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
-			this.ajaxGoodName();
+//			this.ajaxGoodName();
 		},
 		pageInit: function() {
 			var _this = this;
@@ -24,13 +24,13 @@
 		getData: function() {
 			var _this = this;
 			$('#staOrdSechBtn').on('tap', function() {
-				var optionsBusiness = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
+//				var optionsBusiness = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
 				var ordNumVal = $("#staOrderNum").val(); 
                 var reqNumVal = $("#staOrdPurchasing").val(); 
                 var OrdMobileVal = $('#staOrdMobile').val(); 
                 var secStyleVal = $('#staOrdNumbers').val();
                 var orderStatusVal = $('#input_div_orderStatus').val();
-                var checkStatusVal = $('#input_div_checkStatus').val();
+//              var checkStatusVal = $('#input_div_checkStatus').val();
                 var newinputVal = $('.newinput').val();
                 if(ordNumVal == null||ordNumVal == undefined){
 					ordNumVal == "";
@@ -47,13 +47,13 @@
                 if(orderStatusVal == null||orderStatusVal == undefined) {
                 	orderStatusVal == "";
                 }
-                if(checkStatusVal == null||checkStatusVal == undefined) {
-                	checkStatusVal == "";
-                }
+//              if(checkStatusVal == null||checkStatusVal == undefined) {
+//              	checkStatusVal == "";
+//              }
                 if(newinputVal == null||newinputVal == undefined) {
                 	newinputVal == "";
                 }
-                if(ordNumVal == ""&&reqNumVal == ""&&OrdMobileVal == ""&&secStyleVal == ""&&orderStatusVal == ""&&checkStatusVal == ""&&newinputVal == ""&&_this.includeTestData == false){
+                if(ordNumVal == ""&&reqNumVal == ""&&OrdMobileVal == ""&&secStyleVal == ""&&orderStatusVal == ""&&newinputVal == ""&&_this.includeTestData == false){
                 	 mui.toast("请输入查询条件！");
                 	 return;
                 }
@@ -73,7 +73,7 @@
 			var staListSehId = _this.userInfo.staListId;
 			_this.selectOpen = false
 			var optionsClass = $("#input_div_orderStatus option").eq($("#input_div_orderStatus").attr("selectedIndex"));
-			var optionsBusiness = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
+//			var optionsBusiness = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
 			GHUTILS.OPENPAGE({
 				url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
 				extras: {
@@ -83,7 +83,7 @@
 					OrdMobile: $('#staOrdMobile').val(),
 					OrdNumbers: $('#staOrdNumbers').val(),
 					orderStatus: optionsClass.val(),
-					checkStatus: optionsBusiness.val(),
+//					checkStatus: optionsBusiness.val(),
 					newinput: $('.hasoid').attr('id'),
 					includeTestData: _this.includeTestData,
 					flagTxt:$('#flag').val(),
@@ -187,28 +187,28 @@
 					_this.getData();
 				}
 			});
-		},
+		}
 		//审核状态
-		ajaxGoodName: function() {
-			var _this = this;
-			var optHtml ='<option value="">全部</option>';
-			$('#input_div_checkStatus').html(optHtml)
-			var htmlClass = '';
-			$.ajax({
-				type: 'GET',
-				url: '/a/biz/order/bizOrderHeader/listData4mobile',
-				data: {flag:'check_pending',consultantId:_this.userInfo.staListId},
-				dataType: 'json',
-				success: function(res) {
-					$.each(res.data.originConfigMap, function(i, item) {
-//						console.log(item)
-						htmlClass += '<option class="soption" value="' + item + '">' + item + '</option>'
-					});
-					$('#input_div_checkStatus').append(htmlClass);
-					_this.getData();
-				}
-			});
-		},
+//		ajaxGoodName: function() {
+//			var _this = this;
+//			var optHtml ='<option value="">全部</option>';
+////			$('#input_div_checkStatus').html(optHtml)
+//			var htmlClass = '';
+//			$.ajax({
+//				type: 'GET',
+//				url: '/a/biz/order/bizOrderHeader/listData4mobile',
+//				data: {flag:'check_pending',consultantId:_this.userInfo.staListId},
+//				dataType: 'json',
+//				success: function(res) {
+//					$.each(res.data.originConfigMap, function(i, item) {
+////						console.log(item)
+//						htmlClass += '<option class="soption" value="' + item + '">' + item + '</option>'
+//					});
+////					$('#input_div_checkStatus').append(htmlClass);
+//					_this.getData();
+//				}
+//			});
+//		},
 	}
 	$(function() {
 		var ac = new ACCOUNT();
