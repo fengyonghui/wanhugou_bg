@@ -66,6 +66,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -201,7 +202,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         Set<Integer> poIdSet = this.findPrewPoHeader(bizPoHeader);
         if (poIdSet.size() == 1) {
-            return Pair.of(Boolean.TRUE, "操作成功");
+            List<Integer> poIdList = new ArrayList<>(poIdSet);
+            String poId = String.valueOf(poIdList.get(0));
+            return Pair.of(Boolean.TRUE, poId);
         }
         int deOfifceId = 0;
         if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null) {
@@ -224,7 +227,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         autoSavePaymentOrder(bizPoHeader.getId());
 
-        return Pair.of(Boolean.TRUE, "操作成功");
+        String poId = String.valueOf(bizPoHeader.getId());
+
+        return Pair.of(Boolean.TRUE, poId);
     }
 
 

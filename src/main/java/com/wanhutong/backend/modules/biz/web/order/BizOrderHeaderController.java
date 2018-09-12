@@ -2789,12 +2789,24 @@ public class BizOrderHeaderController extends BaseController {
         nextProcessEntity.setCurrent(1);
         commonProcessService.save(nextProcessEntity);
 
+        Boolean poFlag = false;
+        String poId = "";
         if (originConfig.getGenPoProcessId().contains(Integer.valueOf(nextProcessEntity.getType()))) {
             Pair<Boolean, String> booleanStringPair = bizPoHeaderService.autoGenPO(id);
+            if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
+                poFlag = true;
+                poId = booleanStringPair.getRight();
+            }
             LOGGER.warn("auto gen po[{}][{}]", booleanStringPair.getLeft(), booleanStringPair.getRight());
         }
 
-        return Pair.of(Boolean.TRUE, "操作成功!");
+        Pair<Boolean, String> audit = null;
+        if (poFlag) {
+            audit = Pair.of(Boolean.TRUE, "采购单生成," + poId);
+        } else {
+            audit = Pair.of(Boolean.TRUE, "操作成功");
+        }
+        return audit;
     }
 
 }
