@@ -2,11 +2,12 @@ package com.wanhutong.backend.modules.biz.consumer;
 
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.ServiceHelper;
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.InetAddress;
 
 public class OrderPayConsumer implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderPayConsumer.class);
@@ -36,7 +37,9 @@ public class OrderPayConsumer implements Runnable {
         MqttClient client = null;
         try {
             // 2.实例化mqtt客户端
-            client = new MqttClient(HOST, CLIENT_ID);
+            InetAddress addr = InetAddress.getLocalHost();
+            String hostName = addr.getHostName();
+            client = new MqttClient(HOST, CLIENT_ID + hostName);
             // 3.连接
             client.connect(options);
             OrderPayCallback orderPayCallback = ServiceHelper.getService("orderPayCallback");
