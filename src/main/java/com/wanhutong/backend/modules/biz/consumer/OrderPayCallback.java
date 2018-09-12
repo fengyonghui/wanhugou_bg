@@ -3,6 +3,7 @@ package com.wanhutong.backend.modules.biz.consumer;
 import com.alibaba.fastjson.JSONObject;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.ServiceHelper;
+import com.wanhutong.backend.modules.biz.entity.order.OrderPayConsumerEntity;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderPayService;
 import org.apache.commons.lang3.StringUtils;
@@ -47,9 +48,9 @@ public class OrderPayCallback implements MqttCallback {
         String messageDetail = new String(message.getPayload());
         LOGGER.info("OrderPayCallback get message : [{}]",messageDetail);
         try {
-            JSONObject jsonObject = JsonUtil.parseJson(messageDetail);
-            String orderNum = jsonObject.getString("orderNum");
-            String orderType = jsonObject.getString("orderType");
+            OrderPayConsumerEntity entity = JsonUtil.parse(messageDetail, OrderPayConsumerEntity.class);
+            String orderNum = entity.getContent().getOrderNum();
+            String orderType = entity.getContent().getOrderType();
             Pair<Boolean, String> result = bizOrderHeaderService.orderPayHandler(orderNum, orderType);
             if (result != null && result.getLeft()) {
                 LOGGER.warn("OrderPayCallback orderPayHandler SUCCESS : [{}]", result.getRight());

@@ -49,7 +49,6 @@ public class OrderPayConsumer implements Runnable {
     public void run() {
         try {
             CLIENT.subscribe(TOPIC, 2);
-
         } catch (Exception e) {
             LOGGER.error("OrderPayConsumer client subscribe error", e);
         }
