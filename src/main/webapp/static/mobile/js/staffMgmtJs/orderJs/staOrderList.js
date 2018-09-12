@@ -373,12 +373,13 @@
 		seachFunc:function(){
 			var _this = this;
 			var staffHtmlList = '';
-			var nameTxt = '';
-			if(_this.userInfo.checkStatus) {
-				nameTxt = decodeURIComponent(_this.userInfo.checkStatus)
-			}else {
-				nameTxt = ''
-			}
+//			var nameTxt = '';
+//			if(_this.userInfo.checkStatus) {
+//				nameTxt = decodeURIComponent(_this.userInfo.checkStatus)
+//			}else {
+//				nameTxt = ''
+//			}
+			var nameTxts = '';
 			if(_this.userInfo.Purchasing) {
 				nameTxts = decodeURIComponent(_this.userInfo.Purchasing)
 			}else {
@@ -394,7 +395,7 @@
                     'customer.phone': _this.userInfo.OrdMobile,
                     'itemNo': _this.userInfo.OrdNumbers,
                     'bizStatus': _this.userInfo.orderStatus,
-                    'selectAuditStatus': nameTxt, //originConfigMap
+//                  'selectAuditStatus': nameTxt, //originConfigMap
                     'customer.id':_this.userInfo.newinput,
                     consultantId: _this.userInfo.staListSehId,
 					includeTestData: _this.userInfo.includeTestData,
