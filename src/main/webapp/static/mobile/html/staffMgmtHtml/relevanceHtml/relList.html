@@ -7,9 +7,10 @@
 		<meta name="x5-fullscreen" content="true">
 		<!--<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
-		<META HTTP-EQUIV="pragma" CONTENT="no-cache">
-		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
-		<META HTTP-EQUIV="expires" CONTENT="0">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
 		<title>经销店列表</title>
 		<link href="../../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../../css/app.css" rel="stylesheet" />
@@ -46,6 +47,10 @@
 		<script src="../../../js/component/mui.min.js"></script>	
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>
-		<script src="../../../js/staffMgmtJs/relevanceJs/relList.js"></script>
+		<script>
+			var now = new Date().getTime();			
+            document.write("<s"+"cript type='text/javascript' src='../../../js/staffMgmtJs/relevanceJs/relList.js?v="+ now +"'></scr"+"ipt>");
+            document.write('<link rel="stylesheet" href="../../../css/app.css?time='+new Date().getTime()+'">');             
+		</script>
 	</body>
 </html>

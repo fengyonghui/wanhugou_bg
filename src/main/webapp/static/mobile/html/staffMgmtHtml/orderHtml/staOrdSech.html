@@ -3,9 +3,10 @@
 	<head>
 		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<META HTTP-EQUIV="pragma" CONTENT="no-cache">
-		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
-		<META HTTP-EQUIV="expires" CONTENT="0">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
 		<meta name="full-screen" content="yes">
 		<meta name="x5-fullscreen" content="true">
 		<!--<meta charset="utf-8">
@@ -94,6 +95,10 @@
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/mui.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>
-		<script src="../../../js/staffMgmtJs/orderJs/staOrdSech.js"></script>
+		<script>
+			var now = new Date().getTime();			
+            document.write("<s"+"cript type='text/javascript' src='../../../js/staffMgmtJs/orderJs/staOrdSech.js?v="+ now +"'></scr"+"ipt>");
+            document.write('<link rel="stylesheet" href="../../../css/app.css?time='+new Date().getTime()+'">');             
+		</script>
 	</body>
 </html>

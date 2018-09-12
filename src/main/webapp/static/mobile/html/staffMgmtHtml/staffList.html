@@ -5,11 +5,12 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<meta name="full-screen" content="yes">
 		<meta name="x5-fullscreen" content="true">
-		<META HTTP-EQUIV="pragma" CONTENT="no-cache">
-		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
-		<META HTTP-EQUIV="expires" CONTENT="0">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
 		<title>客户专员管理</title>
-		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/mui.min.css?time=20180912.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
     	<style type="text/css">
  			#refreshContainer{touch-action: none;}  
@@ -27,10 +28,6 @@
 				<span class="mui-icon mui-icon-home"></span>
 				<span class="mui-tab-label">返回首页</span>
 			</a>
-			<a class="mui-tab-item app_cf staHomePage">
-				<span class="mui-icon mui-icon-home"></span>
-				<span class="mui-tab-label">返回首页</span>
-			</a>
 		</nav>
 		<div class="app_content mui-content mui-scroll-wrapper" id="refreshContainer">
 			<div class="mui-scroll">
@@ -43,6 +40,10 @@
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/staffMgmtJs/staffList.js"></script>
+		<script>
+			var now = new Date().getTime();			
+            document.write("<s"+"cript type='text/javascript' src='../../js/staffMgmtJs/staffList.js?v="+ now +"'></scr"+"ipt>");
+            document.write('<link rel="stylesheet" href="../../css/app.css?time='+new Date().getTime()+'">');             
+		</script>
 	</body>
 </html>
