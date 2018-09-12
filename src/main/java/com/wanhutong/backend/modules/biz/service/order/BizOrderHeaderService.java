@@ -49,6 +49,7 @@ import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -875,5 +876,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public int updateBizStatus(Integer id, Integer status) {
         return dao.updateBizStatus(id, status,UserUtils.getUser(),new Date());
+    }
+
+    /**
+     * 根据商品id获取相应orderDetailId
+     * @param skuInfoId
+     * @return
+     */
+    public Integer getOrderDetailIdBySkuInfoId(Integer skuInfoId){
+        return bizOrderHeaderDao.getOrderDetailIdBySkuInfoId(skuInfoId);
     }
 }

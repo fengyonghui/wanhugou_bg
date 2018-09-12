@@ -1277,6 +1277,78 @@ public class BizPoHeaderController extends BaseController {
         return boo;
     }
 
+    @RequestMapping(value = "batchSaveSchedulingPlan")
+    @ResponseBody
+    public boolean batchSaveSchedulingPlan(HttpServletRequest request, @RequestBody String params) throws ParseException {
+        List<BizHeaderSchedulingDto> dtoList = JsonUtil.parseArray(params, new TypeReference<List<BizHeaderSchedulingDto>>() {
+        });
+        boolean boo = false;
+        if (dtoList != null && dtoList.size() > 0) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            //通过排产类型获取排产表中objectName的值
+            Integer schedulingType = Integer.parseInt(dtoList.get(0).getSchedulingType());
+            String objectName = PO_HEADER_TABLE_NAME;
+            //按商品排产时
+            if (SCHEDULING_FOR_DETAIL.equals(schedulingType)) {
+                objectName = PO_DETAIL_TABLE_NAME;
+                Integer poHeaderId = dtoList.get(0).getId();
+                BizSchedulingPlan schedulingPlanPoh = bizSchedulingPlanService.getByObjectIdAndObjectName(poHeaderId, PO_HEADER_TABLE_NAME);
+                for (int i = 0; i < dtoList.size(); i++) {
+                    BizHeaderSchedulingDto dto = dtoList.get(i);
+                    if (i == 0) {
+                        if (schedulingPlanPoh == null) {
+                            schedulingPlanPoh = new BizSchedulingPlan();
+                        }
+                        schedulingPlanPoh.setObjectId(dto.getId());
+                        schedulingPlanPoh.setObjectName(PO_HEADER_TABLE_NAME);
+                        schedulingPlanPoh.setOriginalNum(0);
+                        schedulingPlanPoh.setRemark(dto.getRemark());
+                        schedulingPlanPoh.setPoSchType(Integer.valueOf(dto.getPoSchType()));
+                        bizSchedulingPlanService.save(schedulingPlanPoh);
+                    }
+
+                    Integer skuInfoId = dto.getObjectId();
+                    Integer detailId = bizOrderHeaderService.getOrderDetailIdBySkuInfoId(skuInfoId);
+
+                    BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(detailId, objectName);
+                    if (schedulingPlan == null) {
+                        schedulingPlan = new BizSchedulingPlan();
+                        schedulingPlan.setObjectId(detailId);
+                        schedulingPlan.setObjectName(objectName);
+                        schedulingPlan.setOriginalNum(dto.getOriginalNum());
+                        schedulingPlan.setPoSchType(Integer.valueOf(dto.getPoSchType()));
+                        bizSchedulingPlanService.save(schedulingPlan);
+                    }
+
+                    BizCompletePaln bizCompletePaln = new BizCompletePaln();
+                    bizCompletePaln.setSchedulingPlan(schedulingPlan);
+                    bizCompletePaln.setCompleteNum(dto.getSchedulingNum());
+                    bizCompletePaln.setPlanDate(sdf.parse(dto.getPlanDate()));
+                    try {
+                        //防止catch后死循环
+                        Scanner input = new Scanner(System.in);
+                        bizCompletePalnService.save(bizCompletePaln);
+                        boo = true;
+                    } catch (Exception e) {
+                        boo = false;
+                        logger.error(e.getMessage());
+                        break;
+                    }
+                    bizInvoiceService.saveDeliver(dtoList.get(0).getId());
+                }
+                //排产类型为按商品排产时，更新备货单排产类型
+                Integer detailId =  bizOrderHeaderService.getOrderDetailIdBySkuInfoId(dtoList.get(0).getObjectId());
+                BizPoDetail bizPoDetail = bizPoDetailService.get(detailId);
+                BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoDetail.getPoHeader().getId());
+                bizPoHeader.setSchedulingType(SCHEDULING_FOR_DETAIL);
+                bizPoHeaderService.updateSchedulingType(bizPoHeader);
+
+            }
+        }
+
+        return boo;
+    }
+
     @RequestMapping(value = "confirm")
     @ResponseBody
     public boolean confirm(HttpServletRequest request, @RequestBody String params, Integer poHeaderId) {

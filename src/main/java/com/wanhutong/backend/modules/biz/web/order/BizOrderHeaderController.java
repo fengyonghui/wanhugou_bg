@@ -688,6 +688,15 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
             List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+
+            List<Integer> skuInfoIdList = Lists.newArrayList();
+            List<BizOrderDetail> bizOrderDetails = bizOrderHeader.getOrderDetailList();
+            for (BizOrderDetail orderDetail : bizOrderDetails) {
+                BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
+                skuInfoIdList.add(bizSkuInfo.getId());
+            }
+            model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
+
             for (BizOrderDetail orderDetail : orderDetailList) {
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                 if (bizSkuInfo != null) {

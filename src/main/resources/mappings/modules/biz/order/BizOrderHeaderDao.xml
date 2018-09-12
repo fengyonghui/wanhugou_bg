@@ -2926,5 +2926,13 @@ FROM
 		) AS t
 	</select>
 
+	<select id="getOrderDetailIdBySkuInfoId" resultType="Integer">
+		select
+			bpd.id
+		from biz_sku_info a
+			left join biz_po_detail bpd on bpd.sku_no=a.id
+		where a.id=#{skuInfoId}
+	</select>
+
 
 </mapper>
