@@ -1,6 +1,8 @@
 package com.wanhutong.backend.modules.biz.consumer;
 
+import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.ServiceHelper;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.slf4j.Logger;
@@ -9,9 +11,10 @@ import org.slf4j.LoggerFactory;
 public class OrderPayConsumer implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderPayConsumer.class);
 
-    private static final String HOST = "tcp://192.168.1.213:1883";
+    private static final String HOST = Global.getConfig("mqtt.host", "tcp://192.168.1.213:1883");
+
     private static final String TOPIC = "EMQ_order_pay_server";
-    private static final String CLIENT_ID = "10010";
+    private static final String CLIENT_ID = "OrderPayConsumer";
     private static final MqttClient CLIENT = getClient();
 
     private static class SingletonHolder {

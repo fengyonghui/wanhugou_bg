@@ -53,8 +53,14 @@ public class OrderPayCallback implements MqttCallback {
 
         try {
             OrderPayConsumerEntity entity = JsonUtil.parse(messageDetail, OrderPayConsumerEntity.class);
-            String orderNum = entity.getContent().getOrderNum();
-            String orderType = entity.getContent().getOrderType();
+            String content = entity.getContent();
+            JSONObject jsonObject = JsonUtil.parseJson(content);
+            if (jsonObject == null) {
+                LOGGER.warn("OrderPayCallback orderPayHandler FAILED : jsonObject is null");
+                return;
+            }
+            String orderNum = jsonObject.getString("orderNum");
+            String orderType = jsonObject.getString("orderType");
             Pair<Boolean, String> result = bizOrderHeaderService.orderPayHandler(orderNum, orderType);
             if (result != null && result.getLeft()) {
                 LOGGER.warn("OrderPayCallback orderPayHandler SUCCESS : [{}]", result.getRight());
