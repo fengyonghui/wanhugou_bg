@@ -2,7 +2,6 @@ package com.wanhutong.backend.modules.biz.web.request;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -14,14 +13,11 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -169,40 +165,5 @@ public class BizPayMoneyController extends BaseController {
         }
 
         return "redirect:"+ Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
-    }
-
-
-    @RequestMapping(value = "payNotify")
-    @ResponseBody
-    public String payNotify(String orderNum, String orderType){
-        PAY_LOGGER.warn("[pay notify] orderNum:[{}] orderType[{}]", orderNum, orderType);
-
-        Pair<Boolean, String> result = orderPayHandler(orderNum, orderType);
-        if (result == null) {
-            return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, "系统内部错误!", null);
-        }
-        if (result.getLeft()) {
-            return JsonUtil.generateData(result.getRight(), null);
-        }
-        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), null);
-    }
-
-    private Pair<Boolean, String> orderPayHandler(String orderNum, String orderType) {
-        // 取订单
-
-
-        // 取当前支付比例
-
-
-        // 取当前审核状态
-
-
-        // 取审核状态payCode
-
-        // 如果有, 更新当前状态
-        // 前一状态备注:订单支付比例更新自动通过
-
-
-        return null;
     }
 }

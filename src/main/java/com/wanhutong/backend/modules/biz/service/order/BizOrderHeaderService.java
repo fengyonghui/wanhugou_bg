@@ -876,5 +876,4 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     public int updateBizStatus(Integer id, Integer status) {
         return dao.updateBizStatus(id, status,UserUtils.getUser(),new Date());
     }
-
 }

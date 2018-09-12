@@ -59,13 +59,13 @@ public class Process {
      * 支付之后的状态 20%支付
      */
     @XStreamAlias("fifthPayCode")
-    private int fifthPayCode;
+    private Integer fifthPayCode;
 
     /**
      * 支付之后的状态 100%支付
      */
     @XStreamAlias("allPayCode")
-    private int allPayCode;
+    private Integer allPayCode;
 
 
     /**
@@ -146,19 +146,19 @@ public class Process {
         this.zeroPassCode = zeroPassCode;
     }
 
-    public int getFifthPayCode() {
+    public Integer getFifthPayCode() {
         return fifthPayCode;
     }
 
-    public void setFifthPayCode(int fifthPayCode) {
+    public void setFifthPayCode(Integer fifthPayCode) {
         this.fifthPayCode = fifthPayCode;
     }
 
-    public int getAllPayCode() {
+    public Integer getAllPayCode() {
         return allPayCode;
     }
 
-    public void setAllPayCode(int allPayCode) {
+    public void setAllPayCode(Integer allPayCode) {
         this.allPayCode = allPayCode;
     }
 }
