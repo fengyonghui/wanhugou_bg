@@ -18,8 +18,6 @@ import java.util.concurrent.TimeUnit;
 public class WebContextListener extends org.springframework.web.context.ContextLoaderListener {
     protected static final Logger LOGGER = LoggerFactory.getLogger(WebContextListener.class);
 
-    public static ApplicationContext WEB_APP_CONTEXT = null;
-
     /**
      * 定时器
      */

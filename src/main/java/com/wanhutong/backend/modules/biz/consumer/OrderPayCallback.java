@@ -47,6 +47,10 @@ public class OrderPayCallback implements MqttCallback {
         // subscribe后得到的消息会执行到这里面
         String messageDetail = new String(message.getPayload());
         LOGGER.info("OrderPayCallback get message : [{}]",messageDetail);
+        if (StringUtils.isBlank(messageDetail)) {
+            return;
+        }
+
         try {
             OrderPayConsumerEntity entity = JsonUtil.parse(messageDetail, OrderPayConsumerEntity.class);
             String orderNum = entity.getContent().getOrderNum();
