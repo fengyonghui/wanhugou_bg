@@ -89,20 +89,20 @@
                 }
 			})
         /*备货单管理*/
-//          $('#menuMaget').on('click','.childMenu',function(){
-//          	var url = $(this).attr('url');
-//				var purchId = $(this).attr('purchId');
-//              if(url) {
-//              	mui.toast('子菜单不存在')
-//              }else if(purchId==229) {
-//              	GHUTILS.OPENPAGE({
-//						url: "../html/inventoryMagmetHtml/inventoryList.html",
-//						extras: {
-//								purchId:purchId,
-//						}
-//					})
-//              }
-//			})
+            $('#menuMaget').on('click','.childMenu',function(){
+            	var url = $(this).attr('url');
+				var purchId = $(this).attr('purchId');
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(purchId==229) {
+                	GHUTILS.OPENPAGE({
+						url: "../html/inventoryMagmetHtml/inventoryList.html",
+						extras: {
+								purchId:purchId,
+						}
+					})
+                }
+			})
         /*员工管理*/
             $('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');

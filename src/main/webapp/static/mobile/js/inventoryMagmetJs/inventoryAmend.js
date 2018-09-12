@@ -168,7 +168,7 @@
 	                skuInfoIds = _this.skuInfoIds_1 + _this.skuInfoIds_2;
                     reqQtys = _this.reqQtys_1 + _this.reqQtys_2;
                }
-               else{
+                else{
                	    //保存之后以及初始化反填数据申报数量的修改
                	    console.log('修改哈哈')
            	        var skuInfoId='';
