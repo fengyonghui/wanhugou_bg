@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.wanhutong.backend.modules.biz.consumer.OrderPayConsumer;
 import com.wanhutong.backend.modules.config.DynamicConfig;
 import com.wanhutong.backend.modules.sys.service.SystemService;
-import com.wanhutong.backend.modules.sys.task.KernelServiceBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -18,8 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 public class WebContextListener extends org.springframework.web.context.ContextLoaderListener {
     protected static final Logger LOGGER = LoggerFactory.getLogger(WebContextListener.class);
-
-    private static final KernelServiceBus KERNEL_SERVICE_BUS = KernelServiceBus.Builder.newBuilder().build();
 
     public static ApplicationContext WEB_APP_CONTEXT = null;
 
@@ -62,7 +59,6 @@ public class WebContextListener extends org.springframework.web.context.ContextL
     public void contextDestroyed(ServletContextEvent event) {
         LOGGER.warn("contextDestroyed");
         scheduledExecutorService.shutdown();
-        KERNEL_SERVICE_BUS.awaitStopped();
         super.contextDestroyed(event);
     }
 }
