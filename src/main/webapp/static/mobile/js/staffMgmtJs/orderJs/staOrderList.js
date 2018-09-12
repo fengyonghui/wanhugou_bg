@@ -379,6 +379,7 @@
 			}else {
 				nameTxt = ''
 			}
+			var nameTxts = '';
 			if(_this.userInfo.Purchasing) {
 				nameTxts = decodeURIComponent(_this.userInfo.Purchasing)
 			}else {
@@ -432,7 +433,7 @@
 								var staCheckBtn = '';
 	                        	var staCheckBtnTxt = '';
 				                if(_this.staOrdFlag == true) {
-				                	if(item.bizStatus < 15) {
+				                	if(item.bizStatus==0 || item.bizStatus==5 || item.bizStatus==10) {
 				                		staCheckBtn = 'waitCheckBtn'
 				                		staCheckBtnTxt = "待审核"
 				                	}

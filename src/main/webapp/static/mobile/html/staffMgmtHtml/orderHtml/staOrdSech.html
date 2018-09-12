@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<META HTTP-EQUIV="pragma" CONTENT="no-cache">
 		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
 		<META HTTP-EQUIV="expires" CONTENT="0">
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true">
+		<!--<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
 		<title>订单信息查询</title>
 		<link href="../../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../../css/app.css" rel="stylesheet" />
@@ -43,7 +47,7 @@
 						<div style="clear:both"></div>
 					</div>
 				</div>
-				<div class="mui-input-row">
+				<!--<div class="mui-input-row">
 					<label>审核状态：</label>
 					<div class="pre">
 						<select class="secStyle" name="" id="input_div_checkStatus">
@@ -52,7 +56,7 @@
 						<input class="savedata" type="hidden" value=''>
 						<div style="clear:both"></div>
 					</div>
-				</div>
+				</div>-->
 				<div class="mui-input-row">
 					<label>经销店名称：</label>
 					<div class="pre">
@@ -68,6 +72,18 @@
 				<div class="mui-input-row">
 					<label>测试数据：</label>
 					<input type="checkbox" name="" id="" value="" class="testCheckbox"/>
+				</div>
+				<div class="mui-input-row">
+					<label>待审核：</label>
+					<input type="checkbox" name="a" id="staOrdCheck" value=""/>
+				</div>
+				<div class="mui-input-row">
+					<label>审核成功：</label>
+					<input type="checkbox" name="a" id="staOrdSucess" value="" />
+				</div>
+				<div class="mui-input-row">
+					<label>审核失败：</label>
+					<input type="checkbox" name="a" id="staOrdFail" value="" />
 				</div>
 			</form>
 		</div>
