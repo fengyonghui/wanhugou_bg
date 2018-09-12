@@ -16,6 +16,7 @@
 			var _this = this;
 			_this.btnshow()
 			_this.getData()
+			_this.changePrice();
 		},
 		btnshow: function() {
 			var _this = this;
@@ -42,9 +43,12 @@
                 },
                 dataType: "json",
                 success: function(res){
+//              	console.log(res)
                 	if(res.data.bizOrderHeader.flag=='check_pending') {
                 		if(res.data.orderType == 5) {
-                			$('#orderTypebox').hide()
+                			$('#orderTypebox').hide();
+                			$('#nochecked').attr("checked","false" );
+                			$('#yes').attr("checked","checked" );
                 		}
                 	}
 					$('#firstPart').val(res.data.entity2.customer.name);
@@ -90,8 +94,6 @@
 						$('#cityId').val(item.bizLocation.city.id); 
 						$('#regionId').val(item.bizLocation.region.id); 
 					}
-					var shouldPay = item.totalDetail + item.totalExp + item.freight;
-					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
 					//发票状态
 					var invStatusTxt = '';
 					$.ajax({
@@ -131,16 +133,20 @@
 					var total = item.totalDetail+item.totalExp+item.freight
 					if(total > item.receiveTotal && item.bizStatus!=10 && item.bizStatus!=35 && item.bizStatus!=40 && item.bizStatus!=45 && item.bizStatus!=60) {
 						$('#staFinal').val("(有尾款)");
-					}
+					}					
 					$('#staPoordNum').val(item.orderNum);
 					$('#staRelNum').val(item.customer.name);
-					$('#staPototal').val(item.totalDetail);
+					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp);
-					$('#staFreight').val(item.freight);
-					$('#staShouldPay').val(shouldPay);
-					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
-					$('#staPoLastDa').val(item.receiveTotal);
-					$('#staServerPrice').val(serverPrice.toFixed(2));
+					$('#staFreight').val(item.freight.toFixed(2));
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
+					$('#staShouldPay').val(shouldPay.toFixed(2));
+					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');
+					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
+					$('#staPoLastDaPerent').val(poLastDa);
+					$('#staServerPrice').val((item.totalExp + item.serviceFee+item.freight).toFixed(2));
+					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));
+					$('#staAddprice').val(item.serviceFee.toFixed(2));
 					$('#staInvoice').val(invStatusTxt);
 					$('#staStatus').val(statusTxt);
 					$('#staConsignee').val(item.bizLocation.receiver);
@@ -151,7 +157,7 @@
 					_this.statusListHtml(res.data);
 					_this.commodityHtml(res.data);
 					_this.comfirDialig(res.data);
-					_this.changePrice();
+					
                 }
             });
 		},
@@ -203,17 +209,11 @@
 						primaryMobile = ''
 					}
 					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
-	                    '<div class="mui-row">' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+						'<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
-	                    '<label>详情行号:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
-	                    '<li class="mui-table-view-cell">' +
-	                    '<div class="mui-input-row ">' +
-	                    '<label>货架名称:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + opShelfInfo  + '" disabled></div></li></div></div>' +
+	                    '<label class="commodityName">详情行号:</label>' +
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
 	                   
                     	'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
@@ -249,7 +249,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>总 额:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice * item.ordQty + '" disabled></div></li></div></div>'+
+	                    '<input type="text" class="mui-input-clear" id="" value="' + (item.unitPrice * item.ordQty).toFixed(2) + '" disabled></div></li></div></div>'+
 					
 						'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
@@ -260,8 +260,8 @@
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
-	                    '<label>发货方:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.suplyis.name + '" disabled></div></li></div></div>'+
+	                    '<label>货架名称:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + opShelfInfo + '" disabled></div></li></div></div>'+
 						
 						'<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +   
@@ -314,7 +314,7 @@
 					                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
 					                    success:function (data) {
 					                    	var dataVal=JSON.parse(data)
-					                        if (data == "serviceCharge") {
+					                        if (dataVal.data.resultValue == "serviceCharge") {
 					                            mui.toast("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
 					                        } else if (dataVal.data.resultValue == "orderLoss") {
 					                            mui.toast("优惠后订单金额不能低于结算价，请修改调整金额");
@@ -331,6 +331,7 @@
 					                    	            var flagVal=JSON.parse(flag)
 					                                    if(flagVal.data.flag=="ok"){
 					                                        mui.toast("修改成功！");
+					                                       _this.getData();
 					                                    }else{
 					                                        mui.toast(" 修改失败 ");
 					                                    }
@@ -389,6 +390,7 @@
                     localOriginType = r2[i].value;
                 }
             }
+            console.log(localOriginType)
 			$.ajax({
 				type: "POST",
 				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
@@ -464,7 +466,7 @@
 									}
 							})
 			            },800);
-						
+//						
 					}
 				}
 			});

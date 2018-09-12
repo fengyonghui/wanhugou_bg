@@ -373,12 +373,7 @@
 				<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state &&
 				 orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 					<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_LOCAL'}">
-						<c:if test="${orderHeader.commonProcess.jointOperationLocalProcess.name != '审批完成'}">
-							${orderHeader.commonProcess.jointOperationLocalProcess.name}
-						</c:if>
-						<c:if test="${orderHeader.commonProcess.jointOperationLocalProcess.name == '审批完成'}">
-							订单支出信息审核
-						</c:if>
+						${orderHeader.commonProcess.jointOperationLocalProcess.name}
 					</c:if>
 					<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
 						<c:if test="${orderHeader.commonProcess.jointOperationOriginProcess.name != '审批完成'}">
