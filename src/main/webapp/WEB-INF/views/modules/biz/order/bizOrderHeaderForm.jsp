@@ -1078,6 +1078,27 @@
             }
         }
 
+        function addSchedulingHeaderPlan(head, id) {
+            var appendTr = "";
+            if (typeof(id) == undefined) {
+                appendTr = $("#" + head + id);
+            } else {
+                appendTr = $("#" + head);
+            }
+
+            var html = '<tr><td><div name="' + id + '"><label>完成日期' + '：' + '</label><input name="' + id + '_date' + '" type="text" maxlength="20" class="input-medium Wdate" ';
+            html += ' onclick="' + "WdatePicker({dateFmt:'" + "yyyy-MM-dd HH:mm:ss',isShowClear" + ":" + 'true});"/>' + ' &nbsp; '
+            html += ' <label>排产数量：</label> ';
+            html += ' <input name="' + id + "_value" + '" class="input-medium" type="text" maxlength="30"/>';
+            html += ' <input class="btn" type="button" value="删除" onclick="removeSchedulingHeaderPlan(this)"/></div></td></tr>'
+
+            appendTr.append(html)
+        }
+
+        function removeSchedulingHeaderPlan(btn) {
+            btn.parentElement.parentElement.remove();
+        }
+
     </script>
 </head>
 <body>
