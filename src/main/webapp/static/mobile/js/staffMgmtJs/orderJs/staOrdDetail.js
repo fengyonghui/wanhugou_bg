@@ -27,7 +27,7 @@
                 },
                 dataType: "json",
                 success: function(res){
-                	console.log(res)
+//              	console.log(res)
 					$('#firstPart').val(res.data.entity2.customer.name);
 					$('#firstPrincipal').val(res.data.custUser.name);
 					$('#firstMobile').val(res.data.custUser.mobile);
@@ -51,17 +51,19 @@
 						$('#staPoRemark').val(w.comments);
 					})
 					var item = res.data.bizOrderHeader;
-					var shouldPay = item.totalDetail + item.totalExp + item.freight;
-					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
 					$('#staPoordNum').val(item.orderNum);
 					$('#staRelNum').val(item.customer.name);
-					$('#staPototal').val(item.totalDetail);
+					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp);
-					$('#staFreight').val(item.freight);
-					$('#staShouldPay').val(shouldPay);
-					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
-					$('#staPoLastDa').val(item.receiveTotal);
-					$('#staServerPrice').val(serverPrice.toFixed(2));
+					$('#staFreight').val(item.freight.toFixed(2));
+					$('#staShouldPay').val(shouldPay.toFixed(2));
+					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');
+					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
+					$('#staPoLastDaPerent').val(poLastDa);
+					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));
+					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));
+					$('#staAddprice').val(item.serviceFee.toFixed(2));
 					$('#staConsignee').val(item.bizLocation.receiver);
 					$('#staMobile').val(item.bizLocation.phone);
 					$('#staShippAddress').val(item.bizLocation.pcrName);
@@ -127,7 +129,7 @@
 			if(statusLen > 0) {
 				var pHtmlList = '';
 				$.each(data.statusList, function(i, item) {
-					console.log(item)
+//					console.log(item)
 					var step = i + 1;
 					pHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
@@ -155,7 +157,6 @@
 				var CheckHtmlList ='';
 				$.each(data.auditList, function(i, item) {
 					var ProcessName = '';
-					console.log(item)
 					var step = i + 1;
 					var current = item.current;
 					if(current !== 1) {
@@ -172,7 +173,7 @@
 							if(data.entity2.payProportion == 1) {
 								ProcessName = item.doOrderHeaderProcessFifth.name
 							}
-							if(entity2.payProportion == 2) {
+							if(data.entity2.payProportion == 2) {
 								ProcessName = item.doOrderHeaderProcessAll.name
 							}
 						}
@@ -224,12 +225,24 @@
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-					console.log(item)
+//					console.log(data)
 					var opShelfInfo = '';
 					if(item.shelfInfo.opShelfInfo) {
 						opShelfInfo = item.shelfInfo.opShelfInfo.name
 					}else {
 						opShelfInfo = ''
+					}
+					var primaryMobile = '';
+					if(item.primary.mobile) {
+						primaryMobile = item.primary.mobile
+					}else {
+						primaryMobile = ''
+					}
+					var suplyisName = '';
+					if(data.bizOrderHeader.bizStatus>=15 && data.bizOrderHeader.bizStatus!=45) {
+						suplyisName = item.suplyis.name
+					}else {
+						suplyisName = ''
 					}
 					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
 	                    
@@ -262,7 +275,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>供应商电话:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.primary.mobile + '" disabled></div></li></div>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + primaryMobile + '" disabled></div></li></div>' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
@@ -279,7 +292,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>总 额:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice * item.ordQty + '" disabled></div></li></div></div>'+
+	                    '<input type="text" class="mui-input-clear" id="" value="' + (item.unitPrice * item.ordQty).toFixed(2) + '" disabled></div></li></div></div>'+
 					
 						'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
@@ -291,7 +304,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>发货方:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.suplyis.name + '" disabled></div></li></div></div>'+
+	                    '<input type="text" class="mui-input-clear" id="" value="' + suplyisName + '" disabled></div></li></div></div>'+
 						
 						'<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +   

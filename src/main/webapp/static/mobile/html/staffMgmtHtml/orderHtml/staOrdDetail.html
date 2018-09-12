@@ -3,6 +3,9 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+		<META HTTP-EQUIV="expires" CONTENT="0">
 		<title>订单信息详情</title>
 		<link href="../../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../../css/app.css" rel="stylesheet" />
@@ -30,6 +33,10 @@
 				<input type="text" class="mui-input-clear" id="staAdjustmentMoney" disabled>
 			</div>
 			<div class="mui-input-row">
+				<label>增值服务费：</label>
+				<input type="text" class="mui-input-clear" id="staAddprice" disabled>
+			</div>
+			<div class="mui-input-row">
 				<label>运费：</label>
 				<input type="text" class="mui-input-clear" id="staFreight" disabled>
 			</div>
@@ -39,11 +46,16 @@
 			</div>
 			<div class="mui-input-row">
 				<label>已付金额：</label>
-				<input type="text" class="mui-input-clear" id="staPoLastDa" disabled>
+				<input type="text" class="mui-input-clear doubleInput" id="staPoLastDa" disabled>
+				<input type="text" class="mui-input-clear doubleInput" id="staPoLastDaPerent" style="color: #088A29;"disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>服务费：</label>
 				<input type="text" class="mui-input-clear" id="staServerPrice" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>佣金：</label>
+				<input type="text" id="staCommission" class="mui-input-clear" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>发票状态：</label>
@@ -112,7 +124,7 @@
 					
 				</ul>
 			</div>
-			<div class="mui-input-row app_bline">
+			<!--<div class="mui-input-row app_bline">
 				<div class="labelLf">付款约定：</div>
 				<div class="mui-input-row">
 					<label>付款时间：</label>
@@ -122,7 +134,7 @@
 					<label>金额：</label>
 					<input type="text" class="mui-input-clear" id="staPayMoney" disabled>
 				</div>
-			</div>
+			</div>-->
 			<div class="app_cred3">
 				<div class="mui-row app_bline">
 					<div class="mui-input-row">

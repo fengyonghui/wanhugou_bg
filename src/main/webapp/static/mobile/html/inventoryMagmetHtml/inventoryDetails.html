@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -8,11 +7,7 @@
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
 		<style type="text/css">
-			.mui-content div.content_part li {padding: 0;list-style: none;}
-			.mui-content div.ctn_li_h li {height: 30px;}
-			.commoditys {font-size: 13px;}
-			.commoditys div.mui-input-row>input {padding: 0;font-size: 13px;}
-			.commoditys div.mui-input-row>label {padding: 0;}
+			.mui-input-group .mui-input-row:after {left: 0px;}
 		</style>
 	</head>
 	<body>
@@ -25,6 +20,17 @@
 				<label>备货单编号：</label>
 				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
 			</div>
+			<div class="mui-input-row" id="orderTypebox">
+				<label>备货方：</label>
+		    	<div id="changeTxt" class="labelri">
+			        <input id="fromType1" type="radio" name="fromType" value="1" checked  disabled="disabled" class="inputRadio"/>
+			                采购中心备货
+		        </div>	
+		        <div id="changeTxt" class="labelri">
+		        	<input id="fromType2" type="radio" name="fromType" value="2"  disabled="disabled" class="inputRadio"/>
+		        	厂商备货
+	        	</div>
+		    </div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
 				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
@@ -42,14 +48,20 @@
 				<input type="text" class="mui-input-clear" id="inMarginLevel" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>收货时间：</label>
-				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
+				<label>已支付保证金：</label>
+				<input type="text" class="mui-input-clear" id="inMoneyPay" disabled>
 			</div>
 			<div class="mui-input-row">
+				<label>期望收货时间：</label>
+				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
+			</div>
+			<div class="mui-input-row inComdty inDetailComdty">
 				<div class="labelLf">备货商品：</div>
-				<ul id="commodityMenu" class="mui-table-view">
-					
-				</ul>
+				<ul id="commodityMenu" class="mui-table-view"></ul>									
+			</div>
+			<div class="mui-input-row">
+				<div class="labelLf">支付列表：</div>
+				<ul id="inPaylist" class="mui-table-view"></ul>
 			</div>
 			<div class="mui-input-row">
 				<label>备注：</label>
@@ -59,6 +71,35 @@
 				<label>业务状态：</label>
 				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
 			</div>
+			<div class="mui-input-row">
+				<label>排产状态：</label>
+				<input type="text" id="inSchedulstatus" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>排产类型：</label>
+				<input type="text" id="inSchedultype" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row inComdty inDetailComdty" id="stockGoods">
+				<div class="labelLf">采购商品：</div>
+				<ul id="purchaseMenu" class="mui-table-view">
+					
+				</ul>
+			</div>
+			<div class="mui-input-row inComdty" id="schedulingPlan_forHeader">
+				<div class="labelLf">按订单排产：</div>
+				<div class="">
+					<label style="width:30%;float:left;font-size: 14px;">排产记录：</label>
+					<ul id="schedulingHeader" class="mui-table-view" style="width:70%;float:left"></ul>											
+				</div>
+				<div class="">
+					<label style="width:30%;float:left;font-size: 14px;">排产备注：</label>
+				    <div id="schedulingHeaderRemark" class="mui-table-view" style="width:70%;float:left"></div>									
+				</div>				
+			</div>
+			<div class="mui-input-row inComdty" id="prodInfo2Schedu">
+				<div class="labelLf">按商品排产：</div>
+				<ul id="purchaseMenu" class="mui-table-view"></ul>				
+			</div>
 			<!--审批流程块 有的话显示-->
 			<div class="mui-input-row">
 				<div class="labelLf">状态流程：</div>
@@ -66,14 +107,17 @@
 					
 				</ul>
 			</div>
-			
+			<div class="mui-input-row">
+				<div class="labelLf">审批流程：</div>
+				<ul class="flowPath" id="inapprovalAddMenu">
+					
+				</ul>
+			</div>
 		</div>
 		<div class="clear"></div>
-
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
 		<script src="../../js/inventoryMagmetJs/inventoryDetails.js"></script>
 	</body>
-
 </html>
