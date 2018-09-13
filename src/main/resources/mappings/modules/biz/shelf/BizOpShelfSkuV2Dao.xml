@@ -99,6 +99,12 @@
 				<if test="dbName == 'mssql'">'%'+#{productInfo.vendorName}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{productInfo.vendorName},'%')</if>
 			</if>
+			<if test="productInfo != null and productInfo.brandName != null and productInfo.brandName != '' ">
+				AND bpi.brand_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.brandName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.brandName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.brandName},'%')</if>
+			</if>
 			<if test="productInfo != null and productInfo.id != null and productInfo.id != 0 ">
 				AND a.prod_id = #{productInfo.id}
 			</if>
