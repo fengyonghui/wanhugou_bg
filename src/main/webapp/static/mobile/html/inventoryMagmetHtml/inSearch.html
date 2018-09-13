@@ -22,6 +22,14 @@
 					<label>供应商：</label>
 					<input type="text" class="mui-input-clear inReqNum" placeholder="请输入供应商">
 				</div>
+				<div class="mui-input-row" id="orderTypebox">
+					<label>备货方：</label>
+					<select id="inputRadio">
+						<option value="">请选择</option>
+						<option value="1" id="fromType1">本地备货</option>
+						<option value="2" id="fromType2">供应商备货</option>
+					</select>
+		    </div>
 				<div class="mui-input-row">
 					<label>采购中心：</label>
 					<div class="pre">
@@ -66,7 +74,7 @@
 				</div>
 				<div class="mui-input-row">
 					<label>测试数据：</label>
-					<input type="checkbox" name="" id="" value="" class="testCheckbox"/>
+					<input type="checkbox" name="" id="testCheckbox" value="" class="testCheckbox"/>
 				</div>
 			</form>
 		</div>

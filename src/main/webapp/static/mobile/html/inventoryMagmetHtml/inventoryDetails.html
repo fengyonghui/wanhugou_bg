@@ -36,6 +36,22 @@
 				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
 			</div>
 			<div class="mui-input-row">
+				<label>供应商：</label>
+				<input type="text" class="mui-input-clear" id="insupplier" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商卡号：</label>
+				<input type="text" class="mui-input-clear" id="insupplierNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商收款人：</label>
+				<input type="text" class="mui-input-clear" id="insupplierMoney" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商开户行：</label>
+				<input type="text" class="mui-input-clear" id="insupplierBank" disabled>
+			</div>
+			<div class="mui-input-row">
 				<label>应付金额：</label>
 				<input type="text" class="mui-input-clear" id="inPototal" disabled>
 			</div>
@@ -65,7 +81,7 @@
 			</div>
 			<div class="mui-input-row">
 				<label>备注：</label>
-				<textarea id="inPoRemark" name="" rows="" cols="" disabled style="border:1px solid #ccc;border-radius: 5px;"></textarea>
+				<textarea id="inPoRemark" name="" rows="" cols="" disabled style="border:1px solid #ccc;border-radius: 5px;margin:5px 5px 5px -5px;"></textarea>
 			</div>
 			<div class="mui-input-row">
 				<label>业务状态：</label>
@@ -116,6 +132,7 @@
 			</div>
 		</div>
 		<div class="clear"></div>
+		<input type="hidden" id="supplierId"/>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>

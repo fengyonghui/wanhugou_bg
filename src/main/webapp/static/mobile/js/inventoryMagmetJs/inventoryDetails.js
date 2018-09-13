@@ -8,14 +8,12 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
-			this.getData();//获取数据
-			
+			this.getData();//获取数据			
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
-
 		},
 		getData: function() {
 			var _this = this;
@@ -26,6 +24,17 @@
                 dataType: "json",
                 success: function(res){
                 	console.log(res)
+                	//调取供应商信息
+                	if(res.data.bizRequestHeader.bizVendInfo){
+                		var officeId = res.data.bizRequestHeader.bizVendInfo.office.id;
+                	    $('#supplierId').val(officeId);
+                	    _this.supplier($('#supplierId').val());
+                	}else{
+                		$('#insupplier').parent().hide();//供应商
+						$('#insupplierNum').parent().hide();//供应商卡号
+						$('#insupplierMoney').parent().hide();//供应商收款人
+						$('#insupplierBank').parent().hide();//供应商开户行
+                	}               	
 				    /*业务状态*/
 				    var itemStatus=res.data.bizRequestHeader.bizStatus;
 				    var bizstatusTxt = '';
@@ -60,9 +69,9 @@
 		                	})
 		                	$('#inSchedulstatus').val(SchedulstatusTxt);
 						}
-					})
-					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号
-					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);//采购中心
+					});
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号					
+					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);//采购中心					
 					$('#inPototal').val(res.data.bizRequestHeader.totalMoney.toFixed(2));//应付金额
 					$('#inMoneyReceive').val(res.data.bizRequestHeader.recvTotal.toFixed(2));//已收保证金
 					$('#inMarginLevel').val((res.data.bizRequestHeader.recvTotal*100/res.data.bizRequestHeader.totalMoney) .toFixed(2)+ '%');//保证金比例
@@ -93,6 +102,22 @@
 					}					
                 }
             });
+		},
+		//供应商信息
+		supplier:function(supplierId){						
+			$.ajax({
+                type: "GET",
+                url: "/a/biz/request/bizRequestHeaderForVendor/selectVendInfo",
+                data: {vendorId:supplierId},		                
+                dataType: "json",
+                success: function(rest){
+                	console.log(rest)
+                	$('#insupplier').val(rest.vendName);//供应商
+					$('#insupplierNum').val(rest.cardNumber);//供应商卡号
+					$('#insupplierMoney').val(rest.payee);//供应商收款人
+					$('#insupplierBank').val(rest.bankName);//供应商开户行
+				}
+			});
 		},
 		//排产信息接口
 		scheduling:function(idval){
@@ -187,7 +212,7 @@
                         $("#schedulingPlan_forSku").show();
                         var poDetailLists = res.data.bizPoHeader.poDetailList;
                         var poDetailHtmls = ""
-                        $.each(poDetailList,function(n,v){
+                        $.each(poDetailLists,function(n,v){
                         	console.log(v)
                         	poDetailHtmls +='<li class="mui-table-view-cell mui-media app_pr">'+
 								'<div class="photoParent mui-pull-left app_pa">'+
@@ -457,10 +482,6 @@
 								'<label>总库存数量：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.invenSkuOrd +'" disabled>'+
 							'</div>'+
-//							'<div class="mui-input-row">'+
-//								'<label>已收货数量：</label>'+
-//								'<input type="text" class="mui-input-clear" value="'+ item.recvQty +'" disabled>'+
-//							'</div>'+
 						'</div>'+
 					'</li>'
 				});
@@ -525,7 +546,6 @@
 		}
 	}
 	$(function() {
-
 		var ac = new ACCOUNT();
 		ac.init();
 	});

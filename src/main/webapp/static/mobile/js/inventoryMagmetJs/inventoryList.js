@@ -509,6 +509,7 @@
 					pageNo: 1,
 					reqNo:_this.userInfo.reqNo,
 					name:nameTxt,
+					fromType:_this.userInfo.fromType,
 					'fromOffice.id':_this.userInfo.fromOffice,
 					bizStatus:_this.userInfo.bizStatusid,
 					'varietyInfo.id':_this.userInfo.varietyInfoid,
