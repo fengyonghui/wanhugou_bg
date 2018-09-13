@@ -1,10 +1,9 @@
 package com.wanhutong.backend.modules.biz.consumer;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wanhutong.backend.common.utils.JedisUtils;
 import com.wanhutong.backend.common.utils.JsonUtil;
-import com.wanhutong.backend.common.utils.ServiceHelper;
 import com.wanhutong.backend.modules.biz.entity.order.OrderPayConsumerEntity;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderPayService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -16,20 +15,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
 import java.util.Date;
 
 @Repository("orderPayCallback")
 public class OrderPayCallback implements MqttCallback {
 
+
+
+    private static final String REDIS_PREFIX = "ORDER_PAY_CALLBACK_";
+    private static final int REDIS_VALIDITY_TIME = 30;
+
     @Autowired
     private BizOrderPayService bizOrderHeaderService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderPayCallback.class);
-
-    public OrderPayCallback() {
-//        bizOrderHeaderService = ServiceHelper.getService("bizOrderHeaderService");
-    }
 
     @Override
     public void connectionLost(Throwable cause) {
@@ -50,7 +49,8 @@ public class OrderPayCallback implements MqttCallback {
         if (StringUtils.isBlank(messageDetail)) {
             return;
         }
-
+        String orderNum = null;
+        String orderType = null;
         try {
             OrderPayConsumerEntity entity = JsonUtil.parse(messageDetail, OrderPayConsumerEntity.class);
             String content = entity.getContent();
@@ -59,8 +59,15 @@ public class OrderPayCallback implements MqttCallback {
                 LOGGER.warn("OrderPayCallback orderPayHandler FAILED : jsonObject is null");
                 return;
             }
-            String orderNum = jsonObject.getString("orderNum");
-            String orderType = jsonObject.getString("orderType");
+            orderNum = jsonObject.getString("orderNum");
+            orderType = jsonObject.getString("orderType");
+
+            if (StringUtils.isNotBlank(JedisUtils.get(REDIS_PREFIX + orderNum))) {
+                LOGGER.warn("OrderPayCallback orderPayHandler SUCCESS : redis key is exist");
+                return;
+            }
+            JedisUtils.set(REDIS_PREFIX + orderNum, REDIS_PREFIX + orderNum, REDIS_VALIDITY_TIME);
+
             Pair<Boolean, String> result = bizOrderHeaderService.orderPayHandler(orderNum, orderType);
             if (result != null && result.getLeft()) {
                 LOGGER.warn("OrderPayCallback orderPayHandler SUCCESS : [{}]", result.getRight());
@@ -69,6 +76,8 @@ public class OrderPayCallback implements MqttCallback {
             LOGGER.warn("OrderPayCallback orderPayHandler FAILED :[{}]", result == null ? StringUtils.EMPTY : result.getRight());
         }catch (Exception e) {
             LOGGER.error("OrderPayCallback orderPayHandler", e);
+        }finally {
+            JedisUtils.del(JedisUtils.get(REDIS_PREFIX + orderNum));
         }
     }
 }
