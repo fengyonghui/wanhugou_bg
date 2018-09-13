@@ -1275,7 +1275,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public void autoSavePaymentOrder(Integer poHeaderIdid){
+    public Pair<Boolean, String> autoSavePaymentOrder(Integer poHeaderIdid){
         BizPoHeader bizPoHeader = this.get(poHeaderIdid);
         Boolean prew = false;
         BigDecimal prewPayTotal = new BigDecimal(0);
@@ -1307,7 +1307,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         String deadLine = DateUtils.getDateTime();
         Date deadlineDate = DateUtils.parseDate(deadLine);
         bizPoHeader.setPayDeadline(deadlineDate);
-        String msg = this.genPaymentOrder(bizPoHeader).getRight();
+        Pair<Boolean, String> audit = this.genPaymentOrder(bizPoHeader);
+        return audit;
     }
 
     public Byte getBizPoOrderReqByPo(BizPoHeader bizPoHeader) {

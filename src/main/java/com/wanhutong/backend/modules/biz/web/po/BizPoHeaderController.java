@@ -1308,7 +1308,7 @@ public class BizPoHeaderController extends BaseController {
                     }
 
                     Integer skuInfoId = dto.getObjectId();
-                    Integer detailId = bizOrderHeaderService.getOrderDetailIdBySkuInfoId(skuInfoId);
+                    Integer detailId = bizOrderHeaderService.getOrderDetailIdBySkuInfoId(poHeaderId,skuInfoId);
 
                     BizSchedulingPlan schedulingPlan = bizSchedulingPlanService.getByObjectIdAndObjectName(detailId, objectName);
                     if (schedulingPlan == null) {
@@ -1337,7 +1337,7 @@ public class BizPoHeaderController extends BaseController {
                     bizInvoiceService.saveDeliver(dtoList.get(0).getId());
                 }
                 //排产类型为按商品排产时，更新备货单排产类型
-                Integer detailId =  bizOrderHeaderService.getOrderDetailIdBySkuInfoId(dtoList.get(0).getObjectId());
+                Integer detailId =  bizOrderHeaderService.getOrderDetailIdBySkuInfoId(dtoList.get(0).getId(), dtoList.get(0).getObjectId());
                 BizPoDetail bizPoDetail = bizPoDetailService.get(detailId);
                 BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoDetail.getPoHeader().getId());
                 bizPoHeader.setSchedulingType(SCHEDULING_FOR_DETAIL);
@@ -1465,8 +1465,11 @@ public class BizPoHeaderController extends BaseController {
         addMessage(redirectAttributes, "保存采购订单成功");
 
         //采购单开启审核，同时自动生成付款单
-        bizPoHeaderService.autoSavePaymentOrder(poHeaderIdid);
-
-        return "ok";
+        Pair<Boolean, String> audit = bizPoHeaderService.autoSavePaymentOrder(poHeaderIdid);
+        if (audit.getLeft().equals(Boolean.TRUE)) {
+            String poId = String.valueOf(bizPoHeader.getId());
+            return JsonUtil.generateData("采购单生成," + poId, null);
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);
     }
 }

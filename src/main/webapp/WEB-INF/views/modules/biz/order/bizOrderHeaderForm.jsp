@@ -587,16 +587,6 @@
                 }
             }
 
-            // var ecpectPay = $("#ecpectPay").val();
-            // var receiveTotal = $("#receiveTotal").val();
-            // var truePayTotal = $("#truePayTotal").val();
-            //
-            // var totalPay = parseFloat(receiveTotal) + parseFloat(truePayTotal)
-            // if(totalPay > ecpectPay) {
-            //     alert("错误提示:输入支付金额太大,请重新输入");
-            //     return false;
-            // }
-
             if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                 alert("错误提示:请输入支付金额");
                 return false;
@@ -996,10 +986,7 @@
                                 batchSave("1", poId);
                             }
                         }
-
                         window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
-
-
                     }else {
                         alert(result.errmsg);
                     }
@@ -1045,9 +1032,28 @@
                 data: {"reqDetailIds":"", "orderDetailIds": orderDetailIds,"vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
                 type: 'get',
                 async: false,
-                success: function (res) {
-                    if (res == "ok") {
-
+                success: function (result) {
+                    result = JSON.parse(result);
+                    if(result.ret == true || result.ret == 'true') {
+                        var resultData = result.data;
+                        var resultDataArr = resultData.split(",");
+                        console.log(resultDataArr)
+                        console.log(resultDataArr[0])
+                        console.log(resultDataArr[1])
+                        if(resultDataArr[0] == "采购单生成") {
+                            var poId = resultDataArr[1];
+                            var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
+                            console.log(poId)
+                            console.log(schedulingType)
+                            if (schedulingType == 0) {
+                                saveComplete("0", poId);
+                            }
+                            if (schedulingType == 1) {
+                                batchSave("1", poId);
+                            }
+                        }
+                    }else {
+                        alert(result.errmsg);
                     }
                 },
                 error: function (error) {
@@ -2585,7 +2591,7 @@
             <label class="control-label">排产类型：</label>
             <div class="controls" id="schedulingPlanRadio">
                 <form:radiobutton id="deliveryStatus0" path="entity.bizPoHeader.schedulingType" checked="true" onclick="choose(this)" value="0"/>按订单排产
-                <form:radiobutton id="deliveryStatus1" path="entity.bizPoHeader.schedulingType"                onclick="choose(this)" value="1"/>按商品排产
+                <form:radiobutton id="deliveryStatus1" path="entity.bizPoHeader.schedulingType" onclick="choose(this)" value="1"/>按商品排产
             </div>
         </div>
         <div class="control-group" id="stockGoods_schedu">

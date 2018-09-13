@@ -880,10 +880,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     /**
      * 根据商品id获取相应orderDetailId
+     * @param poHeaderId
      * @param skuInfoId
      * @return
      */
-    public Integer getOrderDetailIdBySkuInfoId(Integer skuInfoId){
-        return bizOrderHeaderDao.getOrderDetailIdBySkuInfoId(skuInfoId);
+    public Integer getOrderDetailIdBySkuInfoId(Integer poHeaderId, Integer skuInfoId){
+        return bizOrderHeaderDao.getOrderDetailIdBySkuInfoId(poHeaderId, skuInfoId);
     }
 }
