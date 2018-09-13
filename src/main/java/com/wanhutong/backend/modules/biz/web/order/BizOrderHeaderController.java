@@ -856,6 +856,39 @@ public class BizOrderHeaderController extends BaseController {
                 ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap()
                 : ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap());
 
+        String createPo = "no";
+        Integer orderType = bizOrderHeader.getOrderType();
+        if (BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(orderType)){
+            if (bizOrderHeader.getCommonProcess() != null && ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getCreatePoProcessId().toString().equals(bizOrderHeader.getCommonProcess().getType())) {
+                createPo = "yes";
+            }
+        } else if (bizOrderHeader.getOrderNum().startsWith("SO") && bizOrderHeader.getCommonProcess() != null) {
+            String processType = bizOrderHeader.getCommonProcess().getType();
+            OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail() + bizOrderHeader.getFreight() + bizOrderHeader.getTotalExp() + bizOrderHeader.getServiceFee(), bizOrderHeader.getReceiveTotal());
+            switch (statusEnum) {
+                case ZERO:
+                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getZeroCreatePoProcessId()).equals(processType)){
+                        createPo = "yes";
+                    }
+                    break;
+                case FIFTH:
+                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getFifthCreatePoProcessId()).equals(processType)){
+                        createPo = "yes";
+                    }
+                    break;
+                case ALL:
+                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getAllCreatePoProcessId()).equals(processType)){
+                        createPo = "yes";
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        model.addAttribute("createPo",createPo);
+
+
+
         return "modules/biz/order/bizOrderHeaderForm";
     }
 
@@ -2680,9 +2713,9 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "auditSo")
     @ResponseBody
-    public String auditSo(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType) {
+    public String auditSo(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType, String createPo) {
         try {
-            Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType);
+            Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType, createPo);
             if (audit.getLeft()) {
                 return JsonUtil.generateData(audit.getRight(), null);
             }
@@ -2704,7 +2737,7 @@ public class BizOrderHeaderController extends BaseController {
      * @param orderType
      * @return
      */
-    private Pair<Boolean, String> doAudit(int id, int auditType, String currentType, String description, int orderType) {
+    private Pair<Boolean, String> doAudit(int id, int auditType, String currentType, String description, int orderType, String createPo) {
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectId(String.valueOf(id));
         commonProcessEntity.setObjectName(orderType == 0 ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
@@ -2800,7 +2833,9 @@ public class BizOrderHeaderController extends BaseController {
 
         Boolean poFlag = false;
         String poId = "";
-        if (originConfig.getGenPoProcessId().contains(Integer.valueOf(nextProcessEntity.getType()))) {
+        //if (originConfig.getGenPoProcessId().contains(Integer.valueOf(nextProcessEntity.getType()))) {
+        //品类主管审核是生成采购单
+        if ("yes".equals(createPo)) {
             Pair<Boolean, String> booleanStringPair = bizPoHeaderService.autoGenPO(id);
             if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
                 poFlag = true;
