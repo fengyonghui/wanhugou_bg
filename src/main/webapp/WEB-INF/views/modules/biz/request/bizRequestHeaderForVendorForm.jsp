@@ -144,6 +144,15 @@
         });
 
         $(function(){
+            var headerScheduOrdQtyArr = $("[name='Header_schedu_ordQty']");
+            var sumHeaderScheduOrdQty = 0;
+            for(i=0;i<headerScheduOrdQtyArr.length;i++){
+                var  QtyTd = headerScheduOrdQtyArr[i];
+                sumHeaderScheduOrdQty = parseInt(sumHeaderScheduOrdQty) + parseInt($(QtyTd).val());
+            }
+
+            $("#totalOrdQty").val(sumHeaderScheduOrdQty);
+
             if('${entity.str=='detail'}'){
                 var poheaderId = "${entity.bizPoHeader.id}";
                 if (poheaderId == null || poheaderId == "") {
@@ -419,8 +428,6 @@
                         if(auditType==1){
                             //自动生成采购单
                             var id = $("#id").val();
-                            var bizStatus = getCurrentBizStatus(id);
-                            <%--if ('${ReqHeaderStatusEnum.APPROVE.state}' == bizStatus) {--%>
                             if (createPo == 'yes') {
                                 getPoHeaderPara(id);
                             }
@@ -458,25 +465,6 @@
                     console.info(error);
                 }
             });
-        }
-
-        function getCurrentBizStatus(id) {
-		    var bizStatus = "";
-            $.ajax({
-                url: '${ctx}/biz/request/bizRequestHeaderForVendor/getCurrentBizStatus',
-                contentType: 'application/json',
-                data: {"id": id},
-                type: 'get',
-                dataType: 'json',
-                async: false,
-                success: function (result) {
-                    bizStatus = result;
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-            return bizStatus;
         }
 
         function getPoHeaderPara(id) {
@@ -631,11 +619,9 @@
                 $("#schedulingPlan_forHeader_schedu").show();
                 $("#schedulingPlan_forSku_schedu").hide();
             } else {
-                // $("#stockGoods_schedu").hide();
-                // $("#schedulingPlan_forHeader_schedu").hide();
-				console.log("-1-")
+                $("#stockGoods_schedu").hide();
+                $("#schedulingPlan_forHeader_schedu").hide();
                 $("#schedulingPlan_forSku_schedu").show();
-                console.log("-2-")
             }
         }
 
@@ -796,7 +782,6 @@
                             alert("第" + count + "个商品完成日期不能为空!")
                             return false;
                         }
-
                     }
 
                     if (value == "") {
@@ -849,8 +834,7 @@
                     type: 'post',
                     success: function (result) {
                         if(result == true) {
-                            //window.location.href = "${ctx}/biz/po/bizPoHeader/scheduling?id="+poid;
-                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"
                         }
                     },
                     error: function (error) {
@@ -1201,11 +1185,6 @@
 							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 								<td>${reqDetail.recvQty}</td>
 							</c:if>
-                            <%--<c:if test="${entity.str == 'audit' && entity.commonProcess.type == defaultProcessId}">--%>
-                                <%--<c:forEach items="${reqDetail.invSkuMap}" var="stockQty">--%>
-                                    <%--<td>${stockQty.value}</td>--%>
-                                <%--</c:forEach>--%>
-                            <%--</c:if>--%>
 
 							<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 								<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay' }">
@@ -1683,7 +1662,7 @@
 			<div class="control-group" id="stockGoods_schedu">
 				<label class="control-label">备货商品：</label>
 				<div class="controls">
-					<table id="contentTable" class="table table-striped table-bordered table-condensed">
+					<table style="width:60%;float:left" id="contentTable" class="table table-striped table-bordered table-condensed">
 						<thead>
 						<tr>
 							<th>产品图片</th>
@@ -1694,26 +1673,6 @@
 							<th>商品货号</th>
 							<th>结算价</th>
 							<th>申报数量</th>
-
-							<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
-								<th>仓库名称</th>
-								<th>库存数量</th>
-								<th>销售量</th>
-								<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
-									<th>商品总库存数量</th>
-								</c:if>
-							</c:if>
-							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
-								<th>已收货数量</th>
-							</c:if>
-
-							<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
-								<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay'}">
-									<th>操作</th>
-								</c:if>
-
-							</shiro:hasPermission>
-
 						</tr>
 						</thead>
 						<tbody id="prodInfo">
@@ -1735,37 +1694,8 @@
 										<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
 										<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>
 										<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>
+										<input  type='hidden' name='Header_schedu_ordQty' value='${reqDetail.reqQty}'/>
 									</td>
-
-									<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
-										<td>${reqDetail.invName}</td>
-										<td>${reqDetail.skuInvQty}</td>
-										<td>${reqDetail.sellCount}</td>
-										<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
-											<td>
-												<a href="${ctx}/biz/inventory/bizInventorySku?skuInfo.id=${reqDetail.skuInfo.id}&reqSource=request_Inv">
-														${reqDetail.invenSkuOrd}</a>
-											</td>
-										</c:if>
-									</c:if>
-
-									<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
-										<td>${reqDetail.recvQty}</td>
-									</c:if>
-										<%--<c:if test="${entity.str == 'audit' && entity.commonProcess.type == defaultProcessId}">--%>
-										<%--<c:forEach items="${reqDetail.invSkuMap}" var="stockQty">--%>
-										<%--<td>${stockQty.value}</td>--%>
-										<%--</c:forEach>--%>
-										<%--</c:if>--%>
-
-									<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
-										<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay' }">
-											<td>
-												<a href="#" onclick="delItem(${reqDetail.id})">删除</a>
-
-											</td>
-										</c:if>
-									</shiro:hasPermission>
 								</tr>
 								<c:if test="${reqStatus.last}">
 									<c:set var="aa" value="${reqStatus.index}" scope="page"/>
@@ -1776,19 +1706,20 @@
 						</c:if>
 						</tbody>
 					</table>
+				</div>
 			</div>
 
 			<div class="control-group" id="schedulingPlan_forHeader_schedu">
 				<label class="control-label">按订单排产：</label>
 				<div class="controls">
-					<table id="schedulingForHeader_${bizOrderHeader.id}" style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
+					<table id="schedulingForHeader_${entity.id}" style="width:60%;float:left" class="table table-striped table-bordered table-condensed">
 						<tr>
 							<td>
 								<label>总申报数量：</label>
-								<input id="totalOrdQty" name='reqQtys' readonly="readonly" class="input-mini" type='text'/>
+								<input id="totalOrdQty" name='reqQtys_schedu_header' readonly="readonly" class="input-mini" type='text'/>
 								&nbsp;
 								<input id="addSchedulingHeaderPlanBtn" class="btn" type="button" value="添加排产计划"
-									   onclick="addSchedulingHeaderPlan('schedulingForHeader_', ${bizOrderHeader.id})"/>
+									   onclick="addSchedulingHeaderPlan('schedulingForHeader_', ${entity.id})"/>
 								&nbsp;
 								<span id="schedulingPanAlert" style="color:red; display:none">已排产完成</span>
 							</td>
@@ -1840,26 +1771,6 @@
 							<th>商品货号</th>
 							<th>结算价</th>
 							<th>申报数量</th>
-
-							<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
-								<th>仓库名称</th>
-								<th>库存数量</th>
-								<th>销售量</th>
-								<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
-									<th>商品总库存数量</th>
-								</c:if>
-							</c:if>
-							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
-								<th>已收货数量</th>
-							</c:if>
-
-							<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
-								<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay'}">
-									<th>操作</th>
-								</c:if>
-
-							</shiro:hasPermission>
-
 						</tr>
 						</thead>
 						<tbody id="prodInfo2_schedu">
@@ -1882,36 +1793,6 @@
 										<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>
 										<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 									</td>
-
-									<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
-										<td>${reqDetail.invName}</td>
-										<td>${reqDetail.skuInvQty}</td>
-										<td>${reqDetail.sellCount}</td>
-										<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
-											<td>
-												<a href="${ctx}/biz/inventory/bizInventorySku?skuInfo.id=${reqDetail.skuInfo.id}&reqSource=request_Inv">
-														${reqDetail.invenSkuOrd}</a>
-											</td>
-										</c:if>
-									</c:if>
-
-									<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
-										<td>${reqDetail.recvQty}</td>
-									</c:if>
-										<%--<c:if test="${entity.str == 'audit' && entity.commonProcess.type == defaultProcessId}">--%>
-										<%--<c:forEach items="${reqDetail.invSkuMap}" var="stockQty">--%>
-										<%--<td>${stockQty.value}</td>--%>
-										<%--</c:forEach>--%>
-										<%--</c:if>--%>
-
-									<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
-										<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str!='createPay' && entity.str!='pay' }">
-											<td>
-												<a href="#" onclick="delItem(${reqDetail.id})">删除</a>
-
-											</td>
-										</c:if>
-									</shiro:hasPermission>
 								</tr>
 								<c:if test="${state.last}">
 									<c:set var="aa" value="${state.index}" scope="page"/>
@@ -1919,12 +1800,12 @@
 
 								<tr>
 									<td colspan="11">
-										<table id="schedulingForDetail_${bizOrderDetail.skuInfo.id}" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
+										<table id="schedulingForDetail_${reqDetail.skuInfo.id}" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
 											<tr>
 												<td>
 													<label>总申报数量：</label>
-													<input id="totalOrdQtyForSku_${bizOrderDetail.skuInfo.id}"  name='reqQtys' readonly="readonly" value="${bizOrderDetail.ordQty}" class="input-mini" type='text'/>
-													<input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('schedulingForDetail_', ${bizOrderDetail.skuInfo.id})"/>
+													<input id="totalOrdQtyForSku_${reqDetail.skuInfo.id}"  name='reqQtys_schedu_detail' readonly="readonly" value="${reqDetail.reqQty}" class="input-mini" type='text'/>
+													<input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('schedulingForDetail_', ${reqDetail.skuInfo.id})"/>
 												</td>
 											</tr>
 											<tr>
