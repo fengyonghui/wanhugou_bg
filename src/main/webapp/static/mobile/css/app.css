@@ -574,8 +574,6 @@ body{font-size: 15px;color:#3b3b3b;}
 .operation li {padding: 0;list-style: none;height: 30px;}/*操作按钮栏*/
 .mui-table-view-chevron .mui-table-view-cell {padding-right: 0px;}
 
-.app_header{height: 44px;line-height: 44px;border-bottom: 1px solid #ccc;background-color: #40ABE9;}
-.app_content {padding-bottom: 40px;background-color: #fff;}
 .app_bgcolor {background-color: #374761;box-shadow: none;}
 .app_content_bgc_login {background-color: #374761;}
 .app_content_bgc_phs {background-color: #374761;}

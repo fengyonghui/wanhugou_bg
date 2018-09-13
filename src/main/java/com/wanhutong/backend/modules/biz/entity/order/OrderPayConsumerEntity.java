@@ -2,15 +2,15 @@ package com.wanhutong.backend.modules.biz.entity.order;
 
 public class OrderPayConsumerEntity {
 
-    private Content content;
+    private String content;
 
     private String name;
 
-    public Content getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(Content content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
@@ -20,26 +20,5 @@ public class OrderPayConsumerEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public static class Content{
-        private String orderNum;
-        private String orderType;
-
-        public String getOrderNum() {
-            return orderNum;
-        }
-
-        public void setOrderNum(String orderNum) {
-            this.orderNum = orderNum;
-        }
-
-        public String getOrderType() {
-            return orderType;
-        }
-
-        public void setOrderType(String orderType) {
-            this.orderType = orderType;
-        }
     }
 }

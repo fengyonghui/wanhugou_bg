@@ -52,16 +52,16 @@
 					})
 					var item = res.data.bizOrderHeader;
 					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
-					var serverPrice = (item.totalDetail+item.totalExp+item.freight)-item.totalBuyPrice;
 					$('#staPoordNum').val(item.orderNum);
 					$('#staRelNum').val(item.customer.name);
 					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp);
 					$('#staFreight').val(item.freight.toFixed(2));
 					$('#staShouldPay').val(shouldPay.toFixed(2));
-					var poLastDa = (item.receiveTotal/(item.totalDetail+item.totalExp+item.freight))*100+'%';
-					$('#staPoLastDa').val(item.receiveTotal.toFixed(2));
-					$('#staServerPrice').val((item.totalExp + item.serviceFee).toFixed(2));
+					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');
+					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
+					$('#staPoLastDaPerent').val(poLastDa);
+					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));
 					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));
 					$('#staAddprice').val(item.serviceFee.toFixed(2));
 					$('#staConsignee').val(item.bizLocation.receiver);
@@ -292,7 +292,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>总 额:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice * item.ordQty + '" disabled></div></li></div></div>'+
+	                    '<input type="text" class="mui-input-clear" id="" value="' + (item.unitPrice * item.ordQty).toFixed(2) + '" disabled></div></li></div></div>'+
 					
 						'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +

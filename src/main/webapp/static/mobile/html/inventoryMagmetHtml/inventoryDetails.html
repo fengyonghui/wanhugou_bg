@@ -79,11 +79,26 @@
 				<label>排产类型：</label>
 				<input type="text" id="inSchedultype" class="mui-input-clear" disabled>
 			</div>
-			<div class="mui-input-row inComdty inDetailComdty">
+			<div class="mui-input-row inComdty inDetailComdty" id="stockGoods">
 				<div class="labelLf">采购商品：</div>
 				<ul id="purchaseMenu" class="mui-table-view">
 					
 				</ul>
+			</div>
+			<div class="mui-input-row inComdty" id="schedulingPlan_forHeader">
+				<div class="labelLf">按订单排产：</div>
+				<div class="">
+					<label style="width:30%;float:left;font-size: 14px;">排产记录：</label>
+					<ul id="schedulingHeader" class="mui-table-view" style="width:70%;float:left"></ul>											
+				</div>
+				<div class="">
+					<label style="width:30%;float:left;font-size: 14px;">排产备注：</label>
+				    <div id="schedulingHeaderRemark" class="mui-table-view" style="width:70%;float:left"></div>									
+				</div>				
+			</div>
+			<div class="mui-input-row inComdty" id="prodInfo2Schedu">
+				<div class="labelLf">按商品排产：</div>
+				<ul id="purchaseMenu" class="mui-table-view"></ul>				
 			</div>
 			<!--审批流程块 有的话显示-->
 			<div class="mui-input-row">

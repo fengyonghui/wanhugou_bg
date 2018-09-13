@@ -43,7 +43,10 @@ public class WebContextListener extends org.springframework.web.context.ContextL
          * 订单支付
          */
         try {
-            scheduledExecutorService.scheduleWithFixedDelay(OrderPayConsumer.getInstance(), 60, 60, TimeUnit.SECONDS);
+            String os = System.getProperty("os.name");
+            if(!os.toLowerCase().startsWith("win")){
+                scheduledExecutorService.scheduleWithFixedDelay(OrderPayConsumer.getInstance(), 60, 60, TimeUnit.SECONDS);
+            }
         } catch (Exception e) {
             LOGGER.error("OrderPayConsumer execute error", e);
         }

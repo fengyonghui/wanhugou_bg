@@ -40,6 +40,7 @@ import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -157,7 +158,8 @@ public class BizPoPaymentOrderController extends BaseController {
 				BigDecimal totalDetail = bizPoHeader.getTotalDetail() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalDetail());
 				BigDecimal totalExp = bizPoHeader.getTotalExp() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalExp());
 				BigDecimal totalDetailResult = totalDetail.add(totalExp);
-				model.addAttribute("totalDetailResult",totalDetailResult);
+				DecimalFormat df = new DecimalFormat("#0.00");
+				model.addAttribute("totalDetailResult",df.format(totalDetailResult));
 			}
 		}
 		model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);

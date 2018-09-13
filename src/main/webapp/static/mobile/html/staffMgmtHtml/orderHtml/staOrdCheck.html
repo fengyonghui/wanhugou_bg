@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
 		<title>订单审核</title>
 		<link href="../../../css/mui.min.css" rel="stylesheet" />
-		<link href="../../../css/app.css" rel="stylesheet" />
+		<link href="../../../css/app.css?time=20180912" rel="stylesheet" />
 		<style type="text/css">
 			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 4em;}
 		</style>
@@ -35,7 +41,7 @@
 			</div>
 			<div class="mui-input-row">
 				<label>增值服务费：</label>
-				<input type="text" class="mui-input-clear" id="staAddprice">
+				<input type="text" class="mui-input-clear" id="staAddprice" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>运费：</label>
@@ -47,7 +53,8 @@
 			</div>
 			<div class="mui-input-row">
 				<label>已付金额：</label>
-				<input type="text" class="mui-input-clear" id="staPoLastDa" disabled>
+				<input type="text" class="mui-input-clear doubleInput" id="staPoLastDa" disabled>
+				<input type="text" class="mui-input-clear doubleInput" id="staPoLastDaPerent" style="color: #088A29;" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>服务费：</label>
@@ -113,7 +120,7 @@
 				<label>供货方式：</label>
 		    	<div id="changeTxt" class="labelri">
 		    		本地备货
-			        <input checked type="radio" name="localOriginType" value="1" class="inputRadio"/>
+			        <input checked="checked" type="radio" name="localOriginType" value="1" class="inputRadio" id="nochecked"/>
 		        	产地直发
 		        	<input id="yes" type="radio" name="localOriginType" value="0"  class="inputRadio"/>
 	        	</div>
@@ -182,6 +189,6 @@
 		<script src="../../../js/component/mui.min.js"></script>	
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>
-		<script src="../../../js/staffMgmtJs/orderJs/staOrdCheck.js"></script>
+		<script src="../../../js/staffMgmtJs/orderJs/staOrdCheck.js?v=20180912"></script>
 	</body>
 </html>
