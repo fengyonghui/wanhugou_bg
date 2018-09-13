@@ -852,6 +852,29 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeaderForVendor/?repage";
 	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:edit")
+	@RequestMapping(value = "saveForMobile")
+	@ResponseBody
+	public Boolean saveForMobile(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes) {
+		if (!beanValidator(model, bizRequestHeader)){
+			return false;
+		}
+		if (bizRequestHeader.getId() != null) {
+			BizPoHeader bizPoHeader = new BizPoHeader();
+			bizPoHeader.setBizRequestHeader(bizRequestHeader);
+			List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+			if (CollectionUtils.isNotEmpty(poList)) {
+				bizPoHeaderService.updateProcessToInitAudit(poList.get(0), StringUtils.EMPTY);
+			}
+		}
+		bizRequestHeaderForVendorService.save(bizRequestHeader);
+		addMessage(redirectAttributes, "保存备货清单成功");
+		return true;
+	}
+
+
+
 	@ResponseBody
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "saveInfo")
