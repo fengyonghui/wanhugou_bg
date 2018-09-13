@@ -4,6 +4,7 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.datagood = [];
+		this.dataSupplier = [];
 		this.selectOpen = false
         this.skuInfoIds="";
         this.reqQtys="";
@@ -16,7 +17,7 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAdd01');
-			this.hrefHtml('.newinput02', '.input_div02','#hideSpanAdd02');
+			this.hrefHtmls('.newinput02', '.input_div02','#hideSpanAdd02');
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
@@ -27,7 +28,6 @@
 		},
 		getData: function() {
 			var _this = this;
-
             _this.searchSkuHtml()
             _this.removeItem()
             _this.saveDetail();
@@ -81,7 +81,7 @@
 
                 $.ajax({
                     type: "post",
-                    url: "/a/biz/request/bizRequestHeader/save4Mobile",
+                    url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
                     dataType: 'json',
                     data: {"id":"", "fromOffice.id": _this.fromOfficeId, "recvEta":inPoLastDaVal, "remark": inPoRemarkVal, "bizStatus": bizStatusVal, "skuInfoIds": _this.skuInfoIds, "reqQtys": _this.reqQtys, "reqDetailIds":_this.reqDetailIds, "LineNos":_this.LineNos},
                     success: function (resule) {
@@ -246,6 +246,7 @@
 		hrefHtml: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
 			_this.ajaxGoodList()
+			_this.ajaxSupplier()
 			_this.ajaxCheckStatus()
 
 			$(newinput).on('focus', function() {
@@ -259,8 +260,8 @@
 				}else{
 					_this.selectOpen = true
 				}
-				
 				_this.rendHtml(_this.datagood,$(this).val())
+//				_this.rendHtmls(_this.dataSupplier,$(this).val())
 			})
 			
 			$(hideSpanAdd).on('click', function() {
@@ -276,22 +277,118 @@
 				$(input_div).hide()
 				$(hideSpanAdd).hide()
 				_this.selectOpen = true
+				_this.supplier(_this.fromOfficeId)
 			})
+		},
+		hrefHtmls: function(newinput, input_div,hideSpanAdd) {
+			var _this = this;
+			_this.ajaxGoodList()
+			_this.ajaxSupplier()
+			_this.ajaxCheckStatus()
+
+			$(newinput).on('focus', function() {
+				//$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).show()
+				$(hideSpanAdd).show();
+			})
+			$(newinput).on('keyup', function() {
+				if($(this).val()==''){
+					_this.selectOpen = false
+				}else{
+					_this.selectOpen = true
+				}
+//				_this.rendHtml(_this.datagood,$(this).val())
+				_this.rendHtmls(_this.dataSupplier,$(this).val())
+				if($(this).val() == '') {
+            		$('#inSupplierNum').parent().hide();
+					$('#inSupplierName').parent().hide();
+					$('#inSupplierBank').parent().hide();
+            	}
+			})
+			
+			$(hideSpanAdd).on('click', function() {
+				$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).hide()
+				$(hideSpanAdd).hide()
+			})
+
+			$(input_div).on('click', '.soption', function() {
+				$(this).addClass('hasoid').siblings().removeClass('hasoid')
+                _this.fromOfficeId = $(this).attr("id");
+				$(newinput).val($(this).text())
+				$(input_div).hide()
+				$(hideSpanAdd).hide()
+				_this.selectOpen = true
+				_this.supplier(_this.fromOfficeId)
+			})
+		},
+		//供应商信息
+		supplier:function(supplierId){						
+			$.ajax({
+                type: "GET",
+                url: "/a/biz/request/bizRequestHeaderForVendor/selectVendInfo",
+                data: {vendorId:supplierId},		                
+                dataType: "json",
+                success: function(rest){
+                	console.log(rest)
+                	if(rest) {
+                		if(rest.cardNumber) {
+	                		$('#inSupplierNum').parent().show();
+	                		$('#inSupplierNum').val(rest.cardNumber);//供应商卡号
+	                	}else {
+	                		$('#inSupplierNum').parent().hide();
+	                	}
+	                	if(rest.payee) {
+	                		$('#inSupplierName').parent().show();
+	                		$('#inSupplierName').val(rest.payee);//收款人
+	                	}else {
+	                		$('#inSupplierName').parent().hide();
+	                	}
+	                	if(rest.bankName) {
+							$('#inSupplierBank').parent().show();
+							$('#inSupplierBank').val(rest.bankName);//开户行
+	                	}else {
+	                		$('#inSupplierBank').parent().hide();
+	                	}
+                	}else {
+                		$('#inSupplierNum').parent().hide();
+						$('#inSupplierName').parent().hide();
+						$('#inSupplierBank').parent().hide();
+                	}
+            	}
+			});
 		},
 		rendHtml: function(data, key) {
 			var _this = this;
 			var reult = [];
-			var htmlList=''
-				$.each(data, function(i, item) {
-					if(item.name.indexOf(key) > -1) {
-						reult.push(item)
+			var reults = [];
+			var htmlList='';
+			var htmlLists=''
+			$.each(data, function(i, item) {
+				if(item.name.indexOf(key) > -1) {
+					reult.push(item)
 
-					}
-				})
+				}
+			})
 			$.each(reult, function(i, item) {
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
-			$('.input_div').html(htmlList)
+			$('.input_div01').html(htmlList);
+
+		},
+		rendHtmls: function(data, key) {
+			var _this = this;
+			var reults = [];
+			var htmlLists=''
+			$.each(data, function(i, item) {
+				if(item.name.indexOf(key) > -1) {
+					reults.push(item)
+				}
+			})
+			$.each(reults, function(i, item) {
+				htmlLists += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
+			});
+			$('.input_div02').html(htmlLists);
 
 		},
 		ajaxGoodList: function() {
@@ -305,16 +402,38 @@
 				},
 				dataType: 'json',
 				success: function(res) {
-//					console.log('777');
-//					console.log(res)
+					console.log('777');
+					console.log(res)
 					_this.datagood = res
 					$.each(res, function(i, item) {
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 					});
-					$('.input_div').html(htmlList)
+					$('.input_div01').html(htmlList)
+					_this.getData()
 				}
 			});
-
+		},
+		ajaxSupplier: function() {
+			var _this = this;
+			var htmlSupplier = ''
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/office/queryTreeList',
+				data: {
+					type: 7
+				},
+				dataType: 'json',
+				success: function(res) {
+//					console.log('777');
+//					console.log(res)
+					_this.dataSupplier = res
+					$.each(res, function(i, item) {
+						htmlSupplier += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
+					});
+					$('.input_div02').html(htmlSupplier)
+					_this.getData()
+				}
+			});
 		},
 		ajaxCheckStatus: function() {
 			var _this = this;
