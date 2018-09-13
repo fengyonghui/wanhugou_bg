@@ -101,21 +101,34 @@
             var _this = this;
             $.ajax({
                 type: "GET",
-                url: "/a/biz/request/bizRequestHeader/form4Mobile",
+//              url: "/a/biz/request/bizRequestHeader/form4Mobile",
+                url: "/a/biz/request/bizRequestHeaderForVendor/form4MobileNew",
                 data: {id:_this.userInfo.reqId},
                 dataType: "json",
                 success: function(res){
-                    $('#inPoordNum').val(res.data.entity.reqNo)
-                    $('#inOrordNum').val(res.data.entity.fromOffice.name)
-                    $('#inPototal').val(res.data.entity.totalMoney)
-                    $('#inPoRemark').val(res.data.entity.remark)
+                	console.log(res)
+                	if(res.data.bizRequestHeader.bizVendInfo){
+                	var officeId = res.data.bizRequestHeader.bizVendInfo.office.id;
+                	$('#inSta').val(officeId);
+                	 _this.supplier($('#inSta').val());
+                	}else{
+                		$('#insupplier').parent().hide();//供应商
+						$('#insupplierNum').parent().hide();//供应商卡号
+						$('#insupplierMoney').parent().hide();//供应商收款人
+						$('#insupplierBank').parent().hide();//供应商开户行
+                	}
+                	
+                    $('#inPoordNum').val(res.data.bizRequestHeader.reqNo)
+                    $('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name)
+                    $('#inPototal').val(res.data.bizRequestHeader.totalMoney)
+                    $('#inPoRemark').val(res.data.bizRequestHeader.remark)
                     $('#inMoneyReceive').val()
                     $('#inMarginLevel').val()
-                    var dataValue =_this.newData(res.data.entity.recvEta)
+                    var dataValue =_this.newData(res.data.bizRequestHeader.recvEta)
                     $('#inPoLastDa').val(dataValue)
 
                     /*业务状态*/
-                    var bizstatus = res.data.entity.bizStatus;
+                    var bizstatus = res.data.bizRequestHeader.bizStatus;
                     $('#inputDivAmend  option[value="' + bizstatus + '"]').attr("selected",true)
                     _this.commodityHtml(res.data)
                     _this.statusListHtml(res.data)
@@ -125,6 +138,23 @@
                 }
             });
         },
+        //供应商信息
+		supplier:function(supplierId){						
+			$.ajax({
+                type: "GET",
+                url: "/a/biz/request/bizRequestHeaderForVendor/selectVendInfo",
+                data: {vendorId:supplierId},		                
+                dataType: "json",
+                success: function(rest){
+                	console.log(rest)
+                	$('#insupplier').val(rest.vendName);//供应商
+					$('#insupplierNum').val(rest.cardNumber);//供应商卡号
+					$('#insupplierMoney').val(rest.payee);//供应商收款人
+					$('#insupplierBank').val(rest.bankName);//供应商开户行
+				}
+			});
+		},
+		//供应商点击
         newData:function(da){
         	var _this = this;
             var now = new Date(da),
@@ -137,7 +167,7 @@
         saveDetail: function () {
             var _this = this;
             //点击保存按钮操作 保存按钮控制修改商品申报数量和备货商品的添加
-            mui('.saveDetailBtn').on('tap','#saveDetailBtn',function(){
+            $('#saveDetailBtn').on('tap',function(){
             	console.log('获取_this.skuInfoIds_2的值');
             	console.log(_this.skuInfoIds_2);
                if(_this.skuInfoIds_2){
@@ -192,9 +222,6 @@
                 _this.LineNos = _this.LineNos.substring(0,(_this.LineNos.lastIndexOf(",")));
                 console.log(_this.reqDetailIds);
                 console.log(_this.LineNos);
-//              if(_this.reqDetailIds==""||_this.LineNos==""){
-//              	return false;
-//              }
                 var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
 //              console.log("inPoLastDaVal=" + inPoLastDaVal);
 
@@ -219,20 +246,20 @@
                     mui.toast("请选择业务状态！")
                     return;
                 }
-
                 $.ajax({
-                    type: "post",
-                    url: "/a/biz/request/bizRequestHeader/save4Mobile",
+                    type: "post",                   
+                    url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
                     data: {"id":id, "fromOffice.id": _this.fromOfficeId, "recvEta":inPoLastDaVal, "remark": inPoRemarkVal, "bizStatus": bizStatusVal, "skuInfoIds": skuInfoIds, "reqQtys": reqQtys, "reqDetailIds":_this.reqDetailIds, "LineNos":_this.LineNos},
                     dataType: 'json',
                     success: function (resule) {
-                        if (resule.data.value == '操作成功!') {
+                    	console.log(resule)
+                        if (resule == true) {
                             alert("保存备货单成功！");
-//                          GHUTILS.OPENPAGE({
-//                              url: "../../html/inventoryMagmetHtml/inventoryList.html",
-//                              extras: {
-//                              }
-//                          })
+                            GHUTILS.OPENPAGE({
+                                url: "../../html/inventoryMagmetHtml/inventoryList.html",
+                                extras: {
+                                }
+                            })
                         }
                     }
                 })
@@ -303,7 +330,7 @@
             var _this = this;
             var pHtmlList = '';
 //			var len = data.bizPoHeader.commonProcessList.length
-            $.each(data.statusList, function(i, item) {
+            $.each(data.auditStatusList, function(i, item) {
                 var checkBizStatus = getTizstatusTxt(item.bizStatus);
                 var step = i + 1;
                 pHtmlList +='<li id="procList" class="step_item">'+
@@ -448,14 +475,16 @@
 					itemNo == "";
                 }
                 if(itemNo == ""){
-                	 mui.toast("请输入查询商品的货号！");
+                	 mui.toast("请输入查询条件！");
                 	 return;
                 }
                 $.ajax({
                     type: "post",
                     url: "/a/biz/sku/bizSkuInfo/findSkuList",
-                    data: {itemNo: itemNo},
+//                  data: {itemNo: itemNo},
+                    data: {'productInfo.office.id': $('#inSta').val()},
                     success: function (result) {
+                    	console.log(result) 
                     	console.log('修改查询数据')  
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
@@ -587,6 +616,7 @@
                             cheDiv.append(resultHtml)
                         $("#commodityMenu").append($(cheDiv))
                         _this.skuInfoIds_2 += cheId + ",";
+                        console.log(_this.skuInfoIds_2)
                     }
                 })
             });
