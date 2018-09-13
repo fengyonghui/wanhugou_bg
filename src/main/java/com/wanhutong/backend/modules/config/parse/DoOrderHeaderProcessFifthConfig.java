@@ -27,9 +27,13 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoOrderHeaderProcessFifthConfig.class);
 
-
     @XStreamAlias("defaultProcessId")
     private Integer defaultProcessId;
+
+    @XStreamAlias("fifthDefaultProcessId")
+    private int fifthDefaultProcessId;
+    @XStreamAlias("allDefaultProcessId")
+    private int allDefaultProcessId;
 
     @XStreamAlias("autProcessId")
     private Integer autProcessId;
@@ -64,6 +68,10 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
         return processMap.get(currentProcess.getPassCode());
     }
 
+    public Map<Integer, OrderHeaderProcess> getProcessMap() {
+        return processMap;
+    }
+
     /**
      * 取当前状态拒绝后的状态
      *
@@ -76,6 +84,22 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
 
     public Integer getDefaultProcessId() {
         return defaultProcessId;
+    }
+
+    public int getFifthDefaultProcessId() {
+        return fifthDefaultProcessId;
+    }
+
+    public void setFifthDefaultProcessId(int fifthDefaultProcessId) {
+        this.fifthDefaultProcessId = fifthDefaultProcessId;
+    }
+
+    public int getAllDefaultProcessId() {
+        return allDefaultProcessId;
+    }
+
+    public void setAllDefaultProcessId(int allDefaultProcessId) {
+        this.allDefaultProcessId = allDefaultProcessId;
     }
 
     public Integer getAutProcessId() {
@@ -118,6 +142,30 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
         @XStreamAlias("rejectCode")
         private Integer rejectCode;
 
+        /**
+         * 通过之后的状态 全部支付
+         */
+        @XStreamAlias("allPassCode")
+        private int allPassCode;
+
+        /**
+         * 通过之后的状态 20%支付
+         */
+        @XStreamAlias("fifthPassCode")
+        private int fifthPassCode;
+
+        /**
+         * 支付之后的状态 20%支付
+         */
+        @XStreamAlias("fifthPayCode")
+        private Integer fifthPayCode;
+
+        /**
+         * 支付之后的状态 100%支付
+         */
+        @XStreamAlias("allPayCode")
+        private Integer allPayCode;
+
         public String getName() {
             return name;
         }
@@ -138,7 +186,37 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
             return rejectCode;
         }
 
+        public int getAllPassCode() {
+            return allPassCode;
+        }
 
+        public void setAllPassCode(int allPassCode) {
+            this.allPassCode = allPassCode;
+        }
+
+        public int getFifthPassCode() {
+            return fifthPassCode;
+        }
+
+        public void setFifthPassCode(int fifthPassCode) {
+            this.fifthPassCode = fifthPassCode;
+        }
+
+        public Integer getFifthPayCode() {
+            return fifthPayCode;
+        }
+
+        public void setFifthPayCode(Integer fifthPayCode) {
+            this.fifthPayCode = fifthPayCode;
+        }
+
+        public Integer getAllPayCode() {
+            return allPayCode;
+        }
+
+        public void setAllPayCode(Integer allPayCode) {
+            this.allPayCode = allPayCode;
+        }
     }
 
 

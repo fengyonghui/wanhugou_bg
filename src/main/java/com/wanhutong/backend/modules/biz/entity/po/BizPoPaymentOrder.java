@@ -42,6 +42,11 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     private Date payTime;
 
+    /**
+     * 备注
+     */
+    private String remark;
+
 
     public BizPoPaymentOrder() {
         super();
@@ -158,5 +163,13 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     public void setOrderType(Integer orderType) {
         this.orderType = orderType;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

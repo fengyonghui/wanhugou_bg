@@ -34,7 +34,7 @@ public class DynamicConfig implements Runnable {
 		return SingletonHolder.INSTANCE;
 	}
 
-	public DynamicConfig() {
+	private DynamicConfig() {
 		dynamicConfigDaoImpl = (DynamicConfigDaoImpl) ServiceHelper.getService("dynamicConfigDaoImpl");
 		run(); // 阻塞, 初始化配置文件是系统启动前提.不能异步载入!
 	}

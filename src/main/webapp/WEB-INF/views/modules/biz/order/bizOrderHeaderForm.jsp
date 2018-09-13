@@ -597,10 +597,12 @@
                 return false;
             }
 
+            var paymentRemark = $("#paymentRemark").val();
+
             $.ajax({
                 url: '${ctx}/biz/po/bizPoHeader/payOrder',
                 contentType: 'application/json',
-                data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img},
+                data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img, "paymentRemark":paymentRemark},
                 type: 'get',
                 success: function (result) {
                     alert(result);
@@ -631,7 +633,10 @@
                 }
             }
 
-            window.location.href="${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal  + "&payDeadline=" + payDeadline + "&fromPage=orderHeader";
+            var paymentApplyRemark = $("#paymentApplyRemark").val();
+
+            window.location.href="${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal
+                + "&payDeadline=" + payDeadline + "&fromPage=orderHeader" + "&paymentApplyRemark=" + paymentApplyRemark;
 
             <%--$("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader");--%>
             <%--$("#inputForm").submit();--%>
@@ -893,7 +898,7 @@
 
         function audit(auditType, description) {
             var id = $("#id").val();
-            var currentType = $("#currentType").val();
+            var currentType = $("#currentJoType").val();
 
             $.ajax({
                 url: '${ctx}/biz/order/bizOrderHeader/audit',
@@ -902,8 +907,9 @@
                 type: 'get',
                 async: false,
                 success: function (result) {
-                    alert("操作成功！");
-                    if(result == 'ok') {
+                    result = JSON.parse(result);
+                    if(result.ret == true || result.ret == 'true') {
+                        alert('操作成功!');
                         if(auditType==1){
                             //自动生成采购单
                             var id = $("#id").val();
@@ -913,8 +919,6 @@
                             }
                         }
                         window.location.href = "${ctx}/biz/order/bizOrderHeader";
-                    }else {
-                        alert("操作失败！");
                     }
                 },
                 error: function (error) {
@@ -1270,6 +1274,13 @@
                        placeholder="必填！"/>
             </div>
         </div>
+
+        <div class="control-group">
+            <label class="control-label">支付备注：</label>
+            <div class="controls">
+					<textarea id="paymentApplyRemark" maxlength="200" class="input-xlarge"></textarea>
+            </div>
+        </div>
     </c:if>
 
     <c:if test="${source ne 'vendor'}">
@@ -1309,20 +1320,6 @@
                 </c:if>
             </div>
         </div>
-
-    <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList == null}">
-        <div class="control-group" style="display: none" >
-            <label class="control-label">审核状态：</label>
-            <div class="controls">
-                <input type="text" disabled="disabled"
-                       value="${orderHeaderProcess.name}" htmlEscape="false"
-                       maxlength="30" class="input-xlarge "/>
-                <input id="currentType" type="hidden" disabled="disabled"
-                       value="${orderHeaderProcess.code}" htmlEscape="false"
-                       maxlength="30" class="input-xlarge "/>
-            </div>
-        </div>
-    </c:if>
 
     <c:if test="${entity.str == 'audit' && entity.bizPoHeader.commonProcessList != null && fn:length(entity.bizPoHeader.commonProcessList) > 0}">
         <div class="control-group" style="display: none">
@@ -1405,6 +1402,13 @@
                 </div>
                 <div id="payImgDiv">
                     <img src="${entity.bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">支付备注：</label>
+                <div class="controls">
+					<textarea id="paymentRemark" maxlength="200"
+                              class="input-xlarge">${entity.bizPoHeader.bizPoPaymentOrder.remark}</textarea>
                 </div>
             </div>
         </c:if>
@@ -1774,12 +1778,13 @@
                                         ${v.purchaseOrderProcess.name}
                                     </c:if>
                                     <c:if test="${v.objectName == 'biz_order_header'}">
-                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">
-                                            ${v.doOrderHeaderProcessFifth.name}
-                                        </c:if>
-                                        <c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">
-                                            ${v.doOrderHeaderProcessAll.name}
-                                        </c:if>
+                                        ${v.doOrderHeaderProcessFifth.name}
+                                        <%--<c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">--%>
+                                            <%--${v.doOrderHeaderProcessFifth.name}--%>
+                                        <%--</c:if>--%>
+                                        <%--<c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">--%>
+                                            <%--${v.doOrderHeaderProcessAll.name}--%>
+                                        <%--</c:if>--%>
                                     </c:if>
                                     <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
@@ -1799,6 +1804,9 @@
                                     </c:if>
                                     <c:if test="${v.objectName == 'biz_po_header'}">
                                         ${v.purchaseOrderProcess.name}
+                                    </c:if>
+                                    <c:if test="${v.objectName == 'biz_order_header'}">
+                                        ${v.doOrderHeaderProcessFifth.name}
                                     </c:if>
                                     <br/>
                                     <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>

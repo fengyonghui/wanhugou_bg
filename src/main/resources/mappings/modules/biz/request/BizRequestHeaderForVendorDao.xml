@@ -46,6 +46,7 @@
 		bph.process_id AS "bizPoHeader.process_id",
 		bph.current_payment_id AS "bizPoHeader.currentPaymentId",
 		bph.pay_total AS "bizPoHeader.payTotal",
+		bppo.remark AS "bizPoHeader.bizPoPaymentOrder.remark",
 		cp.id AS "bizPoHeader.commonProcess.id",
 		cp.object_id AS "bizPoHeader.commonProcess.objectId",
 		cp.object_name AS "bizPoHeader.commonProcess.objectName",
