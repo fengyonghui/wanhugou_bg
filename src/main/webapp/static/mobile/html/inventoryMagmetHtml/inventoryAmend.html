@@ -18,9 +18,20 @@
 		</header>
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
-				<label>备货单号：</label>
+				<label>备货单编号：</label>
 				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
 			</div>
+			<div class="mui-input-row" id="orderTypebox">
+				<label>备货方：</label>
+		    	<div id="changeTxt" class="labelri">
+			        <input id="fromType1" type="radio" name="fromType" value="1" checked class="inputRadio"/>
+			                采购中心备货
+		        </div>	
+		        <div id="changeTxt" class="labelri">
+		        	<input id="fromType2" type="radio" name="fromType" value="2" class="inputRadio"/>
+		        	厂商备货
+	        	</div>
+		    </div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
 				<div class="pre">
@@ -35,13 +46,29 @@
 				<font>*</font>
 			</div>
 			<div class="mui-input-row">
+				<label>供应商：</label>
+				<input type="text" class="mui-input-clear" id="insupplier" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商卡号：</label>
+				<input type="text" class="mui-input-clear" id="insupplierNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商收款人：</label>
+				<input type="text" class="mui-input-clear" id="insupplierMoney" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商开户行：</label>
+				<input type="text" class="mui-input-clear" id="insupplierBank" disabled>
+			</div>
+			<div class="mui-input-row">
 				<label>收货时间：</label>
 				<input type="date" class="" id="inPoLastDa">
 				<font>*</font>
 			</div>
 			<div class="mui-input-row" id="inAmendPoLastDaDiv">
 				<label class="commodityName">选择商品：</label>
-				<input type="text" class="mui-input-clear commodityTxt" id="inAmendPoLastDa" placeholder="请输入商品货号">
+				<input type="text" class="mui-input-clear commodityTxt" id="inAmendPoLastDa" placeholder="请输入">
 				<button id="comChoiceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">查询</button>
 			</div>
 
@@ -83,6 +110,7 @@
 			<button id="saveDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>
 		</div>
 		<input id="inStatus" name="inStatus" type="hidden" />
+		<input id="inSta" name="inSta" type="hidden" />
 		<div class="clear"></div>
 
 		<script src="../../js/component/mui.min.js"></script>

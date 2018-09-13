@@ -170,6 +170,7 @@
 				}
 			});
 		},
+		//审核状态
 		ajaxCheckStatus: function() {
 			var _this = this;
 			var optHtml ='<option value="">全部</option>';
@@ -180,6 +181,7 @@
 				data: {consultantId: _this.userInfo.staListId},
 				dataType: 'json',
 				success: function(res) {
+					console.log(res)
 					$.each(res.data.processSet, function(i, item) {
 //						console.log(i)
 						htmlCheckStatus += '<option class="soption"  value="' + i + '">' + item + '</option>'
@@ -189,6 +191,7 @@
 				}
 			});
 		},
+		//业务状态
 		ajaxServiceStates: function() {
 			var _this = this;
 			var optHtml ='<option value="">全部</option>';
@@ -207,6 +210,7 @@
 				}
 			});
 		},
+		//品类名称
 		ajaxGoodName: function() {
 			var _this = this;
 			var optHtml ='<option value="">全部</option>';
