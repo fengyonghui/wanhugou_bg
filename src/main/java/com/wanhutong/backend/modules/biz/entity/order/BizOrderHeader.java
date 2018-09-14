@@ -204,7 +204,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private BizPoPaymentOrder bizPoPaymentOrder;
 
     /**
-     * 是否是本地备货的订单，0:是 721:是  大于0且不等于721：不是
+     * 是否是产地直发的订单，0:是 721:是  大于0且不等于721：不是
      */
     private Integer suplys;
 
@@ -228,7 +228,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     /**
      * 手机端客户专员订单检索
-     * 0：待审核，1：审核成功，2：审核失败
+     * 0：待审核，1：审核失败，2：其他
      */
     private Integer mobileAuditStatus;
 

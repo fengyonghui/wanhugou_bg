@@ -405,14 +405,20 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				/* 查询已生成的采购单 标识*/
 				bizRequestDetail.setPoheaderSource("poHeader");
 			}
+
+			List<Integer> skuInfoIdList = Lists.newArrayList();
+			List<BizRequestDetail> bizRequestDetails = bizRequestHeader.getRequestDetailList();
+			for (BizRequestDetail requestDetail : bizRequestDetails) {
+				BizSkuInfo bizSkuInfo = requestDetail.getSkuInfo();
+				skuInfoIdList.add(bizSkuInfo.getId());
+			}
+			model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
+
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
 			BizInventorySku bizInventorySku = new BizInventorySku();
 			List<BizInventorySku> inventorySkuList =Lists.newArrayList();
 			List<Integer> skuIdList = new ArrayList<>();
-//			List<String> typeList = Lists.newLinkedList();
-//			typeList.add(OfficeTypeEnum.PURCHASINGCENTER.getType());
-//			List<Office> centList = officeService.findListByTypeList(typeList);
-//			model.addAttribute("centList",centList);
+
 			for (BizRequestDetail requestDetail : requestDetailList) {
 				skuIdList.add(requestDetail.getSkuInfo().getId());
 				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
