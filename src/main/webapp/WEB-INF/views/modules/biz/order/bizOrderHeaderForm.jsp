@@ -852,9 +852,9 @@
                         if (obj == "JO") {
                             auditJo(1, f.description);
                         }
-                        // if (obj == "PO") {
-                        //     poAudit(1,f.description);
-                        // }
+                        if (obj == "PO") {
+                            poAudit(1,f.description);
+                        }
                         return true;
                     }
                 },{buttonsFocus:1});
@@ -881,9 +881,9 @@
                         if (obj == "JO") {
                             auditJo(2, f.description);
                         }
-                        // if (obj == "PO") {
-                        //     poAudit(2,f.description);
-                        // }
+                        if (obj == "PO") {
+                            poAudit(2,f.description);
+                        }
                         return true;
                     }
                 },{buttonsFocus:1});
@@ -944,29 +944,29 @@
         }
 
         //采购单审核
-        <%--function poAudit(auditType, description) {--%>
-            <%--var id = $("#poHeaderId").val();--%>
-            <%--var currentType = $("#poCurrentType").val();--%>
-            <%--$.ajax({--%>
-                <%--url: '${ctx}/biz/po/bizPoHeader/audit',--%>
-                <%--contentType: 'application/json',--%>
-                <%--data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "fromPage": "orderHeader"},--%>
-                <%--type: 'get',--%>
-                <%--success: function (result) {--%>
-                    <%--result = JSON.parse(result);--%>
-                    <%--if(result.ret == true || result.ret == 'true') {--%>
-                        <%--alert('操作成功!');--%>
-                        <%--&lt;%&ndash;window.location.href = "${ctx}/biz/order/bizOrderHeader";&ndash;%&gt;--%>
-                        <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
-                    <%--}else {--%>
-                        <%--alert(result.errmsg);--%>
-                    <%--}--%>
-                <%--},--%>
-                <%--error: function (error) {--%>
-                    <%--console.info(error);--%>
-                <%--}--%>
-            <%--});--%>
-        <%--}--%>
+        function poAudit(auditType, description) {
+            var id = $("#poHeaderId").val();
+            var currentType = $("#poCurrentType").val();
+            $.ajax({
+                url: '${ctx}/biz/po/bizPoHeader/audit',
+                contentType: 'application/json',
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "fromPage": "orderHeader"},
+                type: 'get',
+                success: function (result) {
+                    result = JSON.parse(result);
+                    if(result.ret == true || result.ret == 'true') {
+                        alert('操作成功!');
+                        <%--window.location.href = "${ctx}/biz/order/bizOrderHeader";--%>
+                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                    }else {
+                        alert(result.errmsg);
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
 
         function auditJo(auditType, description) {
             var id = $("#id").val();
@@ -2468,32 +2468,32 @@
                 </shiro:hasPermission>
 
                     <!-- 一单到底，采购单审核 -->
-                    <%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
-                        <%--<c:if test="${entity.str == 'audit'}">--%>
-                        <%--<c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">--%>
-                            <%--<c:if test="${entity.bizPoHeader.commonProcessList != null--%>
-                            <%--&& fn:length(entity.bizPoHeader.commonProcessList) > 0--%>
-                            <%--&& (currentAuditStatus.type == 777 || currentAuditStatus.type == 666)--%>
-                            <%--}">--%>
-                                <%--<input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"--%>
-                                       <%--value="审核通过"/>--%>
-                                <%--<input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"--%>
-                                       <%--value="审核驳回"/>--%>
-                            <%--</c:if>--%>
-                        <%--</c:if>--%>
+                <shiro:hasPermission name="biz:po:bizPoHeader:audit">
+                    <c:if test="${entity.str == 'audit'}">
+                    <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                        <c:if test="${entity.bizPoHeader.commonProcessList != null
+                        && fn:length(entity.bizPoHeader.commonProcessList) > 0
+                        && (currentAuditStatus.type == 777 || currentAuditStatus.type == 666)
+                        }">
+                            <input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"
+                                   value="审核通过"/>
+                            <input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"
+                                   value="审核驳回"/>
+                        </c:if>
+                    </c:if>
 
-                        <%--<c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">--%>
-                            <%--<c:if test="${entity.bizPoHeader.commonProcessList != null--%>
-                            <%--&& fn:length(entity.bizPoHeader.commonProcessList) > 0--%>
-                            <%--}">--%>
-                                <%--<input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"--%>
-                                       <%--value="审核通过"/>--%>
-                                <%--<input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"--%>
-                                       <%--value="审核驳回"/>--%>
-                            <%--</c:if>--%>
-                        <%--</c:if>--%>
-                        <%--</c:if>--%>
-                    <%--</shiro:hasPermission>--%>
+                    <c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+                        <c:if test="${entity.bizPoHeader.commonProcessList != null
+                        && fn:length(entity.bizPoHeader.commonProcessList) > 0
+                        }">
+                            <input id="btnSubmit" type="button" onclick="checkPass('PO')" class="btn btn-primary"
+                                   value="审核通过"/>
+                            <input id="btnSubmit" type="button" onclick="checkReject('PO')" class="btn btn-primary"
+                                   value="审核驳回"/>
+                        </c:if>
+                    </c:if>
+                    </c:if>
+                </shiro:hasPermission>
 
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails && entity.str!='audit'}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
