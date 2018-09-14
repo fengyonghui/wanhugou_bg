@@ -416,6 +416,23 @@
             var id = $("#id").val();
             var currentType = $("#currentType").val();
             var createPo = $("#createPo").val();
+
+            if(createPo == "yes") {
+                var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
+                if (schedulingType == 0) {
+                    var checkResult = saveCompleteCheck();
+                    if(checkResult == false) {
+                        return;
+                    }
+                }
+                if (schedulingType == 1) {
+                    var checkResult = batchSaveCheck();
+                    if(checkResult == false) {
+                        return;
+                    }
+                }
+            }
+
             $.ajax({
                 url: '${ctx}/biz/request/bizRequestHeaderForVendor/audit',
                 contentType: 'application/json',
@@ -641,6 +658,127 @@
             btn.parentElement.parentElement.remove();
         }
 
+        function saveCompleteCheck() {
+            var trArray = $("[name='headerScheduling_forHeader']");
+            var originalNum = $("#totalOrdQty").val();
+
+            var totalSchedulingHeaderNum = 0;
+            for(i=0;i<trArray.length;i++){
+                var div = trArray[i];
+                var jqDiv = $(div);
+                var value = jqDiv.find("[name='headerScheduling_forHeader_value']").val();
+
+                totalSchedulingHeaderNum = parseInt(totalSchedulingHeaderNum) + parseInt(value);
+            }
+
+            if(parseInt(totalSchedulingHeaderNum) > parseInt(originalNum)) {
+                alert("排产量总和太大，请从新输入!")
+                return false
+            }
+
+            for(i=0;i<trArray.length;i++){
+                var div = trArray[i];
+                var jqDiv = $(div);
+                var date = jqDiv.find("[name='headerScheduling_forHeader_date']").val();
+                var value = jqDiv.find("[name='headerScheduling_forHeader_value']").val();
+
+                if (date == "") {
+                    if (value != "") {
+                        alert("第" + count + "个商品完成日期不能为空!")
+                        return false;
+                    }
+
+                }
+
+                if (value == "") {
+                    if (date != "") {
+                        alert("第" + count + "个商品排产数量不能为空!")
+                        return false;
+                    }
+                }
+
+                if (date == "" && value == "") {
+                    continue;
+                }
+
+                var reg= /^[0-9]+[0-9]*]*$/;
+                if (value != "" && (parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value))) {
+                    alert("确认值输入不正确!")
+                    return false;
+                }
+            }
+        }
+
+        function batchSaveCheck() {
+            var skuInfoIdListList = JSON.parse('${skuInfoIdListListJson}');
+
+            var totalSchedulingNum = 0;
+            var totalOriginalNum = 0;
+            var count = 1
+            var ind = 0;
+
+            var totalSchedulingDetailNum = 0;
+
+            for(var index in skuInfoIdListList) {
+                var skuInfoId = skuInfoIdListList[index];
+
+                var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
+                totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+            }
+
+            for(var index in skuInfoIdListList) {
+                var skuInfoId = skuInfoIdListList[index];
+                var trArray = $("[name='" + skuInfoId + "']");
+                for(i=0;i<trArray.length;i++) {
+                    var div = trArray[i];
+                    var jqDiv = $(div);
+                    var value = jqDiv.find("[name='" + skuInfoId + "_value']").val();
+                    totalSchedulingDetailNum = parseInt(totalSchedulingDetailNum) + parseInt(value);
+                }
+            }
+
+            for(var index in skuInfoIdListList) {
+                var skuInfoId = skuInfoIdListList[index];
+                var trArray = $("[name='" + skuInfoId + "']");
+                for(i=0;i<trArray.length;i++) {
+                    var div = trArray[i];
+                    var jqDiv = $(div);
+                    var date = jqDiv.find("[name='" + skuInfoId + "_date']").val();
+                    var value = jqDiv.find("[name='" + skuInfoId + "_value']").val();
+                    if (date == "") {
+                        if (value != "") {
+                            alert("第" + count + "个商品完成日期不能为空!")
+                            return false;
+                        }
+                    }
+
+                    if (value == "") {
+                        if (date != "") {
+                            alert("第" + count + "个商品排产数量不能为空!")
+                            return false;
+                        }
+                    }
+
+                    if (date == "" && value == "") {
+                        continue;
+                    }
+
+                    var reg = /^[0-9]+[0-9]*]*$/;
+                    if (value != "" && (parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value))) {
+                        alert("第" + count + "个商品确认值输入不正确!")
+                        return false;
+                    }
+                    totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
+                    ind++;
+                }
+                count++;
+            }
+            if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
+                alert("排产量总和太大，请从新输入!")
+                return false
+            }
+        }
+
         function saveComplete(schedulingType,poId) {
             var trArray = $("[name='headerScheduling_forHeader']");
             var params = new Array();
@@ -715,24 +853,22 @@
                 //totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
             }
 
-            if(confirm("确定执行该排产确认吗？")) {
-                $Mask.AddLogo("正在加载");
-                $.ajax({
-                    url: '${ctx}/biz/po/bizPoHeader/saveSchedulingPlan',
-                    contentType: 'application/json',
-                    data:JSON.stringify(params),
-                    datatype:"json",
-                    type: 'post',
-                    success: function (result) {
-                        if(result == true) {
-                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
-                        }
-                    },
-                    error: function (error) {
-                        console.info(error);
+            $Mask.AddLogo("正在加载");
+            $.ajax({
+                url: '${ctx}/biz/po/bizPoHeader/saveSchedulingPlan',
+                contentType: 'application/json',
+                data:JSON.stringify(params),
+                datatype:"json",
+                type: 'post',
+                success: function (result) {
+                    if(result == true) {
+                        window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
                     }
-                });
-            }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
         }
 
         function batchSave(schedulingType,poId) {
@@ -824,24 +960,22 @@
                 alert("排产量总和太大，请从新输入!")
                 return false
             }
-            if(confirm("确定执行该排产确认吗？")) {
-                $Mask.AddLogo("正在加载");
-                $.ajax({
-                    url: '${ctx}/biz/po/bizPoHeader/batchSaveSchedulingPlan',
-                    contentType: 'application/json',
-                    data:JSON.stringify(params),
-                    datatype:"json",
-                    type: 'post',
-                    success: function (result) {
-                        if(result == true) {
-                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"
-                        }
-                    },
-                    error: function (error) {
-                        console.info(error);
+            $Mask.AddLogo("正在加载");
+            $.ajax({
+                url: '${ctx}/biz/po/bizPoHeader/batchSaveSchedulingPlan',
+                contentType: 'application/json',
+                data:JSON.stringify(params),
+                datatype:"json",
+                type: 'post',
+                success: function (result) {
+                    if(result == true) {
+                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"
                     }
-                });
-            }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
         }
 	</script>
 </head>

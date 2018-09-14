@@ -203,7 +203,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private BizPoPaymentOrder bizPoPaymentOrder;
 
     /**
-     * 是否是本地备货的订单，0:是 721:是  大于0且不等于721：不是
+     * 是否是产地直发的订单，0:是 721:是  大于0且不等于721：不是
      */
     private Integer suplys;
 

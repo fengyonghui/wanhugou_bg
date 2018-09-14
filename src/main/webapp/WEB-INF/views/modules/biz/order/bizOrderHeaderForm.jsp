@@ -903,10 +903,16 @@
             if(createPo == "yes") {
                 var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
                 if (schedulingType == 0) {
-                    saveCompleteCheck();
+                    var checkResult = saveCompleteCheck();
+                    if(checkResult == false) {
+                        return;
+                    }
                 }
                 if (schedulingType == 1) {
-                    batchSaveCheck();
+                    var checkResult = batchSaveCheck();
+                    if(checkResult == false) {
+                        return;
+                    }
                 }
             }
 
@@ -972,10 +978,16 @@
             if(createPo == "yes") {
                 var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
                 if (schedulingType == 0) {
-                    saveCompleteCheck();
+                    var checkResult = saveCompleteCheck();
+                    if(checkResult == false) {
+                        return;
+                    }
                 }
                 if (schedulingType == 1) {
-                    batchSaveCheck();
+                    var checkResult = batchSaveCheck();
+                    if(checkResult == false) {
+                        return;
+                    }
                 }
             }
 

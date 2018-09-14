@@ -138,6 +138,23 @@ public class BizOrderHeaderController extends BaseController {
         BizOrderHeader entity = null;
         if (id != null && id != 0) {
             entity = bizOrderHeaderService.get(id);
+
+            String type = "1";
+            if (entity.getSuplys() == 0 || entity.getSuplys() == 721) {
+                type = "0";
+            }
+            CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+            commonProcessEntity.setObjectId(String.valueOf(entity.getId()));
+            commonProcessEntity.setCurrent(1);
+            commonProcessEntity.setObjectName("0".equals(type) ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+            if (entity.getOrderNum().startsWith("DO")) {
+                commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+            }
+            List<CommonProcessEntity> commonProcessEntities = commonProcessService.findList(commonProcessEntity);
+            if (CollectionUtils.isNotEmpty(commonProcessEntities)) {
+                entity.setCommonProcess(commonProcessEntities.get(0));
+            }
+
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(entity);
             List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
@@ -862,7 +879,7 @@ public class BizOrderHeaderController extends BaseController {
             if (bizOrderHeader.getCommonProcess() != null && ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getCreatePoProcessId().toString().equals(bizOrderHeader.getCommonProcess().getType())) {
                 createPo = "yes";
             }
-        } else if (bizOrderHeader.getOrderNum().startsWith("SO") && bizOrderHeader.getCommonProcess() != null) {
+        } else if (bizOrderHeader.getOrderNum().startsWith("SO") && bizOrderHeader.getCommonProcess() != null && (bizOrderHeader.getSuplys() ==0 || bizOrderHeader.getSuplys() == 721)) {
             String processType = bizOrderHeader.getCommonProcess().getType();
             OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail() + bizOrderHeader.getFreight() + bizOrderHeader.getTotalExp() + bizOrderHeader.getServiceFee(), bizOrderHeader.getReceiveTotal());
             switch (statusEnum) {
