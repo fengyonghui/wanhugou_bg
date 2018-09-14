@@ -253,7 +253,7 @@
     	LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
-		LEFT JOIN  common_process process on process.id = a.process_id
+		LEFT JOIN  common_process process on process.object_id = a.id and process.object_name = 'biz_order_header' and process.current = 1
 		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 1
 		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
 		LEFT JOIN common_process cp ON cp.id = bph.process_id
@@ -275,7 +275,7 @@
 		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
-		LEFT JOIN  common_process process on process.id = a.process_id
+		LEFT JOIN  common_process process on process.object_id = a.id and process.object_name = 'biz_order_header' and process.current = 1
 		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 1
 		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
 		LEFT JOIN common_process cp ON cp.id = bph.process_id
@@ -355,10 +355,10 @@
 		</if>
 
 		<if test="originCode !=null and originCode != ''">
-			LEFT JOIN common_process cpo ON cpo.object_id = a.id
+			LEFT JOIN common_process cpo ON cpo.object_id = a.id and cpo.object_name = 'ORDER_HEADER_SO_ORIGIN' and cpo.current = 1
 		</if>
 		<if test="localCode !=null and localCode != ''">
-			LEFT JOIN common_process cpl ON cpl.object_id = a.id
+			LEFT JOIN common_process cpl ON cpl.object_id = a.id and cpl.object_name = 'ORDER_HEADER_SO_LOCAL'	and cpl.current = 1
 		</if>
 
 		<!-- end  -->
@@ -378,10 +378,7 @@
 			<if test="(originCode !=null and originCode != '') or (localCode !=null and localCode != '') or (doFifthCode != null and doFifthCode != '') ">
 			and (
 				<if test="originCode !=null and originCode != ''">
-					( cpo.object_name = 'ORDER_HEADER_SO_ORIGIN'
-					and
-					cpo.current = 1
-					and cpo.type in
+					(cpo.type in
 					<foreach collection="originCode" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
 					and (SELECT SUM(bod.suply_id)
 					FROM
@@ -395,9 +392,7 @@
 				</if>
 				OR
 				<if test="localCode !=null and localCode != ''">
-					( cpl.object_name = 'ORDER_HEADER_SO_LOCAL'
-					and cpl.current = 1
-					and cpl.type in
+					(cpl.type in
 					<foreach collection="localCode" index="index" item="item" open="(" separator="," close=")">
 						#{item}
 					</foreach>
@@ -411,9 +406,7 @@
 				</if>
 				OR
 				<if test="doFifthCode != null and doFifthCode != '' ">
-					( process.object_name = 'biz_order_header'
-					and process.current = 1
-					and process.type in
+					(process.type in
 					<foreach collection="doFifthCode" index="index" item="item" open="(" separator="," close=")">
 						#{item}
 					</foreach>)
