@@ -28,6 +28,7 @@
 		suu.name AS "updateBy.name",
 		su.name AS "createBy.name",
 		a.update_time AS "updateDate",
+		a.header_type AS "headerType",
 		sum(req_qty) as "reqQtys",
 		sum(recv_qty) as "recvQtys",
 		sum(req_qty * unit_price) AS totalMoney,
@@ -103,6 +104,9 @@
 			1=1
 			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+			<if test="headerType != null">
+				AND a.header_type = #{headerType}
 			</if>
 			<if test="varietyInfo!=null and varietyInfo.id!=null and varietyInfo.id!=''">
 				and bvi.id = #{varietyInfo.id}
@@ -306,7 +310,8 @@
 			create_time,
 			u_version,
 			update_id,
-			update_time
+			update_time,
+			header_type
 		) VALUES (
 			#{id},
 			#{reqNo},
@@ -332,7 +337,8 @@
 			#{createDate},
 			#{uVersion},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+			#{headerType}
 		)
 	</insert>
 	
@@ -360,7 +366,8 @@
 		</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+			update_time = #{updateDate},
+			header_type = #{headerType}
 		WHERE id = #{id}
 	</update>
 	

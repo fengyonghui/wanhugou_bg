@@ -82,13 +82,27 @@
 	<input name="bizOrderHeader.id" value="${bizOrderHeader==null?0:bizOrderHeader.id}" type="hidden"/>
 	<input type="hidden" name="bizStatu" value="${bizStatu}"/>
 	<div class="control-group">
+		<label class="control-label">入库单：</label>
+		<div class="controls">
+			<input readonly="readonly" name="collectNo" type="text" class="input-xlarge" value="${bizRequestHeader.reqNo}"/>
+			<span class="help-inline"><font color="red">*</font></span>
+		</div>
+	</div>
+	<div class="control-group">
 		<label class="control-label">备货清单号：</label>
 		<div class="controls">
 			<input readonly="readonly" type="text" class="input-xlarge" value="${bizRequestHeader.reqNo}"/>
 			<span class="help-inline"><font color="red">*</font></span>
 		</div>
 	</div>
-
+	<div class="control-group">
+		<label class="control-label">发货单号：</label>
+		<div class="controls">
+			<c:forEach items="${deliverNoList}" var="deliverNo">
+				<input readonly="readonly" type="text" class="input-xlarge" value="${deliverNo}"/>
+			</c:forEach>
+		</div>
+	</div>
 	<div class="control-group">
 		<label class="control-label">采购中心：</label>
 		<div class="controls">

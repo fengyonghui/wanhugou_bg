@@ -165,6 +165,10 @@
 				<c:if test="${ship eq 'xs'}">
 					<th>销售单号</th>
 				</c:if>
+				<c:if test="${ship eq 'bh'}">
+					<th>备货方</th>
+					<th>备货单类型</th>
+				</c:if>
 				<th>类型</th>
 				<c:if test="${ship eq 'bh'}">
 					<th>采购中心</th>
@@ -198,6 +202,8 @@
 					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&bizStatu=${bizStatu}">
 						${requestHeader.reqNo}
 					</a></td>
+					<td>${fns:getDictLabel(requestHeader.fromType, 'req_from_type', '未知')}</td>
+					<td>${fns:getDictLabel(requestHeader.headerType, 'req_header_type', '未知')}</td>
 					<td>
 						${fns:getDictLabel(requestHeader.reqType, 'biz_req_type', '未知类型')}
 					</td>
@@ -231,7 +237,7 @@
 							<c:when test="${source=='sh'}">
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&bizStatu=${bizStatu}">备货详情</a>
 								<c:if test="${requestHeader.bizStatus < ReqHeaderStatusEnum.COMPLETE.state}">
-									<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">收货</a>
+									<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">入库</a>
 								</c:if>
 							</c:when>
 							<c:when test="${bizStatu=='1'}">

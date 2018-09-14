@@ -44,6 +44,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private Double recvTotal;
 
 	/**
+	 * 备货单类型
+	 */
+	private Byte headerType;
+
+	/**
 	 * 备货清单查看 已生成的采购单
 	 * */
 	private String poSource;
@@ -704,5 +709,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setProcessPo(String processPo) {
 		this.processPo = processPo;
+	}
+
+	public Byte getHeaderType() {
+		return headerType;
+	}
+
+	public void setHeaderType(Byte headerType) {
+		this.headerType = headerType;
 	}
 }

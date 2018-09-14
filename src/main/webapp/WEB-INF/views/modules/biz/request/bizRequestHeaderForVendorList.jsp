@@ -196,6 +196,7 @@
 			<tr>
 				<td>序号</td>
 				<th>备货单号</th>
+				<th>类型</th>
 				<th>采购中心</th>
 				<th>期望收货时间</th>
 				<th>备货方</th>
@@ -230,6 +231,9 @@
 					</c:choose>
 					${requestHeader.reqNo}
 					</a>
+				</td>
+				<td>
+					${requestHeader.headerType}
 				</td>
 				<td>
 					${requestHeader.fromOffice.name}

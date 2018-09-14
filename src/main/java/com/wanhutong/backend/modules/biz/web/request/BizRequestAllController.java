@@ -342,9 +342,21 @@ public class BizRequestAllController {
             bizInventoryInfo.setReqHeader(new BizRequestHeader(id));
             List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
             model.addAttribute("invInfoList", invInfoList);
+            List<String> deliverNoList = findDeliverNoByReqId(new BizRequestHeader(id));
+            model.addAttribute("deliverNoList",deliverNoList);
+
             return "modules/biz/request/bizRequestKcForm";
         }
         return "modules/biz/request/bizRequestHeaderGhForm";
+    }
+
+    /**
+     * 根据备货单ID查询发货单
+     * @param bizRequestHeader
+     * @return
+     */
+    private List<String> findDeliverNoByReqId(BizRequestHeader bizRequestHeader) {
+        return bizInvoiceService.findDeliverNoByReqId(bizRequestHeader.getId());
     }
 
     /**
