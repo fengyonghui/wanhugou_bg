@@ -70,7 +70,7 @@
 							mui.toast('请选择匹配的选项')
 						}
 				}else{
-					_this.sureSelect(mobileAuditStatus);
+					_this.sureSelect();
 				}
 			})
 		},
@@ -113,7 +113,7 @@
         	var _this = this;
         	$('input[type=radio]').on('change', function() {
         		if(this.checked) {        			
-	      			console.log($(this).val())
+//	      			console.log($(this).val())
 	      			$('#mobileAuditStatus').attr('value',$(this).val())
 	      			_this.getData()
         		}
