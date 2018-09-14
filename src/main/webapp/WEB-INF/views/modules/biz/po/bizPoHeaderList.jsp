@@ -90,6 +90,12 @@
 					<form:options items="${processList}" itemLabel="name" itemValue="code" htmlEscape="false"/>
 				</form:select>
 			</li>
+			<li><label>待支付</label>
+				<form:select path="waitPay" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:option value="1" label="是"/>
+				</form:select>
+			</li>
             <li><label>测试数据</label>
                 <form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
             </li>

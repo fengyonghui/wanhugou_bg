@@ -1,5 +1,6 @@
 package com.wanhutong.backend.common.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.google.common.io.Closer;
 import org.apache.commons.io.output.StringBuilderWriter;
@@ -85,6 +86,20 @@ public class JsonUtil {
             LOGGER.error("jsonutil parse json error ", e);
         }
         return t;
+    }
+
+    /**
+     * Json to Object
+     * @param json
+     * @return
+     */
+	public static JSONObject parseJson(String json) {
+        try {
+            return JSONObject.parseObject(json);
+        } catch (Exception e) {
+            LOGGER.error("jsonutil parse jsonObject error ", e);
+        }
+        return null;
     }
 
     public static String generatePureData(Object result) throws Exception {

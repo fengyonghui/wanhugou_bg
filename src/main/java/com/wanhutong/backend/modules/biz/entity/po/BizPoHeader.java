@@ -163,6 +163,12 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 */
 	private String fromPage;
 
+	/**
+	 * 待支付
+	 * @return
+	 */
+	private Integer waitPay;
+
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
 	}
@@ -636,5 +642,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setFromPage(String fromPage) {
 		this.fromPage = fromPage;
+	}
+
+	public Integer getWaitPay() {
+		return waitPay;
+	}
+
+	public void setWaitPay(Integer waitPay) {
+		this.waitPay = waitPay;
 	}
 }

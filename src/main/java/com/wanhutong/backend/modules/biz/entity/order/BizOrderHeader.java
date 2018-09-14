@@ -131,6 +131,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String imgPhotosSorts;		//主图顺序
 
     private Integer vendorId; //根据供应商Id搜索
+    private String vendorName; //根据供应商名称
     /**
      * 发货单Id
      * */
@@ -154,10 +155,10 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 固定商品的详情总价
      */
     private String detailPrice;
-    /**
-     * 首付金额
-     */
-    private Integer payProportion;
+//    /**
+//     * 首付金额
+//     */
+//    private Integer payProportion;
     /**
      * 审核流程
      */
@@ -224,6 +225,12 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      *  采购单当前审核流程名字
      */
     private String poProcessName;
+
+    /**
+     * 手机端客户专员订单检索
+     * 0：待审核，1：审核成功，2：审核失败
+     */
+    private Integer mobileAuditStatus;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -820,13 +827,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.detailPrice = detailPrice;
     }
 
-    public Integer getPayProportion() {
-        return payProportion;
-    }
-
-    public void setPayProportion(Integer payProportion) {
-        this.payProportion = payProportion;
-    }
+//    public Integer getPayProportion() {
+//        return payProportion;
+//    }
+//
+//    public void setPayProportion(Integer payProportion) {
+//        this.payProportion = payProportion;
+//    }
 
     public CommonProcessEntity getCommonProcess() {
         return commonProcess;
@@ -978,5 +985,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setServiceFee(Double serviceFee) {
         this.serviceFee = serviceFee;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public Integer getMobileAuditStatus() {
+        return mobileAuditStatus;
+    }
+
+    public void setMobileAuditStatus(Integer mobileAuditStatus) {
+        this.mobileAuditStatus = mobileAuditStatus;
     }
 }

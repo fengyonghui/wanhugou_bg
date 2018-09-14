@@ -608,6 +608,50 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         return Pair.of(Boolean.TRUE, "操作成功!");
     }
 
+    /**
+     * 申请付款时，生成支付申请单
+     *
+     * @param bizPoHeader
+     * @return
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Pair<Boolean, String> genPaymentOrderForApply(BizPoHeader bizPoHeader, String paymentApplyRemark) {
+        if (bizPoHeader.getBizPoPaymentOrder() != null && bizPoHeader.getBizPoPaymentOrder().getId() != null && bizPoHeader.getBizPoPaymentOrder().getId() != 0) {
+            return Pair.of(Boolean.FALSE, "操作失败,该订单已经有正在申请的支付单!");
+        }
+        PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
+        PaymentOrderProcessConfig.Process purchaseOrderProcess = null;
+        if (paymentOrderProcessConfig.getDefaultBaseMoney().compareTo(bizPoHeader.getPlanPay()) > 0) {
+            purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getPayProcessId());
+        } else {
+            purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getDefaultProcessId());
+        }
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
+        commonProcessEntity.setObjectName(BizPoPaymentOrderService.DATABASE_TABLE_NAME);
+        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+        commonProcessService.save(commonProcessEntity);
+
+        BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+        bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
+        List<BizPoPaymentOrder> poPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+        if (poPaymentOrderList.size() == 0) {
+            bizPoPaymentOrder.setTotal(BigDecimal.ZERO);
+        } else {
+            bizPoPaymentOrder.setTotal(bizPoHeader.getPlanPay());
+        }
+        bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
+        bizPoPaymentOrder.setDeadline(bizPoHeader.getPayDeadline());
+        bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
+        bizPoPaymentOrder.setRemark(paymentApplyRemark);
+        bizPoPaymentOrderService.save(bizPoPaymentOrder);
+
+        bizPoHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
+        this.updatePaymentOrderId(bizPoHeader.getId(), bizPoPaymentOrder.getId());
+        return Pair.of(Boolean.TRUE, "操作成功!");
+    }
+
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public Pair<Boolean, String> genPaymentOrder(int id, BigDecimal planPay, Date deadline) {
         BizPoHeader bizPoHeader = this.get(id);
@@ -927,7 +971,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public String payOrder(Integer poHeaderId,Integer reqHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
+    public String payOrder(Integer poHeaderId,Integer reqHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img, String paymentRemark) {
         // 当前流程
         User user = UserUtils.getUser();
         Role role = new Role();
@@ -952,6 +996,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         bizPoPaymentOrder.setImg(img);
         bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.ALL_PAY.getStatus());
         bizPoPaymentOrder.setPayTime(new Date());
+        bizPoPaymentOrder.setRemark(paymentRemark);
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
 

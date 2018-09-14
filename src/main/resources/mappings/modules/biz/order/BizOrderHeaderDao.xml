@@ -22,10 +22,10 @@
 		<result property="updateDate" column="updateDate"/>
 		<result property="totalBuyPrice" column="totalBuyPrice"/>
 		<result property="sellersId" column="sellersId"/>
-		<result property="payProportion" column="payProportion"/>
 		<result property="suplys" column="suplys"/>
         <result property="consultantId" column="consultantId"/>
         <result property="serviceFee" column="serviceFee"/>
+		<result property="mobileAuditStatus" column="mobileAuditStatus"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -94,6 +94,7 @@
 			<id property="orderNum" column="bizPoHeader.orderNum"/>
 			<id property="currentPaymentId" column="bizPoHeader.currentPaymentId"/>
 			<id property="poSchType" column="bizPoHeader.poSchType"/>
+			<id property="payTotal" column="bizPoHeader.payTotal"/>
 			<association property="commonProcess" javaType="CommonProcessEntity" column="bizPoHeader.commonProcess">
 				<id property="id" column="bizPoHeader.commonProcess.id"/>
 				<id property="objectId" column="bizPoHeader.commonProcess.objectId"/>
@@ -103,6 +104,10 @@
 				<id property="processor" column="bizPoHeader.commonProcess.processor"/>
 				<id property="description" column="bizPoHeader.commonProcess.description"/>
 				<id property="type" column="bizPoHeader.commonProcess.type"/>
+			</association>
+			<association property="bizPoPaymentOrder" javaType="BizPoPaymentOrder" column="bizPoHeader.bizPoPaymentOrder">
+				<id property="poHeaderId" column="bizPoHeader.bizPoPaymentOrder.poHeaderId"/>
+				<id property="remark" column="bizPoHeader.bizPoPaymentOrder.remark"/>
 			</association>
 		</association>
 
@@ -132,7 +137,6 @@
 		a.id AS "id",
 		a.order_num AS "orderNum",
 		a.order_type AS "orderType",
-		a.pay_proportion AS "payProportion",
 		a.cust_id AS "customer.id",
 		a.consultant_id AS "consultantId",
 		so.name as "customer.name",
@@ -182,6 +186,8 @@
 		bph.id AS "bizPoHeader.id",
 		bph.process_id AS "bizPoHeader.processId",
 		bph.current_payment_id AS "bizPoHeader.currentPaymentId",
+		bph.pay_total AS "bizPoHeader.payTotal",
+		bppo.remark AS "bizPoHeader.bizPoPaymentOrder.remark",
 		cp.id AS "bizPoHeader.commonProcess.id",
 		cp.object_id AS "bizPoHeader.commonProcess.objectId",
 		cp.object_name AS "bizPoHeader.commonProcess.objectName",
@@ -295,6 +301,11 @@
 	<select id="getByOrderNum" resultType="BizOrderHeader">
 		SELECT
 		<include refid="bizOrderHeaderColumns"/>
+		,
+		(SELECT SUM(bod.suply_id)
+		FROM biz_order_detail bod
+		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
+		WHERE boh.id = a.id) AS "suplys"
 		FROM biz_order_header a
 		<include refid="bizOrderHeaderJoins"/>
 		WHERE a.order_num = #{orderNum}
@@ -475,6 +486,15 @@
 			</if>
 			<if test="bizStatus !=null">
 				AND a.biz_status=#{bizStatus}
+			</if>
+			<if test="mobileAuditStatus == 0">
+				AND a.biz_status IN (0,5,10)
+			</if>
+			<if test="mobileAuditStatus == 1">
+				AND a.biz_status = 45
+			</if>
+			<if test="mobileAuditStatus == 2">
+				AND a.biz_status NOT IN (0,5,10,45)
 			</if>
 			<!-- 列表时间查询 -->
 			<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
@@ -797,8 +817,7 @@
 		ship_to_addr = #{bizLocation.id},
 		u_version = #{uVersion},
 		update_id = #{updateBy.id},
-		update_time = #{updateDate},
-		pay_proportion = #{payProportion}
+		update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 
@@ -2881,12 +2900,6 @@ FROM
 		update_id = #{updateBy.id},
 		update_time = #{updateDate}
 		WHERE id = #{id}
-	</update>
-
-	<update id="updateProcessId">
-		UPDATE biz_order_header SET
-		process_id  = #{processId}
-		WHERE id = #{headerId}
 	</update>
 
 	<!-- 查询日期内新建的有效会员 -->

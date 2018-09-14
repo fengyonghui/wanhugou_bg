@@ -34,6 +34,7 @@
 				<th>实际付款时间</th>
 				<th>当前状态</th>
 				<th>单次支付审批状态</th>
+				<th>备注</th>
 				<th>支付凭证</th>
 				<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -61,6 +62,9 @@
 				</td>
 				<td>
 					${bizPoPaymentOrder.commonProcess.paymentOrderProcess.name}
+				</td>
+				<td>
+						${bizPoPaymentOrder.remark}
 				</td>
 				<td>
 					<c:forEach items="${bizPoPaymentOrder.imgList}" var="v">

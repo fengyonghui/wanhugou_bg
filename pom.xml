@@ -659,6 +659,13 @@
             <version>1.7.5</version>
         </dependency>
 
+        <!--EMQ-->
+        <dependency>
+            <groupId>org.eclipse.paho</groupId>
+            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
         <!-- 自定义jar依赖包-->
         <!--<dependency>-->
             <!--<groupId>com.wanhutong.backend</groupId>-->
