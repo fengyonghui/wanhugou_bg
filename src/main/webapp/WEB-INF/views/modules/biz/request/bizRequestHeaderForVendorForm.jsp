@@ -31,7 +31,7 @@
                 $("#vendor").removeAttr("style");
                 deleteStyle();
             }
-            if (str == 'audit' || str == 'startAudit' || str == 'pay' || str =='createPay') {
+            if (str == 'audit' || str == 'pay' || str =='createPay') {
                 $("input[name='fromType']").each(function () {
 					$(this).attr("disabled","disabled");
                 });
@@ -715,34 +715,6 @@
 				</div>
 			</div>
 		</c:if>
-		<c:if test="${entity.str == 'startAudit'}">
-			<%--<div class="control-group">--%>
-				<%--<label class="control-label">是否同时提交支付申请：</label>--%>
-				<%--<div class="controls">--%>
-					<%--<input name="meanwhilePayOrder" id="meanwhilePayOrderRadioFalse" type="radio" onclick="showTimeTotal(false);" checked/>否--%>
-					<%--<input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" />是--%>
-				<%--</div>--%>
-			<%--</div>--%>
-			<%--<div class="control-group prewTimeTotal" style="display: none;">--%>
-				<%--<label class="control-label">最后付款时间：</label>--%>
-				<%--<div class="controls">--%>
-					<%--<input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"--%>
-						   <%--class="input-medium Wdate required"--%>
-						   <%--value="<fmt:formatDate value="${entity.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"--%>
-						   <%--onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"--%>
-						   <%--placeholder="必填！"/>--%>
-				<%--</div>--%>
-			<%--</div>--%>
-			<%--<div class="control-group prewTimeTotal" style="display: none;">--%>
-				<%--<label class="control-label">申请金额：</label>--%>
-				<%--<div class="controls">--%>
-					<%--<input name="prewPayTotal" id="prewPayTotal" type="text"--%>
-						   <%--value="${entity.bizPoPaymentOrder.id != null ?--%>
-                           <%--entity.bizPoPaymentOrder.total : (entity.totalDetail-entity.balanceTotal)}"--%>
-						   <%--maxlength="20" placeholder="必填！"/>--%>
-				<%--</div>--%>
-			<%--</div>--%>
-		</c:if>
 		<c:if test="${entity.str == 'pay'}">
 			<div class="control-group">
 				<label class="control-label">实际付款金额：</label>
@@ -1340,10 +1312,6 @@
 		<div class="form-actions">
 
 			<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-				<%--<c:if test="${entity.str == 'startAudit'}">--%>
-					<%--<input id="btnSubmit" type="button" onclick="startAudit()" class="btn btn-primary" value="审核通过"/>--%>
-					<%--<input id="btnSubmit" type="button" onclick="startRejectAudit()" class="btn btn-primary" value="驳回"/>--%>
-				<%--</c:if>--%>
 				<c:if test="${entity.str == 'audit'}">
 					<c:if test="${entiry.commonProcess.type != autProcessId && entity.processPo != 'processPo'}">
 						<input id="btnSubmit" type="button" onclick="checkPass('RE')" class="btn btn-primary" value="审核通过"/>
@@ -1369,7 +1337,7 @@
 			</shiro:hasPermission>
 
 			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
-				<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str != 'startAudit' && entity.str != 'createPay' && entity.str != 'pay'}">
+				<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str != 'createPay' && entity.str != 'pay'}">
 					<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
 				</c:if>
 			</shiro:hasPermission>
@@ -1392,112 +1360,6 @@
 	</form:form>
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
 <script type="text/javascript">
-
-    function startAudit() {
-        var prew = false;
-        var prewPayTotal = $("#prewPayTotal").val();
-        var prewPayDeadline = $("#prewPayDeadline").val();
-        if ($("#meanwhilePayOrderRadioTrue").attr("checked") == "checked") {
-            if ($String.isNullOrBlank(prewPayTotal)) {
-                alert("请输入申请金额");
-                return false;
-            }
-            if ($String.isNullOrBlank(prewPayDeadline)) {
-                alert("请选择日期");
-                return false;
-            }
-            prew = true;
-        }
-        var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
-        var submit = function (v, h, f) {
-            if ($String.isNullOrBlank(f.description)) {
-                jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                return false;
-            }
-            top.$.jBox.confirm("确认开始后续审核流程吗？", "系统提示", function (v1, h1, f1) {
-                if (v1 == "ok") {
-                    var id = $("#id").val();
-                    $.ajax({
-                        url: '${ctx}/biz/request/bizRequestHeaderForVendor/startAudit',
-                        contentType: 'application/json',
-                        data: {
-                            "id": id,
-                            "prew": prew,
-                            "prewPayTotal": prewPayTotal,
-                            "prewPayDeadline": prewPayDeadline,
-							"auditType": 1,
-                            "desc": f.description
-                        },
-                        type: 'get',
-                        success: function (result) {
-                            result = JSON.parse(result);
-                            if(result.ret == true || result.ret == 'true') {
-                                alert('操作成功!');
-                                window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
-                            }else {
-                                alert(result.errmsg);
-                            }
-                        },
-                        error: function (error) {
-                            console.info(error);
-                        }
-                    });
-                }
-            }, {buttonsFocus: 1});
-            return true;
-        };
-
-        jBox(html, {
-            title: "请输入通过理由:", submit: submit, loaded: function (h) {
-            }
-        });
-
-
-    }
-
-    function startRejectAudit() {
-        top.$.jBox.confirm("确认驳回流程吗？","系统提示",function(v,h,f){
-            if(v=="ok"){
-                var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
-                var submit = function (v, h, f) {
-                    if ($String.isNullOrBlank(f.description)) {
-                        jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                        return false;
-                    }
-                    var id = $("#id").val();
-                    var prew = false;
-                    $.ajax({
-                        url: '${ctx}/biz/request/bizRequestHeaderForVendor/startAudit',
-                        contentType: 'application/json',
-                        data: {"id": id, "prew":prew,  "auditType":2, "desc": f.description},
-                        type: 'get',
-                        success: function (result) {
-                            if(result == '操作成功!') {
-                                window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
-                            }
-                        },
-                        error: function (error) {
-                            console.info(error);
-                        }
-                    });
-                    return true;
-                };
-
-                jBox(html, {
-                    title: "请输入驳回理由:", submit: submit, loaded: function (h) {
-                    }
-                });
-            }
-        },{buttonsFocus:1});
-    }
-
-    function showTimeTotal(show) {
-        if (show) {
-            $(".prewTimeTotal").show();
-            return;
-        }
-        $(".prewTimeTotal").hide();
-    }
 
     function pay() {
         var id = $("#poHeaderId").val();
