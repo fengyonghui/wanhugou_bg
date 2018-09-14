@@ -27,7 +27,7 @@ import java.util.Map;
 @RequestMapping(value = "/biz/payMoney")
 public class BizPayMoneyController extends BaseController {
 
-    private static Logger payLogger = LoggerFactory.getLogger("requestPay");
+    private static final Logger PAY_LOGGER = LoggerFactory.getLogger("requestPay");
 
     @Resource
     private BizRequestHeaderService bizRequestHeaderService;
@@ -47,7 +47,7 @@ public class BizPayMoneyController extends BaseController {
     @RequestMapping(value = "payMoneyIng")
     public String payMoneyIng(@RequestBody Map<String, Object> map){
         String jsonstr = JSONObject.fromObject(map).toString();
-        payLogger.info("请求返回参数--------------"+jsonstr);
+        PAY_LOGGER.info("请求返回参数--------------"+jsonstr);
         BizPayRecord bizPayRecord =new BizPayRecord();
         Integer reqId=0;
         double amount=0.0;
@@ -55,7 +55,7 @@ public class BizPayMoneyController extends BaseController {
         String photoName=null;
         if(map.containsKey("attach")) {
              params = (String) map.get("attach");
-             payLogger.info("微信返回参数--------"+params);
+             PAY_LOGGER.info("微信返回参数--------"+params);
         }else {
             String payNum= (String) map.get("out_trade_no");
             BizPayRecord record= bizPayRecordService.findBizPayRecord(payNum);
@@ -68,7 +68,7 @@ public class BizPayMoneyController extends BaseController {
             bizPayRecord.setCustomer(record.getCustomer());
             String resultCode= (String) map.get("trade_status");
             Double receiptAmount = Double.parseDouble(map.get("receipt_amount").toString());
-            payLogger.info("支付宝返回参数-------------"+receiptAmount);
+            PAY_LOGGER.info("支付宝返回参数-------------"+receiptAmount);
             amount= Double.parseDouble(map.get("buyer_pay_amount").toString());
             bizPayRecord.setPayMoney(Double.valueOf(amount));
             if("TRADE_SUCCESS".equalsIgnoreCase(resultCode)&& receiptAmount.equals(amount)){
@@ -143,13 +143,13 @@ public class BizPayMoneyController extends BaseController {
             Integer bizStatus = bizRequestHeader.getBizStatus();
             if((bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.UNREVIEWED.getState()) || bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.INITIAL_PAY.getState())) && bizRequestHeader.getTotalDetail().equals(bizRequestHeader.getRecvTotal())){
                 bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ALL_PAY.getState());
-                payLogger.info("更新备货清单状态-------"+ReqHeaderStatusEnum.ALL_PAY.getState());
+                PAY_LOGGER.info("更新备货清单状态-------"+ReqHeaderStatusEnum.ALL_PAY.getState());
             }else if((bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.UNREVIEWED.getState()) || bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.INITIAL_PAY.getState()))  && bizRequestHeader.getTotalDetail() > bizRequestHeader.getRecvTotal()){
                 bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.INITIAL_PAY.getState());
-                payLogger.info("更新备货清单状态-------"+ReqHeaderStatusEnum.INITIAL_PAY.getState());
+                PAY_LOGGER.info("更新备货清单状态-------"+ReqHeaderStatusEnum.INITIAL_PAY.getState());
             }else if((bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.UNREVIEWED.getState()) || bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.INITIAL_PAY.getState())) && bizRequestHeader.getTotalDetail() < bizRequestHeader.getRecvTotal()){
                 bizRequestHeader.setBizStatus(-1);
-                payLogger.info("更新状态出问题");
+                PAY_LOGGER.info("更新状态出问题");
             }
             bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
             if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
@@ -161,7 +161,7 @@ public class BizPayMoneyController extends BaseController {
         File file =new File(pathFile);
         if(file.exists()){
             file.delete();
-            payLogger.info("删除生成的二维码");
+            PAY_LOGGER.info("删除生成的二维码");
         }
 
         return "redirect:"+ Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";

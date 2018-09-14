@@ -13,6 +13,7 @@
 		<result column="deadline" property="deadline"/>
 		<result column="processId" property="processId"/>
 		<result column="payTime" property="payTime"/>
+		<result column="remark" property="remark"/>
 		<result column="commonProcess.id" property="commonProcess.id"/>
 		<result column="commonProcess.objectName" property="commonProcess.objectName"/>
 		<result column="commonProcess.prevId" property="commonProcess.prevId"/>
@@ -57,6 +58,7 @@
 		a.deadline AS deadline,
 		a.process_id AS processId,
 		a.pay_time AS payTime,
+		a.remark AS remark,
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
 		process.object_name AS "commonProcess.objectName",
@@ -136,15 +138,21 @@
 			<if test="orderType != null">
 				type,
 			</if>
+			<if test="remark != null and remark != ''">
+				remark,
+			</if>
 			total,
 			deadline,
 			process_id
 		) VALUES (
 			#{id},
 			#{poHeaderId},
-		<if test="orderType != null">
-			#{orderType},
-		</if>
+			<if test="orderType != null">
+				#{orderType},
+			</if>
+			<if test="remark != null and remark != ''">
+				#{remark},
+			</if>
 			#{total},
 			#{deadline},
 			#{processId}
@@ -164,6 +172,9 @@
 			process_id = #{processId}
 			<if test="payTime != null and payTime != ''">
 				, pay_time = #{payTime}
+			</if>
+			<if test="remark != null and remark != ''">
+				, remark = #{remark}
 			</if>
 		WHERE id = #{id}
 	</update>

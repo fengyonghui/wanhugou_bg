@@ -687,15 +687,12 @@ public class BizPoHeaderReqController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "savePoHeader")
     public String savePoHeader(HttpServletRequest request, BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
+        String paymentApplyRemark = request.getParameter("paymentApplyRemark");
         String fromPage = request.getParameter("fromPage");
         if ("createPay".equalsIgnoreCase(type)) {
-            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
+            String msg = bizPoHeaderService.genPaymentOrderForApply(bizPoHeader, paymentApplyRemark).getRight();
             addMessage(redirectAttributes, msg);
             String toPage = "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/listV2/?repage";
-//            String toPage = "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";
-//            if ("orderHeader".equals(fromPage)) {
-//                toPage = "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage";
-//            }
             return toPage;
         }
 
@@ -731,8 +728,8 @@ public class BizPoHeaderReqController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "payOrder")
     @ResponseBody
-    public String payOrder(RedirectAttributes redirectAttributes, Integer poHeaderId,@RequestParam(required = false) Integer reqHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
-        return bizPoHeaderService.payOrder(poHeaderId,reqHeaderId, paymentOrderId, payTotal, img);
+    public String payOrder(RedirectAttributes redirectAttributes, Integer poHeaderId,@RequestParam(required = false) Integer reqHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img, String paymentRemark) {
+        return bizPoHeaderService.payOrder(poHeaderId,reqHeaderId, paymentOrderId, payTotal, img, paymentRemark);
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:audit")

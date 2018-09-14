@@ -436,11 +436,12 @@ public class BizCustomCenterConsultantController extends BaseController {
         Office customs = new Office();
         String result = "0";
         if (StringUtils.isNotBlank(phone)) {
-            List<Office> officeList = officeService.getImgTreeListByPhone(OfficeTypeEnum.CUSTOMER.getType(), "con", phone);
-
-            if (CollectionUtils.isNotEmpty(officeList)) {
-                Integer customsId = officeList.get(0).getId();
-                customs.setId(customsId);
+            ///List<Office> officeList = officeService.getImgTreeListByPhone(OfficeTypeEnum.CUSTOMER.getType(), "con", phone);
+            User user = systemService.getUserByLoginName(phone);
+            Office company = user.getCompany();
+            if (company != null) {
+                Integer companyId = company.getId();
+                customs.setId(companyId);
             } else {
                 logger.warn("未找到相应经销店");
                 return result;
