@@ -145,21 +145,29 @@
 								var inCheck = '';
 								var inCheckBtn='';
 								if(_this.checkFlag == true) {
+									var requestOrderProcess = '';
+									if(item.commonProcess.requestOrderProcess) {
+										requestOrderProcess = item.commonProcess.requestOrderProcess
+									}
+									var purchaseOrderProcess = '';
+									if(item.bizPoHeader) {
+										purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
+									}
 //								<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
 //							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
 //							}">
 									var DataRoleGener = '';
 									if(item.commonProcess) {
-										DataRoleGener = item.commonProcess.requestOrderProcess.roleEnNameEnum;
+										DataRoleGener = requestOrderProcess.roleEnNameEnum;
 									}
 									var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
-										if(item.commonProcess && fileRoleData.length>0 && item.commonProcess.requestOrderProcess.name != '驳回') {
-											inCheck = '审核'
-											inCheckBtn='inCheckBtn'
-										}else {
-											inCheck = ''
-											inCheckBtn=''
-										}
+									if(item.commonProcess && fileRoleData.length>0 && requestOrderProcess.name != '驳回') {
+										inCheck = '审核'
+										inCheckBtn='inCheckBtn'
+									}else {
+										inCheck = ''
+										inCheckBtn=''
+									}
 								}
 								//取消、修改、付款
 								var inPay = '';
@@ -189,14 +197,6 @@
 											inAmendBtn = ''
 											inAmend = ''
 										}
-									}
-									var requestOrderProcess = '';
-									if(item.commonProcess.requestOrderProcess) {
-										requestOrderProcess = item.commonProcess.requestOrderProcess
-									}
-									var purchaseOrderProcess = '';
-									if(item.bizPoHeader) {
-										purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
 									}
 									if(userId != 1 && item.bizstatus < 4 ||(requestOrderProcess.name == '驳回' && userId == item.createBy.id) ||(purchaseOrderProcess.name == '驳回' && userId == item.createBy.id)) {
 										inAmend = '修改'
@@ -239,11 +239,13 @@
 								}
 							/*审核状态*/		
 								var checkStatus = '';
-								if(requestOrderProcess.name != '审核完成') {
-									checkStatus = item.commonProcess.requestOrderProcess.name
-								}
-								if(requestOrderProcess.name == '审核完成') {
-									checkStatus = '订单支出信息审核'
+								if(requestOrderProcess) {
+									if(requestOrderProcess.name != '审核完成') {
+										checkStatus = requestOrderProcess.name
+									}
+									if(requestOrderProcess.name == '审核完成') {
+										checkStatus = '订单支出信息审核'
+									}
 								}
 								inPHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 									'<div class="mui-input-row">' +
@@ -622,21 +624,29 @@
 							var inCheck = '';
 							var inCheckBtn='';
 							if(_this.checkFlag == true) {
-//								<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
-//							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
-//							}">
+								var requestOrderProcess = '';
+								if(item.commonProcess.requestOrderProcess) {
+									requestOrderProcess = item.commonProcess.requestOrderProcess
+								}
+								var purchaseOrderProcess = '';
+								if(item.bizPoHeader) {
+									purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
+								}
+	//								<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
+	//							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
+	//							}">
 								var DataRoleGener = '';
 								if(item.commonProcess) {
-									DataRoleGener = item.commonProcess.requestOrderProcess.roleEnNameEnum;
+									DataRoleGener = requestOrderProcess.roleEnNameEnum;
 								}
 								var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
-									if(item.commonProcess && fileRoleData.length>0 && item.commonProcess.requestOrderProcess.name != '驳回') {
-										inCheck = '审核'
-										inCheckBtn='inCheckBtn'
-									}else {
-										inCheck = ''
-										inCheckBtn=''
-									}
+								if(item.commonProcess && fileRoleData.length>0 && requestOrderProcess.name != '驳回') {
+									inCheck = '审核'
+									inCheckBtn='inCheckBtn'
+								}else {
+									inCheck = ''
+									inCheckBtn=''
+								}
 							}
 							//取消、修改、付款
 							var inPay = '';
@@ -648,7 +658,7 @@
 							if(_this.cancelAmendPayFlag == true){
 								if(userId == 1) {
 									/*修改按钮*/
-//								requestHeader.delFlag!=null && requestHeader.delFlag!=0
+	//								requestHeader.delFlag!=null && requestHeader.delFlag!=0
 									if(item.delFlag!=null && item.delFlag!=0) {
 										inAmend = '修改'
 										inAmendBtn = 'inAmendBtn'
@@ -667,27 +677,19 @@
 										inAmend = ''
 									}
 								}
-								var requestOrderProcess = '';
-								if(item.commonProcess.requestOrderProcess) {
-									requestOrderProcess = item.commonProcess.requestOrderProcess
-								}
-								var purchaseOrderProcess = '';
-								if(item.bizPoHeader) {
-									purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
-								}
 								if(userId != 1 && item.bizstatus < 4 ||(requestOrderProcess.name == '驳回' && userId == item.createBy.id) ||(purchaseOrderProcess.name == '驳回' && userId == item.createBy.id)) {
 									inAmend = '修改'
 									inAmendBtn = 'inAmendBtn'
 									/*删除按钮*/	
-//										if(_this.cancelFlag == true) {
-//										}else {
-//										}
+	//										if(_this.cancelFlag == true) {
+	//										}else {
+	//										}
 									inCancel = '取消'
 									inCancelBtn = 'inCancelBtn'
 								}
 								/*付款按钮*/
 								if(_this.payFlag == true) {
-//									<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
+	//									<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
 									if(item.bizstatus !=40 && item.totalDetail != item.recvTotal) {
 										inPay = '付款'
 										inPayBtn = 'inPayBtn'
@@ -716,11 +718,13 @@
 							}
 						/*审核状态*/		
 							var checkStatus = '';
-							if(requestOrderProcess.name != '审核完成') {
-								checkStatus = item.commonProcess.requestOrderProcess.name
-							}
-							if(requestOrderProcess.name == '审核完成') {
-								checkStatus = '订单支出信息审核'
+							if(requestOrderProcess) {
+								if(requestOrderProcess.name != '审核完成') {
+									checkStatus = requestOrderProcess.name
+								}
+								if(requestOrderProcess.name == '审核完成') {
+									checkStatus = '订单支出信息审核'
+								}
 							}
 						inPHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 							'<div class="mui-input-row">' +
