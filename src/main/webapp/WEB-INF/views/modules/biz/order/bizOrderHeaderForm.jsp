@@ -1632,12 +1632,13 @@
     <div id="vendor" class="control-group" >
         <label class="control-label">供应商：</label>
         <div class="controls">
-            <sys:treeselect id="officeVendor" name="bizVendInfo.office.id" value="${entity.sellers.bizVendInfo.office.id}" labelName="bizVendInfo.office.name"
-                            labelValue="${entity.sellers.bizVendInfo.vendName}" notAllowSelectParent="true"
-                            title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium required"
-                            allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息" onchange="deleteStyle()"/>
-            <span class="help-inline"><font color="red">*</font> </span>
-            <a href="#" id="remark" onclick="selectRemark()" style="display: none">《厂家退换货流程》</a>
+            <input type="text" id="ecpectPay" value="${entity.vendorName}" disabled="true" class="input-xlarge">
+            <%--<sys:treeselect id="officeVendor" name="bizVendInfo.office.id" value="${entity.vendorId}" labelName="bizVendInfo.office.name"--%>
+                            <%--labelValue="${entity.vendorName}" notAllowSelectParent="true"--%>
+                            <%--title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium required"--%>
+                            <%--allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息" onchange="deleteStyle()"/>--%>
+            <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+            <%--<a href="#" id="remark" onclick="selectRemark()" style="display: none">《厂家退换货流程》</a>--%>
         </div>
     </div>
     <div id="cardNumber" class="control-group" style="display: none">
