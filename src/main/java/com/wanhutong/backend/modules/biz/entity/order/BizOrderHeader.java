@@ -228,7 +228,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     /**
      * 手机端客户专员订单检索
-     * 0：待审核，1：审核成功，2：审核失败
+     * 0：待审核，1：审核失败，2：其他
      */
     private Integer mobileAuditStatus;
 
