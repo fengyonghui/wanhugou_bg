@@ -226,6 +226,12 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private String poProcessName;
 
+    /**
+     * 手机端客户专员订单检索
+     * 0：待审核，1：审核成功，2：审核失败
+     */
+    private Integer mobileAuditStatus;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -987,5 +993,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setVendorName(String vendorName) {
         this.vendorName = vendorName;
+    }
+
+    public Integer getMobileAuditStatus() {
+        return mobileAuditStatus;
+    }
+
+    public void setMobileAuditStatus(Integer mobileAuditStatus) {
+        this.mobileAuditStatus = mobileAuditStatus;
     }
 }
