@@ -131,6 +131,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String imgPhotosSorts;		//主图顺序
 
     private Integer vendorId; //根据供应商Id搜索
+    private String vendorName; //根据供应商名称
     /**
      * 发货单Id
      * */
@@ -978,5 +979,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setServiceFee(Double serviceFee) {
         this.serviceFee = serviceFee;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
     }
 }
