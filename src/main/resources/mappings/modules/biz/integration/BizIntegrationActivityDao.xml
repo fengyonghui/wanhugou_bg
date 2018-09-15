@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.integration.BizIntegrationActivityDao">
+    
+	<sql id="bizIntegrationActivityColumns">
+		a.id AS "id",
+		a.activity_name AS "activityName",
+		a.send_time AS "sendTime",
+		a.send_scope AS "sendScope",
+		a.activity_tools AS "activityTools",
+		a.send_num AS "sendNum",
+		a.integration_num AS "integrationNum",
+		a.description AS "description",
+		a.create_id AS "createBy.id",
+		a.update_id AS "updateBy.id",
+		a.create_time AS "createDate",
+		a.update_time AS "updateDate",
+		a.status AS "status",
+		a.u_version AS "uVersion"
+	</sql>
+	
+	<sql id="bizIntegrationActivityJoins">
+	</sql>
+    
+	<select id="get" resultType="BizIntegrationActivity">
+		SELECT 
+			<include refid="bizIntegrationActivityColumns"/>
+		FROM biz_integration_activity a
+		<include refid="bizIntegrationActivityJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizIntegrationActivity">
+		SELECT 
+			<include refid="bizIntegrationActivityColumns"/>
+		FROM biz_integration_activity a
+		<include refid="bizIntegrationActivityJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizIntegrationActivity">
+		SELECT 
+			<include refid="bizIntegrationActivityColumns"/>
+		FROM biz_integration_activity a
+		<include refid="bizIntegrationActivityJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_integration_activity(
+			id,
+			activity_name,
+			send_time,
+			send_scope,
+			activity_tools,
+			send_num,
+			integration_num,
+			description,
+			create_id,
+			update_id,
+			create_time,
+			update_time,
+			status,
+			u_version
+		) VALUES (
+			#{id},
+			#{activityName},
+			#{sendTime},
+			#{sendScope},
+			#{activityTools},
+			#{sendNum},
+			#{integrationNum},
+			#{description},
+			#{createBy.id},
+			#{updateBy.id},
+			#{createDate},
+			#{updateDate},
+			#{status},
+			#{uVersion}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_integration_activity SET 	
+			activity_name = #{activityName},
+			send_time = #{sendTime},
+			send_scope = #{sendScope},
+			activity_tools = #{activityTools},
+			send_num = #{sendNum},
+			integration_num = #{integrationNum},
+			description = #{description},
+			update_id = #{updateBy.id},
+			create_time = #{createDate},
+			update_time = #{updateDate},
+			u_version = #{uVersion}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_integration_activity SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
