@@ -25,7 +25,7 @@ import com.wanhutong.backend.modules.biz.service.integration.BizIntegrationActiv
 /**
  * 积分活动Controller
  * @author LX
- * @version 2018-09-14
+ * @version 2018-09-16
  */
 @Controller
 @RequestMapping(value = "${adminPath}/biz/integration/bizIntegrationActivity")
@@ -54,11 +54,26 @@ public class BizIntegrationActivityController extends BaseController {
 		return "modules/biz/integration/bizIntegrationActivityList";
 	}
 
+
 	@RequiresPermissions("biz:integration:bizIntegrationActivity:view")
 	@RequestMapping(value = "form")
 	public String form(BizIntegrationActivity bizIntegrationActivity, Model model) {
 		model.addAttribute("bizIntegrationActivity", bizIntegrationActivity);
 		return "modules/biz/integration/bizIntegrationActivityForm";
+	}
+
+	@RequiresPermissions("biz:integration:bizIntegrationActivity:view")
+	@RequestMapping(value = "formA")
+	public String formZhu(BizIntegrationActivity bizIntegrationActivity, Model model) {
+		model.addAttribute("bizIntegrationActivity", bizIntegrationActivity);
+		return "modules/biz/integration/bizIntegrationActivityAForm";
+	}
+
+	@RequiresPermissions("biz:integration:bizIntegrationActivity:view")
+	@RequestMapping(value = "formB")
+	public String formZhi(BizIntegrationActivity bizIntegrationActivity, Model model) {
+		model.addAttribute("bizIntegrationActivity", bizIntegrationActivity);
+		return "modules/biz/integration/bizIntegrationActivityBForm";
 	}
 
 	@RequiresPermissions("biz:integration:bizIntegrationActivity:edit")

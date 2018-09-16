@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>积分活动管理</title>
+	<title>注册送</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -36,11 +36,11 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizIntegrationActivity" action="${ctx}/biz/integration/bizIntegrationActivity/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">活动名称：</label>
+			<label class="control-label">说明：</label>
 			<div class="controls">
-				<form:input path="activityName" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				手机号注册成功，即送;
 			</div>
 		</div>
 		<div class="control-group">
@@ -50,46 +50,18 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">发送时间：</label>
+			<label class="control-label">赠送：</label>
 			<div class="controls">
-				<input name="sendTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${bizIntegrationActivity.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">发送范围：</label>
-			 <div class="controls">
-				<form:radiobutton path="sendScope" onclick="radioDefault" value="1" checked="true"/>指定用户
-				<form:radiobutton path="sendScope" value="2"/>已下单用户
-				<form:radiobutton path="sendScope" value="2"/>未下单用户
-				<form:radiobutton path="sendScope" value="2"/>全部用户
-			 </div>
-		</div>
-		<div class="control-group">
-			<div class="controls">
-				<sys:treeselect id="office"  name="office.id" value="${bizShopCart.office.id}" labelName="office.name" labelValue="${bizShopCart.office.name}"
-								title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
-			</div>
-		</div>
-
-		<div class="control-group">
-			<label class="control-label">发送人数：</label>
-			<div class="controls">
-				<form:input path="sendNum" htmlEscape="false" maxlength="10" class="input-xlarge  digits"/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">每人赠送积分：</label>
-			<div class="controls">
+				注册成功，赠送：
 				<form:input path="integrationNum" htmlEscape="false" maxlength="10" class="input-xlarge  digits"/>
+				个万户币
 			</div>
 		</div>
-
 		<div class="control-group">
-			<label class="control-label">备注说明：</label>
+			<label class="control-label">开启状态：</label>
 			<div class="controls">
-				<form:textarea path="description" htmlEscape="false" rows="3" maxlength="200" class="input-xlarge"/>
+				<form:radiobutton path="status" onclick="radioDefault" value="1" checked="true"/>开启
+				<form:radiobutton path="status" value="0"/>关闭
 			</div>
 		</div>
 
@@ -97,8 +69,7 @@
 			<%--<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">
 				<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>保存
 			</shiro:hasPermission>--%>
-			<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>
-			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+			<input id="btnSubmit" class="btn btn-primary" type="submit" value="更新"/>
 		</div>
 	</form:form>
 </body>

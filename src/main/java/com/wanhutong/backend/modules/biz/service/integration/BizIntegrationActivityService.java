@@ -16,7 +16,7 @@ import com.wanhutong.backend.modules.biz.dao.integration.BizIntegrationActivityD
 /**
  * 积分活动Service
  * @author LX
- * @version 2018-09-14
+ * @version 2018-09-16
  */
 @Service
 @Transactional(readOnly = true)

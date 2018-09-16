@@ -5,6 +5,7 @@
 	<sql id="bizIntegrationActivityColumns">
 		a.id AS "id",
 		a.activity_name AS "activityName",
+		a.activity_code AS "activityCode",
 		a.send_time AS "sendTime",
 		a.send_scope AS "sendScope",
 		a.activity_tools AS "activityTools",
@@ -37,6 +38,12 @@
 		<include refid="bizIntegrationActivityJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			<if test="activityName != null and activityName != ''">
+				AND a.activity_name = #{activityName}
+			</if>
+			<if test="beginSendTime != null and endSendTime != null and beginSendTime != '' and endSendTime != ''">
+				AND a.send_time BETWEEN #{beginSendTime} AND #{endSendTime}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -68,6 +75,7 @@
 		INSERT INTO biz_integration_activity(
 			id,
 			activity_name,
+			activity_code,
 			send_time,
 			send_scope,
 			activity_tools,
@@ -83,6 +91,7 @@
 		) VALUES (
 			#{id},
 			#{activityName},
+			#{activityCode},
 			#{sendTime},
 			#{sendScope},
 			#{activityTools},
@@ -101,15 +110,13 @@
 	<update id="update">
 		UPDATE biz_integration_activity SET 	
 			activity_name = #{activityName},
+			activity_code = #{activityCode},
 			send_time = #{sendTime},
 			send_scope = #{sendScope},
 			activity_tools = #{activityTools},
 			send_num = #{sendNum},
 			integration_num = #{integrationNum},
 			description = #{description},
-			update_id = #{updateBy.id},
-			create_time = #{createDate},
-			update_time = #{updateDate},
 			u_version = #{uVersion}
 		WHERE id = #{id}
 	</update>

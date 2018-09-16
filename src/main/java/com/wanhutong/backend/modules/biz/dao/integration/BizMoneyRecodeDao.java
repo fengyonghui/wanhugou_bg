@@ -5,14 +5,14 @@ package com.wanhutong.backend.modules.biz.dao.integration;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
-import com.wanhutong.backend.modules.biz.entity.integration.BizIntegrationActivity;
+import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecode;
 
 /**
- * 积分活动DAO接口
+ * 积分流水DAO接口
  * @author LX
  * @version 2018-09-16
  */
 @MyBatisDao
-public interface BizIntegrationActivityDao extends CrudDao<BizIntegrationActivity> {
+public interface BizMoneyRecodeDao extends CrudDao<BizMoneyRecode> {
 	
 }

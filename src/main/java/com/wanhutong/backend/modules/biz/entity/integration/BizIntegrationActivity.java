@@ -3,29 +3,46 @@
  */
 package com.wanhutong.backend.modules.biz.entity.integration;
 
+import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import javax.validation.constraints.NotNull;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
  * 积分活动Entity
  * @author LX
- * @version 2018-09-14
+ * @version 2018-09-16
  */
 public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 	
 	private static final long serialVersionUID = 1L;
 	private String activityName;		// 活动名称
+	private String activityCode;		// activity_code
 	private Date sendTime;		// 发送时间
-	private String sendScope;		// 发送范围，0是全部用户，-1下单用户，-2未下单用户，其他为指定用户
+	private Integer sendScope;		// 发送范围，0是全部用户，-1下单用户，-2未下单用户，其他为指定用户
 	private String activityTools;		// 优惠工具
 	private Integer sendNum;		// 发送人数
 	private Integer integrationNum;		// 每人赠送积分
 	private String description;		// 备注说明
 	private Integer status;		// status
-	private String uVersion;		// 版本控制；重要
+	private Integer uVersion;		// 版本控制；重要
+	private Date beginSendTime;		// 开始 发送时间
+	private Date endSendTime;		// 结束 发送时间
+	private Integer sendStatus; //发送状态 0未发送 1已发送
+	public Integer getSendStatus() {
+		return sendStatus;
+	}
+
+	public void setSendStatus(Integer sendStatus) {
+		this.sendStatus = sendStatus;
+	}
+
+	private String officeIds;		// 采购商IDs
 	
 	public BizIntegrationActivity() {
 		super();
@@ -44,6 +61,15 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 		this.activityName = activityName;
 	}
 	
+	@Length(min=0, max=50, message="activity_code长度必须介于 0 和 50 之间")
+	public String getActivityCode() {
+		return activityCode;
+	}
+
+	public void setActivityCode(String activityCode) {
+		this.activityCode = activityCode;
+	}
+	
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	public Date getSendTime() {
 		return sendTime;
@@ -53,12 +79,11 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 		this.sendTime = sendTime;
 	}
 	
-	@Length(min=0, max=100, message="发送范围，0是全部用户，-1下单用户，-2未下单用户，其他为指定用户长度必须介于 0 和 100 之间")
-	public String getSendScope() {
+	public Integer getSendScope() {
 		return sendScope;
 	}
 
-	public void setSendScope(String sendScope) {
+	public void setSendScope(Integer sendScope) {
 		this.sendScope = sendScope;
 	}
 	
@@ -104,13 +129,29 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 		this.status = status;
 	}
 	
-	@Length(min=1, max=4, message="版本控制；重要长度必须介于 1 和 4 之间")
-	public String getUVersion() {
+	@NotNull(message="版本控制；重要不能为空")
+	public Integer getUVersion() {
 		return uVersion;
 	}
 
-	public void setUVersion(String uVersion) {
+	public void setUVersion(Integer uVersion) {
 		this.uVersion = uVersion;
 	}
 	
+	public Date getBeginSendTime() {
+		return beginSendTime;
+	}
+
+	public void setBeginSendTime(Date beginSendTime) {
+		this.beginSendTime = beginSendTime;
+	}
+	
+	public Date getEndSendTime() {
+		return endSendTime;
+	}
+
+	public void setEndSendTime(Date endSendTime) {
+		this.endSendTime = endSendTime;
+	}
+		
 }
