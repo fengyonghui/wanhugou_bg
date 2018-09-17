@@ -215,74 +215,42 @@ public class BizOrderHeaderController extends BaseController {
         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
         DoOrderHeaderProcessAllConfig doOrderHeaderProcessAllConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
         DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
 
         Map<String, String> originConfigMap = Maps.newLinkedHashMap();
         List<String> originConfigValue = Lists.newArrayList();
         List<String> localConfigValue = Lists.newArrayList();
-        List<String> doAllConfigValue = Lists.newArrayList();
         List<String> doFifthConfigValue = Lists.newArrayList();
-        List<String> poConfigValue = Lists.newArrayList();
+
+        originConfigMap.put("渠道", "渠道");
+        originConfigMap.put("总经理", "总经理");
+        originConfigMap.put("品类", "品类");
+        originConfigMap.put("财务", "财务");
+        originConfigMap.put("完成", "完成");
+        originConfigMap.put("驳回", "驳回");
+        originConfigMap.put("不需要审批", "不需要审批");
 
 //////////////////////////////////////////////////////////////////
         for (Process process : originConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("产地直发订单-" + process.getName(), "产地直发订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("产地直发订单-", ""))) {
+            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
                 originConfigValue.add(String.valueOf(process.getCode()));
             }
         }
 //////////////////////////////////////////////////////////////////
         for (Process process : localConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("本地备货订单-" + process.getName(), "本地备货订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("本地备货订单-", ""))) {
+            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
                 localConfigValue.add(String.valueOf(process.getCode()));
             }
         }
 //////////////////////////////////////////////////////////////////
-        for (DoOrderHeaderProcessAllConfig.OrderHeaderProcess process : doOrderHeaderProcessAllConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("全款代采订单-" + process.getName(), "全款代采订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("全款代采订单-", ""))) {
-                doAllConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-//////////////////////////////////////////////////////////////////
         for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("首付款代采订单-" + process.getName(), "首付款代采订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("首付款代采订单-", ""))) {
+            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
                 doFifthConfigValue.add(String.valueOf(process.getCode()));
             }
         }
 
-        for (com.wanhutong.backend.modules.config.parse.Process process : purchaseOrderProcessConfig.getProcessList()) {
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus)) {
-                poConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-
-        if ("财会待付款".equals(selectAuditStatus) || "财务待付款".equals(selectAuditStatus)) {
-            bizOrderHeader.setWaitPay(1);
-        } else {
-            if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("产地直发订单-")) {
-                bizOrderHeader.setOriginCode(CollectionUtils.isEmpty(originConfigValue) ? null : originConfigValue);
-            } else if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("本地备货订单-")) {
-                bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
-            } else if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("全款代采订单-")) {
-                bizOrderHeader.setDoAllCode(CollectionUtils.isEmpty(doAllConfigValue) ? null : doAllConfigValue);
-            } else if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("首付款代采订单-")) {
-                bizOrderHeader.setDoFifthCode(CollectionUtils.isEmpty(doFifthConfigValue) ? null : doFifthConfigValue);
-            } else {
-                bizOrderHeader.setPoAuditCode(CollectionUtils.isEmpty(poConfigValue) ? null : poConfigValue);
-            }
-        }
-
+        bizOrderHeader.setOriginCode(CollectionUtils.isEmpty(originConfigValue) ? null : originConfigValue);
+        bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
+        bizOrderHeader.setDoFifthCode(CollectionUtils.isEmpty(doFifthConfigValue) ? null : doFifthConfigValue);
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
