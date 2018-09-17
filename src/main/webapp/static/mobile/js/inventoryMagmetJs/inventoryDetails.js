@@ -17,6 +17,21 @@
 		},
 		getData: function() {
 			var _this = this;
+			inStocktxt
+			//备货方:
+			var arrbss = [];
+			var stock = '';
+			$.ajax({
+                type: "GET",
+                url: "/a/sys/dict/listData",
+                dataType: "json",
+                data: {type: "req_from_type"},
+                async:false,
+                success: function(bss){                 
+					console.log(bss)
+					arrbss = bss
+                }
+            });
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/request/bizRequestHeaderForVendor/form4MobileNew",
@@ -63,8 +78,8 @@
 		                success: function(res){
 		                	console.log(res)
 		                	$.each(res,function(i,item){
-		                		 if(item.value==itempoSchType){
-		                		 	  SchedulstatusTxt = item.label 
+		                		if(item.value==itempoSchType){
+		                		 	SchedulstatusTxt = item.label 
 		                		 }
 		                	})
 		                	$('#inSchedulstatus').val(SchedulstatusTxt);
