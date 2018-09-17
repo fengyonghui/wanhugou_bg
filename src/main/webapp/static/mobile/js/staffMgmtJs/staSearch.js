@@ -118,7 +118,7 @@
 				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
 					type: 8,
-					source:'officeConnIndex'					
+					source:'officeConnIndex'
 				},
 				dataType: 'json',
 				success: function(res) {
