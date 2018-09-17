@@ -1105,10 +1105,10 @@
             $("#bankName").removeAttr("style");
             $("#compact").removeAttr("style");
             $("#identityCard").removeAttr("style");
-            var officeId = $("#officeVendorId").val();
+            var vendId = $("#vendId").val();
             $.ajax({
                 type:"post",
-                url:"${ctx}/biz/order/bizOrderHeader/selectVendInfo?vendorId="+officeId,
+                url:"${ctx}/biz/order/bizOrderHeader/selectVendInfo?vendorId="+vendId,
                 success:function (data) {
                     if (data == null) {
                         return false;
@@ -1535,7 +1535,8 @@
     <input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
     <input type="hidden" value="${entity.bizPoPaymentOrder.id}" id="paymentOrderId"/>
     <input type="hidden" name="receiveTotal" value="${bizOrderHeader.receiveTotal}" />
-    <input id="vendId" type="hidden" value="${entity.sellers.bizVendInfo.office.id}"/>
+    <%--<input id="vendId" type="hidden" value="${entity.sellers.bizVendInfo.office.id}"/>--%>
+    <input id="vendId" type="hidden" value="${entity.sellersId}"/>
     <input id="createPo" type="hidden" value="${createPo}"/>
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>

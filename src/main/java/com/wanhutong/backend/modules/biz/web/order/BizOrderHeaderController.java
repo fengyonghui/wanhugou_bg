@@ -659,6 +659,7 @@ public class BizOrderHeaderController extends BaseController {
 //                entity.sellers.bizVendInfo.office.id
                 bizOrderHeader.setVendorId(vendUser.get(0).getVendor().getId());
                 bizOrderHeader.setVendorName(vendUser.get(0).getVendor().getName());
+                bizOrderHeader.setSellersId(vendUser.get(0).getVendor().getId());
             }
 
             //代采
