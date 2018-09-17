@@ -654,11 +654,24 @@ public class OfficeController extends BaseController {
     @RequiresPermissions("user")
     @ResponseBody
     @RequestMapping(value = "queryTreeListByPhone")
-    public List<Map<String, Object>> getImgTreeListByPhone(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes, String phone) {
+    public List<Map<String, Object>> queryTreeListByPhone(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes) {
         List<Office> list = null;
         if (StringUtils.isNotBlank(type)) {
             String defType = type;
-            list = officeService.filerOfficeByPhone(null, source, OfficeTypeEnum.stateOf(defType), phone);
+            String[] split = type.split(",");
+            if (ArrayUtils.isNotEmpty(split)) {
+                defType = split[0];
+            }
+            if (source != null && source.equals("officeConnIndex")) {
+                //属于客户专员查询采购中心方法
+                list = officeService.CustomerfilerOffice4mobile(null, source, OfficeTypeEnum.stateOf(defType));
+            } else {
+                if (ArrayUtils.isNotEmpty(split) && split.length > 1) {
+                    list = officeService.findListByTypeList(Arrays.asList(split));
+                }else {
+                    list = officeService.filerOffice(null, source, OfficeTypeEnum.stateOf(defType));
+                }
+            }
         }
         if (list == null || list.size() == 0) {
             addMessage(redirectAttributes, "列表不存在");

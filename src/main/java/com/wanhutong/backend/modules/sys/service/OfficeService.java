@@ -710,6 +710,64 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     }
 
     /**
+     * 用于客户专员查询采购中心
+     */
+    public List<Office> CustomerfilerOffice4mobile(List<Office> offices, String source, OfficeTypeEnum officeType) {
+        Office office = new Office();
+        User user = UserUtils.getUser();
+        if (!user.isAdmin() && !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) && !OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType())
+                || user.getCompany().getType().equals(OfficeTypeEnum.WITHCAPITAL.getType()) || user.getCompany().getType().equals(OfficeTypeEnum.NETWORKSUPPLY.getType())) {
+            office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
+        } else if (StringUtils.isNotBlank(source) && (source.equals("ghs") || source.equals("gys") || source.equals("cgs"))) {
+
+        } else if (!user.isAdmin() && OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())) {
+            boolean flag = false;
+            boolean flagb = false;
+            if (user.getRoleList() != null) {
+                for (Role role : user.getRoleList()) {
+                    if (RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
+                        flag = true;
+                        break;
+                    } else if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())) {
+                        flagb = true;
+                        break;
+                    }
+                }
+            }
+            BizCustomCenterConsultant customCenterConsultant = new BizCustomCenterConsultant();
+            if (flag && StringUtils.isBlank(source)) {
+                customCenterConsultant.setCenters(user.getCompany());
+
+                List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
+
+                return officeList;
+            } else if (flagb && StringUtils.isNotBlank(source) && source.equals("purchaser")) {
+                customCenterConsultant.setCenters(user.getCompany());
+                if (StringUtils.isNotBlank(source) && source.equals("purchaser")) {
+                    customCenterConsultant.setConsultants(user);
+                }
+                List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
+
+                return officeList;
+            } else if (flagb || (flag && StringUtils.isNotBlank(source) && source.equals("con"))) {
+                office.setType(String.valueOf(officeType.ordinal()));
+
+                office.setDelFlag(DEL_FLAG_NORMAL);
+                List<Office> officeList = officeDao.findOfficeCustByIdToParent(office);
+                return officeList;
+            }
+        }
+
+        office.setType(String.valueOf(officeType.ordinal()));
+        //office.setCustomerTypeTen(OfficeTypeEnum.WITHCAPITAL.getType());
+        //office.setCustomerTypeEleven(OfficeTypeEnum.NETWORKSUPPLY.getType());
+        office.setDelFlag(DEL_FLAG_NORMAL);
+
+        List<Office> list = queryList(office);
+        return list;
+    }
+
+    /**
      * 取所有的供应商
      *
      * @param id
