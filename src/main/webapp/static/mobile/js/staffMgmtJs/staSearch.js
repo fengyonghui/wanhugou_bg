@@ -122,7 +122,6 @@
 				},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
 					_this.datagood = res
 					$.each(res, function(i, item) {
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="'+item.name+'">' + item.name + '</span>'

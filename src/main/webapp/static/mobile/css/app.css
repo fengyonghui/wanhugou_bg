@@ -591,7 +591,7 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*红色 * 号，必填必选*/
-.mui-input-row font {color: red;position: absolute;right: 60px;top: 37%;font-size: 20px;}
+.mui-input-row font {color: red;position: absolute;right: 60px;top: 36%;font-size: 20px;}
 
 
 /*模糊查询列表显示---查询页面和经销店添加公共样式*/
@@ -653,8 +653,8 @@ body{font-size: 15px;color:#3b3b3b;}
 /*两列*/
 .inAddComdty div.mui-input-row label {width: 43%;}
 .inAddComdty div.mui-input-row input {width: 57%;}
-
-
+/*备货单添加、修改---备货方选择*/
+.inStock {padding: 10px 14px 10px 0;text-align: left;font-size: 14px!important;}
 
 /*=======运营管理后台=======*/
 .appQuitBtn {background-color: #dd5563;border: none;border-radius: 8px;}
