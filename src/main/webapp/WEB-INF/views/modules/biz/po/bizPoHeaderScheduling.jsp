@@ -600,7 +600,11 @@
                                                     </c:when>
                                                     <c:otherwise>
                                                         <input id="addSchedulingHeaderSkuBtn" class="btn" type="button" value="添加排产计划" onclick="addSchedulingHeaderPlan('schedulingForDetail_', ${poDetail.id})"/>
-                                                        <input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete('1',${poDetail.id})" value="保存"/>
+                                                        <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+                                                            <shiro:hasPermission name="biz:po:bizPoHeader:saveScheduling">
+                                                                <input id="saveSubmitForSku" class="btn btn-primary" type="button" onclick="saveComplete('1',${poDetail.id})" value="保存"/>
+                                                            </shiro:hasPermission>
+                                                        </shiro:hasPermission>
                                                         <span id="schedulingPanAlertForSku" style="color:red; display:none" >已排产完成</span>
                                                     </c:otherwise>
                                                 </c:choose>
@@ -666,11 +670,19 @@
     </c:if>
 
     <div class="form-actions">
-        <input id="saveSubmit" class="btn btn-primary" type="button"
-               onclick="saveComplete('0',${bizPoHeader.id})" value="保存"/>
+        <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+            <shiro:hasPermission name="biz:po:bizPoHeader:saveScheduling">
+                <input id="saveSubmit" class="btn btn-primary" type="button"
+                       onclick="saveComplete('0',${bizPoHeader.id})" value="保存"/>
+            </shiro:hasPermission>
+        </shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
         &nbsp;&nbsp;
-        <input id="batchSubmit" class="btn btn-primary" type="button" style="display: none;" onclick="batchSave()" value="批量保存"/>&nbsp;
+        <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+            <shiro:hasPermission name="biz:po:bizPoHeader:saveScheduling">
+                <input id="batchSubmit" class="btn btn-primary" type="button" style="display: none;" onclick="batchSave()" value="批量保存"/>&nbsp;
+            </shiro:hasPermission>
+        </shiro:hasPermission>
     </div>
 </form:form>
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
