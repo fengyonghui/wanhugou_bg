@@ -360,7 +360,6 @@
 			});
 		},
 		comfirDialig: function(data) {
-			console.log(data)
 			var _this = this;
 			document.getElementById("rejectBtns").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
