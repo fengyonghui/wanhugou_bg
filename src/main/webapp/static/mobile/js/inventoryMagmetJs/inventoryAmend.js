@@ -56,12 +56,23 @@
                 dataType: "json",
                 success: function(res){
                 	console.log(res)
+                	//供应商
                 	if(res.data.bizRequestHeader.bizVendInfo){
 	                	var officeId = res.data.bizRequestHeader.bizVendInfo.office.id;
 	                	$('#inSta').val(officeId);
 	                	$('#insupplier').attr('officeId',officeId);
 	                	_this.supplier($('#inSta').val());
-                	}   //供应商          	
+                	}     
+                	//备货方
+					console.log(res.data.bizRequestHeader.fromType);
+					if(res.data.bizRequestHeader.fromType==1){
+						$('#fromType1').attr('checked','checked');
+						$('#fromType2').removeAttr('checked');
+					}
+					if(res.data.bizRequestHeader.fromType==2){
+						$('#fromType1').removeAttr('checked');
+						$('#fromType2').attr('checked','checked');						
+					}
                     $('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号
                     $('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);//采购中心
                     $('#inPototal').val(res.data.bizRequestHeader.totalMoney);
@@ -202,7 +213,7 @@
                     return;
                 }
                 $.ajax({
-                    type: "post",                   
+                    type: "post", 
                     url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
                     data: {"id":id, "fromOffice.id": _this.fromOfficeId, "recvEta":inPoLastDaVal, "remark": inPoRemarkVal, "bizStatus": bizStatusVal, "skuInfoIds": skuInfoIds, "reqQtys": reqQtys, "reqDetailIds":_this.reqDetailIds, "LineNos":_this.LineNos},
                     dataType: 'json',
@@ -577,9 +588,7 @@
 						    '</div>'+
 						'</div>'+
 					'</li>'
-					}	
-//auditLen = 1&& data.bizRequestHeader.bizPoHeader.commonProcessList == null					
-//								
+					}								
 					if(i==auditLen-1 && data.bizRequestHeader.processPo != 'processPo' && item.requestOrderProcess.name != '审核完成') {
 						if(item.requestOrderProcess.name != '审核完成'){
 							CheckHtmlList +='<li class="step_item">'+
@@ -592,17 +601,6 @@
 								'</div>'+
 							'</li>'
 						}
-//						if(item.requestOrderProcess.name == '审核完成'){
-//							CheckHtmlList +='<li class="step_item">'+
-//								'<div class="step_num">'+ step +' </div>'+
-//								'<div class="step_num_txt">'+
-//									'<div class="mui-input-row">'+
-//								        '<label>当前状态:</label>'+
-//								        '<input type="text" value="订单支出信息审核 " class="mui-input-clear" disabled>'+
-//								    '</div>'+
-//								'</div>'+
-//							'</li>'
-//						}
 					}
 				});
 				if(data.bizRequestHeader.bizPoHeader!=""){
@@ -611,32 +609,6 @@
 						var len = data.bizRequestHeader.bizPoHeader.commonProcessList.length;
 						console.log(len)
 						var totalStep = auditLen + a;
-//						if(len-a != 1) {                                          
-//							CheckHtmlList +='<li class="step_item">'+
-//							'<div class="step_num">'+ totalStep +' </div>'+
-//							'<div class="step_num_txt">'+
-//								'<div class="mui-input-row">'+
-//							        '<label>批注:</label>'+
-//							        '<input type="text" value="'+ items.description +'" class="mui-input-clear" disabled>'+
-//							    	'<label>审批人:</label>'+
-//							        '<input type="text" value=" '+ items.user.name +' " class="mui-input-clear" disabled>'+
-//							        '<label>时间:</label>'+
-//							        '<input type="text" value=" '+ _this.formatDateTime(items.updateTime) +' " class="mui-input-clear" disabled>'+
-//							    '</div>'+
-//							'</div>'+
-//						'</li>'
-//						}
-//						if(len-a == 1) {
-//							CheckHtmlList +='<li class="step_item">'+
-//							'<div class="step_num">'+ totalStep +' </div>'+
-//							'<div class="step_num_txt">'+
-//								'<div class="mui-input-row">'+
-//							        '<label>当前状态:</label>'+
-//							        '<input type="text" value="'+ items.purchaseOrderProcess.name +'" class="mui-input-clear" disabled>'+
-//							    '</div>'+
-//							'</div>'+
-//						'</li>'
-//						}
                         if(a==0&&len>1){
                         	CheckHtmlList +='<li class="step_item">'+
 								'<div class="step_num">'+ totalStep +' </div>'+

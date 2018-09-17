@@ -70,7 +70,17 @@
 		                	$('#inSchedulstatus').val(SchedulstatusTxt);
 						}
 					});
-					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号					
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号	
+					//备货方
+					console.log(res.data.bizRequestHeader.fromType);
+					if(res.data.bizRequestHeader.fromType==1){
+						$('#fromType1').attr('checked','checked');
+						$('#fromType2').removeAttr('checked');
+					}
+					if(res.data.bizRequestHeader.fromType==2){
+						$('#fromType1').removeAttr('checked');
+						$('#fromType2').attr('checked','checked');						
+					}
 					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);//采购中心					
 					$('#inPototal').val(res.data.bizRequestHeader.totalMoney.toFixed(2));//应付金额
 					$('#inMoneyReceive').val(res.data.bizRequestHeader.recvTotal.toFixed(2));//已收保证金
@@ -278,7 +288,6 @@
 							    '</li>'
 	                             $("#schedulingHeaders").append(completePalnHtml);
                             });
-
                         });
                         //按商品排产中的排产备注
                         var remarkHtmls = "<textarea id='schRemarkOrder' style='border:1px solid #ccc;'>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
