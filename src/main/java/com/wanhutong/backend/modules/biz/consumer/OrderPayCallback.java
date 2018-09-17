@@ -76,8 +76,6 @@ public class OrderPayCallback implements MqttCallback {
             LOGGER.warn("OrderPayCallback orderPayHandler FAILED :[{}]", result == null ? StringUtils.EMPTY : result.getRight());
         }catch (Exception e) {
             LOGGER.error("OrderPayCallback orderPayHandler", e);
-        }finally {
-            JedisUtils.del(REDIS_PREFIX + orderNum);
         }
     }
 }
