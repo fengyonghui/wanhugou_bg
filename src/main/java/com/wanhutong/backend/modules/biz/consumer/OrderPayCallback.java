@@ -23,7 +23,7 @@ public class OrderPayCallback implements MqttCallback {
 
 
     private static final String REDIS_PREFIX = "ORDER_PAY_CALLBACK_";
-    private static final int REDIS_VALIDITY_TIME = 30;
+    private static final int REDIS_VALIDITY_TIME = 10;
 
     @Autowired
     private BizOrderPayService bizOrderHeaderService;
