@@ -546,10 +546,10 @@
 					</c:if>
 					<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state}">
 					<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state && (orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state || fns:getUser().isAdmin())}">
 					<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&statu=${statu}&source=${source}">修改</a>
 					</c:if>
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state && (orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state || fns:getUser().isAdmin())}">
 					<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&statu=${statu}&source=${source}">修改</a>
 					</c:if>
 					<c:if test="${fns:getUser().isAdmin()}">
