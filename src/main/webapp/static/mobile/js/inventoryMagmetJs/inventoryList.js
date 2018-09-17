@@ -452,9 +452,9 @@
 					mui.confirm('您确认取消该备货单吗？', '系统提示！', btnArray, function(choice) {
 						if(choice.index == 1) {
 							$.ajax({
-				                type: "GET",
-				                url: "/a/biz/request/bizRequestHeader/cancel",
-				                data: {id:inListId},
+				                type: "POST",
+				                url: "/a/biz/request/bizRequestHeaderForVendor/saveInfo",
+				                data: {id:inListId,checkStauts:40},
 				                dataType: "json",
 				                success: function(res){
 				                	mui.toast('操作成功！')

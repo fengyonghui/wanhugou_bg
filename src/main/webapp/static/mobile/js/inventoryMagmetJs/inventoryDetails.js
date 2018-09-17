@@ -186,8 +186,8 @@
                         var schedulingHeaderHtml = "";
                         $.each(bizCompletePalns,function(n,v){
                         	console.log(v)
-                        	schedulingHeaderHtml +='<li class="mui-table-view-cell mui-media app_pr">'+
-								'<div class="mui-media-body app_w80p app_fr">'+
+                        	schedulingHeaderHtml +='<li class="mui-table-view-cell mui-media app_pl0">'+
+								'<div class="mui-media-body">'+
 									'<div class="mui-input-row">'+
 										'<label>完成日期：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(v.planDate) +'" disabled>'+
@@ -214,7 +214,7 @@
                         var poDetailHtmls = ""
                         $.each(poDetailLists,function(n,v){
                         	console.log(v)
-                        	poDetailHtmls +='<li class="mui-table-view-cell mui-media app_pr">'+
+                        	poDetailHtmls +='<li class="mui-table-view-cell mui-media">'+
 								'<div class="photoParent mui-pull-left app_pa">'+
 									'<img class="app_pa" src="'+v.skuInfo.productInfo.imgUrl+'">'+
 								'</div>'+
@@ -255,8 +255,8 @@
                         var completePalnHtml = "";
                         $.each(completePalnList,function(n,v){
                         	console.log(v)
-                        	completePalnHtml +='<li class="mui-table-view-cell mui-media app_pr">'+
-								'<div class="mui-media-body app_w80p app_fr">'+
+                        	completePalnHtml +='<li class="mui-table-view-cell mui-media app_pl0">'+
+								'<div class="mui-media-body">'+
 									'<div class="mui-input-row">'+
 										'<label>完成日期：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(v.planDate) +'" disabled>'+

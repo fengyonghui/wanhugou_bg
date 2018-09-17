@@ -220,6 +220,7 @@ a:hover{text-decoration:none;}
 .app_pb1em{padding-bottom: 1em;}
 .app_pb50{padding-bottom: 50px;}
 
+.app_pl0{padding-left: 0;}
 .app_pl5{padding-left: 5px;}
 .app_pl10{padding-left: 10px;}
 .app_pl15{padding-left: 15px;}
@@ -644,6 +645,9 @@ body{font-size: 15px;color:#3b3b3b;}
 /*备货单详情---备货商品*/
 .inDetailComdty div.mui-input-row label {width: 32%;}
 .inDetailComdty div.mui-input-row input {width: 68%;}
+/*备货单详情---排产*/
+
+
 /*备货单添加、修改---备货商品*/
 .inAddComdty div.mui-row li {padding: 5px;list-style: none;height: 30px;border-bottom: 1px solid #efeff4;}
 .inAddFont .mui-input-row  font {right: 8px;top: 20%;}/*申报数量 font*/
@@ -655,6 +659,8 @@ body{font-size: 15px;color:#3b3b3b;}
 .inAddComdty div.mui-input-row input {width: 57%;}
 /*备货单添加、修改---备货方选择*/
 .inStock {padding: 10px 14px 10px 0;text-align: left;font-size: 14px!important;}
+
+
 
 /*=======运营管理后台=======*/
 .appQuitBtn {background-color: #dd5563;border: none;border-radius: 8px;}

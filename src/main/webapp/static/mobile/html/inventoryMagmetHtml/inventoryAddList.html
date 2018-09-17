@@ -7,7 +7,6 @@
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css?time=20180912" rel="stylesheet" />
 		<style type="text/css">
-			.labelri {font-size: 14px;}
 			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 4em;}
 		</style>
 	</head>
@@ -19,7 +18,7 @@
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
 				<label>备货方：</label>
-		    	<div id="changeTxt" class="labelri" style="padding: 10px 14px 10px 0;text-align: left;">
+		    	<div id="changeTxt" class="labelri inStock">
 		    		采购中心备货
 		        	<input checked id="purchase" type="radio" name="apply" class="inputRadio" value="1"/>
 		        	厂商备货
@@ -45,7 +44,7 @@
 			<div class="mui-input-row">
 				<label>供应商：</label>
 				<div class="pre">
-					<input class="newinput newinput02" type="text" placeholder="请选择供应商">
+					<input class="newinput newinput02" type="text" placeholder="请选择供应商" id="inSupply">
 					<font>*</font>
 					<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAdd02"></span>
 					<div class="input_div input_div02" style="display: none;">

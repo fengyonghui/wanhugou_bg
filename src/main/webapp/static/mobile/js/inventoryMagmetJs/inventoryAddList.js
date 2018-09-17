@@ -144,8 +144,8 @@
         searchSkuHtml: function(Id) {
             var _this = this;
             mui('#inAmendPoLastDaDiv').on('tap','#comChoiceBtn',function(){
-            	console.log(_this.bizOfficeId)
-            	if(_this.bizOfficeId == '') {
+//          	console.log(_this.bizOfficeId)
+            	if(_this.bizOfficeId == '' || !$('#inSupply').val()) {
             		mui.toast("请选择供应商！");
             		return;
             	}
@@ -162,9 +162,10 @@
                     url: "/a/biz/sku/bizSkuInfo/findSkuList",
                     data: {
                     	itemNo: itemNo,
-                    	'bizVendInfo.office.id ': _this.bizOfficeId//供应商 id
+//                  	'bizVendInfo.office.id ': _this.bizOfficeId//供应商 id
                 	},
                     success: function (result) {
+//                  	console.log(result)
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
                         $.each(data,function (keys,skuInfoList) {
@@ -444,7 +445,7 @@
 				},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					_this.datagood = res
 					$.each(res, function(i, item) {
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="' + item.name + '">' + item.name + '</span>'
