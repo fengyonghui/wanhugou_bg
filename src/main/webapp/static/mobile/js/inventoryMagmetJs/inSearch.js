@@ -182,7 +182,7 @@
 				dataType: 'json',
 				success: function(res) {
 					console.log(res)
-					$.each(res.data.processSet, function(i, item) {
+					$.each(res.data.requestMap, function(i, item) {
 //						console.log(i)
 						htmlCheckStatus += '<option class="soption"  value="' + i + '">' + item + '</option>'
 					});

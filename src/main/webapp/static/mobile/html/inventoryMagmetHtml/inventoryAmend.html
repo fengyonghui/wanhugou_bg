@@ -86,6 +86,10 @@
 			<div class="mui-row app_bline2 inComdty inAddComdty" id="commodityMenu">
 
 			</div>
+			<div class="mui-input-row" id="inPaylistbox">
+				<div class="labelLf">支付列表：</div>
+				<ul id="inPaylist" class="mui-table-view"></ul>
+			</div>
 			<div class="mui-input-row">
 				<label>备注：</label>
 				<textarea id="inPoRemark" name="" rows="" cols=""></textarea>
@@ -93,21 +97,28 @@
 			<div class="mui-input-row">
 				<label>业务状态：</label>
 				<div class="pre">
-					<select class="secStyle" name="" id="inputDivAmend">
-
-					</select>
+					<select class="secStyle" name="" id="inputDivAmend"></select>					
 					<input class="savedata" type="hidden" value=''>
 					<div style="clear:both"></div>
 				</div>
 				<font>*</font>
 			</div>
-
+            <div class="mui-input-row">
+				<label>排产状态：</label>
+				<input type="text" id="inSchedulstatus" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>排产类型：</label>
+				<input type="text" id="inSchedultype" class="mui-input-clear" disabled>
+			</div>
 			<div class="mui-input-row">
                 <div class="labelLf">状态流程：</div>
-                <ul class="" id="inCheckAddMenu">
-
-                </ul>
+                <ul class="" id="inCheckAddMenu"></ul>               
             </div>
+            <div class="mui-input-row">
+				<div class="labelLf">审批流程：</div>
+				<ul class="flowPath" id="inapprovalAddMenu"></ul>									
+			</div>
 		</div>
 		<div class="inSaveBtn">
 			<button id="saveDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>
