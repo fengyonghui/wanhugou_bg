@@ -493,7 +493,7 @@
     </script>
     <script type="text/javascript">
         function checkPending(obj) {
-            if('${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}' == 'true' && '${statusEnumState}' == 0) {
+            if(obj == '${OrderHeaderBizStatusEnum.SUPPLYING.state}' && '${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}' == 'true' && '${statusEnumState}' == 0) {
                 alert("代采订单需至少付款20%，请付款后刷新页面再审核");
                 return;
             }
