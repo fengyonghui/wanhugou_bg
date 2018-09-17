@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  * @author zx
  * @version 2017-12-13
  */
-public class BizProductMinMaxPrice {
+public class BizProductMinMaxPrice extends DataEntity<BizProductMinMaxPrice> {
 	private BigDecimal minPrice;		// 最低售价
 	private BigDecimal maxPrice;		// 最高售价
 

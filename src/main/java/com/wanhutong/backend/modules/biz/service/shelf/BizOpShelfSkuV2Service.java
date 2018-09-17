@@ -8,7 +8,6 @@ import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfSkuV2Dao;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
-import com.wanhutong.backend.modules.biz.entity.product.BizProductMinMaxPrice;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
@@ -110,11 +109,11 @@ public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuV2Dao, BizO
 		BizProductInfo productInfo=bizProductInfoService.get(bizOpShelfSku.getProductInfo().getId());
 		BizOpShelfSku opShelfSku =new BizOpShelfSku();
 		opShelfSku.setProductInfo(productInfo);
-		BizProductMinMaxPrice bizProductInfo = bizOpShelfSkuV2Dao.findMinMaxPrice(opShelfSku);
-		if (bizProductInfo != null) {
-			productInfo.setMaxPrice(bizProductInfo.getMaxPrice().doubleValue());
-			productInfo.setMinPrice(bizProductInfo.getMinPrice().doubleValue());
-			bizProductInfoService.saveProd(productInfo);
+		Map<String,BigDecimal> map=bizOpShelfSkuV2Dao.findMinMaxPrice(opShelfSku);
+		if(map!=null){
+		productInfo.setMaxPrice(map.get("maxPrice").doubleValue());
+		productInfo.setMinPrice(map.get("minPrice").doubleValue());
+		bizProductInfoService.saveProd(productInfo);
 			if (i == 2) {
 				return "货号为:" + bizOpShelfSku.getSkuInfo().getItemNo() + ",货架为:" + bizOpShelfSku.getOpShelfInfo().getName() + "的商品下架成功";
 			}
@@ -133,6 +132,13 @@ public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuV2Dao, BizO
 		}
 		return "";
 	}
+
+
+	@Transactional(readOnly = false)
+	public  void saveShelfProdInfoPrice(BizOpShelfSku bizOpShelfSku){
+
+	}
+
 
 	@Transactional(readOnly = false)
 	public void sort() {
