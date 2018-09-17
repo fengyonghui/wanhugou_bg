@@ -115,10 +115,10 @@
 			var htmlList = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/sys/office/queryTreeList',
+				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
 					type: 8,
-					customerTypeTen: 10
+					source:'officeConnIndex'
 				},
 				dataType: 'json',
 				success: function(res) {
