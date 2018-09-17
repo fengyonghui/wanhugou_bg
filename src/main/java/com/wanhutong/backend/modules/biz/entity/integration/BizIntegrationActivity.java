@@ -27,6 +27,7 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 	private Integer sendScope;		// 发送范围，0是全部用户，-1下单用户，-2未下单用户，其他为指定用户
 	private String activityTools;		// 优惠工具
 	private Integer sendNum;		// 发送人数
+	private String officeIds;
 	private Integer integrationNum;		// 每人赠送积分
 	private String description;		// 备注说明
 	private Integer status;		// status
@@ -41,8 +42,6 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 	public void setSendStatus(Integer sendStatus) {
 		this.sendStatus = sendStatus;
 	}
-
-	private String officeIds;		// 采购商IDs
 	
 	public BizIntegrationActivity() {
 		super();
@@ -50,6 +49,14 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 
 	public BizIntegrationActivity(Integer id){
 		super(id);
+	}
+
+	public String getOfficeIds() {
+		return officeIds;
+	}
+
+	public void setOfficeIds(String officeIds) {
+		this.officeIds = officeIds;
 	}
 
 	@Length(min=0, max=50, message="活动名称长度必须介于 0 和 50 之间")
@@ -129,7 +136,6 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 		this.status = status;
 	}
 	
-	@NotNull(message="版本控制；重要不能为空")
 	public Integer getUVersion() {
 		return uVersion;
 	}

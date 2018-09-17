@@ -6,8 +6,19 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
-		});
+            $.ajax({
+                url:"${ctx}/biz/integration/bizMoneyRecode/detail",
+                type:"get",
+                data:'',
+                contentType:"application/json;charset=utf-8",
+                success:function(data){
+                    $("#hd").val(data.gainIntegration);
+                    $("#sy").val(data.usedIntegration);
+                    $("#gq").val(data.expireIntegration);
+                    $("#ky").val(data.availableIntegration);
+                }
+            })
+        });
 		function page(n,s){
 			$("#pageNo").val(n);
 			$("#pageSize").val(s);
@@ -21,7 +32,15 @@
 		<li class="active"><a href="${ctx}/biz/integration/bizMoneyRecode/">积分流水列表</a></li>
 		<shiro:hasPermission name="biz:stream:bizMoneyRecode:edit"><li><a href="${ctx}/biz/stream/bizMoneyRecode/form">积分流水添加</a></li></shiro:hasPermission>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizMoneyRecode" action="${ctx}/biz/stream/bizMoneyRecode/" method="post" class="breadcrumb form-search">
+
+	     <div style="margin-left: 60px">
+			 平台万户币汇总: &nbsp;&nbsp;
+			 累计获得万户币: <input type="text"  id="hd" style="width:100px" value="1500">
+			 累计使用万户币: <input type="text" id="sy"  style="width:100px" value="1600">
+			 累计过期万户币: <input type="text" id="gq" style="width:100px" value="1800">
+			 可用万户币:<input type="text" id="ky" style="width:100px" value="200">
+	     <div>
+	<form:form id="searchForm" modelAttribute="bizMoneyRecode" action="${ctx}/biz/integration/bizMoneyRecode/list" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
@@ -39,7 +58,19 @@
 					value="<fmt:formatDate value="${bizMoneyRecode.endCreateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 			</li>
+
+			<li><label>经销店名称：</label>
+					<sys:treeselect id="office" name="customer.id" value="${office.id}"  labelName="office.name"
+									labelValue="${office.name}" notAllowSelectParent="true"
+									title="经销店"  url="/sys/office/queryTreeList?type=6"
+									cssClass="input-medium required"
+									allowClear="true"/>
+			</li>
+			<li><label>经销店电话：</label>
+				<form:input path="office.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
@@ -48,39 +79,42 @@
 		<thead>
 			<tr>
 				<th>流水id</th>
-				<th>采购商id</th>
+				<th>经销店名称</th>
+				<th>负责人</th>
+				<th>负责人电话</th>
 				<th>流水数量</th>
 				<th>流水类型</th>
 				<th>流水说明</th>
 				<th>生成时间</th>
-				<shiro:hasPermission name="biz:stream:bizMoneyRecode:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizMoneyRecode">
 			<tr>
-				<td><a href="${ctx}/biz/stream/bizMoneyRecode/form?id=${bizMoneyRecode.id}">
-					${bizMoneyRecode.id}
-				</a></td>
 				<td>
-					${bizMoneyRecode.office.id}
+						${bizMoneyRecode.id}
 				</td>
 				<td>
-					${bizMoneyRecode.money}
+				    	${bizMoneyRecode.office.name}
 				</td>
 				<td>
-					${fns:getDictLabel(bizMoneyRecode.statusName, '', '')}
+						${bizMoneyRecode.office.master}
 				</td>
 				<td>
-					${bizMoneyRecode.comment}
+						${bizMoneyRecode.office.phone}
 				</td>
 				<td>
-					<fmt:formatDate value="${bizMoneyRecode.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					    ${bizMoneyRecode.money}
 				</td>
-				<shiro:hasPermission name="biz:stream:bizMoneyRecode:edit"><td>
-    				<a href="${ctx}/biz/stream/bizMoneyRecode/form?id=${bizMoneyRecode.id}">修改</a>
-					<a href="${ctx}/biz/stream/bizMoneyRecode/delete?id=${bizMoneyRecode.id}" onclick="return confirmx('确认要删除该积分流水吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
+				<td>
+						${bizMoneyRecode.statusName}
+				</td>
+				<td>
+				    	${bizMoneyRecode.comment}
+				</td>
+				<td>
+				    	<fmt:formatDate value="${bizMoneyRecode.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
 			</tr>
 		</c:forEach>
 		</tbody>

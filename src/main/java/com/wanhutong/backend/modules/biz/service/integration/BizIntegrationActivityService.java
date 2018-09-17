@@ -13,6 +13,8 @@ import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.entity.integration.BizIntegrationActivity;
 import com.wanhutong.backend.modules.biz.dao.integration.BizIntegrationActivityDao;
 
+import javax.annotation.Resource;
+
 /**
  * 积分活动Service
  * @author LX
@@ -21,6 +23,8 @@ import com.wanhutong.backend.modules.biz.dao.integration.BizIntegrationActivityD
 @Service
 @Transactional(readOnly = true)
 public class BizIntegrationActivityService extends CrudService<BizIntegrationActivityDao, BizIntegrationActivity> {
+    @Resource
+	private BizIntegrationActivityDao bizIntegrationActivityDao;
 
 	public BizIntegrationActivity get(Integer id) {
 		return super.get(id);
@@ -42,6 +46,10 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 	@Transactional(readOnly = false)
 	public void delete(BizIntegrationActivity bizIntegrationActivity) {
 		super.delete(bizIntegrationActivity);
+	}
+
+	public BizIntegrationActivity getIntegrationByCode(String code){
+         return bizIntegrationActivityDao.getIntegrationByCode(code);
 	}
 	
 }

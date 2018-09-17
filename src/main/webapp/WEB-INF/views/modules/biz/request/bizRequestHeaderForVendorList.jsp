@@ -1,3 +1,4 @@
+<%@ taglib prefix="fns" uri="http://java.sun.com/jsp/jstl/functionss" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
