@@ -664,7 +664,7 @@ public class OfficeController extends BaseController {
             }
             if (source != null && source.equals("officeConnIndex")) {
                 //属于客户专员查询采购中心方法
-                list = officeService.CustomerfilerOffice4mobile(null, source, OfficeTypeEnum.stateOf(defType));
+                list = officeService.customerfilerOffice4mobile(null, source, OfficeTypeEnum.stateOf(defType));
             } else {
                 if (ArrayUtils.isNotEmpty(split) && split.length > 1) {
                     list = officeService.findListByTypeList(Arrays.asList(split));

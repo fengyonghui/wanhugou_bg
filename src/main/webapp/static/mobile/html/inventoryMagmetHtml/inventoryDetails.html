@@ -20,7 +20,7 @@
 				<label>备货单编号：</label>
 				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
 			</div>
-			<div class="mui-input-row" id="orderTypebox">
+			<!--<div class="mui-input-row" id="orderTypebox">
 				<label>备货方：</label>
 		    	<div id="changeTxt" class="labelri inStock">
 		    		采购中心备货
@@ -28,7 +28,11 @@
 			                厂商备货 
 			        <input id="fromType2" type="radio" name="fromType" value="2"  disabled="disabled" class="inputRadio"/>
 		        </div>	
-		    </div>
+		    </div>-->
+		    <div class="mui-input-row">
+				<label>备货方：</label>
+				<input type="text" class="mui-input-clear" id="inStocktxt" disabled>
+			</div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
 				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
@@ -100,11 +104,11 @@
 			<div class="mui-input-row inComdty" id="schedulingPlan_forHeader">
 				<div class="labelLf">按订单排产：</div>
 				<div class="">
-					<label style="width:30%;float:left;font-size: 14px;">排产记录：</label>
+					<label class="app_pr0" style="width:30%;float:left;font-size: 14px;">排产记录：</label>
 					<ul id="schedulingHeader" class="mui-table-view" style="width:70%;float:left"></ul>											
 				</div>
 				<div class="">
-					<label style="width:30%;float:left;font-size: 14px;">排产备注：</label>
+					<label class="app_pr0" style="width:30%;float:left;font-size: 14px;">排产备注：</label>
 				    <div id="schedulingHeaderRemark" class="mui-table-view" style="width:70%;float:left"></div>									
 				</div>				
 			</div>
@@ -112,11 +116,11 @@
 				<div class="labelLf">按商品排产：</div>
 				<ul id="purchaseMenus" class="mui-table-view"></ul>
 				<div class="">
-					<label style="width:30%;float:left;font-size: 14px;">排产记录：</label>
+					<label class="app_pr0" style="width:30%;float:left;font-size: 14px;">排产记录：</label>
 					<ul id="schedulingHeaders" class="mui-table-view" style="width:70%;float:left"></ul>											
 				</div>
 				<div class="">
-					<label style="width:30%;float:left;font-size: 14px;">排产备注：</label>
+					<label class="app_pr0" style="width:30%;float:left;font-size: 14px;">排产备注：</label>
 				    <div id="schedulingHeaderRemarks" class="mui-table-view" style="width:70%;float:left"></div>									
 				</div>			
 			</div>

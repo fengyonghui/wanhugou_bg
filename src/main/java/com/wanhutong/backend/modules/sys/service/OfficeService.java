@@ -712,7 +712,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     /**
      * 用于客户专员查询采购中心
      */
-    public List<Office> CustomerfilerOffice4mobile(List<Office> offices, String source, OfficeTypeEnum officeType) {
+    public List<Office> customerfilerOffice4mobile(List<Office> offices, String source, OfficeTypeEnum officeType) {
         Office office = new Office();
         User user = UserUtils.getUser();
         if (!user.isAdmin() && !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) && !OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType())
