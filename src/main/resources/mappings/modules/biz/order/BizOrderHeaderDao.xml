@@ -25,6 +25,7 @@
 		<result property="suplys" column="suplys"/>
         <result property="consultantId" column="consultantId"/>
         <result property="serviceFee" column="serviceFee"/>
+		<result property="mobileAuditStatus" column="mobileAuditStatus"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -479,6 +480,15 @@
 			</if>
 			<if test="bizStatus !=null">
 				AND a.biz_status=#{bizStatus}
+			</if>
+			<if test="mobileAuditStatus == 0">
+				AND a.biz_status IN (0,5,10)
+			</if>
+			<if test="mobileAuditStatus == 1">
+				AND a.biz_status = 45
+			</if>
+			<if test="mobileAuditStatus == 2">
+				AND a.biz_status NOT IN (0,5,10,45)
 			</if>
 			<!-- 列表时间查询 -->
 			<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
@@ -2918,6 +2928,18 @@ FROM
 		AND a.center_id = #{officeId}
 		group by a.cust_id
 		) AS t
+	</select>
+
+	<select id="getOrderDetailIdBySkuInfoId" resultType="Integer">
+		select
+			bpd.id
+		from biz_po_header a
+			left join biz_po_detail bpd on bpd.order_id = a.id
+			left join biz_sku_info bsi on bsi.id = bpd.sku_no
+		where
+			a.id=#{poHeaderId}
+			AND bsi.id=#{skuInfoId}
+			group by bpd.id
 	</select>
 
 

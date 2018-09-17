@@ -14,34 +14,35 @@
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
-			this.ajaxGoodName()
+			this.ajaxGoodName();
 		},
 		pageInit: function() {
 			var _this = this;
-			_this.testData()
+			_this.testData();
 		},
 		getData: function() {
 			var _this = this;
 			$('#inSearchBtn').on('tap', function() {
-				var ordNumVal = $(".inOrdNum").val(); 
-                var reqNumVal = $(".inReqNum").val(); 
-                var newInputVal = $('.newinput').val(); 
-//              var secStyleVal = $('.secStyle').val();
-                var div_businessVal = $('#input_div_business').val();
-                var div_checkVal = $('#input_div_check').val();
-                var cateGoryVal = $('#input_div_class').val();
+				var ordNumVal = $(".inOrdNum").val(); //备货单号
+                var reqNumVal = $(".inReqNum").val(); //供应商
+                var inputRadioVal = $("#inputRadio").val(); //备货方
+                var newInputVal = $('.newinput').val();//采购中心 
+                var div_businessVal = $('#input_div_business').val();//业务状态
+                var div_checkVal = $('#input_div_check').val();//审核状态
+                var cateGoryVal = $('#input_div_class').val();//品类名称
+                var testCheckVal = $('#testCheckbox').val();//测试数据
                if(ordNumVal == null||ordNumVal == undefined){
 					ordNumVal == "";
                 }
                 if(reqNumVal == null||reqNumVal == undefined) {
                 	reqNumVal == "";
                 }
+                if(inputRadioVal == null||inputRadioVal == undefined) {
+                	inputRadioVal == "";
+                }
                 if(newInputVal == null||newInputVal == undefined) {
                 	newInputVal == "";
                 }
-//              if(secStyleVal == null||secStyleVal == undefined) {
-//              	secStyleVal == "";
-//              }
 				if(div_businessVal == null||div_businessVal == undefined) {
                 	div_businessVal == "";
                 }
@@ -51,7 +52,7 @@
                 if(cateGoryVal == null||cateGoryVal == undefined) {
                 	cateGoryVal == "";
                 }
-                if(ordNumVal == ""&&reqNumVal == ""&&newInputVal == ""&&div_businessVal == ""&&div_checkVal == ""&&cateGoryVal == ""&&_this.includeTestData==false){
+                if(ordNumVal == ""&&reqNumVal == ""&inputRadioVal == ""&&newInputVal == ""&&div_businessVal == ""&&div_checkVal == ""&&cateGoryVal == ""&&_this.includeTestData==false){
                 	 mui.toast("请输入查询条件！");
                 	 return;
                 }
@@ -68,20 +69,22 @@
 		},
 		sureSelect:function(){
 			var _this = this;
-			_this.selectOpen = false
-			var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));
-			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
-			var optionscheck = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"));
+			_this.selectOpen = false;
+			var optionsstock = $("#inputRadio option").eq($("#inputRadio").attr("selectedIndex"));//备货方
+			var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));//业务状态
+			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));//品类名称
+			var optionscheck = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"));//审核状态
 			GHUTILS.OPENPAGE({
 				url: "../../html/inventoryMagmetHtml/inventoryList.html",
 				extras: {
-					reqNo: $('.inOrdNum').val(),
-					name: $('.inReqNum').val(),
-					fromOffice: $('.hasoid').attr('id'),
-					bizStatusid: optionsBusiness.val(),
-					varietyInfoid: optionsClass.val(),
-					process:optionscheck.val(),
-					includeTestData: _this.includeTestData,
+					reqNo: $('.inOrdNum').val(),//备货单号
+					name: $('.inReqNum').val(),//供应商
+					fromType:optionsstock.val(),//备货方
+					fromOffice: $('.hasoid').attr('id'),//采购中心 
+					bizStatusid: optionsBusiness.val(),//业务状态
+					varietyInfoid: optionsClass.val(),//品类名称
+					process:optionscheck.val(),//审核状态
+					includeTestData: _this.includeTestData,//测试数据
 					isFunc: true
 				}
 			})
@@ -167,6 +170,7 @@
 				}
 			});
 		},
+		//审核状态
 		ajaxCheckStatus: function() {
 			var _this = this;
 			var optHtml ='<option value="">全部</option>';
@@ -177,6 +181,7 @@
 				data: {consultantId: _this.userInfo.staListId},
 				dataType: 'json',
 				success: function(res) {
+					console.log(res)
 					$.each(res.data.processSet, function(i, item) {
 //						console.log(i)
 						htmlCheckStatus += '<option class="soption"  value="' + i + '">' + item + '</option>'
@@ -186,6 +191,7 @@
 				}
 			});
 		},
+		//业务状态
 		ajaxServiceStates: function() {
 			var _this = this;
 			var optHtml ='<option value="">全部</option>';
@@ -204,6 +210,7 @@
 				}
 			});
 		},
+		//品类名称
 		ajaxGoodName: function() {
 			var _this = this;
 			var optHtml ='<option value="">全部</option>';

@@ -4,8 +4,8 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.datagood = [];
-		this.selectOpen = false
-		this.includeTestData = false
+		this.selectOpen = false;
+		this.includeTestData = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -18,7 +18,8 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			_this.testData()
+			_this.testData();
+			_this.choiceRadio();
 		},
 		//点击查询
 		getData: function() {
@@ -32,6 +33,10 @@
                 var orderStatusVal = $('#input_div_orderStatus').val();
 //              var checkStatusVal = $('#input_div_checkStatus').val();
                 var newinputVal = $('.newinput').val();
+                var mobileAuditStatus = $('#mobileAuditStatus').val();
+                if(mobileAuditStatus == null||mobileAuditStatus == undefined){
+					mobileAuditStatus == "";
+                }
                 if(ordNumVal == null||ordNumVal == undefined){
 					ordNumVal == "";
                 }
@@ -53,7 +58,8 @@
                 if(newinputVal == null||newinputVal == undefined) {
                 	newinputVal == "";
                 }
-                if(ordNumVal == ""&&reqNumVal == ""&&OrdMobileVal == ""&&secStyleVal == ""&&orderStatusVal == ""&&newinputVal == ""&&_this.includeTestData == false){
+                
+                if(ordNumVal == ""&&reqNumVal == ""&&OrdMobileVal == ""&&secStyleVal == ""&&orderStatusVal == ""&&newinputVal == ""&&_this.includeTestData == false && mobileAuditStatus == ''){
                 	 mui.toast("请输入查询条件！");
                 	 return;
                 }
@@ -69,6 +75,7 @@
 			})
 		},
 		sureSelect:function(){
+			var mobileAuditStatus = $('#mobileAuditStatus').val();
 			var _this = this;
 			var staListSehId = _this.userInfo.staListId;
 			_this.selectOpen = false
@@ -83,10 +90,11 @@
 					OrdMobile: $('#staOrdMobile').val(),
 					OrdNumbers: $('#staOrdNumbers').val(),
 					orderStatus: optionsClass.val(),
-//					checkStatus: optionsBusiness.val(),
+					//					checkStatus: optionsBusiness.val(),
 					newinput: $('.hasoid').attr('id'),
 					includeTestData: _this.includeTestData,
 					flagTxt:$('#flag').val(),
+					mobileAuditStatus: mobileAuditStatus,
 					isFunc: true
 				}
 			})
@@ -100,7 +108,17 @@
             		_this.includeTestData = false
             	}
 	        })
-        },       
+        },
+        choiceRadio: function() {
+        	var _this = this;
+        	$('input[type=radio]').on('change', function() {
+        		if(this.checked) {        			
+//	      			console.log($(this).val())
+	      			$('#mobileAuditStatus').attr('value',$(this).val())
+	      			_this.getData()
+        		}
+        	})
+        },
 		hrefHtml: function(newinput, input_div,staOrdHideSpan) {
 			var _this = this;
 			_this.ajaxGoodList();

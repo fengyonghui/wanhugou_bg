@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<title>备货单详情</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
-		<link href="../../css/app.css" rel="stylesheet" />
+		<link href="../../css/app.css?time=20180912" rel="stylesheet" />
 		<style type="text/css">
 			.mui-input-group .mui-input-row:after {left: 0px;}
 		</style>
@@ -36,6 +36,22 @@
 				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
 			</div>
 			<div class="mui-input-row">
+				<label>供应商：</label>
+				<input type="text" class="mui-input-clear" id="insupplier" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商卡号：</label>
+				<input type="text" class="mui-input-clear" id="insupplierNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商收款人：</label>
+				<input type="text" class="mui-input-clear" id="insupplierMoney" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商开户行：</label>
+				<input type="text" class="mui-input-clear" id="insupplierBank" disabled>
+			</div>
+			<div class="mui-input-row">
 				<label>应付金额：</label>
 				<input type="text" class="mui-input-clear" id="inPototal" disabled>
 			</div>
@@ -48,7 +64,7 @@
 				<input type="text" class="mui-input-clear" id="inMarginLevel" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>已支付保证金：</label>
+				<label>已支付厂商保证金：</label>
 				<input type="text" class="mui-input-clear" id="inMoneyPay" disabled>
 			</div>
 			<div class="mui-input-row">
@@ -59,13 +75,13 @@
 				<div class="labelLf">备货商品：</div>
 				<ul id="commodityMenu" class="mui-table-view"></ul>									
 			</div>
-			<div class="mui-input-row">
+			<div class="mui-input-row" id="inPaylistbox">
 				<div class="labelLf">支付列表：</div>
 				<ul id="inPaylist" class="mui-table-view"></ul>
 			</div>
 			<div class="mui-input-row">
 				<label>备注：</label>
-				<textarea id="inPoRemark" name="" rows="" cols="" disabled></textarea>
+				<textarea id="inPoRemark" name="" rows="" cols="" disabled style="border:1px solid #ccc;border-radius: 5px;margin:5px 5px 5px -5px;"></textarea>
 			</div>
 			<div class="mui-input-row">
 				<label>业务状态：</label>
@@ -81,9 +97,7 @@
 			</div>
 			<div class="mui-input-row inComdty inDetailComdty" id="stockGoods">
 				<div class="labelLf">采购商品：</div>
-				<ul id="purchaseMenu" class="mui-table-view">
-					
-				</ul>
+				<ul id="purchaseMenu" class="mui-table-view"></ul>									
 			</div>
 			<div class="mui-input-row inComdty" id="schedulingPlan_forHeader">
 				<div class="labelLf">按订单排产：</div>
@@ -96,28 +110,32 @@
 				    <div id="schedulingHeaderRemark" class="mui-table-view" style="width:70%;float:left"></div>									
 				</div>				
 			</div>
-			<div class="mui-input-row inComdty" id="prodInfo2Schedu">
+			<div class="mui-input-row inComdty" id="schedulingPlan_forSku">
 				<div class="labelLf">按商品排产：</div>
-				<ul id="purchaseMenu" class="mui-table-view"></ul>				
+				<div class="">
+					<label style="width:30%;float:left;font-size: 14px;">排产记录：</label>
+					<ul id="schedulingHeaders" class="mui-table-view" style="width:70%;float:left"></ul>											
+				</div>
+				<div class="">
+					<label style="width:30%;float:left;font-size: 14px;">排产备注：</label>
+				    <div id="schedulingHeaderRemarks" class="mui-table-view" style="width:70%;float:left"></div>									
+				</div>			
 			</div>
 			<!--审批流程块 有的话显示-->
 			<div class="mui-input-row">
 				<div class="labelLf">状态流程：</div>
-				<ul class="flowPath" id="inCheckAddMenu">
-					
-				</ul>
+				<ul class="flowPath" id="inCheckAddMenu"></ul>									
 			</div>
 			<div class="mui-input-row">
 				<div class="labelLf">审批流程：</div>
-				<ul class="flowPath" id="inapprovalAddMenu">
-					
-				</ul>
+				<ul class="flowPath" id="inapprovalAddMenu"></ul>									
 			</div>
 		</div>
 		<div class="clear"></div>
+		<input type="hidden" id="supplierId"/>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/inventoryMagmetJs/inventoryDetails.js"></script>
+		<script src="../../js/inventoryMagmetJs/inventoryDetails.js?time=20180912"></script>
 	</body>
 </html>
