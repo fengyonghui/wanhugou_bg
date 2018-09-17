@@ -20,13 +20,10 @@
 				<label>备货方：</label>
 		    	<div id="changeTxt" class="labelri inStock">
 		    		采购中心备货
-		        	<input checked id="purchase" type="radio" name="apply" class="inputRadio" value="1"/>
+		        	<input checked id="purchase" type="radio" name="localOriginType" class="inputRadio" value="1"/>
 		        	厂商备货
-		        	<input id="manu" type="radio" name="apply" class="inputRadio" value="2"/>    
+		        	<input id="manu" type="radio" name="localOriginType" class="inputRadio" value="2"/>    
 	        	</div>
-		        <!--<div id="changeTxt" class="labelri" style="padding: 10px 14px 10px 0;text-align: left;">	
-                	
-		    	</div>-->
 		    </div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
@@ -104,13 +101,14 @@
 			</div>
 			<div class="mui-input-row">
 				<label>排产类型：</label>
-				<input type="text" class="mui-input-clear" id="inProductTime" disabled>
+				<input type="text" class="mui-input-clear" id="inProductTime" value="未排产" disabled>
 			</div>
 		</div>
 		<div class="inSaveBtn">
 			<button id="inSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>
 		</div>
 		<div class="clear"></div>
+		<input type="hidden" name="inStockAdd" id="inStockAdd"/>
 
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/zepto.min.js"></script>

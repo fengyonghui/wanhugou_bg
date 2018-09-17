@@ -8,14 +8,10 @@
 		this.selectOpen = false;
         this.skuInfoIds="";
         this.reqQtys="";
-//      this.reqDetailIds="";
-//      this.LineNos="";
         this.fromOfficeId="";
         this.bizOfficeId="";
-        this.stock = false;
 		return this;
 	}
-
 	ACCOUNT.prototype = {
 		init: function() {
 			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAdd01');
@@ -26,23 +22,12 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			
+			_this.ajaxCheckStatus();
+			_this.saveDetail();
 		},
 		getData: function() {
 			var _this = this;
-            _this.removeItem()
-            _this.saveDetail();
-            _this.choiceRadio();
-		},
-		choiceRadio: function() {
-			var _this = this;
-			$("input[type=radio]").on("change", function() {
-				if(this.id && this.checked) {
-					_this.stock = true
-				}else {
-					_this.stock = false
-				}
-			})
+            _this.removeItem();
 		},
         saveDetail: function () {
             var _this = this;
@@ -94,6 +79,15 @@
                     mui.toast("请选择业务状态！")
                     return;
                 }
+                //选择备货方：
+                var r2 = document.getElementsByName("localOriginType");
+	            var localOriginType = "";
+	            for (var i = 0; i < r2.length; i++) {
+	                if (r2[i].checked == true) {
+	                    localOriginType = r2[i].value;
+	                }
+	            }
+	            console.log(localOriginType)
                 $.ajax({
                     type: "post",
                     url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
@@ -105,26 +99,23 @@
                     	'bizVendInfo.office.id ': _this.bizOfficeId,//供应商 id
                     	'bizVendInfo.office.name': _this.bizOfficeName,//供应商名称
                     	'bizVendInfo.office.type': _this.bizOfficeType,//供应商所在机构类型
-                    	fromType: _this.stock, //备货方
+                    	fromType: localOriginType, //备货方
                     	recvEta: inPoLastDaVal, //期望收货时间
                     	remark: inPoRemarkVal, //备注信息
                     	bizStatus: bizStatusVal, //业务状态
                     	skuInfoIds: _this.skuInfoIds, //要添加的商品 id
                     	reqQtys: _this.reqQtys //申报数量
-                    	
-//                  	"reqDetailIds":_this.reqDetailIds, 
-//                  	"LineNos":_this.LineNos
                     },
                     success: function (resule) {
-                    	console.log(resule)
-//                      if (resule.data.value == '操作成功!') {
-//                          mui.toast("添加备货单成功！");
-//                          GHUTILS.OPENPAGE({
-//                              url: "../../html/inventoryMagmetHtml/inventoryList.html",
-//                              extras: {
-//                              }
-//                          })
-//                      }
+//                  	console.log(resule)
+                        if (resule == true) {
+                            mui.toast("添加备货单成功！");
+                            GHUTILS.OPENPAGE({
+                                url: "../../html/inventoryMagmetHtml/inventoryList.html",
+                                extras: {
+                                }
+                            })
+                        }
                     }
                 })
             })
@@ -182,7 +173,7 @@
                             var resultListHtml="";
                             var t=0;
                             $.each(skuInfoList,function (index,skuInfo) {
-                            	console.log(skuInfo)
+//                          	console.log(skuInfo)
                                 //skuInfoId+=","+skuInfo.id;
                                 if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
                                     return;
@@ -287,9 +278,6 @@
 		hrefHtml: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
 			_this.ajaxGoodList()
-			_this.ajaxSupplier()
-			_this.ajaxCheckStatus()
-
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
@@ -302,15 +290,12 @@
 					_this.selectOpen = true
 				}
 				_this.rendHtml(_this.datagood,$(this).val())
-//				_this.rendHtmls(_this.dataSupplier,$(this).val())
 			})
-			
 			$(hideSpanAdd).on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
 				$(hideSpanAdd).hide()
 			})
-
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
                 _this.fromOfficeId = $(this).attr("id");
@@ -324,10 +309,7 @@
 		},
 		hrefHtmls: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
-			_this.ajaxGoodList()
 			_this.ajaxSupplier()
-			_this.ajaxCheckStatus()
-
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
@@ -339,7 +321,6 @@
 				}else{
 					_this.selectOpen = true
 				}
-//				_this.rendHtml(_this.datagood,$(this).val())
 				_this.rendHtmls(_this.dataSupplier,$(this).val())
 				if($(this).val() == '') {
             		$('#inSupplierNum').parent().hide();
@@ -347,13 +328,11 @@
 					$('#inSupplierBank').parent().hide();
             	}
 			})
-			
 			$(hideSpanAdd).on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
 				$(hideSpanAdd).hide()
 			})
-
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
                 _this.bizOfficeId = $(this).attr("id");
@@ -375,7 +354,7 @@
                 data: {vendorId:supplierId},		                
                 dataType: "json",
                 success: function(rest){
-                	console.log(rest)
+//              	console.log(rest)
                 	if(rest) {
                 		if(rest.cardNumber) {
 	                		$('#inSupplierNum').parent().show();
@@ -439,9 +418,10 @@
 			var htmlList = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/sys/office/queryTreeList',
+				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
-					type: 8
+					type: 8,
+					source:'officeConnIndex'
 				},
 				dataType: 'json',
 				success: function(res) {
