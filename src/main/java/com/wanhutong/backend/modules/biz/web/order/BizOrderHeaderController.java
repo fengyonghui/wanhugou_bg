@@ -221,10 +221,10 @@ public class BizOrderHeaderController extends BaseController {
         List<String> localConfigValue = Lists.newArrayList();
         List<String> doFifthConfigValue = Lists.newArrayList();
 
-        originConfigMap.put("渠道", "渠道");
+        originConfigMap.put("渠道经理", "渠道经理");
         originConfigMap.put("总经理", "总经理");
-        originConfigMap.put("品类", "品类");
-        originConfigMap.put("财务", "财务");
+        originConfigMap.put("品类主管", "品类主管");
+        originConfigMap.put("财务经理", "财务经理");
         originConfigMap.put("完成", "完成");
         originConfigMap.put("驳回", "驳回");
         originConfigMap.put("不需要审批", "不需要审批");
