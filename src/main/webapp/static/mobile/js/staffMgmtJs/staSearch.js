@@ -115,13 +115,14 @@
 			var htmlList = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/sys/office/queryTreeList',
+				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
 					type: 8,
-					customerTypeTen: 10
+					source:'officeConnIndex'					
 				},
 				dataType: 'json',
 				success: function(res) {
+					console.log(res)
 					_this.datagood = res
 					$.each(res, function(i, item) {
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="'+item.name+'">' + item.name + '</span>'
