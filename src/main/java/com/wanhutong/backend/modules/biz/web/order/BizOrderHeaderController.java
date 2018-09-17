@@ -847,13 +847,15 @@ public class BizOrderHeaderController extends BaseController {
 
         String createPo = "no";
         Integer orderType = bizOrderHeader.getOrderType();
+        OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail() + bizOrderHeader.getFreight() + bizOrderHeader.getTotalExp() + bizOrderHeader.getServiceFee(), bizOrderHeader.getReceiveTotal());
+        Integer statusEnumState = statusEnum.getState();
+        request.setAttribute("statusEnumState", statusEnumState);
         if (BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(orderType)){
             if (bizOrderHeader.getCommonProcess() != null && ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getCreatePoProcessId().toString().equals(bizOrderHeader.getCommonProcess().getType())) {
                 createPo = "yes";
             }
         } else if (bizOrderHeader.getOrderNum().startsWith("SO") && bizOrderHeader.getCommonProcess() != null && (bizOrderHeader.getSuplys() ==0 || bizOrderHeader.getSuplys() == 721)) {
             String processType = bizOrderHeader.getCommonProcess().getType();
-            OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail() + bizOrderHeader.getFreight() + bizOrderHeader.getTotalExp() + bizOrderHeader.getServiceFee(), bizOrderHeader.getReceiveTotal());
             switch (statusEnum) {
                 case ZERO:
                     if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getZeroCreatePoProcessId()).equals(processType)){
