@@ -399,6 +399,7 @@
                     'customer.id':_this.userInfo.newinput,
                     consultantId: _this.userInfo.staListSehId,
 					includeTestData: _this.userInfo.includeTestData,
+					mobileAuditStatus: _this.userInfo.mobileAuditStatus,
 					flag: _this.userInfo.flagTxt
 				},
 				dataType: 'json',

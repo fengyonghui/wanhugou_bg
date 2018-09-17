@@ -390,7 +390,7 @@
                     localOriginType = r2[i].value;
                 }
             }
-            console.log(localOriginType)
+//          console.log(localOriginType)
 			$.ajax({
 				type: "POST",
 				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",

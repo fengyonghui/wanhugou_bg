@@ -300,7 +300,13 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 
-		Map<Integer, com.wanhutong.backend.modules.config.parse.Process> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
+		Map<Integer, String> requestMap = Maps.newHashMap();
+		Map<Integer, RequestOrderProcessConfig.RequestOrderProcess> reqMap = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap;
+		for (Map.Entry<Integer, RequestOrderProcessConfig.RequestOrderProcess> req : reqMap.entrySet()) {
+			requestMap.put(req.getKey(),reqMap.get(req.getKey()).getName());
+		}
+		requestMap.put(ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId(),"订单支出信息审核");
+		/*Map<Integer, com.wanhutong.backend.modules.config.parse.Process> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
 		Integer currentCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getDefaultNewProcessId();
 		Integer lastCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId();
 		Map<String,Integer> poMap = new LinkedHashMap<>();
@@ -331,7 +337,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			bizRequestHeader.setReqCode(requestMap.get(bizRequestHeader.getProcess()));
 		} else if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && poMap.get(bizRequestHeader.getProcess()) != null){
 			bizRequestHeader.setPoCode(poMap.get(bizRequestHeader.getProcess()));
-		}
+		}*/
 		String dataFrom = "biz_request_bizRequestHeader";
 		bizRequestHeader.setDataFrom(dataFrom);
 		Page<BizRequestHeader> page = bizRequestHeaderForVendorService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
@@ -350,13 +356,15 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 
-		model.addAttribute("processSet",processSet);
+		//model.addAttribute("processSet",processSet);
+		model.addAttribute("requestMap",requestMap);
 		model.addAttribute("roleSet",roleSet);
 		model.addAttribute("varietyInfoList", varietyInfoList);
 		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 		model.addAttribute("vendAuditStatus",ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
-		resultMap.put("processSet",processSet);
+		//resultMap.put("processSet",processSet);
+		resultMap.put("requestMap",requestMap);
 		resultMap.put("roleSet",roleSet);
 		resultMap.put("varietyInfoList",varietyInfoList);
 		resultMap.put("auditStatus",ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
@@ -858,6 +866,29 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeaderForVendor/?repage";
 	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:edit")
+	@RequestMapping(value = "saveForMobile")
+	@ResponseBody
+	public Boolean saveForMobile(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes) {
+		if (!beanValidator(model, bizRequestHeader)){
+			return false;
+		}
+		if (bizRequestHeader.getId() != null) {
+			BizPoHeader bizPoHeader = new BizPoHeader();
+			bizPoHeader.setBizRequestHeader(bizRequestHeader);
+			List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+			if (CollectionUtils.isNotEmpty(poList)) {
+				bizPoHeaderService.updateProcessToInitAudit(poList.get(0), StringUtils.EMPTY);
+			}
+		}
+		bizRequestHeaderForVendorService.save(bizRequestHeader);
+		addMessage(redirectAttributes, "保存备货清单成功");
+		return true;
+	}
+
+
+
 	@ResponseBody
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "saveInfo")
