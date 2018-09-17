@@ -527,9 +527,9 @@
 					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
 					<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">详情</a>
 					</c:if>
-					<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15 && orderHeader.bizStatus!=45}">
-						${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
-					</c:if>
+					<%--<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15 && orderHeader.bizStatus!=45}">--%>
+						<%--${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}--%>
+					<%--</c:if>--%>
 					</shiro:hasPermission>
 					</c:when>
 					<c:otherwise>
