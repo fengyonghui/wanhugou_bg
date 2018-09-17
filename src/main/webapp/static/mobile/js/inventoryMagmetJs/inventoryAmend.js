@@ -784,13 +784,18 @@
                 	 mui.toast("请输入商品货号！");
                 	 return;
                 }
+                if($('#inSta').val()==""){
+                	mui.toast("请选择供应商！");
+                	return;
+                }
                 $.ajax({
                     type: "post",
                     url: "/a/biz/sku/bizSkuInfo/findSkuList",
                     data: {'productInfo.office.id': $('#inSta').val(),itemNo: itemNo},
                     success: function (result) { 
                     	var datas = JSON.parse(result).data;                                          		
-                    	console.log('修改查询数据');                    		
+                    	console.log('修改查询数据');  
+                    	console.log(datas)
 	                        $("#searchInfo").empty();
 	                        if($.isEmptyObject(datas)){
 	                        	mui.toast("此供应商下没有此类商品！");
@@ -883,6 +888,7 @@
 		                            	var y=$(that).attr('id')
 		                            	var divs=$("#serskudiv_"+s);
 		                            	if (s==y) {
+		                            		mui.toast('此供应商下已添加过此类备货商品！请选择其他商品！');
 		                            		divs.html('');
 		                            	}
 		                            })
