@@ -360,6 +360,7 @@
 			});
 		},
 		comfirDialig: function(data) {
+			console.log(data)
 			var _this = this;
 			document.getElementById("rejectBtns").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
@@ -372,6 +373,10 @@
 			});
 			document.getElementById("checkBtns").addEventListener('tap', function(e) {
 				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+				if(data.orderType == 5 && data.statusEnumState == 0) {
+	                mui.toast("代采订单需至少付款20%，请付款后刷新页面再审核");
+	                return;
+	            }
 				var btnArray = ['否', '是'];
 				mui.confirm('确定同意发货吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
