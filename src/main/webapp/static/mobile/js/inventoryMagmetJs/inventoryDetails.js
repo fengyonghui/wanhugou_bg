@@ -166,7 +166,7 @@
                         var poDetailHtml = "";
                         $.each(poDetailList,function(n,v){
                         	console.log(v)
-                        	poDetailHtml +='<li class="mui-table-view-cell mui-media app_pr">'+
+                        	poDetailHtml +='<li class="mui-table-view-cell mui-media">'+
 								'<div class="photoParent mui-pull-left app_pa">'+
 									'<img class="app_pa" src="'+v.skuInfo.productInfo.imgUrl+'">'+
 								'</div>'+
@@ -220,7 +220,7 @@
                         $("#schedulingHeader").append(schedulingHeaderHtml);                        
                         //按订单排产中的排产备注
                         var remarkHtml = "<textarea id='schRemarkOrder' style='border:1px solid #ccc;' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
-                        $("#schedulingHeaderRemark").append(remarkHtml);
+                        $(".schedulingHeaderRemark").append(remarkHtml);
                     }
                 	//按商品排产
                 	if (res.data.detailSchedulingFlg == true) {
