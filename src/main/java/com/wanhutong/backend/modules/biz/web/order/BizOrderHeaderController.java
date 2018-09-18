@@ -363,14 +363,11 @@ public class BizOrderHeaderController extends BaseController {
         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
         DoOrderHeaderProcessAllConfig doOrderHeaderProcessAllConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
         DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
 
         Map<String, String> originConfigMap = Maps.newLinkedHashMap();
         List<String> originConfigValue = Lists.newArrayList();
         List<String> localConfigValue = Lists.newArrayList();
-        List<String> doAllConfigValue = Lists.newArrayList();
         List<String> doFifthConfigValue = Lists.newArrayList();
-        List<String> poConfigValue = Lists.newArrayList();
 
         originConfigMap.put("渠道", "渠道");
         originConfigMap.put("总经理", "总经理");
