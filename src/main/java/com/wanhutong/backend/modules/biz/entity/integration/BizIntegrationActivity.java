@@ -29,6 +29,7 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 	private Integer sendNum;		// 发送人数
 	private String officeIds;
 	private Integer integrationNum;		// 每人赠送积分
+	private Integer sendAll;		// 每人赠送积分
 	private String description;		// 备注说明
 	private Integer status;		// status
 	private Integer uVersion;		// 版本控制；重要
@@ -39,6 +40,14 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 	private Integer userId; //活动对应的用户id
 	private String str; //操作类型
 
+
+	public Integer getSendAll() {
+		return sendAll;
+	}
+
+	public void setSendAll(Integer sendAll) {
+		this.sendAll = sendAll;
+	}
 
 	public String getStr() {
 		return str;

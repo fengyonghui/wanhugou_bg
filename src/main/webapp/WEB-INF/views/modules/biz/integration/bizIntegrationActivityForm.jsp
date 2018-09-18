@@ -64,7 +64,35 @@
                             $("#sendNum").val($("#weixiadan").val());
                         }
                     }
+                    var integrationNum = $("#integrationNum").val();
+                    var sendNum = $("#sendNum").val();
+                    if(integrationNum!=null&&integrationNum!=0)
+                    {
+                        var sendAll = sendNum*integrationNum;
+                        $("#sendAll").val(sendAll);
+                    }
                 });
+
+                //每人赠送积分发生改变计算总数
+				$("#integrationNum").change(function(){
+				   var sendNum = $("#sendNum").val();
+				   var integrationNum = $("#integrationNum").val();
+				   if(sendNum!=null&&sendNum!=0)
+				   {
+                       var sendAll = sendNum*integrationNum;
+                       $("#sendAll").val(sendAll);
+				   }
+				});
+
+                $("#sendNum").change(function(){
+				   var integrationNum = $("#integrationNum").val();
+				   var sendNum = $("#sendNum").val();
+				   if(integrationNum!=null&&integrationNum!=0)
+				   {
+					   var sendAll = sendNum*integrationNum;
+					   $("#sendAll").val(sendAll);
+				   }
+				});
 
                 function zTreeOnCheck(event, treeId, treeNode) {
                     var treeObj = $.fn.zTree.getZTreeObj("officeTree");
@@ -182,7 +210,7 @@
 			 </div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">发送人数：</label>
+			<label class="control-label">参与人数：</label>
 			<div class="controls">
 				<form:hidden path="officeIds" id="officeIds"/>
 				<form:input path="sendNum" id="sendNum" htmlEscape="false" maxlength="10" readonly="readonly" class="input-xlarge  digits"/>
@@ -198,7 +226,14 @@
 		<div class="control-group">
 			<label class="control-label">每人赠送积分：</label>
 			<div class="controls">
-				<form:input path="integrationNum" htmlEscape="false" maxlength="10" class="input-xlarge  digits"/>
+				<form:input path="integrationNum" id="integrationNum" htmlEscape="false" maxlength="10" class="input-xlarge  digits"/>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label">发送积分总数：</label>
+			<div class="controls">
+				<form:input path="sendAll" id="sendAll" htmlEscape="false" maxlength="10" class="input-xlarge  digits"/>
 			</div>
 		</div>
 

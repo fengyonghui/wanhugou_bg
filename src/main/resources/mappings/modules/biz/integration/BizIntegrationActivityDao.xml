@@ -7,6 +7,7 @@
 		a.activity_name AS "activityName",
 		a.activity_code AS "activityCode",
 		a.send_time AS "sendTime",
+		a.send_all AS "sendAll",
 		a.send_scope AS "sendScope",
 		a.activity_tools AS "activityTools",
 		a.send_num AS "sendNum",
@@ -18,6 +19,7 @@
 		a.create_time AS "createDate",
 		a.update_time AS "updateDate",
 		a.status AS "status",
+		a.send_status AS "sendStatus",
 		a.u_version AS "uVersion"
 	</sql>
 	
@@ -41,7 +43,10 @@
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="activityName != null and activityName != ''">
-				AND a.activity_name = #{activityName}
+				AND a.activity_name like concat('%',#{activityName},'%')
+			</if>
+			<if test="sendStatus != null and sendStatus != '' or sendStatus==0">
+				AND a.send_status = #{sendStatus}
 			</if>
 			<if test="beginSendTime != null and endSendTime != null and beginSendTime != '' and endSendTime != ''">
 				AND a.send_time BETWEEN #{beginSendTime} AND #{endSendTime}
@@ -80,6 +85,7 @@
 			activity_code,
 			send_time,
 			send_scope,
+			send_all,
 			activity_tools,
 			send_num,
 			integration_num,
@@ -89,6 +95,7 @@
 			create_time,
 			update_time,
 			status,
+			send_status,
 			u_version
 		) VALUES (
 			#{id},
@@ -96,6 +103,7 @@
 			#{activityCode},
 			#{sendTime},
 			#{sendScope},
+			#{sendAll},
 			#{activityTools},
 			#{sendNum},
 			#{integrationNum},
@@ -105,6 +113,7 @@
 			#{createDate},
 			#{updateDate},
 			#{status},
+			#{sendStatus},
 			#{uVersion}
 		)
 	</insert>
@@ -121,6 +130,7 @@
 			activity_code = #{activityCode},
 			send_time = #{sendTime},
 			send_scope = #{sendScope},
+			send_all = #{sendAll},
 			activity_tools = #{activityTools},
 			send_num = #{sendNum},
 			integration_num = #{integrationNum},

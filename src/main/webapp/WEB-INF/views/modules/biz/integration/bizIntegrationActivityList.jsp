@@ -60,6 +60,7 @@
 				<th>发送人数</th>
 				<th>每人赠送积分</th>
 				<th>备注说明</th>
+				<th>发送状态</th>
 				<th>创建人</th>
 				<th>创建时间</th>
 				<th>更新时间</th>
@@ -94,6 +95,9 @@
 					${bizIntegrationActivity.description}
 				</td>
 				<td>
+						${bizIntegrationActivity.sendStatus==0?'未发送':'已发送'}
+				</td>
+				<td>
 					${bizIntegrationActivity.createBy.id}
 				</td>
 				<td>
@@ -103,7 +107,9 @@
 					<fmt:formatDate value="${bizIntegrationActivity.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit"><td>
-    				<a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}">修改</a>
+					<c:if test="${bizIntegrationActivity.sendStatus!=0}">
+						<a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}">修改</a>
+					</c:if>
     				<a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}&str=detail">详情</a>
 					<a href="${ctx}/biz/integration/bizIntegrationActivity/delete?id=${bizIntegrationActivity.id}" onclick="return confirmx('确认要删除该积分活动吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
