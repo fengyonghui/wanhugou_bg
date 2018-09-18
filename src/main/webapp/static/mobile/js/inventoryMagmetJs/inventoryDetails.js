@@ -170,7 +170,7 @@
 								'<div class="photoParent mui-pull-left app_pa">'+
 									'<img class="app_pa" src="'+v.skuInfo.productInfo.imgUrl+'">'+
 								'</div>'+
-								'<div class="mui-media-body app_w80p app_fr">'+
+								'<div class="mui-media-body app_w72p app_fr">'+
 									'<div class="mui-input-row">'+
 										'<label>品牌名称：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.skuInfo.productInfo.brandName +'" disabled>'+
@@ -236,7 +236,7 @@
 								'<div class="photoParent mui-pull-left app_pa">'+
 									'<img class="app_pa" src="'+v.skuInfo.productInfo.imgUrl+'">'+
 								'</div>'+
-								'<div class="mui-media-body app_w80p app_fr">'+
+								'<div class="mui-media-body app_w72p app_fr">'+
 									'<div class="mui-input-row">'+
 										'<label>品牌名称：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.skuInfo.productInfo.brandName +'" disabled>'+
@@ -272,8 +272,8 @@
                             console.log(v);
                             console.log(v.bizSchedulingPlan.completePalnList);
                             $.each(v.bizSchedulingPlan.completePalnList,function(n,v){
-                            	completePalnHtml +='<li class="mui-table-view-cell mui-media app_pr">'+
-								'<div class="mui-media-body app_w80p app_fr">'+
+                            	completePalnHtml +='<li class="mui-table-view-cell mui-media app_pr app_pl0">'+
+								'<div class="mui-media-body">'+
 									'<div class="mui-input-row">'+
 										'<label>完成日期：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(v.planDate) +'" disabled>'+
@@ -289,7 +289,7 @@
                         });
                         //按商品排产中的排产备注
                         var remarkHtmls = "<textarea id='schRemarkOrder' style='border:1px solid #ccc;' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
-                        $("#schedulingHeaderRemarks").append(remarkHtmls);    
+                        $(".schedulingHeaderRemarks").append(remarkHtmls);    
                 	}
 				}
 			})

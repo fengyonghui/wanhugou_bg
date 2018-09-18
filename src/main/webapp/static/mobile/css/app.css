@@ -194,6 +194,7 @@ a:hover{text-decoration:none;}
 .app_m20{margin: 20px;}
 .app_m25{margin: 25px;}
 
+.app_pt0{padding-top:0!important;}
 .app_pt1{padding-top:1px;}
 .app_pt3{padding-top:3px;}
 .app_pt10{padding-top: 10px;}
@@ -208,7 +209,7 @@ a:hover{text-decoration:none;}
 .app_pt70{padding-top: 70px;}
 .app_pt2em{padding-top: 2em;}
 
-
+.app_pb0{padding-bottom: 0!important;}
 .app_pb5{padding-bottom: 5px;}
 .app_pb10{padding-bottom: 10px;}
 .app_pb15{padding-bottom: 15px;}
@@ -220,7 +221,7 @@ a:hover{text-decoration:none;}
 .app_pb1em{padding-bottom: 1em;}
 .app_pb50{padding-bottom: 50px;}
 
-.app_pl0{padding-left: 0;}
+.app_pl0{padding-left: 0!important;}
 .app_pl5{padding-left: 5px;}
 .app_pl10{padding-left: 10px;}
 .app_pl15{padding-left: 15px;}
@@ -233,7 +234,7 @@ a:hover{text-decoration:none;}
 .app_pl3em{padding-left:3em;}
 .app_pl05em{padding-left:.5em;}
 
-.app_pr0{padding-right: 0;}
+.app_pr0{padding-right: 0!important;}
 .app_pr5{padding-right: 5px;}
 .app_pr10{padding-right: 10px;}
 .app_pr15{padding-right: 15px;}
@@ -308,6 +309,7 @@ a:hover{text-decoration:none;}
 .app_w36p{width: 36%;}
 .app_w40p{width: 40%;}
 .app_w70p{width: 70%;}
+.app_w72p{width: 72%;}
 .app_w80p{width: 80%;}
 .app_w100{width: 100%;}
 .app_w100p{width: 100%;}
@@ -649,7 +651,11 @@ body{font-size: 15px;color:#3b3b3b;}
 .inDetailComdty div.mui-input-row label {width: 32%;}
 .inDetailComdty div.mui-input-row input {width: 68%;}
 /*备货单详情---排产*/
+.mui-content .inProduction label {width: 30%;}
+.mui-content .inProduction input {width: 70%;}
 
+/*备货单详情---备注*/
+.mui-input-row textarea {width: 66%;border: 1px solid #ccc;border-radius: 5px;margin: 5px 15px 5px -5px;}
 
 /*备货单添加、修改---备货商品*/
 .inAddComdty div.mui-row li {padding: 5px;list-style: none;height: 30px;border-bottom: 1px solid #efeff4;}

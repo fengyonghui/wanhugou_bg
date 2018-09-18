@@ -170,8 +170,8 @@
 									}
 								}
 								//取消、修改、付款
-								var inPay = '';
-								var inPayBtn = '';
+//								var inPay = '';
+//								var inPayBtn = '';
 								var inAmend = '';
 								var inAmendBtn = '';
 								var inCancel = '';
@@ -186,7 +186,7 @@
 											/*删除*/
 											/*恢复*/
 											/*取消按钮*/
-											if(item.bizstatus !=40) {
+											if(item.bizStatus !=40) {
 												inCancel = '取消'
 												inCancelBtn = 'inCancelBtn'
 											}else {
@@ -198,7 +198,7 @@
 											inAmend = ''
 										}
 									}
-									if(userId != 1 && item.bizstatus < 4 ||(requestOrderProcess.name == '驳回' && userId == item.createBy.id) ||(purchaseOrderProcess.name == '驳回' && userId == item.createBy.id)) {
+									if(userId != 1 && item.bizStatus < 4 ||(requestOrderProcess.name == '驳回' && userId == item.createBy.id) ||(purchaseOrderProcess.name == '驳回' && userId == item.createBy.id)) {
 										inAmend = '修改'
 										inAmendBtn = 'inAmendBtn'
 										/*删除按钮*/	
@@ -209,16 +209,16 @@
 										inCancelBtn = 'inCancelBtn'
 									}
 									/*付款按钮*/
-									if(_this.payFlag == true) {
-//									<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
-										if(item.bizstatus !=40 && item.totalDetail != item.recvTotal) {
-											inPay = '付款'
-											inPayBtn = 'inPayBtn'
-										}else {
-											inPay = ''
-											inPayBtn = ''
-										}								
-									}
+//									if(_this.payFlag == true) {
+////									<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
+//										if(item.bizStatus !=40 && item.totalDetail != item.recvTotal) {
+//											inPay = '付款'
+//											inPayBtn = 'inPayBtn'
+//										}else {
+//											inPay = ''
+//											inPayBtn = ''
+//										}								
+//									}
 								}
 							//详情
 								var inDetail = '';
@@ -284,7 +284,7 @@
 										'<label>更新时间:</label>' +
 										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 									'</div>' +
-									'<div class="app_color40 content_part mui-row app_text_center operation">' +
+									'<div class="app_color40 mui-row app_text_center operation">' +
 										'<div class="mui-col-xs-2">' +
 											'<li class="mui-table-view-cell" ></li>' +
 										'</div>'+
@@ -297,8 +297,8 @@
 										'<div class="mui-col-xs-2 '+inCancelBtn+'" inListId="'+ item.id +'">' +
 											'<li class="mui-table-view-cell"> '+inCancel+'</li>' +
 										'</div>'+
-										'<div class="mui-col-xs-2 '+inPayBtn+'"  inListId="'+ item.id +'">' +
-											'<li class="mui-table-view-cell">'+inPay+'</li>' +
+										'<div class="mui-col-xs-2"  inListId="'+ item.id +'">' +
+											'<li class="mui-table-view-cell"></li>' +
 										'</div>'+
 										'<div class="mui-col-xs-2 '+inCheckBtn+'" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
 											'<li class="mui-table-view-cell">'+ inCheck +'</li>' +
@@ -399,7 +399,7 @@
 				}
 			}),
 		/*修改*/
-            $('.content_part').on('tap','.inAmendBtn', function() {
+            $('#list').on('tap','.inAmendBtn', function() {
 				var url = $(this).attr('url');
                 var reqId = $(this).attr('inListId');
 				GHUTILS.OPENPAGE({
@@ -410,22 +410,22 @@
 				})
 			}),
         /*付款*/
-	       $('#list').on('tap', '.inPayBtn', function() {
-					var url = $(this).attr('url');
-					var inListId = $(this).attr('inListId');
-					if(url) {
-						mui.toast('子菜单不存在')
-					} else if(inListId == inListId) {
-						GHUTILS.OPENPAGE({
-							url: "../../html/inventoryMagmetHtml/inPay.html",
-							extras: {
-								inListId: inListId,
-							}
-						})
-					}
-				}),
+//	       $('#list').on('tap', '.inPayBtn', function() {
+//					var url = $(this).attr('url');
+//					var inListId = $(this).attr('inListId');
+//					if(url) {
+//						mui.toast('子菜单不存在')
+//					} else if(inListId == inListId) {
+//						GHUTILS.OPENPAGE({
+//							url: "../../html/inventoryMagmetHtml/inPay.html",
+//							extras: {
+//								inListId: inListId,
+//							}
+//						})
+//					}
+//				}),
         /* 审核*/
-            $('.content_part').on('tap','.inCheckBtn',function(){
+            $('#list').on('tap','.inCheckBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
 				var bizStatus = $(this).attr('bizStatus');
@@ -442,7 +442,7 @@
                 }
 			}),
 		/*取消*/	
-            $('.content_part').on('tap','.inCancelBtn',function(){
+            $('#list').on('tap','.inCancelBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
                 if(url) {
@@ -454,7 +454,7 @@
 							$.ajax({
 				                type: "POST",
 				                url: "/a/biz/request/bizRequestHeaderForVendor/saveInfo",
-				                data: {id:inListId,checkStauts:40},
+				                data: {id:inListId,checkStatus:'40'},
 				                dataType: "json",
 				                success: function(res){
 				                	mui.toast('操作成功！')
@@ -649,8 +649,8 @@
 								}
 							}
 							//取消、修改、付款
-							var inPay = '';
-							var inPayBtn = '';
+//							var inPay = '';
+//							var inPayBtn = '';
 							var inAmend = '';
 							var inAmendBtn = '';
 							var inCancel = '';
@@ -665,7 +665,7 @@
 										/*删除*/
 										/*恢复*/
 										/*取消按钮*/
-										if(item.bizstatus !=40) {
+										if(item.bizStatus !=40) {
 											inCancel = '取消'
 											inCancelBtn = 'inCancelBtn'
 										}else {
@@ -677,7 +677,7 @@
 										inAmend = ''
 									}
 								}
-								if(userId != 1 && item.bizstatus < 4 ||(requestOrderProcess.name == '驳回' && userId == item.createBy.id) ||(purchaseOrderProcess.name == '驳回' && userId == item.createBy.id)) {
+								if(userId != 1 && item.bizStatus < 4 ||(requestOrderProcess.name == '驳回' && userId == item.createBy.id) ||(purchaseOrderProcess.name == '驳回' && userId == item.createBy.id)) {
 									inAmend = '修改'
 									inAmendBtn = 'inAmendBtn'
 									/*删除按钮*/	
@@ -688,16 +688,16 @@
 									inCancelBtn = 'inCancelBtn'
 								}
 								/*付款按钮*/
-								if(_this.payFlag == true) {
-	//									<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
-									if(item.bizstatus !=40 && item.totalDetail != item.recvTotal) {
-										inPay = '付款'
-										inPayBtn = 'inPayBtn'
-									}else {
-										inPay = ''
-										inPayBtn = ''
-									}								
-								}
+//								if(_this.payFlag == true) {
+//	//									<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
+//									if(item.bizStatus !=40 && item.totalDetail != item.recvTotal) {
+//										inPay = '付款'
+//										inPayBtn = 'inPayBtn'
+//									}else {
+//										inPay = ''
+//										inPayBtn = ''
+//									}								
+//								}
 							}
 						//详情
 							var inDetail = '';
@@ -763,7 +763,7 @@
 								'<label>更新时间:</label>' +
 								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 							'</div>' +
-							'<div class="app_color40 content_part mui-row app_text_center operation">' +
+							'<div class="app_color40 mui-row app_text_center operation">' +
 								'<div class="mui-col-xs-2">' +
 									'<li class="mui-table-view-cell" ></li>' +
 								'</div>'+
@@ -776,8 +776,8 @@
 								'<div class="mui-col-xs-2 '+inCancelBtn+'" inListId="'+ item.id +'">' +
 									'<li class="mui-table-view-cell"> '+inCancel+'</li>' +
 								'</div>'+
-								'<div class="mui-col-xs-2 '+inPayBtn+'"  inListId="'+ item.id +'">' +
-									'<li class="mui-table-view-cell">'+inPay+'</li>' +
+								'<div class="mui-col-xs-2"  inListId="'+ item.id +'">' +
+									'<li class="mui-table-view-cell"></li>' +
 								'</div>'+
 								'<div class="mui-col-xs-2 '+inCheckBtn+'" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
 									'<li class="mui-table-view-cell">'+ inCheck +'</li>' +

@@ -135,49 +135,38 @@
         searchSkuHtml: function(Id) {
             var _this = this;
             mui('#inAmendPoLastDaDiv').on('tap','#comChoiceBtn',function(){
-//          	console.log(_this.bizOfficeId)
-            	if(_this.bizOfficeId == '' || !$('#inSupply').val()) {
+            	if(!$('#inSupply').val()) {
             		mui.toast("请选择供应商！");
             		return;
             	}
                 var itemNo = $("#inAmendPoLastDa").val();
-                if(itemNo == null||itemNo == undefined){
-					itemNo == "";
-                }
-                if(itemNo == ""){
-                	mui.toast("请输入查询商品的货号！");
-                	return;
-                }
-                if(!$('#supplierId').val()) {
-            		mui.toast("此供应商下没有此类商品！");
-            	}
                 $.ajax({
                     type: "post",
                     url: "/a/biz/sku/bizSkuInfo/findSkuList",
                     data: {
-                    	itemNo: itemNo,
+                    	itemNo: itemNo,//输入的商品货号
                     	'productInfo.office.id': $('#supplierId').val()
                 	},
                     success: function (result) {
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
                         if($.isEmptyObject(data)){
-	                        	mui.toast("此供应商下没有此类商品！");
+                        	mui.toast("您输入的货号有误，请重新输入！");
 	                    }else {
 	                        $.each(data,function (keys,skuInfoList) {
 	                            var prodKeys= keys.split(",");
 	                            var prodId= prodKeys[0];
-	//                            var prodName= prodKeys[1];
+//                              var prodName= prodKeys[1];
 	                            var prodUrl= prodKeys[2];
-	//                            var cateName= prodKeys[3];
-	//                            var prodCode= prodKeys[4];
-	//                            var prodOfficeName= prodKeys[5];
+//                              var cateName= prodKeys[3];
+//                              var prodCode= prodKeys[4];
+//                              var prodOfficeName= prodKeys[5];
 	                            var  brandName=prodKeys[6];
 	                            //var flag=true;
 	                            var resultListHtml="";
 	                            var t=0;
 	                            $.each(skuInfoList,function (index,skuInfo) {
-	//                          	console.log(skuInfo)
+//                          		console.log(skuInfo)
 	                                //skuInfoId+=","+skuInfo.id;
 	                                if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
 	                                    return;
@@ -248,11 +237,11 @@
 	                            t++;
 	                            $("#searchInfo").append(resultListHtml);
 	                        })
-                        }
-                        var addButtonHtml = '<div class="inAddBtnParent" id="batchAddDiv">' +
+	                        var addButtonHtml = '<div class="inAddBtnParent" id="batchAddDiv">' +
                             '<button id="batchAdd" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加' +
                             '</button></div>';
-                        $("#searchInfo").append(addButtonHtml);
+                       		 $("#searchInfo").append(addButtonHtml);
+                        }
                     }
                 })
             });
@@ -343,13 +332,14 @@
                 _this.bizOfficeId = $(this).attr("id");
                 _this.bizOfficeName = $(this).attr("name");
                 _this.bizOfficeType = $(this).attr("type");
-				$(newinput).val($(this).text())
-				$(input_div).hide()
-				$(hideSpanAdd).hide()
-				_this.selectOpen = true
-				_this.supplier(_this.bizOfficeId)
+				$(newinput).val($(this).text());
+				$(input_div).hide();
+				$(hideSpanAdd).hide();
+				_this.selectOpen = true;
+				$('#supplierId').val($(this).attr("id"));
+				_this.supplier($('#supplierId').val());
+				_this.searchSkuHtml($('#supplierId').val());
 			})
-			_this.searchSkuHtml(_this.bizOfficeId)
 		},
 		//供应商信息
 		supplier:function(supplierId){						
@@ -359,9 +349,7 @@
                 data: {vendorId:supplierId},		                
                 dataType: "json",
                 success: function(rest){
-                	console.log(rest)
                 	if(rest) {
-                		$('#supplierId').val(rest.office.id);
                 		if(rest.cardNumber) {
 	                		$('#inSupplierNum').parent().show();
 	                		$('#inSupplierNum').val(rest.cardNumber);//供应商卡号

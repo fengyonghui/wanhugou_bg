@@ -8,6 +8,7 @@
 		<link href="../../css/app.css?time=20180912" rel="stylesheet" />
 		<style type="text/css">
 			.mui-input-group .mui-input-row:after {left: 0px;}
+			.mui-input-row label~textarea {width: 66%;border: 1px solid #ccc;margin: 5px 15px 5px -5px;}
 		</style>
 	</head>
 	<body>
@@ -42,11 +43,11 @@
 				<input type="text" class="mui-input-clear" id="insupplierNum" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>供应商收款人：</label>
+				<label>收款人：</label>
 				<input type="text" class="mui-input-clear" id="insupplierMoney" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>供应商开户行：</label>
+				<label>开户行：</label>
 				<input type="text" class="mui-input-clear" id="insupplierBank" disabled>
 			</div>
 			<div class="mui-input-row">
@@ -62,11 +63,11 @@
 				<input type="text" class="mui-input-clear" id="inMarginLevel" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>已付厂商保证金：</label>
+				<label>已付保证金：</label>
 				<input type="text" class="mui-input-clear" id="inMoneyPay" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>期望收货时间：</label>
+				<label>收货时间：</label>
 				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
 			</div>
 			<div class="mui-input-row inComdty inDetailComdty">
@@ -78,8 +79,8 @@
 				<ul id="inPaylist" class="mui-table-view"></ul>
 			</div>
 			<div class="mui-input-row">
-				<label>备注：</label>
-				<textarea id="inPoRemark" name="" rows="" cols="" readonly style="border:1px solid #ccc;border-radius: 5px;margin:5px 5px 5px -5px;"></textarea>
+				<label style="width: 30%;">备注：</label>
+				<textarea id="inPoRemark" name="" rows="" cols="" readonly></textarea>
 			</div>
 			<div class="mui-input-row">
 				<label>业务状态：</label>
@@ -101,23 +102,23 @@
 				<div class="labelLf">按订单排产：</div>
 				<div class="">
 					<label class="app_pr0" style="width:30%;float:left;font-size: 14px;">排产记录：</label>
-					<ul id="schedulingHeader" class="mui-table-view" style="width:70%;float:left"></ul>											
+					<ul id="schedulingHeader" class="mui-table-view app_fr app_w70p"></ul>											
 				</div>
 				<div class="">
 					<label class="app_pr0" style="width:30%;float:left;font-size: 14px;">排产备注：</label>
-				    <div id="schedulingHeaderRemark" class="mui-table-view" style="width:70%;float:left"></div>									
+				    <div id="schedulingHeaderRemark" class="mui-table-view app_fr"></div>									
 				</div>				
 			</div>
-			<div class="mui-input-row inComdty" id="schedulingPlan_forSku">
+			<div class="mui-input-row inComdty inProduction" id="schedulingPlan_forSku">
 				<div class="labelLf">按商品排产：</div>
-				<ul id="purchaseMenus" class="mui-table-view"></ul>
-				<div class="">
-					<label class="app_pr0" style="width:30%;float:left;font-size: 14px;">排产记录：</label>
-					<ul id="schedulingHeaders" class="mui-table-view" style="width:70%;float:left"></ul>											
+				<ul id="purchaseMenus" class="mui-table-view app_bline"></ul>
+				<div class="mui-row app_bline">
+					<label class="app_pr0" style="float:left;font-size: 14px;">排产记录：</label>
+					<ul id="schedulingHeaders" class="mui-table-view app_fr app_w70p"></ul>											
 				</div>
-				<div class="">
-					<label class="app_pr0" style="width:30%;float:left;font-size: 14px;">排产备注：</label>
-				    <div id="schedulingHeaderRemarks" class="mui-table-view" style="width:70%;float:left"></div>									
+				<div class="schedulingHeaderRemarks">
+					<label class="app_pr0" style="float:left;font-size: 14px;">排产备注：</label>
+				   <!-- <div id="schedulingHeaderRemarks" class="" style="width:70%;float:left"></div>	-->								
 				</div>			
 			</div>
 			<!--审批流程块 有的话显示-->
