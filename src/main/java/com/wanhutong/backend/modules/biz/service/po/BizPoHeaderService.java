@@ -711,6 +711,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         cureentProcessEntity.setBizStatus(auditType);
         cureentProcessEntity.setProcessor(user.getId().toString());
         cureentProcessEntity.setDescription(description);
+        cureentProcessEntity.setCurrent(CommonProcessEntity.NOT_CURRENT);
         commonProcessService.save(cureentProcessEntity);
 
         CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
@@ -718,6 +719,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
         nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
         nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+        nextProcessEntity.setCurrent(CommonProcessEntity.CURRENT);
         commonProcessService.save(nextProcessEntity);
         this.updateProcessId(id, nextProcessEntity.getId());
 

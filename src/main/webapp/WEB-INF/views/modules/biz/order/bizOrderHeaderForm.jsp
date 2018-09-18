@@ -493,6 +493,10 @@
     </script>
     <script type="text/javascript">
         function checkPending(obj) {
+            if(obj == '${OrderHeaderBizStatusEnum.SUPPLYING.state}' && '${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}' == 'true' && '${statusEnumState}' == 0) {
+                alert("代采订单需至少付款20%，请付款后刷新页面再审核");
+                return;
+            }
             var localSendIds= "";
             var boo="";
                 $("input[name='localSendIds']").each(function () {
@@ -1105,10 +1109,10 @@
             $("#bankName").removeAttr("style");
             $("#compact").removeAttr("style");
             $("#identityCard").removeAttr("style");
-            var officeId = $("#officeVendorId").val();
+            var vendId = $("#vendId").val();
             $.ajax({
                 type:"post",
-                url:"${ctx}/biz/order/bizOrderHeader/selectVendInfo?vendorId="+officeId,
+                url:"${ctx}/biz/order/bizOrderHeader/selectVendInfo?vendorId="+vendId,
                 success:function (data) {
                     if (data == null) {
                         return false;
@@ -1535,7 +1539,8 @@
     <input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
     <input type="hidden" value="${entity.bizPoPaymentOrder.id}" id="paymentOrderId"/>
     <input type="hidden" name="receiveTotal" value="${bizOrderHeader.receiveTotal}" />
-    <input id="vendId" type="hidden" value="${entity.sellers.bizVendInfo.office.id}"/>
+    <%--<input id="vendId" type="hidden" value="${entity.sellers.bizVendInfo.office.id}"/>--%>
+    <input id="vendId" type="hidden" value="${entity.sellersId}"/>
     <input id="createPo" type="hidden" value="${createPo}"/>
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
@@ -2251,6 +2256,7 @@
                             <tr>
                                 <th>流水号</th>
                                 <th>支付金额</th>
+                                <th>实收金额</th>
                                 <th>状态</th>
                                 <th>创建时间</th>
                             </tr>
@@ -2260,6 +2266,7 @@
                                 <tr>
                                     <td>${unline.serialNum}</td>
                                     <td>${unline.unlinePayMoney}</td>
+                                    <td>${unline.realMoney}</td>
                                     <td>${fns:getDictLabel(unline.bizStatus,"biz_order_unline_bizStatus" ,"未知状态" )}</td>
                                     <td><fmt:formatDate value="${unline.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                                 </tr>

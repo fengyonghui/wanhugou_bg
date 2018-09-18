@@ -300,7 +300,13 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 
-		Map<Integer, com.wanhutong.backend.modules.config.parse.Process> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
+		Map<Integer, String> requestMap = Maps.newHashMap();
+		Map<Integer, RequestOrderProcessConfig.RequestOrderProcess> reqMap = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap;
+		for (Map.Entry<Integer, RequestOrderProcessConfig.RequestOrderProcess> req : reqMap.entrySet()) {
+			requestMap.put(req.getKey(),reqMap.get(req.getKey()).getName());
+		}
+		requestMap.put(ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId(),"订单支出信息审核");
+		/*Map<Integer, com.wanhutong.backend.modules.config.parse.Process> purMap = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap();
 		Integer currentCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getDefaultNewProcessId();
 		Integer lastCode = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId();
 		Map<String,Integer> poMap = new LinkedHashMap<>();
@@ -331,7 +337,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			bizRequestHeader.setReqCode(requestMap.get(bizRequestHeader.getProcess()));
 		} else if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && poMap.get(bizRequestHeader.getProcess()) != null){
 			bizRequestHeader.setPoCode(poMap.get(bizRequestHeader.getProcess()));
-		}
+		}*/
 		String dataFrom = "biz_request_bizRequestHeader";
 		bizRequestHeader.setDataFrom(dataFrom);
 		Page<BizRequestHeader> page = bizRequestHeaderForVendorService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
@@ -350,13 +356,15 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 
-		model.addAttribute("processSet",processSet);
+		//model.addAttribute("processSet",processSet);
+		model.addAttribute("requestMap",requestMap);
 		model.addAttribute("roleSet",roleSet);
 		model.addAttribute("varietyInfoList", varietyInfoList);
 		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 		model.addAttribute("vendAuditStatus",ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
-		resultMap.put("processSet",processSet);
+		//resultMap.put("processSet",processSet);
+		resultMap.put("requestMap",requestMap);
 		resultMap.put("roleSet",roleSet);
 		resultMap.put("varietyInfoList",varietyInfoList);
 		resultMap.put("auditStatus",ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
@@ -408,11 +416,13 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 			List<Integer> skuInfoIdList = Lists.newArrayList();
 			List<BizRequestDetail> bizRequestDetails = bizRequestHeader.getRequestDetailList();
-			for (BizRequestDetail requestDetail : bizRequestDetails) {
-				BizSkuInfo bizSkuInfo = requestDetail.getSkuInfo();
-				skuInfoIdList.add(bizSkuInfo.getId());
+			if (CollectionUtils.isNotEmpty(bizRequestDetails)) {
+				for (BizRequestDetail requestDetail : bizRequestDetails) {
+					BizSkuInfo bizSkuInfo = requestDetail.getSkuInfo();
+					skuInfoIdList.add(bizSkuInfo.getId());
+				}
+				model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
 			}
-			model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
 
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
 			BizInventorySku bizInventorySku = new BizInventorySku();
@@ -958,17 +968,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		bizRequestHeader.setDelFlag(BizRequestHeader.DEL_FLAG_NORMAL);
 		bizRequestHeaderForVendorService.delete(bizRequestHeader);
 		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
-	}
-
-	@RequiresPermissions("biz:request:bizRequestHeader:audit")
-	@RequestMapping(value = "startAudit")
-	@ResponseBody
-	public String startAudit(HttpServletRequest request, Integer id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, Integer auditType, String desc) {
-		Pair<Boolean, String> result = bizRequestHeaderForVendorService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
-		if (result.getLeft()) {
-			return JsonUtil.generateData(result, request.getParameter("callback"));
-		}
-		return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
 	}
 
 	@RequiresPermissions("biz:request:bizRequestHeader:createPayOrder")

@@ -598,7 +598,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .pre {margin-bottom: 0;padding-left: 0;float: right;width: 62%;}
 .newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;background: url(./thumb.jpg) no-repeat scroll right center;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
 .input_div {width: 150px;border: 1px solid #ddd;border-bottom: none;border-radius: 0 0 3px 3px;display: none;}
-.hideSpan {position: absolute;right: 52px;top: 11px;border: 1px solid rgb(204, 204, 204);border-radius: 13px;display: none;}
+.hideSpan {position: absolute;right: 52px;top: 7px;border: 1px solid rgb(204, 204, 204);border-radius: 13px;display: none;}
 .secStyle {margin: 5px 0;} 
 .newinput:focus {cursor: text;}
 .soption {display: block;padding: 2px 5px;}
@@ -695,9 +695,18 @@ a, #list  {touch-action: none;}
 /*改变 ios 默认radio样式 */
 input[type=radio].inputRadio {-webkit-appearance: none;position: relative;top: -1px;width: 15px;height: 15px;border: 1px solid #999;-webkit-border-radius: 50%;border-radius: 50%;background-color: #fff;vertical-align: middle;}
 input[type="radio"].inputRadio:checked {-webkit-appearance: none;background-color: #40ABE9;}
+
+/*查询---radio*/
+/*横排*/
+/*.searchRadioBody {padding: 10px 15px;font-weight: bold;}
+input[type=radio].searchRadio {-webkit-appearance: none;position: relative;top: -1px;width: 17px;height: 17px;border: 1px solid #999;-webkit-border-radius: 50%;border-radius: 50%;background-color: #fff;vertical-align: middle;margin-left: 2px;}
+input[type="radio"].searchRadio:checked {-webkit-appearance: none;background-color: #40ABE9;}*/
+/*竖排*/
+input[type=radio].searchRadio {-webkit-appearance: none;position: relative;top: 12px;width: 17px;height: 17px;border: 1px solid #999;-webkit-border-radius: 50%;border-radius: 50%;background-color: #fff;vertical-align: middle;float: left;}
+input[type="radio"].searchRadio:checked {-webkit-appearance: none;background-color: #40ABE9;}
+
 /*查询---测试数据*/
 /*改变 ios 默认checkbox样式 */
 input[type=checkbox].testCheckbox {-webkit-appearance: none;position: relative;top: 12px;width: 17px;height: 17px;border: 1px solid #999;-webkit-border-radius: 50%;border-radius: 50%;background-color: #fff;vertical-align: middle;float: left;}
 input[type="checkbox"].testCheckbox:checked {-webkit-appearance: none;background-color: #40ABE9;}
 
-/*.mui-input-row input.testCheckbox {height: 20px;margin: 10px 210px 10px 0;width: 20px;}*/
