@@ -416,11 +416,13 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 			List<Integer> skuInfoIdList = Lists.newArrayList();
 			List<BizRequestDetail> bizRequestDetails = bizRequestHeader.getRequestDetailList();
-			for (BizRequestDetail requestDetail : bizRequestDetails) {
-				BizSkuInfo bizSkuInfo = requestDetail.getSkuInfo();
-				skuInfoIdList.add(bizSkuInfo.getId());
+			if (CollectionUtils.isNotEmpty(bizRequestDetails)) {
+				for (BizRequestDetail requestDetail : bizRequestDetails) {
+					BizSkuInfo bizSkuInfo = requestDetail.getSkuInfo();
+					skuInfoIdList.add(bizSkuInfo.getId());
+				}
+				model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
 			}
-			model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
 
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
 			BizInventorySku bizInventorySku = new BizInventorySku();
