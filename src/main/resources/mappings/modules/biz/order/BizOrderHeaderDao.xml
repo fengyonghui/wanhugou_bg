@@ -2245,7 +2245,10 @@ FROM
 				WHERE bod.order_id = a.id
 				AND bod.status = 1
 				AND  ( bod.suply_id = 0 OR bod.suply_id = 721 )
-				AND a.biz_status BETWEEN 15 AND 17
+				<if test="bizStatusStart !=null and bizStatusEnd !=null">
+					AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+					/*AND a.biz_status BETWEEN 15 AND 17*/
+				</if>
 				AND a.STATUS =1 ) t
 		WHERE a.id = t.id
 		GROUP BY id

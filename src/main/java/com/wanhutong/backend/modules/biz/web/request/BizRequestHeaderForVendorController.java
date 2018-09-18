@@ -53,6 +53,7 @@ import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -134,6 +135,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	private BizPoPaymentOrderService bizPoPaymentOrderService;
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+	private CommonProcessService commonProcessService;
 
 	public static final String REQUEST_HEADER_TABLE_NAME = "biz_request_header";
 	public static final String REQUEST_DETAIL_TABLE_NAME = "biz_request_detail";
@@ -466,16 +469,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			model.addAttribute("poSchType", bizRequestHeader.getBizPoHeader().getPoSchType());
 		}
 
-//		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
-//			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
-//					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
-//			model.addAttribute("requestOrderProcess", requestOrderProcess);
-//		}
-//		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
-//			VendorRequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
-//					ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
-//			model.addAttribute("requestOrderProcess", requestOrderProcess);
-//		}
 		String createPo = "no";
 		if (bizRequestHeader.getCommonProcess() != null && ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getCreatePoProcessId().toString().equals(bizRequestHeader.getCommonProcess().getType())) {
 			createPo = "yes";
@@ -496,6 +489,22 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			model.addAttribute("paymentOrderList",paymentOrderList);
 			model.addAttribute("statusList", statusList);
 			model.addAttribute("statusMap", statusMap);
+		}
+
+		BizPoHeader bizPoHeader = new BizPoHeader();
+		bizPoHeader.setBizRequestHeader(bizRequestHeader);
+		List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+		List<CommonProcessEntity> poAuditList = null;
+		if (CollectionUtils.isNotEmpty(poList)) {
+			BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+			bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
+			List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+			BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
+			for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
+				BigDecimal payTotal = poPaymentOrder.getPayTotal();
+				totalPayTotal = totalPayTotal.add(payTotal);
+			}
+			model.addAttribute("totalPayTotal", totalPayTotal);
 		}
 
 		User userAdmin = UserUtils.getUser();
@@ -863,6 +872,26 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 		bizRequestHeaderForVendorService.save(bizRequestHeader);
+
+		BizRequestDetail bizRequestDetail = new BizRequestDetail();
+		bizRequestDetail.setRequestHeader(bizRequestHeader);
+		List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+		BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+		for (BizRequestDetail requestDetail : requestDetailList) {
+			bizPoOrderReq.setSoLineNo(requestDetail.getLineNo());
+			bizPoOrderReq.setRequestHeader(requestDetail.getRequestHeader());
+			bizPoOrderReq.setSoType((byte) 2);
+			List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+			if (poOrderReqList != null && poOrderReqList.size() > 0) {
+				BizPoOrderReq poOrderReq = poOrderReqList.get(0);
+				BizPoHeader poHeader = poOrderReq.getPoHeader();
+				poHeader.setDelFlag("0");
+				poOrderReq.setDelFlag("0");
+				bizPoHeaderService.save(poHeader);
+				bizPoOrderReqService.save(poOrderReq);
+			}
+		}
+
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeaderForVendor/?repage";
 	}

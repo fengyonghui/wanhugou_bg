@@ -71,6 +71,11 @@
 
             $("#inputForm").validate({
                 submitHandler: function(form){
+                    if('${totalPayTotal}' > 0){
+                        alert("该订单已付款，请与系统管理员联系")
+                        return;
+                    }
+
                     if($("#address").val()==''){
                         $("#addError").css("display","inline-block")
                         return false;
@@ -835,7 +840,7 @@
     <script type="text/javascript">
         //代采订单：审核通过
         function checkPass(obj) {
-            if('${createPo == 'yes' && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}'){
+            if('${createPo == 'yes'}'){
                 var lastPayDateVal = $("#lastPayDate").val();
                 if (lastPayDateVal == ""){
                     alert("请输入最后付款时间！");
@@ -978,6 +983,8 @@
             var suplys = $("#suplys").val();
             var orderType = 1;
             var createPo = $("#createPo").val();
+            var lastPayDateVal = $("#lastPayDate").val();
+
 
             if(createPo == "yes") {
                 var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
@@ -1001,7 +1008,7 @@
             $.ajax({
                 url: '${ctx}/biz/order/bizOrderHeader/auditSo',
                 contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "orderType": orderType, "createPo": createPo},
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "orderType": orderType, "createPo": createPo, "lastPayDateVal":lastPayDateVal},
                 type: 'get',
                 success: function (result) {
                     result = JSON.parse(result);
@@ -1542,6 +1549,7 @@
     <%--<input id="vendId" type="hidden" value="${entity.sellers.bizVendInfo.office.id}"/>--%>
     <input id="vendId" type="hidden" value="${entity.sellersId}"/>
     <input id="createPo" type="hidden" value="${createPo}"/>
+    <input id="totalPayTotal" type="hidden" value="${totalPayTotal}"/>
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
@@ -1909,10 +1917,9 @@
     </div>
 
     <!-- 状态为审核中，自动生成采购单时，需要填写最后付款时间 -->
-        <c:if test="${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}">
             <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
                 <c:if test="${entity.str == 'audit'}">
-                    <c:if test="${createPo == 'yes' && entity.bizStatus == OrderHeaderBizStatusEnum.SUPPLYING.state}">
+                    <c:if test="${createPo == 'yes'}">
                         <div class="control-group">
                             <label class="control-label">最后付款时间：</label>
                             <div class="controls">
@@ -1928,7 +1935,6 @@
                     </c:if>
                 </c:if>
             </shiro:hasPermission>
-        </c:if>
 
     <div class="control-group">
         <label class="control-label">备&nbsp;注：</label>

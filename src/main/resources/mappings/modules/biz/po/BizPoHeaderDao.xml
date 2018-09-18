@@ -330,7 +330,9 @@
 		<if test="plateformInfo!=null and plateformInfo.id!=null">
 			plateform_id = #{plateformInfo.id},
 		</if>
-
+		<if test="delFlag !=null and delFlag != ''">
+			status = #{delFlag},
+		</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate},

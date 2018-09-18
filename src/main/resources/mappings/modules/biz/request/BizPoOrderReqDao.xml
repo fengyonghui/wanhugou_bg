@@ -3,6 +3,7 @@
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.request.BizPoOrderReqDao">
     
 	<sql id="bizPoOrderReqColumns">
+		a.id AS "id",
 		a.so_id AS "soId",
 		a.po_id AS "poHeader.id",
 		a.so_line_no AS "soLineNo",
@@ -145,11 +146,14 @@
 		so_line_no=#{soLineNo},
 		so_qty=#{soQty},
 		so_type=#{soType},
-		po_lineNo=#{poLineNo},
+		po_line_no=#{poLineNo},
 		po_id = #{poHeader.id},
 		u_version=#{uVersion},
 		update_id=#{updateBy.id},
-		update_time=#{updateDate}
+		update_time=#{updateDate},
+		<if test="delFlag !=null and delFlag != ''">
+			status = #{delFlag}
+		</if>
 		WHERE id = #{id}
 	</update>
 	

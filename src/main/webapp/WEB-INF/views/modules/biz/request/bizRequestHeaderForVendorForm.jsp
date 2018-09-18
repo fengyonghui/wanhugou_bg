@@ -42,6 +42,11 @@
 			}
 			$("#inputForm").validate({
 				submitHandler: function(form){
+                    if ('${totalPayTotal}' > 0) {
+                        alert("该订单已付款，请与系统管理员联系")
+                        return;
+                    }
+
                     $("input[name='reqQtys']").each(function () {
                         if($(this).val()==''){
                             $(this).val(0)
@@ -993,6 +998,7 @@
 		<input id="vendId" type="hidden" value="${entity.bizVendInfo.office.id}"/>
 		<input id="remarkInput" type="hidden" value=""/>
 		<input id="createPo" type="hidden" value="${createPo}"/>
+		<input id="totalPayTotal" type="hidden" value="${totalPayTotal}"/>
 		<c:forEach items="${fns:getUser().roleList}" var="role">
 			<c:if test="${role.enname==RoleEnNameEnum.STOCKREADYCOMMISSIONER.state}">
 				<c:set var="flag" value="true"/>
