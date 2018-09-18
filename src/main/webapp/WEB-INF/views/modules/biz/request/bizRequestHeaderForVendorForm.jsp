@@ -867,7 +867,8 @@
                 type: 'post',
                 success: function (result) {
                     if(result == true) {
-                        window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
+                        //window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
+                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                     }
                 },
                 error: function (error) {
@@ -974,7 +975,8 @@
                 type: 'post',
                 success: function (result) {
                     if(result == true) {
-                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"
+                        //window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"
+                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                     }
                 },
                 error: function (error) {
