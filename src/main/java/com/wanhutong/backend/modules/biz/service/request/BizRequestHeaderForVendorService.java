@@ -22,6 +22,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestExpand;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -281,6 +282,13 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 
 
 	private void saveCommonProcess(BizRequestHeader bizRequestHeader){
+		CommonProcessEntity commonProcess = new CommonProcessEntity();
+		commonProcess.setObjectId(bizRequestHeader.getId().toString());
+		commonProcess.setObjectName(BizRequestHeaderForVendorService.DATABASE_TABLE_NAME);
+		List<CommonProcessEntity> processList = commonProcessService.findList(commonProcess);
+		if (CollectionUtils.isNotEmpty(processList)) {
+			commonProcessService.updateCurrentByObject(bizRequestHeader.getId(), BizRequestHeaderForVendorService.DATABASE_TABLE_NAME, 0);
+		}
 
 		RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
 		RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess = requestOrderProcessConfig.processMap.get(requestOrderProcessConfig.getDefaultProcessId());
