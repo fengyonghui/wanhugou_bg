@@ -416,6 +416,9 @@
 					1 = 2
 				</if>
 			)
+				AND a.biz_status != 45
+				AND a.biz_status != 40
+				AND a.biz_status != 35
 			</if>
 			<if test="source != null and source == 'vendor'">
 
