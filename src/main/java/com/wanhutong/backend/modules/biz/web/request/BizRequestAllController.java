@@ -3,17 +3,22 @@ package com.wanhutong.backend.modules.biz.web.request;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.supcan.treelist.cols.Col;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
@@ -22,10 +27,14 @@ import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizCollectGoodsRecordService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
@@ -36,6 +45,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVend
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
@@ -100,6 +110,14 @@ public class BizRequestAllController {
     private BizPoHeaderService bizPoHeaderService;
     @Autowired
     private BizInvoiceService bizInvoiceService;
+    @Autowired
+    private BizCollectGoodsRecordService bizCollectGoodsRecordService;
+    @Autowired
+    private BizVarietyUserInfoService bizVarietyUserInfoService;
+    @Autowired
+    private BizCustomCenterConsultantService bizCustomCenterConsultantService;
+    @Autowired
+    private BizSendGoodsRecordService bizSendGoodsRecordService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -246,6 +264,12 @@ public class BizRequestAllController {
                 }
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
                 requestDetail.setSkuInfo(skuInfo);
+                BizVarietyUserInfo bizVarietyUserInfo = new BizVarietyUserInfo();
+                bizVarietyUserInfo.setVarietyInfo(skuInfo.getProductInfo().getBizVarietyInfo());
+                List<BizVarietyUserInfo> varietyUserInfoList = bizVarietyUserInfoService.findList(bizVarietyUserInfo);
+                if (CollectionUtils.isNotEmpty(varietyUserInfoList)) {
+                    requestDetail.setVarietyUser(varietyUserInfoList.get(0).getUser());
+                }
                 reqDetailList.add(requestDetail);
             }
             if(requestDetailList.size()==0){
@@ -344,8 +368,19 @@ public class BizRequestAllController {
             model.addAttribute("invInfoList", invInfoList);
             List<String> deliverNoList = findDeliverNoByReqId(new BizRequestHeader(id));
             model.addAttribute("deliverNoList",deliverNoList);
-
-
+            Integer s = bizCollectGoodsRecordService.findContByCentId(bizRequestHeader.getFromOffice().getId());
+            String collectNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.RIO,bizRequestHeader.getFromOffice().getId(),bizRequestHeader.getToOffice().getId(),s+1);
+            BizCollectGoodsRecord bizCollectGoodsRecord = new BizCollectGoodsRecord();
+            bizCollectGoodsRecord.setBizRequestHeader(bizRequestHeader);
+            List<BizCollectGoodsRecord> bizCollectGoodsRecordList = bizCollectGoodsRecordService.findList(bizCollectGoodsRecord);
+            if (CollectionUtils.isEmpty(bizCollectGoodsRecordList)) {
+                model.addAttribute("collectNo",collectNo+"_1");
+            }else {
+                BizCollectGoodsRecord c = bizCollectGoodsRecordList.get(0);
+                String[] split = c.getCollectNo().split("_");
+                model.addAttribute("collectNo",collectNo + "_" + Integer.valueOf(split[1])+1);
+            }
+            model.addAttribute("collectNo",collectNo);
             return "modules/biz/request/bizRequestKcForm";
         }
         return "modules/biz/request/bizRequestHeaderGhForm";
@@ -358,6 +393,42 @@ public class BizRequestAllController {
      */
     private List<String> findDeliverNoByReqId(BizRequestHeader bizRequestHeader) {
         return bizInvoiceService.findDeliverNoByReqId(bizRequestHeader.getId());
+    }
+
+    /**
+     * 出库页面跳转
+     * @param orderHeaderId
+     * @return
+     */
+    @RequiresPermissions("biz:request:confirmOut:view")
+    @RequestMapping(value = "confirmOut")
+    public String confirmOut(Integer orderHeaderId,Model model) {
+        if (orderHeaderId == null) {
+            return "";
+        }
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(orderHeaderId);
+        BizCustomCenterConsultant bizCustomCenterConsultant = new BizCustomCenterConsultant();
+        bizCustomCenterConsultant.setCustoms(orderHeader.getCustomer());
+        List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(bizCustomCenterConsultant);
+        Office center = new Office();
+        if (CollectionUtils.isNotEmpty(list)) {
+            center = list.get(0).getCenters();
+        }
+        //出库单号
+        Integer s = bizOrderHeaderService.findCountByCentId(center.getId());
+        String sendNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.ODO,orderHeader.getCustomer().getId(),orderHeader.getCenterId(),s + 1);
+        BizSendGoodsRecord bizSendGoodsRecord = new BizSendGoodsRecord();
+        bizSendGoodsRecord.setBizOrderHeader(orderHeader);
+        bizSendGoodsRecord.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());
+        List<BizSendGoodsRecord> sendGoodsRecordList = bizSendGoodsRecordService.findList(bizSendGoodsRecord);
+        if (CollectionUtils.isEmpty(sendGoodsRecordList)) {
+            model.addAttribute("sendNo", sendNo + "_1");
+        } else {
+            BizSendGoodsRecord sendGoodsRecord = sendGoodsRecordList.get(0);
+            String[] split = sendGoodsRecord.getSendNo().split("_");
+            model.addAttribute("sendNo",sendNo + "_" + Integer.valueOf(split[1]) + 1);
+        }
+        return "modules/biz/request/bizRequestConfirmOut";
     }
 
     /**

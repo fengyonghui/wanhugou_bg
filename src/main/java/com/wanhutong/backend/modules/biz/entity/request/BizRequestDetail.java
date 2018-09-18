@@ -91,6 +91,11 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	 */
 	private Map<String,Integer> invSkuMap;
 
+	/**
+	 * 品类主管
+	 */
+	private User varietyUser;
+
 	public BizRequestDetail() {
 		super();
 	}
@@ -315,5 +320,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setInvSkuMap(Map<String, Integer> invSkuMap) {
 		this.invSkuMap = invSkuMap;
+	}
+
+	public User getVarietyUser() {
+		return varietyUser;
+	}
+
+	public void setVarietyUser(User varietyUser) {
+		this.varietyUser = varietyUser;
 	}
 }

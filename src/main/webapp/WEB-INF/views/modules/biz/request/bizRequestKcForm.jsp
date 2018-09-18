@@ -85,14 +85,18 @@
 		<label class="control-label">入库单：</label>
 		<div class="controls">
 			<input readonly="readonly" name="collectNo" type="text" class="input-xlarge" value="${collectNo}"/>
-			<span class="help-inline"><font color="red">*</font></span>
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label">备货清单号：</label>
 		<div class="controls">
 			<input readonly="readonly" type="text" class="input-xlarge" value="${bizRequestHeader.reqNo}"/>
-			<span class="help-inline"><font color="red">*</font></span>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">备货清类型：</label>
+		<div class="controls">
+			<input readonly="readonly" type="text" class="input-xlarge" value="${fns:getDictLabel(bizRequestHeader.headerType,'req_header_type','未知')}"/>
 		</div>
 	</div>
 	<div class="control-group">
@@ -132,11 +136,13 @@
 					<th>商品货号</th>
 					<th>供应商</th>
 					<th>品牌</th>
+					<th>品类主管</th>
 					<th>申报数量</th>
-						<%--<th>已供数量</th>--%>
-					<th>已收数量</th>
+					<th>本次发货数量</th>
+					<th>累计发货数量</th>
+					<th>已入库数量</th>
 					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-						<th>收货数量</th>
+						<th>入库数量</th>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 						<th>收货仓库</th>
@@ -158,7 +164,7 @@
 									<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
 							</td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
-
+							<td>${reqDetail.varietyUser.name}</td>
 							<td>
 								<input type='hidden' name='bizCollectGoodsRecordList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
 								<input type='hidden' name='bizCollectGoodsRecordList[${reqStatus.index}].skuInfo.name' value='${reqDetail.skuInfo.name}'/>
@@ -169,9 +175,12 @@
 									<input name="bizCollectGoodsRecordList[${reqStatus.index}].orderNum" value="${reqDetail.requestHeader.reqNo}" type="hidden"/>
 								</c:if>
 							</td>
-								<%--<td>--%>
-								<%--<input id="sendQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.sendQty' readonly="readonly" value="${reqDetail.sendQty}" type='text'/>--%>
-								<%--</td>--%>
+							<td>
+								<input readonly="readonly" value="${reqDetail.sendQty - reqDetail.recvQty}" type='text'/>
+							</td>
+								<td>
+								<input readonly="readonly" value="${reqDetail.sendQty}" type='text'/>
+								</td>
 							<td>
 								<input id="recvQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.recvQty' readonly="readonly" value="${reqDetail.recvQty}" type='text'/>
 							</td>

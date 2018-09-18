@@ -417,4 +417,11 @@
 	group by inv_id, sku_id
 	</select>
 
+	<select id="findContByCentId" resultType="Integer">
+		SELECT count(1)
+		FROM biz_collect_goods_record a
+		LEFT JOIN biz_request_header rh ON rh.id = a.request_id
+		WHERE rh.from_id = #{centId}
+	</select>
+
 </mapper>
