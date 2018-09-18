@@ -4,6 +4,7 @@
     
 	<sql id="bizCollectGoodsRecordColumns">
 		a.id AS "id",
+		a.collect_no AS "collectNo",
 		a.inv_id AS "invInfo.id",
 		inv.name AS "invInfo.name",
 		a.inv_old_num AS "invOldNum",
@@ -51,6 +52,12 @@
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				AND a.inv_id = #{invInfo.id}
+			</if>
+			<if test="collectNo != null and collectNo != ''">
+				AND a.collect_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{collectNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{collectNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{collectNo},'%')</if>
 			</if>
 			<if test="invInfo != null and invInfo.name != null and invInfo.name != ''">
 				AND inv.name LIKE
@@ -114,6 +121,7 @@
 	<insert id="insert">
 		INSERT INTO biz_collect_goods_record(
 			id,
+			collect_no,
 			inv_id,
 			<if test="invOldNum != null and invOldNum != ''">
 				inv_old_num,
@@ -139,6 +147,7 @@
 			update_time
 		) VALUES (
 			#{id},
+			#{collectNo},
 			#{invInfo.id},
 			<if test="invOldNum != null and invOldNum != ''">
 				#{invOldNum},
@@ -201,6 +210,7 @@
 	<select id="collectSendFindPage" resultType="BizCollectGoodsRecord">
 		select collectSend.* from (select
 		a.id as "id",
+		a.collect_no AS "collectNo",
 		a.inv_id AS "invInfo.id",
 		inv.name AS "invInfo.name",
 		inv. NAME AS "invInfoName",
@@ -312,6 +322,7 @@
 	<select id="getListBySkuIdCentId" resultType="BizCollectGoodsRecord">
 		SELECT
 		a.id AS "id",
+		a.collect_no AS "collectNo",
 		a.inv_id AS "invInfo.id",
 		b.name AS "invInfo.name",
 		a.inv_old_num AS "invOldNum",
@@ -338,6 +349,7 @@
 	<select id="getListBySkuIdInvId" resultType="BizCollectGoodsRecord">
 		SELECT
 		a.id AS "id",
+		a.collect_no AS "collectNo",
 		a.inv_id AS "invInfo.id",
 		b.name AS "invInfo.name",
 		a.inv_old_num AS "invOldNum",

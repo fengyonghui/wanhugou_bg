@@ -84,7 +84,7 @@
 	<div class="control-group">
 		<label class="control-label">入库单：</label>
 		<div class="controls">
-			<input readonly="readonly" name="collectNo" type="text" class="input-xlarge" value="${bizRequestHeader.reqNo}"/>
+			<input readonly="readonly" name="collectNo" type="text" class="input-xlarge" value="${collectNo}"/>
 			<span class="help-inline"><font color="red">*</font></span>
 		</div>
 	</div>

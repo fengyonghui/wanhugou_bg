@@ -345,6 +345,7 @@ public class BizRequestAllController {
             List<String> deliverNoList = findDeliverNoByReqId(new BizRequestHeader(id));
             model.addAttribute("deliverNoList",deliverNoList);
 
+
             return "modules/biz/request/bizRequestKcForm";
         }
         return "modules/biz/request/bizRequestHeaderGhForm";

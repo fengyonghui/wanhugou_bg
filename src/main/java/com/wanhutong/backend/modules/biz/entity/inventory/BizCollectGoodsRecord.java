@@ -39,6 +39,11 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	private List<BizCollectGoodsRecord> bizCollectGoodsRecordList;
 
 	/**
+	 * 入库单号
+	 */
+	private String collectNo;
+
+	/**
 	 * 变更的数量
 	 * */
 	private Double changeNumber;
@@ -246,5 +251,13 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 
 	public void setBizStatu(String bizStatu) {
 		this.bizStatu = bizStatu;
+	}
+
+	public String getCollectNo() {
+		return collectNo;
+	}
+
+	public void setCollectNo(String collectNo) {
+		this.collectNo = collectNo;
 	}
 }
