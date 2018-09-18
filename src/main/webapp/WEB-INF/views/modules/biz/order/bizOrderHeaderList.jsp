@@ -191,6 +191,14 @@
                    value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
         </li>
+		<li><label>同意发货:</label>
+			<select name="mobileAuditStatus" class="input-medium">
+				<option value="">请选择</option>
+				<option value="0">待审核</option>
+				<option value="1">审核失败</option>
+				<option value="2">其他</option>
+			</select>
+		</li>
 		<c:if test="${statu == 'unline'}">
 			<li><label>审核状态:</label>
 				<select name="examine" class="input-medium">
@@ -312,12 +320,12 @@
 			</font></td>
 			<c:if test="${source ne 'vendor'}">
 				<td>
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
-						${orderHeader.totalExp+orderHeader.serviceFee}
-					</c:if>
-					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
-						<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.totalBuyPrice}" pattern="0.00"/>
-					</c:if>
+					<%--<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
+						${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}
+					<%--</c:if>--%>
+					<%--<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
+						<%--<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.totalBuyPrice}" pattern="0.00"/>--%>
+					<%--</c:if>--%>
 				</td>
 			</c:if>
 			<td>
@@ -527,9 +535,9 @@
 					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
 					<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">详情</a>
 					</c:if>
-					<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15 && orderHeader.bizStatus!=45}">
-						${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
-					</c:if>
+					<%--<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15 && orderHeader.bizStatus!=45}">--%>
+						<%--${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}--%>
+					<%--</c:if>--%>
 					</shiro:hasPermission>
 					</c:when>
 					<c:otherwise>
@@ -546,10 +554,10 @@
 					</c:if>
 					<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state}">
 					<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state && (orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state || fns:getUser().isAdmin())}">
 					<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&statu=${statu}&source=${source}">修改</a>
 					</c:if>
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state && (orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state || fns:getUser().isAdmin())}">
 					<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&statu=${statu}&source=${source}">修改</a>
 					</c:if>
 					<c:if test="${fns:getUser().isAdmin()}">

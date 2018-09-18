@@ -3,10 +3,12 @@
  */
 package com.wanhutong.backend.modules.process.entity;
 
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
@@ -161,6 +163,9 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	}
 
 	public com.wanhutong.backend.modules.config.parse.Process getPurchaseOrderProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new Process();
+		}
 		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
@@ -169,18 +174,30 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 //	}
 
 	public PaymentOrderProcessConfig.Process getPaymentOrderProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new PaymentOrderProcessConfig.Process();
+		}
 		return ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
 	public com.wanhutong.backend.modules.config.parse.Process getJointOperationLocalProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new Process();
+		}
 		return ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
 	public com.wanhutong.backend.modules.config.parse.Process getJointOperationOriginProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new Process();
+		}
 		return ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
 	public RequestOrderProcessConfig.RequestOrderProcess getRequestOrderProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new RequestOrderProcessConfig.RequestOrderProcess();
+		}
 		return ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 
@@ -192,14 +209,23 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 		this.current = current;
 	}
 	public VendorRequestOrderProcessConfig.RequestOrderProcess getVendRequestOrderProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new VendorRequestOrderProcessConfig.RequestOrderProcess();
+		}
 		return ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 
 	public DoOrderHeaderProcessAllConfig.OrderHeaderProcess getDoOrderHeaderProcessAll() {
+		if (StringUtils.isBlank(type)) {
+			return new DoOrderHeaderProcessAllConfig.OrderHeaderProcess();
+		}
 		return ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 
 	public DoOrderHeaderProcessFifthConfig.OrderHeaderProcess getDoOrderHeaderProcessFifth() {
+		if (StringUtils.isBlank(type)) {
+			return new DoOrderHeaderProcessFifthConfig.OrderHeaderProcess();
+		}
 		return ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 

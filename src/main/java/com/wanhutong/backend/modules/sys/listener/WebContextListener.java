@@ -6,11 +6,11 @@ import com.wanhutong.backend.modules.config.DynamicConfig;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+import java.net.InetAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +44,9 @@ public class WebContextListener extends org.springframework.web.context.ContextL
          */
         try {
             String os = System.getProperty("os.name");
-            if(!os.toLowerCase().startsWith("win")){
+            InetAddress addr = InetAddress.getLocalHost();
+            String address = addr.getHostName();
+            if(!os.toLowerCase().startsWith("win") && !address.startsWith("zhengzhou")){
                 scheduledExecutorService.scheduleWithFixedDelay(OrderPayConsumer.getInstance(), 60, 60, TimeUnit.SECONDS);
             }
         } catch (Exception e) {

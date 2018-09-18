@@ -3,8 +3,8 @@
  */
 package com.wanhutong.backend.modules.biz.web.shelf;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.BaseEntity;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.RoleUtils;
@@ -426,7 +426,10 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	public List<BizOpShelfSku> findDownOpShelfSku(BizOpShelfSku bizOpShelfSku) {
         if (bizOpShelfSku.getSkuInfo().getItemNo().isEmpty() && bizOpShelfSku.getSkuInfo().getPartNo().isEmpty()
                 && bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getProductInfo().getBrandName().isEmpty()) {
-            return null;
+			bizOpShelfSku.setShelfSign(5);
+			List<BizOpShelfSku> list=Lists.newArrayList();
+			list.add(bizOpShelfSku);
+            return list;
         }
         bizOpShelfSku.setBatchDownShelf("batch");
         return bizOpShelfSkuV2Service.findList(bizOpShelfSku);
