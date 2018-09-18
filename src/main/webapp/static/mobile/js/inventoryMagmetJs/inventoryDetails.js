@@ -17,21 +17,6 @@
 		},
 		getData: function() {
 			var _this = this;
-			inStocktxt
-			//备货方:
-			var arrbss = [];
-			var stock = '';
-			$.ajax({
-                type: "GET",
-                url: "/a/sys/dict/listData",
-                dataType: "json",
-                data: {type: "req_from_type"},
-                async:false,
-                success: function(bss){                 
-					console.log(bss)
-					arrbss = bss
-                }
-            });
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/request/bizRequestHeaderForVendor/form4MobileNew",
@@ -234,7 +219,7 @@
                         });
                         $("#schedulingHeader").append(schedulingHeaderHtml);                        
                         //按订单排产中的排产备注
-                        var remarkHtml = "<textarea id='schRemarkOrder' style='border:1px solid #ccc;'>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
+                        var remarkHtml = "<textarea id='schRemarkOrder' style='border:1px solid #ccc;' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
                         $("#schedulingHeaderRemark").append(remarkHtml);
                     }
                 	//按商品排产
@@ -277,9 +262,7 @@
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
 									'</div>'+
 								'</div>'+
-							'</li>'
-
-							
+							'</li>'							
                         });
                         $("#purchaseMenus").append(poDetailHtmls);
                         //按商品排产中的排产记录
@@ -305,7 +288,7 @@
                             });
                         });
                         //按商品排产中的排产备注
-                        var remarkHtmls = "<textarea id='schRemarkOrder' style='border:1px solid #ccc;'>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
+                        var remarkHtmls = "<textarea id='schRemarkOrder' style='border:1px solid #ccc;' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
                         $("#schedulingHeaderRemarks").append(remarkHtmls);    
                 	}
 				}
@@ -315,36 +298,34 @@
         paylistHtml:function(data){
         	var _this = this;
         	var htmlPaylist = '';
-        	console.log(data)
         	if(data.paymentOrderList != null && data.paymentOrderList.length > 0){
         		$.each(data.paymentOrderList, function(i, item) {
-					console.log(item)			
-					htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
-						'<div class="mui-media-body">'+
-							'<div class="mui-input-row">'+
-								'<label>付款金额：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ item.total.toFixed(2) +'" disabled>'+
+					console.log(item)	
+						htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
+							'<div class="mui-media-body">'+
+								'<div class="mui-input-row">'+
+									'<label>付款金额：</label>'+
+									'<input type="text" class="mui-input-clear" value="'+ item.total.toFixed(2) +'" disabled>'+
+								'</div>'+
+								'<div class="mui-input-row">'+
+									'<label>实际付款金额：</label>'+
+									'<input type="text" class="mui-input-clear" value="'+ item.payTotal.toFixed(2) +'" disabled>'+
+								'</div>'+
+								'<div class="mui-input-row">'+
+									'<label>最后付款时间：</label>'+
+									'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.deadline) +'" disabled>'+
+								'</div>'+
+								'<div class="mui-input-row">'+
+									'<label>实际付款时间：</label>'+
+									'<input type="text" id="payTime" class="mui-input-clear" value="'+ _this.formatDateTime(item.payTime) +'" disabled>'+
+								'</div>'+
 							'</div>'+
-							'<div class="mui-input-row">'+
-								'<label>实际付款金额：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ item.payTotal.toFixed(2) +'" disabled>'+
-							'</div>'+
-							'<div class="mui-input-row">'+
-								'<label>最后付款时间：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.deadline) +'" disabled>'+
-							'</div>'+
-							'<div class="mui-input-row">'+
-								'<label>实际付款时间：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.payTime) +'" disabled>'+
-							'</div>'+
-						'</div>'+
-					'</li>'
-			   });
-			   $("#inPaylist").html(htmlPaylist);
+						'</li>'
+			    });
+			    $("#inPaylist").html(htmlPaylist);
         	}else{
         		$('#inPaylistbox').hide();
-        	}
-        	
+        	}       	
         },		
 		//状态流程
 		statusListHtml:function(data){

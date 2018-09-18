@@ -629,6 +629,8 @@ body{font-size: 15px;color:#3b3b3b;}
 /*备货单审核、详情---商品信息图片*/
 .photoParent {position: absolute;top: 50%;margin-top: -13%;}
 .photoParent img {width: 50px;}
+.photoParents {margin-top: 13%;margin-left:10px;}
+.photoParents img {width: 50px;}
 /*备货单支付*/		
 .pay-logo {width: 40px;margin-left: 20px;}
 .pay-txt {float: right;padding: 9px;width: 65%;}
