@@ -581,7 +581,14 @@
         	console.log(data)
         	if(data.paymentOrderList != null && data.paymentOrderList.length > 0){
         		$.each(data.paymentOrderList, function(i, item) {
-					console.log(item)			
+					console.log(item);
+					if(item.payTime){
+						var realitypayTime="";
+						var realitypayTime=_this.formatDateTime(item.payTime);
+					}else{
+						var realitypayTime="";
+					}
+					console.log(realitypayTime)
 					htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
 						'<div class="mui-media-body">'+
 							'<div class="mui-input-row">'+
@@ -598,7 +605,7 @@
 							'</div>'+
 							'<div class="mui-input-row">'+
 								'<label>实际付款时间：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.payTime) +'" disabled>'+
+								'<input type="text" class="mui-input-clear realitypayTime" value="'+ realitypayTime +'" disabled>'+
 							'</div>'+
 						'</div>'+
 					'</li>'

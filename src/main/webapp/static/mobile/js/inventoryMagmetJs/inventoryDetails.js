@@ -300,27 +300,33 @@
         	var htmlPaylist = '';
         	if(data.paymentOrderList != null && data.paymentOrderList.length > 0){
         		$.each(data.paymentOrderList, function(i, item) {
-					console.log(item)	
-						htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
-							'<div class="mui-media-body">'+
-								'<div class="mui-input-row">'+
-									'<label>付款金额：</label>'+
-									'<input type="text" class="mui-input-clear" value="'+ item.total.toFixed(2) +'" disabled>'+
-								'</div>'+
-								'<div class="mui-input-row">'+
-									'<label>实际付款金额：</label>'+
-									'<input type="text" class="mui-input-clear" value="'+ item.payTotal.toFixed(2) +'" disabled>'+
-								'</div>'+
-								'<div class="mui-input-row">'+
-									'<label>最后付款时间：</label>'+
-									'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.deadline) +'" disabled>'+
-								'</div>'+
-								'<div class="mui-input-row">'+
-									'<label>实际付款时间：</label>'+
-									'<input type="text" id="payTime" class="mui-input-clear" value="'+ _this.formatDateTime(item.payTime) +'" disabled>'+
-								'</div>'+
+					console.log(item)						
+					if(item.payTime){
+						var realitypayTime="";
+						var realitypayTime=_this.formatDateTime(item.payTime);
+					}else{
+						var realitypayTime="";
+					}
+					htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
+						'<div class="mui-media-body">'+
+							'<div class="mui-input-row">'+
+								'<label>付款金额：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.total.toFixed(2) +'" disabled>'+
 							'</div>'+
-						'</li>'
+							'<div class="mui-input-row">'+
+								'<label>实际付款金额：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.payTotal.toFixed(2) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>最后付款时间：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.deadline) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>实际付款时间：</label>'+
+								'<input type="text" class="mui-input-clear realitypayTime" value="'+ realitypayTime +'" disabled>'+
+							'</div>'+
+						'</div>'+
+					'</li>'
 			    });
 			    $("#inPaylist").html(htmlPaylist);
         	}else{
