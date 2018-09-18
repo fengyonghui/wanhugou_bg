@@ -13,6 +13,7 @@
 		a.integration_num AS "integrationNum",
 		a.description AS "description",
 		a.create_id AS "createBy.id",
+		b.name as "createBy.name",
 		a.update_id AS "updateBy.id",
 		a.create_time AS "createDate",
 		a.update_time AS "updateDate",
@@ -21,6 +22,7 @@
 	</sql>
 	
 	<sql id="bizIntegrationActivityJoins">
+          left join sys_user b on b.id = a.create_id and b.status = 1
 	</sql>
     
 	<select id="get" resultType="BizIntegrationActivity">
@@ -71,7 +73,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_integration_activity(
 			id,
 			activity_name,
@@ -106,7 +108,13 @@
 			#{uVersion}
 		)
 	</insert>
-	
+	<insert id="insertMiddle" parameterType="list">
+		        insert into sys_user_activity(activity_id,user_id,biz_status,status) values
+				<foreach collection="list" item="item" index="index" separator=",">
+					(#{item.id},#{item.userId},#{item.bizStatus},#{item.status})
+				</foreach>
+	</insert>
+
 	<update id="update">
 		UPDATE biz_integration_activity SET 	
 			activity_name = #{activityName},

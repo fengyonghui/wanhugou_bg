@@ -9,27 +9,62 @@
 	<script type="text/javascript">
 		    //经销店树形列表
             $(document).ready(function(){
-                // if($(".radioDefault").attr("checked"))
-                // {
-                 //    alert("Aaaaaa")
-                 //    $("#officeTree").show();
-                // }else
+                // if($("#str").val()=='detail')
 				// {
-                 //    $("#officeTree").hidden();
+				//     $("#createBy").show();
+				//     $("#createDate").show();
 				// }
+                $("#officeTree").hide();
+                //查询全部用户，已下单用户，未下单用户的数量
+                $.ajax({
+                    url:"${ctx}/biz/integration/bizIntegrationActivity/count",
+                    type:"get",
+                    data:'',
+                    contentType:"application/json;charset=utf-8",
+                    success:function(data){
+                        $("#quanbu").val(data.totalUser);
+                        $("#xiadan").val(data.orderUser);
+                        $("#weixiadan").val(data.unOrderUser);
+                    }
+                })
+                var val = $('input[name="sendScope"]:checked').val();
+                if(val==-3)
+				{
+                    $("#officeTree").show();
+				}
                 var setting = {
                            check:{enable:true,nocheckInherit:true},
 					       view:{selectedMulti:false},
                            data:{simpleData:{enable:true}},
 					       callback:{
-                                 // beforeClick:function(id, node){
-                                 // tree.checkNode(node, !node.checked, true, true);
-                                 // return false;
-                                 // }
                                onCheck: zTreeOnCheck
                            }
-
                 };
+                $("input[type='radio']").click(function(){
+                    var value= $(this).val();
+                    if(value==-3)
+                    {
+                        $("#officeTree").show();
+                    }
+                    else
+                    {
+                        if(value==0)
+                        {
+                            $("#officeTree").hide();
+                            $("#sendNum").val($("#quanbu").val());
+                        }
+                        if(value==-1)
+                        {
+                            $("#officeTree").hide();
+                            $("#sendNum").val($("#xiadan").val());
+                        }
+                        if(value==-2)
+                        {
+                            $("#officeTree").hide();
+                            $("#sendNum").val($("#weixiadan").val());
+                        }
+                    }
+                });
 
                 function zTreeOnCheck(event, treeId, treeNode) {
                     var treeObj = $.fn.zTree.getZTreeObj("officeTree");
@@ -45,20 +80,29 @@
                         }
                     }
                     var s = v.substring(1);
-                    alert(vv);
-                    alert("拼接后的字符串为："+s+"长度为："+vv.length);
+                    //alert(vv);
+                    //alert("拼接后的字符串为："+s+"长度为："+vv.length);
                     $("#sendNum").val(vv.length);
                     $("#officeIds").val(s);
                 }
                     var zNodes=[
                         <c:forEach items="${officeList}" var="office">{id:"${office.id}", pId:"${not empty office.parent?office.parent.id:0}", name:"${office.name}"},
                     </c:forEach>];
-                // 初始化树结构
-                var tree2 = $.fn.zTree.init($("#officeTree"), setting, zNodes);
-                // 不选择父节点
-                tree2.setting.check.chkboxType = { "Y" : "ps", "N" : "s" };
-                // 默认展开全部节点
-              //  tree2.expandAll(true);
+					// 初始化树结构
+					var tree2 = $.fn.zTree.init($("#officeTree"), setting, zNodes);
+					// 不选择父节点
+					tree2.setting.check.chkboxType = { "Y" : "ps", "N" : "s" };
+					var ids3 = $("#officeIds").val().split(",");
+					for(var i=0; i<ids3.length; i++) {
+						var node = tree2.getNodeByParam("id", ids3[i]);
+						try{tree2.checkNode(node, true, false);}catch(e){}
+					}
+					// 默认展开全部节点
+					//tree2.expandAll(true);
+					if($("#id").val()!=null)
+					{
+						tree2.expandAll(true);
+					}
 			});
 
 			$("#inputForm").validate({
@@ -76,12 +120,9 @@
 					}
 				}
 			});
-            var val=$('input:radio[name="radios"]:checked').val()
-			if(val==1)
-			{
-			    $("#officeTree").show();
-			}
+
 	</script>
+
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -89,8 +130,23 @@
 		<li class="active"><a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}">积分活动<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">${not empty bizIntegrationActivity.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:integration:bizIntegrationActivity:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizIntegrationActivity" action="${ctx}/biz/integration/bizIntegrationActivity/save" method="post" class="form-horizontal">
-		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<form:hidden path="id" id="id"/>
+		<form:hidden path="str" id="str"/>
+		<sys:message content="${message}"/>
+		<c:if test="${bizIntegrationActivity.str}!=null">
+			<div class="control-group">
+				<label class="control-label">创建人：</label>
+				<div class="controls">
+					<form:hidden path="createBy.name" id="createBy" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">创建时间：</label>
+				<div class="controls">
+					<form:hidden path="createDate" id="createDate" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				</div>
+			</div>
+		  </c:if>
 		<div class="control-group">
 			<label class="control-label">活动名称：</label>
 			<div class="controls">
@@ -100,7 +156,7 @@
 		<div class="control-group">
 			<label class="control-label">优惠工具：</label>
 			<div class="controls">
-				<input type="checkbox" value="万户币" checked="checked">万户币
+				<form:checkbox path="activityTools" checked="checked" value="万户币"  htmlEscape="false" maxlength="50" class="input-xlarge"/>万户币
 			</div>
 		</div>
 
@@ -116,16 +172,19 @@
 		<div class="control-group">
 			<label class="control-label">发送范围：</label>
 			 <div class="controls">
-				<form:radiobutton path="sendScope" name="radios" value="1"/>指定用户
-				<form:radiobutton path="sendScope" value="2"/>已下单用户
-				<form:radiobutton path="sendScope" value="3"/>未下单用户
-				<form:radiobutton path="sendScope" value="4"  checked="true"/>全部用户
+                    <form:radiobutton name="sendScope" path="sendScope" value="0"/>全部用户
+                    <form:radiobutton name="sendScope" path="sendScope" value="-1"/>已下单用户
+                    <form:radiobutton name="sendScope" path="sendScope" value="-2"/>未下单用户
+				    <form:radiobutton name="sendScope" path="sendScope" id="zhi" value="-3"/>指定用户
+				    <input type= "hidden" id="quanbu" value="">
+				    <input type= "hidden" id="xiadan" value="">
+				    <input type= "hidden" id="weixiadan" value="">
 			 </div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">发送人数：</label>
 			<div class="controls">
-				<form:input path="officeIds" id="officeIds"/>
+				<form:hidden path="officeIds" id="officeIds"/>
 				<form:input path="sendNum" id="sendNum" htmlEscape="false" maxlength="10" readonly="readonly" class="input-xlarge  digits"/>
 			</div>
 		</div>
@@ -159,4 +218,5 @@
 		</div>
 	</form:form>
 </body>
+
 </html>

@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.integration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -48,6 +49,11 @@ public class BizIntegrationActivityController extends BaseController {
 		BizIntegrationActivity entity = null;
 		if (id!=null){
 			entity = bizIntegrationActivityService.get(id);
+			String officeIds = bizIntegrationActivityService.selectOfficeIdsByActivityId(id);
+            if(StringUtils.isNotBlank(officeIds))
+			{
+				 entity.setOfficeIds(officeIds);
+			}
 		}
 		if (entity == null){
 			entity = new BizIntegrationActivity();
@@ -110,4 +116,12 @@ public class BizIntegrationActivityController extends BaseController {
     public BizIntegrationActivity getIntegrationByCode(@RequestParam("code") String code){
 		return bizIntegrationActivityService.getIntegrationByCode(code);
 	}
+
+	@ResponseBody
+	@RequestMapping("count")
+	public BizMoneyRecodeDetail countOrderUser()
+	{
+        return bizIntegrationActivityService.countTotal();
+	}
+
 }

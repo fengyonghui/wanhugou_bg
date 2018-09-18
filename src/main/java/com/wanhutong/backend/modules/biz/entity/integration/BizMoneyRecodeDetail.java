@@ -18,6 +18,36 @@ public class BizMoneyRecodeDetail {
      private Double expireIntegration;
      //可用
      private Double availableIntegration;
+     //全部用户总数
+     private Integer totalUser;
+     //已下单用户总数
+     private Integer orderUser;
+     //未下单用户总数
+     private Integer unOrderUser;
+
+    public Integer getUnOrderUser() {
+        return unOrderUser;
+    }
+
+    public void setUnOrderUser(Integer unOrderUser) {
+        this.unOrderUser = unOrderUser;
+    }
+
+    public Integer getTotalUser() {
+        return totalUser;
+    }
+
+    public void setTotalUser(Integer totalUser) {
+        this.totalUser = totalUser;
+    }
+
+    public Integer getOrderUser() {
+        return orderUser;
+    }
+
+    public void setOrderUser(Integer orderUser) {
+        this.orderUser = orderUser;
+    }
 
     public Double getGainIntegration() {
         return gainIntegration;

@@ -82,7 +82,7 @@
 					${bizIntegrationActivity.sendScope}
 				</td>
 				<td>
-					${fns:getDictLabel(bizIntegrationActivity.activityTools, '', '')}
+					${bizIntegrationActivity.activityTools}
 				</td>
 				<td>
 					${bizIntegrationActivity.sendNum}
@@ -104,7 +104,7 @@
 				</td>
 				<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit"><td>
     				<a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}">修改</a>
-    				<a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}">参与者详情</a>
+    				<a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}&str=detail">详情</a>
 					<a href="${ctx}/biz/integration/bizIntegrationActivity/delete?id=${bizIntegrationActivity.id}" onclick="return confirmx('确认要删除该积分活动吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
