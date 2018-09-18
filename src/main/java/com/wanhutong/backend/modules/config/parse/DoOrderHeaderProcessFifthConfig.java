@@ -35,6 +35,9 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
     @XStreamAlias("allDefaultProcessId")
     private int allDefaultProcessId;
 
+    @XStreamAlias("createPoProcessId")
+    private Integer createPoProcessId;
+
     @XStreamAlias("autProcessId")
     private Integer autProcessId;
 
@@ -100,6 +103,10 @@ public class DoOrderHeaderProcessFifthConfig extends ConfigGeneral {
 
     public void setAllDefaultProcessId(int allDefaultProcessId) {
         this.allDefaultProcessId = allDefaultProcessId;
+    }
+
+    public Integer getCreatePoProcessId() {
+        return createPoProcessId;
     }
 
     public Integer getAutProcessId() {

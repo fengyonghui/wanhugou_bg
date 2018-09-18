@@ -354,13 +354,11 @@
 		AND a.id != #{id}
 	</select>
 
-	<select id="findMinMaxPrice" resultType="com.wanhutong.backend.modules.biz.entity.product.BizProductMinMaxPrice">
+	<select id="findMinMaxPrice" resultType="Map">
 		SELECT
-		a.id,
-		min(a.sale_price) as minPrice,
-		max(a.sale_price) as maxPrice
+		min(a.sale_price) as minPrice,max(a.sale_price) as maxPrice
 		FROM biz_op_shelf_sku a
-		where a.status = 1 and (a.unshelf_time is null or a.unshelf_time>now())
+		where a.status=1 and (a.unshelf_time is null or a.unshelf_time>now())
 		<if test="productInfo != null and productInfo.id != null and productInfo.id != 0 ">
 			AND a.prod_id = #{productInfo.id}
 		</if>

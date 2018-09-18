@@ -138,6 +138,23 @@ public class BizOrderHeaderController extends BaseController {
         BizOrderHeader entity = null;
         if (id != null && id != 0) {
             entity = bizOrderHeaderService.get(id);
+
+            String type = "1";
+            if (entity.getSuplys() == 0 || entity.getSuplys() == 721) {
+                type = "0";
+            }
+            CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+            commonProcessEntity.setObjectId(String.valueOf(entity.getId()));
+            commonProcessEntity.setCurrent(1);
+            commonProcessEntity.setObjectName("0".equals(type) ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+            if (entity.getOrderNum().startsWith("DO")) {
+                commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+            }
+            List<CommonProcessEntity> commonProcessEntities = commonProcessService.findList(commonProcessEntity);
+            if (CollectionUtils.isNotEmpty(commonProcessEntities)) {
+                entity.setCommonProcess(commonProcessEntities.get(0));
+            }
+
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(entity);
             List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
@@ -198,74 +215,42 @@ public class BizOrderHeaderController extends BaseController {
         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
         DoOrderHeaderProcessAllConfig doOrderHeaderProcessAllConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
         DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
 
         Map<String, String> originConfigMap = Maps.newLinkedHashMap();
         List<String> originConfigValue = Lists.newArrayList();
         List<String> localConfigValue = Lists.newArrayList();
-        List<String> doAllConfigValue = Lists.newArrayList();
         List<String> doFifthConfigValue = Lists.newArrayList();
-        List<String> poConfigValue = Lists.newArrayList();
+
+        originConfigMap.put("渠道经理", "渠道经理");
+        originConfigMap.put("总经理", "总经理");
+        originConfigMap.put("品类主管", "品类主管");
+        originConfigMap.put("财务经理", "财务经理");
+        originConfigMap.put("完成", "完成");
+        originConfigMap.put("驳回", "驳回");
+        originConfigMap.put("不需要审批", "不需要审批");
 
 //////////////////////////////////////////////////////////////////
         for (Process process : originConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("产地直发订单-" + process.getName(), "产地直发订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("产地直发订单-", ""))) {
+            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
                 originConfigValue.add(String.valueOf(process.getCode()));
             }
         }
 //////////////////////////////////////////////////////////////////
         for (Process process : localConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("本地备货订单-" + process.getName(), "本地备货订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("本地备货订单-", ""))) {
+            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
                 localConfigValue.add(String.valueOf(process.getCode()));
             }
         }
 //////////////////////////////////////////////////////////////////
-        for (DoOrderHeaderProcessAllConfig.OrderHeaderProcess process : doOrderHeaderProcessAllConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("全款代采订单-" + process.getName(), "全款代采订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("全款代采订单-", ""))) {
-                doAllConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-//////////////////////////////////////////////////////////////////
         for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("首付款代采订单-" + process.getName(), "首付款代采订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("首付款代采订单-", ""))) {
+            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
                 doFifthConfigValue.add(String.valueOf(process.getCode()));
             }
         }
 
-        for (com.wanhutong.backend.modules.config.parse.Process process : purchaseOrderProcessConfig.getProcessList()) {
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus)) {
-                poConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-
-        if ("财会待付款".equals(selectAuditStatus) || "财务待付款".equals(selectAuditStatus)) {
-            bizOrderHeader.setWaitPay(1);
-        } else {
-            if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("产地直发订单-")) {
-                bizOrderHeader.setOriginCode(CollectionUtils.isEmpty(originConfigValue) ? null : originConfigValue);
-            } else if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("本地备货订单-")) {
-                bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
-            } else if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("全款代采订单-")) {
-                bizOrderHeader.setDoAllCode(CollectionUtils.isEmpty(doAllConfigValue) ? null : doAllConfigValue);
-            } else if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("首付款代采订单-")) {
-                bizOrderHeader.setDoFifthCode(CollectionUtils.isEmpty(doFifthConfigValue) ? null : doFifthConfigValue);
-            } else {
-                bizOrderHeader.setPoAuditCode(CollectionUtils.isEmpty(poConfigValue) ? null : poConfigValue);
-            }
-        }
-
+        bizOrderHeader.setOriginCode(CollectionUtils.isEmpty(originConfigValue) ? null : originConfigValue);
+        bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
+        bizOrderHeader.setDoFifthCode(CollectionUtils.isEmpty(doFifthConfigValue) ? null : doFifthConfigValue);
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
@@ -387,61 +372,37 @@ public class BizOrderHeaderController extends BaseController {
         List<String> doFifthConfigValue = Lists.newArrayList();
         List<String> poConfigValue = Lists.newArrayList();
 
+        originConfigMap.put("渠道", "渠道");
+        originConfigMap.put("总经理", "总经理");
+        originConfigMap.put("品类", "品类");
+        originConfigMap.put("财务", "财务");
+        originConfigMap.put("完成", "完成");
+        originConfigMap.put("驳回", "驳回");
+        originConfigMap.put("不需要审批", "不需要审批");
+
         String selectAuditStatus = bizOrderHeader.getSelectAuditStatus();
 //////////////////////////////////////////////////////////////////
-        for(Process process : originConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("产地直发订单-" + process.getName(), "产地直发订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("产地直发订单-", ""))) {
+        for (Process process : originConfig.getProcessList()) {
+            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
                 originConfigValue.add(String.valueOf(process.getCode()));
             }
         }
 //////////////////////////////////////////////////////////////////
-        for(Process process : localConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("本地备货订单-" + process.getName(), "本地备货订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("本地备货订单-", ""))) {
+        for (Process process : localConfig.getProcessList()) {
+            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
                 localConfigValue.add(String.valueOf(process.getCode()));
             }
         }
 //////////////////////////////////////////////////////////////////
-        for(DoOrderHeaderProcessAllConfig.OrderHeaderProcess process : doOrderHeaderProcessAllConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("全款代采订单-" + process.getName(), "全款代采订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("全款代采订单-", ""))) {
-                doAllConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-//////////////////////////////////////////////////////////////////
         for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
-            if (!"审批完成".equals(process.getName()) && !"审核完成".equals(process.getName())) {
-                originConfigMap.put("首付款代采订单-" + process.getName(), "首付款代采订单-" + process.getName());
-            }
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus.replaceAll("首付款代采订单-", ""))) {
+            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
                 doFifthConfigValue.add(String.valueOf(process.getCode()));
             }
         }
 
-        for (com.wanhutong.backend.modules.config.parse.Process process : purchaseOrderProcessConfig.getProcessList()) {
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().equals(selectAuditStatus)) {
-                poConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-
-        if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("产地直发订单-")) {
-            bizOrderHeader.setOriginCode(CollectionUtils.isEmpty(originConfigValue) ? null : originConfigValue);
-        }else if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("本地备货订单-")) {
-            bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
-        }else if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("全款代采订单-")) {
-            bizOrderHeader.setDoAllCode(CollectionUtils.isEmpty(doAllConfigValue) ? null : doAllConfigValue);
-        }else if (StringUtils.isNotBlank(selectAuditStatus) && selectAuditStatus.startsWith("首付款代采订单-")) {
-            bizOrderHeader.setDoFifthCode(CollectionUtils.isEmpty(doFifthConfigValue) ? null : doFifthConfigValue);
-        }else {
-            bizOrderHeader.setPoAuditCode(CollectionUtils.isEmpty(poConfigValue) ? null : poConfigValue);
-        }
+        bizOrderHeader.setOriginCode(CollectionUtils.isEmpty(originConfigValue) ? null : originConfigValue);
+        bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
+        bizOrderHeader.setDoFifthCode(CollectionUtils.isEmpty(doFifthConfigValue) ? null : doFifthConfigValue);
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
@@ -459,34 +420,11 @@ public class BizOrderHeaderController extends BaseController {
                     bizPoHeader.setBizOrderHeader(b);
                     List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
 
-//                   List<CommonProcessEntity> poAuditList = null;
-//                   if (CollectionUtils.isNotEmpty(poList)) {
-//                       bizPoHeader = poList.get(0);
-//                       CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
-//                       poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-//                       poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-//                       poAuditList = commonProcessService.findList(poCommonProcessEntity);
-//                   }
-//
-//                   if (CollectionUtils.isNotEmpty(poAuditList)) {
-//                       CommonProcessEntity commonProcessEntityPo = poAuditList.get(poAuditList.size() - 1);
-//                       b.setPoProcessName(commonProcessEntityPo.getPurchaseOrderProcess().getName());
-//                   }
-
                     List<CommonProcessEntity> list = null;
                     if (b.getOrderNum().startsWith("SO")) {
                         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
                         commonProcessEntity.setObjectId(String.valueOf(b.getId()));
                         commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
-//                       if (CollectionUtils.isNotEmpty(poList)) {
-//                           bizPoHeader = poList.get(0);
-//                           commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-//                           commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-//                       } else {
-//                           if (b.getSuplys() == null || b.getSuplys() == 0 || b.getSuplys() == 721) {
-//                               commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
-//                           }
-//                       }
 
                         if (b.getSuplys() == null || b.getSuplys() == 0 || b.getSuplys() == 721) {
                             commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
@@ -521,11 +459,6 @@ public class BizOrderHeaderController extends BaseController {
                         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
                         commonProcessEntity.setObjectId(String.valueOf(b.getId()));
                         commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
-//                       if (CollectionUtils.isNotEmpty(poList)) {
-//                           bizPoHeader = poList.get(0);
-//                           commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-//                           commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-//                       }
 
                         list = commonProcessService.findList(commonProcessEntity);
 
@@ -674,6 +607,7 @@ public class BizOrderHeaderController extends BaseController {
 //                entity.sellers.bizVendInfo.office.id
                 bizOrderHeader.setVendorId(vendUser.get(0).getVendor().getId());
                 bizOrderHeader.setVendorName(vendUser.get(0).getVendor().getName());
+                bizOrderHeader.setSellersId(vendUser.get(0).getVendor().getId());
             }
 
             //代采
@@ -691,6 +625,15 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
             List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+
+            List<Integer> skuInfoIdList = Lists.newArrayList();
+            List<BizOrderDetail> bizOrderDetails = bizOrderHeader.getOrderDetailList();
+            for (BizOrderDetail orderDetail : bizOrderDetails) {
+                BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
+                skuInfoIdList.add(bizSkuInfo.getId());
+            }
+            model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
+
             for (BizOrderDetail orderDetail : orderDetailList) {
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                 if (bizSkuInfo != null) {
@@ -850,6 +793,41 @@ public class BizOrderHeaderController extends BaseController {
                 ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap()
                 : ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap());
 
+        String createPo = "no";
+        Integer orderType = bizOrderHeader.getOrderType();
+        OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail() + bizOrderHeader.getFreight() + bizOrderHeader.getTotalExp() + bizOrderHeader.getServiceFee(), bizOrderHeader.getReceiveTotal());
+        Integer statusEnumState = statusEnum.getState();
+        request.setAttribute("statusEnumState", statusEnumState);
+        if (BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(orderType)){
+            if (bizOrderHeader.getCommonProcess() != null && ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getCreatePoProcessId().toString().equals(bizOrderHeader.getCommonProcess().getType())) {
+                createPo = "yes";
+            }
+        } else if (bizOrderHeader.getOrderNum().startsWith("SO") && bizOrderHeader.getCommonProcess() != null && (bizOrderHeader.getSuplys() ==0 || bizOrderHeader.getSuplys() == 721)) {
+            String processType = bizOrderHeader.getCommonProcess().getType();
+            switch (statusEnum) {
+                case ZERO:
+                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getZeroCreatePoProcessId()).equals(processType)){
+                        createPo = "yes";
+                    }
+                    break;
+                case FIFTH:
+                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getFifthCreatePoProcessId()).equals(processType)){
+                        createPo = "yes";
+                    }
+                    break;
+                case ALL:
+                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getAllCreatePoProcessId()).equals(processType)){
+                        createPo = "yes";
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        model.addAttribute("createPo",createPo);
+
+
+
         return "modules/biz/order/bizOrderHeaderForm";
     }
 
@@ -980,6 +958,16 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
             List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+
+            List<Integer> skuInfoIdList = Lists.newArrayList();
+            List<BizOrderDetail> bizOrderDetails = bizOrderHeader.getOrderDetailList();
+            for (BizOrderDetail orderDetail : bizOrderDetails) {
+                BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
+                skuInfoIdList.add(bizSkuInfo.getId());
+            }
+            model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
+            resultMap.put("skuInfoIdListListJson", skuInfoIdList);
+
             for (BizOrderDetail orderDetail : orderDetailList) {
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                 if (bizSkuInfo != null) {
@@ -1164,7 +1152,43 @@ public class BizOrderHeaderController extends BaseController {
                 ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap()
                 : ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap());
 
-        //return "modules/biz/order/bizOrderHeaderForm";
+
+        String createPo = "no";
+        Integer orderType = bizOrderHeader.getOrderType();
+        OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail() + bizOrderHeader.getFreight() + bizOrderHeader.getTotalExp() + bizOrderHeader.getServiceFee(), bizOrderHeader.getReceiveTotal());
+        Integer statusEnumState = statusEnum.getState();
+        request.setAttribute("statusEnumState", statusEnumState);
+        resultMap.put("statusEnumState", statusEnumState);
+        if (BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(orderType)){
+            if (bizOrderHeader.getCommonProcess() != null && ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getCreatePoProcessId().toString().equals(bizOrderHeader.getCommonProcess().getType())) {
+                createPo = "yes";
+            }
+        } else if (bizOrderHeader.getOrderNum().startsWith("SO") && bizOrderHeader.getCommonProcess() != null && (bizOrderHeader.getSuplys() ==0 || bizOrderHeader.getSuplys() == 721)) {
+            String processType = bizOrderHeader.getCommonProcess().getType();
+            switch (statusEnum) {
+                case ZERO:
+                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getZeroCreatePoProcessId()).equals(processType)){
+                        createPo = "yes";
+                    }
+                    break;
+                case FIFTH:
+                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getFifthCreatePoProcessId()).equals(processType)){
+                        createPo = "yes";
+                    }
+                    break;
+                case ALL:
+                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getAllCreatePoProcessId()).equals(processType)){
+                        createPo = "yes";
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        model.addAttribute("createPo",createPo);
+        resultMap.put("createPo", createPo);
+        resultMap.put("createPo", createPo);
+        resultMap.put("PURCHASE_ORDER", BizOrderTypeEnum.PURCHASE_ORDER.getState());
 
         return JsonUtil.generateData(resultMap, null);
     }
@@ -2674,9 +2698,9 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "auditSo")
     @ResponseBody
-    public String auditSo(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType) {
+    public String auditSo(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType, String createPo) {
         try {
-            Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType);
+            Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType, createPo);
             if (audit.getLeft()) {
                 return JsonUtil.generateData(audit.getRight(), null);
             }
@@ -2698,7 +2722,7 @@ public class BizOrderHeaderController extends BaseController {
      * @param orderType
      * @return
      */
-    private Pair<Boolean, String> doAudit(int id, int auditType, String currentType, String description, int orderType) {
+    private Pair<Boolean, String> doAudit(int id, int auditType, String currentType, String description, int orderType, String createPo) {
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectId(String.valueOf(id));
         commonProcessEntity.setObjectName(orderType == 0 ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
@@ -2792,12 +2816,26 @@ public class BizOrderHeaderController extends BaseController {
         nextProcessEntity.setCurrent(1);
         commonProcessService.save(nextProcessEntity);
 
-        if (originConfig.getGenPoProcessId().contains(Integer.valueOf(nextProcessEntity.getType()))) {
+        Boolean poFlag = false;
+        String poId = "";
+        //if (originConfig.getGenPoProcessId().contains(Integer.valueOf(nextProcessEntity.getType()))) {
+        //品类主管审核是生成采购单
+        if ("yes".equals(createPo)) {
             Pair<Boolean, String> booleanStringPair = bizPoHeaderService.autoGenPO(id);
+            if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
+                poFlag = true;
+                poId = booleanStringPair.getRight();
+            }
             LOGGER.warn("auto gen po[{}][{}]", booleanStringPair.getLeft(), booleanStringPair.getRight());
         }
 
-        return Pair.of(Boolean.TRUE, "操作成功!");
+        Pair<Boolean, String> audit = null;
+        if (poFlag) {
+            audit = Pair.of(Boolean.TRUE, "采购单生成," + poId);
+        } else {
+            audit = Pair.of(Boolean.TRUE, "操作成功");
+        }
+        return audit;
     }
 
 }

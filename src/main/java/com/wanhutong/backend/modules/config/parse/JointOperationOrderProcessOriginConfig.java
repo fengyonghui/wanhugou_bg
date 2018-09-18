@@ -33,6 +33,15 @@ public class JointOperationOrderProcessOriginConfig extends ConfigGeneral {
      @XStreamAlias("allDefaultProcessId")
     private int allDefaultProcessId;
 
+    @XStreamAlias("zeroCreatePoProcessId")
+    private int zeroCreatePoProcessId;
+
+    @XStreamAlias("fifthCreatePoProcessId")
+    private int fifthCreatePoProcessId;
+
+    @XStreamAlias("allCreatePoProcessId")
+    private int allCreatePoProcessId;
+
      @XStreamImplicit(itemFieldName = "genPoProcessId")
     private List<Integer> genPoProcessId;
 
@@ -108,5 +117,17 @@ public class JointOperationOrderProcessOriginConfig extends ConfigGeneral {
 
     public List<Integer> getGenPoProcessId() {
         return genPoProcessId;
+    }
+
+    public int getZeroCreatePoProcessId() {
+        return zeroCreatePoProcessId;
+    }
+
+    public int getFifthCreatePoProcessId() {
+        return fifthCreatePoProcessId;
+    }
+
+    public int getAllCreatePoProcessId() {
+        return allCreatePoProcessId;
     }
 }

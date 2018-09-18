@@ -204,7 +204,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private BizPoPaymentOrder bizPoPaymentOrder;
 
     /**
-     * 是否是本地备货的订单，0:是 721:是  大于0且不等于721：不是
+     * 是否是产地直发的订单，0:是 721:是  大于0且不等于721：不是
      */
     private Integer suplys;
 
@@ -225,6 +225,12 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      *  采购单当前审核流程名字
      */
     private String poProcessName;
+
+    /**
+     * 手机端客户专员订单检索
+     * 0：待审核，1：审核失败，2：其他
+     */
+    private Integer mobileAuditStatus;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -987,5 +993,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setVendorName(String vendorName) {
         this.vendorName = vendorName;
+    }
+
+    public Integer getMobileAuditStatus() {
+        return mobileAuditStatus;
+    }
+
+    public void setMobileAuditStatus(Integer mobileAuditStatus) {
+        this.mobileAuditStatus = mobileAuditStatus;
     }
 }

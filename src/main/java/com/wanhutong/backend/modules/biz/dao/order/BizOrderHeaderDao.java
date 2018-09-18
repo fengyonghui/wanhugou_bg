@@ -409,4 +409,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
 //     * @return
 //     */
 //    int updateProcessId(@Param("headerId") Integer headerId, @Param("processId") Integer processId);
+
+    /**
+     * 根据商品id获取相应orderDetailId
+     * @param poHeaderId
+     * @param skuInfoId
+     * @return
+     */
+    Integer getOrderDetailIdBySkuInfoId(@Param("poHeaderId") Integer poHeaderId, @Param("skuInfoId") Integer skuInfoId);
 }
