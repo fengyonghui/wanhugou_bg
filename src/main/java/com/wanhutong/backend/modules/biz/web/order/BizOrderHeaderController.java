@@ -628,11 +628,13 @@ public class BizOrderHeaderController extends BaseController {
 
             List<Integer> skuInfoIdList = Lists.newArrayList();
             List<BizOrderDetail> bizOrderDetails = bizOrderHeader.getOrderDetailList();
-            for (BizOrderDetail orderDetail : bizOrderDetails) {
-                BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
-                skuInfoIdList.add(bizSkuInfo.getId());
+            if (CollectionUtils.isNotEmpty(bizOrderDetails)) {
+                for (BizOrderDetail orderDetail : bizOrderDetails) {
+                    BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
+                    skuInfoIdList.add(bizSkuInfo.getId());
+                }
+                model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
             }
-            model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
 
             for (BizOrderDetail orderDetail : orderDetailList) {
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
