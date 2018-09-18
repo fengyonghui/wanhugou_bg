@@ -968,17 +968,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
 	}
 
-	@RequiresPermissions("biz:request:bizRequestHeader:audit")
-	@RequestMapping(value = "startAudit")
-	@ResponseBody
-	public String startAudit(HttpServletRequest request, Integer id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, Integer auditType, String desc) {
-		Pair<Boolean, String> result = bizRequestHeaderForVendorService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
-		if (result.getLeft()) {
-			return JsonUtil.generateData(result, request.getParameter("callback"));
-		}
-		return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
-	}
-
 	@RequiresPermissions("biz:request:bizRequestHeader:createPayOrder")
 	@RequestMapping(value = "saveRequest")
 	public String saveRequest(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes, String type) {
