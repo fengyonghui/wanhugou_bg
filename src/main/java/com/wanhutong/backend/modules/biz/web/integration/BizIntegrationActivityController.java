@@ -6,6 +6,10 @@ package com.wanhutong.backend.modules.biz.web.integration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -21,6 +26,8 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.integration.BizIntegrationActivity;
 import com.wanhutong.backend.modules.biz.service.integration.BizIntegrationActivityService;
+
+import java.util.List;
 
 /**
  * 积分活动Controller
@@ -33,12 +40,20 @@ public class BizIntegrationActivityController extends BaseController {
 
 	@Autowired
 	private BizIntegrationActivityService bizIntegrationActivityService;
+
+	@Autowired
+	private OfficeService officeService;
 	
 	@ModelAttribute
 	public BizIntegrationActivity get(@RequestParam(required=false) Integer id) {
 		BizIntegrationActivity entity = null;
 		if (id!=null){
 			entity = bizIntegrationActivityService.get(id);
+			String officeIds = bizIntegrationActivityService.selectOfficeIdsByActivityId(id);
+            if(StringUtils.isNotBlank(officeIds))
+			{
+				 entity.setOfficeIds(officeIds);
+			}
 		}
 		if (entity == null){
 			entity = new BizIntegrationActivity();
@@ -59,6 +74,8 @@ public class BizIntegrationActivityController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizIntegrationActivity bizIntegrationActivity, Model model) {
 		model.addAttribute("bizIntegrationActivity", bizIntegrationActivity);
+		List<Office> officeList = officeService.filerOffice(null, null, OfficeTypeEnum.CUSTOMER);
+		model.addAttribute("officeList",officeList);
 		return "modules/biz/integration/bizIntegrationActivityForm";
 	}
 
@@ -93,6 +110,18 @@ public class BizIntegrationActivityController extends BaseController {
 		bizIntegrationActivityService.delete(bizIntegrationActivity);
 		addMessage(redirectAttributes, "删除积分活动成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/integration/bizIntegrationActivity/?repage";
+	}
+	@ResponseBody
+	@RequestMapping("systemActivity")
+    public BizIntegrationActivity getIntegrationByCode(@RequestParam("code") String code){
+		return bizIntegrationActivityService.getIntegrationByCode(code);
+	}
+
+	@ResponseBody
+	@RequestMapping("count")
+	public BizMoneyRecodeDetail countOrderUser()
+	{
+        return bizIntegrationActivityService.countTotal();
 	}
 
 }

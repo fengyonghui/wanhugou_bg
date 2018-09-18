@@ -9,8 +9,11 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.dao.integration.BizMoneyRecodeDao;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecode;
+import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * 积分流水Service
@@ -20,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMoneyRecode> {
+	@Resource
+	private BizMoneyRecodeDao bizMoneyRecodeDao;
 
 	public BizMoneyRecode get(Integer id) {
 		return super.get(id);
@@ -41,6 +46,13 @@ public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMon
 	@Transactional(readOnly = false)
 	public void delete(BizMoneyRecode bizMoneyRecode) {
 		super.delete(bizMoneyRecode);
+	}
+
+	public BizMoneyRecodeDetail selectRecordDetail(){
+		BizMoneyRecodeDetail bizMoneyRecodeDetail = bizMoneyRecodeDao.selectRecodeDetail();
+        Double availableIntegration = bizMoneyRecodeDetail.getGainIntegration()-bizMoneyRecodeDetail.getExpireIntegration()-bizMoneyRecodeDetail.getUsedIntegration();
+        bizMoneyRecodeDetail.setAvailableIntegration(availableIntegration);
+        return bizMoneyRecodeDetail;
 	}
 	
 }

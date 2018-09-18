@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecode;
+import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
 import com.wanhutong.backend.modules.biz.service.integration.BizMoneyRecodeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +53,14 @@ public class BizMoneyRecodeController extends BaseController {
 		model.addAttribute("page", page);
 		return "modules/biz/integration/bizMoneyRecodeList";
 	}
+
+	@RequestMapping(value = {"detail", ""})
+	@ResponseBody
+	public BizMoneyRecodeDetail recodeDetail() {
+		BizMoneyRecodeDetail bizMoneyRecodeDetail = bizMoneyRecodeService.selectRecordDetail();
+		return bizMoneyRecodeDetail;
+	}
+
 
 
 
