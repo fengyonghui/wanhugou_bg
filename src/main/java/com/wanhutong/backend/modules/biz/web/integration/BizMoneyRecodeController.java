@@ -74,7 +74,7 @@ public class BizMoneyRecodeController extends BaseController {
 	}
 
 	/*
-	*  活动列表导出
+	*  活动列表 导出
 	* */
 	@RequestMapping(value = "activityExport")
 	public String activityExport(BizMoneyRecode bizIntegrationActivity, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
