@@ -1170,12 +1170,10 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 }
             }
             if (StringUtils.isNotBlank(orderNum)) {
-//                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), phones.toString(), ImmutableMap.of("order", "订单","number",orderNum.substring(3)));
-                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "订单","number",orderNum.substring(3)));
+                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), phones.toString(), ImmutableMap.of("order", "订单","number",orderNum.substring(3)));
             }
             if (StringUtils.isNotBlank(reqNum)) {
-//                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), phones.toString(), ImmutableMap.of("order", "备货单","number",reqNum.substring(3)));
-                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "备货单","number",reqNum.substring(3)));
+                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), phones.toString(), ImmutableMap.of("order", "备货单","number",reqNum.substring(3)));
             }
 
         } catch (Exception e) {
