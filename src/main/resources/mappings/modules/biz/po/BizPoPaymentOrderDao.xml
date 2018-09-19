@@ -86,6 +86,7 @@
 		FROM biz_po_payment_order a
 		<include refid="bizPoPaymentOrderJoins"/>
 		WHERE a.id = #{id}
+        group by a.id
 	</select>
 	
 	<select id="findList" resultMap="bizPoPaymentOrderMaps">
@@ -131,7 +132,8 @@
 		<include refid="bizPoPaymentOrderJoins"/>
 		<where>
 			
-		</where>		
+		</where>
+		group by a.id
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
