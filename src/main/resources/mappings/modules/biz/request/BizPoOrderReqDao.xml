@@ -31,7 +31,7 @@
 		<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
 			LEFT JOIN biz_request_detail rd ON rd.header_id = a.so_id AND rd.line_no = a.so_line_no
 		</if>
-		 	LEFT join biz_po_header ph on ph.id = a.po_id
+		 	LEFT join biz_po_header ph on ph.id = a.po_id AND ph.status = 1
 	</sql>
     
 	<select id="get" resultType="BizPoOrderReq">
@@ -39,7 +39,7 @@
 			<include refid="bizPoOrderReqColumns"/>
 		FROM biz_po_order_req a
 		<include refid="bizPoOrderReqJoins"/>
-		WHERE a.id = #{id}
+		WHERE a.id = #{id} AND a.status = 1
 	</select>
 	
 	<select id="findList" resultType="BizPoOrderReq">
@@ -89,7 +89,7 @@
 		FROM biz_po_order_req a
 		<include refid="bizPoOrderReqJoins"/>
 		<where>
-			
+			a.status =1
 		</where>		
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -169,8 +169,8 @@
 		a.id AS "id",
 		a.so_type AS "soType"
 		FROM biz_po_order_req a
-		 LEFT JOIN biz_po_header bph on bph.id = a.po_id
-		WHERE bph.id=#{bphId}
+		 LEFT JOIN biz_po_header bph on bph.id = a.po_id AND bph.status = 1
+		WHERE bph.id=#{bphId} AND a.status = 1
 		group by a.id
 	</select>
 	

@@ -2943,7 +2943,8 @@ FROM
 			left join biz_po_detail bpd on bpd.order_id = a.id
 			left join biz_sku_info bsi on bsi.id = bpd.sku_no
 		where
-			a.id=#{poHeaderId}
+			a.status = 1
+			AND a.id=#{poHeaderId}
 			AND bsi.id=#{skuInfoId}
 			group by bpd.id
 	</select>

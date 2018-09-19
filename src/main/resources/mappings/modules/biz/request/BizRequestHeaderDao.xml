@@ -68,8 +68,8 @@
 		<include refid="bizRequestHeaderJoins"/>
 		LEFT JOIN biz_sku_info bsi on brd.sku_id = bsi.id
 		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
-		LEFT JOIN biz_po_order_req por ON por.so_id = a.id AND por.so_type = 2
-		RIGHT JOIN biz_po_header po ON po.id = por.po_id
+		LEFT JOIN biz_po_order_req por ON por.so_id = a.id AND por.so_type = 2 AND por.status = 1
+		RIGHT JOIN biz_po_header po ON po.id = por.po_id AND po.status = 1
 		<!-- 供应商id -->
 		<if test="vendorId !=null and vendorId != ''">
 			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
