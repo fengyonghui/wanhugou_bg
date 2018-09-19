@@ -7,9 +7,6 @@
 		<title>备货单修改</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css?time=20180912" rel="stylesheet" />
-		<style type="text/css">
-			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 4em;}
-		</style>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
@@ -69,9 +66,9 @@
 				<input type="date" class="" id="inPoLastDa">
 				<font>*</font>
 			</div>
-			<div class="mui-input-row" id="inAmendPoLastDaDiv">
-				<label class="commodityName">选择商品：</label>
-				<input type="text" class="mui-input-clear commodityTxt" id="inAmendPoLastDa" placeholder="请输入商品货号">
+			<div class="mui-input-row commodityClear" id="inAmendPoLastDaDiv">
+				<label>选择商品：</label>
+				<input type="text" class="mui-input-clear" id="inAmendPoLastDa" placeholder="请输入商品货号">
 				<button id="comChoiceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">查询</button>
 			</div>
 
@@ -90,7 +87,7 @@
 				<div class="labelLf">支付列表：</div>
 				<ul id="inPaylist" class="mui-table-view"></ul>
 			</div>
-			<div class="mui-input-row">
+			<div class="mui-input-row remark">
 				<label>备注：</label>
 				<textarea id="inPoRemark" name="" rows="" cols=""></textarea>
 			</div>

@@ -6,9 +6,6 @@
 		<title>备货单添加</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css?time=20180912" rel="stylesheet" />
-		<style type="text/css">
-			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 4em;}
-		</style>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
@@ -65,12 +62,12 @@
 			</div>
 			<div class="mui-input-row">
 				<label>收货时间：</label>
-				<input type="date" class="mui-input-clear" id="inPoLastDa">
+				<input type="datetime-local" class="mui-input-clear" id="inPoLastDa">
 				<font>*</font>
 			</div>
-			<div class="mui-input-row" id="inAmendPoLastDaDiv">
-				<label class="commodityName">选择商品：</label>
-				<input type="text" class="mui-input-clear commodityTxt" id="inAmendPoLastDa" placeholder="请输入商品货号">
+			<div class="mui-input-row commodityClear" id="inAmendPoLastDaDiv">
+				<label>选择商品：</label>
+				<input type="text" class="mui-input-clear" id="inAmendPoLastDa" placeholder="请输入商品货号">
 				<button id="comChoiceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">查询</button>
 			</div>
 			<div class="mui-row app_bline2 inComdty inAddComdty" id="searchInfo">
@@ -85,7 +82,7 @@
 
 			</div>
 
-			<div class="mui-input-row">
+			<div class="mui-input-row remark">
 				<label>备注：</label>
 				<textarea id="inPoRemark" name="" rows="" cols=""></textarea>
 			</div>
