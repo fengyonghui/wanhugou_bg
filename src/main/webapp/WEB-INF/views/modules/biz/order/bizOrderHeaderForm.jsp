@@ -1110,7 +1110,7 @@
 
 
         function deleteStyle() {
-            $("#remark").removeAttr("style");
+            //$("#remark").removeAttr("style");
             $("#cardNumber").removeAttr("style");
             $("#payee").removeAttr("style");
             $("#bankName").removeAttr("style");
