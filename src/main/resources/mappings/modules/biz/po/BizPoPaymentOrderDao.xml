@@ -130,10 +130,10 @@
 			<include refid="bizPoPaymentOrderColumns"/>
 		FROM biz_po_payment_order a
 		<include refid="bizPoPaymentOrderJoins"/>
-        group by a.id
 		<where>
 			
-		</where>		
+		</where>
+		group by a.id
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
