@@ -47,6 +47,8 @@
             _this.searchSkuHtml();
             _this.saveDetail();
             _this.getData();
+            _this.ajaxCheckStatus();//业务状态
+             
 		},
         getData: function() {
             var _this = this;
@@ -81,32 +83,55 @@
 //                  $('#inMoneyReceive').val();
 //                  $('#inMarginLevel').val();
                     var dataValue =_this.newData(res.data.bizRequestHeader.recvEta);
-//                  var dataValue =_this.formatDateTime(res.data.bizRequestHeader.recvEta);
-//                  console.log(res.data.bizRequestHeader.recvEta)
-//                  console.log(dataValue)
-                    $('#inPoLastDa').val(dataValue);//收货时间
-
-                    /*业务状态*/
-                    var bizstatus = res.data.bizRequestHeader.bizStatus;
-                    $('#inputDivAmend  option[value="' + bizstatus + '"]').attr("selected",true);
-                    //排产状态
-				    var itempoSchType=res.data.bizRequestHeader.bizPoHeader.poSchType;
-				    var SchedulstatusTxt = '';
-				    $.ajax({
+                    $('#inPoLastDa').val(dataValue);//收货时间  
+                  
+		             /*当前用户信息,判断修改时系统管理员可直接修改备货单状态，其余角色不可以*/
+					var userId = '';
+					$.ajax({
 		                type: "GET",
-		                url: "/a/sys/dict/listData",
-		                data: {type:"poSchType"},		                
+		                url: "/a/getUser",
 		                dataType: "json",
-		                success: function(res){
-		                	console.log(res)
-		                	$.each(res,function(i,item){
-		                		 if(item.value==itempoSchType){
-		                		 	  SchedulstatusTxt = item.label 
-		                		 }
-		                	})
-		                	$('#inSchedulstatus').val(SchedulstatusTxt);
-						}
-					});
+		                async:false,
+		                success: function(user){                 
+				            console.log(user)
+							userId = user.data.id;
+							roleNames= user.data.roleNames;
+							console.log(roleNames)
+		                }
+		            });
+		            /*业务状态*/
+		            if(userId!=""&&userId==1){		            				       			       
+				       	var bizstatus = res.data.bizRequestHeader.bizStatus;
+	                    $('#inputDivAmend  option[value="' + bizstatus + '"]').attr("selected",true);
+		            }else{
+				       	$('#inputDivAmend').parent().parent().hide();
+		            }			        	                    		                          
+                    //排产状态
+				    if(res.data.bizRequestHeader.bizPoHeader){
+				    	var itempoSchType=res.data.bizRequestHeader.bizPoHeader.poSchType;
+					    console.log(itempoSchType)
+					    var SchedulstatusTxt = '';
+					    $.ajax({
+			                type: "GET",
+			                url: "/a/sys/dict/listData",
+			                data: {type:"poSchType"},		                
+			                dataType: "json",
+			                success: function(reslt){
+			                	console.log(reslt)
+			                	$.each(reslt,function(i,item){
+			                		if(item.value==itempoSchType){
+			                		 	SchedulstatusTxt = item.label 
+			                		}
+			                		if(itempoSchType == null||itempoSchType == "") {
+					                	SchedulstatusTxt = "未排产";
+					                }
+			                	})
+			                	$('#inSchedulstatus').val(SchedulstatusTxt);
+							}
+						});
+				    }else{
+				    	$('#inSchedulstatus').val("未排产");
+				    };
                     _this.commodityHtml(res.data);//备货商品反填
                     _this.paylistHtml(res.data);//支付列表
                     _this.statusListHtml(res.data);//状态流程
@@ -127,16 +152,8 @@
         }, 
         newData:function(da){
         	var _this = this;
-//      	 var date = new Date(da);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-//      	 console.log(date)
-//		        var Y = date.getFullYear() + '-';
-//		        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-//		        var D = date.getDate() + ' ';
-//		        var h = date.getHours() + ':';
-//		        var m = date.getMinutes() + ':';
-//		        var s = date.getSeconds();		         
-//		        return Y+M+D+h+m+s;       
-            var now = new Date(da),
+//      	 var date = new Date(da);//时间戳为10位需*1000，时间戳为13位的话不需乘1000      
+            var now = new Date(da);
                 y = now.getFullYear(),
                 m = now.getMonth() + 1,
                 d = now.getDate();
@@ -341,7 +358,6 @@
         hrefHtml: function(newinput, input_div,hideSpanAmend) {
 			var _this = this;
 			_this.ajaxGoodList();
-			_this.ajaxCheckStatus();
 			$(newinput).on('focus', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
@@ -472,12 +488,12 @@
                 data: {type:'biz_req_status'},
                 dataType: 'json',
                 success: function(res) {
+                	console.log(res)
                     $.each(res, function(i, item) {
                         htmlStatusAmend += '<option class="soption" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort +  '" value="' + item.value + '">' + item.label + '</option>'
                     });
                     $('#inputDivAmend').html(optHtml+htmlStatusAmend)
                     _this.getPermissionList();
-//                  _this.getData();
                 }
             });
         },

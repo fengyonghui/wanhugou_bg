@@ -19,12 +19,18 @@
 			</div>
 			<div class="mui-input-row" id="orderTypebox">
 				<label>备货方：</label>
-		    	<div id="changeTxt" class="labelri inStock">
+				<div id="changeTxt" class="labelri inStock">
 		    		采购中心备货
+			        <input id="fromType1" type="radio" name="fromType" value="1" class="inputRadio" disabled/>
+			                厂商备货
+			        <input id="fromType2" type="radio" name="fromType" value="2" class="inputRadio" disabled/>
+		        </div>
+		        <!--<input type="text" class="mui-input-clear" id="infromType" disabled>-->
+		   </div>
 			        <input id="fromType1" type="radio" name="fromType" value="1" disabled="disabled" class="inputRadio"/>
-			                厂商备货 
+			                厂商备货
 			        <input id="fromType2" type="radio" name="fromType" value="2" disabled="disabled" class="inputRadio"/>
-		        </div>	
+		        </div>
 		    </div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
@@ -64,7 +70,7 @@
 			</div>
 			<div class="mui-input-row">
 				<label>收货时间：</label>
-				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
+				<input type="date" class="mui-input-clear" id="inPoLastDa" disabled>
 			</div>
 			<div class="mui-input-row inComdty inDetailComdty">
 				<div class="labelLf">备货商品：</div>

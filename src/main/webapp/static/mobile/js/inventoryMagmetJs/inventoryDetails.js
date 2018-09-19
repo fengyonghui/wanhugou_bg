@@ -36,51 +36,55 @@
 						$('#insupplierBank').parent().hide();//供应商开户行
                 	}               	
 				    /*业务状态*/
-				    var itemStatus=res.data.bizRequestHeader.bizStatus;
-				    var bizstatusTxt = '';
 				    $.ajax({
 		                type: "GET",
 		                url: "/a/sys/dict/listData",
 		                data: {type:"biz_req_status"},		                
 		                dataType: "json",
-		                success: function(res){
-		                	$.each(res,function(i,item){
-		                		 if(item.value==itemStatus){
-		                		 	  bizstatusTxt = item.label 
-		                		 }
+		                success: function(resl){
+		                	$.each(resl,function(i,item){
+		                		if(item.value==res.data.bizRequestHeader.bizStatus){
+		                		 	$('#inPoDizstatus').val(item.label);  
+		                		}
 		                	})
-		                	$('#inPoDizstatus').val(bizstatusTxt);
 						}
 					});
 				    //排产状态
-				    var itempoSchType=res.data.bizRequestHeader.bizPoHeader.poSchType;
-				    var SchedulstatusTxt = '';
-				    $.ajax({
-		                type: "GET",
-		                url: "/a/sys/dict/listData",
-		                data: {type:"poSchType"},		                
-		                dataType: "json",
-		                success: function(res){
-		                	console.log(res)
-		                	$.each(res,function(i,item){
-		                		if(item.value==itempoSchType){
-		                		 	SchedulstatusTxt = item.label 
-		                		 }
-		                	})
-		                	$('#inSchedulstatus').val(SchedulstatusTxt);
-						}
-					});
+				    if(res.data.bizRequestHeader.bizPoHeader){
+				    	var itempoSchType=res.data.bizRequestHeader.bizPoHeader.poSchType;
+					    console.log(itempoSchType)
+					    var SchedulstatusTxt = '';
+					    $.ajax({
+			                type: "GET",
+			                url: "/a/sys/dict/listData",
+			                data: {type:"poSchType"},		                
+			                dataType: "json",
+			                success: function(reslt){
+			                	console.log(reslt)
+			                	$.each(reslt,function(i,item){
+			                		if(item.value==itempoSchType){
+			                		 	SchedulstatusTxt = item.label 
+			                		}
+			                		if(itempoSchType == null||itempoSchType == "") {
+					                	SchedulstatusTxt = "未排产";
+					                }
+			                	})
+			                	$('#inSchedulstatus').val(SchedulstatusTxt);
+							}
+						});
+				    }else{
+		                $('#inSchedulstatus').val("未排产");
+				    };				    
 					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号	
 					//备货方
-					console.log(res.data.bizRequestHeader.fromType);
-					if(res.data.bizRequestHeader.fromType==1){
+                    if(res.data.bizRequestHeader.fromType==1){
 						$('#fromType1').attr('checked','checked');
 						$('#fromType2').removeAttr('checked');
 					}
 					if(res.data.bizRequestHeader.fromType==2){
 						$('#fromType1').removeAttr('checked');
 						$('#fromType2').attr('checked','checked');						
-					}
+					}	            	
 					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);//采购中心					
 					$('#inPototal').val(res.data.bizRequestHeader.totalMoney.toFixed(2));//应付金额
 					$('#inMoneyReceive').val(res.data.bizRequestHeader.recvTotal.toFixed(2));//已收保证金
@@ -90,7 +94,7 @@
 					}else{
 						$('#inMoneyPay').val(res.data.bizRequestHeader.bizPoHeader.payTotal.toFixed(2));//已支付厂商保证金
 					}					
-					$('#inPoLastDa').val(_this.formatDateTime(res.data.bizRequestHeader.recvEta));//期望收货时间
+					$('#inPoLastDa').val(_this.newData(res.data.bizRequestHeader.recvEta));//期望收货时间
 					$('#inPoRemark').val(res.data.bizRequestHeader.remark);//备注
 					_this.commodityHtml(res.data);//备货商品
 					_this.statusListHtml(res.data);//状态流程					
@@ -523,8 +527,19 @@
 		commodityHtml: function(data) {
 			var _this = this;
 			var htmlCommodity = '';
+//			entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state
 			if(data.reqDetailList!=null){
+				console.log(data.bizRequestHeader.str)
+				console.log(data.bizRequestHeader.bizStatus)
+				console.log(data.bizAuditStatusMap)
+				
 				$.each(data.reqDetailList, function(i, item) {
+					$.each(data.bizAuditStatusMap,function(n,v){
+						console.log(Object.keys(data.bizAuditStatusMap))
+						if(data.bizRequestHeader.str=='detail'&&data.bizRequestHeader.bizStatus>=n){
+							console.log(data.bizRequestHeader.bizStatus)
+						}						
+					})
 					htmlCommodity +='<li class="mui-table-view-cell mui-media app_bline app_pr">'+
 	//		产品图片
 						'<div class="photoParent mui-pull-left app_pa">'+
@@ -569,8 +584,16 @@
 								'<input type="text" class="mui-input-clear" value="'+ item.skuInvQty +'" disabled>'+
 							'</div>'+
 							'<div class="mui-input-row">'+
+								'<label>销售量：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.sellCount +'" disabled>'+
+							'</div>'+							
+							'<div class="mui-input-row">'+
 								'<label>总库存数量：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.invenSkuOrd +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>已收货数量：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.recvQty +'" disabled>'+
 							'</div>'+
 						'</div>'+
 					'</li>'
@@ -578,6 +601,19 @@
 				$("#commodityMenu").html(htmlCommodity)
 			}			
 		},
+		newData:function(da){
+        	var _this = this;
+//      	 var date = new Date(da);//时间戳为10位需*1000，时间戳为13位的话不需乘1000      
+            var now = new Date(da);
+                y = now.getFullYear(),
+                m = now.getMonth() + 1,
+                d = now.getDate();
+                var hours = now.getHours();
+                var minutes = now.getMinutes();
+                var seconds = now.getSeconds();
+           // return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + "T" + now.toTimeString().substr(0, 8);
+             return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d);
+        },
 		formatDateTime: function(unix) {
         	var _this = this;
 
