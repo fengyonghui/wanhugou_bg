@@ -1103,7 +1103,7 @@
 
 
         function deleteStyle() {
-            $("#remark").removeAttr("style");
+            // $("#remark").removeAttr("style");
             $("#cardNumber").removeAttr("style");
             $("#payee").removeAttr("style");
             $("#bankName").removeAttr("style");
@@ -3037,7 +3037,7 @@
         <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
             <input class="btn btn-primary" type="button"
                    onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" value="同意发货"/>&nbsp;
-            <input class="btn btn-primary" type="button"
+            <input class="btn btn-warning" type="button"
                    onclick="checkPending(${OrderHeaderBizStatusEnum.UNAPPROVE.state})" value="不同意发货"/>&nbsp;
         </shiro:hasPermission>
     </div>
