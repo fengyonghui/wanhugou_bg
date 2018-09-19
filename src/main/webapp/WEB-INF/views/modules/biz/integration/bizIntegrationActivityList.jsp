@@ -6,7 +6,7 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -38,7 +38,7 @@
 			</li>
 			<li><label>发送状态：</label>
 				<form:select about="choose" path="sendStatus" class="input-medium">
-					<form:option value="" label="请选择"/>
+					<form:option value="" label="全部"/>
 					<form:option value="0" label="未发送"/>
 					<form:option value="1" label="已发送"/>
 				</form:select>
@@ -98,7 +98,7 @@
 						${bizIntegrationActivity.sendStatus==0?'未发送':'已发送'}
 				</td>
 				<td>
-					${bizIntegrationActivity.createBy.id}
+					${bizIntegrationActivity.createBy.name}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizIntegrationActivity.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
@@ -107,7 +107,7 @@
 					<fmt:formatDate value="${bizIntegrationActivity.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit"><td>
-					<c:if test="${bizIntegrationActivity.sendStatus!=0}">
+					<c:if test="${bizIntegrationActivity.sendStatus==0}">
 						<a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}">修改</a>
 					</c:if>
     				<a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}&str=detail">详情</a>

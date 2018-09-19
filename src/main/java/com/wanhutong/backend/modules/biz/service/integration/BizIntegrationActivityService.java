@@ -8,6 +8,9 @@ import java.util.*;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
@@ -33,6 +36,9 @@ import javax.annotation.Resource;
 public class BizIntegrationActivityService extends CrudService<BizIntegrationActivityDao, BizIntegrationActivity> {
     @Resource
 	private BizIntegrationActivityDao bizIntegrationActivityDao;
+
+    @Resource
+	private OfficeService officeService;
 
 	public BizIntegrationActivity get(Integer id) {
 		return super.get(id);
@@ -170,6 +176,34 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		bizMoneyRecodeDetail.setOrderUser(orderOfficeTotal);
 		bizMoneyRecodeDetail.setTotalUser(allOfficeTotal);
 		return bizMoneyRecodeDetail;
+	}
+
+	//下单的经销店列表
+	public List<Office> findOrderedOffice(){
+		  return bizIntegrationActivityDao.findOrderOfficeList();
+	}
+
+	//未下单的经销店列表
+	public List<Office> findUnOrderOffice(){
+		return bizIntegrationActivityDao.findUnOrderOfficeList();
+	}
+
+	//查询指定用户的经销店列表
+	public List<Office> findCheckedOffice(String officeIds){
+		String[] ss = officeIds.split(",");
+		List<Office> list = Lists.newArrayList();
+		for(String s:ss)
+		{
+			Office office = officeService.get(Integer.valueOf(s));
+			list.add(office);
+		}
+		return list;
+	}
+
+	//全部的经销店列表
+	public List<Office> findAllOffice(){
+		List<Office> list = bizIntegrationActivityDao.findAllOffices();
+		return list;
 	}
 	
 }

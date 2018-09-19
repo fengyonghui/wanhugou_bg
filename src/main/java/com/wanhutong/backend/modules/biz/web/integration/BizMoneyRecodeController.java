@@ -76,8 +76,8 @@ public class BizMoneyRecodeController extends BaseController {
 	/*
 	*  活动列表 导出
 	* */
-	@RequestMapping(value = "activityExport")
-	public String activityExport(BizMoneyRecode bizIntegrationActivity, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	@RequestMapping(value = "recodeExport")
+	public String recodeExport(BizMoneyRecode bizIntegrationActivity, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		Page<BizMoneyRecode> page = bizMoneyRecodeService.findPage(new Page<BizMoneyRecode>(request, response), bizIntegrationActivity);
 		List<BizMoneyRecode> list = page.getList();
 		//列表数据
@@ -85,9 +85,9 @@ public class BizMoneyRecodeController extends BaseController {
 		try {
 			if(CollectionUtils.isNotEmpty(list))
 			{
-				List<String> recodeList = Lists.newArrayList();
 				for (BizMoneyRecode biz:list) {
-					recodeList.add(biz.getId()== null ? "未知" : biz.getId().toString());
+                    List<String> recodeList = Lists.newArrayList();
+				    recodeList.add(biz.getId()== null ? "未知" : biz.getId().toString());
 					recodeList.add(biz.getOffice().getName()== null ? "未知" : biz.getOffice().getName());
 					recodeList.add(biz.getOffice().getMaster()==null ? "未知" : biz.getOffice().getMaster());
 					recodeList.add(biz.getOffice().getPhone()==null ? "未知" : biz.getOffice().getPhone());
@@ -95,6 +95,7 @@ public class BizMoneyRecodeController extends BaseController {
 					recodeList.add(biz.getMoney()== null ? "未知" : biz.getMoney().toString());
 					recodeList.add(biz.getComment()== null ? "未知" : biz.getComment().toString());
 					recodeList.add(biz.getStatusName()== null ? "未知" : biz.getStatusName().toString());
+                    data.add(recodeList);
 				}
 				String headers[] = {"流水id","经销店名称","联系人","联系人电话","流水时间","流水金额","描述","流水类型"};
 				ExportExcelUtils eeu = new ExportExcelUtils();
