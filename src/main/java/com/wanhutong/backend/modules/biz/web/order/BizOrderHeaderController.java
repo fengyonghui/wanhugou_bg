@@ -1954,7 +1954,7 @@ public class BizOrderHeaderController extends BaseController {
                     rowData.add(order.getReceiveTotal() == null ? StringUtils.EMPTY : String.valueOf(order.getReceiveTotal()));
                     double sumTotal = total + exp + fre;
                     double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal();
-                    if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(order.getBizStatus()) && sumTotal > receiveTotal) {
+                    if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(OrderHeaderBizStatusEnum.stateOf(order.getBizStatus())) && sumTotal > receiveTotal) {
                         //尾款信息
                         rowData.add("有尾款");
                     } else {
