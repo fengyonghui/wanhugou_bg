@@ -255,7 +255,7 @@
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
 		LEFT JOIN  common_process process on process.object_id = a.id and process.object_name = 'biz_order_header' and process.current = 1
-		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 1
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.status =1 AND bpor.so_type = 1
 		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id AND bph.status = 1
 		LEFT JOIN common_process cp ON cp.id = bph.process_id
 		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
@@ -277,7 +277,7 @@
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
 		LEFT JOIN  common_process process on process.object_id = a.id and process.object_name = 'biz_order_header' and process.current = 1
-		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 1
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.status = 1  AND bpor.so_type = 1
 		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id AND bph.status = 1
 		LEFT JOIN common_process cp ON cp.id = bph.process_id
 		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1

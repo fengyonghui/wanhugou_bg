@@ -12,9 +12,9 @@
             $("#buttonExport").click(function () {
                 top.$.jBox.confirm("确认要导出订单数据吗？", "系统提示", function (v, h, f) {
                     if (v == "ok") {
-                        $("#searchForm").attr("action", "${ctx}/biz/po/bizPoHeader/poHeaderExport");
+                        $("#searchForm").attr("action", "${ctx}/biz/po/bizPoHeader/poHeaderExport?fromPage=listV2");
                         $("#searchForm").submit();
-                        $("#searchForm").attr("action", "${ctx}/biz/po/bizPoHeader/");
+                        $("#searchForm").attr("action", "${ctx}/biz/po/bizPoHeader/listV2");
                     }
                 }, {buttonsFocus: 1});
                 top.$('.jbox-body .jbox-icon').css('top', '55px');

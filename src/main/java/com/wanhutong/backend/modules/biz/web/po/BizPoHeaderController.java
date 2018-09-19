@@ -796,9 +796,14 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = "poHeaderExport")
     public String poHeaderExport(BizPoHeader bizPoHeader,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        String fromPage = bizPoHeader.getFromPage();
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            String fileName = "采购单" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+            String fileNmaeTitle = "采购单";
+            if ("listV2".equals(fromPage)) {
+                fileNmaeTitle = "订单支出信息";
+            }
+            String fileName = fileNmaeTitle + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
             List<BizPoHeader> list = bizPoHeaderService.findList(bizPoHeader);
             //1采购单整体数据
             List<List<String>> data = new ArrayList<List<String>>();
@@ -829,7 +834,14 @@ public class BizPoHeaderController extends BaseController {
                     if (BizOrderTypeEnum.PHOTO_ORDER.getState().equals(orderType)){
                         List<String> headerListData = new ArrayList();
                         //采购单遍历
-                        headerListData.add(poHeader.getOrderNum());
+                        if ("listV2".equals(fromPage)) {
+                            List<String> orderNumList = new ArrayList<>(poHeader.getOrderSourceMap().keySet());
+                            if (CollectionUtils.isNotEmpty(orderNumList)) {
+                                headerListData.add(orderNumList.get(0));
+                            }
+                        } else {
+                            headerListData.add(poHeader.getOrderNum());
+                        }
                         //供应商
                         headerListData.add(poHeader.getVendOffice().getName());
                         //采购总价
@@ -841,7 +853,12 @@ public class BizPoHeaderController extends BaseController {
                         //累计支付金额
                         headerListData.add(String.valueOf(poHeader.getPayTotal()));
                         //支付比例
-                        headerListData.add(String.valueOf(poHeader.getPayTotal().multiply(new BigDecimal(100)).divide(new BigDecimal(poHeader.getTotalDetail() + poHeader.getTotalExp()), 2, RoundingMode.HALF_UP)) + "%");
+                        Double EP = 0.001;
+                        if ((poHeader.getTotalDetail() + poHeader.getTotalExp()) > EP) {
+                            headerListData.add(String.valueOf(poHeader.getPayTotal().multiply(new BigDecimal(100)).divide(new BigDecimal(poHeader.getTotalDetail() + poHeader.getTotalExp()), 2, RoundingMode.HALF_UP)) + "%");
+                        } else {
+                            headerListData.add("0.00%");
+                        }
                         //订单状态
                         Dict dict = new Dict();
                         dict.setType("biz_po_status");
@@ -884,7 +901,15 @@ public class BizPoHeaderController extends BaseController {
                         for (BizPoDetail poDetail:poDetailList) {
                             List<String> headerListData = new ArrayList();
                             //采购单遍历
-                            headerListData.add(poHeader.getOrderNum());
+                            //headerListData.add(poHeader.getOrderNum());
+                            if ("listV2".equals(fromPage)) {
+                                List<String> orderNumList = new ArrayList<>(poHeader.getOrderSourceMap().keySet());
+                                if (CollectionUtils.isNotEmpty(orderNumList)) {
+                                    headerListData.add(orderNumList.get(0));
+                                }
+                            } else {
+                                headerListData.add(poHeader.getOrderNum());
+                            }
                             //供应商
                             headerListData.add(poHeader.getVendOffice().getName());
                             //采购总价
@@ -896,7 +921,12 @@ public class BizPoHeaderController extends BaseController {
                             //累计支付金额
                             headerListData.add(String.valueOf(poHeader.getPayTotal()));
                             //支付比例
-                            headerListData.add(String.valueOf(poHeader.getPayTotal().multiply(new BigDecimal(100)).divide(new BigDecimal(poHeader.getTotalDetail() + poHeader.getTotalExp()), 2, RoundingMode.HALF_UP)) + "%");
+                            Double EP = 0.001;
+                            if ((poHeader.getTotalDetail() + poHeader.getTotalExp()) > EP) {
+                                headerListData.add(String.valueOf(poHeader.getPayTotal().multiply(new BigDecimal(100)).divide(new BigDecimal(poHeader.getTotalDetail() + poHeader.getTotalExp()), 2, RoundingMode.HALF_UP)) + "%");
+                            } else {
+                                headerListData.add("0.00%");
+                            }
                             //订单状态
                             Dict dict = new Dict();
                             dict.setType("biz_po_status");
@@ -980,10 +1010,16 @@ public class BizPoHeaderController extends BaseController {
                     }
                 }
             }
-            String[] headers = {"采购单号", "供应商", "采购总价", "交易费用","应付金额", "累计支付金额", "支付比例","订单状态","审核状态","创建时间","所属单号","商品名称","商品货号","采购数量","已供货数量","结算价"};
+            String orderTitle = "采购单号";
+            String sheetName = "采购单数据";
+            if ("listV2".equals(fromPage)) {
+                orderTitle = "订单/备货单号";
+                sheetName = "订单支出信息数据";
+            }
+            String[] headers = {orderTitle, "供应商", "采购总价", "交易费用","应付金额", "累计支付金额", "支付比例","订单状态","审核状态","创建时间","所属单号","商品名称","商品货号","采购数量","已供货数量","结算价"};
             ExportExcelUtils eeu = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
-            eeu.exportExcel(workbook, 0, "采购单数据", headers, data, fileName);
+            eeu.exportExcel(workbook, 0, sheetName, headers, data, fileName);
             response.reset();
             response.setContentType("application/octet-stream; charset=utf-8");
             response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
@@ -994,7 +1030,11 @@ public class BizPoHeaderController extends BaseController {
             logger.error("可能没有采购单详情",e);
             addMessage(redirectAttributes, "导出采购单数据失败！失败信息：" + e.getMessage());
         }
-        return "redirect:" + adminPath + "/biz/po/bizPoHeader/list";
+        String toPage = "redirect:" + adminPath + "/biz/po/bizPoHeader/list";
+        if ("listV2".equals(fromPage)) {
+            toPage = "redirect:" + adminPath + "/biz/po/bizPoHeader/listV2";
+        }
+        return toPage;
 
     }
 

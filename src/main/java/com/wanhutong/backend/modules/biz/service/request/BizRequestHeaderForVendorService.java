@@ -287,7 +287,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		commonProcess.setObjectName(BizRequestHeaderForVendorService.DATABASE_TABLE_NAME);
 		List<CommonProcessEntity> processList = commonProcessService.findList(commonProcess);
 		if (CollectionUtils.isNotEmpty(processList)) {
-			commonProcessService.updateCurrentByObject(bizRequestHeader.getId(), BizRequestHeaderForVendorService.DATABASE_TABLE_NAME, 0);
+			commonProcessService.updateCurrentByObject(bizRequestHeader.getId(), BizRequestHeaderForVendorService.DATABASE_TABLE_NAME, CommonProcessEntity.NOT_CURRENT);
 		}
 
 		RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
