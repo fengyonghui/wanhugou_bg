@@ -219,7 +219,7 @@
                         });
                         $("#schedulingHeader").append(schedulingHeaderHtml);                        
                         //按订单排产中的排产备注
-                        var remarkHtml = "<textarea id='schRemarkOrder' style='border:1px solid #ccc;' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
+                        var remarkHtml = "<textarea id='schRemarkOrder' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
                         $(".schedulingHeaderRemark").append(remarkHtml);
                     }
                 	//按商品排产
@@ -288,7 +288,7 @@
                             });
                         });
                         //按商品排产中的排产备注
-                        var remarkHtmls = "<textarea id='schRemarkOrder' style='border:1px solid #ccc;' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
+                        var remarkHtmls = "<textarea id='schRemarkOrder' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
                         $(".schedulingHeaderRemarks").append(remarkHtmls);    
                 	}
 				}

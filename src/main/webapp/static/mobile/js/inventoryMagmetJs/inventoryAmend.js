@@ -757,16 +757,16 @@
                         '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                         '<div class="mui-col-sm-10 mui-col-xs-10">' +
                         '<li class="mui-table-view-cell app_bline3">' +
-                            '<div class="mui-input-row inputClassAdd">' +
-                                '<label class="commodityName">商品名称:</label>' +
+                            '<div class="mui-input-row">' +
+                                '<label>商品名称:</label>' +
                                 '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.name + '" disabled></div></li></div></div>' +
                     
                     '<div class="mui-row lineStyle">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-10 mui-col-xs-10">' +
                     '<li class="mui-table-view-cell app_bline3">' +
-                    '<div class="mui-input-row inputClassAdd">' +
-                    '<label class="commodityName">商品货号:</label>' +
+                    '<div class="mui-input-row">' +
+                    '<label>商品货号:</label>' +
                     '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.skuInfo.itemNo + '" disabled></div></li></div></div>' +
                     
                     '<div class="mui-row lineStyle">' +
@@ -782,12 +782,12 @@
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
                     '<li class="mui-table-view-cell app_bline3">' +
-                    '<div class="mui-input-row inputClassAdd">' +
+                    '<div class="mui-input-row">' +
                     '<label>品牌名称:</label>' + 
                     '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.productInfo.brandName + '" disabled></div></li></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
                     '<li class="mui-table-view-cell app_bline3">' +
-                    '<div class="mui-input-row inputClassAdd">' +
+                    '<div class="mui-input-row">' +
                     '<label>供应商:</label>' +
                     '<input type="text" class="mui-input-clear" id="" value="' + item.skuInfo.productInfo.office.name + '" disabled></div></li></div></div>' +
                    
@@ -795,12 +795,12 @@
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
                     '<li class="mui-table-view-cell app_bline3">' +
-                    '<div class="mui-input-row inputClassAdd">' +
+                    '<div class="mui-input-row">' +
                     '<label>结算价:</label>' +  
                     '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
                     '<li class="mui-table-view-cell app_bline3">' +
-                    '<div class="mui-input-row inputClassAdd">' +
+                    '<div class="mui-input-row">' +
                     '<label>申报数量:</label>' +
                     '<input type="text" class="mui-input-clear inDeclareNum" id="reqQty_'+ item.skuInfo.id + '" value="' + item.reqQty + '">'+
                     '<font>*</font>'+
@@ -902,8 +902,8 @@
 	                                        '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
 	                                        '<div class="mui-col-sm-10 mui-col-xs-10">' +
 	                                        '<li class="mui-table-view-cell app_bline3">' +
-	                                        '<div class="mui-input-row inputClassAdd">' +
-	                                        '<label class="commodityName">商品名称:</label>' +
+	                                        '<div class="mui-input-row">' +
+	                                        '<label>商品名称:</label>' +
 	                                        '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.name + '" disabled>' +
 	                                        '</div></li></div></div>' +
 	                                       
@@ -911,8 +911,8 @@
 	                                        '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
 	                                        '<div class="mui-col-sm-10 mui-col-xs-10">' +
 	                                        '<li class="mui-table-view-cell app_bline3">' +
-	                                        '<div class="mui-input-row inputClassAdd">' +
-	                                        '<label class="commodityName">商品货号:</label>' +
+	                                        '<div class="mui-input-row">' +
+	                                        '<label>商品货号:</label>' +
 	                                        '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.itemNo + '" disabled>' +
 	                                        '</div></li></div></div>' +
 	                                        
@@ -929,13 +929,13 @@
 	                                        '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
 	                                        '<div class="mui-col-sm-5 mui-col-xs-5">' +
 	                                        '<li class="mui-table-view-cell app_bline3">' +
-	                                        '<div class="mui-input-row inputClassAdd">' +
+	                                        '<div class="mui-input-row">' +
 	                                        '<label>品牌名称:</label>' +
 	                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.productInfo.brandName +'" disabled>' +
 	                                        '</div></li></div>' +
 	                                        '<div class="mui-col-sm-5 mui-col-xs-5">' +
 	                                        '<li class="mui-table-view-cell app_bline3">' +
-	                                        '<div class="mui-input-row inputClassAdd">' +
+	                                        '<div class="mui-input-row">' +
 	                                        '<label>供应商:</label>' +
 	                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.productInfo.brandName + '" disabled>' +
 	                                        '</div></li></div></div>' +
@@ -944,12 +944,12 @@
 	                                        '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
 	                                        '<div class="mui-col-sm-5 mui-col-xs-5">' +
 	                                        '<li class="mui-table-view-cell app_bline3">' +
-	                                        '<div class="mui-input-row inputClassAdd">' +
+	                                        '<div class="mui-input-row">' +
 	                                        '<label>结算价:</label>' +
 	                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled></div></li></div>' +
 	                                        '<div class="mui-col-sm-5 mui-col-xs-5">' +
 	                                        '<li class="mui-table-view-cell app_bline3">' +
-	                                        '<div class="mui-input-row inputClassAdd">' +
+	                                        '<div class="mui-input-row">' +
 	                                        '<label>申报数量:</label>' +
 	                                        '<input type="hidden" class="mui-input-clear" value="' + skuInfo.id + '">' +
 	                                        '<input type="text" class="mui-input-clear" placeholder="请输入数量" id="reqQty_'+ skuInfo.id +'">' +

@@ -76,7 +76,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		          	    console.log(res)
+//		          	    console.log(res)
 //		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 			            var returnData = res.data.page.list;
 			            var dataRow = res.data.roleSet;
@@ -94,7 +94,7 @@
 			                dataType: "json",
 			                async:false,
 			                success: function(user){                 
-					            console.log(user)
+//					            console.log(user)
 								userId = user.data.id
 			                }
 			            });	
@@ -128,8 +128,8 @@
 			            });
                         if(arrLen > 0) {
 							$.each(returnData, function(i, item) {
-//								console.log(item)
-//								console.log(arrbss)
+//								console.log(item.commonProcess.requestOrderProcess)
+								console.log(item)
 								$.each(arrbss, function(b, bs) {
 									if(bs.value==item.fromType) {
 										stock = bs.label
@@ -161,6 +161,7 @@
 										DataRoleGener = requestOrderProcess.roleEnNameEnum;
 									}
 									var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
+									console.log(fileRoleData)
 									if(item.commonProcess && fileRoleData.length>0 && requestOrderProcess.name != '驳回') {
 										inCheck = '审核'
 										inCheckBtn='inCheckBtn'

@@ -6,10 +6,6 @@
 		<title>备货单详情</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css?time=20180912" rel="stylesheet" />
-		<style type="text/css">
-			.mui-input-group .mui-input-row:after {left: 0px;}
-			.mui-input-row label~textarea {width: 66%;border: 1px solid #ccc;margin: 5px 15px 5px -5px;}
-		</style>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
@@ -29,7 +25,7 @@
 			                厂商备货 
 			        <input id="fromType2" type="radio" name="fromType" value="2" disabled="disabled" class="inputRadio"/>
 		        </div>	
-		   </div>
+		    </div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
 				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
@@ -78,8 +74,8 @@
 				<div class="labelLf">支付列表：</div>
 				<ul id="inPaylist" class="mui-table-view"></ul>
 			</div>
-			<div class="mui-input-row">
-				<label style="width: 30%;">备注：</label>
+			<div class="mui-input-row remark">
+				<label>备注：</label>
 				<textarea id="inPoRemark" name="" rows="" cols="" readonly></textarea>
 			</div>
 			<div class="mui-input-row">
@@ -101,22 +97,22 @@
 			<div class="mui-input-row inComdty inProduction" id="schedulingPlan_forHeader">
 				<div class="labelLf">按订单排产：</div>
 				<div class="mui-row app_bline3">
-					<label class="app_pr0" style="float:left;font-size: 13px;">排产记录：</label>
+					<label class="app_pr0 app_f13">排产记录：</label>
 					<ul id="schedulingHeader" class="mui-table-view app_fr app_w70p"></ul>											
 				</div>
 				<div class="schedulingHeaderRemark">
-					<label class="app_pr0" style="float:left;font-size: 13px;">排产备注：</label>
+					<label class="app_pr0 app_f13">排产备注：</label>
 				</div>				
 			</div>
 			<div class="mui-input-row inComdty inProduction" id="schedulingPlan_forSku">
 				<div class="labelLf">按商品排产：</div>
 				<ul id="purchaseMenus" class="mui-table-view app_bline3"></ul>
 				<div class="mui-row app_bline3">
-					<label class="app_pr0" style="float:left;font-size: 13px;">排产记录：</label>
+					<label class="app_pr0 app_f13">排产记录：</label>
 					<ul id="schedulingHeaders" class="mui-table-view app_fr app_w70p"></ul>											
 				</div>
 				<div class="schedulingHeaderRemarks">
-					<label class="app_pr0" style="float:left;font-size: 13px;">排产备注：</label>
+					<label class="app_pr0 app_f13">排产备注：</label>
 				</div>			
 			</div>
 			<!--审批流程块 有的话显示-->
