@@ -237,7 +237,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
             if (flag && (source == null || source.equals("") || source.equals("purchaser"))) {
                 customCenterConsultant.setCenters(user.getCompany());
 
-                List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
+                //List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
+                List<Office> officeList = officeDao.findOfficeById4Mobile(customCenterConsultant);
 
                 return officeList;
             } else if (flagb && StringUtils.isNotBlank(source) && source.equals("purchaser")) {
@@ -245,7 +246,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
                 if (StringUtils.isNotBlank(source) && source.equals("purchaser")) {
                     customCenterConsultant.setConsultants(user);
                 }
-                List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
+                //List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
+                List<Office> officeList = officeDao.findOfficeById4Mobile(customCenterConsultant);
 
                 return officeList;
             } else if (flagb || (flag && StringUtils.isNotBlank(source) && source.equals("con"))) {

@@ -64,4 +64,11 @@ public interface OfficeDao extends TreeDao<Office> {
      * @return
      */
     List<BizUserStatisticsDto> singleUserRegisterData(@Param("startDate")String startDate, @Param("endDate")String endDate, @Param("officeId")String officeId);
+
+    /**
+     *
+     * @param bizCustomCenterConsultant
+     * @return
+     */
+    List<Office> findOfficeById4Mobile(BizCustomCenterConsultant bizCustomCenterConsultant);
 }
