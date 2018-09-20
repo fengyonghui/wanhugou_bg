@@ -44,19 +44,19 @@
 						$('#insupplierBank').parent().hide(); //供应商开户行
 					}
 					/*业务状态*/
-					//				    $.ajax({
-					//		                type: "GET",
-					//		                url: "/a/sys/dict/listData",
-					//		                data: {type:"biz_req_status"},		                
-					//		                dataType: "json",
-					//		                success: function(resl){
-					//		                	$.each(resl,function(i,item){
-					//		                		if(item.value==res.data.bizRequestHeader.bizStatus){
-					//		                		 	$('#inPoDizstatus').val(item.label);  
-					//		                		}
-					//		                	})
-					//						}
-					//					});
+//				    $.ajax({
+//		                type: "GET",
+//		                url: "/a/sys/dict/listData",
+//		                data: {type:"biz_req_status"},		                
+//		                dataType: "json",
+//		                success: function(resl){
+//		                	$.each(resl,function(i,item){
+//		                		if(item.value==res.data.bizRequestHeader.bizStatus){
+//		                		 	$('#inPoDizstatus').val(item.label);  
+//		                		}
+//		                	})
+//						}
+//					});
 					//排产状态
 					if(res.data.bizRequestHeader.bizPoHeader) {
 						var itempoSchType = res.data.bizRequestHeader.bizPoHeader.poSchType;
@@ -437,6 +437,7 @@
 					//
 					if(i == auditLen - 1 && data.bizRequestHeader.processPo != 'processPo' && item.requestOrderProcess.name != '审核完成') {
 						if(item.requestOrderProcess.name != '审核完成') {
+							$('#incheck').val(item.requestOrderProcess.name);
 							CheckHtmlList += '<li class="step_item">' +
 								'<div class="step_num">' + step + ' </div>' +
 								'<div class="step_num_txt">' +
@@ -523,6 +524,7 @@
 								'</li>'
 						}
 						if(a == len - 1) {
+							$('#incheck').val(item.purchaseOrderProcess.name);
 							CheckHtmlList += '<li class="step_item">' +
 								'<div class="step_num">' + totalStep + ' </div>' +
 								'<div class="step_num_txt">' +

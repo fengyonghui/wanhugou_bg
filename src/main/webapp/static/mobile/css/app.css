@@ -633,11 +633,11 @@ body{font-size: 15px;color:#3b3b3b;}
 .photoParent img {width: 50px;}
 .photoParents {margin-top: 13%;margin-left:10px;}
 .photoParents img {width: 50px;}
-/*备货单支付*/		
+/*备货单支付*/
 /*.pay-logo {width: 40px;margin-left: 20px;}
 .pay-txt {float: right;padding: 9px;width: 65%;}
 .pay-txt>input {position: absolute;right: 55px;}	*/
-	
+
 /*备货单所有备货商品*/
 .inComdty div.mui-input-row input, .inComdty div.mui-input-row label {padding: 0;font-size: 12px;}
 /*备货单详情---支付列表*/
@@ -656,7 +656,7 @@ body{font-size: 15px;color:#3b3b3b;}
 
 /*备货单---备注*/
 .mui-input-group div.remark label {width: 30%;}
-.mui-input-group div.remark label~textarea {width: 66%;border: 1px solid #ccc;border-radius: 5px;margin: 5px 15px 5px -5px;}
+.mui-input-group div.remark label~textarea {width: 66%;border: 1px solid #ccc;border-radius: 5px;margin: 5px 15px 5px -5px;padding-left: 15px;}
 
 /*备货单添加、修改---备货商品*/
 .inAddComdty div.mui-row li {padding: 5px;list-style: none;height: 30px;border-bottom: 1px solid #efeff4;}
@@ -687,8 +687,8 @@ body{font-size: 15px;color:#3b3b3b;}
 
 /*审核按钮*/
 .checkBtn button {color: #fff;width: 35%;}
-.checkBtn button.passBtn {background-color: #40ABE9;} 
-.checkBtn button.RejectBtn {background-color: #dd5563;} 
+.checkBtn button.passBtn {background-color: #40ABE9;}
+.checkBtn button.RejectBtn {background-color: #dd5563;}
 
 
 /*订单审核产品信息*/
@@ -711,7 +711,7 @@ body{font-size: 15px;color:#3b3b3b;}
 input[disabled],input:disabled,input.disabled{color: #000;/*-webkit-text-fill-color:#3b3b3b;*/-webkit-opacity:1;opacity: 1;}
 
 /*滑动---阻止默认事件*/
-a, #list  {touch-action: none;}
+a, #refreshContainer, #list  {touch-action: none;}
 
 /*改变 ios 默认radio样式 */
 input[type=radio].inputRadio {-webkit-appearance: none;position: relative;top: -1px;width: 15px;height: 15px;border: 1px solid #999;-webkit-border-radius: 50%;border-radius: 50%;background-color: #fff;vertical-align: middle;}
