@@ -448,7 +448,9 @@
 						console.log(items)
 						var len = data.bizRequestHeader.bizPoHeader.commonProcessList.length;
 						console.log(len)
+						console.log(auditLen)
 						var totalStep = auditLen + a;
+						console.log(totalStep)
 //						if(len-a != 1) {
 //							CheckHtmlList +='<li class="step_item">'+
 //							'<div class="step_num">'+ totalStep +' </div>'+
@@ -527,19 +529,23 @@
 		commodityHtml: function(data) {
 			var _this = this;
 			var htmlCommodity = '';
-//			entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state
-			if(data.reqDetailList!=null){
-				console.log(data.bizRequestHeader.str)
-				console.log(data.bizRequestHeader.bizStatus)
-				console.log(data.bizAuditStatusMap)
-				
+			if(data.reqDetailList!=null){				
 				$.each(data.reqDetailList, function(i, item) {
-					$.each(data.bizAuditStatusMap,function(n,v){
-						console.log(Object.keys(data.bizAuditStatusMap))
-						if(data.bizRequestHeader.str=='detail'&&data.bizRequestHeader.bizStatus>=n){
-							console.log(data.bizRequestHeader.bizStatus)
-						}						
-					})
+					if(data.bizRequestHeader.str=='detail'&&data.bizRequestHeader.bizStatus>=data.UNREVIEWED){
+						var invNameTxt = item.invName;
+						var skuInvQtyTxt= item.skuInvQty;
+						var sellCountTxt= item.sellCount;
+						if(data.roleChanne!="" && data.roleChanne=='channeOk'){
+							var invenSkuOrdTxt= item.invenSkuOrd;
+						}
+					}
+					console.log(data.PURCHASING)
+					if(data.bizRequestHeader.str=='detail'&&data.bizRequestHeader.bizStatus>=10){
+						var recvQtyTxt= item.recvQty;
+					}else{
+						var recvQtyTxt= "";
+						$('#commodityMenu #recvQtys').hide();						
+					}					
 					htmlCommodity +='<li class="mui-table-view-cell mui-media app_bline app_pr">'+
 	//		产品图片
 						'<div class="photoParent mui-pull-left app_pa">'+
@@ -577,23 +583,23 @@
 							'</div>'+
 							'<div class="mui-input-row">'+
 								'<label>仓库名称：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ item.invName +'" disabled>'+
+								'<input type="text" class="mui-input-clear" value="'+ invNameTxt +'" disabled>'+
 							'</div>'+
 							'<div class="mui-input-row">'+
 								'<label>库存数量：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ item.skuInvQty +'" disabled>'+
+								'<input type="text" class="mui-input-clear" value="'+ skuInvQtyTxt +'" disabled>'+
 							'</div>'+
 							'<div class="mui-input-row">'+
 								'<label>销售量：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ item.sellCount +'" disabled>'+
+								'<input type="text" class="mui-input-clear" value="'+ sellCountTxt +'" disabled>'+
 							'</div>'+							
 							'<div class="mui-input-row">'+
 								'<label>总库存数量：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ item.invenSkuOrd +'" disabled>'+
+								'<input type="text" class="mui-input-clear" value="'+ invenSkuOrdTxt +'" disabled>'+
 							'</div>'+
 							'<div class="mui-input-row">'+
 								'<label>已收货数量：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ item.recvQty +'" disabled>'+
+								'<input type="text" class="mui-input-clear" id="recvQtys" value="'+ recvQtyTxt +'" disabled>'+
 							'</div>'+
 						'</div>'+
 					'</li>'

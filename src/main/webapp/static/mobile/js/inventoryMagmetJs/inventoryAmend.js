@@ -702,6 +702,7 @@
 						console.log(items)
 						var len = data.bizRequestHeader.bizPoHeader.commonProcessList.length;
 						console.log(len)
+						console.log(auditLen)
 						var totalStep = auditLen + a;
                         if(a==0&&len>1){
                         	CheckHtmlList +='<li class="step_item">'+
@@ -901,7 +902,7 @@
 	                            var prodKeys= keys.split(",");
 	                            var prodId= prodKeys[0];
 	                            var prodUrl= prodKeys[2];
-	                            var  brandName=prodKeys[6];
+	                            var brandName=prodKeys[6];
 	                            var resultListHtml="";
 	                            var t=0;
 	                            $.each(skuInfoList,function (index,skuInfo) {
@@ -973,29 +974,29 @@
 	                                        '</div></li></div></div></div></div>';
 	                            });
 	                            t++;                          
-	                            $("#searchInfo").append(resultListHtml);
-	                            //判断是否有相同的商品 
-	                            var dis=$("#searchInfo .skuinfo_check");
-	                            var dos=$("#commodityMenu .skuinfo_check");
-	                            $.each(dis,function(n,v){
-	                            	var s=$(this).attr('id')
-	                            	$.each(dos,function(n,v){
-	                            		var that=this;	                            	
-		                            	var y=$(that).attr('id')
-		                            	var divs=$("#serskudiv_"+s);
-		                            	if (s==y) {
-		                            		mui.toast('此供应商下已添加过此类备货商品！请选择其他商品！');
-		                            		divs.html('');
-		                            	}
-		                            })
-	                            })
-	                        })
+	                            $("#searchInfo").append(resultListHtml);	                            
+	                        })	                        
 	                        var addButtonHtml = '<div class="inAddBtnParent" id="batchAddDiv">' +
 	                                '<button id="batchAdd" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加' +
 	                                '</button></div>';
 	                        $("#searchInfo").append(addButtonHtml);
-	                    }
-                    	                  	                    	                       
+	                        //判断是否有相同的商品 
+                            var dis=$("#searchInfo .skuinfo_check");
+                            var dos=$("#commodityMenu .skuinfo_check");
+                            $.each(dis,function(n,v){
+                            	var s=$(this).attr('id')
+                            	$.each(dos,function(n,v){
+                            		var that=this;	                            	
+	                            	var y=$(that).attr('id')
+	                            	var divs=$("#serskudiv_"+s);
+	                            	if (s==y) {
+	                            		mui.toast('此供应商下已添加过此类备货商品！请选择其他商品！');
+	                            		divs.html('');
+	                            		$('#batchAddDiv').hide();
+	                            	}
+	                            })
+                            })	                        
+	                    }                    	                  	                    	                       
                     }
                 })
             });
