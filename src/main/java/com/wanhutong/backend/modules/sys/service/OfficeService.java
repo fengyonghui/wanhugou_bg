@@ -632,7 +632,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         Office office = new Office();
         User user = UserUtils.getUser();
         if (!user.isAdmin() && !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) && !OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType())
-                || user.getCompany().getType().equals(OfficeTypeEnum.WITHCAPITAL.getType()) || user.getCompany().getType().equals(OfficeTypeEnum.NETWORKSUPPLY.getType())) {
+                || user.getCompany().getType().equals(OfficeTypeEnum.WITHCAPITAL.getType()) || user.getCompany().getType().equals(OfficeTypeEnum.NETWORK.getType())) {
             office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
         } else if (StringUtils.isNotBlank(source) && (source.equals("ghs") || source.equals("gys") || source.equals("cgs"))) {
 
