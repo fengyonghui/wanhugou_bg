@@ -212,6 +212,61 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
     }
 
+    public List<Office> filerOffice4mobile(List<Office> offices, String source, OfficeTypeEnum officeType) {
+        Office office = new Office();
+        User user = UserUtils.getUser();
+        if (!user.isAdmin() && !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) && !OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType())) {
+            office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
+        } else if (StringUtils.isNotBlank(source) && (source.equals("ghs") || source.equals("gys") || source.equals("cgs"))) {
+
+        } else if (!user.isAdmin() && OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())) {
+            boolean flag = false;
+            boolean flagb = false;
+            if (user.getRoleList() != null) {
+                for (Role role : user.getRoleList()) {
+                    if (RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
+                        flag = true;
+
+                    } else if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())) {
+                        flagb = true;
+
+                    }
+                }
+            }
+            BizCustomCenterConsultant customCenterConsultant = new BizCustomCenterConsultant();
+            if (flag && (source == null || source.equals("") || source.equals("purchaser"))) {
+                customCenterConsultant.setCenters(user.getCompany());
+
+                List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
+
+                return officeList;
+            } else if (flagb && StringUtils.isNotBlank(source) && source.equals("purchaser")) {
+                customCenterConsultant.setCenters(user.getCompany());
+                if (StringUtils.isNotBlank(source) && source.equals("purchaser")) {
+                    customCenterConsultant.setConsultants(user);
+                }
+                List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
+
+                return officeList;
+            } else if (flagb || (flag && StringUtils.isNotBlank(source) && source.equals("con"))) {
+                office.setType(String.valueOf(officeType.ordinal()));
+
+                office.setDelFlag(DEL_FLAG_NORMAL);
+                List<Office> officeList = officeDao.findOfficeCustByIdToParent(office);
+                return officeList;
+            }
+        }
+
+        office.setType(String.valueOf(officeType.ordinal()));
+
+        office.setDelFlag(DEL_FLAG_NORMAL);
+
+        List<Office> list = queryList(office);
+
+        return list;
+
+    }
+
     public List<Office> filerOfficeByPhone(List<Office> offices, String source, OfficeTypeEnum officeType, String phone) {
         Office office = new Office();
         office.setPhone(phone);
