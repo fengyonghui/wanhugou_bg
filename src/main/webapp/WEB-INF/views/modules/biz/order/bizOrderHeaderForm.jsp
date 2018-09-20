@@ -493,7 +493,7 @@
     </script>
     <script type="text/javascript">
         function checkPending(obj) {
-            if('${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}' == 'true' && '${statusEnumState}' == 0) {
+            if(obj == '${OrderHeaderBizStatusEnum.SUPPLYING.state}' && '${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}' == 'true' && '${statusEnumState}' == 0) {
                 alert("代采订单需至少付款20%，请付款后刷新页面再审核");
                 return;
             }
@@ -1103,7 +1103,7 @@
 
 
         function deleteStyle() {
-            $("#remark").removeAttr("style");
+            // $("#remark").removeAttr("style");
             $("#cardNumber").removeAttr("style");
             $("#payee").removeAttr("style");
             $("#bankName").removeAttr("style");
@@ -1483,6 +1483,53 @@
                     console.info(error);
                 }
             });
+        }
+
+        function startAudit() {
+            var prew = false;
+            var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+            var submit = function (v, h, f) {
+                if ($String.isNullOrBlank(f.description)) {
+                    jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                    return false;
+                }
+                top.$.jBox.confirm("确认开始审核流程吗？", "系统提示", function (v1, h1, f1) {
+                    if (v1 == "ok") {
+                        var id = "${entity.bizPoHeader.id}";
+                        $.ajax({
+                            url: '${ctx}/biz/po/bizPoHeader/startAudit',
+                            contentType: 'application/json',
+                            data: {
+                                "id": id,
+                                "prew": prew,
+                                "desc": f.description,
+                                "action" : "startAuditAfterReject"
+                            },
+                            type: 'get',
+                            success: function (result) {
+                                result = JSON.parse(result);
+                                if(result.ret == true || result.ret == 'true') {
+                                    alert('操作成功!');
+                                    window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                                }else {
+                                    alert(result.errmsg);
+                                }
+                            },
+                            error: function (error) {
+                                console.info(error);
+                            }
+                        });
+                    }
+                }, {buttonsFocus: 1});
+                return true;
+            };
+
+            jBox(html, {
+                title: "请输入通过理由:", submit: submit, loaded: function (h) {
+                }
+            });
+
+
         }
 
     </script>
@@ -2256,6 +2303,7 @@
                             <tr>
                                 <th>流水号</th>
                                 <th>支付金额</th>
+                                <th>实收金额</th>
                                 <th>状态</th>
                                 <th>创建时间</th>
                             </tr>
@@ -2265,6 +2313,7 @@
                                 <tr>
                                     <td>${unline.serialNum}</td>
                                     <td>${unline.unlinePayMoney}</td>
+                                    <td>${unline.realMoney}</td>
                                     <td>${fns:getDictLabel(unline.bizStatus,"biz_order_unline_bizStatus" ,"未知状态" )}</td>
                                     <td><fmt:formatDate value="${unline.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                                 </tr>
@@ -2472,6 +2521,10 @@
                     </c:if>
                 </shiro:hasPermission>
 
+                <c:if test="${entity.str == 'startAudit'}">
+                    <input type="button" onclick="startAudit()" class="btn btn-primary" value="开启审核"/>
+                </c:if>
+
                     <!-- 一单到底，采购单审核 -->
                 <shiro:hasPermission name="biz:po:bizPoHeader:audit">
                     <c:if test="${entity.str == 'audit'}">
@@ -2500,7 +2553,7 @@
                     </c:if>
                 </shiro:hasPermission>
 
-                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails && entity.str!='audit'}">
+                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails && entity.str!='audit' && entity.str!='startAudit'}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
                         <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
                     </shiro:hasPermission>
@@ -3035,7 +3088,7 @@
         <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
             <input class="btn btn-primary" type="button"
                    onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" value="同意发货"/>&nbsp;
-            <input class="btn btn-primary" type="button"
+            <input class="btn btn-warning" type="button"
                    onclick="checkPending(${OrderHeaderBizStatusEnum.UNAPPROVE.state})" value="不同意发货"/>&nbsp;
         </shiro:hasPermission>
     </div>

@@ -299,6 +299,7 @@
 					"company.type": 8,  
 					"company.customerTypeTypeTen": 10,
 					"company.customerTypeEypeEleven": 11,
+					'company.customerTypeThirteen': 13,
 					conn: "connIndex",
 					'company.customerTypeThirteen': 13,
 					isFunc: true

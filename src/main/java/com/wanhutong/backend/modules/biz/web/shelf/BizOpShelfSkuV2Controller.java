@@ -3,8 +3,8 @@
  */
 package com.wanhutong.backend.modules.biz.web.shelf;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.BaseEntity;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.RoleUtils;
@@ -31,6 +31,8 @@ import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Servi
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +59,7 @@ import java.util.List;
 @RequestMapping(value = "${adminPath}/biz/shelf/bizOpShelfSkuV2")
 public class BizOpShelfSkuV2Controller extends BaseController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BizOpShelfSkuV2Controller.class);
 	@Autowired
 	private BizOpShelfSkuV2Service bizOpShelfSkuV2Service;
 	@Autowired
@@ -278,6 +281,22 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		}
 		return "redirect:"+Global.getAdminPath()+"//biz/shelf/bizOpShelfInfo/form?id="+bizOpShelfSku.getOpShelfInfo().getId();
 	}
+
+    @RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
+    @RequestMapping(value = "deleteOne")
+    @ResponseBody
+    public String deleteOne(BizOpShelfSku bizOpShelfSku, RedirectAttributes redirectAttributes) {
+        try {
+            bizOpShelfSku.setDelFlag(BizOpShelfSku.DEL_FLAG_DELETE);
+            bizOpShelfSkuV2Service.delete(bizOpShelfSku);
+            addMessage(redirectAttributes, "删除商品上架成功");
+            return "ok";
+        } catch (Exception e) {
+            LOGGER.error("删除上下架商品失败，opShelfId[{}]",bizOpShelfSku.getId(),e);
+            return "err";
+        }
+    }
+
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
 	@RequestMapping(value = "recovery")
 	public String recovery(BizOpShelfSku bizOpShelfSku, RedirectAttributes redirectAttributes) {
@@ -407,7 +426,10 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	public List<BizOpShelfSku> findDownOpShelfSku(BizOpShelfSku bizOpShelfSku) {
         if (bizOpShelfSku.getSkuInfo().getItemNo().isEmpty() && bizOpShelfSku.getSkuInfo().getPartNo().isEmpty()
                 && bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getProductInfo().getBrandName().isEmpty()) {
-            return null;
+			bizOpShelfSku.setShelfSign(5);
+			List<BizOpShelfSku> list=Lists.newArrayList();
+			list.add(bizOpShelfSku);
+            return list;
         }
         bizOpShelfSku.setBatchDownShelf("batch");
         return bizOpShelfSkuV2Service.findList(bizOpShelfSku);

@@ -28,6 +28,8 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	
 	private static final long serialVersionUID = 1L;
+	public static final Integer CURRENT = 1;
+	public static final Integer NOT_CURRENT = 0;
 	private String objectId;		// object_id
 	private String objectName;		// object_name
 	private int prevId = 0;		// 前一个ID.起始为0
