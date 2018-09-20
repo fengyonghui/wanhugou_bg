@@ -100,7 +100,7 @@
                     	'bizVendInfo.office.name': _this.bizOfficeName,//供应商名称
                     	'bizVendInfo.office.type': _this.bizOfficeType,//供应商所在机构类型
                     	fromType: localOriginType, //备货方
-                    	recvEta: inPoLastDaVal, //期望收货时间
+                    	recvEta: inPoLastDaVal, //newinput02期望收货时间
                     	remark: inPoRemarkVal, //备注信息
                     	bizStatus: bizStatusVal, //业务状态
                     	skuInfoIds: _this.skuInfoIds, //要添加的商品 id

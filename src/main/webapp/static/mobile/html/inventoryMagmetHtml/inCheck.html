@@ -58,13 +58,15 @@
 				<label>收货时间：</label>
 				<input type="date" class="mui-input-clear" id="inPoLastDa" disabled>
 			</div>
-			<div class="mui-input-row inComdty inDetailComdty">
-				<div class="labelLf">备货商品：</div>
-				<ul id="commodityMenu" class="mui-table-view"></ul>									
+			<div class="mui-row">
+				<div class="labelLf">备货商品：</div>							
 			</div>
-			<div class="mui-input-row">
+			<div class="mui-row app_bline2 inComdty inAddComdty" id="commodityMenu">
+			</div>
+			<div class="mui-row">
 				<div class="labelLf">商品库存：</div>
-				<ul id="" class="listBlue mui-table-view"></ul>
+			</div>
+			<div class="mui-row app_bline2 inComdty inAddComdty" id="Goodsstock">
 			</div>
 			<div class="mui-input-row" id="inPaylistbox">
 				<div class="labelLf">支付列表：</div>
@@ -126,6 +128,7 @@
 			<button id="inRejectBtn" type="submit" class="mui-btn mui-btn-blue app_fr RejectBtn">审核驳回</button>
 		</div>
 	<div class="clear"></div>
+	<input type="hidden" id="supplierId"/>
 	<input type="hidden" name="currentType" id="currentType" value="" />
 	<script src="../../js/component/mui.min.js"></script>
 	<script src="../../js/component/zepto.min.js"></script>
