@@ -778,7 +778,7 @@ public class BizPoHeaderController extends BaseController {
     public String startAudit(HttpServletRequest request, int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, @RequestParam(defaultValue = "1") Integer auditType, String desc, String action) {
         String mark = "oldAudit";
         if (StringUtils.isNotBlank(action)) {
-            mark = "auditAgain";
+            mark = "startAuditAfterReject";
         }
         Pair<Boolean, String> result = bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc, mark);
         if (result.getLeft()) {

@@ -1503,7 +1503,7 @@
                                 "id": id,
                                 "prew": prew,
                                 "desc": f.description,
-                                "action" : "startAudit"
+                                "action" : "startAuditAfterReject"
                             },
                             type: 'get',
                             success: function (result) {

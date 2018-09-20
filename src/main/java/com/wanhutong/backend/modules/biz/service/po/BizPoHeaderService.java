@@ -270,9 +270,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
         commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
         commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
-        commonProcessEntity.setCurrent(commonProcessEntity.CURRENT);
+        commonProcessEntity.setCurrent(CommonProcessEntity.CURRENT);
         List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
-        if (CollectionUtils.isEmpty(list) || "auditAgain".equals(mark)) {
+        if (CollectionUtils.isEmpty(list) || "startAuditAfterReject".equals(mark)) {
             commonProcessService.save(commonProcessEntity);
             this.updateProcessId(bizPoHeader.getId(), commonProcessEntity.getId());
         }
@@ -953,7 +953,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
         }
 
-        if ("auditAgain".equals(mark)) {
+        if ("startAuditAfterReject".equals(mark)) {
             CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
             commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
             commonProcessEntity.setObjectName(DATABASE_TABLE_NAME);
