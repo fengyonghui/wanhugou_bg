@@ -685,8 +685,11 @@ body{font-size: 15px;color:#3b3b3b;}
 /*======运营管理======*/
 .mui-table-view-cell p {border-bottom: 1px solid #e8e8e8;padding: 10px 15px 9px;}
 
-/*审核公共样式*/
-#staOrdCheckBtn button {background-color: #40ABE9;color: #fff;width: 35%;}
+/*审核按钮*/
+.checkBtn button {color: #fff;width: 35%;}
+.checkBtn button.passBtn {background-color: #40ABE9;} 
+.checkBtn button.RejectBtn {background-color: #dd5563;} 
+
 
 /*订单审核产品信息*/
 .commodity div.mui-input-row input, .commodity div.mui-input-row label {padding: 0;font-size: 12px;}

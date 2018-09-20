@@ -24,48 +24,28 @@
 			var _this = this;
 			$.ajax({
                 type: "GET",
-                url: "/a/biz/request/bizRequestHeader/form4Mobile",
-                data: {id:_this.userInfo.inListId},
+                url: "/a/biz/request/bizRequestHeaderForVendor/form4MobileNew",
+                data: {id:_this.userInfo.inListId,str:'detail'},
                 dataType: "json",
                 success: function(res){
-//					console.log(res)
+					console.log(res)
 					/*业务状态*/
-					var bizstatus = res.data.entity.bizStatus;
-					var bizstatusTxt = '';
-					if(bizstatus==0) {
-						bizstatusTxt = "未审核"
-					}else if(bizstatus==1) {
-						bizstatusTxt = "首付支付"
-					}else if(bizstatus==2) {
-						bizstatusTxt = "全部支付"
-						inCheck = "审核"
-					}else if(bizstatus==5) {
-						bizstatusTxt = "审核通过"
-					}else if(bizstatus==6) {
-						bizstatusTxt = "审批中"
-					}else if(bizstatus==7) {
-						bizstatusTxt = "审批完成"
-					}else if(bizstatus==10) {
-						bizstatusTxt = "采购中"
-					}else if(bizstatus==15) {
-						bizstatusTxt = "采购完成"
-					}else if(bizstatus==20) {
-						bizstatusTxt = "备货中"
-					}else if(bizstatus==25) {
-						bizstatusTxt = "供货完成"
-					}else if(bizstatus==30) {
-						bizstatusTxt = "收货完成"
-					}else if(bizstatus==35) {
-						bizstatusTxt = "部分结算"
-					}else if(bizstatus==37) {
-						bizstatusTxt = "结算完成"
-					}else if(bizstatus==40) {
-						bizstatusTxt = "取消"
-					}else {
-						bizstatusTxt = '未知类型'
-					}
-					
-					$('#checkPoDizstatus').val(bizstatusTxt)
+//				    var itemStatus=res.data.bizRequestHeader.bizStatus;
+//				    var bizstatusTxt = '';
+//				    $.ajax({
+//		                type: "GET",
+//		                url: "/a/sys/dict/listData",
+//		                data: {type:"biz_req_status"},		                
+//		                dataType: "json",
+//		                success: function(res){
+//		                	$.each(res,function(i,item){
+//		                		 if(item.value==itemStatus){
+//		                		 	  bizstatusTxt = item.label 
+//		                		 }
+//		                	})
+//		                	$('#checkPoDizstatus').val(bizstatusTxt);
+//						}
+//					});
 					$('#checkPoordNum').val(res.data.entity.reqNo)
 					$('#checkOrordNum').val(res.data.entity.fromOffice.name)
 					$('#inPoLastDa').val(_this.formatDateTime(res.data.entity.recvEta))
