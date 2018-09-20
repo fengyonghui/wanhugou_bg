@@ -669,7 +669,7 @@ public class OfficeController extends BaseController {
                 if (ArrayUtils.isNotEmpty(split) && split.length > 1) {
                     list = officeService.findListByTypeList(Arrays.asList(split));
                 }else {
-                    list = officeService.filerOffice(null, source, OfficeTypeEnum.stateOf(defType));
+                    list = officeService.filerOffice4mobile(null, source, OfficeTypeEnum.stateOf(defType));
                 }
             }
         }
