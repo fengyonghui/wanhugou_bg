@@ -173,7 +173,7 @@
 			var htmlList = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/sys/office/queryTreeList',
+				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
 					type: 6
 				},

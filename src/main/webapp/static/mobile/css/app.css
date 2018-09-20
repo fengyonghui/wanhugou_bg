@@ -633,11 +633,11 @@ body{font-size: 15px;color:#3b3b3b;}
 .photoParent img {width: 50px;}
 .photoParents {margin-top: 13%;margin-left:10px;}
 .photoParents img {width: 50px;}
-/*备货单支付*/		
+/*备货单支付*/
 /*.pay-logo {width: 40px;margin-left: 20px;}
 .pay-txt {float: right;padding: 9px;width: 65%;}
 .pay-txt>input {position: absolute;right: 55px;}	*/
-	
+
 /*备货单所有备货商品*/
 .inComdty div.mui-input-row input, .inComdty div.mui-input-row label {padding: 0;font-size: 12px;}
 /*备货单详情---支付列表*/
@@ -687,8 +687,8 @@ body{font-size: 15px;color:#3b3b3b;}
 
 /*审核按钮*/
 .checkBtn button {color: #fff;width: 35%;}
-.checkBtn button.passBtn {background-color: #40ABE9;} 
-.checkBtn button.RejectBtn {background-color: #dd5563;} 
+.checkBtn button.passBtn {background-color: #40ABE9;}
+.checkBtn button.RejectBtn {background-color: #dd5563;}
 
 
 /*订单审核产品信息*/
