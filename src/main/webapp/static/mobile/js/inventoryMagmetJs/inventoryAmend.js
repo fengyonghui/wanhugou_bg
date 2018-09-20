@@ -95,8 +95,7 @@
 		                success: function(user){                 
 				            console.log(user)
 							userId = user.data.id;
-							roleNames= user.data.roleNames;
-							console.log(roleNames)
+							$('#bizStatusVal').val(userId)
 		                }
 		            });
 		            /*业务状态*/
@@ -253,13 +252,15 @@
                 if(inPoLastDaVal == null || inPoLastDaVal == "") {
                     mui.toast("请选择收货时间！")
                     return;
-                }
-                if(bizStatusVal == null || bizStatusVal == "") {
-                    mui.toast("请选择业务状态！")
-                    return;
-                }
-                console.log(_this.fromOfficeId);
-                console.log(_this.bizOfficeId);
+                }               
+                if($('#bizStatusVal').val()!=""&&$('#bizStatusVal').val()==1){
+                	if(bizStatusVal == null || bizStatusVal == "") {
+	                    mui.toast("请选择业务状态！")
+	                    return;
+	                }
+                }                
+//              console.log(_this.fromOfficeId);
+//              console.log(_this.bizOfficeId);
                 $.ajax({
                     type: "post", 
                     url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
@@ -335,7 +336,7 @@
         }, 
         getbizOfficeId: function(insupplierNum) {
             var _this = this;
-            var fromOfficeId = "";
+            var bizOfficeId = "";
             $.ajax({
                 type: 'GET',
                 url: '/a/sys/office/queryTreeList',

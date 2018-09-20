@@ -111,7 +111,7 @@
 					_this.paylistHtml(res.data); //支付列表
 					_this.checkProcessHtml(res.data); //审批流程
 					//					entity.str == 'audit' && entity.commonProcess.type == defaultProcessId
-//					if(res.data.bizRequestHeader.str == 'audit' && res.data.bizRequestHeader.commonProcess.type == defaultProcessId){
+//					if(res.data.bizRequestHeader.str == 'audit' && res.data.bizRequestHeader.commonProcess.type == res.data.defaultProcessId){
 						_this.stockGoodsHtml(res.data); //商品库存
 //					}
 					
