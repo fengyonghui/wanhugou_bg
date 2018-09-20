@@ -242,11 +242,11 @@
                             </c:otherwise>
                         </c:choose>
 
-                        <shiro:hasPermission name="biz:po:bizPoHeader:startAudit">
-                            <c:if test="${bizPoHeader.commonProcess.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'}">
-                                <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=startAudit">开启审核</a>
-                            </c:if>
-                        </shiro:hasPermission>
+                        <%--<shiro:hasPermission name="biz:po:bizPoHeader:startAudit">--%>
+                            <%--<c:if test="${bizPoHeader.commonProcess.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'}">--%>
+                                <%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=startAudit">开启审核</a>--%>
+                            <%--</c:if>--%>
+                        <%--</shiro:hasPermission>--%>
                         <shiro:hasPermission name="biz:po:bizPoHeader:audit">
                             <c:if test="${bizPoHeader.commonProcess.id != null
 									&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
@@ -284,14 +284,16 @@
                         </c:if>
 
                         <!-- 驳回的单子再次开启审核 -->
-                        <c:if test="${bizPoHeader.commonProcess.type == -1}">
-                            <c:if test="${bizPoHeader.bizOrderHeader != null}">
-                                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoHeader.bizOrderHeader.id}&str=startAudit">开启审核</a>
+                        <shiro:hasPermission name="biz:po:bizPoHeader:startAuditAfterReject">
+                            <c:if test="${bizPoHeader.commonProcess.type == -1}">
+                                <c:if test="${bizPoHeader.bizOrderHeader != null}">
+                                    <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoHeader.bizOrderHeader.id}&str=startAudit">开启审核</a>
+                                </c:if>
+                                <c:if test="${bizPoHeader.bizRequestHeader != null}">
+                                    <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=startAudit">开启审核</a>
+                                </c:if>
                             </c:if>
-                            <c:if test="${bizPoHeader.bizRequestHeader != null}">
-                                <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=startAudit">开启审核</a>
-                            </c:if>
-                        </c:if>
+                        </shiro:hasPermission>
 
 
                         <%--<c:choose>--%>
