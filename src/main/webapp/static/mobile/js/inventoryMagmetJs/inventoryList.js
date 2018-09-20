@@ -129,7 +129,7 @@
                         if(arrLen > 0) {
 							$.each(returnData, function(i, item) {
 //								console.log(item.commonProcess.requestOrderProcess)
-								console.log(item)
+//								console.log(item)
 								$.each(arrbss, function(b, bs) {
 									if(bs.value==item.fromType) {
 										stock = bs.label
@@ -144,15 +144,15 @@
 								/*审核按钮*/	
 								var inCheck = '';
 								var inCheckBtn='';
+								var requestOrderProcess = '';
+								if(item.commonProcess.requestOrderProcess) {
+									requestOrderProcess = item.commonProcess.requestOrderProcess
+								}
+								var purchaseOrderProcess = '';
+								if(item.bizPoHeader.commonProcess) {
+									purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
+								}
 								if(_this.checkFlag == true) {
-									var requestOrderProcess = '';
-									if(item.commonProcess.requestOrderProcess) {
-										requestOrderProcess = item.commonProcess.requestOrderProcess
-									}
-									var purchaseOrderProcess = '';
-									if(item.bizPoHeader) {
-										purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
-									}
 //								<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
 //							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
 //							}">
@@ -161,7 +161,7 @@
 										DataRoleGener = requestOrderProcess.roleEnNameEnum;
 									}
 									var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
-									console.log(fileRoleData)
+//									console.log(fileRoleData)
 									if(item.commonProcess && fileRoleData.length>0 && requestOrderProcess.name != '驳回') {
 										inCheck = '审核'
 										inCheckBtn='inCheckBtn'
