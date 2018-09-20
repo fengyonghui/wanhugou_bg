@@ -907,7 +907,10 @@
         function audit(auditType, description) {
             var id = $("#id").val();
             var currentType = $("#currentJoType").val();
+            // var suplys = $("#suplys").val();
+            // var orderType = 1;
             var createPo = $("#createPo").val();
+            var lastPayDateVal = $("#lastPayDate").val();
 
             if(createPo == "yes") {
                 var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
@@ -928,7 +931,7 @@
             $.ajax({
                 url: '${ctx}/biz/order/bizOrderHeader/audit',
                 contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "createPo": createPo, "lastPayDateVal":lastPayDateVal},
                 type: 'get',
                 async: false,
                 success: function (result) {
