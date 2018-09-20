@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
@@ -54,13 +55,20 @@ import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -1343,5 +1351,81 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         return result;
     }
 
+    public String autoSave(String reqDetailIds, String orderDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal, String prewStatus, String type,
+                           String version, HttpServletResponse response, HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) throws ParseException {
+        Office vendOffice = new Office();
+        vendOffice.setId(Integer.parseInt(vendorId));
+
+        BizPoHeader bizPoHeader = new BizPoHeader();
+        bizPoHeader.setVendOffice(vendOffice);
+        if (reqDetailIds != null || !"".equals(reqDetailIds)) {
+            bizPoHeader.setReqDetailIds(reqDetailIds);
+        }
+        if (orderDetailIds != null || !"".equals(orderDetailIds)) {
+            bizPoHeader.setOrderDetailIds(orderDetailIds);
+        }
+        bizPoHeader.setUnitPrices(unitPrices);
+        bizPoHeader.setOrdQtys(ordQtys);
+
+        if ("audit".equalsIgnoreCase(type)) {
+            String msg = this.genPaymentOrder(bizPoHeader).getRight();
+            //addMessage(redirectAttributes, msg);
+            return "生成支付申请单";
+        }
+
+        Set<Integer> poIdSet = this.findPrewPoHeader(bizPoHeader);
+        if (poIdSet.size() == 1) {
+            //addMessage(redirectAttributes, "prew".equals(prewStatus) ? "采购订单预览信息" : "保存采购订单成功");
+            return "采购单预览";
+        }
+        int deOfifceId = 0;
+        if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null) {
+            deOfifceId = bizPoHeader.getDeliveryOffice().getId();
+        }
+
+        //生成采购单预览
+        String poNo = "0";
+        bizPoHeader.setOrderNum(poNo);
+        bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
+        bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
+        Integer id = bizPoHeader.getId();
+        this.save(bizPoHeader);
+        if (id == null) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
+        if (bizPoHeader.getOrderNum() == null || "0".equals(bizPoHeader.getOrderNum())) {
+            poNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO, deOfifceId, bizPoHeader.getVendOffice().getId(), bizPoHeader.getId());
+            bizPoHeader.setOrderNum(poNo);
+            this.savePoHeader(bizPoHeader);
+        }
+//        if ("mobile".equalsIgnoreCase(version)) {
+//            return renderString(response, JsonUtil.generateData("操作成功", request.getParameter("callback")), "application/json");
+//        }
+
+        //确认生成采购单
+        Integer poHeaderIdid = bizPoHeader.getId();
+        bizPoHeader = this.get(poHeaderIdid);
+        bizPoHeader.setDeliveryStatus(0);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (org.apache.commons.lang3.StringUtils.isBlank(lastPayDateVal)) {
+            bizPoHeader.setLastPayDate(new Date());
+        } else {
+            Date lastPayDate = sdf.parse(lastPayDateVal);
+            bizPoHeader.setLastPayDate(lastPayDate);
+        }
+        bizPoHeader.setIsPrew(0);
+        bizPoHeader.setType("createPo");
+        this.savePoHeader(bizPoHeader);
+
+        //addMessage(redirectAttributes, "保存采购订单成功");
+
+        //采购单开启审核，同时自动生成付款单
+        Pair<Boolean, String> audit = this.autoSavePaymentOrder(poHeaderIdid);
+        if (audit.getLeft().equals(Boolean.TRUE)) {
+            String poId = String.valueOf(bizPoHeader.getId());
+            return JsonUtil.generateData("采购单生成," + poId, null);
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);
+    }
 
 }

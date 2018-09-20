@@ -761,11 +761,11 @@ public class BizRequestOrderController extends BaseController {
                 result.put("vendorId", String.valueOf(vendorId));
                 String unitPrices = "";
                 String ordQtys = "";
-                Map<String,List<BizOrderDetail>> orderDetailMap = new LinkedHashMap<>();
+                Map<String, List<BizOrderDetail>> orderDetailMap = new LinkedHashMap<>();
                 if (StringUtils.isNotBlank(orderDetailIds)) {
                     String[] orderDetailArr = orderDetailIds.split(",");
                     for (int i = 0; i < orderDetailArr.length; i++) {
-                        if (StringUtils.isBlank(orderDetailArr[i])){
+                        if (StringUtils.isBlank(orderDetailArr[i])) {
                             continue;
                         }
                         BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(orderDetailArr[i].trim()));
@@ -774,14 +774,14 @@ public class BizRequestOrderController extends BaseController {
                         Integer ordHerderQty = ordQty - sentQty;
                         ordQtys += ordHerderQty + ",";
 
-                        Integer key =bizOrderDetail.getOrderHeader().getId();
-                        Integer lineNo=bizOrderDetail.getLineNo();
-                        BizPoOrderReq bizPoOrderReq =new BizPoOrderReq();
+                        Integer key = bizOrderDetail.getOrderHeader().getId();
+                        Integer lineNo = bizOrderDetail.getLineNo();
+                        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
                         bizPoOrderReq.setSoLineNo(lineNo);
                         bizPoOrderReq.setOrderHeader(bizOrderDetail.getOrderHeader());
                         bizPoOrderReq.setIsPrew(0);
-                        List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
-                        if(poOrderReqList!=null && poOrderReqList.size()==0){
+                        List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+                        if (poOrderReqList != null && poOrderReqList.size() == 0) {
                             BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
                             bizOrderDetail.setOrderHeader(bizOrderHeader);
                             BizSkuInfo sku = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
@@ -789,24 +789,29 @@ public class BizRequestOrderController extends BaseController {
                             Double buyPrice = skuInfo.getBuyPrice();
                             unitPrices += String.valueOf(buyPrice) + ",";
                             bizOrderDetail.setSkuInfo(skuInfo);
-                            if(orderDetailMap.containsKey(key.toString())){
+                            if (orderDetailMap.containsKey(key.toString())) {
                                 List<BizOrderDetail> orderDetails = orderDetailMap.get(key.toString());
                                 orderDetails.add(bizOrderDetail);
-                                orderDetailMap.put(key.toString(),orderDetails);
-                            }else {
-                                List<BizOrderDetail> orderDetails =  new ArrayList<>();
+                                orderDetailMap.put(key.toString(), orderDetails);
+                            } else {
+                                List<BizOrderDetail> orderDetails = new ArrayList<>();
                                 orderDetails.add(bizOrderDetail);
-                                orderDetailMap.put(key.toString(),orderDetails);
+                                orderDetailMap.put(key.toString(), orderDetails);
                             }
                         }
                     }
-                    ordQtys = ordQtys.substring(0, ordQtys.length()-1);
-                    unitPrices = unitPrices.substring(0, unitPrices.length()-1);
+                    ordQtys = ordQtys.substring(0, ordQtys.length() - 1);
+                    unitPrices = unitPrices.substring(0, unitPrices.length() - 1);
                     result.put("ordQtys", ordQtys);
                     result.put("unitPrices", unitPrices);
+                }
             }
         }
-        }
+
+//        var orderDetailIds = result['orderDetailIds'];
+//        var vendorId = result['vendorId'];
+//        var unitPrices = result['unitPrices'];
+//        var ordQtys = result['ordQtys'];
         return result;
     }
 
