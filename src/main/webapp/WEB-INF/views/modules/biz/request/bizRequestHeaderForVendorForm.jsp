@@ -1015,11 +1015,10 @@
 		<div class="control-group">
 			<label class="control-label">备货单类型：</label>
 			<div class="controls">
-				<form:select path="headerType"cssClass="input-xlarge">
+				<form:select path="headerType" cssClass="input-xlarge">
 					<form:option value="0" label="请选择"/>
-					<form:options items="${fns:getDictList(req_header_type)}" itemValue="value" itemLabel="label"/>
+					<form:options items="${fns:getDictList('req_header_type')}" itemValue="value" itemLabel="label"/>
 				</form:select>
-				<input name="reqNo" value="${entity.headerType}" class="input-xlarge" disabled="disabled"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

@@ -114,7 +114,6 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 		this.orderNum = orderNum;
 	}
 
-	@Length(min=1, max=11, message="收货数量长度必须介于 1 和 11 之间")
 	public Integer getReceiveNum() {
 		return receiveNum;
 	}

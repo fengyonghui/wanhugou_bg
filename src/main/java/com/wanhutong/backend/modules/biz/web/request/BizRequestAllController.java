@@ -1,6 +1,7 @@
 package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.supcan.treelist.cols.Col;
@@ -39,6 +40,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
@@ -48,11 +50,14 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.formula.functions.T;
@@ -118,6 +123,8 @@ public class BizRequestAllController {
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
     @Autowired
     private BizSendGoodsRecordService bizSendGoodsRecordService;
+    @Autowired
+    private AttributeValueV2Service attributeValueV2Service;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -377,10 +384,13 @@ public class BizRequestAllController {
                 model.addAttribute("collectNo",collectNo+"_1");
             }else {
                 BizCollectGoodsRecord c = bizCollectGoodsRecordList.get(0);
-                String[] split = c.getCollectNo().split("_");
-                model.addAttribute("collectNo",collectNo + "_" + Integer.valueOf(split[1])+1);
+                if (StringUtils.isNotBlank(c.getCollectNo())) {
+                    String[] split = c.getCollectNo().split("_");
+                    model.addAttribute("collectNo", collectNo + "_" + Integer.valueOf(split[1]) + 1);
+                } else {
+                    model.addAttribute("collectNo",collectNo + "_1");
+                }
             }
-            model.addAttribute("collectNo",collectNo);
             return "modules/biz/request/bizRequestKcForm";
         }
         return "modules/biz/request/bizRequestHeaderGhForm";
@@ -425,10 +435,47 @@ public class BizRequestAllController {
             model.addAttribute("sendNo", sendNo + "_1");
         } else {
             BizSendGoodsRecord sendGoodsRecord = sendGoodsRecordList.get(0);
-            String[] split = sendGoodsRecord.getSendNo().split("_");
-            model.addAttribute("sendNo",sendNo + "_" + Integer.valueOf(split[1]) + 1);
+            if (StringUtils.isNotBlank(sendGoodsRecord.getSendNo())) {
+                String[] split = sendGoodsRecord.getSendNo().split("_");
+                model.addAttribute("sendNo", sendNo + "_" + Integer.valueOf(split[1]) + 1);
+            } else {
+                model.addAttribute("sendNo", sendNo + "_1");
+            }
         }
+        //订单详情，库存
+        List<BizOrderDetail> orderDetailList = findOrderDetailAndInvSku(orderHeaderId);
+        model.addAttribute("orderDetailList",orderDetailList);
+        model.addAttribute("bizOrderHeader",orderHeader);
         return "modules/biz/request/bizRequestConfirmOut";
+    }
+
+    private List<BizOrderDetail> findOrderDetailAndInvSku(Integer orderHeaderId) {
+        BizOrderDetail bizOrderDetail = new BizOrderDetail();
+        bizOrderDetail.setOrderHeader(new BizOrderHeader(orderHeaderId));
+        List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(orderHeaderId);
+        BizCustomCenterConsultant ccc = new BizCustomCenterConsultant();
+        ccc.setCustoms(orderHeader.getCustomer());
+        List<BizCustomCenterConsultant> cccList = bizCustomCenterConsultantService.findList(ccc);
+        Office center = new Office();
+        if (CollectionUtils.isNotEmpty(cccList)) {
+            center = cccList.get(0).getCenters();
+        }
+        if (CollectionUtils.isNotEmpty(orderDetailList)) {
+            for (BizOrderDetail orderDetail : orderDetailList) {
+                List<AttributeValueV2> valueV2List = bizSkuInfoService.getSkuProperty(orderDetail.getSkuInfo().getId(),BizProductInfoV3Service.SKU_TABLE,"颜色");
+                if (CollectionUtils.isNotEmpty(valueV2List)) {
+                    orderDetail.setColor(valueV2List.get(0).getValue());
+                }
+                List<AttributeValueV2> valueV2s = bizSkuInfoService.getSkuProperty(orderDetail.getSkuInfo().getId(),BizProductInfoV3Service.SKU_TABLE,"尺寸");
+                if (CollectionUtils.isNotEmpty(valueV2s)) {
+                    orderDetail.setStandard(valueV2s.get(0).getValue());
+                }
+                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInventorySkuByskuIdAndcentId(center.getId(),orderDetail.getSkuInfo().getId());
+                orderDetail.setRequestDetailList(requestDetailList);
+            }
+        }
+        return orderDetailList;
     }
 
     /**

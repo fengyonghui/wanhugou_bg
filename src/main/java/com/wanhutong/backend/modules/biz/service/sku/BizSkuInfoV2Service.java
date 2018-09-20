@@ -24,6 +24,8 @@ import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
@@ -399,5 +401,22 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 
 		page.setList(bizSkuInfoDao.findPageForSkuInfo(bizSkuInfo));
 		return page;
+	}
+
+	/**
+	 * 查询商品属性
+	 * @param objId
+	 * @param objName
+	 * @param attrInfoName
+	 * @return
+	 */
+	public List<AttributeValueV2> getSkuProperty(Integer objId, String objName, String attrInfoName) {
+		AttributeValueV2 attributeValueV2 = new AttributeValueV2();
+		attributeValueV2.setObjectId(objId);
+		attributeValueV2.setObjectName(objName);
+		AttributeInfoV2 attributeInfoV2 = new AttributeInfoV2();
+		attributeInfoV2.setName(attrInfoName);
+		attributeValueV2.setAttributeInfo(attributeInfoV2);
+		return attributeValueService.findList(attributeValueV2);
 	}
 }

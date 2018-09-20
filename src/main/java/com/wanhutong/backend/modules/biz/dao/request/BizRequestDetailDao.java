@@ -30,5 +30,7 @@ public interface BizRequestDetailDao extends CrudDao<BizRequestDetail> {
      * @return
      */
     BizRequestDetail getsumSchedulingNum(@Param("objectId") Integer objectId);
+
+    List<BizRequestDetail> findInventorySkuByskuIdAndcentId(@Param("centerId") Integer centerId, @Param("skuId") Integer skuId);
 	
 }

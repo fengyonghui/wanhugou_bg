@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.request;
 
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
@@ -45,6 +46,15 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	private String vendorName;
 	private Integer sendNum;		//记录页面传的供货数量
 
+	/**
+	 * 已出库数量
+	 */
+	private Integer outQty;
+
+	/**
+	 * 库存
+	 */
+	private BizInventorySku inventorySku;
 	/**
 	 * 备货清单查看 已生成的采购单
 	 * */
@@ -328,5 +338,21 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setVarietyUser(User varietyUser) {
 		this.varietyUser = varietyUser;
+	}
+
+	public Integer getOutQty() {
+		return outQty;
+	}
+
+	public void setOutQty(Integer outQty) {
+		this.outQty = outQty;
+	}
+
+	public BizInventorySku getInventorySku() {
+		return inventorySku;
+	}
+
+	public void setInventorySku(BizInventorySku inventorySku) {
+		this.inventorySku = inventorySku;
 	}
 }
