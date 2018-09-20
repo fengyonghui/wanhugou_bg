@@ -416,11 +416,13 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 			List<Integer> skuInfoIdList = Lists.newArrayList();
 			List<BizRequestDetail> bizRequestDetails = bizRequestHeader.getRequestDetailList();
-			for (BizRequestDetail requestDetail : bizRequestDetails) {
-				BizSkuInfo bizSkuInfo = requestDetail.getSkuInfo();
-				skuInfoIdList.add(bizSkuInfo.getId());
+			if (CollectionUtils.isNotEmpty(bizRequestDetails)) {
+				for (BizRequestDetail requestDetail : bizRequestDetails) {
+					BizSkuInfo bizSkuInfo = requestDetail.getSkuInfo();
+					skuInfoIdList.add(bizSkuInfo.getId());
+				}
+				model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
 			}
-			model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
 
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
 			BizInventorySku bizInventorySku = new BizInventorySku();
@@ -966,17 +968,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		bizRequestHeader.setDelFlag(BizRequestHeader.DEL_FLAG_NORMAL);
 		bizRequestHeaderForVendorService.delete(bizRequestHeader);
 		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
-	}
-
-	@RequiresPermissions("biz:request:bizRequestHeader:audit")
-	@RequestMapping(value = "startAudit")
-	@ResponseBody
-	public String startAudit(HttpServletRequest request, Integer id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, Integer auditType, String desc) {
-		Pair<Boolean, String> result = bizRequestHeaderForVendorService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
-		if (result.getLeft()) {
-			return JsonUtil.generateData(result, request.getParameter("callback"));
-		}
-		return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
 	}
 
 	@RequiresPermissions("biz:request:bizRequestHeader:createPayOrder")

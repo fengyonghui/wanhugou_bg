@@ -493,7 +493,7 @@
     </script>
     <script type="text/javascript">
         function checkPending(obj) {
-            if('${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}' == 'true' && '${statusEnumState}' == 0) {
+            if(obj == '${OrderHeaderBizStatusEnum.SUPPLYING.state}' && '${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}' == 'true' && '${statusEnumState}' == 0) {
                 alert("代采订单需至少付款20%，请付款后刷新页面再审核");
                 return;
             }
@@ -1103,7 +1103,7 @@
 
 
         function deleteStyle() {
-            $("#remark").removeAttr("style");
+            // $("#remark").removeAttr("style");
             $("#cardNumber").removeAttr("style");
             $("#payee").removeAttr("style");
             $("#bankName").removeAttr("style");
@@ -2256,6 +2256,7 @@
                             <tr>
                                 <th>流水号</th>
                                 <th>支付金额</th>
+                                <th>实收金额</th>
                                 <th>状态</th>
                                 <th>创建时间</th>
                             </tr>
@@ -2265,6 +2266,7 @@
                                 <tr>
                                     <td>${unline.serialNum}</td>
                                     <td>${unline.unlinePayMoney}</td>
+                                    <td>${unline.realMoney}</td>
                                     <td>${fns:getDictLabel(unline.bizStatus,"biz_order_unline_bizStatus" ,"未知状态" )}</td>
                                     <td><fmt:formatDate value="${unline.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                                 </tr>
@@ -3035,7 +3037,7 @@
         <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
             <input class="btn btn-primary" type="button"
                    onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" value="同意发货"/>&nbsp;
-            <input class="btn btn-primary" type="button"
+            <input class="btn btn-warning" type="button"
                    onclick="checkPending(${OrderHeaderBizStatusEnum.UNAPPROVE.state})" value="不同意发货"/>&nbsp;
         </shiro:hasPermission>
     </div>

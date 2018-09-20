@@ -63,10 +63,14 @@
                     data:$('#searchForm').serialize(),
                     success:function (result) {
                          $("#prodInfo2").empty();
-                         if (result == "") {
-                             alert("请输入查询条件！");
-                             return false;
-                         } else {
+                        if (result == "") {
+                            alert("没有查到数据！");
+                            return false;
+                        }
+                        else if(result[0].shelfSign==5){
+                                 alert("请输入查询条件！");
+						}
+                          else {
                              var tr_tds = "";
                              $.each(result, function (index, opShelfSku) {
                                  tr_tds += "<tr>";

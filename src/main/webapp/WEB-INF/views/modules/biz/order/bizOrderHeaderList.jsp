@@ -363,32 +363,37 @@
 			</td>
 
 			<td>
-				<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state}">
-					待客户专员审核
+				<c:if test="${orderHeader.bizStatus == OrderHeaderBizStatusEnum.CANCLE.state || orderHeader.bizStatus == OrderHeaderBizStatusEnum.DELETE.state || orderHeader.bizStatus == OrderHeaderBizStatusEnum.UNAPPROVE.state}">
+
 				</c:if>
-				<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state
+				<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.DELETE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.UNAPPROVE.state}">
+					<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state}">
+						待客户专员审核
+					</c:if>
+					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state
 								&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state
 								}">
-					<c:if test="${orderHeader.commonProcess.objectName == 'biz_order_header'}">
-						<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '审批完成'}">
-							${orderHeader.commonProcess.doOrderHeaderProcessFifth.name}
-						</c:if>
-						<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成'}">
-							订单支出信息审核
+						<c:if test="${orderHeader.commonProcess.objectName == 'biz_order_header'}">
+							<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '审批完成'}">
+								${orderHeader.commonProcess.doOrderHeaderProcessFifth.name}
+							</c:if>
+							<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成'}">
+								订单支出信息审核
+							</c:if>
 						</c:if>
 					</c:if>
-				</c:if>
-				<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state &&
+					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state &&
 				 orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
-					<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_LOCAL'}">
-						${orderHeader.commonProcess.jointOperationLocalProcess.name}
-					</c:if>
-					<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
-						<c:if test="${orderHeader.commonProcess.jointOperationOriginProcess.name != '审批完成'}">
-							${orderHeader.commonProcess.jointOperationOriginProcess.name}
+						<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_LOCAL'}">
+							${orderHeader.commonProcess.jointOperationLocalProcess.name}
 						</c:if>
-						<c:if test="${orderHeader.commonProcess.jointOperationOriginProcess.name == '审批完成'}">
-							订单支出信息审核
+						<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
+							<c:if test="${orderHeader.commonProcess.jointOperationOriginProcess.name != '审批完成'}">
+								${orderHeader.commonProcess.jointOperationOriginProcess.name}
+							</c:if>
+							<c:if test="${orderHeader.commonProcess.jointOperationOriginProcess.name == '审批完成'}">
+								订单支出信息审核
+							</c:if>
 						</c:if>
 					</c:if>
 				</c:if>
@@ -554,10 +559,10 @@
 					</c:if>
 					<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state}">
 					<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state && (orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state || fns:getUser().isAdmin())}">
 					<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&statu=${statu}&source=${source}">修改</a>
 					</c:if>
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state && (orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state || fns:getUser().isAdmin())}">
 					<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&statu=${statu}&source=${source}">修改</a>
 					</c:if>
 					<c:if test="${fns:getUser().isAdmin()}">

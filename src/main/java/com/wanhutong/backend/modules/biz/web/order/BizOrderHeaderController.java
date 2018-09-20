@@ -221,10 +221,10 @@ public class BizOrderHeaderController extends BaseController {
         List<String> localConfigValue = Lists.newArrayList();
         List<String> doFifthConfigValue = Lists.newArrayList();
 
-        originConfigMap.put("渠道", "渠道");
+        originConfigMap.put("渠道经理", "渠道经理");
         originConfigMap.put("总经理", "总经理");
-        originConfigMap.put("品类", "品类");
-        originConfigMap.put("财务", "财务");
+        originConfigMap.put("品类主管", "品类主管");
+        originConfigMap.put("财务经理", "财务经理");
         originConfigMap.put("完成", "完成");
         originConfigMap.put("驳回", "驳回");
         originConfigMap.put("不需要审批", "不需要审批");
@@ -363,14 +363,11 @@ public class BizOrderHeaderController extends BaseController {
         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
         DoOrderHeaderProcessAllConfig doOrderHeaderProcessAllConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
         DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
 
         Map<String, String> originConfigMap = Maps.newLinkedHashMap();
         List<String> originConfigValue = Lists.newArrayList();
         List<String> localConfigValue = Lists.newArrayList();
-        List<String> doAllConfigValue = Lists.newArrayList();
         List<String> doFifthConfigValue = Lists.newArrayList();
-        List<String> poConfigValue = Lists.newArrayList();
 
         originConfigMap.put("渠道", "渠道");
         originConfigMap.put("总经理", "总经理");
@@ -628,11 +625,13 @@ public class BizOrderHeaderController extends BaseController {
 
             List<Integer> skuInfoIdList = Lists.newArrayList();
             List<BizOrderDetail> bizOrderDetails = bizOrderHeader.getOrderDetailList();
-            for (BizOrderDetail orderDetail : bizOrderDetails) {
-                BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
-                skuInfoIdList.add(bizSkuInfo.getId());
+            if (CollectionUtils.isNotEmpty(bizOrderDetails)) {
+                for (BizOrderDetail orderDetail : bizOrderDetails) {
+                    BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
+                    skuInfoIdList.add(bizSkuInfo.getId());
+                }
+                model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
             }
-            model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
 
             for (BizOrderDetail orderDetail : orderDetailList) {
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
@@ -1938,6 +1937,10 @@ public class BizOrderHeaderController extends BaseController {
                     double total = 0.0;
                     double exp = 0.0;
                     double fre = 0.0;
+                    double buy = 0.0;
+                    if (order.getTotalBuyPrice() != null) {
+                        buy = order.getTotalBuyPrice();
+                    }
                     if (order.getTotalDetail() != null) {
                         total = order.getTotalDetail();
                     }
@@ -1951,18 +1954,18 @@ public class BizOrderHeaderController extends BaseController {
                     rowData.add(order.getReceiveTotal() == null ? StringUtils.EMPTY : String.valueOf(order.getReceiveTotal()));
                     double sumTotal = total + exp + fre;
                     double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal();
-                    if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(order.getBizStatus()) && sumTotal > receiveTotal) {
+                    if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(OrderHeaderBizStatusEnum.stateOf(order.getBizStatus())) && sumTotal > receiveTotal) {
                         //尾款信息
                         rowData.add("有尾款");
                     } else {
                         rowData.add(StringUtils.EMPTY);
                     }
                     //利润
-                    Double buy = 0.0;
-                    if (order.getTotalBuyPrice() != null) {
-                        buy = order.getTotalBuyPrice();
-                    }
-                    rowData.add(BizOrderTypeEnum.PHOTO_ORDER.getState().equals(order.getOrderType()) ? "0.00" : String.valueOf(df.format(total + exp + fre - buy)));
+                    //                        orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight
+                    rowData.add(df.format(exp + (order.getServiceFee() == null ? 0 : order.getServiceFee()) + fre));
+                    // 佣金
+                    //                        orderHeader.totalDetail-orderHeader.totalBuyPrice
+                    rowData.add(df.format(total - buy));
                     Dict dictInv = new Dict();
                     dictInv.setDescription("发票状态");
                     dictInv.setType("biz_order_invStatus");
@@ -2072,7 +2075,11 @@ public class BizOrderHeaderController extends BaseController {
                         //应付金额
                         double total = 0.0;
                         double exp = 0.0;
-                        double Fre = 0.0;
+                        double fre = 0.0;
+                        double buy = 0.0;
+                        if (order.getTotalBuyPrice() != null) {
+                            buy = order.getTotalBuyPrice();
+                        }
                         if (order.getTotalDetail() != null) {
                             total = order.getTotalDetail();
                         }
@@ -2080,24 +2087,24 @@ public class BizOrderHeaderController extends BaseController {
                             exp = order.getTotalExp();
                         }
                         if (order.getFreight() != null) {
-                            Fre = order.getFreight();
+                            fre = order.getFreight();
                         }
-                        rowData.add(String.valueOf(total + exp + Fre));
+                        rowData.add(String.valueOf(total + exp + fre));
                         //已收货款
                         rowData.add(String.valueOf(order.getReceiveTotal() == null ? StringUtils.EMPTY : order.getReceiveTotal()));
-                        double sumTotal = total + exp + Fre;
+                        double sumTotal = total + exp + fre;
                         double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal();
                         if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(order.getBizStatus()) && sumTotal > receiveTotal) {
                             rowData.add("有尾款");
                         } else {
                             rowData.add(StringUtils.EMPTY);
                         }
-                        //利润
-                        Double buy = 0.0;
-                        if (order.getTotalBuyPrice() != null) {
-                            buy = order.getTotalBuyPrice();
-                        }
-                        rowData.add(BizOrderTypeEnum.PHOTO_ORDER.getState().equals(order.getOrderType()) ? "0.00" : String.valueOf(df.format(total + exp + Fre - buy)));
+                        //服务费
+//                        orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight
+                        rowData.add(df.format(exp + (order.getServiceFee() == null ? 0 : order.getServiceFee()) + fre));
+                        // 佣金
+//                        orderHeader.totalDetail-orderHeader.totalBuyPrice
+                        rowData.add(df.format(total - buy));
                         Dict dictInv = new Dict();
                         dictInv.setDescription("发票状态");
                         dictInv.setType("biz_order_invStatus");
@@ -2141,7 +2148,7 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
             String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
-                    "应付金额", "已收货款", "尾款信息", "服务费", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
+                    "应付金额", "已收货款", "尾款信息", "服务费", "佣金", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
             String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "商品结算价", "采购数量", "商品总价"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
