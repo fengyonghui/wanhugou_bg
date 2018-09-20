@@ -764,6 +764,16 @@ public class BizOrderHeaderController extends BaseController {
             poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
             poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
             poAuditList = commonProcessService.findList(poCommonProcessEntity);
+
+            BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+            bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
+            List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+            BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
+            for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
+                BigDecimal payTotal = poPaymentOrder.getPayTotal();
+                totalPayTotal = totalPayTotal.add(payTotal);
+            }
+            model.addAttribute("totalPayTotal", totalPayTotal);
         }
 
         if (CollectionUtils.isNotEmpty(poAuditList) && CollectionUtils.isNotEmpty(list)) {
@@ -1310,12 +1320,30 @@ public class BizOrderHeaderController extends BaseController {
                 genAuditProcess(statusEnum, bizOrderHeader, Boolean.TRUE);
             }
 
-            BizPoHeader bizPoHeader = new BizPoHeader();
-            bizPoHeader.setBizOrderHeader(bizOrderHeader);
-            List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
-            if (CollectionUtils.isNotEmpty(poList)) {
-                bizPoHeaderService.updateProcessToInitAudit(poList.get(0), StringUtils.EMPTY);
+            BizOrderDetail bizOrderDetail = new BizOrderDetail();
+            bizOrderDetail.setOrderHeader(bizOrderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+            BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+            for (BizOrderDetail orderDetail : orderDetailList) {
+                bizPoOrderReq.setSoLineNo(orderDetail.getLineNo());
+                bizPoOrderReq.setOrderHeader(orderDetail.getOrderHeader());
+                bizPoOrderReq.setSoType((byte) 1);
+                List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+                if (poOrderReqList != null && poOrderReqList.size() > 0) {
+                    BizPoOrderReq poOrderReq = poOrderReqList.get(0);
+                    BizPoHeader poHeader = poOrderReq.getPoHeader();
+                    poHeader.setDelFlag("0");
+                    poOrderReq.setDelFlag("0");
+                    bizPoHeaderService.save(poHeader);
+                    bizPoOrderReqService.save(poOrderReq);
+                }
             }
+//            BizPoHeader bizPoHeader = new BizPoHeader();
+//            bizPoHeader.setBizOrderHeader(bizOrderHeader);
+//            List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+//            if (CollectionUtils.isNotEmpty(poList)) {
+//                bizPoHeaderService.updateProcessToInitAudit(poList.get(0), StringUtils.EMPTY);
+//            }
         }
 
         bizOrderHeaderService.save(bizOrderHeader);
@@ -2705,9 +2733,9 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "auditSo")
     @ResponseBody
-    public String auditSo(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType, String createPo) {
+    public String auditSo(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType, String createPo, String lastPayDateVal) {
         try {
-            Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType, createPo);
+            Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType, createPo, lastPayDateVal);
             if (audit.getLeft()) {
                 return JsonUtil.generateData(audit.getRight(), null);
             }
@@ -2729,7 +2757,7 @@ public class BizOrderHeaderController extends BaseController {
      * @param orderType
      * @return
      */
-    private Pair<Boolean, String> doAudit(int id, int auditType, String currentType, String description, int orderType, String createPo) {
+    private Pair<Boolean, String> doAudit(int id, int auditType, String currentType, String description, int orderType, String createPo, String lastPayDateVal) {
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectId(String.valueOf(id));
         commonProcessEntity.setObjectName(orderType == 0 ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
@@ -2828,7 +2856,7 @@ public class BizOrderHeaderController extends BaseController {
         //if (originConfig.getGenPoProcessId().contains(Integer.valueOf(nextProcessEntity.getType()))) {
         //品类主管审核是生成采购单
         if ("yes".equals(createPo)) {
-            Pair<Boolean, String> booleanStringPair = bizPoHeaderService.autoGenPO(id);
+            Pair<Boolean, String> booleanStringPair = bizPoHeaderService.autoGenPO(id, lastPayDateVal);
             if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
                 poFlag = true;
                 poId = booleanStringPair.getRight();

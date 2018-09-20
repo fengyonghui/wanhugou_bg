@@ -691,7 +691,8 @@ public class BizRequestOrderController extends BaseController {
         if (REQUEST_HEADER_TYPE.equals(type)) {
             BizRequestHeader requestHeader = new BizRequestHeader();
             requestHeader.setId(orderId);
-            Page<BizRequestHeader> requestHeaderList = findBizRequestV3(requestHeader,request,response);
+            //Page<BizRequestHeader> requestHeaderList = findBizRequestV3(requestHeader,request,response);
+            Page<BizRequestHeader> requestHeaderList = bizRequestHeaderService.pageFindListV3(new Page<BizRequestHeader>(request, response), requestHeader);
             if (requestHeaderList.getList().size() > 0) {
                 requestHeader = requestHeaderList.getList().get(0);
                 String reqDetailIds = requestHeader.getReqDetailIds();
@@ -749,8 +750,8 @@ public class BizRequestOrderController extends BaseController {
         } else if (DO_ORDER_HEADER_TYPE.equals(type)) {
             BizOrderHeader orderHeader = new BizOrderHeader();
             orderHeader.setId(orderId);
-            orderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
-            orderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
+            //orderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+            //orderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
             Page<BizOrderHeader>  bizOrderHeaderList =bizOrderHeaderService.pageFindList(new Page<BizOrderHeader>(request, response), orderHeader);
             if (bizOrderHeaderList.getList().size() > 0) {
                 orderHeader = bizOrderHeaderList.getList().get(0);

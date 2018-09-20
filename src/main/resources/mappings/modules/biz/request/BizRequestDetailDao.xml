@@ -125,7 +125,8 @@
 		FROM
 		biz_po_order_req por
 		WHERE
-		por.so_line_no = a.line_no
+		por.status = 1
+		AND por.so_line_no = a.line_no
 		AND por.so_id = a.header_id
 		AND por.so_type = 2
 		) ) rd
@@ -257,7 +258,7 @@
 		LEFT JOIN biz_product_info bpi ON bpi.id = si.prod_id
 		<if test="poheaderSource!=null and poheaderSource!=''">
 			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = reheader.id AND a.line_no = bpor.so_line_no and
-			bpor.so_type=2
+			bpor.so_type=2 AND bpor.status = 1
 			LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1
 		</if>
 		LEFT JOIN biz_inventory_sku bis on bis.sku_id=a.sku_id and bis.status=1

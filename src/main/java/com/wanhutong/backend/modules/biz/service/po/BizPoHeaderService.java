@@ -61,6 +61,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -157,7 +159,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String > autoGenPO(Integer orderId) {
+    public Pair<Boolean, String > autoGenPO(Integer orderId, String lastPayDateVal) {
         BizOrderDetail bizOrderDetail = new BizOrderDetail();
         BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderId);
 
@@ -212,6 +214,21 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
         bizPoHeader.setIsPrew(0);
         Integer id = bizPoHeader.getId();
+
+        //设置最后付款时间
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (StringUtils.isBlank(lastPayDateVal)) {
+            bizPoHeader.setLastPayDate(new Date());
+        } else {
+            Date lastPayDate = null;
+            try {
+                lastPayDate = sdf.parse(lastPayDateVal);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            bizPoHeader.setLastPayDate(lastPayDate);
+        }
+
         this.save(bizPoHeader);
         if (id == null) {
             bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
