@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao">
-    
 	<sql id="bizRequestHeaderColumns">
 		a.id AS "id",
 		a.req_no AS "reqNo",
@@ -23,8 +22,6 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		bre.current_payment_id AS "bizPoPaymentOrder.id",
-		bre.balance_total AS "balanceTotal",
 		suu.name AS "updateBy.name",
 		su.name AS "createBy.name",
 		a.update_time AS "updateDate",
@@ -43,8 +40,8 @@
 		process.processor AS "commonProcess.processor",
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
+		process.current AS "commonProcess.current",
 		bph.id AS "bizPoHeader.id",
-		bph.process_id AS "bizPoHeader.process_id",
 		bph.current_payment_id AS "bizPoHeader.currentPaymentId",
 		bph.pay_total AS "bizPoHeader.payTotal",
 		bppo.remark AS "bizPoHeader.bizPoPaymentOrder.remark",
@@ -56,6 +53,7 @@
 		cp.processor AS "bizPoHeader.commonProcess.processor",
 		cp.description AS "bizPoHeader.commonProcess.description",
 		cp.type AS "bizPoHeader.commonProcess.type",
+		cp.current AS "bizPoHeader.commonProcess.current",
 		bsp.po_sch_type AS "bizPoHeader.poSchType"
 	</sql>
 	
@@ -67,11 +65,11 @@
 		LEFT JOIN sys_user su ON su.id=a.create_id
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
 		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
-		LEFT JOIN  common_process process on process.id = a.process_id
-		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 2  and bpor.so_line_no=brd.line_no
+		LEFT JOIN  common_process process on process.object_id = a.id AND brd.header_id = process.object_id AND process.object_name = 'biz_request_header' AND process.current = 1
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_id=process.object_id  AND bpor.so_type = 2  and bpor.so_line_no=brd.line_no
 		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
 		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bph.current_payment_id
-		LEFT JOIN common_process cp ON cp.id = bph.process_id
+		LEFT JOIN common_process cp ON cp.object_id = bph.id AND cp.object_id = bph.id AND cp.object_name = 'biz_po_header' AND cp.current = 1
 		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
 	</sql>
     
@@ -85,15 +83,15 @@
 	</select>
 	
 	<select id="findList" resultType="BizRequestHeader">
-		SELECT 
+		SELECT
 			<include refid="bizRequestHeaderColumns"/>,
 			pi.vendor_name AS "name",
 			bvi.id as "varietyInfo.id",
 			bvi.name as "varietyInfo.name"
 		FROM biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
-		LEFT JOIN biz_sku_info bsi on brd.sku_id = bsi.id
-		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		LEFT JOIN biz_sku_info bsi ON brd.sku_id = bsi.id AND bsi.status=1
+		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id AND pi.status=1
 		<!-- 供应商id -->
 		<if test="vendorId !=null and vendorId != ''">
 			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id

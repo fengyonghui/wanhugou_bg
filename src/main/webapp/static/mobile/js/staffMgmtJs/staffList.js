@@ -45,7 +45,8 @@
 		                    pager['company.type'] = 8;
 		                    pager['company.customerTypeTen'] = 10;
 		                    pager['company.customerTypeEleven'] = 11;
-		                    pager['conn'] ="connIndex"
+		                    pager['conn'] ="connIndex";
+		                    pager['company.customerTypeThirteen'] = 13;
 			                var f = document.getElementById("staffList");
 			                var childs = f.childNodes;
 			                for(var i = childs.length - 1; i >= 0; i--) {
@@ -298,6 +299,7 @@
 					"company.type": 8,  
 					"company.customerTypeTypeTen": 10,
 					"company.customerTypeEypeEleven": 11,
+					'company.customerTypeThirteen': 13,
 					conn: "connIndex",
 					isFunc: true
 				},
