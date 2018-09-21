@@ -361,7 +361,7 @@
         }
 
         function checkPass(obj) {
-            if('${entity.bizStatus == ReqHeaderStatusEnum.IN_REVIEW.state}'){
+            if('${createPo == 'yes'}'){
                 var lastPayDateVal = $("#lastPayDate").val();
                 if (lastPayDateVal == ""){
                     alert("请输入最后付款时间！")
@@ -493,73 +493,7 @@
                     result = JSON.parse(result);
                     if(result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        <%--window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";--%>
                         window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
-                    }else {
-                        alert(result.errmsg);
-                    }
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-        }
-
-        function getPoHeaderPara(id) {
-            $.ajax({
-                url: '${ctx}/biz/request/bizRequestOrder/goListAutoSave',
-                contentType: 'application/json',
-                data: {"orderId": id, "type": "1"},
-                type: 'get',
-                dataType: 'json',
-                async: false,
-                success: function (result) {
-                    var reqDetailIds = result['unitPrices'];
-                    if (reqDetailIds == "") {
-                        alert("价钱不能为空！");
-                        return;
-                    }
-                    savePoHeader(result);
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-        }
-
-        function savePoHeader(result) {
-            var reqDetailIds = result['reqDetailIds'];
-            var vendorId = result['vendorId'];
-            var unitPrices = result['unitPrices'];
-            var ordQtys = result['ordQtys'];
-            <!-- 最后付款时间 -->
-            var lastPayDateVal = $("#lastPayDate").val();
-            $.ajax({
-                url: '${ctx}/biz/po/bizPoHeader/autoSave',
-                contentType: 'application/json',
-                data: {"reqDetailIds": reqDetailIds, "orderDetailIds": "", "vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
-                type: 'get',
-                async: false,
-                success: function (result) {
-                    result = JSON.parse(result);
-                    if(result.ret == true || result.ret == 'true') {
-                        var resultData = result.data;
-                        var resultDataArr = resultData.split(",");
-                        console.log(resultDataArr)
-                        console.log(resultDataArr[0])
-                        console.log(resultDataArr[1])
-                        if(resultDataArr[0] == "采购单生成") {
-                            var poId = resultDataArr[1];
-                            var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
-                            console.log(poId)
-                            console.log(schedulingType)
-                            if (schedulingType == 0) {
-                                saveComplete("0", poId);
-                            }
-                            if (schedulingType == 1) {
-                                batchSave("1", poId);
-                            }
-                        }
                     }else {
                         alert(result.errmsg);
                     }
@@ -883,7 +817,6 @@
                 type: 'post',
                 success: function (result) {
                     if(result == true) {
-                        //window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
                         window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                     }
                 },
@@ -991,7 +924,6 @@
                 type: 'post',
                 success: function (result) {
                     if(result == true) {
-                        //window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"
                         window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                     }
                 },
@@ -1240,7 +1172,7 @@
 
 		<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
 			<c:if test="${entity.str == 'audit'}">
-				<c:if test="${entity.bizStatus == ReqHeaderStatusEnum.IN_REVIEW.state && createPo == 'yes'}">
+				<c:if test="${createPo == 'yes'}">
 					<div class="control-group">
 						<label class="control-label">最后付款时间：</label>
 						<div class="controls">
