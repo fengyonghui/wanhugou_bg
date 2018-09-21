@@ -1150,10 +1150,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequestMapping(value = "audit")
 	@ResponseBody
 	public String audit(HttpServletRequest request, HttpServletResponse response, int id, String currentType, int auditType, String description, String createPo, String lastPayDateVal) {
-//		String result = bizRequestHeaderForVendorService.audit(id, currentType, auditType, description);
-//		return result;
-		//return "";
-
 		try {
 			Pair<Boolean, String> audit = null;
 			audit = bizRequestHeaderForVendorService.audit(request, response, id, currentType, auditType, description, createPo, lastPayDateVal);

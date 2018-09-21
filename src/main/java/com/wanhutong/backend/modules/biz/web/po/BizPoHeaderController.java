@@ -379,6 +379,54 @@ public class BizPoHeaderController extends BaseController {
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:view")
+    @RequestMapping(value = {"listV2Data4Mobile"})
+    @ResponseBody
+    public String listV2Data4Mobile(BizPoHeader bizPoHeader, HttpServletRequest request, HttpServletResponse response) {
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (roleList.contains(role)) {
+            bizPoHeader.setVendOffice(user.getCompany());
+        }
+
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+
+        if (StringUtils.isNotBlank(bizPoHeader.getProcessTypeStr())) {
+            List<Process> processList = purchaseOrderProcessConfig.getNameProcessMap().get(bizPoHeader.getProcessTypeStr());
+            List<String> transform = processList.stream().map(process -> String.valueOf(process.getCode())).collect(Collectors.toList());
+            bizPoHeader.setProcessTypeList(transform);
+        }
+
+        Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<BizPoHeader>(request, response), bizPoHeader);
+        Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
+            }
+        }
+
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
+
+        Set<String> processSet = Sets.newHashSet();
+        for (com.wanhutong.backend.modules.config.parse.Process process : processList) {
+            processSet.add(process.getName());
+        }
+
+        Map<String, Object> resultMap = Maps.newHashMap();
+        resultMap.put("roleSet", roleSet);
+        resultMap.put("processList", processList);
+        resultMap.put("roleEnNameSet", roleEnNameSet);
+        resultMap.put("page", page);
+        resultMap.put("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
+
+        return JsonUtil.generateData(resultMap, request.getParameter("callback"));
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = {"listData4Mobile"})
     @ResponseBody
     public String listData4Mobile(BizPoHeader bizPoHeader, @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo, HttpServletRequest request, HttpServletResponse response) {
