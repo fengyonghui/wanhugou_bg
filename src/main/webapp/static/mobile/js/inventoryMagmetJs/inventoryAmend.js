@@ -556,12 +556,30 @@
 							$('#insupplierBank').val(rest.bankName);//供应商开户行
 	                	}else {
 	                		$('#insupplierBank').html('');
-	                	}						
+	                	}
+	                	//供应商合同
+						if(rest.compactImgList != undefined){
+							$.each(rest.compactImgList,function (m, n) {
+                                $("#insuppliercontract").append("<a href=\"" + n.imgServer + n.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + n.imgServer + n.imgPath + "\"></a>");
+                            });
+						}else{
+							$('#insuppliercontract').parent().hide();
+						}
+						//供应商身份证
+						if (rest.identityCardImgList != undefined) {
+                        $.each(rest.identityCardImgList,function (i, card) {
+                            $("#insuppliercardID").append("<a href=\"" + card.imgServer + card.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + card.imgServer + card.imgPath + "\"></a>");
+                           });
+                        }else{
+                        	$('#insuppliercardID').parent().hide();
+                        }
                 	}
                 	else{
 						$('#insupplierNum').parent().hide();//供应商卡号
 						$('#insupplierMoney').parent().hide();//供应商收款人
 						$('#insupplierBank').parent().hide();//供应商开户行
+						$('#insuppliercontract').parent().hide();//供应商合同
+						$('#insuppliercardID').parent().hide();//供应商身份证
                 	}                						
 				}
 			});

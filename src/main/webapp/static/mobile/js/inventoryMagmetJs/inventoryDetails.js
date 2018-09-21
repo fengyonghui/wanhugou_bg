@@ -34,6 +34,8 @@
 						$('#insupplierNum').parent().hide();//供应商卡号
 						$('#insupplierMoney').parent().hide();//供应商收款人
 						$('#insupplierBank').parent().hide();//供应商开户行
+						$('#insuppliercontract').parent().hide();//供应商合同
+					    $('#insuppliercardID').parent().hide();//供应商身份证
                 	}               	
 				    /*业务状态*/
 				    $.ajax({
@@ -85,7 +87,7 @@
 						$('#fromType1').removeAttr('checked');
 						$('#fromType2').attr('checked','checked');						
 					}	            	
-					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);//采购中心					
+					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);//采购中心
 					$('#inPototal').val(res.data.bizRequestHeader.totalMoney.toFixed(2));//应付金额
 					$('#inMoneyReceive').val(res.data.bizRequestHeader.recvTotal.toFixed(2));//已收保证金
 					$('#inMarginLevel').val((res.data.bizRequestHeader.recvTotal*100/res.data.bizRequestHeader.totalMoney) .toFixed(2)+ '%');//保证金比例
@@ -131,13 +133,30 @@
 						$('#insupplierNum').val(rest.cardNumber);//供应商卡号
 						$('#insupplierMoney').val(rest.payee);//供应商收款人
 						$('#insupplierBank').val(rest.bankName);//供应商开户行
+						//供应商合同
+						if(rest.compactImgList != undefined){
+							$.each(rest.compactImgList,function (m, n) {
+                                $("#insuppliercontract").append("<a href=\"" + n.imgServer + n.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + n.imgServer + n.imgPath + "\"></a>");
+                            });
+						}else{
+							$('#insuppliercontract').parent().hide();
+						}
+						//供应商身份证
+						if (rest.identityCardImgList != undefined) {
+                        $.each(rest.identityCardImgList,function (i, card) {
+                            $("#insuppliercardID").append("<a href=\"" + card.imgServer + card.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + card.imgServer + card.imgPath + "\"></a>");
+                           });
+                        }else{
+                        	$('#insuppliercardID').parent().hide();
+                        }
                 	}else{
                 		$('#insupplier').parent().hide();//供应商
 						$('#insupplierNum').parent().hide();//供应商卡号
 						$('#insupplierMoney').parent().hide();//供应商收款人
 						$('#insupplierBank').parent().hide();//供应商开户行
+						$('#insuppliercontract').parent().hide();
+						$('#insuppliercardID').parent().hide();
                 	}
-
 				}
 			});
 		},
