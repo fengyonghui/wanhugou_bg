@@ -42,6 +42,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
+import com.wanhutong.backend.modules.biz.web.order.BizOrderHeaderController;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
@@ -69,6 +70,8 @@ import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.codehaus.jackson.type.TypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -104,6 +107,8 @@ import java.util.Set;
 @Controller
 @RequestMapping(value = "${adminPath}/biz/request/bizRequestHeaderForVendor")
 public class BizRequestHeaderForVendorController extends BaseController {
+
+	protected static final Logger LOGGER = LoggerFactory.getLogger(BizOrderHeaderController.class);
 
 	@Autowired
 	private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
@@ -1144,9 +1149,22 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:audit")
 	@RequestMapping(value = "audit")
 	@ResponseBody
-	public String audit(int id, String currentType, int auditType, String description) {
-		String result = bizRequestHeaderForVendorService.audit(id, currentType, auditType, description);
-		return result;
+	public String audit(HttpServletRequest request, HttpServletResponse response, int id, String currentType, int auditType, String description, String createPo, String lastPayDateVal) {
+//		String result = bizRequestHeaderForVendorService.audit(id, currentType, auditType, description);
+//		return result;
+		//return "";
+
+		try {
+			Pair<Boolean, String> audit = null;
+			audit = bizRequestHeaderForVendorService.audit(request, response, id, currentType, auditType, description, createPo, lastPayDateVal);
+			if (audit.getLeft()) {
+				return JsonUtil.generateData(audit.getRight(), null);
+			}
+			return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);
+		}catch (Exception e) {
+			LOGGER.error("audit so error ", e);
+		}
+		return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, "操作失败,发生异常,请联系技术部", null);
 	}
 
     @RequiresPermissions("biz:request:bizRequestHeader:audit")

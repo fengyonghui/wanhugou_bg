@@ -878,18 +878,16 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
 
         //自动生成采购单
+        Boolean poFlag = false;
+        String poId = "";
         if ("yes".equals(createPo)) {
             //订单标识类型
             String type = "2";
-            //Pair<Boolean, String> booleanStringPair = bizPoHeaderService.goListForAutoSave(orderHeaderId, type, lastPayDateVal, request, response);
-            Map<String, String> result = bizPoHeaderService.goListForAutoSave(orderHeaderId, type, lastPayDateVal, request, response);
-//            if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
-//                //poFlag = true;
-//                //poId = booleanStringPair.getRight();
-//            }
-            //LOGGER.warn("auto gen po[{}][{}]", booleanStringPair.getLeft(), booleanStringPair.getRight());
+            Pair<Boolean, String> booleanStringPair = bizPoHeaderService.goListForAutoSave(orderHeaderId, type, lastPayDateVal, request, response);
+            if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
+                return booleanStringPair;
+            }
         }
-
         return Pair.of(Boolean.TRUE, "操作成功!");
     }
 

@@ -1370,8 +1370,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     }
 
     //获取自动生成采购单所需的必要信息
-    public Map<String, String> goListForAutoSave(Integer orderId, String type, String lastPayDateVal, HttpServletRequest request,HttpServletResponse response) throws ParseException {
-        Map<String, String> result = new HashMap<String, String>();
+    public Pair<Boolean, String> goListForAutoSave(Integer orderId, String type, String lastPayDateVal, HttpServletRequest request,HttpServletResponse response) throws ParseException {
+        Pair<Boolean, String> result = Pair.of(Boolean.FALSE, "自动生成采购单失败");
         if (REQUEST_HEADER_TYPE.equals(type)) {
             BizRequestHeader requestHeader = new BizRequestHeader();
             requestHeader.setId(orderId);
@@ -1381,8 +1381,6 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 requestHeader = requestHeaderList.getList().get(0);
                 String reqDetailIds = requestHeader.getReqDetailIds();
                 String vendorId = String.valueOf(requestHeader.getOnlyVendor());
-                result.put("reqDetailIds", reqDetailIds);
-                result.put("vendorId", String.valueOf(vendorId));
                 String unitPrices = "";
                 String ordQtys = "";
                 Map<String,List<BizRequestDetail>> reqDetailMap = new LinkedHashMap<>();
@@ -1425,12 +1423,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     }
                     ordQtys = ordQtys.substring(0, ordQtys.length()-1);
                     unitPrices = unitPrices.substring(0, unitPrices.length()-1);
-                    result.put("ordQtys", ordQtys);
-                    result.put("unitPrices", unitPrices);
-                    //model.addAttribute("reqDetailMap",reqDetailMap);
                 }
 
-                this.autoSave(reqDetailIds,"", vendorId, unitPrices, ordQtys, lastPayDateVal);
+                result = this.autoSave(reqDetailIds,"", vendorId, unitPrices, ordQtys, lastPayDateVal);
             }
         } else if (DO_ORDER_HEADER_TYPE.equals(type)) {
             BizOrderHeader orderHeader = new BizOrderHeader();
@@ -1443,8 +1438,6 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 String orderDetailIds = orderHeader.getOrderDetails();
                 String vendorId =  String.valueOf(orderHeader.getOnlyVendor());
 
-                result.put("orderDetailIds", orderDetailIds);
-                result.put("vendorId", String.valueOf(vendorId));
                 String unitPrices = "";
                 String ordQtys = "";
                 Map<String, List<BizOrderDetail>> orderDetailMap = new LinkedHashMap<>();
@@ -1488,18 +1481,14 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     }
                     ordQtys = ordQtys.substring(0, ordQtys.length() - 1);
                     unitPrices = unitPrices.substring(0, unitPrices.length() - 1);
-                    result.put("ordQtys", ordQtys);
-                    result.put("unitPrices", unitPrices);
                 }
-
-                this.autoSave("",orderDetailIds, vendorId, unitPrices, ordQtys, lastPayDateVal);
+                result = this.autoSave("",orderDetailIds, vendorId, unitPrices, ordQtys, lastPayDateVal);
             }
         }
-
         return result;
     }
 
-    public String autoSave(String reqDetailIds, String orderDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal) throws ParseException {
+    public Pair<Boolean, String> autoSave(String reqDetailIds, String orderDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal) throws ParseException {
         Office vendOffice = new Office();
         vendOffice.setId(Integer.parseInt(vendorId));
 
@@ -1516,8 +1505,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         Set<Integer> poIdSet = this.findPrewPoHeader(bizPoHeader);
         if (poIdSet.size() == 1) {
-            //addMessage(redirectAttributes, "prew".equals(prewStatus) ? "采购订单预览信息" : "保存采购订单成功");
-            return "采购单预览";
+            return Pair.of(Boolean.FALSE, "采购单已存在");
         }
         int deOfifceId = 0;
         if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null) {
@@ -1556,15 +1544,13 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         bizPoHeader.setType("createPo");
         this.savePoHeader(bizPoHeader);
 
-        //addMessage(redirectAttributes, "保存采购订单成功");
-
         //采购单开启审核，同时自动生成付款单
         Pair<Boolean, String> audit = this.autoSavePaymentOrder(poHeaderIdid);
         if (audit.getLeft().equals(Boolean.TRUE)) {
             String poId = String.valueOf(bizPoHeader.getId());
-            return JsonUtil.generateData("采购单生成," + poId, null);
+            return Pair.of(Boolean.TRUE, "采购单生成," + poId);
         }
-        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);
+        return Pair.of(Boolean.FALSE, "自动生成付款单失败");
     }
 
 }
