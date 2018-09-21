@@ -7,20 +7,20 @@
 		this.detileFlag = "false"
 		this.cancelAmendPayFlag = "false"
 		this.cancelFlag = "false"
-		this.payFlag = "false"
+//		this.payFlag = "false"
 		this.checkFlag = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 //			biz:request:bizRequestHeader:view   详情
-//			biz:request:bizRequestHeader:edit   取消、修改、付款、删除
+//			biz:request:bizRequestHeader:edit   备货单添加、取消、修改、付款、删除、恢复
 //			biz:request:bizRequestHeader:delete  删除、
 //			biz:requestHeader:pay		付款
 //			biz:request:bizRequestHeader:audit		审核
 			this.getPermissionList('biz:request:bizRequestHeader:view','detileFlag')
 			this.getPermissionList('biz:request:bizRequestHeader:edit','cancelAmendPayFlag')
-			this.getPermissionList('biz:requestHeader:pay','payFlag')
+//			this.getPermissionList('biz:requestHeader:pay','payFlag')
 			this.getPermissionList('biz:request:bizRequestHeader:audit','checkFlag')
 //			this.getPermissionList('biz:request:bizRequestHeader:delete','cancelFlag')
 			if(this.userInfo.isFunc){
@@ -340,7 +340,7 @@
                 success: function(res){
                     _this.detileFlag = res.data;
 					_this.cancelAmendPayFlag = res.data;
-					_this.payFlag = res.data;
+//					_this.payFlag = res.data;
 					_this.checkFlag = res.data;
 //					_this.cancelFlag = res.data;
 //                  console.log(_this.cancelFlag)
@@ -366,13 +366,15 @@
 			}),
 		/*备货单添加*/
 			$('#nav').on('tap','.inAddBtn', function() {
-				var url = $(this).attr('url');
-				GHUTILS.OPENPAGE({
-					url: "../../html/inventoryMagmetHtml/inventoryAddList.html",
-					extras: {
-						
-					}
-				})
+				if(_this.cancelAmendPayFlag == true) {
+					var url = $(this).attr('url');
+					GHUTILS.OPENPAGE({
+						url: "../../html/inventoryMagmetHtml/inventoryAddList.html",
+						extras: {
+							
+						}
+					})
+				}
 			}),
 		/*首页*/
 			$('#nav').on('tap','.inHomePage', function() {

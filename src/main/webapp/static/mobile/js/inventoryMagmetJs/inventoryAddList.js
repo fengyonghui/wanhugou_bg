@@ -6,6 +6,7 @@
 		this.datagood = [];
 		this.dataSupplier = [];
 		this.selectOpen = false;
+		this.inAddSaveFlag = "false"
         this.skuInfoIds="";
         this.reqQtys="";
         this.fromOfficeId="";
@@ -14,6 +15,9 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
+			//权限添加
+//			biz:request:bizRequestHeader:edit    保存
+			this.getPermissionList('biz:request:bizRequestHeader:edit','inAddSaveFlag')
 			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAdd01');
 			this.hrefHtmls('.newinput02', '.input_div02','#hideSpanAdd02');
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
@@ -23,8 +27,23 @@
 		pageInit: function() {
 			var _this = this;
 			_this.ajaxCheckStatus();
-			_this.saveDetail();
+			if(_this.inAddSaveFlag == true) {
+				_this.saveDetail();
+			}
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.inAddSaveFlag = res.data;
+                }
+            });
+        },
 		getData: function() {
 			var _this = this;
             _this.removeItem();
