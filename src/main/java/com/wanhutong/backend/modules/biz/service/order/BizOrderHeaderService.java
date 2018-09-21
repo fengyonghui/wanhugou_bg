@@ -30,6 +30,9 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
+import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
+import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
+import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
@@ -147,6 +150,42 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     @Override
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
+
+        JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
+        JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
+        DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
+
+        String selectAuditStatus = bizOrderHeader.getSelectAuditStatus();
+        if (StringUtils.isNotBlank(selectAuditStatus)) {
+            List<String> originConfigValue = Lists.newArrayList();
+            List<String> localConfigValue = Lists.newArrayList();
+            List<String> doFifthConfigValue = Lists.newArrayList();
+
+            //////////////////////////////////////////////////////////////////
+            for (Process process : originConfig.getProcessList()) {
+                if (process.getName().contains(selectAuditStatus)) {
+                    originConfigValue.add(String.valueOf(process.getCode()));
+                }
+            }
+//////////////////////////////////////////////////////////////////
+            for (Process process : localConfig.getProcessList()) {
+                if (process.getName().contains(selectAuditStatus)) {
+                    localConfigValue.add(String.valueOf(process.getCode()));
+                }
+            }
+//////////////////////////////////////////////////////////////////
+            for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
+                if (process.getName().contains(selectAuditStatus)) {
+                    doFifthConfigValue.add(String.valueOf(process.getCode()));
+                }
+            }
+
+            bizOrderHeader.setOriginCode(CollectionUtils.isEmpty(originConfigValue) ? null : originConfigValue);
+            bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
+            bizOrderHeader.setDoFifthCode(CollectionUtils.isEmpty(doFifthConfigValue) ? null : doFifthConfigValue);
+        }
+
+
         User user = UserUtils.getUser();
         if (user.isAdmin()) {
             bizOrderHeader.setDataStatus("filter");
