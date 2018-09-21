@@ -259,7 +259,7 @@
 		<div class="control-group">
 			<label class="control-label">参与人数：</label>
 			<div class="controls">
-				<form:hidden path="officeIds" id="officeIds"/>
+				<form:input path="officeIds" id="officeIds"/>
 				<form:input path="sendNum" id="sendNum" htmlEscape="false" maxlength="10" readonly="readonly" class="input-xlarge  digits"/>
 			</div>
 

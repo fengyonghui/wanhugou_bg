@@ -20,11 +20,13 @@
 		a.update_time AS "updateDate",
 		a.status AS "status",
 		a.send_status AS "sendStatus",
-		a.u_version AS "uVersion"
+		a.u_version AS "uVersion",
+		GROUP_CONCAT(c.user_id) AS officeIds
 	</sql>
 	
 	<sql id="bizIntegrationActivityJoins">
-          left join sys_user b on b.id = a.create_id and b.status = 1
+          LEFT JOIN sys_user_activity c on c.activity_id = a.id and c.`status` = 1
+          LEFT join sys_user b on b.id = a.create_id and b.status = 1
 	</sql>
     
 	<select id="get" resultType="BizIntegrationActivity">
@@ -59,6 +61,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+        group by a.id
 	</select>
 	
 	<select id="findAllList" resultType="BizIntegrationActivity">

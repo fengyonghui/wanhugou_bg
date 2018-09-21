@@ -54,5 +54,25 @@ public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMon
         bizMoneyRecodeDetail.setAvailableIntegration(availableIntegration);
         return bizMoneyRecodeDetail;
 	}
-	
+
+	//添加积分流水记录
+	@Transactional(readOnly = false)
+	public void saveAll(List<BizMoneyRecode> arrayList) {
+		bizMoneyRecodeDao.saveAll(arrayList);
+	}
+
+	//更新用户信用表积分数
+	@Transactional
+	public void updateMoney(List<BizMoneyRecode> list){
+         bizMoneyRecodeDao.updateMoney(list);
+	}
+
+	//查询用户所有的可用积分
+	public Integer selectMoneyByOfficeId(Integer officeId){
+        return bizMoneyRecodeDao.selectMoney(officeId);
+	}
+
+
+
+
 }

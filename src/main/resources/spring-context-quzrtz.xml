@@ -26,12 +26,13 @@
 	</bean>
 
 	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  -->
-	<bean id="startQuertz" lazy-init="true" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<bean id="startQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
 				<ref bean="cronTrigger" />
 			</list>
 		</property>
+		<property name="jobFactory" ref="jobFactory"></property>
 	</bean>
 
 	<!--这个类是用来设置触发时间的， startJobs方法启动调度容器，然后按照上面触发器每隔1s执行所配置的myJob2.doSomething()方法 -->
@@ -39,5 +40,13 @@
 		<!--这个对象一定要注入，这样类才能进行管理，还有在类型要用get set方法，不然会报错。-->
 		<property name="scheduler" ref="startQuertz" />
 	</bean>
+
+	<!-- 定时任务的factorybean,配置其他config -->
+	<bean id="jobFactory" class="com.wanhutong.backend.modules.biz.service.integration.JobFactory"></bean>
+
+	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobFactory" ref="jobFactory"></property>
+	</bean>
+
 
 </beans>

@@ -20,7 +20,7 @@ public class BizMoneyRecode extends DataEntity<BizMoneyRecode> {
 	
 	private static final long serialVersionUID = 1L;
 	private Office office;		// 采购商id
-	private Double money;		// 流水数量
+	private String money;		// 流水数量
 	private Integer orderId;		// 订单id
 	private Integer statusCode;		// 10获得-注册成功11获得-下单支付12获得-活动赠送20订单抵扣冻结21使用22订单取消抵扣30过期
 	private String statusName;		// 流水类型
@@ -30,6 +30,56 @@ public class BizMoneyRecode extends DataEntity<BizMoneyRecode> {
 	private Date beginCreateDate;		// 开始 生成时间
 	private Date endCreateDate;		// 结束 生成时间
 	private List<Integer> officeIds;
+	private String newMoney;
+	private Date createDate;
+	private Date updateDate;
+	private Integer createId;
+	private Integer updateId;
+
+
+	public Integer getCreateId() {
+		return createId;
+	}
+
+	public void setCreateId(Integer createId) {
+		this.createId = createId;
+	}
+
+	public Integer getUpdateId() {
+		return updateId;
+	}
+
+	public void setUpdateId(Integer updateId) {
+		this.updateId = updateId;
+	}
+
+	@Override
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	@Override
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	@Override
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	@Override
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public String getNewMoney() {
+		return newMoney;
+	}
+
+	public void setNewMoney(String newMoney) {
+		this.newMoney = newMoney;
+	}
 
 	public List<Integer> getOfficeIds() {
 		return officeIds;
@@ -55,16 +105,15 @@ public class BizMoneyRecode extends DataEntity<BizMoneyRecode> {
 	public void setOffice(Office office) {
 		this.office = office;
 	}
-	
-	@NotNull(message="流水数量不能为空")
-	public Double getMoney() {
+
+	public String getMoney() {
 		return money;
 	}
 
-	public void setMoney(Double money) {
+	public void setMoney(String money) {
 		this.money = money;
 	}
-	
+
 	public Integer getOrderId() {
 		return orderId;
 	}

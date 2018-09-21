@@ -10,7 +10,6 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
 import com.wanhutong.backend.modules.config.CronUtils;
 import com.wanhutong.backend.modules.config.web.QuartzManager;
-import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import net.sourceforge.pinyin4j.PinyinHelper;
@@ -35,7 +34,7 @@ import javax.annotation.Resource;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizIntegrationActivityService extends CrudService<BizIntegrationActivityDao, BizIntegrationActivity> {
+public class BizIntegrationActivityService extends CrudService<BizIntegrationActivityDao, BizIntegrationActivity>{
     @Resource
 	private BizIntegrationActivityDao bizIntegrationActivityDao;
     @Resource
@@ -119,7 +118,7 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 				bizIntegrationActivityDao.insertMiddle(list);
 			}
 			//添加定时任务
-            quartzManager.addJob(sid.toString(),"万户币","万户币","万户币",BizIntegrationTimer.class,CronUtils.getCron(sendTime));
+            quartzManager.addJob(sid.toString(),"万户币",bizIntegrationActivity.getActivityName(),"万户币",BizIntegrationTimeService.class,CronUtils.getCron(bizIntegrationActivity.getSendTime()));
 
 
 		}
@@ -199,12 +198,15 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 
 	//查询指定用户的经销店列表
 	public List<Office> findCheckedOffice(String officeIds){
-		String[] ss = officeIds.split(",");
 		List<Office> list = Lists.newArrayList();
-		for(String s:ss)
+		if(StringUtils.isNotBlank(officeIds))
 		{
-			Office office = officeService.get(Integer.valueOf(s));
-			list.add(office);
+			String[] ss = officeIds.split(",");
+			for(String s:ss)
+			{
+				Office office = officeService.get(Integer.valueOf(s));
+				list.add(office);
+			}
 		}
 		return list;
 	}
@@ -214,5 +216,7 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		List<Office> list = bizIntegrationActivityDao.findAllOffices();
 		return list;
 	}
+
+
 	
 }
