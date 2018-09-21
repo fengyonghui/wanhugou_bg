@@ -1236,16 +1236,10 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:audit")
     @RequestMapping(value = "audit")
     @ResponseBody
-    public String audit(int id, String currentType, int auditType, String description, Model model) {
-        //BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
+    public String audit(HttpServletRequest request, HttpServletResponse response, int id, String currentType, int auditType, String description, String createPo, String lastPayDateVal) {
         try {
             Pair<Boolean, String> audit = null;
-//            if (OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeader.getPayProportion())) {
-//                audit = bizOrderHeaderService.auditAll(id, currentType, auditType, description);
-//            } else {
-//                audit = bizOrderHeaderService.auditFifty(id, currentType, auditType, description);
-//            }
-            audit = bizOrderHeaderService.auditFifty(id, currentType, auditType, description);
+            audit = bizOrderHeaderService.auditFifty(request, response, id, currentType, auditType, description, createPo, lastPayDateVal);
             if (audit.getLeft()) {
                 return JsonUtil.generateData(audit.getRight(), null);
             }

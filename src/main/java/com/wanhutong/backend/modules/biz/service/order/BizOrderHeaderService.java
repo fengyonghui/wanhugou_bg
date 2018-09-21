@@ -26,6 +26,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
@@ -58,12 +59,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -107,6 +112,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private CommonImgService commonImgService;
     @Resource
     private SystemService systemService;
+    @Autowired
+    private BizPoHeaderService bizPoHeaderService;
 
     public static final String ORDER_TABLE = "biz_order_header";
 
@@ -784,7 +791,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> auditFifty(Integer orderHeaderId, String currentType, int auditType, String description) {
+    public Pair<Boolean, String> auditFifty(HttpServletRequest request, HttpServletResponse response, Integer orderHeaderId, String currentType, int auditType, String description, String createPo, String lastPayDateVal) throws ParseException {
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectId(String.valueOf(orderHeaderId));
         commonProcessEntity.setObjectName(DATABASE_TABLE_NAME);
@@ -870,6 +877,17 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                     ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
         }
 
+        //自动生成采购单
+        Boolean poFlag = false;
+        String poId = "";
+        if ("yes".equals(createPo)) {
+            //订单标识类型
+            String type = "2";
+            Pair<Boolean, String> booleanStringPair = bizPoHeaderService.goListForAutoSave(orderHeaderId, type, lastPayDateVal, request, response);
+            if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
+                return booleanStringPair;
+            }
+        }
         return Pair.of(Boolean.TRUE, "操作成功!");
     }
 
