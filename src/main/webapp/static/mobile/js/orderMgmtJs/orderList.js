@@ -43,8 +43,8 @@
 			            callback :function(){ 
 			                    pager['size']= 20;
 			                    pager['pageNo'] = 1;
-			                    pager['flag'] = "check_pending";
-			                    pager['consultantId'] = _this.userInfo.staListId;
+//			                    pager['flag'] = "check_pending";
+//			                    pager['consultantId'] = _this.userInfo.staListId;
 				                var f = document.getElementById("orderList");
 				                var childs = f.childNodes;
 				                for(var i = childs.length - 1; i >= 0; i--) {

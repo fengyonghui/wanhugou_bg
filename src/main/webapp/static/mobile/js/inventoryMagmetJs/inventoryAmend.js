@@ -66,6 +66,12 @@
 	                	$('#insupplier').attr('officeId',$('#inSta').val());
 	                	console.log($('#inSta').val())
 	                	_this.supplier($('#inSta').val());
+                	}else{
+						$('#insupplierNum').parent().hide();//供应商卡号
+						$('#insupplierMoney').parent().hide();//供应商收款人
+						$('#insupplierBank').parent().hide();//供应商开户行
+						$('#insuppliercontract').parent().hide();//供应商合同
+					    $('#insuppliercardID').parent().hide();//供应商身份证
                 	}     
                 	//备货方
 					if(res.data.bizRequestHeader.fromType==1){
@@ -316,7 +322,6 @@
             var fromOfficeId = "";
             $.ajax({
                 type: 'GET',
-//              url: '/a/sys/office/queryTreeList',
                 url: '/a/sys/office/queryTreeListByPhone',
                 data: {
                     type: 8,
@@ -504,14 +509,12 @@
 			var htmlSupplier = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/sys/office/queryTreeList',
+				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
 					type: 7
 				},
 				dataType: 'json',
 				success: function(res) {
-//					console.log('777');
-//					console.log(res)
 					_this.dataSupplier = res
 					$.each(res, function(i, item) {
 						htmlSupplier += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
