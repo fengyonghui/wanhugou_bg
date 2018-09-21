@@ -8,6 +8,8 @@ import java.util.*;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
+import com.wanhutong.backend.modules.config.CronUtils;
+import com.wanhutong.backend.modules.config.web.QuartzManager;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -36,6 +38,8 @@ import javax.annotation.Resource;
 public class BizIntegrationActivityService extends CrudService<BizIntegrationActivityDao, BizIntegrationActivity> {
     @Resource
 	private BizIntegrationActivityDao bizIntegrationActivityDao;
+    @Resource
+    private QuartzManager quartzManager;
 
     @Resource
 	private OfficeService officeService;
@@ -52,12 +56,13 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		return super.findPage(page, bizIntegrationActivity);
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
 	public void save(BizIntegrationActivity bizIntegrationActivity) {
 		bizIntegrationActivity.setStatus(1);
 		bizIntegrationActivity.setSendStatus(0);
 		bizIntegrationActivity.setActivityTools("万户币");
-		String activityName  = bizIntegrationActivity.getActivityName();
+        Date sendTime = bizIntegrationActivity.getEndSendTime();
+        String activityName  = bizIntegrationActivity.getActivityName();
 		if(StringUtils.isNotBlank(bizIntegrationActivity.getActivityName()))
 		{
 			String vFullName = getFirstLetters(activityName, HanyuPinyinCaseType.UPPERCASE);
@@ -113,6 +118,10 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 				//添加活动用户表数据
 				bizIntegrationActivityDao.insertMiddle(list);
 			}
+			//添加定时任务
+            quartzManager.addJob(sid.toString(),"万户币","万户币","万户币",BizIntegrationTimer.class,CronUtils.getCron(sendTime));
+
+
 		}
 	}
 	

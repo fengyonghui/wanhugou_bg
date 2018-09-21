@@ -7,6 +7,7 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
+import java.util.List;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
@@ -28,7 +29,16 @@ public class BizMoneyRecode extends DataEntity<BizMoneyRecode> {
 	private Integer uVersion;		// u_version
 	private Date beginCreateDate;		// 开始 生成时间
 	private Date endCreateDate;		// 结束 生成时间
-	
+	private List<Integer> officeIds;
+
+	public List<Integer> getOfficeIds() {
+		return officeIds;
+	}
+
+	public void setOfficeIds(List<Integer> officeIds) {
+		this.officeIds = officeIds;
+	}
+
 	public BizMoneyRecode() {
 		super();
 	}

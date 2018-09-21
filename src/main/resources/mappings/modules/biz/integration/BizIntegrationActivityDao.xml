@@ -137,6 +137,7 @@
 				where a.`status` = 1 AND a.type = 6 and b.cust_id is not null
 				GROUP BY b.cust_id
 	</select>
+
 	<select id="findUnOrderOfficeList" resultType="com.wanhutong.backend.modules.sys.entity.Office">
 		    SELECT
 			a.id,
