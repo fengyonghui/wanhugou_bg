@@ -112,8 +112,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private CommonImgService commonImgService;
     @Resource
     private SystemService systemService;
-    @Autowired
-    private BizPoHeaderService bizPoHeaderService;
+
 
     public static final String ORDER_TABLE = "biz_order_header";
 
@@ -780,115 +779,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
      */
     public BizOrderHeader getByOrderNum(String orderNum) {
         return bizOrderHeaderDao.getByOrderNum(orderNum);
-    }
-
-    /**
-     * 代采订单审核
-     * @param orderHeaderId
-     * @param currentType
-     * @param auditType
-     * @param description
-     * @return
-     */
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> auditFifty(HttpServletRequest request, HttpServletResponse response, Integer orderHeaderId, String currentType, int auditType, String description, String createPo, String lastPayDateVal) throws ParseException {
-        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-        commonProcessEntity.setObjectId(String.valueOf(orderHeaderId));
-        commonProcessEntity.setObjectName(DATABASE_TABLE_NAME);
-        commonProcessEntity.setCurrent(1);
-        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
-        if (list.size() != 1) {
-            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常! current process 不为 1");
-        }
-        CommonProcessEntity cureentProcessEntity = list.get(0);
-        if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
-            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常!");
-        }
-        if (cureentProcessEntity == null) {
-            return Pair.of(Boolean.FALSE, "操作失败,当前订单无审核状态!");
-        }
-
-        BizOrderHeader bizOrderHeader = this.get(orderHeaderId);
-        DoOrderHeaderProcessFifthConfig doOrderHeaderProcessConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
-
-        Integer passProcessCode = null;
-        // 当前流程
-        DoOrderHeaderProcessFifthConfig.OrderHeaderProcess currentProcess = doOrderHeaderProcessConfig.processMap.get(Integer.valueOf(currentType));
-        switch (OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail(), bizOrderHeader.getReceiveTotal())) {
-            case FIFTH:
-                passProcessCode = currentProcess.getFifthPassCode();
-                break;
-            case ALL:
-                passProcessCode = currentProcess.getAllPassCode();
-                break;
-            default:
-                break;
-        }
-        if (passProcessCode == null || passProcessCode == 0) {
-            return Pair.of(Boolean.FALSE, "操作失败,没有下级流程!");
-        }
-
-        // 下一流程
-        DoOrderHeaderProcessFifthConfig.OrderHeaderProcess nextProcess = doOrderHeaderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? passProcessCode : currentProcess.getRejectCode());
-        if (nextProcess == null) {
-            return Pair.of(Boolean.FALSE, "操作失败,当前流程已经结束!");
-        }
-        User user = UserUtils.getUser();
-        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
-        Role role = new Role();
-        role.setEnname(roleEnNameEnum.getState());
-        if (!user.isAdmin() && !user.getRoleList().contains(role)) {
-            return Pair.of(Boolean.FALSE, "操作失败,该用户没有权限!");
-        }
-
-        if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
-            return Pair.of(Boolean.FALSE, "请输入驳回理由!");
-        }
-
-        cureentProcessEntity.setBizStatus(auditType);
-        cureentProcessEntity.setProcessor(user.getId().toString());
-        cureentProcessEntity.setDescription(description);
-        cureentProcessEntity.setCurrent(0);
-        commonProcessService.save(cureentProcessEntity);
-
-        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
-        nextProcessEntity.setObjectId(bizOrderHeader.getId().toString());
-        nextProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
-        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
-        nextProcessEntity.setCurrent(1);
-        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
-
-        commonProcessService.save(nextProcessEntity);
-
-        StringBuilder phone = new StringBuilder();
-
-        User sendUser=new User(systemService.getRoleByEnname(nextProcess.getRoleEnNameEnum()==null?"":nextProcess.getRoleEnNameEnum().toLowerCase()));
-
-        List<User> userList = systemService.findUser(sendUser);
-        if (CollectionUtils.isNotEmpty(userList)) {
-            for (User u : userList) {
-                phone.append(u.getMobile()).append(",");
-            }
-        }
-        if (StringUtils.isNotBlank(phone.toString())) {
-            AliyunSmsClient.getInstance().sendSMS(
-                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
-                    phone.toString(),
-                    ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
-        }
-
-        //自动生成采购单
-        Boolean poFlag = false;
-        String poId = "";
-        if ("yes".equals(createPo)) {
-            //订单标识类型
-            String type = "2";
-            Pair<Boolean, String> booleanStringPair = bizPoHeaderService.goListForAutoSave(orderHeaderId, type, lastPayDateVal, request, response);
-            if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
-                return booleanStringPair;
-            }
-        }
-        return Pair.of(Boolean.TRUE, "操作成功!");
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
