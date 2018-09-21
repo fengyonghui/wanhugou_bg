@@ -520,7 +520,7 @@
 						</c:if>
 						<c:if test="${orderHeader.bizStatus==OrderHeaderBizStatusEnum.UNAPPROVE.state}">
 							审核失败
-							<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+							<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state && fns:getUser().isAdmin()}">
 								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}&source=${source}">修改</a>
 							</c:if>
 						</c:if></a>
