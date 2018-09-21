@@ -1496,10 +1496,6 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             }
         }
 
-//        var orderDetailIds = result['orderDetailIds'];
-//        var vendorId = result['vendorId'];
-//        var unitPrices = result['unitPrices'];
-//        var ordQtys = result['ordQtys'];
         return result;
     }
 
@@ -1544,9 +1540,6 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             bizPoHeader.setOrderNum(poNo);
             this.savePoHeader(bizPoHeader);
         }
-//        if ("mobile".equalsIgnoreCase(version)) {
-//            return renderString(response, JsonUtil.generateData("操作成功", request.getParameter("callback")), "application/json");
-//        }
 
         //确认生成采购单
         Integer poHeaderIdid = bizPoHeader.getId();
