@@ -4,10 +4,14 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.prew = false;
+		this.inLastPayDateFlag = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
+			//权限添加
+//			biz:request:bizRequestHeader:audit    最后付款时间、审核
+			this.getPermissionList('biz:request:bizRequestHeader:audit','inLastPayDateFlag')
 			this.pageInit(); //页面初始化
 			//this.radioShow()
 			//			this.btnshow()
@@ -18,8 +22,23 @@
 		pageInit: function() {
 			var _this = this;
 			_this.getData()
-			_this.comfirDialig()
+			if(_this.inLastPayDateFlag == true) {
+				_this.comfirDialig()
+			}
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.inLastPayDateFlag = res.data;
+                }
+            });
+        },
 		getData: function() {
 			var _this = this;
 			$.ajax({
@@ -33,6 +52,16 @@
 				success: function(res) {
 					console.log(res)
 					//调取供应商信息
+					$('#createPo').val(res.data.createPo);
+					/*判断是品类主管*/
+					if(_this.inLastPayDateFlag == true) {
+						if(res.data.bizRequestHeader.bizStatus == 4 && res.data.createPo == 'yes') {	//品类主管审核才生成PO
+							inLastDate = '<label>最后时间：</label>'+
+								'<input type="date" class="mui-input-clear" id="lastDate" placehohder="必填！">'+
+								'<font>*</font>'
+							$('#inlastDate').append(inLastDate);
+						}
+					}
 					if(res.data.bizRequestHeader.bizVendInfo) {
 						var officeId = res.data.bizRequestHeader.bizVendInfo.office.id;
 						$('#supplierId').val(officeId);
@@ -60,7 +89,6 @@
 					//排产状态
 					if(res.data.bizRequestHeader.bizPoHeader) {
 						var itempoSchType = res.data.bizRequestHeader.bizPoHeader.poSchType;
-						console.log(itempoSchType)
 						var SchedulstatusTxt = '';
 						$.ajax({
 							type: "GET",
@@ -70,7 +98,6 @@
 							},
 							dataType: "json",
 							success: function(reslt) {
-								console.log(reslt)
 								$.each(reslt, function(i, item) {
 									if(item.value == itempoSchType) {
 										SchedulstatusTxt = item.label
@@ -114,7 +141,8 @@
 //					if(res.data.bizRequestHeader.str == 'audit' && res.data.bizRequestHeader.commonProcess.type == res.data.defaultProcessId){
 						_this.stockGoodsHtml(res.data); //商品库存
 //					}
-					
+					//判断审核状态
+					_this.checkStatus(res.data);
 					//排产信息
 					if(res.data.bizRequestHeader.str == 'detail') {
 						var poheaderId = res.data.bizRequestHeader.bizPoHeader.id;
@@ -129,12 +157,30 @@
 							_this.scheduling(poheaderId);
 						}
 					}
-					/*判断是品类主管的时候显示*/
-//					inLastDate = '<label>最后时间：</label>'
-//						'<input type="date" class="mui-input-clear" value="'++'" disabled>'
-//					$('#inlastDate').append(inLastDate);
 				}
 			});
+		},
+		checkStatus: function(data) {
+			var _this = this;
+			var requProcess = data.bizRequestHeader.commonProcess.requestOrderProcess;
+			var purchProcess = data.bizRequestHeader.commonProcess.purchaseOrderProcess;
+			if(data.bizRequestHeader.processPo != 'processPo') {
+				if(requProcess.name != '审核完成') {
+					$('#incheck').val(requProcess.name);
+				}
+				if(requProcess.name == '审核完成') {
+					$('#incheck').val('订单支出信息审核');
+				}
+				$('#currentType').val(requProcess.code)
+			}
+			var commonProcessList = '';
+			if(data.bizRequestHeader.bizPoHeader) {
+				commonProcessList = data.bizRequestHeader.bizPoHeader.commonProcessList
+			}
+			if(commonProcessList != null && commonProcessList.length > 0 && data.bizRequestHeader.processPo == 'processPo') {
+				$('#incheck').val(purchProcess.name);
+				$('#currentType').val(purchProcess.code)
+			}
 		},
 		//供应商信息
 		supplier: function(supplierId) {
@@ -287,7 +333,6 @@
 						});
 						$("#purchaseMenus").append(poDetailHtmls);
 						//按商品排产中的排产记录
-						console.log(res.data.bizPoHeader.poDetailList)
 						var completePalnHtml = "";
 						$.each(res.data.bizPoHeader.poDetailList, function(n, v) {
 							$.each(v.bizSchedulingPlan.completePalnList, function(n, v) {
@@ -319,7 +364,6 @@
 			var htmlPaylist = '';
 			if(data.paymentOrderList != null && data.paymentOrderList.length > 0) {
 				$.each(data.paymentOrderList, function(i, item) {
-					console.log(item)
 					if(item.payTime) {
 						var realitypayTime = "";
 						var realitypayTime = _this.formatDateTime(item.payTime);
@@ -408,7 +452,6 @@
 			if(data.bizRequestHeader.commonProcessList) {
 				var CheckHtmlList = '';
 				$.each(data.bizRequestHeader.commonProcessList, function(i, item) {
-					console.log(item)
 					var auditLen = data.bizRequestHeader.commonProcessList.length;
 					var step = i + 1;
 					if(i != auditLen - 1) {
@@ -430,9 +473,6 @@
 					//
 					if(i == auditLen - 1 && data.bizRequestHeader.processPo != 'processPo' && item.requestOrderProcess.name != '审核完成') {
 						if(item.requestOrderProcess.name != '审核完成') {
-							$('#incheck').val(item.requestOrderProcess.name);
-							$('#currentType').val(item.requestOrderProcess.code)
-							console.log(item.requestOrderProcess.code)
 							CheckHtmlList += '<li class="step_item">' +
 								'<div class="step_num">' + step + ' </div>' +
 								'<div class="step_num_txt">' +
@@ -458,7 +498,6 @@
 				});
 				if(data.bizRequestHeader.bizPoHeader != "") {
 					$.each(data.bizRequestHeader.bizPoHeader.commonProcessList, function(a, items) {
-						console.log(items)
 						var len = data.bizRequestHeader.bizPoHeader.commonProcessList.length;
 						var totalStep = auditLen + a;
 //						if(len-a != 1) {
@@ -518,9 +557,6 @@
 								'</li>'
 						}
 						if(a == len - 1) {
-							$('#incheck').val(items.purchaseOrderProcess.name);
-							$('#currentType').val(items.purchaseOrderProcess.code)
-							console.log(items.purchaseOrderProcess.code)
 							CheckHtmlList += '<li class="step_item">' +
 								'<div class="step_num">' + totalStep + ' </div>' +
 								'<div class="step_num_txt">' +
@@ -543,7 +579,6 @@
 			var _this = this;
 			var htmlCommodity = '';
 			$.each(data.reqDetailList, function(i, item) {
-				console.log(item)
 				htmlCommodity +=
 					'<div class="mui-row app_bline" id="' + item.id + '">' +
 					'<input style="display:none;" name="" class="skuinfo_check" id="' + item.skuInfo.id + '" type="checkbox">' +
@@ -608,8 +643,6 @@
 		},
 		//商品库存
 		stockGoodsHtml: function(data) {
-//			console.log(data);
-//			console.log(data.inventorySkuList);
 			var _this = this;
 			var htmlstockGoods = '';
 			//库存类型
@@ -622,7 +655,6 @@
 	                data: {type:"inv_type"},		                
 	                dataType: "json",
 	                success: function(reslts){
-	                	console.log(reslts)
 	                	$.each(reslts,function(i,item){
 	                		if(item.value==iteminvType){
 	                		 	invInfostatusTxt = item.label 
@@ -636,7 +668,6 @@
 				});
 	        })
 			$.each(data.inventorySkuList, function(i, item) {
-				console.log(item)
 				htmlstockGoods +=
 					'<div class="mui-row app_bline" id="' + item.id + '">' +
 
@@ -754,62 +785,76 @@
 					} else {}
 				})
 			});
-//			alert("操作成功")
 		},
 		ajaxData: function(inText, num) {
 			var _this = this;
+			var lastDateTxt = '';
+			if($('#createPo').val() == 'yes') {
+				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
+			}
 			$.ajax({
 				type: "GET",
 				url: "/a/biz/request/bizRequestHeaderForVendor/audit",
 				data: {
 					id: _this.userInfo.inListId,
 					currentType: $('#currentType').val(),
+					createPo: $('#createPo').val(),
+					lastPayDateVal: lastDateTxt,
 					auditType: num,
 					description: inText
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res);
-//					if(ok) {
-//						alert('操作成功!')
-//						GHUTILS.OPENPAGE({
-//							url: "../../html/inventoryMagmetHtml/inventoryList.html",
-//							extras: {}
-//						})
-//					}
-				},
-				error: function(e) {
-					//服务器响应失败处理函数
-					//				    console.info(data);
-					//				    console.info(status);
-//					console.info(e);
-				}
-			});
-
-		},
-		rejectData: function(rejectTxt, num) {
-			var _this = this;
-			$.ajax({
-				type: "GET",
-				url: "/a/biz/request/bizRequestHeaderForVendor/audit",
-				data: {
-					id: _this.userInfo.inListId,
-					currentType: $('#currentType').val(),
-					auditType: num,
-					description: rejectTxt
-				},
-				dataType: "json",
-				success: function() {
-					if(ok) {
+					if(res.ret == true) {
 						mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
 							url: "../../html/inventoryMagmetHtml/inventoryList.html",
 							extras: {}
 						})
 					}
+					if(res.ret == false) {
+						mui.toast(res.errmsg)
+					}
+				},
+				error: function(e) {
+					//服务器响应失败处理函数
+				}
+			});
+
+		},
+		rejectData: function(rejectTxt, num) {
+			var _this = this;
+			var lastDateTxt = '';
+			if($('#createPo').val() == 'yes') {
+				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
+			}
+			$.ajax({
+				type: "GET",
+				url: "/a/biz/request/bizRequestHeaderForVendor/audit",
+				data: {
+					id: _this.userInfo.inListId,
+					currentType: $('#currentType').val(),
+					createPo: $('#createPo').val(),
+					lastPayDateVal: lastDateTxt,
+					auditType: num,
+					description: rejectTxt
+				},
+				dataType: "json",
+				success: function(res) {
+					if(res.ret == true) {
+						mui.toast('操作成功!')
+						GHUTILS.OPENPAGE({
+							url: "../../html/inventoryMagmetHtml/inventoryList.html",
+							extras: {}
+						})
+					}
+					if(res.ret == false) {
+						mui.toast(res.errmsg)
+					}
 				}
 			});
 		},
+//给时间插件赋值
 		newData: function(da) {
 			var _this = this;
 			//      	 var date = new Date(da);//时间戳为10位需*1000，时间戳为13位的话不需乘1000      
@@ -878,21 +923,6 @@
 			}
 			return now;
 		}
-		//			var data = _this.getData()
-		//			console.log(data)
-		//			$('#ordNum').val(data.bizOrderHeader.orderNumber)
-		//			if(data.bizOrderHeader.orderNumber){
-		//				
-		//			}
-		//			$.each(data.bizOrderHeader.orderNumber, function(i, item) {
-		//						console.log(item.orderNumber)
-		//                       var orderNumber = item.orderNumber;
-		//					$('#ordNum').html(orderNumber)
-		////                        htmlList += 
-		//			});
-		////		                    $('#htmlMenu').html(htmlList)
-		//		}
-
 	}
 	$(function() {
 

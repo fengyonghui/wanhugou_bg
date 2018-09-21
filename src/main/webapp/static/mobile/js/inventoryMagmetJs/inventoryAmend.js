@@ -14,9 +14,9 @@
         this.fromOfficeId="";
         this.bizOfficeId="";
         this.deleteBtnFlag = "false"
+        this.inAddSaveFlag = "false"
         return this;
     }
-
     var bizStatusDesc = (function() {
         var result;
         $.ajax({
@@ -30,11 +30,13 @@
             }
         });
         return result;
-
     })();
-
     ACCOUNT.prototype = {
         init: function() {
+			//权限添加
+//			biz:request:bizRequestHeader:edit    保存
+			this.getPermissionList('biz:request:bizRequestDetail:edit','deleteBtnFlag')
+			this.getPermissionList('biz:request:bizRequestHeader:edit','inAddSaveFlag')
             this.hrefHtml('.newinput01', '.input_div01','#hideSpanAmend01');
 			this.hrefHtmls('.newinput02', '.input_div02','#hideSpanAmend02');
             this.pageInit(); //页面初始化
@@ -45,11 +47,26 @@
         pageInit: function() {
             var _this = this;
             _this.searchSkuHtml();
-            _this.saveDetail();
+            if(_this.inAddSaveFlag == true) {
+				_this.saveDetail();
+			}
             _this.getData();
             _this.ajaxCheckStatus();//业务状态
-             
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.deleteBtnFlag = res.data;
+                    _this.inAddSaveFlag = res.data;
+                }
+            });
+        },
         getData: function() {
             var _this = this;
             $.ajax({
@@ -173,10 +190,9 @@
             var _this = this;
             //点击保存按钮操作 保存按钮控制修改商品申报数量和备货商品的添加
             $('#saveDetailBtn').on('tap',function(){
-            	console.log('获取_this.skuInfoIds_2的值');
-            	console.log(_this.skuInfoIds_2);
+//          	console.log('获取_this.skuInfoIds_2的值');
+//          	console.log(_this.skuInfoIds_2);
                if(_this.skuInfoIds_2){
-               	console.log('添加哈哈')
                	    //备货商品的添加
 	  		        var skuIds = _this.skuInfoIds_2.split(",");
 	                var skuInfoIdsTemp = ""
@@ -303,19 +319,6 @@
                     }
                 })
            })
-        },
-        getPermissionList: function () {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": "biz:request:bizRequestDetail:edit"},
-                async:false,
-                success: function(res){
-                    _this.deleteBtnFlag = res.data;
-                }
-            });
         },
         getFromOfficeId: function(inOrordNum) {
             var _this = this;
@@ -499,7 +502,6 @@
                         htmlStatusAmend += '<option class="soption" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort +  '" value="' + item.value + '">' + item.label + '</option>'
                     });
                     $('#inputDivAmend').html(optHtml+htmlStatusAmend)
-                    _this.getPermissionList();
                 }
             });
         },
