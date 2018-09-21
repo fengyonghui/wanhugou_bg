@@ -96,20 +96,6 @@
 	                        		orderTypeTxt = items.label
 	                        	}
                            })
-//							if(item.orderType == 1) {
-//								orderTypeTxt = '普通订单'
-//							}else if(item.orderType == 2) {
-//								orderTypeTxt = '帐期采购'
-//							}else if(item.orderType == 3) {
-//								orderTypeTxt = '配资采购'
-//							}else if(item.orderType == 4) {
-//								orderTypeTxt = '微商订单'
-//							}else if(item.orderType == 5) {
-//								orderTypeTxt = '代采订单'
-//							}else if(item.orderType == 6) {
-//								orderTypeTxt = '拍照下单'
-//							}
-							
                         	//审核
                         	var staCheckBtn = '';
                         	var staCheckBtnTxt = '';
@@ -244,16 +230,6 @@
 					}
 				})
 			}),	
-		/*首页*/
-			$('#nav').on('tap','.inHomePage', function() {
-				var url = $(this).attr('url');
-				GHUTILS.OPENPAGE({
-					url: "../../html/backstagemgmt.html",
-					extras: {
-						
-					}
-				})
-			}),
 		 /*待审核*/
 	       $('.content_part').on('tap', '.waitCheckBtn', function() {
 				var url = $(this).attr('url');
