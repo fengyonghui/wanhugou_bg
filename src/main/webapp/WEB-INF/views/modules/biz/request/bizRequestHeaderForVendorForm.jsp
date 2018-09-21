@@ -418,10 +418,8 @@
         }
 
         function audit(auditType, description) {
-            var id = $("#id").val();
-            var currentType = $("#currentType").val();
+            //判断排产数据合法性
             var createPo = $("#createPo").val();
-
             if(createPo == "yes") {
                 var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
                 if (schedulingType == 0) {
@@ -438,22 +436,40 @@
                 }
             }
 
+            var id = $("#id").val();
+            var currentType = $("#currentType").val();
+            var lastPayDateVal = $("#lastPayDate").val();
+
             $.ajax({
                 url: '${ctx}/biz/request/bizRequestHeaderForVendor/audit',
                 contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "createPo": createPo, "lastPayDateVal":lastPayDateVal},
                 type: 'get',
                 async: false,
                 success: function (result) {
-                    if(result == 'ok') {
-                        alert("操作成功！");
-                        if(auditType==1){
-                            //自动生成采购单
-                            var id = $("#id").val();
-                            if (createPo == 'yes') {
-                                getPoHeaderPara(id);
+                    result = JSON.parse(result);
+                    if(result.ret == true || result.ret == 'true') {
+                        alert('操作成功!');
+
+                        //备货单排产
+                        var resultData = result.data;
+                        var resultDataArr = resultData.split(",");
+                        console.log(resultDataArr)
+                        console.log(resultDataArr[0])
+                        console.log(resultDataArr[1])
+                        if(resultDataArr[0] == "采购单生成") {
+                            var poId = resultDataArr[1];
+                            var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
+                            console.log(poId)
+                            console.log(schedulingType)
+                            if (schedulingType == 0) {
+                                saveComplete("0", poId);
+                            }
+                            if (schedulingType == 1) {
+                                batchSave("1", poId);
                             }
                         }
+
                         window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                     }else {
                         alert("操作失败！");
