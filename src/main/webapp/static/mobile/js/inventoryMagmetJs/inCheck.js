@@ -118,6 +118,7 @@
 					//排产信息
 					if(res.data.bizRequestHeader.str == 'detail') {
 						var poheaderId = res.data.bizRequestHeader.bizPoHeader.id;
+						console.log(poheaderId)
 						if(poheaderId == null || poheaderId == "") {
 							$("#inSchedultype").val("未排产")
 							$("#stockGoods").hide();
@@ -145,6 +146,7 @@
 				},
 				dataType: "json",
 				success: function(rest) {
+					console.log(rest)
 					if(rest) {
 						$('#insupplier').val(rest.vendName); //供应商
 						$('#insupplierNum').val(rest.cardNumber); //供应商卡号
@@ -767,7 +769,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(JSON.stringify(res));
+					console.log(res);
 //					if(ok) {
 //						alert('操作成功!')
 //						GHUTILS.OPENPAGE({

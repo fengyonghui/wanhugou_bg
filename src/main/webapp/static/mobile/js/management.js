@@ -54,7 +54,7 @@
                         data: {parentId:dataId},
                         dataType: "json",
                         success: function(res){
-//                      	console.log(res)
+                        	console.log(res)
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
                                 if(item.id!==694){
@@ -131,7 +131,22 @@
 						extras: {
 								purchId:purchId,
 						}
-					})`
+					})
+                }
+			})
+            /*订单支出信息*/
+            $('#menuMaget').on('click','.childMenu',function(){
+            	var url = $(this).attr('url');
+				var purchId = $(this).attr('purchId');
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(purchId==727) {
+                	GHUTILS.OPENPAGE({
+						url: "../html/orderMgmtHtml/orderpaymentinfo.html",
+						extras: {
+								purchId:purchId,
+						}
+					})
                 }
 			})
         /*会员管理*/
