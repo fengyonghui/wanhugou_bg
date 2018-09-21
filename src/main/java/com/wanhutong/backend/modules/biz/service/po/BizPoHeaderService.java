@@ -36,10 +36,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVend
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
-import com.wanhutong.backend.modules.config.parse.EmailConfig;
-import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
-import com.wanhutong.backend.modules.config.parse.PhoneConfig;
-import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.*;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.DefaultPropEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
@@ -64,6 +61,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -160,7 +159,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String > autoGenPO(Integer orderId) {
+    public Pair<Boolean, String > autoGenPO(Integer orderId, String lastPayDateVal) {
         BizOrderDetail bizOrderDetail = new BizOrderDetail();
         BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderId);
 
@@ -215,6 +214,21 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
         bizPoHeader.setIsPrew(0);
         Integer id = bizPoHeader.getId();
+
+        //设置最后付款时间
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (StringUtils.isBlank(lastPayDateVal)) {
+            bizPoHeader.setLastPayDate(new Date());
+        } else {
+            Date lastPayDate = null;
+            try {
+                lastPayDate = sdf.parse(lastPayDateVal);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            bizPoHeader.setLastPayDate(lastPayDate);
+        }
+
         this.save(bizPoHeader);
         if (id == null) {
             bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
@@ -273,8 +287,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
         commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
         commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+        commonProcessEntity.setCurrent(CommonProcessEntity.CURRENT);
         List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
-        if (CollectionUtils.isEmpty(list)) {
+        if (CollectionUtils.isEmpty(list) || "startAuditAfterReject".equals(mark)) {
             commonProcessService.save(commonProcessEntity);
             this.updateProcessId(bizPoHeader.getId(), commonProcessEntity.getId());
         }
@@ -954,6 +969,31 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         if (bizStatus == null || !bizStatus.equals(bizPoHeader.getBizStatus())) {
             bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
         }
+
+        if ("startAuditAfterReject".equals(mark)) {
+            CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+            commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+            commonProcessEntity.setObjectName(DATABASE_TABLE_NAME);
+            commonProcessEntity.setCurrent(1);
+
+            List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+            if (CollectionUtils.isNotEmpty(list)) {
+                CommonProcessEntity commonProcess = list.get(0);
+                commonProcess.setCurrent(0);
+                commonProcessService.save(commonProcess);
+            }
+
+            User user = UserUtils.getUser();
+            commonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+            commonProcessEntity.setObjectName(DATABASE_TABLE_NAME);
+            commonProcessEntity.setProcessor(user.getId().toString());
+            commonProcessEntity.setType("0");
+            commonProcessEntity.setDescription(desc);
+            commonProcessEntity.setCurrent(0);
+            commonProcessService.save(commonProcessEntity);
+
+        }
+
         this.updateProcessToInitAudit(bizPoHeader, mark);
         Byte soType = getBizPoOrderReqByPo(bizPoHeader);
         String currentType = "";

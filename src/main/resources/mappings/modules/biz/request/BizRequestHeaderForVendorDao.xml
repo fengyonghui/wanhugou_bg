@@ -66,8 +66,8 @@
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
 		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
 		LEFT JOIN  common_process process on process.object_id = a.id AND brd.header_id = process.object_id AND process.object_name = 'biz_request_header' AND process.current = 1
-		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_id=process.object_id  AND bpor.so_type = 2  and bpor.so_line_no=brd.line_no
-		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.status = 1 AND bpor.so_id=process.object_id  AND bpor.so_type = 2  and bpor.so_line_no=brd.line_no
+		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id AND bph.status = 1
 		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bph.current_payment_id
 		LEFT JOIN common_process cp ON cp.object_id = bph.id AND cp.object_id = bph.id AND cp.object_name = 'biz_po_header' AND cp.current = 1
 		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1

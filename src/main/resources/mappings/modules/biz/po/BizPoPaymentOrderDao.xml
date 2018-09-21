@@ -74,8 +74,8 @@
 	
 	<sql id="bizPoPaymentOrderJoins">
 		LEFT JOIN common_process process ON process.id = a.process_id
-		LEFT JOIN biz_po_header po ON po.id = a.po_header_id
-		left join biz_po_order_req bpor on bpor.po_id = po.id
+		LEFT JOIN biz_po_header po ON po.id = a.po_header_id AND po.status = 1
+		left join biz_po_order_req bpor on bpor.po_id = po.id AND bpor.status = 1
 		left join biz_order_header boh on bpor.so_id = boh.id and bpor.so_type = 1
 		left join biz_request_header brh on bpor.so_id = brh.id and bpor.so_type = 2
 	</sql>
@@ -205,8 +205,8 @@
 	<select id="getPayMentOrderByReqId" parameterType="Integer" resultType="BizPoPaymentOrder">
 		SELECT a.*
 		FROM biz_po_payment_order a
-		LEFT JOIN biz_po_header bph ON bph.id = a.po_header_id
-		LEFT JOIN biz_po_order_req bpor ON bpor.po_id = bph.id AND bpor.so_type = 2
+		LEFT JOIN biz_po_header bph ON bph.id = a.po_header_id AND bph.status =1
+		LEFT JOIN biz_po_order_req bpor ON bpor.po_id = bph.id AND bpor.so_type = 2 AND bpor.status=1
 		WHERE bpor.so_id = #{reqId}
 		GROUP BY a.id
 	</select>

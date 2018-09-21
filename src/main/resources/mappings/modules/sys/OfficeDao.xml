@@ -136,6 +136,25 @@
 		order by parent_ids
 	</select>
 
+	<select id="findOfficeById4Mobile" resultType="Office">
+		select so.*
+		from biz_custom_center_consultant ccc, sys_office so
+		where ccc.cust_id = so.id and so.status=1 and  ccc.status=1
+		<if test="customs != null and customs.id != null and customs.id != ''">
+			AND ccc.cust_id = #{customs.id}
+		</if>
+		<if test="centers != null and centers.id != null and centers.id != ''">
+			AND ccc.center_id = #{centers.id}
+		</if>
+		<if test="consultants != null and consultants.id != null and consultants.id != ''">
+			AND ccc.consultant_id = #{consultants.id}
+		</if>
+		<if test="parentIds!=null and parentIds !=''">
+			AND so.parent_ids LIKE #{parentIds}
+		</if>
+		order by parent_ids
+	</select>
+
 	<select id="findOfficeCustByIdToParent" resultType="Office">
 		SELECT
 		*
