@@ -124,6 +124,7 @@ public class BizIntegrationTimeService implements Job{
             CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
             try {
                   HttpPost httpPost = new HttpPost(url);
+                  JSONObject param = new JSONObject();
                   ActivityVo activityVo = new ActivityVo();
                   if (sendScope == -3) {
                         activityVo.setOfficeIds( bizIntegrationActivity.getOfficeIds());
@@ -131,7 +132,11 @@ public class BizIntegrationTimeService implements Job{
                   activityVo.setSendScope(bizIntegrationActivity.getSendScope());
                   activityVo.setActivityName(bizIntegrationActivity.getActivityName());
                   activityVo.setIntegrationNum(integrationNum);
-                  httpPost.setEntity(new StringEntity(activityVo.toString(), Charset.forName("UTF-8")));
+                  param.put("officeIds", activityVo.getOfficeIds());
+                  param.put("sendScope", activityVo.getSendScope());
+                  param.put("activityName", activityVo.getActivityName());
+                  param.put("integrationNum", activityVo.getIntegrationNum());
+                  httpPost.setEntity(new StringEntity(param.toString(), Charset.forName("UTF-8")));
                   httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
                   httpPost.setHeader("Accept", "application/json");
                   CloseableHttpResponse response = httpClient.execute(httpPost);
