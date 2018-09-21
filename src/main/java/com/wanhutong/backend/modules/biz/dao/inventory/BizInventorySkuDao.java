@@ -55,4 +55,6 @@ public interface BizInventorySkuDao extends CrudDao<BizInventorySku> {
      * @return
      */
     Integer getStockQtyBySkuIdCentIdSkuType(@Param("skuId") Integer skuId, @Param("centId") Integer centId, @Param("skuType") Integer skuType);
+
+    void updateStockQty(Integer id);
 }

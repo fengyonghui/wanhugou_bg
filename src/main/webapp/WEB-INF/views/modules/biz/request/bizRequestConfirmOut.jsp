@@ -7,17 +7,50 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
         $(document).ready(function() {
+            $('#select_all').live('click',function(){
+                var choose=$("input[type='checkbox']");
+                if($(this).attr('checked')){
+                    choose.attr('checked',true);
+                }else{
+                    choose.attr('checked',false);
+                }
+            });
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
+                    var treasuryList = new Array();
+                    var i = 0;
+                    $("input[name='reqDetail'][checked='checked']").each(function () {
+                        var orderDetailId = $(this).parent().parent().find("input[name='orderDetailId']").val();
+                        var reqDetailId = $(this).parent().parent().find("input[name='reqDetailId']").val();
+                        var invSkuId = $(this).parent().parent().find("input[name='invSkuId']").val();
+                        var sentQty = $(this).parent().parent().find("input[name='sentQty']").val();
+                        var uVersion = $(this).parent().parent().find("input[name='uVersion']").val();
+                        var sendNo = $("#sendNo").val();
+                        treasuryList[i] = createTreasury(orderDetailId,reqDetailId,invSkuId,sentQty,uVersion,sendNo);
+                        i = i + 1;
+                    });
+                    console.info(JSON.stringify(treasuryList));
+                    
                     if(window.confirm('你确定要出库吗？')){
-                        // alert("确定");
-                        form.submit();
-                        return true;
-                        loading('正在提交，请稍等...');
+                        $.ajax({
+                            type:"post",
+                            contentType: 'application/json;charset=utf-8',
+                            url:"${ctx}/biz/inventory/bizSendGoodsRecord/outTreasury",
+                            dataType:"json",
+                            data:JSON.stringify(treasuryList),
+                            success:function (data) {
+                                if (data == 'ok') {
+                                    alert("出库成功");
+                                    window.location.href = "${ctx}/biz/request/bizRequestAll?souce=kc&bizStatu=0&ship=xs";
+                                }
+                           }
+                        });
+                        // form.submit();
+                        // return true;
+                        // loading('正在提交，请稍等...');
 
                     }else{
-                        //alert("取消");
                         return false;
                     }
                 },
@@ -56,16 +89,38 @@
                 return false;
             }
         }
-        function checkout2(obj) {
-            var ordQty = $("#ordQty"+obj).val();
-            var sendNum = $("#sendNum"+obj).val();
-            var sentQty = $("#sentQty"+obj).val();
-            var sum = parseInt(sendNum) + parseInt(sentQty);
-            if (sum > ordQty){
-                alert("供货数太大，已超过申报数，请重新调整供货数量！");
-                $("#sendNum"+obj).val(0);
-                return false;
+
+        function checkOrdDetail(obj) {
+            if ($(obj).attr("checked")=='checked') {
+                $(obj).attr("checked","checked");
+                $(obj).parent().parent().parent().parent().find("tbody").find("input[name='reqDetail']").each(function () {
+                   $(this).attr("checked","checked");
+                });
+            } else {
+                $(obj).removeAttr("checked");
+                $(obj).parent().parent().parent().parent().find("tbody").find("input[name='reqDetail']").each(function () {
+                    $(this).removeAttr("checked");
+                });
             }
+        }
+
+        function checkReqDetail(obj) {
+            if ($(obj).attr("checked")=='checked') {
+                $(obj).attr("checked","checked");
+            } else {
+                $(obj).removeAttr("checked");
+            }
+        }
+        
+        function createTreasury(orderDetailId, reqDetailId, invSkuId, outQty,uVersion,sendNo) {
+            var treasury = new Object();
+            treasury.orderDetailId = orderDetailId;
+            treasury.reqDetailId = reqDetailId;
+            treasury.invSkuId = invSkuId;
+            treasury.outQty = outQty;
+            treasury.sendNo = sendNo;
+            treasury.uVersion = uVersion;
+            return treasury;
         }
 	</script>
 </head>
@@ -122,7 +177,7 @@
 	<div class="control-group">
 		<label class="control-label">出库单：</label>
 		<div class="controls">
-			<input readonly="readonly" name="sendNo" type="text" class="input-xlarge" value="${sendNo}"/>
+			<input id="sendNo" readonly="readonly" name="sendNo" type="text" class="input-xlarge" value="${sendNo}"/>
 		</div>
 	</div>
 	<div class="control-group">
@@ -137,6 +192,7 @@
 						<th>颜色</th>
 						<th>尺寸</th>
 						<th>采购数量</th>
+						<th>已出库数量</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -148,6 +204,7 @@
 							<td>${orderDetail.color}</td>
 							<td>${orderDetail.standard}</td>
 							<td>${orderDetail.ordQty}</td>
+							<td>${orderDetail.sentQty}</td>
 						</tr>
 					</c:forEach>
 				</tbody>
@@ -161,7 +218,7 @@
                 <table id="inventorySkuTable" class="table table-striped table-bordered table-condensed">
                     <thead>
                     <tr>
-                        <th><input type="checkbox" value=""/></th>
+                        <th><input name="ordDetail" type="checkbox" onclick="checkOrdDetail(this)"/></th>
                         <th>备货单号</th>
                         <th>商品名称</th>
                         <th>供应商</th>
@@ -169,7 +226,7 @@
                         <th>颜色</th>
                         <th>尺寸</th>
                         <th>库存类型</th>
-                        <th>商品类型</th>
+                        <th>备货方</th>
                         <th>备货单库存数量</th>
                         <th>已出库数量</th>
                         <th>可出库数量</th>
@@ -181,7 +238,7 @@
                     <tbody>
                         <c:forEach items="${orderDetail.requestDetailList}" var="requestDetail">
                             <tr>
-                                <td><input type="checkbox" value=""/></td>
+                                <td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
                                 <td>${requestDetail.requestHeader.reqNo}</td>
                                 <td>${requestDetail.skuInfo.name}</td>
                                 <td>${requestDetail.vendorName}</td>
@@ -190,22 +247,19 @@
                                 <td>--</td>
                                 <%--<td>${requestDetail.skuInfo.standard}</td>--%>
                                 <td>--</td>
-                                <td>--</td>
-                                <td>--</td>
-                                <%--<td>${fns:getDictLabel(requestDetail.inventory.invType,'inv_type','')}</td>--%>
-                                <%--<td>${fns:getDictLabel(requestDetail.inventory.skuType,'inventory_sku_type','')}</td>--%>
+                                <td>${fns:getDictLabel(requestDetail.inventorySku.invType,'inv_type','')}</td>
+                                <td>${fns:getDictLabel(requestDetail.inventorySku.skuType,'inventory_sku_type','')}</td>
                                 <td>${requestDetail.recvQty}</td>
-                                <td>${requestDetail.outQty}</td>
+                                <td>${requestDetail.outQty == null ? "0" : requestDetail.outQty}</td>
                                 <td>${requestDetail.recvQty - requestDetail.outQty}</td>
-                                <%--<td>${requestDetail.inventory.stockQty}</td>--%>
-                                <td>--</td>
-                                <td><input type="text" name="" value="0"/></td>
+                                <input name="orderDetailId" value="${orderDetail.id}" type="hidden"/>
+                                <input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
+                                <input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>
+                                <input name="uVersion" value="${requestDetail.inventorySku.uVersion}" type="hidden"/>
+                                <td>${requestDetail.inventorySku.stockQty}</td>
+                                <td><input type="text" name="sentQty" value="0"/></td>
                                 <td>
-                                    <select class='input-mini required'>
-                                        <c:forEach items="${inventoryInfoList}" var="inventory">
-                                            <option value="${inventory.id}">${inventory.name}</option>
-                                        </c:forEach>
-                                    </select>
+                                    ${requestDetail.inventorySku.invInfo.name}
                                 </td>
                             </tr>
                         </c:forEach>

@@ -7,6 +7,7 @@
 		a.order_id AS "orderHeader.id",
 		boh.order_num AS "orderHeader.orderNum",
 		boh.order_type AS "orderHeader.orderType",
+		boh.cust_id AS "orderHeader.customer.id",
 		a.line_no AS "lineNo",
 		a.p_line_no AS "pLineNo",
 		a.sku_shelf_id as "shelfInfo.id",
