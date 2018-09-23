@@ -176,9 +176,68 @@ public class BizIntegrationActivityController extends BaseController {
 		return "redirect:" + Global.getAdminPath() + "/biz/integration/bizIntegrationActivity/list";
 	}
 
+    /**
+	 * 活动参与者列表导出
+	 *
+	 * */
+    @RequestMapping("activityOfficesExport")
+	@ResponseBody
+    public boolean findActivityOfficeList(Integer sendScope,@RequestParam(required = false)String officeIds,HttpServletRequest request,
+										 HttpServletResponse response, RedirectAttributes redirectAttributes){
+			List<Office> offices;
+			switch(sendScope){
+					case 0:
+						   offices = bizIntegrationActivityService.findAllOffice();
+						break;
+					case -1:
+						   offices = bizIntegrationActivityService.findOrderedOffice();
+						break;
+					case -2:
+						   offices = bizIntegrationActivityService.findUnOrderOffice();
+						break;
+					default:
+						   offices = bizIntegrationActivityService.findCheckedOffice(officeIds);
+			}
+			//列表数据
+			List<List<String>> data = Lists.newArrayList();
+	    	try {
+			    if(CollectionUtils.isNotEmpty(offices)) {
+					for (Office office : offices) {
+						List<String> officeList = Lists.newArrayList();
+						officeList.add(office.getId() == null ? "未知" : office.getId().toString());
+						officeList.add(office.getName() == null ? "未知" : office.getName().toString());
+						officeList.add(office.getPrimaryPerson()==null?"未知":office.getPrimaryPerson().getName() == null ? "未知" : office.getPrimaryPerson().getName());
+						officeList.add(office.getPhone() == null ? "未知" : office.getPhone().toString());
+						data.add(officeList);
+					}
+					String headers[] = {"经销店编号", "经销店名称", "负责人", "负责人电话"};
+					ExportExcelUtils eeu = new ExportExcelUtils();
+					SXSSFWorkbook workbook = new SXSSFWorkbook();
+					String fileName = "活动参与者列表" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+					eeu.exportExcel(workbook, 0, "活动参与者列表", headers, data, fileName);
+					response.reset();
+					response.setContentType("application/octet-stream; charset=utf-8");
+					response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
+					workbook.write(response.getOutputStream());
+					workbook.dispose();
+				}
+			return true;
+		} catch (Exception e) {
+	    		e.printStackTrace();
+			LOGGER.error("数据导出失败！");
+		}
+		return true;
+	}
 
-
-
-
+    /**
+	 * 指定用户动态加载
+	 *
+	 * */
+     @ResponseBody
+	 @RequestMapping("activity/special/offices")
+	 public List<Office> findSpecialOffices(String officeIds){
+		 List<Office> offices = bizIntegrationActivityService.findCheckedOffice(officeIds);
+		 return offices;
+	 }
 
 }

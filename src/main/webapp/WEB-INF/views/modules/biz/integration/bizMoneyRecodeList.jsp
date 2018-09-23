@@ -6,6 +6,16 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
+            $("#buttonExport").click(function(){
+                top.$.jBox.confirm("确认要导出积分流水数据吗？","系统提示",function(v,h,f){
+                    if(v=="ok"){
+                        $("#searchForm").attr("action","${ctx}/biz/integration/bizMoneyRecode/recodeExport");
+                        $("#searchForm").submit();
+                        $("#searchForm").attr("action","${ctx}/biz/integration/bizMoneyRecode/list");
+                    }
+                },{buttonsFocus:1});
+                top.$('.jbox-body .jbox-icon').css('top','55px');
+            });
             $.ajax({
                 url:"${ctx}/biz/integration/bizMoneyRecode/detail",
                 type:"get",

@@ -8,6 +8,10 @@ import java.util.*;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
+import com.wanhutong.backend.modules.config.CronUtils;
+import com.wanhutong.backend.modules.config.web.QuartzManager;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
@@ -30,9 +34,14 @@ import javax.annotation.Resource;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizIntegrationActivityService extends CrudService<BizIntegrationActivityDao, BizIntegrationActivity> {
+public class BizIntegrationActivityService extends CrudService<BizIntegrationActivityDao, BizIntegrationActivity>{
     @Resource
 	private BizIntegrationActivityDao bizIntegrationActivityDao;
+    @Resource
+    private QuartzManager quartzManager;
+
+    @Resource
+	private OfficeService officeService;
 
 	public BizIntegrationActivity get(Integer id) {
 		return super.get(id);
@@ -46,12 +55,13 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		return super.findPage(page, bizIntegrationActivity);
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
 	public void save(BizIntegrationActivity bizIntegrationActivity) {
 		bizIntegrationActivity.setStatus(1);
 		bizIntegrationActivity.setSendStatus(0);
 		bizIntegrationActivity.setActivityTools("万户币");
-		String activityName  = bizIntegrationActivity.getActivityName();
+        Date sendTime = bizIntegrationActivity.getEndSendTime();
+        String activityName  = bizIntegrationActivity.getActivityName();
 		if(StringUtils.isNotBlank(bizIntegrationActivity.getActivityName()))
 		{
 			String vFullName = getFirstLetters(activityName, HanyuPinyinCaseType.UPPERCASE);
@@ -107,6 +117,10 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 				//添加活动用户表数据
 				bizIntegrationActivityDao.insertMiddle(list);
 			}
+			//添加定时任务
+            quartzManager.addJob(sid.toString(),"万户币",bizIntegrationActivity.getActivityName(),"万户币",BizIntegrationTimeService.class,CronUtils.getCron(bizIntegrationActivity.getSendTime()));
+
+
 		}
 	}
 	
@@ -171,5 +185,38 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		bizMoneyRecodeDetail.setTotalUser(allOfficeTotal);
 		return bizMoneyRecodeDetail;
 	}
+
+	//下单的经销店列表
+	public List<Office> findOrderedOffice(){
+		  return bizIntegrationActivityDao.findOrderOfficeList();
+	}
+
+	//未下单的经销店列表
+	public List<Office> findUnOrderOffice(){
+		return bizIntegrationActivityDao.findUnOrderOfficeList();
+	}
+
+	//查询指定用户的经销店列表
+	public List<Office> findCheckedOffice(String officeIds){
+		List<Office> list = Lists.newArrayList();
+		if(StringUtils.isNotBlank(officeIds))
+		{
+			String[] ss = officeIds.split(",");
+			for(String s:ss)
+			{
+				Office office = officeService.get(Integer.valueOf(s));
+				list.add(office);
+			}
+		}
+		return list;
+	}
+
+	//全部的经销店列表
+	public List<Office> findAllOffice(){
+		List<Office> list = bizIntegrationActivityDao.findAllOffices();
+		return list;
+	}
+
+
 	
 }

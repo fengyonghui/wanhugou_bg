@@ -106,6 +106,28 @@
 			#{money}
 		)
 	</insert>
+
+	<insert id="saveAll" parameterType="list">
+		insert into biz_money_recode(office_id,money,status_code,status_name,comment,status,create_id,create_time,update_id,update_time) values
+		<foreach collection="list" item="item" index="index" separator=",">
+			  (#{item.office.id},#{item.money},#{item.statusCode},#{item.statusName},#{item.comment},#{item.status},#{item.createId},#{item.createDate},
+			  #{item.updateId},#{item.updateDate})
+		</foreach>
+	</insert>
+
+	<update id="updateMoney" parameterType="list">
+		update biz_cust_credit
+		set money=
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case office_id" close="end">
+			when #{item.office.id} then #{item.newMoney}
+		</foreach>
+		where office_id in
+		<foreach collection="list" index="index" item="item"
+				 separator="," open="(" close=")">
+			#{item.office.id,jdbcType=BIGINT}
+		</foreach>
+	</update>
 	
 	<update id="update">
 		UPDATE biz_money_recode SET 	

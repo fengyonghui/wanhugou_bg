@@ -20,11 +20,13 @@
 		a.update_time AS "updateDate",
 		a.status AS "status",
 		a.send_status AS "sendStatus",
-		a.u_version AS "uVersion"
+		a.u_version AS "uVersion",
+		GROUP_CONCAT(c.user_id) AS officeIds
 	</sql>
 	
 	<sql id="bizIntegrationActivityJoins">
-          left join sys_user b on b.id = a.create_id and b.status = 1
+          LEFT JOIN sys_user_activity c on c.activity_id = a.id and c.`status` = 1
+          LEFT join sys_user b on b.id = a.create_id and b.status = 1
 	</sql>
     
 	<select id="get" resultType="BizIntegrationActivity">
@@ -59,6 +61,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+        group by a.id
 	</select>
 	
 	<select id="findAllList" resultType="BizIntegrationActivity">
@@ -123,6 +126,37 @@
 					(#{item.id},#{item.userId},#{item.bizStatus},#{item.status})
 				</foreach>
 	</insert>
+
+	<select id="findOrderOfficeList" resultType="com.wanhutong.backend.modules.sys.entity.Office">
+			    SELECT
+				  a.id,
+				  a.`name` as 'name',
+				  a.phone as 'phone',
+				  c.name as 'primaryPerson.name'
+				FROM
+					sys_office a
+				LEFT JOIN biz_order_header b on b.cust_id = a.id and b.status = 1
+				LEFT JOIN sys_user c on a.primary_person = c.id and c.`status` = 1
+				where a.`status` = 1 AND a.type = 6 and b.cust_id is not null
+				GROUP BY b.cust_id
+	</select>
+
+	<select id="findUnOrderOfficeList" resultType="com.wanhutong.backend.modules.sys.entity.Office">
+		    SELECT
+			a.id,
+			a.`name` as 'name',
+			a.phone as 'phone',
+			c.name as 'primaryPerson.name'
+			FROM
+				sys_office a
+			LEFT JOIN biz_order_header b ON b.cust_id = a.id AND b. STATUS = 1
+			LEFT JOIN sys_user c on a.primary_person = c.id and c.`status` = 1
+			WHERE
+				a. STATUS = 1
+			AND a.type = 6
+			AND b.cust_id IS NULL
+			GROUP BY a.id
+	</select>
 
 	<update id="update">
 		UPDATE biz_integration_activity SET 	

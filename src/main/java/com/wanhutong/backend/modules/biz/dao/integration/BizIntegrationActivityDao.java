@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.integration.BizIntegrationActivity;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -53,4 +54,21 @@ public interface BizIntegrationActivityDao extends CrudDao<BizIntegrationActivit
      * */
     @Select("select count(*) as total from (SELECT a.id,b.cust_id FROM sys_office a LEFT JOIN biz_order_header b ON b.cust_id = a.id  AND b.STATUS = 1 where a.status = 1 and a.type = 6 and b.cust_id is null GROUP BY a.id ) u")
     Integer selectUnOrderOfficeTotal();
+
+    /**
+     *  下单的经销店列表
+     * */
+    List<Office> findOrderOfficeList();
+
+    /*
+    *  未下单的经销店列表
+    * */
+    List<Office> findUnOrderOfficeList();
+
+    /**
+     *
+     * 全部的经销店列表
+     * */
+    @Select("SELECT a.id,a.`name`,a.phone,b.`name` as 'primaryPerson.name' from sys_office a LEFT JOIN sys_user b on b.id = a.primary_person and b.`status` = 1  where a.status = 1 and a.type = 6\n")
+    List<Office> findAllOffices();
 }

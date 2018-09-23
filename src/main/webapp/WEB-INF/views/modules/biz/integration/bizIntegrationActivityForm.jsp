@@ -9,11 +9,12 @@
 	<script type="text/javascript">
 		    //经销店树形列表
             $(document).ready(function(){
-                // if($("#str").val()=='detail')
-				// {
-				//     $("#createBy").show();
-				//     $("#createDate").show();
-				// }
+                var str = $("#str").val();
+                if(str=='detail')
+				{
+                    $("#inputForm").find("input[type!='button']").attr("disabled","disabled") ;
+				}
+
                 $("#officeTree").hide();
                 //查询全部用户，已下单用户，未下单用户的数量
                 $.ajax({
@@ -45,22 +46,26 @@
                     if(value==-3)
                     {
                         $("#officeTree").show();
+                        $("#offices").show();
                     }
                     else
                     {
                         if(value==0)
                         {
                             $("#officeTree").hide();
+                            $("#offices").hide();
                             $("#sendNum").val($("#quanbu").val());
                         }
                         if(value==-1)
                         {
                             $("#officeTree").hide();
+                            $("#offices").hide();
                             $("#sendNum").val($("#xiadan").val());
                         }
                         if(value==-2)
                         {
                             $("#officeTree").hide();
+                            $("#offices").hide();
                             $("#sendNum").val($("#weixiadan").val());
                         }
                     }
@@ -94,6 +99,18 @@
 				   }
 				});
 
+                $("#buttonExport").click(function(){
+                    top.$.jBox.confirm("确认要导出活动参与者列表数据吗？","系统提示",function(v,h,f){
+                        if(v=="ok"){
+                            //获取发送范围值
+                            var sendScope = $('input[name="sendScope"]:checked').val();
+                            var officeIds = $("#officeIds").val();
+                            location.href="${ctx}/biz/integration/bizIntegrationActivity/activityOfficesExport?officeIds="+officeIds+"&sendScope="+sendScope;
+                        }
+                    },{buttonsFocus:1});
+                    top.$('.jbox-body .jbox-icon').css('top','55px');
+                });
+
                 function zTreeOnCheck(event, treeId, treeNode) {
                     var treeObj = $.fn.zTree.getZTreeObj("officeTree");
                     nodes=treeObj.getCheckedNodes(true);
@@ -112,6 +129,23 @@
                     //alert("拼接后的字符串为："+s+"长度为："+vv.length);
                     $("#sendNum").val(vv.length);
                     $("#officeIds").val(s);
+                    var val = $("#officeIds").val();
+                    //动态加载文本域
+                    $.ajax({
+                        url:"${ctx}/biz/integration/bizIntegrationActivity/activity/special/offices?officeIds="+val,
+                        type:"get",
+                        data:'',
+                        contentType:"application/json;charset=utf-8",
+                        success:function(data){
+                            var s ="";
+                            for(var v in data)
+							{
+                                  s += data[v].id+'--'+data[v].name+'--'+data[v].primaryPerson.name+'--'+data[v].phone+"\n";
+                                  $("#offices").val(s);
+							}
+                        }
+                    })
+
                 }
                     var zNodes=[
                         <c:forEach items="${officeList}" var="office">{id:"${office.id}", pId:"${not empty office.parent?office.parent.id:0}", name:"${office.name}"},
@@ -133,7 +167,11 @@
 					}
 			});
 
-			$("#inputForm").validate({
+
+
+
+
+            $("#inputForm").validate({
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
 					form.submit();
@@ -161,17 +199,26 @@
 		<form:hidden path="id" id="id"/>
 		<form:hidden path="str" id="str"/>
 		<sys:message content="${message}"/>
-		<c:if test="${bizIntegrationActivity.str}!=null">
+		<c:if test="${bizIntegrationActivity.str=='detail'}">
 			<div class="control-group">
 				<label class="control-label">创建人：</label>
 				<div class="controls">
-					<form:hidden path="createBy.name" id="createBy" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+					<form:input path="createBy.name" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 				</div>
 			</div>
+			<%--<div class="control-group">
+				<label class="control-label">创建时间：</label>
+				<div class="controls">
+					<form:input path="createDate" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+				</div>
+			</div>--%>
 			<div class="control-group">
 				<label class="control-label">创建时间：</label>
 				<div class="controls">
-					<form:hidden path="createDate" id="createDate" htmlEscape="false" maxlength="50" class="input-xlarge "/>
+					<input name="createDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+						   value="<fmt:formatDate value="${bizIntegrationActivity.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+					<span class="help-inline"><font color="red">*</font> </span>
 				</div>
 			</div>
 		  </c:if>
@@ -212,14 +259,20 @@
 		<div class="control-group">
 			<label class="control-label">参与人数：</label>
 			<div class="controls">
-				<form:hidden path="officeIds" id="officeIds"/>
+				<form:input path="officeIds" id="officeIds"/>
 				<form:input path="sendNum" id="sendNum" htmlEscape="false" maxlength="10" readonly="readonly" class="input-xlarge  digits"/>
 			</div>
+
 		</div>
 		<div class="control-group">
 			<div class="controls">
 				<div id="officeTree" class="ztree" style="margin-top:3px;float:left;display: none"></div>
+				<%--已选择：--%>
+				<textarea id="offices" cols="300" ro style="margin-left:50px;word-wrap:normal;width: 300px;height: 240px;vertical-align:top;display: none">
+
+			    </textarea>
 			</div>
+
 		</div>
 
 
@@ -248,8 +301,13 @@
 			<%--<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">
 				<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>保存
 			</shiro:hasPermission>--%>
-			<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>
-			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+			    <c:if test="${bizIntegrationActivity.str!='detail'}">
+					<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>
+				</c:if>
+				<c:if test="${bizIntegrationActivity.str=='detail'}">
+			 	    <input id="buttonExport" class="btn btn-primary" type="button" value="导出参与者列表"/>
+				</c:if>
+			        <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
 </body>
