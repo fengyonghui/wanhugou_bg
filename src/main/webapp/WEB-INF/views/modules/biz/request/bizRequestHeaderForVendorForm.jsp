@@ -42,6 +42,11 @@
 			}
 			$("#inputForm").validate({
 				submitHandler: function(form){
+                    if ('${totalPayTotal}' > 0) {
+                        alert("该订单已付款，请与系统管理员联系")
+                        return;
+                    }
+
                     $("input[name='reqQtys']").each(function () {
                         if($(this).val()==''){
                             $(this).val(0)
@@ -862,7 +867,8 @@
                 type: 'post',
                 success: function (result) {
                     if(result == true) {
-                        window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
+                        //window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
+                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                     }
                 },
                 error: function (error) {
@@ -969,13 +975,61 @@
                 type: 'post',
                 success: function (result) {
                     if(result == true) {
-                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"
+                        //window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"
+                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                     }
                 },
                 error: function (error) {
                     console.info(error);
                 }
             });
+        }
+
+        function startAudit() {
+            var prew = false;
+            var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+            var submit = function (v, h, f) {
+                if ($String.isNullOrBlank(f.description)) {
+                    jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                    return false;
+                }
+                top.$.jBox.confirm("确认开始审核流程吗？", "系统提示", function (v1, h1, f1) {
+                    if (v1 == "ok") {
+                        var id = "${entity.bizPoHeader.id}";
+                        $.ajax({
+                            url: '${ctx}/biz/po/bizPoHeader/startAudit',
+                            contentType: 'application/json',
+                            data: {
+                                "id": id,
+                                "prew": prew,
+                                "desc": f.description,
+                                "action" : "startAuditAfterReject"
+                            },
+                            type: 'get',
+                            success: function (result) {
+                                result = JSON.parse(result);
+                                if(result.ret == true || result.ret == 'true') {
+                                    alert('操作成功!');
+                                    window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                                }else {
+                                    alert(result.errmsg);
+                                }
+                            },
+                            error: function (error) {
+                                console.info(error);
+                            }
+                        });
+                    }
+                }, {buttonsFocus: 1});
+                return true;
+            };
+
+            jBox(html, {
+                title: "请输入通过理由:", submit: submit, loaded: function (h) {
+                }
+            });
+
+
         }
 	</script>
 </head>
@@ -993,6 +1047,7 @@
 		<input id="vendId" type="hidden" value="${entity.bizVendInfo.office.id}"/>
 		<input id="remarkInput" type="hidden" value=""/>
 		<input id="createPo" type="hidden" value="${createPo}"/>
+		<input id="totalPayTotal" type="hidden" value="${totalPayTotal}"/>
 		<c:forEach items="${fns:getUser().roleList}" var="role">
 			<c:if test="${role.enname==RoleEnNameEnum.STOCKREADYCOMMISSIONER.state}">
 				<c:set var="flag" value="true"/>
@@ -1717,6 +1772,10 @@
 					<input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>
 				</c:if>
 			</shiro:hasPermission>
+
+			<c:if test="${entity.str == 'startAudit'}">
+				<input type="button" onclick="startAudit()" class="btn btn-primary" value="开启审核"/>
+			</c:if>
 
 			<!-- 一单到底，采购单审核 -->
 			<shiro:hasPermission name="biz:po:bizPoHeader:audit">

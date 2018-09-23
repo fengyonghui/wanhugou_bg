@@ -753,18 +753,31 @@ public class BizOrderHeaderController extends BaseController {
 
         List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
 
-        BizPoHeader bizPoHeader = new BizPoHeader();
-        bizPoHeader.setBizOrderHeader(bizOrderHeader);
-        List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
         List<CommonProcessEntity> poAuditList = null;
+        if (bizOrderHeader.getId() != null) {
+            BizPoHeader bizPoHeader = new BizPoHeader();
+            bizPoHeader.setBizOrderHeader(bizOrderHeader);
+            List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
 
-        if (CollectionUtils.isNotEmpty(poList)) {
-            bizPoHeader = poList.get(0);
-            CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
-            poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-            poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-            poAuditList = commonProcessService.findList(poCommonProcessEntity);
+            if (CollectionUtils.isNotEmpty(poList)) {
+                bizPoHeader = poList.get(0);
+                CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
+                poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+                poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+                poAuditList = commonProcessService.findList(poCommonProcessEntity);
+
+                BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+                bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
+                List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+                BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
+                for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
+                    BigDecimal payTotal = poPaymentOrder.getPayTotal();
+                    totalPayTotal = totalPayTotal.add(payTotal);
+                }
+                model.addAttribute("totalPayTotal", totalPayTotal);
+            }
         }
+
 
         if (CollectionUtils.isNotEmpty(poAuditList) && CollectionUtils.isNotEmpty(list)) {
             if (bizOrderHeader.getOrderNum().startsWith("DO")) {
@@ -1310,12 +1323,30 @@ public class BizOrderHeaderController extends BaseController {
                 genAuditProcess(statusEnum, bizOrderHeader, Boolean.TRUE);
             }
 
-            BizPoHeader bizPoHeader = new BizPoHeader();
-            bizPoHeader.setBizOrderHeader(bizOrderHeader);
-            List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
-            if (CollectionUtils.isNotEmpty(poList)) {
-                bizPoHeaderService.updateProcessToInitAudit(poList.get(0), StringUtils.EMPTY);
+            BizOrderDetail bizOrderDetail = new BizOrderDetail();
+            bizOrderDetail.setOrderHeader(bizOrderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+            BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+            for (BizOrderDetail orderDetail : orderDetailList) {
+                bizPoOrderReq.setSoLineNo(orderDetail.getLineNo());
+                bizPoOrderReq.setOrderHeader(orderDetail.getOrderHeader());
+                bizPoOrderReq.setSoType((byte) 1);
+                List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+                if (poOrderReqList != null && poOrderReqList.size() > 0) {
+                    BizPoOrderReq poOrderReq = poOrderReqList.get(0);
+                    BizPoHeader poHeader = poOrderReq.getPoHeader();
+                    poHeader.setDelFlag("0");
+                    poOrderReq.setDelFlag("0");
+                    bizPoHeaderService.save(poHeader);
+                    bizPoOrderReqService.save(poOrderReq);
+                }
             }
+//            BizPoHeader bizPoHeader = new BizPoHeader();
+//            bizPoHeader.setBizOrderHeader(bizOrderHeader);
+//            List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+//            if (CollectionUtils.isNotEmpty(poList)) {
+//                bizPoHeaderService.updateProcessToInitAudit(poList.get(0), StringUtils.EMPTY);
+//            }
         }
 
         bizOrderHeaderService.save(bizOrderHeader);
@@ -1937,6 +1968,10 @@ public class BizOrderHeaderController extends BaseController {
                     double total = 0.0;
                     double exp = 0.0;
                     double fre = 0.0;
+                    double buy = 0.0;
+                    if (order.getTotalBuyPrice() != null) {
+                        buy = order.getTotalBuyPrice();
+                    }
                     if (order.getTotalDetail() != null) {
                         total = order.getTotalDetail();
                     }
@@ -1950,18 +1985,18 @@ public class BizOrderHeaderController extends BaseController {
                     rowData.add(order.getReceiveTotal() == null ? StringUtils.EMPTY : String.valueOf(order.getReceiveTotal()));
                     double sumTotal = total + exp + fre;
                     double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal();
-                    if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(order.getBizStatus()) && sumTotal > receiveTotal) {
+                    if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(OrderHeaderBizStatusEnum.stateOf(order.getBizStatus())) && sumTotal > receiveTotal) {
                         //尾款信息
                         rowData.add("有尾款");
                     } else {
                         rowData.add(StringUtils.EMPTY);
                     }
                     //利润
-                    Double buy = 0.0;
-                    if (order.getTotalBuyPrice() != null) {
-                        buy = order.getTotalBuyPrice();
-                    }
-                    rowData.add(BizOrderTypeEnum.PHOTO_ORDER.getState().equals(order.getOrderType()) ? "0.00" : String.valueOf(df.format(total + exp + fre - buy)));
+                    //                        orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight
+                    rowData.add(df.format(exp + (order.getServiceFee() == null ? 0 : order.getServiceFee()) + fre));
+                    // 佣金
+                    //                        orderHeader.totalDetail-orderHeader.totalBuyPrice
+                    rowData.add(df.format(total - buy));
                     Dict dictInv = new Dict();
                     dictInv.setDescription("发票状态");
                     dictInv.setType("biz_order_invStatus");
@@ -2071,7 +2106,11 @@ public class BizOrderHeaderController extends BaseController {
                         //应付金额
                         double total = 0.0;
                         double exp = 0.0;
-                        double Fre = 0.0;
+                        double fre = 0.0;
+                        double buy = 0.0;
+                        if (order.getTotalBuyPrice() != null) {
+                            buy = order.getTotalBuyPrice();
+                        }
                         if (order.getTotalDetail() != null) {
                             total = order.getTotalDetail();
                         }
@@ -2079,24 +2118,24 @@ public class BizOrderHeaderController extends BaseController {
                             exp = order.getTotalExp();
                         }
                         if (order.getFreight() != null) {
-                            Fre = order.getFreight();
+                            fre = order.getFreight();
                         }
-                        rowData.add(String.valueOf(total + exp + Fre));
+                        rowData.add(String.valueOf(total + exp + fre));
                         //已收货款
                         rowData.add(String.valueOf(order.getReceiveTotal() == null ? StringUtils.EMPTY : order.getReceiveTotal()));
-                        double sumTotal = total + exp + Fre;
+                        double sumTotal = total + exp + fre;
                         double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal();
                         if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(order.getBizStatus()) && sumTotal > receiveTotal) {
                             rowData.add("有尾款");
                         } else {
                             rowData.add(StringUtils.EMPTY);
                         }
-                        //利润
-                        Double buy = 0.0;
-                        if (order.getTotalBuyPrice() != null) {
-                            buy = order.getTotalBuyPrice();
-                        }
-                        rowData.add(BizOrderTypeEnum.PHOTO_ORDER.getState().equals(order.getOrderType()) ? "0.00" : String.valueOf(df.format(total + exp + Fre - buy)));
+                        //服务费
+//                        orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight
+                        rowData.add(df.format(exp + (order.getServiceFee() == null ? 0 : order.getServiceFee()) + fre));
+                        // 佣金
+//                        orderHeader.totalDetail-orderHeader.totalBuyPrice
+                        rowData.add(df.format(total - buy));
                         Dict dictInv = new Dict();
                         dictInv.setDescription("发票状态");
                         dictInv.setType("biz_order_invStatus");
@@ -2140,7 +2179,7 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
             String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
-                    "应付金额", "已收货款", "尾款信息", "服务费", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
+                    "应付金额", "已收货款", "尾款信息", "服务费", "佣金", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
             String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "商品结算价", "采购数量", "商品总价"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
@@ -2697,9 +2736,9 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "auditSo")
     @ResponseBody
-    public String auditSo(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType, String createPo) {
+    public String auditSo(HttpServletRequest request, int auditType, int id, String currentType, String description, int orderType, String createPo, String lastPayDateVal) {
         try {
-            Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType, createPo);
+            Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType, createPo, lastPayDateVal);
             if (audit.getLeft()) {
                 return JsonUtil.generateData(audit.getRight(), null);
             }
@@ -2721,7 +2760,7 @@ public class BizOrderHeaderController extends BaseController {
      * @param orderType
      * @return
      */
-    private Pair<Boolean, String> doAudit(int id, int auditType, String currentType, String description, int orderType, String createPo) {
+    private Pair<Boolean, String> doAudit(int id, int auditType, String currentType, String description, int orderType, String createPo, String lastPayDateVal) {
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectId(String.valueOf(id));
         commonProcessEntity.setObjectName(orderType == 0 ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
@@ -2820,7 +2859,7 @@ public class BizOrderHeaderController extends BaseController {
         //if (originConfig.getGenPoProcessId().contains(Integer.valueOf(nextProcessEntity.getType()))) {
         //品类主管审核是生成采购单
         if ("yes".equals(createPo)) {
-            Pair<Boolean, String> booleanStringPair = bizPoHeaderService.autoGenPO(id);
+            Pair<Boolean, String> booleanStringPair = bizPoHeaderService.autoGenPO(id, lastPayDateVal);
             if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
                 poFlag = true;
                 poId = booleanStringPair.getRight();

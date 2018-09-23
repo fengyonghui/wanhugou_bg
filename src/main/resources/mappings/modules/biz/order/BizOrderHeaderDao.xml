@@ -255,8 +255,8 @@
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
 		LEFT JOIN  common_process process on process.object_id = a.id and process.object_name = 'biz_order_header' and process.current = 1
-		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 1
-		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.status =1 AND bpor.so_type = 1
+		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id AND bph.status = 1
 		LEFT JOIN common_process cp ON cp.id = bph.process_id
 		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
 		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bph.current_payment_id
@@ -277,8 +277,8 @@
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
 		LEFT JOIN  common_process process on process.object_id = a.id and process.object_name = 'biz_order_header' and process.current = 1
-		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.so_type = 1
-		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.status = 1  AND bpor.so_type = 1
+		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id AND bph.status = 1
 		LEFT JOIN common_process cp ON cp.id = bph.process_id
 		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
 		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bph.current_payment_id
@@ -2248,7 +2248,10 @@ FROM
 				WHERE bod.order_id = a.id
 				AND bod.status = 1
 				AND  ( bod.suply_id = 0 OR bod.suply_id = 721 )
-				AND a.biz_status BETWEEN 15 AND 17
+				<if test="bizStatusStart !=null and bizStatusEnd !=null">
+					AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+					/*AND a.biz_status BETWEEN 15 AND 17*/
+				</if>
 				AND a.STATUS =1 ) t
 		WHERE a.id = t.id
 		GROUP BY id
@@ -2940,7 +2943,8 @@ FROM
 			left join biz_po_detail bpd on bpd.order_id = a.id
 			left join biz_sku_info bsi on bsi.id = bpd.sku_no
 		where
-			a.id=#{poHeaderId}
+			a.status = 1
+			AND a.id=#{poHeaderId}
 			AND bsi.id=#{skuInfoId}
 			group by bpd.id
 	</select>

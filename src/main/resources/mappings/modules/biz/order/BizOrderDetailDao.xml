@@ -134,7 +134,8 @@
 		FROM
 		biz_po_order_req por
 		WHERE
-		por.so_line_no = a.line_no
+		por.status = 1
+		AND por.so_line_no = a.line_no
 		AND por.so_id = a.order_id
 		AND por.so_type = 1
 		) ) od
@@ -203,7 +204,8 @@
 		FROM
 		biz_po_order_req por ,biz_po_header ph
 		WHERE
-		por.so_line_no = rd.line_no
+		por.status = 1
+		AND por.so_line_no = rd.line_no
 		AND por.so_id = rd.header_id
 		AND por.so_type = 2
 		and ph.id=por.po_id and is_prew=0
@@ -258,7 +260,8 @@
 		FROM
 		biz_po_order_req por ,biz_po_header ph
 		WHERE
-		por.so_line_no = od.line_no
+		por.status = 1
+		AND por.so_line_no = od.line_no
 		AND por.so_id = od.order_id
 		AND por.so_type = 1
 		and ph.id=por.po_id and is_prew=0
@@ -329,7 +332,9 @@ SELECT
 FROM
 	biz_po_order_req por ,biz_po_header ph
 WHERE
-	por.so_line_no = rd.line_no
+	por.status = 1
+	AND ph.status = 1
+	AND por.so_line_no = rd.line_no
 	AND por.so_id = rd.header_id
 	AND por.so_type = 2
 	and ph.id=por.po_id and is_prew=0
@@ -383,7 +388,9 @@ SELECT
 FROM
 	biz_po_order_req por ,biz_po_header ph
 WHERE
-	por.so_line_no = od.line_no
+	por.status = 1
+	AND ph.status = 1
+	AND por.so_line_no = od.line_no
 	AND por.so_id = od.order_id
 	AND por.so_type = 1
 	 and ph.id=por.po_id and is_prew=0
@@ -591,7 +598,7 @@ GROUP BY
 			LEFT JOIN sys_office off ON off.id = pro.vendor_id
 			LEFT JOIN sys_user us ON us.id = off.primary_person
 
-			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.order_id
+			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.order_id AND bpor.status = 1
 		LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1 and ph.is_prew=0
 		<where>
 			a.status=1
