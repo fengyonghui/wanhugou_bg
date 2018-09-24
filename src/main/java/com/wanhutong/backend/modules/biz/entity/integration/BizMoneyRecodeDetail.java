@@ -10,6 +10,8 @@ package com.wanhutong.backend.modules.biz.entity.integration;
  * @date 2018-09-17 11:56
  **/
 public class BizMoneyRecodeDetail {
+     //经销店id
+     private Integer officeId;
      //累计获得
      private Double gainIntegration;
      //累计使用
@@ -24,6 +26,14 @@ public class BizMoneyRecodeDetail {
      private Integer orderUser;
      //未下单用户总数
      private Integer unOrderUser;
+
+    public Integer getOfficeId() {
+        return officeId;
+    }
+
+    public void setOfficeId(Integer officeId) {
+        this.officeId = officeId;
+    }
 
     public Integer getUnOrderUser() {
         return unOrderUser;

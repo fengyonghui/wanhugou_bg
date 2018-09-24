@@ -31,10 +31,10 @@
 			<li><label>发送时间：</label>
 				<input name="beginSendTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					value="<fmt:formatDate value="${bizIntegrationActivity.beginSendTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/> - 
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/> -
 				<input name="endSendTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					value="<fmt:formatDate value="${bizIntegrationActivity.endSendTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
 			<li><label>发送状态：</label>
 				<form:select about="choose" path="sendStatus" class="input-medium">
@@ -44,7 +44,6 @@
 				</form:select>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
@@ -52,7 +51,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>id</th>
+				<th>编号</th>
 				<th>活动名称</th>
 				<th>发送时间</th>
 				<th>发送范围</th>
@@ -70,9 +69,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizIntegrationActivity">
 			<tr>
-				<td><a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}">
+				<td>
 					${bizIntegrationActivity.id}
-				</a></td>
+				</td>
 				<td>
 					${bizIntegrationActivity.activityName}
 				</td>
@@ -80,7 +79,7 @@
 					<fmt:formatDate value="${bizIntegrationActivity.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
-					${bizIntegrationActivity.sendScope}
+						${fns:getDictLabel(bizIntegrationActivity.sendScope,'integration_activity_sendScope' ,'未知' )}
 				</td>
 				<td>
 					${bizIntegrationActivity.activityTools}

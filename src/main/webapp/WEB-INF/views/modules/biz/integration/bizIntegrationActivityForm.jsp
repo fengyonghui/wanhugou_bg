@@ -24,6 +24,7 @@
                     contentType:"application/json;charset=utf-8",
                     success:function(data){
                         $("#quanbu").val(data.totalUser);
+                        $("#sendNum").val(data.totalUser);
                         $("#xiadan").val(data.orderUser);
                         $("#weixiadan").val(data.unOrderUser);
                     }
@@ -41,31 +42,43 @@
                                onCheck: zTreeOnCheck
                            }
                 };
+
                 $("input[type='radio']").click(function(){
                     var value= $(this).val();
                     if(value==-3)
                     {
+                        //取消指定用户节点选中状态
+                        var treeObj = $.fn.zTree.getZTreeObj("officeTree");
+                        treeObj.checkAllNodes(false);
+                        //清空文本域
+                        $("#offices").val('');
                         $("#officeTree").show();
                         $("#offices").show();
+                        $("#search").show();
+                        $("#choose").show();
+                        //清除参与人数
+						$("#sendNum").val('');
+						//清空每人赠送积分和积分总数
+						$("#integrationNum").val('');
+						$("#sendAll").val('');
+
                     }
                     else
                     {
+                        $("#officeTree").hide();
+                        $("#offices").hide();
+                        $("#search").hide();
+                        $("#choose").hide();
                         if(value==0)
                         {
-                            $("#officeTree").hide();
-                            $("#offices").hide();
                             $("#sendNum").val($("#quanbu").val());
                         }
                         if(value==-1)
                         {
-                            $("#officeTree").hide();
-                            $("#offices").hide();
                             $("#sendNum").val($("#xiadan").val());
                         }
                         if(value==-2)
                         {
-                            $("#officeTree").hide();
-                            $("#offices").hide();
                             $("#sendNum").val($("#weixiadan").val());
                         }
                     }
@@ -111,6 +124,22 @@
                     top.$('.jbox-body .jbox-icon').css('top','55px');
                 });
 
+                $("#inputForm").validate({
+                    submitHandler: function(form){
+                        loading('正在提交，请稍等...');
+                        form.submit();
+                    },
+                    errorContainer: "#messageBox",
+                    errorPlacement: function(error, element) {
+                        $("#messageBox").text("输入有误，请先更正。");
+                        if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
+                            error.appendTo(element.parent().parent());
+                        } else {
+                            error.insertAfter(element);
+                        }
+                    }
+                });
+
                 function zTreeOnCheck(event, treeId, treeNode) {
                     var treeObj = $.fn.zTree.getZTreeObj("officeTree");
                     nodes=treeObj.getCheckedNodes(true);
@@ -147,7 +176,9 @@
                     })
 
                 }
-                    var zNodes=[
+
+
+                var zNodes=[
                         <c:forEach items="${officeList}" var="office">{id:"${office.id}", pId:"${not empty office.parent?office.parent.id:0}", name:"${office.name}"},
                     </c:forEach>];
 					// 初始化树结构
@@ -165,28 +196,18 @@
 					{
 						tree2.expandAll(true);
 					}
-			});
+
+            });
 
 
-
-
-
-            $("#inputForm").validate({
-				submitHandler: function(form){
-					loading('正在提交，请稍等...');
-					form.submit();
-				},
-				errorContainer: "#messageBox",
-				errorPlacement: function(error, element) {
-					$("#messageBox").text("输入有误，请先更正。");
-					if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
-						error.appendTo(element.parent().parent());
-					} else {
-						error.insertAfter(element);
-					}
-				}
-			});
-
+            function searchNode(){
+                var treeObj = $.fn.zTree.getZTreeObj("officeTree");
+                var keywords=$("#keyword").val();
+                var nodeList = treeObj.getNodesByParamFuzzy("name", keywords, null);
+                if (nodeList.length>0) {
+                    treeObj.selectNode(nodeList[0]);
+                }
+            }
 	</script>
 
 </head>
@@ -218,36 +239,37 @@
 					<input name="createDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
 						   value="<fmt:formatDate value="${bizIntegrationActivity.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-					<span class="help-inline"><font color="red">*</font> </span>
 				</div>
 			</div>
 		  </c:if>
 		<div class="control-group">
 			<label class="control-label">活动名称：</label>
 			<div class="controls">
-				<form:input path="activityName" htmlEscape="false" maxlength="50" class="input-xlarge "/>
-			</div>
+			 	<form:input path="activityName" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+				</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">优惠工具：</label>
 			<div class="controls">
-				<form:checkbox path="activityTools" checked="checked" value="万户币"  htmlEscape="false" maxlength="50" class="input-xlarge"/>万户币
+				<form:checkbox path="activityTools" readonly="true" checked="checked" value="万户币"  htmlEscape="false" maxlength="50" class="input-xlarge"/>万户币
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label">发送时间：</label>
 			<div class="controls">
-				<input name="sendTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
+				<input name="sendTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
 					value="<fmt:formatDate value="${bizIntegrationActivity.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label">发送范围：</label>
 			 <div class="controls">
-                    <form:radiobutton name="sendScope" path="sendScope" value="0"/>全部用户
+                    <form:radiobutton name="sendScope" checked="true" path="sendScope" value="0"/>全部用户
                     <form:radiobutton name="sendScope" path="sendScope" value="-1"/>已下单用户
                     <form:radiobutton name="sendScope" path="sendScope" value="-2"/>未下单用户
 				    <form:radiobutton name="sendScope" path="sendScope" id="zhi" value="-3"/>指定用户
@@ -259,16 +281,20 @@
 		<div class="control-group">
 			<label class="control-label">参与人数：</label>
 			<div class="controls">
-				<form:input path="officeIds" id="officeIds"/>
-				<form:input path="sendNum" id="sendNum" htmlEscape="false" maxlength="10" readonly="readonly" class="input-xlarge  digits"/>
+				<form:hidden path="officeIds" id="officeIds"/>
+				<form:input path="sendNum" placeholder="由选中发送范围计算得到，不可输入"  id="sendNum"  htmlEscape="false" maxlength="10" readonly="true" class="input-xlarge required  digits"/>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-
 		</div>
 		<div class="control-group">
 			<div class="controls">
+				<div class="search-bar" style="display: none" id="search">
+					<input id="keyword" type="text" placeholder="请输入经销店名称">
+					<input type="button" onclick="searchNode()" value="搜索" style="color:green">
+				</div>
 				<div id="officeTree" class="ztree" style="margin-top:3px;float:left;display: none"></div>
-				<%--已选择：--%>
-				<textarea id="offices" cols="300" ro style="margin-left:50px;word-wrap:normal;width: 300px;height: 240px;vertical-align:top;display: none">
+				<span style="display: none" id="choose">已选择:</span>
+				<textarea id="offices" cols="300" ro style="margin-left:10px;word-wrap:normal;width: 300px;height: 240px;vertical-align:top;display: none">
 
 			    </textarea>
 			</div>
@@ -279,14 +305,16 @@
 		<div class="control-group">
 			<label class="control-label">每人赠送积分：</label>
 			<div class="controls">
-				<form:input path="integrationNum" id="integrationNum" htmlEscape="false" maxlength="10" class="input-xlarge  digits"/>
+				<form:input path="integrationNum" id="integrationNum" htmlEscape="false" maxlength="10" class="input-xlarge required  digits"/>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label">发送积分总数：</label>
 			<div class="controls">
-				<form:input path="sendAll" id="sendAll" htmlEscape="false" maxlength="10" class="input-xlarge  digits"/>
+				<form:input path="sendAll" placeholder="参与人数*每人赠送积分" id="sendAll" htmlEscape="false" maxlength="10" readonly="true" class="input-xlarge required digits"/>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 

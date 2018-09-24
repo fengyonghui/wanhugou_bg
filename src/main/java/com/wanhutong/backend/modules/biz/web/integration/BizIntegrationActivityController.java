@@ -37,6 +37,7 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.integration.BizIntegrationActivity;
 import com.wanhutong.backend.modules.biz.service.integration.BizIntegrationActivityService;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -134,47 +135,6 @@ public class BizIntegrationActivityController extends BaseController {
 		return bizIntegrationActivityService.countTotal();
 	}
 
-	/*
-	*  活动列表导出
-	* */
-	@RequestMapping(value = "activityExport")
-	public String activityExport(BizIntegrationActivity bizIntegrationActivity, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
-		Page<BizIntegrationActivity> page = bizIntegrationActivityService.findPage(new Page<BizIntegrationActivity>(request, response), bizIntegrationActivity);
-		List<BizIntegrationActivity> list = page.getList();
-		//列表数据
-		List<List<String>> data = Lists.newArrayList();
-		try {
-			if(CollectionUtils.isNotEmpty(list))
-			{
-				List<String> activityList = Lists.newArrayList();
-				for (BizIntegrationActivity biz:list) {
-					activityList.add(biz.getId()== null ? "未知" : biz.getId().toString());
-					activityList.add(biz.getActivityName()== null ? "未知" : biz.getActivityName());
-					activityList.add(biz.getActivityTools()== null ? "未知" : biz.getActivityTools());
-					activityList.add(biz.getBizStatus()== null ? "未知" : biz.getBizStatus()==0?"未发送":"已发送");
-					activityList.add(biz.getDescription()== null ? "未知" : biz.getDescription());
-					activityList.add(biz.getSendNum()== null ? "未知" : biz.getSendNum().toString());
-					activityList.add(biz.getIntegrationNum()== null ? "未知" : biz.getIntegrationNum().toString());
-					activityList.add(biz.getSendAll()== null ? "未知" : biz.getSendAll().toString());
-				}
-				String headers[] = {"活动编号","活动名称","优惠工具","发送状态","活动描述","发送人数","每人发送数量","发送总数"};
-				ExportExcelUtils eeu = new ExportExcelUtils();
-			   SXSSFWorkbook workbook = new SXSSFWorkbook();
-			   String fileName = "积分活动" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-			   eeu.exportExcel(workbook, 0, "积分活动数据", headers, data, fileName);
-			   response.reset();
-			   response.setContentType("application/octet-stream; charset=utf-8");
-			   response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
-			   workbook.write(response.getOutputStream());
-			   workbook.dispose();
-			   return null;
-			}
-			return null;
-		} catch (Exception e) {
-			LOGGER.error("活动数据导出失败！");
-		}
-		return "redirect:" + Global.getAdminPath() + "/biz/integration/bizIntegrationActivity/list";
-	}
 
     /**
 	 * 活动参与者列表导出

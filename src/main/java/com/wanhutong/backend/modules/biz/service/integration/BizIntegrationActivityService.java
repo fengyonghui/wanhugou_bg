@@ -60,7 +60,6 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		bizIntegrationActivity.setStatus(1);
 		bizIntegrationActivity.setSendStatus(0);
 		bizIntegrationActivity.setActivityTools("万户币");
-        Date sendTime = bizIntegrationActivity.getEndSendTime();
         String activityName  = bizIntegrationActivity.getActivityName();
 		if(StringUtils.isNotBlank(bizIntegrationActivity.getActivityName()))
 		{
@@ -72,7 +71,7 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		Integer sendScope = bizIntegrationActivity.getSendScope();
 		Integer id = bizIntegrationActivity.getId();
 		BizIntegrationActivity bizIntegrationActivity1 = null;
-		if(StringUtils.isNotBlank(officeIds))
+		if(StringUtils.isNotBlank(officeIds)&&sendScope==-3)
 		{
 			String[] strings = officeIds.split(",");
 			for(String s:strings)
@@ -103,6 +102,11 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 				bizIntegrationActivityDao.insertMiddle(list);
 			}
 			super.save(bizIntegrationActivity);
+			//修改定时任务
+			if(bizIntegrationActivity.getActivityCode().equals("ZCS")&&bizIntegrationActivity.getActivityCode().equals("ZFS")&&bizIntegrationActivity.getActivityCode().equals("XDK"))
+			{
+				quartzManager.modifyJobTime(id.toString(),id.toString(),id.toString(),id.toString(),CronUtils.getCron(bizIntegrationActivity.getSendTime()));
+			}
 		}
 		else
 		{
@@ -118,9 +122,7 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 				bizIntegrationActivityDao.insertMiddle(list);
 			}
 			//添加定时任务
-            quartzManager.addJob(sid.toString(),"万户币",bizIntegrationActivity.getActivityName(),"万户币",BizIntegrationTimeService.class,CronUtils.getCron(bizIntegrationActivity.getSendTime()));
-
-
+            quartzManager.addJob(sid.toString(),sid.toString(),sid.toString(),sid.toString(),BizIntegrationTimeService.class,CronUtils.getCron(bizIntegrationActivity.getSendTime()));
 		}
 	}
 	

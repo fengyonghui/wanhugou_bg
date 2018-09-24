@@ -30,6 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -66,6 +67,14 @@ public class BizMoneyRecodeController extends BaseController {
 		return "modules/biz/integration/bizMoneyRecodeList";
 	}
 
+	@RequiresPermissions("biz:integration:bizIntegrationActivity:view")
+	@RequestMapping(value = {"rules", ""})
+	public String rules(BizIntegrationActivity bizIntegrationActivity, Model model){
+		model.addAttribute("bizIntegrationActivity", bizIntegrationActivity);
+		return "modules/biz/integration/bizIntegrationRules";
+	}
+
+
 	@RequestMapping(value = {"detail", ""})
 	@ResponseBody
 	public BizMoneyRecodeDetail recodeDetail() {
@@ -77,11 +86,13 @@ public class BizMoneyRecodeController extends BaseController {
 	*  活动列表 导出
 	* */
 	@RequestMapping(value = "recodeExport")
-	public String recodeExport(BizMoneyRecode bizIntegrationActivity, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
-		Page<BizMoneyRecode> page = bizMoneyRecodeService.findPage(new Page<BizMoneyRecode>(request, response), bizIntegrationActivity);
-		List<BizMoneyRecode> list = page.getList();
+	public String recodeExport(BizMoneyRecode bizMoneyRecode, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		// Page<BizMoneyRecode> page = bizMoneyRecodeService.findPage(new Page<BizMoneyRecode>(request, response), bizMoneyRecode);
+		// List<BizMoneyRecode> list = page.getList();
+		List<BizMoneyRecode> list = bizMoneyRecodeService.findList(bizMoneyRecode);
 		//列表数据
 		List<List<String>> data = Lists.newArrayList();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
 			if(CollectionUtils.isNotEmpty(list))
 			{
@@ -91,7 +102,7 @@ public class BizMoneyRecodeController extends BaseController {
 					recodeList.add(biz.getOffice().getName()== null ? "未知" : biz.getOffice().getName());
 					recodeList.add(biz.getOffice().getMaster()==null ? "未知" : biz.getOffice().getMaster());
 					recodeList.add(biz.getOffice().getPhone()==null ? "未知" : biz.getOffice().getPhone());
-					recodeList.add(biz.getCreateDate()== null ? "未知" : biz.getCreateDate().toString());
+					recodeList.add(biz.getCreateDate()== null ? "未知" : sdf.format(biz.getCreateDate()).toString());
 					recodeList.add(biz.getMoney()== null ? "未知" : biz.getMoney().toString());
 					recodeList.add(biz.getComment()== null ? "未知" : biz.getComment().toString());
 					recodeList.add(biz.getStatusName()== null ? "未知" : biz.getStatusName().toString());

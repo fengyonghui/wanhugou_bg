@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.integration.BizIntegrationActivity;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -30,7 +31,7 @@ public interface BizIntegrationActivityDao extends CrudDao<BizIntegrationActivit
 
     void insertMiddle(List<BizIntegrationActivity> list);
 
-    @Update("update sys_user_activity set status = 0 where activity_id = #{id}")
+    @Delete("delete from sys_user_activity where activity_id = #{id}")
     void updateMiddleStatusByActivityId(@Param("id") Integer id);
 
     @Select("select GROUP_CONCAT(user_id) from sys_user_activity where activity_id = #{id}")
@@ -71,4 +72,11 @@ public interface BizIntegrationActivityDao extends CrudDao<BizIntegrationActivit
      * */
     @Select("SELECT a.id,a.`name`,a.phone,b.`name` as 'primaryPerson.name' from sys_office a LEFT JOIN sys_user b on b.id = a.primary_person and b.`status` = 1  where a.status = 1 and a.type = 6\n")
     List<Office> findAllOffices();
+
+    /**
+     * 修改活动发送状态
+     *
+     * */
+    @Update("update biz_integration_activity set send_status = 1 where id = #{id}")
+    void updateActivitySendStatus(@Param("id") Integer id);
 }

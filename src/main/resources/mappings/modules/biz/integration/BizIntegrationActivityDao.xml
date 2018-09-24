@@ -43,15 +43,18 @@
 		FROM biz_integration_activity a
 		<include refid="bizIntegrationActivityJoins"/>
 		<where>
-			a.status = #{DEL_FLAG_NORMAL}
+			a.status = #{DEL_FLAG_NORMAL} and a.activity_code not in ('ZCS','ZFS','XDK')
 			<if test="activityName != null and activityName != ''">
 				AND a.activity_name like concat('%',#{activityName},'%')
 			</if>
 			<if test="sendStatus != null and sendStatus != '' or sendStatus==0">
 				AND a.send_status = #{sendStatus}
 			</if>
-			<if test="beginSendTime != null and endSendTime != null and beginSendTime != '' and endSendTime != ''">
-				AND a.send_time BETWEEN #{beginSendTime} AND #{endSendTime}
+			<if test="beginSendTime!=null and beginSendTime!='' ">
+				and a.send_time>=#{beginSendTime}
+			</if>
+			<if test="endSendTime!=null and endSendTime!=''">
+				and  a.send_time<![CDATA[<=]]>#{endSendTime}
 			</if>
 		</where>
 		<choose>

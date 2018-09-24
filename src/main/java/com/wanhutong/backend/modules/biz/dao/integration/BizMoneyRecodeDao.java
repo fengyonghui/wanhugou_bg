@@ -22,6 +22,8 @@ public interface BizMoneyRecodeDao extends CrudDao<BizMoneyRecode> {
 
     BizMoneyRecodeDetail selectRecodeDetail();
 
+    List<BizMoneyRecodeDetail> selectExpireMoney();
+
     void saveAll(List<BizMoneyRecode> list);
 
     void updateMoney(List<BizMoneyRecode> list);

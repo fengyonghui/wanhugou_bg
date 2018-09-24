@@ -49,7 +49,35 @@
 		FROM
 		biz_money_recode
 	</select>
-	
+	<select id="selectExpireMoney" resultType="com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail">
+		SELECT
+				office_id,
+					sum(
+						CASE
+						WHEN status_code IN (10, 11, 12, 22) THEN
+							money
+						ELSE
+							0
+						END
+					) AS sumMoney,
+					sum(
+						CASE
+						WHEN status_code IN (20,21) THEN
+							money
+						ELSE
+							0
+						END
+					) AS usedMoney
+
+				FROM
+					biz_money_recode a
+				WHERE
+					a.create_time BETWEEN concat(YEAR(now()), '-01-01')
+				AND concat(YEAR(now()) , '-12-31')
+				GROUP BY
+					office_id
+	</select>
+
 	<select id="findList" resultType="BizMoneyRecode">
 		SELECT 
 			<include refid="bizMoneyRecodeColumns"/>
@@ -58,8 +86,8 @@
 		<include refid="sysUserJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="statusName != null and statusName != ''">
-				AND a.status_name = #{statusName}
+			<if test="statusCode != null and statusCode != ''">
+				AND a.status_code = #{statusCode}
 			</if>
 			<if test="office != null and office != ''">
 				<if test="office.name != null and office.name != ''">
@@ -69,8 +97,11 @@
 					AND o2.phone like concat('%',#{office.phone},'%')
 				</if>
 			</if>
-			<if test="beginCreateDate != null and endCreateDate != null and beginCreateDate != '' and endCreateDate != ''">
-				AND a.create_time BETWEEN #{beginCreateDate} AND #{endCreateDate}
+			<if test="beginCreateDate!=null and beginCreateDate!='' ">
+				and a.create_time>=#{beginCreateDate}
+			</if>
+			<if test="endCreateDate!=null and endCreateDate!=''">
+				and  a.create_time<![CDATA[<=]]>#{endCreateDate}
 			</if>
 		</where>
 		<choose>

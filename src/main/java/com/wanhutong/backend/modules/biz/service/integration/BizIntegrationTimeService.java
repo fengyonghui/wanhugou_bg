@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.utils.CloseableHttpClientUtil;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.modules.biz.dao.integration.BizIntegrationActivityDao;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.integration.ActivityVo;
 import com.wanhutong.backend.modules.biz.entity.integration.BizIntegrationActivity;
@@ -48,6 +49,9 @@ public class BizIntegrationTimeService implements Job{
       @Autowired
       private BizIntegrationActivityService bizIntegrationActivityService;
       @Autowired
+      private BizIntegrationActivityDao bizIntegrationActivityDao;
+
+      @Autowired
       private BizMoneyRecodeService bizMoneyRecodeService;
 
       private static Logger LOGGER = LoggerFactory.getLogger(BizIntegrationActivityController.class);
@@ -87,6 +91,9 @@ public class BizIntegrationTimeService implements Job{
             }
       }
       private void doSomeThing(List<Office> offices,BizIntegrationActivity bizIntegrationActivity) {
+            //修改活动发送状态为已发送
+            bizIntegrationActivity.setSendStatus(1);
+            bizIntegrationActivityDao.updateActivitySendStatus(bizIntegrationActivity.getId());
             Integer sendScope = bizIntegrationActivity.getSendScope();
             String integrationNum = bizIntegrationActivity.getIntegrationNum();
             BizMoneyRecode bizMoneyRecode = null;
@@ -100,7 +107,8 @@ public class BizIntegrationTimeService implements Job{
                         //根据officeId查询用户可用积分
                         Integer avaiableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
                         if (!Objects.isNull(avaiableMoney)) {
-                              bizMoneyRecode.setNewMoney(avaiableMoney+integrationNum);
+                              Integer newMoney = avaiableMoney + Integer.valueOf(integrationNum);
+                              bizMoneyRecode.setNewMoney(newMoney.toString());
                         }
                         bizMoneyRecode.setOffice(o);
                         bizMoneyRecode.setStatus(1);
@@ -132,11 +140,8 @@ public class BizIntegrationTimeService implements Job{
                   activityVo.setSendScope(bizIntegrationActivity.getSendScope());
                   activityVo.setActivityName(bizIntegrationActivity.getActivityName());
                   activityVo.setIntegrationNum(integrationNum);
-                  param.put("officeIds", activityVo.getOfficeIds());
-                  param.put("sendScope", activityVo.getSendScope());
-                  param.put("activityName", activityVo.getActivityName());
-                  param.put("integrationNum", activityVo.getIntegrationNum());
-                  httpPost.setEntity(new StringEntity(param.toString(), Charset.forName("UTF-8")));
+                  String json = JsonUtil.getJson(activityVo);
+                  httpPost.setEntity(new StringEntity(json.toString(), Charset.forName("UTF-8")));
                   httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
                   httpPost.setHeader("Accept", "application/json");
                   CloseableHttpResponse response = httpClient.execute(httpPost);

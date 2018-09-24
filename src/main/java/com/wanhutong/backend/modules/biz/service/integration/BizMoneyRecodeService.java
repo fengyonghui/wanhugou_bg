@@ -55,6 +55,18 @@ public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMon
         return bizMoneyRecodeDetail;
 	}
 
+	public 	List<BizMoneyRecodeDetail> selectExpireMoney(){
+		List<BizMoneyRecodeDetail> bizMoneyRecodeDetails = bizMoneyRecodeDao.selectExpireMoney();
+		for(BizMoneyRecodeDetail biz:bizMoneyRecodeDetails)
+		{
+			Double gainIntegration = biz.getGainIntegration();
+			Double usedIntegration = biz.getUsedIntegration();
+			double expireIntegration = gainIntegration - usedIntegration;
+			biz.setExpireIntegration(expireIntegration);
+		}
+		return  bizMoneyRecodeDetails;
+	}
+
 	//添加积分流水记录
 	@Transactional(readOnly = false)
 	public void saveAll(List<BizMoneyRecode> arrayList) {
