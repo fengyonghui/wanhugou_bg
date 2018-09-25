@@ -753,28 +753,31 @@ public class BizOrderHeaderController extends BaseController {
 
         List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
 
-        BizPoHeader bizPoHeader = new BizPoHeader();
-        bizPoHeader.setBizOrderHeader(bizOrderHeader);
-        List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
         List<CommonProcessEntity> poAuditList = null;
+        if (bizOrderHeader.getId() != null) {
+            BizPoHeader bizPoHeader = new BizPoHeader();
+            bizPoHeader.setBizOrderHeader(bizOrderHeader);
+            List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
 
-        if (CollectionUtils.isNotEmpty(poList)) {
-            bizPoHeader = poList.get(0);
-            CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
-            poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-            poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-            poAuditList = commonProcessService.findList(poCommonProcessEntity);
+            if (CollectionUtils.isNotEmpty(poList)) {
+                bizPoHeader = poList.get(0);
+                CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
+                poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+                poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+                poAuditList = commonProcessService.findList(poCommonProcessEntity);
 
-            BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
-            bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
-            List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
-            BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
-            for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
-                BigDecimal payTotal = poPaymentOrder.getPayTotal();
-                totalPayTotal = totalPayTotal.add(payTotal);
+                BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+                bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
+                List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+                BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
+                for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
+                    BigDecimal payTotal = poPaymentOrder.getPayTotal();
+                    totalPayTotal = totalPayTotal.add(payTotal);
+                }
+                model.addAttribute("totalPayTotal", totalPayTotal);
             }
-            model.addAttribute("totalPayTotal", totalPayTotal);
         }
+
 
         if (CollectionUtils.isNotEmpty(poAuditList) && CollectionUtils.isNotEmpty(list)) {
             if (bizOrderHeader.getOrderNum().startsWith("DO")) {
