@@ -170,7 +170,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Integer waitPay;
 
 	/**
-	 *
+	 * 可申请支付
 	 * @return
 	 */
 	private Integer applyPayment;
