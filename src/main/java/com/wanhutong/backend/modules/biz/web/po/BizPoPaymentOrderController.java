@@ -153,8 +153,8 @@ public class BizPoPaymentOrderController extends BaseController {
         Map<String, String> configMap = Maps.newLinkedHashMap();
 
         configMap.put("供货部", "供货部");
-        configMap.put("财务经理", "财务经理");
         configMap.put("财务总监", "财务总监");
+        configMap.put("财务总经理", "财务总经理");
         configMap.put("完成", "完成");
         configMap.put("驳回", "驳回");
 

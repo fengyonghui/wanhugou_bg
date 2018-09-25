@@ -1,21 +1,23 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>我的任务</title>
 </head>
 <style type="text/css">
-    html,body,ul,li {
+    html, body, ul, li {
         padding: 0;
         margin: 0;
     }
+    a {color: #000000; text-decoration:none;}
 
-    ul,li {
+    ul, li {
         list-style: none;
     }
+
     .htmlMenu {
         padding: 10px;
     }
@@ -31,7 +33,7 @@
         line-height: 80px;
     }
 
-    .htmlMenu li>span {
+    .htmlMenu li > span {
         width: 30px;
         height: 25px;
         color: #fff;
@@ -51,18 +53,81 @@
 <div class="contentMain">
     <ul class="htmlMenu">
         <li>
-            1156165
-            <span>1</span>
+            <a href="${ctx}/sys/myPanel/waitAudit">订单审核</a>
+            <c:if test="${waitAuditCount > 0}">
+                <span>${waitAuditCount}</span>
+            </c:if>
         </li>
         <li>
-            2
-            <span>10</span>
-        <li>3</li>
-        <li>4</li>
-        <li>5</li>
-        <li>6</li>
-        <li>7</li>
-        <li>8</li>
+            <a href="${ctx}/sys/myPanel/hasRetainage">有尾款</a>
+            <c:if test="${hasRetainageCount > 0}">
+                <span>${hasRetainageCount}</span>
+            </c:if>
+        </li>
+
+        <li>
+            <a href="${ctx}/sys/myPanel/ddck">订单出库</a>
+            <c:if test="${ddckCount > 0}">
+                <span>${ddckCount}</span>
+            </c:if>
+        </li>
+        <li>
+            <a href="${ctx}/sys/myPanel/fhdrk">发货单入库</a>
+            <c:if test="${fhdrkCount > 0}">
+                <span>${fhdrkCount}</span>
+            </c:if>
+        </li>
+        <li>
+            <a href="${ctx}/sys/myPanel/applyPayment">申请付款</a>
+            <c:if test="${applyPaymentCount > 0}">
+                <span>${applyPaymentCount}</span>
+            </c:if>
+        </li>
+        <li>
+            <a href="${ctx}/sys/myPanel/paymentOrderAudit">付款单审核</a>
+            <c:if test="${paymentOrderAuditCount > 0}">
+                <span>${paymentOrderAuditCount}</span>
+            </c:if>
+        </li>
+        <li>
+            <a href="${ctx}/sys/myPanel/reAudit">备货单审核</a>
+            <c:if test="${reAuditCount > 0}">
+                <span>${reAuditCount}</span>
+            </c:if>
+        </li>
+        <li>
+            <a href="${ctx}/sys/myPanel/waitScheduling">待排产</a>
+            <c:if test="${waitSchedulingCount > 0}">
+                <span>${waitSchedulingCount}</span>
+            </c:if>
+        </li>
+        <li>
+            <a href="${ctx}/sys/myPanel/orderPayment">备货单/订单付款</a>
+            <c:if test="${orderPaymentCount > 0}">
+                <span>${orderPaymentCount}</span>
+            </c:if>
+        </li>
+        <li>
+            <a href="${ctx}/sys/myPanel/needPutaway">需上架商品</a>
+            <c:if test="${needPutawayCount > 0}">
+                <span>${needPutawayCount}</span>
+            </c:if>
+        </li>
+        <li>
+            <a href="${ctx}/sys/myPanel/waitShipments">待发货</a>
+            <c:if test="${waitShipmentsCount > 0}">
+                <span>${waitShipmentsCount}</span>
+            </c:if>
+        </li>
+        <li>
+            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form">添加备货单</a>
+        </li>
+        <li>
+            <a href="${ctx}/sys/myPanel/checkException">盘点异常</a>
+            <c:if test="${checkExceptionCount > 0}">
+                <span>${checkExceptionCount}</span>
+            </c:if>
+        </li>
     </ul>
 </div>
 </body>

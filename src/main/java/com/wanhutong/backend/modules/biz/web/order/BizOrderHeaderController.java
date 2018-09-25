@@ -1481,7 +1481,7 @@ public class BizOrderHeaderController extends BaseController {
             if (user.isAdmin() || roleList.contains(role)) {
                 bizOrderHeader.setSupplyId(-1); //判断orderDetail不等于0
             } else {
-                bizOrderHeader.setSupplyId(user.getCompany() == null ? 0 : user.getCompany().getId());
+                bizOrderHeader.setSupplyId(user.getCompany() == null ? null : user.getCompany().getId());
             }
         } else {
             bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());

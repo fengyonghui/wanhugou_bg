@@ -522,7 +522,7 @@
 			<if test="supplyId !=null and supplyId ==-1">
 				and od.suply_id !=0
 			</if>
-			<if test="supplyId !=null and supplyId !=-1 and supplyId !=0">
+			<if test="supplyId !=null and supplyId !=-1">
 				and od.suply_id = #{supplyId}
 			</if>
 			<if test="consultantId!=null">
