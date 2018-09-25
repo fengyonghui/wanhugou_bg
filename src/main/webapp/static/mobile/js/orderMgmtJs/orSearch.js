@@ -4,20 +4,25 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.datagood = [];
+		this.dataSupplier = [];
 		this.selectOpen = false
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			this.hrefHtml('.newinput', '.input_div','#orHideSpan' );
+			this.hrefHtml('.newinput', '.input_div','#hideSpanAdd' );
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
-			this.ajaxGoodName()
+//			this.ajaxGoodName()
 		},
 		pageInit: function() {
 			var _this = this;
-			
+			_this.getData();
+			_this.ajaxinvoiceStatus();//发票状态
+			_this.ajaxPoStatus();//业务状态
+			_this.ajaxorderStatus();//订单来源
+			_this.ajaxcheckStatus();//审核状态
 		},
 		getData: function() {
 			var _this = this;
@@ -55,37 +60,36 @@
 						}
 					})
 		},
-		hrefHtml: function(newinput, input_div,orHideSpan) {
+		hrefHtml: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
 			_this.ajaxSupplier();//供应商
-			_this.ajaxCheckStatus();
+//			_this.ajaxCheckStatus();
 
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
-				$(orHideSpan).show()
+				$(hideSpanAdd).show()
 			})
 			$(newinput).on('keyup', function() {
 				if($(this).val()==''){
 					_this.selectOpen = false
 				}else{
 					_this.selectOpen = true
-				}
-				
-				_this.rendHtml(_this.datagood,$(this).val())
+				}				
+				_this.rendHtml(_this.dataSupplier,$(this).val());
 			})
 			
-			$(orHideSpan).on('click', function() {
+			$(hideSpanAdd).on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
-				$(orHideSpan).hide()
+				$(hideSpanAdd).hide()
 			})
 
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
 				$(newinput).val($(this).text())
 				$(input_div).hide()
-				$('#orHideSpan').hide()
+				$(hideSpanAdd).hide()
 				_this.selectOpen = true
 			})
 		},
@@ -96,7 +100,6 @@
 				$.each(data, function(i, item) {
 					if(item.name.indexOf(key) > -1) {
 						reult.push(item)
-
 					}
 				})
 			$.each(reult, function(i, item) {
@@ -106,27 +109,7 @@
 			$('.input_div').html(htmlList)
 
 		},
-//		ajaxGoodList: function() {
-//			var _this = this;
-//			var htmlList = ''
-//			$.ajax({
-//				type: 'GET',
-//				url: '/a/sys/office/queryTreeList',
-//				data: {
-//					type: 8
-//				},
-//				dataType: 'json',
-//				success: function(res) {
-//					_this.datagood = res
-//					$.each(res, function(i, item) {
-////						console.log(item)
-//						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
-//					});
-//					$('.input_div').html(htmlList)
-//				}
-//			});
-//
-//		},
+		//供应商
 		ajaxSupplier: function() {
 			var _this = this;
 			var htmlSupplier = ''
@@ -142,54 +125,88 @@
 					$.each(res, function(i, item) {
 						htmlSupplier += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="' + item.name + '">' + item.name + '</span>'
 					});
-					$('.input_div02').html(htmlSupplier)
-					_this.getData()
+					$('.input_div').html(htmlSupplier)
 				}
 			});
 		},
-		ajaxCheckStatus: function() {
+		//发票状态
+		ajaxinvoiceStatus: function() {
 			var _this = this;
-			var optHtml ='<option value="">全部</option>';
-			var htmlBusiness = ''
+			var optHtml ='<option value="">请选择</option>';
+			var htmlinvoice = ''
 			$.ajax({
 				type: 'GET',
 				url: '/a/sys/dict/listData',
-				data: {type:'biz_req_status'},
+				data: {type:'biz_order_invStatus'},
 				dataType: 'json',
 				success: function(res) {
-//					console.log(res)
 					$.each(res, function(i, item) {
-//						console.log(item)
-						htmlBusiness += '<option class="soption"  value="' + item.value + '">' + item.label + '</option>'
+						htmlinvoice += '<option class="soption"  value="' + item.id + '">' + item.label + '</option>'
 					});
-					$('#input_div_business').html(optHtml+htmlBusiness)
-					_this.getData()
+					$('#input_div_invoiceStatus').html(optHtml+htmlinvoice);
+					
 				}
 			});
 		},
-		ajaxGoodName: function() {
+		//业务状态
+		ajaxPoStatus: function() {
 			var _this = this;
-			var optHtml ='<option value="">全部</option>';
+			var optHtml ='<option value="">请选择</option>';
 			var htmlClass = '';
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/request/bizRequestHeader/list4Mobile',
-				data: {},
+				url: '/a/sys/dict/listData',
+				data: {type:'biz_po_status'},
 				dataType: 'json',
 				success: function(res) {
-//					console.log(res)
-					$.each(res.data.varietyInfoList, function(i, item) {
-//						console.log(item)
-						htmlClass += '<option class="soption" value="' + item.id + '">' + item.name + '</option>'
+					$.each(res, function(i, item) {
+						htmlClass += '<option class="soption" value="' + item.id + '">' + item.label + '</option>'
 					});
-					$('#input_div_class').html(optHtml+htmlClass)
-					_this.getData()
+					$('#input_div_poStatus').html(optHtml+htmlClass)
 				}
 			});
-
+		},	
+		//订单来源
+		ajaxorderStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlClass = '';
+//			$.ajax({
+//				type: 'GET',
+//				url: '/a/sys/dict/listData',
+//				data: {type:'biz_po_status'},
+//				dataType: 'json',
+//				success: function(res) {
+//					console.log(res)
+//					$.each(res, function(i, item) {
+//						console.log(item)
+//						htmlClass += '<option class="soption" value="' + item.id + '">' + item.label + '</option>'
+//					});
+//					$('#input_div_orderStatus').html(optHtml+htmlClass)
+//				}
+//			});
 		},
-		
-	}
+		//审核状态
+		ajaxcheckStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlClass = '';
+////			$.ajax({
+////				type: 'GET',
+////				url: '/a/sys/dict/listData',
+////				data: {type:'biz_po_status'},
+////				dataType: 'json',
+////				success: function(res) {
+////					console.log(res)
+////					$.each(res, function(i, item) {
+////						console.log(item)
+////						htmlClass += '<option class="soption" value="' + item.id + '">' + item.label + '</option>'
+////					});
+////					$('#input_div_orderStatus').html(optHtml+htmlClass)
+////				}
+////			});
+		},
+},	
 	$(function() {
 
 		var ac = new ACCOUNT();

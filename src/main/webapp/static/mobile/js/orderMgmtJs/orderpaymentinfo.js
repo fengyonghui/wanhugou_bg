@@ -75,8 +75,7 @@
 //				                ass=res;
 //			                }
 //			            });
-                        //订单支出状态
-                        
+                        //订单支出状态                        
                         $.ajax({
 			                type: "GET",
 			                url: "/a/sys/dict/listData",
@@ -119,13 +118,13 @@
 	                        	//排产状态
 	                            var poSchTypeTxt = '';
 	                            if(item.poSchType == 0 || item.poSchType == null){
-	                            	poSchTypeTxt = '未排产';
+	                            	poSchTypeTxt = res.data.SCHEDULING_NOT;
 	                            }else{
 	                            	if(item.poSchType == 1){
-	                            		poSchTypeTxt = '排产中';
+	                            		poSchTypeTxt = res.data.SCHEDULING_PLAN;
 	                            	}
 	                            	if(item.poSchType == 2){
-	                            		poSchTypeTxt = '排产完成';
+	                            		poSchTypeTxt = res.data.SCHEDULING_DONE;
 	                            	}
 	                            }
 	                            //订单支出状态
@@ -243,15 +242,6 @@
 		/*查询*/
 			$('.app_header').on('tap', '#OrdSechBtn', function() {
 				var url = $(this).attr('url');
-//				var staListIds = $('#consultantId').val();
-//				var staListIdTxts = $('#staListIdTxt').val(); 
-//				var conId = '';
-//				if(staListIdTxts) {
-//					conId = $('#staListIdTxt').val();
-//				}
-//				if(staListIds) {
-//					conId = $('#consultantId').val();
-//				}
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
