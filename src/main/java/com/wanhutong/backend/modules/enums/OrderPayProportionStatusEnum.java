@@ -1,5 +1,7 @@
 package com.wanhutong.backend.modules.enums;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+
 import java.math.BigDecimal;
 
 /**
@@ -58,14 +60,16 @@ public enum OrderPayProportionStatusEnum {
             return ALL;
         }
 
-        BigDecimal divide = BigDecimal.valueOf(payTotal).divide(BigDecimal.valueOf(orderTotal),2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+        return OrderPayProportionStatusEnum.parse(BigDecimal.valueOf(orderTotal), BigDecimal.valueOf(payTotal));
+    }
 
-        for (OrderPayProportionStatusEnum statusEnum : values()) {
-            if (statusEnum.minProportion <= divide.intValue() && statusEnum.maxProportion >= divide.intValue()) {
-                return statusEnum;
-            }
-        }
-        return UNKNOWN;
+    /**
+     * 根据支付金额和应支付金额确认支付比例
+     *
+     * @return
+     */
+    public static OrderPayProportionStatusEnum parse(BizOrderHeader b) {
+        return OrderPayProportionStatusEnum.parse(b.getTotalDetail() + b.getFreight() + b.getTotalExp() + b.getServiceFee(), b.getReceiveTotal() + b.getScoreMoney().doubleValue());
     }
 
     public static OrderPayProportionStatusEnum parse(Integer index) {

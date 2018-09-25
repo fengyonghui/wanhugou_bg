@@ -1,7 +1,6 @@
 package com.wanhutong.backend.modules.enums;
 
 import com.google.common.collect.Maps;
-import org.restlet.resource.Get;
 
 import java.util.Map;
 
@@ -23,7 +22,7 @@ public enum ReqHeaderStatusEnum {
     CLOSE(40, "关闭"),
 
     //通用流程Entity对应业务状态
-    PURCHASE(40, "待采购中心经理审批"),
+   // PURCHASE(40, "待采购中心经理审批"),
     CHANNEL(45, "待渠道部经理审批"),
     REJECT(50, "驳回");
 
