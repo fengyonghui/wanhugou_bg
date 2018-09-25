@@ -114,6 +114,12 @@
                 <form:option value="1" label="是"/>
             </form:select>
         </li>
+                <li><label>可申请付款</label>
+                    <form:select path="applyPayment" class="input-medium">
+                        <form:option value="" label="请选择"/>
+                        <form:option value="1" label="是"/>
+                    </form:select>
+                </li>
         <li><label>测试数据</label>
             <form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium"
                            onclick="testData(this)"/>
