@@ -57,8 +57,8 @@
 		},
 		hrefHtml: function(newinput, input_div,orHideSpan) {
 			var _this = this;
-			_this.ajaxGoodList()
-			_this.ajaxCheckStatus()
+			_this.ajaxSupplier();//供应商
+			_this.ajaxCheckStatus();
 
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
@@ -106,26 +106,46 @@
 			$('.input_div').html(htmlList)
 
 		},
-		ajaxGoodList: function() {
+//		ajaxGoodList: function() {
+//			var _this = this;
+//			var htmlList = ''
+//			$.ajax({
+//				type: 'GET',
+//				url: '/a/sys/office/queryTreeList',
+//				data: {
+//					type: 8
+//				},
+//				dataType: 'json',
+//				success: function(res) {
+//					_this.datagood = res
+//					$.each(res, function(i, item) {
+////						console.log(item)
+//						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
+//					});
+//					$('.input_div').html(htmlList)
+//				}
+//			});
+//
+//		},
+		ajaxSupplier: function() {
 			var _this = this;
-			var htmlList = ''
+			var htmlSupplier = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/sys/office/queryTreeList',
+				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
-					type: 8
+					type: 7
 				},
 				dataType: 'json',
 				success: function(res) {
-					_this.datagood = res
+					_this.dataSupplier = res
 					$.each(res, function(i, item) {
-//						console.log(item)
-						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
+						htmlSupplier += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="' + item.name + '">' + item.name + '</span>'
 					});
-					$('.input_div').html(htmlList)
+					$('.input_div02').html(htmlSupplier)
+					_this.getData()
 				}
 			});
-
 		},
 		ajaxCheckStatus: function() {
 			var _this = this;

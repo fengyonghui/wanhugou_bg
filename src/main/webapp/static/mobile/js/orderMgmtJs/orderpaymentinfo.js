@@ -3,14 +3,14 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
-		this.staOrdFlag = "false"
+		this.OrdFlaginfo = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			//权限添加
 //			biz:order:bizOrderHeader:view		操作
-			this.getPermissionList('biz:order:bizOrderHeader:view','staOrdFlag')
+			this.getPermissionList('biz:po:bizPoHeader:view','OrdFlaginfo')
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -47,9 +47,7 @@
 				                var childs = f.childNodes;
 				                for(var i = childs.length - 1; i >= 0; i--) {
 				                    f.removeChild(childs[i]);
-				                }
-				                $('#consultantId').val(pager.consultantId);
-				                $('#flag').val(pager.flag);				                
+				                }			                
 				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
 			            }
@@ -101,12 +99,9 @@
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
                             	console.log(item)
-	                        	$('#consultantIda').val(item.consultantId);
-								$('#statu').val(item.statu);
-								$('#source').val(item.source);
 								//订单/备货单号
-//								var bizOrderId=item.id;
-//	                        	console.log(bizOrderId)
+								var bizOrderId=item.id;
+	                        	console.log(bizOrderId)
 //	                        	$.ajax({
 //					                type: "GET",
 //					                url: "/a/biz/po/bizPoHeader/form",
@@ -124,9 +119,15 @@
 	                        	//排产状态
 	                            var poSchTypeTxt = '';
 	                            if(item.poSchType == 0 || item.poSchType == null){
-	                            	
+	                            	poSchTypeTxt = '未排产';
+	                            }else{
+	                            	if(item.poSchType == 1){
+	                            		poSchTypeTxt = '排产中';
+	                            	}
+	                            	if(item.poSchType == 2){
+	                            		poSchTypeTxt = '排产完成';
+	                            	}
 	                            }
-	                            
 	                            //订单支出状态
 	                             var postatusTxt = '';
 	                            $.each(postatus,function(i,items){
@@ -146,7 +147,7 @@
 	                        	//审核
 	                        	var staCheckBtn = '';
 	                        	var staCheckBtnTxt = '';
-				                if(_this.staOrdFlag == true) {
+				                if(_this.OrdFlaginfo == true) {
 				                	if(item.bizStatus < 15) {
 				                		staCheckBtn = 'waitCheckBtn'
 				                		staCheckBtnTxt = "待审核"
@@ -187,7 +188,7 @@
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>排产状态:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ +' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ poSchTypeTxt +' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>创建时间:</label>' +
@@ -211,11 +212,7 @@
 								$('#staOrdSechBtn').hide();
 								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);							
 						}
-						totalPage = res.data.page.count%pager.size!=0?
-		                parseInt(res.data.page.count/pager.size)+1:
-		                res.data.page.count/pager.size;
-//		                console.log(totalPage)
-		                if(totalPage==pager.pageNo){		                	
+		                if(res.data.page.totalPage==pager.pageNo){		                	
 			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
 			            }else{
 			                pager.pageNo++;
@@ -244,24 +241,24 @@
 		stOrdHrefHtml: function() {
 			var _this = this;
 		/*查询*/
-			$('.app_header').on('tap', '#staOrdSechBtn', function() {
+			$('.app_header').on('tap', '#OrdSechBtn', function() {
 				var url = $(this).attr('url');
-				var staListIds = $('#consultantId').val();
-				var staListIdTxts = $('#staListIdTxt').val(); 
-				var conId = '';
-				if(staListIdTxts) {
-					conId = $('#staListIdTxt').val();
-				}
-				if(staListIds) {
-					conId = $('#consultantId').val();
-				}
+//				var staListIds = $('#consultantId').val();
+//				var staListIdTxts = $('#staListIdTxt').val(); 
+//				var conId = '';
+//				if(staListIdTxts) {
+//					conId = $('#staListIdTxt').val();
+//				}
+//				if(staListIds) {
+//					conId = $('#consultantId').val();
+//				}
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
-						url: "../../../html/staffMgmtHtml/orderHtml/staOrdSech.html",
+						url: "../../html/orderMgmtHtml/orSearch.html",
 						extras:{
-							staListId: conId,
+//							staListId: conId,
 						}
 					})
 				}

@@ -10,7 +10,6 @@
 		<title>订单查询</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
-		<link href="../../css/drop.css" rel="stylesheet" />
 	</head>
 
 	<body>
@@ -21,23 +20,36 @@
 		<div class="mui-content menuMarg">
 			<form class="mui-input-group app_bline">
 				<div class="mui-input-row">
-					<label>订单编号：</label>
+					<label>订单/备货清单编号：</label>
 					<input type="text" class="inOrdNum" placeholder="请输入备货单号">
 				</div>
 				<div class="mui-input-row">
-					<label>经销店电话：</label>
+					<label>供应商：</label>
+					<div class="pre">
+						<input class="newinput newinput02" type="text" placeholder="请选择供应商" id="inSupply">
+						<font>*</font>
+						<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAdd02"></span>
+						<div class="input_div input_div02" style="display: none;">
+	
+						</div>
+						<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+				</div>
+				<div class="mui-input-row">
+					<label>发票状态：</label>
 					<input type="text" class="inReqNum" placeholder="请输入供应商">
 				</div>
 				<div class="mui-input-row">
-					<label>商品货号：</label>
+					<label>业务状态：</label>
 					<input type="text" class="inReqNum" placeholder="请输入供应商">
 				</div>
 				<div class="mui-input-row">
-					<label>采购中心：</label>
+					<label>订单来源：</label>
 					<input type="text" class="inReqNum" placeholder="请输入供应商">
 				</div>
 				<div class="mui-input-row">
-					<label>店名称：</label>
+					<label>审核状态：</label>
 					<div class="pre">
 						<input class="newinput" type="text" placeholder="请选择经销店">
 						<span class="mui-icon mui-icon-closeempty" id="orHideSpan"></span>
@@ -49,7 +61,7 @@
 					</div>
 				</div>
 				<div class="mui-input-row">
-					<label>订单状态：</label>
+					<label>排产状态：</label>
 					<div class="pre">
 						<select class="secStyle" name="" id="input_div_business">
 							<option value=""></option>
@@ -57,6 +69,14 @@
 						<input class="savedata" type="hidden" value=''>
 						<div style="clear:both"></div>
 					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>待支付：</label>
+					<input type="text" class="inReqNum" placeholder="请输入供应商">
+				</div>
+				<div class="mui-input-row">
+					<label>测试数据：</label>
+					<input type="checkbox" name="" id="" value="" class="testCheckbox"/>
 				</div>
 			</form>
 		</div>
@@ -66,7 +86,6 @@
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/component/dropload.js"></script>
 		<script src="../../js/orderMgmtJs/orSearch.js"></script>
 	</body>
 
