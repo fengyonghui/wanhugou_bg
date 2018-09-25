@@ -197,6 +197,60 @@ public class BizPoPaymentOrderController extends BaseController {
     }
 
     @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
+    @RequestMapping(value = {"listV2Data4Mobile"})
+    @ResponseBody
+    public String listV2Data4Mobile(BizPoPaymentOrder bizPoPaymentOrder, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+            }
+        }
+        model.addAttribute("roleSet", roleSet);
+        resultMap.put("roleSet", roleSet);
+
+        PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
+        Map<String, String> configMap = Maps.newLinkedHashMap();
+
+        configMap.put("供货部", "供货部");
+        configMap.put("财务经理", "财务经理");
+        configMap.put("财务总监", "财务总监");
+        configMap.put("完成", "完成");
+        configMap.put("驳回", "驳回");
+
+
+        for(PaymentOrderProcessConfig.Process process : paymentOrderProcessConfig.getProcessList()) {
+            if (StringUtils.isNotBlank(bizPoPaymentOrder.getSelectAuditStatus()) && process.getName().contains(bizPoPaymentOrder.getSelectAuditStatus())) {
+                bizPoPaymentOrder.setAuditStatusCode(process.getCode());
+            }
+        }
+
+
+        if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum())) {
+            if (bizPoPaymentOrder.getOrderNum().startsWith("SO") || bizPoPaymentOrder.getOrderNum().startsWith("DO")) {
+                BizOrderHeader orderHeader = bizOrderHeaderService.getByOrderNum(bizPoPaymentOrder.getOrderNum());
+                if (orderHeader != null) {
+                    bizPoPaymentOrder.setPoHeaderId(orderHeader.getBizPoHeader().getId());
+                }
+            }
+        }
+
+        Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+        model.addAttribute("page", page);
+        String orderId = request.getParameter("orderId");
+        model.addAttribute("orderId", orderId);
+        model.addAttribute("configMap", configMap);
+        resultMap.put("page", page);
+        resultMap.put("orderId", orderId);
+        resultMap.put("configMap", configMap);
+        return JsonUtil.generateData(resultMap, request.getParameter("callback"));
+    }
+
+    @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
     @RequestMapping(value = "form")
     public String form(HttpServletRequest request, HttpServletResponse response, BizPoPaymentOrder bizPoPaymentOrder, Model model) {
         String fromPage = request.getParameter("fromPage");
