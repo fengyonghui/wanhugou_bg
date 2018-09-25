@@ -36,7 +36,7 @@ public class BizOrderPayService extends CrudService<BizOrderHeaderDao, BizOrderH
             return Pair.of(Boolean.TRUE, "bizOrderHeader is null");
         }
         // 取当前支付比例
-        OrderPayProportionStatusEnum proportionStatus = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail() + bizOrderHeader.getFreight() + bizOrderHeader.getTotalExp() + bizOrderHeader.getServiceFee(), bizOrderHeader.getReceiveTotal());
+        OrderPayProportionStatusEnum proportionStatus = OrderPayProportionStatusEnum.parse(bizOrderHeader);
         if (proportionStatus == OrderPayProportionStatusEnum.ZERO) {
             return Pair.of(Boolean.TRUE, "proportionStatus is zero");
         }

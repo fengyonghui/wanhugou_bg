@@ -113,7 +113,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     @Resource
     private SystemService systemService;
 
-
     public static final String ORDER_TABLE = "biz_order_header";
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
