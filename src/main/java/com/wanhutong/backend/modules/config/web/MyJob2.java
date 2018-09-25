@@ -3,7 +3,9 @@ package com.wanhutong.backend.modules.config.web;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecode;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
 import com.wanhutong.backend.modules.biz.service.integration.BizMoneyRecodeService;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.quartz.Job;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +22,11 @@ import java.util.Objects;
  * @date 2018-09-20 15:05
  **/
 public class MyJob2{
+    @Autowired
     private BizMoneyRecodeService bizMoneyRecodeService;
+
+    @Autowired
+    private OfficeService officeService;
 
     List<BizMoneyRecode> arrayList = new ArrayList<>();
     Date date = new Date();
@@ -40,7 +46,6 @@ public class MyJob2{
                 Integer newMoney = aviableMoney + Integer.valueOf(expireIntegration.toString());
                 bizMoneyRecode.setNewMoney(newMoney.toString());
             }
-            bizMoneyRecode.getOffice().setId(officeId);
             bizMoneyRecode.setStatus(1);
             bizMoneyRecode.setMoney(expireIntegration.toString());
             bizMoneyRecode.setStatusCode(12);
@@ -50,6 +55,7 @@ public class MyJob2{
             bizMoneyRecode.setCreateDate(new Date());
             bizMoneyRecode.setUpdateDate(new Date());
             bizMoneyRecode.setComment("每年7月1日，自动过期");
+            bizMoneyRecode.setOffice(officeService.get(officeId));
             arrayList.add(bizMoneyRecode);
         }
         //添加积分流水表

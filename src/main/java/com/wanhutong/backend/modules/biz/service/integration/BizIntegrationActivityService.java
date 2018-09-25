@@ -61,7 +61,13 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		{
 			bizIntegrationActivity.setStatus(1);
 		}
-		bizIntegrationActivity.setSendStatus(0);
+		if(bizIntegrationActivity.getActivityCode().equals("ZCS")||bizIntegrationActivity.getActivityCode().equals("ZFS")||bizIntegrationActivity.getActivityCode().equals("XDK"))
+		{
+			super.save(bizIntegrationActivity);
+			return;
+		}
+
+			bizIntegrationActivity.setSendStatus(0);
 		bizIntegrationActivity.setActivityTools("万户币");
         String activityName  = bizIntegrationActivity.getActivityName();
 		if(StringUtils.isNotBlank(bizIntegrationActivity.getActivityName()))
@@ -104,12 +110,24 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 				}
 				bizIntegrationActivityDao.insertMiddle(list);
 			}
+			else
+			{
+				bizIntegrationActivity = this.get(id);
+				if(!bizIntegrationActivity.getSendScope().equals(sendScope))
+				{
+					//删除活动用户表数据
+					bizIntegrationActivityDao.updateMiddleStatusByActivityId(id);
+
+					//保存活动表
+					super.save(bizIntegrationActivity);
+
+					this.insertMiddleTotal(sendScope,bizIntegrationActivity);
+
+				}
+			}
 			super.save(bizIntegrationActivity);
 			//修改定时任务
-			if(bizIntegrationActivity.getActivityCode().equals("ZCS")&&bizIntegrationActivity.getActivityCode().equals("ZFS")&&bizIntegrationActivity.getActivityCode().equals("XDK"))
-			{
-				quartzManager.modifyJobTime(id.toString(),id.toString(),id.toString(),id.toString(),CronUtils.getCron(bizIntegrationActivity.getSendTime()));
-			}
+			quartzManager.modifyJobTime(id.toString(),id.toString(),id.toString(),id.toString(),CronUtils.getCron(bizIntegrationActivity.getSendTime()));
 		}
 		else
 		{
@@ -124,9 +142,41 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 				//添加活动用户表数据
 				bizIntegrationActivityDao.insertMiddle(list);
 			}
+			else
+			{
+				this.insertMiddleTotal(sendScope,bizIntegrationActivity);
+			}
 			//添加定时任务
             quartzManager.addJob(sid.toString(),sid.toString(),sid.toString(),sid.toString(),BizIntegrationTimeService.class,CronUtils.getCron(bizIntegrationActivity.getSendTime()));
 		}
+	}
+
+	private void insertMiddleTotal(Integer sendScope,BizIntegrationActivity bizIntegrationActivity){
+		List<Office> allOffices = Lists.newArrayList();
+		List<BizIntegrationActivity> list = Lists.newArrayList();
+		BizIntegrationActivity activity = null;
+		if(sendScope==0)
+		{
+			allOffices = this.findAllOffice();
+		}
+		if(sendScope==-1)
+		{
+			allOffices = this.findOrderedOffice();
+		}
+		if(sendScope==-2)
+		{
+			allOffices = this.findUnOrderOffice();
+		}
+		for(Office office:allOffices)
+		{
+			activity = new BizIntegrationActivity();
+			activity.setUserId(office.getId());
+			activity.setId(bizIntegrationActivity.getId());
+			activity.setBizStatus(0);
+			activity.setStatus(1);
+			list.add(activity);
+		}
+		bizIntegrationActivityDao.insertMiddle(list);
 	}
 	
 	@Transactional(readOnly = false)
