@@ -3,14 +3,22 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
-		this.OrdFlaginfo = "false"
+//		this.OrdFlaginfo = "false";
+		this.OrdFlagaudit = "false";
+		this.OrdFlagpay = "false";
+		this.OrdFlagstartAudit = "false";
+		this.OrdFlagScheduling = "false";
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			//权限添加
 //			biz:order:bizOrderHeader:view		操作
-			this.getPermissionList('biz:po:bizPoHeader:view','OrdFlaginfo')
+//			this.getPermissionList('biz:po:bizPoHeader:view','OrdFlaginfo');
+			this.getPermissionList('biz:po:bizPoHeader:audit','OrdFlagaudit');
+			this.getPermissionList1('biz:po:pay:list','OrdFlagpay');
+			this.getPermissionList2('biz:po:bizPoHeader:startAuditAfterReject','OrdFlagstartAudit');
+			this.getPermissionList3('biz:po:bizPoHeader:addScheduling','OrdFlagScheduling');
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -65,16 +73,19 @@
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
 		            	console.log(res)
-//		          	    $.ajax({
-//			                type: "GET",
-//			                url: "/a/sys/dict/listData",
-//			                dataType: "json",
-//			                data: {type: "biz_order_type"},
-//			                async:false,
-//			                success: function(res){                 
-//				                ass=res;
-//			                }
-//			            });
+		            	var dataRow = res.data.roleSet;
+		            	/*当前用户信息*/
+						var userId = '';
+						$.ajax({
+			                type: "GET",
+			                url: "/a/getUser",
+			                dataType: "json",
+			                async:false,
+			                success: function(user){                 
+					            console.log(user)
+								userId = user.data.id
+			                }
+			            });	
                         //订单支出状态                        
                         $.ajax({
 			                type: "GET",
@@ -146,24 +157,66 @@
 	                        	//审核
 	                        	var staCheckBtn = '';
 	                        	var staCheckBtnTxt = '';
-				                if(_this.OrdFlaginfo == true) {
-				                	if(item.bizStatus < 15) {
-				                		staCheckBtn = 'waitCheckBtn'
-				                		staCheckBtnTxt = "待审核"
-				                	}
-				                	if(item.bizStatus==45) {
-				                		staCheckBtnTxt = "审核失败"
-				                	}
-				                	if(item.bizStatus==15) {
-				                		staCheckBtnTxt = "审核成功"
-				                	}
-				                }
-				                else {
+	                        	console.log(_this.OrdFlagaudit)
+				                if(_this.OrdFlagaudit == true) {   
+									var DataRoleGener = '';
+									if(item.commonProcess) {
+										DataRoleGener = item.commonProcess.purchaseOrderProcess.roleEnNameEnum;
+									}
+									var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));	
+									//&& item.commonProcess.purchaseOrderProcess.code != payStatus
+	                                if(item.commonProcess.id != null&& item.commonProcess.purchaseOrderProcess.name != '驳回'&& item.commonProcess.purchaseOrderProcess.name != '审批完成'&& (fileRoleData.length>0 || userId==1))             {
+	                                	if(item.bizOrderHeader != null || item.bizRequestHeader != null){
+	                                	   	if(item.bizOrderHeader != null){
+	                                	   		staCheckBtnTxt = '审核';
+	                                	   	}
+	                                	   	if(item.bizRequestHeader != null){
+	                                	   		staCheckBtnTxt = '审核';
+	                                	   	}
+	                                	}else{
+	                                		staCheckBtnTxt = '审核';
+	                                	}
+	                                }
+				                }else {
 				                	staCheckBtnTxt = ''
 				                }
 	                        	var staCheckSucBtn = '';	                        		                    
 	                        	var staCheckSuc = '';
-
+	                        	//支付申请列表
+	                        	var staPayBtn = '';
+	                        	var staPayBtnTxt = '';
+	                        	if(item.commonProcess.type != -1){
+	                        		if(item.bizOrderHeader != null){
+	                        			console.log(_this.OrdFlagpay)
+	                        			if(_this.OrdFlagpay==false){
+	                        				staPayBtnTxt = '支付申请列表';
+	                        			}	                        			
+	                        		}
+	                        		if(item.bizRequestHeader != null){
+	                        			if(_this.OrdFlagpay==false){
+	                        				staPayBtnTxt = '支付申请列表';
+	                        			}	                        			
+	                        		}
+	                        	}
+	                        	//开启审核
+	                        	var stastartCheckBtn = '';
+	                        	var stastartCheckBtnTxt = '';
+	                        	if(_this.OrdFlagstartAudit==false){
+	                        		if(item.commonProcess.type == -1){
+	                        			if(item.bizOrderHeader != null){
+	                        				stastartCheckBtnTxt = '开启审核';
+	                        			}
+	                        			if(item.bizRequestHeader != null){
+	                        				stastartCheckBtnTxt = '开启审核';
+	                        			}
+	                        		}
+	                        	}
+	                        	//排产
+	                        	var SchedulingBtn = '';
+	                        	var SchedulingBtnTxt = '';
+	                        	if(_this.OrdFlagScheduling==false){
+	                        		stastartCheckBtnTxt = '排产';
+	                        	}
 								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
 											'<label>订单/备货单号:</label>' +
@@ -194,12 +247,21 @@
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ _this.formatDateTime(item.createDate)+' ">' +
 										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-6 staOrDetailBtn" staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">详情</li>' +
+											'<div class="mui-col-xs-3 '+staPayBtn+'" staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li>' +
 											'</div>'+
+											'<div class="mui-col-xs-3 '+stastartCheckBtn+'" staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li>' +
+											'</div>'+
+											'<div class="mui-col-xs-3 '+SchedulingBtn+'" staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
+											'</div>'+
+//											'<div class="mui-col-xs-3 staOrDetailBtn" staOrdId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">详情</li>' +
+//											'</div>'+
 										'</div>' +
 									'</div>'
 								});
@@ -233,7 +295,67 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                    _this.staOrdFlag = res.data;
+                	
+//                  _this.OrdFlaginfo = res.data;
+//                  console.log(_this.OrdFlaginfo)
+                    _this.OrdFlagaudit = res.data;
+                    console.log(_this.OrdFlagaudit)
+//                  _this.OrdFlagpay =  res.data;
+//                  console.log(_this.OrdFlagpay)
+//                  _this.OrdFlagstartAudit = res.data;
+//                  console.log(_this.OrdFlagstartAudit)
+                }
+            });
+        },
+        getPermissionList1: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                	
+//                  _this.OrdFlaginfo = res.data;
+//                  console.log(_this.OrdFlaginfo)
+                    _this.OrdFlagpay =  res.data;
+                    console.log(_this.OrdFlagpay)
+//                  _this.OrdFlagstartAudit = res.data;
+//                  console.log(_this.OrdFlagstartAudit)
+                }
+            });
+        },
+        getPermissionList2: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                	
+//                  _this.OrdFlaginfo = res.data;
+//                  console.log(_this.OrdFlaginfo)
+//                  _this.OrdFlagpay =  res.data;
+//                  console.log(_this.OrdFlagpay)
+                    _this.OrdFlagstartAudit = res.data;
+                    console.log(_this.OrdFlagstartAudit)
+                }
+            });
+        },
+        getPermissionList3: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.OrdFlagScheduling = res.data;
+                    console.log(_this.OrdFlagScheduling)
                 }
             });
         },
