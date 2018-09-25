@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.request;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -13,6 +14,8 @@ import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
+import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -61,6 +64,7 @@ import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -142,6 +146,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	private OfficeService officeService;
 	@Autowired
 	private CommonProcessService commonProcessService;
+    @Autowired
+    private SystemService systemService;
 
 	public static final String REQUEST_HEADER_TABLE_NAME = "biz_request_header";
 	public static final String REQUEST_DETAIL_TABLE_NAME = "biz_request_detail";
@@ -498,20 +504,22 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			model.addAttribute("statusMap", statusMap);
 		}
 
-		BizPoHeader bizPoHeader = new BizPoHeader();
-		bizPoHeader.setBizRequestHeader(bizRequestHeader);
-		List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
-		List<CommonProcessEntity> poAuditList = null;
-		if (CollectionUtils.isNotEmpty(poList)) {
-			BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
-			bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
-			List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
-			BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
-			for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
-				BigDecimal payTotal = poPaymentOrder.getPayTotal();
-				totalPayTotal = totalPayTotal.add(payTotal);
+		if (bizRequestHeader.getId() != null) {
+			BizPoHeader bizPoHeader = new BizPoHeader();
+			bizPoHeader.setBizRequestHeader(bizRequestHeader);
+			List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+			List<CommonProcessEntity> poAuditList = null;
+			if (CollectionUtils.isNotEmpty(poList)) {
+				BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+				bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
+				List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+				BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
+				for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
+					BigDecimal payTotal = poPaymentOrder.getPayTotal();
+					totalPayTotal = totalPayTotal.add(payTotal);
+				}
+				model.addAttribute("totalPayTotal", totalPayTotal);
 			}
-			model.addAttribute("totalPayTotal", totalPayTotal);
 		}
 
 		User userAdmin = UserUtils.getUser();
@@ -1192,7 +1200,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	public String audit(HttpServletRequest request, HttpServletResponse response, int id, String currentType, int auditType, String description, String createPo, String lastPayDateVal) {
 		try {
 			Pair<Boolean, String> audit = null;
-			audit = bizRequestHeaderForVendorService.audit(request, response, id, currentType, auditType, description, createPo, lastPayDateVal);
+			audit = auditRe(request, response, id, currentType, auditType, description, createPo, lastPayDateVal);
 			if (audit.getLeft()) {
 				return JsonUtil.generateData(audit.getRight(), null);
 			}
@@ -1489,4 +1497,107 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 		return JSONObject.fromObject(resultMap).toString();
 	}
+
+
+    public Pair<Boolean, String> auditRe(HttpServletRequest request, HttpServletResponse response, Integer reqHeaderId, String currentType, int auditType, String description, String createPo, String lastPayDateVal) throws ParseException {
+        BizRequestHeader bizRequestHeader = this.get(reqHeaderId);
+        CommonProcessEntity cureentProcessEntity  = bizRequestHeader.getCommonProcess();
+
+        if (cureentProcessEntity == null) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前订单无审核状态!");
+        }
+        cureentProcessEntity = commonProcessService.get(bizRequestHeader.getCommonProcess().getId());
+        if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
+            logger.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", reqHeaderId, currentType);
+            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常!");
+        }
+        RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
+
+        // 当前流程
+        RequestOrderProcessConfig.RequestOrderProcess currentProcess = requestOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
+        // 下一流程
+        RequestOrderProcessConfig.RequestOrderProcess nextProcess = requestOrderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
+        if (nextProcess == null) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前流程已经结束!");
+        }
+        User user = UserUtils.getUser();
+        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
+        Role role = new Role();
+        role.setEnname(roleEnNameEnum.getState());
+        if (!user.isAdmin() && !user.getRoleList().contains(role)) {
+            return Pair.of(Boolean.FALSE, "操作失败,该用户没有权限!");
+
+        }
+
+        if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
+            return Pair.of(Boolean.FALSE, "请输入驳回理由!");
+        }
+
+        cureentProcessEntity.setBizStatus(auditType);
+        cureentProcessEntity.setProcessor(user.getId().toString());
+        cureentProcessEntity.setDescription(description);
+        cureentProcessEntity.setCurrent(CommonProcessEntity.NOT_CURRENT);
+        commonProcessService.save(cureentProcessEntity);
+
+        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+        nextProcessEntity.setObjectId(bizRequestHeader.getId().toString());
+        nextProcessEntity.setObjectName(BizRequestHeaderForVendorService.DATABASE_TABLE_NAME);
+        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+        nextProcessEntity.setCurrent(CommonProcessEntity.CURRENT);
+
+
+        if (cureentProcessEntity.getType().equals(requestOrderProcessConfig.getDefaultProcessId().toString())) {
+            Integer bizStatus =  bizRequestHeader.getBizStatus();
+            bizRequestHeaderForVendorService.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.IN_REVIEW.getState());
+            if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.IN_REVIEW.getState())) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+            }
+        }
+
+        if(nextProcessEntity.getType().equals(requestOrderProcessConfig.getAutProcessId().toString())){
+            Integer bizStatus = bizRequestHeader.getBizStatus();
+            bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());
+            bizRequestHeaderForVendorService.saveRequestHeader(bizRequestHeader);
+            if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.APPROVE.getState())) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+            }
+            bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+            bizRequestHeaderForVendorService.saveRequestHeader(bizRequestHeader);
+            if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState())) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+            }
+        }
+        commonProcessService.save(nextProcessEntity);
+
+        StringBuilder phone = new StringBuilder();
+
+        User sendUser=new User(systemService.getRoleByEnname(nextProcess.getRoleEnNameEnum()==null?"":nextProcess.getRoleEnNameEnum().toLowerCase()));
+        List<User> userList = systemService.findUser(sendUser);
+        if (CollectionUtils.isNotEmpty(userList)) {
+            for (User u : userList) {
+                phone.append(u.getMobile()).append(",");
+            }
+        }
+        if (StringUtils.isNotBlank(phone.toString())) {
+            AliyunSmsClient.getInstance().sendSMS(
+                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                    phone.toString(),
+                    ImmutableMap.of("order","备货清单", "orderNum", bizRequestHeader.getReqNo()));
+        }
+
+        //自动生成采购单
+        Boolean poFlag = false;
+        String poId = "";
+        if ("yes".equals(createPo)) {
+            //备货单标识类型
+            String type = "1";
+            Pair<Boolean, String> booleanStringPair = bizPoHeaderService.goListForAutoSave(reqHeaderId, type, lastPayDateVal, request, response);
+            if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
+                return booleanStringPair;
+            }
+        }
+        return Pair.of(Boolean.TRUE, "操作成功!");
+    }
+
 }

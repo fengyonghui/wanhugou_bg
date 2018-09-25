@@ -46,12 +46,15 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
+import com.wanhutong.backend.modules.enums.BizOrderSchedulingEnum;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
+import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
@@ -422,6 +425,13 @@ public class BizPoHeaderController extends BaseController {
         resultMap.put("roleEnNameSet", roleEnNameSet);
         resultMap.put("page", page);
         resultMap.put("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
+        resultMap.put("SCHEDULING_NOT", BizOrderSchedulingEnum.SCHEDULING_NOT.getDesc());
+        resultMap.put("SCHEDULING_PLAN", BizOrderSchedulingEnum.SCHEDULING_PLAN.getDesc());
+        resultMap.put("SCHEDULING_DONE", BizOrderSchedulingEnum.SCHEDULING_DONE.getDesc());
+        resultMap.put("PO_TYPE", PoPayMentOrderTypeEnum.PO_TYPE.getType());
+        resultMap.put("APPROVE", ReqHeaderStatusEnum.APPROVE.getState());
+        resultMap.put("VEND_ALL_PAY", ReqHeaderStatusEnum.VEND_ALL_PAY.getState());
+
 
         return JsonUtil.generateData(resultMap, request.getParameter("callback"));
     }
@@ -1479,88 +1489,5 @@ public class BizPoHeaderController extends BaseController {
         }
 
         return resultFlag;
-    }
-
-
-    @RequiresPermissions("biz:po:bizPoHeader:edit")
-    @RequestMapping(value = "autoSave")
-    @ResponseBody
-    public String autoSave(String reqDetailIds, String orderDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal, String prewStatus, String type,
-                         String version, HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes,Model model) throws ParseException {
-        Office vendOffice = new Office();
-        vendOffice.setId(Integer.parseInt(vendorId));
-
-        BizPoHeader bizPoHeader = new BizPoHeader();
-        bizPoHeader.setVendOffice(vendOffice);
-        if (reqDetailIds != null || !"".equals(reqDetailIds)) {
-            bizPoHeader.setReqDetailIds(reqDetailIds);
-        }
-        if (orderDetailIds != null || !"".equals(orderDetailIds)) {
-            bizPoHeader.setOrderDetailIds(orderDetailIds);
-        }
-        bizPoHeader.setUnitPrices(unitPrices);
-        bizPoHeader.setOrdQtys(ordQtys);
-
-        if ("audit".equalsIgnoreCase(type)) {
-            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
-            addMessage(redirectAttributes, msg);
-            return "生成支付申请单";
-        }
-        if (!beanValidator(model, bizPoHeader)) {
-            return "自动生成采购单时，服务端参数有效性验证";
-        }
-        Set<Integer> poIdSet = bizPoHeaderService.findPrewPoHeader(bizPoHeader);
-        if (poIdSet.size() == 1) {
-            addMessage(redirectAttributes, "prew".equals(prewStatus) ? "采购订单预览信息" : "保存采购订单成功");
-            return "采购单预览";
-        }
-        int deOfifceId = 0;
-        if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null) {
-            deOfifceId = bizPoHeader.getDeliveryOffice().getId();
-        }
-
-        //生成采购单预览
-        String poNo = "0";
-        bizPoHeader.setOrderNum(poNo);
-        bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
-        bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
-        Integer id = bizPoHeader.getId();
-        bizPoHeaderService.save(bizPoHeader);
-        if (id == null) {
-            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
-        }
-        if (bizPoHeader.getOrderNum() == null || "0".equals(bizPoHeader.getOrderNum())) {
-            poNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO, deOfifceId, bizPoHeader.getVendOffice().getId(), bizPoHeader.getId());
-            bizPoHeader.setOrderNum(poNo);
-            bizPoHeaderService.savePoHeader(bizPoHeader);
-        }
-        if ("mobile".equalsIgnoreCase(version)) {
-            return renderString(response, JsonUtil.generateData("操作成功", request.getParameter("callback")), "application/json");
-        }
-
-        //确认生成采购单
-        Integer poHeaderIdid = bizPoHeader.getId();
-        bizPoHeader = bizPoHeaderService.get(poHeaderIdid);
-        bizPoHeader.setDeliveryStatus(0);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        if (StringUtils.isBlank(lastPayDateVal)) {
-            bizPoHeader.setLastPayDate(new Date());
-        } else {
-            Date lastPayDate = sdf.parse(lastPayDateVal);
-            bizPoHeader.setLastPayDate(lastPayDate);
-        }
-        bizPoHeader.setIsPrew(0);
-        bizPoHeader.setType("createPo");
-        bizPoHeaderService.savePoHeader(bizPoHeader);
-
-        addMessage(redirectAttributes, "保存采购订单成功");
-
-        //采购单开启审核，同时自动生成付款单
-        Pair<Boolean, String> audit = bizPoHeaderService.autoSavePaymentOrder(poHeaderIdid);
-        if (audit.getLeft().equals(Boolean.TRUE)) {
-            String poId = String.valueOf(bizPoHeader.getId());
-            return JsonUtil.generateData("采购单生成," + poId, null);
-        }
-        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);
     }
 }
