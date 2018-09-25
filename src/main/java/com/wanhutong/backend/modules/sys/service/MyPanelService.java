@@ -91,6 +91,18 @@ public class MyPanelService {
     }
 
     /**
+     * 可申请支付
+     *
+     * @return
+     */
+    public int getApplyPaymentCount() {
+        BizPoHeader bizPoHeader = new BizPoHeader();
+        bizPoHeader.setPoSchType(0);
+        List<BizPoHeader> list = bizPoHeaderService.findList(bizPoHeader);
+        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+    }
+
+    /**
      * 备货单审核
      *
      * @return

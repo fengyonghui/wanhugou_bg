@@ -97,7 +97,7 @@
 				</form:select>
 			</li>
 			<li><label>可申请付款</label>
-				<form:select path="waitPay" class="input-medium">
+				<form:select path="applyPayment" class="input-medium">
 					<form:option value="" label="请选择"/>
 					<form:option value="1" label="是"/>
 				</form:select>
@@ -200,7 +200,7 @@
 								<c:if test="${bizPoHeader.bizPoPaymentOrder.id == null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 							&& fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
-							&& bizPoHeader.payTotal < (bizPoHeader.totalDetail+bizPoHeader.totalExp)
+							&& bizPoHeader.payTotal < (bizPoHeader.totalDetail+bizPoHeader.totalExp + bizPoHeader.freight)
 							}">
 									<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
 								</c:if>
