@@ -69,7 +69,7 @@ public enum OrderPayProportionStatusEnum {
      * @return
      */
     public static OrderPayProportionStatusEnum parse(BizOrderHeader b) {
-        return OrderPayProportionStatusEnum.parse(b.getTotalDetail() + b.getFreight() + b.getTotalExp() + b.getServiceFee(), b.getReceiveTotal() + b.getScoreMoney().doubleValue());
+        return OrderPayProportionStatusEnum.parse(b.getTotalDetail() + b.getFreight() + b.getTotalExp() + b.getServiceFee(), b.getReceiveTotal() + (b.getScoreMoney() == null ? 0 : b.getScoreMoney().doubleValue()));
     }
 
     public static OrderPayProportionStatusEnum parse(Integer index) {
