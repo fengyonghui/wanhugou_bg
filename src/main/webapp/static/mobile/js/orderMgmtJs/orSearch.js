@@ -27,27 +27,22 @@
 		getData: function() {
 			var _this = this;
 			$('#inSearchBtn').on('tap', function() {
-				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"))
-//				console.log(optionsBusiness)
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
-							_this.sureSelect(optionsBusiness)
+							_this.sureSelect()
 						}else{
 							mui.toast('请选择匹配的选项')
 						}
-					
 				}else{
-					_this.sureSelect(optionsBusiness)
-					
+					_this.sureSelect()
 				}
-				
-
 			})
 		},
-		sureSelect:function(optionsBusiness){
+		sureSelect:function(){
 			var _this = this;
 				_this.selectOpen = false
-				var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
+				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"))
+//				var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
 				GHUTILS.OPENPAGE({
 					url: "../../html/inventoryMagmetHtml/inventoryList.html",
 					extras: {
@@ -75,7 +70,7 @@
 					_this.selectOpen = false
 				}else{
 					_this.selectOpen = true
-				}				
+				}
 				_this.rendHtml(_this.dataSupplier,$(this).val());
 			})
 			
@@ -144,7 +139,7 @@
 						htmlinvoice += '<option class="soption"  value="' + item.id + '">' + item.label + '</option>'
 					});
 					$('#input_div_invoiceStatus').html(optHtml+htmlinvoice);
-					
+
 				}
 			});
 		},
@@ -165,7 +160,7 @@
 					$('#input_div_poStatus').html(optHtml+htmlClass)
 				}
 			});
-		},	
+		},
 		//订单来源
 		ajaxorderStatus: function() {
 			var _this = this;
@@ -206,7 +201,7 @@
 ////				}
 ////			});
 		},
-},	
+	},
 	$(function() {
 
 		var ac = new ACCOUNT();

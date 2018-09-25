@@ -225,7 +225,7 @@
 	                        	var SchedulingBtn = '';
 	                        	var SchedulingBtnTxt = '';
 	                        	if(_this.OrdFlagScheduling==false){
-	                        		stastartCheckBtnTxt = '排产';
+	                        		SchedulingBtnTxt = '排产';
 	                        	}
 								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
@@ -409,7 +409,7 @@
 //				console.log(staOrdIdd)
 				if(url) {
 					mui.toast('子菜单不存在')
-				} 
+				}
 				else if(staOrdId) {
 					alert(1)
 					GHUTILS.OPENPAGE({
@@ -460,7 +460,7 @@
 //						}
 //					})
 //				}
-//			}),	
+//			}),
 		/*详情*/
 			$('.content_part').on('tap', '.staOrDetailBtn', function() {
 				var url = $(this).attr('url');
@@ -470,6 +470,21 @@
 				} else if(staOrdId == staOrdId) {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/staffMgmtHtml/orderHtml/staOrdDetail.html",
+						extras: {
+							staOrdId: staOrdId,
+						}
+					})
+				}
+			})
+			/*排产*/
+			$('.content_part').on('tap', '.SchedulingBtn', function() {
+				var url = $(this).attr('url');
+				var staOrdId = $(this).attr('staOrdId');
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(staOrdId == staOrdId) {
+					GHUTILS.OPENPAGE({
+						url: "../../html/orderMgmtHtml/orScheduling.html",
 						extras: {
 							staOrdId: staOrdId,
 						}
@@ -599,12 +614,12 @@
 	                        	var staCheckBtn = '';
 	                        	var staCheckBtnTxt = '';
 	                        	console.log(_this.OrdFlagaudit)
-				                if(_this.OrdFlagaudit == true) {   
+				                if(_this.OrdFlagaudit == true) {
 									var DataRoleGener = '';
 									if(item.commonProcess) {
 										DataRoleGener = item.commonProcess.purchaseOrderProcess.roleEnNameEnum;
 									}
-									var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));	
+									var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 									//&& item.commonProcess.purchaseOrderProcess.code != payStatus
 	                                if(item.commonProcess.id != null&& item.commonProcess.purchaseOrderProcess.name != '驳回'&& item.commonProcess.purchaseOrderProcess.name != '审批完成'&& (fileRoleData.length>0 || userId==1))             {
 	                                	if(item.bizOrderHeader != null || item.bizRequestHeader != null){

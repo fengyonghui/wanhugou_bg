@@ -106,7 +106,6 @@
 	                    localOriginType = r2[i].value;
 	                }
 	            }
-	            console.log(localOriginType)
                 $.ajax({
                     type: "post",
                     url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
@@ -126,7 +125,6 @@
                     	reqQtys: _this.reqQtys //申报数量
                     },
                     success: function (resule) {
-//                  	console.log(resule)
                         if (resule == true) {
                             mui.toast("添加备货单成功！");
                             GHUTILS.OPENPAGE({
