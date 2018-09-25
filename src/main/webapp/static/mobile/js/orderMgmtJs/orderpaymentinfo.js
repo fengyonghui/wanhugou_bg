@@ -156,6 +156,7 @@
 	                            }                            
 	                        	//审核
 	                        	var staCheckBtn = '';
+	                        	var staCheckbtns = '';
 	                        	var staCheckBtnTxt = '';
 	                        	console.log(_this.OrdFlagaudit)
 				                if(_this.OrdFlagaudit == true) {   
@@ -167,14 +168,23 @@
 									//&& item.commonProcess.purchaseOrderProcess.code != payStatus
 	                                if(item.commonProcess.id != null&& item.commonProcess.purchaseOrderProcess.name != '驳回'&& item.commonProcess.purchaseOrderProcess.name != '审批完成'&& (fileRoleData.length>0 || userId==1))             {
 	                                	if(item.bizOrderHeader != null || item.bizRequestHeader != null){
-	                                	   	if(item.bizOrderHeader != null){
+	                                		//订单审核
+	                                		console.log(item.bizOrderHeader.id)
+	                                	   	if(item.bizOrderHeader != ""){
+	                                	   		console.log('nnnn')
 	                                	   		staCheckBtnTxt = '审核';
+	                                	   		staCheckbtns = item.bizOrderHeader.id;
 	                                	   	}
-	                                	   	if(item.bizRequestHeader != null){
+	                                	   	//备货单审核
+	                                	   	if(item.bizRequestHeader != ""){
+	                                	   		console.log('mmmm')
 	                                	   		staCheckBtnTxt = '审核';
+	                                	   		staCheckBtn = item.bizRequestHeader.id;
 	                                	   	}
 	                                	}else{
+	                                		//采购单审核
 	                                		staCheckBtnTxt = '审核';
+	                                		staCheckBtn = item.id;
 	                                	}
 	                                }
 				                }else {
@@ -247,16 +257,16 @@
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ _this.formatDateTime(item.createDate)+' ">' +
 										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-											'<div class="mui-col-xs-3 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 staCheckBtns" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-3 '+staPayBtn+'" staOrdId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 staPayBtn" staordid="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-3 '+stastartCheckBtn+'" staOrdId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 '+ stastartCheckBtn +'" staordid="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-3 '+SchedulingBtn+'" staOrdId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 '+ SchedulingBtn +'" staordid="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
 											'</div>'+
 //											'<div class="mui-col-xs-3 staOrDetailBtn" staOrdId="'+ item.id +'">' +
@@ -385,49 +395,72 @@
 					}
 				})
 			}),	
-		 /*待审核*/
-	       $('.content_part').on('tap', '.waitCheckBtn', function() {
+		 /*审核*/
+	       $('.content_part').on('tap', '.staCheckBtns', function() {
 				var url = $(this).attr('url');
-				var staOrdId = $(this).attr('staOrdId');//订单 ID
-				var flagTxt = $('#flag').val();
-				var staListIdTxts = $('#staListIdTxt').val();//查询出来的客户专员 ID
-				var consultantIda = $('#consultantIda').val();//客户专员 ID
-				var stcheckIdTxt = '';
-				if(staListIdTxts) {
-					stcheckIdTxt = staListIdTxts
-				}
-				if(consultantIda) {
-					stcheckIdTxt = consultantIda
-				}
-//				console.log(staListIdTxts)
+				var staOrdId = $(this).attr('staordid');//备货单 ID
+				var staOrdIdd = $(this).attr('staordids');//订单 ID
+				var audit = 'audit', processPo = 'processPo';
+				var baseURL='../../html/inventoryMagmetHtml/inCheck.html';
+				var baseURLs='../../html/staffMgmtHtml/orderHtml/staOrdCheck.html';
+//				console.log(staOrdId)
+//				console.log(audit)
+//				console.log(processPo)
+//				console.log(staOrdIdd)
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(staOrdId == staOrdId) {
+				} 
+				else if(staOrdId) {
+					alert(1)
 					GHUTILS.OPENPAGE({
-						url: "../../../html/staffMgmtHtml/orderHtml/staOrdCheck.html",
+						url: baseURL,
 						extras: {
-							staOrdId: staOrdId,
-							flagTxt: flagTxt,
-							stcheckIdTxt: stcheckIdTxt,
+							staOrdIds: staOrdId,
+							audits:audit,
+							processPos:processPo
+						}
+					})
+				}
+				else if(staOrdIdd){
+					alert(2)
+					GHUTILS.OPENPAGE({
+						url: baseURLs,
+						extras: {
+							staOrdIds: staOrdId,
 						}
 					})
 				}
 			}),
-		/*修改*/
-	       $('.content_part').on('tap', '.staOraAmendBtn', function() {
+			//支付申请列表
+			 $('.content_part').on('tap', '.staPayBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
 					GHUTILS.OPENPAGE({
-						url: "../../../html/staffMgmtHtml/orderHtml/staOrdAmend.html",
-						extras: {
-							staOrdId: staOrdId,
-						}
+						url: "../../html/orderMgmtHtml/payApplyList.html",
+//						extras: {
+//							staOrdId: staOrdId,
+//						}
 					})
 				}
-			}),	
+			}),
+		/*修改*/
+//	       $('.content_part').on('tap', '.staOraAmendBtn', function() {
+//				var url = $(this).attr('url');
+//				var staOrdId = $(this).attr('staOrdId');
+//				if(url) {
+//					mui.toast('子菜单不存在')
+//				} else if(staOrdId == staOrdId) {
+//					GHUTILS.OPENPAGE({
+//						url: "../../../html/staffMgmtHtml/orderHtml/staOrdAmend.html",
+//						extras: {
+//							staOrdId: staOrdId,
+//						}
+//					})
+//				}
+//			}),	
 		/*详情*/
 			$('.content_part').on('tap', '.staOrDetailBtn', function() {
 				var url = $(this).attr('url');
@@ -562,21 +595,36 @@
 		                        		orderTypeTxt = items.label
 		                        	}
 	                            })
-								var staCheckBtn = '';
+								//审核
+	                        	var staCheckBtn = '';
 	                        	var staCheckBtnTxt = '';
-				                if(_this.staOrdFlag == true) {
-				                	if(item.bizStatus==0 || item.bizStatus==5 || item.bizStatus==10) {
-				                		staCheckBtn = 'waitCheckBtn'
-				                		staCheckBtnTxt = "待审核"
-				                	}
-				                	if(item.bizStatus==45) {
-				                		staCheckBtnTxt = "审核失败"
-				                	}
-				                	if(item.bizStatus==15) {
-				                		staCheckBtnTxt = "审核成功"
-				                	}
-				                }
-				                else {
+	                        	console.log(_this.OrdFlagaudit)
+				                if(_this.OrdFlagaudit == true) {   
+									var DataRoleGener = '';
+									if(item.commonProcess) {
+										DataRoleGener = item.commonProcess.purchaseOrderProcess.roleEnNameEnum;
+									}
+									var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));	
+									//&& item.commonProcess.purchaseOrderProcess.code != payStatus
+	                                if(item.commonProcess.id != null&& item.commonProcess.purchaseOrderProcess.name != '驳回'&& item.commonProcess.purchaseOrderProcess.name != '审批完成'&& (fileRoleData.length>0 || userId==1))             {
+	                                	if(item.bizOrderHeader != null || item.bizRequestHeader != null){
+	                                		//订单审核
+	                                	   	if(item.bizOrderHeader != null){
+	                                	   		staCheckBtnTxt = '审核';
+	                                	   		staCheckBtn = item.bizOrderHeader.id;
+	                                	   	}
+	                                	   	//备货单审核
+	                                	   	if(item.bizRequestHeader != null){
+	                                	   		staCheckBtnTxt = '审核';
+	                                	   		staCheckBtn = item.bizRequestHeader.id;
+	                                	   	}
+	                                	}else{
+	                                		//采购单审核
+	                                		staCheckBtnTxt = '审核';
+	                                		staCheckBtn = item.id;
+	                                	}
+	                                }
+				                }else {
 				                	staCheckBtnTxt = ''
 				                }
 	                        	var staCheckSucBtn = '';
