@@ -42,8 +42,9 @@
 </head>
 <body>
 
-	<form:form id="inputForm" modelAttribute="bizIntegrationActivity" action="${ctx}/biz/integration/bizIntegrationActivity/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="bizIntegrationActivity" style="margin-top: 20px" action="${ctx}/biz/integration/bizIntegrationActivity/save" method="post" class="form-horizontal">
 		<form:hidden id="integrationId" path="id"/>
+		<form:hidden  path="str" value="rules"/>
 		<sys:message content="${message}"/>
 		<div style="margin-left: 30px">
 			每单可使用的万户币≤订单货值的

@@ -57,14 +57,8 @@
 				and  a.send_time<![CDATA[<=]]>#{endSendTime}
 			</if>
 		</where>
-		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
-			</when>
-			<otherwise>
-			</otherwise>
-		</choose>
         group by a.id
+		order by a.id desc
 	</select>
 	
 	<select id="findAllList" resultType="BizIntegrationActivity">

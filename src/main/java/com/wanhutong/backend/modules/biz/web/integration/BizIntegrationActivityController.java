@@ -111,6 +111,22 @@ public class BizIntegrationActivityController extends BaseController {
 			return form(bizIntegrationActivity, model);
 		}
 		bizIntegrationActivityService.save(bizIntegrationActivity);
+		String str = bizIntegrationActivity.getStr();
+		if("zcs".equals(str))
+		{
+			addMessage(redirectAttributes, "注册送积分设置成功");
+			return "redirect:" + Global.getAdminPath() + "/biz/integration/bizIntegrationActivity/formA";
+		}
+		if("zfs".equals(str))
+		{
+			addMessage(redirectAttributes, "支付送积分设置成功");
+			return "redirect:" + Global.getAdminPath() + "/biz/integration/bizIntegrationActivity/formB";
+		}
+		if("rules".equals(str))
+		{
+			addMessage(redirectAttributes, "积分规则设置成功");
+			return "redirect:" + Global.getAdminPath() + "/biz/integration/bizMoneyRecode/rules";
+		}
 		addMessage(redirectAttributes, "保存积分活动成功");
 		return "redirect:" + Global.getAdminPath() + "/biz/integration/bizIntegrationActivity/?repage";
 	}

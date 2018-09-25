@@ -41,12 +41,9 @@
 	</script>
 </head>
 <body>
-<ul class="nav nav-tabs">
-	<li><a href="${ctx}/biz/integration/bizIntegrationActivity/">积分活动列表</a></li>
-	<li class="active"><a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}">积分活动<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">${not empty bizIntegrationActivity.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:integration:bizIntegrationActivity:edit">查看</shiro:lacksPermission></a></li>
-</ul><br/>
-<form:form id="inputForm" modelAttribute="bizIntegrationActivity" action="${ctx}/biz/integration/bizIntegrationActivity/save" method="post" class="form-horizontal">
+<form:form id="inputForm" modelAttribute="bizIntegrationActivity" style="margin-top: 20px" action="${ctx}/biz/integration/bizIntegrationActivity/save" method="post" class="form-horizontal">
 	<form:hidden id="integrationId" path="id"/>
+    <form:hidden  path="str" value="zfs"/>
 	<sys:message content="${message}"/>
 	<div class="control-group">
 		<label class="control-label">说明：</label>

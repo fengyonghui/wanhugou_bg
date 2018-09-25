@@ -79,7 +79,7 @@
 	</select>
 
 	<select id="findList" resultType="BizMoneyRecode">
-		SELECT 
+		SELECT
 			<include refid="bizMoneyRecodeColumns"/>
 		FROM biz_money_recode a
 		<include refid="bizMoneyRecodeJoins"/>
@@ -104,13 +104,7 @@
 				and  a.create_time<![CDATA[<=]]>#{endCreateDate}
 			</if>
 		</where>
-		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
-			</when>
-			<otherwise>
-			</otherwise>
-		</choose>
+		order by a.id desc
 	</select>
 	
 	<select id="findAllList" resultType="BizMoneyRecode">
