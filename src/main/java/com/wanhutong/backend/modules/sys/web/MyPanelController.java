@@ -35,13 +35,13 @@ public class MyPanelController extends BaseController {
         int fhdrkCount = 0;
 //        申请付款 po可以申请付款的 TODO
         int applyPaymentCount = 0;
-//        付款单审核 poPaymentOrder 审核 TODO
+//        付款单审核 poPaymentOrder 审核
         int paymentOrderAuditCount = 0;
 //        备货单审核
         int reAuditCount = 0;
 //        待排产
         int waitSchedulingCount = 0;
-//        备货单/订单付款 付款单可以付款的 TODO
+//        备货单/订单付款 付款单可以付款的
         int orderPaymentCount = 0;
 //        需上架商品 所有没有上架的商品  TODO
         int needPutawayCount = 0;
