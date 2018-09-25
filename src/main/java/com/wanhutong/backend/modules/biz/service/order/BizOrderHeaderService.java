@@ -846,7 +846,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         Integer passProcessCode = null;
         // 当前流程
         DoOrderHeaderProcessFifthConfig.OrderHeaderProcess currentProcess = doOrderHeaderProcessConfig.processMap.get(Integer.valueOf(currentType));
-        switch (OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail(), bizOrderHeader.getReceiveTotal())) {
+        switch (OrderPayProportionStatusEnum.parse(bizOrderHeader)) {
             case FIFTH:
                 passProcessCode = currentProcess.getFifthPassCode();
                 break;

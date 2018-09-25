@@ -493,20 +493,22 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			model.addAttribute("statusMap", statusMap);
 		}
 
-		BizPoHeader bizPoHeader = new BizPoHeader();
-		bizPoHeader.setBizRequestHeader(bizRequestHeader);
-		List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
-		List<CommonProcessEntity> poAuditList = null;
-		if (CollectionUtils.isNotEmpty(poList)) {
-			BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
-			bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
-			List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
-			BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
-			for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
-				BigDecimal payTotal = poPaymentOrder.getPayTotal();
-				totalPayTotal = totalPayTotal.add(payTotal);
+		if (bizRequestHeader.getId() != null) {
+			BizPoHeader bizPoHeader = new BizPoHeader();
+			bizPoHeader.setBizRequestHeader(bizRequestHeader);
+			List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+			List<CommonProcessEntity> poAuditList = null;
+			if (CollectionUtils.isNotEmpty(poList)) {
+				BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+				bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
+				List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+				BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
+				for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
+					BigDecimal payTotal = poPaymentOrder.getPayTotal();
+					totalPayTotal = totalPayTotal.add(payTotal);
+				}
+				model.addAttribute("totalPayTotal", totalPayTotal);
 			}
-			model.addAttribute("totalPayTotal", totalPayTotal);
 		}
 
 		User userAdmin = UserUtils.getUser();
