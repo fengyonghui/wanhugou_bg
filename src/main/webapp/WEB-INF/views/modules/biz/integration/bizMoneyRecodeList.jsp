@@ -45,10 +45,10 @@
 
 	     <div style="margin-left: 60px">
 			 平台万户币汇总: &nbsp;&nbsp;
-			 累计获得万户币: <input type="text"  id="hd" style="width:100px" value="1500">
-			 累计使用万户币: <input type="text" id="sy"  style="width:100px" value="1600">
-			 累计过期万户币: <input type="text" id="gq" style="width:100px" value="1800">
-			 可用万户币:<input type="text" id="ky" style="width:100px" value="200">
+			 累计获得万户币: <input type="text"  id="hd" style="width:100px" value="" readonly="true">
+			 累计使用万户币: <input type="text" id="sy"  style="width:100px" value="" readonly="true">
+			 累计过期万户币: <input type="text" id="gq" style="width:100px" value="" readonly="true">
+			 可用万户币:<input type="text" id="ky" style="width:100px" value="" readonly="true">
 	     <div>
 	<form:form id="searchForm" modelAttribute="bizMoneyRecode" action="${ctx}/biz/integration/bizMoneyRecode/list" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

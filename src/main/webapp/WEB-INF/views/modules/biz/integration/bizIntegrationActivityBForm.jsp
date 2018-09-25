@@ -65,7 +65,7 @@
 		<label class="control-label">赠送：</label>
 		<div class="controls">
 			联营订单，订单完成，赠送：订单支付金额的
-			<form:input path="integrationNum" id="integrationNum" htmlEscape="false" maxlength="10" class="input-xlarge  digits"/>
+			<form:input path="integrationNum" id="integrationNum" htmlEscape="false" maxlength="10" class="input-xlarge"/>
 			%个万户币
 		</div>
 	</div>
@@ -78,10 +78,9 @@
 	</div>
 
 	<div class="form-actions">
-			<%--<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">
-				<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>保存
-			</shiro:hasPermission>--%>
-		<input id="btnSubmit" class="btn btn-primary" type="submit" value="更新"/>
+		<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">
+			<input id="btnSubmit" class="btn btn-primary" type="submit" value="更新"/>
+		</shiro:hasPermission>
 	</div>
 </form:form>
 </body>

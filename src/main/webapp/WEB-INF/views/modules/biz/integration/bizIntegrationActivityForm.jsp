@@ -326,11 +326,12 @@
 		</div>
 
 		<div class="form-actions">
-			<%--<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">
-				<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>保存
-			</shiro:hasPermission>--%>
+
 			    <c:if test="${bizIntegrationActivity.str!='detail'}">
-					<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>
+					<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">
+						<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>
+					</shiro:hasPermission>
+					<%--<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>--%>
 				</c:if>
 				<c:if test="${bizIntegrationActivity.str=='detail'}">
 			 	    <input id="buttonExport" class="btn btn-primary" type="button" value="导出参与者列表"/>

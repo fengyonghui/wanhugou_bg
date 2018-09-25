@@ -47,14 +47,16 @@
 		<sys:message content="${message}"/>
 		<div style="margin-left: 30px">
 			每单可使用的万户币≤订单货值的
-			<form:input path="integrationNum" id="integrationNum" htmlEscape="false" maxlength="10" class="input-xlarge  digits"/>
+			<form:input path="integrationNum" id="integrationNum" htmlEscape="false" maxlength="10" class="input-xlarge"/>
 			%
 		</div>
 		<div style="margin-left: 30px;margin-top: 20px">
 			<%--<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">
 				<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>保存
 			</shiro:hasPermission>--%>
-			<input id="btnSubmit" class="btn btn-primary" type="submit" value="更新"/>
+				<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">
+					<input id="btnSubmit" class="btn btn-primary" type="submit" value="更新"/>
+				</shiro:hasPermission>
 		</div>
 	</form:form>
 

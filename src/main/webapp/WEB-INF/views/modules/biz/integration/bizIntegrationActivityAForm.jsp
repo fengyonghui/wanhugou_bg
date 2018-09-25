@@ -78,10 +78,9 @@
 		</div>
 
 		<div class="form-actions">
-			<%--<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">
-				<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>保存
-			</shiro:hasPermission>--%>
-			<input id="btnSubmit" class="btn btn-primary" type="submit" value="更新"/>
+			<shiro:hasPermission name="biz:integration:bizIntegrationActivity:edit">
+				<input id="btnSubmit" class="btn btn-primary" type="submit" value="更新"/>
+			</shiro:hasPermission>
 		</div>
 	</form:form>
 </body>
