@@ -49,4 +49,6 @@ public interface BizRequestHeaderForVendorDao extends CrudDao<BizRequestHeader> 
      */
     void updateSchedulingType(BizRequestHeader requestHeader);
 
+    List<BizRequestHeader> inventoryPage(BizRequestHeader bizRequestHeader);
+
 }

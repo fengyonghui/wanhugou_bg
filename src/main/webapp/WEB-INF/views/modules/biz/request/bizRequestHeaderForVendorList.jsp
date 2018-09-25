@@ -39,7 +39,7 @@
             $("#includeTestData").val(checkbox.checked);
         }
         function checkInfo(obj,val,hid) {
-           if(confirm("您确认取消该采购单吗？")){
+           if(confirm("您确认取消该备货单吗？")){
 
                $.ajax({
                    type:"post",

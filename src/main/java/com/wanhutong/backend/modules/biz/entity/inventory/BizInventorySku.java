@@ -20,6 +20,7 @@ import java.util.List;
 public class BizInventorySku extends DataEntity<BizInventorySku> {
 
 	private static final long serialVersionUID = 1L;
+	public static final String INVSKUREQUESTTABLE = "biz_inv_sku_request";
 	private BizInventoryInfo invInfo;        // 仓库ID，biz_inventory_info.id
 	private BizSkuInfo skuInfo;        // biz_sku_info.id
 	private Integer invType;        // 库存类型：1常规；2残损；3专属

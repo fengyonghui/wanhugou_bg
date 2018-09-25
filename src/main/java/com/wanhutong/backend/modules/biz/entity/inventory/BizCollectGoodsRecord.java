@@ -66,6 +66,31 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	 */
 	private String bizStatu;
 
+	/**
+	 * 采购中心名
+	 */
+	private String centName;
+
+	/**
+	 * 供应商名
+	 */
+	private String vendorName;
+
+	/**
+	 * 库存
+	 */
+	private BizInventorySku inventorySku;
+
+	/**
+	 * 出库数量
+	 */
+	private Integer outQty;
+
+	/**
+	 * 备货单
+	 */
+	private BizRequestHeader requestHeader;
+
 	public BizCollectGoodsRecord() {
 		super();
 	}
@@ -258,5 +283,45 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 
 	public void setCollectNo(String collectNo) {
 		this.collectNo = collectNo;
+	}
+
+	public String getCentName() {
+		return centName;
+	}
+
+	public void setCentName(String centName) {
+		this.centName = centName;
+	}
+
+	public String getVendorName() {
+		return vendorName;
+	}
+
+	public void setVendorName(String vendorName) {
+		this.vendorName = vendorName;
+	}
+
+	public BizInventorySku getInventorySku() {
+		return inventorySku;
+	}
+
+	public void setInventorySku(BizInventorySku inventorySku) {
+		this.inventorySku = inventorySku;
+	}
+
+	public Integer getOutQty() {
+		return outQty;
+	}
+
+	public void setOutQty(Integer outQty) {
+		this.outQty = outQty;
+	}
+
+	public BizRequestHeader getRequestHeader() {
+		return requestHeader;
+	}
+
+	public void setRequestHeader(BizRequestHeader requestHeader) {
+		this.requestHeader = requestHeader;
 	}
 }

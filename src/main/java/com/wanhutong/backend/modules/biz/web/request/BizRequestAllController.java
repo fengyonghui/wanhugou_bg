@@ -408,14 +408,17 @@ public class BizRequestAllController {
     /**
      * 出库页面跳转
      * @param orderHeaderId
+     * @param source
+     * @param model
      * @return
      */
     @RequiresPermissions("biz:request:confirmOut:view")
     @RequestMapping(value = "confirmOut")
-    public String confirmOut(Integer orderHeaderId,Model model) {
+    public String confirmOut(Integer orderHeaderId, String source, Model model) {
         if (orderHeaderId == null) {
             return "";
         }
+        model.addAttribute("source",source);
         BizOrderHeader orderHeader = bizOrderHeaderService.get(orderHeaderId);
         BizCustomCenterConsultant bizCustomCenterConsultant = new BizCustomCenterConsultant();
         bizCustomCenterConsultant.setCustoms(orderHeader.getCustomer());
@@ -423,6 +426,20 @@ public class BizRequestAllController {
         Office center = new Office();
         if (CollectionUtils.isNotEmpty(list)) {
             center = list.get(0).getCenters();
+        }
+        //订单详情，库存
+        List<BizOrderDetail> orderDetailList = findOrderDetailAndInvSku(orderHeaderId,source);
+        model.addAttribute("orderDetailList",orderDetailList);
+        model.addAttribute("bizOrderHeader",orderHeader);
+        //出库详情的出库单
+        if ("detail".equals(source)) {
+            BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
+            bsgr.setBizOrderHeader(orderHeader);
+            List<BizSendGoodsRecord> bsgrList = bizSendGoodsRecordService.findList(bsgr);
+            if (CollectionUtils.isNotEmpty(bsgrList)) {
+                model.addAttribute("sendNo",bsgrList.get(0).getSendNo());
+            }
+            return "modules/biz/request/bizRequestConfirmOut";
         }
         //出库单号
         Integer s = bizOrderHeaderService.findCountByCentId(center.getId());
@@ -442,14 +459,10 @@ public class BizRequestAllController {
                 model.addAttribute("sendNo", sendNo + "_1");
             }
         }
-        //订单详情，库存
-        List<BizOrderDetail> orderDetailList = findOrderDetailAndInvSku(orderHeaderId);
-        model.addAttribute("orderDetailList",orderDetailList);
-        model.addAttribute("bizOrderHeader",orderHeader);
         return "modules/biz/request/bizRequestConfirmOut";
     }
 
-    private List<BizOrderDetail> findOrderDetailAndInvSku(Integer orderHeaderId) {
+    private List<BizOrderDetail> findOrderDetailAndInvSku(Integer orderHeaderId, String source) {
         BizOrderDetail bizOrderDetail = new BizOrderDetail();
         bizOrderDetail.setOrderHeader(new BizOrderHeader(orderHeaderId));
         List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
@@ -471,8 +484,13 @@ public class BizRequestAllController {
                 if (CollectionUtils.isNotEmpty(valueV2s)) {
                     orderDetail.setStandard(valueV2s.get(0).getValue());
                 }
-                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInventorySkuByskuIdAndcentId(center.getId(),orderDetail.getSkuInfo().getId());
-                orderDetail.setRequestDetailList(requestDetailList);
+                if ("detail".equals(source)) {
+                    List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInvReqByOrderDetailId(orderDetail.getId());
+                    orderDetail.setRequestDetailList(requestDetailList);
+                } else {
+                    List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInventorySkuByskuIdAndcentId(center.getId(), orderDetail.getSkuInfo().getId());
+                    orderDetail.setRequestDetailList(requestDetailList);
+                }
             }
         }
         return orderDetailList;

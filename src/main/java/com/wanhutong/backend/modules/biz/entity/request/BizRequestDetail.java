@@ -52,6 +52,10 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	private Integer outQty;
 
 	/**
+	 * 实际库存
+	 */
+	private Integer actualQty;
+	/**
 	 * 库存
 	 */
 	private BizInventorySku inventorySku;
@@ -354,5 +358,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setInventorySku(BizInventorySku inventorySku) {
 		this.inventorySku = inventorySku;
+	}
+
+	public Integer getActualQty() {
+		return actualQty;
+	}
+
+	public void setActualQty(Integer actualQty) {
+		this.actualQty = actualQty;
 	}
 }

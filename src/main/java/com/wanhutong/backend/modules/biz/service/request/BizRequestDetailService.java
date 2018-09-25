@@ -72,4 +72,8 @@ public class BizRequestDetailService extends CrudService<BizRequestDetailDao, Bi
 		return dao.findInventorySkuByskuIdAndcentId(centerId, skuId);
 	}
 
+	public List<BizRequestDetail> findInvReqByOrderDetailId(Integer orderDetailId) {
+		return dao.findInvReqByOrderDetailId(orderDetailId);
+	}
+
 }

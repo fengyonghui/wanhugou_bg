@@ -218,7 +218,9 @@
                 <table id="inventorySkuTable" class="table table-striped table-bordered table-condensed">
                     <thead>
                     <tr>
-                        <th><input name="ordDetail" type="checkbox" onclick="checkOrdDetail(this)"/></th>
+						<c:if test="${source ne 'detail'}">
+                        	<th><input name="ordDetail" type="checkbox" onclick="checkOrdDetail(this)"/></th>
+						</c:if>
                         <th>备货单号</th>
                         <th>商品名称</th>
                         <th>供应商</th>
@@ -231,14 +233,18 @@
                         <th>已出库数量</th>
                         <th>可出库数量</th>
                         <th>库存数量</th>
-                        <th>本次出库数量</th>
+						<c:if test="${source ne 'detail'}">
+                        	<th>本次出库数量</th>
+						</c:if>
                         <th>出库仓库</th>
                     </tr>
                     </thead>
                     <tbody>
                         <c:forEach items="${orderDetail.requestDetailList}" var="requestDetail">
                             <tr>
-                                <td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
+								<c:if test="${source ne 'detail'}">
+                                	<td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
+								</c:if>
                                 <td>${requestDetail.requestHeader.reqNo}</td>
                                 <td>${requestDetail.skuInfo.name}</td>
                                 <td>${requestDetail.vendorName}</td>
@@ -257,7 +263,9 @@
                                 <input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>
                                 <input name="uVersion" value="${requestDetail.inventorySku.uVersion}" type="hidden"/>
                                 <td>${requestDetail.inventorySku.stockQty}</td>
-                                <td><input type="text" name="sentQty" value="0"/></td>
+								<c:if test="${source ne 'detail'}">
+                                	<td><input type="text" name="sentQty" value="0"/></td>
+								</c:if>
                                 <td>
                                     ${requestDetail.inventorySku.invInfo.name}
                                 </td>
@@ -271,7 +279,9 @@
 	</div>
 
 	<div class="form-actions">
-		<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="确认出库"/>&nbsp;</shiro:hasPermission>
+		<c:if test="${source ne 'detail'}">
+			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="确认出库"/>&nbsp;</shiro:hasPermission>
+		</c:if>
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 	</div>
 

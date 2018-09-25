@@ -32,4 +32,6 @@ public interface BizCollectGoodsRecordDao extends CrudDao<BizCollectGoodsRecord>
                                                        @Param("invName")String invName, @Param("skuItemNo")String skuItemNo);
 
     Integer findContByCentId(@Param("centId") Integer centId);
+
+    List<BizCollectGoodsRecord> getInventoryDetail(@Param("invSkuId") Integer invSkuId, @Param("skuId") Integer skuId);
 }
