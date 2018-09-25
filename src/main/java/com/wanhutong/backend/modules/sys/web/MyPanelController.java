@@ -33,7 +33,7 @@ public class MyPanelController extends BaseController {
         int ddckCount = 0;
 //        备货单入库
         int fhdrkCount = 0;
-//        申请付款 po可以申请付款的 TODO
+//        申请付款 po可以申请付款的
         int applyPaymentCount = 0;
 //        付款单审核 poPaymentOrder 审核
         int paymentOrderAuditCount = 0;
@@ -93,6 +93,7 @@ public class MyPanelController extends BaseController {
             waitAuditCount = myPanelService.getOrderWaitAuditCount("品类主管");
             waitSchedulingCount = myPanelService.getWaitSchedulingCount();
             reAuditCount = myPanelService.getReAuditCount("2");
+            applyPaymentCount = myPanelService.getApplyPaymentCount();
         }
 
 //        财务经理；财务总监；财务总经理：订单审核；备货单审核；

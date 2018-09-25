@@ -97,7 +97,7 @@ public class MyPanelService {
      */
     public int getApplyPaymentCount() {
         BizPoHeader bizPoHeader = new BizPoHeader();
-        bizPoHeader.setPoSchType(0);
+        bizPoHeader.setApplyPayment(1);
         List<BizPoHeader> list = bizPoHeaderService.findList(bizPoHeader);
         return CollectionUtils.isEmpty(list) ? 0 : list.size();
     }
