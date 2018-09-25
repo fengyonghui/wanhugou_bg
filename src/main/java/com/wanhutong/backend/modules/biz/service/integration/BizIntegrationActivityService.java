@@ -57,7 +57,10 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 	
 	@Transactional(readOnly = false,rollbackFor = Exception.class)
 	public void save(BizIntegrationActivity bizIntegrationActivity) {
-		bizIntegrationActivity.setStatus(1);
+		if(Objects.isNull(bizIntegrationActivity.getStatus()))
+		{
+			bizIntegrationActivity.setStatus(1);
+		}
 		bizIntegrationActivity.setSendStatus(0);
 		bizIntegrationActivity.setActivityTools("万户币");
         String activityName  = bizIntegrationActivity.getActivityName();
