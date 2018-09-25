@@ -46,12 +46,15 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
+import com.wanhutong.backend.modules.enums.BizOrderSchedulingEnum;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
+import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
@@ -422,6 +425,13 @@ public class BizPoHeaderController extends BaseController {
         resultMap.put("roleEnNameSet", roleEnNameSet);
         resultMap.put("page", page);
         resultMap.put("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
+        resultMap.put("SCHEDULING_NOT", BizOrderSchedulingEnum.SCHEDULING_NOT.getDesc());
+        resultMap.put("SCHEDULING_PLAN", BizOrderSchedulingEnum.SCHEDULING_PLAN.getDesc());
+        resultMap.put("SCHEDULING_DONE", BizOrderSchedulingEnum.SCHEDULING_DONE.getDesc());
+        resultMap.put("PO_TYPE", PoPayMentOrderTypeEnum.PO_TYPE.getType());
+        resultMap.put("APPROVE", ReqHeaderStatusEnum.APPROVE.getState());
+        resultMap.put("VEND_ALL_PAY", ReqHeaderStatusEnum.VEND_ALL_PAY.getState());
+
 
         return JsonUtil.generateData(resultMap, request.getParameter("callback"));
     }
