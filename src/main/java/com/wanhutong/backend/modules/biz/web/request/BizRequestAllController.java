@@ -52,12 +52,14 @@ import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
+import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.formula.functions.T;
@@ -125,6 +127,8 @@ public class BizRequestAllController {
     private BizSendGoodsRecordService bizSendGoodsRecordService;
     @Autowired
     private AttributeValueV2Service attributeValueV2Service;
+    @Autowired
+    private SysOfficeAddressService officeAddressService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -270,6 +274,14 @@ public class BizRequestAllController {
                     requestHeader.setPoSource("poHeaderSource");
                 }
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+                List<AttributeValueV2> colorList = bizSkuInfoService.getSkuProperty(skuInfo.getId(), BizProductInfoV3Service.SKU_TABLE, "颜色");
+                if (CollectionUtils.isNotEmpty(colorList)) {
+                    skuInfo.setColor(colorList.get(0).getValue());
+                }
+                List<AttributeValueV2> sizeList = bizSkuInfoService.getSkuProperty(skuInfo.getId(), BizProductInfoV3Service.SKU_TABLE, "尺寸");
+                if (CollectionUtils.isNotEmpty(sizeList)) {
+                    skuInfo.setSize(sizeList.get(0).getValue());
+                }
                 requestDetail.setSkuInfo(skuInfo);
                 BizVarietyUserInfo bizVarietyUserInfo = new BizVarietyUserInfo();
                 bizVarietyUserInfo.setVarietyInfo(skuInfo.getProductInfo().getBizVarietyInfo());
@@ -279,6 +291,9 @@ public class BizRequestAllController {
                 }
                 reqDetailList.add(requestDetail);
             }
+            SysOfficeAddress officeAddress = new SysOfficeAddress();
+            officeAddress.setOffice(user.getCompany());
+            officeAddressService.findList(officeAddress);
             if(requestDetailList.size()==0){
                 requestHeader.setPoSource("poHeaderSource");
             }
@@ -368,18 +383,18 @@ public class BizRequestAllController {
         if (source != null && "ghs".equals(source)) {
             return "modules/biz/request/bizRequestKcXqForm";
         }
+        BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+        bizInventoryInfo.setReqHeader(new BizRequestHeader(id));
+        List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+        model.addAttribute("invInfoList", invInfoList);
+        List<String> deliverNoList = findDeliverNoByReqId(new BizRequestHeader(id));
+        model.addAttribute("deliverNoList",deliverNoList);
+        BizCollectGoodsRecord bizCollectGoodsRecord = new BizCollectGoodsRecord();
+        bizCollectGoodsRecord.setBizRequestHeader(bizRequestHeader);
+        List<BizCollectGoodsRecord> bizCollectGoodsRecordList = bizCollectGoodsRecordService.findList(bizCollectGoodsRecord);
         if (source != null && "sh".equals(source)) {
-            BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
-            bizInventoryInfo.setReqHeader(new BizRequestHeader(id));
-            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-            model.addAttribute("invInfoList", invInfoList);
-            List<String> deliverNoList = findDeliverNoByReqId(new BizRequestHeader(id));
-            model.addAttribute("deliverNoList",deliverNoList);
             Integer s = bizCollectGoodsRecordService.findContByCentId(bizRequestHeader.getFromOffice().getId());
             String collectNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.RIO,bizRequestHeader.getFromOffice().getId(),bizRequestHeader.getToOffice().getId(),s+1);
-            BizCollectGoodsRecord bizCollectGoodsRecord = new BizCollectGoodsRecord();
-            bizCollectGoodsRecord.setBizRequestHeader(bizRequestHeader);
-            List<BizCollectGoodsRecord> bizCollectGoodsRecordList = bizCollectGoodsRecordService.findList(bizCollectGoodsRecord);
             if (CollectionUtils.isEmpty(bizCollectGoodsRecordList)) {
                 model.addAttribute("collectNo",collectNo+"_1");
             }else {
@@ -392,6 +407,10 @@ public class BizRequestAllController {
                 }
             }
             return "modules/biz/request/bizRequestKcForm";
+        }
+        if (CollectionUtils.isNotEmpty(bizCollectGoodsRecordList)) {
+            BizCollectGoodsRecord collectGoodsRecord = bizCollectGoodsRecordList.get(0);
+            model.addAttribute("collectGoodsRecord",collectGoodsRecord);
         }
         return "modules/biz/request/bizRequestHeaderGhForm";
     }

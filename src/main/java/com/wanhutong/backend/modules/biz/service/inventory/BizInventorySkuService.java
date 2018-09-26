@@ -18,15 +18,18 @@ import com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
 import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
@@ -75,6 +78,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	private SystemService systemService;
 	@Autowired
     private BizRequestDetailService bizRequestDetailService;
+	@Autowired
+	private BizInventoryViewLogService bizInventoryViewLogService;
 
 	@Override
 	public BizInventorySku get(Integer id) {
@@ -226,13 +231,39 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	}
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public Pair<Boolean, String> auditInventory(int id, String currentType, int auditType, String description) {
-		BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorDao.get(id);
-		CommonProcessEntity cureentProcessEntity = bizRequestHeader.getInvCommonProcess();
-		return audit(id, currentType, auditType, description, cureentProcessEntity);
+	public void inventorySave(BizRequestHeader requestHeader) {
+		BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorDao.get(requestHeader.getId());
+		String invReqDetail = requestHeader.getInvReqDetail();
+		Integer requestHeaderId = 0;
+		String[] invReqDetailArr = invReqDetail.split(",");
+		for(int i = 0; i < invReqDetailArr.length; i++) {
+			String[] split = invReqDetailArr[i].split("-");
+			if (split.length ==2) {
+				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.valueOf(split[0]));
+				bizRequestDetail.setActualQty(Integer.valueOf(split[1]));
+				bizRequestDetailService.save(bizRequestDetail);
+				requestHeaderId = bizRequestDetail.getRequestHeader().getId();
+			}
+		}
+
+
+		CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+		commonProcessEntity.setCurrent(CommonProcessEntity.CURRENT);
+		commonProcessEntity.setObjectId(requestHeaderId.toString());
+		commonProcessEntity.setObjectName(BizInventorySku.INVSKUREQUESTTABLE);
+		commonProcessEntity.setBizStatus(CommonProcessEntity.NOT_CURRENT);
+		commonProcessEntity.setType(ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getDefaultProcessId().toString());
+		commonProcessService.save(commonProcessEntity);
 	}
 
-	public Pair<Boolean, String> audit(int id, String currentType, int auditType, String description, CommonProcessEntity cureentProcessEntity) {
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public Pair<Boolean, String> auditInventory(int id, int invId, String currentType, int auditType, String description) {
+		BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorDao.get(id);
+		CommonProcessEntity cureentProcessEntity = bizRequestHeader.getInvCommonProcess();
+		return audit(id, invId, currentType, auditType, description, cureentProcessEntity);
+	}
+
+	public Pair<Boolean, String> audit(int id, int invId, String currentType, int auditType, String description, CommonProcessEntity cureentProcessEntity) {
 		if (cureentProcessEntity == null) {
 			return Pair.of(Boolean.FALSE, "操作失败,当前订单无审核状态!");
 		}
@@ -261,6 +292,40 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
                     bizRequestDetailService.save(requestDetail);
                 }
             }
+			BizInventorySku inventorySku = new BizInventorySku();
+            BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorDao.get(id);
+			inventorySku.setInvInfo(new BizInventoryInfo(invId));
+			inventorySku.setSkuInfo(bizRequestDetail.getSkuInfo());
+			if (BizRequestHeader.HeaderType.ROUTINE.getHeaderType() == bizRequestHeader.getHeaderType().intValue()) {
+				inventorySku.setInvType(BizInventorySku.InvType.ROUTINE.getInvType());
+			}
+			if (BizRequestHeader.HeaderType.SAMPLE.getHeaderType() == bizRequestHeader.getHeaderType().intValue()) {
+				inventorySku.setInvType(BizInventorySku.InvType.SAMPLE.getInvType());
+			}
+			if (ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+				inventorySku.setSkuType(InventorySkuTypeEnum.CENTER_TYPE.getType());
+			}
+			if (ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+				inventorySku.setSkuType(InventorySkuTypeEnum.VENDOR_TYPE.getType());
+			}
+			List<BizInventorySku> inventorySkuList = bizInventorySkuDao.findList(inventorySku);
+			if (CollectionUtils.isNotEmpty(inventorySkuList)) {
+				BizInventorySku invSku = inventorySkuList.get(0);
+				int stock = invSku.getStockQty();
+				Integer num = bizRequestDetail.getRecvQty() - (bizRequestDetail.getOutQty() == null ? 0 : bizRequestDetail.getOutQty()) - bizRequestDetail.getActualQty();
+				invSku.setStockQty(invSku.getStockQty() - num);
+				bizInventorySkuDao.update(invSku);
+				//盘点记录
+				BizInventoryViewLog viewLog = new BizInventoryViewLog();
+				viewLog.setInvInfo(new BizInventoryInfo(invId));
+				viewLog.setInvType(inventorySku.getInvType());
+				viewLog.setSkuInfo(bizRequestDetail.getSkuInfo());
+				viewLog.setStockQty(stock);
+				viewLog.setStockChangeQty(num);
+				viewLog.setNowStockQty(invSku.getStockQty());
+				viewLog.setRequestHeader(bizRequestHeader);
+				bizInventoryViewLogService.save(viewLog);
+			}
         }
 
 		User user = UserUtils.getUser();

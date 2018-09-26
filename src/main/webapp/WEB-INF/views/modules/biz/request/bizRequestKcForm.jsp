@@ -134,6 +134,8 @@
 					<th>产品分类</th>
 					<th>商品名称</th>
 					<th>商品货号</th>
+					<th>颜色</th>
+					<th>尺寸</th>
 					<th>供应商</th>
 					<th>品牌</th>
 					<th>品类主管</th>
@@ -158,6 +160,8 @@
 							<td>${reqDetail.skuInfo.productInfo.bizVarietyInfo.name}</td>
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
+							<td>${reqDetail.skuInfo.color}</td>
+							<td>${reqDetail.skuInfo.size}</td>
 
 							<td>
 									${reqDetail.skuInfo.productInfo.office.name}

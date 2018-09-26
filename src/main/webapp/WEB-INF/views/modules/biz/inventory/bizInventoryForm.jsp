@@ -62,7 +62,8 @@
 	<form:form id="inputForm" modelAttribute="BizRequestHeader" action="${ctx}/biz/inventory/bizInventorySku/inventorySave" method="post" class="form-horizontal">
 		<sys:message content="${message}"/>
         <input id="source" value="${source}" type="hidden"/>
-        <input id="id" value="${requestHeader.id}" type="hidden"/>
+        <input id="id" name="id" value="${requestHeader.id}" type="hidden"/>
+		<input id="invId" name="invInfo.id" value="${requestHeader.invInfo.id}" type="hidden"/>
 		<div class="control-group">
 			<label class="control-label">备货单号：</label>
 			<div class="controls">
@@ -227,10 +228,11 @@
     function audit(auditType, description) {
         var id = $("#id").val();
         var currentType = $("#currentType").val();
+        var invId = $("#invId").val();
         $.ajax({
             url: '${ctx}/biz/inventory/bizInventorySku/audit',
             contentType: 'application/json',
-            data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+            data: {"id": id, "invId": invId, "currentType": currentType, "auditType": auditType, "description": description},
             type: 'get',
             success: function (result) {
                 result = JSON.parse(result);

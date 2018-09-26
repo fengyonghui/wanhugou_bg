@@ -207,4 +207,20 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	public void setVendor(Office vendor) {
 		this.vendor = vendor;
 	}
+
+	public enum InvType{
+//		库存类型：1常规；2残损；3专属；4样品
+		ROUTINE(1),
+		DAMAGE(2),
+		exclusive(3),
+		SAMPLE(4),
+		;
+		private Integer invType;
+
+		InvType(Integer invType) {this.invType = invType;}
+
+		public Integer getInvType() {
+			return invType;
+		}
+	}
 }
