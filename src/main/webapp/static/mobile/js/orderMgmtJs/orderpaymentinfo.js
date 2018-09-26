@@ -231,7 +231,7 @@
 	                        	}
 								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
-											'<label>订单/备货单号:</label>' +
+											'<label>备货单号:</label>' +
 											'<input type="text" class="mui-input-clear dd" disabled="disabled" value=" '+ poNumTxt+' " id="poNum_' + itemId + '">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
@@ -243,11 +243,11 @@
 											'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+ item.totalDetail.toFixed(1)+' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
-											'<label>订单支出状态:</label>' +
+											'<label>支出状态:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+postatusTxt +' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
-											'<label>订单支出审核状态:</label>' +
+											'<label>审核状态:</label>' +
 											'<input type="text" class="mui-input-clear" id="paycheckSta" disabled="disabled" value=" '+ paycheckTxt +' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +

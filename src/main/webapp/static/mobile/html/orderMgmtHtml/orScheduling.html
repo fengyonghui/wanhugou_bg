@@ -17,16 +17,16 @@
 		</header>
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
-				<label>订/备货单号：</label>
-				<input type="text" class="inOrdNum mui-input-clear" placeholder="请输入备货单号">
+				<label>备货单号：</label>
+				<input type="text" id="schedOrdNum" disabled>
 			</div>
 			<div class="mui-input-row" id="orderTypebox">
 				<label>排产类型：</label>
 				<div id="changeTxt" class="labelri inStock">
 		    		按订单排产
-			        <input id="fromType1" type="radio" name="fromType" value="1" class="inputRadio" checked/>
-	                                按商品排产
-			        <input id="fromType2" type="radio" name="fromType" value="2" class="inputRadio"/>
+			        <input id="fromType1" type="radio" name="fromType" value="0" class="inputRadio" checked/>
+            		按商品排产
+			        <input id="fromType2" type="radio" name="fromType" value="1" class="inputRadio"/>
 		       </div>
 		    </div>
 	<!--按订单排产-->	    
@@ -41,15 +41,15 @@
 				<div class="mui-row app_f13 app_bline2">
 					<div class="mui-input-row">
 						<label>总申报数量：</label>
-						<input type="text" class="inOrdNum mui-input-clear">
+						<input type="text" id="ordQty" disabled>
 					</div>
 					<div class="mui-input-row">
 						<label>总待排产量：</label>
-						<input type="text" class="inOrdNum mui-input-clear">
+						<input type="text" id="waiteNum" disabled>
 					</div>	
 					<div class="mui-input-row">
 						<label>已排产数量：</label>
-						<input type="text" class="inOrdNum mui-input-clear">
+						<input type="text" id="completeNum" disabled>
 					</div>
 					<div class="inAddBtnParent">
 						<button id="purchAddBtn" type="submit" class="inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>
@@ -71,10 +71,6 @@
 						
 					</div>	
 				</div>
-				<div class="mui-row remark">
-					<label>备注：</label>
-					<textarea id="inPoRemark" name="" rows="" cols=""></textarea>
-				</div>
 			</div>
 	<!--按商品排产-->
 			<div class="mui-input-row schedCommd">
@@ -82,11 +78,12 @@
 				<ul id="orSchedCommd" class="mui-table-view">
 					
 				</ul>
-				<div class="mui-row remark">
-					<label>备注：</label>
-					<textarea id="inPoRemark" name="" rows="" cols=""></textarea>
-				</div>
-			</div>	
+			</div>
+			
+			<div class="mui-input-row remark">
+				<label>备注：</label>
+				<textarea id="orRemark" ></textarea>
+			</div>
 		</div>	
 		<div class="inSaveBtn saveBtnPt">
 			
