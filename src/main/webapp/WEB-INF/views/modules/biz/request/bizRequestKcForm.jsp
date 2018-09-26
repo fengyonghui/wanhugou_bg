@@ -180,7 +180,7 @@
 								</c:if>
 							</td>
 							<td>
-								<input readonly="readonly" value="${reqDetail.sendQty - reqDetail.recvQty}" type='text'/>
+								<input readonly="readonly" value="${reqDetail.recvQty - reqDetail.sendQty}" type='text'/>
 							</td>
 							<td>
 							<input readonly="readonly" value="${reqDetail.sendQty}" type='text'/>
