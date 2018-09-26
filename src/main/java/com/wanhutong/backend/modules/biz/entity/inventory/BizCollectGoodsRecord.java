@@ -163,8 +163,6 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 		this.customer = customer;
 	}
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@NotNull(message="收货时间不能为空")
 	public Date getReceiveDate() {
 		return receiveDate;
 	}

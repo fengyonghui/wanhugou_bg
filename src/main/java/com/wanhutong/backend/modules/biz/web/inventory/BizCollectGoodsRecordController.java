@@ -53,8 +53,6 @@ public class BizCollectGoodsRecordController extends BaseController {
 
 	@Autowired
 	private BizCollectGoodsRecordService bizCollectGoodsRecordService;
-
-
     @Autowired
     private BizRequestDetailService bizRequestDetailService;
     @Autowired
@@ -96,9 +94,9 @@ public class BizCollectGoodsRecordController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizCollectGoodsRecord:edit")
 	@RequestMapping(value = "save")
 	public String save(BizCollectGoodsRecord bizCollectGoodsRecord, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, bizCollectGoodsRecord)){
-			return form(bizCollectGoodsRecord, model);
-		}
+//		if (!beanValidator(model, bizCollectGoodsRecord)){
+//			return form(bizCollectGoodsRecord, model);
+//		}
 		bizCollectGoodsRecordService.save(bizCollectGoodsRecord);
 		addMessage(redirectAttributes, "保存收货记录成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestAll/?source=sh&ship=bh&bizStatu=0";
