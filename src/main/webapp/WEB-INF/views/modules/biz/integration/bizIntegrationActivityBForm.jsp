@@ -61,7 +61,7 @@
 	<div class="control-group">
 		<label class="control-label">赠送：</label>
 		<div class="controls">
-			联营订单，订单完成，赠送：订单支付金额的
+			联营订单，订单完成，赠送：订单中商品金额的
 			<form:input path="integrationNum" id="integrationNum" htmlEscape="false" maxlength="10" class="input-xlarge"/>
 			%个万户币
 		</div>

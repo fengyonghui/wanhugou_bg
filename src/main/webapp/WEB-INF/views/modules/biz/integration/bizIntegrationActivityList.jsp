@@ -25,6 +25,7 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
+			<div style="margin-left: 20px">说明：指定时间，向指定用户，赠送</div>
 			<li><label>活动名称：</label>
 				<form:input path="activityName" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
