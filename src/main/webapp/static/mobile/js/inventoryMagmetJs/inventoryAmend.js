@@ -847,7 +847,7 @@
                     '<font>*</font>'+
                     '</div></li></div></div>';
                 if (_this.deleteBtnFlag == true) {
-                    htmlCommodity += '<div class="inAddBtnParent">' +
+                    htmlCommodity += '<div>' +
                     '<button id="' + item.id +'" type="button" class="deleteSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block" >删除</button></div>';
                     }
                 htmlCommodity += '</div>';
@@ -1000,7 +1000,7 @@
 	                            t++;                          
 	                            $("#searchInfo").append(resultListHtml);	                            
 	                        })	                        
-	                        var addButtonHtml = '<div class="inAddBtnParent" id="batchAddDiv">' +
+	                        var addButtonHtml = '<div id="batchAddDiv">' +
 	                                '<button id="batchAdd" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加' +
 	                                '</button></div>';
 	                        $("#searchInfo").append(addButtonHtml);
@@ -1038,7 +1038,7 @@
                         var cheDiv = $("#serskudiv_" + cheId);
                         $("#" + cheId).prop('checked',false);
                         $("#" + cheId).hide();
-                        var resultHtml = '<div class="inAddBtnParent" id="removeBtn_' + cheId + '">' +
+                        var resultHtml = '<div id="removeBtn_' + cheId + '">' +
                             '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除' +
                             '</button></div>';
                             cheDiv.append(resultHtml)
