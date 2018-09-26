@@ -624,6 +624,292 @@
 		ORDER BY updateDate DESC
 	</select>
 
+
+	<select id="findListNotCompleteAudit" resultMap="orderHeaderResult">
+		SELECT
+		<include refid="bizOrderHeaderColumns"/>,
+		od.id AS "orderDetailList.id",
+		od.unit_price AS "orderDetailList.unitPrice",
+		od.ord_qty AS "orderDetailList.ordQty",
+		od.sent_qty AS "orderDetailList.sentQty",
+		od.line_no AS "orderDetailList.lineNo",
+		si.id AS "orderDetailList.skuInfo.id",
+		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
+		si.item_no AS "orderDetailList.skuInfo.itemNo",
+		pi.vendor_name AS "orderDetailList.vendor.name",
+		(SELECT SUM(bod.suply_id)
+		FROM biz_order_detail bod
+		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
+		WHERE boh.id = a.id) AS "suplys",
+		(select
+		sum(od.buy_price * od.ord_qty)
+		from
+		biz_order_detail od
+		WHERE
+		od.status=1
+		and od.order_id=a.id
+		GROUP BY a.id ) as "totalBuyPrice"
+		<if test="statu != null and statu =='refund'">
+			,bd.drawback_status AS "drawBack.drawbackStatus"
+		</if>
+		FROM biz_order_header a
+		LEFT JOIN biz_order_detail od ON od.order_id = a.id
+		<if test="statu != null and statu =='unline'">
+			LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
+		</if>
+		<if test="statu != null and statu =='refund'">
+			LEFT JOIN biz_drawback bd on bd.order_id = a.id
+		</if>
+		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
+		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
+		<!-- 供应商id -->
+		<if test="vendorId !=null and vendorId != ''">
+			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
+		</if>
+
+
+			LEFT JOIN common_process cpo ON cpo.object_id = a.id and cpo.object_name = 'ORDER_HEADER_SO_ORIGIN' and cpo.current = 1
+
+			LEFT JOIN common_process cpl ON cpl.object_id = a.id and cpl.object_name = 'ORDER_HEADER_SO_LOCAL'	and cpl.current = 1
+
+
+		<!-- end  -->
+		<choose>
+			<when test="source != null and source == 'vendor'">
+				<include refid="bizOrderHeaderVendJoins"/>
+			</when>
+			<otherwise>
+				<include refid="bizOrderHeaderJoins"/>
+			</otherwise>
+		</choose>
+
+
+
+
+		<where>1=1 and a.order_type !=4
+			and ((
+			(cpo.type not in
+			('666','-1'))
+			and (SELECT SUM(bod.suply_id)
+			FROM
+			biz_order_detail bod
+			LEFT
+			JOIN biz_order_header boh ON boh.id = bod.order_id
+			WHERE boh.id = a.id) = 0)
+
+
+			OR
+			(
+			(cpl.type not in
+			('777',-1,'666'))
+			and (SELECT SUM(bod.suply_id)
+			FROM biz_order_detail bod
+			LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
+			WHERE boh.id = a.id) != 0)
+
+
+			OR
+
+			(process.type NOT in('3','-1')
+			)
+
+			)
+
+			AND a.biz_status != 45
+			AND a.biz_status != 40
+			AND a.biz_status != 35
+
+			<if test="source != null and source == 'vendor'">
+
+				AND (a.order_type = 1 OR a.order_type = 5)
+			</if>
+			<if test="dataStatus==null">
+				and a.status = 1
+			</if>
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="skuChickCount!=null and skuChickCount!=''">
+				AND (
+				(
+				a.biz_status != 45
+				AND a.biz_status != 40
+				AND a.biz_status != 35
+				AND a.biz_status != 0
+				)
+				OR (a.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND a.	receive_total > 0)
+				)
+			</if>
+
+			<if test="retainage == '1' || retainage == 1">
+				AND (a.total_detail + a.total_exp + a.service_fee) > a.receive_total
+				AND (<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
+				a.biz_status != #{item.state}
+			</foreach>
+				OR (a.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND a.receive_total > 0))
+			</if>
+
+			<if test="orderType != null and orderType != ''">
+				AND a.order_type = #{orderType}
+			</if>
+			<if test="name != null and name != ''">
+				AND pi.vendor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="customer != null and customer.id != null and customer.id!=''">
+				AND a.cust_id = #{customer.id}
+			</if>
+			<if test="centersName != null and centersName!=''">
+				AND s.name like
+				<if test="dbName == 'oracle'">'%'||#{centersName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{centersName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{centersName},'%')</if>
+			</if>
+			<if test="customer != null and customer.phone != null and customer.phone!=''">
+				AND su.mobile LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>
+			</if>
+			<if test="receiveTotal != null and receiveTotal != ''">
+				AND a.receive_total = #{receiveTotal}
+			</if>
+			<if test="bizStatus !=null">
+				AND a.biz_status=#{bizStatus}
+			</if>
+			<if test="mobileAuditStatus == 0">
+				AND a.biz_status IN (0,5,10)
+			</if>
+			<if test="mobileAuditStatus == 1">
+				AND a.biz_status = 45
+			</if>
+			<if test="mobileAuditStatus == 2">
+				AND a.biz_status NOT IN (0,5,10,45)
+			</if>
+			<!-- 列表时间查询 -->
+			<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
+				AND a.create_time &gt;= #{orderCreatStartTime}
+				<if test="orderCreatEndTime!=null and orderCreatEndTime!=''">
+					AND a.create_time &lt;= #{orderCreatEndTime}
+				</if>
+			</if>
+			<if test="orderUpdaStartTime !=null and orderUpdaStartTime !=''">
+				AND a.update_time &gt;= #{orderUpdaStartTime}
+				<if test="orderUpdaEndTime!=null and orderUpdaEndTime!=''">
+					AND a.update_time &lt;= #{orderUpdaEndTime}
+				</if>
+			</if>
+			<!-- end -->
+			<if test="bizType !=null and bizType!=''">
+				AND a.biz_type=#{bizType}
+			</if>
+			<if test="sendGoodsStatus != null and sendGoodsStatus == 1">
+				AND a.order_type != 6
+			</if>
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="invStatus !=null and invStatus!=''">
+				AND a.inv_status=#{invStatus}
+			</if>
+			<if test="supplyId !=null and supplyId ==-1">
+				and od.suply_id !=0
+			</if>
+			<if test="supplyId !=null and supplyId !=-1">
+				and od.suply_id = #{supplyId}
+			</if>
+			<if test="consultantId!=null">
+				and ccs.consultant_id = #{consultantId}
+			</if>
+
+			<if test="centerId!=null">
+				and (ccs.center_id = #{centerId} or s.parent_ids like concat('%',#{centerId},',%'))
+			</if>
+
+			<if test="itemNo !=null and itemNo !=''">
+				and si.item_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+			</if>
+
+			<if test="partNo !=null and partNo !=''">
+				and si.part_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
+			</if>
+			<if test="con !=null and con.name != null and con.name !=''">
+				and con.name
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{con.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{con.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{con.name},'%')</if>
+			</if>
+			<if test="statu != null and statu == 'unline'">
+				AND ohu.id IS NOT NULL
+			</if>
+			<if test="statu != null and statu == 'refund'">
+				AND (bd.drawback_status = 0 OR bd.drawback_status = 1 OR bd.drawback_status = 2 OR bd.drawback_status = 3)
+			</if>
+			<if test="statu != null and statu =='unline' and examine != null and examine == 2">
+				AND ohu.biz_status = 0
+			</if>
+			<if test="statu != null and statu =='unline' and examine != null and examine == 1">
+				AND a.id NOT IN (
+				SELECT b.id
+				FROM biz_order_header b
+				LEFT JOIN biz_order_header_unline bohu ON bohu.order_id = b.id
+				WHERE bohu.biz_status = 0
+				AND bohu.`status` = 1
+				AND b.`status` = 1
+				AND b.order_type != 4
+				)
+			</if>
+			<if test="page != null and page.includeTestData != true and skuChickCount==null">
+				AND NOT EXISTS(
+				select 1
+				from sys_test_account ta
+				where a.cust_id = ta.object_id
+				and ta.object_name = 'sys_office'
+				)
+			</if>
+
+			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
+				${sqlMap.order}
+			</if>
+			<if test="vendorId !=null and vendorId != ''">
+				AND  sv.id = ${vendorId}
+			</if>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="bizPoHeader !=null and bizPoHeader.id != null and bizPoHeader.id != ''">
+				AND  bph.id = ${bizPoHeader.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				GROUP  BY a.id
+			</otherwise>
+		</choose>
+		<if test="waitPay == 1 or waitPay == '1'">
+			having sum(bppo.total - bppo.pay_total) > 0
+		</if>
+		ORDER BY updateDate DESC
+	</select>
+
 	<select id="findCount" resultType="Integer">
 		SELECT count(1) from
 		(SELECT
