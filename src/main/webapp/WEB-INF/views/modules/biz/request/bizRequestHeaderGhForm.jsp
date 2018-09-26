@@ -36,14 +36,33 @@
 </ul><br/>
 <form:form id="inputForm"  method="post" class="form-horizontal">
 
-		<div class="control-group">
-			<label class="control-label">备货清单号：</label>
-			<div class="controls">
-				<input readonly="readonly" type="text" class="input-xlarge" value="${bizRequestHeader.reqNo}"/>
-				<span class="help-inline"><font color="red">*</font></span>
-			</div>
+	<div class="control-group">
+		<label class="control-label">入库单：</label>
+		<div class="controls">
+			<input readonly="readonly" name="collectNo" type="text" class="input-xlarge" value="${collectGoodsRecord.collectNo}"/>
 		</div>
-
+	</div>
+	<div class="control-group">
+		<label class="control-label">备货清单号：</label>
+		<div class="controls">
+			<input readonly="readonly" type="text" class="input-xlarge" value="${bizRequestHeader.reqNo}"/>
+			<span class="help-inline"><font color="red">*</font></span>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">备货清类型：</label>
+		<div class="controls">
+			<input readonly="readonly" type="text" class="input-xlarge" value="${fns:getDictLabel(bizRequestHeader.headerType,'req_header_type','未知')}"/>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">发货单号：</label>
+		<div class="controls">
+			<c:forEach items="${deliverNoList}" var="deliverNo">
+				<input readonly="readonly" type="text" class="input-xlarge" value="${deliverNo}"/>
+			</c:forEach>
+		</div>
+	</div>
 	<div class="control-group">
 		<label class="control-label">采购中心：</label>
 		<div class="controls">
@@ -96,12 +115,17 @@
 					<th>产品分类</th>
 					<th>商品名称</th>
 					<th>商品货号</th>
+					<th>颜色</th>
+					<th>尺寸</th>
 					<th>供应商</th>
 					<th>供应商电话</th>
 					<th>品牌</th>
+					<th>品类主管</th>
 					<th>申报数量</th>
+					<th>本次发货数量</th>
+					<th>累计发货数量</th>
 					<c:if test="${bizStatu == 0}">
-						<th>已收数量</th>
+						<th>已入库数量</th>
 					</c:if>
 					<c:if test="${bizStatu != 0}">
 						<th>已供货数量</th>
@@ -126,12 +150,21 @@
 
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
+							<td>${reqDetail.skuInfo.color}</td>
+							<td>${reqDetail.skuInfo.size}</td>
 							<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
 								${reqDetail.skuInfo.productInfo.office.name}</a></td>
 							<td>${reqDetail.skuInfo.productInfo.office.user.mobile}</td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
+							<td>${reqDetail.varietyUser.name}</td>
 							<td>
 								<input   value="${reqDetail.reqQty}" readonly="readonly" class="input-medium" type='text'/>
+							</td>
+							<td>
+								<input readonly="readonly" value="${reqDetail.sendQty - reqDetail.recvQty}" type='text'/>
+							</td>
+							<td>
+								<input readonly="readonly" value="${reqDetail.sendQty}" type='text'/>
 							</td>
 							<c:if test="${bizStatu == 0}">
 								<td>

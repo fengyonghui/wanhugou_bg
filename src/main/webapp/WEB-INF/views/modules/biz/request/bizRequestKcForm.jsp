@@ -182,9 +182,9 @@
 							<td>
 								<input readonly="readonly" value="${reqDetail.sendQty - reqDetail.recvQty}" type='text'/>
 							</td>
-								<td>
-								<input readonly="readonly" value="${reqDetail.sendQty}" type='text'/>
-								</td>
+							<td>
+							<input readonly="readonly" value="${reqDetail.sendQty}" type='text'/>
+							</td>
 							<td>
 								<input id="recvQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.recvQty' readonly="readonly" value="${reqDetail.recvQty}" type='text'/>
 							</td>

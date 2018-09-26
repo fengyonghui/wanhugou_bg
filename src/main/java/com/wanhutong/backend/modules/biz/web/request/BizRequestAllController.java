@@ -1,17 +1,12 @@
 package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.BaseService;
-import com.wanhutong.backend.common.supcan.treelist.cols.Col;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
-import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
-import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
@@ -23,8 +18,6 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
-import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
-import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -41,20 +34,27 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
-import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
-import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
-import com.wanhutong.backend.modules.enums.*;
-import com.wanhutong.backend.modules.sys.entity.*;
-import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
+import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
+import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.SendGoodsRecordBizStatusEnum;
+import com.wanhutong.backend.modules.sys.entity.DefaultProp;
+import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
-import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -62,7 +62,6 @@ import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Servi
 import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,9 +74,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 备货清单和销售订单（source=gh审核通过、采购中，source=kc 采购中、采购完成、供应中心供货, source=sh 备货中, source=ghs 供货详情，ship=xs 销售单，ship=bh 备货单）
@@ -102,8 +100,6 @@ public class BizRequestAllController {
     @Autowired
     private BizInventoryInfoService bizInventoryInfoService;
     @Autowired
-    private SystemService systemService;
-    @Autowired
     private BizLogisticsService bizLogisticsService;
     @Autowired
     private OfficeService officeService;
@@ -126,9 +122,9 @@ public class BizRequestAllController {
     @Autowired
     private BizSendGoodsRecordService bizSendGoodsRecordService;
     @Autowired
-    private AttributeValueV2Service attributeValueV2Service;
-    @Autowired
     private SysOfficeAddressService officeAddressService;
+    @Autowired
+    private CommonLocationService commonLocationService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -293,7 +289,11 @@ public class BizRequestAllController {
             }
             SysOfficeAddress officeAddress = new SysOfficeAddress();
             officeAddress.setOffice(user.getCompany());
-            officeAddressService.findList(officeAddress);
+            List<SysOfficeAddress> officeAddressList = officeAddressService.findList(officeAddress);
+            if (CollectionUtils.isNotEmpty(officeAddressList)) {
+                CommonLocation logistics = commonLocationService.get(officeAddressList.get(0).getBizLocation().getId());
+                model.addAttribute("logistics",logistics);
+            }
             if(requestDetailList.size()==0){
                 requestHeader.setPoSource("poHeaderSource");
             }
