@@ -22,7 +22,9 @@
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
+				
 				this.pageInit(); //页面初始化
+				
 			}
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
@@ -49,8 +51,6 @@
 			            callback :function(){ 
 			                    pager['size']= 20;
 			                    pager['pageNo'] = 1;
-//			                    pager['flag'] = "check_pending";
-//			                    pager['consultantId'] = _this.userInfo.staListId;
 				                var f = document.getElementById("orderinfoList");
 				                var childs = f.childNodes;
 				                for(var i = childs.length - 1; i >= 0; i--) {
@@ -72,6 +72,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
+		            	
 		            	console.log(res)
 		            	var dataRow = res.data.roleSet;
 		            	/*当前用户信息*/
@@ -109,23 +110,20 @@
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
                             	console.log(item)
-								//订单/备货单号
-								var bizOrderId=item.id;
-	                        	console.log(bizOrderId)
-//	                        	$.ajax({
-//					                type: "GET",
-//					                url: "/a/biz/po/bizPoHeader/form",
-//					                dataType: "json",
-//					                data: {id:bizOrderId,str:'detail'},
-//					                async:false,
-//					                success: function(res){
-//					                	console.log(res)
-//						                ass=res;
-//					                }
-//					            });	
-//	                        	if(item.bizOrderHeader != null){
-//	                        		
-//	                        	}
+								//订单/备货单号								
+                                var poNumTxt="";  
+                                var itemId="";
+	                        	if(item.bizOrderHeader){
+	                        		poNumTxt=item.bizOrderHeader.orderNum;
+	                        		console.log(item.bizOrderHeader.id)
+	                        		itemId=item.bizOrderHeader.id;
+	                        	}
+	                        	if(item.bizRequestHeader){
+	                        		poNumTxt=item.bizRequestHeader.reqNo;
+	                        		console.log(item.bizRequestHeader.id)
+	                        		itemId=item.bizRequestHeader.id;
+	                        		
+	                        	}
 	                        	//排产状态
 	                            var poSchTypeTxt = '';
 	                            if(item.poSchType == 0 || item.poSchType == null){
@@ -193,18 +191,23 @@
 	                        	var staCheckSucBtn = '';	                        		                    
 	                        	var staCheckSuc = '';
 	                        	//支付申请列表
-	                        	var staPayBtn = '';
+	                        	var staPayBtn = '';//订单
+	                        	var staPayBtns = '';//备货单
 	                        	var staPayBtnTxt = '';
 	                        	if(item.commonProcess.type != -1){
 	                        		if(item.bizOrderHeader != null){
 	                        			console.log(_this.OrdFlagpay)
+	                        			//订单
 	                        			if(_this.OrdFlagpay==false){
 	                        				staPayBtnTxt = '支付申请列表';
+	                        				staPayBtn = item.bizOrderHeader.id;	
 	                        			}	                        			
 	                        		}
 	                        		if(item.bizRequestHeader != null){
+	                        			//备货单
 	                        			if(_this.OrdFlagpay==false){
 	                        				staPayBtnTxt = '支付申请列表';
+	                        				staPayBtns = item.bizRequestHeader.id;
 	                        			}	                        			
 	                        		}
 	                        	}
@@ -222,7 +225,6 @@
 	                        		}
 	                        	}
 	                        	//排产
-	                        	var SchedulingBtn = '';
 	                        	var SchedulingBtnTxt = '';
 	                        	if(_this.OrdFlagScheduling==false){
 	                        		SchedulingBtnTxt = '排产';
@@ -230,7 +232,7 @@
 								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
 											'<label>订单/备货单号:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ +' ">' +
+											'<input type="text" class="mui-input-clear dd" disabled="disabled" value=" '+ poNumTxt+' " id="poNum_' + itemId + '">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>供应商:</label>' +
@@ -260,7 +262,7 @@
 											'<div class="mui-col-xs-3 staCheckBtns" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-3 staPayBtn" staordid="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 staPayBtn" staordid="'+ item.id +'" ordid="'+ staPayBtn +'" ordids="'+ staPayBtns +'">' +
 												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li>' +
 											'</div>'+
 											'<div class="mui-col-xs-3 '+ stastartCheckBtn +'" staordid="'+ item.id +'">' +
@@ -274,9 +276,27 @@
 //											'</div>'+
 										'</div>' +
 									'</div>'
-								});
+//									_this.dd(item)
+							});	
 								$('#orderinfoList').append(orderHtmlList);
-								_this.stOrdHrefHtml()
+								_this.stOrdHrefHtml();
+								//先隐藏订单信息
+								 var pos=$(".ctn_show_row .dd");
+								 var posd=$(".ctn_show_row .staPayBtn");
+								 $.each(pos,function(n,v){
+	                            	var poNumid=$(this).attr('id').substr(6);
+//		                        	console.log(poNumid)
+	                            	$.each(posd,function(n,v){
+	                            		var that=this;	                            	
+		                            	var y=$(that).attr('ordid')
+//		                            	console.log(y)
+		                            	var divs=$("#poNum_"+poNumid);
+//		                            	console.log(divs)
+		                            	if(poNumid==y){
+		                            		divs.parent().parent().hide()
+		                            	}
+		                            })
+	                            })
 					    }else {
 								$('.mui-pull-bottom-pocket').html('');
 								$('#orderinfoList').append('<p class="noneTxt">暂无数据</p>');
@@ -411,7 +431,8 @@
 					mui.toast('子菜单不存在')
 				}
 				else if(staOrdId) {
-					alert(1)
+					//备货单
+//					alert(7)
 					GHUTILS.OPENPAGE({
 						url: baseURL,
 						extras: {
@@ -422,7 +443,7 @@
 					})
 				}
 				else if(staOrdIdd){
-					alert(2)
+//					alert(8)
 					GHUTILS.OPENPAGE({
 						url: baseURLs,
 						extras: {
@@ -434,16 +455,38 @@
 			//支付申请列表
 			 $('.content_part').on('tap', '.staPayBtn', function() {
 				var url = $(this).attr('url');
-				var staOrdId = $(this).attr('staOrdId');
+				var staOrdId = $(this).attr('staordid');//采购单id
+                var OrdId = $(this).attr('ordid');//订单id
+                var OrdIds = $(this).attr('ordids');//备货单id
+//				console.log(staOrdId)
+				console.log(OrdId)
+				console.log(OrdIds)
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(staOrdId == staOrdId) {
-					GHUTILS.OPENPAGE({
-						url: "../../html/orderMgmtHtml/payApplyList.html",
+				} 
+				else if(OrdId) {
+					alert(7)
+//					GHUTILS.OPENPAGE({
+//						//订单
+//						
+//						url: "../../html/orderMgmtHtml/payApplyList.html",
 //						extras: {
 //							staOrdId: staOrdId,
+//							orderId:OrdId,
 //						}
-					})
+//					})
+				}
+				else if(OrdIds){
+					alert(8)
+//					GHUTILS.OPENPAGE({
+//						//备货单
+//						
+//						url: "../../html/orderMgmtHtml/payApplyList.html",
+//						extras: {
+//							staOrdId: staOrdId,
+//							orderId:OrdIds,
+//						}
+//					})
 				}
 			}),
 		/*修改*/
@@ -479,7 +522,7 @@
 			/*排产*/
 			$('.content_part').on('tap', '.SchedulingBtn', function() {
 				var url = $(this).attr('url');
-				var staOrdId = $(this).attr('staOrdId');
+				var staOrdId = $(this).attr('staordid');
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
@@ -688,7 +731,7 @@
 									'</div>'
 								});
 								$('#orderinfoList').append(staffHtmlList);
-								_this.stOrdHrefHtml()
+								_this.stOrdHrefHtml();
 					}else{
 						$('#orderinfoList').append('<p class="noneTxt">暂无数据</p>');
 						$('#staOrdSechBtn').hide();
