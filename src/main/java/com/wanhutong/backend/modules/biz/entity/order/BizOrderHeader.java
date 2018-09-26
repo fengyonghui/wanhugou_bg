@@ -232,6 +232,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private Integer mobileAuditStatus;
 
+    /**
+     * 积分抵扣
+     */
+    private BigDecimal scoreMoney;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -1001,5 +1006,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setMobileAuditStatus(Integer mobileAuditStatus) {
         this.mobileAuditStatus = mobileAuditStatus;
+    }
+
+    public BigDecimal getScoreMoney() {
+        return scoreMoney;
+    }
+
+    public void setScoreMoney(BigDecimal scoreMoney) {
+        this.scoreMoney = scoreMoney;
     }
 }
