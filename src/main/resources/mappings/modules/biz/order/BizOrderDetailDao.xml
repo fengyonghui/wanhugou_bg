@@ -650,6 +650,7 @@ GROUP BY
 			oh.id AS "orderHeader.id",
 			oh.order_num AS "orderHeader.orderNum",
 			cust.name AS "cust.name",
+			cust.phone AS "cust.phone",
 			oh.biz_status AS "orderHeader.bizStatus",
 			si.name AS "skuInfo.name",
 			si.item_no AS "skuInfo.itemNo",

@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.entity.order;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
+import com.wanhutong.backend.modules.biz.entity.logistic.BizOrderLogistics;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
@@ -236,6 +237,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 积分抵扣
      */
     private BigDecimal scoreMoney;
+
+    private List<BizOrderLogistics> bizOrderLogisticsList;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -1014,5 +1017,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setScoreMoney(BigDecimal scoreMoney) {
         this.scoreMoney = scoreMoney;
+    }
+
+    public List<BizOrderLogistics> getBizOrderLogisticsList() {
+        return bizOrderLogisticsList;
+    }
+
+    public void setBizOrderLogisticsList(List<BizOrderLogistics> bizOrderLogisticsList) {
+        this.bizOrderLogisticsList = bizOrderLogisticsList;
     }
 }

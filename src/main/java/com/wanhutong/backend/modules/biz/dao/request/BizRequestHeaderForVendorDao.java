@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.dao.request;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.biz.entity.logistic.AddressVoEntity;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -48,5 +49,7 @@ public interface BizRequestHeaderForVendorDao extends CrudDao<BizRequestHeader> 
      * @param requestHeader
      */
     void updateSchedulingType(BizRequestHeader requestHeader);
+
+    List<AddressVoEntity> findOfficeRegion(@Param("officeId") Integer officeId);
 
 }

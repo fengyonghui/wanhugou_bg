@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.request;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
@@ -15,6 +16,7 @@ import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestExpandDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
+import com.wanhutong.backend.modules.biz.entity.logistic.AddressVoEntity;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
@@ -49,6 +51,7 @@ import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -61,6 +64,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 备货清单Service
@@ -684,6 +688,36 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void updateSchedulingType(BizRequestHeader requestHeader) {
 		bizRequestHeaderForVendorDao.updateSchedulingType(requestHeader);
+	}
+
+	public List<AddressVoEntity> findOfficeRegion(Integer officeId) {
+		return bizRequestHeaderForVendorDao.findOfficeRegion(officeId);
+	}
+
+	public void findOrderLogistics(AddressVoEntity addressVoEntity) {
+		Map<String, Object> params = Maps.newHashMap();
+		//设置起始站点
+		params.put("transitStartPointCode", null);
+		if (StringUtils.isNotBlank(addressVoEntity.getRegionCode())) {
+			params.put("transitStopPointCode", addressVoEntity.getRegionCode());
+			params.put("level", 3);
+		} else if (StringUtils.isNotBlank(addressVoEntity.getCityCode())) {
+			params.put("transitStopPointCode", addressVoEntity.getCityCode());
+			params.put("level", 2);
+		} else {
+			//return ResultVo.createByErrorEnum("找不到相应的采购中心地址信息");
+		}
+		//如果收货地址为广东 则把起始站点设置为2
+		if (StringUtils.isNotBlank(addressVoEntity.getProvCode()) && addressVoEntity.getProvCode().equals(1)) {
+			params.put("transitStartPointCode", 2);
+		}
+		//设置网点
+		params.put("branchesCode", 1);
+		//设置线路类别（1=发货线路，2=到货线路） 默认发货路线
+		params.put("category", 1);
+		params.put("varietyInfoIdSParams", addressVoEntity.getVarietyInfoIdSParams());
+
+
 	}
 
 }

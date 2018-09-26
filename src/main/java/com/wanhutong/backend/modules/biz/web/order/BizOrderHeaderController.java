@@ -1801,8 +1801,7 @@ public class BizOrderHeaderController extends BaseController {
         JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
 
         // 产地直发
-        //CommonProcessEntity originEntity = new CommonProcessEntity();
-        CommonProcessEntity originEntity = null;
+        CommonProcessEntity originEntity = new CommonProcessEntity();
         originEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
         originEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
         List<CommonProcessEntity> originList = commonProcessService.findList(originEntity);

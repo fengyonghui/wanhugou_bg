@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.logistic.BizOrderLogisticsDao">
+    
+	<sql id="bizOrderLogisticsColumns">
+		a.id AS "id",
+		a.order_id AS "orderId",
+		a.logistics_lines AS "logisticsLines",
+		a.logistics_company AS "logisticsCompany",
+		a.logistics_lines_code AS "logisticsLinesCode",
+		a.logistics_lines_num AS "logisticsLinesNum",
+		a.category AS "category",
+		a.stop_point_code AS "stopPointCode",
+		a.logistics_money AS "logisticsMoney",
+		a.logistic_status AS "logisticStatus",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.status AS "delFlag",
+		a.start_point_code AS "startPointCode"
+	</sql>
+	
+	<sql id="bizOrderLogisticsJoins">
+	</sql>
+    
+	<select id="get" resultType="BizOrderLogistics">
+		SELECT 
+			<include refid="bizOrderLogisticsColumns"/>
+		FROM biz_order_logistics a
+		<include refid="bizOrderLogisticsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizOrderLogistics">
+		SELECT 
+			<include refid="bizOrderLogisticsColumns"/>
+		FROM biz_order_logistics a
+		<include refid="bizOrderLogisticsJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizOrderLogistics">
+		SELECT 
+			<include refid="bizOrderLogisticsColumns"/>
+		FROM biz_order_logistics a
+		<include refid="bizOrderLogisticsJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_order_logistics(
+			id,
+			order_id,
+			logistics_lines,
+			logistics_company,
+			logistics_lines_code,
+			logistics_lines_num,
+			category,
+			stop_point_code,
+			logistics_money,
+			logistic_status,
+			create_id,
+			create_time,
+			update_id,
+			update_time,
+			status,
+			start_point_code
+		) VALUES (
+			#{id},
+			#{orderId},
+			#{logisticsLines},
+			#{logisticsCompany},
+			#{logisticsLinesCode},
+			#{logisticsLinesNum},
+			#{category},
+			#{stopPointCode},
+			#{logisticsMoney},
+			#{logisticStatus},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag},
+			#{startPointCode}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_order_logistics SET 	
+			order_id = #{orderId},
+			logistics_lines = #{logisticsLines},
+			logistics_company = #{logisticsCompany},
+			logistics_lines_code = #{logisticsLinesCode},
+			logistics_lines_num = #{logisticsLinesNum},
+			category = #{category},
+			stop_point_code = #{stopPointCode},
+			logistics_money = #{logisticsMoney},
+			logistic_status = #{logisticStatus},
+			create_time = #{createDate},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate},
+			start_point_code = #{startPointCode}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_order_logistics SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

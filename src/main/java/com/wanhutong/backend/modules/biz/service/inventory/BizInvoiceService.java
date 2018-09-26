@@ -3,15 +3,20 @@
  */
 package com.wanhutong.backend.modules.biz.service.inventory;
 
+import com.google.common.collect.Maps;
+import com.sun.mail.imap.protocol.ID;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
+import com.wanhutong.backend.common.utils.CloseableHttpClientUtil;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizInvoiceDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.*;
+import com.wanhutong.backend.modules.biz.entity.logistic.BizOrderLogistics;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
@@ -30,25 +35,39 @@ import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.web.order.BizOrderHeaderController;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
+
+import static java.util.regex.Pattern.*;
 
 /**
  * 发货单Service
@@ -60,6 +79,7 @@ import java.util.Set;
 @Transactional(readOnly = true)
 public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BizInvoiceService.class);
     @Autowired
     private BizSendGoodsRecordService bizSendGoodsRecordService;
     @Autowired
@@ -185,13 +205,28 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     bizDetailInvoiceService.save(bizDetailInvoice);
                 }
                 ordId = orderHeader.getId();
+
+                int goodsquantity = 0;
+                String receiverphone = null;
+
+                List<BizOrderDetail> bizOrderDetailList = bizOrderDetailService.findOrderDetailList(bizInvoice.getId());
+                if (CollectionUtils.isNotEmpty(bizOrderDetailList)) {
+                    BizOrderDetail orderDetail = bizOrderDetailList.get(0);
+                    Office cust = orderDetail.getCust();
+                    if (cust != null) {
+                        receiverphone = cust.getPhone();
+                    }
+                }
+
                 String[] odNumArr = oheaders[1].split("\\*");
                 for (int i = 0; i < odNumArr.length; i++) {
                     String[] odArr = odNumArr[i].split("-");
                     BizOrderDetail orderDetail = bizOrderDetailService.get(Integer.parseInt(odArr[0]));
+
                     //商品
                     BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                     int sendNum = Integer.parseInt(odArr[1]);    //供货数
+                    goodsquantity += sendNum;
                     valuePrice += bizSkuInfo.getBuyPrice() * sendNum;//累计货值
                     //采购商
                     Office office = officeService.get(orderHeader.getCustomer().getId());
@@ -393,6 +428,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         }
                     }
                 }
+
+                String creOrdLogistics = bizInvoice.getCreOrdLogistics();
+                if ("yes".equals(creOrdLogistics)) {
+                    this.creOrdLogistics(ordId, receiverphone, goodsquantity);
+                }
             }
             if ("new".equals(bizInvoice.getSource())) {
                 bizInvoice.setValuePrice(valuePrice);
@@ -544,6 +584,75 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             bizInvoice.setCarrier(user.getName());
             super.save(bizInvoice);
         }
+    }
+
+    public void creOrdLogistics(Integer orderCode, String receiverphone, Integer goodsquantity) {
+
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(orderCode);
+        List<BizOrderLogistics> orderLogisticsList = orderHeader.getBizOrderLogisticsList();
+        String logisticsLinesCode = null;
+        String stopPointCode = null;
+        if (CollectionUtils.isNotEmpty(orderLogisticsList)) {
+            BizOrderLogistics orderLogistics = orderLogisticsList.get(0);
+            logisticsLinesCode = orderLogistics.getLogisticsLinesCode();
+            stopPointCode = orderLogistics.getStopPointCode();
+        }
+        User user = UserUtils.getUser();
+        String creator = user.getLoginName();
+        String senderphoneTemp = "";
+
+        Pattern compile = compile("[0-9]*");
+        Boolean boo = compile.matcher(creator).matches();
+        if (boo && creator != null && !"".equals(creator)) {
+            senderphoneTemp = creator;
+        }
+        if ("".equals(senderphoneTemp)) {
+            senderphoneTemp = null;
+        }
+        String senderphone = senderphoneTemp;
+        String linecode = logisticsLinesCode;
+        String linepointcode = stopPointCode;
+
+        //物流运单生成
+        ThreadPoolManager.getDefaultThreadPool().execute(() -> {
+            String postUrl = "http://wuliu.guojingec.com:8081/test/order/logistic/add_order_WHT";
+            CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
+            HttpPost httpPost = new HttpPost(postUrl);
+            CloseableHttpResponse httpResponse = null;
+            String result = null;
+            try {
+                HashMap<String, Object> map = Maps.newHashMap();
+                map.put("orderCode", orderCode);
+                map.put("linecode", linecode);
+                map.put("linepointcode", linepointcode);
+                map.put("creator", creator);
+                map.put("senderphone", senderphone);
+                map.put("receiverphone", receiverphone);
+                map.put("goodsquantity", goodsquantity);
+
+                httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
+                httpPost.setHeader("Accept", "application/json");
+
+                String jsonstr = JSONObject.fromObject(map).toString();
+                httpPost.setEntity(new StringEntity(jsonstr, Charset.forName("UTF-8")));
+
+                httpResponse = httpClient.execute(httpPost);
+
+                result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                LOGGER.info("返回结果result=================" + result);
+
+            }catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (httpClient != null) {
+                    try {
+                        httpClient.close();
+                    } catch (IOException e) {
+                        LOGGER.error("关闭异常，710",e);
+                    }
+                }
+            }
+        });
     }
 
     /**
