@@ -18,8 +18,10 @@ import com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
@@ -71,6 +73,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	private CommonProcessService commonProcessService;
 	@Autowired
 	private SystemService systemService;
+	@Autowired
+    private BizRequestDetailService bizRequestDetailService;
 
 	@Override
 	public BizInventorySku get(Integer id) {
@@ -239,12 +243,25 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		}
 		InventorySkuRequestProcessConfig inventorySkuRequestProcessConfig = ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get();
 		// 当前流程
-		InventorySkuRequestProcessConfig.OrderHeaderProcess currentProcess = inventorySkuRequestProcessConfig.getProcessMap().get(Integer.valueOf(currentType));
+		InventorySkuRequestProcessConfig.InvRequestProcess currentProcess = inventorySkuRequestProcessConfig.getProcessMap().get(Integer.valueOf(currentType));
 		// 下一流程
-		InventorySkuRequestProcessConfig.OrderHeaderProcess nextProcess = inventorySkuRequestProcessConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
+		InventorySkuRequestProcessConfig.InvRequestProcess nextProcess = inventorySkuRequestProcessConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
+
 		if (nextProcess == null) {
 			return Pair.of(Boolean.FALSE,  "操作失败,当前流程已经结束!");
 		}
+        //审核完成时，修改出库数量为收货数量-实际库存数
+        if (ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getAutProcessId().equals(nextProcess.getCode())) {
+            BizRequestDetail bizRequestDetail = new BizRequestDetail();
+            bizRequestDetail.setRequestHeader(new BizRequestHeader(id));
+            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+            if (CollectionUtils.isNotEmpty(requestDetailList)) {
+                for (BizRequestDetail requestDetail : requestDetailList) {
+                    requestDetail.setOutQty(requestDetail.getRecvQty() - requestDetail.getActualQty());
+                    bizRequestDetailService.save(requestDetail);
+                }
+            }
+        }
 
 		User user = UserUtils.getUser();
 		String s = currentProcess.getRoleEnNameEnum();

@@ -476,8 +476,18 @@
 			a.req_no AS "reqNo",
 			prod.vendor_name AS "vendName",
 			prod.vari_id AS "varietyInfo.id",
-			bvi.name AS "varietyInfo.name"
+			bvi.name AS "varietyInfo.name",
+			process.id AS "invCommonProcess.id",
+			process.object_id AS "invCommonProcess.objectId",
+			process.object_name AS "invCommonProcess.objectName",
+			process.prev_id AS "invCommonProcess.prevId",
+			process.biz_status AS "invCommonProcess.bizStatus",
+			process.processor AS "invCommonProcess.processor",
+			process.description AS "invCommonProcess.description",
+			process.type AS "invCommonProcess.type",
+			process.current AS "invCommonProcess.current"
 		FROM biz_request_header a
+		LEFT JOIN common_process process ON process.object_id = a.id AND process.object_name = 'biz_inv_sku_request' AND process.current = 1
 		LEFT JOIN sys_office cent ON cent.id = a.from_id
 		LEFT JOIN biz_request_detail rd ON rd.header_id = a.id
 		LEFT JOIN biz_sku_info sku ON sku.id = rd.sku_id
@@ -494,6 +504,9 @@
 		</if>
 		<if test="varietyInfo != null and varietyInfo.id != null">
 			AND prod.vari_id = #{varietyInfo.id}
+		</if>
+		<if test="invCommonProcess != null and invCommonProcess.type != null and invCommonProcess.type != ''">
+			AND process.type = #{invCommonProcess.type}
 		</if>
 		<if test="fromType != null">
 			AND a.from_type = #{fromType}

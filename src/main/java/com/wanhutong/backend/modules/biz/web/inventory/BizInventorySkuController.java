@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.web.inventory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.BaseEntity;
 import com.wanhutong.backend.common.persistence.Page;
@@ -30,6 +31,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
 import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
@@ -39,6 +41,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
@@ -73,6 +76,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 商品库存详情Controller
@@ -112,6 +116,8 @@ public class BizInventorySkuController extends BaseController {
     private BizPoHeaderService bizPoHeaderService;
     @Autowired
     private CommonProcessService commonProcessService;
+    @Autowired
+    private BizSendGoodsRecordService bizSendGoodsRecordService;
 
     @ModelAttribute
     public BizInventorySku get(@RequestParam(required = false) Integer id) {
@@ -604,6 +610,20 @@ public class BizInventorySkuController extends BaseController {
     @RequestMapping(value = "inventory")
     public String inventory(BizRequestHeader requestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         Page<BizRequestHeader> requestHeaderPage = bizInventorySkuService.inventoryPage(new Page<BizRequestHeader>(request, response),requestHeader);
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Set<String> rolsSet = Sets.newHashSet();
+        if (CollectionUtils.isNotEmpty(roleList)) {
+            for (Role role : roleList) {
+                RoleEnNameEnum parse = RoleEnNameEnum.parse(role.getEnname());
+                if (parse != null) {
+                    rolsSet.add(parse.name());
+                }
+            }
+        }
+        List<InventorySkuRequestProcessConfig.InvRequestProcess> processList = ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getProcessList();
+        model.addAttribute("processList", processList);
+        model.addAttribute("roleSet",rolsSet);
         model.addAttribute("page",requestHeaderPage);
         model.addAttribute("requestHeader",requestHeader);
         return "modules/biz/inventory/bizInventory";
@@ -628,6 +648,10 @@ public class BizInventorySkuController extends BaseController {
                 List<CommonImg> imgList = bizSkuInfoService.getImg(bizRequestDetail.getSkuInfo().getId(), ImgEnum.SKU_TYPE.getTableName(), ImgEnum.SKU_TYPE.getCode());
                 if (CollectionUtils.isNotEmpty(imgList)) {
                     bizRequestDetail.getSkuInfo().setSkuImgUrl(imgList.get(0).getImgServer() + imgList.get(0).getImgPath());
+                }
+                if ("pChange".equals(source)) {
+                    Integer sumSendNum = bizSendGoodsRecordService.getSumSendNumByReqDetailId(bizRequestDetail.getId());
+                    bizRequestDetail.setSumSendNum(sumSendNum);
                 }
             }
         }
@@ -664,7 +688,7 @@ public class BizInventorySkuController extends BaseController {
         String invReqDetail = requestHeader.getInvReqDetail();
         if (StringUtils.isBlank(invReqDetail)) {
             addMessage(redirectAttributes,"保存库存失败");
-            return "modules/biz/inventory/bizInventory";
+            return "redirect:" + adminPath + "/biz/inventory/bizInventory";
         }
         Integer requestHeaderId = 0;
         String[] invReqDetailArr = invReqDetail.split(",");

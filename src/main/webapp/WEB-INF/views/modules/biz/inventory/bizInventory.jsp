@@ -40,9 +40,6 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku/inventory">商品库存详情列表</a></li>
-		<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-			<li><a href="${ctx}/biz/inventory/bizInventorySku/form?invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">商品库存详情添加</a></li>
-		</shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="BizRequestHeader" action="${ctx}/biz/inventory/bizInventorySku/inventory/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -71,7 +68,16 @@
 								labelValue="${bizRequestHeader.invInfo.name}" notAllowSelectParent="true"
 								title="仓库"  url="/biz/inventory/bizInventoryInfo/warehouseData"
 								cssClass="input-medium" allowClear="true"/>
-			<%--</li>--%>
+			</li>
+			<li>
+				<label>审核状态：</label>
+				<select name="invCommonProcess.type" class="input-medium">
+					<option value="" label="请选择">请选择</option>
+					<c:forEach items="${processList}" var="process">
+						<option value="${process.code}">${process.name}</option>
+					</c:forEach>
+				</select>
+			</li>
 			<%--<li><label style="width: 90px;">库龄时长(天)：</label>--%>
 				<%--<form:input path="inventoryAgeDay" htmlEscape="false"  class="input-medium"/>--%>
 			<%--</li>--%>
@@ -106,6 +112,7 @@
 				<th>备货单号</th>
 				<th>品类</th>
 				<th>供应商</th>
+				<th>审核状态</th>
 				<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -136,15 +143,20 @@
 					${bizRequestHeader.vendName}
 				</td>
 				<td>
+					${bizRequestHeader.invCommonProcess.invRequestProcess.name}
+				</td>
+				<td>
 					<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invName=${bizRequestHeader.invInfo.name}&source=detail">详情</a>
 					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-						<%--<c:if test="${bizRequestHeader.commonProcess.name == '审核完成'}">--%>
+						<c:if test="${(bizRequestHeader.invCommonProcess.id == null || bizRequestHeader.invCommonProcess.invRequestProcess.name == '审批完成')}">
 							<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invName=${bizRequestHeader.invInfo.name}">盘点</a>
-						<%--</c:if>--%>
+						</c:if>
 					</shiro:hasPermission>
 					<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invName=${bizRequestHeader.invInfo.name}&source=pChange">日常异动</a>
 					<shiro:hasPermission name="biz:inventory:bizInventorySku:audit">
-						<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invName=${bizRequestHeader.invInfo.name}&source=audit">审核</a>
+						<c:if test="${bizRequestHeader.invCommonProcess.id != null && bizRequestHeader.invCommonProcess.invRequestProcess.name != '审批完成' && (fns:hasRole(roleSet, bizRequestHeader.invCommonProcess.invRequestProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
+							<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invName=${bizRequestHeader.invInfo.name}&source=audit">审核</a>
+						</c:if>
 					</shiro:hasPermission>
 				</td>
 			</tr>

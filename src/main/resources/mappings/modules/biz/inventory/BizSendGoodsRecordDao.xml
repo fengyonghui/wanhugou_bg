@@ -311,4 +311,15 @@
 		WHERE id = #{id}
 	</update>
 
+	<select id="getSumSendNumByReqDetailId" resultType="BizSendGoodsRecord">
+		SELECT
+			sum(a.send_num)
+		FROM biz_send_goods_record a
+		LEFT JOIN biz_order_detail od ON od.order_id = a.order_id AND od.sku_id = a.sku_id
+		LEFT JOIN biz_inventory_order_request bior ON bior.order_detail_id = od.id
+		WHERE
+			bior.request_detail_id = #{reqDetailId}
+			AND a.create_time BETWEEN #{oneDayBefore} AND #{yesterdayEnd}
+	</select>
+
 </mapper>

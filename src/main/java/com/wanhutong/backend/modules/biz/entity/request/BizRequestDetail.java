@@ -110,6 +110,11 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	 */
 	private User varietyUser;
 
+	/**
+	 * 前一天的出库数量
+	 */
+	private Integer sumSendNum;
+
 	public BizRequestDetail() {
 		super();
 	}
@@ -366,5 +371,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setActualQty(Integer actualQty) {
 		this.actualQty = actualQty;
+	}
+
+	public Integer getSumSendNum() {
+		return sumSendNum;
+	}
+
+	public void setSumSendNum(Integer sumSendNum) {
+		this.sumSendNum = sumSendNum;
 	}
 }

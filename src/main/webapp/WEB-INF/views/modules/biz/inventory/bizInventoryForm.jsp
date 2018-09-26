@@ -5,8 +5,21 @@
 <head>
 	<title>库存</title>
 	<meta name="decorator" content="default"/>
+	<style type="text/css">
+		.help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;border-top:1px solid #FFF;width: 100%}
+		.help_step_item{margin-right: 30px;width:200px;border:1px #3daae9 solid;float:left;height:150px;padding:0 25px 0 45px;cursor:pointer;position:relative;font-size:14px;font-weight:bold;}
+		.help_step_num{width:19px;height:120px;line-height:100px;position:absolute;text-align:center;top:18px;left:10px;font-size:16px;font-weight:bold;color: #239df5;}
+		.help_step_set{background: #FFF;color: #3daae9;}
+		.help_step_set .help_step_left{width:8px;height:100px;position:absolute;left:0;top:0;}
+		.help_step_set .help_step_right{width:8px;height:100px; position:absolute;right:-8px;top:0;}
+	</style>
 	<script type="text/javascript">
 		$(document).ready(function() {
+		    if ($("#source").val()!= '') {
+		        $("input[name='actualQtys']").each(function () {
+                   $(this).attr("disabled","true");
+                });
+            }
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
@@ -48,23 +61,24 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="BizRequestHeader" action="${ctx}/biz/inventory/bizInventorySku/inventorySave" method="post" class="form-horizontal">
 		<sys:message content="${message}"/>
-
+        <input id="source" value="${source}" type="hidden"/>
+        <input id="id" value="${requestHeader.id}" type="hidden"/>
 		<div class="control-group">
 			<label class="control-label">备货单号：</label>
 			<div class="controls">
-				<input name="" value="${requestDetailList[0].requestHeader.reqNo}"/>
+				<input name="" readonly="readonly" value="${requestDetailList[0].requestHeader.reqNo}"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">供应商：</label>
 			<div class="controls">
-				<input name="" value="${requestDetailList[0].skuInfo.vendorName}"/>
+				<input name="" readonly="readonly" value="${requestDetailList[0].skuInfo.vendorName}"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">所属仓库：</label>
 			<div class="controls">
-				<input name="" value="${requestHeader.invInfo.name}"/>
+				<input name="" readonly="readonly" value="${requestHeader.invInfo.name}"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -81,12 +95,14 @@
 						<th>销售价</th>
 						<th>图片</th>
 						<th>现有库存数</th>
-						<th>已出库数量</th>
+                        <c:if test="${source eq 'pChange'}">
+						    <th>出库数量</th>
+                        </c:if>
 						<th>实际库存数</th>
 					</tr>
 					</thead>
 					<tbody id="invReq">
-						<c:forEach items="${requestDetailList}" var="requestDetail">
+						<c:forEach items="${requestDetailList}" var="requestDetail" varStatus="v">
 							<tr>
 								<input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
 								<td>${requestDetail.skuInfo.name}</td>
@@ -97,8 +113,10 @@
 								<td>${requestDetail.skuInfo.buyPrice}</td>
 								<td style='width: 200px'><img style='width: 200px' src="${requestDetail.skuInfo.skuImgUrl}"></td>
 								<td>${requestDetail.recvQty - requestDetail.outQty}</td>
-								<td>${requestDetail.outQty}</td>
-								<td><input name="actualQtys" value="0" type="number" class="input-mini required"/></td>
+                                <c:if test="${source eq 'pChange'}">
+								    <td>${requestDetail.sumSendNum == null ? 0 : requestDetail.sumSendNum}</td>
+                                </c:if>
+                                <td><input name="actualQtys" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini required"/></td>
 							</tr>
 						</c:forEach>
 					</tbody>
@@ -110,10 +128,10 @@
 				<label class="control-label">审核状态：</label>
 				<div class="controls">
 					<input type="text" disabled="disabled"
-						   value="${invCommonProcess.name}" htmlEscape="false"
+						   value="${requestHeader.invCommonProcess.invRequestProcess.name}" htmlEscape="false"
 						   maxlength="30" class="input-xlarge "/>
 					<input id="currentType" type="hidden" disabled="disabled"
-						   value="${invCommonProcess.code}" htmlEscape="false"
+						   value="${requestHeader.invCommonProcess.invRequestProcess.code}" htmlEscape="false"
 						   maxlength="30" class="input-xlarge "/>
 				</div>
 			</div>
@@ -124,19 +142,21 @@
 			<div class="controls help_wrap">
 				<div class="help_step_box fa">
 					<c:forEach items="${requestHeader.invCommonProcessList}" var="v" varStatus="stat">
-						<div class="help_step_item">
-							<div class="help_step_left"></div>
-							<div class="help_step_num">${stat.index + 1}</div>
-							批注:${v.description}<br/><br/>
-							审批人:${v.user.name}<br/>
-							<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-							<div class="help_step_right"></div>
-						</div>
+						<c:if test="${!stat.last}">
+							<div class="help_step_item">
+								<div class="help_step_left"></div>
+								<div class="help_step_num">${stat.index + 1}</div>
+								批注:${v.description}<br/><br/>
+								审批人:${v.user.name}<br/>
+								<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+								<div class="help_step_right"></div>
+							</div>
+						</c:if>
 						<c:if test="${stat.last}">
 							<div class="help_step_item help_step_set">
 								<div class="help_step_left"></div>
 								<div class="help_step_num">${stat.index + 1}</div>
-									当前状态:${v.invCommonProcess.name}<br/><br/>
+									当前状态:${v.invRequestProcess.name}<br/><br/>
 									${v.user.name}<br/>
 								<div class="help_step_right"></div>
 							</div>
@@ -208,7 +228,7 @@
         var id = $("#id").val();
         var currentType = $("#currentType").val();
         $.ajax({
-            url: '${ctx}/biz/inventory/inventorySku/audit',
+            url: '${ctx}/biz/inventory/bizInventorySku/audit',
             contentType: 'application/json',
             data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
             type: 'get',
@@ -216,7 +236,7 @@
                 result = JSON.parse(result);
                 if(result.ret == true || result.ret == 'true') {
                     alert('操作成功!');
-                    window.location.href = "${ctx}/biz/inventory/inventorySku/inventory";
+                    window.location.href = "${ctx}/biz/inventory/bizInventorySku/inventory";
                 }else {
                     alert(result.errmsg);
                 }

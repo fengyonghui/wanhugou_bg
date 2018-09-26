@@ -34,19 +34,19 @@ public class InventorySkuRequestProcessConfig extends ConfigGeneral {
     private Integer autProcessId;
 
     @XStreamImplicit(itemFieldName = "process")
-    private List<OrderHeaderProcess> processList;
+    private List<InvRequestProcess> processList;
 
     /**
      * 数据MAP
      */
-    public Map<Integer, OrderHeaderProcess> processMap;
+    public Map<Integer, InvRequestProcess> processMap;
 
     @Override
     public InventorySkuRequestProcessConfig parse(String content) throws Exception {
         InventorySkuRequestProcessConfig purchaseOrderProcessConfig = XmlUtils.fromXml(content);
         purchaseOrderProcessConfig.processMap = Maps.newHashMap();
         if (CollectionUtils.isNotEmpty(purchaseOrderProcessConfig.processList)) {
-            for (OrderHeaderProcess e : purchaseOrderProcessConfig.processList) {
+            for (InvRequestProcess e : purchaseOrderProcessConfig.processList) {
                 purchaseOrderProcessConfig.processMap.put(e.getCode(), e);
             }
         }
@@ -59,11 +59,11 @@ public class InventorySkuRequestProcessConfig extends ConfigGeneral {
      * @param currentProcess 当前状态
      * @return 通过后的状态
      */
-    public OrderHeaderProcess getPassProcess(OrderHeaderProcess currentProcess) {
+    public InvRequestProcess getPassProcess(InvRequestProcess currentProcess) {
         return processMap.get(currentProcess.getPassCode());
     }
 
-    public Map<Integer, OrderHeaderProcess> getProcessMap() {
+    public Map<Integer, InvRequestProcess> getProcessMap() {
         return processMap;
     }
 
@@ -73,7 +73,7 @@ public class InventorySkuRequestProcessConfig extends ConfigGeneral {
      * @param currentEnum 当前状态
      * @return 通过后的状态
      */
-    public OrderHeaderProcess getRejectProcess(OrderHeaderProcess currentEnum) {
+    public InvRequestProcess getRejectProcess(InvRequestProcess currentEnum) {
         return processMap.get(currentEnum.getRejectCode());
     }
 
@@ -85,12 +85,12 @@ public class InventorySkuRequestProcessConfig extends ConfigGeneral {
         return autProcessId;
     }
 
-    public List<OrderHeaderProcess> getProcessList() {
+    public List<InvRequestProcess> getProcessList() {
         return processList;
     }
 
     @XStreamAlias("process")
-    public static class OrderHeaderProcess {
+    public static class InvRequestProcess {
         /**
          * 状态码
          */

@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
+import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
@@ -51,6 +52,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	private DoOrderHeaderProcessFifthConfig.OrderHeaderProcess doOrderHeaderProcessFifth;
 	private com.wanhutong.backend.modules.config.parse.Process jointOperationLocalProcess;
 	private com.wanhutong.backend.modules.config.parse.Process jointOperationOriginProcess;
+	private com.wanhutong.backend.modules.config.parse.Process invRequestProcess;
 
 	/**
 	 * 前一个流程
@@ -227,6 +229,13 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 			return new DoOrderHeaderProcessFifthConfig.OrderHeaderProcess();
 		}
 		return ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
+
+	public InventorySkuRequestProcessConfig.InvRequestProcess getInvRequestProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new InventorySkuRequestProcessConfig.InvRequestProcess();
+		}
+		return ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 
 	public enum AuditType {
