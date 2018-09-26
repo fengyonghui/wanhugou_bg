@@ -13,6 +13,7 @@
 		a.stock_change_qty AS "stockChangeQty",
 		a.now_stock_qty as "nowStockQty",
 		a.create_id AS "createBy.id",
+		a.req_id AS "requestHeader.id",
 		u.name as "createBy.name",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
@@ -23,6 +24,7 @@
 	
 	<sql id="bizInventoryViewLogJoins">
 		LEFT JOIN biz_inventory_info bi on bi.id = a.inv_id
+		Left JOIN biz_request_header rh on rh.id=a.req_id
 		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
 		LEFT JOIN sys_user u on  u.id = a.create_id
 	</sql>
@@ -91,6 +93,7 @@
 			stock_qty,
 			stock_change_qty,
 			now_stock_qty,
+			req_id,
 			create_id,
 			create_time,
 			u_version,
@@ -105,6 +108,7 @@
 			#{stockQty},
 			#{stockChangeQty},
 			#{nowStockQty},
+			#{requestHeader.id},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
