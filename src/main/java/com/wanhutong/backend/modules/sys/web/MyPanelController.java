@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 @Controller
@@ -52,7 +54,6 @@ public class MyPanelController extends BaseController {
         int reWaitShipmentsCount = 0;
 //        待发货  订单待发货  供货中suply_id 等于0的 供货中心发货
         int orderWaitShipmentsCount = 0;
-
 
 
         // 取当前用户角色
@@ -162,50 +163,89 @@ public class MyPanelController extends BaseController {
     //        订单审核 TODO
     @RequestMapping(value = {"waitAudit"})
     public String waitAudit(RedirectAttributes redirectModel) {
-       User user= UserUtils.getUser();
-        BizOrderHeader  bizOrderHeader=new BizOrderHeader();
-       if(user.isAdmin()){
-           bizOrderHeader.setStr("orderAudit");
-       }
-        redirectModel.addFlashAttribute("bizOrderHeader",bizOrderHeader);
+        User user = UserUtils.getUser();
+        BizOrderHeader bizOrderHeader = new BizOrderHeader();
+        if (user.isAdmin()) {
+            bizOrderHeader.setStr("orderAudit");
+        }
+        redirectModel.addFlashAttribute("bizOrderHeader", bizOrderHeader);
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list";
 
     }
 
-    //        有尾款 TODO
+    //        有尾款
     @RequestMapping(value = {"hasRetainage"})
     public String hasRetainage() {
-        return null;
+        return "redirect:/a/biz/order/bizOrderHeader/list?retainage=1";
     }
 
-    //        订单出库 TODO
+    //        订单出库
     @RequestMapping(value = {"ddck"})
     public String ddck() {
-        return null;
+        return "redirect:/a/biz/order/bizOrderHeader/list?waitOutput=1";
     }
 
-    //        发货单入库 TODO
+    //        发货单入库
     @RequestMapping(value = {"fhdrk"})
     public String fhdrk() {
-        return null;
+        return "redirect:/a/biz/request/bizRequestHeaderForVendor?bizStatusStart=20&bizStatusEnd=27";
     }
 
-    //        申请付款 TODO
+    //        申请付款
     @RequestMapping(value = {"applyPayment"})
     public String applyPayment() {
-        return null;
+        return "redirect:/a/biz/po/bizPoHeader/listV2?applyPayment=1";
     }
 
-    //        付款单审核 TODO
+    //        付款单审核
     @RequestMapping(value = {"paymentOrderAudit"})
     public String paymentOrderAudit() {
-        return null;
+        // 取当前用户角色
+        User user = UserUtils.getUser();
+        List<Role> userRoleList = user.getRoleList();
+        Role tempRole = new Role();
+        try {
+            tempRole.setEnname(RoleEnNameEnum.FINANCE_DIRECTOR.getState());
+            if (userRoleList.contains(tempRole)) {
+                return "redirect:/a/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("财务总监", "UTF-8");
+            }
+            tempRole.setEnname(RoleEnNameEnum.FINANCIAL_GENERAL_MANAGER.getState());
+            if (userRoleList.contains(tempRole)) {
+                return "redirect:/a/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("财务总经理", "UTF-8");
+            }
+            tempRole.setEnname(RoleEnNameEnum.PROVIDER_MANAGER.getState());
+            if (userRoleList.contains(tempRole)) {
+                return "redirect:/a/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("供货部", "UTF-8");
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "redirect:/a/biz/po/bizPoPaymentOrder/listV2";
     }
 
-    //        备货单审核 TODO
+    //        备货单审核
     @RequestMapping(value = {"reAudit"})
     public String reAudit() {
-        return null;
+        // 取当前用户角色
+        User user = UserUtils.getUser();
+        List<Role> userRoleList = user.getRoleList();
+        Role tempRole = new Role();
+//      渠道经理
+        tempRole.setEnname(RoleEnNameEnum.CHANNEL_MANAGER.getState());
+        if (userRoleList.contains(tempRole)) {
+            return "redirect:/a/biz/request/bizRequestHeaderForVendor?process=1";
+        }
+//        品类主管：订单审核；申请付款；付款单审核；备货单审核；待排产；需上架商品
+        tempRole.setEnname(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState());
+        if (userRoleList.contains(tempRole)) {
+            return "redirect:/a/biz/request/bizRequestHeaderForVendor?process=2";
+        }
+//        运营总监：备货审核
+        tempRole.setEnname(RoleEnNameEnum.OP_DIRECTOR.getState());
+        if (userRoleList.contains(tempRole)) {
+            return "redirect:/a/biz/request/bizRequestHeaderForVendor?process=8";
+        }
+        return "redirect:/a/biz/request/bizRequestHeaderForVendor";
     }
 
     //        待排产

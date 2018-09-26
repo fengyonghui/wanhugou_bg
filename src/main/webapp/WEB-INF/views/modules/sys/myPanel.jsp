@@ -72,7 +72,7 @@
             </c:if>
         </li>
         <li>
-            <a href="${ctx}/sys/myPanel/fhdrk">发货单入库</a>
+            <a href="${ctx}/sys/myPanel/fhdrk">备货单入库</a>
             <c:if test="${fhdrkCount > 0}">
                 <span>${fhdrkCount}</span>
             </c:if>

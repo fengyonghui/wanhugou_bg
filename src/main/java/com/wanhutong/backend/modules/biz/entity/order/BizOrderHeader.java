@@ -242,6 +242,12 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private Integer waitShipments;
 
+    /**
+     * 待出库
+     * @return
+     */
+    private Integer waitOutput;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -1028,4 +1034,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     public void setWaitShipments(Integer waitShipments) {
         this.waitShipments = waitShipments;
     }
+
+    public Integer getWaitOutput() {
+        return waitOutput;
+    }
+
+    public void setWaitOutput(Integer waitOutput) {
+        this.waitOutput = waitOutput;
+    }
 }
+

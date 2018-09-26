@@ -165,15 +165,9 @@ public class MyPanelService {
      */
     public int getDdckCount() {
         BizOrderHeader bizOrderHeader = new BizOrderHeader();
-        bizOrderHeader.setStatu(String.valueOf(OrderHeaderBizStatusEnum.APPROVE.getState()));
+        bizOrderHeader.setWaitOutput(1);
         List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
-        int temp = CollectionUtils.isEmpty(list) ? 0 : list.size();
-
-        bizOrderHeader.setStatu(String.valueOf(OrderHeaderBizStatusEnum.SUPPLYING.getState()));
-        bizOrderHeader.setSupplyId(-1);
-        List<BizOrderHeader> tempList = bizOrderHeaderService.findList(bizOrderHeader);
-
-        return CollectionUtils.isEmpty(tempList) ? temp : list.size() + temp;
+        return CollectionUtils.isEmpty(list) ? 0 : list.size();
     }
 
     /**

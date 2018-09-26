@@ -206,6 +206,12 @@
 				<form:option value="1" label="是"/>
 			</form:select>
 		</li>
+		<li><label>待出库</label>
+			<form:select path="waitOutput" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:option value="1" label="是"/>
+			</form:select>
+		</li>
 		<c:if test="${statu == 'unline'}">
 			<li><label>审核状态:</label>
 				<select name="examine" class="input-medium">
