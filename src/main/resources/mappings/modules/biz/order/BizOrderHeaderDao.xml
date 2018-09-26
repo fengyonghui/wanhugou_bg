@@ -447,7 +447,7 @@
 			</if>
 
 			<if test="retainage == '1' || retainage == 1">
-				AND (a.total_detail + a.total_exp + a.service_fee) > a.receive_total
+				AND (a.total_detail + a.total_exp + a.service_fee) > (a.receive_total + a.score_money)
 				AND (<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
 				a.biz_status != #{item.state}
 			</foreach>
@@ -758,7 +758,7 @@
 			</if>
 
 			<if test="retainage == '1' || retainage == 1">
-				AND (a.total_detail + a.total_exp + a.service_fee) > a.receive_total
+				AND (a.total_detail + a.total_exp + a.service_fee) > (a.receive_total + a.score_money)
 				AND (<foreach collection="@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@INVALID_STATUS" index="index" item="item" open="(" separator="AND" close=")">
 				a.biz_status != #{item.state}
 			</foreach>
