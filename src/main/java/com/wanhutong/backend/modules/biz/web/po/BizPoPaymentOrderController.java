@@ -18,6 +18,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVend
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -136,6 +137,78 @@ public class BizPoPaymentOrderController extends BaseController {
     }
 
     @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
+    @RequestMapping(value = "listData4MobileNew")
+    @ResponseBody
+    public String listData4MobileNew(BizPoPaymentOrder bizPoPaymentOrder, HttpServletRequest request, HttpServletResponse response, Model model, Integer poId) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+            }
+        }
+        model.addAttribute("roleSet", roleSet);
+        resultMap.put("roleSet", roleSet);
+
+        String fromPage = request.getParameter("fromPage");
+        model.addAttribute("fromPage", fromPage);
+        resultMap.put("fromPage", fromPage);
+        if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+            BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(poId);
+            model.addAttribute("bizRequestHeader", bizRequestHeader);
+            resultMap.put("bizRequestHeader", bizRequestHeader);
+        } else if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+            bizOrderHeaderService.get(poId);
+        } else {
+            BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
+            if (fromPage != null) {
+                switch (fromPage) {
+                    case "requestHeader":
+                        BizRequestHeader bizRequestHeader = new BizRequestHeader();
+                        bizRequestHeader.setBizPoHeader(bizPoHeader);
+                        List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
+                        if (CollectionUtils.isNotEmpty(requestHeaderList)) {
+                            model.addAttribute("requestHeader", requestHeaderList.get(0));
+                            resultMap.put("requestHeader", requestHeaderList.get(0));
+                        }
+                    case "orderHeader":
+                        BizOrderHeader bizOrderHeader = new BizOrderHeader();
+                        bizOrderHeader.setBizPoHeader(bizPoHeader);
+                        List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
+                        if (CollectionUtils.isNotEmpty(orderHeaderList)) {
+                            model.addAttribute("orderHeader", orderHeaderList.get(0));
+                            resultMap.put("orderHeader", orderHeaderList.get(0));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            model.addAttribute("bizPoHeader", bizPoHeader);
+            resultMap.put("bizPoHeader", bizPoHeader);
+        }
+        if (poId == null) {
+            bizPoPaymentOrder.setPoHeaderId(-1);
+        } else {
+            bizPoPaymentOrder.setPoHeaderId(poId);
+        }
+        Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+        model.addAttribute("page", page);
+        resultMap.put("page", page);
+        String orderId = request.getParameter("orderId");
+        model.addAttribute("orderId", orderId);
+        resultMap.put("orderId", orderId);
+
+        resultMap.put("PO_TYPE", PoPayMentOrderTypeEnum.PO_TYPE.getType());
+        resultMap.put("CLOSE", ReqHeaderStatusEnum.CLOSE.getState());
+
+        return JsonUtil.generateData(resultMap, request.getParameter("callback"));
+    }
+
+    @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
     @RequestMapping(value = {"listV2"})
     public String listV2(BizPoPaymentOrder bizPoPaymentOrder, HttpServletRequest request, HttpServletResponse response, Model model) {
         User user = UserUtils.getUser();
@@ -251,6 +324,32 @@ public class BizPoPaymentOrderController extends BaseController {
     }
 
     @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
+    @RequestMapping(value = "form4Mobile")
+    @ResponseBody
+    public String form4Mobile(HttpServletRequest request, HttpServletResponse response, BizPoPaymentOrder bizPoPaymentOrder, Model model) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        String fromPage = request.getParameter("fromPage");
+        model.addAttribute("fromPage", fromPage);
+        resultMap.put("fromPage", fromPage);
+        bizPoPaymentOrder = bizPoPaymentOrderService.get(bizPoPaymentOrder.getId());
+        if (bizPoPaymentOrder.getPoHeaderId() != null) {
+            BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoPaymentOrder.getPoHeaderId());
+            if (bizPoHeader != null) {
+                BigDecimal totalDetail = bizPoHeader.getTotalDetail() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalDetail());
+                BigDecimal totalExp = bizPoHeader.getTotalExp() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalExp());
+                BigDecimal totalDetailResult = totalDetail.add(totalExp);
+                DecimalFormat df = new DecimalFormat("#0.00");
+                model.addAttribute("totalDetailResult", df.format(totalDetailResult));
+                resultMap.put("totalDetailResult", df.format(totalDetailResult));
+            }
+        }
+        model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
+        resultMap.put("bizPoPaymentOrder", bizPoPaymentOrder);
+
+        return JsonUtil.generateData(resultMap, request.getParameter("callback"));
+    }
+
+    @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
     @RequestMapping(value = "form")
     public String form(HttpServletRequest request, HttpServletResponse response, BizPoPaymentOrder bizPoPaymentOrder, Model model) {
         String fromPage = request.getParameter("fromPage");
@@ -279,6 +378,26 @@ public class BizPoPaymentOrderController extends BaseController {
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
         addMessage(redirectAttributes, "保存付款单成功");
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "&orderType=" + bizPoPaymentOrder.getOrderType();
+    }
+
+    @RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
+    @RequestMapping(value = "save4Mobile")
+    @ResponseBody
+    public String save4Mobile(HttpServletRequest request, HttpServletResponse response, BizPoPaymentOrder bizPoPaymentOrder, Model model, RedirectAttributes redirectAttributes) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        if (!beanValidator(model, bizPoPaymentOrder)) {
+            return form(request, response, bizPoPaymentOrder, model);
+        }
+        Boolean result = false;
+        try {
+            bizPoPaymentOrderService.save(bizPoPaymentOrder);
+            result = true;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        resultMap.put("result", result);
+        //return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "&orderType=" + bizPoPaymentOrder.getOrderType();
+        return JsonUtil.generateData(resultMap, request.getParameter("callback"));
     }
 
     @RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
