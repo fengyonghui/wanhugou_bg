@@ -37,7 +37,6 @@
                             type:"post",
                             contentType: 'application/json;charset=utf-8',
                             url:"${ctx}/biz/inventory/bizSendGoodsRecord/outTreasury",
-                            dataType:"json",
                             data:JSON.stringify(treasuryList),
                             success:function (data) {
                                 if (data == 'ok') {
