@@ -459,13 +459,13 @@
                 var OrdId = $(this).attr('ordid');//订单id
                 var OrdIds = $(this).attr('ordids');//备货单id
 //				console.log(staOrdId)
-				console.log(OrdId)
+//				console.log(OrdId)
 				console.log(OrdIds)
-				if(url) {
-					mui.toast('子菜单不存在')
-				} 
-				else if(OrdId) {
-					alert(7)
+//				if(url) {
+//					mui.toast('子菜单不存在')
+//				} 
+//				if(OrdId!=null&&OrdIds==null) {
+//					alert(7)
 //					GHUTILS.OPENPAGE({
 //						//订单
 //						
@@ -475,18 +475,17 @@
 //							orderId:OrdId,
 //						}
 //					})
-				}
-				else if(OrdIds){
+//				}
+				if(OrdIds){
 					alert(8)
-//					GHUTILS.OPENPAGE({
-//						//备货单
-//						
-//						url: "../../html/orderMgmtHtml/payApplyList.html",
-//						extras: {
-//							staOrdId: staOrdId,
-//							orderId:OrdIds,
-//						}
-//					})
+					GHUTILS.OPENPAGE({
+						//备货单						
+						url: "../../html/orderMgmtHtml/payApplyList.html",
+						extras: {
+							staOrdId: staOrdId,
+							orderId:OrdIds,
+						}
+					})
 				}
 			}),
 		/*修改*/
