@@ -3,20 +3,21 @@
  */
 package com.wanhutong.backend.modules.biz.service.inventory;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao;
-import com.wanhutong.backend.modules.biz.dao.inventory.BizInventorySkuDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -44,10 +45,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.dao.inventory.BizInventorySkuDao;
 
 /**
  * 商品库存详情Service
@@ -204,8 +205,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		return dao.getStockQtyBySkuIdCentIdSkuType(skuId, centId, skuType);
 	}
 	@Transactional(readOnly = false,rollbackFor = Exception.class)
-	public void updateStockQty(BizInventorySku inventorySku) {
-		dao.updateStockQty(inventorySku.getId());
+	public void updateStockQty(BizInventorySku inventorySku, Integer stockQty) {
+		dao.updateStockQty(inventorySku.getId(),stockQty);
 	}
 
 	/**

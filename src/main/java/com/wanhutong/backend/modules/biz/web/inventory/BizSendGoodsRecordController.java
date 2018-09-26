@@ -5,27 +5,16 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.supcan.treelist.cols.Col;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryOrderRequest;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
-import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryOrderRequestService;
-import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
-import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
-import com.wanhutong.backend.modules.enums.SendGoodsRecordBizStatusEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -46,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -61,15 +49,7 @@ public class BizSendGoodsRecordController extends BaseController {
 	@Autowired
 	private BizSendGoodsRecordService bizSendGoodsRecordService;
     @Autowired
-    private BizInventorySkuService bizInventorySkuService;
-    @Autowired
     private BizInventoryInfoService bizInventoryInfoService;
-    @Autowired
-	private BizOrderDetailService bizOrderDetailService;
-    @Autowired
-	private BizRequestDetailService bizRequestDetailService;
-    @Autowired
-	private BizInventoryOrderRequestService bizInventoryOrderRequestService;
 
 	@ModelAttribute
 	public BizSendGoodsRecord get(@RequestParam(required=false) Integer id) {
@@ -146,50 +126,7 @@ public class BizSendGoodsRecordController extends BaseController {
 		if (CollectionUtils.isEmpty(outTreasuryList)) {
 			return "error";
 		}
-		for (BizOutTreasuryEntity outTreasuryEntity : outTreasuryList) {
-			Integer orderDetailId = outTreasuryEntity.getOrderDetailId();
-			Integer reqDetailId = outTreasuryEntity.getReqDetailId();
-			Integer invId = outTreasuryEntity.getInvSkuId();
-			Integer outQty = outTreasuryEntity.getOutQty();
-			Integer version = outTreasuryEntity.getuVersion();
-			BizOrderDetail bizOrderDetail = bizOrderDetailService.get(orderDetailId);
-			BizInventorySku inventorySku = bizInventorySkuService.get(invId);
-			BizRequestDetail bizRequestDetail = bizRequestDetailService.get(reqDetailId);
-			if (!version.equals(inventorySku.getuVersion())) {
-				return "其他人正在出库，请刷新页面重新操作";
-			}
-			//生成发货单
-			BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
-			bsgr.setSendNo(outTreasuryEntity.getSendNo());
-			bsgr.setSkuInfo(bizOrderDetail.getSkuInfo());
-			bsgr.setInvOldNum(inventorySku.getStockQty());
-			bsgr.setInvInfo(inventorySku.getInvInfo());
-			bsgr.setBizOrderHeader(bizOrderDetail.getOrderHeader());
-			bsgr.setOrderNum(bizOrderDetail.getOrderHeader().getOrderNum());
-			bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());
-			bsgr.setSendNum(outQty);
-			bsgr.setCustomer(bizOrderDetail.getOrderHeader().getCustomer());
-			bsgr.setSendDate(new Date());
-			bizSendGoodsRecordService.save(bsgr);
-			//修改库存数量
-			inventorySku.setStockQty(inventorySku.getStockQty() - outQty);
-			bizInventorySkuService.updateStockQty(inventorySku);
-			//修改备货单详情已出库数量
-			bizRequestDetail.setOutQty((bizRequestDetail.getOutQty() == null ? 0 : bizRequestDetail.getOutQty()) + outQty);
-			bizRequestDetailService.save(bizRequestDetail);
-			//修改订单详情已发货数量
-			bizOrderDetail.setSentQty((bizOrderDetail.getSentQty() == null ? 0 : bizOrderDetail.getSentQty()) + outQty);
-			bizOrderDetailService.saveStatus(bizOrderDetail);
-			//订单关联出库备货单
-			BizInventoryOrderRequest ior = new BizInventoryOrderRequest();
-			ior.setOrderDetail(bizOrderDetail);
-			ior.setRequestDetail(bizRequestDetail);
-			List<BizInventoryOrderRequest> iorList = bizInventoryOrderRequestService.findList(ior);
-			if (CollectionUtils.isEmpty(iorList)) {
-				bizInventoryOrderRequestService.save(ior);
-			}
-		}
-		return "ok";
+		return bizSendGoodsRecordService.outTreasury(outTreasuryList);
 	}
 
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:view")
