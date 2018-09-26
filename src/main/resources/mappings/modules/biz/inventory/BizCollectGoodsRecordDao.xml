@@ -242,6 +242,7 @@
 		union all
 		select
 		b.id as "id",
+		b.collect_no AS "collectNo",
 		b.inv_id AS "invInfo.id",
 		inv.name AS "invInfo.name",
 		inv. NAME AS "invInfoName",

@@ -784,4 +784,20 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	public void setInvReqDetail(String invReqDetail) {
 		this.invReqDetail = invReqDetail;
 	}
+
+	public enum HeaderType{
+		ROUTINE(1),
+		SAMPLE(2),
+		;
+		private Integer headerType;
+
+		HeaderType(Integer headerType){this.headerType = headerType;}
+
+		public Integer getHeaderType() {
+			return headerType;
+		}
+	}
+	public enum FromType{
+
+	}
 }

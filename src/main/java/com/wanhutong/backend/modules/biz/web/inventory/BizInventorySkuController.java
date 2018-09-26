@@ -631,7 +631,7 @@ public class BizInventorySkuController extends BaseController {
 
     @RequiresPermissions("biz:inventory:bizInventorySku:view")
     @RequestMapping(value = "inventoryForm")
-    public String inventoryForm(BizRequestHeader requestHeader,String source, String invName, RedirectAttributes redirectAttributes, Model model) {
+    public String inventoryForm(BizRequestHeader requestHeader,String source, Integer invId, Model model) {
         BizRequestDetail requestDetail = new BizRequestDetail();
         requestDetail.setRequestHeader(requestHeader);
         List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(requestDetail);
@@ -662,9 +662,7 @@ public class BizInventorySkuController extends BaseController {
             Collections.reverse(commonProcessList);
             bizRequestHeader.setInvCommonProcessList(commonProcessList);
         }
-        BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
-        bizInventoryInfo.setName(invName);
-        bizRequestHeader.setInvInfo(bizInventoryInfo);
+        bizRequestHeader.setInvInfo(bizInventoryInfoService.get(invId));
         model.addAttribute("source",source);
         model.addAttribute("requestHeader",bizRequestHeader);
         model.addAttribute("requestDetailList",requestDetailList);
@@ -674,8 +672,8 @@ public class BizInventorySkuController extends BaseController {
     @ResponseBody
     @RequiresPermissions("biz:inventory:bizInventorySku:audit")
     @RequestMapping(value = "audit")
-    public String audit(HttpServletRequest request, int id, String currentType, int auditType, String description) {
-        Pair<Boolean, String> result = bizInventorySkuService.auditInventory(id, currentType, auditType, description);
+    public String audit(HttpServletRequest request, int id, int invId, String currentType, int auditType, String description) {
+        Pair<Boolean, String> result = bizInventorySkuService.auditInventory(id, invId, currentType, auditType, description);
         if (result.getLeft()) {
             return JsonUtil.generateData(result, request.getParameter("callback"));
         }
@@ -690,26 +688,7 @@ public class BizInventorySkuController extends BaseController {
             addMessage(redirectAttributes,"保存库存失败");
             return "redirect:" + adminPath + "/biz/inventory/bizInventory";
         }
-        Integer requestHeaderId = 0;
-        String[] invReqDetailArr = invReqDetail.split(",");
-        for(int i = 0; i < invReqDetailArr.length; i++) {
-            String[] split = invReqDetailArr[i].split("-");
-            if (split.length ==2) {
-                BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.valueOf(split[0]));
-                bizRequestDetail.setActualQty(Integer.valueOf(split[1]));
-                bizRequestDetailService.save(bizRequestDetail);
-                requestHeaderId = bizRequestDetail.getRequestHeader().getId();
-            }
-        }
-
-        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-        commonProcessEntity.setCurrent(CommonProcessEntity.CURRENT);
-        commonProcessEntity.setObjectId(requestHeaderId.toString());
-        commonProcessEntity.setObjectName(BizInventorySku.INVSKUREQUESTTABLE);
-        commonProcessEntity.setBizStatus(CommonProcessEntity.NOT_CURRENT);
-        commonProcessEntity.setType(ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getDefaultProcessId().toString());
-        commonProcessService.save(commonProcessEntity);
-
+        bizInventorySkuService.inventorySave(requestHeader);
         return "modules/biz/inventory/bizInventory";
     }
 
