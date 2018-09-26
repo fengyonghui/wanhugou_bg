@@ -266,7 +266,7 @@
 											'<div class="mui-col-xs-3 '+ stastartCheckBtn +'" staordid="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-3 '+ SchedulingBtn +'" staordid="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 SchedulingBtn" staordid="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
 											'</div>'+
 //											'<div class="mui-col-xs-3 staOrDetailBtn" staOrdId="'+ item.id +'">' +
