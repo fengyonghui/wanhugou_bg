@@ -32,40 +32,78 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInventoryViewLog" action="${ctx}/biz/inventoryviewlog/bizInventoryViewLog/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">仓库id：</label>
+			<label class="control-label">备货单号：</label>
 			<div class="controls">
-				<form:input path="invId" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<input type="text"  class="input-medium" name="" readonly="readonly" value="${bizInventoryViewLog.requestHeader.reqNo}"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">库存类型：1常规；2残损；3专属：</label>
+			<label class="control-label">供应商：</label>
 			<div class="controls">
-				<form:input path="invType" htmlEscape="false" maxlength="10" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<input type="text" name="" class="input-medium" readonly="readonly" value="${bizInventoryViewLog.requestHeader.requestDetailList[0].skuInfo.vendorName}"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品id：</label>
+			<label class="control-label">采购中心：</label>
 			<div class="controls">
-				<form:input path="skuId" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<input type="text" name="" class="input-medium" readonly="readonly" value="${bizInventoryViewLog.requestHeader.fromOffice.name}"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">库存数量：</label>
+			<label class="control-label">所属仓库：</label>
 			<div class="controls">
-				<form:input path="stockQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<input type="text" name="" class="input-medium" readonly="readonly" value="${bizInventoryViewLog.invInfo.name}"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">改变数量：</label>
+			<label class="control-label">盘点日期：</label>
 			<div class="controls">
-				<form:input path="stockChangeQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<input type="text" name="" class="input-medium" readonly="readonly" value="<fmt:formatDate value="${bizInventoryViewLog.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">盘点人：</label>
+			<div class="controls">
+				<input type="text" name="" class="input-medium" readonly="readonly" value="${bizInventoryViewLog.createBy.name}"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">商品信息：</label>
+			<div class="controls">
+				<table id="contentTable"  class="table table-striped table-bordered table-condensed">
+					<thead>
+					<tr>
+						<th>商品名称</th>
+						<th>商品货号</th>
+						<th>颜色</th>
+						<th>尺寸</th>
+						<th>库存类型</th>
+						<th>销售价</th>
+						<th>图片</th>
+						<th>现有库存数</th>
+						<th>实际库存数</th>
+					</tr>
+					</thead>
+					<tbody id="invReq">
+					<c:forEach items="${bizInventoryViewLog.requestHeader.requestDetailList}" var="requestDetail" varStatus="v">
+						<tr>
+							<input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
+							<td>${requestDetail.skuInfo.name}</td>
+							<td>${requestDetail.skuInfo.itemNo}</td>
+							<td>${requestDetail.skuInfo.color}</td>
+							<td>${requestDetail.skuInfo.size}</td>
+							<td>${fns:getDictLabel(requestHeader.headerType,'req_header_type','未知')}</td>
+							<td>${requestDetail.skuInfo.buyPrice}</td>
+							<td style='width: 200px'><img style='width: 200px' src="${requestDetail.skuInfo.skuImgUrl}"></td>
+							<td>${requestDetail.recvQty - requestDetail.outQty}</td>
+
+							<td><input name="actualQtys" readonly="readonly" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini"/></td>
+						</tr>
+					</c:forEach>
+					</tbody>
+				</table>
 			</div>
 		</div>
 		<div class="form-actions">

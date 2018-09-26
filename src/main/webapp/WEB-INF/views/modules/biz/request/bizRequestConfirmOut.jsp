@@ -177,7 +177,7 @@
 	<div class="control-group">
 		<label class="control-label">出库单：</label>
 		<div class="controls">
-			<input id="sendNo" readonly="readonly" name="sendNo" type="text" class="input-xlarge" value="${sendNo}"/>
+			<input id="sendNo" readonly="readonly" name="sendNo" type="text" class="input-xlarge" value="${bizSendGoodsRecord.sendNo}"/>
 		</div>
 	</div>
 	<div class="control-group">

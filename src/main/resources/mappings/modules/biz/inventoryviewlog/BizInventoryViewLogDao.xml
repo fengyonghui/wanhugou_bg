@@ -14,6 +14,8 @@
 		a.now_stock_qty as "nowStockQty",
 		a.create_id AS "createBy.id",
 		a.req_id AS "requestHeader.id",
+		rh.req_no AS "requestHeader.reqNo",
+		rh.from_type AS "requestHeader.fromType",
 		u.name as "createBy.name",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
