@@ -43,7 +43,7 @@ public class MyPanelController extends BaseController {
         int waitSchedulingCount = 0;
 //        备货单/订单付款 付款单可以付款的
         int orderPaymentCount = 0;
-//        需上架商品 所有没有上架的商品  TODO
+//        需上架商品 所有没有上架的商品
         int needPutawayCount = 0;
 //        待发货  备货单待发货
         int reWaitShipmentsCount = 0;
@@ -94,6 +94,7 @@ public class MyPanelController extends BaseController {
             waitSchedulingCount = myPanelService.getWaitSchedulingCount();
             reAuditCount = myPanelService.getReAuditCount("2");
             applyPaymentCount = myPanelService.getApplyPaymentCount();
+            needPutawayCount = myPanelService.getNeedPutawayCount();
         }
 
 //        财务经理；财务总监；财务总经理：订单审核；备货单审核；

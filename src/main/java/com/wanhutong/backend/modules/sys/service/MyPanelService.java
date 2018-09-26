@@ -5,10 +5,13 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
@@ -33,6 +36,9 @@ public class MyPanelService {
     private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
     @Autowired
     private BizPoPaymentOrderService bizPoPaymentOrderService;
+    @Autowired
+    private BizSkuInfoService bizSkuInfoService;
+
 
     /**
      * 订单审核
@@ -209,6 +215,18 @@ public class MyPanelService {
         BizPoHeader bizPoHeader = new BizPoHeader();
         bizPoHeader.setWaitPay(1);
         List<BizPoHeader> list = bizPoHeaderService.findList(bizPoHeader);
+        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+    }
+
+    /**
+     * 未上架商品
+     *
+     * @return
+     */
+    public int getNeedPutawayCount() {
+        BizSkuInfo bizSkuInfo = new BizSkuInfo();
+        bizSkuInfo.setNotPutaway(1);
+        List<BizSkuInfo> list = bizSkuInfoService.findList(bizSkuInfo);
         return CollectionUtils.isEmpty(list) ? 0 : list.size();
     }
 }

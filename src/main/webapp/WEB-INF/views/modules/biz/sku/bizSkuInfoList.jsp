@@ -74,6 +74,12 @@
 			<li><label>供应商：</label>
 				<form:input path="productInfo.vendorName" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
+			<li><label>未上架</label>
+				<form:select path="notPutaway" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:option value="1" label="是"/>
+				</form:select>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
