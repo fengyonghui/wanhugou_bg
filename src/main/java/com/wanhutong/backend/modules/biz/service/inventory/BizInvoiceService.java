@@ -14,9 +14,11 @@ import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizInvoiceDao;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.*;
 import com.wanhutong.backend.modules.biz.entity.logistic.BizOrderLogistics;
+import com.wanhutong.backend.modules.biz.entity.logistic.VarietyInfoIdSParams;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
@@ -60,6 +62,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -451,6 +454,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             for (int b = 0; b < requests.length; b++) {
                 String[] rheaders = requests[b].split("#".trim());
                 BizRequestHeader requestHeader = bizRequestHeaderService.get(Integer.parseInt(rheaders[0]));
+                Office fromOffice = requestHeader.getFromOffice();
+                Integer officeId = null;
+                if (fromOffice != null) {
+                    officeId = fromOffice.getId();
+                }
                 //加入中间表关联关系
                 if ((BizInvoice.IsConfirm.NO.getIsConfirm().equals(bizInvoice.getIsConfirm()) || "new".equals(bizInvoice.getSource())) && !reqId.equals(requestHeader.getId())) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
@@ -459,12 +467,26 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     bizDetailInvoiceService.save(bizDetailInvoice);
                 }
                 reqId = requestHeader.getId();
+
+                List<VarietyInfoIdSParams> varietyParamsList = new ArrayList<VarietyInfoIdSParams>();
                 String[] reNumArr = rheaders[1].split("\\*");
                 for (int i = 0; i < reNumArr.length; i++) {
+                    VarietyInfoIdSParams varietyParams = new VarietyInfoIdSParams();
                     String[] reArr = reNumArr[i].split("-");
                     BizRequestDetail requestDetail = bizRequestDetailService.get(Integer.parseInt(reArr[0]));
+                    Integer reqQty = requestDetail.getReqQty();
+                    varietyParams.setNumberCode(reqQty);
                     //商品
                     BizSkuInfo bizSkuInfo = bizSkuInfoService.get(requestDetail.getSkuInfo().getId());
+                    BizSkuInfo sku = bizSkuInfoService.findListProd(bizSkuInfo);
+                    BizVarietyInfo varietyInfo = sku.getProductInfo().getBizVarietyInfo();
+                    Integer variId = null;
+                    if (varietyInfo != null) {
+                        variId = varietyInfo.getId();
+                    }
+                    varietyParams.setBizVarietyInfoId(variId);
+                    varietyParamsList.add(varietyParams);
+
                     int sendNum = Integer.parseInt(reArr[1]);     //供货数
                     valuePrice += bizSkuInfo.getBuyPrice() * sendNum;//累计货值
                     //采购中心

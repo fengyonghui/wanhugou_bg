@@ -10,6 +10,7 @@
 		a.from_type AS "fromType",
 		a.to_id AS "toOffice.id",
 		so.name AS "fromOffice.name",
+		so.id AS "fromOffice.id",
 		sot.name AS "toOffice.name",
 		a.recv_eta AS "recvEta",
 		a.total_detail AS "totalDetail",
