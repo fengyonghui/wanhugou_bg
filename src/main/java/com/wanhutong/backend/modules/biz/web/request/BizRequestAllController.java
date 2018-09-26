@@ -456,7 +456,7 @@ public class BizRequestAllController {
             bsgr.setBizOrderHeader(orderHeader);
             List<BizSendGoodsRecord> bsgrList = bizSendGoodsRecordService.findList(bsgr);
             if (CollectionUtils.isNotEmpty(bsgrList)) {
-                model.addAttribute("sendNo",bsgrList.get(0).getSendNo());
+                model.addAttribute("bizSendGoodsRecord",bsgrList.get(0));
             }
             return "modules/biz/request/bizRequestConfirmOut";
         }
