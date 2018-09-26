@@ -703,4 +703,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
     }
 
+    public List<String> findDeliverNoByReqId (Integer requestId) {
+        return bizInvoiceDao.findDeliverNoByReqId(requestId);
+    }
+
 }

@@ -331,4 +331,10 @@
 		WHERE id = #{id}
 	</update>
 
+	<update id="updateStockQty">
+		UPDATE biz_inventory_sku SET
+			stock_qty = #{stockQty}
+		WHERE id = #{id}
+	</update>
+
 </mapper>

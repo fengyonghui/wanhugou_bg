@@ -4,6 +4,7 @@
     
 	<sql id="bizCollectGoodsRecordColumns">
 		a.id AS "id",
+		a.collect_no AS "collectNo",
 		a.inv_id AS "invInfo.id",
 		inv.name AS "invInfo.name",
 		a.inv_old_num AS "invOldNum",
@@ -51,6 +52,12 @@
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				AND a.inv_id = #{invInfo.id}
+			</if>
+			<if test="collectNo != null and collectNo != ''">
+				AND a.collect_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{collectNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{collectNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{collectNo},'%')</if>
 			</if>
 			<if test="invInfo != null and invInfo.name != null and invInfo.name != ''">
 				AND inv.name LIKE
@@ -114,6 +121,7 @@
 	<insert id="insert">
 		INSERT INTO biz_collect_goods_record(
 			id,
+			collect_no,
 			inv_id,
 			<if test="invOldNum != null and invOldNum != ''">
 				inv_old_num,
@@ -139,6 +147,7 @@
 			update_time
 		) VALUES (
 			#{id},
+			#{collectNo},
 			#{invInfo.id},
 			<if test="invOldNum != null and invOldNum != ''">
 				#{invOldNum},
@@ -201,6 +210,7 @@
 	<select id="collectSendFindPage" resultType="BizCollectGoodsRecord">
 		select collectSend.* from (select
 		a.id as "id",
+		a.collect_no AS "collectNo",
 		a.inv_id AS "invInfo.id",
 		inv.name AS "invInfo.name",
 		inv. NAME AS "invInfoName",
@@ -312,6 +322,7 @@
 	<select id="getListBySkuIdCentId" resultType="BizCollectGoodsRecord">
 		SELECT
 		a.id AS "id",
+		a.collect_no AS "collectNo",
 		a.inv_id AS "invInfo.id",
 		b.name AS "invInfo.name",
 		a.inv_old_num AS "invOldNum",
@@ -338,6 +349,7 @@
 	<select id="getListBySkuIdInvId" resultType="BizCollectGoodsRecord">
 		SELECT
 		a.id AS "id",
+		a.collect_no AS "collectNo",
 		a.inv_id AS "invInfo.id",
 		b.name AS "invInfo.name",
 		a.inv_old_num AS "invOldNum",
@@ -403,6 +415,40 @@
 			AND bii.name LIKE concat('%',#{invName},'%')
 		</if>
 	group by inv_id, sku_id
+	</select>
+
+	<select id="findContByCentId" resultType="Integer">
+		SELECT count(1)
+		FROM biz_collect_goods_record a
+		LEFT JOIN biz_request_header rh ON rh.id = a.request_id
+		WHERE rh.from_id = #{centId}
+	</select>
+
+	<select id="getInventoryDetail" resultType="BizCollectGoodsRecord">
+		SELECT
+			cent.name AS "centName",
+			bii.name AS "invInfo.name",
+			sku.id AS "skuInfo.id",
+			sku.name AS "skuInfo.name",
+			sku.item_no AS "skuInfo.itemNo",
+			bpi.vendor_name AS "vendorName",
+			bis.stock_qty AS "inventorySku.stockQty",
+			rd.out_qty AS "outQty",
+			rh.req_no AS "requestHeader.reqNo",
+			sku.buy_price AS "skuInfo.buyPrice",
+			rh.header_type AS "requestHeader.headerType",
+			bcgr.receive_time AS "receiveDate",
+			bcgr.receive_num AS "receiveNum"
+		FROM biz_collect_goods_record bcgr
+		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bcgr.sku_id AND bis.inv_id = bcgr.inv_id
+		LEFT JOIN biz_sku_info sku ON sku.id = bcgr.sku_id
+		LEFT JOIN biz_product_info bpi ON bpi.id = sku.prod_id
+		LEFT JOIN biz_request_detail rd ON rd.sku_id = bcgr.sku_id AND rd.header_id = bcgr.request_id
+		LEFT JOIN biz_request_header rh ON rh.id = bcgr.request_id
+		LEFT JOIN sys_office cent ON cent.id = rh.from_id
+		LEFT JOIN biz_inventory_info bii ON bii.id = bcgr.inv_id
+		WHERE bis.id = #{invSkuId}
+		AND sku.id = #{skuId}
 	</select>
 
 </mapper>

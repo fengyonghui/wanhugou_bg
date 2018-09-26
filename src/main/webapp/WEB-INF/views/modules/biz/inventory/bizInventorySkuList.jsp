@@ -232,8 +232,9 @@
 						${bizInventorySku.updateBy.name}
 					</td>
 				</c:if>
-				<c:if test="${zt eq '2' || zt eq '3'}">
-					<td>
+				<td>
+					<a href="${ctx}/biz/inventory/bizInventorySku/inventorySkuDetail?id=${bizInventorySku.id}">详情</a>
+					<c:if test="${zt eq '2' || zt eq '3'}">
 						<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 							<c:if test="${bizInventorySku.delFlag!=null && bizInventorySku.delFlag!=0}">
 								<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}&invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">修改</a>
@@ -245,8 +246,8 @@
 								   onclick="return confirmx('确认要恢复该商品库存详情吗？', this.href)">恢复</a>
 							</c:if>
 						</shiro:hasPermission>
-					</td>
-				</c:if>
+					</c:if>
+				</td>
 			</tr>
 		</c:forEach>
 		</tbody>

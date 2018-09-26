@@ -25,6 +25,7 @@
 		suu.name AS "updateBy.name",
 		su.name AS "createBy.name",
 		a.update_time AS "updateDate",
+		a.header_type AS "headerType",
 		sum(req_qty) as "reqQtys",
 		sum(recv_qty) as "recvQtys",
 		sum(req_qty * unit_price) AS totalMoney,
@@ -40,6 +41,15 @@
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
 		process.current AS "commonProcess.current",
+		cpro.id AS "invCommonProcess.id",
+		cpro.object_id AS "invCommonProcess.objectId",
+		cpro.object_name AS "invCommonProcess.objectName",
+		cpro.prev_id "invCommonProcess.prevId",
+		cpro.biz_status "invCommonProcess.bizStatus",
+		cpro.processor "invCommonProcess.processor",
+		cpro.description "invCommonProcess.description",
+		cpro.type "invCommonProcess.type",
+		cpro.current "invCommonProcess.current",
 		bph.id AS "bizPoHeader.id",
 		bph.current_payment_id AS "bizPoHeader.currentPaymentId",
 		bph.pay_total AS "bizPoHeader.payTotal",
@@ -57,6 +67,7 @@
 	</sql>
 	
 	<sql id="bizRequestHeaderJoins">
+		LEFT JOIN common_process cpro ON cpro.object_id = a.id AND cpro.object_name = 'biz_inv_sku_request' AND cpro.current = 1
 		LEFT JOIN biz_request_expand bre ON bre.request_id = a.id
 		LEFT JOIN biz_vend_info vend ON vend.office_id = bre.vend_id
 		LEFT JOIN sys_office so ON so.id=a.from_id
@@ -101,6 +112,9 @@
 			1=1
 			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+			<if test="headerType != null">
+				AND a.header_type = #{headerType}
 			</if>
 			<if test="varietyInfo!=null and varietyInfo.id!=null and varietyInfo.id!=''">
 				and bvi.id = #{varietyInfo.id}
@@ -304,7 +318,8 @@
 			create_time,
 			u_version,
 			update_id,
-			update_time
+			update_time,
+			header_type
 		) VALUES (
 			#{id},
 			#{reqNo},
@@ -330,7 +345,8 @@
 			#{createDate},
 			#{uVersion},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+			#{headerType}
 		)
 	</insert>
 	
@@ -358,7 +374,8 @@
 		</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+			update_time = #{updateDate},
+			header_type = #{headerType}
 		WHERE id = #{id}
 	</update>
 	
@@ -447,5 +464,69 @@
 		WHERE status=1
 		AND id = #{id}
 	</update>
+
+	<select id="inventoryPage" resultType="BizRequestHeader">
+		SELECT
+			a.id AS "id",
+			a.header_type AS "headerType",
+			inv.name AS "invInfo.name",
+			inv.id AS "invInfo.id",
+			cent.name AS "fromOffice.name",
+			a.from_type AS "fromType",
+			a.req_no AS "reqNo",
+			prod.vendor_name AS "vendName",
+			prod.vari_id AS "varietyInfo.id",
+			bvi.name AS "varietyInfo.name",
+			process.id AS "invCommonProcess.id",
+			process.object_id AS "invCommonProcess.objectId",
+			process.object_name AS "invCommonProcess.objectName",
+			process.prev_id AS "invCommonProcess.prevId",
+			process.biz_status AS "invCommonProcess.bizStatus",
+			process.processor AS "invCommonProcess.processor",
+			process.description AS "invCommonProcess.description",
+			process.type AS "invCommonProcess.type",
+			process.current AS "invCommonProcess.current"
+		FROM biz_request_header a
+		LEFT JOIN common_process process ON process.object_id = a.id AND process.object_name = 'biz_inv_sku_request' AND process.current = 1
+		LEFT JOIN sys_office cent ON cent.id = a.from_id
+		LEFT JOIN biz_request_detail rd ON rd.header_id = a.id
+		LEFT JOIN biz_sku_info sku ON sku.id = rd.sku_id
+		LEFT JOIN biz_product_info prod ON prod.id = sku.prod_id
+		LEFT JOIN biz_variety_info bvi ON bvi.id = prod.vari_id
+		LEFT JOIN biz_collect_goods_record bcgr ON bcgr.request_id = a.id
+		LEFT JOIN biz_inventory_info inv ON inv.id = bcgr.inv_id
+		WHERE inv.id IS NOT NULL
+		<if test="vendName != null and vendName != ''">
+			AND prod.vendor_name LIKE
+			<if test="dbName == 'oracle'">'%'||#{vendName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{vendName}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{vendName},'%')</if>
+		</if>
+		<if test="varietyInfo != null and varietyInfo.id != null">
+			AND prod.vari_id = #{varietyInfo.id}
+		</if>
+		<if test="invCommonProcess != null and invCommonProcess.type != null and invCommonProcess.type != ''">
+			AND process.type = #{invCommonProcess.type}
+		</if>
+		<if test="fromType != null">
+			AND a.from_type = #{fromType}
+		</if>
+		<if test="page != null and page.includeTestData != true">
+			AND NOT EXISTS(
+			select 1
+			from sys_test_account ta
+			where a.from_id = ta.object_id
+			and ta.object_name = 'sys_office'
+			)
+		</if>
+		GROUP BY a.id
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
 
 </mapper>

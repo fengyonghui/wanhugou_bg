@@ -3,6 +3,7 @@ package com.wanhutong.backend.modules.config;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
+import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
@@ -79,6 +80,8 @@ public abstract class ConfigGeneral {
 
 	public static final ConfigWrapper<DoOrderHeaderProcessFifthConfig> DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG = new ConfigWrapper<>(
 			"DoOrderHeaderProcessFifthConfig.xml",new DoOrderHeaderProcessFifthConfig());
+	public static final ConfigWrapper<InventorySkuRequestProcessConfig> INVENTORY_SKU_REQUEST_PROCESS_CONFIG = new ConfigWrapper<>(
+			"InventorySkuRequestProcessConfig.xml",new InventorySkuRequestProcessConfig());
 
 	/**
 	 * 获取所有的配置对象实例所属的父容器，使用反射实现，由于仅在更新配置的内存版本时调用，属于可容忍的性能损耗

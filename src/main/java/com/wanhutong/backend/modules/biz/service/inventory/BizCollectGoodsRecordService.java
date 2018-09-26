@@ -153,6 +153,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			}
 			//生成收货记录表
 			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bcgr.getSkuInfo().getId());
+			bcgr.setCollectNo(bizCollectGoodsRecord.getCollectNo());
 			bcgr.setInvInfo(bcgr.getInvInfo());
 			bcgr.setInvOldNum(invOldNum);
 			bcgr.setSkuInfo(bizSkuInfo);
@@ -203,5 +204,9 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 
 	public List<BizSkuInputOutputDto> skuInputOutputRecord(String startDate, String endDate, String invName, String skuItemNo) {
 		return dao.getSkuInputOutputRecord(startDate, endDate, invName, skuItemNo);
+	}
+
+	public Integer findContByCentId(Integer centId) {
+		return dao.findContByCentId(centId);
 	}
 }

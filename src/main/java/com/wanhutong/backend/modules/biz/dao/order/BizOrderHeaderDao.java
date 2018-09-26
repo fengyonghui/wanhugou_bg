@@ -417,4 +417,6 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return
      */
     Integer getOrderDetailIdBySkuInfoId(@Param("poHeaderId") Integer poHeaderId, @Param("skuInfoId") Integer skuInfoId);
+
+    Integer findCountByCentId(@Param("centId") Integer centId);
 }

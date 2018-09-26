@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
@@ -40,6 +42,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private Integer bizStatus;		// 业务状态：0未审核 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
 	private Double totalDetail;
 	private Double recvTotal;
+
+	/**
+	 * 备货单类型
+	 */
+	private Byte headerType;
 
 	/**
 	 * 备货清单查看 已生成的采购单
@@ -196,6 +203,32 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 审核是用来判断审核的是RE还是PO
 	 */
 	private String processPo;
+
+	/**
+	 * 仓库
+	 */
+	private BizInventoryInfo invInfo;
+
+	/**
+	 * 供应商名
+	 */
+	private String vendName;
+
+	/**
+	 * 库存审核
+	 */
+	private CommonProcessEntity invCommonProcess;
+
+	/**
+	 * 库存已审核列表
+	 */
+	private List<CommonProcessEntity> invCommonProcessList;
+
+	/**
+	 * 页面传值
+	 */
+	private String invReqDetail;
+
 
 	public BizRequestHeader() {
 		super();
@@ -702,5 +735,53 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setProcessPo(String processPo) {
 		this.processPo = processPo;
+	}
+
+	public Byte getHeaderType() {
+		return headerType;
+	}
+
+	public void setHeaderType(Byte headerType) {
+		this.headerType = headerType;
+	}
+
+	public BizInventoryInfo getInvInfo() {
+		return invInfo;
+	}
+
+	public void setInvInfo(BizInventoryInfo invInfo) {
+		this.invInfo = invInfo;
+	}
+
+	public String getVendName() {
+		return vendName;
+	}
+
+	public void setVendName(String vendName) {
+		this.vendName = vendName;
+	}
+
+	public CommonProcessEntity getInvCommonProcess() {
+		return invCommonProcess;
+	}
+
+	public void setInvCommonProcess(CommonProcessEntity invCommonProcess) {
+		this.invCommonProcess = invCommonProcess;
+	}
+
+	public List<CommonProcessEntity> getInvCommonProcessList() {
+		return invCommonProcessList;
+	}
+
+	public void setInvCommonProcessList(List<CommonProcessEntity> invCommonProcessList) {
+		this.invCommonProcessList = invCommonProcessList;
+	}
+
+	public String getInvReqDetail() {
+		return invReqDetail;
+	}
+
+	public void setInvReqDetail(String invReqDetail) {
+		this.invReqDetail = invReqDetail;
 	}
 }

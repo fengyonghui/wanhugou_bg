@@ -12,6 +12,7 @@
 		si.item_no AS "skuInfo.itemNo",
 		bpi.vendor_name AS "skuInfo.vendorName",
 		si.buy_price AS "skuInfo.buyPrice",
+		si.name AS "skuInfo.name",
 		a.req_qty AS "reqQty",
 		a.recv_qty AS "recvQty",
 		a.send_qty AS "sendQty",
@@ -21,7 +22,9 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		a.out_qty AS "outQty",
+		a.actual_qty AS "actualQty"
 	</sql>
 	
 	<sql id="bizRequestDetailJoins">
@@ -164,7 +167,9 @@
 			create_time,
 			u_version,
 			update_id,
-			update_time
+			update_time,
+			out_qty,
+			actual_qty
 		) VALUES (
 			#{id},
 			#{requestHeader.id},
@@ -184,7 +189,9 @@
 			#{createDate},
 			#{uVersion},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+			#{outQty},
+			#{actualQty}
 		)
 	</insert>
 	
@@ -209,12 +216,16 @@
 			<if test="sendQty!=null">
 				send_qty = #{sendQty},
 			</if>
-			<if test="recvQty!=null">
+			<if test="remark!=null">
 			remark = #{remark},
 			</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+			update_time = #{updateDate},
+            <if test="outQty != null">
+			  out_qty = #{outQty},
+            </if>
+			actual_qty = #{actualQty}
 		WHERE id = #{id}
 	</update>
 	
@@ -329,5 +340,68 @@
 			a.status = 1
 		   AND a.object_id =#{objectId}
 	</select>
-	
+
+	<select id="findInventorySkuByskuIdAndcentId" resultType="BizRequestDetail">
+		SELECT
+			a.id AS "id",
+			rh.req_no AS "requestHeader.reqNo",
+			bsi.name AS "skuInfo.name",
+			bpi.vendor_id AS "vendorId",
+			bpi.vendor_name AS "vendorName",
+			bsi.item_no AS "skuInfo.itemNo",
+			bii.id AS "inventorySku.invInfo.id",
+			bii.name AS "inventorySku.invInfo.name",
+			bis.inv_type AS "inventorySku.invType",
+			bis.sku_type AS "inventorySku.skuType",
+			bis.id AS "inventorySku.id",
+			bis.u_version AS "uVersion",
+			a.recv_qty AS "recvQty",
+			a.out_qty AS "outQty",
+			bis.stock_qty AS "inventorySku.stockQty"
+		FROM biz_request_detail a
+		LEFT JOIN biz_request_header rh ON rh.id = a.header_id
+		LEFT JOIN biz_sku_info bsi ON bsi.id = a.sku_id
+		LEFT JOIN biz_product_info bpi ON bpi.id = bsi.prod_id
+		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsi.id
+		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		WHERE a.status = 1
+		AND rh.status = 1
+		AND rh.biz_status != 40
+		AND bis.status = 1
+		AND bii.cust_id = #{centerId}
+		AND bsi.id = #{skuId}
+		ORDER BY a.create_time ASC
+	</select>
+
+	<select id="findInvReqByOrderDetailId" resultType="BizRequestDetail">
+		SELECT
+			a.id,
+			rh.req_no AS "requestHeader.reqNo",
+			bsi.name AS "skuInfo.name",
+			bpi.vendor_id AS "vendorId",
+			bpi.vendor_name AS "vendorName",
+			bsi.item_no AS "skuInfo.itemNo",
+			bii.id AS "inventorySku.invInfo.id",
+			bii.name AS "inventorySku.invInfo.name",
+			bis.inv_type AS "inventorySku.invType",
+			bis.sku_type AS "inventorySku.skuType",
+			bis.id AS "inventorySku.id",
+			bis.u_version AS "uVersion",
+			a.recv_qty AS "recvQty",
+			a.out_qty AS "outQty",
+			bis.stock_qty AS "inventorySku.stockQty"
+			FROM biz_request_detail a
+			LEFT JOIN biz_request_header rh ON rh.id = a.header_id
+			LEFT JOIN biz_sku_info bsi ON bsi.id = a.sku_id
+			LEFT JOIN biz_product_info bpi ON bpi.id = bsi.prod_id
+			LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsi.id
+			LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+			LEFT JOIN biz_inventory_order_request bior ON bior.request_detail_id = a.id
+			LEFT JOIN biz_order_detail od ON od.id = bior.order_detail_id
+			WHERE
+			a.status = 1
+			AND od.status = 1
+			AND rh.biz_status != 40
+			AND od.id = #{orderDetailId}
+	</select>
 </mapper>

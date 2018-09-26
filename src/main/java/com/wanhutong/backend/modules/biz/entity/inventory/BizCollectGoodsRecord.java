@@ -39,6 +39,11 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	private List<BizCollectGoodsRecord> bizCollectGoodsRecordList;
 
 	/**
+	 * 入库单号
+	 */
+	private String collectNo;
+
+	/**
 	 * 变更的数量
 	 * */
 	private Double changeNumber;
@@ -60,6 +65,31 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	 * 用于页面判断
 	 */
 	private String bizStatu;
+
+	/**
+	 * 采购中心名
+	 */
+	private String centName;
+
+	/**
+	 * 供应商名
+	 */
+	private String vendorName;
+
+	/**
+	 * 库存
+	 */
+	private BizInventorySku inventorySku;
+
+	/**
+	 * 出库数量
+	 */
+	private Integer outQty;
+
+	/**
+	 * 备货单
+	 */
+	private BizRequestHeader requestHeader;
 
 	public BizCollectGoodsRecord() {
 		super();
@@ -109,7 +139,6 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 		this.orderNum = orderNum;
 	}
 
-	@Length(min=1, max=11, message="收货数量长度必须介于 1 和 11 之间")
 	public Integer getReceiveNum() {
 		return receiveNum;
 	}
@@ -246,5 +275,53 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 
 	public void setBizStatu(String bizStatu) {
 		this.bizStatu = bizStatu;
+	}
+
+	public String getCollectNo() {
+		return collectNo;
+	}
+
+	public void setCollectNo(String collectNo) {
+		this.collectNo = collectNo;
+	}
+
+	public String getCentName() {
+		return centName;
+	}
+
+	public void setCentName(String centName) {
+		this.centName = centName;
+	}
+
+	public String getVendorName() {
+		return vendorName;
+	}
+
+	public void setVendorName(String vendorName) {
+		this.vendorName = vendorName;
+	}
+
+	public BizInventorySku getInventorySku() {
+		return inventorySku;
+	}
+
+	public void setInventorySku(BizInventorySku inventorySku) {
+		this.inventorySku = inventorySku;
+	}
+
+	public Integer getOutQty() {
+		return outQty;
+	}
+
+	public void setOutQty(Integer outQty) {
+		this.outQty = outQty;
+	}
+
+	public BizRequestHeader getRequestHeader() {
+		return requestHeader;
+	}
+
+	public void setRequestHeader(BizRequestHeader requestHeader) {
+		this.requestHeader = requestHeader;
 	}
 }
