@@ -730,6 +730,7 @@
 			AND a.biz_status != 45
 			AND a.biz_status != 40
 			AND a.biz_status != 35
+			OR a.biz_status  &lt; 15
 
 			<if test="source != null and source == 'vendor'">
 
