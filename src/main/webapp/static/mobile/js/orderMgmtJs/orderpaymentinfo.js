@@ -477,7 +477,6 @@
 //					})
 //				}
 				if(OrdIds){
-					alert(8)
 					GHUTILS.OPENPAGE({
 						//备货单						
 						url: "../../html/orderMgmtHtml/payApplyList.html",

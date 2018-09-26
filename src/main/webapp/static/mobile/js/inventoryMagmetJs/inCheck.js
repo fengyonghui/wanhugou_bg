@@ -168,7 +168,7 @@
 					//判断审核状态
 					_this.checkStatus(res.data);
 					//排产信息
-					if(res.data.bizRequestHeader.str == 'audit') {
+					if(res.data.bizRequestHeader.str == 'detail') {
 						var poheaderId = res.data.bizRequestHeader.bizPoHeader.id;
 						console.log(poheaderId)
 						if(poheaderId == null || poheaderId == "") {
