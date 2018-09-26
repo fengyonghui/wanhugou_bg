@@ -354,7 +354,7 @@
 			bis.inv_type AS "inventorySku.invType",
 			bis.sku_type AS "inventorySku.skuType",
 			bis.id AS "inventorySku.id",
-			bis.u_version AS "uVersion",
+			bis.u_version AS "inventorySku.uVersion",
 			a.recv_qty AS "recvQty",
 			a.out_qty AS "outQty",
 			bis.stock_qty AS "inventorySku.stockQty"
