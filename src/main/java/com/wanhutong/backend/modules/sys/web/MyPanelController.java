@@ -176,25 +176,25 @@ public class MyPanelController extends BaseController {
     //        有尾款
     @RequestMapping(value = {"hasRetainage"})
     public String hasRetainage() {
-        return "redirect:/a/biz/order/bizOrderHeader/list?retainage=1";
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?retainage=1";
     }
 
     //        订单出库
     @RequestMapping(value = {"ddck"})
     public String ddck() {
-        return "redirect:/a/biz/order/bizOrderHeader/list?waitOutput=1";
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?waitOutput=1";
     }
 
     //        发货单入库
     @RequestMapping(value = {"fhdrk"})
     public String fhdrk() {
-        return "redirect:/a/biz/request/bizRequestHeaderForVendor?bizStatusStart=20&bizStatusEnd=27";
+        return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor?bizStatusStart=20&bizStatusEnd=27";
     }
 
     //        申请付款
     @RequestMapping(value = {"applyPayment"})
     public String applyPayment() {
-        return "redirect:/a/biz/po/bizPoHeader/listV2?applyPayment=1";
+        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/listV2?applyPayment=1";
     }
 
     //        付款单审核
@@ -207,20 +207,20 @@ public class MyPanelController extends BaseController {
         try {
             tempRole.setEnname(RoleEnNameEnum.FINANCE_DIRECTOR.getState());
             if (userRoleList.contains(tempRole)) {
-                return "redirect:/a/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("财务总监", "UTF-8");
+                return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("财务总监", "UTF-8");
             }
             tempRole.setEnname(RoleEnNameEnum.FINANCIAL_GENERAL_MANAGER.getState());
             if (userRoleList.contains(tempRole)) {
-                return "redirect:/a/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("财务总经理", "UTF-8");
+                return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("财务总经理", "UTF-8");
             }
             tempRole.setEnname(RoleEnNameEnum.PROVIDER_MANAGER.getState());
             if (userRoleList.contains(tempRole)) {
-                return "redirect:/a/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("供货部", "UTF-8");
+                return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("供货部", "UTF-8");
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return "redirect:/a/biz/po/bizPoPaymentOrder/listV2";
+        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/listV2";
     }
 
     //        备货单审核
@@ -233,49 +233,49 @@ public class MyPanelController extends BaseController {
 //      渠道经理
         tempRole.setEnname(RoleEnNameEnum.CHANNEL_MANAGER.getState());
         if (userRoleList.contains(tempRole)) {
-            return "redirect:/a/biz/request/bizRequestHeaderForVendor?process=1";
+            return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor?process=1";
         }
 //        品类主管：订单审核；申请付款；付款单审核；备货单审核；待排产；需上架商品
         tempRole.setEnname(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState());
         if (userRoleList.contains(tempRole)) {
-            return "redirect:/a/biz/request/bizRequestHeaderForVendor?process=2";
+            return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor?process=2";
         }
 //        运营总监：备货审核
         tempRole.setEnname(RoleEnNameEnum.OP_DIRECTOR.getState());
         if (userRoleList.contains(tempRole)) {
-            return "redirect:/a/biz/request/bizRequestHeaderForVendor?process=8";
+            return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor?process=8";
         }
-        return "redirect:/a/biz/request/bizRequestHeaderForVendor";
+        return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor";
     }
 
     //        待排产
     @RequestMapping(value = {"waitScheduling"})
     public String waitScheduling() {
-        return "redirect:/a/biz/po/bizPoHeader/listV2?poSchType=0";
+        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/listV2?poSchType=0";
     }
 
     //        备货单/订单付款
     @RequestMapping(value = {"orderPayment"})
     public String orderPayment() {
-        return "redirect:/a/biz/po/bizPoHeader/listV2?waitPay=1";
+        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/listV2?waitPay=1";
     }
 
     //        需上架商品
     @RequestMapping(value = {"needPutaway"})
     public String needPutaway() {
-        return "redirect:/a/biz/sku/bizSkuInfo/list?notPutaway=1&productInfo.prodType=1";
+        return "redirect:" + Global.getAdminPath() + "/biz/sku/bizSkuInfo/list?notPutaway=1&productInfo.prodType=1";
     }
 
     //        备货单待发货
     @RequestMapping(value = {"reWaitShipments"})
     public String reWaitShipments() {
-        return "redirect:/a/biz/request/bizRequestHeaderForVendor?bizStatus=15";
+        return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor?bizStatus=15";
     }
 
     //        订单待发货
     @RequestMapping(value = {"orderWaitShipments"})
     public String orderWaitShipments() {
-        return "redirect:/a/biz/order/bizOrderHeader/list?waitShipments=1";
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?waitShipments=1";
     }
 
 
