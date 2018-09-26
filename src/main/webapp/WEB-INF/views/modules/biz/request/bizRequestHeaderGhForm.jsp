@@ -27,6 +27,24 @@
 
 		});
 	</script>
+	<script type="text/javascript">
+        function doPrint() {
+            top.$.jBox.confirm("确认要打印当前入库单吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    bdhtml=window.document.body.innerHTML;
+                    sprnstr="<!--startprint-->";
+                    eprnstr="<!--endprint-->";
+                    prnhtml=bdhtml.substr(bdhtml.indexOf(sprnstr)+17);
+                    prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr));
+                    window.document.body.innerHTML=prnhtml;
+                    window.print();
+                    location.reload();
+                    setTimeout("window.close();", 0);
+                }
+            },{buttonsFocus:1});
+            top.$('.jbox-body .jbox-icon').css('top','55px');
+        }
+	</script>
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -235,12 +253,107 @@
 	</div>
 
 	<div class="form-actions">
-		<input onclick="window.print();" type="button" class="btn btn-primary" value="打印备货清单收货" style="background:#F78181;"/>
+		<input class="btn btn-primary" type="button" onclick="doPrint()" value="打印"/>
 		&nbsp;&nbsp;&nbsp;
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 	</div>
 
 </form:form>
 
+<div>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>局部打印</title>
+	</head>
+	<br/>
+	<div style="margin-left: 100px;display: none">
+		<!--startprint--><!--注意要加上html里star和end的这两个标记-->
+		<p>
+		<table border="1" border-collapse:collapse style="width: 1000px;height: 1000px">
+			<tr align="center">
+				<td colspan="7">
+					<img src="${ctxStatic}/jingle/image/logo.png" style="float: left">
+					<b style="font-size: 20px">云仓入库单</b>
+					<div style="font-size: 15px;font-weight: bold;float: right;margin-bottom: 0px">www.wanhutong.com</div>
+				</td>
+			</tr>
+			<tr align="center" style="width:300px">
+				<td rowspan="2">单号</td>
+				<td rowspan="2">${bizRequestHeader.reqNo}</td>
+				<td >订单类型</td>
+				<td colspan="4">
+					<input type="checkbox">备货
+					<input type="checkbox">调拨
+					<input type="checkbox">样品
+					<input type="checkbox">退货
+				</td>
+			</tr>
+			<tr align="center">
+				<td>供货日期</td>
+				<td colspan="4">
+					<fmt:formatDate value="${collectGoodsRecord.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+			</tr>
+			<tr align="center">
+				<td>发货人</td>
+				<td>${collectGoodsRecord.createBy.name}</td>
+				<td>联系电话</td>
+				<td colspan="4">${collectGoodsRecord.createBy.mobile}</td>
+			</tr>
+			<tr align="center">
+				<td>收货地址</td>
+				<td colspan="6">${logistics.pcrName}${logistics.address}</td>
+			</tr>
+			<tr align="center">
+				<td>货号</td>
+				<td width="250px">商品名称</td>
+				<td width="150px">供应商名称</td>
+				<td width="100px">品类</td>
+				<td width="80px">颜色</td>
+				<td width="80px">规格</td>
+				<td width="80px">已入库数量</td>
+			</tr>
+			<c:forEach items="${reqDetailList}" var="reqDetail">
+				<tr align="center">
+					<td>${reqDetail.skuInfo.itemNo}</td>
+					<td>${reqDetail.skuInfo.name}</td>
+					<td>${reqDetail.skuInfo.productInfo.office.name}</td>
+					<td>${reqDetail.skuInfo.productInfo.bizVarietyInfo.name}</td>
+					<td>${reqDetail.skuInfo.color}</td>
+					<td>${reqDetail.skuInfo.size}</td>
+					<td>${reqDetail.recvQty}</td>
+				</tr>
+			</c:forEach>
+			<tr align="center">
+				<td>收货员签字</td>
+				<td></td>
+				<td>负责人签字</td>
+				<td></td>
+				<td>库管签字</td>
+				<td colspan="2"></td>
+			</tr>
+			<tr align="center">
+				<td>到货状况</td>
+				<td><input type="checkbox">完好
+					<input type="checkbox">损坏
+					<input type="checkbox">缺少
+					<input type="checkbox">其他</td>
+				<td>状况说明</td>
+				<td></td>
+				<td>收货日期</td>
+				<td colspan="2"></td>
+			</tr>
+			<tr align="center">
+				<td  colspan="7">说明：1.此入库清单三联，第一联云仓库管存档，第二联负责人留存备查，第三联云仓收货人签收存档</td>
+			</tr>
+			<tr align="center">
+				<td  colspan="7">说明：2.云仓收货认真检查货品状况并填写签收，收货本日内请完成收货入库，如有运输问题请及时反馈给供货中心予以处理</td>
+			</tr>
+		</table>
+		</p>
+		<!--endprint-->
+
+	</div>
+</div>
 </body>
 </html>

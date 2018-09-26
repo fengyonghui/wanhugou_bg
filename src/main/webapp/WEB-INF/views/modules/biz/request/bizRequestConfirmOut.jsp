@@ -64,6 +64,7 @@
                 }
             });
         });
+
         $("#btnSubmit").click(function () {
 			var reqQty = $("#reqQty").val();
 			var sendNum = $("#sendNum").val();
@@ -75,6 +76,7 @@
 				console.info($(this).val())
             });
         });
+
 
         function checkout(obj) {
             var reqQty = $("#reqQty"+obj).val();	//申报数量
@@ -103,6 +105,7 @@
             }
         }
 
+
         function checkReqDetail(obj) {
             if ($(obj).attr("checked")=='checked') {
                 $(obj).attr("checked","checked");
@@ -120,6 +123,24 @@
             treasury.sendNo = sendNo;
             treasury.uVersion = uVersion;
             return treasury;
+        }
+	</script>
+	<script type="text/javascript">
+        function doPrint() {
+            top.$.jBox.confirm("确认要打印当前出库单吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    bdhtml=window.document.body.innerHTML;
+                    sprnstr="<!--startprint-->";
+                    eprnstr="<!--endprint-->";
+                    prnhtml=bdhtml.substr(bdhtml.indexOf(sprnstr)+17);
+                    prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr));
+                    window.document.body.innerHTML=prnhtml;
+                    window.print();
+                    location.reload();
+                //    alert("打印出库单成功");
+                }
+            },{buttonsFocus:1});
+            top.$('.jbox-body .jbox-icon').css('top','55px');
         }
 	</script>
 </head>
@@ -281,10 +302,106 @@
 		<c:if test="${source ne 'detail'}">
 			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="确认出库"/>&nbsp;</shiro:hasPermission>
 		</c:if>
+		<%--<input id="yulan" class="btn btn-primary" type="button" value="打印预览"/>--%>
+		<input class="btn btn-primary" type="button" onclick="doPrint()" value="打印"/>
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 	</div>
 
 </form:form>
 
+	<div>
+		<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+			<title>局部打印</title>
+		</head>
+		<br/>
+		<div style="margin-left: 100px;display: none">
+			<!--startprint--><!--注意要加上html里star和end的这两个标记-->
+			<p>
+			<table border="1" border-collapse:collapse style="width: 1000px;height: 1000px">
+				<tr align="center" style="height: 60px">
+					<td colspan="6" valign="middle">
+						<img src="${ctxStatic}/jingle/image/logo.png" style="float: left">
+						<b style="font-size: 20px">云仓出库单</b>
+						<div style="font-size: 15px;font-weight: bold;float: right;margin-bottom: 0px">www.wanhutong.com</div>
+					</td>
+				</tr>
+				<tr align="center">
+					<td rowspan="2">单号</td>
+					<td rowspan="2">${bizOrderHeader.orderNum}</td>
+					<td >订单类型</td>
+					<td colspan="3">
+						<input type="checkbox">订单
+						<input type="checkbox">调拨
+						<input type="checkbox">样品
+						<input type="checkbox">退货
+					</td>
+				</tr>
+				<tr align="center">
+					<td>出库日期</td>
+					<td colspan="3">
+						<fmt:formatDate value="${bizSendGoodsRecord.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					</td>
+				</tr>
+				<tr align="center">
+					<td>发货人</td>
+					<td>${bizOrderHeader.bizLocation.receiver}</td>
+					<td>联系电话</td>
+					<td colspan="3">${bizOrderHeader.bizLocation.phone}</td>
+				</tr>
+				<tr align="center">
+					<td>收货地址</td>
+					<td colspan="5">${bizOrderHeader.bizLocation.fullAddress}</td>
+
+				</tr>
+				<tr align="center">
+					<td>货号</td>
+					<td width="200px">商品名称</td>
+					<td width="200px">供应商名称</td>
+					<td width="120px">颜色</td>
+					<td width="120px">规格</td>
+					<td width="120px">已出库数量</td>
+				</tr>
+				<c:forEach items="${orderDetailList}" var="orderDetail">
+					<tr align="center">
+						<td>${orderDetail.skuInfo.itemNo}</td>
+						<td>${orderDetail.skuInfo.name}</td>
+						<td>${orderDetail.vendor.name}</td>
+						<td>${orderDetail.color}</td>
+						<td>${orderDetail.standard}</td>
+						<td>${orderDetail.sentQty}</td>
+					</tr>
+				</c:forEach>
+				<tr align="center">
+					<td>库管签字</td>
+					<td></td>
+					<td>财务签字</td>
+					<td></td>
+					<td>司机签字</td>
+					<td></td>
+				</tr>
+				<tr align="center">
+					<td>到货状况</td>
+					<td><input type="checkbox">完好
+						<input type="checkbox">损坏
+						<input type="checkbox">缺少
+						<input type="checkbox">其他</td>
+					<td>状况说明</td>
+					<td></td>
+					<td>收货日期</td>
+					<td></td>
+				</tr>
+				<tr align="center">
+					<td  colspan="6">1.说明：此出库清单三联，第一联云仓库管发货存档，第二联账务或采购中心签字留存，第三联云仓司机签收存档</td>
+				</tr>
+				<tr align="center">
+					<td  colspan="6">2.说明：此出库清单经云仓库管签字生效，云仓货品出库需携带此单，认真检查货品状况并填写签收</td>
+				</tr>
+			</table>
+			</p>
+			<!--endprint-->
+
+		</div>
+	</div>
 </body>
 </html>
