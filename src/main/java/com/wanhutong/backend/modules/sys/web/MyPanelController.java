@@ -1,6 +1,7 @@
 package com.wanhutong.backend.modules.sys.web;
 
 
+import com.sun.deploy.net.URLEncoder;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -16,7 +17,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 @Controller
@@ -160,15 +160,29 @@ public class MyPanelController extends BaseController {
     }
 
 
-    //        订单审核 TODO
+    //        订单审核 
     @RequestMapping(value = {"waitAudit"})
     public String waitAudit(RedirectAttributes redirectModel) {
         User user = UserUtils.getUser();
         BizOrderHeader bizOrderHeader = new BizOrderHeader();
-        if (user.isAdmin()) {
-            bizOrderHeader.setStr("orderAudit");
-        }
-        redirectModel.addFlashAttribute("bizOrderHeader", bizOrderHeader);
+       if(user.isAdmin()){
+           bizOrderHeader.setStr("orderAudit");
+       }else{
+           List<Role> list= user.getRoleList();
+           for(Role role:list){
+               if(role.getEnname().equals(RoleEnNameEnum.GENERAL_MANAGER.getState())){
+                    bizOrderHeader.setSelectAuditStatus("总经理");
+               } else if(role.getEnname().equals(RoleEnNameEnum.CHANNEL_MANAGER.getState())){
+                bizOrderHeader.setSelectAuditStatus("渠道经理");
+               }else if(role.getEnname().equals(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState())|| role.getEnname().equals(RoleEnNameEnum.MARKETINGMANAGER.getState()) ){
+                   bizOrderHeader.setSelectAuditStatus("品类主管");
+               }else if(role.getEnname().equals(RoleEnNameEnum.FINANCE.getState())){
+                   bizOrderHeader.setSelectAuditStatus("财务经理");
+               }
+           }
+       }
+
+        redirectModel.addFlashAttribute("bizOrderHeader",bizOrderHeader);
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list";
 
     }
