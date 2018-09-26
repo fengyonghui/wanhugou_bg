@@ -75,7 +75,7 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
             }else{
                 custCredit.setWallet(bizCustCredit.getWallet());
             }
-            //原账户万户币
+/*            //原账户万户币
             BigDecimal money = custCredit.getMoney();
             //修改后账户万户币
             BigDecimal bizCustCreditMoney = bizCustCredit.getMoney();
@@ -101,7 +101,7 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
                 bizMoneyRecode.setStatusName("后台减");
                 bizMoneyRecode.setComment("系统减积分");
             }
-            bizMoneyRecodeService.save(bizMoneyRecode);
+            bizMoneyRecodeService.save(bizMoneyRecode);*/
             custCredit.setMoney(bizCustCredit.getMoney());
 
             custCredit.setId(bizCustCredit.getCustomer().getId());

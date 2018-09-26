@@ -61,11 +61,6 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		{
 			bizIntegrationActivity.setStatus(1);
 		}
-		if(bizIntegrationActivity.getActivityCode().equals("ZCS")||bizIntegrationActivity.getActivityCode().equals("ZFS")||bizIntegrationActivity.getActivityCode().equals("XDK"))
-		{
-			super.save(bizIntegrationActivity);
-			return;
-		}
 
 			bizIntegrationActivity.setSendStatus(0);
 		bizIntegrationActivity.setActivityTools("万户币");
@@ -74,6 +69,11 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		{
 			String vFullName = getFirstLetters(activityName, HanyuPinyinCaseType.UPPERCASE);
 			bizIntegrationActivity.setActivityCode(vFullName);
+		}
+		if(bizIntegrationActivity.getActivityCode().equals("ZCS")||bizIntegrationActivity.getActivityCode().equals("ZFS")||bizIntegrationActivity.getActivityCode().equals("XDK"))
+		{
+			super.save(bizIntegrationActivity);
+			return;
 		}
 		String officeIds = bizIntegrationActivity.getOfficeIds();
 		List<BizIntegrationActivity> list = Lists.newArrayList();

@@ -58,6 +58,7 @@
 				<th>优惠工具</th>
 				<th>发送人数</th>
 				<th>每人赠送积分</th>
+				<th>发送总数</th>
 				<th>备注说明</th>
 				<th>发送状态</th>
 				<th>创建人</th>
@@ -89,6 +90,9 @@
 				</td>
 				<td>
 					${bizIntegrationActivity.integrationNum}
+				</td>
+				<td>
+						${bizIntegrationActivity.sendAll}
 				</td>
 				<td>
 					${bizIntegrationActivity.description}
