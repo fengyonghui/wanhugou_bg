@@ -153,15 +153,9 @@ public class MyPanelService {
      */
     public int getOrderWaitShipmentsCount() {
         BizOrderHeader bizOrderHeader = new BizOrderHeader();
-        bizOrderHeader.setStatu(String.valueOf(OrderHeaderBizStatusEnum.STOCKING.getState()));
+        bizOrderHeader.setWaitShipments(1);
         List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
-        int temp = CollectionUtils.isEmpty(list) ? 0 : list.size();
-
-        bizOrderHeader.setStatu(String.valueOf(OrderHeaderBizStatusEnum.SUPPLYING.getState()));
-        bizOrderHeader.setSupplyId(0);
-        List<BizOrderHeader> tempList = bizOrderHeaderService.findList(bizOrderHeader);
-
-        return CollectionUtils.isEmpty(tempList) ? temp : list.size() + temp;
+        return CollectionUtils.isEmpty(list) ? 0 : list.size();
     }
 
     /**

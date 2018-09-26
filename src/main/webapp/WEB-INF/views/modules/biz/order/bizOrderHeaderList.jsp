@@ -191,13 +191,19 @@
                    value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
         </li>
-		<li><label>同意发货:</label>
+		<li><label>待同意发货:</label>
 			<select name="mobileAuditStatus" class="input-medium">
 				<option value="">请选择</option>
 				<option value="0">待审核</option>
 				<option value="1">审核失败</option>
 				<option value="2">其他</option>
 			</select>
+		</li>
+		<li><label>待发货</label>
+			<form:select path="waitShipments" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:option value="1" label="是"/>
+			</form:select>
 		</li>
 		<c:if test="${statu == 'unline'}">
 			<li><label>审核状态:</label>

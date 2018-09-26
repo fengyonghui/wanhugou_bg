@@ -114,9 +114,16 @@
             </c:if>
         </li>
         <li>
-            <a href="${ctx}/sys/myPanel/waitShipments">待发货</a>
-            <c:if test="${waitShipmentsCount > 0}">
-                <span>${waitShipmentsCount}</span>
+            <a href="${ctx}/sys/myPanel/reWaitShipments">备货单待发货</a>
+            <c:if test="${reWaitShipmentsCount > 0}">
+                <span>${reWaitShipmentsCount}</span>
+            </c:if>
+        </li>
+
+        <li>
+            <a href="${ctx}/sys/myPanel/orderWaitShipments">订单待发货</a>
+            <c:if test="${orderWaitShipmentsCount > 0}">
+                <span>${orderWaitShipmentsCount}</span>
             </c:if>
         </li>
         <li>

@@ -127,30 +127,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     @Override
     public List<BizOrderHeader> findList(BizOrderHeader bizOrderHeader) {
-        User user = UserUtils.getUser();
-        boolean oflag = false;
-        if (UserUtils.getOfficeList() != null) {
-            for (Office office : UserUtils.getOfficeList()) {
-                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
-                    oflag = true;
-                }
-            }
-        }
-        if (user.isAdmin()) {
-            return super.findList(bizOrderHeader);
-        } else {
-            if (oflag) {
-                //     bizOrderHeader.setConsultantId(user.getId());
-            } else {
-                bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
-            }
-            return super.findList(bizOrderHeader);
-        }
-    }
-
-    @Override
-    public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
-
         JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
         DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
@@ -184,8 +160,29 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
             bizOrderHeader.setDoFifthCode(CollectionUtils.isEmpty(doFifthConfigValue) ? null : doFifthConfigValue);
         }
+        User user = UserUtils.getUser();
+        boolean oflag = false;
+        if (UserUtils.getOfficeList() != null) {
+            for (Office office : UserUtils.getOfficeList()) {
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
+                    oflag = true;
+                }
+            }
+        }
+        if (user.isAdmin()) {
+            return super.findList(bizOrderHeader);
+        } else {
+            if (oflag) {
+                //     bizOrderHeader.setConsultantId(user.getId());
+            } else {
+                bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+            }
+            return super.findList(bizOrderHeader);
+        }
+    }
 
-
+    @Override
+    public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user = UserUtils.getUser();
         if (user.isAdmin()) {
             bizOrderHeader.setDataStatus("filter");

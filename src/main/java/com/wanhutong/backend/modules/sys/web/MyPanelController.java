@@ -2,6 +2,7 @@ package com.wanhutong.backend.modules.sys.web;
 
 
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -198,28 +199,34 @@ public class MyPanelController extends BaseController {
         return null;
     }
 
-    //        待排产 TODO
+    //        待排产
     @RequestMapping(value = {"waitScheduling"})
     public String waitScheduling() {
-        return null;
+        return "redirect:/a/biz/po/bizPoHeader/listV2?poSchType=0";
     }
 
-    //        备货单/订单付款 TODO
+    //        备货单/订单付款
     @RequestMapping(value = {"orderPayment"})
     public String orderPayment() {
-        return null;
+        return "redirect:/a/biz/po/bizPoHeader/listV2?waitPay=1";
     }
 
-    //        需上架商品 TODO
+    //        需上架商品
     @RequestMapping(value = {"needPutaway"})
     public String needPutaway() {
-        return null;
+        return "redirect:/a/biz/sku/bizSkuInfo/list?notPutaway=1&productInfo.prodType=1";
     }
 
-    //        待发货 TODO
-    @RequestMapping(value = {"waitShipments"})
-    public String waitShipments() {
-        return null;
+    //        备货单待发货
+    @RequestMapping(value = {"reWaitShipments"})
+    public String reWaitShipments() {
+        return "redirect:/a/biz/request/bizRequestHeaderForVendor?bizStatus=15";
+    }
+
+    //        订单待发货
+    @RequestMapping(value = {"orderWaitShipments"})
+    public String orderWaitShipments() {
+        return "redirect:/a/biz/order/bizOrderHeader/list?waitShipments=1";
     }
 
 
