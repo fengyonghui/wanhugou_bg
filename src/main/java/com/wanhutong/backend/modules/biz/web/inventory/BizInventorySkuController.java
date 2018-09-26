@@ -686,10 +686,10 @@ public class BizInventorySkuController extends BaseController {
         String invReqDetail = requestHeader.getInvReqDetail();
         if (StringUtils.isBlank(invReqDetail)) {
             addMessage(redirectAttributes,"保存库存失败");
-            return "redirect:" + adminPath + "/biz/inventory/bizInventory";
+            return "redirect:" + adminPath + "/biz/inventory/bizInventorySku/inventory";
         }
         bizInventorySkuService.inventorySave(requestHeader);
-        return "modules/biz/inventory/bizInventory";
+        return "redirect:" + adminPath + "/biz/inventory/bizInventorySku/inventory";
     }
 
 

@@ -204,9 +204,9 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	public Integer getStockQtyBySkuIdCentIdSkuType(Integer skuId, Integer centId, Integer skuType) {
 		return dao.getStockQtyBySkuIdCentIdSkuType(skuId, centId, skuType);
 	}
-
-	public void updateStockQty(BizInventorySku inventorySku) {
-		dao.updateStockQty(inventorySku.getId());
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
+	public void updateStockQty(BizInventorySku inventorySku, Integer stockQty) {
+		dao.updateStockQty(inventorySku.getId(),stockQty);
 	}
 
 	/**
