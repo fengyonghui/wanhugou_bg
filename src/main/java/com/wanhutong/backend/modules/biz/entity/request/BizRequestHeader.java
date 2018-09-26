@@ -3,7 +3,9 @@
  */
 package com.wanhutong.backend.modules.biz.entity.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
@@ -18,14 +20,10 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import javax.validation.constraints.NotNull;
-
-import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
  * 备货清单Entity
@@ -240,7 +238,7 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 		super(id);
 	}
 
-	@Length(min=1, max=20, message="需求单号-备货单号长度必须介于 1 和 20 之间")
+	@Length(min=1, max=30, message="需求单号-备货单号长度必须介于 1 和 30 之间")
 	public String getReqNo() {
 		return reqNo;
 	}

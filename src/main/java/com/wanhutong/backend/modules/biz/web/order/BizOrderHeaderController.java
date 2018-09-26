@@ -285,7 +285,7 @@ public class BizOrderHeaderController extends BaseController {
                        }
 
                        if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
-                           OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail() + b.getFreight() + b.getTotalExp() + b.getServiceFee(), b.getReceiveTotal());
+                           OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                            //b.setPayProportion(orderPayProportionStatusEnum.getState());
                            bizOrderHeaderService.saveOrderHeader(b);
                            genAuditProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
@@ -297,7 +297,7 @@ public class BizOrderHeaderController extends BaseController {
                        commonProcessEntityTemp.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
                        list = commonProcessService.findList(commonProcessEntityTemp);
                        if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
-                           OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail() + b.getFreight() + b.getTotalExp() + b.getServiceFee(), b.getReceiveTotal());
+                           OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                            Integer state = orderPayProportionStatusEnum.getState();
                            if (state > 0) {
                                bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
@@ -434,7 +434,7 @@ public class BizOrderHeaderController extends BaseController {
                         }
 
                         if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
-                            OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail() + b.getFreight() + b.getTotalExp() + b.getServiceFee(), b.getReceiveTotal());
+                            OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                             //b.setPayProportion(orderPayProportionStatusEnum.getState());
                             bizOrderHeaderService.saveOrderHeader(b);
                             genAuditProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
@@ -446,7 +446,7 @@ public class BizOrderHeaderController extends BaseController {
                         commonProcessEntityTemp.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
                         list = commonProcessService.findList(commonProcessEntityTemp);
                         if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
-                            OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b.getTotalDetail() + b.getFreight() + b.getTotalExp() + b.getServiceFee(), b.getReceiveTotal());
+                            OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                             Integer state = orderPayProportionStatusEnum.getState();
                             if (state > 0) {
                                 bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
@@ -753,28 +753,31 @@ public class BizOrderHeaderController extends BaseController {
 
         List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
 
-        BizPoHeader bizPoHeader = new BizPoHeader();
-        bizPoHeader.setBizOrderHeader(bizOrderHeader);
-        List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
         List<CommonProcessEntity> poAuditList = null;
+        if (bizOrderHeader.getId() != null) {
+            BizPoHeader bizPoHeader = new BizPoHeader();
+            bizPoHeader.setBizOrderHeader(bizOrderHeader);
+            List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
 
-        if (CollectionUtils.isNotEmpty(poList)) {
-            bizPoHeader = poList.get(0);
-            CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
-            poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-            poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-            poAuditList = commonProcessService.findList(poCommonProcessEntity);
+            if (CollectionUtils.isNotEmpty(poList)) {
+                bizPoHeader = poList.get(0);
+                CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
+                poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+                poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+                poAuditList = commonProcessService.findList(poCommonProcessEntity);
 
-            BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
-            bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
-            List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
-            BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
-            for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
-                BigDecimal payTotal = poPaymentOrder.getPayTotal();
-                totalPayTotal = totalPayTotal.add(payTotal);
+                BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+                bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
+                List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+                BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
+                for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
+                    BigDecimal payTotal = poPaymentOrder.getPayTotal();
+                    totalPayTotal = totalPayTotal.add(payTotal);
+                }
+                model.addAttribute("totalPayTotal", totalPayTotal);
             }
-            model.addAttribute("totalPayTotal", totalPayTotal);
         }
+
 
         if (CollectionUtils.isNotEmpty(poAuditList) && CollectionUtils.isNotEmpty(list)) {
             if (bizOrderHeader.getOrderNum().startsWith("DO")) {
@@ -804,7 +807,7 @@ public class BizOrderHeaderController extends BaseController {
 
         String createPo = "no";
         Integer orderType = bizOrderHeader.getOrderType();
-        OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail() + bizOrderHeader.getFreight() + bizOrderHeader.getTotalExp() + bizOrderHeader.getServiceFee(), bizOrderHeader.getReceiveTotal());
+        OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader);
         Integer statusEnumState = statusEnum.getState();
         request.setAttribute("statusEnumState", statusEnumState);
         if (BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(orderType)){
@@ -1164,7 +1167,7 @@ public class BizOrderHeaderController extends BaseController {
 
         String createPo = "no";
         Integer orderType = bizOrderHeader.getOrderType();
-        OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail() + bizOrderHeader.getFreight() + bizOrderHeader.getTotalExp() + bizOrderHeader.getServiceFee(), bizOrderHeader.getReceiveTotal());
+        OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader);
         Integer statusEnumState = statusEnum.getState();
         request.setAttribute("statusEnumState", statusEnumState);
         resultMap.put("statusEnumState", statusEnumState);
@@ -1309,7 +1312,7 @@ public class BizOrderHeaderController extends BaseController {
         }
         String statuPath = request.getParameter("statuPath");
         if (bizOrderHeader.getId() != null) {
-            OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail() + bizOrderHeader.getFreight() + bizOrderHeader.getTotalExp() + bizOrderHeader.getServiceFee(), bizOrderHeader.getReceiveTotal());
+            OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader);
             if (bizOrderHeader.getOrderNum().startsWith("DO")) {
                 if (OrderPayProportionStatusEnum.ALL == statusEnum || OrderPayProportionStatusEnum.FIFTH == statusEnum) {
                     bizOrderHeaderService.saveCommonProcess(statusEnum, bizOrderHeader, Boolean.TRUE);
@@ -1574,7 +1577,7 @@ public class BizOrderHeaderController extends BaseController {
         try {
             if (bizOrderHeader.getId() != null) {
                 BizOrderHeader order = bizOrderHeaderService.get(bizOrderHeader);
-                OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(order.getTotalDetail() + order.getFreight() + order.getTotalExp() + order.getServiceFee(), order.getReceiveTotal());
+                OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader);
                 if (order != null) {
                     if (objJsp.equals(OrderHeaderBizStatusEnum.SUPPLYING.getState())) {
 
@@ -1663,7 +1666,7 @@ public class BizOrderHeaderController extends BaseController {
         try {
             if (bizOrderHeader.getId() != null) {
                 BizOrderHeader order = bizOrderHeaderService.get(bizOrderHeader);
-                OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(order.getTotalDetail() + order.getFreight() + order.getTotalExp() + order.getServiceFee(), order.getReceiveTotal());
+                OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader);
                 if (order != null) {
                     if (objJsp.equals(OrderHeaderBizStatusEnum.SUPPLYING.getState())) {
 
@@ -2790,7 +2793,7 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         currentProcess = processMap.get(Integer.valueOf(currentType));
-        switch (OrderPayProportionStatusEnum.parse(orderHeader.getTotalDetail(), orderHeader.getReceiveTotal())) {
+        switch (OrderPayProportionStatusEnum.parse(orderHeader)) {
             case ZERO:
                 passProcessCode = currentProcess.getZeroPassCode();
                 break;
