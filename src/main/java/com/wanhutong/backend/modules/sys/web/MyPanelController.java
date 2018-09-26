@@ -1,7 +1,9 @@
 package com.wanhutong.backend.modules.sys.web;
 
 
+import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -10,6 +12,7 @@ import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -158,8 +161,15 @@ public class MyPanelController extends BaseController {
 
     //        订单审核 TODO
     @RequestMapping(value = {"waitAudit"})
-    public String waitAudit() {
-        return null;
+    public String waitAudit(RedirectAttributes redirectModel) {
+       User user= UserUtils.getUser();
+        BizOrderHeader  bizOrderHeader=new BizOrderHeader();
+       if(user.isAdmin()){
+           bizOrderHeader.setStr("orderAudit");
+       }
+        redirectModel.addFlashAttribute("bizOrderHeader",bizOrderHeader);
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list";
+
     }
 
     //        有尾款 TODO

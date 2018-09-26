@@ -6,11 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.order;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
-import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizPlatformDataOverviewDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.entity.order.BizDrawBack;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
@@ -417,4 +413,11 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return
      */
     Integer getOrderDetailIdBySkuInfoId(@Param("poHeaderId") Integer poHeaderId, @Param("skuInfoId") Integer skuInfoId);
+
+    /**
+     * 系统管理员查看待审核订单
+     * @param bizOrderHeader
+     * @return
+     */
+    List<BizOrderHeader> findListNotCompleteAudit(BizOrderHeader bizOrderHeader);
 }
