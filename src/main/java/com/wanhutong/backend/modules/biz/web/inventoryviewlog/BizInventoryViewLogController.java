@@ -3,15 +3,27 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventoryviewlog;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +34,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
-import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +53,13 @@ public class BizInventoryViewLogController extends BaseController {
 	private BizInventoryViewLogService bizInventoryViewLogService;
 	@Autowired
 	private DictService dictService;
+	@Autowired
+	private BizRequestHeaderService bizRequestHeaderService;
+	@Autowired
+	private BizRequestDetailService bizRequestDetailService;
+
+	@Autowired
+	private BizSkuInfoV2Service bizSkuInfoService;
 
 	@ModelAttribute
 	public BizInventoryViewLog get(@RequestParam(required=false) Integer id) {
@@ -70,6 +84,30 @@ public class BizInventoryViewLogController extends BaseController {
 	@RequiresPermissions("biz:inventoryviewlog:bizInventoryViewLog:view")
 	@RequestMapping(value = "form")
 	public String form(BizInventoryViewLog bizInventoryViewLog, Model model) {
+		BizRequestHeader bizRequestHeader=bizInventoryViewLog.getRequestHeader();
+		BizRequestHeader requestHeader=bizRequestHeaderService.get(bizRequestHeader.getId());
+		BizRequestDetail requestDetail = new BizRequestDetail();
+		requestDetail.setRequestHeader(requestHeader);
+		List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(requestDetail);
+		if (CollectionUtils.isNotEmpty(requestDetailList)) {
+			for (BizRequestDetail bizRequestDetail : requestDetailList) {
+				List<AttributeValueV2> colorList = bizSkuInfoService.getSkuProperty(bizRequestDetail.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "颜色");
+				if (CollectionUtils.isNotEmpty(colorList)) {
+					bizRequestDetail.getSkuInfo().setColor(colorList.get(0).getValue());
+				}
+				List<AttributeValueV2> sizeList = bizSkuInfoService.getSkuProperty(bizRequestDetail.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "尺寸");
+				if (CollectionUtils.isNotEmpty(sizeList)) {
+					bizRequestDetail.getSkuInfo().setSize(sizeList.get(0).getValue());
+				}
+				List<CommonImg> imgList = bizSkuInfoService.getImg(bizRequestDetail.getSkuInfo().getId(), ImgEnum.SKU_TYPE.getTableName(), ImgEnum.SKU_TYPE.getCode());
+				if (CollectionUtils.isNotEmpty(imgList)) {
+					bizRequestDetail.getSkuInfo().setSkuImgUrl(imgList.get(0).getImgServer() + imgList.get(0).getImgPath());
+				}
+
+			}
+		}
+		requestHeader.setRequestDetailList(requestDetailList);
+		bizInventoryViewLog.setRequestHeader(requestHeader);
 		model.addAttribute("bizInventoryViewLog", bizInventoryViewLog);
 		return "modules/biz/inventoryviewlog/bizInventoryViewLogForm";
 	}
