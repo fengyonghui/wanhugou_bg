@@ -193,12 +193,12 @@
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
         </li>
 		<li><label>待同意发货:</label>
-			<select name="mobileAuditStatus" class="input-medium">
-				<option value="">请选择</option>
-				<option value="0">待审核</option>
-				<option value="1">审核失败</option>
-				<option value="2">其他</option>
-			</select>
+			<form:select path="mobileAuditStatus" class="input-medium">
+				<form:option value="">请选择</form:option>
+				<form:option value="0">待审核</form:option>
+				<form:option value="1">审核失败</form:option>
+				<form:option value="2">其他</form:option>
+			</form:select>
 		</li>
 		<li><label>待发货</label>
 			<form:select path="waitShipments" class="input-medium">
@@ -214,11 +214,11 @@
 		</li>
 		<c:if test="${statu == 'unline'}">
 			<li><label>审核状态:</label>
-				<select name="examine" class="input-medium">
-					<option value="0">请选择</option>
-					<option value="1">审核完成</option>
-					<option value="2">未审核完成</option>
-				</select>
+				<form:select path="examine" class="input-medium">
+					<form:option value="0">请选择</form:option>
+					<form:option value="1">审核完成</form:option>
+					<form:option value="2">未审核完成</form:option>
+				</form:select>
 			</li>
 		</c:if>
 		<li><label>测试数据</label>
