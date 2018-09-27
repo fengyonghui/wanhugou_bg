@@ -400,7 +400,6 @@
 			$.each(data, function(i, item) {
 				if(item.name.indexOf(key) > -1) {
 					reult.push(item)
-
 				}
 			})
 			$.each(reult, function(i, item) {

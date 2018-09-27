@@ -215,19 +215,19 @@
 	                        		}
 	                        	}
 	                        	//开启审核
-	                        	var stastartCheckBtn = '';
-	                        	var stastartCheckBtnTxt = '';
-	                        	if(_this.OrdFlagstartAudit==false){
-	                        		if(item.commonProcess.type == -1){
-	                        			if(item.bizOrderHeader != null){
-	                        				stastartCheckBtnTxt = '开启审核';
-	                        				staPayBtn = item.bizOrderHeader.id;
-	                        			}
-	                        			if(item.bizRequestHeader != null){
-	                        				stastartCheckBtnTxt = '开启审核';
-	                        			}
-	                        		}
-	                        	}
+//	                        	var stastartCheckBtn = '';
+//	                        	var stastartCheckBtnTxt = '';
+//	                        	if(_this.OrdFlagstartAudit==false){
+//	                        		if(item.commonProcess.type == -1){
+//	                        			if(item.bizOrderHeader != null){
+//	                        				stastartCheckBtnTxt = '开启审核';
+//	                        				staPayBtn = item.bizOrderHeader.id;
+//	                        			}
+//	                        			if(item.bizRequestHeader != null){
+//	                        				stastartCheckBtnTxt = '开启审核';
+//	                        			}
+//	                        		}
+//	                        	}
 	                        	//排产
 	                        	var SchedulingBtnTxt = '';
 	                        	if(_this.OrdFlagScheduling==false){
@@ -269,9 +269,9 @@
 											'<div class="mui-col-xs-3 staPayBtn" staordid="'+ item.id +'" ordid="'+ staPayBtn +'" ordids="'+ staPayBtns +'">' +
 												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-3 '+ stastartCheckBtn +'" staordid="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li>' +
-											'</div>'+
+//											'<div class="mui-col-xs-3 stastartCheckBtn" staordid="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li>' +
+//											'</div>'+
 											'<div class="mui-col-xs-3 SchedulingBtn" staordid="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
 											'</div>'+
@@ -487,21 +487,21 @@
 					})
 				}
 			}),
-		/*修改*/
-//	       $('.content_part').on('tap', '.staOraAmendBtn', function() {
-//				var url = $(this).attr('url');
-//				var staOrdId = $(this).attr('staOrdId');
-//				if(url) {
-//					mui.toast('子菜单不存在')
-//				} else if(staOrdId == staOrdId) {
-//					GHUTILS.OPENPAGE({
-//						url: "../../../html/staffMgmtHtml/orderHtml/staOrdAmend.html",
-//						extras: {
-//							staOrdId: staOrdId,
-//						}
-//					})
-//				}
-//			}),
+		/*开启审核*/
+	       $('.content_part').on('tap', '.stastartCheckBtn', function() {
+				var url = $(this).attr('url');
+				var staOrdId = $(this).attr('staOrdId');
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(staOrdId == staOrdId) {
+					GHUTILS.OPENPAGE({
+						url: "../../../html/staffMgmtHtml/orderHtml/staOrdAmend.html",
+						extras: {
+							staOrdId: staOrdId,
+						}
+					})
+				}
+			}),
 		/*详情*/
 			$('.content_part').on('tap', '.staOrDetailBtn', function() {
 				var url = $(this).attr('url');

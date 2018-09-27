@@ -5,6 +5,7 @@
 		this.expTipNum = 0;
 		this.prew = false;
 		this.inLastPayDateFlag = "false"
+		this.inpoFlag = "false"
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -12,6 +13,7 @@
 			//权限添加
 //			biz:request:bizRequestHeader:audit    最后付款时间、审核
 			this.getPermissionList('biz:request:bizRequestHeader:audit','inLastPayDateFlag')
+			this.getPermissionList1('biz:po:bizPoHeader:audit','inpoFlag')
 			this.pageInit(); //页面初始化
 			//this.radioShow()
 			//			this.btnshow()
@@ -21,10 +23,8 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			_this.getData()
-			if(_this.inLastPayDateFlag == true) {
-				_this.comfirDialig()
-			}
+			_this.getData();
+			
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
@@ -36,6 +36,20 @@
                 async:false,
                 success: function(res){
                     _this.inLastPayDateFlag = res.data;
+                }
+            });
+        },
+        getPermissionList1: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                	console.log(res.data)
+                    _this.inpoFlag = res.data;
                 }
             });
         },
@@ -66,7 +80,27 @@
 				data: datas,
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+					console.log(res);
+					console.log(res.data.bizRequestHeader.str);
+					$('#inCheckBtn').attr('poid',res.data.bizRequestHeader.bizPoHeader.id);
+					$('#inRejectBtn').attr('poids',res.data.bizRequestHeader.bizPoHeader.id);
+					//备货单审核
+					if(res.data.bizRequestHeader.str=='detail'){
+						console.log(_this.inLastPayDateFlag);
+						if(_this.inLastPayDateFlag == true) {
+							_this.comfirDialig();
+						}
+					}	
+					//订单支出信息进来的备货单审核
+					console.log(_this.inpoFlag);
+					if(_this.inpoFlag == true) {
+						if(res.data.bizRequestHeader.str=='audit'){
+							if(res.data.bizRequestHeader.bizPoHeader.commonProcessList != null && res.data.bizRequestHeader.bizPoHeader.commonProcessList.length > 0 && res.data.bizRequestHeader.processPo == 'processPo')                {
+								_this.comfirDialigs();
+							}						    
+						}
+					}
+					
 					//调取供应商信息
 					$('#createPo').val(res.data.createPo);
 					/*判断是品类主管*/
@@ -91,19 +125,19 @@
 					    $('#insuppliercardID').parent().hide();//供应商身份证
 					}
 					/*业务状态*/
-//				    $.ajax({
-//		                type: "GET",
-//		                url: "/a/sys/dict/listData",
-//		                data: {type:"biz_req_status"},		                
-//		                dataType: "json",
-//		                success: function(resl){
-//		                	$.each(resl,function(i,item){
-//		                		if(item.value==res.data.bizRequestHeader.bizStatus){
-//		                		 	$('#inPoDizstatus').val(item.label);  
-//		                		}
-//		                	})
-//						}
-//					});
+				    $.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {type:"biz_req_status"},		                
+		                dataType: "json",
+		                success: function(resl){
+		                	$.each(resl,function(i,item){
+		                		if(item.value==res.data.bizRequestHeader.bizStatus){
+		                		 	$('#inPoDizstatus').val(item.label);  
+		                		}
+		                	})
+						}
+					});
 					//排产状态
 					if(res.data.bizRequestHeader.bizPoHeader) {
 						var itempoSchType = res.data.bizRequestHeader.bizPoHeader.poSchType;
@@ -189,6 +223,7 @@
 			var _this = this;
 			var requProcess = data.bizRequestHeader.commonProcess.requestOrderProcess;
 			var purchProcess = data.bizRequestHeader.commonProcess.purchaseOrderProcess;
+			var purchPro = data.bizRequestHeader.bizPoHeader.commonProcessList;
 			if(data.bizRequestHeader.str == 'audit' && data.bizRequestHeader.processPo != 'processPo') {
 				if(requProcess.name != '审核完成') {
 					$('#incheck').val(requProcess.name);
@@ -203,8 +238,13 @@
 				commonProcessList = data.bizRequestHeader.bizPoHeader.commonProcessList
 			}
 			if(data.bizRequestHeader.str == 'audit' && commonProcessList != null && commonProcessList.length > 0 && data.bizRequestHeader.processPo == 'processPo') {
-				$('#incheck').val(purchProcess.name);
-				$('#currentType').val(purchProcess.code)
+//				$('#incheck').val(purchProcess.name);
+//				$('#currentType').val(purchProcess.code)
+                console.log(purchPro)
+                $.each(purchPro, function(i, item) {
+					$('#incheck').val(item.purchaseOrderProcess.name);
+				    $('#currentType').val(item.purchaseOrderProcess.code)
+				})
 			}
 		},
 		//供应商信息
@@ -880,6 +920,122 @@
 					currentType: $('#currentType').val(),
 					createPo: $('#createPo').val(),
 					lastPayDateVal: lastDateTxt,
+					auditType: num,
+					description: rejectTxt
+				},
+				dataType: "json",
+				success: function(res) {
+					if(res.ret == true) {
+						mui.toast('操作成功!')
+						GHUTILS.OPENPAGE({
+							url: "../../html/inventoryMagmetHtml/inventoryList.html",
+							extras: {}
+						})
+					}
+					if(res.ret == false) {
+						mui.toast(res.errmsg)
+					}
+				}
+			});
+		},
+		comfirDialigs: function() {
+			var _this = this;
+			document.getElementById("inRejectBtn").addEventListener('tap', function() {
+				var id= $(this).attr('poids');
+				var currentType= $('#currentType').val();
+//				console.log(id)
+//				console.log(currentType)
+				var btnArray = ['否', '是'];
+				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
+					if(choice.index == 1) {
+						var btnArray = ['取消', '确定'];
+						mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
+							if(a.index == 1) {
+								var rejectTxt = a.value;
+								if(a.value == '') {
+									mui.toast('驳货理由不能为空！')
+								} else {
+									_this.rejectDatas(id,rejectTxt, 2,currentType)
+								}
+							} else {}
+						})
+					} else {}
+				})
+			});
+			document.getElementById("inCheckBtn").addEventListener('tap', function(e) {
+				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+				var id= $(this).attr('poid');
+//				console.log(id);
+				var currentType= $('#currentType').val();
+//				console.log(currentType);
+				var btnArray = ['取消', '确定'];
+				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
+					if(e.index == 1) {
+						var inText = e.value;
+						if(e.value == '') {
+							mui.toast('通过理由不能为空！')
+							return;
+						} else {
+							var btnArray = ['否', '是'];
+							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
+								if(choice.index == 1) {
+									_this.ajaxDatas(id,inText, 1,currentType)
+								} else {}
+							})
+						}
+					} else {}
+				})
+			});
+		},
+		ajaxDatas: function(id,inText, num,currentType) {
+			var _this = this;
+			var lastDateTxt = '';
+			if($('#createPo').val() == 'yes') {
+				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
+			}
+			$.ajax({
+				type: "GET",
+				url: "/a/biz/po/bizPoHeader/audit",
+				data: {
+					id: id,
+					currentType: currentType,
+					fromPage: 'requestHeader',
+					auditType: num,
+					description: inText
+				},
+				dataType: "json",
+				success: function(res) {
+					console.log(res)
+					if(res.ret == true) {
+						mui.toast('操作成功!')
+						GHUTILS.OPENPAGE({
+							url: "../../html/inventoryMagmetHtml/inventoryList.html",
+							extras: {}
+						})
+					}
+					if(res.ret == false) {
+						mui.toast(res.errmsg)
+					}
+				},
+				error: function(e) {
+					//服务器响应失败处理函数
+				}
+			});
+
+		},
+		rejectDatas: function(id,rejectTxt, num,currentType) {
+			var _this = this;
+			var lastDateTxt = '';
+			if($('#createPo').val() == 'yes') {
+				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
+			}
+			$.ajax({
+				type: "GET",
+				url: "/a/biz/po/bizPoHeader/audit",
+				data: {
+					id: id,
+					currentType: currentType,
+					fromPage: 'requestHeader',
 					auditType: num,
 					description: rejectTxt
 				},
