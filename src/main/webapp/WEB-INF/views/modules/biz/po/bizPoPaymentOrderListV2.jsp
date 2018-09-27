@@ -81,7 +81,14 @@
 					${bizPoPaymentOrder.bizStatus == 0 ? '未支付' : '已支付'}
 				</td>
 				<td>
-					${bizPoPaymentOrder.commonProcess.paymentOrderProcess.name}
+				<td>
+					<c:if test="${bizPoPaymentOrder.total == '0.00' && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成'}">
+						待确认支付金额
+					</c:if>
+					<c:if test="${bizPoPaymentOrder.total != '0.00'}">
+						${bizPoPaymentOrder.commonProcess.paymentOrderProcess.name}
+					</c:if>
+				</td>
 				</td>
 				<td>
 						${bizPoPaymentOrder.remark}
