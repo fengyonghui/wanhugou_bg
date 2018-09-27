@@ -83,7 +83,7 @@
 			                dataType: "json",
 			                async:false,
 			                success: function(user){                 
-					            console.log(user)
+//					            console.log(user)
 								userId = user.data.id
 			                }
 			            });	
@@ -95,7 +95,7 @@
 			                data: {type: "biz_po_status"},
 			                async:false,
 			                success: function(res){                 
-				                console.log(res);
+//				                console.log(res);
 				                postatus=res;
 			                }
 			            });	
@@ -115,12 +115,12 @@
                                 var itemId="";
 	                        	if(item.bizOrderHeader){
 	                        		poNumTxt=item.bizOrderHeader.orderNum;
-	                        		console.log(item.bizOrderHeader.id)
+//	                        		console.log(item.bizOrderHeader.id)
 	                        		itemId=item.bizOrderHeader.id;
 	                        	}
 	                        	if(item.bizRequestHeader){
 	                        		poNumTxt=item.bizRequestHeader.reqNo;
-	                        		console.log(item.bizRequestHeader.id)
+//	                        		console.log(item.bizRequestHeader.id)
 	                        		itemId=item.bizRequestHeader.id;
 	                        		
 	                        	}
@@ -156,7 +156,7 @@
 	                        	var staCheckBtn = '';
 	                        	var staCheckbtns = '';
 	                        	var staCheckBtnTxt = '';
-	                        	console.log(_this.OrdFlagaudit)
+//	                        	console.log(_this.OrdFlagaudit)
 				                if(_this.OrdFlagaudit == true) {   
 									var DataRoleGener = '';
 									if(item.commonProcess) {
@@ -167,15 +167,15 @@
 	                                if(item.commonProcess.id != null&& item.commonProcess.purchaseOrderProcess.name != '驳回'&& item.commonProcess.purchaseOrderProcess.name != '审批完成'&& (fileRoleData.length>0 || userId==1))             {
 	                                	if(item.bizOrderHeader != null || item.bizRequestHeader != null){
 	                                		//订单审核
-	                                		console.log(item.bizOrderHeader.id)
+//	                                		console.log(item.bizOrderHeader.id)
 	                                	   	if(item.bizOrderHeader != ""){
-	                                	   		console.log('nnnn')
+//	                                	   		console.log('nnnn')
 	                                	   		staCheckBtnTxt = '审核';
 	                                	   		staCheckbtns = item.bizOrderHeader.id;
 	                                	   	}
 	                                	   	//备货单审核
 	                                	   	if(item.bizRequestHeader != ""){
-	                                	   		console.log('mmmm')
+//	                                	   		console.log('mmmm')
 	                                	   		staCheckBtnTxt = '审核';
 	                                	   		staCheckBtn = item.bizRequestHeader.id;
 	                                	   	}
@@ -194,13 +194,15 @@
 	                        	var staPayBtn = '';//订单
 	                        	var staPayBtns = '';//备货单
 	                        	var staPayBtnTxt = '';
+	                        	var sta = '';
 	                        	if(item.commonProcess.type != -1){
 	                        		if(item.bizOrderHeader != null){
-	                        			console.log(_this.OrdFlagpay)
+//	                        			console.log(_this.OrdFlagpay)
 	                        			//订单
 	                        			if(_this.OrdFlagpay==false){
 	                        				staPayBtnTxt = '支付申请列表';
-	                        				staPayBtn = item.bizOrderHeader.id;	
+	                        				staPayBtn = item.bizOrderHeader.id;
+//	                        				sta = item.bizOrderHeader.id;
 	                        			}	                        			
 	                        		}
 	                        		if(item.bizRequestHeader != null){
@@ -208,6 +210,7 @@
 	                        			if(_this.OrdFlagpay==false){
 	                        				staPayBtnTxt = '支付申请列表';
 	                        				staPayBtns = item.bizRequestHeader.id;
+//	                        				stas = item.bizRequestHeader.id;
 	                        			}	                        			
 	                        		}
 	                        	}
@@ -218,6 +221,7 @@
 	                        		if(item.commonProcess.type == -1){
 	                        			if(item.bizOrderHeader != null){
 	                        				stastartCheckBtnTxt = '开启审核';
+	                        				staPayBtn = item.bizOrderHeader.id;
 	                        			}
 	                        			if(item.bizRequestHeader != null){
 	                        				stastartCheckBtnTxt = '开启审核';
@@ -271,24 +275,26 @@
 											'<div class="mui-col-xs-3 SchedulingBtn" staordid="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
 											'</div>'+
-//											'<div class="mui-col-xs-3 staOrDetailBtn" staOrdId="'+ item.id +'">' +
+//											'<div class="mui-col-xs-2 sta" stas="'+ sta +'" style="display:none">' +
 //												'<li class="mui-table-view-cell">详情</li>' +
 //											'</div>'+
 										'</div>' +
 									'</div>'
-//									_this.dd(item)
 							});	
 								$('#orderinfoList').append(orderHtmlList);
 								_this.stOrdHrefHtml();
 								//先隐藏订单信息
 								 var pos=$(".ctn_show_row .dd");
 								 var posd=$(".ctn_show_row .staPayBtn");
+//								 var posd=$(".ctn_show_row .sta");
 								 $.each(pos,function(n,v){
 	                            	var poNumid=$(this).attr('id').substr(6);
 //		                        	console.log(poNumid)
 	                            	$.each(posd,function(n,v){
+//	                            		console.log(v)
 	                            		var that=this;	                            	
-		                            	var y=$(that).attr('ordid')
+		                            	var y=$(that).attr('ordid');
+//		                            	var y=$(that).attr('stas')
 //		                            	console.log(y)
 		                            	var divs=$("#poNum_"+poNumid);
 //		                            	console.log(divs)
