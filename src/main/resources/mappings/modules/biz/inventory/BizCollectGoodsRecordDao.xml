@@ -82,6 +82,9 @@
 				<if test="dbName == 'mssql'">'%'+#{skuInfo.partNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.partNo},'%')</if>
 			</if>
+            <if test="bizRequestHeader != null and bizRequestHeader.id != null">
+                AND a.request_id =#{bizRequestHeader.id}
+            </if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num LIKE
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>

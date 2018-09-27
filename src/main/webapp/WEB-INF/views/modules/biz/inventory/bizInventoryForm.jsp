@@ -234,7 +234,7 @@
             <tr align="center" >
                 <td rowspan="2" style="width:100px;width: 200px">备货单号</td>
                 <td rowspan="2">${requestDetailList[0].requestHeader.reqNo}</td>
-                <td >货品类型</td>
+                <td>订单类型</td>
                 <td colspan="4">
                     <input type="checkbox">订单
                     <input type="checkbox">调拨
@@ -244,7 +244,7 @@
             </tr>
 
             <tr align="center">
-                <td>货号</td>
+                <td>货品类型</td>
                 <td colspan="4">
                     <input type="checkbox">拉杆箱
                     <input type="checkbox">双肩包
