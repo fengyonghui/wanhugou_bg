@@ -177,7 +177,9 @@
 				<c:if test="${ship eq 'xs'}">
 					<th>采购客户</th>
 				</c:if>
-				<th>期望收货时间</th>
+				<c:if test="${ship eq 'bh'}">
+					<th>期望收货时间</th>
+				</c:if>
 				<c:if test="${ship eq 'xs'}">
 					<th>收货地址</th>
 				</c:if>
@@ -267,10 +269,6 @@
 					</td>
 					<td>
 							${orderHeader.customer.name}
-					</td>
-
-					<td>
-						<fmt:formatDate value="${orderHeader.deliveryDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
 					<c:if test="${ship eq 'xs'}">
 						<td>

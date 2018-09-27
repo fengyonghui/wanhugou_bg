@@ -161,17 +161,30 @@
 			<div class="controls help_wrap">
 				<div class="help_step_box fa">
 					<c:forEach items="${requestHeader.invCommonProcessList}" var="v" varStatus="stat">
-						<c:if test="${!stat.last}">
-							<div class="help_step_item">
-								<div class="help_step_left"></div>
-								<div class="help_step_num">${stat.index + 1}</div>
-								批注:${v.description}<br/><br/>
-								审批人:${v.user.name}<br/>
-								<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-								<div class="help_step_right"></div>
-							</div>
-						</c:if>
-						<c:if test="${stat.last}">
+						<c:choose>
+							<c:when test="${!stat.last && v.type == autProcessId}">
+								<div class="help_step_item help_step_set">
+									<div class="help_step_left"></div>
+									<div class="help_step_num">${stat.index + 1}</div>
+									当前状态:审核完成<br/><br/>
+									<br/>
+									<div class="help_step_right"></div>
+								</div>
+							</c:when>
+							<c:when test="${!stat.last && v.type != autProcessId}">
+								<div class="help_step_item">
+									<div class="help_step_left"></div>
+									<div class="help_step_num">${stat.index + 1}</div>
+									批注:${v.description}<br/><br/>
+									审批人:${v.user.name}<br/>
+									<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+									<div class="help_step_right"></div>
+								</div>
+							</c:when>
+							<c:otherwise>
+							</c:otherwise>
+						</c:choose>
+						<c:if test="${stat.last && v.type != autProcessId}">
 							<div class="help_step_item help_step_set">
 								<div class="help_step_left"></div>
 								<div class="help_step_num">${stat.index + 1}</div>
