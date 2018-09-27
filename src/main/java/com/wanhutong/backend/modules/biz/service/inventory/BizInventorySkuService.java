@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
@@ -225,6 +226,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	 * @return
 	 */
 	public Page<BizRequestHeader> inventoryPage(Page<BizRequestHeader> page, BizRequestHeader requestHeader) {
+		User user = UserUtils.getUser();
+		requestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "cent","su"));
 		requestHeader.setPage(page);
 		page.setList(bizRequestHeaderForVendorDao.inventoryPage(requestHeader));
 		return page;
@@ -306,41 +309,44 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
                 for (BizRequestDetail requestDetail : requestDetailList) {
                     requestDetail.setOutQty(requestDetail.getRecvQty() - requestDetail.getActualQty());
                     bizRequestDetailService.save(requestDetail);
+					BizInventorySku inventorySku = new BizInventorySku();
+					BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorDao.get(id);
+					inventorySku.setInvInfo(new BizInventoryInfo(invId));
+					inventorySku.setSkuInfo(requestDetail.getSkuInfo());
+					if (BizRequestHeader.HeaderType.ROUTINE.getHeaderType() == bizRequestHeader.getHeaderType().intValue()) {
+						inventorySku.setInvType(BizInventorySku.InvType.ROUTINE.getInvType());
+					}
+					if (BizRequestHeader.HeaderType.SAMPLE.getHeaderType() == bizRequestHeader.getHeaderType().intValue()) {
+						inventorySku.setInvType(BizInventorySku.InvType.SAMPLE.getInvType());
+					}
+					if (ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+						inventorySku.setSkuType(InventorySkuTypeEnum.CENTER_TYPE.getType());
+					}
+					if (ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+						inventorySku.setSkuType(InventorySkuTypeEnum.VENDOR_TYPE.getType());
+					}
+					List<BizInventorySku> inventorySkuList = bizInventorySkuDao.findList(inventorySku);
+					if (CollectionUtils.isNotEmpty(inventorySkuList)) {
+						BizInventorySku invSku = inventorySkuList.get(0);
+						int stock = invSku.getStockQty();
+						Integer num = requestDetail.getRecvQty() - (requestDetail.getOutQty() == null ? 0 : requestDetail.getOutQty()) - requestDetail.getActualQty();
+						invSku.setStockQty(invSku.getStockQty() - num);
+						bizInventorySkuDao.update(invSku);
+						//盘点记录
+						while (stock != invSku.getStockQty()) {
+							BizInventoryViewLog viewLog = new BizInventoryViewLog();
+							viewLog.setInvInfo(new BizInventoryInfo(invId));
+							viewLog.setInvType(inventorySku.getInvType());
+							viewLog.setSkuInfo(requestDetail.getSkuInfo());
+							viewLog.setStockQty(stock);
+							viewLog.setStockChangeQty(num);
+							viewLog.setNowStockQty(invSku.getStockQty());
+							viewLog.setRequestHeader(bizRequestHeader);
+							bizInventoryViewLogService.save(viewLog);
+						}
                 }
             }
-			BizInventorySku inventorySku = new BizInventorySku();
-            BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorDao.get(id);
-			inventorySku.setInvInfo(new BizInventoryInfo(invId));
-			inventorySku.setSkuInfo(bizRequestDetail.getSkuInfo());
-			if (BizRequestHeader.HeaderType.ROUTINE.getHeaderType() == bizRequestHeader.getHeaderType().intValue()) {
-				inventorySku.setInvType(BizInventorySku.InvType.ROUTINE.getInvType());
-			}
-			if (BizRequestHeader.HeaderType.SAMPLE.getHeaderType() == bizRequestHeader.getHeaderType().intValue()) {
-				inventorySku.setInvType(BizInventorySku.InvType.SAMPLE.getInvType());
-			}
-			if (ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
-				inventorySku.setSkuType(InventorySkuTypeEnum.CENTER_TYPE.getType());
-			}
-			if (ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
-				inventorySku.setSkuType(InventorySkuTypeEnum.VENDOR_TYPE.getType());
-			}
-			List<BizInventorySku> inventorySkuList = bizInventorySkuDao.findList(inventorySku);
-			if (CollectionUtils.isNotEmpty(inventorySkuList)) {
-				BizInventorySku invSku = inventorySkuList.get(0);
-				int stock = invSku.getStockQty();
-				Integer num = bizRequestDetail.getRecvQty() - (bizRequestDetail.getOutQty() == null ? 0 : bizRequestDetail.getOutQty()) - bizRequestDetail.getActualQty();
-				invSku.setStockQty(invSku.getStockQty() - num);
-				bizInventorySkuDao.update(invSku);
-				//盘点记录
-				BizInventoryViewLog viewLog = new BizInventoryViewLog();
-				viewLog.setInvInfo(new BizInventoryInfo(invId));
-				viewLog.setInvType(inventorySku.getInvType());
-				viewLog.setSkuInfo(bizRequestDetail.getSkuInfo());
-				viewLog.setStockQty(stock);
-				viewLog.setStockChangeQty(num);
-				viewLog.setNowStockQty(invSku.getStockQty());
-				viewLog.setRequestHeader(bizRequestHeader);
-				bizInventoryViewLogService.save(viewLog);
+
 			}
         }
 

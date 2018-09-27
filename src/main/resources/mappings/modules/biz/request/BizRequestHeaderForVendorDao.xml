@@ -495,6 +495,7 @@
 		LEFT JOIN biz_variety_info bvi ON bvi.id = prod.vari_id
 		LEFT JOIN biz_collect_goods_record bcgr ON bcgr.request_id = a.id
 		LEFT JOIN biz_inventory_info inv ON inv.id = bcgr.inv_id
+		LEFT JOIN sys_user su ON su.id = a.create_id
 		WHERE inv.id IS NOT NULL
 		<if test="vendName != null and vendName != ''">
 			AND prod.vendor_name LIKE
@@ -538,6 +539,9 @@
 			where a.from_id = ta.object_id
 			and ta.object_name = 'sys_office'
 			)
+		</if>
+		<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
+			${sqlMap.request}
 		</if>
 		GROUP BY a.id
 		<choose>

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <html>
 <head>
 	<title>备货清单管理</title>
@@ -300,7 +301,9 @@
 							<c:otherwise>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs&bizStatu=${bizStatu}&ship=${ship}">发货详情</a>--%>
 								<a href="${ctx}/biz/request/bizRequestAll/confirmOut?orderHeaderId=${orderHeader.id}&source=detail">出库详情</a>
-								<a href="${ctx}/biz/request/bizRequestAll/confirmOut?orderHeaderId=${orderHeader.id}">出库</a>
+								<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SEND.state}">
+									<a href="${ctx}/biz/request/bizRequestAll/confirmOut?orderHeaderId=${orderHeader.id}">出库</a>
+								</c:if>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=xs">发货</a>--%>
 							</c:otherwise>
 						</c:choose>
