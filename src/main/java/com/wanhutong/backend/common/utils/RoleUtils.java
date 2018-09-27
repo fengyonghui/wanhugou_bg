@@ -1,6 +1,5 @@
 package com.wanhutong.backend.common.utils;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
