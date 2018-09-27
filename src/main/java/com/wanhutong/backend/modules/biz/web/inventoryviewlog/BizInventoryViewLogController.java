@@ -17,6 +17,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -54,7 +55,7 @@ public class BizInventoryViewLogController extends BaseController {
 	@Autowired
 	private DictService dictService;
 	@Autowired
-	private BizRequestHeaderService bizRequestHeaderService;
+	private BizRequestHeaderForVendorService bizRequestHeaderService;
 	@Autowired
 	private BizRequestDetailService bizRequestDetailService;
 
@@ -85,7 +86,16 @@ public class BizInventoryViewLogController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizInventoryViewLog bizInventoryViewLog, Model model) {
 		BizRequestHeader bizRequestHeader=bizInventoryViewLog.getRequestHeader();
-		BizRequestHeader requestHeader=bizRequestHeaderService.get(bizRequestHeader.getId());
+		BizRequestHeader requestHeader= new BizRequestHeader();
+		if (bizRequestHeader.getId() == null || bizRequestHeader.getId() == 0) {
+			model.addAttribute("bizInventoryViewLog", bizInventoryViewLog);
+			return "modules/biz/inventoryviewlog/bizInventoryViewLogForm";
+		}
+		requestHeader = bizRequestHeaderService.get(bizRequestHeader.getId());
+		if (requestHeader == null) {
+			model.addAttribute("bizInventoryViewLog", bizInventoryViewLog);
+			return "modules/biz/inventoryviewlog/bizInventoryViewLogForm";
+		}
 		BizRequestDetail requestDetail = new BizRequestDetail();
 		requestDetail.setRequestHeader(requestHeader);
 		List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(requestDetail);

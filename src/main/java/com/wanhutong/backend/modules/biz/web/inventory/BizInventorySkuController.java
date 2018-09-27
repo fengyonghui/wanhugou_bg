@@ -684,6 +684,8 @@ public class BizInventorySkuController extends BaseController {
             bizRequestHeader.setInvCommonProcessList(commonProcessList);
         }
         bizRequestHeader.setInvInfo(bizInventoryInfoService.get(invId));
+        Integer autProcessId = ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getAutProcessId();
+        model.addAttribute("autProcessId",autProcessId);
         model.addAttribute("source",source);
         model.addAttribute("requestHeader",bizRequestHeader);
         model.addAttribute("requestDetailList",requestDetailList);

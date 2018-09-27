@@ -18,6 +18,26 @@
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
+                    var flag = false;
+                    $("input[name='reqDetail']").each(function () {
+						if ($(this).attr("checked")=='checked') {
+						    flag = true;
+						    var sentQty = $(this).parent().find("input[name='sentQty']").val();
+						    var okQty = $(this).parent().find("input[name='okQty']").val();
+						    if (sentQty == '' || sentQty == 0) {
+						        alert("选中出库的备货单，本次出库数量不能为空，也不能为0");
+						        return false;
+							}
+							if (parseInt(sentQty) > parseInt(okQty)) {
+						        alert("选中出库的备货单，本次出库数量不能大于可出库数量");
+						        return false;
+							}
+						}
+                    });
+                    if (!flag) {
+                        alert("请勾选出库的备货单！");
+                        return false;
+					}
                     var treasuryList = new Array();
                     var i = 0;
                     $("input[name='reqDetail'][checked='checked']").each(function () {
@@ -233,65 +253,70 @@
 	</div>
 	<div class="control-group">
         <c:forEach items="${orderDetailList}" var="orderDetail">
-            <label class="control-label">库存信息：</label>
-            <div class="controls">
-                <table id="inventorySkuTable" class="table table-striped table-bordered table-condensed">
-                    <thead>
-                    <tr>
-						<c:if test="${source ne 'detail'}">
-                        	<th><input name="ordDetail" type="checkbox" onclick="checkOrdDetail(this)"/></th>
-						</c:if>
-                        <th>备货单号</th>
-                        <th>商品名称</th>
-                        <th>供应商</th>
-                        <th>商品货号</th>
-                        <th>颜色</th>
-                        <th>尺寸</th>
-                        <th>库存类型</th>
-                        <th>备货方</th>
-                        <th>备货单库存数量</th>
-                        <th>已出库数量</th>
-                        <th>可出库数量</th>
-                        <th>库存数量</th>
-						<c:if test="${source ne 'detail'}">
-                        	<th>本次出库数量</th>
-						</c:if>
-                        <th>出库仓库</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach items="${orderDetail.requestDetailList}" var="requestDetail">
-                            <tr>
-								<c:if test="${source ne 'detail'}">
-                                	<td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
+			<c:if test="${orderDetail.ordQty != orderDetail.sentQty}">
+            	<label class="control-label">库存信息：</label>
+				<div class="controls">
+					<table id="inventorySkuTable" class="table table-striped table-bordered table-condensed">
+						<thead>
+						<tr>
+							<c:if test="${source ne 'detail'}">
+								<th><input name="ordDetail" type="checkbox" onclick="checkOrdDetail(this)"/></th>
+							</c:if>
+							<th>备货单号</th>
+							<th>商品名称</th>
+							<th>供应商</th>
+							<th>商品货号</th>
+							<th>颜色</th>
+							<th>尺寸</th>
+							<th>库存类型</th>
+							<th>备货方</th>
+							<th>备货单库存数量</th>
+							<th>已出库数量</th>
+							<th>可出库数量</th>
+							<th>库存数量</th>
+							<c:if test="${source ne 'detail'}">
+								<th>本次出库数量</th>
+							</c:if>
+							<th>出库仓库</th>
+						</tr>
+						</thead>
+						<tbody>
+							<c:forEach items="${orderDetail.requestDetailList}" var="requestDetail">
+								<c:if test="${requestDetail.recvQty - requestDetail.outQty != 0}">
+									<tr>
+										<c:if test="${source ne 'detail'}">
+											<td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
+										</c:if>
+										<td>${requestDetail.requestHeader.reqNo}</td>
+										<td>${requestDetail.skuInfo.name}</td>
+										<td>${requestDetail.vendorName}</td>
+										<td>${requestDetail.skuInfo.itemNo}</td>
+										<td>${orderDetail.color}</td>
+										<td>${orderDetail.standard}</td>
+										<td>${fns:getDictLabel(requestDetail.inventorySku.invType,'inv_type','')}</td>
+										<td>${fns:getDictLabel(requestDetail.inventorySku.skuType,'inventory_sku_type','')}</td>
+										<td>${requestDetail.recvQty}</td>
+										<td>${requestDetail.outQty == null ? "0" : requestDetail.outQty}</td>
+										<td>${requestDetail.recvQty - requestDetail.outQty}</td>
+										<input name="okQty" value="${requestDetail.recvQty - requestDetail.outQty}" type="hidden"/>
+										<input name="orderDetailId" value="${orderDetail.id}" type="hidden"/>
+										<input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
+										<input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>
+										<input name="uVersion" value="${requestDetail.inventorySku.uVersion}" type="hidden"/>
+										<td>${requestDetail.inventorySku.stockQty}</td>
+										<c:if test="${source ne 'detail'}">
+											<td><input type="text" name="sentQty" value="0"/></td>
+										</c:if>
+										<td>
+											${requestDetail.inventorySku.invInfo.name}
+										</td>
+									</tr>
 								</c:if>
-                                <td>${requestDetail.requestHeader.reqNo}</td>
-                                <td>${requestDetail.skuInfo.name}</td>
-                                <td>${requestDetail.vendorName}</td>
-                                <td>${requestDetail.skuInfo.itemNo}</td>
-                                <td>${orderDetail.color}</td>
-                                <td>${orderDetail.standard}</td>
-                                <td>${fns:getDictLabel(requestDetail.inventorySku.invType,'inv_type','')}</td>
-                                <td>${fns:getDictLabel(requestDetail.inventorySku.skuType,'inventory_sku_type','')}</td>
-                                <td>${requestDetail.recvQty}</td>
-                                <td>${requestDetail.outQty == null ? "0" : requestDetail.outQty}</td>
-                                <td>${requestDetail.recvQty - requestDetail.outQty}</td>
-                                <input name="orderDetailId" value="${orderDetail.id}" type="hidden"/>
-                                <input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
-                                <input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>
-                                <input name="uVersion" value="${requestDetail.inventorySku.uVersion}" type="hidden"/>
-                                <td>${requestDetail.inventorySku.stockQty}</td>
-								<c:if test="${source ne 'detail'}">
-                                	<td><input type="text" name="sentQty" value="0"/></td>
-								</c:if>
-                                <td>
-                                    ${requestDetail.inventorySku.invInfo.name}
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-            </div>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
+			</c:if>
             <HR align=center width=100% color=#987cb9 SIZE=1>
         </c:forEach>
 	</div>
