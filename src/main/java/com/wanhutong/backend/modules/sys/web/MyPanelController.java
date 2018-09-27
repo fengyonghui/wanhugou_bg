@@ -114,7 +114,10 @@ public class MyPanelController extends BaseController {
         tempRole.setEnname(RoleEnNameEnum.FINANCIAL_GENERAL_MANAGER.getState());
         if (userRoleList.contains(tempRole)) {
             paymentOrderAuditCount = myPanelService.getPaymentOrderAuditCount("财务总经理");
-
+        }
+        tempRole.setEnname(RoleEnNameEnum.PROVIDER_MANAGER.getState());
+        if (userRoleList.contains(tempRole)) {
+            paymentOrderAuditCount = myPanelService.getPaymentOrderAuditCount("供货部");
         }
 
 //        运营总监：备货审核
