@@ -685,7 +685,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 httpResponse = httpClient.execute(httpPost);
 
                 result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                LOGGER.info("返回结果result=================" + result);
+                LOGGER.info("订单物流返回结果result=================" + result);
 
             }catch (Exception e) {
                 e.printStackTrace();
@@ -751,7 +751,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         httpResponse = httpClient.execute(httpPost);
 
                         result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                        LOGGER.info("返回结果result=================" + result);
+                        LOGGER.info("备货单物流路线返回结果result=================" + result);
                         JSONObject  jasonObject = JSONObject.fromObject(result);
                         Map map = (Map)jasonObject;
                         List dataList = (List) map.get("data");
@@ -791,7 +791,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             httpResponse = httpClient.execute(httpPost);
 
                             resultInfo = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                            LOGGER.info("返回结果resultInfo=================" + resultInfo);
+                            LOGGER.info("备货单物流信息返回结果resultInfo=================" + resultInfo);
                         }
                     }catch (Exception e) {
                         e.printStackTrace();
