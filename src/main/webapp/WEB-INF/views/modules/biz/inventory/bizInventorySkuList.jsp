@@ -154,9 +154,7 @@
 					<th>修改时间</th>
 					<th>修改人</th>
 				</c:if>
-				<c:if test="${zt eq '2' || zt eq '3'}">
-					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><th>操作</th></shiro:hasPermission>
-				</c:if>
+					<th>操作</th>
 			</tr>
 		</thead>
 		<tbody>

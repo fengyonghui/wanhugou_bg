@@ -93,7 +93,7 @@
 						<th>颜色</th>
 						<th>尺寸</th>
 						<th>库存类型</th>
-						<th>销售价</th>
+						<th>结算价</th>
 						<th>图片</th>
 						<th>现有库存数</th>
                         <c:if test="${source eq 'pChange'}">

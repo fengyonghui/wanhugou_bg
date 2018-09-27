@@ -13,10 +13,15 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.SendGoodsRecordBizStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -46,8 +51,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao, BizSendGoodsRecord> {
 
-    @Resource
-    private OfficeService officeService;
 	@Autowired
     private BizSendGoodsRecordDao bizSendGoodsRecordDao;
 	@Autowired
@@ -58,6 +61,10 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 	private BizInventoryOrderRequestService bizInventoryOrderRequestService;
 	@Autowired
 	private BizInventorySkuService bizInventorySkuService;
+	@Autowired
+    private BizOrderHeaderService bizOrderHeaderService;
+	@Autowired
+    private BizOrderStatusService bizOrderStatusService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BizSendGoodsRecordService.class);
 
@@ -105,6 +112,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 
 	@Transactional(readOnly = false,rollbackFor = Exception.class)
 	public String outTreasury(List<BizOutTreasuryEntity> outTreasuryList) {
+	    boolean orderFlag = true; //用于判断订单是否已全部出库
+        BizOrderHeader orderHeader = new BizOrderHeader();
 		for (BizOutTreasuryEntity outTreasuryEntity : outTreasuryList) {
 			Integer orderDetailId = outTreasuryEntity.getOrderDetailId();
 			Integer reqDetailId = outTreasuryEntity.getReqDetailId();
@@ -114,7 +123,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			BizOrderDetail bizOrderDetail = bizOrderDetailService.get(orderDetailId);
 			BizInventorySku inventorySku = bizInventorySkuService.get(invId);
 			BizRequestDetail bizRequestDetail = bizRequestDetailService.get(reqDetailId);
-			if (!version.equals(inventorySku.getuVersion())) {
+            orderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
+            if (!version.equals(inventorySku.getuVersion())) {
 				return "其他人正在出库，请刷新页面重新操作";
 			}
 			//生成发货单
@@ -131,7 +141,6 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			bsgr.setSendDate(new Date());
 			save(bsgr);
 			//修改库存数量
-			inventorySku.setStockQty(inventorySku.getStockQty() - outQty);
 			bizInventorySkuService.updateStockQty(inventorySku,inventorySku.getStockQty() - outQty);
 			//修改备货单详情已出库数量
 			bizRequestDetail.setOutQty((bizRequestDetail.getOutQty() == null ? 0 : bizRequestDetail.getOutQty()) + outQty);
@@ -139,6 +148,16 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			//修改订单详情已发货数量
 			bizOrderDetail.setSentQty((bizOrderDetail.getSentQty() == null ? 0 : bizOrderDetail.getSentQty()) + outQty);
 			bizOrderDetailService.saveStatus(bizOrderDetail);
+			//修改订单状态
+            int status = orderHeader.getBizStatus();
+            orderHeader.setBizStatus(OrderHeaderBizStatusEnum.APPROVE.getState());
+            bizOrderHeaderService.saveOrderHeader(orderHeader);
+            if (status < OrderHeaderBizStatusEnum.APPROVE.getState()) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(),BizOrderStatusOrderTypeEnum.SELLORDER.getState(),orderHeader.getId());
+            }
+			if (!bizOrderDetail.getOrdQty().equals(bizOrderDetail.getSentQty())) {
+                orderFlag = false;
+            }
 			//订单关联出库备货单
 			BizInventoryOrderRequest ior = new BizInventoryOrderRequest();
 			ior.setOrderDetail(bizOrderDetail);
@@ -148,6 +167,14 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				bizInventoryOrderRequestService.save(ior);
 			}
 		}
+		if (orderFlag) {
+		    int status = orderHeader.getBizStatus();
+            orderHeader.setBizStatus(OrderHeaderBizStatusEnum.SEND.getState());
+            bizOrderHeaderService.saveOrderHeader(orderHeader);
+            if (status < OrderHeaderBizStatusEnum.SEND.getState()) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(),BizOrderStatusOrderTypeEnum.SELLORDER.getState(),orderHeader.getId());
+            }
+        }
 		return "ok";
 	}
 }

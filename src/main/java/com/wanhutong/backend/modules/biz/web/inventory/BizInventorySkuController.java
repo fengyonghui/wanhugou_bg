@@ -42,9 +42,12 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVend
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
@@ -594,6 +597,22 @@ public class BizInventorySkuController extends BaseController {
     public String inventorySkuDetail(Integer id, Model model) {
         BizInventorySku inventorySku = bizInventorySkuService.get(id);
         List<BizCollectGoodsRecord> bcgrList = bizInventorySkuService.getInventoryDetail(id, inventorySku.getSkuInfo().getId());
+        if (CollectionUtils.isNotEmpty(bcgrList)) {
+            for (BizCollectGoodsRecord collectGoodsRecord : bcgrList) {
+                List<AttributeValueV2> colorList = bizSkuInfoService.getSkuProperty(collectGoodsRecord.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "颜色");
+                if (CollectionUtils.isNotEmpty(colorList)) {
+                    collectGoodsRecord.getSkuInfo().setColor(colorList.get(0).getValue());
+                }
+                List<AttributeValueV2> sizeList = bizSkuInfoService.getSkuProperty(collectGoodsRecord.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "尺寸");
+                if (CollectionUtils.isNotEmpty(sizeList)) {
+                    collectGoodsRecord.getSkuInfo().setSize(sizeList.get(0).getValue());
+                }
+                List<CommonImg> imgList = bizSkuInfoService.getImg(collectGoodsRecord.getSkuInfo().getId(), ImgEnum.SKU_TYPE.getTableName(), ImgEnum.SKU_TYPE.getCode());
+                if (CollectionUtils.isNotEmpty(imgList)) {
+                    collectGoodsRecord.getSkuInfo().setSkuImgUrl(imgList.get(0).getImgServer() + imgList.get(0).getImgPath());
+                }
+            }
+        }
         model.addAttribute("bcgrList",bcgrList);
         return "modules/biz/inventory/bizInventorySkuDetail";
     }

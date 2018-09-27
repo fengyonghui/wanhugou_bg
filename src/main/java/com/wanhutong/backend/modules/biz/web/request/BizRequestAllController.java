@@ -402,7 +402,7 @@ public class BizRequestAllController {
                 BizCollectGoodsRecord c = bizCollectGoodsRecordList.get(0);
                 if (StringUtils.isNotBlank(c.getCollectNo())) {
                     String[] split = c.getCollectNo().split("_");
-                    model.addAttribute("collectNo", collectNo + "_" + Integer.valueOf(split[1]) + 1);
+                    model.addAttribute("collectNo", collectNo + "_" + (Integer.valueOf(split[1]) + 1));
                 } else {
                     model.addAttribute("collectNo",collectNo + "_1");
                 }
@@ -458,6 +458,7 @@ public class BizRequestAllController {
             List<BizSendGoodsRecord> bsgrList = bizSendGoodsRecordService.findList(bsgr);
             if (CollectionUtils.isNotEmpty(bsgrList)) {
                 model.addAttribute("bizSendGoodsRecord",bsgrList.get(0));
+                model.addAttribute("sendNo",bsgrList.get(0).getSendNo());
             }
             return "modules/biz/request/bizRequestConfirmOut";
         }
@@ -474,7 +475,7 @@ public class BizRequestAllController {
             BizSendGoodsRecord sendGoodsRecord = sendGoodsRecordList.get(0);
             if (StringUtils.isNotBlank(sendGoodsRecord.getSendNo())) {
                 String[] split = sendGoodsRecord.getSendNo().split("_");
-                model.addAttribute("sendNo", sendNo + "_" + Integer.valueOf(split[1]) + 1);
+                model.addAttribute("sendNo", sendNo + "_" + (Integer.valueOf(split[1]) + 1));
             } else {
                 model.addAttribute("sendNo", sendNo + "_1");
             }

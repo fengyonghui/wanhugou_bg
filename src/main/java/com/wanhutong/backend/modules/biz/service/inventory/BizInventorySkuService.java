@@ -246,14 +246,30 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			}
 		}
 
-
 		CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-		commonProcessEntity.setCurrent(CommonProcessEntity.CURRENT);
 		commonProcessEntity.setObjectId(requestHeaderId.toString());
 		commonProcessEntity.setObjectName(BizInventorySku.INVSKUREQUESTTABLE);
-		commonProcessEntity.setBizStatus(CommonProcessEntity.NOT_CURRENT);
-		commonProcessEntity.setType(ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getDefaultProcessId().toString());
-		commonProcessService.save(commonProcessEntity);
+//		commonProcessEntity.setType(ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getAutProcessId().toString());
+		List<CommonProcessEntity> commonProcessEntityList = commonProcessService.findList(commonProcessEntity);
+		if (CollectionUtils.isEmpty(commonProcessEntityList)) {
+			commonProcessEntity.setCurrent(CommonProcessEntity.CURRENT);
+			commonProcessEntity.setBizStatus(CommonProcessEntity.NOT_CURRENT);
+			commonProcessEntity.setType(ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getDefaultProcessId().toString());
+			commonProcessService.save(commonProcessEntity);
+		}
+		if (CollectionUtils.isNotEmpty(commonProcessEntityList)) {
+			for (CommonProcessEntity processEntity : commonProcessEntityList) {
+				if (ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getAutProcessId().toString().equals(processEntity.getType()) && CommonProcessEntity.CURRENT.equals(processEntity.getCurrent())) {
+					processEntity.setCurrent(CommonProcessEntity.NOT_CURRENT);
+					commonProcessService.save(processEntity);
+					commonProcessEntity.setCurrent(CommonProcessEntity.CURRENT);
+					commonProcessEntity.setBizStatus(CommonProcessEntity.NOT_CURRENT);
+					commonProcessEntity.setType(ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getDefaultProcessId().toString());
+					commonProcessService.save(commonProcessEntity);
+					break;
+				}
+			}
+		}
 	}
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)

@@ -39,9 +39,9 @@
                             url:"${ctx}/biz/inventory/bizSendGoodsRecord/outTreasury",
                             data:JSON.stringify(treasuryList),
                             success:function (data) {
-                                if (data == 'ok') {
+                                if (data=='ok') {
                                     alert("出库成功");
-                                    window.location.href = "${ctx}/biz/request/bizRequestAll?souce=kc&bizStatu=0&ship=xs";
+                                    window.location.href = "${ctx}/biz/request/bizRequestAll?source=kc&bizStatu=0&ship=xs";
                                 }
                            }
                         });
@@ -197,7 +197,7 @@
 	<div class="control-group">
 		<label class="control-label">出库单：</label>
 		<div class="controls">
-			<input id="sendNo" readonly="readonly" name="sendNo" type="text" class="input-xlarge" value="${bizSendGoodsRecord.sendNo}"/>
+			<input id="sendNo" readonly="readonly" name="sendNo" type="text" class="input-xlarge" value="${sendNo}"/>
 		</div>
 	</div>
 	<div class="control-group">
@@ -269,10 +269,8 @@
                                 <td>${requestDetail.skuInfo.name}</td>
                                 <td>${requestDetail.vendorName}</td>
                                 <td>${requestDetail.skuInfo.itemNo}</td>
-                                <%--<td>${requestDetail.skuInfo.color}</td>--%>
-                                <td>--</td>
-                                <%--<td>${requestDetail.skuInfo.standard}</td>--%>
-                                <td>--</td>
+                                <td>${orderDetail.color}</td>
+                                <td>${orderDetail.standard}</td>
                                 <td>${fns:getDictLabel(requestDetail.inventorySku.invType,'inv_type','')}</td>
                                 <td>${fns:getDictLabel(requestDetail.inventorySku.skuType,'inventory_sku_type','')}</td>
                                 <td>${requestDetail.recvQty}</td>
