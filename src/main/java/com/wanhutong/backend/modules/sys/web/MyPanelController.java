@@ -1,7 +1,7 @@
 package com.wanhutong.backend.modules.sys.web;
 
 
-import com.sun.deploy.net.URLEncoder;
+
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @Controller
@@ -222,22 +221,22 @@ public class MyPanelController extends BaseController {
         User user = UserUtils.getUser();
         List<Role> userRoleList = user.getRoleList();
         Role tempRole = new Role();
-        try {
-            tempRole.setEnname(RoleEnNameEnum.FINANCE_DIRECTOR.getState());
-            if (userRoleList.contains(tempRole)) {
-                return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("财务总监", "UTF-8");
-            }
-            tempRole.setEnname(RoleEnNameEnum.FINANCIAL_GENERAL_MANAGER.getState());
-            if (userRoleList.contains(tempRole)) {
-                return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("财务总经理", "UTF-8");
-            }
-            tempRole.setEnname(RoleEnNameEnum.PROVIDER_MANAGER.getState());
-            if (userRoleList.contains(tempRole)) {
-                return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("供货部", "UTF-8");
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            tempRole.setEnname(RoleEnNameEnum.FINANCE_DIRECTOR.getState());
+//            if (userRoleList.contains(tempRole)) {
+//                return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("财务总监", "UTF-8");
+//            }
+//            tempRole.setEnname(RoleEnNameEnum.FINANCIAL_GENERAL_MANAGER.getState());
+//            if (userRoleList.contains(tempRole)) {
+//                return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("财务总经理", "UTF-8");
+//            }
+//            tempRole.setEnname(RoleEnNameEnum.PROVIDER_MANAGER.getState());
+//            if (userRoleList.contains(tempRole)) {
+//                return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/listV2?selectAuditStatus=" + URLEncoder.encode("供货部", "UTF-8");
+//            }
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/listV2";
     }
 
