@@ -1331,6 +1331,9 @@
 								<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 							</td>
 
+
+
+
 							<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
 								<td>${reqDetail.invName}</td>
 								<td>${reqDetail.skuInvQty}</td>
