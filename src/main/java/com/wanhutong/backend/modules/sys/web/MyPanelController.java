@@ -1,7 +1,6 @@
 package com.wanhutong.backend.modules.sys.web;
 
 
-import com.sun.deploy.net.URLEncoder;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -17,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 @Controller
