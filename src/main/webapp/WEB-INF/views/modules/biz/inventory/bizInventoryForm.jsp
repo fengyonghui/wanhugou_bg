@@ -53,6 +53,24 @@
 			});
 		});
 	</script>
+    <script type="text/javascript">
+        function doPrint() {
+            top.$.jBox.confirm("确认要打印当前报表吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    bdhtml=window.document.body.innerHTML;
+                    sprnstr="<!--startprint-->";
+                    eprnstr="<!--endprint-->";
+                    prnhtml=bdhtml.substr(bdhtml.indexOf(sprnstr)+17);
+                    prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr));
+                    window.document.body.innerHTML=prnhtml;
+                    window.print();
+                    location.reload();
+                    setTimeout("window.close();", 0);
+                }
+            },{buttonsFocus:1});
+            top.$('.jbox-body .jbox-icon').css('top','55px');
+        }
+    </script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -178,8 +196,79 @@
 				</c:if>
 			</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+            <input class="btn btn-primary" type="button" onclick="doPrint()" value="打印"/>
+
 		</div>
 	</form:form>
+
+    <div>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+            <title>局部打印</title>
+        </head>
+        <br/>
+        <div style="margin-left: 100px;">
+            <!--startprint--><!--注意要加上html里star和end的这两个标记-->
+            <p>
+            <table border="1" border-collapse:collapse style="width: 800px;height: 800px">
+            <tr align="center">
+                <td colspan="7">
+                    <img src="${ctxStatic}/jingle/image/logo.png" style="float: left">
+                    <b style="font-size: 20px">云仓备货单盘点报表</b>
+                    <div style="font-size: 15px;font-weight: bold;float: right;margin-bottom: 0px">www.wanhutong.com</div>
+                </td>
+            </tr>
+            <tr align="center" >
+                <td rowspan="2" style="width:100px;width: 200px">备货单号</td>
+                <td rowspan="2">${requestDetailList[0].requestHeader.reqNo}</td>
+                <td >货品类型</td>
+                <td colspan="4">
+                    <input type="checkbox">订单
+                    <input type="checkbox">调拨
+                    <input type="checkbox">样品
+                    <input type="checkbox">退货
+                </td>
+            </tr>
+
+            <tr align="center">
+                <td>货号</td>
+                <td colspan="4">
+                    <input type="checkbox">拉杆箱
+                    <input type="checkbox">双肩包
+                    <input type="checkbox">男女包
+                </td>
+            </tr>
+
+            <tr align="center">
+                <td>货号</td>
+                <td width="200px">货品名称</td>
+                <td width="100px">颜色</td>
+                <td width="100px">规格</td>
+                <td width="100px">现有库存数</td>
+            </tr>
+            <c:forEach items="${requestDetailList}" var="requestDetail" varStatus="v">
+                <tr align="center">
+                    <td>${requestDetail.skuInfo.itemNo}</td>
+                    <td>${requestDetail.skuInfo.name}</td>
+                    <td>${requestDetail.skuInfo.color}</td>
+                    <td>${requestDetail.skuInfo.size}</td>
+                    <td>${requestDetail.recvQty - requestDetail.outQty}</td>
+                </tr>
+            </c:forEach>
+            <tr align="center">
+                <td  colspan="7">
+                    <span style="float:left">盘点人签字：</span>
+                    <span style="float: right;margin-right: 200px">采购中心负责人签字：</span>
+                </td>
+            </tr>
+            </table>
+            </p>
+            <!--endprint-->
+        </div>
+    </div>
+
+
+
 
 <script type="text/javascript">
 
