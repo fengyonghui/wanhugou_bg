@@ -163,7 +163,7 @@ public class MyPanelController extends BaseController {
     //        订单审核 
     @RequestMapping(value = {"waitAudit"})
     public String waitAudit(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
 
         User user = UserUtils.getUser();
         BizOrderHeader bizOrderHeader = new BizOrderHeader();
@@ -196,35 +196,35 @@ public class MyPanelController extends BaseController {
     //        有尾款
     @RequestMapping(value = {"hasRetainage"})
     public String hasRetainage(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?retainage=1";
     }
 
     //        订单出库
     @RequestMapping(value = {"ddck"})
     public String ddck(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?waitOutput=1";
     }
 
     //        发货单入库
     @RequestMapping(value = {"fhdrk"})
     public String fhdrk(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
         return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor?bizStatusStart=20&bizStatusEnd=27";
     }
 
     //        申请付款
     @RequestMapping(value = {"applyPayment"})
     public String applyPayment(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/listV2?applyPayment=1";
     }
 
     //        付款单审核
     @RequestMapping(value = {"paymentOrderAudit"})
     public String paymentOrderAudit(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
 // 取当前用户角色
         User user = UserUtils.getUser();
         List<Role> userRoleList = user.getRoleList();
@@ -251,7 +251,7 @@ public class MyPanelController extends BaseController {
     //        备货单审核
     @RequestMapping(value = {"reAudit"})
     public String reAudit(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
 // 取当前用户角色
         User user = UserUtils.getUser();
         List<Role> userRoleList = user.getRoleList();
@@ -277,35 +277,35 @@ public class MyPanelController extends BaseController {
     //        待排产
     @RequestMapping(value = {"waitScheduling"})
     public String waitScheduling(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/listV2?poSchType=0";
     }
 
     //        备货单/订单付款
     @RequestMapping(value = {"orderPayment"})
     public String orderPayment(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/listV2?waitPay=1";
     }
 
     //        需上架商品
     @RequestMapping(value = {"needPutaway"})
     public String needPutaway(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
         return "redirect:" + Global.getAdminPath() + "/biz/sku/bizSkuInfo/list?notPutaway=1&productInfo.prodType=1";
     }
 
     //        备货单待发货
     @RequestMapping(value = {"reWaitShipments"})
     public String reWaitShipments(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
         return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor?bizStatus=15";
     }
 
     //        订单待发货
     @RequestMapping(value = {"orderWaitShipments"})
     public String orderWaitShipments(RedirectAttributes redirectModel) {
-        redirectModel.addAttribute("fromPage", "myPanel");
+        redirectModel.addAttribute("previousPage", "myPanel");
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?waitShipments=1";
     }
 

@@ -31,7 +31,7 @@ public abstract class DataEntity<T> extends BaseEntity<T> {
 	/**
 	 * 来自哪个页面
 	 */
-	protected String fromPage;
+	protected String previousPage;
 	public DataEntity() {
 		super();
 		this.delFlag = DEL_FLAG_NORMAL;
@@ -144,11 +144,11 @@ public abstract class DataEntity<T> extends BaseEntity<T> {
 		this.dataStatus = dataStatus;
 	}
 
-	public String getFromPage() {
-		return fromPage;
+	public String getPreviousPage() {
+		return previousPage;
 	}
 
-	public void setFromPage(String fromPage) {
-		this.fromPage = fromPage;
+	public void setPreviousPage(String previousPage) {
+		this.previousPage = previousPage;
 	}
 }

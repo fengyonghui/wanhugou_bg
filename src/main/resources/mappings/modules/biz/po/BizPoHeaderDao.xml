@@ -178,6 +178,7 @@
 				AND (a.current_payment_id is null or a.current_payment_id = 0)
 				and (a.total_detail + a.total_exp + a.freight) > a.pay_total
                 and process.type = 7
+				and 37 > rh.biz_status
 			</if>
 		</where>
 		GROUP BY a.id

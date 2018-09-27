@@ -36,7 +36,7 @@
 						</form:select>
 					</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-			<c:if test="${bizPoPaymentOrder.fromPage == 'myPanel'}">
+			<c:if test="${bizPoPaymentOrder.previousPage == 'myPanel'}">
 				<li class="btns"><a href="${ctx}/sys/myPanel/index"><input class="btn" type="button" value="返回我的任务"/></a></li>
 			</c:if>
 			<li class="clearfix"></li>
@@ -94,7 +94,7 @@
 				<td>
 				<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:audit">
 					<c:if test="${bizPoPaymentOrder.total != '0.00'}">
-						<c:if test="${bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成' && bizPoPaymentOrder.total != 0}">
+						<c:if test="${bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成' && bizPoPaymentOrder.total != 0}">
 												<%--&& (fns:hasRole(roleSet, bizPoPaymentOrder.commonProcess.paymentOrderProcess.moneyRole.roleEnNameEnum))--%>
 							<a href="#" onclick="checkPass(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核通过</a>
 							<a href="#" onclick="checkReject(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核驳回</a>

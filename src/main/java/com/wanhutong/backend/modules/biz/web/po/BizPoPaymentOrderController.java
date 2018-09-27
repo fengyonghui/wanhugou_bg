@@ -165,7 +165,6 @@ public class BizPoPaymentOrderController extends BaseController {
             }
         }
 
-
         if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum())) {
             if (bizPoPaymentOrder.getOrderNum().startsWith("SO") || bizPoPaymentOrder.getOrderNum().startsWith("DO")) {
                 BizOrderHeader orderHeader = bizOrderHeaderService.getByOrderNum(bizPoPaymentOrder.getOrderNum());

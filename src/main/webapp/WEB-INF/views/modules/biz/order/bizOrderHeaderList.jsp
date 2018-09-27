@@ -227,7 +227,7 @@
 
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
-		<c:if test="${bizOrderHeader.fromPage == 'myPanel'}">
+		<c:if test="${bizOrderHeader.previousPage == 'myPanel'}">
 			<li class="btns"><a href="${ctx}/sys/myPanel/index"><input class="btn" type="button" value="返回我的任务"/></a></li>
 		</c:if>
 		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">

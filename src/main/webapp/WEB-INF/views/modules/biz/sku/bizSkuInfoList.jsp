@@ -81,7 +81,7 @@
 				</form:select>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-			<c:if test="${bizSkuInfo.fromPage == 'myPanel'}">
+			<c:if test="${bizSkuInfo.previousPage == 'myPanel'}">
 				<li class="btns"><a href="${ctx}/sys/myPanel/index"><input class="btn" type="button" value="返回我的任务"/></a></li>
 			</c:if>
 			<li class="clearfix"></li>
