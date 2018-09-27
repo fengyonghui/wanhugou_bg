@@ -40,42 +40,18 @@
 		SELECT
 		sum(CASE WHEN status_code IN (10, 11, 12, 22) THEN money ELSE 0 END ) AS gainIntegration,
 		sum(CASE WHEN status_code IN (20, 21) THEN money ELSE 0 END) AS usedIntegration,
-		sum(CASE WHEN CURRENT_DATE &lt; concat(YEAR(now()), '-07-01')
-		AND status_code IN ('10', '11', '12', '22')
-		AND update_time &lt; concat(YEAR(now()) - 1, '-01-01') THEN money
-		WHEN CURRENT_DATE >= concat(YEAR(now()), '-07-01')
-		AND status_code IN ('10', '11', '12', '22')
-		AND update_time &lt; concat(YEAR(now()), '-01-01') THEN money ELSE 0 END) AS expireIntegration
+		sum(CASE WHEN status_code IN (30) THEN money ELSE 0 END) AS expireIntegration
 		FROM
 		biz_money_recode
 	</select>
 	<select id="selectExpireMoney" resultType="com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail">
 		SELECT
-				office_id,
-					sum(
-						CASE
-						WHEN status_code IN (10, 11, 12, 22) THEN
-							money
-						ELSE
-							0
-						END
-					) AS sumMoney,
-					sum(
-						CASE
-						WHEN status_code IN (20,21) THEN
-							money
-						ELSE
-							0
-						END
-					) AS usedMoney
-
-				FROM
-					biz_money_recode a
-				WHERE
-					a.create_time BETWEEN concat(YEAR(now()), '-01-01')
-				AND concat(YEAR(now()) , '-12-31')
-				GROUP BY
-					office_id
+		office_id,
+		sum(CASE WHEN status_code IN(10, 11, 12, 22) and create_time >= (concat(YEAR(now())-1,'-01-01')) and create_time <![CDATA[<=]]> (concat(year(now())-1,'-12-31')) THEN money ELSE 0 END )AS gainIntegration,
+		sum(CASE WHEN status_code IN(20,21) and create_time >= (concat(YEAR(now())-1,'-01-01')) and create_time <![CDATA[<=]]> (concat(year(now()),'-07-01')) THEN money ELSE 0 END)AS usedIntegration
+		FROM
+		biz_money_recode
+		GROUP BY office_id
 	</select>
 
 	<select id="findList" resultType="BizMoneyRecode">
