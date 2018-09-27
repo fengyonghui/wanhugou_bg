@@ -284,20 +284,14 @@
 								$('#orderinfoList').append(orderHtmlList);
 								_this.stOrdHrefHtml();
 								//先隐藏订单信息
-								 var pos=$(".ctn_show_row .dd");
-								 var posd=$(".ctn_show_row .staPayBtn");
-//								 var posd=$(".ctn_show_row .sta");
-								 $.each(pos,function(n,v){
+								var pos=$(".ctn_show_row .dd");
+								var posd=$(".ctn_show_row .staPayBtn");
+								$.each(pos,function(n,v){
 	                            	var poNumid=$(this).attr('id').substr(6);
-//		                        	console.log(poNumid)
 	                            	$.each(posd,function(n,v){
-//	                            		console.log(v)
 	                            		var that=this;	                            	
 		                            	var y=$(that).attr('ordid');
-//		                            	var y=$(that).attr('stas')
-//		                            	console.log(y)
 		                            	var divs=$("#poNum_"+poNumid);
-//		                            	console.log(divs)
 		                            	if(poNumid==y){
 		                            		divs.parent().parent().hide()
 		                            	}
