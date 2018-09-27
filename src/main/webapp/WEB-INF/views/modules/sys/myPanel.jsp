@@ -129,7 +129,7 @@
             </li>
         </shiro:hasAnyRoles>
         <shiro:hasAnyRoles
-                name="dept,teller">
+                name="dept,teller,finance,financial_general_manager,finance_director">
             <li>
                 <a href="${ctx}/sys/myPanel/orderPayment">备货单/订单付款</a>
                 <c:if test="${orderPaymentCount > 0}">
