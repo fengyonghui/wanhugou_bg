@@ -694,30 +694,4 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		return bizRequestHeaderForVendorDao.findOfficeRegion(officeId);
 	}
 
-	public void findOrderLogistics(AddressVoEntity addressVoEntity) {
-		Map<String, Object> params = Maps.newHashMap();
-		//设置起始站点
-		params.put("transitStartPointCode", null);
-		if (StringUtils.isNotBlank(addressVoEntity.getRegionCode())) {
-			params.put("transitStopPointCode", addressVoEntity.getRegionCode());
-			params.put("level", 3);
-		} else if (StringUtils.isNotBlank(addressVoEntity.getCityCode())) {
-			params.put("transitStopPointCode", addressVoEntity.getCityCode());
-			params.put("level", 2);
-		} else {
-			//return ResultVo.createByErrorEnum("找不到相应的采购中心地址信息");
-		}
-		//如果收货地址为广东 则把起始站点设置为2
-		if (StringUtils.isNotBlank(addressVoEntity.getProvCode()) && addressVoEntity.getProvCode().equals(1)) {
-			params.put("transitStartPointCode", 2);
-		}
-		//设置网点
-		params.put("branchesCode", 1);
-		//设置线路类别（1=发货线路，2=到货线路） 默认发货路线
-		params.put("category", 1);
-		params.put("varietyInfoIdSParams", addressVoEntity.getVarietyInfoIdSParams());
-
-
-	}
-
 }
