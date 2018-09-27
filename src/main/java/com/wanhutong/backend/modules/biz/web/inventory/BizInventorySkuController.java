@@ -641,10 +641,12 @@ public class BizInventorySkuController extends BaseController {
             }
         }
         List<InventorySkuRequestProcessConfig.InvRequestProcess> processList = ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getProcessList();
+        List<BizVarietyInfo> varietyList= bizVarietyInfoService.findList(new BizVarietyInfo());
         model.addAttribute("processList", processList);
         model.addAttribute("roleSet",rolsSet);
         model.addAttribute("page",requestHeaderPage);
         model.addAttribute("requestHeader",requestHeader);
+        model.addAttribute("varietyList",varietyList);
         return "modules/biz/inventory/bizInventory";
     }
 

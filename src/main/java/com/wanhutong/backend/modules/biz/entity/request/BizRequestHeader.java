@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
@@ -22,6 +21,8 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -228,6 +229,8 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 页面传值
 	 */
 	private String invReqDetail;
+
+	private Long inventoryAgeDay;
 
 
 	public BizRequestHeader() {
@@ -696,6 +699,7 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	public void setTotalCompleteScheduHeaderNum(Integer totalCompleteScheduHeaderNum) {
 		this.totalCompleteScheduHeaderNum = totalCompleteScheduHeaderNum;
 	}
+	private String inventoryAgeDate;
 
 	public BizPoHeader getBizPoHeader() {
 		return bizPoHeader;
@@ -800,4 +804,18 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	public enum FromType{
 
 	}
+
+	public Long getInventoryAgeDay() {
+		return inventoryAgeDay;
+	}
+
+	public void setInventoryAgeDay(Long inventoryAgeDay) {
+		this.inventoryAgeDay = inventoryAgeDay;
+	}
+	public String getInventoryAgeDate() {
+		LocalDate today = LocalDate.now();
+		LocalDate date = today.minus(this.getInventoryAgeDay(), ChronoUnit.DAYS);
+		return date.toString();
+	}
+
 }

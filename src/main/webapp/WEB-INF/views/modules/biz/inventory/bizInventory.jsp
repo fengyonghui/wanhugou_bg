@@ -41,7 +41,7 @@
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku/inventory">商品库存详情列表</a></li>
 	</ul>
-	<form:form id="searchForm" modelAttribute="BizRequestHeader" action="${ctx}/biz/inventory/bizInventorySku/inventory/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="requestHeader" action="${ctx}/biz/inventory/bizInventorySku/inventory/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<%--<input id="zt" type="hidden" name="zt" value="${zt}"/>--%>
@@ -49,25 +49,31 @@
 			<li><label>供应商：</label>
 				<input name="vendName" value="${requestHeader.vendName}" htmlEscape="false" class="input-medium"/>
 			</li>
-			<%--<li><label>品类：</label>--%>
-				<%--<form:select path="varietyInfo.id" cssStyle="width: 100px" >--%>
-					<%--<form:option value="" label="全部"/>--%>
-					<%--<form:options items="${varietyList}" itemLabel="name" itemValue="id" htmlEscape="false" />--%>
-				<%--</form:select>--%>
-			<%--</li>--%>
-			<%--<li><label>备货方：</label>--%>
-				<%--<select name="fromType" htmlEscape="false"  class="input-medium">--%>
-					<%--<option value="" label="全部"/>--%>
-					<%--<c:forEach items="${fns:getDictList('req_from_type')}" var="v">--%>
-						<%--<option value="${v.value}" />--%>
-					<%--</c:forEach>--%>
-				<%--</select>--%>
-			<%--</li>--%>
+			<li><label>品类：</label>
+				<form:select path="varietyInfo.id" cssStyle="width: 100px" >
+					<form:option value="" label="全部"/>
+					<form:options items="${varietyList}" itemLabel="name" itemValue="id" htmlEscape="false" />
+				</form:select>
+			</li>
+
+			<li><label>备货单号：</label>
+				<input name="reqNo" value="${requestHeader.reqNo}" htmlEscape="false" class="input-medium"/>
+			</li>
+
+			<li><label>备货方：</label>
+				<form:select path="fromType" cssStyle="width: 100px" >
+					<form:option value="" label="全部"/>
+					<form:options items="${fns:getDictList('req_from_type')}" itemLabel="label" itemValue="value" htmlEscape="false" />
+				</form:select>
+			</li>
 			<li><label>仓库名称：</label>
-				<sys:treeselect id="invInfo" name="invInfo.id" value="${bizRequestHeader.invInfo.id}" labelName="invInfo.name"
-								labelValue="${bizRequestHeader.invInfo.name}" notAllowSelectParent="true"
+				<sys:treeselect id="invInfo" name="invInfo.id" value="${requestHeader.invInfo.id}" labelName="invInfo.name"
+								labelValue="${requestHeader.invInfo.name}" notAllowSelectParent="true"
 								title="仓库"  url="/biz/inventory/bizInventoryInfo/warehouseData"
 								cssClass="input-medium" allowClear="true"/>
+			</li>
+			<li><label style="width: 90px;">库龄时长(天)：</label>
+				<form:input path="inventoryAgeDay" htmlEscape="false"  class="input-medium"/>
 			</li>
 			<li>
 				<label>审核状态：</label>
