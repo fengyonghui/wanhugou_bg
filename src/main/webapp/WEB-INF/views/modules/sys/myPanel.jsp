@@ -57,7 +57,7 @@
 <div class="contentMain">
     <ul class="htmlMenu">
         <shiro:hasAnyRoles
-                name="dept,p_center_manager,buyer,channel_manager,Channel Supervisor,General manager,selection_of_specialist">
+                name="dept,p_center_manager,buyer,channel_manager,Channel Supervisor,General manager,selection_of_specialist,finance,financial_general_manager,finance_director">
             <li>
                 <a href="${ctx}/sys/myPanel/waitAudit">订单审核</a>
                 <c:if test="${waitAuditCount > 0}">
