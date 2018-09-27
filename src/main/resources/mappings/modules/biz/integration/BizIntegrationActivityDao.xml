@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.integration.BizIntegrationActivityDao">
+    
+	<sql id="bizIntegrationActivityColumns">
+		a.id AS "id",
+		a.activity_name AS "activityName",
+		a.activity_code AS "activityCode",
+		a.send_time AS "sendTime",
+		a.send_all AS "sendAll",
+		a.send_scope AS "sendScope",
+		a.activity_tools AS "activityTools",
+		a.send_num AS "sendNum",
+		a.integration_num AS "integrationNum",
+		a.description AS "description",
+		a.create_id AS "createBy.id",
+		b.name as "createBy.name",
+		a.update_id AS "updateBy.id",
+		a.create_time AS "createDate",
+		a.update_time AS "updateDate",
+		a.status AS "status",
+		a.send_status AS "sendStatus",
+		a.u_version AS "uVersion",
+		GROUP_CONCAT(c.user_id) AS officeIds
+	</sql>
+	
+	<sql id="bizIntegrationActivityJoins">
+          LEFT JOIN sys_user_activity c on c.activity_id = a.id and c.`status` = 1
+          LEFT join sys_user b on b.id = a.create_id and b.status = 1
+	</sql>
+    
+	<select id="get" resultType="BizIntegrationActivity">
+		SELECT 
+			<include refid="bizIntegrationActivityColumns"/>
+		FROM biz_integration_activity a
+		<include refid="bizIntegrationActivityJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizIntegrationActivity">
+		SELECT 
+			<include refid="bizIntegrationActivityColumns"/>
+		FROM biz_integration_activity a
+		<include refid="bizIntegrationActivityJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL} and a.activity_code not in ('ZCS','ZFS','XDK')
+			<if test="activityName != null and activityName != ''">
+				AND a.activity_name like concat('%',#{activityName},'%')
+			</if>
+			<if test="sendStatus != null and sendStatus != '' or sendStatus==0">
+				AND a.send_status = #{sendStatus}
+			</if>
+			<if test="beginSendTime!=null and beginSendTime!='' ">
+				and a.send_time>=#{beginSendTime}
+			</if>
+			<if test="endSendTime!=null and endSendTime!=''">
+				and  a.send_time<![CDATA[<=]]>#{endSendTime}
+			</if>
+		</where>
+        group by a.id
+		order by a.id desc
+	</select>
+	
+	<select id="findAllList" resultType="BizIntegrationActivity">
+		SELECT 
+			<include refid="bizIntegrationActivityColumns"/>
+		FROM biz_integration_activity a
+		<include refid="bizIntegrationActivityJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_integration_activity(
+			id,
+			activity_name,
+			activity_code,
+			send_time,
+			send_scope,
+			send_all,
+			activity_tools,
+			send_num,
+			integration_num,
+			description,
+			create_id,
+			update_id,
+			create_time,
+			update_time,
+			status,
+			send_status,
+			u_version
+		) VALUES (
+			#{id},
+			#{activityName},
+			#{activityCode},
+			#{sendTime},
+			#{sendScope},
+			#{sendAll},
+			#{activityTools},
+			#{sendNum},
+			#{integrationNum},
+			#{description},
+			#{createBy.id},
+			#{updateBy.id},
+			#{createDate},
+			#{updateDate},
+			#{status},
+			#{sendStatus},
+			#{uVersion}
+		)
+	</insert>
+	<insert id="insertMiddle" parameterType="list">
+		        insert into sys_user_activity(activity_id,user_id,biz_status,status) values
+				<foreach collection="list" item="item" index="index" separator=",">
+					(#{item.id},#{item.userId},#{item.bizStatus},#{item.status})
+				</foreach>
+	</insert>
+
+	<select id="findOrderOfficeList" resultType="com.wanhutong.backend.modules.sys.entity.Office">
+			    SELECT
+				  a.id,
+				  a.`name` as 'name',
+				  a.phone as 'phone',
+				  c.name as 'primaryPerson.name'
+				FROM
+					sys_office a
+				LEFT JOIN biz_order_header b on b.cust_id = a.id and b.status = 1
+				LEFT JOIN sys_user c on a.primary_person = c.id and c.`status` = 1
+				where a.`status` = 1 AND a.type = 6 and b.cust_id is not null
+				GROUP BY b.cust_id
+	</select>
+
+	<select id="findUnOrderOfficeList" resultType="com.wanhutong.backend.modules.sys.entity.Office">
+		    SELECT
+			a.id,
+			a.`name` as 'name',
+			a.phone as 'phone',
+			c.name as 'primaryPerson.name'
+			FROM
+				sys_office a
+			LEFT JOIN biz_order_header b ON b.cust_id = a.id AND b. STATUS = 1
+			LEFT JOIN sys_user c on a.primary_person = c.id and c.`status` = 1
+			WHERE
+				a. STATUS = 1
+			AND a.type = 6
+			AND b.cust_id IS NULL
+			GROUP BY a.id
+	</select>
+
+	<update id="update">
+		UPDATE biz_integration_activity SET 	
+			activity_name = #{activityName},
+			activity_code = #{activityCode},
+			send_time = #{sendTime},
+			send_scope = #{sendScope},
+			send_all = #{sendAll},
+			activity_tools = #{activityTools},
+			send_num = #{sendNum},
+			integration_num = #{integrationNum},
+			description = #{description},
+			status = #{status},
+			u_version = #{uVersion}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_integration_activity SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

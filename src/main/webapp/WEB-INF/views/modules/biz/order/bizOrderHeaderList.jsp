@@ -258,6 +258,7 @@
 		<th>商品总价</th>
 		<th>调整金额</th>
 		<th>运费</th>
+		<th>万户币抵扣</th>
 		<th>应付金额</th>
 		<c:if test="${source ne 'vendor'}">
 			<th>服务费</th>
@@ -331,8 +332,11 @@
 			<td><font color="#848484">
 				<fmt:formatNumber type="number" value="${orderHeader.freight}" pattern="0.00"/>
 			</font></td>
+			<td><font color="#848484"><%--==null?0.00:orderHeader.scoreMoney--%>
+				<fmt:formatNumber type="number" value="${orderHeader.scoreMoney}" pattern="0.00"/>
+			</font></td>
 			<td><font color="#0A2A0A">
-				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee}" pattern="0.00"/>
+				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.scoreMoney}" pattern="0.00"/>
 			</font></td>
 			<c:if test="${source ne 'vendor'}">
 				<td>
