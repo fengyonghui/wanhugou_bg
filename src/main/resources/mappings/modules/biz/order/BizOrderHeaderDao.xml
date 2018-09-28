@@ -421,6 +421,7 @@
 				AND a.biz_status != 45
 				AND a.biz_status != 40
 				AND a.biz_status != 35
+				AND a.biz_status >= 15
 			</if>
 			<if test="source != null and source == 'vendor'">
 
@@ -619,6 +620,7 @@
 						WHERE boh.id = a.id) != 0 and a.biz_status = 15
 					)
 				)
+				and a.order_num like 'SO%'
 			</if>
 			<if test="bizPoHeader !=null and bizPoHeader.id != null and bizPoHeader.id != ''">
 				AND  bph.id = ${bizPoHeader.id}

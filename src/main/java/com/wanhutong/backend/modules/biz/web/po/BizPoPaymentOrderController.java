@@ -170,10 +170,18 @@ public class BizPoPaymentOrderController extends BaseController {
         }
 
         if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum())) {
-            if (bizPoPaymentOrder.getOrderNum().startsWith("SO") || bizPoPaymentOrder.getOrderNum().startsWith("DO")) {
+            if (bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("SO") || bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("DO")) {
                 BizOrderHeader orderHeader = bizOrderHeaderService.getByOrderNum(bizPoPaymentOrder.getOrderNum());
                 if (orderHeader != null) {
                     bizPoPaymentOrder.setPoHeaderId(orderHeader.getBizPoHeader().getId());
+                }
+            }
+            if (bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("RE")) {
+                BizRequestHeader requestHeader = new BizRequestHeader();
+                requestHeader.setReqNo(bizPoPaymentOrder.getOrderNum());
+                List<BizRequestHeader> list = bizRequestHeaderForVendorService.findList(requestHeader);
+                if (CollectionUtils.isNotEmpty(list)) {
+                    bizPoPaymentOrder.setPoHeaderId(list.get(0).getBizPoHeader().getId());
                 }
             }
         }
