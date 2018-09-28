@@ -58,13 +58,13 @@
                         if (!flag) {
                             alert("请勾选出库的备货单！");
                             return false;
-						} else if (flag1){
+						} else if (!flag1){
                             alert("选中出库的备货单，本次出库数量不能为空，也不能为0");
                             return false;
-						} else if (flag2){
+						} else if (!flag2){
                             alert("选中出库的备货单，本次出库数量不能大于可出库数量");
                             return false;
-						} else if (flag3){
+						} else if (!flag3){
                             alert("选中出库的备货单，本次出库数量不能大于订单的剩余需求数量");
                             return false;
 						} else {
