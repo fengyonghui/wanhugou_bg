@@ -969,6 +969,25 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 		bizRequestHeaderForVendorService.save(bizRequestHeader);
+
+		BizRequestDetail bizRequestDetail = new BizRequestDetail();
+		bizRequestDetail.setRequestHeader(bizRequestHeader);
+		List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+		BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+		for (BizRequestDetail requestDetail : requestDetailList) {
+			bizPoOrderReq.setSoLineNo(requestDetail.getLineNo());
+			bizPoOrderReq.setRequestHeader(requestDetail.getRequestHeader());
+			bizPoOrderReq.setSoType((byte) 2);
+			List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+			if (poOrderReqList != null && poOrderReqList.size() > 0) {
+				BizPoOrderReq poOrderReq = poOrderReqList.get(0);
+				BizPoHeader poHeader = poOrderReq.getPoHeader();
+				poHeader.setDelFlag("0");
+				poOrderReq.setDelFlag("0");
+				bizPoHeaderService.save(poHeader);
+				bizPoOrderReqService.save(poOrderReq);
+			}
+		}
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return true;
 	}
