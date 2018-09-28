@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<title>支付申请列表</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/app.css?time=20180914" rel="stylesheet" />
+		<style>
+			.payMoney{
+				display: none;
+				background: #CECECE;
+				width:90%;	
+				left:5%;			
+				position: fixed;
+				top:180px;
+				z-index: 100;
+				border:1px solid #007AFF;
+				text-align: center;
+				border-radius: 8px;
+			}
+			.paybox{
+				text-align: center;
+			}
+			.payMoney input,.payMoney textarea{
+				margin-top:5px;
+				width:80%;
+				margin-left:10%;
+			}
+			.btnbox{
+				margin:5px 0;
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="app_header mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+		    <p class="app_cf app_nav_text_center">支付申请列表</p>
+		</header>
+		<!--<nav class="mui-bar mui-bar-tab footClass" id="nav">
+			<a class="mui-tab-item app_cf staHomePage">
+				<span class="mui-icon mui-icon-home"></span>
+				<span class="mui-tab-label">返回首页</span>
+			</a>
+		</nav>-->
+		<div class="app_content mui-content mui-scroll-wrapper" id="refreshContainer">			
+			<div class="mui-scroll">
+				<ul class="mui-table-view mui-table-view-chevron" id="payApplyList">
+                        
+                </ul>
+			</div>
+		</div>
+		<div class="payMoney">
+			<div class="paybox">
+				<label>订单总金额:</label>
+			    <input class="mui-input-clear" type="text" id="totalMoney" disabled>
+			</div>
+			<div class="paybox">
+				<label>付款金额:</label>
+			    <input class="mui-input-clear" type="text" id="paymoney">
+			</div>
+			<div class="paybox">
+				<label>备注:</label>
+			    <textarea id="textxt"></textarea>
+			</div>
+			
+			<div class="btnbox">
+				<button id="payBtnsave" style="background: #40ABE9;color:#fff;width:100px">保存</button>
+			</div>
+			
+		</div>
+		<script src="../../js/component/mui.min.js"></script>
+		<script src="../../js/component/zepto.min.js"></script>
+		<script src="../../js/component/GHutils.js"></script>
+		<script src="../../js/orderMgmtJs/payApplyList.js"></script>
+	</body>
+</html>
