@@ -4,10 +4,16 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.fs == false;
+		this.outSaveFlag = "false"
+		this.inSsaveFlag = "false"
+		
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
+			//biz:po:bizPoHeader:addScheduling		biz:po:bizPoHeader:saveScheduling	保存、批量保存	
+			this.getPermissionList('biz:po:bizPoHeader:addScheduling','outSaveFlag')	
+			this.getPermissionList('biz:po:bizPoHeader:saveScheduling','inSsaveFlag')	
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			this.pageInit(); //页面初始化
 		},
@@ -15,6 +21,44 @@
 			var _this = this;
 			_this.getData();
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.outSaveFlag = res.data;
+					_this.inSsaveFlag = res.data;
+                    console.log(_this.outSaveFlag)
+					console.log(_this.inSsaveFlag)
+                }
+            });
+        },
+        ajaxNum: function() {
+        	var _this = this;
+        	 $.ajax({
+                type: "GET",
+                url: "/a/biz/po/bizPoHeader/checkSchedulingNum",
+                dataType: "json",
+                data: {id: _this.userInfo.staOrdId},
+                async:false,
+                success: function(mm){
+                	console.log(mm)
+                	$('#purchOrdQty').val(mm.totalOrdQty);
+                	console.log(mm.totalSchedulingHeaderNum)
+                	if(mm.totalSchedulingHeaderNum != null) {
+                		$('#purchWaiteNum').val(mm.totalOrdQty - mm.totalSchedulingHeaderNum);
+                		$('#toalSchedulingNum').val(mm.totalSchedulingHeaderNum);
+                	}else{
+                		$('#purchWaiteNum').val(mm.totalOrdQty);
+                		$('#toalSchedulingNum').val('0');
+                	}
+        	    }
+            });
+        },
 		getData: function() {
 			var _this = this;
 			$.ajax({
@@ -30,12 +74,15 @@
 	              		})
 	              	})
                 	var poDetailList = res.data.bizPoHeader.poDetailList;
+                	if(poDetailList.length == 0) {
+		                $('#saveBtnPt').hide();
+		            } else {
+		                _this.ajaxNum();
+		            }
                 	var htmlPurch = '';
 					var htmlSave = '';
                 	$.each(poDetailList, function(i,item) {
-                		$('#purchOrdQty').val(item.ordQty);
-                		$('#purchWaiteNum').val(item.ordQty - item.sumCompleteNum);
-                		$('#toalSchedulingNum').val(item.sumCompleteNum);
+                		
 					htmlPurch +='<li class="mui-table-view-cell mui-media app_bline app_pr">'+
 //		产品图片
 					'<div class="photoParent mui-pull-left app_pa">'+
@@ -66,7 +113,11 @@
 					$("#orSchedPurch").html(htmlPurch)
             		$(".saveBtnPt").html(htmlSave)
                 	_this.showContent(res);
-            		_this.saveSchedul(res);
+//              	if(_this.outSaveFlag == true) {
+//	                	if(_this.inSsaveFlag == true) {
+	                		_this.saveSchedul(res);
+//	                	}
+//	                }
                 }
 			});	
 			_this.schedulPlan();
@@ -75,7 +126,6 @@
 		showContent: function(data) {
 			var _this = this;
 			console.log(data)
-			$('.schedCommd').hide();
 			if(data.data.detailHeaderFlg == true) {
 				_this.purchContent(data);
 				$(".inputRadio").attr("disabled", true);
@@ -85,12 +135,23 @@
 				$(".inputRadio").attr("disabled", true);
 			}
 			if(data.data.detailHeaderFlg == false && data.data.detailSchedulingFlg == false) {
+				$('.schedCommd').hide();
 				_this.btnshow(data);
 			}
 		},
 		purchContent: function(a) {
 			var _this = this;
 			console.log(a)
+			if(a.data.bizPoHeader.poSchType == 0) {
+				$('#chedulingStatus').val('未排产');
+			}
+			if(a.data.bizPoHeader.poSchType == 1) {
+				$('#chedulingStatus').val('排产中');
+			}
+			if(a.data.bizPoHeader.poSchType == 2) {
+				$('#chedulingStatus').val('排产完成');
+				$('#saveBtnPt').hide();
+			}
 			var htmlPurch = '';
 			var htmlSave = '';
 			$.each(a.data.bizPoHeader.poDetailList, function(i,item) {
@@ -127,6 +188,17 @@
 		commdContent: function(b) {
 			var _this = this;
 			console.log(b)
+			var chedulingStatus = '';
+			if(a.data.bizPoHeader.poSchType == 0) {
+				chedulingStatus = '未排产'
+			}
+			if(a.data.bizPoHeader.poSchType == 1) {
+				chedulingStatus = '排产中'
+			}
+			if(a.data.bizPoHeader.poSchType == 2) {
+				chedulingStatus = '排产完成'
+				$('#saveBtnPt').hide();
+			}
 			var htmlCommodity = '';
 			var htmlAllSave = '';
 			$.each(b.data.bizPoHeader.poDetailList, function(i,item) {
@@ -159,13 +231,16 @@
 					'<div class="mui-row app_f13 app_bline">'+
 						'<div class="mui-input-row">'+
 							'<label>总申报数量：</label>'+
-							'<input type="text" value="'+ item.ordQty +'" id="totalOrdQtyForSku_'+ item.id+'" class="commdOrdQty"></div>'+
+							'<input type="text" value="'+ item.ordQty +'" id="totalOrdQtyForSku_'+ item.id+'" class="commdOrdQty" sidabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>总待排产量：</label>'+
 							'<input type="text" value="'+ waiteNum +'" class="commdWaiteNum"></div>'+	
 						'<div class="mui-input-row">'+
 							'<label>已排产数量：</label>'+
-							'<input type="text" name="toalSchedulingNumForSku" value="'+ item.sumCompleteNum +'" class="commdCompleteNum"></div>'+
+							'<input type="text" name="toalSchedulingNumForSku" value="'+ item.sumCompleteNum +'" class="commdCompleteNum" sidabled></div>'+
+						'<div class="mui-input-row">'+
+							'<label>当前状态：</label>'+
+							'<input type="text" value="'+ chedulingStatus +'" class="commdCompleteNum app_cred3" sidabled></div>'+
 						'<button type="submit" class="commdAddBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
 						'<button type="submit" class="singleAddBtn inAddBtn app_btn_search mui-btn-blue mui-btn-block">保存</button></div>'+
 					'<div class="mui-row plan">'+
@@ -186,6 +261,7 @@
 		},
 		btnshow: function(data) {
 			var _this = this;
+			$('#chedulingStatus').val('未排产');
 			$('input[type=radio]').on('change', function() {
 				if(this.checked && this.value == 0) {
 					$('.schedPurch').show();
@@ -422,7 +498,7 @@
                 var trArray = $("[name='" + reqDetailId + "']");
                 
                  console.log(trArray)
-        console.log(trArray.length)
+       			 console.log(trArray.length)
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];
                     var jqDiv = $(div);
