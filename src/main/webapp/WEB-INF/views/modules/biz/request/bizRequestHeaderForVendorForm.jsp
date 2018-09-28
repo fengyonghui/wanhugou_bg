@@ -614,14 +614,15 @@
         }
 
         function saveCompleteCheck() {
-            var trArray = $("[name='headerScheduling_forHeader']");
+            var reqId = "${entity.id}";
+            var trArray = $("[name='" + reqId + "']");
             var originalNum = $("#totalOrdQty").val();
 
             var totalSchedulingHeaderNum = 0;
             for(i=0;i<trArray.length;i++){
                 var div = trArray[i];
                 var jqDiv = $(div);
-                var value = jqDiv.find("[name='headerScheduling_forHeader_value']").val();
+                var value = jqDiv.find("[name='" + reqId + "_value']").val();
 
                 totalSchedulingHeaderNum = parseInt(totalSchedulingHeaderNum) + parseInt(value);
             }
@@ -634,8 +635,8 @@
             for(i=0;i<trArray.length;i++){
                 var div = trArray[i];
                 var jqDiv = $(div);
-                var date = jqDiv.find("[name='headerScheduling_forHeader_date']").val();
-                var value = jqDiv.find("[name='headerScheduling_forHeader_value']").val();
+                var date = jqDiv.find("[name='" + reqId + "_date']").val();
+                var value = jqDiv.find("[name='" + reqId + "_value']").val();
 
                 if (date == "") {
                     if (value != "") {
@@ -735,7 +736,8 @@
         }
 
         function saveComplete(schedulingType,poId) {
-            var trArray = $("[name='headerScheduling_forHeader']");
+            var reqId = "${entity.id}";
+            var trArray = $("[name='" + reqId + "']");
             var params = new Array();
             var schRemark = "";
             var originalNum = $("#totalOrdQty").val();
@@ -747,7 +749,7 @@
             for(i=0;i<trArray.length;i++){
                 var div = trArray[i];
                 var jqDiv = $(div);
-                var value = jqDiv.find("[name='headerScheduling_forHeader_value']").val();
+                var value = jqDiv.find("[name='" + reqId + "_value']").val();
 
                 totalSchedulingHeaderNum = parseInt(totalSchedulingHeaderNum) + parseInt(value);
             }
@@ -763,8 +765,8 @@
             for(i=0;i<trArray.length;i++){
                 var div = trArray[i];
                 var jqDiv = $(div);
-                var date = jqDiv.find("[name='headerScheduling_forHeader_date']").val();
-                var value = jqDiv.find("[name='headerScheduling_forHeader_value']").val();
+                var date = jqDiv.find("[name='" + reqId + "_date']").val();
+                var value = jqDiv.find("[name='" + reqId + "_value']").val();
 
                 if (date == "") {
                     if (value != "") {
@@ -1841,13 +1843,13 @@
 						</tr>
 						<tr id="header_${entity.bizPoHeader.id}" class="headerScheduling">
 							<td>
-								<div name="headerScheduling_forHeader">
+								<div name="${entity.id}">
 									<label>完成日期：</label>
-									<input name="headerScheduling_forHeader_date" type="text" maxlength="20"
+									<input name="${entity.id}_date" type="text" maxlength="20"
 										   class="input-medium Wdate"
 										   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/> &nbsp;
 									<label>排产数量：</label>
-									<input name="headerScheduling_forHeader_value" class="input-medium" type="text" maxlength="30"/>
+									<input name="${entity.id}_value" class="input-medium" type="text" maxlength="30"/>
 								</div>
 							</td>
 						</tr>

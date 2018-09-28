@@ -1370,6 +1370,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     }
 
     //获取自动生成采购单所需的必要信息
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public Pair<Boolean, String> goListForAutoSave(Integer orderId, String type, String lastPayDateVal, HttpServletRequest request,HttpServletResponse response) throws ParseException {
         Pair<Boolean, String> result = Pair.of(Boolean.FALSE, "自动生成采购单失败");
         if (REQUEST_HEADER_TYPE.equals(type)) {
@@ -1488,6 +1489,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         return result;
     }
 
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public Pair<Boolean, String> autoSave(String reqDetailIds, String orderDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal) throws ParseException {
         Office vendOffice = new Office();
         vendOffice.setId(Integer.parseInt(vendorId));
