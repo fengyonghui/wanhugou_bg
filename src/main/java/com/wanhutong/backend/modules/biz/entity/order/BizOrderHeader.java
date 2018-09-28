@@ -248,6 +248,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private Integer waitOutput;
 
+    /**
+     * 需要出库筛选条件
+     */
+    private Integer needOut;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -1041,6 +1046,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setWaitOutput(Integer waitOutput) {
         this.waitOutput = waitOutput;
+    }
+
+    public Integer getNeedOut() {
+        return needOut;
+    }
+
+    public void setNeedOut(Integer needOut) {
+        this.needOut = needOut;
     }
 }
 

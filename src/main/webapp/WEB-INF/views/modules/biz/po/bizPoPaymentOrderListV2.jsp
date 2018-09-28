@@ -197,11 +197,8 @@
                         result = JSON.parse(result);
                         if(result.ret == true || result.ret == 'true') {
                             alert('操作成功!');
-                            if(${fromPage != null}) {
-                                window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
-                            } else {
-                                window.location.href = "${ctx}/biz/po/bizPoHeader";
-                            }
+                            window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+
                             <%--if(${fromPage != null && fromPage == 'requestHeader'}) {--%>
                                 <%--window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";--%>
                             <%--} else if (${fromPage != null && fromPage == 'orderHeader'}) {--%>

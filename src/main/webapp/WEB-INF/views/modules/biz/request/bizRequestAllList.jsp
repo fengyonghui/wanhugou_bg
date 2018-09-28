@@ -92,11 +92,20 @@
 						<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>
 				</li>
+                <li><label>需要入库</label>
+                    <form:select path="needIn" cssClass="input-mini">
+                        <form:option value="" label="请选择"/>
+                        <form:option value="1" label="是"/>
+                    </form:select>
+                </li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 				<li class="btns">
 					<%--备货单收货--%>
 					<input id="requestAllExport" class="btn btn-primary" type="button" value="导出"/>
 				</li>
+				<c:if test="${bizRequestHeader.previousPage == 'myPanel'}">
+					<li class="btns"><a href="${ctx}/sys/myPanel/index"><input class="btn" type="button" value="返回我的任务"/></a></li>
+				</c:if>
 				<li class="clearfix"></li>
 			</ul>
 		</form:form>
@@ -138,6 +147,12 @@
 										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
 				</li>
+                <li><label>需要出库</label>
+                    <form:select path="needOut" cssClass="input-mini">
+                        <form:option value="" label="请选择"/>
+                        <form:option value="1" label="是"/>
+                    </form:select>
+                </li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 				<li class="btns">
 					<%--订单出库--%>

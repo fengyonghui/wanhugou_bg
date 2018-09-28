@@ -214,7 +214,7 @@ public class MyPanelController extends BaseController {
     @RequestMapping(value = {"fhdrk"})
     public String fhdrk(RedirectAttributes redirectModel) {
         redirectModel.addAttribute("previousPage", "myPanel");
-        return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor?bizStatusStart=20&bizStatusEnd=27";
+        return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestAll/list?source=sh&bizStatu=0&ship=bh&needIn=1";
     }
 
     //        申请付款
