@@ -69,6 +69,7 @@
 
             var poDetailList = '${bizPoHeader.poDetailList.size()}';
             if(poDetailList == 0) {
+                $("#saveSubmit").hide();
                 $("#batchSubmit").hide();
             } else {
                 var id = '${bizPoHeader.id}'
