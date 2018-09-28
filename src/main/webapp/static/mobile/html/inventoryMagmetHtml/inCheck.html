@@ -125,15 +125,82 @@
 				<div class="labelLf">状态流程：</div>
 				<ul class="flowPath" id="inCheckAddMenu"></ul>									
 			</div>
-			<div class="mui-input-row">
+			<div class="mui-input-row app_bline2">
 				<div class="labelLf">审批流程：</div>
 				<ul class="flowPath" id="inapprovalAddMenu"></ul>									
 			</div>
+			
+	-----排产-----	
+			<!--<div class="mui-input-row" id="orderTypebox">
+				<label>排产类型：</label>
+				<div id="changeTxt" class="labelri inStock">
+		    		按订单排产
+			        <input id="fromType1" type="radio" name="schedulType" value="0" class="inputRadio" checked/>
+            		按商品排产
+			        <input id="fromType2" type="radio" name="schedulType" value="1" class="inputRadio"/>
+		       </div>
+		    </div>-->
+	<!--按订单排产-->	    
+		    <!--<div class="mui-input-row schedPurch app_bline2">
+		    	<div class="mui-input-row inComdty inDetailComdty">
+					<div class="labelLf">采购商品：</div>
+					<ul id="orSchedPurch" class="mui-table-view">
+						
+					</ul>									
+				</div>
+				<div class="labelLf">按订单排产：</div>
+				<div class="mui-row app_f13 app_bline2">
+					<div class="mui-input-row">
+						<label>总申报数量：</label>
+						<input type="text" id="purchOrdQty" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>总待排产量：</label>
+						<input type="text" id="purchWaiteNum" disabled>
+					</div>	
+					<div class="mui-input-row">
+						<label>已排产数量：</label>
+						<input type="text" id="toalSchedulingNum" disabled>
+					</div>
+					<div class="inAddBtnParent">
+						<button id="purchAddBtn" type="submit" class="inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>
+					</div> 
+				</div>
+				<div class="mui-row">
+					<div class="labelLf">排产计划：</div>
+					<div class="mui-row app_f13" id="purchAddCont">
+						<div class="mui-row app_bline" id="purchPlan">
+							<div class="mui-input-row">
+								<label>完成日期：</label>
+								<input type="date" id="purchDate">
+							</div>
+							<div class="mui-input-row">
+								<label>排产数量：</label>
+								<input type="text" id="purchNum" class="mui-input-clear">
+							</div>
+						</div>	
+						
+					</div>
+				</div>
+			</div>-->
+	<!--按商品排产-->
+			<!--<div class="mui-input-row schedCommd">
+				<div class="labelLf">按商品排产：</div>
+				<ul id="orSchedCommd" class="mui-table-view">
+					
+				</ul>
+			</div>
+			
+			<div class="mui-input-row remark">
+				<label>备注：</label>
+				<textarea id="orRemark" ></textarea>
+			</div>-->
 		</div>
 		<div class="app_p20 app_pl25 app_pr25 checkBtn">
 		    <button id="inCheckBtn" type="submit" class="mui-btn mui-btn-blue passBtn">审核通过</button>
 			<button id="inRejectBtn" type="submit" class="mui-btn mui-btn-blue app_fr RejectBtn">审核驳回</button>
 		</div>
+		
 	<div class="clear"></div>
 	<input type="hidden" id="createPo"/>
 	<input type="hidden" id="supplierId"/>

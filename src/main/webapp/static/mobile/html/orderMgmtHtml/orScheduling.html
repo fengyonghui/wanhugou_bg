@@ -30,7 +30,7 @@
 		       </div>
 		    </div>
 	<!--按订单排产-->	    
-		    <div class="mui-input-row schedPurch">
+		    <div class="mui-input-row schedPurch app_bline2">
 		    	<div class="mui-input-row inComdty inDetailComdty">
 					<div class="labelLf">采购商品：</div>
 					<ul id="orSchedPurch" class="mui-table-view">
@@ -41,15 +41,15 @@
 				<div class="mui-row app_f13 app_bline2">
 					<div class="mui-input-row">
 						<label>总申报数量：</label>
-						<input type="text" id="ordQty" disabled>
+						<input type="text" id="purchOrdQty" disabled>
 					</div>
 					<div class="mui-input-row">
 						<label>总待排产量：</label>
-						<input type="text" id="waiteNum" disabled>
+						<input type="text" id="purchWaiteNum" disabled>
 					</div>	
 					<div class="mui-input-row">
 						<label>已排产数量：</label>
-						<input type="text" id="completeNum" disabled>
+						<input type="text" id="toalSchedulingNum" disabled>
 					</div>
 					<div class="inAddBtnParent">
 						<button id="purchAddBtn" type="submit" class="inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>
@@ -58,18 +58,18 @@
 				<div class="mui-row">
 					<div class="labelLf">排产计划：</div>
 					<div class="mui-row app_f13" id="purchAddCont">
-						<div class="mui-row app_bline">
+						<div class="mui-row app_bline" id="purchPlan">
 							<div class="mui-input-row">
 								<label>完成日期：</label>
-								<input type="date" class="inOrdNum">
+								<input type="date" id="purchDate">
 							</div>
 							<div class="mui-input-row">
 								<label>排产数量：</label>
-								<input type="text" class="inOrdNum mui-input-clear">
+								<input type="text" id="purchNum" class="mui-input-clear">
 							</div>
 						</div>	
 						
-					</div>	
+					</div>
 				</div>
 			</div>
 	<!--按商品排产-->
@@ -88,7 +88,6 @@
 		<div class="inSaveBtn saveBtnPt">
 			
 		</div>
-		
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>

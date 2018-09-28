@@ -392,19 +392,19 @@
 		stOrdHrefHtml: function() {
 			var _this = this;
 		/*查询*/
-			$('.app_header').on('tap', '#OrdSechBtn', function() {
-				var url = $(this).attr('url');
-				if(url) {
-					mui.toast('子菜单不存在')
-				} else {
-					GHUTILS.OPENPAGE({
-						url: "../../html/orderMgmtHtml/orSearch.html",
-						extras:{
-//							staListId: conId,
-						}
-					})
-				}
-			}),
+//			$('.app_header').on('tap', '#OrdSechBtn', function() {
+//				var url = $(this).attr('url');
+//				if(url) {
+//					mui.toast('子菜单不存在')
+//				} else {
+//					GHUTILS.OPENPAGE({
+//						url: "../../html/orderMgmtHtml/orSearch.html",
+//						extras:{
+////							staListId: conId,
+//						}
+//					})
+//				}
+//			}),
 		/*首页*/
 			$('#nav').on('tap','.staHomePage', function() {
 				var url = $(this).attr('url');

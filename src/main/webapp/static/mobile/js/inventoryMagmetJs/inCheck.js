@@ -24,7 +24,7 @@
 		pageInit: function() {
 			var _this = this;
 			_this.getData();
-			
+
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
@@ -61,19 +61,23 @@
 //			console.log(idd)
 //			console.log(audit)
 //			console.log(processPo)
-			var datas={};
-			if(idd==null&&audit==null&&processPo==null){
-				datas={
-					id: _this.userInfo.inListId,
-					str: "detail"
-				}
-			}else{
-				datas={
-					id: idd,
-					str: audit,
-					processPo:processPo,
-				}
-			}			
+			datas={
+				id: _this.userInfo.inListId,
+				str: "audit"
+			}
+//			var datas={};
+//			if(idd==null&&audit==null&&processPo==null){
+//				datas={
+//					id: _this.userInfo.inListId,
+//					str: "detail"
+//				}
+//			}else{
+//				datas={
+//					id: idd,
+//					str: audit,
+//					processPo:processPo,
+//				}
+//			}
 			$.ajax({
 				type: "GET",
 				url: "/a/biz/request/bizRequestHeaderForVendor/form4MobileNew",
@@ -90,17 +94,17 @@
 						if(_this.inLastPayDateFlag == true) {
 							_this.comfirDialig();
 						}
-					}	
+					}
 					//订单支出信息进来的备货单审核
 					console.log(_this.inpoFlag);
 					if(_this.inpoFlag == true) {
 						if(res.data.bizRequestHeader.str=='audit'){
 							if(res.data.bizRequestHeader.bizPoHeader.commonProcessList != null && res.data.bizRequestHeader.bizPoHeader.commonProcessList.length > 0 && res.data.bizRequestHeader.processPo == 'processPo')                {
 								_this.comfirDialigs();
-							}						    
+							}
 						}
 					}
-					
+
 					//调取供应商信息
 					$('#createPo').val(res.data.createPo);
 					/*判断是品类主管*/
@@ -128,12 +132,12 @@
 				    $.ajax({
 		                type: "GET",
 		                url: "/a/sys/dict/listData",
-		                data: {type:"biz_req_status"},		                
+		                data: {type:"biz_req_status"},
 		                dataType: "json",
 		                success: function(resl){
 		                	$.each(resl,function(i,item){
 		                		if(item.value==res.data.bizRequestHeader.bizStatus){
-		                		 	$('#inPoDizstatus').val(item.label);  
+		                		 	$('#inPoDizstatus').val(item.label);
 		                		}
 		                	})
 						}
@@ -204,7 +208,7 @@
 					//排产信息
 					if(res.data.bizRequestHeader.str == 'detail'||res.data.bizRequestHeader.str == 'audit') {
 						var poheaderId = res.data.bizRequestHeader.bizPoHeader.id;
-						console.log(poheaderId)
+//						console.log(poheaderId)
 						if(poheaderId == null || poheaderId == "") {
 							$("#inSchedultype").val("未排产")
 							$("#stockGoods").hide();
@@ -222,8 +226,9 @@
 			console.log(data)
 			var _this = this;
 			var requProcess = data.bizRequestHeader.commonProcess.requestOrderProcess;
-			var purchProcess = data.bizRequestHeader.commonProcess.purchaseOrderProcess;
-			var purchPro = data.bizRequestHeader.bizPoHeader.commonProcessList;
+//			var purchProcess = data.bizRequestHeader.commonProcess.purchaseOrderProcess;
+//			var purchPro = data.bizRequestHeader.bizPoHeader.commonProcessList;
+//			var purchProcess = data.bizRequestHeader.commonProcess.purchaseOrderProcess;
 			if(data.bizRequestHeader.str == 'audit' && data.bizRequestHeader.processPo != 'processPo') {
 				if(requProcess.name != '审核完成') {
 					$('#incheck').val(requProcess.name);
@@ -233,19 +238,19 @@
 				}
 				$('#currentType').val(requProcess.code)
 			}
-			var commonProcessList = '';
-			if(data.bizRequestHeader.bizPoHeader) {
-				commonProcessList = data.bizRequestHeader.bizPoHeader.commonProcessList
-			}
-			if(data.bizRequestHeader.str == 'audit' && commonProcessList != null && commonProcessList.length > 0 && data.bizRequestHeader.processPo == 'processPo') {
-//				$('#incheck').val(purchProcess.name);
-//				$('#currentType').val(purchProcess.code)
-                console.log(purchPro)
-                $.each(purchPro, function(i, item) {
-					$('#incheck').val(item.purchaseOrderProcess.name);
-				    $('#currentType').val(item.purchaseOrderProcess.code)
-				})
-			}
+//			var commonProcessList = '';
+//			if(data.bizRequestHeader.bizPoHeader) {
+//				commonProcessList = data.bizRequestHeader.bizPoHeader.commonProcessList
+//			}
+//			if(data.bizRequestHeader.str == 'audit' && commonProcessList != null && commonProcessList.length > 0 && data.bizRequestHeader.processPo == 'processPo') {
+////				$('#incheck').val(purchProcess.name);
+////				$('#currentType').val(purchProcess.code)
+//              console.log(purchPro)
+//              $.each(purchPro, function(i, item) {
+//					$('#incheck').val(item.purchaseOrderProcess.name);
+//				    $('#currentType').val(item.purchaseOrderProcess.code)
+//				})
+//			}
 		},
 		//供应商信息
 		supplier: function(supplierId) {
