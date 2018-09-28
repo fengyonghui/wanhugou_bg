@@ -237,6 +237,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private BigDecimal scoreMoney;
 
+    /**
+     * 需要出库筛选条件
+     */
+    private Integer needOut;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -1014,5 +1019,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setScoreMoney(BigDecimal scoreMoney) {
         this.scoreMoney = scoreMoney;
+    }
+
+    public Integer getNeedOut() {
+        return needOut;
+    }
+
+    public void setNeedOut(Integer needOut) {
+        this.needOut = needOut;
     }
 }

@@ -232,6 +232,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	private Long inventoryAgeDay;
 
+	/**
+	 * 需要入库的筛选条件
+	 */
+	private Integer needIn;
+
 
 	public BizRequestHeader() {
 		super();
@@ -819,6 +824,14 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 			return date.toString();
 		}
 		return null;
+	}
+
+	public Integer getNeedIn() {
+		return needIn;
+	}
+
+	public void setNeedIn(Integer needIn) {
+		this.needIn = needIn;
 	}
 
 }
