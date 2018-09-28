@@ -19,25 +19,26 @@
             $("#inputForm").validate({
                 submitHandler: function(form){
                     var flag = false;
+                    var flag1 = true;
+                    var flag2= true;
+                    var flag3 = true;
                     $("input[name='reqDetail']").each(function () {
 						if ($(this).attr("checked")=='checked') {
-						    flag = true;
-						    var sentQty = $(this).parent().find("input[name='sentQty']").val();
-						    var okQty = $(this).parent().find("input[name='okQty']").val();
+							flag = true;
+						    var sentQty = $(this).parent().parent().find("input[name='sentQty']").val();
+						    var okQty = $(this).parent().parent().find("input[name='okQty']").val();
+						    var sQty = $(this).parent().parent().find("input[name='sQty']").val();
 						    if (sentQty == '' || sentQty == 0) {
-						        alert("选中出库的备货单，本次出库数量不能为空，也不能为0");
-						        return false;
+                                flag1 = false;
 							}
-							if (parseInt(sentQty) > parseInt(okQty)) {
-						        alert("选中出库的备货单，本次出库数量不能大于可出库数量");
-						        return false;
+							if (sentQty > okQty) {
+						        flag2 = false;
+							}
+							if (sQty < sentQty) {
+						        flag3 = false;
 							}
 						}
                     });
-                    if (!flag) {
-                        alert("请勾选出库的备货单！");
-                        return false;
-					}
                     var treasuryList = new Array();
                     var i = 0;
                     $("input[name='reqDetail'][checked='checked']").each(function () {
@@ -53,18 +54,32 @@
                     console.info(JSON.stringify(treasuryList));
                     
                     if(window.confirm('你确定要出库吗？')){
-                        $.ajax({
-                            type:"post",
-                            contentType: 'application/json;charset=utf-8',
-                            url:"${ctx}/biz/inventory/bizSendGoodsRecord/outTreasury",
-                            data:JSON.stringify(treasuryList),
-                            success:function (data) {
-                                if (data=='ok') {
-                                    alert("出库成功");
-                                    window.location.href = "${ctx}/biz/request/bizRequestAll?source=kc&bizStatu=0&ship=xs";
-                                }
-                           }
-                        });
+                        if (!flag) {
+                            alert("请勾选出库的备货单！");
+                            return false;
+						} else if (flag1){
+                            alert("选中出库的备货单，本次出库数量不能为空，也不能为0");
+                            return false;
+						} else if (flag2){
+                            alert("选中出库的备货单，本次出库数量不能大于可出库数量");
+                            return false;
+						} else if (flag3){
+                            alert("选中出库的备货单，本次出库数量不能大于订单的采购数量");
+                            return false;
+						} else {
+							$.ajax({
+								type:"post",
+								contentType: 'application/json;charset=utf-8',
+								url:"${ctx}/biz/inventory/bizSendGoodsRecord/outTreasury",
+								data:JSON.stringify(treasuryList),
+								success:function (data) {
+									if (data=='ok') {
+										alert("出库成功");
+										window.location.href = "${ctx}/biz/request/bizRequestAll?source=kc&bizStatu=0&ship=xs";
+									}
+							   }
+							});
+                        }
                         // form.submit();
                         // return true;
                         // loading('正在提交，请稍等...');
@@ -299,6 +314,7 @@
 										<td>${requestDetail.outQty == null ? "0" : requestDetail.outQty}</td>
 										<td>${requestDetail.recvQty - requestDetail.outQty}</td>
 										<input name="okQty" value="${requestDetail.recvQty - requestDetail.outQty}" type="hidden"/>
+										<input name="sQty" value="${orderDetail.ordQty}" type="hidden"/>
 										<input name="orderDetailId" value="${orderDetail.id}" type="hidden"/>
 										<input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
 										<input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>
