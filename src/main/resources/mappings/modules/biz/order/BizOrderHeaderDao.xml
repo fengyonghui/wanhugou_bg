@@ -598,15 +598,16 @@
 			</if>
 
 			<if test="waitShipments != null and waitShipments == 1">
-				AND (a.biz_status = 19 or
-					(
-						(SELECT SUM(bod.suply_id)
-						FROM
-						biz_order_detail bod
-						LEFT
-						JOIN biz_order_header boh ON boh.id = bod.order_id
-						WHERE boh.id = a.id) = 0 and a.biz_status = 15
-					)
+				AND (a.biz_status = 19 or a.biz_status = 18
+--                 or
+-- 					(
+-- 						(SELECT SUM(bod.suply_id)
+-- 						FROM
+-- 						biz_order_detail bod
+-- 						LEFT
+-- 						JOIN biz_order_header boh ON boh.id = bod.order_id
+-- 						WHERE boh.id = a.id) = 0 and a.biz_status = 15
+-- 					)
 				)
 			</if>
 			<if test="waitOutput != null and waitOutput == 1">
