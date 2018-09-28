@@ -6,7 +6,7 @@
 		a.id AS "id",
 		a.office_id AS "office.id",
 		o2.name as "office.name",
-		o2.phone as "office.phone",
+		u.mobile as "office.phone",
 		u.name as "office.master",
 		a.money AS "money",
 		a.order_id AS "orderId",

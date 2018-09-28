@@ -9,6 +9,7 @@
 	<script type="text/javascript">
 		    //经销店树形列表
             $(document).ready(function(){
+
                 var str = $("#str").val();
                 if(str=='detail')
 				{
@@ -24,16 +25,34 @@
                     contentType:"application/json;charset=utf-8",
                     success:function(data){
                         $("#quanbu").val(data.totalUser);
-                        $("#sendNum").val(data.totalUser);
                         $("#xiadan").val(data.orderUser);
                         $("#weixiadan").val(data.unOrderUser);
+                        var val = $('input[name="sendScope"]:checked').val();
+                        if(val==-3)
+                        {
+                            $("#officeTree").show();
+                            var officeIds = $("#officeIds").val();
+                            var split = officeIds.split(",");
+                            $("#sendNum").val(split.length);
+                        }
+                        else {
+                            $("#officeIds").val('')
+                            if(val==0)
+                            {
+                                $("#sendNum").val( $("#quanbu").val());
+                            }
+                            if(val==-1)
+                            {
+                                $("#sendNum").val( $("#xiadan").val());
+                            }
+                            if(val==-2)
+                            {
+                                $("#sendNum").val( $("#weixiadan").val());
+                            }
+                        }
                     }
                 })
-                var val = $('input[name="sendScope"]:checked').val();
-                if(val==-3)
-				{
-                    $("#officeTree").show();
-				}
+
                 var setting = {
                            check:{enable:true,nocheckInherit:true},
 					       view:{selectedMulti:false},
@@ -42,6 +61,7 @@
                                onCheck: zTreeOnCheck
                            }
                 };
+
 
                 $("input[type='radio']").click(function(){
                     var value= $(this).val();
@@ -69,6 +89,7 @@
                         $("#offices").hide();
                         $("#search").hide();
                         $("#choose").hide();
+                        $("#officeIds").val('');
                         if(value==0)
                         {
                             $("#sendNum").val($("#quanbu").val());
@@ -269,7 +290,7 @@
 		<div class="control-group">
 			<label class="control-label">发送范围：</label>
 			 <div class="controls">
-                    <form:radiobutton name="sendScope" checked="true" path="sendScope" value="0"/>全部用户
+                    <form:radiobutton name="sendScope" path="sendScope" checked="true" value="0"/>全部用户
                     <form:radiobutton name="sendScope" path="sendScope" value="-1"/>已下单用户
                     <form:radiobutton name="sendScope" path="sendScope" value="-2"/>未下单用户
 				    <form:radiobutton name="sendScope" path="sendScope" id="zhi" value="-3"/>指定用户

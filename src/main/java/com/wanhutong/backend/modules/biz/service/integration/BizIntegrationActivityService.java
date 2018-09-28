@@ -112,8 +112,8 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 			}
 			else
 			{
-				bizIntegrationActivity = this.get(id);
-				if(!bizIntegrationActivity.getSendScope().equals(sendScope))
+				BizIntegrationActivity localIntegrationActivity = this.get(id);
+				if(!localIntegrationActivity.getSendScope().equals(sendScope))
 				{
 					//删除活动用户表数据
 					bizIntegrationActivityDao.updateMiddleStatusByActivityId(id);
@@ -179,7 +179,7 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		bizIntegrationActivityDao.insertMiddle(list);
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
 	public void delete(BizIntegrationActivity bizIntegrationActivity) {
 		//判断是否为指定用户
 		Integer id = bizIntegrationActivity.getId();
@@ -188,6 +188,10 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		{
 			//删除活动用户表数据
 			bizIntegrationActivityDao.updateMiddleStatusByActivityId(id);
+		}
+		if(bizIntegrationActivity.getSendStatus()==0)
+		{
+			quartzManager.removeJob(id.toString(),id.toString(),id.toString(),id.toString());
 		}
 		super.delete(bizIntegrationActivity);
 	}
