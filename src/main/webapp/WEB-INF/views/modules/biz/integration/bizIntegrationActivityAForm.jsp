@@ -39,6 +39,8 @@
 			   alert("请选择指定用户！");
         }
 
+
+
 	</script>
 </head>
 <body >
@@ -80,5 +82,6 @@
 			</shiro:hasPermission>
 		</div>
 	</form:form>
+
 </body>
 </html>

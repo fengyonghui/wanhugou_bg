@@ -25,6 +25,7 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
+			<div style="margin-left: 20px">说明：指定时间，向指定用户，赠送</div>
 			<li><label>活动名称：</label>
 				<form:input path="activityName" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
@@ -114,7 +115,7 @@
 						<a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}">修改</a>
 					</c:if>
     				<a href="${ctx}/biz/integration/bizIntegrationActivity/form?id=${bizIntegrationActivity.id}&str=detail">详情</a>
-					<a href="${ctx}/biz/integration/bizIntegrationActivity/delete?id=${bizIntegrationActivity.id}" onclick="return confirmx('确认要删除该积分活动吗？', this.href)">删除</a>
+					<%--<a href="${ctx}/biz/integration/bizIntegrationActivity/delete?id=${bizIntegrationActivity.id}" onclick="return confirmx('确认要删除该积分活动吗？', this.href)">删除</a>--%>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

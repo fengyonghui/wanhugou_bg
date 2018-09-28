@@ -11,6 +11,7 @@
 		<result property="totalExp" column="totalExp"/>
 
 		<result property="freight" column="freight"/>
+		<result property="scoreMoney" column="scoreMoney"/>
 		<result property="invStatus" column="invStatus"/>
 		<result property="bizStatus" column="bizStatus"/>
 		<result property="bizType" column="bizType"/>
@@ -158,6 +159,7 @@
 		a.total_exp AS "totalExp",
 		a.service_fee AS "serviceFee",
 		a.freight AS "freight",
+		a.score_money AS "scoreMoney",
 		a.inv_status AS "invStatus",
 		a.biz_status AS "bizStatus",
 		a.biz_type as "bizType",

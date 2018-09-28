@@ -29,6 +29,6 @@ public interface BizMoneyRecodeDao extends CrudDao<BizMoneyRecode> {
     void updateMoney(List<BizMoneyRecode> list);
 
     @Select("SELECT money from biz_cust_credit where office_id = #{officeId}")
-    Integer selectMoney(@Param("officeId") Integer officeId);
+    Double selectMoney(@Param("officeId") Integer officeId);
 	
 }

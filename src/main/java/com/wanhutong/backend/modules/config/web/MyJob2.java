@@ -3,6 +3,7 @@ package com.wanhutong.backend.modules.config.web;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecode;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
 import com.wanhutong.backend.modules.biz.service.integration.BizMoneyRecodeService;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.quartz.Job;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,32 +38,39 @@ public class MyJob2{
         for(BizMoneyRecodeDetail biz:list)
         {
             Integer officeId = biz.getOfficeId();
-            Double expireIntegration = biz.getExpireIntegration();
+            Double expireIntegration = biz.getGainIntegration()-biz.getUsedIntegration();
+            if(expireIntegration==0)
+            {
+                continue;
+            }
             //添加积分流水过期记录
             bizMoneyRecode = new BizMoneyRecode();
             //根据officeId查询用户可用积分
-            Integer aviableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
+            Double aviableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
             if (!Objects.isNull(aviableMoney)) {
-                Integer newMoney = aviableMoney + Integer.valueOf(expireIntegration.toString());
+                Double newMoney = aviableMoney - expireIntegration;
                 bizMoneyRecode.setNewMoney(newMoney.toString());
             }
             bizMoneyRecode.setStatus(1);
             bizMoneyRecode.setMoney(expireIntegration.toString());
-            bizMoneyRecode.setStatusCode(12);
+            bizMoneyRecode.setStatusCode(30);
             bizMoneyRecode.setStatusName("过期");
             bizMoneyRecode.setCreateId(1);
             bizMoneyRecode.setUpdateId(1);
             bizMoneyRecode.setCreateDate(new Date());
             bizMoneyRecode.setUpdateDate(new Date());
             bizMoneyRecode.setComment("每年7月1日，自动过期");
-            bizMoneyRecode.setOffice(officeService.get(officeId));
-            arrayList.add(bizMoneyRecode);
+            Office office = officeService.get(officeId);
+            if(!Objects.isNull(office))
+            {
+                bizMoneyRecode.setOffice(office);
+                arrayList.add(bizMoneyRecode);
+            }
         }
         //添加积分流水表
         bizMoneyRecodeService.saveAll(arrayList);
         //更新用户积分
         bizMoneyRecodeService.updateMoney(arrayList);
-
     }
 }
 

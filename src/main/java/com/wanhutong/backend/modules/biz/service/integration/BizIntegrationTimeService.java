@@ -105,9 +105,9 @@ public class BizIntegrationTimeService implements Job{
                         bizMoneyRecode = new BizMoneyRecode();
                         Integer officeId = o.getId();
                         //根据officeId查询用户可用积分
-                        Integer avaiableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
+                        Double avaiableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
                         if (!Objects.isNull(avaiableMoney)) {
-                              Integer newMoney = avaiableMoney + Integer.valueOf(integrationNum);
+                              Double newMoney = avaiableMoney + Double.valueOf(integrationNum);
                               bizMoneyRecode.setNewMoney(newMoney.toString());
                         }
                         bizMoneyRecode.setOffice(o);

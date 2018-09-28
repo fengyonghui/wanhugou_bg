@@ -51,6 +51,10 @@ public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMon
 	public BizMoneyRecodeDetail selectRecordDetail(){
 		BizMoneyRecodeDetail bizMoneyRecodeDetail = bizMoneyRecodeDao.selectRecodeDetail();
         Double availableIntegration = bizMoneyRecodeDetail.getGainIntegration()-bizMoneyRecodeDetail.getExpireIntegration()-bizMoneyRecodeDetail.getUsedIntegration();
+        if(availableIntegration<0)
+		{
+			availableIntegration = 0.0;
+		}
         bizMoneyRecodeDetail.setAvailableIntegration(availableIntegration);
         return bizMoneyRecodeDetail;
 	}
@@ -80,7 +84,7 @@ public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMon
 	}
 
 	//查询用户所有的可用积分
-	public Integer selectMoneyByOfficeId(Integer officeId){
+	public Double selectMoneyByOfficeId(Integer officeId){
         return bizMoneyRecodeDao.selectMoney(officeId);
 	}
 
