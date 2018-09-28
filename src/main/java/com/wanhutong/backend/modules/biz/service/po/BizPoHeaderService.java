@@ -623,6 +623,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
+        commonProcessEntity.setObjectId(bizPoPaymentOrder.getId().toString());
+        commonProcessService.save(commonProcessEntity);
+
         bizPoHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
         this.updatePaymentOrderId(bizPoHeader.getId(), bizPoPaymentOrder.getId());
         return Pair.of(Boolean.TRUE, "操作成功!");

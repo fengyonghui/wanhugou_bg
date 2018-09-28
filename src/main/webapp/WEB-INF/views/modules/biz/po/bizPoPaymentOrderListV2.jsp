@@ -81,14 +81,12 @@
 					${bizPoPaymentOrder.bizStatus == 0 ? '未支付' : '已支付'}
 				</td>
 				<td>
-				<td>
 					<c:if test="${bizPoPaymentOrder.total == '0.00' && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成'}">
 						待确认支付金额
 					</c:if>
 					<c:if test="${bizPoPaymentOrder.total != '0.00'}">
 						${bizPoPaymentOrder.commonProcess.paymentOrderProcess.name}
 					</c:if>
-				</td>
 				</td>
 				<td>
 						${bizPoPaymentOrder.remark}
@@ -135,12 +133,8 @@
 						</c:if>
 						</c:if>
 				</shiro:hasPermission>
-					<%--<c:if test="${bizPoPaymentOrder.type == PoPayMentOrderTypeEnum.REQ_TYPE.type && bizPoPaymentOrder.id == bizRequestHeader.bizPoPaymentOrder.id--%>
-						  <%--&& bizRequestHeader.commonProcess.vendRequestOrderProcess.name == '审批完成'--%>
-						  <%--&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'}">--%>
-						<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizRequestHeader.id}&str=pay">确认付款</a>--%>
-					<%--</c:if>--%>
 				</shiro:hasPermission>
+					<a href="${ctx}/biz/po/bizPoPaymentOrder/formV2?id=${bizPoPaymentOrder.id}">详情</a>
 				</td>
 			</tr>
 		</c:forEach>
