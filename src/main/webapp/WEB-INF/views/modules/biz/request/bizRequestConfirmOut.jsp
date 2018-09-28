@@ -27,6 +27,7 @@
 							flag = true;
 						    var sentQty = $(this).parent().parent().find("input[name='sentQty']").val();
 						    var okQty = $(this).parent().parent().find("input[name='okQty']").val();
+						    var ordQty = $(this).parent().parent().find("input[name='ordQty']").val();
 						    var sQty = $(this).parent().parent().find("input[name='sQty']").val();
 						    if (sentQty == '' || sentQty == 0) {
                                 flag1 = false;
@@ -34,7 +35,7 @@
 							if (sentQty > okQty) {
 						        flag2 = false;
 							}
-							if (sQty < sentQty) {
+							if (ordQty - sQty < sentQty) {
 						        flag3 = false;
 							}
 						}
@@ -64,7 +65,7 @@
                             alert("选中出库的备货单，本次出库数量不能大于可出库数量");
                             return false;
 						} else if (flag3){
-                            alert("选中出库的备货单，本次出库数量不能大于订单的采购数量");
+                            alert("选中出库的备货单，本次出库数量不能大于订单的剩余需求数量");
                             return false;
 						} else {
 							$.ajax({
@@ -314,7 +315,8 @@
 										<td>${requestDetail.outQty == null ? "0" : requestDetail.outQty}</td>
 										<td>${requestDetail.recvQty - requestDetail.outQty}</td>
 										<input name="okQty" value="${requestDetail.recvQty - requestDetail.outQty}" type="hidden"/>
-										<input name="sQty" value="${orderDetail.ordQty}" type="hidden"/>
+                                        <input name="sQty" value="${orderDetail.sentQty}" type="hidden"/>
+                                        <input name="ordQty" value="${orderDetail.ordQty}" type="hidden"/>
 										<input name="orderDetailId" value="${orderDetail.id}" type="hidden"/>
 										<input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
 										<input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>

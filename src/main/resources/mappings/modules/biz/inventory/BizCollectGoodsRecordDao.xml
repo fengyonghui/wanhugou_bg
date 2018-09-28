@@ -215,7 +215,7 @@
 	<select id="collectSendFindPage" resultType="BizCollectGoodsRecord">
 		select collectSend.* from (select
 		a.id as "id",
-		a.collect_no AS "collectNo",
+		a.send_no AS "sendNo",
 		a.inv_id AS "invInfo.id",
 		inv.name AS "invInfo.name",
 		inv. NAME AS "invInfoName",

@@ -220,7 +220,7 @@
             <title>局部打印</title>
         </head>
         <br/>
-        <div style="margin-left: 100px;">
+        <div style="margin-left: 100px;display: none">
             <!--startprint--><!--注意要加上html里star和end的这两个标记-->
             <p>
             <table border="1" border-collapse:collapse style="width: 800px;height: 800px">

@@ -814,8 +814,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	}
 	public String getInventoryAgeDate() {
 		LocalDate today = LocalDate.now();
-		LocalDate date = today.minus(this.getInventoryAgeDay(), ChronoUnit.DAYS);
-		return date.toString();
+		if (this.getInventoryAgeDay() != null) {
+			LocalDate date = today.minus(this.getInventoryAgeDay(), ChronoUnit.DAYS);
+			return date.toString();
+		}
+		return null;
 	}
 
 }
