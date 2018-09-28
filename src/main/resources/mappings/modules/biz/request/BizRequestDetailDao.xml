@@ -394,13 +394,14 @@
 			LEFT JOIN biz_request_header rh ON rh.id = a.header_id
 			LEFT JOIN biz_sku_info bsi ON bsi.id = a.sku_id
 			LEFT JOIN biz_product_info bpi ON bpi.id = bsi.prod_id
-			LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsi.id
-			LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
 			LEFT JOIN biz_inventory_order_request bior ON bior.request_detail_id = a.id
+			LEFT JOIN biz_inventory_sku bis ON bis.id = bior.inv_sku_id
+			LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
 			LEFT JOIN biz_order_detail od ON od.id = bior.order_detail_id
 			WHERE
 			a.status = 1
 			AND od.status = 1
+			AND bis.status = 1
 			AND rh.biz_status != 40
 			AND od.id = #{orderDetailId}
 	</select>

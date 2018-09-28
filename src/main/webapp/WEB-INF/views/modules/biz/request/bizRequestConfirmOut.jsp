@@ -77,7 +77,11 @@
 									if (data=='ok') {
 										alert("出库成功");
 										window.location.href = "${ctx}/biz/request/bizRequestAll?source=kc&bizStatu=0&ship=xs";
-									}
+									} else if (data=='error') {
+									    alert("出库失败，没有选择出库数据");
+                                    } else {
+									    alert("其他人正在出库，请刷新页面重新操作");
+                                    }
 							   }
 							});
                         }
@@ -269,7 +273,7 @@
 	</div>
 	<div class="control-group">
         <c:forEach items="${orderDetailList}" var="orderDetail">
-			<c:if test="${orderDetail.ordQty != orderDetail.sentQty}">
+			<c:if test="${orderDetail.ordQty != orderDetail.sentQty || source eq 'detail'}">
             	<label class="control-label">库存信息：</label>
 				<div class="controls">
 					<table id="inventorySkuTable" class="table table-striped table-bordered table-condensed">
@@ -289,7 +293,7 @@
 							<th>备货单库存数量</th>
 							<th>已出库数量</th>
 							<th>可出库数量</th>
-							<th>库存数量</th>
+							<th>库存总数</th>
 							<c:if test="${source ne 'detail'}">
 								<th>本次出库数量</th>
 							</c:if>
@@ -298,7 +302,7 @@
 						</thead>
 						<tbody>
 							<c:forEach items="${orderDetail.requestDetailList}" var="requestDetail">
-								<c:if test="${requestDetail.recvQty - requestDetail.outQty != 0}">
+								<c:if test="${requestDetail.recvQty - requestDetail.outQty != 0 || source eq 'detail'}">
 									<tr>
 										<c:if test="${source ne 'detail'}">
 											<td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>

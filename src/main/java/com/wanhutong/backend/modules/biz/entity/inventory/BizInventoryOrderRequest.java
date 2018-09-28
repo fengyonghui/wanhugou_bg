@@ -17,6 +17,11 @@ public class BizInventoryOrderRequest extends DataEntity<BizInventoryOrderReques
 	
 	private static final long serialVersionUID = 1L;
 	/**
+	 * 库存
+	 */
+	private BizInventorySku invSku;
+
+	/**
 	 * 订单详情
 	 */
 	private BizOrderDetail orderDetail;
@@ -48,5 +53,13 @@ public class BizInventoryOrderRequest extends DataEntity<BizInventoryOrderReques
 
 	public void setRequestDetail(BizRequestDetail requestDetail) {
 		this.requestDetail = requestDetail;
+	}
+
+	public BizInventorySku getInvSku() {
+		return invSku;
+	}
+
+	public void setInvSku(BizInventorySku invSku) {
+		this.invSku = invSku;
 	}
 }

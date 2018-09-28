@@ -4,6 +4,7 @@
     
 	<sql id="bizInventoryOrderRequestColumns">
 		a.id AS "id",
+		a.inv_sku_id AS "invSku.id",
 		a.order_detail_id AS "orderDetail.id",
 		a.request_detail_id AS "requestDetail.id",
 		a.status AS "delFlag",
@@ -31,7 +32,9 @@
 		FROM biz_inventory_order_request a
 		<include refid="bizInventoryOrderRequestJoins"/>
 		<where>
-			
+			<if test="invSku != null and invSku.id != null">
+				AND a.inv_sku_id = #{invSku.id}
+			</if>
 			<if test="orderDetail != null and orderDetail.id != null and orderDetail.id != ''">
 				AND a.order_detail_id = #{orderDetail.id}
 			</if>
@@ -68,6 +71,7 @@
 	<insert id="insert">
 		INSERT INTO biz_inventory_order_request(
 			id,
+			inv_sku_id,
 			order_detail_id,
 			request_detail_id,
 			status,
@@ -78,6 +82,7 @@
 			update_time
 		) VALUES (
 			#{id},
+			#{invSku.id},
 			#{orderDetail.id},
 			#{requestDetail.id},
 			#{delFlag},
@@ -90,7 +95,8 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_inventory_order_request SET 	
+		UPDATE biz_inventory_order_request SET
+			inv_sku_id = #{invSku.id},
 			order_detail_id = #{orderDetail.id},
 			request_detail_id = #{requestDetail.id},
 			u_version = #{uVersion},

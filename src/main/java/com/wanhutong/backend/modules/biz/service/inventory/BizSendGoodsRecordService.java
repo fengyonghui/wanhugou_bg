@@ -160,6 +160,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
             }
 			//订单关联出库备货单
 			BizInventoryOrderRequest ior = new BizInventoryOrderRequest();
+            ior.setInvSku(inventorySku);
 			ior.setOrderDetail(bizOrderDetail);
 			ior.setRequestDetail(bizRequestDetail);
 			List<BizInventoryOrderRequest> iorList = bizInventoryOrderRequestService.findList(ior);
