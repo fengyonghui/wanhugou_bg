@@ -133,6 +133,8 @@ public class BizRequestAllController {
             } else {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
+            }
+            if (bizStatu == 0) {
                 bizOrderHeader.setSupplyId(-1);
             }
             if (bizStatu == 1) {
