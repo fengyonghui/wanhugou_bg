@@ -1,6 +1,7 @@
 package com.wanhutong.backend.modules.sys.service;
 
 
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
@@ -80,8 +81,8 @@ public class MyPanelService {
     public int getOrderHasRetainageCount() {
         BizOrderHeader bizOrderHeader = new BizOrderHeader();
         bizOrderHeader.setRetainage(1);
-        List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<>(), bizOrderHeader);
+        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
     }
 
     /**
