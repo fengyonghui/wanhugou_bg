@@ -374,7 +374,7 @@
 					<c:otherwise>
 						${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
 						<a style="display: none">
-							<fmt:formatNumber type="number" var="total" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
+							<fmt:formatNumber type="number" var="total" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.scoreMoney}" pattern="0.00"/>
 						</a>
 						<c:if test="${total > orderHeader.receiveTotal && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=35 && orderHeader.bizStatus!=40 && orderHeader.bizStatus!=45 && orderHeader.bizStatus!=60}">
 							<font color="#FF0000">(有尾款)</font>

@@ -102,17 +102,17 @@ public class BizMoneyRecodeController extends BaseController {
 					recodeList.add(biz.getOffice().getName()== null ? "未知" : biz.getOffice().getName());
 					recodeList.add(biz.getOffice().getMaster()==null ? "未知" : biz.getOffice().getMaster());
 					recodeList.add(biz.getOffice().getPhone()==null ? "未知" : biz.getOffice().getPhone());
-					recodeList.add(biz.getCreateDate()== null ? "未知" : sdf.format(biz.getCreateDate()).toString());
 					recodeList.add(biz.getMoney()== null ? "未知" : biz.getMoney().toString());
-					recodeList.add(biz.getComment()== null ? "未知" : biz.getComment().toString());
 					recodeList.add(biz.getStatusName()== null ? "未知" : biz.getStatusName().toString());
+					recodeList.add(biz.getComment()== null ? "未知" : biz.getComment().toString());
+					recodeList.add(biz.getCreateDate()== null ? "未知" : sdf.format(biz.getCreateDate()).toString());
                     data.add(recodeList);
 				}
-				String headers[] = {"流水id","经销店名称","联系人","联系人电话","流水时间","流水金额","描述","流水类型"};
+				String headers[] = {"流水id","经销店名称","负责人","负责人电话","流水数量","流水类型","流水说明","生成时间"};
 				ExportExcelUtils eeu = new ExportExcelUtils();
 				SXSSFWorkbook workbook = new SXSSFWorkbook();
-				String fileName = "流水数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-				eeu.exportExcel(workbook, 0, "流水数据", headers, data, fileName);
+				String fileName = "万户币流水数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+				eeu.exportExcel(workbook, 0, "万户币流水数据", headers, data, fileName);
 				response.reset();
 				response.setContentType("application/octet-stream; charset=utf-8");
 				response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));

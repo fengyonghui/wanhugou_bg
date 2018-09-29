@@ -6,7 +6,7 @@
 		a.id AS "id",
 		a.office_id AS "office.id",
 		o2.name as "office.name",
-		o2.phone as "office.phone",
+		u.mobile as "office.phone",
 		u.name as "office.master",
 		a.money AS "money",
 		a.order_id AS "orderId",
@@ -37,20 +37,21 @@
 	</select>
 
 	<select id="selectRecodeDetail" resultType="com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail">
-		SELECT
-		sum(CASE WHEN status_code IN (10, 11, 12, 22) THEN money ELSE 0 END ) AS gainIntegration,
-		sum(CASE WHEN status_code IN (20, 21) THEN money ELSE 0 END) AS usedIntegration,
-		sum(CASE WHEN status_code IN (30) THEN money ELSE 0 END) AS expireIntegration
-		FROM
-		biz_money_recode
+            select
+			sum(a.user_money) as usedIntegration,
+			sum(a.over_money) as expireIntegration,
+			sum(a.gain_money) as gainIntegration,
+			sum(a.money) as availableIntegration
+			from biz_cust_credit a
 	</select>
 	<select id="selectExpireMoney" resultType="com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail">
 		SELECT
-		office_id,
-		sum(CASE WHEN status_code IN(10, 11, 12, 22) and create_time >= (concat(YEAR(now())-1,'-01-01')) and create_time <![CDATA[<=]]> (concat(year(now())-1,'-12-31')) THEN money ELSE 0 END )AS gainIntegration,
-		sum(CASE WHEN status_code IN(20,21) and create_time >= (concat(YEAR(now())-1,'-01-01')) and create_time <![CDATA[<=]]> (concat(year(now()),'-07-01')) THEN money ELSE 0 END)AS usedIntegration
+		a.office_id,
+		b.user_money as usedIntegration,
+		sum(CASE WHEN status_code IN(10, 11, 12) and a.create_time >= (concat(YEAR(now()),'-01-01')) and a.create_time <![CDATA[<=]]> (concat(year(now()),'-12-31')) THEN a.money ELSE 0 END )AS gainIntegration
 		FROM
-		biz_money_recode
+		biz_money_recode a
+		inner JOIN biz_cust_credit b on b.office_id = a.office_id and b.status  = 1
 		GROUP BY office_id
 	</select>
 
@@ -121,6 +122,31 @@
 		<foreach collection="list" item="item" index="index"
 				 separator=" " open="case office_id" close="end">
 			when #{item.office.id} then #{item.newMoney}
+		</foreach>
+		,gain_money=
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case office_id" close="end">
+			when #{item.office.id} then #{item.gainIntegration}
+		</foreach>
+		where office_id in
+		<foreach collection="list" index="index" item="item"
+				 separator="," open="(" close=")">
+			#{item.office.id,jdbcType=BIGINT}
+		</foreach>
+	</update>
+
+
+	<update id="updateExpireMoney" parameterType="list">
+		update biz_cust_credit
+		set money=
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case office_id" close="end">
+			when #{item.office.id} then #{item.newMoney}
+		</foreach>
+		,over_money=
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case office_id" close="end">
+			when #{item.office.id} then #{item.expireIntegration}
 		</foreach>
 		where office_id in
 		<foreach collection="list" index="index" item="item"

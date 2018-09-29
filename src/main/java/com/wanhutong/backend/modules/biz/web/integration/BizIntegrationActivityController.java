@@ -39,6 +39,7 @@ import com.wanhutong.backend.modules.biz.service.integration.BizIntegrationActiv
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 积分活动Controller
@@ -109,6 +110,16 @@ public class BizIntegrationActivityController extends BaseController {
 	public String save(BizIntegrationActivity bizIntegrationActivity, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, bizIntegrationActivity)) {
 			return form(bizIntegrationActivity, model);
+		}
+		Integer id = bizIntegrationActivity.getId();
+		if(!Objects.isNull(id))
+		{
+			BizIntegrationActivity activity = bizIntegrationActivityService.get(id);
+			if(activity.getSendStatus()==1)
+			{
+				addMessage(redirectAttributes, "已发送的活动不可修改！");
+				return "redirect:" + Global.getAdminPath() + "/biz/integration/bizIntegrationActivity/list";
+			}
 		}
 		bizIntegrationActivityService.save(bizIntegrationActivity);
 		String str = bizIntegrationActivity.getStr();
