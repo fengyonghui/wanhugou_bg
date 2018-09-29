@@ -5,7 +5,8 @@
 		this.expTipNum = 0;
 		this.datagood = [];
 		this.dataSupplier = [];
-		this.selectOpen = false
+		this.selectOpen = false;
+		this.includeTestData = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -14,14 +15,14 @@
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
+			this.testData();
 //			this.ajaxGoodName()
 		},
 		pageInit: function() {
 			var _this = this;
-			_this.getData();
+			_this.getData();			
 			_this.ajaxinvoiceStatus();//发票状态
 			_this.ajaxPoStatus();//业务状态
-			_this.ajaxorderStatus();//订单来源
 			_this.ajaxcheckStatus();//审核状态
 		},
 		getData: function() {
@@ -29,11 +30,13 @@
 			$('#inSearchBtn').on('tap', function() {
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
+							console.log('---')
 							_this.sureSelect()
 						}else{
 							mui.toast('请选择匹配的选项')
 						}
 				}else{
+					console.log('+++')
 					_this.sureSelect()
 				}
 			})
@@ -41,20 +44,38 @@
 		sureSelect:function(){
 			var _this = this;
 				_this.selectOpen = false
-				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"))
-//				var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
+				console.log($('#inSupply').val());
+				console.log($('.hasoid').attr('id'));
+				console.log($('#input_div_invoiceStatus').val());
+				console.log($('#input_div_poStatus').val());
+				console.log($('#input_div_orderStatus').val());
+				console.log($('#input_div_poSchType').val());
+				console.log($('#wait_pay').val());
 				GHUTILS.OPENPAGE({
-					url: "../../html/inventoryMagmetHtml/inventoryList.html",
+					url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
 					extras: {
-						reqNo: $('.inOrdNum').val(),
-						name: $('.inReqNum').val(),
-						fromOffice: $('.hasoid').attr('id'),
-						bizStatusid: optionsBusiness.val(),
-						varietyInfoid: optionsClass.val(),
-						isFunc: true
+						num: $('.inOrdNum').val(),//备货单号
+						vendOffice: $('.hasoid').attr('id'),//供应商
+						invStatus: $('#input_div_invoiceStatus').val(),//发票状态
+						bizStatus: $('#input_div_poStatus').val(),//业务状态
+						processTypeStr:$('#input_div_orderStatus').val(),//审核状态
+						poSchType:$('#input_div_poSchType').val(),//排产状态
+                        waitPay: $('#wait_pay').val(),//待支付
+                        includeTestData: _this.includeTestData,//测试数据
+                        isFunc: true
 						}
 					})
 		},
+		testData:function() {
+			var _this = this;
+            $('.testCheckbox').on('change',function(){
+            	if(this.checked){
+            		_this.includeTestData = true
+            	}else {
+            		_this.includeTestData = false
+            	}
+	        })
+        },
 		hrefHtml: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
 			_this.ajaxSupplier();//供应商
@@ -136,7 +157,8 @@
 				dataType: 'json',
 				success: function(res) {
 					$.each(res, function(i, item) {
-						htmlinvoice += '<option class="soption"  value="' + item.id + '">' + item.label + '</option>'
+						console.log(item)
+						htmlinvoice += '<option class="soption"  value="' + item.value + '">' + item.label + '</option>'
 					});
 					$('#input_div_invoiceStatus').html(optHtml+htmlinvoice);
 
@@ -155,51 +177,31 @@
 				dataType: 'json',
 				success: function(res) {
 					$.each(res, function(i, item) {
-						htmlClass += '<option class="soption" value="' + item.id + '">' + item.label + '</option>'
+						htmlClass += '<option class="soption" value="' + item.value + '">' + item.label + '</option>'
 					});
 					$('#input_div_poStatus').html(optHtml+htmlClass)
 				}
 			});
-		},
-		//订单来源
-		ajaxorderStatus: function() {
-			var _this = this;
-			var optHtml ='<option value="">请选择</option>';
-			var htmlClass = '';
-//			$.ajax({
-//				type: 'GET',
-//				url: '/a/sys/dict/listData',
-//				data: {type:'biz_po_status'},
-//				dataType: 'json',
-//				success: function(res) {
-//					console.log(res)
-//					$.each(res, function(i, item) {
-//						console.log(item)
-//						htmlClass += '<option class="soption" value="' + item.id + '">' + item.label + '</option>'
-//					});
-//					$('#input_div_orderStatus').html(optHtml+htmlClass)
-//				}
-//			});
 		},
 		//审核状态
 		ajaxcheckStatus: function() {
 			var _this = this;
 			var optHtml ='<option value="">请选择</option>';
 			var htmlClass = '';
-////			$.ajax({
-////				type: 'GET',
-////				url: '/a/sys/dict/listData',
-////				data: {type:'biz_po_status'},
-////				dataType: 'json',
-////				success: function(res) {
-////					console.log(res)
-////					$.each(res, function(i, item) {
-////						console.log(item)
-////						htmlClass += '<option class="soption" value="' + item.id + '">' + item.label + '</option>'
-////					});
-////					$('#input_div_orderStatus').html(optHtml+htmlClass)
-////				}
-////			});
+			$.ajax({
+				type: 'GET',
+				url: '/a/biz/po/bizPoHeader/listV2Data4Mobile',
+//				data: {type:'biz_po_status'},
+				dataType: 'json',
+				success: function(res) {
+					console.log(res)
+					$.each(res.data.processList, function(i, item) {
+						console.log(item)
+						htmlClass += '<option class="soption" value="' + item.name + '">' + item.name + '</option>'
+					});
+					$('#input_div_orderStatus').html(optHtml+htmlClass)
+				}
+			});
 		},
 	},
 	$(function() {

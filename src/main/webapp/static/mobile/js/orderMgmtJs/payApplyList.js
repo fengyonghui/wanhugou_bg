@@ -21,7 +21,7 @@
 //			}else{
 				
 				this.pageInit(); //页面初始化
-
+                this.removeBtn();
 //			}
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
@@ -105,9 +105,7 @@
 								//操作确认支付金额
 								var inPay ="";								
 								var inPayBtn="";
-								if(_this.PaymentFlag ==false){
-//									$('app_color40 .inCheckBtn').find('div').css('display','none');
-//									$('app_color40 .inCheckBtns').find('div').css('display','none');
+								if(_this.PaymentFlag ==true){
 									if(res.data.fromPage == 'requestHeader' && item.total == '0.00' && (res.data.requestHeader == null || res.data.requestHeader.bizStatus < res.data.CLOSE)){
 										inPay = '确认支付金额';
 									}
@@ -115,11 +113,10 @@
 								//操作审核
 								var inCheck ="";
 								var inChecks ="";
-//								var inCheckBtn="";
 								if(_this.checkFlag ==true){	
 									if(item.total != '0.00'){
-//										$('app_color40 .inPayBtn').find('div').css('display','none');
-										if(item.id == res.data.bizPoHeader.bizPoPaymentOrder.id && res.data.bizPoHeader.commonProcess.paymentOrderProcess.name != '审批完成' && item.total != 0){
+										console.log(item.commonProcess.paymentOrderProcess.name)
+										if(item.id == res.data.bizPoHeader.bizPoPaymentOrder.id && item.commonProcess.paymentOrderProcess.name != '审批完成' && item.total != 0){
 											inCheck ="审核通过";
 											inChecks ="审核驳回";
 										}
@@ -256,6 +253,11 @@
                 }
             });
         },
+        removeBtn:function(){
+        	$('#payBtnremove').on('tap',  function() {
+        		$('.payMoney').hide();
+        	})
+        },
         comfirDialig: function() {
 			var _this = this;
 			document.getElementById("inCheckBtns").addEventListener('tap', function() {
@@ -331,12 +333,12 @@
 					console.log(res)
 					if(res.ret == true) {
 						mui.toast(res.data.right);
-//						window.setTimeout(function(){
-//			                GHUTILS.OPENPAGE({
-//								url: "../orderMgmtHtml/orderpaymentinfo.html",
-//								extras: {}
-//							})
-//			            },300);						
+						window.setTimeout(function(){
+			                GHUTILS.OPENPAGE({
+								url: "../orderMgmtHtml/orderpaymentinfo.html",
+								extras: {}
+							})
+			            },300);						
 					}
 					if(res.ret == false) {
 						mui.toast(res.errmsg)
@@ -348,10 +350,6 @@
 			});
 
 		},
-//		hide:function(){
-//			$('#inCheckBtn').hide();
-//			$('#inCheckBtns').hide();
-//		},
 		rejectData: function(rejectTxt,num,inListId,money,currentType) {
 			var _this = this;
 			$.ajax({
@@ -419,14 +417,20 @@
 	                    	$('.btnbox').show();
 	                    }
 	                    $('#payBtnsave').on('tap',function(){
+	                    	var totalVal = $("#paymoney").val();
+//		                    console.log(totalVal);	
+                            if (totalVal=="" || totalVal<= 0) {
+                                mui.toast("付款金额输入不正确，请重新输入！");
+                                return;
+                            }
 	                    	$.ajax({
-				                type: "GET",
+				                type: "get",
 				                url: "/a/biz/po/bizPoPaymentOrder/save4Mobile",
 				                dataType: "json",
 				                data: {id:resid,poHeaderId:poHeaderIds,orderType:orderTypes,total:$('#paymoney').val(),remark:$('#textxt').val()},
 				                async:false,
 				                success: function(res){				                   
-				                    console.log(res.data.result);				                    
+//				                    console.log(res.data.result);					                    
 				                    if(res.data.result==true){
 				                    	mui.toast('保存成功！！');
 				                    	$('.payMoney').hide();

@@ -1,5 +1,3 @@
-
-
 (function($) {
 	var ACCOUNT = function() {
 		this.ws = null;
@@ -221,7 +219,19 @@
 				chedulingStatus = '未排产'
 			}
 			if(b.data.bizPoHeader.poSchType == 1) {
-				chedulingStatus = '排产中'
+				chedulingStatus = '排产中';
+				console.log(b.data.bizPoHeader.poDetailList);
+				var itemdate="";
+				var itemnum="";
+//				console.log(b.data.bizPoHeader.poDetailList.bizSchedulingPlan.completePalnList);
+				$.each(b.data.bizPoHeader.poDetailList, function(o, p) {
+					console.log(p.bizSchedulingPlan.completePalnList);
+					$.each(p.bizSchedulingPlan.completePalnList, function(x, y) {
+						console.log(y);
+							itemdate=_this.formatDateTime(y.planDate);
+							itemnum=y.completeNum
+					});
+				});
 			}
 			if(b.data.bizPoHeader.poSchType == 2) {
 				chedulingStatus = '排产完成'
@@ -286,9 +296,9 @@
 					'<div class="mui-row plan">'+
 						'<div class="labelLf">排产计划：</div>'+
 						'<div class="mui-row app_f13 commdAddPlan" id="'+ item.id+'">'+comPlanTx+
-						
+
 					'</div></div></div></li>'
-				htmlAllSave = '<button id="allSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">批量保存</button>'			
+				htmlAllSave = '<button id="allSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">批量保存</button>'
 			});
     		$("#orSchedCommd").html(htmlCommodity)
     		$(".saveBtnPt").html(htmlAllSave)
