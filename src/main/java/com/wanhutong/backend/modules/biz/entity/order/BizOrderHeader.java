@@ -1042,7 +1042,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     public void setBizOrderLogisticsList(List<BizOrderLogistics> bizOrderLogisticsList) {
         this.bizOrderLogisticsList = bizOrderLogisticsList;
     }
-}
 
     public Integer getWaitShipments() {
         return waitShipments;
