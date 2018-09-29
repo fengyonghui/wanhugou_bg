@@ -40,6 +40,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVend
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.web.order.BizOrderHeaderController;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -661,7 +662,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
         //物流运单生成
         ThreadPoolManager.getDefaultThreadPool().execute(() -> {
-            String postUrl = "http://wuliu.guojingec.com:8081/test/order/logistic/add_order_WHT";
+            String postUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
+            LOGGER.info("订单物流postUrl=================" + postUrl);
             CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
             HttpPost httpPost = new HttpPost(postUrl);
             CloseableHttpResponse httpResponse = null;
@@ -734,8 +736,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
                 //物流运单生成
                 ThreadPoolManager.getDefaultThreadPool().execute(() -> {
-                    String reginUrl = "http://wuliu.guojingec.com:8081/test/order/logistic/get_start_and_stop_point_code_WHT";
-                    String createLogisticUrl = "http://wuliu.guojingec.com:8081/test/order/logistic/add_order_WHT";
+                    String reginUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.GET_START_AND_STOP_POINT_CODE_WHT;
+                    String createLogisticUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
+
+                    LOGGER.info("订单物流reginUrl=================" + reginUrl);
+                    LOGGER.info("订单物流createLogisticUrl=================" + createLogisticUrl);
                     CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
                     HttpPost httpPost = new HttpPost(reginUrl);
                     CloseableHttpResponse httpResponse = null;

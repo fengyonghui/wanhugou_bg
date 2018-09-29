@@ -80,6 +80,13 @@ public abstract class ConfigGeneral {
 	public static final ConfigWrapper<DoOrderHeaderProcessFifthConfig> DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG = new ConfigWrapper<>(
 			"DoOrderHeaderProcessFifthConfig.xml",new DoOrderHeaderProcessFifthConfig());
 
+
+	public static final String TESTURI= "http://wuliu.guojingec.com:8081/test/";
+	public static final String PRODUCEURI= "http://wuliu.guojingec.com:8080/wuliu/";
+
+	public static final String GET_START_AND_STOP_POINT_CODE_WHT = "order/logistic/get_start_and_stop_point_code_WHT";
+	public static final String ADD_ORDER_WHT = "order/logistic/add_order_WHT";
+
 	/**
 	 * 获取所有的配置对象实例所属的父容器，使用反射实现，由于仅在更新配置的内存版本时调用，属于可容忍的性能损耗
 	 * 
