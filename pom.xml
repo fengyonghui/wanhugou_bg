@@ -54,6 +54,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <downloadSources>true</downloadSources>
 
+        <!--quartz定时任务-->
+        <quartz.version>2.2.1</quartz.version>
+
     </properties>
 
     <!-- 设定主仓库，按设定顺序进行查找。 -->
@@ -80,6 +83,13 @@
 
     <!-- 依赖项定义 -->
     <dependencies>
+        <!--quzrtz定時任务-->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.version}</version>
+        </dependency>
+
 
         <!-- SPRING begin -->
         <dependency>
