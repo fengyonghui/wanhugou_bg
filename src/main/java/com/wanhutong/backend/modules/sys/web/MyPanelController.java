@@ -157,7 +157,7 @@ public class MyPanelController extends BaseController {
         request.setAttribute("fhdrkCount", fhdrkCount);
         request.setAttribute("applyPaymentCount", applyPaymentCount);
         request.setAttribute("paymentOrderAuditCount", paymentOrderAuditCount);
-        request.setAttribute("reAuditCOunt", reAuditCount);
+        request.setAttribute("reAuditCount", reAuditCount);
         request.setAttribute("waitSchedulingCount", waitSchedulingCount);
         request.setAttribute("orderPaymentCount", orderPaymentCount);
         request.setAttribute("needPutawayCount", needPutawayCount);
