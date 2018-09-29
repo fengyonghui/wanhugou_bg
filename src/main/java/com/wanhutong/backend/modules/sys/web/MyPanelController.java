@@ -179,9 +179,11 @@ public class MyPanelController extends BaseController {
                     bizOrderHeader.setSelectAuditStatus("总经理");
                } else if(role.getEnname().equals(RoleEnNameEnum.CHANNEL_MANAGER.getState())){
                 bizOrderHeader.setSelectAuditStatus("渠道经理");
-               }else if(role.getEnname().equals(RoleEnNameEnum.P_CENTER_MANAGER.getState())||role.getEnname().equals(RoleEnNameEnum.BUYER.getState())){
-                   bizOrderHeader.setBizStatusStart(0);
-                   bizOrderHeader.setBizStatusEnd(14);
+               }else if(role.getEnname().equals(RoleEnNameEnum.P_CENTER_MANAGER.getState()) || role.getEnname().equals(RoleEnNameEnum.BUYER.getState())){
+                   bizOrderHeader.setFlag("check_pending");
+                   bizOrderHeader.setMobileAuditStatus(0);
+                   redirectModel.addFlashAttribute("bizOrderHeader",bizOrderHeader);
+                   return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?flag=check_pending";
                }
                else if(role.getEnname().equals(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState())|| role.getEnname().equals(RoleEnNameEnum.MARKETINGMANAGER.getState()) ){
                    bizOrderHeader.setSelectAuditStatus("品类主管");
