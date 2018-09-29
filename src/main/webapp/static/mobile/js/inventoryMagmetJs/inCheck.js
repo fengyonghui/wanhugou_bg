@@ -204,10 +204,15 @@
 					_this.statusListHtml(res.data); //状态流程					
 					_this.paylistHtml(res.data); //支付列表
 					_this.checkProcessHtml(res.data); //审批流程
+					console.log(res.data.bizRequestHeader.commonProcess.type)
+					console.log(res.data.defaultProcessId)
+					console.log(res.data.bizRequestHeader.str)
 					if(res.data.bizRequestHeader.str == 'audit' && res.data.bizRequestHeader.commonProcess.type == res.data.defaultProcessId){
+						alert(999)
 						_this.stockGoodsHtml(res.data); //商品库存
 					}else{
-						$('#labelLf').hide();
+						alert(999)
+						$('#labelLf').parent().hide();
 					}
 					//判断审核状态
 					_this.checkStatus(res.data);
@@ -740,6 +745,10 @@
 		stockGoodsHtml: function(data) {
 			var _this = this;
 			var htmlstockGoods = '';
+			if(data.inventorySkuList == null || data.inventorySkuList == '') {
+				$('#labelLf').parent().hide();
+				return;
+			}
 			//库存类型
 	        $.each(data.inventorySkuList,function(i,items){
 	            var iteminvType=items.invType;	
@@ -1196,7 +1205,7 @@
 					'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>商品名称：</label>'+
-					'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuInfo.namee +'" disabled></div>'+
+					'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuInfo.name +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>商品货号：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled></div>'+
@@ -1247,7 +1256,7 @@
 					'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>商品名称：</label>'+
-					'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuInfo.namee +'" disabled></div>'+
+					'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuInfo.name +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>商品货号：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled></div>'+
@@ -1284,7 +1293,7 @@
 							'<input type="text" class="" value="'+ item.skuInfo.productInfo.brandName +'" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>商品名称：</label>'+
-							'<input type="text" class="app_color40 " value="'+ item.skuInfo.namee +'" disabled></div>'+
+							'<input type="text" class="app_color40 " value="'+ item.skuInfo.name +'" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>商品货号：</label>'+
 							'<input type="text" class="" value="'+ item.skuInfo.itemNo +'" disabled></div>'+
