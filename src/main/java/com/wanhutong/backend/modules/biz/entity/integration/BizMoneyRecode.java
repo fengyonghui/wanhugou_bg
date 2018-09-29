@@ -32,12 +32,42 @@ public class BizMoneyRecode extends DataEntity<BizMoneyRecode> {
 	private Date beginCreateDate;		// 开始 生成时间
 	private Date endCreateDate;		// 结束 生成时间
 	private List<Integer> officeIds;
-	private String newMoney;
+	//可用
+	private BigDecimal newMoney;
+	//获得
+	private BigDecimal gainIntegration;
+	//使用
+	private BigDecimal usedIntegration;
+	//过期
+	private BigDecimal expireIntegration;
 	private Date createDate;
 	private Date updateDate;
 	private Integer createId;
 	private Integer updateId;
 
+	public BigDecimal getGainIntegration() {
+		return gainIntegration;
+	}
+
+	public void setGainIntegration(BigDecimal gainIntegration) {
+		this.gainIntegration = gainIntegration;
+	}
+
+	public BigDecimal getUsedIntegration() {
+		return usedIntegration;
+	}
+
+	public void setUsedIntegration(BigDecimal usedIntegration) {
+		this.usedIntegration = usedIntegration;
+	}
+
+	public BigDecimal getExpireIntegration() {
+		return expireIntegration;
+	}
+
+	public void setExpireIntegration(BigDecimal expireIntegration) {
+		this.expireIntegration = expireIntegration;
+	}
 
 	public Integer getCreateId() {
 		return createId;
@@ -75,11 +105,11 @@ public class BizMoneyRecode extends DataEntity<BizMoneyRecode> {
 		this.updateDate = updateDate;
 	}
 
-	public String getNewMoney() {
+	public BigDecimal getNewMoney() {
 		return newMoney;
 	}
 
-	public void setNewMoney(String newMoney) {
+	public void setNewMoney(BigDecimal newMoney) {
 		this.newMoney = newMoney;
 	}
 

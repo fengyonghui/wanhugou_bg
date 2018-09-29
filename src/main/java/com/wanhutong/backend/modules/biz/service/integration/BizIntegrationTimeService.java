@@ -9,6 +9,7 @@ import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.integration.ActivityVo;
 import com.wanhutong.backend.modules.biz.entity.integration.BizIntegrationActivity;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecode;
+import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
 import com.wanhutong.backend.modules.biz.entity.logistic.LogisticEntity;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.web.integration.BizIntegrationActivityController;
@@ -106,10 +107,12 @@ public class BizIntegrationTimeService implements Job{
                         bizMoneyRecode = new BizMoneyRecode();
                         Integer officeId = o.getId();
                         //根据officeId查询用户可用积分
-                        BigDecimal avaiableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
-                        if (!Objects.isNull(avaiableMoney)) {
-                              BigDecimal newMoney = avaiableMoney.add(integrationNum);
-                              bizMoneyRecode.setNewMoney(newMoney.toString());
+                        BizMoneyRecodeDetail bizMoneyRecodeDetail = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
+                        if (!Objects.isNull(bizMoneyRecodeDetail)) {
+                              BigDecimal newMoney = bizMoneyRecodeDetail.getAvailableIntegration().add(integrationNum);
+                              BigDecimal gainMoney = bizMoneyRecodeDetail.getGainIntegration().add(integrationNum);
+                              bizMoneyRecode.setNewMoney(newMoney);
+                              bizMoneyRecode.setGainIntegration(gainMoney);
                         }
                         bizMoneyRecode.setOffice(o);
                         bizMoneyRecode.setStatus(1);

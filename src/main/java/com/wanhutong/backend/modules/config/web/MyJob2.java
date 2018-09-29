@@ -40,17 +40,19 @@ public class MyJob2{
         {
             Integer officeId = biz.getOfficeId();
             BigDecimal expireIntegration = biz.getGainIntegration().subtract(biz.getUsedIntegration());
-            if(expireIntegration.equals(0))
+            if(expireIntegration.compareTo(BigDecimal.ZERO)==0||expireIntegration.compareTo(BigDecimal.ZERO)==-1)
             {
                 continue;
             }
             //添加积分流水过期记录
             bizMoneyRecode = new BizMoneyRecode();
             //根据officeId查询用户可用积分
-            BigDecimal aviableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
-            if (!Objects.isNull(aviableMoney)) {
-                BigDecimal newMoney = aviableMoney.multiply(expireIntegration);
-                bizMoneyRecode.setNewMoney(newMoney.toString());
+            BizMoneyRecodeDetail bizMoneyRecodeDetail = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
+            if (!Objects.isNull(bizMoneyRecodeDetail)) {
+                BigDecimal newMoney = bizMoneyRecodeDetail.getAvailableIntegration().subtract(expireIntegration);
+                BigDecimal expireMoney = bizMoneyRecodeDetail.getExpireIntegration().add(expireIntegration);
+                bizMoneyRecode.setNewMoney(newMoney);
+                bizMoneyRecode.setExpireIntegration(expireMoney);
             }
             bizMoneyRecode.setStatus(1);
             bizMoneyRecode.setMoney(expireIntegration);
@@ -71,7 +73,7 @@ public class MyJob2{
         //添加积分流水表
         bizMoneyRecodeService.saveAll(arrayList);
         //更新用户积分
-        bizMoneyRecodeService.updateMoney(arrayList);
+        bizMoneyRecodeService.updateExpireMoney(arrayList);
     }
 }
 

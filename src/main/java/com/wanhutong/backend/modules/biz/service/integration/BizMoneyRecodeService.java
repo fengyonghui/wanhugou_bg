@@ -51,15 +51,6 @@ public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMon
 
 	public BizMoneyRecodeDetail selectRecordDetail(){
 		BizMoneyRecodeDetail bizMoneyRecodeDetail = bizMoneyRecodeDao.selectRecodeDetail();
-        BigDecimal availableIntegration = bizMoneyRecodeDetail.getGainIntegration().subtract(bizMoneyRecodeDetail.getExpireIntegration()).subtract(bizMoneyRecodeDetail.getUsedIntegration());
-		int i = availableIntegration.compareTo(BigDecimal.ZERO);
-		if(i==0)
-		{
-			double v = availableIntegration.doubleValue();
-			v = 0;
-			availableIntegration = new BigDecimal(v);
-		}
-        bizMoneyRecodeDetail.setAvailableIntegration(availableIntegration);
         return bizMoneyRecodeDetail;
 	}
 
@@ -87,8 +78,14 @@ public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMon
          bizMoneyRecodeDao.updateMoney(list);
 	}
 
+    //更新用户信用表过期积分数
+    @Transactional
+    public void updateExpireMoney(List<BizMoneyRecode> list){
+        bizMoneyRecodeDao.updateExpireMoney(list);
+    }
+
 	//查询用户所有的可用积分
-	public BigDecimal selectMoneyByOfficeId(Integer officeId){
+	public BizMoneyRecodeDetail selectMoneyByOfficeId(Integer officeId){
         return bizMoneyRecodeDao.selectMoney(officeId);
 	}
 
