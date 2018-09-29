@@ -237,6 +237,22 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private BigDecimal scoreMoney;
 
+    /**
+     * 待发货
+     */
+    private Integer waitShipments;
+
+    /**
+     * 待出库
+     * @return
+     */
+    private Integer waitOutput;
+
+    /**
+     * 需要出库筛选条件
+     */
+    private Integer needOut;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -1015,4 +1031,29 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     public void setScoreMoney(BigDecimal scoreMoney) {
         this.scoreMoney = scoreMoney;
     }
+
+    public Integer getWaitShipments() {
+        return waitShipments;
+    }
+
+    public void setWaitShipments(Integer waitShipments) {
+        this.waitShipments = waitShipments;
+    }
+
+    public Integer getWaitOutput() {
+        return waitOutput;
+    }
+
+    public void setWaitOutput(Integer waitOutput) {
+        this.waitOutput = waitOutput;
+    }
+
+    public Integer getNeedOut() {
+        return needOut;
+    }
+
+    public void setNeedOut(Integer needOut) {
+        this.needOut = needOut;
+    }
 }
+

@@ -24,11 +24,8 @@ public enum OrderHeaderBizStatusEnum {
     COMPLETE(30,"已完成"),
     CANCLE(35,"已取消"),
     DELETE(40,"已删除"),
-    UNAPPROVE(45, "审核失败"),
-    //一单到底审核
-    UNREVIEWED(50, "未审核"),
-    IN_REVIEW(55,"审核中"),
-    APPROVEPARTONE(60, "第一阶段审核通过");
+    UNAPPROVE(45, "审核失败");
+
 
     private Integer state;
     private String desc;

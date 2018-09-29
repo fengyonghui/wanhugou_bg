@@ -132,6 +132,10 @@
 					#{skuId}
 				</foreach>
 			</if>
+
+			<if test="notPutaway !=null and notPutaway = 1">
+				and not exists (select 1 from biz_op_shelf_sku boss where boss.sku_id = a.id and boss.status = 1)
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
