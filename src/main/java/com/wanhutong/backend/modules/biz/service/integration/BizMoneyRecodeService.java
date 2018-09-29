@@ -9,8 +9,11 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.dao.integration.BizMoneyRecodeDao;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecode;
+import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * 积分流水Service
@@ -20,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMoneyRecode> {
+	@Resource
+	private BizMoneyRecodeDao bizMoneyRecodeDao;
 
 	public BizMoneyRecode get(Integer id) {
 		return super.get(id);
@@ -42,5 +47,48 @@ public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMon
 	public void delete(BizMoneyRecode bizMoneyRecode) {
 		super.delete(bizMoneyRecode);
 	}
-	
+
+	public BizMoneyRecodeDetail selectRecordDetail(){
+		BizMoneyRecodeDetail bizMoneyRecodeDetail = bizMoneyRecodeDao.selectRecodeDetail();
+        Double availableIntegration = bizMoneyRecodeDetail.getGainIntegration()-bizMoneyRecodeDetail.getExpireIntegration()-bizMoneyRecodeDetail.getUsedIntegration();
+        if(availableIntegration<0)
+		{
+			availableIntegration = 0.0;
+		}
+        bizMoneyRecodeDetail.setAvailableIntegration(availableIntegration);
+        return bizMoneyRecodeDetail;
+	}
+
+	public 	List<BizMoneyRecodeDetail> selectExpireMoney(){
+		List<BizMoneyRecodeDetail> bizMoneyRecodeDetails = bizMoneyRecodeDao.selectExpireMoney();
+		for(BizMoneyRecodeDetail biz:bizMoneyRecodeDetails)
+		{
+			Double gainIntegration = biz.getGainIntegration();
+			Double usedIntegration = biz.getUsedIntegration();
+			double expireIntegration = gainIntegration - usedIntegration;
+			biz.setExpireIntegration(expireIntegration);
+		}
+		return  bizMoneyRecodeDetails;
+	}
+
+	//添加积分流水记录
+	@Transactional(readOnly = false)
+	public void saveAll(List<BizMoneyRecode> arrayList) {
+		bizMoneyRecodeDao.saveAll(arrayList);
+	}
+
+	//更新用户信用表积分数
+	@Transactional
+	public void updateMoney(List<BizMoneyRecode> list){
+         bizMoneyRecodeDao.updateMoney(list);
+	}
+
+	//查询用户所有的可用积分
+	public Double selectMoneyByOfficeId(Integer officeId){
+        return bizMoneyRecodeDao.selectMoney(officeId);
+	}
+
+
+
+
 }
