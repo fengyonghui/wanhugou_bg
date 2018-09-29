@@ -46,7 +46,7 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	/**
 	 * 变更的数量
 	 * */
-	private Double changeNumber;
+	private Integer changeNumber;
 	/**
 	 * 变更记录
 	 * */
@@ -203,11 +203,11 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 		this.invOldNum = invOldNum;
 	}
 
-	public Double getChangeNumber() {
+	public Integer getChangeNumber() {
 		return changeNumber;
 	}
 
-	public void setChangeNumber(Double changeNumber) {
+	public void setChangeNumber(Integer changeNumber) {
 		this.changeNumber = changeNumber;
 	}
 
