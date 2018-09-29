@@ -42,6 +42,7 @@
            class="breadcrumb form-search">
     <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
     <input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+    <input id="previousPage" name="previousPage" type="hidden" value="${bizPoHeader.previousPage}"/>
     <input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
     <ul class="ul-form">
             <%--<li><label>采购单号</label>--%>

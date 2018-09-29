@@ -51,6 +51,7 @@
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizSkuInfo" action="${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=${prodType}" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+		<input id="previousPage" name="previousPage" type="hidden" value="${bizSkuInfo.previousPage}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
             <li><label>商品类型：</label>

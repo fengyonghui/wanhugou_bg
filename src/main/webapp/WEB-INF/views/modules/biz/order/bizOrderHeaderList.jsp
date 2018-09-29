@@ -106,6 +106,7 @@
 <form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader?statu=${statu}" method="post" class="breadcrumb form-search">
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+	<input id="previousPage" name="previousPage" type="hidden" value="${bizOrderHeader.previousPage}"/>
 	<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
 	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 	<input type="hidden" name="source" value="${source}"/>

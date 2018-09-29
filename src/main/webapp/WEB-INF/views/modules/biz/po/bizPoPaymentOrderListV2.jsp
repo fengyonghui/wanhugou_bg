@@ -24,6 +24,7 @@
 			   class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<input id="previousPage" name="previousPage" type="hidden" value="${bizPoPaymentOrder.previousPage}"/>
 		<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 		<ul class="ul-form">
 			<li><span style="margin-left: 10px"><label>订单/备货清单编号</label></span>

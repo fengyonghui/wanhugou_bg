@@ -75,6 +75,7 @@
 			<ul class="ul-form">
 				<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 				<input name="source" value="${source}" type="hidden"/>
+				<input id="previousPage" name="previousPage" type="hidden" value="${bizRequestHeader.previousPage}"/>
 				<input name="ship" value="${ship}" type="hidden"/>
 				<input name="bizStatu" value="${bizStatu}" type="hidden"/>
 				<li><label>备货单号：</label>
