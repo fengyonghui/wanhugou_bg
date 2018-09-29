@@ -172,6 +172,14 @@
 			<if test="waitPay != null and waitPay == 1">
 				AND (select bppo.biz_status from biz_po_payment_order bppo join common_process dcp  on bppo.process_id = dcp.id
 				WHERE bppo.id = a.current_payment_id and dcp.type = 666) = 0
+				and process.type = 7
+			</if>
+
+			<if test="applyPayment != null and applyPayment == 1">
+				AND (a.current_payment_id is null or a.current_payment_id = 0)
+				and (a.total_detail + a.total_exp + a.freight) > a.pay_total
+                and process.type = 7
+				and 37 > rh.biz_status
 			</if>
 		</where>
 		GROUP BY a.id

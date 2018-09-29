@@ -108,6 +108,10 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private Date orderCreatEndTime;
 
 
+	/**
+	 * 未上架
+	 */
+	private Integer notPutaway;
 
 	public BizSkuInfo() {
 		super();
@@ -431,5 +435,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setVendorId(String vendorId) {
 		this.vendorId = vendorId;
+	}
+
+	public Integer getNotPutaway() {
+		return notPutaway;
+	}
+
+	public void setNotPutaway(Integer notPutaway) {
+		this.notPutaway = notPutaway;
 	}
 }

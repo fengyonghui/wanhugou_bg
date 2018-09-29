@@ -121,15 +121,23 @@ public class BizRequestAllController {
         if ("kc".equals(source)) {
             bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
             bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCK_COMPLETE.getState().byteValue());
-            if (bizStatu == 0) {
+            if (bizStatu == 0 && Integer.valueOf(1).equals(bizOrderHeader.getNeedOut())) {
+                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.APPROVE.getState());
+            } else {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
             }
+
+            if (bizStatu == 0) {
+                bizOrderHeader.setSupplyId(-1);
+            }
+
             if (bizStatu == 1) {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
-
             }
+
             if (ship.equals("xs")) {
                 Page<BizOrderHeader> page = new Page<>(request, response);
                 page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
@@ -145,8 +153,13 @@ public class BizRequestAllController {
                 model.addAttribute("page", page);
             }
         } else if ("sh".equals(source)) {
-            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
-            bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETE.getState().byteValue());
+            if (Integer.valueOf(1).equals(bizRequestHeader.getNeedIn())) {
+                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETEING.getState().byteValue());
+            } else {
+                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETE.getState().byteValue());
+            }
 
             Page<BizRequestHeader> page = new Page<>(request, response);
             page = bizRequestHeaderService.findPageForSendGoods(page, bizRequestHeader);

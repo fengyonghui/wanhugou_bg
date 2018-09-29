@@ -20,6 +20,8 @@ import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
@@ -65,6 +67,8 @@ public class BizPoPaymentOrderController extends BaseController {
     private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
     @Autowired
     private BizOrderHeaderService bizOrderHeaderService;
+    @Autowired
+    private CommonProcessService commonProcessService;
 
     @ModelAttribute
     public BizPoPaymentOrder get(@RequestParam(required = false) Integer id) {
@@ -226,8 +230,8 @@ public class BizPoPaymentOrderController extends BaseController {
         Map<String, String> configMap = Maps.newLinkedHashMap();
 
         configMap.put("供货部", "供货部");
-        configMap.put("财务经理", "财务经理");
         configMap.put("财务总监", "财务总监");
+        configMap.put("财务总经理", "财务总经理");
         configMap.put("完成", "完成");
         configMap.put("驳回", "驳回");
 
@@ -238,12 +242,19 @@ public class BizPoPaymentOrderController extends BaseController {
             }
         }
 
-
         if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum())) {
-            if (bizPoPaymentOrder.getOrderNum().startsWith("SO") || bizPoPaymentOrder.getOrderNum().startsWith("DO")) {
+            if (bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("SO") || bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("DO")) {
                 BizOrderHeader orderHeader = bizOrderHeaderService.getByOrderNum(bizPoPaymentOrder.getOrderNum());
                 if (orderHeader != null) {
                     bizPoPaymentOrder.setPoHeaderId(orderHeader.getBizPoHeader().getId());
+                }
+            }
+            if (bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("RE")) {
+                BizRequestHeader requestHeader = new BizRequestHeader();
+                requestHeader.setReqNo(bizPoPaymentOrder.getOrderNum());
+                List<BizRequestHeader> list = bizRequestHeaderForVendorService.findList(requestHeader);
+                if (CollectionUtils.isNotEmpty(list)) {
+                    bizPoPaymentOrder.setPoHeaderId(list.get(0).getBizPoHeader().getId());
                 }
             }
         }
@@ -365,8 +376,37 @@ public class BizPoPaymentOrderController extends BaseController {
                 model.addAttribute("totalDetailResult", df.format(totalDetailResult));
             }
         }
+
         model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
         return "modules/biz/po/bizPoPaymentOrderForm";
+    }
+
+    @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
+    @RequestMapping(value = "formV2")
+    public String formV2(BizPoPaymentOrder bizPoPaymentOrder, Model model) {
+        bizPoPaymentOrder = bizPoPaymentOrderService.get(bizPoPaymentOrder.getId());
+        if (bizPoPaymentOrder.getPoHeaderId() != null) {
+            BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoPaymentOrder.getPoHeaderId());
+            if (bizPoHeader != null) {
+                BigDecimal totalDetail = bizPoHeader.getTotalDetail() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalDetail());
+                BigDecimal totalExp = bizPoHeader.getTotalExp() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalExp());
+                BigDecimal totalDetailResult = totalDetail.add(totalExp);
+                DecimalFormat df = new DecimalFormat("#0.00");
+                model.addAttribute("totalDetailResult", df.format(totalDetailResult));
+            }
+        }
+
+        if (bizPoPaymentOrder.getId() != null) {
+            Integer processId = bizPoPaymentOrder.getProcessId();
+            CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+            commonProcessEntity.setObjectId(String.valueOf(bizPoPaymentOrder.getId()));
+            commonProcessEntity.setObjectName("biz_po_payment_order");
+            List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+            model.addAttribute("auditList", list);
+            model.addAttribute("processId", processId);
+        }
+        model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
+        return "modules/biz/po/bizPoPaymentOrderFormV2";
     }
 
     @RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
