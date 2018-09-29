@@ -111,7 +111,7 @@
             </li>
         </shiro:hasAnyRoles>
         <shiro:hasAnyRoles
-                name="dept,channel_manager,Channel Supervisor,selection_of_specialist">
+                name="dept,channel_manager,Channel Supervisor,selection_of_specialist,op_director">
             <li>
                 <a href="${ctx}/sys/myPanel/reAudit">备货单审核</a>
                 <c:if test="${reAuditCount > 0}">
@@ -165,20 +165,20 @@
             </li>
         </shiro:hasAnyRoles>
         <shiro:hasAnyRoles
-                name="dept,channel_manager,Channel Supervisor">
+                name="dept,channel_manager,p_center_manager,Channel Supervisor">
             <li>
                 <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form">添加备货单</a>
             </li>
         </shiro:hasAnyRoles>
-        <shiro:hasAnyRoles
-                name="dept,warehouse_specialist">
-            <li>
-                <a href="${ctx}/sys/myPanel/checkException">盘点异常</a>
-                <c:if test="${checkExceptionCount > 0}">
-                    <span>${checkExceptionCount}</span>
-                </c:if>
-            </li>
-        </shiro:hasAnyRoles>
+        <%--<shiro:hasAnyRoles--%>
+                <%--name="dept,warehouse_specialist">--%>
+            <%--<li>--%>
+                <%--<a href="${ctx}/sys/myPanel/checkException">盘点异常</a>--%>
+                <%--<c:if test="${checkExceptionCount > 0}">--%>
+                    <%--<span>${checkExceptionCount}</span>--%>
+                <%--</c:if>--%>
+            <%--</li>--%>
+        <%--</shiro:hasAnyRoles>--%>
     </ul>
 </div>
 </body>

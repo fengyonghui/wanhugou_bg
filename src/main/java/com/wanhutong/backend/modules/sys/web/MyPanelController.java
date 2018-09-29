@@ -106,15 +106,20 @@ public class MyPanelController extends BaseController {
         if (userRoleList.contains(tempRole)) {
             waitAuditCount = myPanelService.getOrderWaitAuditCount("财务经理");
             paymentOrderAuditCount = myPanelService.getPaymentOrderAuditCount("财务经理");
+            orderPaymentCount = myPanelService.getOrderPaymentCount();
         }
         tempRole.setEnname(RoleEnNameEnum.FINANCE_DIRECTOR.getState());
         if (userRoleList.contains(tempRole)) {
             paymentOrderAuditCount = myPanelService.getPaymentOrderAuditCount("财务总监");
+            orderPaymentCount = myPanelService.getOrderPaymentCount();
         }
         tempRole.setEnname(RoleEnNameEnum.FINANCIAL_GENERAL_MANAGER.getState());
         if (userRoleList.contains(tempRole)) {
+            orderPaymentCount = myPanelService.getOrderPaymentCount();
             paymentOrderAuditCount = myPanelService.getPaymentOrderAuditCount("财务总经理");
         }
+
+//        供货中心经理
         tempRole.setEnname(RoleEnNameEnum.PROVIDER_MANAGER.getState());
         if (userRoleList.contains(tempRole)) {
             paymentOrderAuditCount = myPanelService.getPaymentOrderAuditCount("供货部");
