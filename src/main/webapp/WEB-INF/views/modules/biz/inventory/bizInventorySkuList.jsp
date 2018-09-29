@@ -74,7 +74,7 @@
 			<li><label>商品货号：</label>
 				<form:input path="skuInfo.itemNo" htmlEscape="false"  class="input-medium"/>
 			</li>
-			<li><label>货权：</label>
+			<li><label>备货方：</label>
 				<form:select path="skuType" htmlEscape="false"  class="input-medium">
 					<form:option value="" label="全部"/>
 					<form:options items="${fns:getDictList('inventory_sku_type')}" itemLabel="label" itemValue="value"/>
@@ -125,7 +125,7 @@
 				<td>序号</td>
 				<th>库存类型</th>
 				<th>仓库名称</th>
-				<th>货权归属</th>
+				<th>备货方</th>
 				<th>采购中心</th>
 				<th style="width: 15%">商品名称</th>
 				<th>出厂价</th>

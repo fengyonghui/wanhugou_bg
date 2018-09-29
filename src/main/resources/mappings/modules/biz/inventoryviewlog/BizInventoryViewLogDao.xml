@@ -27,6 +27,7 @@
 	<sql id="bizInventoryViewLogJoins">
 		LEFT JOIN biz_inventory_info bi on bi.id = a.inv_id
 		Left JOIN biz_request_header rh on rh.id=a.req_id
+		LEFT JOIN sys_office cent ON cent.id = rh.from_id
 		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
 		LEFT JOIN sys_user u on  u.id = a.create_id
 	</sql>
@@ -57,6 +58,9 @@
 					<if test="dbName == 'oracle'">'%'||#{skuInfo.name}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{skuInfo.name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
+			</if>
+			<if test="sqlMap != null and sqlMap.viewLog != null and sqlMap.viewLog != ''">
+				${sqlMap.viewLog}
 			</if>
 		</where>
 		<choose>

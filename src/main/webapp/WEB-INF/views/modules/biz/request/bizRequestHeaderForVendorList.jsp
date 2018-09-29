@@ -206,6 +206,7 @@
 				<th>已收保证金</th>
 				<th>付款比例</th>
 				<th>已到货数量</th>
+				<th>已卖出数量</th>
 				<th>备注</th>
 				<th>业务状态</th>
 				<th>审核状态</th>
@@ -233,7 +234,7 @@
 					</a>
 				</td>
 				<td>
-					${requestHeader.headerType}
+					${fns:getDictLabel(requestHeader.headerType,'req_header_type','未知')}
 				</td>
 				<td>
 					${requestHeader.fromOffice.name}
@@ -253,6 +254,7 @@
 					<fmt:formatNumber type="number" value="${requestHeader.recvTotal*100/requestHeader.totalMoney}" pattern="0.00" />%
 				</td>
 				<td>${requestHeader.recvQtys}</td>
+				<td>${requestHeader.outQtys}</td>
 				<td>
 					${requestHeader.remark}
 				</td>

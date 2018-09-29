@@ -28,6 +28,7 @@
 		a.header_type AS "headerType",
 		sum(req_qty) as "reqQtys",
 		sum(recv_qty) as "recvQtys",
+		sum(brd.out_qty) AS "outQtys",
 		sum(req_qty * unit_price) AS totalMoney,
 		GROUP_CONCAT(brd.id) AS reqDetailIds,
 		count(brd.id) as "ordCount",

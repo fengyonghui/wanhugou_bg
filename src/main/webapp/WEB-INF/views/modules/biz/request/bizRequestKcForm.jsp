@@ -52,7 +52,7 @@
             var sum = parseInt(receiveNum) + parseInt(recvQty);
             if (sum > reqQty){
                 alert("收货数太大，已超过申报数量，请重新调整收货数量！");
-                $("#sendNum"+obj).val(0);
+                $("#receiveNum"+obj).val(0);
                 return false;
             }
         }
@@ -191,7 +191,7 @@
 
 							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<td>
-									<input id="receiveNum${reqStatus.index}" name="bizCollectGoodsRecordList[${reqStatus.index}].receiveNum" <c:if test="${reqDetail.recvQty==reqDetail.reqQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout(${reqStatus.index})"/>
+									<input id="receiveNum${reqStatus.index}" name="bizCollectGoodsRecordList[${reqStatus.index}].receiveNum" <c:if test="${reqDetail.recvQty==reqDetail.reqQty}">readonly="readonly"</c:if> value="0" type="number" min="0" class="input-medium requried" onblur="checkout(${reqStatus.index})"/>
 								</td>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
@@ -247,7 +247,7 @@
 
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 									<td>
-										<input title="sendNum${ordStatus.index}" name="bizCollectGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout2(${ordStatus.index})"/>
+										<input title="sendNum${ordStatus.index}" name="bizCollectGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="number" min="0" class="input-medium requried" onblur="checkout2(${ordStatus.index})"/>
 									</td>
 								</shiro:hasPermission>
 							</tr>

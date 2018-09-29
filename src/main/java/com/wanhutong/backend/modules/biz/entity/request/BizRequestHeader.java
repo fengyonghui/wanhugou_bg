@@ -45,6 +45,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private Double recvTotal;
 
 	/**
+	 * 已卖出数量
+	 */
+	private Integer outQtys;
+
+	/**
 	 * 备货单类型
 	 */
 	private Byte headerType;
@@ -834,4 +839,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 		this.needIn = needIn;
 	}
 
+	public Integer getOutQtys() {
+		return outQtys;
+	}
+
+	public void setOutQtys(Integer outQtys) {
+		this.outQtys = outQtys;
+	}
 }
