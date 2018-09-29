@@ -8,6 +8,7 @@ import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.quartz.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,21 +39,21 @@ public class MyJob2{
         for(BizMoneyRecodeDetail biz:list)
         {
             Integer officeId = biz.getOfficeId();
-            Double expireIntegration = biz.getGainIntegration()-biz.getUsedIntegration();
-            if(expireIntegration==0)
+            BigDecimal expireIntegration = biz.getGainIntegration().subtract(biz.getUsedIntegration());
+            if(expireIntegration.equals(0))
             {
                 continue;
             }
             //添加积分流水过期记录
             bizMoneyRecode = new BizMoneyRecode();
             //根据officeId查询用户可用积分
-            Double aviableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
+            BigDecimal aviableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
             if (!Objects.isNull(aviableMoney)) {
-                Double newMoney = aviableMoney - expireIntegration;
+                BigDecimal newMoney = aviableMoney.multiply(expireIntegration);
                 bizMoneyRecode.setNewMoney(newMoney.toString());
             }
             bizMoneyRecode.setStatus(1);
-            bizMoneyRecode.setMoney(expireIntegration.toString());
+            bizMoneyRecode.setMoney(expireIntegration);
             bizMoneyRecode.setStatusCode(30);
             bizMoneyRecode.setStatusName("过期");
             bizMoneyRecode.setCreateId(1);

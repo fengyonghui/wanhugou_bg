@@ -133,6 +133,8 @@
 				   }
 				});
 
+
+
                 $("#buttonExport").click(function(){
                     top.$.jBox.confirm("确认要导出活动参与者列表数据吗？","系统提示",function(v,h,f){
                         if(v=="ok"){
@@ -216,6 +218,12 @@
 					if($("#id").val()!=null)
 					{
 						tree2.expandAll(true);
+                        var val = $('input[name="sendScope"]:checked').val();
+                        if(val==-3)
+						{
+                            $("#sendAll").val('');
+                            $("#integrationNum").val('');
+						}
 					}
 
             });
@@ -229,6 +237,7 @@
                     treeObj.selectNode(nodeList[0]);
                 }
             }
+
 	</script>
 
 </head>
@@ -280,10 +289,11 @@
 		<div class="control-group">
 			<label class="control-label">发送时间：</label>
 			<div class="controls">
-				<input name="sendTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+				<input name="sendTime" id="sendTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
 					value="<fmt:formatDate value="${bizIntegrationActivity.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 				<span class="help-inline"><font color="red">*</font> </span>
+				<span>(请将发送时间设置成至少为【活动保存时间】5分钟以后)</span>
 			</div>
 		</div>
 

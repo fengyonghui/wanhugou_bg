@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -95,7 +96,7 @@ public class BizIntegrationTimeService implements Job{
             bizIntegrationActivity.setSendStatus(1);
             bizIntegrationActivityDao.updateActivitySendStatus(bizIntegrationActivity.getId());
             Integer sendScope = bizIntegrationActivity.getSendScope();
-            String integrationNum = bizIntegrationActivity.getIntegrationNum();
+            BigDecimal integrationNum = bizIntegrationActivity.getIntegrationNum();
             BizMoneyRecode bizMoneyRecode = null;
             List<BizMoneyRecode> arrayList = new ArrayList<>();
             Date date = new Date();
@@ -105,9 +106,9 @@ public class BizIntegrationTimeService implements Job{
                         bizMoneyRecode = new BizMoneyRecode();
                         Integer officeId = o.getId();
                         //根据officeId查询用户可用积分
-                        Double avaiableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
+                        BigDecimal avaiableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
                         if (!Objects.isNull(avaiableMoney)) {
-                              Double newMoney = avaiableMoney + Double.valueOf(integrationNum);
+                              BigDecimal newMoney = avaiableMoney.add(integrationNum);
                               bizMoneyRecode.setNewMoney(newMoney.toString());
                         }
                         bizMoneyRecode.setOffice(o);

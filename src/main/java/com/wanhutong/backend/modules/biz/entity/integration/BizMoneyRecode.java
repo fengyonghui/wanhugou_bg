@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.entity.integration;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class BizMoneyRecode extends DataEntity<BizMoneyRecode> {
 	
 	private static final long serialVersionUID = 1L;
 	private Office office;		// 采购商id
-	private String money;		// 流水数量
+	private BigDecimal money;		// 流水数量
 	private Integer orderId;		// 订单id
 	private Integer statusCode;		// 10获得-注册成功11获得-下单支付12获得-活动赠送20订单抵扣冻结21使用22订单取消抵扣30过期
 	private String statusName;		// 流水类型
@@ -106,11 +108,11 @@ public class BizMoneyRecode extends DataEntity<BizMoneyRecode> {
 		this.office = office;
 	}
 
-	public String getMoney() {
+	public BigDecimal getMoney() {
 		return money;
 	}
 
-	public void setMoney(String money) {
+	public void setMoney(BigDecimal money) {
 		this.money = money;
 	}
 
@@ -140,7 +142,7 @@ public class BizMoneyRecode extends DataEntity<BizMoneyRecode> {
 		this.statusName = statusName;
 	}
 	
-	@Length(min=0, max=50, message="流水说明长度必须介于 0 和 50 之间")
+	@Length(min=0, max=200, message="流水说明长度必须介于 0 和 50 之间")
 	public String getComment() {
 		return comment;
 	}
