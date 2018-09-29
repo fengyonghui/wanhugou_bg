@@ -18,18 +18,13 @@ import com.wanhutong.backend.modules.biz.dao.order.BizDrawBackDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
-import com.wanhutong.backend.modules.biz.entity.order.BizDrawBack;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderComment;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.*;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
-import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
@@ -40,6 +35,10 @@ import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderPayProportionStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
+import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
+import com.wanhutong.backend.modules.config.parse.Process;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.dao.UserDao;
@@ -72,6 +71,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.*;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Service
@@ -855,6 +855,104 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
      */
     public BizOrderHeader getByOrderNum(String orderNum) {
         return bizOrderHeaderDao.getByOrderNum(orderNum);
+    }
+
+    /**
+     * 代采订单审核
+     * @param orderHeaderId
+     * @param currentType
+     * @param auditType
+     * @param description
+     * @return
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Pair<Boolean, String> auditFifty(Integer orderHeaderId, String currentType, int auditType, String description) {
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(String.valueOf(orderHeaderId));
+        commonProcessEntity.setObjectName(DATABASE_TABLE_NAME);
+        commonProcessEntity.setCurrent(1);
+        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+        if (list.size() != 1) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常! current process 不为 1");
+        }
+        CommonProcessEntity cureentProcessEntity = list.get(0);
+        if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常!");
+        }
+        if (cureentProcessEntity == null) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前订单无审核状态!");
+        }
+
+        BizOrderHeader bizOrderHeader = this.get(orderHeaderId);
+        DoOrderHeaderProcessFifthConfig doOrderHeaderProcessConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
+
+        Integer passProcessCode = null;
+        // 当前流程
+        DoOrderHeaderProcessFifthConfig.OrderHeaderProcess currentProcess = doOrderHeaderProcessConfig.processMap.get(Integer.valueOf(currentType));
+        switch (OrderPayProportionStatusEnum.parse(bizOrderHeader)) {
+            case FIFTH:
+                passProcessCode = currentProcess.getFifthPassCode();
+                break;
+            case ALL:
+                passProcessCode = currentProcess.getAllPassCode();
+                break;
+            default:
+                break;
+        }
+        if (passProcessCode == null || passProcessCode == 0) {
+            return Pair.of(Boolean.FALSE, "操作失败,没有下级流程!");
+        }
+
+        // 下一流程
+        DoOrderHeaderProcessFifthConfig.OrderHeaderProcess nextProcess = doOrderHeaderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? passProcessCode : currentProcess.getRejectCode());
+        if (nextProcess == null) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前流程已经结束!");
+        }
+        User user = UserUtils.getUser();
+        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
+        Role role = new Role();
+        role.setEnname(roleEnNameEnum.getState());
+        if (!user.isAdmin() && !user.getRoleList().contains(role)) {
+            return Pair.of(Boolean.FALSE, "操作失败,该用户没有权限!");
+        }
+
+        if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
+            return Pair.of(Boolean.FALSE, "请输入驳回理由!");
+        }
+
+        cureentProcessEntity.setBizStatus(auditType);
+        cureentProcessEntity.setProcessor(user.getId().toString());
+        cureentProcessEntity.setDescription(description);
+        cureentProcessEntity.setCurrent(0);
+        commonProcessService.save(cureentProcessEntity);
+
+        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+        nextProcessEntity.setObjectId(bizOrderHeader.getId().toString());
+        nextProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+        nextProcessEntity.setCurrent(1);
+        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+
+        commonProcessService.save(nextProcessEntity);
+
+        StringBuilder phone = new StringBuilder();
+
+        User sendUser=new User(systemService.getRoleByEnname(nextProcess.getRoleEnNameEnum()==null?"":nextProcess.getRoleEnNameEnum().toLowerCase()));
+
+        List<User> userList = systemService.findUser(sendUser);
+        if (CollectionUtils.isNotEmpty(userList)) {
+            for (User u : userList) {
+                phone.append(u.getMobile()).append(",");
+            }
+        }
+        if (StringUtils.isNotBlank(phone.toString())) {
+            AliyunSmsClient.getInstance().sendSMS(
+                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                    phone.toString(),
+                    ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
+        }
+
+        return Pair.of(Boolean.TRUE, "操作成功!");
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
