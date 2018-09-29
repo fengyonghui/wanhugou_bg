@@ -57,8 +57,8 @@ public class MyPanelService {
 //        originConfigMap.put("不需要审批", "不需要审批");
         BizOrderHeader bizOrderHeader = new BizOrderHeader();
         bizOrderHeader.setSelectAuditStatus(roleName);
-        List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<>(), bizOrderHeader);
+        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
     }
 
     /**
@@ -69,8 +69,8 @@ public class MyPanelService {
     public int getOrderWaitAgreedDeliveryCount() {
         BizOrderHeader bizOrderHeader = new BizOrderHeader();
         bizOrderHeader.setMobileAuditStatus(0);
-        List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<>(), bizOrderHeader);
+        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
     }
 
     /**
@@ -93,8 +93,8 @@ public class MyPanelService {
     public int getWaitSchedulingCount() {
         BizPoHeader bizPoHeader = new BizPoHeader();
         bizPoHeader.setPoSchType(0);
-        List<BizPoHeader> list = bizPoHeaderService.findList(bizPoHeader);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<>(), bizPoHeader);
+        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
     }
 
     /**
@@ -105,8 +105,8 @@ public class MyPanelService {
     public int getApplyPaymentCount() {
         BizPoHeader bizPoHeader = new BizPoHeader();
         bizPoHeader.setApplyPayment(1);
-        List<BizPoHeader> list = bizPoHeaderService.findList(bizPoHeader);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<>(), bizPoHeader);
+        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
     }
 
     /**
@@ -117,8 +117,8 @@ public class MyPanelService {
     public int getReAuditCount(String processType) {
         BizRequestHeader bizRequestHeader = new BizRequestHeader();
         bizRequestHeader.setProcess(processType);
-        List<BizRequestHeader> list = bizRequestHeaderForVendorService.findList(bizRequestHeader);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        Page<BizRequestHeader> page = bizRequestHeaderForVendorService.findPage(new Page<>(), bizRequestHeader);
+        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
     }
 
     /**
@@ -131,8 +131,8 @@ public class MyPanelService {
         BizRequestHeader bizRequestHeader = new BizRequestHeader();
         bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
         bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETEING.getState().byteValue());
-        List<BizRequestHeader> list = bizRequestHeaderForVendorService.findList(bizRequestHeader);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        Page<BizRequestHeader> page = bizRequestHeaderForVendorService.findPage(new Page<>(), bizRequestHeader);
+        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
     }
 
     /**
@@ -143,8 +143,8 @@ public class MyPanelService {
     public int getReWaitShipmentsCount() {
         BizRequestHeader bizRequestHeader = new BizRequestHeader();
         bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
-        List<BizRequestHeader> list = bizRequestHeaderForVendorService.findList(bizRequestHeader);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        Page<BizRequestHeader> page = bizRequestHeaderForVendorService.findPage(new Page<>(), bizRequestHeader);
+        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
     }
 
     /**
@@ -155,8 +155,8 @@ public class MyPanelService {
     public int getOrderWaitShipmentsCount() {
         BizOrderHeader bizOrderHeader = new BizOrderHeader();
         bizOrderHeader.setWaitShipments(1);
-        List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<>(), bizOrderHeader);
+        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
     }
 
     /**
@@ -167,8 +167,8 @@ public class MyPanelService {
     public int getDdckCount() {
         BizOrderHeader bizOrderHeader = new BizOrderHeader();
         bizOrderHeader.setWaitOutput(1);
-        List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<>(), bizOrderHeader);
+        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
     }
 
     /**
