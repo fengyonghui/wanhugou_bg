@@ -237,7 +237,7 @@
 		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'prodCick_count'}">
 			<li class="btns"><input class="btn" type="button" value="返回产品信息管理" onclick="location.href='${ctx}/biz/product/bizProductInfoV2?prodType=1'"/></li>
 		</c:if>
-		<c:if test="${bizOrderHeader.flag=='check_pending'}">
+		<c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.previousPage != 'myPanel'}">
 			<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/></li>
 		</c:if>
 		<li class="clearfix"></li>
