@@ -26,7 +26,24 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			_this.ajaxCheckStatus();
+			/*当前用户信息*/
+			var userId = '';
+			$.ajax({
+                type: "GET",
+                url: "/a/getUser",
+                dataType: "json",
+                async:false,
+                success: function(user){                 
+					userId = user.data.id
+                }
+            });
+        	/*业务状态*/
+			if(userId!=""&&userId==1){		            				       			       
+				_this.ajaxCheckStatus();
+            }else{
+            	$('#inputDivAdd').parent().parent().hide();
+            }
+			
 			if(_this.inAddSaveFlag == true) {
 				_this.saveDetail();
 			}

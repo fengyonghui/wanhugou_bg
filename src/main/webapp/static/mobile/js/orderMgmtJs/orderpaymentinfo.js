@@ -189,8 +189,10 @@
 				                }else {
 				                	staCheckBtnTxt = ''
 				                }
-	                        	var staCheckSucBtn = '';	                        		                    
-	                        	var staCheckSuc = '';
+				                var staCheckSucBtn = "";                        		                    
+	                        	var staCheckSuc = "";
+	                        	var staCheckSuc = item.bizOrderHeader.id;	                        		                    
+	                        	var staCheck = item.bizRequestHeader.id;
 	                        	//支付申请列表
 	                        	var staPayBtn = '';//订单
 	                        	var staPayBtns = '';//备货单
@@ -204,6 +206,7 @@
 	                        				staPayBtnTxt = '支付申请列表';
 	                        				staPayBtn = item.bizOrderHeader.id;
 //	                        				sta = item.bizOrderHeader.id;
+
 	                        			}	                        			
 	                        		}
 	                        		if(item.bizRequestHeader != null){
@@ -234,7 +237,12 @@
 	                        	if(_this.OrdFlagScheduling==false){
 	                        		SchedulingBtnTxt = '排产';
 	                        	}
+	                        	console.log(staCheckSucBtn)
 								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
+										'<div class="mui-input-row" style="display:none">' +
+										    '<label>备货单号:</label>' +
+											'<input type="text" class="mui-input-clear staPayBtns" disabled="disabled" podid="'+ staCheckSuc +'" podids="'+ staCheck +'">' +
+										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>备货单号:</label>' +
 											'<input type="text" class="mui-input-clear dd" disabled="disabled" value=" '+ poNumTxt+' " id="poNum_' + itemId + '">' +
@@ -286,12 +294,15 @@
 								_this.stOrdHrefHtml();
 								//先隐藏订单信息
 								var pos=$(".ctn_show_row .dd");
-								var posd=$(".ctn_show_row .staPayBtn");
+//								var posd=$(".ctn_show_row .staPayBtn");
+								var posd=$(".ctn_show_row .staPayBtns");
+								console.log(posd)
 								$.each(pos,function(n,v){
 	                            	var poNumid=$(this).attr('id').substr(6);
 	                            	$.each(posd,function(n,v){
 	                            		var that=this;	                            	
-		                            	var y=$(that).attr('ordid');
+//		                            	var y=$(that).attr('ordid');
+                                        var y=$(that).attr('podid');
 		                            	var divs=$("#poNum_"+poNumid);
 		                            	if(poNumid==y){
 		                            		divs.parent().parent().hide()
@@ -735,6 +746,8 @@
 				                }
 	                        	var staCheckSucBtn = '';	                        		                    
 	                        	var staCheckSuc = '';
+	                        	var staCheckSuc = item.bizOrderHeader.id;	                        		                    
+	                        	var staCheck = item.bizRequestHeader.id;
 	                        	//支付申请列表
 	                        	var staPayBtn = '';//订单
 	                        	var staPayBtns = '';//备货单
@@ -779,6 +792,10 @@
 	                        		SchedulingBtnTxt = '排产';
 	                        	}
 								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
+										'<div class="mui-input-row" style="display:none">' +
+										    '<label>备货单号:</label>' +
+											'<input type="text" class="mui-input-clear staPayBtns" disabled="disabled" podid="'+ staCheckSuc +'" podids="'+ staCheck +'">' +
+										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>备货单号:</label>' +
 											'<input type="text" class="mui-input-clear dd" disabled="disabled" value=" '+ poNumTxt+' " id="poNum_' + itemId + '">' +
@@ -808,6 +825,7 @@
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ _this.formatDateTime(item.createDate)+' ">' +
 										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation">' +
+
 											'<div class="mui-col-xs-3 staCheckBtns" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
@@ -829,19 +847,20 @@
 								$('#orderinfoList').append(orderHtmlList);
 								_this.stOrdHrefHtml();
 								//先隐藏订单信息
-//								var pos=$(".ctn_show_row .dd");
+								var pos=$(".ctn_show_row .dd");
 //								var posd=$(".ctn_show_row .staPayBtn");
-//								$.each(pos,function(n,v){
-//	                            	var poNumid=$(this).attr('id').substr(6);
-//	                            	$.each(posd,function(n,v){
-//	                            		var that=this;	                            	
-//		                            	var y=$(that).attr('ordid');
-//		                            	var divs=$("#poNum_"+poNumid);
-//		                            	if(poNumid==y){
-//		                            		divs.parent().parent().hide()
-//		                            	}
-//		                            })
-//	                            })
+								var posd=$(".ctn_show_row .staPayBtns");
+								$.each(pos,function(n,v){
+	                            	var poNumid=$(this).attr('id').substr(6);
+	                            	$.each(posd,function(n,v){
+	                            		var that=this;	                            	
+		                            	var y=$(that).attr('podid');
+		                            	var divs=$("#poNum_"+poNumid);
+		                            	if(poNumid==y){
+		                            		divs.parent().parent().hide()
+		                            	}
+		                            })
+	                            })
 					}else{
 						$('#orderinfoList').append('<p class="noneTxt">暂无数据</p>');
 						$('#staOrdSechBtn').hide();
