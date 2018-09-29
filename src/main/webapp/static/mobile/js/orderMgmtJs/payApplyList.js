@@ -83,10 +83,9 @@
 						}else{
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						}
-		                
                         if(arrLen > 0) {
 							$.each(returnData, function(i, item) {
-//								console.log(item)
+								console.log(item)
 								//当前状态
 								var nowbizStatus="";
 								var nowbizStatus="";
@@ -122,6 +121,7 @@
 										}
 									}
 								}
+								var mt = item;
 								inPayHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 									'<div class="mui-input-row">' +
 										'<label>ID:</label>' +
@@ -157,7 +157,7 @@
 									'</div>' +
 									'<div class="mui-input-row">' +
 										'<label>支付凭证:</label>' +
-										'<div class="imgLists">' +
+										'<div class="imgLists">' +_this.photoShow(mt)+
 										'</div>' +
 									'</div>' +
 									'<div class="app_color40 mui-row app_text_center operation">' +
@@ -180,17 +180,17 @@
 							$('#payApplyList').append(inPayHtmlList);
 							//支付凭证
 //							console.log(res.data.page.list)
-							$.each(res.data.page.list,function (i, cards) {
-//                               console.log(cards.imgList)
-                                 if(cards.imgList){
-									$.each(cards.imgList,function (i, card) {
-//									console.log(card)
-		                            $(".imgLists").html("<a href=\"" + card.imgServer + card.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + card.imgServer + card.imgPath + "\"></a>");
-		                           });
-		                        }else{
-		                        	$('.imgLists').parent().hide();
-		                        }
-	                        });
+//							$.each(res.data.page.list,function (i, cards) {
+////                               console.log(cards.imgList)
+//                               if(cards.imgList){
+//									$.each(cards.imgList,function (i, card) {
+////									console.log(card)
+//		                            $(".imgLists").html("<a href=\"" + card.imgServer + card.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + card.imgServer + card.imgPath + "\"></a>");
+//		                           });
+//		                        }else{
+//		                        	$('.imgLists').parent().hide();
+//		                        }
+//	                        });
 							
 							_this.inHrefHtml();
 											
@@ -210,6 +210,19 @@
 		            }
 		        })
 		    } 
+		},
+		photoShow: function(item) {
+			var _this = this;
+//			console.log(item)
+			var imgs = '';
+			 if(item.imgList){
+				$.each(item.imgList,function (i, card) {
+                imgs = "<a href=\"" + card.imgServer + card.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + card.imgServer + card.imgPath + "\"></a>"
+               });
+               return imgs;
+            }else{
+            	$('.imgLists').parent().hide();
+            }
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;

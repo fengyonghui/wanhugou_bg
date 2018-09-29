@@ -15,6 +15,8 @@
         this.bizOfficeId="";
         this.deleteBtnFlag = "false"
         this.inAddSaveFlag = "false"
+        this.creatPayFlag = "false"
+        this.OrdFlagstartAudit = "false";
         return this;
     }
     var bizStatusDesc = (function() {
@@ -34,9 +36,14 @@
     ACCOUNT.prototype = {
         init: function() {
 			//权限添加
+//			biz:request:bizRequestDetail:edit
 //			biz:request:bizRequestHeader:edit    保存
+//			biz:request:bizRequestHeader:createPayOrder   申请付款
 			this.getPermissionList('biz:request:bizRequestDetail:edit','deleteBtnFlag')
 			this.getPermissionList('biz:request:bizRequestHeader:edit','inAddSaveFlag')
+			this.getPermissionList('biz:request:bizRequestHeader:createPayOrder','creatPayFlag')
+			this.getPermissionList('biz:po:bizPoHeader:startAuditAfterReject','OrdFlagstartAudit');
+			
             this.hrefHtml('.newinput01', '.input_div01','#hideSpanAmend01');
 			this.hrefHtmls('.newinput02', '.input_div02','#hideSpanAmend02');
             this.pageInit(); //页面初始化
@@ -64,18 +71,57 @@
                 success: function(res){
                     _this.deleteBtnFlag = res.data;
                     _this.inAddSaveFlag = res.data;
+                    _this.creatPayFlag = res.data;
+                    _this.OrdFlagstartAudit = res.data;
+                    console.log(_this.OrdFlagstartAudit)
                 }
             });
         },
         getData: function() {
             var _this = this;
+            var strs = '';
+            var ids = '';
+            
+	        if(_this.OrdFlagstartAudit == true) {
+	        	strs = _this.userInfo.starStr
+	        	ids = _this.userInfo.paymentId
+	        }else if(_this.creatPayFlag == true) {
+	        	strs = _this.userInfo.str
+	        	ids = _this.userInfo.paymentId
+	        }else {
+	        	strs = 'detail'
+	        	ids = _this.userInfo.reqId
+	        }
+	        var btnMeun = '';
+	        if(strs == 'createPay') {
+	        	btnMeun = '<button id="payMentBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">申请付款</button>'
+	        }else if(strs == 'startAudit') {
+	        	btnMeun = '<button id="startCheckBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">开启审核</button>'
+	        }else {
+	        	btnMeun = '<button id="saveDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+	        }
+	        $('.inSaveBtn').html(btnMeun);
             $.ajax({
                 type: "GET",
                 url: "/a/biz/request/bizRequestHeaderForVendor/form4MobileNew",
-                data: {id:_this.userInfo.reqId,str:'detail'},
+                data: {id:ids,str:strs},
                 dataType: "json",
                 success: function(res){
                 	console.log(res)
+                	//支付申请
+                	var strTxt = res.data.bizRequestHeader.str;
+                	var payMentCont = '';
+                	if(res.data.bizRequestHeader.bizPoPaymentOrder.id != null || strTxt == 'createPay') {
+	        			payMentCont = '<div class="mui-input-row"><label>申请金额：</label>'+
+							'<input type="text" id="payMentNum" class="mui-input-clear"><font>*</font></div>'+
+						'<div class="mui-input-row"><label>付款时间：</label>'+
+							'<input type="date" id="payMentDate" class="mui-input-clear"><font>*</font></div>'+
+						'<div class="mui-input-row remark"><label>支付备注：</label>'+
+							'<textarea id="payPoRemark" name="" rows="" cols=""></textarea></div>'
+	        			$('#payMents').append(payMentCont);
+                	}
+                	var poHeaderId = res.data.bizRequestHeader.bizPoHeader.id;
+                	
                 	//供应商初始化
                 	if(res.data.bizRequestHeader.bizVendInfo){
 	                	var officeId = res.data.bizRequestHeader.bizVendInfo.office.id;
@@ -154,10 +200,13 @@
 				    }else{
 				    	$('#inSchedulstatus').val("未排产");
 				    };
-                    _this.commodityHtml(res.data);//备货商品反填
+                    _this.commodityHtml(res.data, strTxt);//备货商品反填
                     _this.paylistHtml(res.data);//支付列表
                     _this.statusListHtml(res.data);//状态流程
                     _this.checkProcessHtmls(res.data);//审批流程
+                    _this.apply(strTxt,poHeaderId);
+                    _this.startCheck(poHeaderId);
+                    
                     //排产信息
 					if(res.data.bizRequestHeader.str=='detail'){
 						var poheaderId = res.data.bizRequestHeader.bizPoHeader.id;
@@ -319,6 +368,111 @@
                     }
                 })
            })
+        },
+        apply: function(type, id) {
+        	$('#payMentBtn').on('tap',function(){
+	            if (type == 'createPay') {
+	            	var ss = $('#payMentNum').val();
+					IsNum(ss)
+					function IsNum(num) {
+						if(num) {
+							var reNum = /^\d+(\.\d+)?$/;
+							if(reNum.test(num)) {
+				                var payDeadline = $("#payMentDate").val() + ' 00:00:00';
+				                if ($("#payMentDate").val() == '') {
+				                    mui.toast("请选择本次申请付款时间!");
+				                    return;
+				                }
+								var paymentApplyRemark = $("#payPoRemark").val();
+								$.ajax({
+				                    type: "get", 
+				                    url: "/a/biz/po/bizPoHeaderReq/savePoHeader4Mobile",
+				                    data: {
+				                    	type:type, 
+				                    	id:id, 
+				                    	planPay: ss, 
+				                    	payDeadline: payDeadline, 
+				                    	fromPage: 'requestHeader', 
+				                    	paymentApplyRemark: paymentApplyRemark
+				                    },
+				                    dataType: 'json',
+				                    success: function (resule) {
+				                    	console.log(resule)
+				                        if (resule == true) {
+				                            mui.toast("本次申请付款成功！");
+				//                          window.setTimeout(function(){
+				                          	GHUTILS.OPENPAGE({
+					                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+					                                extras: {
+					                                }
+					                            })
+				//                          },500)                            
+				                        }
+				                    }
+				                })
+							} else {
+								if(num < 0) {
+									mui.toast("申请金额不能为负数！");
+								}else {
+									mui.toast("申请金额必须为数字！");
+								}
+							}
+						}else {
+							mui.toast("申请金额不能为空！");
+						}
+					}
+	            }
+	        })
+        },
+        startCheck: function(id) {
+        	var _this = this;
+        	var prew = false;
+        	document.getElementById("startCheckBtn").addEventListener('tap', function() {
+				var btnArray = ['否', '是'];
+				mui.confirm('确认开启审核吗？', '系统提示！', btnArray, function(choice) {
+					if(choice.index == 1) {
+						var btnArray = ['取消', '确定'];
+						mui.prompt('请输入开启理由：', '开启理由', '', btnArray, function(a) {
+							if(a.index == 1) {
+								var inText = a.value;
+								
+								console.log(id)
+								console.log(inText)
+								console.log(prew)
+								if(a.value == '') {
+									mui.toast('开启理由不能为空！')
+									return;
+								} else {
+									$.ajax({
+					                    type: "get", 
+					                    url: "/a/biz/po/bizPoHeader/startAudit",
+					                    data: {
+					                    	id:id, 
+					                    	prew: prew, 
+					                    	desc: inText, 
+					                    	action: 'startAuditAfterReject'
+					                    },
+					                    dataType: 'json',
+					                    success: function (result) {
+					                    	console.log(result)
+					                        if (result.ret == true || result.ret == 'true') {
+					                            mui.toast("开启审核成功！");
+					//                          window.setTimeout(function(){
+					                          	GHUTILS.OPENPAGE({
+						                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+						                                extras: {
+						                                }
+						                            })
+					//                          },500)                            
+					                        }
+					                    }
+					                })
+								}
+							} else {}
+						})
+					} else {}
+				})
+			});
         },
         getFromOfficeId: function(inOrordNum) {
             var _this = this;
@@ -776,7 +930,7 @@
 				$("#inapprovalAddMenu").parent().hide();
 			}
 		},
-        commodityHtml: function(data) {
+        commodityHtml: function(data, strTxt) {
         	//备货商品初始化反填
             var _this = this;
             var htmlCommodity = '';
@@ -846,9 +1000,14 @@
                     '<input type="text" class="mui-input-clear inDeclareNum" id="reqQty_'+ item.skuInfo.id + '" value="' + item.reqQty + '">'+
                     '<font>*</font>'+
                     '</div></li></div></div>';
-                if (_this.deleteBtnFlag == true) {
-                    htmlCommodity += '<div>' +
+                if(_this.deleteBtnFlag == true) {
+                	if(strTxt== "createPay") {
+	            		htmlCommodity += ''
+	            	}else {
+	            		htmlCommodity += '<div>' +
                     '<button id="' + item.id +'" type="button" class="deleteSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block" >删除</button></div>';
+	            	}
+                    
                     }
                 htmlCommodity += '</div>';
             });

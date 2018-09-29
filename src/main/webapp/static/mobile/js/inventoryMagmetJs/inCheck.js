@@ -48,7 +48,7 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                	console.log(res.data)
+//              	console.log(res.data)
                     _this.inpoFlag = res.data;
                 }
             });
@@ -75,19 +75,19 @@
 				}
 			}
 			$.ajax({
-				type: "GET",
+				type: "post",
 				url: "/a/biz/request/bizRequestHeaderForVendor/form4MobileNew",
 				data: datas,
 				dataType: "json",
 				success: function(res) {
 					$('#schedulingTxt').hide();
 					console.log(res);
-					console.log(res.data.bizRequestHeader.str);
+//					console.log(res.data.bizRequestHeader.str);
 					$('#inCheckBtn').attr('poid',res.data.bizRequestHeader.bizPoHeader.id);
 					$('#inRejectBtn').attr('poids',res.data.bizRequestHeader.bizPoHeader.id);
 					
 					//订单支出信息进来的备货单审核
-					console.log(_this.inpoFlag)
+//					console.log(_this.inpoFlag)
 					if(_this.inpoFlag == true) {
 						if(res.data.bizRequestHeader.str=='audit'){
 							if(res.data.bizRequestHeader.bizPoHeader.commonProcessList != null && res.data.bizRequestHeader.bizPoHeader.commonProcessList.length > 0 && res.data.bizRequestHeader.processPo == 'processPo')                {
@@ -108,12 +108,10 @@
 					}
 //-----------
 					//调取供应商信息
-					$('#createPo').val(res.data.createPo);
+					$('#createPo').val(res.data.createPoHeader);
 					/*判断是品类主管*/
-					console.log(_this.inLastPayDateFlag)
 					if(_this.inLastPayDateFlag == true) {
-						console.log(res.data.createPo)
-						if(res.data.createPo == 'yes') {	//品类主管审核才生成PO
+						if(res.data.createPoHeader == 'yes') {	//品类主管审核才生成PO
 							inLastDate = '<label>最后时间：</label>'+
 								'<input type="date" class="mui-input-clear" id="lastDate" placehohder="必填！">'+
 								'<font>*</font>'
@@ -146,7 +144,7 @@
 							userId = user.data.id
 		                }
 		           });
-		            console.log(userId)
+//		            console.log(userId)
 					/*业务状态*/
 					if(userId!=""&&userId==1){
 						$.ajax({
@@ -221,9 +219,9 @@
 					_this.statusListHtml(res.data); //状态流程					
 					_this.paylistHtml(res.data); //支付列表
 					_this.checkProcessHtml(res.data); //审批流程
-					console.log(res.data.bizRequestHeader.commonProcess.type)
-					console.log(res.data.defaultProId)
-					console.log(res.data.bizRequestHeader.str)
+//					console.log(res.data.bizRequestHeader.commonProcess.type)
+//					console.log(res.data.defaultProId)
+//					console.log(res.data.bizRequestHeader.str)
 					if(res.data.bizRequestHeader.str == 'audit' && res.data.bizRequestHeader.commonProcess.type == res.data.defaultProId){
 						_this.stockGoodsHtml(res.data); //商品库存
 					}else{
@@ -271,7 +269,7 @@
 			if(data.bizRequestHeader.str == 'audit' && commonProcessList != null && commonProcessList.length > 0 && data.bizRequestHeader.processPo == 'processPo') {
 //				$('#incheck').val(purchProcess.name);
 //				$('#currentType').val(purchProcess.code)
-                console.log(purchPro)
+//              console.log(purchPro)
                 $.each(purchPro, function(i, item) {
 					$('#incheck').val(item.purchaseOrderProcess.name);
 				    $('#currentType').val(item.purchaseOrderProcess.code)
@@ -866,7 +864,7 @@
 		},
 		comfirDialig: function(res) {
 			var _this = this;
-			console.log(res)
+//			console.log(res)
 			document.getElementById("inRejectBtn").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
@@ -887,7 +885,7 @@
 			});
 			document.getElementById("inCheckBtn").addEventListener('tap', function(e) {
 				if(_this.inLastPayDateFlag == true) {
-					if(res.data.createPo == 'yes') {//品类主管审核才生成PO
+					if(res.data.createPoHeader == 'yes') {//品类主管审核才生成PO
 						var lastDates = $('#lastDate').val();
 						if(lastDates == null || lastDates == '') {
 							mui.toast('最后付款时间不能为空！')
@@ -934,21 +932,21 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
                     if(res.ret == true || res.ret == 'true') {
                     	mui.toast('操作成功!')
 						if($('#createPo').val() == 'yes') {
 							//备货单排产
 	                        var resultData = res.data;
 	                        var resultDataArr = resultData.split(",");
-	                        console.log(resultDataArr)
-	                        console.log(resultDataArr[0])
-	                        console.log(resultDataArr[1])
+//	                        console.log(resultDataArr)
+//	                        console.log(resultDataArr[0])
+//	                        console.log(resultDataArr[1])
 	                        if(resultDataArr[0] == "采购单生成") {
 	                            var poId = resultDataArr[1];
 	                            var schedulingType = $("input[name='schedulType']:checked").val();
-	                            console.log(poId)
-	                            console.log(schedulingType)
+//	                            console.log(poId)
+//	                            console.log(schedulingType)
 	                            if (schedulingType == 0) {
 	                                _this.saveComplete("0", poId);
 	                            }
@@ -1012,7 +1010,7 @@
 				var id= $(this).attr('poids');
 				var currentType= $('#currentType').val();
 //				console.log(id)
-				console.log(currentType)
+//				console.log(currentType)
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
@@ -1035,7 +1033,7 @@
 				var id= $(this).attr('poid');
 //				console.log(id);
 				var currentType= $('#currentType').val();
-				console.log(currentType);
+//				console.log(currentType);
 				var btnArray = ['取消', '确定'];
 				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
 					if(e.index == 1) {
@@ -1073,7 +1071,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret == true) {
 						mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
@@ -1112,7 +1110,7 @@
 					if(res.ret == true) {
 						mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
-							url: "../../html/inventoryMagmetHtml/inventoryList.html",
+							url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
 							extras: {}
 						})
 					}
@@ -1194,8 +1192,7 @@
 //排产		
 		schedulGetData: function(chData) {
 			var _this = this;
-        	console.log(chData)
-        	
+//      	console.log(chData)
         	
 //        	$.each(res.data.bizPoHeader.orderNumMap, function(a, c) {
 //        		$.each(c, function(v, n) {
@@ -1205,7 +1202,7 @@
 //      	var poDetailList = res.data.bizPoHeader.poDetailList;
         	var htmlPurch = '';
         	$.each(chData.data.reqDetailList, function(i,item) {
-        		console.log(item)
+//      		console.log(item)
         		$('#purchOrdQty').val(item.reqQty);
         		$('#purchWaiteNum').val(item.reqQty - item.sumCompleteNum);
         		$('#toalSchedulingNum').val(item.sumCompleteNum);
@@ -1241,6 +1238,7 @@
 		},
 		btnshow: function(data) {
 			var _this = this;
+			$('.schedCommd').hide();
 			$('input[name=schedulType]').on('change', function() {
 				if(this.checked && this.value == 0) {
 					$('.schedPurch').show();
@@ -1256,7 +1254,7 @@
 		},
 		purchContent: function(a) {
 			var _this = this;
-			console.log(a)
+//			console.log(a)
 			var htmlPurch = '';
 			var htmlSave = '';
 			$.each(a.data.reqDetailList, function(i,item) {
@@ -1290,11 +1288,11 @@
 		},
 		commdContent: function(b) {
 			var _this = this;
-			console.log(b)
+//			console.log(b)
 			var htmlCommodity = '';
 			var htmlAllSave = '';
 			$.each(b.data.reqDetailList, function(i,item) {
-				console.log(item)
+//				console.log(item)
 				var waiteNum = item.reqQty - item.sumCompleteNum;
 				htmlCommodity += '<li class="mui-table-view-cell app_bline2">'+
 				'<div class="mui-input-row inComdty inDetailComdty app_pall11_15">'+
@@ -1332,8 +1330,8 @@
 							'<label>已排产数量：</label>'+
 							'<input type="text" name="toalSchedulingNumForSku" value="'+ item.sumCompleteNum +'" class="commdCompleteNum"></div>'+
 						'<button type="submit" class="commdAddBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
-						'<button type="submit" class="singleAddBtn inAddBtn app_btn_search mui-btn-blue mui-btn-block">保存</button></div>'+
-					'<div class="mui-row plan">'+
+						'<div classs="app_bline"></div>'+
+					'<div class="mui-row comdPlan">'+
 						'<div class="labelLf">排产计划：</div>'+
 						'<div class="mui-row app_f13 commdAddPlan" id="'+ item.skuInfo.id+'">'+
 							'<div class="mui-row app_bline commdPlan" name="'+ item.skuInfo.id +'">'+
@@ -1343,7 +1341,7 @@
 								'<div class="mui-input-row">'+
 									'<label>排产数量：</label>'+
 									'<input type="text" name="'+ item.skuInfo.id +'_value" class="commdNum mui-input-clear"></div></div>'+	
-								'</div></div></div></li>'
+					'</div></div></div></li>'
 			});
     		$("#orSchedCommd").html(htmlCommodity)
 		},
@@ -1370,7 +1368,7 @@
 			$(".schedPurch").on("tap", "#purchAddBtn", function() {
 				$('#purchAddCont').append(htmlPurchPlan);
 				var addPurchNum = _this.userInfo.inListId;
-				console.log(_this.userInfo.inListId)
+//				console.log(_this.userInfo.inListId)
 				$('.purchAddCont').attr('name', addPurchNum);
 				$('#purchPlan').attr('name', addPurchNum);
 				$('.addpurchDate').attr('name', addPurchNum + '_date');
@@ -1379,7 +1377,7 @@
 				$('#purchNum').attr('name', addPurchNum + '_value');
 			})
 			$(".schedCommd").on("tap", ".commdAddBtn", function() {
-				$(this).parent('.app_f13').next('.plan').find('.commdAddPlan').append(htmlcommdPlan);
+				$(this).parent('.app_f13').find('.commdAddPlan').append(htmlcommdPlan);
 				var commdDateName = ($('.commdDate').attr('name'));
 				var commdNumName = ($('.commdNum').attr('name'));
 				var commdPlanName = ($('.commdPlan').attr('name'));
@@ -1463,7 +1461,7 @@
                 params[i]=entity;
                 //totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
             }
-            console.log(params)
+//          console.log(params)
             $.ajax({
                 url: '/a/biz/po/bizPoHeader/saveSchedulingPlan',
                 contentType: 'application/json',
@@ -1487,7 +1485,7 @@
        },
        batchSave: function(schedulingType,poId,vn) {
 			var _this = this;
-			console.log(vn)
+//			console.log(vn)
 			var skuInfoIdListList = vn.data.skuInfoIdListListJson;
             var params = new Array();
             var totalSchedulingNum = 0;
@@ -1544,10 +1542,10 @@
                         continue;
                     }
                     var reg = /^[0-9]+[0-9]*]*$/;
-                    console.log(value)
-                    console.log(parseInt(value) <= 0)
-                    console.log(parseInt(value) > originalNum)
-                    console.log(!reg.test(value))
+//                  console.log(value)
+//                  console.log(parseInt(value) <= 0)
+//                  console.log(parseInt(value) > originalNum)
+//                  console.log(!reg.test(value))
                     if (value != "" && (parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value))) {
                         alert("第" + count + "个商品确认值输入不正确!")
                         return false;
@@ -1568,7 +1566,7 @@
                 }
                 count++;
             }
-            console.log(params)
+//          console.log(params)
             if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
                 alert("排产量总和太大，请从新输入!")
                 return false

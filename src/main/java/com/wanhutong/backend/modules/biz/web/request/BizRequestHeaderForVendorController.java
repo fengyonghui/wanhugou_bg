@@ -640,7 +640,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			createPo = "yes";
 		}
 		model.addAttribute("createPo",createPo);
-		resultMap.put("createPo", createPo);
+		resultMap.put("createPoHeader", createPo);
 
 		if (bizRequestHeader.getId() != null && bizRequestHeader.getId() != 0) {
 			BizOrderStatus bizOrderStatus = new BizOrderStatus();
