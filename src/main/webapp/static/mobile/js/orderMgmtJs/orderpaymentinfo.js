@@ -197,9 +197,9 @@
 	                        	var sta = '';
 	                        	if(item.commonProcess.type != -1){
 	                        		if(item.bizOrderHeader != null){
-//	                        			console.log(_this.OrdFlagpay)
+	                        			console.log(_this.OrdFlagpay)
 	                        			//订单
-	                        			if(_this.OrdFlagpay==false){
+	                        			if(_this.OrdFlagpay==true){
 	                        				staPayBtnTxt = '支付申请列表';
 	                        				staPayBtn = item.bizOrderHeader.id;
 //	                        				sta = item.bizOrderHeader.id;
@@ -207,7 +207,7 @@
 	                        		}
 	                        		if(item.bizRequestHeader != null){
 	                        			//备货单
-	                        			if(_this.OrdFlagpay==false){
+	                        			if(_this.OrdFlagpay==true){
 	                        				staPayBtnTxt = '支付申请列表';
 	                        				staPayBtns = item.bizRequestHeader.id;
 //	                        				stas = item.bizRequestHeader.id;

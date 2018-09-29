@@ -614,7 +614,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
 			model.addAttribute("defaultProcessId",requestOrderProcessConfig.getDefaultProcessId().toString());
 			model.addAttribute("autProcessId",requestOrderProcessConfig.getAutProcessId().toString());
-			resultMap.put("defaultProcessId", requestOrderProcessConfig.getDefaultProcessId().toString());
+			resultMap.put("defaultProId", requestOrderProcessConfig.getDefaultProcessId().toString());
 			resultMap.put("autProcessId", requestOrderProcessConfig.getAutProcessId().toString());
 		}
 

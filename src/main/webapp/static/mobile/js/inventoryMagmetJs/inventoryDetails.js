@@ -36,21 +36,38 @@
 						$('#insupplierBank').parent().hide();//供应商开户行
 						$('#insuppliercontract').parent().hide();//供应商合同
 					    $('#insuppliercardID').parent().hide();//供应商身份证
-                	}               	
-				    /*业务状态*/
-				    $.ajax({
+                	}  
+                	/*当前用户信息*/
+					var userId = '';
+					$.ajax({
 		                type: "GET",
-		                url: "/a/sys/dict/listData",
-		                data: {type:"biz_req_status"},		                
+		                url: "/a/getUser",
 		                dataType: "json",
-		                success: function(resl){
-		                	$.each(resl,function(i,item){
-		                		if(item.value==res.data.bizRequestHeader.bizStatus){
-		                		 	$('#inPoDizstatus').val(item.label);  
-		                		}
-		                	})
-						}
-					});
+		                async:false,
+		                success: function(user){                 
+//					            console.log(user)
+							userId = user.data.id
+		                }
+		           });
+                	console.log(userId)
+					/*业务状态*/
+					if(userId!=""&&userId==1){		            				       			       
+						$.ajax({
+			                type: "GET",
+			                url: "/a/sys/dict/listData",
+			                data: {type:"biz_req_status"},
+			                dataType: "json",
+			                success: function(resl){
+			                	$.each(resl,function(i,item){
+			                		if(item.value==res.data.bizRequestHeader.bizStatus){
+			                		 	$('#inPoDizstatus').val(item.label);
+			                		}
+			                	})
+							}
+						});
+		            }else{
+		            	$('#inPoDizstatus').parent().hide();
+		            }
 				    //排产状态
 				    if(res.data.bizRequestHeader.bizPoHeader){
 				    	var itempoSchType=res.data.bizRequestHeader.bizPoHeader.poSchType;
@@ -119,6 +136,7 @@
                 }
             });
 		},
+		
 		//供应商信息
 		supplier:function(supplierId){						
 			$.ajax({
@@ -546,6 +564,7 @@
 		},
 		//备货商品
 		commodityHtml: function(data) {
+			console.log(data)
 			var _this = this;
 			var htmlCommodity = '';
 			if(data.reqDetailList!=null){				
@@ -554,8 +573,12 @@
 						var invNameTxt = item.invName;
 						var skuInvQtyTxt= item.skuInvQty;
 						var sellCountTxt= item.sellCount;
+						console.log(data.roleChanne)
+						console.log(item.invenSkuOrd)
 						if(data.roleChanne!="" && data.roleChanne=='channeOk'){
 							var invenSkuOrdTxt= item.invenSkuOrd;
+						}else{
+							var invenSkuOrdTxt= "";
 						}
 					}
 					console.log(data.PURCHASING)
