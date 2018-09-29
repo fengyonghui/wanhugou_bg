@@ -5,6 +5,9 @@
 	<sql id="bizMoneyRecodeColumns">
 		a.id AS "id",
 		a.office_id AS "office.id",
+		o2.name as "office.name",
+		o2.phone as "office.phone",
+		u.name as "office.master",
 		a.money AS "money",
 		a.order_id AS "orderId",
 		a.status_code AS "statusCode",
@@ -21,6 +24,9 @@
 	<sql id="bizMoneyRecodeJoins">
 		LEFT JOIN sys_office o2 ON o2.id = a.office_id
 	</sql>
+	<sql id="sysUserJoins">
+        LEFT JOIN sys_user u on u.id = o2.primary_person
+	</sql>
     
 	<select id="get" resultType="BizMoneyRecode">
 		SELECT 
@@ -29,28 +35,52 @@
 		<include refid="bizMoneyRecodeJoins"/>
 		WHERE a.id = #{id}
 	</select>
-	
+
+	<select id="selectRecodeDetail" resultType="com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail">
+		SELECT
+		sum(CASE WHEN status_code IN (10, 11, 12, 22) THEN money ELSE 0 END ) AS gainIntegration,
+		sum(CASE WHEN status_code IN (20, 21) THEN money ELSE 0 END) AS usedIntegration,
+		sum(CASE WHEN status_code IN (30) THEN money ELSE 0 END) AS expireIntegration
+		FROM
+		biz_money_recode
+	</select>
+	<select id="selectExpireMoney" resultType="com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail">
+		SELECT
+		office_id,
+		sum(CASE WHEN status_code IN(10, 11, 12, 22) and create_time >= (concat(YEAR(now())-1,'-01-01')) and create_time <![CDATA[<=]]> (concat(year(now())-1,'-12-31')) THEN money ELSE 0 END )AS gainIntegration,
+		sum(CASE WHEN status_code IN(20,21) and create_time >= (concat(YEAR(now())-1,'-01-01')) and create_time <![CDATA[<=]]> (concat(year(now()),'-07-01')) THEN money ELSE 0 END)AS usedIntegration
+		FROM
+		biz_money_recode
+		GROUP BY office_id
+	</select>
+
 	<select id="findList" resultType="BizMoneyRecode">
-		SELECT 
+		SELECT
 			<include refid="bizMoneyRecodeColumns"/>
 		FROM biz_money_recode a
 		<include refid="bizMoneyRecodeJoins"/>
+		<include refid="sysUserJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="statusName != null and statusName != ''">
-				AND a.status_name = #{statusName}
+			<if test="statusCode != null and statusCode != ''">
+				AND a.status_code = #{statusCode}
 			</if>
-			<if test="beginCreateDate != null and endCreateDate != null and beginCreateDate != '' and endCreateDate != ''">
-				AND a.create_time BETWEEN #{beginCreateDate} AND #{endCreateDate}
+			<if test="office != null and office != ''">
+				<if test="office.name != null and office.name != ''">
+					AND o2.name = #{office.name}
+				</if>
+				<if test="office.phone != null and office.phone != ''">
+					AND o2.phone like concat('%',#{office.phone},'%')
+				</if>
+			</if>
+			<if test="beginCreateDate!=null and beginCreateDate!='' ">
+				and a.create_time>=#{beginCreateDate}
+			</if>
+			<if test="endCreateDate!=null and endCreateDate!=''">
+				and  a.create_time<![CDATA[<=]]>#{endCreateDate}
 			</if>
 		</where>
-		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
-			</when>
-			<otherwise>
-			</otherwise>
-		</choose>
+		order by a.id desc
 	</select>
 	
 	<select id="findAllList" resultType="BizMoneyRecode">
@@ -72,11 +102,32 @@
 	
 	<insert id="insert">
 		INSERT INTO biz_money_recode(
-			money
-		) VALUES (
-			#{money}
-		)
+			office_id,money,status_code,status_name,comment,status,create_id,create_time,update_id,update_time) VALUES (
+			#{office.id},#{money},#{statusCode},#{statusName},#{comment},#{status},#{createId},#{createDate},
+			  #{updateId},#{updateDate})
 	</insert>
+
+	<insert id="saveAll" parameterType="list">
+		insert into biz_money_recode(office_id,money,status_code,status_name,comment,status,create_id,create_time,update_id,update_time) values
+		<foreach collection="list" item="item" index="index" separator=",">
+			  (#{item.office.id},#{item.money},#{item.statusCode},#{item.statusName},#{item.comment},#{item.status},#{item.createId},#{item.createDate},
+			  #{item.updateId},#{item.updateDate})
+		</foreach>
+	</insert>
+
+	<update id="updateMoney" parameterType="list">
+		update biz_cust_credit
+		set money=
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case office_id" close="end">
+			when #{item.office.id} then #{item.newMoney}
+		</foreach>
+		where office_id in
+		<foreach collection="list" index="index" item="item"
+				 separator="," open="(" close=")">
+			#{item.office.id,jdbcType=BIGINT}
+		</foreach>
+	</update>
 	
 	<update id="update">
 		UPDATE biz_money_recode SET 	

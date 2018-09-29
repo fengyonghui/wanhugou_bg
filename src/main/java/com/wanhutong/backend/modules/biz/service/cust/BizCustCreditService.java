@@ -4,9 +4,12 @@
 package com.wanhutong.backend.modules.biz.service.cust;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecode;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.service.integration.BizMoneyRecodeService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
@@ -37,6 +40,8 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
     public static final Integer PAYTYPE = 3;
     @Autowired
     private BizPayRecordService bizPayRecordService;
+    @Autowired
+    private BizMoneyRecodeService bizMoneyRecodeService;
 
     public BizCustCredit get(Integer id) {
         return super.get(id);
@@ -70,7 +75,35 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
             }else{
                 custCredit.setWallet(bizCustCredit.getWallet());
             }
+/*            //原账户万户币
+            BigDecimal money = custCredit.getMoney();
+            //修改后账户万户币
+            BigDecimal bizCustCreditMoney = bizCustCredit.getMoney();
+            BizMoneyRecode bizMoneyRecode = new BizMoneyRecode();
+            bizMoneyRecode.setOffice(bizCustCredit.getCustomer());
+            bizMoneyRecode.setStatus(1);
+            bizMoneyRecode.setCreateId(user.getId());
+            bizMoneyRecode.setUpdateId(user.getId());
+            bizMoneyRecode.setCreateDate(new Date());
+            bizMoneyRecode.setUpdateDate(new Date());
+            //将万户币的变化数存到积分流水表
+            if(bizCustCreditMoney.compareTo(money)==1)
+            {
+                 //表明账户万户币增加
+                bizMoneyRecode.setMoney(bizCustCreditMoney.subtract(money).toString());
+                bizMoneyRecode.setStatusCode(35);
+                bizMoneyRecode.setStatusName("后台加");
+                bizMoneyRecode.setComment("系统加积分");
+            }
+            else if(bizCustCreditMoney.compareTo(money)==-1){
+                bizMoneyRecode.setMoney(money.subtract(bizCustCreditMoney).toString());
+                bizMoneyRecode.setStatusCode(40);
+                bizMoneyRecode.setStatusName("后台减");
+                bizMoneyRecode.setComment("系统减积分");
+            }
+            bizMoneyRecodeService.save(bizMoneyRecode);*/
             custCredit.setMoney(bizCustCredit.getMoney());
+
             custCredit.setId(bizCustCredit.getCustomer().getId());
             super.save(custCredit);
             if (bizCustCredit.getCustFalg() == null || !("officeCust").equals(bizCustCredit.getCustFalg())) {

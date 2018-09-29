@@ -22,18 +22,66 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 	
 	private static final long serialVersionUID = 1L;
 	private String activityName;		// 活动名称
+	private Office office;
 	private String activityCode;		// activity_code
 	private Date sendTime;		// 发送时间
-	private Integer sendScope;		// 发送范围，0是全部用户，-1下单用户，-2未下单用户，其他为指定用户
+	private Integer sendScope;		// 发送范围，0是全部用户，-1下单用户，-2未下单用户，-3为指定用户
 	private String activityTools;		// 优惠工具
 	private Integer sendNum;		// 发送人数
-	private Integer integrationNum;		// 每人赠送积分
+	private String officeIds;
+	private String integrationNum;		// 每人赠送积分
+	private Integer sendAll;		// 赠送总积分
 	private String description;		// 备注说明
 	private Integer status;		// status
 	private Integer uVersion;		// 版本控制；重要
 	private Date beginSendTime;		// 开始 发送时间
 	private Date endSendTime;		// 结束 发送时间
 	private Integer sendStatus; //发送状态 0未发送 1已发送
+	private Integer bizStatus; //是否点击
+	private Integer userId; //活动对应的用户id
+	private String str; //操作类型
+
+
+	public Office getOffice() {
+		return office;
+	}
+
+	public void setOffice(Office office) {
+		this.office = office;
+	}
+
+	public Integer getSendAll() {
+		return sendAll;
+	}
+
+	public void setSendAll(Integer sendAll) {
+		this.sendAll = sendAll;
+	}
+
+	public String getStr() {
+		return str;
+	}
+
+	public void setStr(String str) {
+		this.str = str;
+	}
+
+	public Integer getBizStatus() {
+		return bizStatus;
+	}
+
+	public void setBizStatus(Integer bizStatus) {
+		this.bizStatus = bizStatus;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
 	public Integer getSendStatus() {
 		return sendStatus;
 	}
@@ -41,8 +89,6 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 	public void setSendStatus(Integer sendStatus) {
 		this.sendStatus = sendStatus;
 	}
-
-	private String officeIds;		// 采购商IDs
 	
 	public BizIntegrationActivity() {
 		super();
@@ -50,6 +96,14 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 
 	public BizIntegrationActivity(Integer id){
 		super(id);
+	}
+
+	public String getOfficeIds() {
+		return officeIds;
+	}
+
+	public void setOfficeIds(String officeIds) {
+		this.officeIds = officeIds;
 	}
 
 	@Length(min=0, max=50, message="活动名称长度必须介于 0 和 50 之间")
@@ -103,15 +157,15 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 	public void setSendNum(Integer sendNum) {
 		this.sendNum = sendNum;
 	}
-	
-	public Integer getIntegrationNum() {
+
+	public String getIntegrationNum() {
 		return integrationNum;
 	}
 
-	public void setIntegrationNum(Integer integrationNum) {
+	public void setIntegrationNum(String integrationNum) {
 		this.integrationNum = integrationNum;
 	}
-	
+
 	@Length(min=0, max=100, message="备注说明长度必须介于 0 和 100 之间")
 	public String getDescription() {
 		return description;
@@ -129,7 +183,6 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 		this.status = status;
 	}
 	
-	@NotNull(message="版本控制；重要不能为空")
 	public Integer getUVersion() {
 		return uVersion;
 	}
