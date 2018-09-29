@@ -240,6 +240,22 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     private List<BizOrderLogistics> bizOrderLogisticsList;
 
+    /**
+     * 待发货
+     */
+    private Integer waitShipments;
+
+    /**
+     * 待出库
+     * @return
+     */
+    private Integer waitOutput;
+
+    /**
+     * 需要出库筛选条件
+     */
+    private Integer needOut;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -1027,3 +1043,29 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.bizOrderLogisticsList = bizOrderLogisticsList;
     }
 }
+
+    public Integer getWaitShipments() {
+        return waitShipments;
+    }
+
+    public void setWaitShipments(Integer waitShipments) {
+        this.waitShipments = waitShipments;
+    }
+
+    public Integer getWaitOutput() {
+        return waitOutput;
+    }
+
+    public void setWaitOutput(Integer waitOutput) {
+        this.waitOutput = waitOutput;
+    }
+
+    public Integer getNeedOut() {
+        return needOut;
+    }
+
+    public void setNeedOut(Integer needOut) {
+        this.needOut = needOut;
+    }
+}
+

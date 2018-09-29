@@ -215,18 +215,12 @@ public class BizOrderHeaderController extends BaseController {
             //商品下单量标识
             bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
         }
-        String selectAuditStatus = bizOrderHeader.getSelectAuditStatus();
-
 
         JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
-        DoOrderHeaderProcessAllConfig doOrderHeaderProcessAllConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
         DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
 
         Map<String, String> originConfigMap = Maps.newLinkedHashMap();
-        List<String> originConfigValue = Lists.newArrayList();
-        List<String> localConfigValue = Lists.newArrayList();
-        List<String> doFifthConfigValue = Lists.newArrayList();
 
         originConfigMap.put("渠道经理", "渠道经理");
         originConfigMap.put("总经理", "总经理");
@@ -236,28 +230,6 @@ public class BizOrderHeaderController extends BaseController {
         originConfigMap.put("驳回", "驳回");
         originConfigMap.put("不需要审批", "不需要审批");
 
-//////////////////////////////////////////////////////////////////
-        for (Process process : originConfig.getProcessList()) {
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
-                originConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-//////////////////////////////////////////////////////////////////
-        for (Process process : localConfig.getProcessList()) {
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
-                localConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-//////////////////////////////////////////////////////////////////
-        for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
-                doFifthConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-
-        bizOrderHeader.setOriginCode(CollectionUtils.isEmpty(originConfigValue) ? null : originConfigValue);
-        bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
-        bizOrderHeader.setDoFifthCode(CollectionUtils.isEmpty(doFifthConfigValue) ? null : doFifthConfigValue);
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
@@ -349,7 +321,6 @@ public class BizOrderHeaderController extends BaseController {
 
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
-        model.addAttribute("auditAllStatus", doOrderHeaderProcessAllConfig.getAutProcessId());
         model.addAttribute("auditFithStatus", doOrderHeaderProcessFifthConfig.getAutProcessId());
         model.addAttribute("auditStatus", originConfig.getPayProcessId());
 
@@ -1520,7 +1491,7 @@ public class BizOrderHeaderController extends BaseController {
             if (user.isAdmin() || roleList.contains(role)) {
                 bizOrderHeader.setSupplyId(-1); //判断orderDetail不等于0
             } else {
-                bizOrderHeader.setSupplyId(user.getCompany() == null ? 0 : user.getCompany().getId());
+                bizOrderHeader.setSupplyId(user.getCompany() == null ? null : user.getCompany().getId());
             }
         } else {
             bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());

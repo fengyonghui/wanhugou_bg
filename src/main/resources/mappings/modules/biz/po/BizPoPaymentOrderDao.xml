@@ -94,6 +94,9 @@
 			<include refid="bizPoPaymentOrderColumns"/>
 		FROM biz_po_payment_order a
 		<include refid="bizPoPaymentOrderJoins"/>
+		<if test="auditStatusCode != null and auditStatusCode != 0">
+			LEFT JOIN common_process poprocess ON poprocess.id = po.process_id
+		</if>
 		<where>
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
@@ -112,6 +115,8 @@
 			</if>
 			<if test="auditStatusCode != null and auditStatusCode != 0">
 				AND process.type = #{auditStatusCode}
+				and poprocess.type = 7
+				and a.total > 0
 			</if>
 		</where>
 		group by a.id

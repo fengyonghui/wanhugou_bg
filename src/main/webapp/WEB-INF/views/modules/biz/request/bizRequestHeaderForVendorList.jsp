@@ -130,6 +130,7 @@
 <form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/" method="post" class="breadcrumb form-search">
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+	<input id="previousPage" name="previousPage" type="hidden" value="${bizRequestHeader.previousPage}"/>
 	<input id="payNum" type="hidden" />
 	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 	<ul class="ul-form">
@@ -187,6 +188,9 @@
 
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
+		<c:if test="${bizRequestHeader.previousPage == 'myPanel'}">
+			<li class="btns"><a href="${ctx}/sys/myPanel/index"><input class="btn" type="button" value="返回我的任务"/></a></li>
+		</c:if>
 		<li class="clearfix"></li>
 	</ul>
 </form:form>

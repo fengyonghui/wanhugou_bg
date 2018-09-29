@@ -125,7 +125,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private BizRequestHeader bizRequestHeader;
 
 	/**
-	 * 备货单
+	 * 订单
 	 */
 	private BizOrderHeader bizOrderHeader;
 
@@ -168,6 +168,12 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 * @return
 	 */
 	private Integer waitPay;
+
+	/**
+	 * 可申请支付
+	 * @return
+	 */
+	private Integer applyPayment;
 
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
@@ -650,5 +656,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setWaitPay(Integer waitPay) {
 		this.waitPay = waitPay;
+	}
+
+	public Integer getApplyPayment() {
+		return applyPayment;
+	}
+
+	public void setApplyPayment(Integer applyPayment) {
+		this.applyPayment = applyPayment;
 	}
 }

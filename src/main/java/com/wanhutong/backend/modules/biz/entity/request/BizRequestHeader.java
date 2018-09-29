@@ -197,6 +197,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 */
 	private String processPo;
 
+	/**
+	 * 需要入库的筛选条件
+	 */
+	private Integer needIn;
+
 	public BizRequestHeader() {
 		super();
 	}
@@ -702,5 +707,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setProcessPo(String processPo) {
 		this.processPo = processPo;
+	}
+
+	public Integer getNeedIn() {
+		return needIn;
+	}
+
+	public void setNeedIn(Integer needIn) {
+		this.needIn = needIn;
 	}
 }
