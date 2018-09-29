@@ -151,12 +151,15 @@
 		},
 		purchContent: function(a) {
 			var _this = this;
+			$('.schedPurch').show();
 			console.log(a)
 //			if(a.data.bizPoHeader.poSchType == 0) {
 //				$('#chedulingStatus').val('未排产');
 //				}
 			if(a.data.bizPoHeader.poSchType == 1) {
 				$('#chedulingStatus').val('排产中');
+			}
+			if(a.data.bizPoHeader.poSchType == 1 || a.data.bizPoHeader.poSchType == 2) {
 				var htmlPurchPlans = '';
 				$.each(a.data.bizCompletePalns, function(d, h) {
 					console.log(h)
