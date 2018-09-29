@@ -2038,6 +2038,7 @@ public class BizOrderHeaderController extends BaseController {
                     } else {
                         rowData.add(StringUtils.EMPTY);
                     }
+                    rowData.add(order.getScoreMoney().toString());
                     //利润
                     //                        orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight
                     rowData.add(df.format(exp + (order.getServiceFee() == null ? 0 : order.getServiceFee()) + fre));
@@ -2177,6 +2178,7 @@ public class BizOrderHeaderController extends BaseController {
                         } else {
                             rowData.add(StringUtils.EMPTY);
                         }
+                        rowData.add(order.getScoreMoney().toString());
                         //服务费
 //                        orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight
                         rowData.add(df.format(exp + (order.getServiceFee() == null ? 0 : order.getServiceFee()) + fre));
@@ -2226,7 +2228,7 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
             String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
-                    "应付金额", "已收货款", "尾款信息", "服务费", "佣金", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
+                    "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "佣金", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
             String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "商品结算价", "采购数量", "商品总价"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
