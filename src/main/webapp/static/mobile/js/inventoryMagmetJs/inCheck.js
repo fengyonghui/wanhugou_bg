@@ -93,12 +93,13 @@
 							if(res.data.bizRequestHeader.bizPoHeader.commonProcessList != null && res.data.bizRequestHeader.bizPoHeader.commonProcessList.length > 0 && res.data.bizRequestHeader.processPo == 'processPo')                {
 								_this.comfirDialigs();
 							}
-							
 						}
 					}
 //修改：------		//备货单审核
+//					console.log(_this.inLastPayDateFlag)
+//					console.log(res.data.bizRequestHeader.str)
 					if(_this.inLastPayDateFlag == true) {
-						if(res.data.bizRequestHeader.str=='audit') {
+						if(res.data.bizRequestHeader.str== 'audit') {
 							if(res.data.bizRequestHeader.commonProcess.type != res.data.autProcessId && res.data.bizRequestHeader.processPo != 'processPo') {
 //								alert(999)
 								_this.comfirDialig(res);
@@ -841,6 +842,7 @@
 		},
 		comfirDialig: function(res) {
 			var _this = this;
+			console.log(res)
 			document.getElementById("inRejectBtn").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
@@ -1438,7 +1440,6 @@
                 //totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
             }
             console.log(params)
-            return
             $.ajax({
                 url: '/a/biz/po/bizPoHeader/saveSchedulingPlan',
                 contentType: 'application/json',
@@ -1446,14 +1447,14 @@
                 datatype:"json",
                 type: 'post',
                 success: function (result) {
-                    if(result == true) {
-                        GHUTILS.OPENPAGE({
-							url: "../../html/inventoryMagmetHtml/inventoryList.html",
-							extras: {
-								
-							}
-						})
-                    }
+//                  if(result == true) {
+//                      GHUTILS.OPENPAGE({
+//							url: "../../html/inventoryMagmetHtml/inventoryList.html",
+//							extras: {
+//								
+//							}
+//						})
+//                  }
                 },
                 error: function (error) {
                     console.info(error);
@@ -1544,7 +1545,6 @@
                 count++;
             }
             console.log(params)
-//          return
             if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
                 alert("排产量总和太大，请从新输入!")
                 return false
@@ -1556,14 +1556,14 @@
                 datatype:"json",
                 type: 'post',
                 success: function (result) {
-                    if(result == true) {
-                        GHUTILS.OPENPAGE({
-							url: "../../html/inventoryMagmetHtml/inventoryList.html",
-							extras: {
-								
-							}
-						})
-                    }
+//                  if(result == true) {
+//                      GHUTILS.OPENPAGE({
+//							url: "../../html/inventoryMagmetHtml/inventoryList.html",
+//							extras: {
+//								
+//							}
+//						})
+//                  }
                 },
                 error: function (error) {
                     console.info(error);

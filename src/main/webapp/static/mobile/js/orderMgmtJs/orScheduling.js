@@ -431,7 +431,6 @@
                 type: 'post',
                 success: function (result) {
                 	console.log(result)
-                	return
                     if(result == true) {
                        GHUTILS.OPENPAGE({
 							url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
