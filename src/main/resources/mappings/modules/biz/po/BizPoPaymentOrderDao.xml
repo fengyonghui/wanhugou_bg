@@ -132,7 +132,7 @@
 
 	<select id="findCount" resultType="Integer">
 		SELECT
-			count(1)
+			count(1) from
 		(SELECT
 			1
 		FROM biz_po_payment_order a
