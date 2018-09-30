@@ -130,7 +130,7 @@
 		</choose>
 	</select>
 
-	<select id="findCount" resultMap="Integer">
+	<select id="findCount" resultType="Integer">
 		SELECT
 			count(1)
 		(SELECT
