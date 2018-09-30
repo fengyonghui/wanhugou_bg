@@ -24,4 +24,5 @@ public interface BizPoPaymentOrderDao extends CrudDao<BizPoPaymentOrder> {
     List<BizPoPaymentOrder> getPayMentOrderByReqId(@Param("reqId") Integer reqId);
 
 
+    int findCount(BizPoPaymentOrder bizPoPaymentOrder);
 }

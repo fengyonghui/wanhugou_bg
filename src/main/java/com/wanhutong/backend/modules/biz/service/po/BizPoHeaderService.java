@@ -136,6 +136,10 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         return super.findList(bizPoHeader);
     }
 
+    public int findCount(BizPoHeader bizPoHeader) {
+        return dao.findCount(bizPoHeader);
+    }
+
     @Override
     public Page<BizPoHeader> findPage(Page<BizPoHeader> page, BizPoHeader bizPoHeader) {
         return super.findPage(page, bizPoHeader);
