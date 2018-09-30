@@ -94,7 +94,7 @@
 				var purchId = $(this).attr('purchId');
                 if(url) {
                 	mui.toast('子菜单不存在')
-                }else if(purchId==229) {
+                }else if(purchId==229 || purchId==679) {
                 	GHUTILS.OPENPAGE({
 						url: "../html/inventoryMagmetHtml/inventoryList.html",
 						extras: {
