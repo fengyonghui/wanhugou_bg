@@ -80,7 +80,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		          	    console.log(res)
+//		          	    console.log(res)
 //		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 			            var returnData = res.data.page.list;
 			            var dataRow = res.data.roleSet;
@@ -356,7 +356,7 @@
                 async:false,
                 success: function(res){
 					_this.cancelAmendPayFlag = res.data;
-					console.log(_this.cancelAmendPayFlag)
+//					console.log(_this.cancelAmendPayFlag)
                 }
             });
         },

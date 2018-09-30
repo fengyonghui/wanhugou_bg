@@ -581,7 +581,7 @@
 						url: "../../html/inventoryMagmetHtml/inventoryAmend.html",
 						extras: {
 							paymentId: paymentId,
-							str: 'createPay',
+							createPayStr: 'createPay',
 						}
 					})
 				}

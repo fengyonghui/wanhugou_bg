@@ -1075,7 +1075,7 @@
 					if(res.ret == true) {
 						mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
-							url: "../../html/inventoryMagmetHtml/inventoryList.html",
+							url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
 							extras: {}
 						})
 					}
