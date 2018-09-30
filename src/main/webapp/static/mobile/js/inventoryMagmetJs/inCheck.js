@@ -1198,11 +1198,11 @@
 //        	})
 //      	var poDetailList = res.data.bizPoHeader.poDetailList;
         	var htmlPurch = '';
+        	var totalReqQtyNums = 0;
         	$.each(chData.data.reqDetailList, function(i,item) {
-//      		console.log(item)
-        		$('#purchOrdQty').val(item.reqQty);
-        		$('#purchWaiteNum').val(item.reqQty - item.sumCompleteNum);
-        		$('#toalSchedulingNum').val(item.sumCompleteNum);
+        		console.log(item.reqQty)
+        		var reqQtyNum = item.reqQty;
+        		totalReqQtyNums = parseInt(totalReqQtyNums) + parseInt(reqQtyNum);
 			htmlPurch +='<li class="mui-table-view-cell mui-media app_bline app_pr">'+
 //		产品图片
 			'<div class="photoParent mui-pull-left app_pa">'+
@@ -1220,7 +1220,7 @@
 					'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>采购数量：</label>'+
-					'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" disabled></div>'+
+					'<input type="text" class="mui-input-clear" name="reqQtyNum" value="'+ item.reqQty +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>结算价：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
@@ -1229,10 +1229,11 @@
 					'<input type="text" class="mui-input-clear" value="'+ item.reqQty * item.unitPrice +'" disabled>'+
 				'</div></div></li>'
 			});
+			$("#purchOrdQty").val(totalReqQtyNums);
 			$("#orSchedPurch").html(htmlPurch)
 			_this.btnshow(chData);
 			_this.schedulPlan();
-		},
+	},
 		btnshow: function(data) {
 			var _this = this;
 			$('.schedCommd').hide();
