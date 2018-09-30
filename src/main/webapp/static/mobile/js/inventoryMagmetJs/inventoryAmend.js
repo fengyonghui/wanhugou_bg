@@ -173,7 +173,7 @@
 	                    $('#inputDivAmend  option[value="' + bizstatus + '"]').attr("selected",true);
 		            }else{
 				       	$('#inputDivAmend').parent().parent().hide();
-		            }			        	                    		                          
+		            }	
                     //排产状态
 				    if(res.data.bizRequestHeader.bizPoHeader){
 				    	var itempoSchType=res.data.bizRequestHeader.bizPoHeader.poSchType;

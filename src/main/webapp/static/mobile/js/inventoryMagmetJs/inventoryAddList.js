@@ -15,9 +15,6 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			//权限添加
-//			biz:request:bizRequestHeader:edit    保存
-			this.getPermissionList('biz:request:bizRequestHeader:edit','inAddSaveFlag')
 			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAdd01');
 			this.hrefHtmls('.newinput02', '.input_div02','#hideSpanAdd02');
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
@@ -44,9 +41,7 @@
             	$('#inputDivAdd').parent().parent().hide();
             }
 			console.log(userId)
-			if(_this.inAddSaveFlag == true) {
-				_this.saveDetail(userId);
-			}
+			_this.saveDetail(userId);
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;

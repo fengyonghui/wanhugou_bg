@@ -117,12 +117,10 @@
                                 var itemId="";
 	                        	if(item.bizOrderHeader){
 	                        		poNumTxt=item.bizOrderHeader.orderNum;
-//	                        		console.log(item.bizOrderHeader.id)
 	                        		itemId=item.bizOrderHeader.id;
 	                        	}
 	                        	if(item.bizRequestHeader){
 	                        		poNumTxt=item.bizRequestHeader.reqNo;
-//	                        		console.log(item.bizRequestHeader.id)
 	                        		itemId=item.bizRequestHeader.id;
 	                        		
 	                        	}
@@ -207,7 +205,6 @@
 	                        				staPayBtnTxt = '支付申请列表';
 	                        				staPayBtn = item.bizOrderHeader.id;
 //	                        				sta = item.bizOrderHeader.id;
-
 	                        			}
 	                        		}
 	                        		if(item.bizRequestHeader != null){
@@ -244,7 +241,6 @@
 	                        	if(_this.OrdFlagScheduling==true){
 	                        		SchedulingBtnTxt = '排产';
 	                        	}
-//	                        	console.log(staCheckSucBtn)
 								//申请付款
 								var creatPayBt = '';
 								var creatPay = '';
@@ -804,7 +800,7 @@
 	                        	var sta = '';
 	                        	if(item.commonProcess.type != -1){
 	                        		if(item.bizOrderHeader != null){
-	                        			console.log(_this.OrdFlagpay)
+//	                        			console.log(_this.OrdFlagpay)
 	                        			//订单
 	                        			if(_this.OrdFlagpay==true){
 	                        				staPayBtnTxt = '支付申请列表';
@@ -822,24 +818,44 @@
 	                        		}
 	                        	}
 	                        	//开启审核
-//	                        	var stastartCheckBtn = '';
-//	                        	var stastartCheckBtnTxt = '';
-//	                        	if(_this.OrdFlagstartAudit==false){
-//	                        		if(item.commonProcess.type == -1){
+	                        	var stastartCheckBtn = '';
+	                        	var stastartCheckBtnTxt = '';
+	                        	if(_this.OrdFlagstartAudit==true){
+	                        		if(item.commonProcess.type == -1){
 //	                        			if(item.bizOrderHeader != null){
 //	                        				stastartCheckBtnTxt = '开启审核';
+//	                        				stastartCheckBtn = 'stastartCheckBtn'
 //	                        				staPayBtn = item.bizOrderHeader.id;
 //	                        			}
-//	                        			if(item.bizRequestHeader != null){
-//	                        				stastartCheckBtnTxt = '开启审核';
-//	                        			}
-//	                        		}
-//	                        	}
+	                        			if(item.bizRequestHeader != null){
+	                        				stastartCheckBtnTxt = '开启审核';
+	                        				stastartCheckBtn = 'stastartCheckBtn'
+	                        			}
+	                        		}else {
+	                        			stastartCheckBtn = ''
+	                        		}
+	                        	}else {
+	                        		stastartCheckBtn = ''
+	                        	}
 	                        	//排产
 	                        	var SchedulingBtnTxt = '';
 	                        	if(_this.OrdFlagScheduling==true){
 	                        		SchedulingBtnTxt = '排产';
 	                        	}
+	                        	//申请付款
+								var creatPayBt = '';
+								var creatPay = '';
+								if(_this.creatPayFlag == true) {
+									if(item.bizRequestHeader != null) {
+										if((item.currentPaymentId == null || item.currentPaymentId == '') && item.bizRequestHeader.bizStatus >= 5 && item.bizRequestHeader.bizStatus < 37 && (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
+											creatPay = '申请付款'
+											creatPayBt = 'creatPayBtn'
+										}else {
+											creatPay = ''
+											creatPayBt = ''
+										}
+									}
+								}
 								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row" style="display:none">' +
 										    '<label>备货单号:</label>' +
@@ -874,22 +890,21 @@
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ _this.formatDateTime(item.createDate)+' ">' +
 										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-
-											'<div class="mui-col-xs-3 staCheckBtns" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
+											'<div class="mui-col-xs-2 staCheckBtns" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
 											'<div class="mui-col-xs-3 staPayBtn" staordid="'+ item.id +'" ordid="'+ staPayBtn +'" ordids="'+ staPayBtns +'">' +
 												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li>' +
 											'</div>'+
-//											'<div class="mui-col-xs-3 stastartCheckBtn" staordid="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li>' +
-//											'</div>'+
-											'<div class="mui-col-xs-3 SchedulingBtn" staordid="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 '+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
+												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li>' +
+											'</div>'+
+											'<div class="mui-col-xs-2 SchedulingBtn" staordid="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
 											'</div>'+
-//											'<div class="mui-col-xs-2 sta" stas="'+ sta +'" style="display:none">' +
-//												'<li class="mui-table-view-cell">详情</li>' +
-//											'</div>'+
+											'<div class="mui-col-xs-2 '+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
+												'<li class="mui-table-view-cell">'+creatPay+'</li>' +
+											'</div>'+
 										'</div>' +
 									'</div>'
 							});

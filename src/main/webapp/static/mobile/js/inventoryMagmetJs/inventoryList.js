@@ -13,15 +13,16 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
+			//权限添加
 //			biz:request:bizRequestHeader:view   详情
 //			biz:request:bizRequestHeader:edit   备货单添加、取消、修改、付款、删除、恢复
 //			biz:request:bizRequestHeader:delete  删除、
 //			biz:requestHeader:pay		付款
 //			biz:request:bizRequestHeader:audit		审核
 			this.getPermissionList('biz:request:bizRequestHeader:view','detileFlag')
-			this.getPermissionList('biz:request:bizRequestHeader:edit','cancelAmendPayFlag')
+			this.getPermissionList2('biz:request:bizRequestHeader:edit','cancelAmendPayFlag')
 //			this.getPermissionList('biz:requestHeader:pay','payFlag')
-			this.getPermissionList('biz:request:bizRequestHeader:audit','checkFlag')
+			this.getPermissionList3('biz:request:bizRequestHeader:audit','checkFlag')
 //			this.getPermissionList('biz:request:bizRequestHeader:delete','cancelFlag')
 			if(this.userInfo.isFunc){
 				this.seachFunc()
@@ -33,6 +34,9 @@
 		},
 		pageInit:function(){
 			var _this = this;
+			if(_this.cancelAmendPayFlag == false) {
+				$('.inAddBtn').hide();
+			}
 			var pager = {};//分页 
 		    var totalPage;//总页码
 		    pullRefresh(pager);//启用上拉下拉 
@@ -339,16 +343,50 @@
                 async:false,
                 success: function(res){
                     _this.detileFlag = res.data;
+                }
+            });
+        },
+        getPermissionList2: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
 					_this.cancelAmendPayFlag = res.data;
-//					_this.payFlag = res.data;
+					console.log(_this.cancelAmendPayFlag)
+                }
+            });
+        },
+        getPermissionList3: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
 					_this.checkFlag = res.data;
-//					_this.cancelFlag = res.data;
-//                  console.log(_this.cancelFlag)
                 }
             });
         },
 		inHrefHtml: function() {
 			var _this = this;
+			/*备货单添加*/
+			$('#nav').on('tap','.inAddBtn', function() {
+				if(_this.cancelAmendPayFlag == true) {
+					var url = $(this).attr('url');
+					GHUTILS.OPENPAGE({
+						url: "../../html/inventoryMagmetHtml/inventoryAddList.html",
+						extras: {
+							
+						}
+					})
+				}
+			})
 		/*查询*/
 			$('.app_header').on('tap', '#searchBtn', function() {
 				var url = $(this).attr('url');
@@ -363,19 +401,7 @@
 					})
 				}
 					
-			}),
-		/*备货单添加*/
-			$('#nav').on('tap','.inAddBtn', function() {
-				if(_this.cancelAmendPayFlag == true) {
-					var url = $(this).attr('url');
-					GHUTILS.OPENPAGE({
-						url: "../../html/inventoryMagmetHtml/inventoryAddList.html",
-						extras: {
-							
-						}
-					})
-				}
-			}),
+			})
 		/*首页*/
 			$('#nav').on('tap','.inHomePage', function() {
 				var url = $(this).attr('url');
@@ -385,7 +411,7 @@
 						
 					}
 				})
-			}),
+			})
 		/*详情*/
 			$('#list').on('tap', '.inDetailBtn', function() {
 				var url = $(this).attr('url');
@@ -400,7 +426,7 @@
 						}
 					})
 				}
-			}),
+			})
 		/*修改*/
             $('#list').on('tap','.inAmendBtn', function() {
 				var url = $(this).attr('url');
@@ -411,7 +437,7 @@
                         reqId: reqId,
 					}
 				})
-			}),
+			})
         /*付款*/
 //	       $('#list').on('tap', '.inPayBtn', function() {
 //					var url = $(this).attr('url');
@@ -443,7 +469,7 @@
 						}
 					})
                 }
-			}),
+			})
 		/*取消*/	
             $('#list').on('tap','.inCancelBtn',function(){
             	var url = $(this).attr('url');
