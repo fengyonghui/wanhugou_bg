@@ -29,4 +29,12 @@ public interface BizSkuInfoV2Dao extends CrudDao<BizSkuInfo> {
     List<BizSkuInfo> findPurseSkuList(BizSkuInfo bizSkuInfo);
 
     void recovery(BizSkuInfo bizSkuInfo);
+
+
+    /**
+     * 查询数据条数
+     * @param bizSkuInfo
+     * @return
+     */
+    int findCount(BizSkuInfo bizSkuInfo);
 }
