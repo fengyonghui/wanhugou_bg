@@ -313,7 +313,7 @@
 		WHERE id = #{id}
 	</update>
 
-	<select id="getSumSendNumByReqDetailId" resultType="BizSendGoodsRecord">
+	<select id="getSumSendNumByReqDetailId" resultType="Integer">
 		SELECT
 			sum(a.send_num)
 		FROM biz_send_goods_record a

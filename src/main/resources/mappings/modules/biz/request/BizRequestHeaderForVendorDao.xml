@@ -545,6 +545,7 @@
 			${sqlMap.request}
 		</if>
 		GROUP BY a.id
+		ORDER BY a.update_time DESC
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}

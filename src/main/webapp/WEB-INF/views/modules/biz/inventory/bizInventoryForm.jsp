@@ -135,7 +135,12 @@
                                 <c:if test="${source eq 'pChange'}">
 								    <td>${requestDetail.sumSendNum == null ? 0 : requestDetail.sumSendNum}</td>
                                 </c:if>
-                                <td><input name="actualQtys" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini required"/></td>
+								<c:if test="${source == null}">
+                                	<td><input name="actualQtys" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini required"/></td>
+								</c:if>
+								<c:if test="${source != null}">
+									<td>${requestDetail.actualQty}</td>
+								</c:if>
 							</tr>
 						</c:forEach>
 					</tbody>
