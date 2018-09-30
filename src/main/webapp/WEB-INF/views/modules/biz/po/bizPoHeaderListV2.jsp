@@ -128,9 +128,6 @@
 
         <li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
         <li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
-                <c:if test="${bizPoHeader.previousPage == 'myPanel'}">
-                    <li class="btns"><a href="${ctx}/sys/myPanel/index"><input class="btn" type="button" value="返回我的任务"/></a></li>
-                </c:if>
         <li class="clearfix"></li>
     </ul>
 </form:form>
