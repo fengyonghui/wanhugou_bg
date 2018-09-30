@@ -59,7 +59,7 @@
         <shiro:hasAnyRoles
                 name="dept,p_center_manager,buyer,channel_manager,Channel Supervisor,General manager,selection_of_specialist,finance,financial_general_manager,finance_director">
             <li>
-                <a href="${ctx}/sys/myPanel/waitAudit">订单审核</a>
+                <a onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/waitAudit">订单审核</a>
                 <c:if test="${waitAuditCount > 0}">
                     <span>${waitAuditCount}</span>
                 </c:if>
@@ -68,7 +68,7 @@
         <shiro:hasAnyRoles
                 name="dept,p_center_manager,buyer,channel_manager">
             <li>
-                <a href="${ctx}/sys/myPanel/hasRetainage">有尾款</a>
+                <a  onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/hasRetainage">有尾款</a>
                 <c:if test="${hasRetainageCount > 0}">
                     <span>${hasRetainageCount}</span>
                 </c:if>
@@ -77,7 +77,7 @@
         <shiro:hasAnyRoles
                 name="dept,p_center_manager,warehouse_specialist">
             <li>
-                <a href="${ctx}/sys/myPanel/ddck">订单出库</a>
+                <a onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/ddck">订单出库</a>
                 <c:if test="${ddckCount > 0}">
                     <span>${ddckCount}</span>
                 </c:if>
@@ -86,7 +86,7 @@
         <shiro:hasAnyRoles
                 name="dept,p_center_manager,warehouse_specialist">
             <li>
-                <a href="${ctx}/sys/myPanel/fhdrk">备货单入库</a>
+                <a  onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/fhdrk">备货单入库</a>
                 <c:if test="${fhdrkCount > 0}">
                     <span>${fhdrkCount}</span>
                 </c:if>
@@ -95,7 +95,7 @@
         <shiro:hasAnyRoles
                 name="dept,selection_of_specialist">
             <li>
-                <a href="${ctx}/sys/myPanel/applyPayment">申请付款</a>
+                <a onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/applyPayment">申请付款</a>
                 <c:if test="${applyPaymentCount > 0}">
                     <span>${applyPaymentCount}</span>
                 </c:if>
@@ -104,7 +104,7 @@
         <shiro:hasAnyRoles
                 name="dept,provider_manager,finance_director,financial_general_manager">
             <li>
-                <a href="${ctx}/sys/myPanel/paymentOrderAudit">付款单审核</a>
+                <a  onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/paymentOrderAudit">付款单审核</a>
                 <c:if test="${paymentOrderAuditCount > 0}">
                     <span>${paymentOrderAuditCount}</span>
                 </c:if>
@@ -113,7 +113,7 @@
         <shiro:hasAnyRoles
                 name="dept,channel_manager,Channel Supervisor,selection_of_specialist,op_director">
             <li>
-                <a href="${ctx}/sys/myPanel/reAudit">备货单审核</a>
+                <a  onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/reAudit">备货单审核</a>
                 <c:if test="${reAuditCount > 0}">
                     <span>${reAuditCount}</span>
                 </c:if>
@@ -122,7 +122,7 @@
         <shiro:hasAnyRoles
                 name="dept,selection_of_specialist">
             <li>
-                <a href="${ctx}/sys/myPanel/waitScheduling">待排产</a>
+                <a  onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/waitScheduling">待排产</a>
                 <c:if test="${waitSchedulingCount > 0}">
                     <span>${waitSchedulingCount}</span>
                 </c:if>
@@ -131,7 +131,7 @@
         <shiro:hasAnyRoles
                 name="dept,teller,finance,financial_general_manager,finance_director">
             <li>
-                <a href="${ctx}/sys/myPanel/orderPayment">备货单/订单付款</a>
+                <a  onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/orderPayment">备货单/订单付款</a>
                 <c:if test="${orderPaymentCount > 0}">
                     <span>${orderPaymentCount}</span>
                 </c:if>
@@ -140,7 +140,7 @@
         <shiro:hasAnyRoles
                 name="dept,selection_of_specialist">
             <li>
-                <a href="${ctx}/sys/myPanel/needPutaway">需上架商品</a>
+                <a  onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/needPutaway">需上架商品</a>
                 <c:if test="${needPutawayCount > 0}">
                     <span>${needPutawayCount}</span>
                 </c:if>
@@ -149,7 +149,7 @@
         <shiro:hasAnyRoles
                 name="dept,shipper">
             <li>
-                <a href="${ctx}/sys/myPanel/reWaitShipments">备货单待发货</a>
+                <a  onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/reWaitShipments">备货单待发货</a>
                 <c:if test="${reWaitShipmentsCount > 0}">
                     <span>${reWaitShipmentsCount}</span>
                 </c:if>
@@ -158,7 +158,7 @@
         <shiro:hasAnyRoles
                 name="dept,shipper">
             <li>
-                <a href="${ctx}/sys/myPanel/orderWaitShipments">订单待发货</a>
+                <a  onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/orderWaitShipments">订单待发货</a>
                 <c:if test="${orderWaitShipmentsCount > 0}">
                     <span>${orderWaitShipmentsCount}</span>
                 </c:if>
@@ -167,7 +167,7 @@
         <shiro:hasAnyRoles
                 name="dept,channel_manager,p_center_manager,Channel Supervisor">
             <li>
-                <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form">添加备货单</a>
+                <a onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/biz/request/bizRequestHeaderForVendor/form">添加备货单</a>
             </li>
         </shiro:hasAnyRoles>
         <%--<shiro:hasAnyRoles--%>
@@ -181,6 +181,12 @@
         <%--</shiro:hasAnyRoles>--%>
     </ul>
 </div>
+<script src="${ctxStatic}/jquery/jquery-1.9.1.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+    function addTab($this, refresh){
+        parent.addTab($this, refresh);
+    }
+</script>
 </body>
 
 </html>

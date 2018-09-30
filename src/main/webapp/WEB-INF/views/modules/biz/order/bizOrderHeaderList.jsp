@@ -228,9 +228,6 @@
 
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
-		<c:if test="${bizOrderHeader.previousPage == 'myPanel'}">
-			<li class="btns"><a href="${ctx}/sys/myPanel/index"><input class="btn" type="button" value="返回我的任务"/></a></li>
-		</c:if>
 		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
 			<li class="btns"><input class="btn" type="button" value="返回商品信息管理" onclick="location.href='${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=1'"/></li>
 		</c:if>
@@ -374,9 +371,9 @@
 					<c:otherwise>
 						${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
 						<a style="display: none">
-							<fmt:formatNumber type="number" var="total" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.scoreMoney}" pattern="0.00"/>
+							<fmt:formatNumber type="number" var="total" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
 						</a>
-						<c:if test="${total > orderHeader.receiveTotal && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=35 && orderHeader.bizStatus!=40 && orderHeader.bizStatus!=45 && orderHeader.bizStatus!=60}">
+						<c:if test="${total > (orderHeader.receiveTotal + orderHeader.scoreMoney) && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=35 && orderHeader.bizStatus!=40 && orderHeader.bizStatus!=45 && orderHeader.bizStatus!=60}">
 							<font color="#FF0000">(有尾款)</font>
 						</c:if>
 					</c:otherwise>

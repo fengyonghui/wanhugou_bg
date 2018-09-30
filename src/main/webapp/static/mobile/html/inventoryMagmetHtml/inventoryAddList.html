@@ -5,11 +5,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<title>备货单添加</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
-		<link href="../../css/app.css?time=20180912" rel="stylesheet" />
-		<style type="text/css">
-			.labelri {font-size: 14px;}
-			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 4em;}
-		</style>
+		<link href="../../css/app.css?time=20180930" rel="stylesheet" />
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
@@ -19,15 +15,12 @@
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
 				<label>备货方：</label>
-		    	<div id="changeTxt" class="labelri" style="padding: 10px 14px 10px 0;text-align: left;">
+		    	<div id="changeTxt" class="labelri inStock">
 		    		采购中心备货
-		        	<input checked id="purchase" type="radio" name="apply" class="inputRadio" value="1"/>
+		        	<input checked id="purchase" type="radio" name="localOriginType" class="inputRadio" value="1"/>
 		        	厂商备货
-		        	<input id="manu" type="radio" name="apply" class="inputRadio" value="2"/>    
+		        	<input id="manu" type="radio" name="localOriginType" class="inputRadio" value="2"/>    
 	        	</div>
-		        <!--<div id="changeTxt" class="labelri" style="padding: 10px 14px 10px 0;text-align: left;">	
-                	
-		    	</div>-->
 		    </div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
@@ -45,7 +38,7 @@
 			<div class="mui-input-row">
 				<label>供应商：</label>
 				<div class="pre">
-					<input class="newinput newinput02" type="text" placeholder="请选择供应商">
+					<input class="newinput newinput02" type="text" placeholder="请选择供应商" id="inSupply">
 					<font>*</font>
 					<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAdd02"></span>
 					<div class="input_div input_div02" style="display: none;">
@@ -72,24 +65,23 @@
 				<input type="date" class="mui-input-clear" id="inPoLastDa">
 				<font>*</font>
 			</div>
-			<div class="mui-input-row" id="inAmendPoLastDaDiv">
-				<label class="commodityName">选择商品：</label>
-				<input type="text" class="mui-input-clear commodityTxt" id="inAmendPoLastDa" placeholder="请输入商品货号">
+			<div class="mui-input-row commodityClear" id="inAmendPoLastDaDiv">
+				<label>选择商品：</label>
+				<input type="text" class="mui-input-clear" id="inAmendPoLastDa" placeholder="请输入商品货号">
 				<button id="comChoiceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">查询</button>
 			</div>
 			<div class="mui-row app_bline2 inComdty inAddComdty" id="searchInfo">
 
 			</div>
-
+			
 			<div class="mui-row">
 				<div class="labelLf">备货商品：</div>
 			</div>
-
+			
 			<div class="mui-row app_bline2 inComdty inAddComdty" id="commodityMenu">
 
 			</div>
-
-			<div class="mui-input-row">
+			<div class="mui-input-row remark">
 				<label>备注：</label>
 				<textarea id="inPoRemark" name="" rows="" cols=""></textarea>
 			</div>
@@ -105,18 +97,20 @@
 			</div>
 			<div class="mui-input-row">
 				<label>排产类型：</label>
-				<input type="text" class="mui-input-clear" id="inProductTime" disabled>
+				<input type="text" class="mui-input-clear" id="inProductTime" value="未排产" disabled>
 			</div>
 		</div>
 		<div class="inSaveBtn">
 			<button id="inSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>
 		</div>
 		<div class="clear"></div>
+		<input type="hidden" name="inStockAdd" id="inStockAdd"/>
+		<input type="hidden" name="supplierId" id="supplierId"/>
 
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/inventoryMagmetJs/inventoryAddList.js?time=20180912"></script>
+		<script src="../../js/inventoryMagmetJs/inventoryAddList.js?time=20180930"></script>
 	</body>
 
 </html>

@@ -301,6 +301,7 @@
 					"company.customerTypeEypeEleven": 11,
 					'company.customerTypeThirteen': 13,
 					conn: "connIndex",
+					'company.customerTypeThirteen': 13,
 					isFunc: true
 				},
 				dataType: 'json',

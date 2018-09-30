@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
@@ -54,12 +55,17 @@ import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -68,6 +74,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +127,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     @Autowired
     private BizRequestExpandDao bizRequestExpandDao;
 
+    public static final String REQUEST_HEADER_TYPE = "1";
+    public static final String DO_ORDER_HEADER_TYPE = "2";
 
     /**
      * 默认表名
@@ -1367,5 +1376,190 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         return result;
     }
 
+    //获取自动生成采购单所需的必要信息
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Pair<Boolean, String> goListForAutoSave(Integer orderId, String type, String lastPayDateVal, HttpServletRequest request,HttpServletResponse response) throws ParseException {
+        Pair<Boolean, String> result = Pair.of(Boolean.FALSE, "自动生成采购单失败");
+        if (REQUEST_HEADER_TYPE.equals(type)) {
+            BizRequestHeader requestHeader = new BizRequestHeader();
+            requestHeader.setId(orderId);
+            //Page<BizRequestHeader> requestHeaderList = findBizRequestV3(requestHeader,request,response);
+            Page<BizRequestHeader> requestHeaderList = bizRequestHeaderService.pageFindListV3(new Page<BizRequestHeader>(request, response), requestHeader);
+            if (requestHeaderList.getList().size() > 0) {
+                requestHeader = requestHeaderList.getList().get(0);
+                String reqDetailIds = requestHeader.getReqDetailIds();
+                String vendorId = String.valueOf(requestHeader.getOnlyVendor());
+                String unitPrices = "";
+                String ordQtys = "";
+                Map<String,List<BizRequestDetail>> reqDetailMap = new LinkedHashMap<>();
+                if (StringUtils.isNotBlank(reqDetailIds)) {
+                    String[] reqDetailArr = reqDetailIds.split(",");
+                    for (int i = 0; i < reqDetailArr.length; i++) {
+                        if (StringUtils.isBlank(reqDetailArr[i])){
+                            continue;
+                        }
+                        BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.parseInt(reqDetailArr[i].trim()));
+                        Integer reqQty = bizRequestDetail.getReqQty();
+                        Integer recvQty = bizRequestDetail.getRecvQty();
+                        Integer ordQty = reqQty - recvQty;
+                        ordQtys += ordQty + ",";
+                        Integer key =bizRequestDetail.getRequestHeader().getId();
+                        Integer lineNo=bizRequestDetail.getLineNo();
+                        BizPoOrderReq bizPoOrderReq =new BizPoOrderReq();
+                        bizPoOrderReq.setSoLineNo(lineNo);
+                        bizPoOrderReq.setRequestHeader(bizRequestDetail.getRequestHeader());
+                        bizPoOrderReq.setIsPrew(0);
+                        List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
+                        if(poOrderReqList!=null && poOrderReqList.size()==0){
+                            BizSkuInfo sku = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
+                            BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizRequestDetail.getRequestHeader().getId());
+                            bizRequestDetail.setRequestHeader(bizRequestHeader);
+                            BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
+                            Double buyPrice = skuInfo.getBuyPrice();
+                            unitPrices += String.valueOf(buyPrice) + ",";
+                            bizRequestDetail.setSkuInfo(skuInfo);
+                            if(reqDetailMap.containsKey(key.toString())){
+                                List<BizRequestDetail> requestDetails = reqDetailMap.get(key.toString());
+                                requestDetails.add(bizRequestDetail);
+                                reqDetailMap.put(key.toString(),requestDetails);
+                            }else {
+                                List<BizRequestDetail> requestDetails =  new ArrayList<>();
+                                requestDetails.add(bizRequestDetail);
+                                reqDetailMap.put(key.toString(),requestDetails);
+                            }
+                        }
+                    }
+                    ordQtys = ordQtys.substring(0, ordQtys.length()-1);
+                    unitPrices = unitPrices.substring(0, unitPrices.length()-1);
+                }
+
+                result = this.autoSave(reqDetailIds,"", vendorId, unitPrices, ordQtys, lastPayDateVal);
+            }
+        } else if (DO_ORDER_HEADER_TYPE.equals(type)) {
+            BizOrderHeader orderHeader = new BizOrderHeader();
+            orderHeader.setId(orderId);
+            //orderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+            //orderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
+            Page<BizOrderHeader>  bizOrderHeaderList =bizOrderHeaderService.pageFindList(new Page<BizOrderHeader>(request, response), orderHeader);
+            if (bizOrderHeaderList.getList().size() > 0) {
+                orderHeader = bizOrderHeaderList.getList().get(0);
+                String orderDetailIds = orderHeader.getOrderDetails();
+                String vendorId =  String.valueOf(orderHeader.getOnlyVendor());
+
+                String unitPrices = "";
+                String ordQtys = "";
+                Map<String, List<BizOrderDetail>> orderDetailMap = new LinkedHashMap<>();
+                if (StringUtils.isNotBlank(orderDetailIds)) {
+                    String[] orderDetailArr = orderDetailIds.split(",");
+                    for (int i = 0; i < orderDetailArr.length; i++) {
+                        if (StringUtils.isBlank(orderDetailArr[i])) {
+                            continue;
+                        }
+                        BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(orderDetailArr[i].trim()));
+                        Integer ordQty = bizOrderDetail.getOrdQty();
+                        Integer sentQty = bizOrderDetail.getSentQty();
+                        Integer ordHerderQty = ordQty - sentQty;
+                        ordQtys += ordHerderQty + ",";
+
+                        Integer key = bizOrderDetail.getOrderHeader().getId();
+                        Integer lineNo = bizOrderDetail.getLineNo();
+                        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                        bizPoOrderReq.setSoLineNo(lineNo);
+                        bizPoOrderReq.setOrderHeader(bizOrderDetail.getOrderHeader());
+                        bizPoOrderReq.setIsPrew(0);
+                        List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+                        if (poOrderReqList != null && poOrderReqList.size() == 0) {
+                            BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
+                            bizOrderDetail.setOrderHeader(bizOrderHeader);
+                            BizSkuInfo sku = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
+                            BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
+                            Double buyPrice = skuInfo.getBuyPrice();
+                            unitPrices += String.valueOf(buyPrice) + ",";
+                            bizOrderDetail.setSkuInfo(skuInfo);
+                            if (orderDetailMap.containsKey(key.toString())) {
+                                List<BizOrderDetail> orderDetails = orderDetailMap.get(key.toString());
+                                orderDetails.add(bizOrderDetail);
+                                orderDetailMap.put(key.toString(), orderDetails);
+                            } else {
+                                List<BizOrderDetail> orderDetails = new ArrayList<>();
+                                orderDetails.add(bizOrderDetail);
+                                orderDetailMap.put(key.toString(), orderDetails);
+                            }
+                        }
+                    }
+                    ordQtys = ordQtys.substring(0, ordQtys.length() - 1);
+                    unitPrices = unitPrices.substring(0, unitPrices.length() - 1);
+                }
+                result = this.autoSave("",orderDetailIds, vendorId, unitPrices, ordQtys, lastPayDateVal);
+            }
+        }
+        return result;
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Pair<Boolean, String> autoSave(String reqDetailIds, String orderDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal) throws ParseException {
+        Office vendOffice = new Office();
+        vendOffice.setId(Integer.parseInt(vendorId));
+
+        BizPoHeader bizPoHeader = new BizPoHeader();
+        bizPoHeader.setVendOffice(vendOffice);
+        if (reqDetailIds != null || !"".equals(reqDetailIds)) {
+            bizPoHeader.setReqDetailIds(reqDetailIds);
+        }
+        if (orderDetailIds != null || !"".equals(orderDetailIds)) {
+            bizPoHeader.setOrderDetailIds(orderDetailIds);
+        }
+        bizPoHeader.setUnitPrices(unitPrices);
+        bizPoHeader.setOrdQtys(ordQtys);
+
+        Set<Integer> poIdSet = this.findPrewPoHeader(bizPoHeader);
+        if (poIdSet.size() == 1) {
+            return Pair.of(Boolean.FALSE, "采购单已存在");
+        }
+        int deOfifceId = 0;
+        if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null) {
+            deOfifceId = bizPoHeader.getDeliveryOffice().getId();
+        }
+
+        //生成采购单预览
+        String poNo = "0";
+        bizPoHeader.setOrderNum(poNo);
+        bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
+        //bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
+        bizPoHeader.setIsPrew(0);
+        Integer id = bizPoHeader.getId();
+        this.save(bizPoHeader);
+        if (id == null) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
+        if (bizPoHeader.getOrderNum() == null || "0".equals(bizPoHeader.getOrderNum())) {
+            poNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO, deOfifceId, bizPoHeader.getVendOffice().getId(), bizPoHeader.getId());
+            bizPoHeader.setOrderNum(poNo);
+            this.savePoHeader(bizPoHeader);
+        }
+
+        //确认生成采购单
+        Integer poHeaderIdid = bizPoHeader.getId();
+        bizPoHeader = this.get(poHeaderIdid);
+        bizPoHeader.setDeliveryStatus(0);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (org.apache.commons.lang3.StringUtils.isBlank(lastPayDateVal)) {
+            bizPoHeader.setLastPayDate(new Date());
+        } else {
+            Date lastPayDate = sdf.parse(lastPayDateVal);
+            bizPoHeader.setLastPayDate(lastPayDate);
+        }
+        bizPoHeader.setIsPrew(0);
+        bizPoHeader.setType("createPo");
+        this.savePoHeader(bizPoHeader);
+
+        //采购单开启审核，同时自动生成付款单
+        Pair<Boolean, String> audit = this.autoSavePaymentOrder(poHeaderIdid);
+        if (audit.getLeft().equals(Boolean.TRUE)) {
+            String poId = String.valueOf(bizPoHeader.getId());
+            return Pair.of(Boolean.TRUE, "采购单生成," + poId);
+        }
+        return Pair.of(Boolean.FALSE, "自动生成付款单失败");
+    }
 
 }

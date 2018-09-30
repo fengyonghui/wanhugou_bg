@@ -29,9 +29,9 @@
 			        up:{
 			            contentnomore:'没 有 更 多 数 据 了',
 			            callback:function(){			            	
-			                window.setTimeout(function(){
+//			                window.setTimeout(function(){
 			                    getData(pager);
-			                },500);
+//			                },500);
 			            }
 			         },
 			        down : {
@@ -41,19 +41,16 @@
 			            contentover : "",
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
-			                    pager['size']= 10;//条数
+			                    pager['size']= 20;
 			                    pager['pageNo'] = 1;
 			                    pager['flag'] = "check_pending";
-			                    pager['consultantId'] = _this.userInfo.staListId;
-				                var f = document.getElementById("staOrdList");
+				                var f = document.getElementById("orderList");
 				                var childs = f.childNodes;
 				                for(var i = childs.length - 1; i >= 0; i--) {
 				                    f.removeChild(childs[i]);
 				                }
-				                $('#consultantId').val(pager.consultantId);
 				                $('#flag').val(pager.flag);
-				                
-				                $('.mui-pull-caption-down').html('');				                
+				                $('.mui-pull-caption-down').html('');
 				                getData(pager);
 			            }
 			        }
@@ -63,25 +60,27 @@
 		    	var staffHtmlList = '';
 		    	var ass=[];
 		        mui.ajax("/a/biz/order/bizOrderHeader/listData4mobile",{
-		            data:params,               
+		            data:params,
 		            dataType:'json',
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		          	    console.log(res)
 		          	    $.ajax({
 			                type: "GET",
 			                url: "/a/sys/dict/listData",
 			                dataType: "json",
 			                data: {type: "biz_order_type"},
 			                async:false,
-			                success: function(res){                 
+			                success: function(res){
 				                ass=res;
 			                }
 			            });
-		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-
-						var arrLen = res.data.page.list.length;	
+						var arrLen = res.data.page.list.length;
+						if(arrLen <20 ){
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+						}else{
+							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true)
+						}
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
@@ -95,20 +94,6 @@
 	                        		orderTypeTxt = items.label
 	                        	}
                            })
-//							if(item.orderType == 1) {
-//								orderTypeTxt = '普通订单'
-//							}else if(item.orderType == 2) {
-//								orderTypeTxt = '帐期采购'
-//							}else if(item.orderType == 3) {
-//								orderTypeTxt = '配资采购'
-//							}else if(item.orderType == 4) {
-//								orderTypeTxt = '微商订单'
-//							}else if(item.orderType == 5) {
-//								orderTypeTxt = '代采订单'
-//							}else if(item.orderType == 6) {
-//								orderTypeTxt = '拍照下单'
-//							}
-							
                         	//审核
                         	var staCheckBtn = '';
                         	var staCheckBtnTxt = '';
@@ -155,7 +140,7 @@
 //											'<label>业务状态:</label>' +
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center hhh">' +
+										'<div class="app_color40 mui-row app_text_center content_part operation">' +
 											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
@@ -171,22 +156,23 @@
 										'</div>' +
 									'</div>'
 								});
-								$('#staOrdList').append(staffHtmlList);
+								$('#orderList').append(staffHtmlList);
 								_this.stOrdHrefHtml()
 					} else {
 								$('.mui-pull-bottom-pocket').html('');
-								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);							
+								$('#orderList').append('<p class="noneTxt">暂无数据</p>');
+								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 							}
 						totalPage = res.data.page.count%pager.size!=0?
 		                parseInt(res.data.page.count/pager.size)+1:
 		                res.data.page.count/pager.size;
-		                if(totalPage==pager.pageNo){		                	
-			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
-			                
+//		                console.log(totalPage)
+		                if(totalPage==pager.pageNo){
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
-			            } 			           
+			            }
 			        },
 		            error:function(xhr,type,errorThrown){
 //			            console.log(type);
@@ -210,42 +196,30 @@
 		stOrdHrefHtml: function() {
 			var _this = this;
 		/*查询*/
-			$('.header').on('tap', '#staOrdSechBtn', function() {
+			$('.app_header').on('tap', '#staOrdSechBtn', function() {
 				var url = $(this).attr('url');
-				var staListId = $('#consultantId').val();
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
-						url: "../../../html/staffMgmtHtml/orderHtml/staOrdSech.html",
+						url: "../../html/orderMgmtHtml/orSearch.html",
 						extras:{
-							staListId: staListId,
 						}
 					})
 				}
 			}),
-		/*客户专员列表*/
-			$('#nav').on('tap','.staOrdStaBtn', function() {
-				var url = $(this).attr('url');
-				GHUTILS.OPENPAGE({
-					url: "../../../html/staffMgmtHtml/staffList.html",
-					extras: {
-						
-					}
-				})
-			}),	
 		/*首页*/
-			$('#nav').on('tap','.inHomePage', function() {
+			$('#nav').on('tap','.staHomePage', function() {
 				var url = $(this).attr('url');
 				GHUTILS.OPENPAGE({
 					url: "../../html/backstagemgmt.html",
 					extras: {
-						
+
 					}
 				})
 			}),
 		 /*待审核*/
-	       $('.hhh').on('tap', '.waitCheckBtn', function() {
+	       $('.content_part').on('tap', '.waitCheckBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');//订单 ID
 				var flagTxt = $('#flag').val();
@@ -258,7 +232,7 @@
 				if(consultantIda) {
 					stcheckIdTxt = consultantIda
 				}
-				console.log(staListIdTxts)
+//				console.log(staListIdTxts)
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
@@ -273,7 +247,7 @@
 				}
 			}),
 		/*修改*/
-	       $('.hhh').on('tap', '.staOraAmendBtn', function() {
+	       $('.content_part').on('tap', '.staOraAmendBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
 				if(url) {
@@ -286,9 +260,9 @@
 						}
 					})
 				}
-			}),	
+			}),
 		/*详情*/
-			$('.hhh').on('tap', '.staOrDetailBtn', function() {
+			$('.content_part').on('tap', '.staOrDetailBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
 				if(url) {
@@ -363,31 +337,37 @@
 		seachFunc:function(){
 			var _this = this;
 			var staffHtmlList = '';
-			var nameTxt = '';
-			if(_this.userInfo.newinput) {
-				nameTxt = decodeURIComponent(_this.userInfo.checkStatus)
+//			var nameTxt = '';
+//			if(_this.userInfo.checkStatus) {
+//				nameTxt = decodeURIComponent(_this.userInfo.checkStatus)
+//			}else {
+//				nameTxt = ''
+//			}
+			var nameTxts = '';
+			if(_this.userInfo.Purchasing) {
+				nameTxts = decodeURIComponent(_this.userInfo.Purchasing)
 			}else {
-				nameTxt = ''
+				nameTxts = ''
 			}
-			
 			$.ajax({
 				type: 'GET',
                 url: '/a/biz/order/bizOrderHeader/listData4mobile',
 				data: {
 					'pageNo': 1,
 					'orderNum' : _this.userInfo.staOrder,
-                    'centersName': _this.userInfo.Purchasing,
+                    'centersName': nameTxts,
                     'customer.phone': _this.userInfo.OrdMobile,
                     'itemNo': _this.userInfo.OrdNumbers,
-                    'con.name': _this.userInfo.OrdClient,
                     'bizStatus': _this.userInfo.orderStatus,
-                    'selectAuditStatus': nameTxt, //originConfigMap
+//                  'selectAuditStatus': nameTxt, //originConfigMap
                     'customer.id':_this.userInfo.newinput,
-//                  consultantId: _this.userInfo.staListSehId
+					includeTestData: _this.userInfo.includeTestData,
+					mobileAuditStatus: _this.userInfo.mobileAuditStatus,
+					flag: _this.userInfo.flagTxt
 				},
 				dataType: 'json',
 				success: function(res) {
-					$('#staListIdTxt').val(_this.userInfo.staListSehId)//查询出来的客户专员 ID
+					$('#flag').val(_this.userInfo.flagTxt)
 					$.ajax({
 			                type: "GET",
 			                url: "/a/sys/dict/listData",
@@ -409,14 +389,13 @@
 	                        	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
 	                            var orderTypeTxt = '';
 	                            $.each(ass,function(i,items){
-	                            	console.log(items.value)
 		                        	if(item.orderType==items.value) {
 		                        		orderTypeTxt = items.label
 		                        	}
 	                            })
 								var staCheckBtn = '';
 	                        	var staCheckBtnTxt = '';
-				                if(_this.staCheckFlag == true) {
+				                if(_this.staOrdFlag == true) {
 				                	if(item.bizStatus==0 || item.bizStatus==5 || item.bizStatus==10) {
 				                		staCheckBtn = 'waitCheckBtn'
 				                		staCheckBtnTxt = "待审核"
@@ -460,9 +439,9 @@
 //											'<label>业务状态:</label>' +
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
-										'<div class="app_font_cl content_part mui-row app_text_center hhh">' +
+										'<div class="app_color40 mui-row app_text_center content_part operation">' +
 											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
+												'<li class="mui-table-view-cell" id="flagid">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
 //											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
 //												'<li class="mui-table-view-cell">出库确认</li>' +
@@ -476,10 +455,10 @@
 										'</div>' +
 									'</div>'
 								});
-								$('#staOrdList').append(staffHtmlList);
+								$('#orderList').append(staffHtmlList);
 								_this.stOrdHrefHtml()
 					}else{
-						$('#staOrdList').append('<p class="noneTxt">暂无数据</p>');
+						$('#orderList').append('<p class="noneTxt">暂无数据</p>');
 						$('#staOrdSechBtn').hide();
 					}
 				}

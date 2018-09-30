@@ -134,7 +134,7 @@
 				<td>${off.remarks}</td>
                 <shiro:hasPermission name="sys:office:edit"><td>
 					<c:if test="${off.delRemark==1}">
-						<shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit">
+						<shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:change">
 							<a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更客户专员</a>
 						</shiro:hasPermission>
 						<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">修改</a>

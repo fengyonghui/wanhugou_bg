@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<title>审核</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
-		<link href="../../css/app.css?time=20180912" rel="stylesheet" />
+		<link href="../../css/app.css?time=20180930" rel="stylesheet" />
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
@@ -15,48 +15,202 @@
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
 				<label>备货单编号：</label>
-				<input type="text" class="mui-input-clear" id="checkPoordNum" disabled>
+				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
 			</div>
+			<div class="mui-input-row" id="orderTypebox">
+				<label>备货方：</label>
+				<div id="changeTxt" class="labelri inStock">
+		    		采购中心备货
+			        <input id="fromType1" type="radio" name="fromType" value="1" class="inputRadio" disabled/>
+	                厂商备货
+			        <input id="fromType2" type="radio" name="fromType" value="2" class="inputRadio" disabled/>
+		       </div>
+		    </div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
-				<input type="text" class="mui-input-clear" id="checkOrordNum" disabled>
+				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商：</label>
+				<input type="text" class="mui-input-clear" id="insupplier" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商卡号：</label>
+				<input type="text" class="mui-input-clear" id="insupplierNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>收款人：</label>
+				<input type="text" class="mui-input-clear" id="insupplierMoney" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>开户行：</label>
+				<input type="text" class="mui-input-clear" id="insupplierBank" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商合同：</label>
+				<div id="insuppliercontract"></div>									
+			</div>
+			<div class="mui-input-row">
+				<label>身份证：</label>
+				<div id="insuppliercardID"></div>	
 			</div>
 			<div class="mui-input-row">
 				<label>收货时间：</label>
-				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
+				<input type="date" class="mui-input-clear" id="inPoLastDa" disabled>
 			</div>
-			<div class="mui-input-row">
-				<div class="labelLf">备货商品：</div>
-				<ul id="checkCommodityMenu" class="listBlue mui-table-view">
-					
-				</ul>
+			<div class="mui-input-row" id="inlastDate">
+				
 			</div>
-			<div class="mui-input-row">
+			<div class="mui-row">
+				<div class="labelLf">备货商品：</div>							
+			</div>
+			<div class="mui-row app_bline2 inComdty inAddComdty" id="commodityMenu">
+			</div>
+			<div class="mui-row">
+				<div class="labelLf" id="labelLf">商品库存：</div>
+			</div>
+			<div class="mui-row app_bline2 inComdty inAddComdty" id="Goodsstock">
+			</div>
+			<div class="mui-input-row" id="inPaylistbox">
+				<div class="labelLf">支付列表：</div>
+				<ul id="inPaylist" class="mui-table-view"></ul>
+			</div>
+			<div class="mui-input-row remark">
 				<label>备注：</label>
-				<textarea id="checkPoRemark" name="" rows="" cols="" disabled></textarea>
+				<textarea id="inPoRemark" name="" rows="" cols="" readonly></textarea>
+			</div>
+			<div class="mui-input-row">
+				<label>审核状态：</label>
+				<input type="text" id="incheck" class="mui-input-clear" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>业务状态：</label>
-				<input type="text" id="checkPoDizstatus" class="mui-input-clear" disabled>
+				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
 			</div>
+			<div class="mui-input-row">
+				<label>排产状态：</label>
+				<input type="text" id="inSchedulstatus" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>排产类型：</label>
+				<input type="text" id="inSchedultype" class="mui-input-clear" disabled>
+			</div>
+			<!--<div class="mui-input-row inComdty inDetailComdty" id="stockGoods">
+				<div class="labelLf">采购商品：</div>
+				<ul id="purchaseMenu" class="mui-table-view"></ul>									
+			</div>-->
+			<!--<div class="mui-input-row inComdty inProduction" id="schedulingPlan_forHeader">
+				<div class="labelLf">按订单排产：</div>
+				<div class="mui-row app_bline3">
+					<label class="app_pr0 app_f13">排产记录：</label>
+					<ul id="schedulingHeader" class="mui-table-view app_fr app_w70p"></ul>											
+				</div>
+				<div class="schedulingHeaderRemark remark">
+					<label class="app_pr0 app_f13">排产备注：</label>
+				</div>				
+			</div>
+			<div class="mui-input-row inComdty inProduction" id="schedulingPlan_forSku">
+				<div class="labelLf">按商品排产：</div>
+				<ul id="purchaseMenus" class="mui-table-view app_bline3"></ul>
+				<div class="mui-row app_bline3">
+					<label class="app_pr0 app_f13">排产记录：</label>
+					<ul id="schedulingHeaders" class="mui-table-view app_fr app_w70p"></ul>											
+				</div>
+				<div class="schedulingHeaderRemarks remark">
+					<label class="app_pr0 app_f13">排产备注：</label>
+				</div>			
+			</div>-->
 			<!--审批流程块 有的话显示-->
 			<div class="mui-input-row">
 				<div class="labelLf">状态流程：</div>
-				<ul class="" id="inCheckMen">
-					
-				</ul>
+				<ul class="flowPath" id="inCheckAddMenu"></ul>									
 			</div>
+			<div class="mui-input-row app_bline2">
+				<div class="labelLf">审批流程：</div>
+				<ul class="flowPath" id="inapprovalAddMenu"></ul>									
+			</div>
+			
+	<!-------排产------->
+			<div class="mui-input-row" id="schedulingTxt">
+				<div class="mui-input-row" id="orderTypebox">
+					<label>排产类型：</label>
+					<div id="changeTxt" class="labelri inStock">
+			    		按订单排产
+				        <input id="fromType1" type="radio" name="schedulType" value="0" class="inputRadio" checked disabled/>
+	            		按商品排产
+				        <input id="fromType2" type="radio" name="schedulType" value="1" class="inputRadio" disabled/>
+			       </div>
+			    </div>
+		<!--按订单排产-->	    
+			    <div class="mui-input-row schedPurch app_bline2">
+			    	<div class="mui-input-row inComdty inDetailComdty">
+						<div class="labelLf">采购商品：</div>
+						<ul id="orSchedPurch" class="mui-table-view">
+							
+						</ul>									
+					</div>
+					<div class="labelLf">按订单排产：</div>
+					<div class="mui-row app_f13 app_bline2">
+						<div class="mui-input-row">
+							<label>总申报数量：</label>
+							<input type="text" id="purchOrdQty" disabled>
+						</div>
+						<!--<div class="mui-input-row">
+							<label>总待排产量：</label>
+							<input type="text" id="purchWaiteNum" disabled>
+						</div>	
+						<div class="mui-input-row">
+							<label>已排产数量：</label>
+							<input type="text" id="toalSchedulingNum" disabled>
+						</div>-->
+						<div class="inAddBtnParent">
+							<button id="purchAddBtn" type="submit" class="inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>
+						</div> 
+					</div>
+					<div class="mui-row">
+						<div class="labelLf">排产计划</div>
+						<div class="mui-row app_f13" id="purchAddCont">
+							<div class="mui-row app_bline" id="purchPlan">
+								<div class="mui-input-row">
+									<label>完成日期：</label>
+									<input type="date" id="purchDate">
+								</div>
+								<div class="mui-input-row">
+									<label>排产数量：</label>
+									<input type="text" id="purchNum" class="mui-input-clear">
+								</div>
+							</div>	
+							
+						</div>
+					</div>
+				</div>
+		<!--按商品排产-->
+				<div class="mui-input-row schedCommd">
+					<div class="labelLf">按商品排产：</div>
+					<ul id="orSchedCommd" class="mui-table-view">
+						
+					</ul>
+				</div>
+				
+				<div class="mui-input-row remark">
+					<label>备注：</label>
+					<textarea id="orRemark" ></textarea>
+				</div>
+			</div>	
 		</div>
-		<div class="app_p20">
-		    <button id="inCheckBtn" type="submit" class="mui-btn mui-btn-blue">审核通过</button>
-			<button id="inRejectBtn" type="submit" class="mui-btn mui-btn-blue">审核驳回</button>
+		<div class="app_p20 app_pl25 app_pr25 checkBtn">
+		    <button id="inCheckBtn" type="submit" class="mui-btn mui-btn-blue passBtn">审核通过</button>
+			<button id="inRejectBtn" type="submit" class="mui-btn mui-btn-blue app_fr RejectBtn">审核驳回</button>
 		</div>
+		
 	<div class="clear"></div>
+	<input type="hidden" id="createPo"/>
+	<input type="hidden" id="supplierId"/>
 	<input type="hidden" name="currentType" id="currentType" value="" />
 	<script src="../../js/component/mui.min.js"></script>
 	<script src="../../js/component/zepto.min.js"></script>
 	<script src="../../js/component/GHutils.js"></script>
-	<script src="../../js/inventoryMagmetJs/inCheck.js?time=20180912"></script>
+	<script src="../../js/inventoryMagmetJs/inCheck.js?time=20180930"></script>
     </body>
 </html>
 

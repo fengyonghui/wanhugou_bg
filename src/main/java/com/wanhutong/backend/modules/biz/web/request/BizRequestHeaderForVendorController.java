@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.request;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -13,6 +14,8 @@ import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
+import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -42,6 +45,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
+import com.wanhutong.backend.modules.biz.web.order.BizOrderHeaderController;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
@@ -60,6 +64,7 @@ import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -69,6 +74,8 @@ import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.codehaus.jackson.type.TypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -105,6 +112,8 @@ import java.util.Set;
 @RequestMapping(value = "${adminPath}/biz/request/bizRequestHeaderForVendor")
 public class BizRequestHeaderForVendorController extends BaseController {
 
+	protected static final Logger LOGGER = LoggerFactory.getLogger(BizOrderHeaderController.class);
+
 	@Autowired
 	private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
 	@Autowired
@@ -137,6 +146,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	private OfficeService officeService;
 	@Autowired
 	private CommonProcessService commonProcessService;
+    @Autowired
+    private SystemService systemService;
 
 	public static final String REQUEST_HEADER_TABLE_NAME = "biz_request_header";
 	public static final String REQUEST_DETAIL_TABLE_NAME = "biz_request_detail";
@@ -564,16 +575,24 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				/* 查询已生成的采购单 标识*/
 				bizRequestDetail.setPoheaderSource("poHeader");
 			}
+
+			List<Integer> skuInfoIdList = Lists.newArrayList();
+			List<BizRequestDetail> bizRequestDetails = bizRequestHeader.getRequestDetailList();
+			if (CollectionUtils.isNotEmpty(bizRequestDetails)) {
+				for (BizRequestDetail requestDetail : bizRequestDetails) {
+					BizSkuInfo bizSkuInfo = requestDetail.getSkuInfo();
+					skuInfoIdList.add(bizSkuInfo.getId());
+				}
+				model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
+				resultMap.put("skuInfoIdListListJson", skuInfoIdList);
+			}
+
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
 			BizInventorySku bizInventorySku = new BizInventorySku();
 			List<BizInventorySku> inventorySkuList =Lists.newArrayList();
 			List<Integer> skuIdList = new ArrayList<>();
-//			List<String> typeList = Lists.newLinkedList();
-//			typeList.add(OfficeTypeEnum.PURCHASINGCENTER.getType());
-//			List<Office> centList = officeService.findListByTypeList(typeList);
-//			model.addAttribute("centList",centList);
 			for (BizRequestDetail requestDetail : requestDetailList) {
-				//skuIdList.add(requestDetail.getSkuInfo().getId());
+				skuIdList.add(requestDetail.getSkuInfo().getId());
 				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
 				List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
 				inventorySkuList.addAll(list);
@@ -582,34 +601,46 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				}
 				BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 				requestDetail.setSkuInfo(skuInfo);
-				//requestDetail.setSellCount(findSellCount(requestDetail));
-				//Map<String, Integer> stockQtyMap = selectCentInvSku(centList, skuInfo, bizRequestHeader.getFromType());
-				//requestDetail.setInvSkuMap(stockQtyMap);
 				reqDetailList.add(requestDetail);
 			}
+			model.addAttribute("inventorySkuList",inventorySkuList);
 			resultMap.put("inventorySkuList", inventorySkuList);
-//			List<BizOrderHeader> orderHeaderList = bizRequestHeaderForVendorService.findOrderForVendReq(skuIdList, bizRequestHeader.getFromOffice().getId());
-//			model.addAttribute("orderHeaderList",orderHeaderList);
-//			resultMap.put("orderHeaderList", orderHeaderList);
+			List<BizOrderHeader> orderHeaderList = bizRequestHeaderForVendorService.findOrderForVendReq(skuIdList, bizRequestHeader.getFromOffice().getId());
+			model.addAttribute("orderHeaderList",orderHeaderList);
+			resultMap.put("orderHeaderList", orderHeaderList);
 			if (requestDetailList.size() == 0) {
 				bizRequestHeader.setPoSource("poHeaderSource");
 			}
 			RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
-			resultMap.put("defaultProcessId", requestOrderProcessConfig.getDefaultProcessId().toString());
+			model.addAttribute("defaultProcessId",requestOrderProcessConfig.getDefaultProcessId().toString());
+			model.addAttribute("autProcessId",requestOrderProcessConfig.getAutProcessId().toString());
+			resultMap.put("defaultProId", requestOrderProcessConfig.getDefaultProcessId().toString());
+			resultMap.put("autProcessId", requestOrderProcessConfig.getAutProcessId().toString());
 		}
 
-		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() == null) {
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && !"processPo".equals(bizRequestHeader.getProcessPo())) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+			model.addAttribute("requestOrderProcess", requestOrderProcess);
 			resultMap.put("requestOrderProcess", requestOrderProcess);
 		}
-		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getBizPoHeader().getCommonProcess() != null) {
+
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getBizPoHeader().getCommonProcess() != null && "processPo".equals(bizRequestHeader.getProcessPo())) {
 			com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizRequestHeader.getBizPoHeader().getCommonProcess().getType()));
+			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
 			resultMap.put("purchaseOrderProcess", purchaseOrderProcess);
 		}
 		if (bizRequestHeader.getBizPoHeader() != null) {
+			model.addAttribute("poSchType", bizRequestHeader.getBizPoHeader().getPoSchType());
 			resultMap.put("poSchType", bizRequestHeader.getBizPoHeader().getPoSchType());
 		}
+
+		String createPo = "no";
+		if (bizRequestHeader.getCommonProcess() != null && ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getCreatePoProcessId().toString().equals(bizRequestHeader.getCommonProcess().getType())) {
+			createPo = "yes";
+		}
+		model.addAttribute("createPo",createPo);
+		resultMap.put("createPoHeader", createPo);
 
 		if (bizRequestHeader.getId() != null && bizRequestHeader.getId() != 0) {
 			BizOrderStatus bizOrderStatus = new BizOrderStatus();
@@ -622,12 +653,34 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 			Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
 			List<BizPoPaymentOrder> paymentOrderList = getPayMentOrderByReqId(bizRequestHeader.getId());
+			model.addAttribute("paymentOrderList",paymentOrderList);
+			model.addAttribute("statusList", statusList);
+			model.addAttribute("statusMap", statusMap);
 
 			Map<Integer, String> stateDescMap = ReqHeaderStatusEnum.getStateDescMap();
 			resultMap.put("stateDescMap", stateDescMap);
 			resultMap.put("paymentOrderList", paymentOrderList);
 			resultMap.put("auditStatusList", statusList);
 			resultMap.put("bizAuditStatusMap", statusMap);
+		}
+
+		if (bizRequestHeader.getId() != null) {
+			BizPoHeader bizPoHeader = new BizPoHeader();
+			bizPoHeader.setBizRequestHeader(bizRequestHeader);
+			List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+			List<CommonProcessEntity> poAuditList = null;
+			if (CollectionUtils.isNotEmpty(poList)) {
+				BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+				bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
+				List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+				BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
+				for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
+					BigDecimal payTotal = poPaymentOrder.getPayTotal();
+					totalPayTotal = totalPayTotal.add(payTotal);
+				}
+				model.addAttribute("totalPayTotal", totalPayTotal);
+				resultMap.put("totalPayTotal", totalPayTotal);
+			}
 		}
 
 		User userAdmin = UserUtils.getUser();
@@ -916,6 +969,25 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 		bizRequestHeaderForVendorService.save(bizRequestHeader);
+
+		BizRequestDetail bizRequestDetail = new BizRequestDetail();
+		bizRequestDetail.setRequestHeader(bizRequestHeader);
+		List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+		BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+		for (BizRequestDetail requestDetail : requestDetailList) {
+			bizPoOrderReq.setSoLineNo(requestDetail.getLineNo());
+			bizPoOrderReq.setRequestHeader(requestDetail.getRequestHeader());
+			bizPoOrderReq.setSoType((byte) 2);
+			List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+			if (poOrderReqList != null && poOrderReqList.size() > 0) {
+				BizPoOrderReq poOrderReq = poOrderReqList.get(0);
+				BizPoHeader poHeader = poOrderReq.getPoHeader();
+				poHeader.setDelFlag("0");
+				poOrderReq.setDelFlag("0");
+				bizPoHeaderService.save(poHeader);
+				bizPoOrderReqService.save(poOrderReq);
+			}
+		}
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return true;
 	}
@@ -1146,9 +1218,18 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:audit")
 	@RequestMapping(value = "audit")
 	@ResponseBody
-	public String audit(int id, String currentType, int auditType, String description) {
-		String result = bizRequestHeaderForVendorService.audit(id, currentType, auditType, description);
-		return result;
+	public String audit(HttpServletRequest request, HttpServletResponse response, int id, String currentType, int auditType, String description, String createPo, String lastPayDateVal) {
+		try {
+			Pair<Boolean, String> audit = null;
+			audit = auditRe(request, response, id, currentType, auditType, description, createPo, lastPayDateVal);
+			if (audit.getLeft()) {
+				return JsonUtil.generateData(audit.getRight(), null);
+			}
+			return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);
+		}catch (Exception e) {
+			LOGGER.error("audit so error ", e);
+		}
+		return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, "操作失败,发生异常,请联系技术部", null);
 	}
 
     @RequiresPermissions("biz:request:bizRequestHeader:audit")
@@ -1437,4 +1518,107 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 		return JSONObject.fromObject(resultMap).toString();
 	}
+
+
+    public Pair<Boolean, String> auditRe(HttpServletRequest request, HttpServletResponse response, Integer reqHeaderId, String currentType, int auditType, String description, String createPo, String lastPayDateVal) throws ParseException {
+        BizRequestHeader bizRequestHeader = this.get(reqHeaderId);
+        CommonProcessEntity cureentProcessEntity  = bizRequestHeader.getCommonProcess();
+
+        if (cureentProcessEntity == null) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前订单无审核状态!");
+        }
+        cureentProcessEntity = commonProcessService.get(bizRequestHeader.getCommonProcess().getId());
+        if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
+            logger.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", reqHeaderId, currentType);
+            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常!");
+        }
+        RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
+
+        // 当前流程
+        RequestOrderProcessConfig.RequestOrderProcess currentProcess = requestOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
+        // 下一流程
+        RequestOrderProcessConfig.RequestOrderProcess nextProcess = requestOrderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
+        if (nextProcess == null) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前流程已经结束!");
+        }
+        User user = UserUtils.getUser();
+        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
+        Role role = new Role();
+        role.setEnname(roleEnNameEnum.getState());
+        if (!user.isAdmin() && !user.getRoleList().contains(role)) {
+            return Pair.of(Boolean.FALSE, "操作失败,该用户没有权限!");
+
+        }
+
+        if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
+            return Pair.of(Boolean.FALSE, "请输入驳回理由!");
+        }
+
+        cureentProcessEntity.setBizStatus(auditType);
+        cureentProcessEntity.setProcessor(user.getId().toString());
+        cureentProcessEntity.setDescription(description);
+        cureentProcessEntity.setCurrent(CommonProcessEntity.NOT_CURRENT);
+        commonProcessService.save(cureentProcessEntity);
+
+        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+        nextProcessEntity.setObjectId(bizRequestHeader.getId().toString());
+        nextProcessEntity.setObjectName(BizRequestHeaderForVendorService.DATABASE_TABLE_NAME);
+        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+        nextProcessEntity.setCurrent(CommonProcessEntity.CURRENT);
+
+
+        if (cureentProcessEntity.getType().equals(requestOrderProcessConfig.getDefaultProcessId().toString())) {
+            Integer bizStatus =  bizRequestHeader.getBizStatus();
+            bizRequestHeaderForVendorService.updateBizStatus(reqHeaderId,ReqHeaderStatusEnum.IN_REVIEW.getState());
+            if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.IN_REVIEW.getState())) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+            }
+        }
+
+        if(nextProcessEntity.getType().equals(requestOrderProcessConfig.getAutProcessId().toString())){
+            Integer bizStatus = bizRequestHeader.getBizStatus();
+            bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());
+            bizRequestHeaderForVendorService.saveRequestHeader(bizRequestHeader);
+            if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.APPROVE.getState())) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+            }
+            bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+            bizRequestHeaderForVendorService.saveRequestHeader(bizRequestHeader);
+            if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState())) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+            }
+        }
+        commonProcessService.save(nextProcessEntity);
+
+        StringBuilder phone = new StringBuilder();
+
+        User sendUser=new User(systemService.getRoleByEnname(nextProcess.getRoleEnNameEnum()==null?"":nextProcess.getRoleEnNameEnum().toLowerCase()));
+        List<User> userList = systemService.findUser(sendUser);
+        if (CollectionUtils.isNotEmpty(userList)) {
+            for (User u : userList) {
+                phone.append(u.getMobile()).append(",");
+            }
+        }
+        if (StringUtils.isNotBlank(phone.toString())) {
+            AliyunSmsClient.getInstance().sendSMS(
+                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                    phone.toString(),
+                    ImmutableMap.of("order","备货清单", "orderNum", bizRequestHeader.getReqNo()));
+        }
+
+        //自动生成采购单
+        Boolean poFlag = false;
+        String poId = "";
+        if ("yes".equals(createPo)) {
+            //备货单标识类型
+            String type = "1";
+            Pair<Boolean, String> booleanStringPair = bizPoHeaderService.goListForAutoSave(reqHeaderId, type, lastPayDateVal, request, response);
+            if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
+                return booleanStringPair;
+            }
+        }
+        return Pair.of(Boolean.TRUE, "操作成功!");
+    }
+
 }

@@ -194,6 +194,7 @@ a:hover{text-decoration:none;}
 .app_m20{margin: 20px;}
 .app_m25{margin: 25px;}
 
+.app_pt0{padding-top:0!important;}
 .app_pt1{padding-top:1px;}
 .app_pt3{padding-top:3px;}
 .app_pt10{padding-top: 10px;}
@@ -208,7 +209,7 @@ a:hover{text-decoration:none;}
 .app_pt70{padding-top: 70px;}
 .app_pt2em{padding-top: 2em;}
 
-
+.app_pb0{padding-bottom: 0!important;}
 .app_pb5{padding-bottom: 5px;}
 .app_pb10{padding-bottom: 10px;}
 .app_pb15{padding-bottom: 15px;}
@@ -220,6 +221,7 @@ a:hover{text-decoration:none;}
 .app_pb1em{padding-bottom: 1em;}
 .app_pb50{padding-bottom: 50px;}
 
+.app_pl0{padding-left: 0!important;}
 .app_pl5{padding-left: 5px;}
 .app_pl10{padding-left: 10px;}
 .app_pl15{padding-left: 15px;}
@@ -232,6 +234,7 @@ a:hover{text-decoration:none;}
 .app_pl3em{padding-left:3em;}
 .app_pl05em{padding-left:.5em;}
 
+.app_pr0{padding-right: 0!important;}
 .app_pr5{padding-right: 5px;}
 .app_pr10{padding-right: 10px;}
 .app_pr15{padding-right: 15px;}
@@ -244,6 +247,8 @@ a:hover{text-decoration:none;}
 .app_pr03em{padding-right:.3em;}
 .app_pr1_5em{padding-right:1.5em;}
 .app_pr2em{padding-right:2em;}
+
+.app_pall11_15 {padding: 11px 15px;}
 
 .app_mt5{margin-top:5px;}
 .app_mt8{margin-top: 8px;}
@@ -306,6 +311,7 @@ a:hover{text-decoration:none;}
 .app_w36p{width: 36%;}
 .app_w40p{width: 40%;}
 .app_w70p{width: 70%;}
+.app_w72p{width: 72%;}
 .app_w80p{width: 80%;}
 .app_w100{width: 100%;}
 .app_w100p{width: 100%;}
@@ -591,7 +597,7 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*红色 * 号，必填必选*/
-.mui-input-row font {color: red;position: absolute;right: 60px;top: 37%;font-size: 20px;}
+.mui-input-row font {color: red;position: absolute;right: 60px;top: 36%;font-size: 20px;}
 
 
 /*模糊查询列表显示---查询页面和经销店添加公共样式*/
@@ -617,24 +623,24 @@ body{font-size: 15px;color:#3b3b3b;}
 .inSaveBtn {width: 70%;margin: 20px auto;}
 
 /*移除、添加、删除---小按钮*/
-.inAddBtnParent {width: 25%;margin: 5px auto;}
-.inAddBtn {font-size: 15px;padding: 0;}
+.inAddBtn {font-size: 15px;padding: 0;width: 30%;margin: 5px auto;}
 /*查询小按钮--备货单添加、修改  和  经销店添加*/
 .comChoiceBtn {padding: 5px;border: none;width: 50px;position: absolute;right: 10px;top: 2px;background-color: #40ABE9;}
-
+/*======订单管理=======*/
+/*订单支出列表---排产*/
+#orSchedCommd li.mui-table-view-cell {padding: 0;}
 
 /*======备货单======*/
 /*备货单审核、详情---商品信息图片*/
 .photoParent {position: absolute;top: 50%;margin-top: -13%;}
 .photoParent img {width: 50px;}
-/*备货单支付*/		
-.pay-logo {width: 40px;margin-left: 20px;}
+.photoParents {margin-top: 13%;margin-left:10px;}
+.photoParents img {width: 50px;}
+/*备货单支付*/
+/*.pay-logo {width: 40px;margin-left: 20px;}
 .pay-txt {float: right;padding: 9px;width: 65%;}
-.pay-txt>input {position: absolute;right: 55px;}	
-	
-/*备货单添加和修改--备货商品	*/		
-/*.inputClassAdd>label.commodityName {padding: 0;font-size: 10px;width: 20%;}
-.inputClassAdd>input.commodityTxt {padding: 0;font-size: 10px;width: 80%;position: relative;}*/
+.pay-txt>input {position: absolute;right: 55px;}	*/
+
 /*备货单所有备货商品*/
 .inComdty div.mui-input-row input, .inComdty div.mui-input-row label {padding: 0;font-size: 12px;}
 /*备货单详情---支付列表*/
@@ -644,6 +650,17 @@ body{font-size: 15px;color:#3b3b3b;}
 /*备货单详情---备货商品*/
 .inDetailComdty div.mui-input-row label {width: 32%;}
 .inDetailComdty div.mui-input-row input {width: 68%;}
+/*备货单详情---排产*/
+.mui-content .inProduction label {width: 30%;}
+.mui-content .inProduction input {width: 70%;}
+
+/*备货单---货号查询 clear*/
+.mui-input-group .commodityClear .mui-input-clear~.mui-icon-clear {right: 4em;}
+
+/*备货单---备注*/
+.mui-input-group div.remark label {width: 30%;}
+.mui-input-group div.remark label~textarea {width: 66%;border: 1px solid #ccc;border-radius: 5px;margin: 5px 15px 5px -5px;padding-left: 15px;}
+
 /*备货单添加、修改---备货商品*/
 .inAddComdty div.mui-row li {padding: 5px;list-style: none;height: 30px;border-bottom: 1px solid #efeff4;}
 .inAddFont .mui-input-row  font {right: 8px;top: 20%;}/*申报数量 font*/
@@ -653,6 +670,8 @@ body{font-size: 15px;color:#3b3b3b;}
 /*两列*/
 .inAddComdty div.mui-input-row label {width: 43%;}
 .inAddComdty div.mui-input-row input {width: 57%;}
+/*备货单添加、修改---备货方选择*/
+.inStock {padding: 10px 14px 10px 0;text-align: left;font-size: 14px!important;}
 
 
 
@@ -664,13 +683,16 @@ body{font-size: 15px;color:#3b3b3b;}
 .clear {clear: both;}
 .app_bnp {padding: 0 !important;}
 
-/*运营管理*/
+
+
+/*======运营管理======*/
 .mui-table-view-cell p {border-bottom: 1px solid #e8e8e8;padding: 10px 15px 9px;}
 
-/*审核公共样式*/
+/*审核按钮*/
 .checkBtn button {color: #fff;width: 35%;}
-.checkBtn button.passBtn {background-color: #40ABE9;} 
+.checkBtn button.passBtn {background-color: #40ABE9;}
 .checkBtn button.RejectBtn {background-color: #dd5563;}
+
 
 /*订单审核产品信息*/
 .commodity div.mui-input-row input, .commodity div.mui-input-row label {padding: 0;font-size: 12px;}
@@ -692,7 +714,7 @@ body{font-size: 15px;color:#3b3b3b;}
 input[disabled],input:disabled,input.disabled{color: #000;/*-webkit-text-fill-color:#3b3b3b;*/-webkit-opacity:1;opacity: 1;}
 
 /*滑动---阻止默认事件*/
-a, #list  {touch-action: none;}
+a,#refreshContainer, #list,#nav  {touch-action: none;}
 
 /*改变 ios 默认radio样式 */
 input[type=radio].inputRadio {-webkit-appearance: none;position: relative;top: -1px;width: 15px;height: 15px;border: 1px solid #999;-webkit-border-radius: 50%;border-radius: 50%;background-color: #fff;vertical-align: middle;}

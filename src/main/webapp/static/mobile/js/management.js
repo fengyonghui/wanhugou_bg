@@ -89,20 +89,20 @@
                 }
 			})
         /*备货单管理*/
-//          $('#menuMaget').on('click','.childMenu',function(){
-//          	var url = $(this).attr('url');
-//				var purchId = $(this).attr('purchId');
-//              if(url) {
-//              	mui.toast('子菜单不存在')
-//              }else if(purchId==229) {
-//              	GHUTILS.OPENPAGE({
-//						url: "../html/inventoryMagmetHtml/inventoryList.html",
-//						extras: {
-//								purchId:purchId,
-//						}
-//					})
-//              }
-//			})
+            $('#menuMaget').on('click','.childMenu',function(){
+            	var url = $(this).attr('url');
+				var purchId = $(this).attr('purchId');
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(purchId==229 || purchId==679) {
+                	GHUTILS.OPENPAGE({
+						url: "../html/inventoryMagmetHtml/inventoryList.html",
+						extras: {
+								purchId:purchId,
+						}
+					})
+                }
+			})
         /*员工管理*/
             $('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');
@@ -127,13 +127,28 @@
 //              	mui.toast('子菜单不存在')
 //              }else if(purchId==133) {
 //              	GHUTILS.OPENPAGE({
-//						url: "../html/orderMgmtHtml/orderList.html",
+//						url: "../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 //						extras: {
 //								purchId:purchId,
 //						}
 //					})
 //              }
 //			})
+            /*订单支出信息*/
+            $('#menuMaget').on('click','.childMenu',function(){
+            	var url = $(this).attr('url');
+				var purchId = $(this).attr('purchId');
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(purchId==727 || purchId==699) {
+                	GHUTILS.OPENPAGE({
+						url: "../html/orderMgmtHtml/orderpaymentinfo.html",
+						extras: {
+								purchId:purchId,
+						}
+					})
+                }
+			})
         /*会员管理*/
 //          $('#menuMaget').on('click','.childMenu',function(){
 //          	var url = $(this).attr('url');
