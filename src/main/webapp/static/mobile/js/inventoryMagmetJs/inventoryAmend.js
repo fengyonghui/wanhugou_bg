@@ -53,11 +53,24 @@
         },
         pageInit: function() {
             var _this = this;
+            /*当前用户信息,判断修改时系统管理员可直接修改备货单状态，其余角色不可以*/
+			var userId = '';
+			$.ajax({
+                type: "GET",
+                url: "/a/getUser",
+                dataType: "json",
+                async:false,
+                success: function(user){                 
+					userId = user.data.id;
+					console.log(userId)
+					$('#bizStatusVal').val(userId)
+                }
+            });
             _this.searchSkuHtml();
             if(_this.inAddSaveFlag == true) {
-				_this.saveDetail();
+				_this.saveDetail(userId);
 			}
-            _this.getData();
+            _this.getData(userId);
             _this.ajaxCheckStatus();//业务状态
 		},
 		getPermissionList: function (markVal,flag) {
@@ -77,7 +90,7 @@
                 }
             });
         },
-        getData: function() {
+        getData: function(userId) {
             var _this = this;
             var strs = '';
             var ids = '';
@@ -154,19 +167,6 @@
                     var dataValue =_this.newData(res.data.bizRequestHeader.recvEta);
                     $('#inPoLastDa').val(dataValue);//收货时间  
                   
-		             /*当前用户信息,判断修改时系统管理员可直接修改备货单状态，其余角色不可以*/
-					var userId = '';
-					$.ajax({
-		                type: "GET",
-		                url: "/a/getUser",
-		                dataType: "json",
-		                async:false,
-		                success: function(user){                 
-				            console.log(user)
-							userId = user.data.id;
-							$('#bizStatusVal').val(userId)
-		                }
-		            });
 		            /*业务状态*/
 		            if(userId!=""&&userId==1){		            				       			       
 				       	var bizstatus = res.data.bizRequestHeader.bizStatus;
@@ -235,7 +235,7 @@
              return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d);
         },
         //保存按钮操作
-        saveDetail: function () {
+        saveDetail: function (userId) {
             var _this = this;
             //点击保存按钮操作 保存按钮控制修改商品申报数量和备货商品的添加
             $('#saveDetailBtn').on('tap',function(){
@@ -323,13 +323,15 @@
                 if(inPoLastDaVal == null || inPoLastDaVal == "") {
                     mui.toast("请选择收货时间！")
                     return;
-                }               
-                if($('#bizStatusVal').val()!=""&&$('#bizStatusVal').val()==1){
-                	if(bizStatusVal == null || bizStatusVal == "") {
-	                    mui.toast("请选择业务状态！")
-	                    return;
-	                }
-                }                
+                }   
+                if(userId!=""&&userId==1){
+                	if($('#bizStatusVal').val()!=""&&$('#bizStatusVal').val()==1){
+	                	if(bizStatusVal == null || bizStatusVal == "") {
+		                    mui.toast("请选择业务状态！")
+		                    return;
+		                }
+                	} 
+                }
 //              console.log(_this.fromOfficeId);
 //              console.log(_this.bizOfficeId);
                 $.ajax({

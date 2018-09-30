@@ -43,9 +43,9 @@
             }else{
             	$('#inputDivAdd').parent().parent().hide();
             }
-			
+			console.log(userId)
 			if(_this.inAddSaveFlag == true) {
-				_this.saveDetail();
+				_this.saveDetail(userId);
 			}
 		},
 		getPermissionList: function (markVal,flag) {
@@ -65,7 +65,7 @@
 			var _this = this;
             _this.removeItem();
 		},
-        saveDetail: function () {
+        saveDetail: function (userId) {
             var _this = this;
             mui('.inSaveBtn').on('tap','#inSaveBtn',function(){
                 var skuIds = _this.skuInfoIds.split(",");
@@ -111,9 +111,12 @@
                     mui.toast("请选择收货时间！")
                     return;
                 }
-                if(bizStatusVal == null || bizStatusVal == "") {
-                    mui.toast("请选择业务状态！")
-                    return;
+                console.log(userId)
+                if(userId!=""&&userId==1){
+                	if(bizStatusVal == null || bizStatusVal == "") {
+	                    mui.toast("请选择业务状态！")
+	                    return;
+	                }
                 }
                 //选择备货方：
                 var r2 = document.getElementsByName("localOriginType");
