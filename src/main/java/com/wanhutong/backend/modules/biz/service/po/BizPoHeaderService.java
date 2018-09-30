@@ -136,6 +136,10 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         return super.findList(bizPoHeader);
     }
 
+    public int findCount(BizPoHeader bizPoHeader) {
+        return dao.findCount(bizPoHeader);
+    }
+
     @Override
     public Page<BizPoHeader> findPage(Page<BizPoHeader> page, BizPoHeader bizPoHeader) {
         return super.findPage(page, bizPoHeader);
@@ -622,6 +626,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         bizPoPaymentOrder.setDeadline(bizPoHeader.getPayDeadline());
         bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
+
+        commonProcessEntity.setObjectId(bizPoPaymentOrder.getId().toString());
+        commonProcessService.save(commonProcessEntity);
 
         bizPoHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
         this.updatePaymentOrderId(bizPoHeader.getId(), bizPoPaymentOrder.getId());

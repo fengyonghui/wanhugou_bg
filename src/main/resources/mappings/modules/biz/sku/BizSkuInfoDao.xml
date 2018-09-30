@@ -132,6 +132,11 @@
 					#{skuId}
 				</foreach>
 			</if>
+
+			<if test="notPutaway !=null and notPutaway = 1">
+				and exists (select 1 from biz_inventory_sku bis where bis.sku_id = a.id and bis.status = 1 AND bis.stock_qty > 0 )
+				and not exists (select 1 from biz_op_shelf_sku boss where boss.sku_id = a.id and boss.status = 1)
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -141,6 +146,76 @@
 				ORDER BY a.update_time DESC
 			</otherwise>
 		</choose>
+	</select>
+
+	<select id="findCount" resultType="Integer">
+		SELECT
+		count(1)
+		FROM biz_sku_info a
+		<include refid="bizSkuInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			and bpi.status = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id =#{id}
+			</if>
+			<if test="skuType != null and skuType != ''">
+				AND a.sku_type =#{skuType}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="partNo != null and partNo != ''">
+				AND a.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
+			</if>
+			<if test="itemNo != null and itemNo != ''">
+				AND a.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.id !=null and productInfo.id!=''">
+				AND a.prod_id =#{productInfo.id}
+			</if>
+			<if test="productInfo != null and productInfo.name !=null and productInfo.name!=''">
+				AND bpi.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.prodCode !=null and productInfo.prodCode!=''">
+				AND bpi.prod_code LIKE
+
+				<if test="dbName == 'oracle'">'%'||#{productInfo.prodCode}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.prodCode}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.prodCode},'%')</if>
+			</if>
+
+			<if test="productInfo != null and productInfo.brandName !=null and productInfo.brandName!=''">
+				AND bpi.brand_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.brandName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.brandName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.brandName},'%')</if>
+			</if>
+			<if test="skuIds!=null and skuIds!='' and skuIds.size()!=0">
+				and a.id in
+				<foreach collection="skuIds" item="skuId" index="index"
+						 open="(" close=")" separator=",">
+					#{skuId}
+				</foreach>
+			</if>
+
+			<if test="notPutaway !=null and notPutaway = 1">
+				and exists (select 1 from biz_inventory_sku bis where bis.sku_id = a.id and bis.status = 1 AND bis.stock_qty > 0 )
+				and not exists (select 1 from biz_op_shelf_sku boss where boss.sku_id = a.id and boss.status = 1)
+			</if>
+		</where>
 	</select>
 
 	<select id="findListByParam" resultMap="BizSkuInfoMap">

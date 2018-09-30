@@ -8,9 +8,9 @@ public enum RoleEnNameEnum {
      */
     P_CENTER_MANAGER("p_center_manager", "采购中心经理"),
     /**
-     * 采购专员
+     * 客户专员
      */
-    BUYER("buyer", "采购专员"),
+    BUYER("buyer", "客户专员"),
     /**
      * 运营总监
      */
@@ -71,6 +71,11 @@ public enum RoleEnNameEnum {
      * 渠道经理
      */
     CHANNEL_MANAGER("channel_manager","渠道经理"),
+
+    /**
+     * 渠道主管
+     */
+    CHANNEL_SUPERVISOR("Channel Supervisor","渠道主管"),
 
     /**
      * 提付款专员

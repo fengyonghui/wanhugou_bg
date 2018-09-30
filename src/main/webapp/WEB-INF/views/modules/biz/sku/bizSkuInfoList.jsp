@@ -51,6 +51,7 @@
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizSkuInfo" action="${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=${prodType}" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+		<input id="previousPage" name="previousPage" type="hidden" value="${bizSkuInfo.previousPage}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
             <li><label>商品类型：</label>
@@ -74,7 +75,16 @@
 			<li><label>供应商：</label>
 				<form:input path="productInfo.vendorName" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
+			<li><label>未上架<a href="javascript:alert('各采购中心仓库中库存大于0且未上架');" data-toggle="tooltip" title="各采购中心仓库中库存大于0且未上架">?</a></label>
+				<form:select path="notPutaway" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:option value="1" label="是"/>
+				</form:select>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<c:if test="${bizSkuInfo.previousPage == 'myPanel'}">
+				<li class="btns"><a href="${ctx}/sys/myPanel/index"><input class="btn" type="button" value="返回我的任务"/></a></li>
+			</c:if>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>

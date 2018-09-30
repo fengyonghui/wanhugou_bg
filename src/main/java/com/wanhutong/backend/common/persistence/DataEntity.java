@@ -28,6 +28,10 @@ public abstract class DataEntity<T> extends BaseEntity<T> {
 	protected String delFlag; 	// 删除标记（1：正常；0：删除；2：审核）
 	protected Integer uVersion;  //版本控制
 	protected String dataStatus; //数据状态
+	/**
+	 * 来自哪个页面
+	 */
+	protected String previousPage;
 	public DataEntity() {
 		super();
 		this.delFlag = DEL_FLAG_NORMAL;
@@ -138,5 +142,13 @@ public abstract class DataEntity<T> extends BaseEntity<T> {
 
 	public void setDataStatus(String dataStatus) {
 		this.dataStatus = dataStatus;
+	}
+
+	public String getPreviousPage() {
+		return previousPage;
+	}
+
+	public void setPreviousPage(String previousPage) {
+		this.previousPage = previousPage;
 	}
 }

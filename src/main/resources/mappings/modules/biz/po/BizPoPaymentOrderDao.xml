@@ -94,6 +94,9 @@
 			<include refid="bizPoPaymentOrderColumns"/>
 		FROM biz_po_payment_order a
 		<include refid="bizPoPaymentOrderJoins"/>
+		<if test="auditStatusCode != null and auditStatusCode != 0">
+			LEFT JOIN common_process poprocess ON poprocess.id = po.process_id
+		</if>
 		<where>
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
@@ -112,6 +115,8 @@
 			</if>
 			<if test="auditStatusCode != null and auditStatusCode != 0">
 				AND process.type = #{auditStatusCode}
+				and poprocess.type = 7
+				and a.total > 0
 			</if>
 		</where>
 		group by a.id
@@ -124,7 +129,42 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
+	<select id="findCount" resultType="Integer">
+		SELECT
+			count(1) from
+		(SELECT
+			1
+		FROM biz_po_payment_order a
+		<include refid="bizPoPaymentOrderJoins"/>
+		<if test="auditStatusCode != null and auditStatusCode != 0">
+			LEFT JOIN common_process poprocess ON poprocess.id = po.process_id
+		</if>
+		<where>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="poHeaderId != null and poHeaderId != ''">
+				AND a.po_header_id = #{poHeaderId}
+			</if>
+			<if test="total != null and total != ''">
+				AND a.total = #{total}
+			</if>
+			<if test="bizStatus != null and bizStatus != -1">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="orderType != null">
+				AND a.type = #{orderType}
+			</if>
+			<if test="auditStatusCode != null and auditStatusCode != 0">
+				AND process.type = #{auditStatusCode}
+				and poprocess.type = 7
+				and a.total > 0
+			</if>
+		</where>
+		group by a.id) as t
+	</select>
+
 	<select id="findAllList" resultType="BizPoPaymentOrder">
 		SELECT 
 			<include refid="bizPoPaymentOrderColumns"/>

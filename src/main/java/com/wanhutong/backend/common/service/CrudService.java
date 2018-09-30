@@ -52,7 +52,7 @@ public abstract class CrudService<D extends CrudDao<T>, T extends DataEntity<T>>
 	public List<T> findList(T entity) {
 		return dao.findList(entity);
 	}
-	
+
 	/**
 	 * 查询分页数据
 	 * @param page 分页对象

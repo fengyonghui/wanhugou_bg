@@ -106,9 +106,11 @@
 <form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader?statu=${statu}" method="post" class="breadcrumb form-search">
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+	<input id="previousPage" name="previousPage" type="hidden" value="${bizOrderHeader.previousPage}"/>
 	<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
 	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 	<input type="hidden" name="source" value="${source}"/>
+	<input type="hidden" name="str" value="${bizOrderHeader.str}"/>
 	<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
 		<input type="hidden" name="skuChickCount" value="${bizOrderHeader.skuChickCount}"/>
 		<input type="hidden" name="partNo" value="${bizOrderHeader.partNo}"/>
@@ -191,21 +193,33 @@
                    value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
         </li>
-		<li><label>同意发货:</label>
-			<select name="mobileAuditStatus" class="input-medium">
-				<option value="">请选择</option>
-				<option value="0">待审核</option>
-				<option value="1">审核失败</option>
-				<option value="2">其他</option>
-			</select>
+		<li><label>待同意发货:</label>
+			<form:select path="mobileAuditStatus" class="input-medium">
+				<form:option value="">请选择</form:option>
+				<form:option value="0">待审核</form:option>
+				<form:option value="1">审核失败</form:option>
+				<form:option value="2">其他</form:option>
+			</form:select>
+		</li>
+		<li><label>待发货</label>
+			<form:select path="waitShipments" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:option value="1" label="是"/>
+			</form:select>
+		</li>
+		<li><label>待出库</label>
+			<form:select path="waitOutput" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:option value="1" label="是"/>
+			</form:select>
 		</li>
 		<c:if test="${statu == 'unline'}">
 			<li><label>审核状态:</label>
-				<select name="examine" class="input-medium">
-					<option value="0">请选择</option>
-					<option value="1">审核完成</option>
-					<option value="2">未审核完成</option>
-				</select>
+				<form:select path="examine" class="input-medium">
+					<form:option value="0">请选择</form:option>
+					<form:option value="1">审核完成</form:option>
+					<form:option value="2">未审核完成</form:option>
+				</form:select>
 			</li>
 		</c:if>
 		<li><label>测试数据</label>
@@ -214,13 +228,16 @@
 
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
+		<c:if test="${bizOrderHeader.previousPage == 'myPanel'}">
+			<li class="btns"><a href="${ctx}/sys/myPanel/index"><input class="btn" type="button" value="返回我的任务"/></a></li>
+		</c:if>
 		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
 			<li class="btns"><input class="btn" type="button" value="返回商品信息管理" onclick="location.href='${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=1'"/></li>
 		</c:if>
 		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'prodCick_count'}">
 			<li class="btns"><input class="btn" type="button" value="返回产品信息管理" onclick="location.href='${ctx}/biz/product/bizProductInfoV2?prodType=1'"/></li>
 		</c:if>
-		<c:if test="${bizOrderHeader.flag=='check_pending'}">
+		<c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.previousPage != 'myPanel'}">
 			<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/></li>
 		</c:if>
 		<li class="clearfix"></li>

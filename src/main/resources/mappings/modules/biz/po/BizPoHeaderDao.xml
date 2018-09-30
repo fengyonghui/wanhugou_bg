@@ -172,6 +172,14 @@
 			<if test="waitPay != null and waitPay == 1">
 				AND (select bppo.biz_status from biz_po_payment_order bppo join common_process dcp  on bppo.process_id = dcp.id
 				WHERE bppo.id = a.current_payment_id and dcp.type = 666) = 0
+				and process.type = 7
+			</if>
+
+			<if test="applyPayment != null and applyPayment == 1">
+				AND (a.current_payment_id is null or a.current_payment_id = 0)
+				and (a.total_detail + a.total_exp + a.freight) > a.pay_total
+                and process.type = 7
+				and 37 > rh.biz_status
 			</if>
 		</where>
 		GROUP BY a.id
@@ -184,6 +192,110 @@
 				ORDER BY updateDate DESC, id DESC
 			</otherwise>
 		</choose>
+	</select>
+
+	<select id="findCount" resultType="Integer">
+		SELECT
+			count(1) FROM (select 1
+		FROM biz_po_header a
+		<include refid="bizPoHeaderJoins"/>
+		LEFT JOIN biz_po_payment_order ppo ON ppo.po_header_id = a.id
+		LEFT JOIN biz_po_order_req por ON por.po_id = a.id AND por.status = 1
+		LEFT JOIN biz_order_header oh ON oh.id = por.so_id AND por.so_type = 1
+		LEFT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			AND a.is_prew = 0
+			<if test="poSchType != null">
+				AND bslp.po_sch_type = #{poSchType}
+			</if>
+			<if test="num != null and num != ''">
+				AND (oh.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
+				OR
+				rh.req_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
+				)
+			</if>
+			<if test="bizOrderHeader != null and bizOrderHeader.id != null">
+				AND oh.id = #{bizOrderHeader.id}
+			</if>
+			<if test="bizOrderHeader != null and bizOrderHeader.bizStatus != null">
+				AND oh.biz_status = #{bizOrderHeader.bizStatus}
+			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.id != null">
+				AND rh.id = #{bizRequestHeader.id}
+			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.bizStatus != null">
+				AND rh.biz_status = #{bizRequestHeader.bizStatus}
+			</if>
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="vendOffice != null and vendOffice.id !=null and vendOffice.id != ''">
+				AND a.vend_id = #{vendOffice.id}
+			</if>
+			<if test="invStatus != null and invStatus != ''">
+				AND a.inv_status = #{invStatus}
+			</if>
+			<if test="bizStatus != null">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="plateformInfo != null and plateformInfo.id !=null and  plateformInfo.id != ''">
+				AND a.plateform_id = #{plateformInfo.id}
+			</if>
+			<if test="commonProcess != null and commonProcess.type !=null and commonProcess.type != ''">
+				AND process.type = #{commonProcess.type}
+			</if>
+
+			<if test="processTypeList != null and processTypeList.size > 0">
+				AND process.type IN
+				<foreach collection="processTypeList" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+
+			<if test="page !=null and page.includeTestData != true">
+				AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE a.create_id = ta.object_id AND ta.object_name = 'sys_user' )
+			</if>
+
+			<if test="startPrice !=null and startPrice != ''">
+				AND a.total_detail >= #{startPrice}
+			</if>
+
+			<if test="endPrice !=null and endPrice != ''">
+				AND #{endPrice} >= a.total_detail
+			</if>
+			<if test="startPayTime != null and startPayTime != ''">
+				AND ppo.pay_time &gt;= #{startPayTime}
+			</if>
+			<if test="endPayTime != null and endPayTime != ''">
+				AND ppo.pay_time &lt;= #{endPayTime}
+			</if>
+			<if test="filteringDate != null and filteringDate != ''">
+				AND a.create_time &lt; #{filteringDate}
+			</if>
+			<if test="waitPay != null and waitPay == 1">
+				AND (select bppo.biz_status from biz_po_payment_order bppo join common_process dcp  on bppo.process_id = dcp.id
+				WHERE bppo.id = a.current_payment_id and dcp.type = 666) = 0
+				and process.type = 7
+			</if>
+
+			<if test="applyPayment != null and applyPayment == 1">
+				AND (a.current_payment_id is null or a.current_payment_id = 0)
+				and (a.total_detail + a.total_exp + a.freight) > a.pay_total
+                and process.type = 7
+				and 37 > rh.biz_status
+			</if>
+		</where>
+		GROUP BY a.id) as t
 	</select>
 	
 	<select id="findAllList" resultType="BizPoHeader">

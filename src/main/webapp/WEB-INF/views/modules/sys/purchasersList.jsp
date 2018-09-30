@@ -134,7 +134,9 @@
 				<td>${off.remarks}</td>
                 <shiro:hasPermission name="sys:office:edit"><td>
 					<c:if test="${off.delRemark==1}">
-						<a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更客户专员</a>
+						<shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit">
+							<a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更客户专员</a>
+						</shiro:hasPermission>
 						<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">修改</a>
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
