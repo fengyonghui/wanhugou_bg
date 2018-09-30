@@ -10,6 +10,7 @@ import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -28,7 +29,9 @@ public interface BizMoneyRecodeDao extends CrudDao<BizMoneyRecode> {
 
     void updateMoney(List<BizMoneyRecode> list);
 
-    @Select("SELECT money from biz_cust_credit where office_id = #{officeId}")
-    Double selectMoney(@Param("officeId") Integer officeId);
+    void updateExpireMoney(List<BizMoneyRecode> list);
+
+    @Select("SELECT money as availableIntegration,user_money as usedIntegration,gain_money as gainIntegration,over_money as expireIntegration from biz_cust_credit where office_id = #{officeId}")
+    BizMoneyRecodeDetail selectMoney(@Param("officeId") Integer officeId);
 	
 }
