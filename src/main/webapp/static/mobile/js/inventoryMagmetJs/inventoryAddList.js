@@ -6,16 +6,13 @@
 		this.datagood = [];
 		this.dataSupplier = [];
 		this.selectOpen = false;
+		this.inAddSaveFlag = "false"
         this.skuInfoIds="";
         this.reqQtys="";
-//      this.reqDetailIds="";
-//      this.LineNos="";
         this.fromOfficeId="";
         this.bizOfficeId="";
-        this.stock = false;
 		return this;
 	}
-
 	ACCOUNT.prototype = {
 		init: function() {
 			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAdd01');
@@ -26,25 +23,44 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			
+			/*当前用户信息*/
+			var userId = '';
+			$.ajax({
+                type: "GET",
+                url: "/a/getUser",
+                dataType: "json",
+                async:false,
+                success: function(user){                 
+					userId = user.data.id
+                }
+            });
+        	/*业务状态*/
+			if(userId!=""&&userId==1){		            				       			       
+				_this.ajaxCheckStatus();
+            }else{
+            	$('#inputDivAdd').parent().parent().hide();
+            }
+			console.log(userId)
+			_this.saveDetail(userId);
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.inAddSaveFlag = res.data;
+                }
+            });
+        },
 		getData: function() {
 			var _this = this;
-            _this.removeItem()
-            _this.saveDetail();
-            _this.choiceRadio();
+            _this.removeItem();
 		},
-		choiceRadio: function() {
-			var _this = this;
-			$("input[type=radio]").on("change", function() {
-				if(this.id && this.checked) {
-					_this.stock = true
-				}else {
-					_this.stock = false
-				}
-			})
-		},
-        saveDetail: function () {
+        saveDetail: function (userId) {
             var _this = this;
             mui('.inSaveBtn').on('tap','#inSaveBtn',function(){
                 var skuIds = _this.skuInfoIds.split(",");
@@ -90,10 +106,21 @@
                     mui.toast("请选择收货时间！")
                     return;
                 }
-                if(bizStatusVal == null || bizStatusVal == "") {
-                    mui.toast("请选择业务状态！")
-                    return;
+                console.log(userId)
+                if(userId!=""&&userId==1){
+                	if(bizStatusVal == null || bizStatusVal == "") {
+	                    mui.toast("请选择业务状态！")
+	                    return;
+	                }
                 }
+                //选择备货方：
+                var r2 = document.getElementsByName("localOriginType");
+	            var localOriginType = "";
+	            for (var i = 0; i < r2.length; i++) {
+	                if (r2[i].checked == true) {
+	                    localOriginType = r2[i].value;
+	                }
+	            }
                 $.ajax({
                     type: "post",
                     url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
@@ -105,26 +132,22 @@
                     	'bizVendInfo.office.id ': _this.bizOfficeId,//供应商 id
                     	'bizVendInfo.office.name': _this.bizOfficeName,//供应商名称
                     	'bizVendInfo.office.type': _this.bizOfficeType,//供应商所在机构类型
-                    	fromType: _this.stock, //备货方
-                    	recvEta: inPoLastDaVal, //期望收货时间
+                    	fromType: localOriginType, //备货方
+                    	recvEta: inPoLastDaVal, //newinput02期望收货时间
                     	remark: inPoRemarkVal, //备注信息
                     	bizStatus: bizStatusVal, //业务状态
                     	skuInfoIds: _this.skuInfoIds, //要添加的商品 id
                     	reqQtys: _this.reqQtys //申报数量
-                    	
-//                  	"reqDetailIds":_this.reqDetailIds, 
-//                  	"LineNos":_this.LineNos
                     },
                     success: function (resule) {
-                    	console.log(resule)
-//                      if (resule.data.value == '操作成功!') {
-//                          mui.toast("添加备货单成功！");
-//                          GHUTILS.OPENPAGE({
-//                              url: "../../html/inventoryMagmetHtml/inventoryList.html",
-//                              extras: {
-//                              }
-//                          })
-//                      }
+                        if (resule == true) {
+                            mui.toast("添加备货单成功！");
+                            GHUTILS.OPENPAGE({
+                                url: "../../html/inventoryMagmetHtml/inventoryList.html",
+                                extras: {
+                                }
+                            })
+                        }
                     }
                 })
             })
@@ -144,118 +167,113 @@
         searchSkuHtml: function(Id) {
             var _this = this;
             mui('#inAmendPoLastDaDiv').on('tap','#comChoiceBtn',function(){
-            	console.log(_this.bizOfficeId)
-            	if(_this.bizOfficeId == '') {
+            	if(!$('#inSupply').val()) {
             		mui.toast("请选择供应商！");
             		return;
             	}
                 var itemNo = $("#inAmendPoLastDa").val();
-                if(itemNo == null||itemNo == undefined){
-					itemNo == "";
-                }
-                if(itemNo == ""){
-                	mui.toast("请输入查询商品的货号！");
-                	return;
-                }
                 $.ajax({
                     type: "post",
                     url: "/a/biz/sku/bizSkuInfo/findSkuList",
                     data: {
-                    	itemNo: itemNo,
-                    	'bizVendInfo.office.id ': _this.bizOfficeId//供应商 id
+                    	itemNo: itemNo,//输入的商品货号
+                    	'productInfo.office.id': $('#supplierId').val()
                 	},
                     success: function (result) {
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
-                        $.each(data,function (keys,skuInfoList) {
-                            var prodKeys= keys.split(",");
-                            var prodId= prodKeys[0];
-
-//                            var prodName= prodKeys[1];
-                            var prodUrl= prodKeys[2];
-//                            var cateName= prodKeys[3];
-//                            var prodCode= prodKeys[4];
-//                            var prodOfficeName= prodKeys[5];
-                            var  brandName=prodKeys[6];
-                            //var flag=true;
-                            var resultListHtml="";
-                            var t=0;
-                            $.each(skuInfoList,function (index,skuInfo) {
-                            	console.log(skuInfo)
-                                //skuInfoId+=","+skuInfo.id;
-                                if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
-                                    return;
-                                }
-                                resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
-                                    '<div class="mui-row mui-checkbox mui-left">' +
-                                    '<input style="top: 61px;" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
-                                    '<div class="mui-row">' +
-                                    
-                                    '<div class="mui-row lineStyle">' +
-                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
-                                    '<li class="mui-table-view-cell app_bline3">' +
-                                    '<div class="mui-input-row ">' +
-                                    '<label class="">商品名称:</label>' +
-                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.name + '" disabled>' +
-                                    '</div></li></div></div>' +
-                                   
-                                  	'<div class="mui-row lineStyle">' +
-                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
-                                    '<li class="mui-table-view-cell app_bline3">' +
-                                    '<div class="mui-input-row ">' +
-                                    '<label class="">商品货号:</label>' +
-                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.itemNo + '" disabled>' +
-                                    '</div></li></div></div>' +
-                                    
-                                    '<div class="mui-row lineStyle">' +
-                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
-                                    '<li class="mui-table-view-cell app_bline3">' +
-                                    '<div class="mui-input-row ">' +
-                                    '<label class="">商品编码:</label>' +
-                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.partNo + '" disabled>' +
-                                    '</div></li></div></div>' +
-                                    
-                                    '<div class="mui-row">' +
-                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                    '<li class="mui-table-view-cell app_bline3">' +
-                                    '<div class="mui-input-row ">' +
-                                    '<label>品牌名称:</label>' +
-                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.productInfo.brandName +'" disabled>' +
-                                    '</div></li></div>' +
-                                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                    '<li class="mui-table-view-cell app_bline3">' +
-                                    '<div class="mui-input-row ">' +
-                                    '<label>供应商:</label>' +
-                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.productInfo.brandName + '" disabled>' +
-                                    '</div></li></div></div>' +
-                                   
-                                    '<div class="mui-row  inAddFont">' +
-                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                    '<li class="mui-table-view-cell app_bline3">' +
-                                    '<div class="mui-input-row">' +
-                                    '<label>结算价:</label>' +
-                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled></div></li></div>' +
-                                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                                    '<li class="mui-table-view-cell app_bline3">' +
-                                    '<div class="mui-input-row">' +
-                                    '<label>申报数量:</label>' +
-                                    '<input type="hidden" class="mui-input-clear" value="' + skuInfo.id + '">' +
-                                    '<input type="text" class="mui-input-clear" placeholder="请输入数量" id="reqQty_'+ skuInfo.id +'">' +
-                                    '<font>*</font>'+
-                                    '</div></li></div></div></div></div>';
-                            });
-                            t++;
-                            $("#searchInfo").append(resultListHtml);
-                        })
-                        var addButtonHtml = '<div class="inAddBtnParent" id="batchAddDiv">' +
+                        if($.isEmptyObject(data)){
+                        	mui.toast("您输入的货号有误，或者此供应商暂无商品！");
+	                    }else {
+	                        $.each(data,function (keys,skuInfoList) {
+	                            var prodKeys= keys.split(",");
+	                            var prodId= prodKeys[0];
+//                              var prodName= prodKeys[1];
+	                            var prodUrl= prodKeys[2];
+//                              var cateName= prodKeys[3];
+//                              var prodCode= prodKeys[4];
+//                              var prodOfficeName= prodKeys[5];
+	                            var  brandName=prodKeys[6];
+	                            //var flag=true;
+	                            var resultListHtml="";
+	                            var t=0;
+	                            $.each(skuInfoList,function (index,skuInfo) {
+//                          		console.log(skuInfo)
+	                                //skuInfoId+=","+skuInfo.id;
+	                                if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
+	                                    return;
+	                                }
+	                                resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
+	                                    '<div class="mui-row mui-checkbox mui-left">' +
+	                                    '<input style="top: 61px;" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
+	                                    '<div class="mui-row">' +
+	                                    
+	                                    '<div class="mui-row lineStyle">' +
+	                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
+	                                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
+	                                    '<li class="mui-table-view-cell app_bline3">' +
+	                                    '<div class="mui-input-row ">' +
+	                                    '<label class="">商品名称:</label>' +
+	                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.name + '" disabled>' +
+	                                    '</div></li></div></div>' +
+	                                   
+	                                  	'<div class="mui-row lineStyle">' +
+	                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
+	                                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
+	                                    '<li class="mui-table-view-cell app_bline3">' +
+	                                    '<div class="mui-input-row ">' +
+	                                    '<label class="">商品货号:</label>' +
+	                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.itemNo + '" disabled>' +
+	                                    '</div></li></div></div>' +
+	                                    
+	                                    '<div class="mui-row lineStyle">' +
+	                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
+	                                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
+	                                    '<li class="mui-table-view-cell app_bline3">' +
+	                                    '<div class="mui-input-row ">' +
+	                                    '<label class="">商品编码:</label>' +
+	                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.partNo + '" disabled>' +
+	                                    '</div></li></div></div>' +
+	                                    
+	                                    '<div class="mui-row">' +
+	                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
+	                                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
+	                                    '<li class="mui-table-view-cell app_bline3">' +
+	                                    '<div class="mui-input-row ">' +
+	                                    '<label>品牌名称:</label>' +
+	                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.productInfo.brandName +'" disabled>' +
+	                                    '</div></li></div>' +
+	                                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
+	                                    '<li class="mui-table-view-cell app_bline3">' +
+	                                    '<div class="mui-input-row ">' +
+	                                    '<label>供应商:</label>' +
+	                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.productInfo.brandName + '" disabled>' +
+	                                    '</div></li></div></div>' +
+	                                   
+	                                    '<div class="mui-row  inAddFont">' +
+	                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
+	                                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
+	                                    '<li class="mui-table-view-cell app_bline3">' +
+	                                    '<div class="mui-input-row">' +
+	                                    '<label>结算价:</label>' +
+	                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled></div></li></div>' +
+	                                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
+	                                    '<li class="mui-table-view-cell app_bline3">' +
+	                                    '<div class="mui-input-row">' +
+	                                    '<label>申报数量:</label>' +
+	                                    '<input type="hidden" class="mui-input-clear" value="' + skuInfo.id + '">' +
+	                                    '<input type="text" class="mui-input-clear" placeholder="请输入数量" id="reqQty_'+ skuInfo.id +'">' +
+	                                    '<font>*</font>'+
+	                                    '</div></li></div></div></div></div>';
+	                            });
+	                            t++;
+	                            $("#searchInfo").append(resultListHtml);
+	                        })
+	                        var addButtonHtml = '<div id="batchAddDiv">' +
                             '<button id="batchAdd" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加' +
                             '</button></div>';
-                        $("#searchInfo").append(addButtonHtml);
+                       		 $("#searchInfo").append(addButtonHtml);
+                        }
                     }
                 })
             });
@@ -273,7 +291,7 @@
                         var cheDiv = $("#serskudiv_" + cheId);
                         $("#" + cheId).prop('checked',false);
                         $("#" + cheId).hide();
-                        var removeButtonHtml = '<div class="inAddBtnParent" id="removeBtn_' + cheId + '">' +
+                        var removeButtonHtml = '<div id="removeBtn_' + cheId + '">' +
                             '<button id="remove_' + cheId +'" type="submit" class="removeSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除' +
                             '</button></div>';
                             cheDiv.append(removeButtonHtml)
@@ -286,9 +304,6 @@
 		hrefHtml: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
 			_this.ajaxGoodList()
-			_this.ajaxSupplier()
-			_this.ajaxCheckStatus()
-
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
@@ -301,15 +316,12 @@
 					_this.selectOpen = true
 				}
 				_this.rendHtml(_this.datagood,$(this).val())
-//				_this.rendHtmls(_this.dataSupplier,$(this).val())
 			})
-			
 			$(hideSpanAdd).on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
 				$(hideSpanAdd).hide()
 			})
-
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
                 _this.fromOfficeId = $(this).attr("id");
@@ -323,10 +335,7 @@
 		},
 		hrefHtmls: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
-			_this.ajaxGoodList()
 			_this.ajaxSupplier()
-			_this.ajaxCheckStatus()
-
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
@@ -338,7 +347,6 @@
 				}else{
 					_this.selectOpen = true
 				}
-//				_this.rendHtml(_this.datagood,$(this).val())
 				_this.rendHtmls(_this.dataSupplier,$(this).val())
 				if($(this).val() == '') {
             		$('#inSupplierNum').parent().hide();
@@ -346,25 +354,24 @@
 					$('#inSupplierBank').parent().hide();
             	}
 			})
-			
 			$(hideSpanAdd).on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
 				$(hideSpanAdd).hide()
 			})
-
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
                 _this.bizOfficeId = $(this).attr("id");
                 _this.bizOfficeName = $(this).attr("name");
                 _this.bizOfficeType = $(this).attr("type");
-				$(newinput).val($(this).text())
-				$(input_div).hide()
-				$(hideSpanAdd).hide()
-				_this.selectOpen = true
-				_this.supplier(_this.bizOfficeId)
+				$(newinput).val($(this).text());
+				$(input_div).hide();
+				$(hideSpanAdd).hide();
+				_this.selectOpen = true;
+				$('#supplierId').val($(this).attr("id"));
+				_this.supplier($('#supplierId').val());
+				_this.searchSkuHtml($('#supplierId').val());
 			})
-			_this.searchSkuHtml(_this.bizOfficeId)
 		},
 		//供应商信息
 		supplier:function(supplierId){						
@@ -374,7 +381,6 @@
                 data: {vendorId:supplierId},		                
                 dataType: "json",
                 success: function(rest){
-                	console.log(rest)
                 	if(rest) {
                 		if(rest.cardNumber) {
 	                		$('#inSupplierNum').parent().show();
@@ -409,7 +415,6 @@
 			$.each(data, function(i, item) {
 				if(item.name.indexOf(key) > -1) {
 					reult.push(item)
-
 				}
 			})
 			$.each(reult, function(i, item) {
@@ -438,13 +443,14 @@
 			var htmlList = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/sys/office/queryTreeList',
+				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
-					type: 8
+					type: 8,
+					source:'officeConnIndex'
 				},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					_this.datagood = res
 					$.each(res, function(i, item) {
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="' + item.name + '">' + item.name + '</span>'
@@ -459,7 +465,7 @@
 			var htmlSupplier = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/sys/office/queryTreeList',
+				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
 					type: 7
 				},
