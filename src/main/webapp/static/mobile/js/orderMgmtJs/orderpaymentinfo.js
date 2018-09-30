@@ -75,7 +75,7 @@
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
 		            	
-		            	console.log(res)
+//		            	console.log(res)
 		            	var dataRow = res.data.roleSet;
 		            	/*当前用户信息*/
 						var userId = '';
@@ -111,7 +111,7 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-                            	console.log(item)
+//                          	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";
@@ -202,7 +202,7 @@
 //	                        			console.log(_this.OrdFlagpay)
 	                        			//订单
 	                        			if(_this.OrdFlagpay==true){
-	                        				staPayBtnTxt = '支付申请列表';
+	                        				staPayBtnTxt = '支付列表';
 	                        				staPayBtn = item.bizOrderHeader.id;
 //	                        				sta = item.bizOrderHeader.id;
 	                        			}
@@ -210,7 +210,7 @@
 	                        		if(item.bizRequestHeader != null){
 	                        			//备货单
 	                        			if(_this.OrdFlagpay==true){
-	                        				staPayBtnTxt = '支付申请列表';
+	                        				staPayBtnTxt = '支付列表';
 	                        				staPayBtns = item.bizRequestHeader.id;
 //	                        				stas = item.bizRequestHeader.id;
 	                        			}	                        			
@@ -247,7 +247,7 @@
 								if(_this.creatPayFlag == true) {
 									if(item.bizRequestHeader != null) {
 										if((item.currentPaymentId == null || item.currentPaymentId == '') && item.bizRequestHeader.bizStatus >= 5 && item.bizRequestHeader.bizStatus < 37 && (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
-											creatPay = '申请付款'
+											creatPay = '申付款'
 											creatPayBt = 'creatPayBtn'
 										}else {
 											creatPay = ''
@@ -298,11 +298,11 @@
 											'<div class="mui-col-xs-3 '+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
 												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2 SchedulingBtn" staordid="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
-											'</div>'+
 											'<div class="mui-col-xs-2 '+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
 												'<li class="mui-table-view-cell">'+creatPay+'</li>' +
+											'</div>'+
+											'<div class="mui-col-xs-2 SchedulingBtn" staordid="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
 											'</div>'+
 										'</div>' +
 									'</div>'
@@ -392,7 +392,7 @@
                 async:false,
                 success: function(res){
                     _this.OrdFlagstartAudit = res.data;
-                    console.log(_this.OrdFlagstartAudit)
+//                  console.log(_this.OrdFlagstartAudit)
                 }
             });
         },
@@ -420,7 +420,7 @@
                 async:false,
                 success: function(res){
                     _this.creatPayFlag = res.data;
-                    console.log(_this.creatPayFlag)
+//                  console.log(_this.creatPayFlag)
 //                  console.log(_this.OrdFlagScheduling)
                 }
             });
@@ -656,13 +656,6 @@
 			}else {
 				nameTxt = ''
 			}
-            console.log(_this.userInfo.num);
-				console.log(_this.userInfo.vendOffice);
-				console.log(_this.userInfo.invStatus);
-				console.log( _this.userInfo.bizStatus);
-				console.log(_this.userInfo.poSchType);
-				console.log(_this.userInfo.waitPay);
-				console.log(_this.userInfo.includeTestData);
 			$.ajax({
 				type: 'GET',
                 url: '/a/biz/po/bizPoHeader/listV2Data4Mobile',
@@ -680,7 +673,7 @@
 				},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 		            	var dataRow = res.data.roleSet;
 		            	/*当前用户信息*/
 						var userId = '';
@@ -707,12 +700,12 @@
 			                }
 			            });	
 						var arrLen = res.data.page.list.length;
-						console.log(arrLen)
+//						console.log(arrLen)
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-                            	console.log(item)
+//                          	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";
@@ -803,7 +796,7 @@
 //	                        			console.log(_this.OrdFlagpay)
 	                        			//订单
 	                        			if(_this.OrdFlagpay==true){
-	                        				staPayBtnTxt = '支付申请列表';
+	                        				staPayBtnTxt = '支付列表';
 	                        				staPayBtn = item.bizOrderHeader.id;
 //	                        				sta = item.bizOrderHeader.id;
 	                        			}	                        			
@@ -811,7 +804,7 @@
 	                        		if(item.bizRequestHeader != null){
 	                        			//备货单
 	                        			if(_this.OrdFlagpay==true){
-	                        				staPayBtnTxt = '支付申请列表';
+	                        				staPayBtnTxt = '支付列表';
 	                        				staPayBtns = item.bizRequestHeader.id;
 //	                        				stas = item.bizRequestHeader.id;
 	                        			}	                        			
@@ -848,7 +841,7 @@
 								if(_this.creatPayFlag == true) {
 									if(item.bizRequestHeader != null) {
 										if((item.currentPaymentId == null || item.currentPaymentId == '') && item.bizRequestHeader.bizStatus >= 5 && item.bizRequestHeader.bizStatus < 37 && (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
-											creatPay = '申请付款'
+											creatPay = '申付款'
 											creatPayBt = 'creatPayBtn'
 										}else {
 											creatPay = ''
@@ -899,11 +892,11 @@
 											'<div class="mui-col-xs-3 '+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
 												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-2 SchedulingBtn" staordid="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
-											'</div>'+
 											'<div class="mui-col-xs-2 '+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
 												'<li class="mui-table-view-cell">'+creatPay+'</li>' +
+											'</div>'+
+											'<div class="mui-col-xs-2 SchedulingBtn" staordid="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
 											'</div>'+
 										'</div>' +
 									'</div>'
