@@ -120,20 +120,20 @@
                 }
 			})    
         /*订单管理*/
-            $('#menuMaget').on('click','.childMenu',function(){
-            	var url = $(this).attr('url');
-				var purchId = $(this).attr('purchId');
-                if(url) {
-                	mui.toast('子菜单不存在')
-                }else if(purchId==133) {
-                	GHUTILS.OPENPAGE({
-						url: "../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
-						extras: {
-								purchId:purchId,
-						}
-					})
-                }
-			})
+//          $('#menuMaget').on('click','.childMenu',function(){
+//          	var url = $(this).attr('url');
+//				var purchId = $(this).attr('purchId');
+//              if(url) {
+//              	mui.toast('子菜单不存在')
+//              }else if(purchId==133) {
+//              	GHUTILS.OPENPAGE({
+//						url: "../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+//						extras: {
+//								purchId:purchId,
+//						}
+//					})
+//              }
+//			})
             /*订单支出信息*/
             $('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');

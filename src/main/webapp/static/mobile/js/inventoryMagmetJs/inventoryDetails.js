@@ -122,7 +122,7 @@
 					//排产信息
 					if(res.data.bizRequestHeader.str=='detail'){
 						var poheaderId = res.data.bizRequestHeader.bizPoHeader.id;
-						console.log(poheaderId)
+//						console.log(poheaderId)
 		                if (poheaderId == null || poheaderId == "") {
 		                    $("#inSchedultype").val("未排产")
 		                    $("#stockGoods").hide();

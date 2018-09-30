@@ -247,7 +247,7 @@
 								if(_this.creatPayFlag == true) {
 									if(item.bizRequestHeader != null) {
 										if((item.currentPaymentId == null || item.currentPaymentId == '') && item.bizRequestHeader.bizStatus >= 5 && item.bizRequestHeader.bizStatus < 37 && (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
-											creatPay = '申付款'
+											creatPay = '申请付款'
 											creatPayBt = 'creatPayBtn'
 										}else {
 											creatPay = ''
@@ -841,7 +841,7 @@
 								if(_this.creatPayFlag == true) {
 									if(item.bizRequestHeader != null) {
 										if((item.currentPaymentId == null || item.currentPaymentId == '') && item.bizRequestHeader.bizStatus >= 5 && item.bizRequestHeader.bizStatus < 37 && (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
-											creatPay = '申付款'
+											creatPay = '申请付款'
 											creatPayBt = 'creatPayBtn'
 										}else {
 											creatPay = ''

@@ -101,7 +101,6 @@
 					if(_this.inLastPayDateFlag == true) {
 						if(res.data.bizRequestHeader.str== 'audit') {
 							if(res.data.bizRequestHeader.commonProcess.type != res.data.autProcessId && res.data.bizRequestHeader.processPo != 'processPo') {
-//								alert(999)
 								_this.comfirDialig(res);
 							}
 						}
@@ -864,6 +863,7 @@
 		},
 		comfirDialig: function(res) {
 			var _this = this;
+//			alert('方法')
 //			console.log(res)
 			document.getElementById("inRejectBtn").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
@@ -974,23 +974,24 @@
 		},
 		rejectData: function(rejectTxt, num) {
 			var _this = this;
-			var lastDateTxt = '';
-			if($('#createPo').val() == 'yes') {
-				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
-			}
+//			var lastDateTxt = '';
+//			if($('#createPo').val() == 'yes') {
+//				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
+//			}
 			$.ajax({
 				type: "GET",
 				url: "/a/biz/request/bizRequestHeaderForVendor/audit",
 				data: {
 					id: _this.userInfo.inListId,
 					currentType: $('#currentType').val(),
-					createPo: $('#createPo').val(),
-					lastPayDateVal: lastDateTxt,
+					createPo: 'no',
+//					lastPayDateVal: lastDateTxt,
 					auditType: num,
 					description: rejectTxt
 				},
 				dataType: "json",
 				success: function(res) {
+					console.log(res)
 					if(res.ret == true) {
 						mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
@@ -1091,10 +1092,6 @@
 		},
 		rejectDatas: function(id,rejectTxt, num,currentType) {
 			var _this = this;
-			var lastDateTxt = '';
-			if($('#createPo').val() == 'yes') {
-				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
-			}
 			$.ajax({
 				type: "GET",
 				url: "/a/biz/po/bizPoHeader/audit",
