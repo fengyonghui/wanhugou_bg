@@ -140,7 +140,7 @@
 				var purchId = $(this).attr('purchId');
                 if(url) {
                 	mui.toast('子菜单不存在')
-                }else if(purchId==727) {
+                }else if(purchId==727 || purchId==699) {
                 	GHUTILS.OPENPAGE({
 						url: "../html/orderMgmtHtml/orderpaymentinfo.html",
 						extras: {
