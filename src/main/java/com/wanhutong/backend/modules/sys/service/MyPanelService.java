@@ -11,11 +11,9 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
-import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +36,7 @@ public class MyPanelService {
     @Autowired
     private BizPoPaymentOrderService bizPoPaymentOrderService;
     @Autowired
-    private BizSkuInfoService bizSkuInfoService;
+    private BizSkuInfoV2Service bizSkuInfoService;
 
 
     /**
@@ -215,7 +213,6 @@ public class MyPanelService {
     public int getNeedPutawayCount() {
         BizSkuInfo bizSkuInfo = new BizSkuInfo();
         bizSkuInfo.setNotPutaway(1);
-        List<BizSkuInfo> list = bizSkuInfoService.findList(bizSkuInfo);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        return bizSkuInfoService.findCount(bizSkuInfo);
     }
 }
