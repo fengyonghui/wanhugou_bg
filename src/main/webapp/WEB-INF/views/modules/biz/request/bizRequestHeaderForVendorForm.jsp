@@ -420,6 +420,10 @@
         function audit(auditType, description) {
             //判断排产数据合法性
             var createPo = $("#createPo").val();
+            if(auditType == 2) {
+                createPo = "no";
+			}
+
             if(createPo == "yes") {
                 var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
                 if (schedulingType == 0) {
