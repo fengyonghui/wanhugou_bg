@@ -223,6 +223,7 @@
 						{
                             $("#sendAll").val('');
                             $("#integrationNum").val('');
+                            $("#search").show();
 						}
 					}
 
@@ -325,7 +326,7 @@
 				</div>
 				<div id="officeTree" class="ztree" style="margin-top:3px;float:left;display: none"></div>
 				<span style="display: none" id="choose">已选择:</span>
-				<textarea id="offices" cols="300" ro style="margin-left:10px;word-wrap:normal;width: 300px;height: 240px;vertical-align:top;display: none">
+				<textarea id="offices" cols="300" ro style="margin-left:10px;word-wrap:normal;width: 400px;height: 240px;vertical-align:top;display: none">
 
 			    </textarea>
 			</div>
