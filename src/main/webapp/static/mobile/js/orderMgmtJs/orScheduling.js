@@ -383,24 +383,25 @@
 			
 			$(".schedPurch").on("tap", "#purchAddBtn", function() {
 				$('#purchAddCont').append(htmlPurchPlan);
-				var addPurchNum = _this.userInfo.staOrdId;
-				$('.purchAddCont').attr('name', addPurchNum);
-				$('#purchPlan').attr('name', addPurchNum);
-				$('.addpurchDate').attr('name', addPurchNum + '_date');
-				$('.addpurchNum').attr('name', addPurchNum + '_value');
-				$('#purchDate').attr('name', addPurchNum + '_date');
-				$('#purchNum').attr('name', addPurchNum + '_value');
 			})
 			$(".schedCommd").on("tap", ".commdAddBtn", function() {
 //				console.log($(this).parent('.app_f13').next('.commdSchedRecord').next('.plan').find('.commdAddPlan'))
 				$(this).parent('.app_f13').next('.commdSchedRecord').next('.plan').find('.commdAddPlan').append(htmlcommdPlan);
-				var commdDateName = ($('.commdDate').attr('name'));
-				var commdNumName = ($('.commdNum').attr('name'));
-				var commdPlanName = ($('.commdPlan').attr('name'));
-				$('.addCommdDate').attr('name', commdDateName);
-				$('.addCommdNum').attr('name', commdNumName);
-				$('.commdAddCont').attr('name', commdPlanName);
 			})
+			var addPurchNum = _this.userInfo.staOrdId;
+			$('.purchAddCont').attr('name', addPurchNum);
+			$('#purchPlan').attr('name', addPurchNum);
+			$('.addpurchDate').attr('name', addPurchNum + '_date');
+			$('.addpurchNum').attr('name', addPurchNum + '_value');
+			$('#purchDate').attr('name', addPurchNum + '_date');
+			$('#purchNum').attr('name', addPurchNum + '_value');
+			
+			var commdDateName = ($('.commdDate').attr('name'));
+			var commdNumName = ($('.commdNum').attr('name'));
+			var commdPlanName = ($('.commdPlan').attr('name'));
+			$('.addCommdDate').attr('name', commdDateName);
+			$('.addCommdNum').attr('name', commdNumName);
+			$('.commdAddCont').attr('name', commdPlanName);
 			_this.removeSchedul();
 		},
 		removeSchedul: function() {

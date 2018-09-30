@@ -932,7 +932,8 @@
 				},
 				dataType: "json",
 				success: function(res) {
-//					console.log(res)
+					console.log(res)
+					console.log($('#createPo').val())
                     if(res.ret == true || res.ret == 'true') {
                     	mui.toast('操作成功!')
 						if($('#createPo').val() == 'yes') {
@@ -954,11 +955,12 @@
 	                                _this.batchSave("1", poId, vn);
 	                            }
 	                        }
+						}else {
+							GHUTILS.OPENPAGE({
+								url: "../../html/inventoryMagmetHtml/inventoryList.html",
+								extras: {}
+							})
 						}
-						GHUTILS.OPENPAGE({
-							url: "../../html/inventoryMagmetHtml/inventoryList.html",
-							extras: {}
-						})
                     }else {
                         alert("操作失败！");
 					}
@@ -1200,7 +1202,7 @@
         	var htmlPurch = '';
         	var totalReqQtyNums = 0;
         	$.each(chData.data.reqDetailList, function(i,item) {
-        		console.log(item.reqQty)
+//      		console.log(item.reqQty)
         		var reqQtyNum = item.reqQty;
         		totalReqQtyNums = parseInt(totalReqQtyNums) + parseInt(reqQtyNum);
 			htmlPurch +='<li class="mui-table-view-cell mui-media app_bline app_pr">'+
@@ -1330,7 +1332,7 @@
 						'<button type="submit" class="commdAddBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
 						'<div classs="app_bline"></div>'+
 					'<div class="mui-row comdPlan">'+
-						'<div class="labelLf">排产计划：</div>'+
+						'<div class="labelLf">排产计划</div>'+
 						'<div class="mui-row app_f13 commdAddPlan" id="'+ item.skuInfo.id+'">'+
 							'<div class="mui-row app_bline commdPlan" name="'+ item.skuInfo.id +'">'+
 								'<div class="mui-input-row">'+
@@ -1365,24 +1367,25 @@
 			'</div>';
 			$(".schedPurch").on("tap", "#purchAddBtn", function() {
 				$('#purchAddCont').append(htmlPurchPlan);
-				var addPurchNum = _this.userInfo.inListId;
-//				console.log(_this.userInfo.inListId)
-				$('.purchAddCont').attr('name', addPurchNum);
-				$('#purchPlan').attr('name', addPurchNum);
-				$('.addpurchDate').attr('name', addPurchNum + '_date');
-				$('.addpurchNum').attr('name', addPurchNum + '_value');
-				$('#purchDate').attr('name', addPurchNum + '_date');
-				$('#purchNum').attr('name', addPurchNum + '_value');
 			})
 			$(".schedCommd").on("tap", ".commdAddBtn", function() {
 				$(this).parent('.app_f13').find('.commdAddPlan').append(htmlcommdPlan);
-				var commdDateName = ($('.commdDate').attr('name'));
-				var commdNumName = ($('.commdNum').attr('name'));
-				var commdPlanName = ($('.commdPlan').attr('name'));
-				$('.addCommdDate').attr('name', commdDateName);
-				$('.addCommdNum').attr('name', commdNumName);
-				$('.commdAddCont').attr('name', commdPlanName);
 			})
+			var addPurchNum = _this.userInfo.inListId;
+//				console.log(_this.userInfo.inListId)
+			$('.purchAddCont').attr('name', addPurchNum);
+			$('#purchPlan').attr('name', addPurchNum);
+			$('.addpurchDate').attr('name', addPurchNum + '_date');
+			$('.addpurchNum').attr('name', addPurchNum + '_value');
+			$('#purchDate').attr('name', addPurchNum + '_date');
+			$('#purchNum').attr('name', addPurchNum + '_value');
+			
+			var commdDateName = ($('.commdDate').attr('name'));
+			var commdNumName = ($('.commdNum').attr('name'));
+			var commdPlanName = ($('.commdPlan').attr('name'));
+			$('.addCommdDate').attr('name', commdDateName);
+			$('.addCommdNum').attr('name', commdNumName);
+			$('.commdAddCont').attr('name', commdPlanName);
 			_this.removeSchedul();
 		},
 		removeSchedul: function() {
@@ -1396,6 +1399,7 @@
 			var _this = this;
             var reqId = _this.userInfo.inListId;
             var trArray = $("[name='" + reqId + "']");
+//          console.log(trArray.length)
             var params = new Array();
             var schRemark = "";
             var originalNum = $("#purchOrdQty").val();
@@ -1446,6 +1450,7 @@
                     alert("确认值输入不正确!")
                     return false;
                 }
+//              console.log(originalNum)
                 var entity = {};
                 entity.id = poId;
                 entity.objectId = poId;
@@ -1459,7 +1464,7 @@
                 params[i]=entity;
                 //totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
             }
-//          console.log(params)
+            console.log(params)
             $.ajax({
                 url: '/a/biz/po/bizPoHeader/saveSchedulingPlan',
                 contentType: 'application/json',
@@ -1467,14 +1472,7 @@
                 datatype:"json",
                 type: 'post',
                 success: function (result) {
-//                  if(result == true) {
-//                      GHUTILS.OPENPAGE({
-//							url: "../../html/inventoryMagmetHtml/inventoryList.html",
-//							extras: {
-//								
-//							}
-//						})
-//                  }
+//              	console.log(result)
                 },
                 error: function (error) {
                     console.info(error);
