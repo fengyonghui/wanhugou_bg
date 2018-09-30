@@ -201,10 +201,8 @@
 	<select id="findCount" resultType="Integer">
 		SELECT
 			count(1)
-		FROM common_img ci
-		WHERE ci.status = #{DEL_FLAG_NORMAL} AND ci.object_name = 'biz_sku_info' AND ci.object_id = a.id limit 1) AS defaultImg
 		FROM biz_sku_info a
-		<include refid="bizSkuInfoJoins"/>
+		join biz_product_info bpi on bpi.id = a.prod_id
 		<where>
 			1=1
 			<if test="dataStatus==null ">

@@ -91,8 +91,7 @@ public class MyPanelService {
     public int getWaitSchedulingCount() {
         BizPoHeader bizPoHeader = new BizPoHeader();
         bizPoHeader.setPoSchType(0);
-        Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<>(), bizPoHeader);
-        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
+        return bizPoHeaderService.findCount(bizPoHeader);
     }
 
     /**
@@ -103,8 +102,7 @@ public class MyPanelService {
     public int getApplyPaymentCount() {
         BizPoHeader bizPoHeader = new BizPoHeader();
         bizPoHeader.setApplyPayment(1);
-        Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<>(), bizPoHeader);
-        return CollectionUtils.isEmpty(page.getList()) ? 0 : page.getList().size();
+        return bizPoHeaderService.findCount(bizPoHeader);
     }
 
     /**
@@ -189,8 +187,7 @@ public class MyPanelService {
             }
         }
 
-        List<BizPoPaymentOrder> list = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        return bizPoPaymentOrderService.findCount(bizPoPaymentOrder);
     }
 
     /**
@@ -201,8 +198,7 @@ public class MyPanelService {
     public int getOrderPaymentCount() {
         BizPoHeader bizPoHeader = new BizPoHeader();
         bizPoHeader.setWaitPay(1);
-        List<BizPoHeader> list = bizPoHeaderService.findList(bizPoHeader);
-        return CollectionUtils.isEmpty(list) ? 0 : list.size();
+        return bizPoHeaderService.findCount(bizPoHeader);
     }
 
     /**
