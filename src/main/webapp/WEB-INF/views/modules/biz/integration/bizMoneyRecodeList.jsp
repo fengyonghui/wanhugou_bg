@@ -70,8 +70,8 @@
 			</li>
 
 			<li><label>经销店名称：</label>
-					<sys:treeselect id="office" name="customer.id" value="${office.id}"  labelName="office.name"
-									labelValue="${office.name}" notAllowSelectParent="true"
+					<sys:treeselect id="office" name="office.id" value="${bizMoneyRecode.office.id}"  labelName="office.name"
+									labelValue="${bizMoneyRecode.office.name}" notAllowSelectParent="true"
 									title="经销店"  url="/sys/office/queryTreeList?type=6"
 									cssClass="input-medium required"
 									allowClear="true"/>

@@ -10,24 +10,24 @@
 	<title>备货清单管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
-		$(document).ready(function() {
-			$("#buttonExport").click(function(){
-				top.$.jBox.confirm("确认要导出备货清单数据吗？","系统提示",function(v,h,f){
-					if(v=="ok"){
-						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestHeaderForVendor/requestHeaderExport");
-						$("#searchForm").submit();
-						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestHeaderForVendor/");
-					}
-				},{buttonsFocus:1});
-				top.$('.jbox-body .jbox-icon').css('top','55px');
-			});
+        $(document).ready(function() {
+            $("#buttonExport").click(function(){
+                top.$.jBox.confirm("确认要导出备货清单数据吗？","系统提示",function(v,h,f){
+                    if(v=="ok"){
+                        $("#searchForm").attr("action","${ctx}/biz/request/bizRequestHeaderForVendor/requestHeaderExport");
+                        $("#searchForm").submit();
+                        $("#searchForm").attr("action","${ctx}/biz/request/bizRequestHeaderForVendor/");
+                    }
+                },{buttonsFocus:1});
+                top.$('.jbox-body .jbox-icon').css('top','55px');
+            });
             $('#myModal').on('hide.bs.modal', function () {
                 window.location.href="${ctx}/biz/request/bizRequestHeaderForVendor";
 
             });
 
             timeoutID= setInterval(tttt,5000);
-		});
+        });
         function page(n,s,t){
             $("#pageNo").val(n);
             $("#pageSize").val(s);
@@ -39,7 +39,7 @@
             $("#includeTestData").val(checkbox.checked);
         }
         function checkInfo(obj,val,hid) {
-           if(confirm("您确认取消该备货单吗？")){
+            if(confirm("您确认取消该采购单吗？")){
 
                $.ajax({
                    type:"post",
@@ -123,114 +123,118 @@
 	</script>
 </head>
 <body>
-	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/request/bizRequestHeaderForVendor/">备货清单列表</a></li>
-		<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><li><a href="${ctx}/biz/request/bizRequestHeaderForVendor/form">备货清单添加</a></li></shiro:hasPermission>
-	</ul>
-	<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/" method="post" class="breadcrumb form-search">
-		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<input id="payNum" type="hidden" />
-		<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
-		<ul class="ul-form">
-			<li><label>备货单号：</label>
-				<form:input path="reqNo" htmlEscape="false" maxlength="30" class="input-medium"/>
-			</li>
+<ul class="nav nav-tabs">
+	<li class="active"><a href="${ctx}/biz/request/bizRequestHeaderForVendor/">备货清单列表</a></li>
+	<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><li><a href="${ctx}/biz/request/bizRequestHeaderForVendor/form">备货清单添加</a></li></shiro:hasPermission>
+</ul>
+<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/" method="post" class="breadcrumb form-search">
+	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+	<input id="previousPage" name="previousPage" type="hidden" value="${bizRequestHeader.previousPage}"/>
+	<input id="payNum" type="hidden" />
+	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
+	<ul class="ul-form">
+		<li><label>备货单号：</label>
+			<form:input path="reqNo" htmlEscape="false" maxlength="30" class="input-medium"/>
+		</li>
 			<%--<li><label>货号：</label>--%>
 				<%--<form:input path="itemNo" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
 			<%--</li>--%>
-			<li><label>供应商：</label>
-				<form:input path="name" htmlEscape="false" maxlength="30" class="input-medium"/>
-			</li>
-			<li><label>采购中心：</label>
-				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
-								labelValue="${entity.fromOffice.name}" allowClear="true"
-								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-medium required" dataMsgRequired="必填信息">
-				</sys:treeselect>
-			</li>
-			<li><label>备货方：</label>
-				<form:select path="fromType" class="input-medium">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('req_from_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-				</form:select>
-			</li>
-			<li><span><label>期望收货时间：</label></span>
-				<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-			</li>
-			<li><label>业务状态：</label>
-				<form:select path="bizStatus" class="input-medium">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-				</form:select>
-			</li>
-			<li><label>审核状态</label>
-				<form:select class="input-medium" path="process">
-					<%--<option value="">请选择</option>--%>
-					<%--<c:forEach items="${requestMap}" var="req">--%>
-						<%--<option value="${req.key}">${req.value}</option>--%>
-					<%--</c:forEach>--%>
-					<form:option value="" label="请选择"/>
-					<form:options items="${requestMap}" htmlEscape="false"/>
-				</form:select>
-			</li>
-			<li><label>品类名称：</label>
-				<form:select id="varietyInfoId" about="choose" path="varietyInfo.id" class="input-medium">
-					<form:option value="" label="请选择"/>
-					<form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
-				</form:select>
-			</li>
-			<li><label>测试数据</label>
-				<form:checkbox id="includeTest" path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
-			</li>
+		<li><label>供应商：</label>
+			<form:input path="name" htmlEscape="false" maxlength="30" class="input-medium"/>
+		</li>
+		<li><label>采购中心：</label>
+			<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
+							labelValue="${entity.fromOffice.name}" allowClear="true"
+							title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-medium required" dataMsgRequired="必填信息">
+			</sys:treeselect>
+		</li>
+		<li><label>备货方：</label>
+			<form:select path="fromType" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:options items="${fns:getDictList('req_from_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</form:select>
+		</li>
+		<li><span><label>期望收货时间：</label></span>
+			<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+				   value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+		</li>
+		<li><label>业务状态：</label>
+			<form:select path="bizStatus" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+			</form:select>
+		</li>
+		<li><label>审核状态</label>
+			<form:select class="input-medium" path="process">
+				<%--<option value="">请选择</option>--%>
+				<%--<c:forEach items="${requestMap}" var="req">--%>
+				<%--<option value="${req.key}">${req.value}</option>--%>
+				<%--</c:forEach>--%>
+				<form:option value="" label="请选择"/>
+				<form:options items="${requestMap}" htmlEscape="false"/>
+			</form:select>
+		</li>
+		<li><label>品类名称：</label>
+			<form:select id="varietyInfoId" about="choose" path="varietyInfo.id" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+			</form:select>
+		</li>
+		<li><label>测试数据</label>
+			<form:checkbox id="includeTest" path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
+		</li>
 
-			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
-			<li class="clearfix"></li>
-		</ul>
-	</form:form>
-	<sys:message content="${message}"/>
-	<table id="contentTable" class="table table-striped table-bordered table-condensed">
-		<thead>
-			<tr>
-				<td>序号</td>
-				<th>备货单号</th>
-				<th>类型</th>
-				<th>采购中心</th>
-				<th>期望收货时间</th>
-				<th>备货方</th>
-				<th>供应商</th>
-				<th>备货商品数量</th>
-				<th>备货商品总价</th>
-				<th>已收保证金</th>
-				<th>付款比例</th>
-				<th>已到货数量</th>
-				<th>已卖出数量</th>
-				<th>备注</th>
-				<th>业务状态</th>
-				<th>审核状态</th>
-				<th>下单时间</th>
-				<th>品类名称</th>
-				<th>申请人</th>
-				<th>更新时间</th>
-				<shiro:hasAnyPermissions name="biz:request:bizRequestHeader:edit,biz:request:bizRequestHeader:view"><th>操作</th></shiro:hasAnyPermissions>
-			</tr>
-		</thead>
-		<tbody>
-		<c:forEach items="${page.list}" var="requestHeader" varStatus="state">
-			<tr>
-				<td>${state.index+1}</td>
-				<td>
-					<c:choose>
-						<c:when test="${requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state}">
-							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=detail">
-							</c:when>
-							<c:otherwise>
-								<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=detail">
-							</c:otherwise>
-					</c:choose>
-					${requestHeader.reqNo}
+		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
+		<c:if test="${bizRequestHeader.previousPage == 'myPanel'}">
+			<li class="btns"><a href="${ctx}/sys/myPanel/index"><input class="btn" type="button" value="返回我的任务"/></a></li>
+		</c:if>
+		<li class="clearfix"></li>
+	</ul>
+</form:form>
+<sys:message content="${message}"/>
+<table id="contentTable" class="table table-striped table-bordered table-condensed">
+	<thead>
+	<tr>
+		<td>序号</td>
+		<th>备货单号</th>
+		<th>类型</th>
+		<th>采购中心</th>
+		<th>期望收货时间</th>
+		<th>备货方</th>
+		<th>供应商</th>
+		<th>备货商品数量</th>
+		<th>备货商品总价</th>
+		<th>已收保证金</th>
+		<th>付款比例</th>
+		<th>已到货数量</th>
+		<th>已卖出数量</th>
+		<th>备注</th>
+		<th>业务状态</th>
+		<th>审核状态</th>
+		<th>下单时间</th>
+		<th>品类名称</th>
+		<th>申请人</th>
+		<th>更新时间</th>
+		<shiro:hasAnyPermissions name="biz:request:bizRequestHeader:edit,biz:request:bizRequestHeader:view"><th>操作</th></shiro:hasAnyPermissions>
+	</tr>
+	</thead>
+	<tbody>
+	<c:forEach items="${page.list}" var="requestHeader" varStatus="state">
+		<tr>
+			<td>${state.index+1}</td>
+			<td>
+				<c:choose>
+				<c:when test="${requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state}">
+				<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=detail">
+					</c:when>
+					<c:otherwise>
+					<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=detail">
+						</c:otherwise>
+						</c:choose>
+							${requestHeader.reqNo}
 					</a>
 				</td>
 				<td>

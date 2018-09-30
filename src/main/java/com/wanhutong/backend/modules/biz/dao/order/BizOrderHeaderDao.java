@@ -418,5 +418,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      */
     Integer getOrderDetailIdBySkuInfoId(@Param("poHeaderId") Integer poHeaderId, @Param("skuInfoId") Integer skuInfoId);
 
+    /**
+     * 系统管理员查看待审核订单
+     * @param bizOrderHeader
+     * @return
+     */
+    List<BizOrderHeader> findListNotCompleteAudit(BizOrderHeader bizOrderHeader);
+
     Integer findCountByCentId(@Param("centId") Integer centId);
 }

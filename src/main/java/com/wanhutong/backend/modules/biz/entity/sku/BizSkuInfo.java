@@ -123,6 +123,10 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private String skuImgUrl;
 
 
+	/**
+	 * 未上架
+	 */
+	private Integer notPutaway;
 
 	public BizSkuInfo() {
 		super();
@@ -470,5 +474,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setColor(String color) {
 		this.color = color;
+	}
+
+	public Integer getNotPutaway() {
+		return notPutaway;
+	}
+
+	public void setNotPutaway(Integer notPutaway) {
+		this.notPutaway = notPutaway;
 	}
 }

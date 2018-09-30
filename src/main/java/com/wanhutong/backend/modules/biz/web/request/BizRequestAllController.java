@@ -129,19 +129,20 @@ public class BizRequestAllController {
             if (bizStatu == 0 && Integer.valueOf(1).equals(bizOrderHeader.getNeedOut())) {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.APPROVE.getState());
-                bizOrderHeader.setSupplyId(-1);
             } else {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
             }
+
             if (bizStatu == 0) {
                 bizOrderHeader.setSupplyId(-1);
             }
+
             if (bizStatu == 1) {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
-
             }
+
             if (ship.equals("xs")) {
                 Page<BizOrderHeader> page = new Page<>(request, response);
                 page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
@@ -1231,7 +1232,5 @@ public class BizRequestAllController {
         //备货单发货
         return "modules/biz/request/bizRequestAllCollectList";
     }
-
-
 
 }
