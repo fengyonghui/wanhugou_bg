@@ -177,7 +177,7 @@
 				<if test="dbName == 'mssql'">'%'+#{productInfo.brandName}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{productInfo.brandName},'%')</if>
 			</if>
-			<if test="notPutaway !=null and notPutaway = 1">
+			<if test="notPutaway !=null and notPutaway == 1">
 				and exists (select 1 from biz_inventory_sku bis where bis.sku_id = a.id and bis.status = 1 AND bis.stock_qty > 0 )
 				and not exists (select 1 from biz_op_shelf_sku boss where boss.sku_id = a.id and boss.status = 1)
 			</if>
@@ -268,7 +268,7 @@
 				<if test="dbName == 'mssql'">'%'+#{productInfo.brandName}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{productInfo.brandName},'%')</if>
 			</if>
-			<if test="notPutaway !=null and notPutaway = 1">
+			<if test="notPutaway !=null and notPutaway == 1">
 				and exists (select 1 from biz_inventory_sku bis where bis.sku_id = a.id and bis.status = 1 AND bis.stock_qty > 0 )
 				and not exists (select 1 from biz_op_shelf_sku boss where boss.sku_id = a.id and boss.status = 1)
 			</if>
