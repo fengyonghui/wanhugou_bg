@@ -1242,8 +1242,11 @@
 			$("#purchOrdQty").val(totalReqQtyNums);
 			var purchNumss = $('#purchNum').val();
 			if(purchNumss > totalReqQtyNums) {
-				mui.toast('排产量总和太大，请从新输入!')
-				return;
+				mui.toast('排产量总和太大，排产失败!')
+				GHUTILS.OPENPAGE({
+					url: "../../html/inventoryMagmetHtml/inventoryList.html",
+					extras: {}
+				})
 			}
 			$("#orSchedPurch").html(htmlPurch)
 //			_this.btnshow(chData);
@@ -1433,7 +1436,7 @@
             poSchType = originalNum >  parseInt(totalSchedulingHeaderNum)  ? 1 : 2;
 
             if(parseInt(totalSchedulingHeaderNum) > parseInt(originalNum)) {
-                alert("排产量总和太大，排产失败!")
+                alert("排产量总和太大，请重新输入!")
                 return;
             }
 
