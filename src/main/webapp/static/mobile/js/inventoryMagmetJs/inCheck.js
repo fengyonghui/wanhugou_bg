@@ -932,10 +932,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
-					console.log($('#createPo').val())
                     if(res.ret == true || res.ret == 'true') {
-                    	mui.toast('操作成功!')
 						if($('#createPo').val() == 'yes') {
 							//备货单排产
 	                        var resultData = res.data;
@@ -945,17 +942,28 @@
 //	                        console.log(resultDataArr[1])
 	                        if(resultDataArr[0] == "采购单生成") {
 	                            var poId = resultDataArr[1];
-	                            var schedulingType = $("input[name='schedulType']:checked").val();
+	                            _this.saveComplete("0", poId);
+//	                            var schedulingType = $("input[name='schedulType']:checked").val();
 //	                            console.log(poId)
 //	                            console.log(schedulingType)
-	                            if (schedulingType == 0) {
-	                                _this.saveComplete("0", poId);
-	                            }
-	                            if (schedulingType == 1) {
-	                                _this.batchSave("1", poId, vn);
-	                            }
+//	                            if (schedulingType == 0) {
+////	                            	var purchDates = $('#purchDate').val();
+//	                            	var purchNums = $('#purchNums').val();
+//	                            	console.log(purchNums)
+//	                            	if(purchNums != undefined) {
+//	                            		_this.saveComplete("0", poId);
+//	                            	}
+//	                            }
+//	                            if (schedulingType == 1) {
+////	                            	var commdDates = $('.commdDate').val();
+//	                            	var commdNums = $('.commdNum').val();
+//	                            	if(commdNums != undefined) {
+//	                            		_this.batchSave("1", poId, vn);
+//	                            	}
+//	                            }
 	                        }
 						}else {
+							mui.toast('操作成功!')
 							GHUTILS.OPENPAGE({
 								url: "../../html/inventoryMagmetHtml/inventoryList.html",
 								extras: {}
@@ -1232,10 +1240,15 @@
 				'</div></div></li>'
 			});
 			$("#purchOrdQty").val(totalReqQtyNums);
+			var purchNumss = $('#purchNum').val();
+			if(purchNumss > totalReqQtyNums) {
+				mui.toast('排产量总和太大，请从新输入!')
+				return;
+			}
 			$("#orSchedPurch").html(htmlPurch)
-			_this.btnshow(chData);
+//			_this.btnshow(chData);
 			_this.schedulPlan();
-	},
+		},
 		btnshow: function(data) {
 			var _this = this;
 			$('.schedCommd').hide();
@@ -1420,8 +1433,8 @@
             poSchType = originalNum >  parseInt(totalSchedulingHeaderNum)  ? 1 : 2;
 
             if(parseInt(totalSchedulingHeaderNum) > parseInt(originalNum)) {
-                alert("排产量总和太大，请从新输入!")
-                return false
+                alert("排产量总和太大，排产失败!")
+                return;
             }
 
             for(i=0;i<trArray.length;i++){
@@ -1433,13 +1446,13 @@
                 if (date == "") {
                     if (value != "") {
                         alert("第" + count + "个商品完成日期不能为空!")
-                        return false;
+                        return;
                     }
                 }
                 if (value == "") {
                     if (date != "") {
                         alert("第" + count + "个商品排产数量不能为空!")
-                        return false;
+                        return;
                     }
                 }
                 if (date == "" && value == "") {
@@ -1448,7 +1461,7 @@
                 var reg= /^[0-9]+[0-9]*]*$/;
                 if (value != "" && (parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value))) {
                     alert("确认值输入不正确!")
-                    return false;
+                    return;
                 }
 //              console.log(originalNum)
                 var entity = {};
@@ -1472,7 +1485,16 @@
                 datatype:"json",
                 type: 'post',
                 success: function (result) {
-//              	console.log(result)
+                	console.log(result)
+                	if(result == true || result == 'true') {
+                		mui.toast('操作成功!')
+						GHUTILS.OPENPAGE({
+							url: "../../html/inventoryMagmetHtml/inventoryList.html",
+							extras: {}
+						})
+                	}else{
+                		mui.toast('操作失败!')
+                	}
                 },
                 error: function (error) {
                     console.info(error);
@@ -1525,13 +1547,13 @@
                     if (date == "") {
                         if (value != "") {
                             alert("第" + count + "个商品完成日期不能为空!")
-                            return false;
+                            return;
                         }
                     }
                     if (value == "") {
                         if (date != "") {
                             alert("第" + count + "个商品排产数量不能为空!")
-                            return false;
+                            return;
                         }
                     }
                     if (date == "" && value == "") {
@@ -1544,7 +1566,7 @@
 //                  console.log(!reg.test(value))
                     if (value != "" && (parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value))) {
                         alert("第" + count + "个商品确认值输入不正确!")
-                        return false;
+                        return;
                     }
                     var entity = {};
                     entity.id = poId;
@@ -1574,14 +1596,15 @@
                 datatype:"json",
                 type: 'post',
                 success: function (result) {
-//                  if(result == true) {
-//                      GHUTILS.OPENPAGE({
-//							url: "../../html/inventoryMagmetHtml/inventoryList.html",
-//							extras: {
-//								
-//							}
-//						})
-//                  }
+                	if(result == true || result == 'true') {
+                		mui.toast('操作成功!')
+						GHUTILS.OPENPAGE({
+							url: "../../html/inventoryMagmetHtml/inventoryList.html",
+							extras: {}
+						})
+                	}else{
+                		mui.toast('操作失败!')
+                	}
                 },
                 error: function (error) {
                     console.info(error);
