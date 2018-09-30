@@ -183,7 +183,7 @@
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
                         if($.isEmptyObject(data)){
-                        	mui.toast("您输入的货号有误，请重新输入！");
+                        	mui.toast("您输入的货号有误，或者此供应商暂无商品！");
 	                    }else {
 	                        $.each(data,function (keys,skuInfoList) {
 	                            var prodKeys= keys.split(",");
