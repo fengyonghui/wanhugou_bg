@@ -20,43 +20,13 @@
 		<div class="mui-content">
 			<form class="mui-input-group">
 				<div class="mui-input-row">
-					<label>清单编号：</label>
-					<input type="text" class="inOrdNum" placeholder="请输入备货单号">
+					<label>订单编号：</label>
+					<input type="text" class="inOrdNum" placeholder="请输入">
 				</div>
 				<div class="mui-input-row">
-					<label>供应商：</label>
+					<label>订单状态：</label>
 					<div class="pre">
-						<input class="newinput" type="text" placeholder="请选择供应商" id="inSupply">
-						<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAdd"></span>
-						<div class="input_div" style="display: none;"></div>						
-						<input class="savedata" type="hidden" value=''>
-					</div>
-					<div style="clear:both"></div>
-				</div>
-				<div class="mui-input-row">
-					<label>发票状态：</label>
-					<div class="pre">
-						<select class="secStyle" name="" id="input_div_invoiceStatus">
-							<option value=""></option>
-						</select>
-						<input class="savedata" type="hidden" value=''>
-						<div style="clear:both"></div>
-					</div>
-				</div>
-				<div class="mui-input-row">
-					<label>业务状态：</label>
-					<div class="pre">
-						<select class="secStyle" name="" id="input_div_poStatus">
-							<option value=""></option>
-						</select>
-						<input class="savedata" type="hidden" value=''>
-						<div style="clear:both"></div>
-					</div>
-				</div>
-				<div class="mui-input-row">
-					<label>订单来源：</label>
-					<div class="pre">
-						<select class="secStyle" name="" id="input_div_orderStatus">
+						<select class="secStyle" name="" id="input_div_ordStatus">
 							<option value=""></option>
 						</select>
 						<input class="savedata" type="hidden" value=''>
@@ -74,24 +44,68 @@
 					</div>
 				</div>
 				<div class="mui-input-row">
-					<label>排产状态：</label>
+					<label>尾款：</label>
 					<div class="pre">
-						<select class="secStyle" name="" id="">
+						<select class="secStyle" name="" id="input_div_finalMoney">
 							<option value="">请选择</option>
-							<option value="0">未排产</option>
-							<option value="1">排产中</option>
-							<option value="2">排产完成</option>
+							<option value="1">有尾款</option>
 						</select>
+						<input class="savedata" type="hidden" value=''>
 						<div style="clear:both"></div>
 					</div>
 				</div>
 				<div class="mui-input-row">
-					<label>待支付：</label>
+					<label>经销店电话：</label>
+					<input type="text" class="inOrdPhone" placeholder="请输入">
+				</div>
+				<div class="mui-input-row">
+					<label>商品货号：</label>
+					<input type="text" class="inItemNum" placeholder="请输入">
+				</div>
+				<div class="mui-input-row">
+					<label>经销店名称：</label>
+					<input type="text" class="inOrdNum" placeholder="请输入">
+				</div>
+				<div class="mui-input-row">
+					<label>采购中心：</label>
+					<input type="text" class="centersName" placeholder="请输入">
+				</div>
+				<div class="mui-input-row">
+					<label>客户专员：</label>
+					<input type="text" class="conName" placeholder="请输入">
+				</div>
+				<div class="mui-input-row">
+					<label>待同意发货：</label>
 					<div class="pre">
-						<select class="secStyle" name="" id="">
+						<select class="secStyle" name="" id="input_div_waitchkStatus">
+							<option value="">请选择</option>
+							<option value="0">待审核</option>
+							<option value="1">审核失败</option>
+							<option value="2">其他</option>
+						</select>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>待发货：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="input_div_waitsendgoods">
 							<option value="">请选择</option>
 							<option value="1">是</option>
 						</select>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>待出库：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="input_div_outbound">
+							<option value="">请选择</option>
+							<option value="1">是</option>
+						</select>
+						<input class="savedata" type="hidden" value=''>
 						<div style="clear:both"></div>
 					</div>
 				</div>

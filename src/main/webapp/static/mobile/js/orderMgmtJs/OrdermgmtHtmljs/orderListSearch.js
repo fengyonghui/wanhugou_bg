@@ -5,7 +5,8 @@
 		this.expTipNum = 0;
 		this.datagood = [];
 		this.dataSupplier = [];
-		this.selectOpen = false
+		this.selectOpen = false;
+		this.includeTestData = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -21,45 +22,74 @@
 			_this.getData();
 			_this.ajaxinvoiceStatus();//发票状态
 			_this.ajaxPoStatus();//业务状态
-			_this.ajaxorderStatus();//订单来源
+			_this.ajaxorderStatus();//订单状态
 			_this.ajaxcheckStatus();//审核状态
 		},
 		getData: function() {
 			var _this = this;
 			$('#inSearchBtn').on('tap', function() {
-				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"))
+//				var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"))
 //				console.log(optionsBusiness)
 				if(_this.selectOpen){
 						if($('.hasoid').attr('id')){
-							_this.sureSelect(optionsBusiness)
+							_this.sureSelect();
 						}else{
-							mui.toast('请选择匹配的选项')
+							mui.toast('请选择匹配的选项');
 						}
 					
 				}else{
-					_this.sureSelect(optionsBusiness)
+					alert(1)
+					_this.sureSelect();
 					
 				}
 				
 
 			})
 		},
-		sureSelect:function(optionsBusiness){
+		sureSelect:function(){
 			var _this = this;
-				_this.selectOpen = false
+				_this.selectOpen = false;
 				var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
+				console.log($('#input_div_ordStatus').val());//订单状态
+				console.log($('#input_div_cheStatus').val());//审核状态
+				console.log($('#input_div_finalMoney').val());//尾款
+				console.log($('.inOrdPhone').val());//经销商电话
+				console.log($('.inItemNum').val());//商品货号
+				console.log($('.centersName').val());//采购中心
+				console.log($('.conName').val());//客户专员
+				console.log($('#input_div_waitchkStatus').val());//待同意发货
+				console.log($('#input_div_waitsendgoods').val());//待发货
+				console.log($('#input_div_outbound').val());//待出库
 				GHUTILS.OPENPAGE({
-					url: "../../html/inventoryMagmetHtml/inventoryList.html",
+					url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 					extras: {
-						reqNo: $('.inOrdNum').val(),
-						name: $('.inReqNum').val(),
-						fromOffice: $('.hasoid').attr('id'),
-						bizStatusid: optionsBusiness.val(),
-						varietyInfoid: optionsClass.val(),
+						orderNum: $('.inOrdNum').val(),//订单编号
+						bizStatus:$('#input_div_ordStatus').val(),//订单状态
+                        selectAuditStatus:$('#input_div_cheStatus').val(),//审核状态
+                        retainage:$('#input_div_finalMoney').val(),//尾款
+                        customerPhone:$('.inOrdPhone').val(),//经销商电话
+                        itemNo:$('.inItemNum').val(),//商品货号
+//                      customerName://经销店名称
+                        centersName:$('.centersName').val(),//采购中心
+                        conName:$('.centersName').val(),//客户专员
+						mobileAuditStatus: $('.inReqNum').val(),//待同意发货
+						waitShipments: $('#input_div_waitsendgoods').val(),//待发货
+						waitOutput: $('#input_div_outbound').val(),//待出库
+						includeTestData: _this.includeTestData,//测试数据
 						isFunc: true
 						}
-					})
+				})
 		},
+		testData:function() {
+			var _this = this;
+            $('.testCheckbox').on('change',function(){
+            	if(this.checked){
+            		_this.includeTestData = true
+            	}else {
+            		_this.includeTestData = false
+            	}
+	        })
+        },
 		hrefHtml: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
 			_this.ajaxSupplier();//供应商
@@ -166,45 +196,45 @@
 				}
 			});
 		},	
-		//订单来源
+		//订单状态
 		ajaxorderStatus: function() {
 			var _this = this;
 			var optHtml ='<option value="">请选择</option>';
-			var htmlClass = '';
-//			$.ajax({
-//				type: 'GET',
-//				url: '/a/sys/dict/listData',
-//				data: {type:'biz_po_status'},
-//				dataType: 'json',
-//				success: function(res) {
+			var htmlOrdstatus = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/dict/listData',
+				data: {type:'biz_order_status'},
+				dataType: 'json',
+				success: function(res) {
 //					console.log(res)
-//					$.each(res, function(i, item) {
+					$.each(res, function(i, item) {
 //						console.log(item)
-//						htmlClass += '<option class="soption" value="' + item.id + '">' + item.label + '</option>'
-//					});
-//					$('#input_div_orderStatus').html(optHtml+htmlClass)
-//				}
-//			});
+						htmlOrdstatus += '<option class="soption" value="' + item.value + '">' + item.label + '</option>'
+					});
+					$('#input_div_ordStatus').html(optHtml+htmlOrdstatus);
+				}
+			});
 		},
 		//审核状态
 		ajaxcheckStatus: function() {
 			var _this = this;
 			var optHtml ='<option value="">请选择</option>';
-			var htmlClass = '';
-////			$.ajax({
-////				type: 'GET',
-////				url: '/a/sys/dict/listData',
-////				data: {type:'biz_po_status'},
-////				dataType: 'json',
-////				success: function(res) {
-////					console.log(res)
-////					$.each(res, function(i, item) {
-////						console.log(item)
-////						htmlClass += '<option class="soption" value="' + item.id + '">' + item.label + '</option>'
-////					});
-////					$('#input_div_orderStatus').html(optHtml+htmlClass)
-////				}
-////			});
+			var htmlChstatus = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/biz/order/bizOrderHeader/listData4mobile',
+//				data: {type:'biz_po_status'},
+				dataType: 'json',
+				success: function(res) {
+					console.log(res.data)
+					$.each(res.data.originConfigMap, function(i, item) {
+						console.log(item)
+						htmlChstatus += '<option class="soption" value="' + item+ '">' + item + '</option>'
+					});
+					$('#input_div_cheStatus').html(optHtml+htmlChstatus)
+				}
+			});
 		},
 },	
 	$(function() {
