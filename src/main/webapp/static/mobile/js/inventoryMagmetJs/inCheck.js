@@ -886,7 +886,6 @@
 				})
 			});
 			document.getElementById("inCheckBtn").addEventListener('tap', function(e) {
-//				alert(_this.checkResult)
 				if(_this.inLastPayDateFlag == true) {
 					if(res.data.createPoHeader == 'yes') {//品类主管审核才生成PO
 						var lastDates = $('#lastDate').val();
@@ -967,7 +966,6 @@
                     if(_this.checkResult == true || _this.checkResult == 'true') {
 						if($('#createPo').val() == 'yes') {
 							//备货单排产
-							alert('备货单排产')
 	                        var resultData = res.data;
 	                        var resultDataArr = resultData.split(",");
 	                        if(resultDataArr[0] == "采购单生成") {
@@ -1267,14 +1265,6 @@
 				'</div></div></li>'
 			});
 			$("#purchOrdQty").val(totalReqQtyNums);
-//			var purchNumss = $('#purchNum').val();
-//			if(purchNumss > totalReqQtyNums) {
-//				mui.toast('排产量总和太大，排产失败!')
-//				GHUTILS.OPENPAGE({
-//					url: "../../html/inventoryMagmetHtml/inventoryList.html",
-//					extras: {}
-//				})
-//			}
 			$("#orSchedPurch").html(htmlPurch)
 			_this.btnshow(chData);
 			_this.schedulPlan();
@@ -1614,7 +1604,7 @@
                 }
                 count++;
             }
-            console.log(params)
+//          console.log(params)
             if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
                 alert("排产量总和太大，请从新输入!")
                 return false
@@ -1626,7 +1616,6 @@
                 datatype:"json",
                 type: 'post',
                 success: function (result) {
-                	console.log(result)
                 	if(result == true || result == 'true') {
                 		mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
