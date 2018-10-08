@@ -32,8 +32,6 @@
                 success: function(res){
                     _this.outSaveFlag = res.data;
 					_this.inSsaveFlag = res.data;
-//                  console.log(_this.outSaveFlag)
-//					console.log(_this.inSsaveFlag)
                 }
             });
         },
@@ -46,9 +44,7 @@
                 data: {id: _this.userInfo.staOrdId},
                 async:false,
                 success: function(mm){
-//              	console.log(mm)
                 	$('#purchOrdQty').val(mm.totalOrdQty);
-//              	console.log(mm.totalSchedulingHeaderNum)
                 	if(mm.totalSchedulingHeaderNum != null) {
                 		$('#purchWaiteNum').val(mm.totalOrdQty - mm.totalSchedulingHeaderNum);
                 		$('#toalSchedulingNum').val(mm.totalSchedulingHeaderNum);
@@ -67,7 +63,6 @@
                 data:{id: _this.userInfo.staOrdId},
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
                 	var remarkTxt = '';
                 	if(res.data.bizPoHeader.bizSchedulingPlan.remark) {
                 		remarkTxt = res.data.bizPoHeader.bizSchedulingPlan.remark
@@ -130,7 +125,6 @@
 		},
 		showContent: function(data) {
 			var _this = this;
-//			console.log(data)
 			if(data.data.detailHeaderFlg == true) {
 				$('#schedPlan1').attr('checked', 'checked');
 				$('#schedPlan2').removeAttr('checked');
@@ -154,17 +148,12 @@
 		purchContent: function(a) {
 			var _this = this;
 			$('.schedPurch').show();
-//			console.log(a)
-//			if(a.data.bizPoHeader.poSchType == 0) {
-//				$('#chedulingStatus').val('未排产');
-//			}
 			if(a.data.bizPoHeader.poSchType == 1) {
 				$('#chedulingStatus').val('排产中');
 			}
 			if(a.data.bizPoHeader.poSchType == 1 || a.data.bizPoHeader.poSchType == 2) {
 				var htmlPurchPlans = '';
 				$.each(a.data.bizCompletePalns, function(d, h) {
-//					console.log(h)
 					htmlPurchPlans += '<div class="mui-row app_bline">'+
 						'<div class="mui-input-row">'+
 							'<label>完成日期：</label>'+
@@ -226,7 +215,6 @@
 				console.log(b.data.bizPoHeader.poDetailList);
 				var itemdate="";
 				var itemnum="";
-//				console.log(b.data.bizPoHeader.poDetailList.bizSchedulingPlan.completePalnList);
 				$.each(b.data.bizPoHeader.poDetailList, function(o, p) {
 					console.log(p.bizSchedulingPlan.completePalnList);
 					$.each(p.bizSchedulingPlan.completePalnList, function(x, y) {
@@ -320,7 +308,6 @@
 					'</div></div>'+comdPlans+'</div></li>'
 				htmlAllSave = '<button id="allSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">批量保存</button>'
 				var commdItemId = item.id;
-//				console.log(commdItemId)
 				_this.commdEverySave(commdItemId)
 			});
     		$("#orSchedCommd").html(htmlCommodity)
@@ -329,10 +316,8 @@
 		},
 		htmlcommdPlanTxt: function(tt) {
 			var _this = this;
-//			console.log(tt)
 			var htmlcommdPlans = '';
 			$.each(tt.bizSchedulingPlan.completePalnList, function(o, p) {
-//				console.log(p)
 				htmlcommdPlans += '<div class="mui-row app_bline">'+
 					'<div class="mui-input-row">'+
 						'<label>完成日期：</label>'+
@@ -385,7 +370,6 @@
 				$('#purchAddCont').append(htmlPurchPlan);
 			})
 			$(".schedCommd").on("tap", ".commdAddBtn", function() {
-//				console.log($(this).parent('.app_f13').next('.commdSchedRecord').next('.plan').find('.commdAddPlan'))
 				$(this).parent('.app_f13').next('.commdSchedRecord').next('.plan').find('.commdAddPlan').append(htmlcommdPlan);
 			})
 			var addPurchNum = _this.userInfo.staOrdId;
@@ -422,13 +406,10 @@
 		},
 		commdEverySave: function(id) {
 			var _this = this;
-	//		var commdPurchId = $('.inAddBtn').attr('commdPurchId');
 			$('.schedCommd').on('tap', '#singleAddBtn_'+ id, function() {
-//				console.log(id)
 				_this.saveComplete(1, id)
 			});
 		},
-	//	"saveComplete('1',${poDetail.id})      saveComplete('0',${bizPoHeader.id})
 	//单个保存
 		saveComplete:function(schedulingType,id){
 			var _this = this;
@@ -467,14 +448,10 @@
 	            poSchType = originalNum > parseInt(totalSchedulingDetailNum) + parseInt(toalSchedulingNumForSku) ? 1 : 2;
 	            totalTotalSchedulingNum = parseInt(totalSchedulingDetailNum) + parseInt(toalSchedulingNumForSku);
 	        }
-//	        console.log("originalNum=" + originalNum);
-//	        console.log("totalTotalSchedulingNum=" + totalTotalSchedulingNum);
-
 	        if(parseInt(totalTotalSchedulingNum) > parseInt(originalNum)) {
 	            alert("排产量总和太大，请从新输入!")
 	            return false
 	        }
-
 	        for(i=0;i<trArray.length;i++){
 	            var div = trArray[i];
 	            var jqDiv = $(div);
@@ -504,15 +481,10 @@
 	            } else {
 	                totalSchedulingDetailNum = parseInt(totalSchedulingDetailNum) + parseInt(value);
 	            }
-
 	            params[i]=entity;
-
 	            totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
 	        }
-//	        console.log(params)
-	//          return
 	        if(confirm("确定执行该排产确认吗？")) {
-	//              $Mask.AddLogo("正在加载");
 	            $.ajax({
 	                url: '/a/biz/po/bizPoHeader/saveSchedulingPlan',
 	                contentType: 'application/json',
@@ -539,7 +511,6 @@
 		batchSave: function (m) {
 			var _this = this;
 			var reqDetailIdList = m.data.poDetailIdListJson;
-//          var reqDetailIdList = JSON.parse('${poDetailIdListJson}');
             var params = new Array();
             var totalSchedulingNum = 0;
             var totalOriginalNum = 0;
@@ -579,15 +550,9 @@
                 }
             }
             poSchType = totalOriginalNum > parseInt(totalSchedulingDetailNum) + parseInt(toalSchedulingNumForSkuNum) ? 1 : 2;
-//	console.log(poSchType)
-//return;
             for(var index in reqDetailIdList) {
-//          	alert(999)
                 var reqDetailId = reqDetailIdList[index];
                 var trArray = $("[name='" + reqDetailId + "']");
-                
-//               console.log(trArray)
-//     			 console.log(trArray.length)
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];
                     var jqDiv = $(div);
@@ -618,14 +583,11 @@
                 }
                 count++;
             }
-//          console.log(params)
             if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
                 alert("排产量总和太大，请从新输入!")
                 return false
             }
-//return
             if(confirm("确定执行该排产确认吗？")) {
-//              $Mask.AddLogo("正在加载");
                 $.ajax({
                     url: '/a/biz/po/bizPoHeader/saveSchedulingPlan',
                     contentType: 'application/json',

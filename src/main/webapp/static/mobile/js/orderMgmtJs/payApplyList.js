@@ -178,22 +178,7 @@
 								    
 						});	
 							$('#payApplyList').append(inPayHtmlList);
-							//支付凭证
-//							console.log(res.data.page.list)
-//							$.each(res.data.page.list,function (i, cards) {
-////                               console.log(cards.imgList)
-//                               if(cards.imgList){
-//									$.each(cards.imgList,function (i, card) {
-////									console.log(card)
-//		                            $(".imgLists").html("<a href=\"" + card.imgServer + card.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + card.imgServer + card.imgPath + "\"></a>");
-//		                           });
-//		                        }else{
-//		                        	$('.imgLists').parent().hide();
-//		                        }
-//	                        });
-							
 							_this.inHrefHtml();
-											
 						} else {
 							$('.mui-pull-caption').html('');
 							$('#payApplyList').append('<p class="noneTxt">暂无数据</p>');
@@ -397,16 +382,6 @@
 		inHrefHtml: function() {
 			var _this = this;
 			_this.comfirDialig();
-		/*首页*/
-//			$('#nav').on('tap','.inHomePage', function() {
-//				var url = $(this).attr('url');
-//				GHUTILS.OPENPAGE({
-//					url: "../../html/backstagemgmt.html",
-//					extras: {
-//						
-//					}
-//				})
-//			}),
 		/*	确认支付金额*/
 			$('#payApplyList').on('tap', '.inPayBtn', function() {
 				$('.payMoney').show();
@@ -431,7 +406,6 @@
 	                    }
 	                    $('#payBtnsave').on('tap',function(){
 	                    	var totalVal = $("#paymoney").val();
-//		                    console.log(totalVal);	
                             if (totalVal=="" || totalVal<= 0) {
                                 mui.toast("付款金额输入不正确，请重新输入！");
                                 return;
@@ -443,7 +417,6 @@
 				                data: {id:resid,poHeaderId:poHeaderIds,orderType:orderTypes,total:$('#paymoney').val(),remark:$('#textxt').val()},
 				                async:false,
 				                success: function(res){				                   
-//				                    console.log(res.data.result);					                    
 				                    if(res.data.result==true){
 				                    	mui.toast('保存成功！！');
 				                    	$('.payMoney').hide();
