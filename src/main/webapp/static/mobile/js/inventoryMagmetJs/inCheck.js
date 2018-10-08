@@ -4,8 +4,10 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.prew = false;
-		this.inLastPayDateFlag = "false"
-		this.inpoFlag = "false"
+		this.inLastPayDateFlag = false;
+		this.inpoFlag = false;
+		this.checkResult = false;
+		this.poId = '';
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -863,8 +865,6 @@
 		},
 		comfirDialig: function(res) {
 			var _this = this;
-//			alert('方法')
-//			console.log(res)
 			document.getElementById("inRejectBtn").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
@@ -905,13 +905,39 @@
 							var btnArray = ['否', '是'];
 							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
 								if(choice.index == 1) {
-									_this.ajaxData(inText, 1, res)
+									if(_this.checkResult == true) {
+										_this.afterAjaxData(inText, 1, res)
+									}
+									if(_this.checkResult == false) {
+										_this.ajaxData(inText, 1, res)
+									}
 								} else {}
 							})
 						}
 					} else {}
 				})
 			});
+		},
+		afterAjaxData: function(inText, num, dm) {
+			var _this = this;
+			var schedulingType = $("input[name='schedulType']:checked").val();
+            console.log(_this.poId)
+            console.log(schedulingType)
+            if (schedulingType == 0) {
+//	                            	var purchDates = $('#purchDate').val();
+            	var purchNums = $('#purchNum').val();
+            	console.log(purchNums)
+            	if(purchNums != undefined) {
+            		_this.saveComplete("0", _this.poId);
+            	}
+            }
+            if (schedulingType == 1) {
+//	                            	var commdDates = $('.commdDate').val();
+            	var commdNums = $('.commdNum').val();
+            	if(commdNums != undefined) {
+            		_this.batchSave("1", _this.poId, dm);
+            	}
+            }
 		},
 		ajaxData: function(inText, num, vn) {
 			var _this = this;
@@ -932,35 +958,31 @@
 				},
 				dataType: "json",
 				success: function(res) {
-                    if(res.ret == true || res.ret == 'true') {
+					console.log(res)
+					_this.checkResult = res.ret
+                    if(_this.checkResult == true || _this.checkResult == 'true') {
 						if($('#createPo').val() == 'yes') {
 							//备货单排产
 	                        var resultData = res.data;
 	                        var resultDataArr = resultData.split(",");
-//	                        console.log(resultDataArr)
-//	                        console.log(resultDataArr[0])
-//	                        console.log(resultDataArr[1])
 	                        if(resultDataArr[0] == "采购单生成") {
-	                            var poId = resultDataArr[1];
-	                            _this.saveComplete("0", poId);
-//	                            var schedulingType = $("input[name='schedulType']:checked").val();
-//	                            console.log(poId)
-//	                            console.log(schedulingType)
-//	                            if (schedulingType == 0) {
-////	                            	var purchDates = $('#purchDate').val();
-//	                            	var purchNums = $('#purchNums').val();
-//	                            	console.log(purchNums)
-//	                            	if(purchNums != undefined) {
-//	                            		_this.saveComplete("0", poId);
-//	                            	}
-//	                            }
-//	                            if (schedulingType == 1) {
-////	                            	var commdDates = $('.commdDate').val();
-//	                            	var commdNums = $('.commdNum').val();
-//	                            	if(commdNums != undefined) {
-//	                            		_this.batchSave("1", poId, vn);
-//	                            	}
-//	                            }
+	                            _this.poId = resultDataArr[1];
+	                            var schedulingType = $("input[name='schedulType']:checked").val();
+	                            console.log(_this.poId)
+	                            console.log(schedulingType)
+	                            if (schedulingType == 0) {
+	                            	var purchNums = $('#purchNum').val();
+	                            	console.log(purchNums)
+	                            	if(purchNums != undefined) {
+	                            		_this.saveComplete("0", _this.poId);
+	                            	}
+	                            }
+	                            if (schedulingType == 1) {
+	                            	var commdNums = $('.commdNum').val();
+	                            	if(commdNums != undefined) {
+	                            		_this.batchSave("1", _this.poId, vn);
+	                            	}
+	                            }
 	                        }
 						}else {
 							mui.toast('操作成功!')
@@ -1240,16 +1262,8 @@
 				'</div></div></li>'
 			});
 			$("#purchOrdQty").val(totalReqQtyNums);
-			var purchNumss = $('#purchNum').val();
-			if(purchNumss > totalReqQtyNums) {
-				mui.toast('排产量总和太大，排产失败!')
-				GHUTILS.OPENPAGE({
-					url: "../../html/inventoryMagmetHtml/inventoryList.html",
-					extras: {}
-				})
-			}
 			$("#orSchedPurch").html(htmlPurch)
-//			_this.btnshow(chData);
+			_this.btnshow(chData);
 			_this.schedulPlan();
 		},
 		btnshow: function(data) {
@@ -1504,10 +1518,10 @@
                 }
             });
        },
-       batchSave: function(schedulingType,poId,vn) {
+       batchSave: function(schedulingType,poId,vndm) {
 			var _this = this;
-//			console.log(vn)
-			var skuInfoIdListList = vn.data.skuInfoIdListListJson;
+//			console.log(vndm)
+			var skuInfoIdListList = vndm.data.skuInfoIdListListJson;
             var params = new Array();
             var totalSchedulingNum = 0;
             var totalOriginalNum = 0;
@@ -1587,13 +1601,13 @@
                 }
                 count++;
             }
-//          console.log(params)
+            console.log(params)
             if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
-                alert("排产量总和太大，请从新输入!")
+                alert("排产量总和太大，请重新输入!")
                 return false
             }
             $.ajax({
-                url: '/a/biz/po/bizPoHeader/saveSchedulingPlan',
+                url: '/a/biz/po/bizPoHeader/batchSaveSchedulingPlan',
                 contentType: 'application/json',
                 data:JSON.stringify(params),
                 datatype:"json",
