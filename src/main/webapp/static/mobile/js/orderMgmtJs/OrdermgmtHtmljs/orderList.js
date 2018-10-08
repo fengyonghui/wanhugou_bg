@@ -43,14 +43,16 @@
 			            callback :function(){ 
 			                    pager['size']= 20;
 			                    pager['pageNo'] = 1;
-			                    pager['flag'] = "check_pending";
+//			                    pager['flag'] = "check_pending";
+//			                    pager['consultantId'] = _this.userInfo.staListId;
 				                var f = document.getElementById("orderList");
 				                var childs = f.childNodes;
 				                for(var i = childs.length - 1; i >= 0; i--) {
 				                    f.removeChild(childs[i]);
 				                }
-				                $('#flag').val(pager.flag);
-				                $('.mui-pull-caption-down').html('');
+				                $('#consultantId').val(pager.consultantId);
+				                $('#flag').val(pager.flag);				                
+				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
 			            }
 			        }
@@ -60,7 +62,7 @@
 		    	var staffHtmlList = '';
 		    	var ass=[];
 		        mui.ajax("/a/biz/order/bizOrderHeader/listData4mobile",{
-		            data:params,
+		            data:params,               
 		            dataType:'json',
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
@@ -71,10 +73,10 @@
 			                dataType: "json",
 			                data: {type: "biz_order_type"},
 			                async:false,
-			                success: function(res){
+			                success: function(res){                 
 				                ass=res;
 			                }
-			            });
+			            });		 
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
@@ -161,18 +163,18 @@
 					} else {
 								$('.mui-pull-bottom-pocket').html('');
 								$('#orderList').append('<p class="noneTxt">暂无数据</p>');
-								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);							
 							}
 						totalPage = res.data.page.count%pager.size!=0?
 		                parseInt(res.data.page.count/pager.size)+1:
 		                res.data.page.count/pager.size;
 //		                console.log(totalPage)
-		                if(totalPage==pager.pageNo){
-			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+		                if(totalPage==pager.pageNo){		                	
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
-			            }
+			            } 			           
 			        },
 		            error:function(xhr,type,errorThrown){
 //			            console.log(type);
@@ -198,12 +200,22 @@
 		/*查询*/
 			$('.app_header').on('tap', '#staOrdSechBtn', function() {
 				var url = $(this).attr('url');
+//				var staListIds = $('#consultantId').val();
+//				var staListIdTxts = $('#staListIdTxt').val(); 
+//				var conId = '';
+//				if(staListIdTxts) {
+//					conId = $('#staListIdTxt').val();
+//				}
+//				if(staListIds) {
+//					conId = $('#consultantId').val();
+//				}
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
-						url: "../../html/orderMgmtHtml/orSearch.html",
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderListSeach.html",
 						extras:{
+//							staListId: conId,
 						}
 					})
 				}
@@ -214,10 +226,10 @@
 				GHUTILS.OPENPAGE({
 					url: "../../html/backstagemgmt.html",
 					extras: {
-
+						
 					}
 				})
-			}),
+			}),	
 		 /*待审核*/
 	       $('.content_part').on('tap', '.waitCheckBtn', function() {
 				var url = $(this).attr('url');
@@ -260,7 +272,7 @@
 						}
 					})
 				}
-			}),
+			}),	
 		/*详情*/
 			$('.content_part').on('tap', '.staOrDetailBtn', function() {
 				var url = $(this).attr('url');
@@ -361,6 +373,7 @@
                     'bizStatus': _this.userInfo.orderStatus,
 //                  'selectAuditStatus': nameTxt, //originConfigMap
                     'customer.id':_this.userInfo.newinput,
+                    consultantId: _this.userInfo.staListSehId,
 					includeTestData: _this.userInfo.includeTestData,
 					mobileAuditStatus: _this.userInfo.mobileAuditStatus,
 					flag: _this.userInfo.flagTxt
@@ -368,6 +381,7 @@
 				dataType: 'json',
 				success: function(res) {
 					$('#flag').val(_this.userInfo.flagTxt)
+					$('#staListIdTxt').val(_this.userInfo.staListSehId)//查询出来的客户专员 ID
 					$.ajax({
 			                type: "GET",
 			                url: "/a/sys/dict/listData",

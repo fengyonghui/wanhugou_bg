@@ -231,6 +231,8 @@
             var _this = this;
             //点击保存按钮操作 保存按钮控制修改商品申报数量和备货商品的添加
             $('#saveDetailBtn').on('tap',function(){
+//          	alert(999)
+            	console.log(res.data.totalPayTotal)
         		if (res.data.totalPayTotal > 0) {
                     mui.toast("该订单已付款，请与系统管理员联系")
                     return;

@@ -23,7 +23,7 @@
                 data: {id:_this.userInfo.inListId,str:'detail'},
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	console.log(res)
                 	//调取供应商信息
                 	if(res.data.bizRequestHeader.bizVendInfo){
                 		var officeId = res.data.bizRequestHeader.bizVendInfo.office.id;
@@ -79,7 +79,7 @@
 			                data: {type:"poSchType"},		                
 			                dataType: "json",
 			                success: function(reslt){
-//			                	console.log(reslt)
+			                	console.log(reslt)
 			                	$.each(reslt,function(i,item){
 			                		if(item.value==itempoSchType){
 			                		 	SchedulstatusTxt = item.label 
@@ -187,6 +187,7 @@
                 data: {id:idval},
                 dataType: "json",
                 success: function(res){
+                	console.log(res)
                 	if (res.data.detailHeaderFlg != true && res.data.detailSchedulingFlg != true) {
                         $("#inSchedultype").val("未排产")
                         $("#stockGoods").hide();
