@@ -49,7 +49,6 @@
 		sureSelect:function(){
 			var _this = this;
 				_this.selectOpen = false;
-				var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));
 				console.log($('#input_div_ordStatus').val());//订单状态
 				console.log($('#input_div_cheStatus').val());//审核状态
 				console.log($('#input_div_finalMoney').val());//尾款

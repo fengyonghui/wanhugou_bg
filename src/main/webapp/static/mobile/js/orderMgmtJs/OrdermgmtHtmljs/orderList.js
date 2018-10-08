@@ -43,15 +43,11 @@
 			            callback :function(){ 
 			                    pager['size']= 20;
 			                    pager['pageNo'] = 1;
-//			                    pager['flag'] = "check_pending";
-//			                    pager['consultantId'] = _this.userInfo.staListId;
 				                var f = document.getElementById("orderList");
 				                var childs = f.childNodes;
 				                for(var i = childs.length - 1; i >= 0; i--) {
 				                    f.removeChild(childs[i]);
-				                }
-				                $('#consultantId').val(pager.consultantId);
-				                $('#flag').val(pager.flag);				                
+				                }			                
 				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
 			            }
@@ -166,12 +162,8 @@
 								$('.mui-pull-bottom-pocket').html('');
 								$('#orderList').append('<p class="noneTxt">暂无数据</p>');
 								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);							
-							}
-						totalPage = res.data.page.count%pager.size!=0?
-		                parseInt(res.data.page.count/pager.size)+1:
-		                res.data.page.count/pager.size;
-//		                console.log(totalPage)
-		                if(totalPage==pager.pageNo){		                	
+						}
+		                if(res.data.page.totalPage==pager.pageNo){		                	
 			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
 			            }else{
 			                pager.pageNo++;
@@ -179,7 +171,7 @@
 			            } 			           
 			        },
 		            error:function(xhr,type,errorThrown){
-//			            console.log(type);
+			            console.log(type);
 		            }
 		        })
 		    }
@@ -283,7 +275,7 @@
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
 					GHUTILS.OPENPAGE({
-						url: "../../../html/staffMgmtHtml/orderHtml/staOrdDetail.html",
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordDetail.html",
 						extras: {
 							staOrdId: staOrdId,
 						}
