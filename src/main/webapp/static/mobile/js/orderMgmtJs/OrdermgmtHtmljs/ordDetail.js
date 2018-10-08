@@ -19,7 +19,8 @@
 		getData: function() {
 			var _this = this;
 			$.ajax({
-                type: "GET",
+                type: "GET",//a/biz/order/bizOrderHeader/form4Mobile  scoreMoney
+//              url: "/a/biz/order/bizOrderHeader/listData4mobile",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
                 data: {
                 	id:_this.userInfo.staOrdId,
@@ -27,7 +28,21 @@
                 },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	console.log(res)
+                	//调取供应商信息
+                	if(res.data.entity2){
+                		var officeId = res.data.entity2.sellersId;
+                	    $('#supplierId').val(officeId);
+                	    _this.supplier($('#supplierId').val());
+                	}else{
+                		$('#insupplier').parent().hide();//供应商
+						$('#insupplierNum').parent().hide();//供应商卡号
+						$('#insupplierMoney').parent().hide();//供应商收款人
+						$('#insupplierBank').parent().hide();//供应商开户行
+						$('#insuppliercontract').parent().hide();//供应商合同
+					    $('#insuppliercardID').parent().hide();//供应商身份证
+                	} 
+                	//红色字体内容
 					$('#firstPart').val(res.data.entity2.customer.name);
 					$('#firstPrincipal').val(res.data.custUser.name);
 					$('#firstMobile').val(res.data.custUser.mobile);
@@ -38,6 +53,7 @@
 					
 					$('#partCPrincipal').val(res.data.orderCenter.consultants.name);
 					$('#partCMobile').val(res.data.orderCenter.consultants.mobile);
+					//付款约定
 					if(res.data.appointedTimeList) {
 						$.each(res.data.appointedTimeList, function(n, v) {
 							$('#staPayTime').val(_this.formatDateTime(v.appointedDate));
@@ -48,26 +64,27 @@
 						$('#staPayMoney').val();
 					}
 					$.each(res.data.commentList, function(q, w) {
-						$('#staPoRemark').val(w.comments);
+						$('#staPoRemark').val(w.comments);//备注
 					})
 					var item = res.data.bizOrderHeader;
 					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
-					$('#staPoordNum').val(item.orderNum);
-					$('#staRelNum').val(item.customer.name);
-					$('#staPototal').val(item.totalDetail.toFixed(2));
-					$('#staAdjustmentMoney').val(item.totalExp);
-					$('#staFreight').val(item.freight.toFixed(2));
-					$('#staShouldPay').val(shouldPay.toFixed(2));
-					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');
+					$('#staPoordNum').val(item.orderNum);//订单编号
+					$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
+					$('#staRelNum').val(item.customer.name);//经销店名称
+					$('#staPototal').val(item.totalDetail.toFixed(2));//商品总价
+					$('#staAdjustmentMoney').val(item.totalExp);//调整金额
+					$('#staFreight').val(item.freight.toFixed(2));//运费
+					$('#staShouldPay').val(shouldPay.toFixed(2));//应付金额
+					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');//已付金额
 					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
-					$('#staPoLastDaPerent').val(poLastDa);
-					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));
-					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));
-					$('#staAddprice').val(item.serviceFee.toFixed(2));
-					$('#staConsignee').val(item.bizLocation.receiver);
-					$('#staMobile').val(item.bizLocation.phone);
-					$('#staShippAddress').val(item.bizLocation.pcrName);
-					$('#staDateilAddress').val(item.bizLocation.address);
+					$('#staPoLastDaPerent').val(poLastDa);//已付金额百分比
+					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));//服务费
+					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));//佣金
+					$('#staAddprice').val(item.serviceFee.toFixed(2));//增值服务费
+					$('#staConsignee').val(item.bizLocation.receiver);//收货人
+					$('#staMobile').val(item.bizLocation.phone);//联系电话
+					$('#staShippAddress').val(item.bizLocation.pcrName);//收货地址
+					$('#staDateilAddress').val(item.bizLocation.address);//详细地址
 					//发票状态
 					var invStatusTxt = '';
 					$.ajax({
@@ -121,6 +138,47 @@
 					_this.commodityHtml(res.data)
                 }
             });
+		},
+		//供应商信息
+		supplier:function(supplierId){						
+			$.ajax({
+                type: "GET",//biz/order/bizOrderHeader/selectVendInfo
+                url: "/a/biz/order/bizOrderHeader/selectVendInfo",
+                data: {vendorId:supplierId},		                
+                dataType: "json",
+                success: function(rest){
+                	console.log(rest)
+                	if(rest){
+                		$('#insupplier').val(rest.vendName);//供应商
+						$('#insupplierNum').val(rest.cardNumber);//供应商卡号
+						$('#insupplierMoney').val(rest.payee);//供应商收款人
+						$('#insupplierBank').val(rest.bankName);//供应商开户行
+						//供应商合同
+						if(rest.compactImgList != undefined){
+							$.each(rest.compactImgList,function (m, n) {
+                                $("#insuppliercontract").append("<a href=\"" + n.imgServer + n.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + n.imgServer + n.imgPath + "\"></a>");
+                            });
+						}else{
+							$('#insuppliercontract').parent().hide();
+						}
+						//供应商身份证
+						if (rest.identityCardImgList != undefined) {
+                        $.each(rest.identityCardImgList,function (i, card) {
+                            $("#insuppliercardID").append("<a href=\"" + card.imgServer + card.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + card.imgServer + card.imgPath + "\"></a>");
+                           });
+                        }else{
+                        	$('#insuppliercardID').parent().hide();
+                        }
+                	}else{
+                		$('#insupplier').parent().hide();//供应商
+						$('#insupplierNum').parent().hide();//供应商卡号
+						$('#insupplierMoney').parent().hide();//供应商收款人
+						$('#insupplierBank').parent().hide();//供应商开户行
+						$('#insuppliercontract').parent().hide();
+						$('#insuppliercardID').parent().hide();
+                	}
+				}
+			});
 		},
 		//状态流程
 		statusListHtml:function(data){

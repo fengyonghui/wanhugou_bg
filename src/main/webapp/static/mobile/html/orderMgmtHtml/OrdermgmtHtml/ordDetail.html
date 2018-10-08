@@ -42,6 +42,10 @@
 				<input type="text" class="mui-input-clear" id="staFreight" disabled>
 			</div>
 			<div class="mui-input-row">
+				<label>万户币抵扣：</label>
+				<input type="text" class="mui-input-clear" id="staCoin" disabled>
+			</div>
+			<div class="mui-input-row">
 				<label>应付金额：</label>
 				<input type="text" class="mui-input-clear" id="staShouldPay" disabled pattern="0.00">
 			</div>
@@ -57,6 +61,30 @@
 			<div class="mui-input-row">
 				<label>佣金：</label>
 				<input type="text" id="staCommission" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商：</label>
+				<input type="text" class="mui-input-clear" id="insupplier" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商卡号：</label>
+				<input type="text" class="mui-input-clear" id="insupplierNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>收款人：</label>
+				<input type="text" class="mui-input-clear" id="insupplierMoney" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>开户行：</label>
+				<input type="text" class="mui-input-clear" id="insupplierBank" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商合同：</label>
+				<div id="insuppliercontract"></div>									
+			</div>
+			<div class="mui-input-row">
+				<label>身份证：</label>
+				<div id="insuppliercardID"></div>	
 			</div>
 			<div class="mui-input-row">
 				<label>发票状态：</label>
@@ -186,6 +214,7 @@
 			
 		</div>
 		<div class="clear"></div>
+		<input type="hidden" id="supplierId"/>
 		<script src="../../../js/component/mui.min.js"></script>	
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>
