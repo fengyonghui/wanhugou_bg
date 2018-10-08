@@ -18,15 +18,12 @@
 			this.getPermissionList1('biz:po:bizPoHeader:audit','inpoFlag')
 			this.pageInit(); //页面初始化
 			//this.radioShow()
-			//			this.btnshow()
-			//			this.searchShow()
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
 			_this.getData();
-
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
@@ -60,9 +57,6 @@
 			var idd=_this.userInfo.staOrdIds;
 			var audit=_this.userInfo.audits;
 			var processPo=_this.userInfo.processPos;
-//			console.log(idd)
-//			console.log(audit)
-//			console.log(processPo)
 			var datas={};
 			if(idd==null&&audit==null&&processPo==null){
 				datas={
@@ -84,12 +78,9 @@
 				success: function(res) {
 					$('#schedulingTxt').hide();
 					console.log(res);
-//					console.log(res.data.bizRequestHeader.str);
 					$('#inCheckBtn').attr('poid',res.data.bizRequestHeader.bizPoHeader.id);
 					$('#inRejectBtn').attr('poids',res.data.bizRequestHeader.bizPoHeader.id);
-					
 					//订单支出信息进来的备货单审核
-//					console.log(_this.inpoFlag)
 					if(_this.inpoFlag == true) {
 						if(res.data.bizRequestHeader.str=='audit'){
 							if(res.data.bizRequestHeader.bizPoHeader.commonProcessList != null && res.data.bizRequestHeader.bizPoHeader.commonProcessList.length > 0 && res.data.bizRequestHeader.processPo == 'processPo')                {
@@ -97,9 +88,7 @@
 							}
 						}
 					}
-//修改：------		//备货单审核
-//					console.log(_this.inLastPayDateFlag)
-//					console.log(res.data.bizRequestHeader.str)
+					//备货单审核
 					if(_this.inLastPayDateFlag == true) {
 						if(res.data.bizRequestHeader.str== 'audit') {
 							if(res.data.bizRequestHeader.commonProcess.type != res.data.autProcessId && res.data.bizRequestHeader.processPo != 'processPo') {
@@ -107,7 +96,6 @@
 							}
 						}
 					}
-//-----------
 					//调取供应商信息
 					$('#createPo').val(res.data.createPoHeader);
 					/*判断是品类主管*/
@@ -141,11 +129,9 @@
 		                dataType: "json",
 		                async:false,
 		                success: function(user){
-//					            console.log(user)
 							userId = user.data.id
 		                }
 		           });
-//		            console.log(userId)
 					/*业务状态*/
 					if(userId!=""&&userId==1){
 						$.ajax({
@@ -220,9 +206,6 @@
 					_this.statusListHtml(res.data); //状态流程					
 					_this.paylistHtml(res.data); //支付列表
 					_this.checkProcessHtml(res.data); //审批流程
-//					console.log(res.data.bizRequestHeader.commonProcess.type)
-//					console.log(res.data.defaultProId)
-//					console.log(res.data.bizRequestHeader.str)
 					if(res.data.bizRequestHeader.str == 'audit' && res.data.bizRequestHeader.commonProcess.type == res.data.defaultProId){
 						_this.stockGoodsHtml(res.data); //商品库存
 					}else{
@@ -233,12 +216,8 @@
 					//排产信息
 					if(res.data.bizRequestHeader.str == 'detail'||res.data.bizRequestHeader.str == 'audit') {
 						var poheaderId = res.data.bizRequestHeader.bizPoHeader.id;
-//						console.log(poheaderId)
 						if(poheaderId == null || poheaderId == "") {
 							$("#inSchedultype").val("未排产")
-//							$("#stockGoods").hide();
-//							$("#schedulingPlan_forHeader").hide();
-//							$("#schedulingPlan_forSku").hide();
 						}
 						if(poheaderId != null && poheaderId != "") {
 							_this.scheduling(poheaderId);
@@ -248,7 +227,6 @@
 			});
 		},
 		checkStatus: function(data) {
-//			console.log(data)
 			var _this = this;
 			var requProcess = data.bizRequestHeader.commonProcess.requestOrderProcess;
 			var purchProcess = data.bizRequestHeader.commonProcess.purchaseOrderProcess;
@@ -268,9 +246,6 @@
 				commonProcessList = data.bizRequestHeader.bizPoHeader.commonProcessList
 			}
 			if(data.bizRequestHeader.str == 'audit' && commonProcessList != null && commonProcessList.length > 0 && data.bizRequestHeader.processPo == 'processPo') {
-//				$('#incheck').val(purchProcess.name);
-//				$('#currentType').val(purchProcess.code)
-//              console.log(purchPro)
                 $.each(purchPro, function(i, item) {
 					$('#incheck').val(item.purchaseOrderProcess.name);
 				    $('#currentType').val(item.purchaseOrderProcess.code)
@@ -287,7 +262,6 @@
 				},
 				dataType: "json",
 				success: function(rest) {
-//					console.log(rest)
 					if(rest) {
 						$('#insupplier').val(rest.vendName); //供应商
 						$('#insupplierNum').val(rest.cardNumber); //供应商卡号
@@ -335,139 +309,14 @@
 				success: function(res) {
 					if(res.data.detailHeaderFlg != true && res.data.detailSchedulingFlg != true) {
 						$("#inSchedultype").val("未排产")
-//						$("#stockGoods").hide();
-//						$("#schedulingPlan_forHeader").hide();
-//						$("#schedulingPlan_forSku").hide();
 					}
 					//按订单排产
 					if(res.data.detailHeaderFlg == true) {
 						$("#inSchedultype").val("按订单排产")
-//						$("#stockGoods").show();
-//						$("#schedulingPlan_forHeader").show();
-//						$("#schedulingPlan_forSku").hide();
-
-//						var poDetailList = res.data.bizPoHeader.poDetailList;
-//						var poDetailHtml = "";
-//						$.each(poDetailList, function(n, v) {
-//							poDetailHtml += '<li class="mui-table-view-cell mui-media">' +
-//								'<div class="photoParent mui-pull-left app_pa">' +
-//								'<img class="app_pa" src="' + v.skuInfo.productInfo.imgUrl + '">' +
-//								'</div>' +
-//								'<div class="mui-media-body app_w72p app_fr">' +
-//								'<div class="mui-input-row">' +
-//								'<label>品牌名称：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.skuInfo.productInfo.brandName + '" disabled>' +
-//								'</div>' +
-//								'<div class="mui-input-row">' +
-//								'<label>商品名称：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.skuInfo.name + '" disabled>' +
-//								'</div>' +
-//								'<div class="mui-input-row">' +
-//								'<label>商品货号：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.skuInfo.itemNo + '" disabled>' +
-//								'</div>' +
-//								'<div class="mui-input-row">' +
-//								'<label>采购数量：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.ordQty + '" reqQty disabled>' +
-//								'</div>' +
-//								'<div class="mui-input-row">' +
-//								'<label>结算价：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.unitPrice + '" disabled>' +
-//								'</div>' +
-//								'<div class="mui-input-row">' +
-//								'<label>总金额：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.ordQty * v.unitPrice + '" disabled>' +
-//								'</div>' +
-//								'</div>' +
-//								'</li>'
-//						})
-//						$("#purchaseMenu").append(poDetailHtml);
-//						//按订单排产中的排产记录
-//						var bizCompletePalns = res.data.bizCompletePalns;
-//						var schedulingHeaderHtml = "";
-//						$.each(bizCompletePalns, function(n, v) {
-//							schedulingHeaderHtml += '<li class="mui-table-view-cell mui-media app_pl0">' +
-//								'<div class="mui-media-body">' +
-//								'<div class="mui-input-row">' +
-//								'<label>完成日期：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + _this.formatDateTime(v.planDate) + '" disabled>' +
-//								'</div>' +
-//								'<div class="mui-input-row">' +
-//								'<label>排产数量：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.completeNum + '" disabled>' +
-//								'</div>' +
-//								'</div>' +
-//								'</li>'
-//						});
-//						$("#schedulingHeader").append(schedulingHeaderHtml);
-//						//按订单排产中的排产备注
-//						var remarkHtml = "<textarea id='schRemarkOrder' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
-//						$(".schedulingHeaderRemark").append(remarkHtml);
 					}
 					//按商品排产
 					if(res.data.detailSchedulingFlg == true) {
 						$("#inSchedultype").val("按商品排产")
-//						$("#stockGoods").hide();
-//						$("#schedulingPlan_forHeader").hide();
-//						$("#schedulingPlan_forSku").show();
-//						var poDetailLists = res.data.bizPoHeader.poDetailList;
-//						var poDetailHtmls = ""
-//						$.each(poDetailLists, function(n, v) {
-//							poDetailHtmls += '<li class="mui-table-view-cell mui-media">' +
-//								'<div class="photoParent mui-pull-left app_pa">' +
-//								'<img class="app_pa" src="' + v.skuInfo.productInfo.imgUrl + '">' +
-//								'</div>' +
-//								'<div class="mui-media-body app_w72p app_fr">' +
-//								'<div class="mui-input-row">' +
-//								'<label>品牌名称：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.skuInfo.productInfo.brandName + '" disabled>' +
-//								'</div>' +
-//								'<div class="mui-input-row">' +
-//								'<label>商品名称：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.skuInfo.name + '" disabled>' +
-//								'</div>' +
-//								'<div class="mui-input-row">' +
-//								'<label>商品货号：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.skuInfo.itemNo + '" disabled>' +
-//								'</div>' +
-//								'<div class="mui-input-row">' +
-//								'<label>采购数量：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.ordQty + '" reqQty disabled>' +
-//								'</div>' +
-//								'<div class="mui-input-row">' +
-//								'<label>结算价：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.unitPrice + '" disabled>' +
-//								'</div>' +
-//								'<div class="mui-input-row">' +
-//								'<label>总金额：</label>' +
-//								'<input type="text" class="mui-input-clear" value="' + v.ordQty * v.unitPrice + '" disabled>' +
-//								'</div>' +
-//								'</div>' +
-//								'</li>'
-//						});
-//						$("#purchaseMenus").append(poDetailHtmls);
-//						//按商品排产中的排产记录
-//						var completePalnHtml = "";
-//						$.each(res.data.bizPoHeader.poDetailList, function(n, v) {
-//							$.each(v.bizSchedulingPlan.completePalnList, function(n, v) {
-//								completePalnHtml += '<li class="mui-table-view-cell mui-media app_pr app_pl0">' +
-//									'<div class="mui-media-body">' +
-//									'<div class="mui-input-row">' +
-//									'<label>完成日期：</label>' +
-//									'<input type="text" class="mui-input-clear" value="' + _this.formatDateTime(v.planDate) + '" disabled>' +
-//									'</div>' +
-//									'<div class="mui-input-row">' +
-//									'<label>排产数量：</label>' +
-//									'<input type="text" class="mui-input-clear" value="' + v.completeNum + '" disabled>' +
-//									'</div>' +
-//									'</div>' +
-//									'</li>'
-//								$("#schedulingHeaders").append(completePalnHtml);
-//							});
-//						});
-//						//按商品排产中的排产备注
-//						var remarkHtmls = "<textarea id='schRemarkOrder' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
-//						$(".schedulingHeaderRemarks").append(remarkHtmls);
 					}
 				}
 			})
@@ -535,7 +384,6 @@
 							'</div>' +
 							'</li>'
 					}
-					//					$("#inCheckAddMenu").html(pHtmlList);
 					if(i === statusLen - 1) {
 						var step = i + 1;
 						pHtmlList += '<li class="step_item">' +
@@ -583,8 +431,6 @@
 							'</div>' +
 							'</li>'
 					}
-					//auditLen = 1&& data.bizRequestHeader.bizPoHeader.commonProcessList == null
-					//
 					if(i == auditLen - 1 && data.bizRequestHeader.processPo != 'processPo' && item.requestOrderProcess.name != '审核完成') {
 						if(item.requestOrderProcess.name != '审核完成') {
 							CheckHtmlList += '<li class="step_item">' +
@@ -597,49 +443,12 @@
 								'</div>' +
 								'</li>'
 						}
-//						if(item.requestOrderProcess.name == '审核完成'){
-//							CheckHtmlList +='<li class="step_item">'+
-//								'<div class="step_num">'+ step +' </div>'+
-//								'<div class="step_num_txt">'+
-//									'<div class="mui-input-row">'+
-//								        '<label>当前状态:</label>'+
-//								        '<input type="text" value="订单支出信息审核 " class="mui-input-clear" disabled>'+
-//								    '</div>'+
-//								'</div>'+
-//							'</li>'
-//						}
 					}
 				});
 				if(data.bizRequestHeader.bizPoHeader != "") {
 					$.each(data.bizRequestHeader.bizPoHeader.commonProcessList, function(a, items) {
 						var len = data.bizRequestHeader.bizPoHeader.commonProcessList.length;
 						var totalStep = auditLen + a;
-//						if(len-a != 1) {
-//							CheckHtmlList +='<li class="step_item">'+
-//							'<div class="step_num">'+ totalStep +' </div>'+
-//							'<div class="step_num_txt">'+
-//								'<div class="mui-input-row">'+
-//							        '<label>批注:</label>'+
-//							        '<input type="text" value="'+ items.description +'" class="mui-input-clear" disabled>'+
-//							    	'<label>审批人:</label>'+
-//							        '<input type="text" value=" '+ items.user.name +' " class="mui-input-clear" disabled>'+
-//							        '<label>时间:</label>'+
-//							        '<input type="text" value=" '+ _this.formatDateTime(items.updateTime) +' " class="mui-input-clear" disabled>'+
-//							    '</div>'+
-//							'</div>'+
-//						'</li>'
-//						}
-//						if(len-a == 1) {
-//							CheckHtmlList +='<li class="step_item">'+
-//							'<div class="step_num">'+ totalStep +' </div>'+
-//							'<div class="step_num_txt">'+
-//								'<div class="mui-input-row">'+
-//							        '<label>当前状态:</label>'+
-//							        '<input type="text" value="'+ items.purchaseOrderProcess.name +'" class="mui-input-clear" disabled>'+
-//							    '</div>'+
-//							'</div>'+
-//						'</li>'
-//						}
 						if(a == 0 && len > 1) {
 							CheckHtmlList += '<li class="step_item">' +
 								'<div class="step_num">' + totalStep + ' </div>' +
@@ -927,7 +736,6 @@
             console.log(_this.poId)
             console.log(schedulingType)
             if (schedulingType == 0) {
-//	                            	var purchDates = $('#purchDate').val();
             	var purchNums = $('#purchNum').val();
             	console.log(purchNums)
             	if(purchNums != undefined) {
@@ -935,7 +743,6 @@
             	}
             }
             if (schedulingType == 1) {
-//	                            	var commdDates = $('.commdDate').val();
             	var commdNums = $('.commdNum').val();
             	if(commdNums != undefined) {
             		_this.batchSave("1", _this.poId, dm);
@@ -997,9 +804,6 @@
                     }else {
                         alert("操作失败！");
 					}
-//					if(res.ret == false) {
-//						mui.toast(res.errmsg)
-//					}
 				},
 				error: function(e) {
 					//服务器响应失败处理函数
@@ -1009,10 +813,6 @@
 		},
 		rejectData: function(rejectTxt, num) {
 			var _this = this;
-//			var lastDateTxt = '';
-//			if($('#createPo').val() == 'yes') {
-//				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
-//			}
 			$.ajax({
 				type: "GET",
 				url: "/a/biz/request/bizRequestHeaderForVendor/audit",
@@ -1020,7 +820,6 @@
 					id: _this.userInfo.inListId,
 					currentType: $('#currentType').val(),
 					createPo: 'no',
-//					lastPayDateVal: lastDateTxt,
 					auditType: num,
 					description: rejectTxt
 				},
@@ -1045,8 +844,6 @@
 			document.getElementById("inRejectBtn").addEventListener('tap', function() {
 				var id= $(this).attr('poids');
 				var currentType= $('#currentType').val();
-//				console.log(id)
-//				console.log(currentType)
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
@@ -1067,9 +864,7 @@
 			document.getElementById("inCheckBtn").addEventListener('tap', function(e) {
 				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
 				var id= $(this).attr('poid');
-//				console.log(id);
 				var currentType= $('#currentType').val();
-//				console.log(currentType);
 				var btnArray = ['取消', '确定'];
 				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
 					if(e.index == 1) {
@@ -1107,7 +902,6 @@
 				},
 				dataType: "json",
 				success: function(res) {
-//					console.log(res)
 					if(res.ret == true) {
 						mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
@@ -1224,18 +1018,9 @@
 //排产		
 		schedulGetData: function(chData) {
 			var _this = this;
-//      	console.log(chData)
-        	
-//        	$.each(res.data.bizPoHeader.orderNumMap, function(a, c) {
-//        		$.each(c, function(v, n) {
-//        			$('#schedOrdNum').val(n.orderNumStr);
-//        		})
-//        	})
-//      	var poDetailList = res.data.bizPoHeader.poDetailList;
         	var htmlPurch = '';
         	var totalReqQtyNums = 0;
         	$.each(chData.data.reqDetailList, function(i,item) {
-//      		console.log(item.reqQty)
         		var reqQtyNum = item.reqQty;
         		totalReqQtyNums = parseInt(totalReqQtyNums) + parseInt(reqQtyNum);
 			htmlPurch +='<li class="mui-table-view-cell mui-media app_bline app_pr">'+
@@ -1287,7 +1072,6 @@
 		},
 		purchContent: function(a) {
 			var _this = this;
-//			console.log(a)
 			var htmlPurch = '';
 			var htmlSave = '';
 			$.each(a.data.reqDetailList, function(i,item) {
@@ -1321,11 +1105,9 @@
 		},
 		commdContent: function(b) {
 			var _this = this;
-//			console.log(b)
 			var htmlCommodity = '';
 			var htmlAllSave = '';
 			$.each(b.data.reqDetailList, function(i,item) {
-//				console.log(item)
 				var waiteNum = item.reqQty - item.sumCompleteNum;
 				htmlCommodity += '<li class="mui-table-view-cell app_bline2">'+
 				'<div class="mui-input-row inComdty inDetailComdty app_pall11_15">'+
@@ -1405,7 +1187,6 @@
 				$(this).parent('.app_f13').find('.commdAddPlan').append(htmlcommdPlan);
 			})
 			var addPurchNum = _this.userInfo.inListId;
-//				console.log(_this.userInfo.inListId)
 			$('.purchAddCont').attr('name', addPurchNum);
 			$('#purchPlan').attr('name', addPurchNum);
 			$('.addpurchDate').attr('name', addPurchNum + '_date');
@@ -1432,7 +1213,6 @@
 			var _this = this;
             var reqId = _this.userInfo.inListId;
             var trArray = $("[name='" + reqId + "']");
-//          console.log(trArray.length)
             var params = new Array();
             var schRemark = "";
             var originalNum = $("#purchOrdQty").val();
@@ -1483,7 +1263,6 @@
                     alert("确认值输入不正确!")
                     return;
                 }
-//              console.log(originalNum)
                 var entity = {};
                 entity.id = poId;
                 entity.objectId = poId;
@@ -1523,7 +1302,6 @@
        },
        batchSave: function(schedulingType,poId,vndm) {
 			var _this = this;
-//			console.log(vndm)
 			var skuInfoIdListList = vndm.data.skuInfoIdListListJson;
             var params = new Array();
             var totalSchedulingNum = 0;
@@ -1580,10 +1358,6 @@
                         continue;
                     }
                     var reg = /^[0-9]+[0-9]*]*$/;
-//                  console.log(value)
-//                  console.log(parseInt(value) <= 0)
-//                  console.log(parseInt(value) > originalNum)
-//                  console.log(!reg.test(value))
                     if (value != "" && (parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value))) {
                         alert("第" + count + "个商品确认值输入不正确!")
                         return;
@@ -1604,7 +1378,6 @@
                 }
                 count++;
             }
-//          console.log(params)
             if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
                 alert("排产量总和太大，请从新输入!")
                 return false
