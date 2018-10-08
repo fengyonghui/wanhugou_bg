@@ -590,7 +590,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .photoList {margin-left: 33%;}
 .step_num {text-align: center;color: #007aff;}
 
-.step_item {border: 1px #3daae9 solid;margin: 15px;}/*流程蓝色边框*/
+.step_item {border: 1px #3daae9 solid;margin: 15px;margin-top: 0;}/*流程蓝色边框*/
 .oneBtn {left: 50%;margin-left: -41px;}
 .list-padding {padding: 10px 10px 0 10px;}
 .mui-input-row label~input.doubleInput {width: 31%;}/*一行有两个input*/
