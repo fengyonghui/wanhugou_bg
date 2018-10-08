@@ -1,5 +1,7 @@
 package com.wanhutong.backend.modules.biz.entity.integration;
 
+import java.math.BigDecimal;
+
 /**
  * (C) Copyright 2017-2019
  * All rights reserved.
@@ -13,13 +15,13 @@ public class BizMoneyRecodeDetail {
      //经销店id
      private Integer officeId;
      //累计获得
-     private Double gainIntegration;
+     private BigDecimal gainIntegration;
      //累计使用
-     private Double usedIntegration;
+     private BigDecimal usedIntegration;
      //累计过期
-     private Double expireIntegration;
+     private BigDecimal expireIntegration;
      //可用
-     private Double availableIntegration;
+     private BigDecimal availableIntegration;
      //全部用户总数
      private Integer totalUser;
      //已下单用户总数
@@ -59,35 +61,35 @@ public class BizMoneyRecodeDetail {
         this.orderUser = orderUser;
     }
 
-    public Double getGainIntegration() {
+    public BigDecimal getGainIntegration() {
         return gainIntegration;
     }
 
-    public void setGainIntegration(Double gainIntegration) {
+    public void setGainIntegration(BigDecimal gainIntegration) {
         this.gainIntegration = gainIntegration;
     }
 
-    public Double getUsedIntegration() {
+    public BigDecimal getUsedIntegration() {
         return usedIntegration;
     }
 
-    public void setUsedIntegration(Double usedIntegration) {
+    public void setUsedIntegration(BigDecimal usedIntegration) {
         this.usedIntegration = usedIntegration;
     }
 
-    public Double getExpireIntegration() {
+    public BigDecimal getExpireIntegration() {
         return expireIntegration;
     }
 
-    public void setExpireIntegration(Double expireIntegration) {
+    public void setExpireIntegration(BigDecimal expireIntegration) {
         this.expireIntegration = expireIntegration;
     }
 
-    public Double getAvailableIntegration() {
+    public BigDecimal getAvailableIntegration() {
         return availableIntegration;
     }
 
-    public void setAvailableIntegration(Double availableIntegration) {
+    public void setAvailableIntegration(BigDecimal availableIntegration) {
         this.availableIntegration = availableIntegration;
     }
 }

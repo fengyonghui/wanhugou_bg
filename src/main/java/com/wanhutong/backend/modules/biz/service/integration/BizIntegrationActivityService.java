@@ -11,7 +11,9 @@ import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail
 import com.wanhutong.backend.modules.config.CronUtils;
 import com.wanhutong.backend.modules.config.web.QuartzManager;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
@@ -57,12 +59,13 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 	
 	@Transactional(readOnly = false,rollbackFor = Exception.class)
 	public void save(BizIntegrationActivity bizIntegrationActivity) {
+		User user = UserUtils.getUser();
 		if(Objects.isNull(bizIntegrationActivity.getStatus()))
 		{
 			bizIntegrationActivity.setStatus(1);
 		}
 
-			bizIntegrationActivity.setSendStatus(0);
+		bizIntegrationActivity.setSendStatus(0);
 		bizIntegrationActivity.setActivityTools("万户币");
         String activityName  = bizIntegrationActivity.getActivityName();
 		if(StringUtils.isNotBlank(bizIntegrationActivity.getActivityName()))
@@ -80,6 +83,7 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		Integer sendScope = bizIntegrationActivity.getSendScope();
 		Integer id = bizIntegrationActivity.getId();
 		BizIntegrationActivity bizIntegrationActivity1 = null;
+		//获取指定用户的id集合
 		if(StringUtils.isNotBlank(officeIds)&&sendScope==-3)
 		{
 			String[] strings = officeIds.split(",");
@@ -94,6 +98,11 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		}
 		if(!Objects.isNull(id))
 		{
+			//修改积分活动
+			if(!Objects.isNull(user))
+			{
+				bizIntegrationActivity.setUpdateBy(user);
+			}
 			bizIntegrationActivity.setId(id);
 			if(sendScope == -3)
 			{
@@ -112,15 +121,14 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 			}
 			else
 			{
-				bizIntegrationActivity = this.get(id);
-				if(!bizIntegrationActivity.getSendScope().equals(sendScope))
+				BizIntegrationActivity localIntegrationActivity = this.get(id);
+				if(!localIntegrationActivity.getSendScope().equals(sendScope))
 				{
 					//删除活动用户表数据
 					bizIntegrationActivityDao.updateMiddleStatusByActivityId(id);
-
 					//保存活动表
 					super.save(bizIntegrationActivity);
-
+					//添加活动用户表数据
 					this.insertMiddleTotal(sendScope,bizIntegrationActivity);
 
 				}
@@ -131,6 +139,11 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		}
 		else
 		{
+			//保存积分活动
+			if(!Objects.isNull(user))
+			{
+				bizIntegrationActivity.setCreateBy(user);
+			}
 			super.save(bizIntegrationActivity);
 			Integer sid = bizIntegrationActivity.getId();
 			for (BizIntegrationActivity bizIntegrationActivity2:list)
@@ -144,6 +157,7 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 			}
 			else
 			{
+				//添加活动用户表数据
 				this.insertMiddleTotal(sendScope,bizIntegrationActivity);
 			}
 			//添加定时任务
@@ -179,15 +193,16 @@ public class BizIntegrationActivityService extends CrudService<BizIntegrationAct
 		bizIntegrationActivityDao.insertMiddle(list);
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
 	public void delete(BizIntegrationActivity bizIntegrationActivity) {
 		//判断是否为指定用户
 		Integer id = bizIntegrationActivity.getId();
 		bizIntegrationActivity = super.get(id);
-		if(bizIntegrationActivity.getSendScope()==-3)
+		//删除活动用户表数据
+		bizIntegrationActivityDao.updateMiddleStatusByActivityId(id);
+		if(bizIntegrationActivity.getSendStatus()==0)
 		{
-			//删除活动用户表数据
-			bizIntegrationActivityDao.updateMiddleStatusByActivityId(id);
+			quartzManager.removeJob(id.toString(),id.toString(),id.toString(),id.toString());
 		}
 		super.delete(bizIntegrationActivity);
 	}

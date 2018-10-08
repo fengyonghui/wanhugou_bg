@@ -9,6 +9,7 @@
 	<script type="text/javascript">
 		    //经销店树形列表
             $(document).ready(function(){
+
                 var str = $("#str").val();
                 if(str=='detail')
 				{
@@ -24,16 +25,34 @@
                     contentType:"application/json;charset=utf-8",
                     success:function(data){
                         $("#quanbu").val(data.totalUser);
-                        $("#sendNum").val(data.totalUser);
                         $("#xiadan").val(data.orderUser);
                         $("#weixiadan").val(data.unOrderUser);
+                        var val = $('input[name="sendScope"]:checked').val();
+                        if(val==-3)
+                        {
+                            $("#officeTree").show();
+                            var officeIds = $("#officeIds").val();
+                            var split = officeIds.split(",");
+                            $("#sendNum").val(split.length);
+                        }
+                        else {
+                            $("#officeIds").val('')
+                            if(val==0)
+                            {
+                                $("#sendNum").val( $("#quanbu").val());
+                            }
+                            if(val==-1)
+                            {
+                                $("#sendNum").val( $("#xiadan").val());
+                            }
+                            if(val==-2)
+                            {
+                                $("#sendNum").val( $("#weixiadan").val());
+                            }
+                        }
                     }
                 })
-                var val = $('input[name="sendScope"]:checked').val();
-                if(val==-3)
-				{
-                    $("#officeTree").show();
-				}
+
                 var setting = {
                            check:{enable:true,nocheckInherit:true},
 					       view:{selectedMulti:false},
@@ -42,6 +61,7 @@
                                onCheck: zTreeOnCheck
                            }
                 };
+
 
                 $("input[type='radio']").click(function(){
                     var value= $(this).val();
@@ -69,6 +89,7 @@
                         $("#offices").hide();
                         $("#search").hide();
                         $("#choose").hide();
+                        $("#officeIds").val('');
                         if(value==0)
                         {
                             $("#sendNum").val($("#quanbu").val());
@@ -111,6 +132,8 @@
 					   $("#sendAll").val(sendAll);
 				   }
 				});
+
+
 
                 $("#buttonExport").click(function(){
                     top.$.jBox.confirm("确认要导出活动参与者列表数据吗？","系统提示",function(v,h,f){
@@ -195,6 +218,13 @@
 					if($("#id").val()!=null)
 					{
 						tree2.expandAll(true);
+                        var val = $('input[name="sendScope"]:checked').val();
+                        if(val==-3)
+						{
+                            $("#sendAll").val('');
+                            $("#integrationNum").val('');
+                            $("#search").show();
+						}
 					}
 
             });
@@ -208,6 +238,7 @@
                     treeObj.selectNode(nodeList[0]);
                 }
             }
+
 	</script>
 
 </head>
@@ -259,17 +290,18 @@
 		<div class="control-group">
 			<label class="control-label">发送时间：</label>
 			<div class="controls">
-				<input name="sendTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+				<input name="sendTime" id="sendTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
 					value="<fmt:formatDate value="${bizIntegrationActivity.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 				<span class="help-inline"><font color="red">*</font> </span>
+				<span>(请将发送时间设置成至少为【活动保存时间】5分钟以后)</span>
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label">发送范围：</label>
 			 <div class="controls">
-                    <form:radiobutton name="sendScope" checked="true" path="sendScope" value="0"/>全部用户
+                    <form:radiobutton name="sendScope" path="sendScope" checked="true" value="0"/>全部用户
                     <form:radiobutton name="sendScope" path="sendScope" value="-1"/>已下单用户
                     <form:radiobutton name="sendScope" path="sendScope" value="-2"/>未下单用户
 				    <form:radiobutton name="sendScope" path="sendScope" id="zhi" value="-3"/>指定用户
@@ -294,7 +326,7 @@
 				</div>
 				<div id="officeTree" class="ztree" style="margin-top:3px;float:left;display: none"></div>
 				<span style="display: none" id="choose">已选择:</span>
-				<textarea id="offices" cols="300" ro style="margin-left:10px;word-wrap:normal;width: 300px;height: 240px;vertical-align:top;display: none">
+				<textarea id="offices" cols="300" ro style="margin-left:10px;word-wrap:normal;width: 400px;height: 240px;vertical-align:top;display: none">
 
 			    </textarea>
 			</div>

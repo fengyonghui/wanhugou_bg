@@ -73,6 +73,13 @@ public class BizSkuInfoV3Service extends CrudService<BizSkuInfoV3Dao, BizSkuInfo
 		return null;
 	}
 
+	public int findCount(BizSkuInfo bizSkuInfo) {
+		if(bizSkuInfo != null) {
+			return dao.findCount(bizSkuInfo);
+		}
+		return 0;
+	}
+
 	public List<BizSkuInfo> findListByParam(BizSkuInfo bizSkuInfo){
 		return bizSkuInfoDao.findListByParam(bizSkuInfo);
 	}

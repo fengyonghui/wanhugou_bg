@@ -10,7 +10,6 @@
 		<title>订单查询</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
-		<link href="../../css/drop.css" rel="stylesheet" />
 	</head>
 
 	<body>
@@ -18,55 +17,86 @@
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
 			<p class="app_cf app_nav_text_center">订单查询</p>
 		</header>
-		<div class="mui-content menuMarg">
-			<form class="mui-input-group app_bline">
+		<div class="mui-content">
+			<form class="mui-input-group">
 				<div class="mui-input-row">
-					<label>订单编号：</label>
+					<label>清单编号：</label>
 					<input type="text" class="inOrdNum" placeholder="请输入备货单号">
 				</div>
 				<div class="mui-input-row">
-					<label>经销店电话：</label>
-					<input type="text" class="inReqNum" placeholder="请输入供应商">
-				</div>
-				<div class="mui-input-row">
-					<label>商品货号：</label>
-					<input type="text" class="inReqNum" placeholder="请输入供应商">
-				</div>
-				<div class="mui-input-row">
-					<label>采购中心：</label>
-					<input type="text" class="inReqNum" placeholder="请输入供应商">
-				</div>
-				<div class="mui-input-row">
-					<label>店名称：</label>
+					<label>供应商：</label>
 					<div class="pre">
-						<input class="newinput" type="text" placeholder="请选择经销店">
-						<span class="mui-icon mui-icon-closeempty" id="orHideSpan"></span>
-						<div id="storeBtn" class="input_div" style="display: none;">
-							
-						</div>
+						<input class="newinput" type="text" placeholder="请选择供应商" id="inSupply">
+						<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAdd"></span>
+						<div class="input_div" style="display: none;"></div>
 						<input class="savedata" type="hidden" value=''>
-						<div style="clear:both"></div>
 					</div>
+					<div style="clear:both"></div>
 				</div>
 				<div class="mui-input-row">
-					<label>订单状态：</label>
+					<label>发票状态：</label>
 					<div class="pre">
-						<select class="secStyle" name="" id="input_div_business">
+						<select class="secStyle" name="" id="input_div_invoiceStatus">
 							<option value=""></option>
 						</select>
 						<input class="savedata" type="hidden" value=''>
 						<div style="clear:both"></div>
 					</div>
 				</div>
+				<div class="mui-input-row">
+					<label>业务状态：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="input_div_poStatus">
+							<option value=""></option>
+						</select>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>审核状态：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="input_div_orderStatus">
+							<option value=""></option>
+						</select>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>排产状态：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="input_div_poSchType">
+							<option value="">请选择</option>
+							<option value="0">未排产</option>
+							<option value="1">排产中</option>
+							<option value="2">排产完成</option>
+						</select>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>待支付：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="wait_pay">
+							<option value="">请选择</option>
+							<option value="1">是</option>
+						</select>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>测试数据：</label>
+					<input type="checkbox" name="" id="testCheckbox" value="" class="testCheckbox"/>
+				</div>
 			</form>
 		</div>
-		<div class="inSearchBtnClass">
+		<div class="SearchBtnClass">
 			<button id="inSearchBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">查询</button>
 		</div>
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/component/dropload.js"></script>
 		<script src="../../js/orderMgmtJs/orSearch.js"></script>
 	</body>
 

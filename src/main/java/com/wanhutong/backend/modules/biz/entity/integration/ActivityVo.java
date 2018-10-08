@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -20,7 +21,7 @@ public class ActivityVo extends DataEntity<ActivityVo> {
 	private static final long serialVersionUID = 1L;
 	private String activityName;		// 活动名称
 	private String officeIds;
-	private String integrationNum;// 每人赠送积分
+	private BigDecimal integrationNum;// 每人赠送积分
     private Integer sendScope; //发送范围
 
 	public String getActivityName() {
@@ -39,11 +40,11 @@ public class ActivityVo extends DataEntity<ActivityVo> {
 		this.officeIds = officeIds;
 	}
 
-	public String getIntegrationNum() {
+	public BigDecimal getIntegrationNum() {
 		return integrationNum;
 	}
 
-	public void setIntegrationNum(String integrationNum) {
+	public void setIntegrationNum(BigDecimal integrationNum) {
 		this.integrationNum = integrationNum;
 	}
 

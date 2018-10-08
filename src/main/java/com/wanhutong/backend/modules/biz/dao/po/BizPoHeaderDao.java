@@ -59,4 +59,6 @@ public interface BizPoHeaderDao extends CrudDao<BizPoHeader> {
      * @param bizPoHeader
      */
     void updateSchedulingType(BizPoHeader bizPoHeader);
+
+    int findCount(BizPoHeader bizPoHeader);
 }

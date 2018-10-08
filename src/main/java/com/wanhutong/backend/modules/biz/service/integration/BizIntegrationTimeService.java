@@ -9,6 +9,7 @@ import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.integration.ActivityVo;
 import com.wanhutong.backend.modules.biz.entity.integration.BizIntegrationActivity;
 import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecode;
+import com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail;
 import com.wanhutong.backend.modules.biz.entity.logistic.LogisticEntity;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.web.integration.BizIntegrationActivityController;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -95,7 +97,7 @@ public class BizIntegrationTimeService implements Job{
             bizIntegrationActivity.setSendStatus(1);
             bizIntegrationActivityDao.updateActivitySendStatus(bizIntegrationActivity.getId());
             Integer sendScope = bizIntegrationActivity.getSendScope();
-            String integrationNum = bizIntegrationActivity.getIntegrationNum();
+            BigDecimal integrationNum = bizIntegrationActivity.getIntegrationNum();
             BizMoneyRecode bizMoneyRecode = null;
             List<BizMoneyRecode> arrayList = new ArrayList<>();
             Date date = new Date();
@@ -105,10 +107,12 @@ public class BizIntegrationTimeService implements Job{
                         bizMoneyRecode = new BizMoneyRecode();
                         Integer officeId = o.getId();
                         //根据officeId查询用户可用积分
-                        Double avaiableMoney = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
-                        if (!Objects.isNull(avaiableMoney)) {
-                              Double newMoney = avaiableMoney + Double.valueOf(integrationNum);
-                              bizMoneyRecode.setNewMoney(newMoney.toString());
+                        BizMoneyRecodeDetail bizMoneyRecodeDetail = bizMoneyRecodeService.selectMoneyByOfficeId(officeId);
+                        if (!Objects.isNull(bizMoneyRecodeDetail)) {
+                              BigDecimal newMoney = bizMoneyRecodeDetail.getAvailableIntegration().add(integrationNum);
+                              BigDecimal gainMoney = bizMoneyRecodeDetail.getGainIntegration().add(integrationNum);
+                              bizMoneyRecode.setNewMoney(newMoney);
+                              bizMoneyRecode.setGainIntegration(gainMoney);
                         }
                         bizMoneyRecode.setOffice(o);
                         bizMoneyRecode.setStatus(1);

@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.service.integration;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.wanhutong.backend.common.persistence.Page;
@@ -50,12 +51,6 @@ public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMon
 
 	public BizMoneyRecodeDetail selectRecordDetail(){
 		BizMoneyRecodeDetail bizMoneyRecodeDetail = bizMoneyRecodeDao.selectRecodeDetail();
-        Double availableIntegration = bizMoneyRecodeDetail.getGainIntegration()-bizMoneyRecodeDetail.getExpireIntegration()-bizMoneyRecodeDetail.getUsedIntegration();
-        if(availableIntegration<0)
-		{
-			availableIntegration = 0.0;
-		}
-        bizMoneyRecodeDetail.setAvailableIntegration(availableIntegration);
         return bizMoneyRecodeDetail;
 	}
 
@@ -63,9 +58,9 @@ public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMon
 		List<BizMoneyRecodeDetail> bizMoneyRecodeDetails = bizMoneyRecodeDao.selectExpireMoney();
 		for(BizMoneyRecodeDetail biz:bizMoneyRecodeDetails)
 		{
-			Double gainIntegration = biz.getGainIntegration();
-			Double usedIntegration = biz.getUsedIntegration();
-			double expireIntegration = gainIntegration - usedIntegration;
+			BigDecimal gainIntegration = biz.getGainIntegration();
+			BigDecimal usedIntegration = biz.getUsedIntegration();
+			BigDecimal expireIntegration = gainIntegration.subtract(usedIntegration);
 			biz.setExpireIntegration(expireIntegration);
 		}
 		return  bizMoneyRecodeDetails;
@@ -83,8 +78,14 @@ public class BizMoneyRecodeService extends CrudService<BizMoneyRecodeDao, BizMon
          bizMoneyRecodeDao.updateMoney(list);
 	}
 
+    //更新用户信用表过期积分数
+    @Transactional
+    public void updateExpireMoney(List<BizMoneyRecode> list){
+        bizMoneyRecodeDao.updateExpireMoney(list);
+    }
+
 	//查询用户所有的可用积分
-	public Double selectMoneyByOfficeId(Integer officeId){
+	public BizMoneyRecodeDetail selectMoneyByOfficeId(Integer officeId){
         return bizMoneyRecodeDao.selectMoney(officeId);
 	}
 

@@ -191,4 +191,7 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 		return dao.getPayMentOrderByReqId(reqId);
 	}
 
+	public int findCount(BizPoPaymentOrder bizPoPaymentOrder) {
+		return dao.findCount(bizPoPaymentOrder);
+	}
 }

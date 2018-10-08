@@ -155,9 +155,10 @@
 			var htmlList = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/sys/office/queryTreeList',
+				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
-					type: 8
+					type: 8,
+					source:'officeConnIndex'
 				},
 				dataType: 'json',
 				success: function(res) {
@@ -182,7 +183,7 @@
 				dataType: 'json',
 				success: function(res) {
 					console.log(res)
-					$.each(res.data.processSet, function(i, item) {
+					$.each(res.data.requestMap, function(i, item) {
 //						console.log(i)
 						htmlCheckStatus += '<option class="soption"  value="' + i + '">' + item + '</option>'
 					});

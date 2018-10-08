@@ -9,15 +9,15 @@
 		<meta http-equiv="Pragma" content="no-cache">
 		<meta http-equiv="Cache-control" content="no-cache">
 		<meta http-equiv="Cache" content="no-cache">
-		<title>订单列表</title>
+		<title>订单支出信息</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
-		<link href="../../css/app.css?time=20180914" rel="stylesheet" />
+		<link href="../../css/app.css?time=20180930" rel="stylesheet" />
 	</head>
 	<body>
 		<header class="app_header mui-bar mui-bar-nav">
 		    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
-		    <span id="staOrdSechBtn" class="mui-icon mui-icon-search mui-pull-right app_cf"></span>
-		    <p class="app_cf app_nav_text_center">订单列表</p>
+		    <span id="OrdSechBtn" class="mui-icon mui-icon-search mui-pull-right app_cf"></span>
+		    <p class="app_cf app_nav_text_center">订单支出信息列表</p>
 		</header>
 		<nav class="mui-bar mui-bar-tab footClass" id="nav">
 			<a class="mui-tab-item app_cf staHomePage">
@@ -27,18 +27,14 @@
 		</nav>
 		<div class="app_content mui-content mui-scroll-wrapper" id="refreshContainer">			
 			<div class="mui-scroll">
-				<ul class="mui-table-view mui-table-view-chevron" id="orderList">
+				<ul class="mui-table-view mui-table-view-chevron" id="orderinfoList">
                         
                 </ul>
 			</div>
-		</div>
-		<input type="hidden" name="statu" id="statu"/>
-		<input type="hidden" name="source" id="source"/>
-		<input type="hidden" name="flag" id="flag"/>
-		<script src="../../js/component/zepto.min.js"></script>
+		</div>			
 		<script src="../../js/component/mui.min.js"></script>
+		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/orderMgmtJs/orderList.js"></script>
-
+		<script src="../../js/orderMgmtJs/orderpaymentinfo.js?time=20180930"></script>
 	</body>
 </html>

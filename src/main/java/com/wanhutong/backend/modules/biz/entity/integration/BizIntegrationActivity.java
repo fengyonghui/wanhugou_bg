@@ -5,6 +5,8 @@ package com.wanhutong.backend.modules.biz.entity.integration;
 
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -29,8 +31,8 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 	private String activityTools;		// 优惠工具
 	private Integer sendNum;		// 发送人数
 	private String officeIds;
-	private String integrationNum;		// 每人赠送积分
-	private Integer sendAll;		// 赠送总积分
+	private BigDecimal integrationNum;		// 每人赠送积分
+	private BigDecimal sendAll;		// 赠送总积分
 	private String description;		// 备注说明
 	private Integer status;		// status
 	private Integer uVersion;		// 版本控制；重要
@@ -50,12 +52,20 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 		this.office = office;
 	}
 
-	public Integer getSendAll() {
+	public BigDecimal getSendAll() {
 		return sendAll;
 	}
 
-	public void setSendAll(Integer sendAll) {
+	public void setSendAll(BigDecimal sendAll) {
 		this.sendAll = sendAll;
+	}
+
+	public BigDecimal getIntegrationNum() {
+		return integrationNum;
+	}
+
+	public void setIntegrationNum(BigDecimal integrationNum) {
+		this.integrationNum = integrationNum;
 	}
 
 	public String getStr() {
@@ -106,7 +116,7 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 		this.officeIds = officeIds;
 	}
 
-	@Length(min=0, max=50, message="活动名称长度必须介于 0 和 50 之间")
+	@Length(min=0, max=200, message="活动名称长度必须介于 0 和 50 之间")
 	public String getActivityName() {
 		return activityName;
 	}
@@ -141,7 +151,7 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 		this.sendScope = sendScope;
 	}
 	
-	@Length(min=0, max=10, message="优惠工具长度必须介于 0 和 10 之间")
+	@Length(min=0, max=10, message="优惠工具长度必须介于 0 和 30 之间")
 	public String getActivityTools() {
 		return activityTools;
 	}
@@ -156,14 +166,6 @@ public class BizIntegrationActivity extends DataEntity<BizIntegrationActivity> {
 
 	public void setSendNum(Integer sendNum) {
 		this.sendNum = sendNum;
-	}
-
-	public String getIntegrationNum() {
-		return integrationNum;
-	}
-
-	public void setIntegrationNum(String integrationNum) {
-		this.integrationNum = integrationNum;
 	}
 
 	@Length(min=0, max=100, message="备注说明长度必须介于 0 和 100 之间")
