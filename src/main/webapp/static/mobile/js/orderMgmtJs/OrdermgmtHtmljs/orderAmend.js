@@ -282,7 +282,7 @@
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-//					console.log(data)
+					console.log(item)
 					var opShelfInfo = '';
 					if(item.shelfInfo.opShelfInfo) {
 						opShelfInfo = item.shelfInfo.opShelfInfo.name
@@ -386,11 +386,32 @@
 	                    '<div class="mui-input-row ">' +
 	                    '<label class="commodityName">创建时间:</label>' +
 	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + _this.formatDateTime(item.createDate) + '" disabled></div></li></div>' +
-	                    
+	                   
+	                    '<div class="mui-row lineStyle">' +
+		                    '<li class="mui-table-view-cell">' +
+			                    '<div class="mui-input-row ">' +
+				                    '<button type="submit" style="float:left;margin-left:50px;" amendId="'+item.id+'" class="ordAmendBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">修改</button>'+
+									'<button type="submit" style="float:right;margin-right:50px;" class="inAddBtn app_btn_search mui-btn-blue mui-btn-block">删除</button>'+
+		                    	'</div></li></div>' +
+	                   
                     '</div>'
 				});
 				$("#staCommodity").html(htmlCommodity)
+				_this.ordHrefHtml();
 			}
+		},
+		ordHrefHtml: function() {
+			var _this = this;
+			/*修改*/
+            $('#staCommodity').on('tap','.ordAmendBtn', function() {
+                var amendId = $(this).attr('amendId');
+				GHUTILS.OPENPAGE({
+					url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orDetailAmend.html",
+					extras: {
+                        amendId: amendId,
+					}
+				})
+			})
 		},
 		formatDateTime: function(unix) {
         	var _this = this;
