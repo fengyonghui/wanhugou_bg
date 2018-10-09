@@ -1335,6 +1335,58 @@ public class BizOrderHeaderController extends BaseController {
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?statu=" + statuPath + "&source=" + bizOrderHeader.getSource();
     }
 
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "save4mobile")
+    @ResponseBody
+    public String save4mobile(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        if (!beanValidator(model, bizOrderHeader)) {
+            return form(bizOrderHeader, model, null, null, request, response);
+        }
+        if (bizOrderHeader.getPlatformInfo() == null) {
+            //后台默认保存为 系统后台订单
+            bizOrderHeader.getPlatformInfo().setId(6);
+        }
+        String statuPath = request.getParameter("statuPath");
+        if (bizOrderHeader.getId() != null) {
+            OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader);
+            if (bizOrderHeader.getOrderNum().startsWith("DO")) {
+                if (OrderPayProportionStatusEnum.ALL == statusEnum || OrderPayProportionStatusEnum.FIFTH == statusEnum) {
+                    bizOrderHeaderService.saveCommonProcess(statusEnum, bizOrderHeader, Boolean.TRUE);
+                }
+            }
+
+            if (bizOrderHeader.getOrderNum().startsWith("SO")) {
+                genAuditProcess(statusEnum, bizOrderHeader, Boolean.TRUE);
+            }
+
+            BizOrderDetail bizOrderDetail = new BizOrderDetail();
+            bizOrderDetail.setOrderHeader(bizOrderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+            BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+            for (BizOrderDetail orderDetail : orderDetailList) {
+                bizPoOrderReq.setSoLineNo(orderDetail.getLineNo());
+                bizPoOrderReq.setOrderHeader(orderDetail.getOrderHeader());
+                bizPoOrderReq.setSoType((byte) 1);
+                List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+                if (poOrderReqList != null && poOrderReqList.size() > 0) {
+                    BizPoOrderReq poOrderReq = poOrderReqList.get(0);
+                    BizPoHeader poHeader = poOrderReq.getPoHeader();
+                    poHeader.setDelFlag("0");
+                    poOrderReq.setDelFlag("0");
+                    bizPoHeaderService.save(poHeader);
+                    bizPoOrderReqService.save(poOrderReq);
+                }
+            }
+        }
+
+        //Boolean result
+
+        bizOrderHeaderService.save(bizOrderHeader);
+
+        return "";
+    }
+
     @RequiresPermissions("biz:order:bizOrderHeader:doRefund")
     @RequestMapping(value = "saveRefund")
     public String saveRefund(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
