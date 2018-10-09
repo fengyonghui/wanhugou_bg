@@ -1664,7 +1664,7 @@
                             <%--allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息" onchange="deleteStyle()"/>--%>
             <%--<span class="help-inline"><font color="red">*</font> </span>--%>
             <input id="remarkInput" type="hidden" value=""/>
-            <a href="#" id="remark" onclick="selectRemark()">《厂家退换货流程》</a>
+            <buttion id="remark" onclick="selectRemark()">《厂家退换货流程》</buttion>
         </div>
     </div>
     <div id="cardNumber" class="control-group" style="display: none">
