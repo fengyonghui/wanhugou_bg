@@ -703,6 +703,8 @@ body{font-size: 15px;color:#3b3b3b;}
 /*订单详情---产品信息--- 一列样式:*/
 .commodity div.lineStyle label {width:20%}
 .commodity div.lineStyle input {width:80%}
+#foot{display: flex;}
+#foot div{flex: 7;}
 /*进展信息*/
 .nextTxt01 {top: 17px;left: 88px;}
 .nextTxt02 {top: 6px;left: 87px;}

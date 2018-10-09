@@ -4,13 +4,19 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.staOrdFlag = "false";
+		this.staOrdauditFlag = "false";
+		this.staOrdsupplyFlag = "false";
+		this.staOrdeditFlag = "false";
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			//权限添加
 //			biz:order:bizOrderHeader:view		操作
-			this.getPermissionList('biz:order:bizOrderHeader:view','staOrdFlag')//true
+			this.getPermissionList('biz:order:bizOrderHeader:view','staOrdFlag')//true 
+			this.getPermissionList1('biz:order:bizOrderHeader:audit','staOrdauditFlag')//false审核
+			this.getPermissionList2('biz:order:bizOrderHeader:supplying','staOrdsupplyFlag')//false出库确认
+			this.getPermissionList3('biz:order:bizOrderHeader:edit','staOrdeditFlag')//修改、删除true
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -64,6 +70,7 @@
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
 		            	console.log(res)
+		            	var dataRow = res.data.roleSet;
 		            	//订单类型
 		          	    $.ajax({
 			                type: "GET",
@@ -74,7 +81,18 @@
 			                success: function(res){                 
 				                ass=res;
 			                }
-			            });		 
+			            });	
+			            /*当前用户信息*/
+						var userId = '';
+						$.ajax({
+			                type: "GET",
+			                url: "/a/getUser",
+			                dataType: "json",
+			                async:false,
+			                success: function(user){                 
+								userId = user.data.id
+			                }
+			            });
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
@@ -94,24 +112,132 @@
 		                        	if(item.orderType==items.value) {
 		                        		orderTypeTxt = items.label
 		                        	}
-	                           })
-	                        	//审核
-//	                        	var staCheckBtn = '';
+	                            })
+	                        	
 	                        	var staCheckBtnTxt = '';
+	                        	var staSupplyBtnTxt = '';
 				                if(_this.staOrdFlag == true) {
-				                	if(item.bizStatus < 15) {
-				                		staCheckBtn = 'waitCheckBtn'
-				                		staCheckBtnTxt = "待审核"
-				                	}
-				                	if(item.bizStatus==45) {
-				                		staCheckBtnTxt = "审核失败"
-				                	}
-				                	if(item.bizStatus==15) {
-				                		staCheckBtnTxt = "审核成功"
-				                	}
-//                                  if(item.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state){
-//
-//                                  }
+				                	//审核
+                                    if(item.bizStatus != res.data.CANCLE){
+                                        if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING){
+                                        	console.log('审核1')
+                                         	if(_this.staOrdauditFlag == false){
+												var DataRoleGener = '';
+												if(item.commonProcess) {
+													DataRoleGener = item.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
+												}
+												console.log(DataRoleGener)
+												var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));	
+                                         		if((fileRoleData || userId==1)&& item.commonProcess.doOrderHeaderProcessFifth.name != '驳回'&& item.commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
+                                         			
+                                         			staCheckBtnTxt="审核";
+                                         		}
+												var DataRoleGeners = '';
+												if(item.commonProcess) {
+													DataRoleGeners = item.commonProcess.jointOperationOriginProcess.roleEnNameEnum;
+												}
+												var fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
+												console.log(res.data.auditStatus)
+												var auditStatu = '';
+					                            $.each(res.data.auditStatus,function(q,s){
+					                            	console.log(s)
+						                        	auditStatu=s
+					                            })
+					                            console.log(auditStatu)
+                                         		if(fileRoleDatas&& item.commonProcess.jointOperationOriginProcess.name != '驳回'&& item.commonProcess.jointOperationOriginProcess.code != auditStatu&& item.orderType == res.data.ORDINARY_ORDER){
+                                         			staCheckBtnTxt="审核";
+                                         		}
+                                         	}
+                                        }
+                                        if(_this.staOrdauditFlag == false){
+                                        	console.log('审核2')
+//                                      	orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
+//							&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
+//							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+//							&& (fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationLocalProcess)
+//							 	|| fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationOriginProcess)
+//							 	 || fns:getUser().isAdmin()
+//                                          console.log(dataRow)
+                                            var DataRole = '';
+											if(item.commonProcess) {
+												DataRole = item.commonProcess.jointOperationLocalProcess;
+											}
+											console.log(DataRole)
+//											var fileRole = dataRow.filter(v => DataRole.includes(v));
+											var DataRoles = '';
+											if(item.commonProcess) {
+												DataRoles = item.commonProcess.jointOperationOriginProcess;
+											}
+											console.log(DataRoles)
+//											var fileRoles = dataRow.filter(v => DataRoles.includes(v));
+                                            if(item.commonProcess != null && item.commonProcess.id != null && item.commonProcess.purchaseOrderProcess.name != '驳回' && item.commonProcess.purchaseOrderProcess.name != '审批完成' && (DataRole||DataRoles||userId==1)){
+                                                if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING){
+                                                    if(item.suplys == 0 ){
+                                                     	staCheckBtnTxt="审核";
+                                                    }
+                                                    if(item.suplys != 0 ){
+                                                     	staCheckBtnTxt="审核";
+                                                    }
+                                                }
+                                        	}
+                                        }
+                                        //出库确认
+                                        if(_this.staOrdsupplyFlag == false){
+                                        	if(item.bizStatus >= res.data.SUPPLYING && item.bizStatus <= res.data.STOCKING && item.suplys != 0 && item.suplys != 721){
+                                        		if(item.bizInvoiceList.length <= 0){
+                                        			staSupplyBtnTxt="出库确认";
+                                        		}
+                                        	}
+                                        }
+                                    }
+                                    if(item.delFlag!=null && item.delFlag == '1'){
+                                    	//支付流水
+                                    	var staPaymentBtnTxt ="";
+                                    	if(item.bizStatus != res.data.CANCLE){
+                                    		if(item.statu == 'unline' || userId==1){
+                                    			staPaymentBtnTxt ="支付流水";
+                                    		}
+                                    	}
+                                    	//详情
+	                                    var staDetailBtnTxt ="";
+	                                    if(item.orderType != res.data.PHOTO_ORDER){
+	                                    	staDetailBtnTxt="详情";
+	                                    }
+	                                    if(item.orderType == res.data.PHOTO_ORDER){
+	                                    	staDetailBtnTxt="详情";
+	                                    }
+	                                    //修改、删除
+	                                    var staAmendTxt ="";
+	                                    var staDeleteTxt ="";
+	                                    if(item.bizStatus != res.data.CANCLE){
+	                                    	if(_this.staOrdeditFlag==true){
+	                                    		if(item.orderType != res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)){
+	                                    			staAmendTxt ="修改";
+	                                    		}
+	                                    		if(item.orderType == res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)){
+	                                    			staAmendTxt ="修改";
+	                                    		}
+	                                    		if(userId==1){
+	                                    			staDeleteTxt ="删除";
+	                                    		}
+	                                    	}
+	                                    }
+	                               }else{
+	                                	staPaymentBtnTxt ="";
+	                                	staDetailBtnTxt="";
+	                                	staAmendTxt ="";
+	                                	staDeleteTxt ="";
+	                                }
+	                                //详情另一种情况
+	                                var staDetailBtnTxt ="";
+	                                var staRecoveryBtnTxt ="";//h恢复
+	                                if(_this.staOrdeditFlag==true){
+	                                	if(item.delFlag!=null && item.delFlag == '0'){
+	                                		staDetailBtnTxt ="详情";
+	                                		staRecoveryBtnTxt ="恢复";
+	                                	}
+	                                }
+                                    
 				                }
 				                else {
 				                	staCheckBtnTxt = ''
@@ -139,29 +265,38 @@
 											'<label>更新时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 										'</div>' +
-										//业务状态需要添加权限
+										//业务状态需要添加权限 mui-col-xs-2 
 //										'<div class="mui-input-row">' +
 //											'<label>业务状态:</label>' +
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
-										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-											'<div class="mui-col-xs-3 ordCheckBtn" staOrdId="'+ item.id +'">' +
+										'<div class="app_color40 mui-row app_text_center content_part operation " id="foot">' +
+											'<div class="ordCheckBtn" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
-//											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">出库确认</li>' +
-//											'</div>'+
-											'<div class="mui-col-xs-3 ordAmendBtn"  staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">修改</li>' +
+											'<div class="ordSupplyBtn"  staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ staSupplyBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-3 ordDetailBtn" staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">详情</li>' +
+											'<div class="ordPaymentBtn"  staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ staPaymentBtnTxt +'</li>' +
+											'</div>'+
+											'<div class="ordAmendBtn"  staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ staAmendTxt +'</li>' +
+											'</div>'+
+											'<div class="ordDeleteBtn"  staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ staDeleteTxt +'</li>' +
+											'</div>'+
+											'<div class="ordDetailBtn" staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ staDetailBtnTxt +'</li>' +
+											'</div>'+
+											'<div class="ordRecoveryBtn" staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ staRecoveryBtnTxt +'</li>' +
 											'</div>'+
 										'</div>' +
 									'</div>'
 								});
 								$('#orderList').append(staffHtmlList);
-								_this.stOrdHrefHtml()
+								_this.stOrdHrefHtml();
 					} else {
 								$('.mui-pull-bottom-pocket').html('');
 								$('#orderList').append('<p class="noneTxt">暂无数据</p>');
@@ -190,6 +325,48 @@
                 async:false,
                 success: function(res){
                     _this.staOrdFlag = res.data;
+                }
+            });
+        },
+        getPermissionList1: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+//              	console.log(res.data) //false
+                    _this.staOrdauditFlag = res.data;
+                }
+            });
+        },
+        getPermissionList2: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+//              	console.log(res.data) //false
+                    _this.staOrdsupplyFlag = res.data;
+                }
+            });
+        },
+        getPermissionList3: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                	console.log(res.data) //false
+                    _this.staOrdeditFlag = res.data;
                 }
             });
         },
@@ -380,6 +557,7 @@
 				},
 				dataType: 'json',
 				success: function(res) {
+					var dataRow = res.data.roleSet;
 					$('#flag').val(_this.userInfo.flagTxt)
 					$('#staListIdTxt').val(_this.userInfo.staListSehId)//查询出来的客户专员 ID
 					$.ajax({
@@ -407,19 +585,37 @@
 		                        		orderTypeTxt = items.label
 		                        	}
 	                            })
-//								var staCheckBtn = '';
+//								//审核
 	                        	var staCheckBtnTxt = '';
 				                if(_this.staOrdFlag == true) {
-				                	if(item.bizStatus==0 || item.bizStatus==5 || item.bizStatus==10) {
-//				                		staCheckBtn = 'waitCheckBtn'
-				                		staCheckBtnTxt = "待审核"
-				                	}
-				                	if(item.bizStatus==45) {
-				                		staCheckBtnTxt = "审核失败"
-				                	}
-				                	if(item.bizStatus==15) {
-				                		staCheckBtnTxt = "审核成功"
-				                	}
+                                    if(item.bizStatus != res.data.CANCLE){
+                                        if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING){
+                                         	if(_this.staOrdauditFlag == false){
+//                                       		(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) || fns:getUser().isAdmin())
+//									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
+//									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
+												var DataRoleGener = '';
+												if(item.commonProcess) {
+													DataRoleGener = item.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
+												}
+												var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));	
+                                         		if((fileRoleData || userId==1)&& item.commonProcess.doOrderHeaderProcessFifth.name != '驳回'&& item.commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
+                                         			staCheckBtnTxt="审核";
+                                         		}
+//                                       		fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOriginProcess.roleEnNameEnum) && orderHeader.commonProcess.jointOperationOriginProcess.name != '驳回' && orderHeader.commonProcess.jointOperationOriginProcess.code != auditStatus
+//								 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state
+												var DataRoleGeners = '';
+												if(item.commonProcess) {
+													DataRoleGeners = item.commonProcess.jointOperationOriginProcess.roleEnNameEnum;
+												}
+												var fileRoleDatas = dataRow.filter(v => DataRoleGener.includes(v));
+												console.log(res.data.auditStatus)
+                                         		if(fileRoleDatas&& item.commonProcess.jointOperationOriginProcess.name != '驳回'&& item.commonProcess.jointOperationOriginProcess.code != res.data.auditStatus&& item.orderType == res.data.ORDINARY_ORDER){
+                                         			staCheckBtnTxt="审核";
+                                         		}
+                                         	}
+                                        }
+                                    }
 				                }
 				                else {
 				                	staCheckBtnTxt = ''

@@ -23,8 +23,7 @@
 			this.getPermissionList4('biz:request:bizRequestHeader:createPayOrder','creatPayFlag')//申请付款
 			if(this.userInfo.isFunc){
 				this.seachFunc()
-			}else{
-				
+			}else{				
 				this.pageInit(); //页面初始化
 				
 			}
