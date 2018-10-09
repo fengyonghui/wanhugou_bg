@@ -291,34 +291,38 @@
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
 									'</div>'+
 								'</div>'+
-							'</li>'							
+							'</li>'	+
+							'<div class="mui-row app_bline2">'+
+								'<label class="app_pr0 app_f13">排产记录:</label>'+
+								'<ul id="schedulingHeaders" class="schedulingHeaders mui-table-view app_fr app_w70p">'+_this.eachCompletePaln(v)+'</ul>'+
+							'</div>'
                         });
                         $("#purchaseMenus").append(poDetailHtmls);
-                        //按商品排产中的排产记录
-                        var completePalnHtml = "";
-                        $.each(res.data.bizPoHeader.poDetailList,function(n,v){
-                            $.each(v.bizSchedulingPlan.completePalnList,function(n,v){
-                            	completePalnHtml +='<li class="mui-table-view-cell mui-media app_pr app_pl0">'+
-								'<div class="mui-media-body">'+
-									'<div class="mui-input-row">'+
-										'<label>完成日期：</label>'+
-										'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(v.planDate) +'" disabled>'+
-									'</div>'+
-									'<div class="mui-input-row">'+
-										'<label>排产数量：</label>'+
-										'<input type="text" class="mui-input-clear" value="'+ v.completeNum +'" disabled>'+
-									'</div>'+
-								'</div>'+
-							    '</li>'
-	                             $("#schedulingHeaders").append(completePalnHtml);
-                            });
-                        });
                         //按商品排产中的排产备注
                         var remarkHtmls = "<textarea id='schRemarkOrder' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
                         $(".schedulingHeaderRemarks").append(remarkHtmls);    
                 	}
 				}
 			})
+		},
+		eachCompletePaln: function(ak) {
+			var _this = this;
+			var completePalnHtml = "";
+			$.each(ak.bizSchedulingPlan.completePalnList,function(a,k){
+            	completePalnHtml +='<li class="mui-table-view-cell mui-media app_pr app_pl0">'+
+				'<div class="mui-media-body">'+
+					'<div class="mui-input-row">'+
+						'<label>完成日期：</label>'+
+						'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(k.planDate) +'" disabled>'+
+					'</div>'+
+					'<div class="mui-input-row">'+
+						'<label>排产数量：</label>'+
+						'<input type="text" class="mui-input-clear" value="'+ k.completeNum +'" disabled>'+
+					'</div>'+
+				'</div>'+
+			    '</li>'
+            });
+            return completePalnHtml;
 		},
         //支付列表
         paylistHtml:function(data){

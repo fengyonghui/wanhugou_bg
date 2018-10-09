@@ -287,6 +287,7 @@ a:hover{text-decoration:none;}
 .app_ml2em{margin-left: 2em;}
 .app_ml3em{margin-left: 3em;}
 .app_ml30{margin-left: 30px;}
+.app_ml50{margin-left: 50px;}
 
 .app_mr5{margin-right: 5px;}
 .app_mr05em{margin-right: .5em}
@@ -299,6 +300,7 @@ a:hover{text-decoration:none;}
 .app_mr20{margin-right:20px;}
 .app_mr25{margin-right:25px;}
 .app_mr30{margin-right:30px;}
+.app_mr50{margin-right:50px;}
 
 .app_t01em{position: relative;top:.1em}
 .app_t45{top:45px}
@@ -626,6 +628,10 @@ body{font-size: 15px;color:#3b3b3b;}
 .inAddBtn {font-size: 15px;padding: 0;width: 30%;margin: 5px auto;}
 /*查询小按钮--备货单添加、修改  和  经销店添加*/
 .comChoiceBtn {padding: 5px;border: none;width: 50px;position: absolute;right: 10px;top: 2px;background-color: #40ABE9;}
+/*按商品排产---一行两个按钮*/
+.schedull {font-size: 15px;padding: 0;width: 30%;margin: 5px 0 5px 50px;float: left;}
+.schedulr {font-size: 15px;padding: 0;width: 30%;margin: 5px 50px 5px 0;float: right;}
+
 /*======订单管理=======*/
 /*订单支出列表---排产*/
 #orSchedCommd li.mui-table-view-cell {padding: 0;}

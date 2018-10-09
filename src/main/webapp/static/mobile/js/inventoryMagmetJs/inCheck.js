@@ -1176,29 +1176,31 @@
 					'<input type="date" name="" class="addCommdDate"></div>'+
 				'<div class="mui-input-row">'+
 					'<label>排产数量：</label>'+
-					'<input type="text" name="" class="addCommdNum mui-input-clear"></div>'+
+					'<input type="text" class="addCommdNum mui-input-clear"></div>'+
 				'<button type="submit" class="removeBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">删除</button>'+
 			'</div>';
 			$(".schedPurch").on("tap", "#purchAddBtn", function() {
 				$('#purchAddCont').append(htmlPurchPlan);
+				var addPurchNum = _this.userInfo.inListId;
+				$('.purchAddCont').attr('name', addPurchNum);
+				$('#purchPlan').attr('name', addPurchNum);
+				$('.addpurchDate').attr('name', addPurchNum + '_date');
+				$('.addpurchNum').attr('name', addPurchNum + '_value');
+				$('#purchDate').attr('name', addPurchNum + '_date');
+				$('#purchNum').attr('name', addPurchNum + '_value');
 			})
+			var commdDateName = '';
+			var commdNumName = '';
+			var commdPlanName = '';
 			$(".schedCommd").on("tap", ".commdAddBtn", function() {
 				$(this).parent('.app_f13').find('.commdAddPlan').append(htmlcommdPlan);
+				commdPlanName = $(this).parent('.app_f13').find('.commdPlan').attr('name');
+				commdDateName = $(this).parent('.app_f13').find('.commdDate').attr('name');
+				commdNumName = $(this).parent('.app_f13').find('.commdNum').attr('name');
+				$(this).parent('.app_f13').find('.commdAddCont').attr('name', commdPlanName);
+				$(this).parent('.app_f13').find('.addCommdDate').attr('name', commdDateName);
+				$(this).parent('.app_f13').find('.addCommdNum').attr('name', commdNumName);
 			})
-			var addPurchNum = _this.userInfo.inListId;
-			$('.purchAddCont').attr('name', addPurchNum);
-			$('#purchPlan').attr('name', addPurchNum);
-			$('.addpurchDate').attr('name', addPurchNum + '_date');
-			$('.addpurchNum').attr('name', addPurchNum + '_value');
-			$('#purchDate').attr('name', addPurchNum + '_date');
-			$('#purchNum').attr('name', addPurchNum + '_value');
-			
-			var commdDateName = ($('.commdDate').attr('name'));
-			var commdNumName = ($('.commdNum').attr('name'));
-			var commdPlanName = ($('.commdPlan').attr('name'));
-			$('.addCommdDate').attr('name', commdDateName);
-			$('.addCommdNum').attr('name', commdNumName);
-			$('.commdAddCont').attr('name', commdPlanName);
 			_this.removeSchedul();
 		},
 		removeSchedul: function() {
@@ -1297,8 +1299,8 @@
                     console.info(error);
                 }
             });
-       },
-       batchSave: function(schedulingType,poId,vndm) {
+		},
+		batchSave: function(schedulingType,poId,vndm) {
 			var _this = this;
 			var skuInfoIdListList = vndm.data.skuInfoIdListListJson;
             var params = new Array();
@@ -1317,7 +1319,7 @@
                 var skuInfoId = skuInfoIdListList[index];
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
-                totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+                totalOriginalNum = parseInt(totalOriginalNum) + parseInt(originalNum);
             }
 
             for(var index in skuInfoIdListList) {
@@ -1334,6 +1336,7 @@
 
             for(var index in skuInfoIdListList) {
                 var skuInfoId = skuInfoIdListList[index];
+                var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
                 var trArray = $("[name='" + skuInfoId + "']");
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];

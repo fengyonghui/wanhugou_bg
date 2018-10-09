@@ -63,6 +63,7 @@
                 data:{id: _this.userInfo.staOrdId},
                 dataType: "json",
                 success: function(res){
+//              	console.log(res)
                 	var remarkTxt = '';
                 	if(res.data.bizPoHeader.bizSchedulingPlan.remark) {
                 		remarkTxt = res.data.bizPoHeader.bizSchedulingPlan.remark
@@ -81,6 +82,7 @@
 		            } else {
 		                _this.ajaxNum();
 		            }
+//		            console.log(res.data.bizPoHeader.poSchType)
 		            if(res.data.bizPoHeader.poSchType != 0) {
 		            	$('.schedPurch').hide();
 		            }else {
@@ -125,6 +127,7 @@
 		},
 		showContent: function(data) {
 			var _this = this;
+//			console.log(data)
 			if(data.data.detailHeaderFlg == true) {
 				$('#schedPlan1').attr('checked', 'checked');
 				$('#schedPlan2').removeAttr('checked');
@@ -135,6 +138,7 @@
 			if(data.data.detailSchedulingFlg == true) {
 				$('#schedPlan2').attr('checked', 'checked');
 				$('#schedPlan1').removeAttr('checked');
+				$('.schedPurch').hide();
 				_this.commdContent(data);
 				$(".inputRadio").attr("disabled", true);
 			}
@@ -205,30 +209,29 @@
 		},
 		commdContent: function(b) {
 			var _this = this;
-//			console.log(b)
 			var chedulingStatus = '';
-			if(b.data.bizPoHeader.poSchType == 0) {
-				chedulingStatus = '未排产'
-			}
-			if(b.data.bizPoHeader.poSchType == 1) {
-				chedulingStatus = '排产中';
-				console.log(b.data.bizPoHeader.poDetailList);
-				var itemdate="";
-				var itemnum="";
-				$.each(b.data.bizPoHeader.poDetailList, function(o, p) {
-					console.log(p.bizSchedulingPlan.completePalnList);
-					$.each(p.bizSchedulingPlan.completePalnList, function(x, y) {
-						console.log(y);
-							itemdate=_this.formatDateTime(y.planDate);
-							itemnum=y.completeNum
-					});
-				});
-			}
-			if(b.data.bizPoHeader.poSchType == 2) {
-				$('.commdAddPlan').parent().remove();
-				chedulingStatus = '排产完成'
-				$('.saveBtnPt').hide();
-			}
+//			if(b.data.bizPoHeader.poSchType == 0) {
+////				chedulingStatus = '未排产'
+//			}
+//			if(b.data.bizPoHeader.poSchType == 1) {
+////				chedulingStatus = '排产中';
+//				console.log(b.data.bizPoHeader.poDetailList);
+//				var itemdate="";
+//				var itemnum="";
+//				$.each(b.data.bizPoHeader.poDetailList, function(o, p) {
+////					console.log(p.bizSchedulingPlan.completePalnList);
+//					$.each(p.bizSchedulingPlan.completePalnList, function(x, y) {
+////						console.log(y);
+//							itemdate=_this.formatDateTime(y.planDate);
+//							itemnum=y.completeNum
+//					});
+//				});
+//			}
+//			if(b.data.bizPoHeader.poSchType == 2) {
+//				$('.commdAddPlan').parent().remove();
+////				chedulingStatus = '排产完成'
+//				$('.saveBtnPt').hide();
+//			}
 			var htmlCommodity = '';
 			var htmlAllSave = '';
 			$.each(b.data.bizPoHeader.poDetailList, function(i,item) {
@@ -236,32 +239,37 @@
 				var comPlanTx = '';
 				var comdPlans = '';
 				var comdAddBtns = '';
-				if(b.data.bizPoHeader.poSchType == 1 || b.data.bizPoHeader.poSchType == 2) {
+				if(item.ordQty == item.sumCompleteNum) {
+					chedulingStatus = '排产完成'
+					comdAddBtns = ''
+					comdPlans = ''
+				}else {
+					comdAddBtns = '<button type="submit" class="commdAddBtn schedull app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
+					'<button type="submit" commdPurchId="'+item.id+'" id="singleAddBtn_'+ item.id+'" class="singleAddBtn schedulr app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+
+					comdPlans = '<div class="mui-row plan">'+
+					'<div class="labelLf">排产计划：</div>'+
+					'<div class="mui-row app_f13 commdAddPlan" id="'+ item.id+'">'+
+						'<div class="mui-row app_bline commdPlan" name="'+ item.id +'">'+
+							'<div class="mui-input-row">'+
+								'<label>完成日期：</label>'+
+								'<input type="date" name="'+ item.id +'_date" class="commdDate"></div>'+
+							'<div class="mui-input-row">'+
+								'<label>排产数量：</label>'+
+								'<input type="text" name="'+ item.id +'_value" class="commdNum mui-input-clear"></div></div>'+
+				'</div></div>'
+				}
+				if(waiteNum == item.ordQty) {
+					chedulingStatus = '未排产'
+					$('.commdSchedRecord').hide();
+				}
+				if(waiteNum != item.ordQty && item.ordQty != item.sumCompleteNum) {
+					chedulingStatus = '排产中'
+				}
+				if(waiteNum != item.ordQty) {
 					comPlanTx = _this.htmlcommdPlanTxt(item)
 				}
-				if(b.data.bizPoHeader.poSchType == 1) {
-					if(item.ordQty == item.sumCompleteNum) {
-						chedulingStatus = '排产完成'
-						comdAddBtns = ''
-						comdPlans = ''
-					}else {
-						chedulingStatus = '排产中'
-						comdAddBtns = '<button type="submit" class="commdAddBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
-						'<button type="submit" commdPurchId="'+item.id+'" id="singleAddBtn_'+ item.id+'" class="singleAddBtn inAddBtn app_btn_search mui-btn-blue mui-btn-block">保存</button>'
-
-						comdPlans = '<div class="mui-row plan">'+
-						'<div class="labelLf">排产计划：</div>'+
-						'<div class="mui-row app_f13 commdAddPlan" id="'+ item.id+'">'+
-							'<div class="mui-row app_bline commdPlan" name="'+ item.id +'">'+
-								'<div class="mui-input-row">'+
-									'<label>完成日期：</label>'+
-									'<input type="date" name="'+ item.id +'_date" class="commdDate"></div>'+
-								'<div class="mui-input-row">'+
-									'<label>排产数量：</label>'+
-									'<input type="text" name="'+ item.id +'_value" class="commdNum mui-input-clear"></div></div>'+
-					'</div></div>'
-					}
-				}
+//				}
 				htmlCommodity += '<li class="mui-table-view-cell app_bline2">'+
 				'<div class="mui-input-row inComdty inDetailComdty app_pall11_15">'+
 	//							<!--产品图片-->
@@ -303,16 +311,15 @@
 							comdAddBtns+'</div>'+
 					'<div class="mui-row commdSchedRecord">'+
 						'<div class="labelLf">排产记录：</div>'+
-						'<div class="mui-row app_f13">'+comPlanTx+
-
-					'</div></div>'+comdPlans+'</div></li>'
+						'<div class="mui-row app_f13">'+comPlanTx+'</div></div>'+
+					comdPlans +
+					'</div></li>'
 				htmlAllSave = '<button id="allSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">批量保存</button>'
 				var commdItemId = item.id;
 				_this.commdEverySave(commdItemId)
 			});
     		$("#orSchedCommd").html(htmlCommodity)
     		$(".saveBtnPt").html(htmlAllSave)
-
 		},
 		htmlcommdPlanTxt: function(tt) {
 			var _this = this;
@@ -368,24 +375,23 @@
 			
 			$(".schedPurch").on("tap", "#purchAddBtn", function() {
 				$('#purchAddCont').append(htmlPurchPlan);
+				var addPurchNum = _this.userInfo.staOrdId;
+				$('.purchAddCont').attr('name', addPurchNum);
+				$('#purchPlan').attr('name', addPurchNum);
+				$('.addpurchDate').attr('name', addPurchNum + '_date');
+				$('.addpurchNum').attr('name', addPurchNum + '_value');
+				$('#purchDate').attr('name', addPurchNum + '_date');
+				$('#purchNum').attr('name', addPurchNum + '_value');
 			})
 			$(".schedCommd").on("tap", ".commdAddBtn", function() {
 				$(this).parent('.app_f13').next('.commdSchedRecord').next('.plan').find('.commdAddPlan').append(htmlcommdPlan);
+				var commdDateName = $(this).parent('.app_f13').next('.commdSchedRecord').next('.plan').find('.commdDate').attr('name');
+				var commdNumName = $(this).parent('.app_f13').next('.commdSchedRecord').next('.plan').find('.commdNum').attr('name');
+				var commdPlanName = $(this).parent('.app_f13').next('.commdSchedRecord').next('.plan').find('.commdPlan').attr('name');
+				$(this).parent('.app_f13').next('.commdSchedRecord').next('.plan').find('.addCommdDate').attr('name', commdDateName);
+				$(this).parent('.app_f13').next('.commdSchedRecord').next('.plan').find('.addCommdNum').attr('name', commdNumName);
+				$(this).parent('.app_f13').next('.commdSchedRecord').next('.plan').find('.commdAddCont').attr('name', commdPlanName);
 			})
-			var addPurchNum = _this.userInfo.staOrdId;
-			$('.purchAddCont').attr('name', addPurchNum);
-			$('#purchPlan').attr('name', addPurchNum);
-			$('.addpurchDate').attr('name', addPurchNum + '_date');
-			$('.addpurchNum').attr('name', addPurchNum + '_value');
-			$('#purchDate').attr('name', addPurchNum + '_date');
-			$('#purchNum').attr('name', addPurchNum + '_value');
-			
-			var commdDateName = ($('.commdDate').attr('name'));
-			var commdNumName = ($('.commdNum').attr('name'));
-			var commdPlanName = ($('.commdPlan').attr('name'));
-			$('.addCommdDate').attr('name', commdDateName);
-			$('.addCommdNum').attr('name', commdNumName);
-			$('.commdAddCont').attr('name', commdPlanName);
 			_this.removeSchedul();
 		},
 		removeSchedul: function() {
