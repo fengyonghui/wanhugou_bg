@@ -1937,6 +1937,7 @@ public class BizOrderHeaderController extends BaseController {
                     double exp = 0.0;
                     double fre = 0.0;
                     double buy = 0.0;
+                    double serviceFee = 0.0;
                     if (order.getTotalBuyPrice() != null) {
                         buy = order.getTotalBuyPrice();
                     }
@@ -1949,10 +1950,13 @@ public class BizOrderHeaderController extends BaseController {
                     if (order.getFreight() != null) {
                         fre = order.getFreight();
                     }
-                    rowData.add(String.valueOf(total + exp + fre));
+                    if (order.getServiceFee() != null) {
+                        serviceFee = order.getServiceFee();
+                    }
+                    double sumTotal = total + exp + fre + serviceFee;
+                    rowData.add(String.valueOf(sumTotal));
                     rowData.add(order.getReceiveTotal() == null ? StringUtils.EMPTY : String.valueOf(order.getReceiveTotal()));
-                    double sumTotal = total + exp + fre;
-                    double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal();
+                    double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal() + (order.getScoreMoney() == null ? 0.0 : order.getScoreMoney().doubleValue());
                     if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(OrderHeaderBizStatusEnum.stateOf(order.getBizStatus())) && sumTotal > receiveTotal) {
                         //尾款信息
                         rowData.add("有尾款");
@@ -2077,6 +2081,7 @@ public class BizOrderHeaderController extends BaseController {
                         double exp = 0.0;
                         double fre = 0.0;
                         double buy = 0.0;
+                        double serviceFee = 0.0;
                         if (order.getTotalBuyPrice() != null) {
                             buy = order.getTotalBuyPrice();
                         }
@@ -2089,12 +2094,15 @@ public class BizOrderHeaderController extends BaseController {
                         if (order.getFreight() != null) {
                             fre = order.getFreight();
                         }
-                        rowData.add(String.valueOf(total + exp + fre));
+                        if (order.getServiceFee() != null) {
+                            serviceFee = order.getServiceFee();
+                        }
+                        double sumTotal = total + exp + fre + serviceFee;
+                        rowData.add(String.valueOf(sumTotal));
                         //已收货款
                         rowData.add(String.valueOf(order.getReceiveTotal() == null ? StringUtils.EMPTY : order.getReceiveTotal()));
-                        double sumTotal = total + exp + fre;
-                        double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal();
-                        if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(order.getBizStatus()) && sumTotal > receiveTotal) {
+                        double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal() + (order.getScoreMoney() == null ? 0.0 : order.getScoreMoney().doubleValue());
+                        if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(OrderHeaderBizStatusEnum.stateOf(order.getBizStatus())) && sumTotal > receiveTotal) {
                             rowData.add("有尾款");
                         } else {
                             rowData.add(StringUtils.EMPTY);
