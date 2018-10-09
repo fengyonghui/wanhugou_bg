@@ -387,8 +387,8 @@
                                 completePalnHtml += "</div></td></tr>";
                             }
                             poDetailHtml += completePalnHtml;
-                            prodInfo2.append(poDetailHtml)
                         }
+                        prodInfo2.append(poDetailHtml)
 
                         var schedulingDetailRemarkHtml = "<tr><td colspan='7'><div><label>备注：</label>";
                         schedulingDetailRemarkHtml += "<textarea id='schRemarkOrder' maxlength='200' class='input-xlarge '>" + bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
@@ -1188,7 +1188,7 @@
                 var skuInfoId = skuInfoIdListList[index];
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
-                totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+                totalOriginalNum = parseInt(totalOriginalNum) + parseInt(originalNum);
             }
 
             for(var index in skuInfoIdListList) {
@@ -1204,6 +1204,7 @@
 
             for(var index in skuInfoIdListList) {
                 var skuInfoId = skuInfoIdListList[index];
+                var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
                 var trArray = $("[name='" + skuInfoId + "']");
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];
@@ -1355,7 +1356,7 @@
                 var skuInfoId = skuInfoIdListList[index];
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
-                totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+                totalOriginalNum = parseInt(totalOriginalNum) + parseInt(originalNum);
             }
 
             for(var index in skuInfoIdListList) {
@@ -1372,6 +1373,7 @@
 
             for(var index in skuInfoIdListList) {
                 var skuInfoId = skuInfoIdListList[index];
+                var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
                 var trArray = $("[name='" + skuInfoId + "']");
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];
@@ -1398,10 +1400,6 @@
                     }
 
                     var reg = /^[0-9]+[0-9]*]*$/;
-                    console.log(value)
-                    console.log(parseInt(value) <= 0)
-                    console.log(parseInt(value) > originalNum)
-                    console.log(!reg.test(value))
                     if (value != "" && (parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value))) {
                         alert("第" + count + "个商品确认值输入不正确!")
                         return false;
