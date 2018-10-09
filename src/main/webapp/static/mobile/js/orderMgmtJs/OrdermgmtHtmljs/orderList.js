@@ -3,14 +3,14 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
-		this.staOrdFlag = "false"
+		this.staOrdFlag = "false";
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			//权限添加
 //			biz:order:bizOrderHeader:view		操作
-			this.getPermissionList('biz:order:bizOrderHeader:view','staOrdFlag')
+			this.getPermissionList('biz:order:bizOrderHeader:view','staOrdFlag')//true
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -29,7 +29,9 @@
 			        up:{
 			            contentnomore:'没 有 更 多 数 据 了',
 			            callback:function(){			            	
-		                    getData(pager);
+			                window.setTimeout(function(){
+			                    getData(pager);
+			                },100);
 			            }
 			         },
 			        down : {
@@ -82,6 +84,7 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
+                            	console.log(item)
 	                        	$('#consultantIda').val(item.consultantId);
 								$('#statu').val(item.statu);
 								$('#source').val(item.source);
@@ -93,7 +96,7 @@
 		                        	}
 	                           })
 	                        	//审核
-	                        	var staCheckBtn = '';
+//	                        	var staCheckBtn = '';
 	                        	var staCheckBtnTxt = '';
 				                if(_this.staOrdFlag == true) {
 				                	if(item.bizStatus < 15) {
@@ -106,6 +109,9 @@
 				                	if(item.bizStatus==15) {
 				                		staCheckBtnTxt = "审核成功"
 				                	}
+//                                  if(item.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state){
+//
+//                                  }
 				                }
 				                else {
 				                	staCheckBtnTxt = ''
@@ -139,16 +145,16 @@
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 ordCheckBtn" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
 //											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
 //												'<li class="mui-table-view-cell">出库确认</li>' +
 //											'</div>'+
-//											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">审核成功</li>' +
-//											'</div>'+
-											'<div class="mui-col-xs-6 staOrDetailBtn" staOrdId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 ordAmendBtn"  staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">修改</li>' +
+											'</div>'+
+											'<div class="mui-col-xs-3 ordDetailBtn" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">详情</li>' +
 											'</div>'+
 										'</div>' +
@@ -190,7 +196,7 @@
 		stOrdHrefHtml: function() {
 			var _this = this;
 		/*查询*/
-			$('.app_header').on('tap', '#staOrdSechBtn', function() {
+			$('.app_header').on('tap', '#OrdSechBtn', function() {
 				var url = $(this).attr('url');
 //				var staListIds = $('#consultantId').val();
 //				var staListIdTxts = $('#staListIdTxt').val(); 
@@ -222,8 +228,8 @@
 					}
 				})
 			}),	
-		 /*待审核*/
-	       $('.content_part').on('tap', '.waitCheckBtn', function() {
+		 /*审核*/
+	       $('.content_part').on('tap', '.ordCheckBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');//订单 ID
 				var flagTxt = $('#flag').val();
@@ -251,14 +257,14 @@
 				}
 			}),
 		/*修改*/
-	       $('.content_part').on('tap', '.staOraAmendBtn', function() {
+	       $('.content_part').on('tap', '.ordAmendBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
 					GHUTILS.OPENPAGE({
-						url: "../../../html/staffMgmtHtml/orderHtml/staOrdAmend.html",
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderAmend.html",
 						extras: {
 							staOrdId: staOrdId,
 						}
@@ -266,7 +272,7 @@
 				}
 			}),	
 		/*详情*/
-			$('.content_part').on('tap', '.staOrDetailBtn', function() {
+			$('.content_part').on('tap', '.ordDetailBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
 				if(url) {
@@ -401,11 +407,11 @@
 		                        		orderTypeTxt = items.label
 		                        	}
 	                            })
-								var staCheckBtn = '';
+//								var staCheckBtn = '';
 	                        	var staCheckBtnTxt = '';
 				                if(_this.staOrdFlag == true) {
 				                	if(item.bizStatus==0 || item.bizStatus==5 || item.bizStatus==10) {
-				                		staCheckBtn = 'waitCheckBtn'
+//				                		staCheckBtn = 'waitCheckBtn'
 				                		staCheckBtnTxt = "待审核"
 				                	}
 				                	if(item.bizStatus==45) {
@@ -448,16 +454,16 @@
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 ordCheckBtn" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell" id="flagid">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
 //											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
 //												'<li class="mui-table-view-cell">出库确认</li>' +
 //											'</div>'+
-//											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">审核成功</li>' +
-//											'</div>'+
-											'<div class="mui-col-xs-6 staOrDetailBtn" staOrdId="'+ item.id +'">' +
+											'<div class="mui-col-xs-3 ordAmendBtn"  staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">审核成功</li>' +
+											'</div>'+
+											'<div class="mui-col-xs-3 ordDetailBtn" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">详情</li>' +
 											'</div>'+
 										'</div>' +
