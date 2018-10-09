@@ -1341,7 +1341,7 @@ public class BizOrderHeaderController extends BaseController {
     public String save4mobile(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> resultMap = Maps.newHashMap();
         if (!beanValidator(model, bizOrderHeader)) {
-            return form(bizOrderHeader, model, null, null, request, response);
+            return JsonUtil.generateErrorData(HttpStatus.SC_BAD_REQUEST, "数据验证失败!", null);
         }
         if (bizOrderHeader.getPlatformInfo() == null) {
             //后台默认保存为 系统后台订单
@@ -1380,11 +1380,8 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
 
-        //Boolean result
-
         bizOrderHeaderService.save(bizOrderHeader);
-
-        return "";
+        return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:doRefund")
@@ -1444,6 +1441,16 @@ public class BizOrderHeaderController extends BaseController {
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "delete4Mobile")
+    @ResponseBody
+    public String delete4Mobile(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+        bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_DELETE);
+        bizOrderHeaderService.delete(bizOrderHeader);
+
+        return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
+    }
+
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "recovery")
     public String recovery(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
         bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_NORMAL);
@@ -1453,6 +1460,16 @@ public class BizOrderHeaderController extends BaseController {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
         }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId() + "&statu=" + bizOrderHeader.getStatu();
+    }
+
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "recovery4Mobile")
+    @ResponseBody
+    public String recovery4Mobile(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+        bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_NORMAL);
+        bizOrderHeaderService.delete(bizOrderHeader);
+
+        return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
     }
 
 
