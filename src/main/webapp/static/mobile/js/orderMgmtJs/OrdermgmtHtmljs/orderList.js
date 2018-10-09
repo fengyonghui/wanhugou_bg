@@ -29,9 +29,7 @@
 			        up:{
 			            contentnomore:'没 有 更 多 数 据 了',
 			            callback:function(){			            	
-//			                window.setTimeout(function(){
-			                    getData(pager);
-//			                },500);
+		                    getData(pager);
 			            }
 			         },
 			        down : {
