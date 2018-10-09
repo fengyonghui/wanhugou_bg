@@ -88,7 +88,7 @@ import static java.util.regex.Pattern.*;
 @Transactional(readOnly = true)
 public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(BizInvoiceService.class);
+    private static final Logger LOGISTICS_LOGGER = LoggerFactory.getLogger("logistics");
     @Autowired
     private BizSendGoodsRecordService bizSendGoodsRecordService;
     @Autowired
@@ -663,7 +663,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         //物流运单生成
         ThreadPoolManager.getDefaultThreadPool().execute(() -> {
             String postUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
-            LOGGER.info("订单物流postUrl=================" + postUrl);
+            LOGISTICS_LOGGER.info("订单物流postUrl=================" + postUrl);
             CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
             HttpPost httpPost = new HttpPost(postUrl);
             CloseableHttpResponse httpResponse = null;
@@ -687,7 +687,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 httpResponse = httpClient.execute(httpPost);
 
                 result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                LOGGER.info("订单物流返回结果result=================" + result);
+                LOGISTICS_LOGGER.info("订单物流返回结果result=================" + result);
 
             }catch (Exception e) {
                 e.printStackTrace();
@@ -696,7 +696,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     try {
                         httpClient.close();
                     } catch (IOException e) {
-                        LOGGER.error("关闭异常，710",e);
+                        LOGISTICS_LOGGER.error("关闭异常，710",e);
                     }
                 }
             }
@@ -739,8 +739,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     String reginUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.GET_START_AND_STOP_POINT_CODE_WHT;
                     String createLogisticUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
 
-                    LOGGER.info("订单物流reginUrl=================" + reginUrl);
-                    LOGGER.info("订单物流createLogisticUrl=================" + createLogisticUrl);
+                    LOGISTICS_LOGGER.info("订单物流reginUrl=================" + reginUrl);
+                    LOGISTICS_LOGGER.info("订单物流createLogisticUrl=================" + createLogisticUrl);
                     CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
                     HttpPost httpPost = new HttpPost(reginUrl);
                     CloseableHttpResponse httpResponse = null;
@@ -756,7 +756,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         httpResponse = httpClient.execute(httpPost);
 
                         result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                        LOGGER.info("备货单物流路线返回结果result=================" + result);
+                        LOGISTICS_LOGGER.info("备货单物流路线返回结果result=================" + result);
                         JSONObject  jasonObject = JSONObject.fromObject(result);
                         Map map = (Map)jasonObject;
                         List dataList = (List) map.get("data");
@@ -796,7 +796,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             httpResponse = httpClient.execute(httpPost);
 
                             resultInfo = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                            LOGGER.info("备货单物流信息返回结果resultInfo=================" + resultInfo);
+                            LOGISTICS_LOGGER.info("备货单物流信息返回结果resultInfo=================" + resultInfo);
                         }
                     }catch (Exception e) {
                         e.printStackTrace();
@@ -805,7 +805,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             try {
                                 httpClient.close();
                             } catch (IOException e) {
-                                LOGGER.error("关闭异常，710",e);
+                                LOGISTICS_LOGGER.error("关闭异常，710",e);
                             }
                         }
                     }
