@@ -31,6 +31,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.enums.TagInfoEnum;
+import com.wanhutong.backend.modules.enums.VarietyAttrEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -202,6 +203,9 @@ public class BizProductInfoV3Controller extends BaseController {
                 dictList = dictService.findList(dict);
             }
             if (attributeInfo.getLevel() != null && TagInfoEnum.PRODTAG.ordinal() == attributeInfo.getLevel()) {
+                if (!VarietyAttrEnum.NOT_VARIETY_ATTR.contains(attributeInfo.getId())) {
+                    continue;
+                }
                 attributeInfo.setDictList(dictList);
                 tagInfos.add(attributeInfo);
             }
