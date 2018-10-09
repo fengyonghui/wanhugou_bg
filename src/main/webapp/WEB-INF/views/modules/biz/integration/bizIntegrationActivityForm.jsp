@@ -164,6 +164,8 @@
                 });
 
                 function zTreeOnCheck(event, treeId, treeNode) {
+                    $("#sendAll").val('');
+                    $("#integrationNum").val('');
                     var treeObj = $.fn.zTree.getZTreeObj("officeTree");
                     nodes=treeObj.getCheckedNodes(true);
 					var v="";
@@ -189,6 +191,10 @@
                         data:'',
                         contentType:"application/json;charset=utf-8",
                         success:function(data){
+                            if(data=='')
+							{
+                                $("#offices").val('');
+							}
                             var s ="";
                             for(var v in data)
 							{

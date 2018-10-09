@@ -35,6 +35,9 @@
 			$("#searchForm").submit();
         	return false;
         }
+        function testData(checkbox) {
+            $("#includeTestData").val(checkbox.checked);
+        }
 	</script>
 </head>
 <body>
@@ -53,6 +56,7 @@
 	<form:form id="searchForm" modelAttribute="bizMoneyRecode" action="${ctx}/biz/integration/bizMoneyRecode/list" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 		<ul class="ul-form">
 			<li><label>流水类型：</label>
 				<form:select path="statusCode" class="input-medium">
@@ -78,6 +82,9 @@
 			</li>
 			<li><label>经销店电话：</label>
 				<form:input path="office.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
+			</li>
+			<li><label>测试数据</label>
+				<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
