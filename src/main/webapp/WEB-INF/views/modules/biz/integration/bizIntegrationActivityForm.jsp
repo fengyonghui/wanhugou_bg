@@ -227,8 +227,11 @@
                         var val = $('input[name="sendScope"]:checked').val();
                         if(val==-3)
 						{
-                            $("#sendAll").val('');
-                            $("#integrationNum").val('');
+						    if(str!='detail')
+                            {
+                                $("#sendAll").val('');
+                                $("#integrationNum").val('');
+                            }
                             $("#search").show();
 						}
 					}
