@@ -185,7 +185,7 @@
                                         if(_this.staOrdsupplyFlag == false){
                                         	if(item.bizStatus >= res.data.SUPPLYING && item.bizStatus <= res.data.STOCKING && item.suplys != 0 && item.suplys != 721){
                                         		if(item.bizInvoiceList.length <= 0){
-                                        			staSupplyBtnTxt="出库确认";
+                                        			staSupplyBtnTxt="出库";
                                         		}
                                         	}
                                         }
@@ -195,7 +195,7 @@
                                     	var staPaymentBtnTxt ="";
                                     	if(item.bizStatus != res.data.CANCLE){
                                     		if(item.statu == 'unline' || userId==1){
-                                    			staPaymentBtnTxt ="支付流水";
+                                    			staPaymentBtnTxt ="支付";
                                     		}
                                     	}
                                     	//详情
@@ -222,14 +222,14 @@
 	                                    		}
 	                                    	}
 	                                    }
-	                               }else{
+	                                }else{
 	                                	staPaymentBtnTxt ="";
 	                                	staDetailBtnTxt="";
 	                                	staAmendTxt ="";
 	                                	staDeleteTxt ="";
 	                                }
 	                                //详情另一种情况
-	                                var staDetailBtnTxt ="";
+//	                                var staDetailBtnTxt ="";
 	                                var staRecoveryBtnTxt ="";//h恢复
 	                                if(_this.staOrdeditFlag==true){
 	                                	if(item.delFlag!=null && item.delFlag == '0'){
@@ -272,25 +272,25 @@
 //										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation " id="foot">' +
 											'<div class="ordCheckBtn" staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
+												 staCheckBtnTxt +
 											'</div>'+
 											'<div class="ordSupplyBtn"  staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ staSupplyBtnTxt +'</li>' +
+												staSupplyBtnTxt +
 											'</div>'+
 											'<div class="ordPaymentBtn"  staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ staPaymentBtnTxt +'</li>' +
+												 staPaymentBtnTxt +
 											'</div>'+
 											'<div class="ordAmendBtn"  staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ staAmendTxt +'</li>' +
+												staAmendTxt +
 											'</div>'+
 											'<div class="ordDeleteBtn"  staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ staDeleteTxt +'</li>' +
+												staDeleteTxt +
 											'</div>'+
-											'<div class="ordDetailBtn" staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ staDetailBtnTxt +'</li>' +
+											'<div class="ordDetailBtn" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+												staDetailBtnTxt +
 											'</div>'+
 											'<div class="ordRecoveryBtn" staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ staRecoveryBtnTxt +'</li>' +
+												staRecoveryBtnTxt +
 											'</div>'+
 										'</div>' +
 									'</div>'
@@ -452,6 +452,9 @@
 			$('.content_part').on('tap', '.ordDetailBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
+				var orderDetail="details";
+				var statu=$(this).attr('ordstatu');
+				var source=$(this).attr('ordsource');
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
@@ -459,6 +462,9 @@
 						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordDetail.html",
 						extras: {
 							staOrdId: staOrdId,
+							orderDetails:orderDetail,
+							statu:statu,
+							source:source,
 						}
 					})
 				}

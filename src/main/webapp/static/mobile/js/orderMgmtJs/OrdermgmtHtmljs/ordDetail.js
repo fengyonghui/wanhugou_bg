@@ -17,14 +17,30 @@
 		},
 		getData: function() {
 			var _this = this;
+			var datas={};
+			var idd=_this.userInfo.staOrdId;
+			var orderDetails=_this.userInfo.orderDetails;
+			var statu=_this.userInfo.statu;
+			var source=_this.userInfo.source;
+			console.log(idd)
+			console.log(orderDetails)
+			console.log(statu)
+			console.log(source)
+			datas={
+				id:idd,
+                orderDetails: orderDetails,
+                statu:statu,
+                source:source
+			}
 			$.ajax({
                 type: "GET",
 //              url: "/a/biz/order/bizOrderHeader/listData4mobile",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
-                data: {
-                	id:_this.userInfo.staOrdId,
-                	orderDetails: 'details',
-                },
+//              data: {
+//              	id:_this.userInfo.staOrdId,
+//              	orderDetails: 'details',
+//              },
+                data:datas,
                 dataType: "json",
                 success: function(res){
                 	console.log(res)
@@ -134,7 +150,21 @@
 					}
 					_this.statusListHtml(res.data)
 					_this.checkProcessHtml(res.data);
-					_this.commodityHtml(res.data)
+					_this.commodityHtml(res.data);
+					//排产信息
+					if(res.data.bizOrderHeader.orderDetails=='details'){
+						var poheaderId = res.data.bizOrderHeader.bizPoHeader.id;
+						console.log(poheaderId)
+		                if (poheaderId == null || poheaderId == "") {
+		                    $("#inSchedultype").val("未排产")
+		                    $("#stockGoods").hide();
+		                    $("#schedulingPlan_forHeader").hide();
+		                    $("#schedulingPlan_forSku").hide();
+		                }
+		                if (poheaderId != null && poheaderId != "") {
+		                	_this.scheduling(poheaderId);
+		                }
+					}	
                 }
             });
 		},
