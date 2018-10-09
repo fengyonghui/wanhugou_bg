@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.order;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -11,6 +12,8 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.common.utils.*;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
+import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
+import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
@@ -1210,16 +1213,10 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:audit")
     @RequestMapping(value = "audit")
     @ResponseBody
-    public String audit(int id, String currentType, int auditType, String description, Model model) {
-        //BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
+    public String audit(HttpServletRequest request, HttpServletResponse response, int id, String currentType, int auditType, String description, String createPo, String lastPayDateVal) {
         try {
             Pair<Boolean, String> audit = null;
-//            if (OrderPayProportionStatusEnum.ALL.getState().equals(bizOrderHeader.getPayProportion())) {
-//                audit = bizOrderHeaderService.auditAll(id, currentType, auditType, description);
-//            } else {
-//                audit = bizOrderHeaderService.auditFifty(id, currentType, auditType, description);
-//            }
-            audit = bizOrderHeaderService.auditFifty(id, currentType, auditType, description);
+            audit = auditFifty(request, response, id, currentType, auditType, description, createPo, lastPayDateVal);
             if (audit.getLeft()) {
                 return JsonUtil.generateData(audit.getRight(), null);
             }
@@ -1940,6 +1937,7 @@ public class BizOrderHeaderController extends BaseController {
                     double exp = 0.0;
                     double fre = 0.0;
                     double buy = 0.0;
+                    double serviceFee = 0.0;
                     if (order.getTotalBuyPrice() != null) {
                         buy = order.getTotalBuyPrice();
                     }
@@ -1952,10 +1950,13 @@ public class BizOrderHeaderController extends BaseController {
                     if (order.getFreight() != null) {
                         fre = order.getFreight();
                     }
-                    rowData.add(String.valueOf(total + exp + fre));
+                    if (order.getServiceFee() != null) {
+                        serviceFee = order.getServiceFee();
+                    }
+                    double sumTotal = total + exp + fre + serviceFee;
+                    rowData.add(String.valueOf(sumTotal));
                     rowData.add(order.getReceiveTotal() == null ? StringUtils.EMPTY : String.valueOf(order.getReceiveTotal()));
-                    double sumTotal = total + exp + fre;
-                    double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal();
+                    double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal() + (order.getScoreMoney() == null ? 0.0 : order.getScoreMoney().doubleValue());
                     if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(OrderHeaderBizStatusEnum.stateOf(order.getBizStatus())) && sumTotal > receiveTotal) {
                         //尾款信息
                         rowData.add("有尾款");
@@ -2080,6 +2081,7 @@ public class BizOrderHeaderController extends BaseController {
                         double exp = 0.0;
                         double fre = 0.0;
                         double buy = 0.0;
+                        double serviceFee = 0.0;
                         if (order.getTotalBuyPrice() != null) {
                             buy = order.getTotalBuyPrice();
                         }
@@ -2092,12 +2094,15 @@ public class BizOrderHeaderController extends BaseController {
                         if (order.getFreight() != null) {
                             fre = order.getFreight();
                         }
-                        rowData.add(String.valueOf(total + exp + fre));
+                        if (order.getServiceFee() != null) {
+                            serviceFee = order.getServiceFee();
+                        }
+                        double sumTotal = total + exp + fre + serviceFee;
+                        rowData.add(String.valueOf(sumTotal));
                         //已收货款
                         rowData.add(String.valueOf(order.getReceiveTotal() == null ? StringUtils.EMPTY : order.getReceiveTotal()));
-                        double sumTotal = total + exp + fre;
-                        double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal();
-                        if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(order.getBizStatus()) && sumTotal > receiveTotal) {
+                        double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal() + (order.getScoreMoney() == null ? 0.0 : order.getScoreMoney().doubleValue());
+                        if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(OrderHeaderBizStatusEnum.stateOf(order.getBizStatus())) && sumTotal > receiveTotal) {
                             rowData.add("有尾款");
                         } else {
                             rowData.add(StringUtils.EMPTY);
@@ -2847,6 +2852,114 @@ public class BizOrderHeaderController extends BaseController {
             audit = Pair.of(Boolean.TRUE, "操作成功");
         }
         return audit;
+    }
+
+    /**
+     * 代采订单审核
+     * @param orderHeaderId
+     * @param currentType
+     * @param auditType
+     * @param description
+     * @return
+     */
+    public Pair<Boolean, String> auditFifty(HttpServletRequest request, HttpServletResponse response, Integer orderHeaderId, String currentType, int auditType, String description, String createPo, String lastPayDateVal) throws ParseException {
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(String.valueOf(orderHeaderId));
+        commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+        commonProcessEntity.setCurrent(1);
+        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+        if (list.size() != 1) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常! current process 不为 1");
+        }
+        CommonProcessEntity cureentProcessEntity = list.get(0);
+        if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前审核状态异常!");
+        }
+        if (cureentProcessEntity == null) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前订单无审核状态!");
+        }
+
+        BizOrderHeader bizOrderHeader = this.get(orderHeaderId);
+        DoOrderHeaderProcessFifthConfig doOrderHeaderProcessConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
+
+        Integer passProcessCode = null;
+        // 当前流程
+        DoOrderHeaderProcessFifthConfig.OrderHeaderProcess currentProcess = doOrderHeaderProcessConfig.processMap.get(Integer.valueOf(currentType));
+        switch (OrderPayProportionStatusEnum.parse(bizOrderHeader.getTotalDetail(), bizOrderHeader.getReceiveTotal())) {
+            case FIFTH:
+                passProcessCode = currentProcess.getFifthPassCode();
+                break;
+            case ALL:
+                passProcessCode = currentProcess.getAllPassCode();
+                break;
+            default:
+                break;
+        }
+        if (passProcessCode == null || passProcessCode == 0) {
+            return Pair.of(Boolean.FALSE, "操作失败,没有下级流程!");
+        }
+
+        // 下一流程
+        DoOrderHeaderProcessFifthConfig.OrderHeaderProcess nextProcess = doOrderHeaderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? passProcessCode : currentProcess.getRejectCode());
+        if (nextProcess == null) {
+            return Pair.of(Boolean.FALSE, "操作失败,当前流程已经结束!");
+        }
+        User user = UserUtils.getUser();
+        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
+        Role role = new Role();
+        role.setEnname(roleEnNameEnum.getState());
+        if (!user.isAdmin() && !user.getRoleList().contains(role)) {
+            return Pair.of(Boolean.FALSE, "操作失败,该用户没有权限!");
+        }
+
+        if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
+            return Pair.of(Boolean.FALSE, "请输入驳回理由!");
+        }
+
+        cureentProcessEntity.setBizStatus(auditType);
+        cureentProcessEntity.setProcessor(user.getId().toString());
+        cureentProcessEntity.setDescription(description);
+        cureentProcessEntity.setCurrent(0);
+        commonProcessService.save(cureentProcessEntity);
+
+        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+        nextProcessEntity.setObjectId(bizOrderHeader.getId().toString());
+        nextProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+        nextProcessEntity.setCurrent(1);
+        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+
+        commonProcessService.save(nextProcessEntity);
+
+        StringBuilder phone = new StringBuilder();
+
+        User sendUser=new User(systemService.getRoleByEnname(nextProcess.getRoleEnNameEnum()==null?"":nextProcess.getRoleEnNameEnum().toLowerCase()));
+
+        List<User> userList = systemService.findUser(sendUser);
+        if (CollectionUtils.isNotEmpty(userList)) {
+            for (User u : userList) {
+                phone.append(u.getMobile()).append(",");
+            }
+        }
+        if (StringUtils.isNotBlank(phone.toString())) {
+            AliyunSmsClient.getInstance().sendSMS(
+                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                    phone.toString(),
+                    ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
+        }
+
+        //自动生成采购单
+        Boolean poFlag = false;
+        String poId = "";
+        if ("yes".equals(createPo)) {
+            //订单标识类型
+            String type = "2";
+            Pair<Boolean, String> booleanStringPair = bizPoHeaderService.goListForAutoSave(orderHeaderId, type, lastPayDateVal, request, response);
+            if (Boolean.TRUE.equals(booleanStringPair.getLeft())) {
+                return booleanStringPair;
+            }
+        }
+        return Pair.of(Boolean.TRUE, "操作成功!");
     }
 
 }

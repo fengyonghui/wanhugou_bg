@@ -707,6 +707,16 @@ public class BizPoHeaderReqController extends BaseController {
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "savePoHeader4Mobile")
+    public String savePoHeader4Mobile(HttpServletRequest request, BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        String paymentApplyRemark = request.getParameter("paymentApplyRemark");
+        Boolean msg = bizPoHeaderService.genPaymentOrderForApply(bizPoHeader, paymentApplyRemark).getLeft();
+        resultMap.put("msg", msg);
+        return JsonUtil.generateData(resultMap, null);
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "createPay4Mobile")
     @ResponseBody
     public String createPay4Mobile(HttpServletRequest request, int id, BigDecimal planPay, Date deadline) {

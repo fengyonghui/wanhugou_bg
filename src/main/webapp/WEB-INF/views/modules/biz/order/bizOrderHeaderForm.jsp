@@ -559,8 +559,14 @@
             }
         }
     </script>
-
     <script type="text/javascript">
+        function selectRemark() {
+            if ($("#remarkInput").val() == "") {
+                alert("该厂商没有退换货流程");
+            } else {
+                alert($("#remarkInput").val());
+            }
+        }
         function checkInfo(obj, val, hid) {
             if (confirm("您确认同意该订单退款申请吗？")) {
 
@@ -905,10 +911,11 @@
         }
 
         function audit(auditType, description) {
-            var id = $("#id").val();
-            var currentType = $("#currentJoType").val();
+            //判断排产数据合法性
             var createPo = $("#createPo").val();
-
+            if(auditType == 2) {
+                createPo = "no"
+            }
             if(createPo == "yes") {
                 var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
                 if (schedulingType == 0) {
@@ -925,24 +932,40 @@
                 }
             }
 
+            var id = $("#id").val();
+            var currentType = $("#currentJoType").val();
+            var lastPayDateVal = $("#lastPayDate").val();
+
             $.ajax({
                 url: '${ctx}/biz/order/bizOrderHeader/audit',
                 contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "createPo": createPo, "lastPayDateVal":lastPayDateVal},
                 type: 'get',
                 async: false,
                 success: function (result) {
                     result = JSON.parse(result);
                     if(result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        if(auditType==1){
-                            //自动生成采购单
-                            var id = $("#id").val();
-                            //获取当前订单业务状态，如果订单审核完成则自动生成采购单
-                            if (createPo == 'yes') {
-                                getPoHeaderPara(id);
+
+                        //订单排产
+                        var resultData = result.data;
+                        var resultDataArr = resultData.split(",");
+                        console.log(resultDataArr)
+                        console.log(resultDataArr[0])
+                        console.log(resultDataArr[1])
+                        if(resultDataArr[0] == "采购单生成") {
+                            var poId = resultDataArr[1];
+                            var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
+                            console.log(poId)
+                            console.log(schedulingType)
+                            if (schedulingType == 0) {
+                                saveComplete("0", poId);
+                            }
+                            if (schedulingType == 1) {
+                                batchSave("1", poId);
                             }
                         }
+
                         window.location.href = "${ctx}/biz/order/bizOrderHeader";
                     }
                 },
@@ -965,7 +988,6 @@
                     result = JSON.parse(result);
                     if(result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        <%--window.location.href = "${ctx}/biz/order/bizOrderHeader";--%>
                         window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
                     }else {
                         alert(result.errmsg);
@@ -1043,72 +1065,6 @@
             });
         }
 
-        function getPoHeaderPara(id) {
-            $.ajax({
-                url: '${ctx}/biz/request/bizRequestOrder/goListAutoSave',
-                contentType: 'application/json',
-                data: {"orderId": id, "type": "2"},
-                type: 'get',
-                dataType: 'json',
-                async: false,
-                success: function (result) {
-                    var reqDetailIds = result['unitPrices'];
-                    if (reqDetailIds == "") {
-                        alert("价钱不能为空！");
-                        return;
-                    }
-                    savePoHeader(result);
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-        }
-
-        function savePoHeader(result) {
-            var orderDetailIds = result['orderDetailIds'];
-            var vendorId = result['vendorId'];
-            var unitPrices = result['unitPrices'];
-            var ordQtys = result['ordQtys'];
-            <!-- 最后付款时间 -->
-            var lastPayDateVal = $("#lastPayDate").val();
-            $.ajax({
-                url: '${ctx}/biz/po/bizPoHeader/autoSave',
-                contentType: 'application/json',
-                data: {"reqDetailIds":"", "orderDetailIds": orderDetailIds,"vendorId":vendorId, "unitPrices":unitPrices, "ordQtys":ordQtys, "lastPayDateVal": lastPayDateVal},
-                type: 'get',
-                async: false,
-                success: function (result) {
-                    result = JSON.parse(result);
-                    if(result.ret == true || result.ret == 'true') {
-                        var resultData = result.data;
-                        var resultDataArr = resultData.split(",");
-                        console.log(resultDataArr)
-                        console.log(resultDataArr[0])
-                        console.log(resultDataArr[1])
-                        if(resultDataArr[0] == "采购单生成") {
-                            var poId = resultDataArr[1];
-                            var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
-                            console.log(poId)
-                            console.log(schedulingType)
-                            if (schedulingType == 0) {
-                                saveComplete("0", poId);
-                            }
-                            if (schedulingType == 1) {
-                                batchSave("1", poId);
-                            }
-                        }
-                    }else {
-                        alert(result.errmsg);
-                    }
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-        }
-
-
         function deleteStyle() {
             //$("#remark").removeAttr("style");
             $("#cardNumber").removeAttr("style");
@@ -1125,6 +1081,7 @@
                         return false;
                     }
                     $("#cardNumberInput").val(data.cardNumber);
+                    $("#remarkInput").val(data.remark);
                     $("#payeeInput").val(data.payee);
                     $("#bankNameInput").val(data.bankName);
                     if (data.compactImgList != undefined) {
@@ -1172,14 +1129,16 @@
         }
 
         function saveCompleteCheck() {
-            var trArray = $("[name='headerScheduling_forHeader']");
+            var orderId = "${entity.id}";
+            var trArray = $("[name='" + orderId + "']");
+            console.log(trArray)
             var originalNum = $("#totalOrdQty").val();
 
             var totalSchedulingHeaderNum = 0;
             for(i=0;i<trArray.length;i++){
                 var div = trArray[i];
                 var jqDiv = $(div);
-                var value = jqDiv.find("[name='headerScheduling_forHeader_value']").val();
+                var value = jqDiv.find("[name='" + orderId + "_value']").val();
 
                 totalSchedulingHeaderNum = parseInt(totalSchedulingHeaderNum) + parseInt(value);
             }
@@ -1192,8 +1151,8 @@
             for(i=0;i<trArray.length;i++){
                 var div = trArray[i];
                 var jqDiv = $(div);
-                var date = jqDiv.find("[name='headerScheduling_forHeader_date']").val();
-                var value = jqDiv.find("[name='headerScheduling_forHeader_value']").val();
+                var date = jqDiv.find("[name='" + orderId + "_date']").val();
+                var value = jqDiv.find("[name='" + orderId + "_value']").val();
 
                 if (date == "") {
                     if (value != "") {
@@ -1293,7 +1252,8 @@
         }
 
         function saveComplete(schedulingType,poId) {
-            var trArray = $("[name='headerScheduling_forHeader']");
+            var orderId = "${entity.id}";
+            var trArray = $("[name='" + orderId + "']");
             var params = new Array();
             var schRemark = "";
             var originalNum = $("#totalOrdQty").val();
@@ -1304,7 +1264,7 @@
             for(i=0;i<trArray.length;i++){
                 var div = trArray[i];
                 var jqDiv = $(div);
-                var value = jqDiv.find("[name='headerScheduling_forHeader_value']").val();
+                var value = jqDiv.find("[name='" + orderId + "_value']").val();
 
                 totalSchedulingHeaderNum = parseInt(totalSchedulingHeaderNum) + parseInt(value);
             }
@@ -1320,8 +1280,8 @@
             for(i=0;i<trArray.length;i++){
                 var div = trArray[i];
                 var jqDiv = $(div);
-                var date = jqDiv.find("[name='headerScheduling_forHeader_date']").val();
-                var value = jqDiv.find("[name='headerScheduling_forHeader_value']").val();
+                var date = jqDiv.find("[name='" + orderId + "_date']").val();
+                var value = jqDiv.find("[name='" + orderId + "_value']").val();
 
                 if (date == "") {
                     if (value != "") {
@@ -1482,7 +1442,6 @@
                 type: 'post',
                 success: function (result) {
                     if(result == true) {
-                        //window.location.href = "${ctx}/biz/po/bizPoHeader/scheduling?id="+poid;
                         window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
                     }
                 },
@@ -1704,7 +1663,8 @@
                             <%--title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium required"--%>
                             <%--allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息" onchange="deleteStyle()"/>--%>
             <%--<span class="help-inline"><font color="red">*</font> </span>--%>
-            <%--<a href="#" id="remark" onclick="selectRemark()" style="display: none">《厂家退换货流程》</a>--%>
+            <input id="remarkInput" type="hidden" value=""/>
+            <buttion id="remark" onclick="selectRemark()">《厂家退换货流程》</buttion>
         </div>
     </div>
     <div id="cardNumber" class="control-group" style="display: none">
@@ -2916,13 +2876,13 @@
                     </tr>
                     <tr id="header_${entity.bizPoHeader.id}" class="headerScheduling">
                         <td>
-                            <div name="headerScheduling_forHeader">
+                            <div name="${bizOrderHeader.id}">
                                 <label>完成日期：</label>
-                                <input name="headerScheduling_forHeader_date" type="text" maxlength="20"
+                                <input name="${bizOrderHeader.id}_date" type="text" maxlength="20"
                                        class="input-medium Wdate"
                                        onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/> &nbsp;
                                 <label>排产数量：</label>
-                                <input name="headerScheduling_forHeader_value" class="input-medium" type="text" maxlength="30"/>
+                                <input name="${bizOrderHeader.id}_value" class="input-medium" type="text" maxlength="30"/>
                             </div>
                         </td>
                     </tr>

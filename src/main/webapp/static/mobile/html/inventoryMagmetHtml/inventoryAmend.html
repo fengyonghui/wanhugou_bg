@@ -6,36 +6,32 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<title>备货单修改</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
-		<link href="../../css/app.css?time=20180912" rel="stylesheet" />
-		<style type="text/css">
-			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 4em;}
-		</style>
+		<link href="../../css/app.css?time=20180930" rel="stylesheet" />
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
+
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
 			<p class="app_cf app_nav_text_center">备货单修改</p>
 		</header>
-		<div class="mui-content mui-input-group">
+		<div class="mui-content mui-input-group" id="payMents">
 			<div class="mui-input-row">
 				<label>备货单编号：</label>
 				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
 			</div>
 			<div class="mui-input-row" id="orderTypebox">
 				<label>备货方：</label>
-		    	<div id="changeTxt" class="labelri">
-			        <input id="fromType1" type="radio" name="fromType" value="1" checked class="inputRadio"/>
-			                采购中心备货
+		    	<div id="changeTxt" class="labelri inStock">
+		    		采购中心备货
+			        <input id="fromType1" type="radio" name="fromType" value="1" class="inputRadio"/>
+	                厂商备货  
+			        <input id="fromType2" type="radio" name="fromType" value="2" class="inputRadio"/>
 		        </div>	
-		        <div id="changeTxt" class="labelri">
-		        	<input id="fromType2" type="radio" name="fromType" value="2" class="inputRadio"/>
-		        	厂商备货
-	        	</div>
 		    </div>
 			<div class="mui-input-row">
 				<label>采购中心：</label>
 				<div class="pre">
-					<input class="newinput01" type="text" id="inOrordNum" placeholder="请选择采购中心">
+					<input class="newinput newinput01" type="text" id="inOrordNum" placeholder="请选择采购中心">
 					<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAmend01"></span>
 					<div class="input_div01" style="display: none;"></div>					
 					<input class="savedata" type="hidden" value=''>
@@ -46,7 +42,7 @@
 			<div class="mui-input-row">
 				<label>供应商：</label>
 				<div class="pre">
-					<input class="newinput02" type="text" id="insupplier">
+					<input class="newinput newinput02" type="text" id="insupplier" placeholder="请选择供应商">
 					<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAmend02"></span>
 					<div class="input_div02" style="display: none;"></div>					
 					<input class="savedata" type="hidden" value=''>
@@ -59,21 +55,29 @@
 				<input type="text" class="mui-input-clear" id="insupplierNum" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>供应商收款人：</label>
+				<label>收款人：</label>
 				<input type="text" class="mui-input-clear" id="insupplierMoney" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>供应商开户行：</label>
+				<label>开户行：</label>
 				<input type="text" class="mui-input-clear" id="insupplierBank" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商合同：</label>
+				<div id="insuppliercontract"></div>									
+			</div>
+			<div class="mui-input-row">
+				<label>身份证：</label>
+				<div id="insuppliercardID"></div>	
 			</div>
 			<div class="mui-input-row">
 				<label>收货时间：</label>
 				<input type="date" class="" id="inPoLastDa">
 				<font>*</font>
 			</div>
-			<div class="mui-input-row" id="inAmendPoLastDaDiv">
-				<label class="commodityName">选择商品：</label>
-				<input type="text" class="mui-input-clear commodityTxt" id="inAmendPoLastDa" placeholder="请输入">
+			<div class="mui-input-row commodityClear" id="inAmendPoLastDaDiv">
+				<label>选择商品：</label>
+				<input type="text" class="mui-input-clear" id="inAmendPoLastDa" placeholder="请输入商品货号">
 				<button id="comChoiceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">查询</button>
 			</div>
 
@@ -88,39 +92,52 @@
 			<div class="mui-row app_bline2 inComdty inAddComdty" id="commodityMenu">
 
 			</div>
-			<div class="mui-input-row">
+			<div class="mui-input-row" id="inPaylistbox">
+				<div class="labelLf">支付列表：</div>
+				<ul id="inPaylist" class="mui-table-view"></ul>
+			</div>
+			<div class="mui-input-row remark">
 				<label>备注：</label>
 				<textarea id="inPoRemark" name="" rows="" cols=""></textarea>
 			</div>
 			<div class="mui-input-row">
 				<label>业务状态：</label>
 				<div class="pre">
-					<select class="secStyle" name="" id="inputDivAmend">
-
-					</select>
+					<select class="secStyle" name="" id="inputDivAmend"></select>					
 					<input class="savedata" type="hidden" value=''>
 					<div style="clear:both"></div>
 				</div>
+				<!--<input type="text" id="inputDivAmend" class="mui-input-clear">-->
 				<font>*</font>
 			</div>
-
+            <div class="mui-input-row">
+				<label>排产状态：</label>
+				<input type="text" id="inSchedulstatus" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>排产类型：</label>
+				<input type="text" id="inSchedultype" class="mui-input-clear" disabled>
+			</div>
 			<div class="mui-input-row">
                 <div class="labelLf">状态流程：</div>
-                <ul class="" id="inCheckAddMenu">
-
-                </ul>
+                <ul class="" id="inCheckAddMenu"></ul>               
             </div>
+            <div class="mui-input-row">
+				<div class="labelLf">审批流程：</div>
+				<ul class="flowPath" id="inapprovalAddMenu"></ul>									
+			</div>
 		</div>
 		<div class="inSaveBtn">
-			<button id="saveDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>
+			
 		</div>
 		<input id="inStatus" name="inStatus" type="hidden" />
-		<input id="inSta" name="inSta" type="text" />
+		<input id="inSta" name="inSta" type="hidden" />
+		<input id="bizStatusVal" name="bizStatusVal" type="hidden" />
 		<div class="clear"></div>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/inventoryMagmetJs/inventoryAmend.js?time=20180912"></script>
+		<script src="../../js/inventoryMagmetJs/inventoryAmend.js?time=20180930"></script>
 	</body>
 
 </html>
