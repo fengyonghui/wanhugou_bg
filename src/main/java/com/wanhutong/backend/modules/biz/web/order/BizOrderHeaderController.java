@@ -911,6 +911,9 @@ public class BizOrderHeaderController extends BaseController {
             if (CollectionUtils.isNotEmpty(vendUser)) {
                 model.addAttribute("vendUser", vendUser.get(0));
                 resultMap.put("vendUser", vendUser.get(0));
+                bizOrderHeader.setVendorId(vendUser.get(0).getVendor().getId());
+                bizOrderHeader.setVendorName(vendUser.get(0).getVendor().getName());
+                bizOrderHeader.setSellersId(vendUser.get(0).getVendor().getId());
             }
 
             //代采
@@ -932,12 +935,14 @@ public class BizOrderHeaderController extends BaseController {
 
             List<Integer> skuInfoIdList = Lists.newArrayList();
             List<BizOrderDetail> bizOrderDetails = bizOrderHeader.getOrderDetailList();
-            for (BizOrderDetail orderDetail : bizOrderDetails) {
-                BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
-                skuInfoIdList.add(bizSkuInfo.getId());
+            if (CollectionUtils.isNotEmpty(bizOrderDetails)) {
+                for (BizOrderDetail orderDetail : bizOrderDetails) {
+                    BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
+                    skuInfoIdList.add(bizSkuInfo.getId());
+                }
+                model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
+                resultMap.put("skuInfoIdListListJson", skuInfoIdList);
             }
-            model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
-            resultMap.put("skuInfoIdListListJson", skuInfoIdList);
 
             for (BizOrderDetail orderDetail : orderDetailList) {
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
@@ -1065,7 +1070,6 @@ public class BizOrderHeaderController extends BaseController {
             resultMap.put("purchaseOrderProcess", purchaseOrderProcess);
         }
 
-//        if ("audit".equals(str) && ("0".equals(type) || "1".equals(type))) {
         // type = 0 产地直发
         // type = 1 本地备货
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
@@ -1076,17 +1080,29 @@ public class BizOrderHeaderController extends BaseController {
         }
         List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
 
-        BizPoHeader bizPoHeader = new BizPoHeader();
-        bizPoHeader.setBizOrderHeader(bizOrderHeader);
-        List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
         List<CommonProcessEntity> poAuditList = null;
+        if (bizOrderHeader.getId() != null) {
+            BizPoHeader bizPoHeader = new BizPoHeader();
+            bizPoHeader.setBizOrderHeader(bizOrderHeader);
+            List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
 
-        if (CollectionUtils.isNotEmpty(poList)) {
-            bizPoHeader = poList.get(0);
-            CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
-            poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
-            poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-            poAuditList = commonProcessService.findList(poCommonProcessEntity);
+            if (CollectionUtils.isNotEmpty(poList)) {
+                bizPoHeader = poList.get(0);
+                CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
+                poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+                poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+                poAuditList = commonProcessService.findList(poCommonProcessEntity);
+
+                BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+                bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
+                List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+                BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
+                for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
+                    BigDecimal payTotal = poPaymentOrder.getPayTotal();
+                    totalPayTotal = totalPayTotal.add(payTotal);
+                }
+                model.addAttribute("totalPayTotal", totalPayTotal);
+            }
         }
 
         if (CollectionUtils.isNotEmpty(poAuditList) && CollectionUtils.isNotEmpty(list)) {
@@ -1158,8 +1174,16 @@ public class BizOrderHeaderController extends BaseController {
         }
         model.addAttribute("createPo",createPo);
         resultMap.put("createPo", createPo);
-        resultMap.put("createPo", createPo);
         resultMap.put("PURCHASE_ORDER", BizOrderTypeEnum.PURCHASE_ORDER.getState());
+
+        //页面常量值获取
+        resultMap.put("SUPPLYING", OrderHeaderBizStatusEnum.SUPPLYING.getState());
+        resultMap.put("UNAPPROVE", OrderHeaderBizStatusEnum.UNAPPROVE.getState());
+        resultMap.put("PURSEHANGER", DefaultPropEnum.PURSEHANGER.getPropValue());
+        resultMap.put("REFUND", OrderHeaderDrawBackStatusEnum.REFUND.getState());
+        resultMap.put("REFUNDING", OrderHeaderDrawBackStatusEnum.REFUNDING.getState());
+        resultMap.put("PURCHASE_ORDER", BizOrderTypeEnum.PURCHASE_ORDER.getState());
+        resultMap.put("ORDINARY_ORDER", BizOrderTypeEnum.ORDINARY_ORDER.getState());
 
         return JsonUtil.generateData(resultMap, null);
     }
