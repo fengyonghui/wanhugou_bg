@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<title>订单修改</title>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/app.css?time=20181009" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">订单修改</p>
+		</header>
+		<div class="mui-content mui-input-group">
+			<div class="mui-input-row">
+				<label>订单编号：</label>
+				<input type="text" class="mui-input-clear" id="staPoordNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>经销店名称：</label>
+				<input type="text" class="mui-input-clear" id="staRelNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>商品总价：</label>
+				<input type="text" class="mui-input-clear" id="staPototal" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>调整金额：</label>
+				<input type="text" class="mui-input-clear" id="staAdjustmentMoney" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>增值服务费：</label>
+				<input type="text" class="mui-input-clear" id="staAddprice" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>运费：</label>
+				<input type="text" class="mui-input-clear" id="staFreight" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>万户币抵扣：</label>
+				<input type="text" class="mui-input-clear" id="staCoin" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>应付金额：</label>
+				<input type="text" class="mui-input-clear" id="staShouldPay" disabled pattern="0.00">
+			</div>
+			<div class="mui-input-row">
+				<label>已付金额：</label>
+				<input type="text" class="mui-input-clear doubleInput" id="staPoLastDa" disabled>
+				<input type="text" class="mui-input-clear doubleInput" id="staPoLastDaPerent" style="color: #088A29;"disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>服务费：</label>
+				<input type="text" class="mui-input-clear" id="staServerPrice" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>佣金：</label>
+				<input type="text" id="staCommission" class="mui-input-clear" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商：</label>
+				<input type="text" class="mui-input-clear" id="insupplier" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商卡号：</label>
+				<input type="text" class="mui-input-clear" id="insupplierNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>收款人：</label>
+				<input type="text" class="mui-input-clear" id="insupplierMoney" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>开户行：</label>
+				<input type="text" class="mui-input-clear" id="insupplierBank" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商合同：</label>
+				<div id="insuppliercontract"></div>									
+			</div>
+			<div class="mui-input-row">
+				<label>身份证：</label>
+				<div id="insuppliercardID"></div>	
+			</div>
+			<div class="mui-input-row">
+				<label>发票状态：</label>
+				<input type="text" class="mui-input-clear" id="staInvoice" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>业务状态：</label>
+				<input type="text" class="mui-input-clear doubleInput app_cred3" id="staFinal" disabled>
+				<input type="text" class="mui-input-clear doubleInput" id="staStatus" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>收货人：</label>
+				<input type="text" class="mui-input-clear" id="staConsignee" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>联系电话：</label>
+				<input type="text" class="mui-input-clear" id="staMobile" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>收货地址：</label>
+				<input type="text" class="mui-input-clear" id="staShippAddress" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>详细地址：</label>
+				<input type="text" class="mui-input-clear" id="staDateilAddress" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>备注：</label>
+				<textarea class="app_color40" id="staPoRemark" name="" rows="" cols="" disabled></textarea>
+			</div>
+			<!--<div class="mui-input-row">
+				<div class="labelLf">进展信息：</div>
+				<div class="labelParent">
+					<ul class="labelRi ">
+						<li class="app_pr">
+							<div>首付款支付</div>
+							<div>全部支付</div>
+							<span class="mui-icon mui-icon-arrowthinright app_pa nextTxt01"></span>
+						</li>
+						<li class="app_pr app_t12">
+							<div class="app_pr">供货中</div>
+							<span class="mui-icon mui-icon-arrowthinright app_pa nextTxt02"></span>
+						</li>
+						<li>
+							<div>采购中</div>
+							<div>已发货</div>
+						</li>
+					</ul>
+				</div>
+			</div>-->
+			<div class="mui-input-row">
+				<div class="labelLf">状态流程：</div>
+				<ul class="flowPath" id="staEvoMenu">
+					
+				</ul>
+			</div>
+			<div class="mui-input-row">
+				<div class="labelLf">审核流程：</div>
+				<ul class="" id="staCheckMenu">
+					
+				</ul>
+			</div>
+			<div class="mui-input-row staCommodity">
+				<div class="labelLf">商品信息：</div>
+				<ul id="staCommodity" class="mui-table-view app_pl10">
+					
+				</ul>
+			</div>
+			<!--<div class="mui-input-row app_bline">
+				<div class="labelLf">付款约定：</div>
+				<div class="mui-input-row">
+					<label>付款时间：</label>
+					<input type="text" class="mui-input-clear" id="staPayTime" disabled>
+				</div>
+				<div class="mui-input-row">
+					<label>金额：</label>
+					<input type="text" class="mui-input-clear" id="staPayMoney" disabled>
+				</div>
+			</div>-->
+			<div class="app_cred3">
+				<div class="mui-row app_bline">
+					<div class="mui-input-row">
+						<label>甲方(经销店):</label>
+						<input type="text" class="mui-input-clear" id="firstPart" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>负责人:</label>
+						<input type="text" class="mui-input-clear" id="firstPrincipal" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>联系电话:</label>
+						<input type="text" class="mui-input-clear" id="firstMobile" disabled>
+					</div>
+				</div>
+				<div class="mui-row app_bline">
+					<div class="mui-input-row">
+						<label>乙方(供应商):</label>
+						<input type="text" class="mui-input-clear" id="partB" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>负责人:</label>
+						<input type="text" class="mui-input-clear" id="partBPrincipal" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>联系电话:</label>
+						<input type="text" class="mui-input-clear" id="partBMobile" disabled>
+					</div>
+				</div>
+				<div class="mui-row app_bline">
+					<div class="mui-input-row">
+						<label>丙方(万户通):</label>
+						<input type="text" class="mui-input-clear" value="万户通总公司" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>负责人:</label>
+						<input type="text" class="mui-input-clear" id="partCPrincipal" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>联系电话:</label>
+						<input type="text" class="mui-input-clear" id="partCMobile" disabled>
+					</div>
+				</div>
+				<div class="app_p15 app_f12" id="notes">
+					
+				</div>
+			</div>
+			
+		</div>
+		<div class="clear"></div>
+		<input type="hidden" id="supplierId"/>
+		<script src="../../../js/component/mui.min.js"></script>	
+		<script src="../../../js/component/zepto.min.js"></script>
+		<script src="../../../js/component/GHutils.js"></script>
+		<script src="../../../js/orderMgmtJs/OrdermgmtHtmljs/orderAmend.js?v=20181009"></script>
+	</body>
+</html>
