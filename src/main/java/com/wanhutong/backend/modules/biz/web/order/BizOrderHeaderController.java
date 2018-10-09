@@ -335,45 +335,17 @@ public class BizOrderHeaderController extends BaseController {
 
         JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
-        DoOrderHeaderProcessAllConfig doOrderHeaderProcessAllConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get();
         DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
 
         Map<String, String> originConfigMap = Maps.newLinkedHashMap();
-        List<String> originConfigValue = Lists.newArrayList();
-        List<String> localConfigValue = Lists.newArrayList();
-        List<String> doFifthConfigValue = Lists.newArrayList();
 
-        originConfigMap.put("渠道", "渠道");
+        originConfigMap.put("渠道经理", "渠道经理");
         originConfigMap.put("总经理", "总经理");
-        originConfigMap.put("品类", "品类");
-        originConfigMap.put("财务", "财务");
+        originConfigMap.put("品类主管", "品类主管");
+        originConfigMap.put("财务经理", "财务经理");
         originConfigMap.put("完成", "完成");
         originConfigMap.put("驳回", "驳回");
         originConfigMap.put("不需要审批", "不需要审批");
-
-        String selectAuditStatus = bizOrderHeader.getSelectAuditStatus();
-//////////////////////////////////////////////////////////////////
-        for (Process process : originConfig.getProcessList()) {
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
-                originConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-//////////////////////////////////////////////////////////////////
-        for (Process process : localConfig.getProcessList()) {
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
-                localConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-//////////////////////////////////////////////////////////////////
-        for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
-            if (StringUtils.isNotBlank(selectAuditStatus) && process.getName().contains(selectAuditStatus)) {
-                doFifthConfigValue.add(String.valueOf(process.getCode()));
-            }
-        }
-
-        bizOrderHeader.setOriginCode(CollectionUtils.isEmpty(originConfigValue) ? null : originConfigValue);
-        bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
-        bizOrderHeader.setDoFifthCode(CollectionUtils.isEmpty(doFifthConfigValue) ? null : doFifthConfigValue);
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
@@ -464,16 +436,29 @@ public class BizOrderHeaderController extends BaseController {
 
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
-        model.addAttribute("auditAllStatus", doOrderHeaderProcessAllConfig.getAutProcessId());
         model.addAttribute("auditFithStatus", doOrderHeaderProcessFifthConfig.getAutProcessId());
         model.addAttribute("auditStatus", originConfig.getPayProcessId());
 
         resultMap.put("originConfigMap", originConfigMap);
         resultMap.put("roleSet", roleSet);
         resultMap.put("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
-        resultMap.put("auditAllStatus", doOrderHeaderProcessAllConfig.getAutProcessId());
         resultMap.put("auditFithStatus", doOrderHeaderProcessFifthConfig.getAutProcessId());
         resultMap.put("auditStatus", originConfig.getPayProcessId());
+
+        //页面常量值获取
+        resultMap.put("SUPPLYING", OrderHeaderBizStatusEnum.SUPPLYING.getState());
+        resultMap.put("CANCLE", OrderHeaderBizStatusEnum.CANCLE.getState());
+        resultMap.put("DELETE", OrderHeaderBizStatusEnum.DELETE.getState());
+        resultMap.put("UNAPPROVE", OrderHeaderBizStatusEnum.UNAPPROVE.getState());
+        resultMap.put("STOCKING", OrderHeaderBizStatusEnum.STOCKING.getState());
+        resultMap.put("PHOTO_ORDER", BizOrderTypeEnum.PHOTO_ORDER.getState());
+        resultMap.put("PURCHASE_ORDER", BizOrderTypeEnum.PURCHASE_ORDER.getState());
+        resultMap.put("ORDINARY_ORDER", BizOrderTypeEnum.ORDINARY_ORDER.getState());
+        resultMap.put("REFUND", OrderHeaderDrawBackStatusEnum.REFUND.getState());
+        resultMap.put("REFUNDING", OrderHeaderDrawBackStatusEnum.REFUNDING.getState());
+        resultMap.put("REFUNDREJECT", OrderHeaderDrawBackStatusEnum.REFUNDREJECT.getState());
+        resultMap.put("REFUNDED", OrderHeaderDrawBackStatusEnum.REFUNDED.getState());
+
 
         return JsonUtil.generateData(resultMap, request.getParameter("callback"));
     }
