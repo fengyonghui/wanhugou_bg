@@ -34,7 +34,6 @@
 			}
 			$.ajax({
                 type: "GET",
-//              url: "/a/biz/order/bizOrderHeader/listData4mobile",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
 //              data: {
 //              	id:_this.userInfo.staOrdId,
@@ -82,7 +81,7 @@
 						$('#staPoRemark').val(w.comments);//备注
 					})
 					var item = res.data.bizOrderHeader;
-					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staPoordNum').val(item.orderNum);//订单编号
 					$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
 					$('#staRelNum').val(item.customer.name);//经销店名称
@@ -91,7 +90,7 @@
 					$('#staFreight').val(item.freight.toFixed(2));//运费
 					$('#staShouldPay').val(shouldPay.toFixed(2));//应付金额
 					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');//已付金额
-					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
+					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
 					$('#staPoLastDaPerent').val(poLastDa);//已付金额百分比
 					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));//服务费
 					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));//佣金
@@ -208,6 +207,176 @@
                 	}
 				}
 			});
+		},
+		//排产信息接口
+		scheduling:function(idval){
+			var _this = this;			
+			$.ajax({
+                type: "GET",
+                url: "/a/biz/po/bizPoHeader/scheduling4Mobile",
+                data: {id:idval},
+                dataType: "json",
+                success: function(res){
+                	if (res.data.detailHeaderFlg != true && res.data.detailSchedulingFlg != true) {
+                        $("#inSchedultype").val("未排产")
+                        $("#stockGoods").hide();
+                        $("#schedulingPlan_forHeader").hide();
+                        $("#schedulingPlan_forSku").hide();
+                    }
+                	//按订单排产
+                	if (res.data.detailHeaderFlg == true) {
+                        $("#inSchedultype").val("按订单排产")
+                        $("#stockGoods").show();
+                        $("#schedulingPlan_forHeader").show();
+                        $("#schedulingPlan_forSku").hide();
+
+                        var poDetailList = res.data.bizPoHeader.poDetailList;
+                        var poDetailHtml = "";
+                        $.each(poDetailList,function(n,v){
+                        	poDetailHtml +='<li class="mui-table-view-cell mui-media">'+
+								'<div class="photoParent mui-pull-left app_pa">'+
+									'<img class="app_pa" src="'+v.skuInfo.productInfo.imgUrl+'">'+
+								'</div>'+
+								'<div class="mui-media-body app_w72p app_fr">'+
+									'<div class="mui-input-row">'+
+										'<label>品牌名称：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.skuInfo.productInfo.brandName +'" disabled>'+
+									'</div>'+
+									'<div class="mui-input-row">'+
+										'<label>商品名称：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.skuInfo.name +'" disabled>'+
+									'</div>'+
+									'<div class="mui-input-row">'+
+										'<label>商品货号：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.skuInfo.itemNo +'" disabled>'+
+									'</div>'+
+									'<div class="mui-input-row">'+
+										'<label>采购数量：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.ordQty +'" reqQty disabled>'+
+									'</div>'+
+									'<div class="mui-input-row">'+
+										'<label>结算价：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
+									'</div>'+
+									'<div class="mui-input-row">'+
+										'<label>总金额：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
+									'</div>'+
+								'</div>'+
+							'</li>'
+                        })
+                        $("#purchaseMenu").append(poDetailHtml);
+                        //按订单排产中的排产记录
+                        var bizCompletePalns = res.data.bizCompletePalns;
+                        var schedulingHeaderHtml = "";
+                        $.each(bizCompletePalns,function(n,v){
+                        	schedulingHeaderHtml +='<li class="mui-table-view-cell mui-media app_pl0">'+
+								'<div class="mui-media-body">'+
+									'<div class="mui-input-row">'+
+										'<label>完成日期：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(v.planDate) +'" disabled>'+
+									'</div>'+
+									'<div class="mui-input-row">'+
+										'<label>排产数量：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.completeNum +'" disabled>'+
+									'</div>'+
+								'</div>'+
+							'</li>'
+                        });
+                        $("#schedulingHeader").append(schedulingHeaderHtml);                        
+                        //按订单排产中的排产备注
+                        var remarkHtml = "<textarea id='schRemarkOrder' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
+                        $(".schedulingHeaderRemark").append(remarkHtml);
+                    }
+                	//按商品排产
+                	if (res.data.detailSchedulingFlg == true) {
+                        $("#inSchedultype").val("按商品排产")
+                        $("#stockGoods").hide();
+                        $("#schedulingPlan_forHeader").hide();
+                        $("#schedulingPlan_forSku").show();
+                        var poDetailLists = res.data.bizPoHeader.poDetailList;
+                        var poDetailHtmls = ""
+                        $.each(poDetailLists,function(n,v){
+//                      	console.log(v)
+                        	poDetailHtmls +='<li class="mui-table-view-cell mui-media">'+
+								'<div class="photoParent mui-pull-left app_pa">'+
+									'<img class="app_pa" src="'+v.skuInfo.productInfo.imgUrl+'">'+
+								'</div>'+
+								'<div class="mui-media-body app_w72p app_fr">'+
+									'<div class="mui-input-row">'+
+										'<label>品牌名称：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.skuInfo.productInfo.brandName +'" disabled>'+
+									'</div>'+
+									'<div class="mui-input-row">'+
+										'<label>商品名称：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.skuInfo.name +'" disabled>'+
+									'</div>'+
+									'<div class="mui-input-row">'+
+										'<label>商品货号：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.skuInfo.itemNo +'" disabled>'+
+									'</div>'+
+									'<div class="mui-input-row">'+
+										'<label>采购数量：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.ordQty +'" reqQty disabled>'+
+									'</div>'+
+									'<div class="mui-input-row">'+
+										'<label>结算价：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
+									'</div>'+
+									'<div class="mui-input-row">'+
+										'<label>总金额：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
+									'</div>'+
+								'</div>'+
+							'</li>'	+
+							'<div class="mui-row app_bline2 app_bline4">'+
+								'<div class="mui-row mui-col-xs-6 ">'+
+										'<label class="app_pr0 app_f13">总申报数量：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+v.ordQty+'" disabled>'+
+								'</div>'+
+								'<div class="mui-row mui-col-xs-6 ">'+
+										'<label class="app_pr0 app_f13">待排产量：</label>'+
+										'<input type="text" class="mui-input-clear" value="" disabled>'+
+								'</div>'+
+								'<div class="mui-row mui-col-xs-6 ">'+
+										'<label class="app_pr0 app_f13">已排产数量：</label>'+
+										'<input type="text" class="mui-input-clear" value="" disabled>'+
+								'</div>'+
+								'<div class="mui-row mui-col-xs-6 ">'+
+										'<label class="app_pr0 app_f13" id="scolor"> 已排产完成</label>'+
+								'</div>'+
+							'</div>'+
+							'<div class="mui-row app_bline2">'+
+								'<label class="app_pr0 app_f13">排产记录:</label>'+
+								'<ul id="schedulingHeaders" class="schedulingHeaders mui-table-view app_fr app_w70p">'+_this.eachCompletePaln(v)+'</ul>'+
+							'</div>'
+                        });
+                        $("#purchaseMenus").append(poDetailHtmls);
+                        //按商品排产中的排产备注
+                        var remarkHtmls = "<textarea id='schRemarkOrder' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
+                        $(".schedulingHeaderRemarks").append(remarkHtmls);    
+                	}
+				}
+			})
+		},
+		eachCompletePaln: function(ak) {
+			var _this = this;
+			var completePalnHtml = "";
+			$.each(ak.bizSchedulingPlan.completePalnList,function(a,k){
+            	completePalnHtml +='<li class="mui-table-view-cell mui-media app_pr app_pl0">'+
+				'<div class="mui-media-body">'+
+					'<div class="mui-input-row">'+
+						'<label>完成日期：</label>'+
+						'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(k.planDate) +'" disabled>'+
+					'</div>'+
+					'<div class="mui-input-row">'+
+						'<label>排产数量：</label>'+
+						'<input type="text" class="mui-input-clear" value="'+ k.completeNum +'" disabled>'+
+					'</div>'+
+				'</div>'+
+			    '</li>'
+            });
+            return completePalnHtml;
 		},
 		//状态流程
 		statusListHtml:function(data){

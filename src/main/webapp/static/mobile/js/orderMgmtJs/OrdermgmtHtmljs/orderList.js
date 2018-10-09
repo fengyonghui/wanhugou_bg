@@ -132,21 +132,23 @@
                                          			
                                          			staCheckBtnTxt="审核";
                                          		}
-												var DataRoleGeners = '';
-												if(item.commonProcess) {
-													DataRoleGeners = item.commonProcess.jointOperationOriginProcess.roleEnNameEnum;
-												}
-												var fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
-												console.log(res.data.auditStatus)
-												var auditStatu = '';
-					                            $.each(res.data.auditStatus,function(q,s){
-					                            	console.log(s)
-						                        	auditStatu=s
-					                            })
-					                            console.log(auditStatu)
-                                         		if(fileRoleDatas&& item.commonProcess.jointOperationOriginProcess.name != '驳回'&& item.commonProcess.jointOperationOriginProcess.code != auditStatu&& item.orderType == res.data.ORDINARY_ORDER){
-                                         			staCheckBtnTxt="审核";
-                                         		}
+//												var DataRoleGeners = '';
+//												if(item.commonProcess) {
+//													console.log(item.commonProcess)
+//													DataRoleGeners = item.commonProcess.jointOperationOriginProcess.roleEnNameEnum;
+//												}
+//												console.log(DataRoleGeners)
+//												var fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
+//												console.log(res.data.auditStatus)
+//												var auditStatu = '';
+//					                            $.each(res.data.auditStatus,function(q,s){
+//					                            	console.log(s)
+//						                        	auditStatu=s
+//					                            })
+//					                            console.log(auditStatu)
+//                                       		if(fileRoleDatas&& item.commonProcess.jointOperationOriginProcess.name != '驳回'&& item.commonProcess.jointOperationOriginProcess.code != auditStatu&& item.orderType == res.data.ORDINARY_ORDER){
+//                                       			staCheckBtnTxt="审核";
+//                                       		}
                                          	}
                                         }
                                         if(_this.staOrdauditFlag == false){
