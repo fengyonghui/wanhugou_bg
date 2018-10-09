@@ -164,6 +164,8 @@
                 });
 
                 function zTreeOnCheck(event, treeId, treeNode) {
+                    $("#sendAll").val('');
+                    $("#integrationNum").val('');
                     var treeObj = $.fn.zTree.getZTreeObj("officeTree");
                     nodes=treeObj.getCheckedNodes(true);
 					var v="";
@@ -189,6 +191,10 @@
                         data:'',
                         contentType:"application/json;charset=utf-8",
                         success:function(data){
+                            if(data=='')
+							{
+                                $("#offices").val('');
+							}
                             var s ="";
                             for(var v in data)
 							{
@@ -221,8 +227,11 @@
                         var val = $('input[name="sendScope"]:checked').val();
                         if(val==-3)
 						{
-                            $("#sendAll").val('');
-                            $("#integrationNum").val('');
+						    if(str!='detail')
+                            {
+                                $("#sendAll").val('');
+                                $("#integrationNum").val('');
+                            }
                             $("#search").show();
 						}
 					}

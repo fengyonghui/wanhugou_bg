@@ -43,6 +43,12 @@
 			sum(a.gain_money) as gainIntegration,
 			sum(a.money) as availableIntegration
 			from biz_cust_credit a
+			where NOT EXISTS(
+				select 1
+				from sys_test_account ta
+				where a.office_id = ta.object_id
+				and ta.object_name = 'sys_office'
+				)
 	</select>
 	<select id="selectExpireMoney" resultType="com.wanhutong.backend.modules.biz.entity.integration.BizMoneyRecodeDetail">
 		SELECT
@@ -79,6 +85,14 @@
 			</if>
 			<if test="endCreateDate!=null and endCreateDate!=''">
 				and  a.create_time<![CDATA[<=]]>#{endCreateDate}
+			</if>
+			<if test="page != null and page.includeTestData != true">
+				AND NOT EXISTS(
+				select 1
+				from sys_test_account ta
+				where a.office_id = ta.object_id
+				and ta.object_name = 'sys_office'
+				)
 			</if>
 		</where>
 		order by a.id desc
