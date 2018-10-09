@@ -559,8 +559,14 @@
             }
         }
     </script>
-
     <script type="text/javascript">
+        function selectRemark() {
+            if ($("#remarkInput").val() == "") {
+                alert("该厂商没有退换货流程");
+            } else {
+                alert($("#remarkInput").val());
+            }
+        }
         function checkInfo(obj, val, hid) {
             if (confirm("您确认同意该订单退款申请吗？")) {
 
@@ -1075,6 +1081,7 @@
                         return false;
                     }
                     $("#cardNumberInput").val(data.cardNumber);
+                    $("#remarkInput").val(data.remark);
                     $("#payeeInput").val(data.payee);
                     $("#bankNameInput").val(data.bankName);
                     if (data.compactImgList != undefined) {
@@ -1656,7 +1663,8 @@
                             <%--title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium required"--%>
                             <%--allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息" onchange="deleteStyle()"/>--%>
             <%--<span class="help-inline"><font color="red">*</font> </span>--%>
-            <%--<a href="#" id="remark" onclick="selectRemark()" style="display: none">《厂家退换货流程》</a>--%>
+            <input id="remarkInput" type="hidden" value=""/>
+            <a href="#" id="remark" onclick="selectRemark()">《厂家退换货流程》</a>
         </div>
     </div>
     <div id="cardNumber" class="control-group" style="display: none">
