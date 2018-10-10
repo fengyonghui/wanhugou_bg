@@ -516,7 +516,7 @@
             <label class="control-label">已付金额：</label>
             <div class="controls">
                 <font color="#088A29">
-                    <fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.freight)}" maxFractionDigits="2" />
+                    <fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/fn:trim(bizOrderHeader.totalDetail+bizOrderHeader.freight)}" maxFractionDigits="2" />
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
