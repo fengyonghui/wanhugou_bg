@@ -131,7 +131,7 @@
 	<div ><input type="button" class="btn" onclick="window.history.go(-1);" value="返回"/></div>
 	<div class="pagination">${page}</div>
 	<script type="text/javascript">
-            function checkPass(id, currentType, money,type) {
+            function checkPass(poPayId, currentType, money,type) {
                 var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
                 var submit = function (v, h, f) {
                     if ($String.isNullOrBlank(f.description)) {
@@ -140,7 +140,7 @@
                     }
                     top.$.jBox.confirm("确认审核通过吗？", "系统提示", function (v1, h1, f1) {
                         if (v1 == "ok") {
-                            audit(1, f.description, id, currentType, money,type);
+                            audit(1, f.description, poPayId, currentType, money,type);
                         }
                     }, {buttonsFocus: 1});
                     return true;
@@ -153,7 +153,7 @@
 
             }
 
-            function checkReject(id, currentType, money,type) {
+            function checkReject(poPayId, currentType, money,type) {
                 var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
                 var submit = function (v, h, f) {
                     if ($String.isNullOrBlank(f.description)) {
@@ -162,7 +162,7 @@
                     }
                     top.$.jBox.confirm("确认驳回该流程吗？", "系统提示", function (v1, h1, f1) {
                         if (v1 == "ok") {
-                            audit(2, f.description, id, currentType, money,type);
+                            audit(2, f.description, poPayId, currentType, money,type);
                         }
                     }, {buttonsFocus: 1});
                     return true;
@@ -175,11 +175,11 @@
 
             }
 
-            function audit(auditType, description, id, currentType, money,type) {
+            function audit(auditType, description, poPayId, currentType, money,type) {
                 $.ajax({
                     url: '${ctx}/biz/po/bizPoHeader/auditPay',
                     contentType: 'application/json',
-                    data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "money": money},
+                    data: {"poPayId": poPayId, "currentType": currentType, "auditType": auditType, "description": description, "money": money},
                     type: 'get',
                     success: function (result) {
                         result = JSON.parse(result);

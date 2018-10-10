@@ -189,7 +189,9 @@
 		AND a.inv_id = #{invInfo.id}
 		AND a.inv_type = #{invType}
 		AND a.sku_type = #{skuType}
-		AND a.vend_id = #{vendor.id}
+		<if test="vendor != null and vendor.id != null">
+			AND a.vend_id = #{vendor.id}
+		</if>
 	</select>
 
 	<!--查询采购中心库存总数-->
