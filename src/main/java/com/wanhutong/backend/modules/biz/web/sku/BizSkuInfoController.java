@@ -327,7 +327,9 @@ public class BizSkuInfoController extends BaseController {
         map.put("inventoryInfoList",inventoryInfoList);
         List<Dict> dictList=DictUtils.getDictList("inv_type");
         map.put("dictList",dictList);
-			return map;
+		List<Dict> skuTypeList = DictUtils.getDictList("inventory_sku_type");
+		map.put("skuTypeDictList",skuTypeList);
+		return map;
 	}
 
 	@ResponseBody
