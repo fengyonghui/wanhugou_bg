@@ -153,10 +153,26 @@
                 success: function(rest){
 //              	console.log(rest)
                 	if(rest){
-                		$('#insupplier').val(rest.vendName);//供应商
-						$('#insupplierNum').val(rest.cardNumber);//供应商卡号
-						$('#insupplierMoney').val(rest.payee);//供应商收款人
-						$('#insupplierBank').val(rest.bankName);//供应商开户行
+                		if(rest.vendName){
+                			$('#insupplier').val(rest.vendName);//供应商
+                		}else{
+                			$('#insupplier').parent().hide();//供应商
+                		}
+                		if(rest.cardNumber){
+                			$('#insupplierNum').val(rest.cardNumber);//供应商卡号
+                		}else{
+                			$('#insupplierNum').parent().hide();//供应商卡号
+                		}
+						if(rest.payee){
+                			$('#insupplierMoney').val(rest.payee);//供应商收款人
+                		}else{
+                			$('#insupplierMoney').parent().hide();//供应商收款人
+                		}
+						if(rest.bankName){
+                			$('#insupplierBank').val(rest.bankName);//供应商开户行
+                		}else{
+                			$('#insupplierBank').parent().hide();//供应商收款人
+                		}	
 						//供应商合同
 						if(rest.compactImgList != undefined){
 							$.each(rest.compactImgList,function (m, n) {
