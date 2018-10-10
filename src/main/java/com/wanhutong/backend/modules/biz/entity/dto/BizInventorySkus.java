@@ -24,6 +24,10 @@ public class BizInventorySkus extends DataEntity<BizInventorySkus> {
 	private String skuInfoIds;        // biz_sku_info.id
 	private String invTypes;        // 库存类型：1常规；2残损；3专属
 	private String stockQtys;      //库存数量
+	/**
+	 * 库存商品类型 ：1本地备货商品 2厂商备货
+	 */
+	private String skuTypes;
 
 
 	public BizInventorySkus() {
@@ -72,5 +76,13 @@ public class BizInventorySkus extends DataEntity<BizInventorySkus> {
 
 	public void setCustomerIds(String customerIds) {
 		this.customerIds = customerIds;
+	}
+
+	public String getSkuTypes() {
+		return skuTypes;
+	}
+
+	public void setSkuTypes(String skuTypes) {
+		this.skuTypes = skuTypes;
 	}
 }

@@ -63,11 +63,20 @@
                             selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
 						});
                         selecttd+="</select>";
+
                         var selectInvTypetd="<select class='input-mini' title='invType' class='input-medium'><option value=''>请选择</option>";
                         $.each(data.dictList,function (index,dict) {
                             selectInvTypetd+="<option value='"+dict.value+"'>"+dict.label+"</option>"
                         });
                         selectInvTypetd+="</select>";
+
+                        var selectSkuTypeTd = "<select class='input-mini' title='skuType' class='input-medium'><option value=''>请选择</option>";
+                        $.each(data.skuTypeDictList,function (index,dict) {
+                            selectSkuTypeTd += "<option value='"+dict.value+"'>"+dict.label+"</option>"
+                        });
+                        selectSkuTypeTd += "</select>";
+
+
 						var trdatas='';
                             var t=0;
                             $.each(data.skuInfoList,function (index,skuInfo) {
@@ -85,6 +94,7 @@
                                 trdatas+="<td>"+(skuInfo.productInfo.vendorName==undefined?"":skuInfo.productInfo.vendorName)+"</td>";
                                 trdatas+="<td>"+skuInfo.skuPropertyInfos+"</td>";
                                 trdatas+="<td id='invType_"+skuInfo.id+"'>"+selectInvTypetd+"</td>";
+                                trdatas+="<td id='skuType_"+skuInfo.id+"'>"+selectSkuTypeTd+"</td>";
                                 trdatas+="<td><input  type='text' class='input-mini' id='saleQty_"+skuInfo.id+"'/></td>";
                                 trdatas+="<td id='td_"+skuInfo.id+"'> <a href='#' onclick=\"addItem('"+skuInfo.id+"')\">增加</a></td>";
                                 trdatas+= "</tr>";
@@ -110,6 +120,8 @@
             $("#prodInfo2").find($("#custId_"+obj)).find($("select[about='custId']")).removeAttr("disabled");
             $("#prodInfo2").find($("#invType_"+obj)).find($("select[title='invType']")).removeAttr("name");
             $("#prodInfo2").find($("#invType_"+obj)).find($("select[title='invType']")).removeAttr("disabled");
+            $("#prodInfo2").find($("#skuType_"+obj)).find($("select[title='skuType']")).removeAttr("name");
+            $("#prodInfo2").find($("#skuType_"+obj)).find($("select[title='skuType']")).removeAttr("disabled");
             $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("name");
             $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("readonly");
             $("#prodInfo2").find($("#skuInfoIds_"+obj)).removeAttr("name");
@@ -119,6 +131,7 @@
         function addItem(obj) {
             var invInfoId= $("#invInfoId_"+obj).find("select[title='invInfoId']").val();
             var invType=$("#invType_"+obj).find("select[title='invType']").val();
+            var skuType=$("#skuType_"+obj).find("select[title='skuType']").val();
             var saleQty=$("#saleQty_"+obj).val();
             var custId = $("#custId_"+obj).find("select[about='custId']").val();
             if(invInfoId==''){
@@ -137,15 +150,21 @@
                 alert("请输入数量");
                 return;
 			}
+			if (skuType=='') {
+                alert("请选择库存商品类型");
+                return;
+			}
             $("#td_"+obj).html("<a href='#' onclick=\"removeItem('"+obj+"')\">移除</a>");
             var trHtml=$("#"+obj);
             $("#prodInfo").append(trHtml);
             $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("name","invInfoIds");
-            $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("disabled","disabled");
+            // $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("disabled","disabled");
             $("#prodInfo").find($("#custId_"+obj)).find($("select[about='custId']")).attr("name","customerIds");
-            $("#prodInfo").find($("#custId_"+obj)).find($("select[about='custId']")).attr("disabled","disabled");
+            // $("#prodInfo").find($("#custId_"+obj)).find($("select[about='custId']")).attr("disabled","disabled");
             $("#prodInfo").find($("#invType_"+obj)).find($("select[title='invType']")).attr("name","invTypes");
-            $("#prodInfo").find($("#invType_"+obj)).find($("select[title='invType']")).attr("disabled","disabled");
+            // $("#prodInfo").find($("#invType_"+obj)).find($("select[title='invType']")).attr("disabled","disabled");
+            $("#prodInfo").find($("#skuType_"+obj)).find($("select[title='skuType']")).attr("name","skuTypes");
+            // $("#prodInfo").find($("#skuType_"+obj)).find($("select[title='skuType']")).attr("readonly","readonly");
             $("#prodInfo").find($("#saleQty_"+obj)).attr("name","stockQtys");
             $("#prodInfo").find($("#saleQty_"+obj)).attr("readonly","readonly");
             $("#prodInfo").find($("#skuInfoIds_"+obj)).attr("name","skuInfoIds");
@@ -247,6 +266,7 @@
 						<th>供应商</th>
 						<th>商品属性</th>
 						<th>库存类型</th>
+						<th>库存商品类型</th>
 						<th>入库数量</th>
 						<%--<th>操作</th>--%>
 					</tr>
@@ -266,7 +286,8 @@
 						<td style='width: 200px'><img style='width: 200px' src="${entity.skuInfo.defaultImg}"></td>
 						<td>${entity.skuInfo.vendorName}</td>
 						<td>${entity.skuInfo.skuPropertyInfos}</td>
-						<td>${fns:getDictLabel(entity.invType, 'inv_type', '未知状态')}</td>
+						<td>${fns:getDictLabel(entity.invType, 'inv_type', '未知类型')}</td>
+						<td>${fns:getDictLabel(entity.skuType, 'inventory_sku_type', '未知类型')}</td>
 						<td><input name="stockQtys" value="${entity.stockQty}" style="width: 40px"/></td>
 							<%--<td><a href='#' onclick="delItem('${entity.id}')">删除</a></td>--%>
 						</tr>
@@ -296,6 +317,7 @@
 						<th>供应商</th>
 						<th>商品属性</th>
 						<th>库存类型</th>
+						<th>库存商品类型</th>
 						<th>入库数量</th>
 						<th>操作</th>
 					</tr>
