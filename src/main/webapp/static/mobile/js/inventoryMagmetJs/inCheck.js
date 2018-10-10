@@ -1179,15 +1179,17 @@
 					'<input type="text" class="addCommdNum mui-input-clear"></div>'+
 				'<button type="submit" class="removeBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">删除</button>'+
 			'</div>';
+			var addPurchNum = _this.userInfo.inListId;
+			$('#purchPlan').attr('name', addPurchNum);
+			$('#purchDate').attr('name', addPurchNum + '_date');
+			$('#purchNum').attr('name', addPurchNum + '_value');
+			
 			$(".schedPurch").on("tap", "#purchAddBtn", function() {
 				$('#purchAddCont').append(htmlPurchPlan);
 				var addPurchNum = _this.userInfo.inListId;
 				$('.purchAddCont').attr('name', addPurchNum);
-				$('#purchPlan').attr('name', addPurchNum);
 				$('.addpurchDate').attr('name', addPurchNum + '_date');
 				$('.addpurchNum').attr('name', addPurchNum + '_value');
-				$('#purchDate').attr('name', addPurchNum + '_date');
-				$('#purchNum').attr('name', addPurchNum + '_value');
 			})
 			var commdDateName = '';
 			var commdNumName = '';
