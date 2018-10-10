@@ -48,6 +48,9 @@ public class DsConfig {
         return getConfig().getString("logisticUrl");
     }
 
+    public static String getActivityMsgUrl() {
+        return getConfig().getString("activityMsgUrl");
+    }
 
 
 

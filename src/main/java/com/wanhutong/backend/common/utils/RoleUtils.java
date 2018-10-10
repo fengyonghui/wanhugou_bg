@@ -27,6 +27,22 @@ public class RoleUtils {
         return Boolean.FALSE;
     }
 
+    public static Boolean hasRoleByProcess(Set<String> roleSet, com.wanhutong.backend.modules.config.parse.Process roleStr) {
+        if (roleStr == null) {
+            return false;
+        }
+        List<String> roleEnNameEnum = roleStr.getRoleEnNameEnum();
+        if (CollectionUtils.isEmpty(roleEnNameEnum)) {
+            return Boolean.FALSE;
+        }
+        for (String role : roleEnNameEnum) {
+            if (roleSet.contains(role.trim())) {
+                return Boolean.TRUE;
+            }
+        }
+        return Boolean.FALSE;
+    }
+
 
 
     public static Boolean hasRole (User user, List<String> roleList) {

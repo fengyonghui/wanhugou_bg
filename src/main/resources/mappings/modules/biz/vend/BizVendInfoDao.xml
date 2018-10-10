@@ -19,6 +19,11 @@
 		a.create_time AS "createDate",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
+		a.remark AS "remark",
+		a.introduce AS "introduce",
+		a.prod_adv AS "prodAdv",
+		a.type AS "type",
+		a.remark AS "remarks",
 		o1.name AS "office.name"
 	</sql>
 	
@@ -99,7 +104,11 @@
 			update_time,
 			card_number,
 			bank_name,
-			payee
+			payee,
+			remark,
+			introduce,
+			prod_adv,
+			type
 		) VALUES (
 			#{office.id},
 			#{vendName},
@@ -114,7 +123,11 @@
 			#{updateDate},
 			#{cardNumber},
 			#{bankName},
-			#{payee}
+			#{payee},
+			#{remark},
+			#{introduce},
+			#{prodAdv},
+			#{type}
 		)
 	</insert>
 	
@@ -130,7 +143,11 @@
 			audit_status = #{auditStatus},
 			card_number = #{cardNumber},
 			bank_name = #{bankName},
-			payee = #{payee}
+			payee = #{payee},
+			remark = #{remark},
+			introduce = #{introduce},
+			prod_adv = #{prodAdv},
+			type = #{type}
 		WHERE office_id = #{office.id}
 	</update>
 

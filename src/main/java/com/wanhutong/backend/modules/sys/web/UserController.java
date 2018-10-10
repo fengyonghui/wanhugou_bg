@@ -3,35 +3,41 @@
  */
 package com.wanhutong.backend.modules.sys.web;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolationException;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.beanvalidator.BeanValidators;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.excel.ExportExcel;
+import com.wanhutong.backend.common.utils.excel.ImportExcel;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
-import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
-import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
-import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import com.wanhutong.backend.common.thread.ThreadPoolManager;
-import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
 import com.wanhutong.backend.modules.biz.web.statistics.BizStatisticsPlatformController;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,46 +52,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.wanhutong.backend.common.beanvalidator.BeanValidators;
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.BaseService;
-import com.wanhutong.backend.common.utils.DateUtils;
-import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.common.utils.excel.ExportExcel;
-import com.wanhutong.backend.common.utils.excel.ImportExcel;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
-import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
-import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
-import com.wanhutong.backend.modules.biz.web.statistics.BizStatisticsPlatformController;
-import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
-import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.Role;
-import com.wanhutong.backend.modules.sys.entity.User;
-import com.wanhutong.backend.modules.sys.service.OfficeService;
-import com.wanhutong.backend.modules.sys.service.SystemService;
-import com.wanhutong.backend.modules.sys.utils.DictUtils;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -121,6 +92,8 @@ public class UserController extends BaseController {
 	private BizVarietyInfoService bizVarietyInfoService;
 	@Autowired
 	private BizVarietyUserInfoService bizVarietyUserInfoService;
+	@Autowired
+	private CommonImgService commonImgService;
 
 	@ModelAttribute
 	public User get(@RequestParam(required=false) Integer id) {
@@ -150,10 +123,12 @@ public class UserController extends BaseController {
 					user.getCompany().setCustomerTypeTen(queryOffice.getType());
 				} else if (queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()))) {    //网供中心 11
 					user.getCompany().setCustomerTypeEleven(queryOffice.getType());
+					user.getCompany().setCustomerTypeThirteen(String.valueOf(OfficeTypeEnum.NETWORK.getType()));
 				} else {
 					user.getCompany().setType(String.valueOf(OfficeTypeEnum.PURCHASINGCENTER.getType()));
 					user.getCompany().setCustomerTypeTen(String.valueOf(OfficeTypeEnum.WITHCAPITAL.getType()));
 					user.getCompany().setCustomerTypeEleven(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()));
+					user.getCompany().setCustomerTypeThirteen(String.valueOf(OfficeTypeEnum.NETWORK.getType()));
 				}
 			}
 		}
@@ -188,6 +163,70 @@ public class UserController extends BaseController {
 		return "modules/sys/userList";
 	}
 
+
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = {"listData4mobile"})
+	@ResponseBody
+	public String listData4mobile(User user, HttpServletRequest request, HttpServletResponse response, Date ordrHeaderStartTime,Date orderHeaderEedTime,
+								  Model model, @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo
+								  ) {
+		if (user.getCompany() != null && user.getCompany().getSource() != null && "officeConnIndex".equals(user.getCompany().getSource())) {
+			//属于客户专员左边点击菜单查询
+			Office queryOffice = officeService.get(user.getCompany().getId());
+			if (queryOffice != null) {
+				if (queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.PURCHASINGCENTER.getType()))) {//采购中心8
+					user.getCompany().setType(queryOffice.getType());
+				} else if (queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.WITHCAPITAL.getType()))) { //配资中心 10
+					user.getCompany().setCustomerTypeTen(queryOffice.getType());
+				} else if (queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()))) {    //网供中心 11
+					user.getCompany().setCustomerTypeEleven(queryOffice.getType());
+					user.getCompany().setCustomerTypeThirteen(String.valueOf(OfficeTypeEnum.NETWORK.getType()));
+				} else {
+					user.getCompany().setType(String.valueOf(OfficeTypeEnum.PURCHASINGCENTER.getType()));
+					user.getCompany().setCustomerTypeTen(String.valueOf(OfficeTypeEnum.WITHCAPITAL.getType()));
+					user.getCompany().setCustomerTypeEleven(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()));
+					user.getCompany().setCustomerTypeThirteen(String.valueOf(OfficeTypeEnum.NETWORK.getType()));
+				}
+			}
+		}
+		if (UserUtils.getUser().isAdmin()) {
+			user.setDataStatus("filter");
+		}
+
+		Page<User> userPage = new Page<>(request, response);
+		userPage.setPageNo(pageNo);
+		Page<User> page = systemService.findUser(userPage, user);
+		if (user.getConn() != null && "connIndex".equals(user.getConn())) {
+			//客户专员统计
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			User userAdmin = UserUtils.getUser();
+			if (ordrHeaderStartTime != null) {
+				bizOrderHeader.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
+			}
+			if (orderHeaderEedTime != null) {
+				bizOrderHeader.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
+			}
+			if (!userAdmin.isAdmin()) {
+				bizOrderHeader.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+			}
+			for (int i = 0; i < page.getList().size(); i++) {
+				bizOrderHeader.setCon(page.getList().get(i));
+				BizOrderHeader orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
+				if (orderUserCount != null) {
+					page.getList().get(i).setUserOrder(orderUserCount);
+				}
+			}
+		}
+//		model.addAttribute("page", page);
+//		model.addAttribute("ordrHeaderStartTime", ordrHeaderStartTime);
+//		model.addAttribute("orderHeaderEedTime", orderHeaderEedTime);
+		Map<String, Object> resultMap = Maps.newHashMap();
+		resultMap.put("page", page);
+		resultMap.put("ordrHeaderStartTime", ordrHeaderStartTime);
+		resultMap.put("orderHeaderEedTime", orderHeaderEedTime);
+		return JsonUtil.generateData(resultMap, request.getParameter("callback"));
+	}
+
 	@ResponseBody
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"listData"})
@@ -199,6 +238,16 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "form")
 	public String form(User user, Model model,String flag) {
+		if (user.getId() != null) {
+			CommonImg commonImg = new CommonImg();
+			commonImg.setObjectId(user.getId());
+			commonImg.setObjectName(ImgEnum.USER_PHOTO.getTableName());
+			commonImg.setImgType(ImgEnum.USER_PHOTO.getCode());
+			List<CommonImg> headPhotoList = commonImgService.findList(commonImg);
+			if (CollectionUtils.isNotEmpty(headPhotoList)) {
+				model.addAttribute("headPhotoList",headPhotoList);
+			}
+		}
 		if (user.getOffice()==null || user.getOffice().getId()==null){
 			user.setCompany(UserUtils.getUser().getCompany());
 			user.setOffice(UserUtils.getUser().getOffice());
@@ -271,6 +320,21 @@ public class UserController extends BaseController {
 		}
 		return list;
 	}
+
+    @RequestMapping(value = "getAdvisers4mobile")
+    @ResponseBody
+    public String getAdvisers4mobile(User user, HttpServletRequest request, HttpServletResponse response, Model model){
+        List<User> list;
+        if(user.getOffice().getId() == null){
+            list = new ArrayList<>();
+        }else{
+            Role role = new Role();
+            role.setId(Integer.valueOf(DictUtils.getDictValue("角色", "sys_user_role_adviser","")));
+            user.setRole(role);
+            list = systemService.selectUserByOfficeId(user);
+        }
+        return JsonUtil.generateData(list, request.getParameter("callback"));
+    }
 
 	@RequiresPermissions("sys:user:edit")
 	@RequestMapping(value = "save")

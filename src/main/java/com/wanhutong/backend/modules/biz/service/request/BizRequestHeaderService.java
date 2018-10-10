@@ -32,6 +32,7 @@ import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -126,16 +127,10 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 				}
 			}
 		}
-		if (user.isAdmin()) {
-			return super.findPage(page,bizRequestHeader);
-		} else {
-			if(oflag){
-
-			}else {
-				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
-			}
-			return super.findPage(page,bizRequestHeader);
+		if (!user.isAdmin() && !oflag) {
+			bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
 		}
+		return super.findPage(page,bizRequestHeader);
 	}
 
 	@Override
@@ -391,6 +386,43 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		}
 	}
 
+	/**
+	 * 备货清单分页查询
+	 * */
+	public Page<BizRequestHeader> pageFindListV3(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
+		User user = UserUtils.getUser();
+		boolean oflag = false;
+		boolean flag=false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+				}
+			}
+		}
+		if (UserUtils.getOfficeList() != null){
+			for (Office office:UserUtils.getOfficeList()){
+				if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+					oflag = true;
+				}
+			}
+		}
+		if (user.isAdmin()) {
+			bizRequestHeader.setPage(page);
+			page.setList(bizRequestHeaderDao.findListForPoHeaderForAuto(bizRequestHeader));
+			return page;
+		} else {
+			if(oflag){
+
+			}else {
+				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
+			}
+			bizRequestHeader.setPage(page);
+			page.setList(bizRequestHeaderDao.findListForPoHeaderForAuto(bizRequestHeader));
+			return page;
+		}
+	}
+
 
 	/**
 	 *
@@ -400,9 +432,14 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	 * @param description
 	 * @return
 	 */
-	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	@Transactional(readOnly = false, rollbackFor = Exception.class, propagation = Propagation.SUPPORTS)
 	public String audit(Integer reqHeaderId, String currentType, int auditType, String description) {
 		BizRequestHeader bizRequestHeader = this.get(reqHeaderId);
+
+		if (!bizRequestHeader.getFromType().equals(ReqFromTypeEnum.CENTER_TYPE.getType())) {
+			return "操作失败,请在PC端使用V2版本进行审核!";
+		}
+
 		CommonProcessEntity cureentProcessEntity  = bizRequestHeader.getCommonProcess();
 
 		if (cureentProcessEntity == null) {
@@ -417,6 +454,10 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
 		// 当前流程
 		RequestOrderProcessConfig.RequestOrderProcess currentProcess = requestOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
+		if (currentProcess == null) {
+			return "操作失败, 当前流程不存在!";
+		}
+
 		// 下一流程
 		RequestOrderProcessConfig.RequestOrderProcess nextProcess = requestOrderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
 		if (nextProcess == null) {
@@ -540,7 +581,9 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	 * 取消
 	 * @param id
 	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void cancel(int id) {
 		dao.updateREStatus(id, ReqHeaderStatusEnum.CLOSE.getState());
 	}
+
 }

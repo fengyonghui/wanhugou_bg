@@ -7,6 +7,7 @@
 		a.req_no AS "reqNo",
 		a.req_type AS "reqType",
 		a.from_id AS "fromOffice.id",
+		a.from_type AS "fromType",
 		a.to_id AS "toOffice.id",
 		so.name AS "fromOffice.name",
 		sot.name AS "toOffice.name",
@@ -67,6 +68,8 @@
 		<include refid="bizRequestHeaderJoins"/>
 		LEFT JOIN biz_sku_info bsi on brd.sku_id = bsi.id
 		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		LEFT JOIN biz_po_order_req por ON por.so_id = a.id AND por.so_type = 2 AND por.status = 1
+		RIGHT JOIN biz_po_header po ON po.id = por.po_id AND po.status = 1
 		<!-- 供应商id -->
 		<if test="vendorId !=null and vendorId != ''">
 			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
@@ -211,6 +214,90 @@
 			<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
 				${sqlMap.request}
 			</if>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			GROUP BY a.id
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				<!--GROUP  BY a.id-->
+			</otherwise>
+		</choose>
+		order by updateDate desc
+	</select>
+
+	<select id="findListForPoHeaderForAuto" resultType="BizRequestHeader">
+		SELECT
+		<include refid="bizRequestHeaderColumns"/>,
+		pi.vendor_id AS "onlyVendor"
+		FROM (select @rownum:=0) as rownum,biz_request_header a
+		<include refid="bizRequestHeaderJoins"/>
+		INNER JOIN biz_sku_info bsi on brd.sku_id = bsi.id
+		INNER JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		<where>
+			1=1
+			AND EXISTS(
+			SELECT 1 FROM
+			(SELECT
+			DISTINCT a.id, pi.vendor_id
+			FROM biz_request_header a,biz_request_detail bod
+			LEFT JOIN biz_sku_info bsi on bod.sku_id = bsi.id
+			LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+			WHERE bod.header_id = a.id
+			AND bod.status = 1
+			<if test="dataStatus!=null and dataStatus!=''">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+			<if test="reqNo != null and reqNo != ''">
+				AND a.req_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{reqNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{reqNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{reqNo},'%')</if>
+			</if>
+			<if test="reqType != null and reqType != ''">
+				AND a.req_type = #{reqType}
+			</if>
+			<if test="fromOffice != null and fromOffice.id !=null and fromOffice.id != ''">
+				AND a.from_id = #{fromOffice.id}
+			</if>
+			<if test="recvEta != null and recvEta != ''">
+				AND  a.recv_eta BETWEEN ${startDate} AND ${endDate}
+			</if>
+			<if test="bizStatus != null and bizStatus != -1">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+
+			AND a.STATUS =1 ) t
+			WHERE a.id = t.id
+			GROUP BY id
+			)
+
+			<if test="page != null and page.includeTestData != true">
+				AND NOT EXISTS(
+				select 1
+				from sys_test_account ta
+				where a.from_id = ta.object_id
+				and ta.object_name = 'sys_office'
+				)
+			</if>
+
+			<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
+				${sqlMap.request}
+			</if>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
 			GROUP BY a.id
 		</where>
 		<choose>
@@ -350,4 +437,6 @@
 		biz_status  = #{status}
 		WHERE id = #{id}
 	</update>
+
+
 </mapper>

@@ -8,6 +8,8 @@ import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 采购付款单DAO接口
  * @author Ma.Qiang
@@ -19,5 +21,8 @@ public interface BizPoPaymentOrderDao extends CrudDao<BizPoPaymentOrder> {
 
     int updateProcessId(@Param("paymentId")Integer paymentId, @Param("processId") Integer processId);
 
+    List<BizPoPaymentOrder> getPayMentOrderByReqId(@Param("reqId") Integer reqId);
 
+
+    int findCount(BizPoPaymentOrder bizPoPaymentOrder);
 }

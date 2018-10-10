@@ -50,12 +50,29 @@
 				});
 			}
         }
+        function deleteOne(opShelfSkuId) {
+			$.ajax({
+				type:"post",
+				url:"${ctx}/biz/shelf/bizOpShelfSkuV2/deleteOne?id=" + opShelfSkuId,
+				success:function (data) {
+				    if (data == 'ok') {
+						alert("删除上架商品成功");
+                        window.location.reload();
+                    } else {
+				        alert("删除上架商品失败");
+                    }
+                }
+			})
+        }
 	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/">商品上架列表</a></li>
-		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><li><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?shelfSign=0">商品上架添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">
+			<li><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?shelfSign=0">商品上架添加</a></li>
+			<li><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/downShelfAdd">批量下架</a></li>
+		</shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSkuV2/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -219,7 +236,7 @@
 								<a href="#" onclick="DownShelf(${bizOpShelfSku.id})">下架</a>
 							</c:otherwise>
 						</c:choose>
-						<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>
+						<a href="#" onclick="deleteOne(${bizOpShelfSku.id})">删除</a>
 					</c:if>
 					<c:if test="${bizOpShelfSku.delFlag!=null && bizOpShelfSku.delFlag==0}">
 						<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/recovery?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要恢复该上架商品吗？', this.href)">恢复</a>

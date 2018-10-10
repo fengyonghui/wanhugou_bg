@@ -3,10 +3,15 @@
  */
 package com.wanhutong.backend.modules.process.entity;
 
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
@@ -23,6 +28,8 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	
 	private static final long serialVersionUID = 1L;
+	public static final Integer CURRENT = 1;
+	public static final Integer NOT_CURRENT = 0;
 	private String objectId;		// object_id
 	private String objectName;		// object_name
 	private int prevId = 0;		// 前一个ID.起始为0
@@ -33,10 +40,17 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	private Date createTime;		// 创建时间
 	private User user;
 	private Date updateTime;
+	private Integer current;
 
-	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess;
+	private com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess;
+	private com.wanhutong.backend.modules.config.parse.Process purchaseOrderForOrderHeaderProcess;
 	private RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess;
 	private PaymentOrderProcessConfig.Process paymentOrderProcess;
+	private VendorRequestOrderProcessConfig.RequestOrderProcess vendRequestOrderProcess;
+	private DoOrderHeaderProcessAllConfig.OrderHeaderProcess doOrderHeaderProcessAll;
+	private DoOrderHeaderProcessFifthConfig.OrderHeaderProcess doOrderHeaderProcessFifth;
+	private com.wanhutong.backend.modules.config.parse.Process jointOperationLocalProcess;
+	private com.wanhutong.backend.modules.config.parse.Process jointOperationOriginProcess;
 
 	/**
 	 * 前一个流程
@@ -148,18 +162,72 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 		this.updateTime = updateTime;
 	}
 
-	public PurchaseOrderProcessConfig.PurchaseOrderProcess getPurchaseOrderProcess() {
+	public com.wanhutong.backend.modules.config.parse.Process getPurchaseOrderProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new Process();
+		}
 		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
+//	public com.wanhutong.backend.modules.config.parse.Process getPurchaseOrderForOrderHeaderProcess() {
+//		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG_FOR_ORDER_HEADER.get().getProcessMap().get(Integer.valueOf(type));
+//	}
+
 	public PaymentOrderProcessConfig.Process getPaymentOrderProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new PaymentOrderProcessConfig.Process();
+		}
 		return ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
+	public com.wanhutong.backend.modules.config.parse.Process getJointOperationLocalProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new Process();
+		}
+		return ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
+	}
+
+	public com.wanhutong.backend.modules.config.parse.Process getJointOperationOriginProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new Process();
+		}
+		return ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
+	}
+
 	public RequestOrderProcessConfig.RequestOrderProcess getRequestOrderProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new RequestOrderProcessConfig.RequestOrderProcess();
+		}
 		return ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 
+	public Integer getCurrent() {
+		return current;
+	}
+
+	public void setCurrent(Integer current) {
+		this.current = current;
+	}
+	public VendorRequestOrderProcessConfig.RequestOrderProcess getVendRequestOrderProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new VendorRequestOrderProcessConfig.RequestOrderProcess();
+		}
+		return ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
+
+	public DoOrderHeaderProcessAllConfig.OrderHeaderProcess getDoOrderHeaderProcessAll() {
+		if (StringUtils.isBlank(type)) {
+			return new DoOrderHeaderProcessAllConfig.OrderHeaderProcess();
+		}
+		return ConfigGeneral.DO_ORDER_HEADER_PROCESS_All_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
+
+	public DoOrderHeaderProcessFifthConfig.OrderHeaderProcess getDoOrderHeaderProcessFifth() {
+		if (StringUtils.isBlank(type)) {
+			return new DoOrderHeaderProcessFifthConfig.OrderHeaderProcess();
+		}
+		return ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
 
 	public enum AuditType {
 		/**

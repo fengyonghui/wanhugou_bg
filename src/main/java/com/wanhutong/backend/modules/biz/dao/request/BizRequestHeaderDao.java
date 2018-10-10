@@ -31,4 +31,12 @@ public interface BizRequestHeaderDao extends CrudDao<BizRequestHeader> {
      * @return
      */
     int updateREStatus(@Param("id")int id, @Param("status") Integer status);
+
+    /**
+     * 自动生成采购单时，备货清单分页查询
+     * @param bizRequestHeader
+     * @return
+     */
+    List<BizRequestHeader> findListForPoHeaderForAuto(BizRequestHeader bizRequestHeader);
+
 }

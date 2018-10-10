@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true">
+		<title>排产</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/app.css" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="header mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">排产</p>
+		</header>
+		<div class="mui-content mui-input-group">
+			<div class="mui-input-row">
+				<label>备货单号：</label>
+				<input type="text" id="schedOrdNum" disabled>
+			</div>
+			<div class="mui-input-row" id="orderTypebox">
+				<label>排产类型：</label>
+				<div id="changeTxt" class="labelri inStock">
+		    		按订单排产
+			        <input id="schedPlan1" type="radio" name="fromType" value="0" class="inputRadio" checked/>
+            		按商品排产
+			        <input id="schedPlan2" type="radio" name="fromType" value="1" class="inputRadio"/>
+		       </div>
+		    </div>
+	<!--按订单排产-->	    
+		    <div class="mui-input-row schedPurch app_bline2">
+		    	<div class="mui-input-row inComdty inDetailComdty">
+					<div class="labelLf">采购商品：</div>
+					<ul id="orSchedPurch" class="mui-table-view">
+						
+					</ul>									
+				</div>
+				<div class="labelLf">按订单排产：</div>
+				<div class="mui-row app_f13 app_bline2">
+					<div class="mui-input-row">
+						<label>总申报数量：</label>
+						<input type="text" id="purchOrdQty" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>总待排产量：</label>
+						<input type="text" id="purchWaiteNum" disabled>
+					</div>	
+					<div class="mui-input-row">
+						<label>已排产数量：</label>
+						<input type="text" id="toalSchedulingNum" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>当前状态：</label>
+						<input type="text" id="chedulingStatus" disabled class="app_cred3">
+					</div>
+					<div class="inAddBtnParent">
+						<button id="purchAddBtn" type="submit" class="inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>
+					</div> 
+				</div>
+				<div class="mui-row">
+					<div class="labelLf">排产记录</div>
+					<div class="mui-row app_f13" id="purchSchedRecord">
+						
+					</div>
+				</div>
+				<div class="mui-row">
+					<div class="labelLf">排产计划</div>
+					<div class="mui-row app_f13" id="purchAddCont">
+						<div class="mui-row app_bline" id="purchPlan">
+							<div class="mui-input-row">
+								<label>完成日期：</label>
+								<input type="date" id="purchDate">
+							</div>
+							<div class="mui-input-row">
+								<label>排产数量：</label>
+								<input type="text" id="purchNum" class="mui-input-clear">
+							</div>
+						</div>	
+						
+					</div>
+				</div>
+			</div>
+	<!--按商品排产-->
+			<div class="mui-input-row schedCommd">
+				<div class="labelLf">按商品排产：</div>
+				<ul id="orSchedCommd" class="mui-table-view">
+					
+				</ul>
+			</div>
+			
+			<div class="mui-input-row remark">
+				<label>备注：</label>
+				<textarea id="orRemark" ></textarea>
+			</div>
+		</div>	
+		<div class="inSaveBtn saveBtnPt">
+			
+		</div>
+		<script src="../../js/component/zepto.min.js"></script>
+		<script src="../../js/component/mui.min.js"></script>
+		<script src="../../js/component/GHutils.js"></script>
+		<script src="../../js/orderMgmtJs/orScheduling.js"></script>
+	</body>
+</html>

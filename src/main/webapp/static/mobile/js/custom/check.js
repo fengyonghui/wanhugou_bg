@@ -92,7 +92,6 @@
 							'<label>当前状态:</label>'+
 					        '<textarea name="" rows="" cols="" disabled>'+ process.purchaseOrderProcess.name +'</textarea>'+
 					    '</div>'+
-						'<br />'+
 						'<div class="mui-input-row">'+
 					        '<label></label>'+
 					        '<input type="text" value="" class="mui-input-clear" disabled>'+
@@ -109,7 +108,6 @@
 							'<label>批注:</label>'+
 					        '<textarea name="" rows="" cols="" disabled>'+ item.description +'</textarea>'+
 					    '</div>'+
-						'<br />'+
 						'<div class="mui-input-row">'+
 					        '<label>审批人:</label>'+
 					        '<input type="text" value="'+ item.user.name +'" class="mui-input-clear" disabled>'+
@@ -191,7 +189,8 @@
 					id:_this.userInfo.listId,
 					currentType:$('#codeId').val(),//流程code
 					auditType:num,
-					description:inText
+					description:inText,
+                    fromPage:""
 				},
 				dataType: "json",
 				success: function(res) {
@@ -223,7 +222,8 @@
 					id:_this.userInfo.listId,
 					currentType:$('#codeId').val(),//流程code
 					auditType:num,
-					description:rejectTxt
+					description:rejectTxt,
+                    fromPage:""
 				},
 				dataType: "json",
 				success: function(res) {

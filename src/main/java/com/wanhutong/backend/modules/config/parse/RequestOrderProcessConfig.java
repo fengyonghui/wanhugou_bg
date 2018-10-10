@@ -1,9 +1,5 @@
 package com.wanhutong.backend.modules.config.parse;
 
-/**
- * @author Ma.Qiang
- * 2017/10/8
- */
 
 import com.google.common.collect.Maps;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -37,6 +33,9 @@ public class RequestOrderProcessConfig extends ConfigGeneral {
 
     @XStreamImplicit(itemFieldName = "process")
     private List<RequestOrderProcess> processList;
+
+    @XStreamAlias("createPoProcessId")
+    private Integer createPoProcessId;
 
     /**
      * 数据MAP
@@ -81,6 +80,10 @@ public class RequestOrderProcessConfig extends ConfigGeneral {
 
     public Integer getAutProcessId() {
         return autProcessId;
+    }
+
+    public Integer getCreatePoProcessId() {
+        return createPoProcessId;
     }
 
     @XStreamAlias("process")

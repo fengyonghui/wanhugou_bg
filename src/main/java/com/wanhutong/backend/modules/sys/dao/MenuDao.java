@@ -8,6 +8,7 @@ import java.util.List;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.sys.entity.Menu;
+import com.wanhutong.backend.modules.sys.entity.User;
 
 /**
  * 菜单DAO接口
@@ -24,5 +25,12 @@ public interface MenuDao extends CrudDao<Menu> {
 	public int updateParentIds(Menu menu);
 	
 	public int updateSort(Menu menu);
+
+	/**
+	 * 获取用户权限标示
+	 * @param user
+	 * @return
+	 */
+	public List<String> findAllPermissionList(User user);
 	
 }

@@ -17,7 +17,7 @@ public enum OrderHeaderBizStatusEnum {
     SUPPLYING(15, "同意发货(供货中)"),
     APPROVE(16, "采购中心供货"),
     PURCHASING(17, "采购中"),
-    ACCOMPLISH_PURCHASE(18, "采购完成"),
+    ACCOMPLISH_PURCHASE(18, "待供货部供货"),
     STOCKING(19,"供应中心供货"),
     SEND(20,"已发货"),
     RECEIVED(25,"客户已收货"),
@@ -26,10 +26,12 @@ public enum OrderHeaderBizStatusEnum {
     DELETE(40,"已删除"),
     UNAPPROVE(45, "审核失败");
 
+
     private Integer state;
     private String desc;
 
     private static Map<Integer, OrderHeaderBizStatusEnum> statusMap;
+    private static Map<Integer, String> stateDescMap;
 
     OrderHeaderBizStatusEnum(int st, String desc) {
         this.state=st;
@@ -45,6 +47,17 @@ public enum OrderHeaderBizStatusEnum {
             statusMap = mapTemp;
         }
         return statusMap;
+    }
+
+    public static Map<Integer, String> getStateDescMap() {
+        if (stateDescMap == null) {
+            Map<Integer, String> mapTemp = Maps.newHashMap();
+            for (OrderHeaderBizStatusEnum statusEnum : values()) {
+                mapTemp.put(statusEnum.getState(), statusEnum.getDesc());
+            }
+            stateDescMap = mapTemp;
+        }
+        return stateDescMap;
     }
 
     public static OrderHeaderBizStatusEnum stateOf(Integer index) {

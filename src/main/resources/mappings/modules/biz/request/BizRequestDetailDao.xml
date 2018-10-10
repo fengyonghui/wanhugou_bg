@@ -125,7 +125,8 @@
 		FROM
 		biz_po_order_req por
 		WHERE
-		por.so_line_no = a.line_no
+		por.status = 1
+		AND por.so_line_no = a.line_no
 		AND por.so_id = a.header_id
 		AND por.so_type = 2
 		) ) rd
@@ -257,17 +258,17 @@
 		LEFT JOIN biz_product_info bpi ON bpi.id = si.prod_id
 		<if test="poheaderSource!=null and poheaderSource!=''">
 			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = reheader.id AND a.line_no = bpor.so_line_no and
-			bpor.so_type=2
-			LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1
+			bpor.so_type=2 AND bpor.status = 1
+			LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1 AND ph.is_prew = 0
 		</if>
 		LEFT JOIN biz_inventory_sku bis on bis.sku_id=a.sku_id and bis.status=1
 		LEFT JOIN biz_inventory_info bii on bii.id=bis.inv_id and bii.status=1
 		and bii.cust_id=reheader.from_id
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="poheaderSource!=null and poheaderSource!=''">
-				AND ph.is_prew = 0
-			</if>
+			<!--<if test="poheaderSource!=null and poheaderSource!=''">-->
+				<!--AND ph.is_prew = 0-->
+			<!--</if>-->
 			<if test="skuInfo != null and skuInfo.id!=null and skuInfo.id != ''">
 				AND a.sku_id = #{skuInfo.id}
 			</if>
@@ -307,6 +308,26 @@
 				GROUP BY a.id
 			</otherwise>
 		</choose>
+	</select>
+
+	<select id="getsumSchedulingNum" resultType="BizRequestDetail">
+		SELECT
+		a.object_id as "id",
+		SUM(bcp.complete_num) as "sumCompleteNum",
+		(
+		select SUM(bcp.complete_num)
+		FROM biz_scheduling_plan bsp
+			left join biz_complete_paln bcp on bcp.scheduling_id = bsp.id and bcp.status=1 and bcp.complete_status=1
+		WHERE
+				bsp.status = 1
+			   AND bsp.object_id =#{objectId}
+		   and bsp.object_name='biz_request_detail'
+	  	) as "sumCompleteDetailNum"
+		FROM biz_scheduling_plan a
+		left join biz_complete_paln bcp on bcp.scheduling_id = a.id and bcp.status=1
+		WHERE
+			a.status = 1
+		   AND a.object_id =#{objectId}
 	</select>
 	
 </mapper>

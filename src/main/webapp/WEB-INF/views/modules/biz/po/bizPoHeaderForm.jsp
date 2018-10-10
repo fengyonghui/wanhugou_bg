@@ -172,7 +172,9 @@
     <li><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
     <li class="active">
         <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">采购订单
-            <shiro:hasPermission name="biz:po:bizPoHeader:edit">${not empty bizPoHeader.id?'修改':'添加'}</shiro:hasPermission>
+            <shiro:hasPermission name="biz:po:bizPoHeader:edit">
+                ${not empty bizPoHeader.id ? ( bizPoHeader.str == 'detail' ? "详情":'修改'):'添加'}
+            </shiro:hasPermission>
             <shiro:lacksPermission name="biz:po:bizPoHeader:edit">查看</shiro:lacksPermission></a>
     </li>
 </ul>
@@ -188,31 +190,50 @@
     <input id="str" type="hidden" value="${bizPoHeader.str}"/>
     <input id="deliveryStatus" type="hidden" value="${bizPoHeader.deliveryStatus}"/>
     <c:if test="${bizPoHeader.id!=null}">
-        <div class="control-group">
-            <label class="control-label">采购单编号：</label>
-            <div class="controls">
-                <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+        <c:if test="${bizPoHeader.fromPage == 'poHeader'}">
+            <div class="control-group" >
+                <label class="control-label">采购单编号：</label>
+                <div class="controls">
+                    <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                </div>
             </div>
-        </div>
 
-        <div class="control-group">
-            <label class="control-label">采购单来源：</label>
-            <div class="controls">
-                <c:forEach items="${bizPoHeader.orderSourceMap}" var="so">
-                    <%--<c:if test="${so.orderHeader!=null}">--%>
-                    <%--<input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.orderHeader.orderNum}" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-                    <%--<br/>--%>
-                    <%--</c:if>--%>
-                    <%--<c:if test="${so.requestHeader!=null}">--%>
-                    <input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.key}"
-                           htmlEscape="false" maxlength="30" class="input-xlarge "/>
-                    <br/>
-                    <%--</c:if>--%>
-
-                </c:forEach>
-
+            <div class="control-group">
+                <label class="control-label">采购单来源：</label>
+                <div class="controls">
+                    <c:forEach items="${bizPoHeader.orderSourceMap}" var="so">
+                        <%--<c:if test="${so.orderHeader!=null}">--%>
+                        <%--<input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.orderHeader.orderNum}" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+                        <%--<br/>--%>
+                        <%--</c:if>--%>
+                        <%--<c:if test="${so.requestHeader!=null}">--%>
+                        <input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.key}"
+                               htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                        <br/>
+                        <%--</c:if>--%>
+                    </c:forEach>
+                </div>
             </div>
-        </div>
+        </c:if>
+
+        <c:if test="${bizPoHeader.fromPage == 'orderHeader'}">
+            <div class="control-group">
+                <label class="control-label">订单/备货单号</label>
+                <div class="controls">
+                    <c:forEach items="${bizPoHeader.orderSourceMap}" var="so">
+                        <%--<c:if test="${so.orderHeader!=null}">--%>
+                        <%--<input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.orderHeader.orderNum}" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+                        <%--<br/>--%>
+                        <%--</c:if>--%>
+                        <%--<c:if test="${so.requestHeader!=null}">--%>
+                        <input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.key}"
+                               htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                        <br/>
+                        <%--</c:if>--%>
+                    </c:forEach>
+                </div>
+            </div>
+        </c:if>
 
         <div class="control-group">
             <label class="control-label">订单总价：</label>
@@ -528,7 +549,7 @@
             <c:if test="${bizPoHeader.id!=null}">
                 <th>已供货数量</th>
             </c:if>
-            <th>工厂价</th>
+            <th>结算价</th>
 
 
         </tr>
@@ -592,7 +613,7 @@
                                        class="input-mini" type='text'/></td>
                             <td>
                                 <input readonly="readonly" type="text" name="unitPrices"
-                                       value="${reqDetail.skuInfo.buyPrice}" class="input-mini">
+                                       value="${reqDetail.unitPrice}" class="input-mini">
                             </td>
 
                         </tr>
@@ -810,13 +831,13 @@
         $.ajax({
             url: '${ctx}/biz/po/bizPoHeader/audit',
             contentType: 'application/json',
-            data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+            data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "fromPage": "poHeader"},
             type: 'get',
             success: function (result) {
                 result = JSON.parse(result);
                 if(result.ret == true || result.ret == 'true') {
                     alert('操作成功!');
-                    window.location.href = "${ctx}/biz/po/bizPoHeader";
+                    window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                 }else {
                     alert(result.errmsg);
                 }
@@ -835,10 +856,11 @@
 
         var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
         var img = "";
-        for (var i = 0; i < mainImg.length; i ++) {
-            img += $(mainImg[i]).attr("src") + ",";
+        if(mainImg.length >= 2) {
+            for (var i = 1; i < mainImg.length; i ++) {
+                img += $(mainImg[i]).attr("src") + ",";
+            }
         }
-
         if ($String.isNullOrBlank(payTotal)) {
             alert("错误提示:请输入支付金额");
             return false;

@@ -5,15 +5,20 @@ package com.wanhutong.backend.modules.biz.entity.request;
 
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 import org.omg.PortableInterceptor.INACTIVE;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * 备货清单详细信息Entity
@@ -54,6 +59,37 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	 * 查看商品的总库存数量
 	 * */
 	private Integer invenSkuOrd;
+	/**
+	 * 销售数量
+	 */
+	private Integer sellCount;
+
+    /**
+     * 排产计划
+     */
+    //private List<BizSchedulingPlan> schedulingPlanList;
+
+	/**
+	 * 总的已排产量
+	 */
+	private Integer sumSchedulingNum = 0;
+
+	/**
+	 * 订单按商品排产是，总的已确认量
+	 */
+	private Integer sumCompleteDetailNum;
+
+	/**
+	 * 总的已确认数量
+	 */
+	private Integer sumCompleteNum = 0;
+
+	private BizSchedulingPlan bizSchedulingPlan;
+
+	/**
+	 * detail商品对应的各个采购中心的库存，Map<采购中心ID,库存数>
+	 */
+	private Map<String,Integer> invSkuMap;
 
 	public BizRequestDetail() {
 		super();
@@ -223,5 +259,61 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setInvenSkuOrd(Integer invenSkuOrd) {
 		this.invenSkuOrd = invenSkuOrd;
+	}
+
+	public Integer getSellCount() {
+		return sellCount;
+	}
+
+	public void setSellCount(Integer sellCount) {
+		this.sellCount = sellCount;
+	}
+
+//    public List<BizSchedulingPlan> getSchedulingPlanList() {
+//        return schedulingPlanList;
+//    }
+//
+//    public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
+//        this.schedulingPlanList = schedulingPlanList;
+//    }
+
+	public Integer getSumSchedulingNum() {
+		return sumSchedulingNum;
+	}
+
+	public void setSumSchedulingNum(Integer sumSchedulingNum) {
+		this.sumSchedulingNum = sumSchedulingNum;
+	}
+
+	public Integer getSumCompleteNum() {
+		return sumCompleteNum;
+	}
+
+	public void setSumCompleteNum(Integer sumCompleteNum) {
+		this.sumCompleteNum = sumCompleteNum;
+	}
+
+	public BizSchedulingPlan getBizSchedulingPlan() {
+		return bizSchedulingPlan;
+	}
+
+	public void setBizSchedulingPlan(BizSchedulingPlan bizSchedulingPlan) {
+		this.bizSchedulingPlan = bizSchedulingPlan;
+	}
+
+	public Integer getSumCompleteDetailNum() {
+		return sumCompleteDetailNum;
+	}
+
+	public void setSumCompleteDetailNum(Integer sumCompleteDetailNum) {
+		this.sumCompleteDetailNum = sumCompleteDetailNum;
+	}
+
+	public Map<String, Integer> getInvSkuMap() {
+		return invSkuMap;
+	}
+
+	public void setInvSkuMap(Map<String, Integer> invSkuMap) {
+		this.invSkuMap = invSkuMap;
 	}
 }

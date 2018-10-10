@@ -6,7 +6,16 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+            $("#buttonExport").click(function(){
+                top.$.jBox.confirm("确认要导出商品订单数据吗？","系统提示",function(v,h,f){
+                    if(v=="ok"){
+                        $("#searchForm").attr("action","${ctx}/biz/sku/bizSkuInfo/skuOrderExport");
+                        $("#searchForm").submit();
+                        $("#searchForm").attr("action","${ctx}/biz/sku/bizSkuInfo/findPageForSkuInfo");
+                    }
+                },{buttonsFocus:1});
+                top.$('.jbox-body .jbox-icon').css('top','55px');
+            });
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -47,6 +56,7 @@
 					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
@@ -57,7 +67,7 @@
 				<td>序号</td>
 				<th>商品名称</th>
 				<th>商品货号</th>
-				<th>工厂价</th>
+				<th>结算价</th>
 				<th>(订单)销售价</th>
 				<th>订单数量</th>
 				<th>应付金额</th>

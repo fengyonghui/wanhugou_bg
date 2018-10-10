@@ -61,7 +61,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<c:if test="${source eq 'sh'}">
-			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&ship=${ship}">收货清单列表</a></li>
+			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&ship=${ship}&bizStatu=${bizStatu}">收货清单列表</a></li>
 		</c:if>
 		<c:if test="${source eq 'kc'}">
 			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&bizStatu=${bizStatu}&ship=${ship}">供货清单列表</a></li>
@@ -150,78 +150,85 @@
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
 					<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/></li>
 
-				</c:if>
-				<li class="clearfix"></li>
-			</ul>
-		</form:form>
-	</c:if>
-	<sys:message content="${message}"/>
-	<table id="contentTable" class="table table-striped table-bordered table-condensed">
-		<thead>
-			<tr>
-				<th>序号</th>
-				<c:if test="${source eq 'gh'}">
-					<th><input id="select_all" type="checkbox" /></th>
-				</c:if>
-				<c:if test="${ship eq 'bh'}">
-					<th>备货单号</th>
-				</c:if>
-				<c:if test="${ship eq 'xs'}">
-					<th>销售单号</th>
-				</c:if>
-				<th>类型</th>
-				<c:if test="${ship eq 'bh'}">
-					<th>采购中心</th>
-				</c:if>
-				<c:if test="${ship eq 'xs'}">
-					<th>采购客户</th>
-				</c:if>
-				<c:if test="${ship ne 'xs'}">
-				<th>期望收货时间</th>
-				</c:if>
-				<c:if test="${ship eq 'xs'}">
-					<th>收货地址</th>
-				</c:if>
-				<c:if test="${ship eq 'bh'}">
-					<th>备注</th>
-				</c:if>
-				<th>业务状态</th>
-				<th>更新人</th>
-				<th>创建时间</th>
-				<th>更新时间</th>
-				<th>操作</th>
-			</tr>
-		</thead>
-		<tbody>
-		<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">
+			</c:if>
+			<li class="clearfix"></li>
+		</ul>
+	</form:form>
+</c:if>
+<sys:message content="${message}"/>
+<table id="contentTable" class="table table-striped table-bordered table-condensed">
+	<thead>
+	<tr>
+		<th>序号</th>
+		<c:if test="${source eq 'gh'}">
+			<th><input id="select_all" type="checkbox" /></th>
+		</c:if>
+		<c:if test="${ship eq 'bh'}">
+			<th>备货单号</th>
+		</c:if>
+		<c:if test="${ship eq 'xs'}">
+			<th>销售单号</th>
+		</c:if>
+		<th>类型</th>
+		<c:if test="${ship eq 'bh'}">
+			<th>采购中心</th>
+		</c:if>
+		<c:if test="${ship eq 'bh'}">
+			<th>备货方</th>
+		</c:if>
+		<c:if test="${ship eq 'xs'}">
+			<th>采购客户</th>
+		</c:if>
+		<c:if test="${ship ne 'xs'}">
+			<th>期望收货时间</th>
+		</c:if>
+		<c:if test="${ship eq 'xs' && vendor ne 'vendor'}">
+			<th>收货地址</th>
+		</c:if>
+		<c:if test="${ship eq 'bh' && vendor ne 'vendor'}">
+			<th>备注</th>
+		</c:if>
+		<th>业务状态</th>
+		<th>更新人</th>
+		<th>创建时间</th>
+		<th>更新时间</th>
+		<th>操作</th>
+	</tr>
+	</thead>
+	<tbody>
+	<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">
 		<c:if test="${source == 'sh' || source=='gh' || bizStatu==1 && ship=='bh'}">
 			<c:forEach items="${page.list}" var="requestHeader" varStatus="state">
 				<tr>
 					<td>${state.index+1}</td>
 					<c:if test="${source=='gh'}">
-					<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>
+						<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>
 					</c:if>
-					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">
-						${requestHeader.reqNo}
+					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&ship=${ship}&bizStatu=${bizStatu}">
+							${requestHeader.reqNo}
 					</a></td>
 					<td>
-						${fns:getDictLabel(requestHeader.reqType, 'biz_req_type', '未知类型')}
+							${fns:getDictLabel(requestHeader.reqType, 'biz_req_type', '未知类型')}
 					</td>
 					<td>
-						${requestHeader.fromOffice.name}
+							${requestHeader.fromOffice.name}
 					</td>
-
+					<td>
+							${fns:getDictLabel(requestHeader.fromType,'req_from_type' , '未知')}
+					</td>
 					<td>
 						<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
+					<c:if test="${vendor ne 'vendor'}">
+						<td>
+								${requestHeader.remark}
+						</td>
+					</c:if>
 					<td>
-						${requestHeader.remark}
+							${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
 					</td>
 					<td>
-						${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
-					</td>
-					<td>
-						${requestHeader.updateBy.name}
+							${requestHeader.updateBy.name}
 					</td>
 					<td>
 						<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
@@ -232,14 +239,14 @@
 					<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
 						<c:choose>
 							<c:when test="${source=='gh'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">详情</a>
 							</c:when>
 							<c:when test="${source=='sh'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">备货详情</a>
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">收货</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&ship=${ship}&bizStatu=${bizStatu}">备货详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">收货</a>
 							</c:when>
 							<c:when test="${bizStatu=='1'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">备货详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&ship=${ship}&bizStatu=${bizStatu}">备货详情</a>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=bh">发货</a>--%>
 							</c:when>
 						</c:choose>
@@ -256,29 +263,29 @@
 					<c:if test="${source=='gh'}">
 						<td><input name="orderIds" title="orderIds" type="checkbox" value="${orderHeader.id}" /></td>
 					</c:if>
-					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs">
+					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs&bizStatu=${bizStatu}&ship=${ship}">
 							${orderHeader.orderNum}
 					</a></td>
 					<td>
-							销售订单
+						销售订单
 					</td>
 					<td>
 							${orderHeader.customer.name}
 					</td>
 					<c:if test="${ship ne 'xs'}">
-					<td>
-						<fmt:formatDate value="${orderHeader.deliveryDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-					</td>
-					</c:if>
-					<c:if test="${ship eq 'xs'}">
 						<td>
-							${orderHeader.bizLocation.province.name}${orderHeader.bizLocation.city.name}
-							${orderHeader.bizLocation.region.name}${orderHeader.bizLocation.address}
+							<fmt:formatDate value="${orderHeader.deliveryDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 						</td>
 					</c:if>
-					<%--<td>--%>
-							<%--&lt;%&ndash;${orderHeader.remark}&ndash;%&gt;--%>
-					<%--</td>--%>
+					<c:if test="${ship eq 'xs' && vendor ne 'vendor'}">
+						<td>
+								${orderHeader.bizLocation.province.name}${orderHeader.bizLocation.city.name}
+								${orderHeader.bizLocation.region.name}${orderHeader.bizLocation.address}
+						</td>
+					</c:if>
+						<%--<td>--%>
+						<%--&lt;%&ndash;${orderHeader.remark}&ndash;%&gt;--%>
+						<%--</td>--%>
 					<td>
 							${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知类型')}
 					</td>
@@ -294,10 +301,10 @@
 					<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
 						<c:choose>
 							<c:when test="${source=='gh'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}">详情</a>
 							</c:when>
 							<c:otherwise>
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs">发货详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs&ship=${ship}&bizStatu=${bizStatu}">发货详情</a>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=xs">发货</a>--%>
 							</c:otherwise>
 						</c:choose>
@@ -305,15 +312,15 @@
 				</tr>
 			</c:forEach>
 		</c:if>
-		</form>
-		</tbody>
-	</table>
-	<div class="pagination">${page}</div>
-	<%--<div class="form-actions">
+	</form>
+	</tbody>
+</table>
+<div class="pagination">${page}</div>
+<%--<div class="form-actions">
 
-			<shiro:hasPermission name="biz:request:selecting:supplier:edit">
-				<input type="button" onclick="saveOrderIds();" class="btn btn-primary" value="合单采购"/>
-			</shiro:hasPermission>
-	</div>--%>
+        <shiro:hasPermission name="biz:request:selecting:supplier:edit">
+            <input type="button" onclick="saveOrderIds();" class="btn btn-primary" value="合单采购"/>
+        </shiro:hasPermission>
+</div>--%>
 </body>
 </html>

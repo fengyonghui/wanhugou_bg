@@ -28,6 +28,7 @@ import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryVi
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -44,11 +45,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -180,13 +177,17 @@ public class BizInventorySkuController extends BaseController {
                 //商品
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                 BizInventoryInfo inventoryInfo = new BizInventoryInfo();
-                if (odArr.length != 3) {
+                if (odArr.length != 4) {
                     continue;
                 }
                 inventoryInfo = bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
                 BizInventorySku bizInventorySku = new BizInventorySku();
                 bizInventorySku.setInvInfo(inventoryInfo);
                 bizInventorySku.setSkuInfo(bizSkuInfo);
+                bizInventorySku.setSkuType(Integer.valueOf(odArr[3]));
+                if (InventorySkuTypeEnum.VENDOR_TYPE.getType().equals(Integer.valueOf(odArr[3]))) {
+                    bizInventorySku.setVendor(bizSkuInfo.getProductInfo().getOffice());
+                }
                 List<BizInventorySku> invSkuList = bizInventorySkuService.findList(bizInventorySku);
                 if (invSkuList != null && invSkuList.size() > 0) {
                     flag = "true";
@@ -195,6 +196,33 @@ public class BizInventorySkuController extends BaseController {
         }
         return flag;
     }
+
+    @ResponseBody
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping(value = "findInvSkuV2")
+    public String findInvSkuV2(int invId, int skuId, int count, int skuType) {
+        String flag = "false";
+
+        // 仓库
+        BizInventoryInfo inventoryInfo = bizInventoryInfoService.get(invId);
+        // SKU
+        BizSkuInfo bizSkuInfo = bizSkuInfoService.get(skuId);
+
+        // 仓库内数量
+        BizInventorySku bizInventorySku = new BizInventorySku();
+        bizInventorySku.setInvInfo(inventoryInfo);
+        bizInventorySku.setSkuInfo(bizSkuInfo);
+        bizInventorySku.setSkuType(skuType);
+        if (InventorySkuTypeEnum.VENDOR_TYPE.getType().equals(skuType)) {
+            bizInventorySku.setVendor(bizSkuInfo.getProductInfo().getOffice());
+        }
+        List<BizInventorySku> invSkuList = bizInventorySkuService.findList(bizInventorySku);
+        if (invSkuList != null && invSkuList.size() >= count) {
+            return "true";
+        }
+        return flag;
+    }
+
 
     @RequiresPermissions("biz:inventory:bizInventorySku:view")
     @RequestMapping(value = "form")
@@ -256,6 +284,7 @@ public class BizInventorySkuController extends BaseController {
                 customerIdArr = bizInventorySkus.getCustomerIds().split(",");
             }
             String[] invTypeArr = bizInventorySkus.getInvTypes().split(",");
+            String[] skuTypeArr = bizInventorySkus.getSkuTypes().split(",");
             String[] skuInfoIdArr = bizInventorySkus.getSkuInfoIds().split(",");
             String[] stockQtyArr = bizInventorySkus.getStockQtys().split(",");
             BizInventorySku bizInventorySku = new BizInventorySku();
@@ -268,6 +297,8 @@ public class BizInventorySkuController extends BaseController {
                 }
                 bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
                 bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
+                bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_DELETE);
+                bizInventorySku.setSkuType(Integer.parseInt(skuTypeArr[i].trim()));
                 bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
                 bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
                 bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
@@ -280,7 +311,7 @@ public class BizInventorySkuController extends BaseController {
                     bizInventoryViewLog.setNowStockQty(bizInventorySku.getStockQty());
                     bizInventorySkuService.save(bizInventorySku);
                 } else {
-                    if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
+                    if (StringUtils.isNotBlank(bizInventorySkus.getCustomerIds())) {
                         only.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
                     }
                     bizInventoryViewLog.setStockQty(0);

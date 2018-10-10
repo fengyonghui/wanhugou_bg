@@ -60,6 +60,7 @@ public class BizSkuViewLogController extends BaseController {
 	public String list(BizSkuViewLog bizSkuViewLog, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizSkuViewLog> page = bizSkuViewLogService.findPage(new Page<BizSkuViewLog>(request, response), bizSkuViewLog); 
 		model.addAttribute("page", page);
+		model.addAttribute("skuType",bizSkuViewLog.getSkuType());
 		return "modules/biz/sku/bizSkuViewLogList";
 	}
 
@@ -117,7 +118,7 @@ public class BizSkuViewLogController extends BaseController {
 				headerList.add(String.valueOf(sdf.format(order.getCreateDate())));
 				header.add(headerList);
 			});
-			String[] headerArr = {"商品名称", "商品货号", "商品修改时间", "商品修改人", "修改前工厂价", "修改后工厂价", "改变的价格", "创建时间"};
+			String[] headerArr = {"商品名称", "商品货号", "商品修改时间", "商品修改人", "修改前结算价", "修改后结算价", "改变的价格", "创建时间"};
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
 			eeu.exportExcel(workbook, 0, "出厂价日志", headerArr, header, fileName);

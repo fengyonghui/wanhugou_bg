@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JointOperationOrderProcessLocalConfig>
+    <!--本地备货审核-->
+
+    <zeroDefaultProcessId>30001</zeroDefaultProcessId>
+    <fifthDefaultProcessId>20001</fifthDefaultProcessId>
+    <allDefaultProcessId>666</allDefaultProcessId>
+    <payProcessId>666</payProcessId>
+    <payProcessId>777</payProcessId>
+    <endProcessId>-1</endProcessId>
+
+    <!--流程节点-->
+    <process>
+        <name>财务经理审批</name>
+        <code>10001</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <passCode>777</passCode>
+        <zeroPassCode>777</zeroPassCode>
+        <fifthPassCode>777</fifthPassCode>
+        <allPassCode>777</allPassCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>渠道经理审批</name>
+        <code>20001</code>
+        <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
+        <passCode>20002</passCode>
+        <zeroPassCode>20002</zeroPassCode>
+        <fifthPassCode>20002</fifthPassCode>
+        <allPassCode>777</allPassCode>
+        <allPayCode>666</allPayCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>财务经理审批</name>
+        <code>20002</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <passCode>777</passCode>
+        <zeroPassCode>777</zeroPassCode>
+        <fifthPassCode>777</fifthPassCode>
+        <allPassCode>777</allPassCode>
+        <allPayCode>666</allPayCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>渠道经理审批</name>
+        <code>30001</code>
+        <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
+        <passCode>30002</passCode>
+        <zeroPassCode>30002</zeroPassCode>
+        <fifthPassCode>30003</fifthPassCode>
+        <allPassCode>777</allPassCode>
+        <allPayCode>666</allPayCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>总经理审批</name>
+        <code>30002</code>
+        <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
+        <passCode>30003</passCode>
+        <zeroPassCode>30003</zeroPassCode>
+        <fifthPassCode>30003</fifthPassCode>
+        <allPassCode>777</allPassCode>
+        <fifthPayCode>30003</fifthPayCode>
+        <allPayCode>666</allPayCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>财务主管审批</name>
+        <code>30003</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <passCode>777</passCode>
+        <zeroPassCode>777</zeroPassCode>
+        <fifthPassCode>777</fifthPassCode>
+        <allPassCode>777</allPassCode>
+        <allPayCode>666</allPayCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>全额支付不需要审批</name>
+        <code>666</code>
+    </process>
+    <process>
+        <name>审批完成</name>
+        <code>777</code>
+    </process>
+    <process>
+        <name>审批驳回</name>
+        <code>-1</code>
+    </process>
+</JointOperationOrderProcessLocalConfig>

@@ -143,5 +143,20 @@
 					<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
 	</update>
+
+	<select id="findAllPermissionList" resultType="string" parameterType="com.wanhutong.backend.modules.sys.entity.User">
+		SELECT DISTINCT
+			a.permission AS "permission"
+		FROM sys_menu a
+		LEFT JOIN sys_role_menu srm ON srm.menu_id = a.id
+		LEFT JOIN sys_user_role sur ON sur.role_id = srm.role_id
+		LEFT JOIN sys_user su ON su.id = sur.user_id
+		WHERE a.status = #{DEL_FLAG_NORMAL}
+		AND su.status = #{DEL_FLAG_NORMAL}
+		AND a.permission is not null
+		AND a.permission != ""
+		AND su.id = #{id}
+		GROUP by a.permission
+	</select>
 	
 </mapper>

@@ -31,6 +31,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.web.po.BizPoHeaderController;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -43,6 +44,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -81,8 +83,11 @@ public class BizRequestOrderController extends BaseController {
     @Autowired
     private CommonImgService commonImgService;
 
+    public static final String REQUEST_HEADER_TYPE = "1";
+    public static final String DO_ORDER_HEADER_TYPE = "2";
 
-       @RequiresPermissions("biz:request:selecting:supplier:view")
+
+    @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
     public String list(String source, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader,HttpServletRequest request,HttpServletResponse response) {
         List<BizRequestHeader> requestHeaderList = null;
@@ -193,9 +198,15 @@ public class BizRequestOrderController extends BaseController {
     private Page<BizRequestHeader> findBizRequestV2(BizRequestHeader bizRequestHeader,HttpServletRequest request, HttpServletResponse response) {
         bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
         bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+        bizRequestHeader.setFromType(ReqFromTypeEnum.CENTER_TYPE.getType());
         Page<BizRequestHeader> requestHeaderList = bizRequestHeaderService.pageFindListV2(new Page<BizRequestHeader>(request, response), bizRequestHeader);
 
         return requestHeaderList;
+    }
+
+    private Page<BizRequestHeader> findBizRequestV3(BizRequestHeader bizRequestHeader,HttpServletRequest request, HttpServletResponse response) {
+        bizRequestHeader.setFromType(ReqFromTypeEnum.CENTER_TYPE.getType());
+        return bizRequestHeaderService.pageFindListV2(new Page<BizRequestHeader>(request, response), bizRequestHeader);
     }
 
 

@@ -3,18 +3,13 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventory;
 
-import com.alibaba.druid.support.json.JSONUtils;
-import com.google.gson.JsonObject;
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.CloseableHttpClientUtil;
-import com.wanhutong.backend.common.utils.DateUtils;
-import com.wanhutong.backend.common.utils.DsConfig;
-import com.wanhutong.backend.common.utils.Encodes;
-import com.wanhutong.backend.common.utils.JsonUtil;
-import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.*;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
@@ -24,6 +19,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizDetailInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
@@ -34,6 +30,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -42,7 +39,6 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -57,11 +53,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -106,6 +98,8 @@ public class BizInvoiceController extends BaseController {
     private DictService dictService;
     @Autowired
     private BizPhotoOrderHeaderService bizPhotoOrderHeaderService;
+    @Autowired
+    private CommonImgService commonImgService;
 
     private static final String DEF_EN_NAME = "shipper";
 
@@ -164,8 +158,6 @@ public class BizInvoiceController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInvoice:view")
 	@RequestMapping(value = "form")
 	public String form(BizInvoice bizInvoice, Model model) {
-        BizLogistics bizLogistics = new BizLogistics();
-		List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
         User user = UserUtils.getUser();
         List<Role> roleList = user.getRoleList();
         boolean flag = false;
@@ -175,7 +167,8 @@ public class BizInvoiceController extends BaseController {
                 break;
             }
         }
-        model.addAttribute("logisticsList",logisticsList);
+        List<User> inspectorList = systemService.findUserByRoleEnName(RoleEnNameEnum.INSPECTOR.getState());
+        model.addAttribute("inspectorList",inspectorList);
         if (StringUtils.isBlank(bizInvoice.getCarrier())) {
             bizInvoice.setCarrier(user.getName());
         }
@@ -198,6 +191,19 @@ public class BizInvoiceController extends BaseController {
 		return "modules/biz/inventory/bizInvoiceForm";
 	}
 
+	@RequiresPermissions("biz:inventory:bizInvoice:view")
+	@RequestMapping(value = "formV2")
+	public String formV2(HttpServletRequest request, int id, BizInvoice bizInvoice, Model model) {
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
+//        List<User> userList = systemService.findUserByRoleEnName(RoleEnNameEnum.WAREHOUSESPECIALIST.getState());
+        model.addAttribute("userList", Lists.newArrayList(UserUtils.getUser()));
+        bizInvoice.setId(null);
+        request.setAttribute("orderNum", bizOrderHeader.getOrderNum());
+        request.setAttribute("bizStatus", bizOrderHeader.getBizStatus());
+
+        return "modules/biz/inventory/bizInvoiceFormV2";
+	}
+
     /**
      * 订单所属发货单详情
      * @param bizInvoice
@@ -206,8 +212,20 @@ public class BizInvoiceController extends BaseController {
      */
     @RequiresPermissions("biz:inventory:bizInvoice:view")
     @RequestMapping(value = "invoiceOrderDetail")
-    public String invoiceOrderDetail(BizInvoice bizInvoice,String source, Model model) {
-
+    public String invoiceOrderDetail(BizInvoice bizInvoice, String str, String source, Model model) {
+        bizInvoice.setStr(str);
+        CommonImg commonImg=new CommonImg();
+        commonImg.setImgType(ImgEnum.LOGISTICS_TYPE.getCode());
+        commonImg.setObjectId(bizInvoice.getId());
+        commonImg.setObjectName("biz_invoice");
+        if(bizInvoice.getId()!=null){
+            String photos="";
+            List<CommonImg> imgList=commonImgService.findList(commonImg);
+            for(CommonImg img:imgList){
+                photos+="|"+img.getImgServer()+img.getImgPath();
+            }
+            bizInvoice.setImgUrl(photos);
+        }
         BizLogistics bizLogistics = new BizLogistics();
         List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
@@ -230,7 +248,6 @@ public class BizInvoiceController extends BaseController {
                 }
             }
         }
-
         User user = UserUtils.getUser();
         List<Role> roleList = user.getRoleList();
         boolean flag = false;
@@ -240,9 +257,8 @@ public class BizInvoiceController extends BaseController {
                 break;
             }
         }
-//        if (StringUtils.isBlank(bizInvoice.getCarrier())) {
-//            bizInvoice.setCarrier(user.getName());
-//        }
+        List<User> inspectorList = systemService.findUserByRoleEnName(RoleEnNameEnum.INSPECTOR.getState());
+        model.addAttribute("inspectorList",inspectorList);
         if (flag && bizInvoice.getBizStatus()==1) {
             List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
             model.addAttribute("userList", userList);
@@ -251,6 +267,14 @@ public class BizInvoiceController extends BaseController {
             model.addAttribute("userList", userList);
         }else {
             model.addAttribute("userList",null);
+        }
+        BizDetailInvoice detailInvoice = new BizDetailInvoice();
+        detailInvoice.setInvoice(bizInvoice);
+        List<BizDetailInvoice> list = bizDetailInvoiceService.findList(detailInvoice);
+        BizDetailInvoice deInvoice = list.get(0);
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(deInvoice.getOrderHeader().getId());
+        if (orderHeader != null) {
+            model.addAttribute("orderHeader",orderHeader);
         }
 
         model.addAttribute("logisticsList",logisticsList);
@@ -272,8 +296,20 @@ public class BizInvoiceController extends BaseController {
      */
     @RequiresPermissions("biz:inventory:bizInvoice:view")
     @RequestMapping(value = "invoiceRequestDetail")
-    public String invoiceRequestDetail(BizInvoice bizInvoice,String source, Model model) {
-
+    public String invoiceRequestDetail(BizInvoice bizInvoice,String str, String source, Model model) {
+        bizInvoice.setStr(str);
+        CommonImg commonImg=new CommonImg();
+        commonImg.setImgType(ImgEnum.LOGISTICS_TYPE.getCode());
+        commonImg.setObjectId(bizInvoice.getId());
+        commonImg.setObjectName("biz_invoice");
+        if(bizInvoice.getId()!=null){
+            String photos="";
+            List<CommonImg> imgList=commonImgService.findList(commonImg);
+            for(CommonImg img:imgList){
+                photos+="|"+img.getImgServer()+img.getImgPath();
+            }
+            bizInvoice.setImgUrl(photos);
+        }
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
         bizDetailInvoice.setInvoice(bizInvoice);
         List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
@@ -305,9 +341,8 @@ public class BizInvoiceController extends BaseController {
                 break;
             }
         }
-//        if (StringUtils.isBlank(bizInvoice.getCarrier())) {
-//            bizInvoice.setCarrier(user.getName());
-//        }
+        List<User> inspectorList = systemService.findUserByRoleEnName(RoleEnNameEnum.INSPECTOR.getState());
+        model.addAttribute("inspectorList",inspectorList);
         if (flag && bizInvoice.getBizStatus()==1) {
             List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
             model.addAttribute("userList", userList);
@@ -333,7 +368,7 @@ public class BizInvoiceController extends BaseController {
 			return form(bizInvoice, model);
 		}
 		bizInvoiceService.save(bizInvoice);
-		addMessage(redirectAttributes, "保存发货单成功");
+		addMessage(redirectAttributes, "发货成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage&bizStatus="+bizInvoice.getBizStatus()+"&ship="+bizInvoice.getShip();
 	}
 	

@@ -136,7 +136,7 @@
 				<%--<th>物流结算方式</th>--%>
 				<%--<th>备注</th>--%>
 				<%--<th>发货时间</th>--%>
-				<%--<th>物流信息图</th>--%>
+				<th>物流信息图</th>
 				<th>操作</th>
 				<%--<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><th>操作</th></shiro:hasPermission>--%>
 			</tr>
@@ -162,7 +162,7 @@
 				<%--<td>
 					<fmt:formatDate value="${bizInvoice.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>--%>
-				<%--<td><img src="${bizInvoice.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>--%>
+				<td><img src="${bizInvoice.imgUrl}"style="max-width:150px;max-height:150px;_height:150px;border:0;padding:3px;"/></td>
 				<td>
 					<a href="${ctx}/biz/inventory/bizInvoice/logisticsOrderDetail?id=${bizInvoice.id}&source=xq&targetPage=logistics">物流单详情</a>
 				</td>

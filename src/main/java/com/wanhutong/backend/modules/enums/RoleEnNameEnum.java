@@ -8,9 +8,9 @@ public enum RoleEnNameEnum {
      */
     P_CENTER_MANAGER("p_center_manager", "采购中心经理"),
     /**
-     * 采购专员
+     * 客户专员
      */
-    BUYER("buyer", "采购专员"),
+    BUYER("buyer", "客户专员"),
     /**
      * 运营总监
      */
@@ -51,9 +51,9 @@ public enum RoleEnNameEnum {
      */
     WAREHOUSESPECIALIST("warehouse_specialist", "仓储专员"),
     /**
-     * 选品专员
+     * 品类主管
      */
-    SELECTIONOFSPECIALIST("selection_of_specialist", "选品专员"),
+    SELECTION_OF_SPECIALIST("selection_of_specialist", "品类主管"),
     /**
      * 供货中心经理
      */
@@ -73,17 +73,24 @@ public enum RoleEnNameEnum {
     CHANNEL_MANAGER("channel_manager","渠道经理"),
 
     /**
+     * 渠道主管
+     */
+    CHANNEL_SUPERVISOR("Channel Supervisor","渠道主管"),
+
+    /**
      * 提付款专员
      */
     PAYMENT_SPECIALIST_SUBMIT("payment_specialist_submit","提付款专员"),
 
     /**
+     * 验货员
+     */
+    INSPECTOR("inspector","验货员"),
+
+    /**
      * 系统管理员
      */
     DEPT("dept", "系统管理员");
-
-
-
 
 
     private String state;

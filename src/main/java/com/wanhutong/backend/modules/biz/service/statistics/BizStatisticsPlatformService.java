@@ -26,8 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +49,6 @@ public class BizStatisticsPlatformService {
 
     @Resource
     private OfficeDao officeDao;
-
 
     @Resource
     private BizOpPlanDao bizOpPlanDao;
@@ -172,7 +173,7 @@ public class BizStatisticsPlatformService {
     /**
      * 获取平台业务数据
      */
-    public Map<String, List<BizPlatformDataOverviewDto>> getPlatformData(String startDate, String endDate, String currentDate) {
+    public Map<String, List<BizPlatformDataOverviewDto>> getPlatformData(String startDate, String endDate, String currentDate) throws ParseException {
         String[] dateStrArr = startDate.split("-");
 
         List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = bizOrderHeaderDao.platformDataOverview(startDate, endDate + " 23:59:59", OrderHeaderBizStatusEnum.INVALID_STATUS);
@@ -181,6 +182,10 @@ public class BizStatisticsPlatformService {
             nameSet.add(b.getName());
         }
 
+        SimpleDateFormat sdfDay = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdfMonth = new SimpleDateFormat("yyyy-MM");
+
+        Date sDate = sdfDay.parse(startDate);
 
         List<Office> listByType = officeDao.findListByTypeList(Lists.newArrayList(
                 OfficeTypeEnum.PURCHASINGCENTER.getType(),
@@ -216,6 +221,13 @@ public class BizStatisticsPlatformService {
             if (CollectionUtils.isNotEmpty(planList)) {
                 bizOpPlan = planList.get(0);
             }
+
+            BizUserStatisticsDto userStatisticDataByOfficeId = bizOrderHeaderDao.getValidUserStatisticDataByOfficeId(sdfMonth.format(sDate), o.getOfficeId());
+            o.setNewUser(userStatisticDataByOfficeId == null ? BigDecimal.ZERO : BigDecimal.valueOf(userStatisticDataByOfficeId.getCount()));
+            o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
+            BizOrderStatisticsDto serviceChargeDto = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonthOfficeId(sdfMonth.format(sDate) + "%", o.getOfficeId());
+            o.setServiceCharge(serviceChargeDto == null ? BigDecimal.ZERO : serviceChargeDto.getProfitPrice());
+            o.setServiceChargePlan(bizOpPlan.getServiceCharge() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getServiceCharge()));
 
             o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
             o.setProcurementDay(

@@ -102,7 +102,8 @@
 	<select id="findOfficeByIdToParent" resultType="Office">
 		select *
 		from sys_office a
-		where FIND_IN_SET(id,
+		where
+		FIND_IN_SET(id,
 		(select GROUP_CONCAT(distinct parent_ids,'0')
 		from biz_custom_center_consultant ccc, sys_office so
 		where ccc.cust_id = so.id and ccc.status=1
@@ -135,13 +136,36 @@
 		order by parent_ids
 	</select>
 
+	<select id="findOfficeById4Mobile" resultType="Office">
+		select so.*
+		from biz_custom_center_consultant ccc, sys_office so
+		where ccc.cust_id = so.id and so.status=1 and  ccc.status=1
+		<if test="customs != null and customs.id != null and customs.id != ''">
+			AND ccc.cust_id = #{customs.id}
+		</if>
+		<if test="centers != null and centers.id != null and centers.id != ''">
+			AND ccc.center_id = #{centers.id}
+		</if>
+		<if test="consultants != null and consultants.id != null and consultants.id != ''">
+			AND ccc.consultant_id = #{consultants.id}
+		</if>
+		<if test="parentIds!=null and parentIds !=''">
+			AND so.parent_ids LIKE #{parentIds}
+		</if>
+		order by parent_ids
+	</select>
+
 	<select id="findOfficeCustByIdToParent" resultType="Office">
 		SELECT
 		*
 		FROM
 		sys_office a
 		WHERE
-		FIND_IN_SET(
+		1 = 1
+		<if test="phone != null and phone != ''">
+			AND a.phone = #{phone}
+		</if>
+		AND FIND_IN_SET(
 		id,
 		(
 		SELECT
@@ -164,6 +188,9 @@
 		so.status = #{DEL_FLAG_NORMAL}
 		<if test="type != null and type != ''">
 			AND so.type = #{type}
+		</if>
+		<if test="phone != null and phone != ''">
+			AND so.phone = #{phone}
 		</if>
 		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1
 		and ccc.consultant_id != (SELECT prop_value FROM sys_default_prop WHERE prop_desc = '超级客户专员'))
@@ -292,6 +319,9 @@
 		<if test="name != null and name != ''">
 			AND a.name = #{name}
 		</if>
+		<if test="phone != null and phone != ''">
+			AND a.phone = #{phone}
+		</if>
 		<if test="parent != null and parent.id != null">
 			AND a.parent_id = #{parent.id}
 		</if>
@@ -302,7 +332,6 @@
 			${sqlMap.dsf}
 			OR a.id = #{currentUser.office.id}
 		</if>
-
 		<!--</if>-->
 		<!--<if test="currentUser != null and currentUser.UserOfficeList != null and currentUser.UserOfficeList.size() != 0">-->
 
@@ -312,7 +341,6 @@
 		<!--#{userOffice.office.id}-->
 		<!--</foreach>-->
 		<!--</if>-->
-		ORDER BY  a.parent_id
 	</select>
 
 	<!--用于分页查询会员列表-->
@@ -325,6 +353,19 @@
 		LEFT join sys_user sua on sua.company_id=a.id and sua.status =1 and a.primary_person=sua.id
 		<where>
 			1 = 1
+
+			<if test="vendorId !=null and vendorId != 0">
+				and (a.id in (
+				select boh.cust_id from biz_order_header boh where boh.id in (
+				select distinct bod.order_id
+				from biz_order_detail bod
+				left join biz_sku_info bsi on bod.sku_id = bsi.id
+				left join biz_product_info bpi on bpi.id = bsi.prod_id
+				where bpi.vendor_id = #{vendorId}
+				)) or a.id in (SELECT oh.cust_id FROM biz_order_header oh WHERE
+				oh.seller_id = #{vendorId}))
+			</if>
+
 			<if test="dataStatus==null or  dataStatus==''">
 				AND  a.status = #{DEL_FLAG_NORMAL}
 			</if>
@@ -419,6 +460,30 @@
 			and ccc.center_id = #{officeId}
 		</if>
 		group by su.id;
+	</select>
+
+	<select id="getCustParentIdByVendorId" resultType="String">
+				select parent_ids from sys_office vendor where vendor.id in (
+				select boh.cust_id
+				from biz_order_header boh
+				where boh.id in (select distinct bod.order_id
+								 from biz_order_detail bod left join biz_sku_info bsi on bod.sku_id = bsi.id
+								   left join biz_product_info bpi on bpi.id = bsi.prod_id
+								 where bpi.vendor_id = #{vendorId})
+				or boh.seller_id = #{vendorId}
+				)
+	</select>
+
+	<select id="getCustIdByVendorId" resultType="String">
+				select id from sys_office vendor where vendor.id in (
+				select boh.cust_id
+				from biz_order_header boh
+				where boh.id in (select distinct bod.order_id
+								 from biz_order_detail bod left join biz_sku_info bsi on bod.sku_id = bsi.id
+								   left join biz_product_info bpi on bpi.id = bsi.prod_id
+								 where bpi.vendor_id = #{vendorId})
+				or boh.seller_id = #{vendorId}
+				)
 	</select>
 
 </mapper>

@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.supcan.treelist.cols.Col;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -21,14 +22,17 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.chat.BizChatRecordService;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.BuyerAdviser;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.BuyerAdviserService;
@@ -92,6 +96,8 @@ public class OfficeController extends BaseController {
     private BizChatRecordService bizChatRecordService;
     @Autowired
     private BizProductInfoV2Service bizProductInfoV2Service;
+    @Autowired
+    private CommonImgService commonImgService;
 
 
 
@@ -132,8 +138,20 @@ public class OfficeController extends BaseController {
     @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "purchasersList")
     public String purchasersList(Office office, String conn, Integer centers, Integer consultants, HttpServletRequest request, HttpServletResponse response, Model model) {
-        String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
         Office customer = new Office();
+
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (!user.isAdmin() && roleList.contains(role)) {
+            customer.setVendorId(user.getCompany().getId());
+            customer.setVendor("vendor");
+            model.addAttribute("vendor","vendor");
+        }
+
+
+        String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
         if (office.getParent()!=null && office.getParent().getId()!=null && office.getParent().getId()!=0) {
             customer.setParent(office);
         } else {
@@ -144,7 +162,7 @@ public class OfficeController extends BaseController {
         }
         Page<Office> page = officeService.findPage(new Page<Office>(request, response), customer);
         if (page.getList().size() == 0) {
-            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && !office.getMoblieMoeny().getMobile().equals("")) {
+            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
                 //列表页输入2个条件查询时
                 Office officeUser = new Office();
                 officeUser.setQueryMemberGys(office.getName()+"");
@@ -226,6 +244,16 @@ public class OfficeController extends BaseController {
     @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "supplierForm")
     public String supplierForm(Office office, Model model, String gysFlag) {
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(office.getId());
+        commonImg.setObjectName(ImgEnum.VENDOR_VIDEO.getTableName());
+        if (office.getId() != null) {
+            commonImg.setImgType(ImgEnum.VENDOR_VIDEO.getCode());
+            List<CommonImg> vendVideoList = commonImgService.findList(commonImg);
+            if (CollectionUtils.isNotEmpty(vendVideoList)) {
+                model.addAttribute("vendVideoList",vendVideoList);
+            }
+        }
         User user = UserUtils.getUser();
         if (office.getParent() == null || office.getParent().getId() == null) {
             if (OfficeTypeEnum.VENDOR.getType().equals(office.getType())) {
@@ -284,9 +312,35 @@ public class OfficeController extends BaseController {
     public List<Map<String, Object>> purchaserTreeData(@RequestParam(required = false) String extId, @RequestParam(required = false) String type,
                                                        @RequestParam(required = false) Long grade, @RequestParam(required = false) Boolean isAll, HttpServletResponse response) {
 
+
+
         List<Map<String, Object>> mapList = Lists.newArrayList();
 
         List<Office> list = officeService.filerOffice(null, "purchaser", OfficeTypeEnum.CUSTOMER);
+
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (roleList.contains(role)) {
+            List<String> custParentIdByVendorId = officeService.getCustParentIdByVendorId(user.getCompany().getId());
+            List<String> custIdByVendorId = officeService.getCustIdByVendorId(user.getCompany().getId());
+            List<Office> temp = Lists.newArrayList();
+            for (Office o1 : list) {
+                for (String o : custParentIdByVendorId) {
+                    if (o.contains(String.valueOf(o1.getId()))) {
+                        temp.add(o1);
+                    }
+                }
+                for (String o : custIdByVendorId) {
+                    if (o.equals(String.valueOf(o1.getId()))) {
+                        temp.add(o1);
+                    }
+                }
+            }
+            list = temp;
+        }
+
         for (int i = 0; i < list.size(); i++) {
             Office e = list.get(i);
             if ((StringUtils.isBlank(extId) || (extId != null && !extId.equals(e.getId()) && e.getParentIds().indexOf("," + extId + ",") == -1))
@@ -588,6 +642,34 @@ public class OfficeController extends BaseController {
                     list = officeService.findListByTypeList(Arrays.asList(split));
                 }else {
                     list = officeService.filerOffice(null, source, OfficeTypeEnum.stateOf(defType));
+                }
+            }
+        }
+        if (list == null || list.size() == 0) {
+            addMessage(redirectAttributes, "列表不存在");
+        }
+        return convertList(list);
+    }
+
+    @RequiresPermissions("user")
+    @ResponseBody
+    @RequestMapping(value = "queryTreeListByPhone")
+    public List<Map<String, Object>> queryTreeListByPhone(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes) {
+        List<Office> list = null;
+        if (StringUtils.isNotBlank(type)) {
+            String defType = type;
+            String[] split = type.split(",");
+            if (ArrayUtils.isNotEmpty(split)) {
+                defType = split[0];
+            }
+            if (source != null && source.equals("officeConnIndex")) {
+                //属于客户专员查询采购中心方法
+                list = officeService.customerfilerOffice4mobile(null, source, OfficeTypeEnum.stateOf(defType));
+            } else {
+                if (ArrayUtils.isNotEmpty(split) && split.length > 1) {
+                    list = officeService.findListByTypeList(Arrays.asList(split));
+                }else {
+                    list = officeService.filerOffice4mobile(null, source, OfficeTypeEnum.stateOf(defType));
                 }
             }
         }

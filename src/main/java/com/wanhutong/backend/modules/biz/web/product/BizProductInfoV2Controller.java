@@ -157,7 +157,7 @@ public class BizProductInfoV2Controller extends BaseController {
         model.addAttribute("prodType",bizProductInfo.getProdType());
         //品类主管
         Role role = new Role();
-        role.setName(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+        role.setName(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState());
         User user = new User();
         user.setRole(role);
         List<User> users = systemService.userSelectCompany(user);

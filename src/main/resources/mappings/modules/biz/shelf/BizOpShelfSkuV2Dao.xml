@@ -99,6 +99,12 @@
 				<if test="dbName == 'mssql'">'%'+#{productInfo.vendorName}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{productInfo.vendorName},'%')</if>
 			</if>
+			<if test="productInfo != null and productInfo.brandName != null and productInfo.brandName != '' ">
+				AND bpi.brand_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.brandName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.brandName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.brandName},'%')</if>
+			</if>
 			<if test="productInfo != null and productInfo.id != null and productInfo.id != 0 ">
 				AND a.prod_id = #{productInfo.id}
 			</if>
@@ -156,6 +162,9 @@
 				<if test="dbName == 'oracle'">'%'||#{opShelfInfo.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{opShelfInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{opShelfInfo.name},'%')</if>
+			</if>
+			<if test="batchDownShelf != null and batchDownShelf == 'batch'">
+				AND (a.unShelf_time IS NULL OR a.unShelf_time &gt; CURRENT_TIME)
 			</if>
 
 			<if test="sqlMap != null and sqlMap.shelfSku != null and sqlMap.shelfSku != ''">
@@ -343,5 +352,16 @@
 		WHERE a.shelf_id = #{opShelfInfo.id}
 		AND a.sku_id = #{skuInfo.id}
 		AND a.id != #{id}
+	</select>
+
+	<select id="findMinMaxPrice" resultType="Map">
+		SELECT
+		min(a.sale_price) as minPrice,max(a.sale_price) as maxPrice
+		FROM biz_op_shelf_sku a
+		where a.status=1 and (a.unshelf_time is null or a.unshelf_time>now())
+		<if test="productInfo != null and productInfo.id != null and productInfo.id != 0 ">
+			AND a.prod_id = #{productInfo.id}
+		</if>
+
 	</select>
 </mapper>

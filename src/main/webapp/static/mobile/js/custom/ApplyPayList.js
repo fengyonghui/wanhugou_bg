@@ -38,8 +38,10 @@
 							if(item.total) {
 								$('#applyPayMoney').val(item.total)
 							}
-							var payCodeId = item.commonProcess.paymentOrderProcess.code
-							$('#payCodeId').val(item.commonProcess.paymentOrderProcess.code)
+							if(item.commonProcess.paymentOrderProcess) {
+								var payCodeId = item.commonProcess.paymentOrderProcess.code
+								$('#payCodeId').val(item.commonProcess.paymentOrderProcess.code)
+							}
 							/*有没有支付单*/
 							var bizStatus = '';
 							if(item.bizStatus == 0) {
@@ -47,14 +49,14 @@
 							} else if(item.bizStatus == 1) {
 								bizStatus = '已支付'
 							}
-		/*最后付款时间*/		var deadlineTime = '';
+		/*截止时间*/		var deadlineTime = '';
 							if(item.deadline) {
 //								console.log(item.deadline)
 								deadlineTime = _this.formatDateTime(item.deadline);
 							} else {
 								deadlineTime = ''
 							}
-							/*实际付款时间*/
+							/*实付时间*/
 							var practicalTimeTxt = '';
 							if(item.payTime) {
 //								console.log(item.payTime)
@@ -69,120 +71,122 @@
 							}else {
 								imgPath = ''
 							}
-							var PoName = item.commonProcess.paymentOrderProcess.name
-							if(PoName=='审批完成') {
-//								 && item.bizStatus == 1
-								pHtmlList += '<div class="mui-input-row">' +
-								'<div class="mui-input-row">' +
-								'<label>id：</label>' +
-								'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>付款金额：</label>' +
-								'<input type="text" value="' + item.total + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>实际付款金额：</label>' +
-								'<input type="text" value="' + item.payTotal + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>最后付款时间：</label>' +
-								'<input type="text" value="' + deadlineTime + '" class="mui-input-clear PoLastDa" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>实际付款时间：</label>' +
-								'<input type="text" value="' + practicalTimeTxt + '" class="mui-input-clear PoPayTm" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>当前状态：</label>' +
-								'<input type="text" value="' + bizStatus + '" class="mui-input-clear PoStas" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>审批状态：</label>' +
-								'<input type="text" value="' + PoName + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>支付凭证：</label>' +
-								'<img src="' + imgPath + '"/>' +
-								'</div>'+
-							'</div>'	
-							}/*else if(item.bizStatus == 0) {         //确认付款html
-								pHtmlList += '<div class="mui-input-row">' +
-								'<div class="mui-input-row">' +
-								'<label>id：</label>' +
-								'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>付款金额：</label>' +
-								'<input type="text" value="' + item.total + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>实际付款金额：</label>' +
-								'<input type="text" value="' + item.payTotal + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>最后付款时间：</label>' +
-								'<input type="text" value="' + deadlineTime + '" class="mui-input-clear PoLastDa" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>实际付款时间：</label>' +
-								'<input type="text" value="' + practicalTimeTxt + '" class="mui-input-clear PoPayTm" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>当前状态：</label>' +
-								'<input type="text" value="' + bizStatus + '" class="mui-input-clear PoStas" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>审批状态：</label>' +
-								'<input type="text" value="' + PoName + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>支付凭证：</label>' +
-								'<img src="' + imgPath + '"/>' +
-								'</div>'+
-								'<div class="app_p20" style="float:left;width:100%;">'+
-							    	'<button id="confirmPayBtn" style="width: 26%;float:none;left: 50%;margin-left: -41px;" class="mui-btn mui-btn-blue">确认付款</button>'+
-								'</div>'+
-							'</div>'
-							}*/else {
-								pHtmlList += '<div class="mui-input-row">' +
-								'<div class="mui-input-row">' +
-								'<label>id：</label>' +
-								'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>付款金额：</label>' +
-								'<input type="text" value="' + item.total + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>实际付款金额：</label>' +
-								'<input type="text" value="' + item.payTotal + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>最后付款时间：</label>' +
-								'<input type="text" value="' + deadlineTime + '" class="mui-input-clear PoLastDa" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>实际付款时间：</label>' +
-								'<input type="text" value="' + practicalTimeTxt + '" class="mui-input-clear PoPayTm" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>当前状态：</label>' +
-								'<input type="text" value="' + bizStatus + '" class="mui-input-clear PoStas" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>审批状态：</label>' +
-								'<input type="text" value="' + PoName + '" class="mui-input-clear" disabled>' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>支付凭证：</label>' +
-								'<img src="' + imgPath + '"/>' +
-								'</div>' +
-								'<div class="payingCheckBtn app_p20">'+
-								    '<button type="submit" class="payCheckBtn mui-btn-blue">审核通过</button>'+
-									'<button type="submit" class="payRejectBtn mui-btn-blue">审核驳回</button>'+
-								'</div>'+
-							'</div>'
+							if(item.commonProcess.paymentOrderProcess) {
+								var PoName = item.commonProcess.paymentOrderProcess.name
+								if(PoName=='审批完成') {
+	//								 && item.bizStatus == 1
+									pHtmlList += '<div class="mui-input-row app_bline2">' +
+									'<div class="mui-input-row">' +
+									'<label>id：</label>' +
+									'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>应付金额：</label>' +
+									'<input type="text" value="' + item.total + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>实付金额：</label>' +
+									'<input type="text" value="' + item.payTotal + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>截止时间：</label>' +
+									'<input type="text" value="' + deadlineTime + '" class="mui-input-clear PoLastDa" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>实付时间：</label>' +
+									'<input type="text" value="' + practicalTimeTxt + '" class="mui-input-clear PoPayTm" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>当前状态：</label>' +
+									'<input type="text" value="' + bizStatus + '" class="mui-input-clear PoStas" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>审批状态：</label>' +
+									'<input type="text" value="' + PoName + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>支付凭证：</label>' +
+									'<img src="' + imgPath + '"/>' +
+									'</div>'+
+								'</div>'	
+								}/*else if(item.bizStatus == 0) {         			//确认付款
+									pHtmlList += '<div class="mui-input-row">' +
+									'<div class="mui-input-row">' +
+									'<label>id：</label>' +
+									'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>应付金额：</label>' +
+									'<input type="text" value="' + item.total + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>实付金额：</label>' +
+									'<input type="text" value="' + item.payTotal + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>截止时间：</label>' +
+									'<input type="text" value="' + deadlineTime + '" class="mui-input-clear PoLastDa" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>实付时间：</label>' +
+									'<input type="text" value="' + practicalTimeTxt + '" class="mui-input-clear PoPayTm" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>当前状态：</label>' +
+									'<input type="text" value="' + bizStatus + '" class="mui-input-clear PoStas" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>审批状态：</label>' +
+									'<input type="text" value="' + PoName + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>支付凭证：</label>' +
+									'<img src="' + imgPath + '"/>' +
+									'</div>'+
+									'<div class="app_p20" style="float:left;width:100%;">'+
+								    	'<button id="confirmPayBtn" style="width: 26%;float:none;left: 50%;margin-left: -41px;" class="mui-btn mui-btn-blue">确认付款</button>'+
+									'</div>'+
+								'</div>'
+								}*/else {
+									pHtmlList += '<div class="mui-input-row app_bline2">' +
+									'<div class="mui-input-row">' +
+									'<label>id：</label>' +
+									'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>应付金额：</label>' +
+									'<input type="text" value="' + item.total + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>实付金额：</label>' +
+									'<input type="text" value="' + item.payTotal + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>截止时间：</label>' +
+									'<input type="text" value="' + deadlineTime + '" class="mui-input-clear PoLastDa" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>实付时间：</label>' +
+									'<input type="text" value="' + practicalTimeTxt + '" class="mui-input-clear PoPayTm" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>当前状态：</label>' +
+									'<input type="text" value="' + bizStatus + '" class="mui-input-clear PoStas" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>审批状态：</label>' +
+									'<input type="text" value="' + PoName + '" class="mui-input-clear" disabled>' +
+									'</div>' +
+									'<div class="mui-input-row">' +
+									'<label>支付凭证：</label>' +
+									'<img src="' + imgPath + '"/>' +
+									'</div>' +
+									'<div class="payingCheckBtn app_p20">'+
+									    '<button type="submit" class="payCheckBtn mui-btn-blue">审核通过</button>'+
+										'<button type="submit" class="payRejectBtn mui-btn-blue">审核驳回</button>'+
+									'</div>'+
+								'</div>'
+								}
 							}
 						});
 				    } else {
@@ -193,32 +197,7 @@
 					$("#addPayListBtn").html(pHtmlList)
 				}
 			});
-//			_this.hrefHtmlConfirmPay()
 		},
-//		hrefHtmlConfirmPay: function() {
-//			var _this = this;
-//			$('#addPayListBtn').on('tap','#confirmPayBtn',function(){
-//          	var url = $(this).attr('url');
-//          	var poId = $(this).attr('poId');
-//          	var listId = $(this).attr('listId');
-//				var applyPayId = $(this).attr('applyPayId');
-//				var confirmPayId =  _this.userInfo.listId;
-//              if(url) {
-//              	mui.toast('子菜单不存在')
-//              }else if(applyPayId==applyPayId) {
-//              	GHUTILS.OPENPAGE({
-//						url: "../../mobile/html/confirmPayment.html",
-//						extras: {
-//								applyPayId:applyPayId,
-//								id: _this.userInfo.listId,
-//								poId:poId,
-//								listId:listId,
-//						}
-//					})
-//              }
-//			})
-//		},
-		            
 		payComfirDialig: function() {
 			var _this = this;
 			$('#addPayListBtn').on('click','.payRejectBtn', function() {

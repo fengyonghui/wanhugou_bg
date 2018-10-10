@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true">
+		<!--<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />-->
+		<title>订单信息查询</title>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/app.css?time=20180914" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="header mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">订单信息查询</p>
+		</header>
+		<div class="mui-content menuMarg">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>订单编号：</label>
+					<input type="text" class="inReqNum mui-input-clear" id="staOrderNum" placeholder="请输入订单编号">
+				</div>
+				<div class="mui-input-row">
+					<label>采购中心：</label>
+					<input type="text" class="inReqNum mui-input-clear" id="staOrdPurchasing" placeholder="请输入采购中心">
+				</div>
+				<div class="mui-input-row">
+					<label>经销店电话：</label>
+					<input type="text" class="inReqNum mui-input-clear" id="staOrdMobile" placeholder="请输入电话">
+				</div>
+				<div class="mui-input-row">
+					<label>商品货号：</label>
+					<input type="text" class="inReqNum mui-input-clear" id="staOrdNumbers" placeholder="请输入商品货号">
+				</div>
+				<div class="mui-input-row">
+					<label>订单状态：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="input_div_orderStatus">
+							<option value=""></option>
+						</select>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<!--<div class="mui-input-row">
+					<label>审核状态：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="input_div_checkStatus">
+							<option value=""></option>
+						</select>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>-->
+				<div class="mui-input-row">
+					<label>经销店名称：</label>
+					<div class="pre">
+						<input class="newinput" type="text" placeholder="请选择经销店">
+						<span class="mui-icon mui-icon-closeempty hideSpan" id="staOrdHideSpan"></span>
+						<div class="input_div" style="display: none;">
+							
+						</div>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>测试数据：</label>
+					<input type="checkbox" name="" id="" value="" class="testCheckbox"/>
+				</div>
+				<!--<div class="mui-row searchRadioBody">
+			        <div class="mui-col-sm-4 mui-col-xs-4">
+			                        审核成功
+						<input type="radio" name="a" id="staOrdSucess" value="" class="searchRadio"/>
+			        </div>
+			        <div class="mui-col-sm-4 mui-col-xs-4">
+			                        审核失败
+						<input type="radio" name="a" id="staOrdFail" value="" class="searchRadio"/>
+			        </div>
+			        <div class="mui-col-sm-4 mui-col-xs-4">
+			                        待审核
+						<input type="radio" name="a" id="staOrdCheck" value="" class="searchRadio"/>
+			        </div>
+			    </div>-->
+			    <div id="box">
+						<div class="mui-input-row">
+							<label>审核失败：</label>
+							<input type="radio" name="a" id="staOrdFail" value="1" class="searchRadio"/>
+						</div>
+						<div class="mui-input-row">
+							<label>成功及其他：</label>
+							<input type="radio" name="a" id="staOrdSucess" value="2" class="searchRadio"/>
+						</div>
+						<div class="mui-input-row">
+							<label>待审核：</label>
+							<input type="radio" name="a" id="staOrdCheck" value="0" class="searchRadio"/>
+						</div>
+			    </div>
+				
+			</form>
+		</div>
+		<div class="SearchBtnClass">
+			<button id="staOrdSechBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">查询</button>
+		</div>
+		
+		<input type="hidden" name="flag" id="flag" value="check_pending"/>
+		<input type="hidden" name="mobileAuditStatus" id="mobileAuditStatus"/>
+		<script src="../../../js/component/zepto.min.js"></script>
+		<script src="../../../js/component/mui.min.js"></script>
+		<script src="../../../js/component/GHutils.js"></script>
+		<script src="../../../js/staffMgmtJs/orderJs/staOrdSech.js?v=20180920"></script>
+	</body>
+</html>

@@ -43,8 +43,8 @@
                         alert("请输入数量");
                         return;
 					}
+					$("#btnSubmit").attr("disabled","disabled ");
 					loading('正在提交，请稍等...');
-
 					form.submit();
 				},
 				errorContainer: "#messageBox",
@@ -518,7 +518,7 @@
 						<th>商品编码</th>
 						<th>商品货号</th>
 						<%--<th>商品属性</th>--%>
-						<th>工厂价</th>
+						<th>结算价</th>
 							<%--<th>商品类型</th>--%>
 						<th>申报数量</th>
 							<%--<th>已收货数量</th>--%>

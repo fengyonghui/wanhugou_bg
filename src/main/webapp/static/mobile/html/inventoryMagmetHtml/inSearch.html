@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>备货单查询</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/app.css?time=20180930" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="header mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">备货单查询</p>
+		</header>
+		<div class="mui-content menuMarg">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>备货单号：</label>
+					<input type="text" class="mui-input-clear inOrdNum" placeholder="请输入备货单号">
+				</div>
+				<div class="mui-input-row">
+					<label>供应商：</label>
+					<input type="text" class="mui-input-clear inReqNum" placeholder="请输入供应商">
+				</div>
+				<div class="mui-input-row" id="orderTypebox">
+					<label>备货方：</label>
+					<select id="inputRadio">
+						<option value="">请选择</option>
+						<option value="1" id="fromType1">本地备货</option>
+						<option value="2" id="fromType2">供应商备货</option>
+					</select>
+		    </div>
+				<div class="mui-input-row">
+					<label>采购中心：</label>
+					<div class="pre">
+						<input class="newinput" type="text" placeholder="请选择采购中心">
+						<span class="mui-icon mui-icon-closeempty hideSpan" id="inHideSpan"></span>
+						<div class="input_div" style="display: none;">
+							
+						</div>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>业务状态：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="input_div_business">
+							<option value=""></option>
+						</select>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>审核状态：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="input_div_check">
+							<option value=""></option>
+						</select>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>品类名称：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="input_div_class">
+							<option value=""></option>
+						</select>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
+					<label>测试数据：</label>
+					<input type="checkbox" name="" id="testCheckbox" value="" class="testCheckbox"/>
+				</div>
+			</form>
+		</div>
+		<div class="SearchBtnClass">
+			<button id="inSearchBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">查询</button>
+		</div>
+		<script src="../../js/component/zepto.min.js"></script>
+		<script src="../../js/component/mui.min.js"></script>
+		<script src="../../js/component/GHutils.js"></script>
+		<script src="../../js/inventoryMagmetJs/inSearch.js?time=20180930"></script>
+	</body>
+</html>

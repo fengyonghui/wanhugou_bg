@@ -4,16 +4,20 @@
 package com.wanhutong.backend.modules.biz.entity.order;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
-import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
-import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +34,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Integer orderType;        // 1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单
     private Office customer;        // 客户ID sys_office.id &amp;  type=customer
     private Double totalDetail;        // 订单详情总价
+    private Double serviceFee;        // 增值服务费
     private Double receiveTotal;    //订单已收货款
     private Double totalExp;        // 订单总费用
     private Double freight;            // 运费
@@ -39,6 +44,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private BizPlatformInfo platformInfo;        // 订单来源； biz_platform_info.id
     private BizOrderAddress bizLocation;        // 订单收货地址： common_location.id 在1月22改为 biz_order_address.id
     private Integer sendGoodsStatus;     //区分非拍照下单发货
+    private List<BizInvoice> bizInvoiceList;
     /**
      * 卖方ID
      *  if(order_type == 4)｛
@@ -125,6 +131,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String imgPhotosSorts;		//主图顺序
 
     private Integer vendorId; //根据供应商Id搜索
+    private String vendorName; //根据供应商名称
     /**
      * 发货单Id
      * */
@@ -138,6 +145,113 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 退款状态- 0-申请 1审核通过 2驳回 3撤销申请退款
      */
     private BizDrawBack drawBack;
+
+
+    /**
+     * 供应商查看订单 source = vendor
+     */
+    private String source;
+    /**
+     * 固定商品的详情总价
+     */
+    private String detailPrice;
+//    /**
+//     * 首付金额
+//     */
+//    private Integer payProportion;
+    /**
+     * 审核流程
+     */
+    private CommonProcessEntity commonProcess;
+
+    /**
+     * 一单到底对应的采购单
+     */
+    private BizPoHeader bizPoHeader;
+
+    /**
+     * 审核路径参数记录
+     */
+    private String str;
+    /**
+     * 审核状态过滤
+     */
+    private String selectAuditStatus;
+
+
+    /**
+     * 申请支付金额
+     */
+    private BigDecimal planPay;
+
+    /**
+     * 与供应商结算的金额
+     */
+    private BigDecimal balanceTotal;
+
+    /**
+     * 付款时间
+     */
+    private Date payDeadline;
+
+    /**
+     * 已审批流程
+     */
+    private List<CommonProcessEntity> commonProcessList;
+    /**
+     * 支付单
+     */
+    private BizPoPaymentOrder bizPoPaymentOrder;
+
+    /**
+     * 是否是产地直发的订单，0:是 721:是  大于0且不等于721：不是
+     */
+    private Integer suplys;
+
+    /**
+     * 流程查询
+     */
+    private List<String> originCode;
+    private List<String> localCode;
+    private List<String> doAllCode;
+    private List<String> doFifthCode;
+    private List<String> poAuditCode;
+
+    private Integer waitPay;
+
+    private Integer retainage;
+
+    /**
+     *  采购单当前审核流程名字
+     */
+    private String poProcessName;
+
+    /**
+     * 手机端客户专员订单检索
+     * 0：待审核，1：审核失败，2：其他
+     */
+    private Integer mobileAuditStatus;
+
+    /**
+     * 积分抵扣
+     */
+    private BigDecimal scoreMoney;
+
+    /**
+     * 待发货
+     */
+    private Integer waitShipments;
+
+    /**
+     * 待出库
+     * @return
+     */
+    private Integer waitOutput;
+
+    /**
+     * 需要出库筛选条件
+     */
+    private Integer needOut;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -717,4 +831,229 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     public void setDrawBack(BizDrawBack drawBack) {
         this.drawBack = drawBack;
     }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getDetailPrice() {
+        return detailPrice;
+    }
+
+    public void setDetailPrice(String detailPrice) {
+        this.detailPrice = detailPrice;
+    }
+
+//    public Integer getPayProportion() {
+//        return payProportion;
+//    }
+//
+//    public void setPayProportion(Integer payProportion) {
+//        this.payProportion = payProportion;
+//    }
+
+    public CommonProcessEntity getCommonProcess() {
+        return commonProcess;
+    }
+
+    public void setCommonProcess(CommonProcessEntity commonProcess) {
+        this.commonProcess = commonProcess;
+    }
+
+    public BizPoHeader getBizPoHeader() {
+        return bizPoHeader;
+    }
+
+    public void setBizPoHeader(BizPoHeader bizPoHeader) {
+        this.bizPoHeader = bizPoHeader;
+    }
+
+    public String getStr() {
+        return str;
+    }
+
+    public void setStr(String str) {
+        this.str = str;
+    }
+
+    public List<CommonProcessEntity> getCommonProcessList() {
+        return commonProcessList;
+    }
+
+    public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
+        this.commonProcessList = commonProcessList;
+    }
+
+    public BizPoPaymentOrder getBizPoPaymentOrder() {
+        return bizPoPaymentOrder;
+    }
+
+    public void setBizPoPaymentOrder(BizPoPaymentOrder bizPoPaymentOrder) {
+        this.bizPoPaymentOrder = bizPoPaymentOrder;
+    }
+
+    public Integer getSuplys() {
+        return suplys;
+    }
+
+    public void setSuplys(Integer suplys) {
+        this.suplys = suplys;
+    }
+
+    public List<BizInvoice> getBizInvoiceList() {
+        return bizInvoiceList;
+    }
+
+    public void setBizInvoiceList(List<BizInvoice> bizInvoiceList) {
+        this.bizInvoiceList = bizInvoiceList;
+    }
+
+    public BigDecimal getPlanPay() {
+        return planPay;
+    }
+
+    public void setPlanPay(BigDecimal planPay) {
+        this.planPay = planPay;
+    }
+
+    public Date getPayDeadline() {
+        return payDeadline;
+    }
+
+    public void setPayDeadline(Date payDeadline) {
+        this.payDeadline = payDeadline;
+    }
+
+    public String getSelectAuditStatus() {
+        return selectAuditStatus;
+    }
+
+    public void setSelectAuditStatus(String selectAuditStatus) {
+        this.selectAuditStatus = selectAuditStatus;
+    }
+
+    public List<String> getOriginCode() {
+        return originCode;
+    }
+
+    public void setOriginCode(List<String> originCode) {
+        this.originCode = originCode;
+    }
+
+    public List<String> getLocalCode() {
+        return localCode;
+    }
+
+    public void setLocalCode(List<String> localCode) {
+        this.localCode = localCode;
+    }
+
+    public List<String> getDoAllCode() {
+        return doAllCode;
+    }
+
+    public void setDoAllCode(List<String> doAllCode) {
+        this.doAllCode = doAllCode;
+    }
+
+    public List<String> getDoFifthCode() {
+        return doFifthCode;
+    }
+
+    public void setDoFifthCode(List<String> doFifthCode) {
+        this.doFifthCode = doFifthCode;
+    }
+
+    public List<String> getPoAuditCode() {
+        return poAuditCode;
+    }
+
+    public void setPoAuditCode(List<String> poAuditCode) {
+        this.poAuditCode = poAuditCode;
+    }
+
+    public Integer getWaitPay() {
+        return waitPay;
+    }
+
+    public void setWaitPay(Integer waitPay) {
+        this.waitPay = waitPay;
+    }
+
+    public String getPoProcessName() {
+        return poProcessName;
+    }
+
+    public void setPoProcessName(String poProcessName) {
+        this.poProcessName = poProcessName;
+    }
+
+    public Integer getRetainage() {
+        return retainage;
+    }
+
+    public void setRetainage(Integer retainage) {
+        this.retainage = retainage;
+    }
+
+    public Double getServiceFee() {
+        return serviceFee;
+    }
+
+    public void setServiceFee(Double serviceFee) {
+        this.serviceFee = serviceFee;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public Integer getMobileAuditStatus() {
+        return mobileAuditStatus;
+    }
+
+    public void setMobileAuditStatus(Integer mobileAuditStatus) {
+        this.mobileAuditStatus = mobileAuditStatus;
+    }
+
+    public BigDecimal getScoreMoney() {
+        return scoreMoney;
+    }
+
+    public void setScoreMoney(BigDecimal scoreMoney) {
+        this.scoreMoney = scoreMoney;
+    }
+
+    public Integer getWaitShipments() {
+        return waitShipments;
+    }
+
+    public void setWaitShipments(Integer waitShipments) {
+        this.waitShipments = waitShipments;
+    }
+
+    public Integer getWaitOutput() {
+        return waitOutput;
+    }
+
+    public void setWaitOutput(Integer waitOutput) {
+        this.waitOutput = waitOutput;
+    }
+
+    public Integer getNeedOut() {
+        return needOut;
+    }
+
+    public void setNeedOut(Integer needOut) {
+        this.needOut = needOut;
+    }
 }
+

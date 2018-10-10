@@ -24,6 +24,11 @@ public enum SmsTemplateCode {
      */
     ORDER_DELIVER("SMS_138070187","您有新的${order}待发货,请及时登陆系统后台处理,单号:${number}","order:%s,number:%s","阿里云"),
 
+    /**
+     * 订单和备货单待发货
+     */
+    COMPLETE_SCHEDULING("SMS_138070188","${order}:${reqNo_1}${reqNo_2}已有商品生成完成，请及时与供应商联系","order:%s,reqNo_1:%s,reqNo_2:%s","阿里云"),
+
     UNKNOWN("0", "未知", "未知", "未知"),;
 
     /**

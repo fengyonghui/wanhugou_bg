@@ -5,7 +5,6 @@ package com.wanhutong.backend.modules.biz.entity.po;
 
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
-import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
@@ -23,10 +22,19 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     private static final long serialVersionUID = 1111111111111L;
     private Integer poHeaderId;        // 采购单ID
+    /**
+     * 采购单
+     */
+    private BizPoHeader poHeader;
     private BigDecimal total;        // 申请金额
     private BigDecimal payTotal;        // 付款金额
     private Integer bizStatus;        // 当前状态
     private String img;        // 图片
+
+    /**
+     * 支付单类型
+     */
+    private Integer orderType;
 
     private List<CommonImg> imgList;
 
@@ -38,6 +46,24 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     private Date payTime;
 
+    /**
+     * 备注
+     */
+    private String remark;
+
+    /**
+     * 订单号
+     */
+    private String orderNum;
+    private String reqNo;
+    /**
+     * 过滤状态
+     */
+    private String selectAuditStatus;
+    /**
+     * 审核状态
+     */
+    private Integer auditStatusCode;
 
     public BizPoPaymentOrder() {
         super();
@@ -47,7 +73,6 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
         super(id);
     }
 
-    @Length(min = 1, max = 11, message = "采购单ID长度必须介于 1 和 11 之间")
     public Integer getPoHeaderId() {
         return poHeaderId;
     }
@@ -147,5 +172,65 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
         public String getDesc() {
             return desc;
         }
+    }
+
+    public Integer getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(Integer orderType) {
+        this.orderType = orderType;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(String orderNum) {
+        this.orderNum = orderNum;
+    }
+
+    public String getSelectAuditStatus() {
+        return selectAuditStatus;
+    }
+
+    public void setSelectAuditStatus(String selectAuditStatus) {
+        this.selectAuditStatus = selectAuditStatus;
+    }
+
+    public Integer getAuditStatusCode() {
+        return auditStatusCode;
+    }
+
+    public void setAuditStatusCode(Integer auditStatusCode) {
+        this.auditStatusCode = auditStatusCode;
+    }
+
+    public BizPoHeader getPoHeader() {
+        return poHeader;
+    }
+
+    public void setPoHeader(BizPoHeader poHeader) {
+        this.poHeader = poHeader;
+    }
+
+    public String getReqNo() {
+        return reqNo;
+    }
+
+    public void setReqNo(String reqNo) {
+        this.reqNo = reqNo;
     }
 }

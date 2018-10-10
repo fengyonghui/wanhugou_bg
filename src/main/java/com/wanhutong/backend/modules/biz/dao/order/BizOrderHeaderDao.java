@@ -6,11 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.order;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
-import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizPlatformDataOverviewDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.entity.order.BizDrawBack;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
@@ -18,6 +14,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,6 +41,15 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      */
     List<BizOrderStatisticsDto> getValidOrderTotalAndCountByCreateTimeMonth(@Param("month") String month, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList, @Param("officeType") String officeType);
 
+  /**
+     * 按月获取订单的总金额和订单数量
+     *
+     * @param month      月份
+     * @param officeId   机构ID
+     * @return 订单统计数据
+     */
+    BizOrderStatisticsDto getValidOrderTotalAndCountByCreateTimeMonthOfficeId(@Param("month") String month, @Param("officeId") Integer officeId);
+
     /**
      * 按月获取订单销售额相关的产品信息
      *
@@ -59,6 +65,24 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return 用户统计数据
      */
     List<BizUserStatisticsDto> getUserStatisticData(String month);
+
+    /**
+     * 按月获取用户相关的注册信息
+     *
+     * @param month 月份
+     * @return 用户统计数据
+     */
+    BizUserStatisticsDto getUserStatisticDataByOfficeId(@Param("month")String month, @Param("officeId")Integer officeId);
+
+
+    /**
+     * 按月获取有效用户相关的注册信息
+     *
+     * @param month 月份
+     * @return 用户统计数据
+     */
+    BizUserStatisticsDto getValidUserStatisticDataByOfficeId(@Param("month")String month, @Param("officeId")Integer officeId);
+
 
     /**
      * 根据月份取用户业绩统计相关数据
@@ -138,7 +162,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param startDate 开始时间
      * @return 产品统计数据
      */
-    List<BizProductStatisticsDto> getProductStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("variId") Integer variId, @Param("purchasingId") Integer purchasingId);
+    List<BizProductStatisticsDto> getProductStatisticDataBetween(@Param("startDate") String startDate,
+                                                                 @Param("endDate") String endDate,
+                                                                 @Param("variId") Integer variId,
+                                                                 @Param("purchasingId") Integer purchasingId,
+                                                                 @Param("type") Integer type
+                                                                );
 
    /**
      * 按区间获取商品趋势相关的信息
@@ -149,7 +178,8 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     List<BizProductStatisticsDto> skuTendencyDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate,
                                                          @Param("variId") Integer variId, @Param("purchasingId") Integer purchasingId,
                                                          @Param("type") Integer type,
-                                                         @Param("timeType") String timeType
+                                                         @Param("timeType") String timeType,
+                                                         @Param("itemNo") String itemNo
                                                         );
 
     /**
@@ -348,4 +378,46 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param orderNum
      */
     BizOrderHeader getByOrderNum(String orderNum);
+
+    /**
+     * 备货单商品的销售单
+     * @param skuIdList
+     * @param centId
+     * @return
+     */
+    List<BizOrderHeader> findOrderForVendReq(@Param("skuIdList") List<Integer> skuIdList, @Param("centId") Integer centId);
+
+
+    /**
+     * 更新订单业务状态
+     * @param id
+     * @param status
+     * @param updateBy
+     * @param updateDate
+     * @return
+     */
+    int updateBizStatus(@Param("id") Integer id,@Param("status") Integer status, @Param("updateBy") User updateBy, @Param("updateDate") Date updateDate);
+
+//    /**
+//     * 更新审核流程id
+//     * @param headerId
+//     * @param processId
+//     * @return
+//     */
+//    int updateProcessId(@Param("headerId") Integer headerId, @Param("processId") Integer processId);
+
+    /**
+     * 根据商品id获取相应orderDetailId
+     * @param poHeaderId
+     * @param skuInfoId
+     * @return
+     */
+    Integer getOrderDetailIdBySkuInfoId(@Param("poHeaderId") Integer poHeaderId, @Param("skuInfoId") Integer skuInfoId);
+
+    /**
+     * 系统管理员查看待审核订单
+     * @param bizOrderHeader
+     * @return
+     */
+    List<BizOrderHeader> findListNotCompleteAudit(BizOrderHeader bizOrderHeader);
 }

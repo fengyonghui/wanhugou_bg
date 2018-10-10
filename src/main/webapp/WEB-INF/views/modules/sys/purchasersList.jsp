@@ -67,8 +67,11 @@
 								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
 				<input type="hidden" name="queryMemberGys" value="query">
 			</li>
-			<li><label>联系人电话：</label>
-				<form:input path="moblieMoeny.mobile" htmlEscape="false" placeholder="请输入联系人电话"  class="input-medium"/></li>
+			<c:if test="${vendor ne 'vendor'}">
+				<li><label>联系人电话：</label>
+					<form:input path="moblieMoeny.mobile" htmlEscape="false" placeholder="请输入联系人电话"  class="input-medium"/>
+				</li>
+			</c:if>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
@@ -97,24 +100,43 @@
 	<%--</script>--%>
 	<table id="treeTable" class="table table-striped table-bordered table-condensed">
 		<thead>
-			<tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>电话</th><th>联系人电话</th><th>机构类型</th><th>备注</th>
+			<tr>
+				<th>机构名称</th>
+				<th>归属区域</th><th>机构编码</th>
+				<c:if test="${vendor ne 'vendor'}">
+					<th>电话</th>
+					<th>联系人电话</th>
+				</c:if>
+				<th>机构类型</th>
+				<th>备注</th>
 			<shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="off">
 			<tr>
-                <td><a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">${off.name}</a></td>
+                <td>
+					<c:if test="${vendor ne 'vendor'}">
+						<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">${off.name}</a>
+					</c:if>
+					<c:if test="${vendor eq 'vendor'}">
+						${off.name}
+					</c:if>
+				</td>
 				<td>${off.area.name}</td>
 				<td>${off.code}</td>
-				<td>${off.phone}</td>
-				<td>${off.moblieMoeny.mobile}</td>
+				<c:if test="${vendor ne 'vendor'}">
+					<td>${off.phone}</td>
+					<td>${off.moblieMoeny.mobile}</td>
+				</c:if>
 				<td>
                     ${fns:getDictLabel(off.type, 'sys_office_type', '未知状态')}
                 </td>
 				<td>${off.remarks}</td>
                 <shiro:hasPermission name="sys:office:edit"><td>
 					<c:if test="${off.delRemark==1}">
-						<a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更客户专员</a>
+						<shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:change">
+							<a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更客户专员</a>
+						</shiro:hasPermission>
 						<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">修改</a>
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>

@@ -43,4 +43,12 @@ public interface BizSkuInfoV3Dao extends CrudDao<BizSkuInfo> {
      * @return
      */
     List<BizSkuInfo> findPageForSkuInfo(BizSkuInfo bizSkuInfo);
+
+
+    /**
+     * 查询数据条数
+     * @param bizSkuInfo
+     * @return
+     */
+    int findCount(BizSkuInfo bizSkuInfo);
 }

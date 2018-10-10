@@ -32,14 +32,20 @@
         <th colspan="9">目标分析</th>
     </tr>
     <tr>
-        <th>月计划采购额(元)</th>
-        <th>月累计销量</th>
+        <th>月计划回款额(元)</th>
         <th>月累计回款</th>
-        <th>日销售额(元)</th>
         <th>达成率</th>
+        <th>月累计销量</th>
+        <th>日销售额(元)</th>
         <th>月累计差异</th>
         <th>剩余天数</th>
         <th>每日最低回款额</th>
+        <th>计划新用户</th>
+        <th>新用户</th>
+        <th>新用户达成率</th>
+        <th>计划服务费</th>
+        <th>服务费</th>
+        <th>服务费达成率</th>
         <th>库存金额</th>
     </tr>
     </thead>
@@ -54,21 +60,23 @@
             <td>
                     ${item.name}
             </td>
-            <td>
-                    ${item.procurement}
-            </td>
+                <td>
+                        ${item.procurement}
+                </td>
+                <td>
+                        ${item.receiveTotal}
+                </td>
+                <td>
+                        ${item.yieldRate}
+                </td>
             <td>
                     ${item.accumulatedSalesMonth}
             </td>
-            <td>
-                    ${item.receiveTotal}
-            </td>
+
             <td>
                     ${item.procurementDay}
             </td>
-            <td>
-                    ${item.yieldRate}
-            </td>
+
             <td>
                     ${item.differenceTotalMonth}
             </td>
@@ -77,6 +85,24 @@
             </td>
             <td>
                     ${item.dayMinReturned}
+            </td>
+            <td>
+                    ${item.newUserPlan}
+            </td>
+            <td>
+                    ${item.newUser}
+            </td>
+            <td>
+                    ${item.newUserRate}
+            </td>
+                <td>
+                    ${item.serviceChargePlan}
+            </td>
+            <td>
+                    ${item.serviceCharge}
+            </td>
+            <td>
+                    ${item.serviceChargeRate}
             </td>
             <td>
                     ${item.stockAmount}

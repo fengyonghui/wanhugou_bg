@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -17,6 +18,7 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -32,7 +34,9 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -60,6 +64,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 备货清单Controller
@@ -135,6 +140,20 @@ public class BizRequestHeaderController extends BaseController {
         //品类名称
 		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
 		resultMap.put("varietyInfoList", varietyInfoList);
+
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
+            }
+        }
+        resultMap.put("roleSet", roleSet);
+        resultMap.put("roleEnNameSet", roleEnNameSet);
 		resultMap.put("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
 		return JsonUtil.generateData(resultMap, null);
@@ -248,9 +267,13 @@ public class BizRequestHeaderController extends BaseController {
 			}
 		}
 
-		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+			resultMap.put("requestOrderProcess", requestOrderProcess);
+		} else if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) && ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+			VendorRequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+					ConfigGeneral.VENDOR_REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			resultMap.put("requestOrderProcess", requestOrderProcess);
 		}
 
@@ -312,7 +335,7 @@ public class BizRequestHeaderController extends BaseController {
 			for (BizRequestDetail requestDetail:requestDetailList){
 				bizPoOrderReq.setSoLineNo(requestDetail.getLineNo());
 				List<BizPoOrderReq> poOrderReqList= bizPoOrderReqService.findList(bizPoOrderReq);
-				if(poOrderReqList!=null && poOrderReqList.size()>0){
+				if(poOrderReqList!=null && poOrderReqList.size()>0 || ReqFromTypeEnum.VENDOR_TYPE.getType().equals(bizRequestHeader1.getFromType())){
 					BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 					skuInfo.setVendorName(requestDetail.getSkuInfo().getVendorName());
 					requestDetail.setSkuInfo(skuInfo);
@@ -350,6 +373,16 @@ public class BizRequestHeaderController extends BaseController {
 		if (!beanValidator(model, bizRequestHeader)){
 			return form(bizRequestHeader, model);
 		}
+
+		if (bizRequestHeader.getId() != null) {
+			BizPoHeader bizPoHeader = new BizPoHeader();
+			bizPoHeader.setBizRequestHeader(bizRequestHeader);
+			List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+			if (CollectionUtils.isNotEmpty(poList)) {
+				bizPoHeaderService.updateProcessToInitAudit(poList.get(0), StringUtils.EMPTY);
+			}
+		}
+
 		bizRequestHeaderService.save(bizRequestHeader);
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
@@ -534,7 +567,7 @@ public class BizRequestHeaderController extends BaseController {
 								detailListData.add("");
 							}
 							if(detail.getSkuInfo()!=null && detail.getSkuInfo().getSkuPropertyInfos()!=null || detail.getSkuInfo().getBuyPrice()!=null){
-								//商品属性，工厂价
+								//商品属性，结算价
 								detailListData.add(String.valueOf(detail.getSkuInfo().getSkuPropertyInfos()));
 								detailListData.add(String.valueOf(detail.getSkuInfo().getBuyPrice()));
 							}else{
@@ -553,7 +586,7 @@ public class BizRequestHeaderController extends BaseController {
 				}
 			}
 			String[] headers = {"备货单号", "采购中心","期望收货时间", "备货商品数量", "备货商品总价","已收保证金","已到货数量", "备注", "业务状态","下单时间","申请人"};
-			String[] details = {"备货单号", "产品名称", "品牌名称", "商品名称","商品编码", "商品货号", "商品属性", "工厂价", "申报数量","期望收货时间"};
+			String[] details = {"备货单号", "产品名称", "品牌名称", "商品名称","商品编码", "商品货号", "商品属性", "结算价", "申报数量","期望收货时间"};
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
 			eeu.exportExcel(workbook, 0, "备货单数据", headers, data, fileName);
@@ -575,7 +608,8 @@ public class BizRequestHeaderController extends BaseController {
 	@RequestMapping(value = "audit")
 	@ResponseBody
 	public String audit(int id, String currentType, int auditType, String description) {
-		return bizRequestHeaderService.audit(id, currentType, auditType, description);
+		String result = bizRequestHeaderService.audit(id, currentType, auditType, description);
+		return JsonUtil.generateData(result, null);
 	}
 
 	@ResponseBody

@@ -30,8 +30,9 @@
                         var t= $(this).val();
                         var detail="";
                         var num ="";
-                        var sObj= $("#prodInfo").find("input[title='sent_"+t+"']");
-                        var iObj=$("#prodInfo").find("select[title='invInfoId']");
+                        var sObj = $("#prodInfo").find("input[title='sent_"+t+"']");
+                        var iObj = $("#prodInfo").find("select[title='invInfoId']");
+                        var tObj = $("#prodInfo").find("select[title='skuType']");
                         sObj.each(function (index) {
                             total+= parseInt($(this).val());
                         })
@@ -42,9 +43,7 @@
                                 }
                             });
                             $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
-
-                                detail+=$(this).val()+"-"+sObj[i].value+"-"+iObj[i].value+"*";
-
+                                detail += $(this).val() + "-" + sObj[i].value + "-" + iObj[i].value + "-" + tObj[i].value + "*";
                             });
 						}else {
                             flag = true;
@@ -114,9 +113,14 @@
                 $("#nameCopy").val(name);
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/biz/order/bizOrderHeader/findByOrder?flag="+bizStatus,
+                    url:"${ctx}/biz/order/bizOrderHeader/findByOrderV2?flag="+bizStatus,
                     data:$('#searchForm').serialize(),
                     success:function (data) {
+                        data = JSON.parse(data);
+                        if(data.ret != true && data.ret != 'true') {
+                            alert(data.errmsg);
+						}
+                        data = data.data;
                         if ($("#id").val() == '') {
                             $("#prodInfo2").empty();
                         }
@@ -126,6 +130,7 @@
                             $.each(data.inventoryInfoList,function (index,inventory) {
                                 selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
                             });
+                            var skuType = "<select class='input-mini' title='skuType'><option value='1'>采购中心</option><option value='2'>供应商</option></select>";
                         }
                         var tr_tds="";
                         var bizName ="";
@@ -156,15 +161,15 @@
                                     tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'><a href='${ctx}/biz/order/bizOrderHeader/form?id="+orderHeader.id+"&orderDetails=details'> "+orderHeader.orderNum+"</a></td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
                                 }
                                  tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
-                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
+                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+(detail.skuInfo.skuPropertyInfos == undefined ? '': detail.skuInfo.skuPropertyInfos)+"</td>" ;
                                 if(bizStatus==0) {
-                                    tr_tds += "<td>" + selecttd + "</td>"
+                                    tr_tds += "<td>" + selecttd + "</td><td>"+ skuType +"</td>";
                                 }
                                 tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
                                 if(detail.ordQty==detail.sentQty){
-                                    tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
+                                    tr_tds+="<td><input type='text' title='sent_"+orderHeader.id+"' name='' onchange='checkNum(" + detail.ordQty + "," + detail.sentQty + ",this)' value='0'></td>";
                                 }else {
-                                    tr_tds+="<td><input  type='text'  title='sent_"+orderHeader.id+"' name='' onchange='checkNum("+detail.ordQty+","+detail.sentQty+",this)' value='"+(detail.ordQty-detail.sentQty)+"'></td>";
+                                    tr_tds+="<td><input type='text' title='sent_"+orderHeader.id+"' name='' onchange='checkNum(" + detail.ordQty + "," + detail.sentQty + ",this)' value='0'></td>";
                                 }
 
                                 tr_tds+="</tr>";
@@ -183,7 +188,7 @@
 				$('input:checkbox:checked').each(function(i) {
 				   var t= $(this).val();
 				   var ttp= $(this).parent().parent().parent();
-				   var trt= ttp.find($(".tr_"+t))
+				   var trt= ttp.find($(".tr_"+t));
 					$("#prodInfo").append(trt);
 				});
                 $("#select_all").removeAttr("checked");
@@ -203,7 +208,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单列表</a></li>
+		<li><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货记录</a></li>
 		<li class="active"><a href="${ctx}/biz/inventory/bizInvoice/form?id=${bizInvoice.id}&ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单<shiro:hasPermission name="biz:inventory:bizInvoice:edit">${not empty bizInvoice.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInvoice:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save" method="post" class="form-horizontal">
@@ -211,6 +216,8 @@
 		<sys:message content="${message}"/>		
 		<form:hidden path="ship"/>
 		<form:hidden path="bizStatus"/>
+		<input name="source" type="hidden" value="new"/>
+		<input type="hidden" name="isConfirm" value="1"/>
 		<c:if test="${bizInvoice.id != null && bizInvoice.id != ''}">
 			<div class="control-group">
 				<label class="control-label">发货单号：</label>
@@ -226,66 +233,47 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">运费：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>--%>
+                <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+            <%--</div>--%>
+        <%--</div>--%>
 		<div class="control-group">
-			<label class="control-label">物流商：</label>
+			<label class="control-label">验货员：</label>
 			<div class="controls">
-				<select id="bizLogistics" name="logistics.id" onmouseout="" class="input-medium required">
-					<c:forEach items="${logisticsList}" var="bizLogistics">
-						<option value="${bizLogistics.id}"/>${bizLogistics.name}
-					</c:forEach>
-				</select>
+				<form:select about="choose" path="inspector.id" class="input-medium ">
+					<form:option value="" label="请选择"/>
+					<form:options items="${inspectorList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">物流信息图：</label>
+			<label class="control-label">验货时间：</label>
 			<div class="controls">
-				<form:hidden path="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-				<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="false" maxWidth="100"
-							  maxHeight="100"/>
-			</div>
-		</div>
-		<%--<div class="control-group">
-			<label class="control-label">货值：</label>
-			<div class="controls">
-				<input id="valuePrice" name="valuePrice"  htmlEscape="false" value="" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>--%>
-		<div class="control-group">
-			<label class="control-label">操作费：</label>
-			<div class="controls">
-				<form:input path="operation" htmlEscape="false" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">运费：</label>
-			<div class="controls">
-				<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
+				<input name="inspectDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+					   value="<fmt:formatDate value="${bizInvoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<c:if test="${userList==null}">
 		<div class="control-group">
-			<label class="control-label">发货人：</label>
+			<label class="control-label">验货备注：</label>
 			<div class="controls">
-				<form:input about="choose" readonly="true" path="carrier" class="input-medium required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:textarea path="inspectRemark" htmlEscape="false" maxlength="30" class="input-xlarge "/>
 			</div>
 		</div>
-		</c:if>
-		<c:if test="${userList != null}">
-			<div class="control-group">
-				<label class="control-label">发货人：</label>
-				<div class="controls">
-					<form:select about="choose" path="carrier" class="input-medium required">
-						<form:option value="" label="请选择"/>
-						<form:options items="${userList}" itemLabel="name" itemValue="name" htmlEscape="false"/>
-					</form:select>
-					<span class="help-inline"><font color="red">*</font> </span>
-				</div>
+		<div class="control-group">
+			<label class="control-label">集货地点：</label>
+			<div class="controls">
+				<form:select path="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('coll_locate')}" itemValue="value" itemLabel="label"/>
+				</form:select>
 			</div>
-		</c:if>
+		</div>
 		<div class="control-group">
 			<label class="control-label">发货时间：</label>
 			<div class="controls">
@@ -308,7 +296,7 @@
 			</div>
 		</div>
 
-
+		<c:if test="${bizInvoice.id == null}">
 		<div class="control-group">
 			<label class="control-label">选择订单：</label>
 			<div class="controls">
@@ -331,6 +319,7 @@
 
 			</div>
 		</div>
+		</c:if>
 
 		<div class="control-group">
 			<label class="control-label">待发货订单：</label>
@@ -349,6 +338,7 @@
 						<th>商品属性</th>
 						<c:if test="${bizInvoice.bizStatus==0}">
 							<th>选择仓库</th>
+							<th>选择货权方</th>
 						</c:if>
 						<th>采购数量</th>
 						<th>已发货数量</th>
@@ -378,6 +368,7 @@
 						<th>商品属性</th>
 						<c:if test="${bizInvoice.bizStatus==0}">
 							<th>选择仓库</th>
+							<th>选择货权方</th>
 						</c:if>
 						<th>采购数量</th>
 						<th>已发货数量</th>
@@ -408,7 +399,6 @@
 		<form:hidden id="skuItemNoCopy" path="itemNo"/>
 		<form:hidden id="skuCodeCopy" path="partNo"/>
 		<form:hidden id="nameCopy" path="name"/>
-
 	</form:form>
 </body>
 </html>

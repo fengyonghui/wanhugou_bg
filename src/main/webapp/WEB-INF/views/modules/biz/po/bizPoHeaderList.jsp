@@ -90,6 +90,18 @@
 					<form:options items="${processList}" itemLabel="name" itemValue="code" htmlEscape="false"/>
 				</form:select>
 			</li>
+			<li><label>待支付</label>
+				<form:select path="waitPay" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:option value="1" label="是"/>
+				</form:select>
+			</li>
+			<li><label>可申请付款</label>
+				<form:select path="applyPayment" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:option value="1" label="是"/>
+				</form:select>
+			</li>
             <li><label>测试数据</label>
                 <form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
             </li>
@@ -166,26 +178,19 @@
 				</td>
 				<td>
 					<c:if test="${bizPoHeader.bizStatus != 10}">
-					<c:choose>
-						<c:when test="${bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成' || bizPoHeader.totalOrdQty == null || bizPoHeader.totalOrdQty == 0}">
-							<%--${BizOrderSchedulingEnum.UNABLE_SCHEDULING.desc}--%>
-						</c:when>
-						<c:otherwise>
-							<c:choose>
-								<c:when test="${bizPoHeader.toalSchedulingNum == null || bizPoHeader.toalSchedulingNum == 0}">
-									${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}
-								</c:when>
-								<c:otherwise>
-									<c:if test="${bizPoHeader.totalOrdQty != bizPoHeader.toalSchedulingNum}">
-										${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}
-									</c:if>
-									<c:if test="${bizPoHeader.totalOrdQty == bizPoHeader.toalSchedulingNum}">
-										${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}
-									</c:if>
-								</c:otherwise>
-							</c:choose>
-						</c:otherwise>
-					</c:choose>
+						<c:choose>
+							<c:when test="${bizPoHeader.poSchType == 0 || bizPoHeader.poSchType == null}">
+								${BizOrderSchedulingEnum.SCHEDULING_NOT.desc}
+							</c:when>
+							<c:otherwise>
+								<c:if test="${bizPoHeader.poSchType == 1}">
+									${BizOrderSchedulingEnum.SCHEDULING_PLAN.desc}
+								</c:if>
+								<c:if test="${bizPoHeader.poSchType == 2}">
+									${BizOrderSchedulingEnum.SCHEDULING_DONE.desc}
+								</c:if>
+							</c:otherwise>
+						</c:choose>
 					</c:if>
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
@@ -195,7 +200,7 @@
 								<c:if test="${bizPoHeader.bizPoPaymentOrder.id == null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 							&& fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
-							&& bizPoHeader.payTotal < (bizPoHeader.totalDetail+bizPoHeader.totalExp)
+							&& bizPoHeader.payTotal < (bizPoHeader.totalDetail+bizPoHeader.totalExp + bizPoHeader.freight)
 							}">
 									<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
 								</c:if>
@@ -223,17 +228,17 @@
 								<a href="javascript:void(0);" onclick="cancel(${bizPoHeader.id});">取消</a>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:po:bizPoHeader:view">
-								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
+								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail&fromPage=poHeader">详情</a>
 							</shiro:hasPermission>
 							<c:if test="${bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
-								<c:if test="${bizPoHeader.totalOrdQty != null && bizPoHeader.totalOrdQty != 0}">
-							<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
-								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}">排产</a>
-							</shiro:hasPermission>
-							<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
-								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
-							</shiro:hasPermission>
-							</c:if>
+								<%--<c:if test="${bizPoHeader.totalOrdQty != null && bizPoHeader.totalOrdQty != 0}">--%>
+									<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+										<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}">排产</a>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+										<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
+									</shiro:hasPermission>
+								<%--</c:if>--%>
 							</c:if>
 						</c:if>
 					</td>

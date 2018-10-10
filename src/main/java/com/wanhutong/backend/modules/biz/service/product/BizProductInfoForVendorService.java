@@ -18,11 +18,13 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoForVendorService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -94,6 +96,8 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
     private AttributeValueV2Service attributeValueV2Service;
     @Resource
     private BizSkuInfoForVendorService bizSkuInfoForVendorService;
+    @Resource
+    private BizSkuViewLogService bizSkuViewLogService;
 
 
     /**
@@ -208,6 +212,29 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
                 BizSkuInfo bizSkuInfo = new BizSkuInfo();
                 if (StringUtils.isNotBlank(id) && !"undefined".equals(id) && !"0".equals(id) && !copy) {
                     bizSkuInfo.setId(Integer.valueOf(id));
+                }
+                if(bizSkuInfo.getId()!=null && !bizSkuInfo.getId().equals("0") && !bizSkuInfo.getId().equals("undefined")){
+                    //保存商品出厂价日志表
+                    Double aftBuyPrice=StringUtils.isBlank(price)? 0 : Double.valueOf(price);
+                    BizSkuViewLog skuViewLog = new BizSkuViewLog();
+                    BizSkuInfo skuInfo = bizSkuInfoForVendorService.get(bizSkuInfo);
+                    if(skuInfo!=null){
+                        if(!aftBuyPrice.equals(skuInfo.getBuyPrice())) {
+                            skuViewLog.setSkuInfo(skuInfo);//商品名称
+                            skuViewLog.setItemNo(skuInfo.getItemNo());//货号
+                            skuViewLog.setUpdateDate(skuInfo.getUpdateDate());//商品修改时间
+                            skuViewLog.setUpdateBy(skuInfo.getUpdateBy());//商品修改人
+                            skuViewLog.setSkuType(BizSkuViewLog.SkuType.VENDOR.getType());
+                            Double buyPrice = 0.0;
+                            if (skuInfo.getBuyPrice() != null) {
+                                buyPrice = skuInfo.getBuyPrice();
+                            }
+                            skuViewLog.setFrontBuyPrice(buyPrice);//修改前价格
+                            skuViewLog.setAfterBuyPrice(aftBuyPrice);//修改后价格
+                            skuViewLog.setChangePrice(aftBuyPrice - buyPrice);//改变价格
+                            bizSkuViewLogService.save(skuViewLog);
+                        }
+                    }
                 }
                 bizSkuInfo.setProductInfo(bizProductInfo);
                 bizSkuInfo.setBuyPrice(StringUtils.isBlank(price) ? 0 : Double.valueOf(price));

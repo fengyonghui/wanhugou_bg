@@ -6,11 +6,7 @@
 		a.id AS "id",
 		a.send_number AS "sendNumber",
 		a.tracking_number AS "trackingNumber",
-		a.logistics_id AS "logistics.id",
-		bl.name AS "logistics.name",
-		a.img_url AS "imgUrl",
 		a.value_price AS "valuePrice",
-		a.operation AS "operation",
 		a.freight AS "freight",
 		a.carrier AS "carrier",
 		a.settlement_status AS "settlementStatus",
@@ -23,13 +19,18 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		a.remarks AS "remarks"
+		a.remarks AS "remarks",
+		a.inspect_time AS "inspectDate",
+        a.inspector_id AS "inspector.id",
+        us.name AS "inspector.name",
+        a.inspect_remark AS "inspectRemark",
+        a.coll_locate AS "collLocate",
+        a.is_confirm AS "isConfirm"
 	</sql>
 	
 	<sql id="bizInvoiceJoins">
-		LEFT JOIN biz_logistics bl ON bl.id = a.logistics_id
 		LEFT JOIN sys_user su on su.id =a.create_id
-
+        LEFT JOIN sys_user us ON us.id = a.inspector_id
 	</sql>
     
 	<select id="get" resultType="BizInvoice">
@@ -79,6 +80,9 @@
 				<if test="dbName == 'mssql'">'%'+#{trackingNumber}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{trackingNumber},'%')</if>
 			</if>
+			<if test="isConfirm != null">
+				AND a.is_confirm = #{isConfirm}
+			</if>
 			<if test="ship != null and ship == 0">
 				<if test="orderNum != null and orderNum != ''">
 					AND bo.order_num LIKE
@@ -95,20 +99,11 @@
 					<if test="dbName == 'mysql'">concat('%',#{reqNo},'%')</if>
 				</if>
 			</if>
-			<if test="logistics != null and logistics.id != null and logistics.id != ''">
-				AND a.logistics_id = #{logistics.id}
-			</if>
 			<if test="bizStatus != null">
 				AND a.biz_status = #{bizStatus}
 			</if>
 			<if test="ship != null">
 				AND a.ship = #{ship}
-			</if>
-			<if test="logistics != null and logistics.name != null and logistics.name != ''">
-				AND bl.name LIKE
-				<if test="dbName == 'oracle'">'%'||#{logistics.name}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{logistics.name}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{logistics.name},'%')</if>
 			</if>
 			<if test="carrier != null and carrier != ''">
 				AND a.carrier LIKE
@@ -171,17 +166,8 @@
 			id,
 			send_number,
 			tracking_number,
-			<if test="logistics != null and logistics.id != null and logistics.id != ''">
-				logistics_id,
-			</if>
-			<if test="imgUrl != null and imgUrl != ''">
-				img_url,
-			</if>
 			<if test="valuePrice != null and valuePrice != ''">
 				value_price,
-			</if>
-			<if test="operation != null and operation != 0">
-				operation,
 			</if>
 			<if test="freight != null and freight != 0">
 				freight,
@@ -198,27 +184,23 @@
 			biz_status,
 			ship,
 			send_time,
+			inspect_time,
 			status,
 			create_id,
 			create_time,
 			u_version,
 			update_id,
-			update_time
+			update_time,
+            inspector_id,
+            inspect_remark,
+            coll_locate,
+            is_confirm
 		) VALUES (
 			#{id},
 			#{sendNumber},
 			#{trackingNumber},
-			<if test="logistics != null and logistics.id != null and logistics.id != ''">
-				#{logistics.id},
-			</if>
-			<if test="imgUrl != null and imgUrl != ''">
-				#{imgUrl},
-			</if>
 			<if test="valuePrice != null and valuePrice != ''">
 				#{valuePrice},
-			</if>
-			<if test="operation != null and operation != 0">
-				#{operation},
 			</if>
 			<if test="freight != null and freight != 0">
 				#{freight},
@@ -235,12 +217,17 @@
 			#{bizStatus},
 			#{ship},
 			#{sendDate},
+			#{inspectDate},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+            #{inspector.id},
+            #{inspectRemark},
+            #{collLocate},
+            #{isConfirm}
 		)
 	</insert>
 	
@@ -248,17 +235,8 @@
 		UPDATE biz_invoice SET 	
 			send_number = #{sendNumber},
 			tracking_number = #{trackingNumber},
-			<if test="logistics != null and logistics.id != null and logistics.id != ''">
-				logistics_id = #{logistics.id},
-			</if>
-			<if test="imgUrl != null and imgUrl != ''">
-				img_url = #{imgUrl},
-			</if>
 			<if test="valuePrice != null and valuePrice != ''">
 				value_price = #{valuePrice},
-			</if>
-			<if test="operation != null and operation != 0">
-				operation = #{operation},
 			</if>
 			<if test="freight != null and freight != 0">
 				freight = #{freight},
@@ -275,9 +253,14 @@
 			biz_status = #{bizStatus},
 			ship = #{ship},
 			send_time = #{sendDate},
+            inspect_time = #{inspectDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+			update_time = #{updateDate},
+            inspector_id = #{inspector.id},
+            inspect_remark = #{inspectRemark},
+            coll_locate = #{collLocate},
+            is_confirm = #{isConfirm}
 		WHERE id = #{id}
 	</update>
 	

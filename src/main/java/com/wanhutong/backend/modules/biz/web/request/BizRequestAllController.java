@@ -2,6 +2,7 @@ package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -11,6 +12,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -22,6 +24,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
@@ -29,6 +32,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
@@ -67,7 +71,7 @@ import java.util.stream.Stream;
 @RequestMapping(value = "${adminPath}/biz/request/bizRequestAll")
 public class BizRequestAllController {
     @Autowired
-    private BizRequestHeaderService bizRequestHeaderService;
+    private BizRequestHeaderForVendorService bizRequestHeaderService;
     @Autowired
     private DefaultPropService defaultPropService;
     @Autowired
@@ -94,42 +98,22 @@ public class BizRequestAllController {
     private CommonImgService commonImgService;
     @Autowired
     private BizPoHeaderService bizPoHeaderService;
+    @Autowired
+    private BizInvoiceService bizInvoiceService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
     public String list(String source, Integer bizStatu, String ship, HttpServletRequest request, HttpServletResponse response, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader) {
         User user = UserUtils.getUser();
-        DefaultProp defaultProp = new DefaultProp();
-        defaultProp.setPropKey("vend_center");
-        Integer vendId = 0;
-        List<DefaultProp> defaultPropList = defaultPropService.findList(defaultProp);
-        if (defaultPropList != null && defaultPropList.size() > 0) {
-            DefaultProp prop = defaultPropList.get(0);
-            vendId = Integer.parseInt(prop.getPropValue());
+        List<Role> roleList = user.getRoleList();
+        List<String> enNameList = Lists.newArrayList();
+        for (Role role : roleList) {
+            enNameList.add(role.getEnname());
         }
-        //用户属于供应中心或管理员
-
-       /*String type= user.getCompany().getType();
-        System.out.println(type);
-
-        boolean flag=false;
-        if(user.getRoleList()!=null) {
-            for (Role role : user.getRoleList()) {
-                if (!RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
-                    flag = true;
-                    break;
-                }
-            }
+        if (!user.isAdmin() && enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
+            model.addAttribute("vendor","vendor");
         }
-        if(flag){
-            model.addAttribute("ship",ship);
-        }*/
-//        String type = officeService.get(user.getCompany().getId()).getType();
-//        if (type.equals(OfficeTypeEnum.SUPPLYCENTER.getType())  || user.isAdmin()){
         model.addAttribute("ship", ship);
-//        }else {
-//            model.addAttribute("ship","");
-//        }
         model.addAttribute("source", source);
         if (bizOrderHeader == null) {
             bizOrderHeader = new BizOrderHeader();
@@ -137,15 +121,23 @@ public class BizRequestAllController {
         if ("kc".equals(source)) {
             bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
             bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCK_COMPLETE.getState().byteValue());
-            if (bizStatu == 0) {
+            if (bizStatu == 0 && Integer.valueOf(1).equals(bizOrderHeader.getNeedOut())) {
+                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.APPROVE.getState());
+            } else {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
             }
+
+            if (bizStatu == 0) {
+                bizOrderHeader.setSupplyId(-1);
+            }
+
             if (bizStatu == 1) {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
-
             }
+
             if (ship.equals("xs")) {
                 Page<BizOrderHeader> page = new Page<>(request, response);
                 page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
@@ -161,8 +153,13 @@ public class BizRequestAllController {
                 model.addAttribute("page", page);
             }
         } else if ("sh".equals(source)) {
-            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
-            bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETE.getState().byteValue());
+            if (Integer.valueOf(1).equals(bizRequestHeader.getNeedIn())) {
+                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETEING.getState().byteValue());
+            } else {
+                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETE.getState().byteValue());
+            }
 
             Page<BizRequestHeader> page = new Page<>(request, response);
             page = bizRequestHeaderService.findPageForSendGoods(page, bizRequestHeader);
@@ -219,6 +216,15 @@ public class BizRequestAllController {
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = "form")
     public String form(String source, Integer id, Model model, Integer bizStatu, String ship) {
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        List<String> enNameList = Lists.newArrayList();
+        for (Role role : roleList) {
+            enNameList.add(role.getEnname());
+        }
+        if (!user.isAdmin() && enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
+            model.addAttribute("vendor","vendor");
+        }
         List<BizRequestDetail> reqDetailList = Lists.newArrayList();
         List<BizOrderDetail> ordDetailList = Lists.newArrayList();
         BizOrderHeader orderHeader = null;
@@ -234,20 +240,15 @@ public class BizRequestAllController {
             //取出用户所属采购中心
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
             BizLogistics bizLogistics = new BizLogistics();
-            User user = UserUtils.getUser();
-            if (user.isAdmin()) {
-                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList", invInfoList);
-                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList", logisticsList);
-            } else {
+            if (!user.isAdmin()) {
                 Office company = officeService.get(user.getCompany().getId());
                 bizInventoryInfo.setCustomer(company);
-                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList", invInfoList);
-                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList", logisticsList);
             }
+            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+            model.addAttribute("invInfoList", invInfoList);
+            List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
+            model.addAttribute("logisticsList", logisticsList);
+
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
             bizRequestDetail.setRequestHeader(bizRequestHeader);
             List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
@@ -263,29 +264,50 @@ public class BizRequestAllController {
             if(requestDetailList.size()==0){
                 requestHeader.setPoSource("poHeaderSource");
             }
+            BizInvoice invoice = new BizInvoice();
+            if ("bh".equals(ship)) {
+                invoice.setShip(BizInvoice.Ship.RE.getShip());
+                invoice.setReqNo(bizRequestHeader.getReqNo());
+                invoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
+            }
+            List<BizInvoice> invoiceList = bizInvoiceService.findList(invoice);
+            if (CollectionUtils.isNotEmpty(invoiceList)) {
+                model.addAttribute("invoiceList",invoiceList);
+            }
         }
         if (bizOrderHeader != null && bizOrderHeader.getId() != null) {
             //取出用户所属采购中心
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
             BizLogistics bizLogistics = new BizLogistics();
-            User user = UserUtils.getUser();
-            if (user.isAdmin()) {
-                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList", invInfoList);
-                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList", logisticsList);
-            } else {
+            if (!user.isAdmin()) {
                 Office company = officeService.get(user.getCompany().getId());
                 bizInventoryInfo.setCustomer(company);
-                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList", invInfoList);
-                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList", logisticsList);
             }
+            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+            model.addAttribute("invInfoList", invInfoList);
+            List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
+            model.addAttribute("logisticsList", logisticsList);
+
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
-            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+            List<BizOrderDetail> orderDetailList;
             orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+            if (bizStatu == 0) {
+                bizOrderDetail.setSuplyis(new Office(bizOrderHeader.getCenterId()));
+                orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+            } else {
+                orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+                BizInvoice invoice = new BizInvoice();
+                if ("xs".equals(ship)) {
+                    invoice.setShip(BizInvoice.Ship.SO.getShip());
+                    invoice.setOrderNum(orderHeader.getOrderNum());
+                    invoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
+                }
+                List<BizInvoice> invoiceList = bizInvoiceService.findList(invoice);
+                if (CollectionUtils.isNotEmpty(invoiceList)) {
+                    model.addAttribute("invoiceList",invoiceList);
+                }
+            }
             if (orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
                 CommonImg commonImg = new CommonImg();
                 commonImg.setObjectId(orderHeader.getId());

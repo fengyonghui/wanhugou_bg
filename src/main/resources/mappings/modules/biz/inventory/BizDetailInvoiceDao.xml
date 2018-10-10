@@ -25,6 +25,12 @@
 			<include refid="bizDetailInvoiceColumns"/>
 		FROM biz_detail_invoice a
 		<include refid="bizDetailInvoiceJoins"/>
+		<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+			LEFT JOIN biz_order_header oh ON oh.id = a.order_header_id AND oh.status = 1
+		</if>
+		<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+			LEFT JOIN biz_request_header rh ON rh.id = a.request_header_id AND rh.status = 1
+		</if>
 		<where>
 			
 			<if test="invoice != null and invoice.id != null and invoice.id != ''">

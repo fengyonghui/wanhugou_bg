@@ -21,9 +21,14 @@ public class BizSkuViewLog extends DataEntity<BizSkuViewLog> {
 	private static final long serialVersionUID = 1L;
 	private BizSkuInfo skuInfo;		// sku商品编号
 	private String itemNo;		// sku商品货号
-	private Double frontBuyPrice;		// 商品修改前工厂价格
+	private Double frontBuyPrice;		// 商品修改前结算价格
 	private Double changePrice;		//价格变化
-	private Double afterBuyPrice;		// 商品修改后工厂价格
+	private Double afterBuyPrice;		// 商品修改后结算价格
+
+	/**
+	 * 商品类型 （0：平台商品 1：供应商商品）
+	 */
+	private Byte skuType;
 	
 	public BizSkuViewLog() {
 		super();
@@ -74,5 +79,28 @@ public class BizSkuViewLog extends DataEntity<BizSkuViewLog> {
 
 	public void setChangePrice(Double changePrice) {
 		this.changePrice = changePrice;
+	}
+
+	public Byte getSkuType() {
+		return skuType;
+	}
+
+	public void setSkuType(Byte skuType) {
+		this.skuType = skuType;
+	}
+
+	public enum SkuType {
+		PLATFORM((byte)0),
+		VENDOR((byte)1),
+		;
+		private Byte type;
+
+		SkuType(Byte type) {
+			this.type = type;
+		}
+
+		public Byte getType() {
+			return type;
+		}
 	}
 }

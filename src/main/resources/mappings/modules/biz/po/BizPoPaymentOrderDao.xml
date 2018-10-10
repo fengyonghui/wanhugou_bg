@@ -5,6 +5,7 @@
 	<resultMap type="BizPoPaymentOrder" id="bizPoPaymentOrderMaps">
 		<id column="id" property="id"/>
 		<result column="poHeaderId" property="poHeaderId"/>
+		<result column="orderType" property="orderType"/>
 		<result column="total" property="total"/>
 		<result column="payTotal" property="payTotal"/>
 		<result column="bizStatus" property="bizStatus"/>
@@ -12,6 +13,7 @@
 		<result column="deadline" property="deadline"/>
 		<result column="processId" property="processId"/>
 		<result column="payTime" property="payTime"/>
+		<result column="remark" property="remark"/>
 		<result column="commonProcess.id" property="commonProcess.id"/>
 		<result column="commonProcess.objectName" property="commonProcess.objectName"/>
 		<result column="commonProcess.prevId" property="commonProcess.prevId"/>
@@ -48,13 +50,15 @@
 	<sql id="bizPoPaymentOrderColumns">
 		a.id AS "id",
 		a.po_header_id AS "poHeaderId",
+		a.type AS "orderType",
 		a.total AS "total",
 		a.pay_total AS "payTotal",
 		a.img AS "img",
-		a.biz_status AS bizStatus,
+		a.biz_status AS "bizStatus",
 		a.deadline AS deadline,
 		a.process_id AS processId,
 		a.pay_time AS payTime,
+		a.remark AS remark,
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
 		process.object_name AS "commonProcess.objectName",
@@ -63,12 +67,17 @@
 		process.processor AS "commonProcess.processor",
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
-		process.create_time AS "commonProcess.createTime"
-
+		process.create_time AS "commonProcess.createTime",
+		boh.order_num as orderNum,
+		brh.req_no as reqNo
 	</sql>
 	
 	<sql id="bizPoPaymentOrderJoins">
 		LEFT JOIN common_process process ON process.id = a.process_id
+		LEFT JOIN biz_po_header po ON po.id = a.po_header_id AND po.status = 1
+		left join biz_po_order_req bpor on bpor.po_id = po.id AND bpor.status = 1
+		left join biz_order_header boh on bpor.so_id = boh.id and bpor.so_type = 1
+		left join biz_request_header brh on bpor.so_id = brh.id and bpor.so_type = 2
 	</sql>
     
 	<select id="get" resultType="BizPoPaymentOrder">
@@ -77,6 +86,7 @@
 		FROM biz_po_payment_order a
 		<include refid="bizPoPaymentOrderJoins"/>
 		WHERE a.id = #{id}
+        group by a.id
 	</select>
 	
 	<select id="findList" resultMap="bizPoPaymentOrderMaps">
@@ -84,6 +94,9 @@
 			<include refid="bizPoPaymentOrderColumns"/>
 		FROM biz_po_payment_order a
 		<include refid="bizPoPaymentOrderJoins"/>
+		<if test="auditStatusCode != null and auditStatusCode != 0">
+			LEFT JOIN common_process poprocess ON poprocess.id = po.process_id
+		</if>
 		<where>
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
@@ -94,16 +107,64 @@
 			<if test="total != null and total != ''">
 				AND a.total = #{total}
 			</if>
+			<if test="bizStatus != null and bizStatus != -1">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="orderType != null">
+				AND a.type = #{orderType}
+			</if>
+			<if test="auditStatusCode != null and auditStatusCode != 0">
+				AND process.type = #{auditStatusCode}
+				and poprocess.type = 7
+				and a.total > 0
+			</if>
 		</where>
+		group by a.id
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY a.id desc
 			</otherwise>
 		</choose>
 	</select>
-	
+
+	<select id="findCount" resultType="Integer">
+		SELECT
+			count(1) from
+		(SELECT
+			1
+		FROM biz_po_payment_order a
+		<include refid="bizPoPaymentOrderJoins"/>
+		<if test="auditStatusCode != null and auditStatusCode != 0">
+			LEFT JOIN common_process poprocess ON poprocess.id = po.process_id
+		</if>
+		<where>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="poHeaderId != null and poHeaderId != ''">
+				AND a.po_header_id = #{poHeaderId}
+			</if>
+			<if test="total != null and total != ''">
+				AND a.total = #{total}
+			</if>
+			<if test="bizStatus != null and bizStatus != -1">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="orderType != null">
+				AND a.type = #{orderType}
+			</if>
+			<if test="auditStatusCode != null and auditStatusCode != 0">
+				AND process.type = #{auditStatusCode}
+				and poprocess.type = 7
+				and a.total > 0
+			</if>
+		</where>
+		group by a.id) as t
+	</select>
+
 	<select id="findAllList" resultType="BizPoPaymentOrder">
 		SELECT 
 			<include refid="bizPoPaymentOrderColumns"/>
@@ -111,7 +172,8 @@
 		<include refid="bizPoPaymentOrderJoins"/>
 		<where>
 			
-		</where>		
+		</where>
+		group by a.id
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -125,12 +187,24 @@
 		INSERT INTO biz_po_payment_order(
 			id,
 			po_header_id,
+			<if test="orderType != null">
+				type,
+			</if>
+			<if test="remark != null and remark != ''">
+				remark,
+			</if>
 			total,
 			deadline,
 			process_id
 		) VALUES (
 			#{id},
 			#{poHeaderId},
+			<if test="orderType != null">
+				#{orderType},
+			</if>
+			<if test="remark != null and remark != ''">
+				#{remark},
+			</if>
 			#{total},
 			#{deadline},
 			#{processId}
@@ -140,6 +214,9 @@
 	<update id="update">
 		UPDATE biz_po_payment_order SET 	
 			po_header_id = #{poHeaderId},
+			<if test="orderType != null">
+				type = #{orderType},
+			</if>
 			total = #{total},
 			deadline = #{deadline},
 			pay_total = #{payTotal},
@@ -147,6 +224,9 @@
 			process_id = #{processId}
 			<if test="payTime != null and payTime != ''">
 				, pay_time = #{payTime}
+			</if>
+			<if test="remark != null and remark != ''">
+				, remark = #{remark}
 			</if>
 		WHERE id = #{id}
 	</update>
@@ -161,6 +241,15 @@
 		process_id  = #{processId}
 		WHERE id = #{paymentId}
 	</update>
+
+	<select id="getPayMentOrderByReqId" parameterType="Integer" resultType="BizPoPaymentOrder">
+		SELECT a.*
+		FROM biz_po_payment_order a
+		LEFT JOIN biz_po_header bph ON bph.id = a.po_header_id AND bph.status =1
+		LEFT JOIN biz_po_order_req bpor ON bpor.po_id = bph.id AND bpor.so_type = 2 AND bpor.status=1
+		WHERE bpor.so_id = #{reqId}
+		GROUP BY a.id
+	</select>
 
 
 </mapper>

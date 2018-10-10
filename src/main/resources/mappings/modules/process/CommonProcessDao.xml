@@ -13,6 +13,7 @@
 		a.type AS "type",
 		a.create_time AS "createTime",
 		a.update_time AS "updateTime",
+		a.current AS "current",
 		b.id AS "prevProcess.id",
 		b.object_id AS "prevProcess.objectId",
 		b.object_name AS "prevProcess.objectName",
@@ -69,12 +70,16 @@
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
 			</if>
+			<if test="current != null">
+				AND a.current = #{current}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY a.id
 			</otherwise>
 		</choose>
 	</select>
@@ -92,6 +97,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY a.id
 			</otherwise>
 		</choose>
 	</select>
@@ -107,7 +113,8 @@
 			description,
 			type,
 			create_time,
-			update_time
+			update_time,
+			current
 		) VALUES (
 			#{id},
 			#{objectId},
@@ -118,7 +125,8 @@
 			#{description},
 			#{type},
 			#{createTime},
-			#{updateDate}
+			#{updateDate},
+			#{current}
 		)
 	</insert>
 	
@@ -131,13 +139,21 @@
 			processor = #{processor},
 			description = #{description},
 			type = #{type},
-			update_time = NOW()
+			update_time = NOW(),
+			current = #{current}
 		WHERE id = #{id}
 	</update>
-	
+
+	<update id="updateCurrentByObject">
+		UPDATE common_process SET
+			current = #{current}
+		WHERE object_id = #{objectId} and
+			object_name = #{objectName}
+	</update>
+
 	<update id="delete">
 		DELETE FROM common_process
 		WHERE id = #{id}
 	</update>
-	
+
 </mapper>
