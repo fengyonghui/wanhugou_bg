@@ -561,6 +561,10 @@
 //		},
 		comfirDialig: function(data) {
 			var _this = this;
+			console.log(data)
+			console.log(_this.userInfo.staOrdId)
+			var orderType = data.orderType;
+			var createPo = data.createPo;
 			document.getElementById("rejectBtns").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
 				mui.confirm('确定审核驳回吗？', '系统提示！', btnArray, function(choice) {
@@ -576,13 +580,73 @@
 	                mui.toast("代采订单需至少付款20%，请付款后刷新页面再审核");
 	                return;
 	            }
-				var btnArray = ['否', '是'];
-				mui.confirm('确定审核通过吗？', '系统提示！', btnArray, function(choice) {
-					if(choice.index == 1) {
-						_this.ajaxData(15)
-					} else {						
-					}
+				var btnArray = ['取消', '确定'];
+				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
+					if(e.index == 1) {
+						var inText = e.value;
+						if(e.value == '') {
+							mui.toast('通过理由不能为空！')
+							return;
+						} else {
+							var btnArray = ['否', '是'];
+							mui.confirm('确定审核通过吗？', '系统提示！', btnArray, function(choice) {
+								if(choice.index == 1) {
+									if(orderType == 1) {
+										_this.ajaxDataSo(inText,1,orderType,createPo)
+									}
+									if(orderType == 2) {
+										_this.ajaxData(inText,1,orderType,createPo)
+									}
+								} else {						
+								}
+							})
+						}	
+					} else {}
 				})
+			});
+		},
+		ajaxDataSo:function(inText, num, orderType, createPo) {
+			var _this = this;
+//			var r2 = document.getElementsByName("localOriginType");
+//          var localOriginType = "";
+//          for (var i = 0; i < r2.length; i++) {
+//              if (r2[i].checked == true) {
+//                  localOriginType = r2[i].value;
+//              }
+//          }
+//          console.log(localOriginType)
+			$.ajax({
+				type: "GET",
+				url: "/a/biz/order/bizOrderHeader/auditSo",
+				data:{
+					id: _this.userInfo.staOrdId,//采购单id
+					currentType: ,//当前审核状态
+					auditType: num,//审核标识1：审核通过， 2：驳回
+					description: inText,//通过/驳回理由
+					orderType: orderType,//订单类型
+					createPo: createPo,//是否生成po标识
+					lastPayDateVal: ,//最后付款时间
+				},
+				dataType: "json",
+				success: function(res) {
+//					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;
+					console.log(res)
+//					if(res.data=='ok'){
+//						mui.toast('发货成功!')
+//						window.setTimeout(function(){
+//			                GHUTILS.OPENPAGE({
+//							url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+//							extras: {
+//								staListId:stcheckIdTxt,
+//								}
+//							})
+//			            },800);						
+//					}
+				},
+				error: function (e) {
+				    //服务器响应失败处理函数
+//				    console.info(e);
+				}
 			});
 		},
 		ajaxData:function(num) {
