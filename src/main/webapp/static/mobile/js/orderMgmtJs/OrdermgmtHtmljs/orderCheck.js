@@ -16,7 +16,8 @@
 			var _this = this;
 //			_this.btnshow()
 			_this.getData();
-			_this.changePrice();
+//			_this.changePrice();
+			_this.addRemark();
 		},
 //		btnshow: function() {
 //			var _this = this;
@@ -35,12 +36,12 @@
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
                 data: {
                 	id: _this.userInfo.staOrdId,
-                	orderDetails: 'details',
-	                flag: _this.userInfo.flagTxt
+                	str: 'audit',
+	                type: 1
                 },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	console.log(res)
 //              	if(res.data.bizOrderHeader.flag=='check_pending') {
 //              		if(res.data.orderType == 5) {
 //              			$('#orderTypebox').hide();
@@ -70,6 +71,7 @@
 					$('#partBMobile').val(res.data.vendUser.mobile);					
 					$('#partCPrincipal').val(res.data.orderCenter.consultants.name);
 					$('#partCMobile').val(res.data.orderCenter.consultants.mobile);
+					//付款约定
 					if(res.data.appointedTimeList) {
 						$.each(res.data.appointedTimeList, function(n, v) {
 							$('#staPayTime').val(_this.formatDateTime(v.appointedDate));
@@ -79,6 +81,15 @@
 						$('#staPayTime').val();
 						$('#staPayMoney').val();
 					}
+					var RemarkHtml="";
+					$.each(res.data.commentList, function(q, w) {
+						console.log(w)						
+						RemarkHtml +='<div class="step_item">'+
+						    w.comments
+                            +
+					    '</div>'
+						$('#staPoRemark').append(RemarkHtml);//备注
+					})
 					//订单id
 					$('#ordId').val(_this.userInfo.staOrdId);					
 					var item = res.data.bizOrderHeader;
@@ -334,6 +345,7 @@
 		commodityHtml: function(data) {
 			var _this = this;
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
+			console.log(orderDetailLen)
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
@@ -444,76 +456,109 @@
 	                    
                     '</div>'
 				});
-				$("#staCommodity").html(htmlCommodity)
+				$("#staCheckCommodity").html(htmlCommodity)
 			}
 		},
-		changePrice: function() {
+		addRemark:function(){
 			var _this = this;
-			document.getElementById("changePriceBtn").addEventListener('tap', function(e) {
-				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+			document.getElementById("addRemarkBtn").addEventListener('tap', function(e) {
+				e.detail.gesture.preventDefault(); 
 				var btnArray = ['取消', '确定'];
-				mui.confirm('确定修改价格吗？', '系统提示！', btnArray, function(choice) {
-					if(choice.index == 1) {
-						var ss = $('#staAdjustmentMoney').val();
-						IsNum(ss)
-						function IsNum(num) {
-							if (num) {
-								var reNum = /^\d+(\.\d+)?$/;
-								if(reNum.test(num)) {
-									var orderId = _this.userInfo.staOrdId;
-					                var totalExp = $('#staAdjustmentMoney').val();
-					                var totalDetail =$('#staPototal').val();
-					                $.ajax({
-					                    type:"post",
-					                    url:"/a/biz/order/bizOrderHeader/checkTotalExp4Mobile",
-					                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
-					                    success:function (data) {
-					                    	var dataVal=JSON.parse(data)
-					                        if (dataVal.data.resultValue == "serviceCharge") {
-					                            mui.toast("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
-					                        } else if (dataVal.data.resultValue == "orderLoss") {
-					                            mui.toast("优惠后订单金额不能低于结算价，请修改调整金额");
-					                        } else if (dataVal.data.resultValue == "orderLowest") {
-					                            mui.toast("优惠后订单金额不能低于结算价的95%，请修改调整金额");
-					                        } else if (dataVal.data.resultValue == "orderLowest8") {
-					                            mui.toast("优惠后订单金额不能低于结算价的80%，请修改调整金额");
-					                        } else if (dataVal.data.resultValue == "ok") {
-					                            $.ajax({
-					                                type:"post",
-					                                url:"/a/biz/order/bizOrderHeader/saveBizOrderHeader4Mobile",
-					                                data:{orderId:orderId,money:totalExp},					                              
-					                                success:function(flag){
-					                    	            var flagVal=JSON.parse(flag)
-					                                    if(flagVal.data.flag=="ok"){
-					                                        mui.toast("修改成功！");
-					                                       _this.getData();
-					                                    }else{
-					                                        mui.toast(" 修改失败 ");
-					                                    }
-					                                }
-					                            });
-					                        }
-					                    }
-					                });									
-									return true;
-								} else {
-									if(num < 0) {
-										mui.toast("价格不能为负数！");
-									}else {
-										mui.toast("价格必须为数字！");
-									}
-									return false;
-								}
-							}else {
-								mui.toast("价格不能为空！");
-								return false;
-							}
-						}
+				mui.prompt('请输入你要添加的备注', '系统提示！', '系统提示！',btnArray, function(e) {
+					console.log(e)
+					if(e.index == 1) {
+						var inText = e.value;
+                        console.log(inText)
+                        console.log($('#ordId').val())
+                        if (inText == null) {
+			                return false;
+			            }
+                        $.ajax({
+			                type:"post",
+			                url:"/a/biz/order/bizOrderComment/addComment",
+			                data:{orderId:$('#ordId').val(),remark:inText},
+			                success:function (data) {
+			                	console.log(data)
+			                    if (data == "error") {
+			                        alert("添加订单备注失败，备注可能为空");
+			                    }
+			                    if (data == "ok") {
+			                        alert("添加订单备注成功");
+			                    }
+			                }
+			            });
 					} else {						
 					}
 				})
 			});
 		},
+//		changePrice: function() {
+//			var _this = this;
+//			document.getElementById("changePriceBtn").addEventListener('tap', function(e) {
+//				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+//				var btnArray = ['取消', '确定'];
+//				mui.confirm('确定修改价格吗？', '系统提示！', btnArray, function(choice) {
+//					if(choice.index == 1) {
+//						var ss = $('#staAdjustmentMoney').val();
+//						IsNum(ss)
+//						function IsNum(num) {
+//							if (num) {
+//								var reNum = /^\d+(\.\d+)?$/;
+//								if(reNum.test(num)) {
+//									var orderId = _this.userInfo.staOrdId;
+//					                var totalExp = $('#staAdjustmentMoney').val();
+//					                var totalDetail =$('#staPototal').val();
+//					                $.ajax({
+//					                    type:"post",
+//					                    url:"/a/biz/order/bizOrderHeader/checkTotalExp4Mobile",
+//					                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
+//					                    success:function (data) {
+//					                    	var dataVal=JSON.parse(data)
+//					                        if (dataVal.data.resultValue == "serviceCharge") {
+//					                            mui.toast("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
+//					                        } else if (dataVal.data.resultValue == "orderLoss") {
+//					                            mui.toast("优惠后订单金额不能低于结算价，请修改调整金额");
+//					                        } else if (dataVal.data.resultValue == "orderLowest") {
+//					                            mui.toast("优惠后订单金额不能低于结算价的95%，请修改调整金额");
+//					                        } else if (dataVal.data.resultValue == "orderLowest8") {
+//					                            mui.toast("优惠后订单金额不能低于结算价的80%，请修改调整金额");
+//					                        } else if (dataVal.data.resultValue == "ok") {
+//					                            $.ajax({
+//					                                type:"post",
+//					                                url:"/a/biz/order/bizOrderHeader/saveBizOrderHeader4Mobile",
+//					                                data:{orderId:orderId,money:totalExp},					                              
+//					                                success:function(flag){
+//					                    	            var flagVal=JSON.parse(flag)
+//					                                    if(flagVal.data.flag=="ok"){
+//					                                        mui.toast("修改成功！");
+//					                                       _this.getData();
+//					                                    }else{
+//					                                        mui.toast(" 修改失败 ");
+//					                                    }
+//					                                }
+//					                            });
+//					                        }
+//					                    }
+//					                });									
+//									return true;
+//								} else {
+//									if(num < 0) {
+//										mui.toast("价格不能为负数！");
+//									}else {
+//										mui.toast("价格必须为数字！");
+//									}
+//									return false;
+//								}
+//							}else {
+//								mui.toast("价格不能为空！");
+//								return false;
+//							}
+//						}
+//					} else {						
+//					}
+//				})
+//			});
+//		},
 		comfirDialig: function(data) {
 			var _this = this;
 			document.getElementById("rejectBtns").addEventListener('tap', function() {
@@ -571,7 +616,7 @@
 					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;
 //					console.log(res)
 					if(res.data=='ok'){
-						mui.toast('发货成功!')
+						mui.toast('审核成功!')
 						window.setTimeout(function(){
 			                GHUTILS.OPENPAGE({
 							url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
@@ -616,7 +661,7 @@
 				success: function(res) {
 					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;
 					if(res.data=='comError'){
-						mui.toast('发货失败!')
+						mui.toast('审核失败!')
 						window.setTimeout(function(){
 			                GHUTILS.OPENPAGE({
 								url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",

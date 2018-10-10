@@ -12,8 +12,7 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			//权限添加
-//			biz:order:bizOrderHeader:view		操作
-			this.getPermissionList('biz:order:bizOrderHeader:view','staOrdFlag')//true 
+			this.getPermissionList('biz:order:bizOrderHeader:view','staOrdFlag')//true 操作
 			this.getPermissionList1('biz:order:bizOrderHeader:audit','staOrdauditFlag')//false审核
 			this.getPermissionList2('biz:order:bizOrderHeader:supplying','staOrdsupplyFlag')//false出库确认
 			this.getPermissionList3('biz:order:bizOrderHeader:edit','staOrdeditFlag')//修改、删除true
@@ -282,7 +281,7 @@
 											'<div class="ordPaymentBtn"  staOrdId="'+ item.id +'">' +
 												 staPaymentBtnTxt +
 											'</div>'+
-											'<div class="ordAmendBtn"  staOrdId="'+ item.id +'">' +
+											'<div class="ordAmendBtn"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staAmendTxt +
 											'</div>'+
 											'<div class="ordDeleteBtn"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
@@ -411,16 +410,13 @@
 	       $('.content_part').on('tap', '.ordCheckBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');//订单 ID
-				var flagTxt = $('#flag').val();
-				var staListIdTxts = $('#staListIdTxt').val();//查询出来的客户专员 ID
-				var consultantIda = $('#consultantIda').val();//客户专员 ID
-				var stcheckIdTxt = '';
-				if(staListIdTxts) {
-					stcheckIdTxt = staListIdTxts
-				}
-				if(consultantIda) {
-					stcheckIdTxt = consultantIda
-				}
+//				var stcheckIdTxt = '';
+//				if(staListIdTxts) {
+//					stcheckIdTxt = staListIdTxts
+//				}
+//				if(consultantIda) {
+//					stcheckIdTxt = consultantIda
+//				}
 //				console.log(staListIdTxts)
 				if(url) {
 					mui.toast('子菜单不存在')
@@ -429,8 +425,6 @@
 						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderCheck.html",
 						extras: {
 							staOrdId: staOrdId,
-							flagTxt: flagTxt,
-							stcheckIdTxt: stcheckIdTxt,
 						}
 					})
 				}
@@ -439,6 +433,8 @@
 	       $('.content_part').on('tap', '.ordAmendBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
+				var statu=$(this).attr('ordstatu');
+				var source=$(this).attr('ordsource');
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
@@ -446,6 +442,8 @@
 						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderAmend.html",
 						extras: {
 							staOrdId: staOrdId,
+							statu:statu,
+							source:source,
 						}
 					})
 				}

@@ -17,14 +17,19 @@
 		},
 		getData: function() {
 			var _this = this;
+			var datas={};
+			var idd=_this.userInfo.staOrdId;
+			var statu=_this.userInfo.statu;
+			var source=_this.userInfo.source;
+			datas={
+				id:idd,
+                statu:statu,
+                source:source
+			};
 			$.ajax({
                 type: "GET",
-//              url: "/a/biz/order/bizOrderHeader/listData4mobile",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
-                data: {
-                	id:_this.userInfo.staOrdId,
-                	orderDetails: 'details',
-                },
+                data:datas,
                 dataType: "json",
                 success: function(res){
                 	console.log(res)
@@ -66,7 +71,7 @@
 						$('#staPoRemark').val(w.comments);//备注
 					})
 					var item = res.data.bizOrderHeader;
-					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staPoordNum').val(item.orderNum);//订单编号
 					$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
 					$('#staRelNum').val(item.customer.name);//经销店名称
@@ -75,7 +80,7 @@
 					$('#staFreight').val(item.freight.toFixed(2));//运费
 					$('#staShouldPay').val(shouldPay.toFixed(2));//应付金额
 					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');//已付金额
-					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
+					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
 					$('#staPoLastDaPerent').val(poLastDa);//已付金额百分比
 					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));//服务费
 					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));//佣金
@@ -123,7 +128,7 @@
 						}
 					})
 					var total = item.totalDetail+item.totalExp+item.freight
-					if(total > item.receiveTotal && item.bizStatus!=10 && item.bizStatus!=35 && item.bizStatus!=40 && item.bizStatus!=45 && item.bizStatus!=60) {
+					if(total > (item.receiveTotal+item.scoreMoney) && item.bizStatus!=10 && item.bizStatus!=35 && item.bizStatus!=40 && item.bizStatus!=45 && item.bizStatus!=60) {
 						$('#staFinal').val("(有尾款)");
 					}
 					//注意事项

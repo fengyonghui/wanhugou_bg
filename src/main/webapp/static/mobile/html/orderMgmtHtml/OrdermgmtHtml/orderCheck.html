@@ -37,7 +37,7 @@
 			<div class="mui-input-row">
 				<label>调整金额：</label>
 				<input type="text" class="mui-input-clear" id="staAdjustmentMoney">
-				<button id="changePriceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">修改</button>
+				<!--<button id="changePriceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">修改</button>-->
 			</div>
 			<div class="mui-input-row">
 				<label>增值服务费：</label>
@@ -119,25 +119,21 @@
 			</div>
 			<div class="mui-input-row">
 				<label>备注：</label>
-				<textarea id="staPoRemark" name="" rows="" cols="" disabled></textarea>
+				<textarea id="staPoRemark" class="staPoRemark" name="" rows="" cols="">
+				</textarea>
+				<button id="addRemarkBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">增加</button>
 			</div>
 			<div class="mui-input-row">
 				<div class="labelLf">状态流程：</div>
-				<ul class="flowPath" id="staStatusMenu">
-					
-				</ul>
+				<ul class="flowPath" id="staStatusMenu"></ul>									
 			</div>
 			<div class="mui-input-row">
 				<div class="labelLf">审核流程：</div>
-				<ul class="" id="staCheckMenu">
-					
-				</ul>
+				<ul class="" id="staCheckMenu"></ul>
 			</div>
 			<div class="mui-input-row staCommodity">
 				<div class="labelLf">商品信息：</div>
-				<ul id="staCheckCommodity" class="mui-table-view app_pl10">
-					
-				</ul>
+				<ul id="staCheckCommodity" class="mui-table-view app_pl10"></ul>				
 			</div>
 			<!--<div class="mui-input-row app_bline" id="orderTypebox">
 				<label>供货方式：</label>
