@@ -127,8 +127,6 @@
 		                },
 		                dataType: "json",
 		                success: function(res){
-//		                	console.log(res)
-//		                	console.log(item.bizStatus)
 		                	$.each(res,function(i,itemaa){
 		                		 if(itemaa.value==item.bizStatus){
 		                		 	  statusTxt = itemaa.label 
@@ -136,9 +134,9 @@
 		                	})
 		                	$('#staStatus').val(statusTxt);
 						}
-					})
-					var total = item.totalDetail+item.totalExp+item.freight
-					if(total > item.receiveTotal && item.bizStatus!=10 && item.bizStatus!=35 && item.bizStatus!=40 && item.bizStatus!=45 && item.bizStatus!=60) {
+					})      
+					var total = item.totalDetail+item.totalExp+item.freight;
+					if(total > (item.receiveTotal+item.scoreMoney) && item.bizStatus!=10 && item.bizStatus!=35 && item.bizStatus!=40 && item.bizStatus!=45 && item.bizStatus!=60) {
 						$('#staFinal').val("(有尾款)");
 					}
 					//注意事项
@@ -175,12 +173,28 @@
                 data: {vendorId:supplierId},		                
                 dataType: "json",
                 success: function(rest){
-//              	console.log(rest)
+                	console.log(rest)
                 	if(rest){
-                		$('#insupplier').val(rest.vendName);//供应商
-						$('#insupplierNum').val(rest.cardNumber);//供应商卡号
-						$('#insupplierMoney').val(rest.payee);//供应商收款人
-						$('#insupplierBank').val(rest.bankName);//供应商开户行
+                		if(rest.vendName){
+                			$('#insupplier').val(rest.vendName);//供应商
+                		}else{
+                			$('#insupplier').parent().hide();//供应商
+                		}
+                		if(rest.cardNumber){
+                			$('#insupplierNum').val(rest.cardNumber);//供应商卡号
+                		}else{
+                			$('#insupplierNum').parent().hide();//供应商卡号
+                		}
+						if(rest.payee){
+                			$('#insupplierMoney').val(rest.payee);//供应商收款人
+                		}else{
+                			$('#insupplierMoney').parent().hide();//供应商收款人
+                		}
+						if(rest.bankName){
+                			$('#insupplierBank').val(rest.bankName);//供应商开户行
+                		}else{
+                			$('#insupplierBank').parent().hide();//供应商收款人
+                		}						
 						//供应商合同
 						if(rest.compactImgList != undefined){
 							$.each(rest.compactImgList,function (m, n) {
@@ -207,7 +221,7 @@
                 	}
 				}
 			});
-		},
+		}, 
 		//排产信息接口
 		scheduling:function(idval){
 			var _this = this;			
@@ -329,23 +343,23 @@
 									'</div>'+
 								'</div>'+
 							'</li>'	+
-							'<div class="mui-row app_bline2 app_bline4">'+
-								'<div class="mui-row mui-col-xs-6 ">'+
-										'<label class="app_pr0 app_f13">总申报数量：</label>'+
-										'<input type="text" class="mui-input-clear" value="'+v.ordQty+'" disabled>'+
-								'</div>'+
-								'<div class="mui-row mui-col-xs-6 ">'+
-										'<label class="app_pr0 app_f13">待排产量：</label>'+
-										'<input type="text" class="mui-input-clear" value="" disabled>'+
-								'</div>'+
-								'<div class="mui-row mui-col-xs-6 ">'+
-										'<label class="app_pr0 app_f13">已排产数量：</label>'+
-										'<input type="text" class="mui-input-clear" value="" disabled>'+
-								'</div>'+
-								'<div class="mui-row mui-col-xs-6 ">'+
-										'<label class="app_pr0 app_f13" id="scolor"> 已排产完成</label>'+
-								'</div>'+
-							'</div>'+
+//							'<div class="mui-row app_bline2 app_bline4">'+
+//								'<div class="mui-row mui-col-xs-6 ">'+
+//										'<label class="app_pr0 app_f13">总申报数量：</label>'+
+//										'<input type="text" class="mui-input-clear" value="'+v.ordQty+'" disabled>'+
+//								'</div>'+
+//								'<div class="mui-row mui-col-xs-6 ">'+
+//										'<label class="app_pr0 app_f13">待排产量：</label>'+
+//										'<input type="text" class="mui-input-clear" value="" disabled>'+
+//								'</div>'+
+//								'<div class="mui-row mui-col-xs-6 ">'+
+//										'<label class="app_pr0 app_f13">已排产数量：</label>'+
+//										'<input type="text" class="mui-input-clear" value="" disabled>'+
+//								'</div>'+
+//								'<div class="mui-row mui-col-xs-6 ">'+
+//										'<label class="app_pr0 app_f13" id="scolor"> 已排产完成</label>'+
+//								'</div>'+
+//							'</div>'+
 							'<div class="mui-row app_bline2">'+
 								'<label class="app_pr0 app_f13">排产记录:</label>'+
 								'<ul id="schedulingHeaders" class="schedulingHeaders mui-table-view app_fr app_w70p">'+_this.eachCompletePaln(v)+'</ul>'+
@@ -472,7 +486,9 @@
 					'</li>'
 					}
 				});
-				$("#staCheckMenu").html(CheckHtmlList)
+				$("#staCheckMenu").html(CheckHtmlList);
+			}else{
+				$("#staCheckMenu").parent().hide();
 			}
 		},
 		commodityHtml: function(data) {

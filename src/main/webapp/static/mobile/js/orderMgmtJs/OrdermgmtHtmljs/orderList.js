@@ -285,13 +285,13 @@
 											'<div class="ordAmendBtn"  staOrdId="'+ item.id +'">' +
 												staAmendTxt +
 											'</div>'+
-											'<div class="ordDeleteBtn"  staOrdId="'+ item.id +'">' +
+											'<div class="ordDeleteBtn"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staDeleteTxt +
 											'</div>'+
 											'<div class="ordDetailBtn" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staDetailBtnTxt +
 											'</div>'+
-											'<div class="ordRecoveryBtn" staOrdId="'+ item.id +'">' +
+											'<div class="ordRecoveryBtn" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staRecoveryBtnTxt +
 											'</div>'+
 										'</div>' +
@@ -426,7 +426,7 @@
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
 					GHUTILS.OPENPAGE({
-						url: "../../../html/staffMgmtHtml/orderHtml/staOrdCheck.html",
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderCheck.html",
 						extras: {
 							staOrdId: staOrdId,
 							flagTxt: flagTxt,
@@ -467,6 +467,79 @@
 							orderDetails:orderDetail,
 							statu:statu,
 							source:source,
+						}
+					})
+				}
+			}),
+			//删除
+			$('.content_part').on('tap', '.ordDeleteBtn', function() {
+				var url = $(this).attr('url');
+				var staOrdId = $(this).attr('staOrdId');
+//				console.log(staOrdId)
+				var statu=$(this).attr('ordstatu');
+				var source=$(this).attr('ordsource');
+				
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(staOrdId == staOrdId) {
+                    var btnArray = ['取消', '确定'];
+					mui.confirm('您确认删除该订单吗？', '系统提示！', btnArray, function(choice) {
+						if(choice.index == 1) {
+							$.ajax({
+				                type: "GET",
+				                url: "/a/biz/order/bizOrderHeader/delete4Mobile",
+				                data: {id:staOrdId,statu:statu,source:source},
+				                dataType: "json",
+				                success: function(res){
+				                	mui.toast('操作成功！')
+				                	window.setTimeout(function(){
+					                    GHUTILS.OPENPAGE({
+											url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+											extras: {
+	//												inListId:inListId,
+											}
+										})
+					                },300);
+				                	
+			                	}
+			            	})
+						}else {
+							
+						}
+					})
+				}
+			}),
+			//恢复
+			$('.content_part').on('tap', '.ordRecoveryBtn', function() {
+				var url = $(this).attr('url');
+				var staOrdId = $(this).attr('staOrdId');
+				var statu=$(this).attr('ordstatu');				
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(staOrdId == staOrdId) {
+                    var btnArray = ['取消', '确定'];
+					mui.confirm('您确认恢复该订单吗？', '系统提示！', btnArray, function(choice) {
+						if(choice.index == 1) {
+							$.ajax({
+				                type: "GET",
+				                url: "/a/biz/order/bizOrderHeader/recovery4Mobile",
+				                data: {id:staOrdId,statu:statu},
+				                dataType: "json",
+				                success: function(res){
+				                	mui.toast('操作成功！')
+				                	window.setTimeout(function(){
+					                    GHUTILS.OPENPAGE({
+											url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+											extras: {
+	//												inListId:inListId,
+											}
+										})
+					                },300);
+				                	
+			                	}
+			            	})
+						}else {
+							
 						}
 					})
 				}
