@@ -1136,13 +1136,13 @@
 					'<div class="mui-row app_f13 app_bline">'+
 						'<div class="mui-input-row">'+
 							'<label>总申报数量：</label>'+
-							'<input type="text" value="'+ item.reqQty +'" id="totalOrdQtyForSku_'+ item.skuInfo.id+'" class="commdOrdQty"></div>'+
+							'<input type="text" value="'+ item.reqQty +'" id="totalOrdQtyForSku_'+ item.skuInfo.id+'" class="commdOrdQty" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>总待排产量：</label>'+
-							'<input type="text" value="'+ waiteNum +'" class="commdWaiteNum"></div>'+	
+							'<input type="text" value="'+ waiteNum +'" class="commdWaiteNum" disabled></div>'+	
 						'<div class="mui-input-row">'+
 							'<label>已排产数量：</label>'+
-							'<input type="text" name="toalSchedulingNumForSku" value="'+ item.sumCompleteNum +'" class="commdCompleteNum"></div>'+
+							'<input type="text" name="toalSchedulingNumForSku" value="'+ item.sumCompleteNum +'" class="commdCompleteNum" disabled></div>'+
 						'<button type="submit" class="commdAddBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
 						'<div classs="app_bline"></div>'+
 					'<div class="mui-row comdPlan">'+
