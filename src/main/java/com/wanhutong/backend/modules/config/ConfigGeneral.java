@@ -81,7 +81,9 @@ public abstract class ConfigGeneral {
 			"DoOrderHeaderProcessFifthConfig.xml",new DoOrderHeaderProcessFifthConfig());
 
 
+	//测试环境
 	public static final String TESTURI= "http://wuliu.guojingec.com:8081/test/";
+    //生产环境
 	public static final String PRODUCEURI= "http://wuliu.guojingec.com:8080/wuliu/";
 
 	public static final String GET_START_AND_STOP_POINT_CODE_WHT = "order/logistic/get_start_and_stop_point_code_WHT";

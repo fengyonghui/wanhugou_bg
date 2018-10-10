@@ -466,7 +466,7 @@
 		WHERE
 			  cl.id = a.addr_id
 			  AND a.office_id  = #{officeId}
-			  AND a.type = 2
+			  AND a.type = #{type}
 			  AND a.default_status = true
 			  AND a.STATUS = 1
 			  AND cl.STATUS = 1

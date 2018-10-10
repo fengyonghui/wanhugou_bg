@@ -50,6 +50,6 @@ public interface BizRequestHeaderForVendorDao extends CrudDao<BizRequestHeader> 
      */
     void updateSchedulingType(BizRequestHeader requestHeader);
 
-    List<AddressVoEntity> findOfficeRegion(@Param("officeId") Integer officeId);
+    List<AddressVoEntity> findOfficeRegion(@Param("officeId") Integer officeId, @Param("type") Integer type);
 
 }

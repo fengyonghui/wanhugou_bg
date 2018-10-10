@@ -336,6 +336,8 @@
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
 		si.item_no AS "orderDetailList.skuInfo.itemNo",
 		pi.vendor_name AS "orderDetailList.vendor.name",
+		bol.logistics_lines_code AS "bizOrderLogisticsList.logisticsLinesCode",
+		bol.stop_point_code AS "bizOrderLogisticsList.stopPointCode",
 		(SELECT SUM(bod.suply_id)
 		FROM biz_order_detail bod
 		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id

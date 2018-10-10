@@ -208,6 +208,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 //        List<BizRequestHeader> requestHeaderList = bizInvoice.getRequestHeaderList();
         if (StringUtils.isNotBlank(orderHeaders)) {
             Integer ordId = 0;
+            String  orderNum = null;
             String[] orders = orderHeaders.split(",");
             for (int a = 0; a < orders.length; a++) {
                 boolean ordFlag = true;
@@ -221,16 +222,28 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     bizDetailInvoiceService.save(bizDetailInvoice);
                 }
                 ordId = orderHeader.getId();
+                orderNum = orderHeader.getOrderNum();
 
                 int goodsquantity = 0;
+                String receivername = null;
                 String receiverphone = null;
+                String receiverdetailedaddress = null;
+                String logisticsOrderCode = bizInvoice.getTrackingNumber();
+                String sentGoodsCode = bizInvoice.getSendNumber();
 
                 List<BizOrderDetail> bizOrderDetailList = bizOrderDetailService.findOrderDetailList(bizInvoice.getId());
                 if (CollectionUtils.isNotEmpty(bizOrderDetailList)) {
                     BizOrderDetail orderDetail = bizOrderDetailList.get(0);
                     Office cust = orderDetail.getCust();
                     if (cust != null) {
+                        receivername = cust.getName();
                         receiverphone = cust.getPhone();
+                        Integer custId = cust.getId();
+                        List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOfficeRegion(custId, 1);
+                        if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
+                            AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
+                            receiverdetailedaddress = addressVoEntity.getAddress();
+                        }
                     }
                 }
 
@@ -447,7 +460,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
                 String creOrdLogistics = bizInvoice.getCreOrdLogistics();
                 if ("yes".equals(creOrdLogistics)) {
-                    this.creOrdLogisticsForOrder(ordId, receiverphone, goodsquantity);
+                    this.creOrdLogisticsForOrder(ordId, orderNum, receivername,receiverphone, receiverdetailedaddress, goodsquantity, logisticsOrderCode, sentGoodsCode);
                 }
             }
             if ("new".equals(bizInvoice.getSource())) {
@@ -463,16 +476,28 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         if (StringUtils.isNotBlank(requestHeaders)) {
             boolean reqFlag = true;
             Integer reqId = 0;
+            String reqNo = null;
             String[] requests = requestHeaders.split(",".trim());
             for (int b = 0; b < requests.length; b++) {
                 String[] rheaders = requests[b].split("#".trim());
                 BizRequestHeader requestHeader = bizRequestHeaderService.get(Integer.parseInt(rheaders[0]));
                 Office fromOffice = requestHeader.getFromOffice();
                 Integer officeId = null;
+                String receivername = null;
                 String receiverphone = null;
+                String receiverdetailedaddress = null;
+                String logisticsOrderCode = bizInvoice.getTrackingNumber();
+                String sentGoodsCode = bizInvoice.getSendNumber();
                 if (fromOffice != null) {
                     officeId = fromOffice.getId();
+                    receivername = fromOffice.getName();
                     receiverphone = fromOffice.getPhone();
+
+                    List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOfficeRegion(officeId, 2);
+                    if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
+                        AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
+                        receiverdetailedaddress = addressVoEntity.getAddress();
+                    }
                 }
                 //加入中间表关联关系
                 if ((BizInvoice.IsConfirm.NO.getIsConfirm().equals(bizInvoice.getIsConfirm()) || "new".equals(bizInvoice.getSource())) && !reqId.equals(requestHeader.getId())) {
@@ -482,6 +507,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     bizDetailInvoiceService.save(bizDetailInvoice);
                 }
                 reqId = requestHeader.getId();
+                reqNo = requestHeader.getReqNo();
 
                 int goodsquantity = 0;
 
@@ -620,7 +646,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
                 String creOrdLogistics = bizInvoice.getCreOrdLogistics();
                 if ("yes".equals(creOrdLogistics)) {
-                    this.creOrdLogisticsForReqHeader(reqId, receiverphone, goodsquantity, officeId, varietyParamsList);
+                    this.creOrdLogisticsForReqHeader(reqId, reqNo, receivername,receiverphone, receiverdetailedaddress, goodsquantity, officeId, varietyParamsList, logisticsOrderCode, sentGoodsCode);
                 }
             }
             if ("new".equals(bizInvoice.getSource())) {
@@ -633,10 +659,18 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         }
     }
 
-    public void creOrdLogisticsForOrder(Integer orderCode, String receiverphone, Integer goodsquantity) {
+    public void creOrdLogisticsForOrder(Integer orderCode, String orderNum, String receivername, String receiverphone,
+                                        String receiverdetailedaddress, Integer goodsquantity, String logisticsOrderCode, String sentGoodsCode) {
 
-        BizOrderHeader orderHeader = bizOrderHeaderService.get(orderCode);
-        List<BizOrderLogistics> orderLogisticsList = orderHeader.getBizOrderLogisticsList();
+        List<BizOrderLogistics> orderLogisticsList = new ArrayList<BizOrderLogistics>();
+        BizOrderHeader orderHeader = new BizOrderHeader();
+        orderHeader.setId(orderCode);
+        List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(orderHeader);
+        if (CollectionUtils.isNotEmpty(orderHeaderList)) {
+            orderHeader = orderHeaderList.get(0);
+            orderLogisticsList = orderHeader.getBizOrderLogisticsList();
+        }
+
         String logisticsLinesCode = null;
         String stopPointCode = null;
         if (CollectionUtils.isNotEmpty(orderLogisticsList)) {
@@ -662,7 +696,10 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
         //物流运单生成
         ThreadPoolManager.getDefaultThreadPool().execute(() -> {
-            String postUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
+            //测试环境
+            String postUrl = ConfigGeneral.TESTURI + ConfigGeneral.ADD_ORDER_WHT;
+            //开发环境
+            //String postUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
             LOGISTICS_LOGGER.info("订单物流postUrl=================" + postUrl);
             CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
             HttpPost httpPost = new HttpPost(postUrl);
@@ -670,13 +707,19 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             String result = null;
             try {
                 HashMap<String, Object> map = Maps.newHashMap();
-                map.put("orderCode", orderCode);
+                map.put("orderCode", orderNum);
                 map.put("linecode", linecode);
                 map.put("linepointcode", linepointcode);
                 map.put("creator", creator);
-                map.put("senderphone", senderphone);
+                map.put("sendername", "北京万户通");
+                map.put("senderphone", "15383129116");
+                //map.put("senderphone", senderphone);
+                map.put("receivername", receivername);
                 map.put("receiverphone", receiverphone);
+                map.put("receiverdetailedaddress", receiverdetailedaddress);
                 map.put("goodsquantity", goodsquantity);
+                map.put("logisticsOrderCode", logisticsOrderCode);
+                map.put("sentGoodsCode", sentGoodsCode);
 
                 httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
                 httpPost.setHeader("Accept", "application/json");
@@ -704,8 +747,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
     }
 
 
-    public void creOrdLogisticsForReqHeader(Integer orderCode, String receiverphone, Integer goodsquantity, Integer officeId, List<VarietyInfoIdSParams> varietyInfoIdSParams) {
-        List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOfficeRegion(officeId);
+    public void creOrdLogisticsForReqHeader(Integer orderCode, String reqNo, String receivername, String receiverphone, String receiverdetailedaddress,
+                                            Integer goodsquantity, Integer officeId, List<VarietyInfoIdSParams> varietyInfoIdSParams, String logisticsOrderCode, String sentGoodsCode) {
+        List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOfficeRegion(officeId, 2);
         if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
             AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
 
@@ -736,8 +780,13 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
                 //物流运单生成
                 ThreadPoolManager.getDefaultThreadPool().execute(() -> {
-                    String reginUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.GET_START_AND_STOP_POINT_CODE_WHT;
-                    String createLogisticUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
+                    //测试环境
+                    String reginUrl = ConfigGeneral.TESTURI + ConfigGeneral.GET_START_AND_STOP_POINT_CODE_WHT;
+                    String createLogisticUrl = ConfigGeneral.TESTURI + ConfigGeneral.ADD_ORDER_WHT;
+                    //开发环境
+                    //String reginUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.GET_START_AND_STOP_POINT_CODE_WHT;
+                    //String createLogisticUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
+
 
                     LOGISTICS_LOGGER.info("订单物流reginUrl=================" + reginUrl);
                     LOGISTICS_LOGGER.info("订单物流createLogisticUrl=================" + createLogisticUrl);
@@ -782,15 +831,21 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             String senderphone = senderphoneTemp;
 
                             HashMap<String, Object> paramMap = Maps.newHashMap();
-                            paramMap.put("orderCode", orderCode);
+                            paramMap.put("orderCode", reqNo);
                             paramMap.put("linecode", linecode);
                             paramMap.put("linepointcode", linepointcode);
                             paramMap.put("creator", creator);
-                            paramMap.put("senderphone", senderphone);
+                            paramMap.put("sendername", "北京万户通");
+                            paramMap.put("senderphone", "15383129116");
+                            //paramMap.put("senderphone", senderphone);
+                            paramMap.put("receivername", receivername);
                             paramMap.put("receiverphone", receiverphone);
+                            paramMap.put("receiverdetailedaddress", receiverdetailedaddress);
                             paramMap.put("goodsquantity", goodsquantity);
+                            paramMap.put("logisticsOrderCode", logisticsOrderCode);
+                            paramMap.put("sentGoodsCode", sentGoodsCode);
 
-                            String jsonstrParam = JSONObject.fromObject(map).toString();
+                            String jsonstrParam = JSONObject.fromObject(paramMap).toString();
                             httpPost.setEntity(new StringEntity(jsonstrParam, Charset.forName("UTF-8")));
 
                             httpResponse = httpClient.execute(httpPost);
