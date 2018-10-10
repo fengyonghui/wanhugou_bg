@@ -29,9 +29,7 @@
 			        up:{
 			            contentnomore:'没 有 更 多 数 据 了',
 			            callback:function(){			            	
-//			                window.setTimeout(function(){
-			                    getData(pager);
-//			                },500);
+	                    	getData(pager);
 			            }
 			         },
 			        down : {
@@ -166,7 +164,6 @@
 						totalPage = res.data.page.count%pager.size!=0?
 		                parseInt(res.data.page.count/pager.size)+1:
 		                res.data.page.count/pager.size;
-//		                console.log(totalPage)
 		                if(totalPage==pager.pageNo){
 			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 			            }else{
@@ -175,7 +172,6 @@
 			            }
 			        },
 		            error:function(xhr,type,errorThrown){
-//			            console.log(type);
 		            }
 		        })
 		    }
@@ -232,7 +228,6 @@
 				if(consultantIda) {
 					stcheckIdTxt = consultantIda
 				}
-//				console.log(staListIdTxts)
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {

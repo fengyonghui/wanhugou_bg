@@ -109,7 +109,6 @@
                 data: {id:ids,str:strs},
                 dataType: "json",
                 success: function(res){
-//              	console.log(strs)
                 	//支付申请
                 	var strTxt = res.data.bizRequestHeader.str;
                 	var payMentCont = '';
@@ -129,7 +128,6 @@
 	                	var officeId = res.data.bizRequestHeader.bizVendInfo.office.id;
 	                	$('#inSta').val(officeId);
 	                	$('#insupplier').attr('officeId',$('#inSta').val());
-//	                	console.log($('#inSta').val())
 	                	_this.supplier($('#inSta').val());
                 	}else{
 						$('#insupplierNum').parent().hide();//供应商卡号
@@ -151,8 +149,6 @@
                     $('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);//采购中心
                     $('#inPototal').val(res.data.bizRequestHeader.totalMoney);
                     $('#inPoRemark').val(res.data.bizRequestHeader.remark);//备注
-//                  $('#inMoneyReceive').val();
-//                  $('#inMarginLevel').val();
                     var dataValue =_this.newData(res.data.bizRequestHeader.recvEta);
                     $('#inPoLastDa').val(dataValue);//收货时间  
                   
@@ -166,7 +162,6 @@
                     //排产状态
 				    if(res.data.bizRequestHeader.bizPoHeader){
 				    	var itempoSchType=res.data.bizRequestHeader.bizPoHeader.poSchType;
-//					    console.log(itempoSchType)
 					    var SchedulstatusTxt = '';
 					    $.ajax({
 			                type: "GET",
@@ -174,7 +169,6 @@
 			                data: {type:"poSchType"},		                
 			                dataType: "json",
 			                success: function(reslt){
-//			                	console.log(reslt)
 			                	$.each(reslt,function(i,item){
 			                		if(item.value==itempoSchType){
 			                		 	SchedulstatusTxt = item.label 
@@ -199,7 +193,6 @@
                     //排产信息
 					if(res.data.bizRequestHeader.str=='detail'){
 						var poheaderId = res.data.bizRequestHeader.bizPoHeader.id;
-//						console.log(poheaderId)
 		                if (poheaderId == null || poheaderId == "") {
 		                    $("#inSchedultype").val("未排产")
 		                }
@@ -264,7 +257,6 @@
                }
                 else{
                	    //保存之后以及初始化反填数据申报数量的修改
-//             	    console.log('修改哈哈')
            	        var skuInfoId='';
 	                var reqQty='';
 	                var dos=$("#commodityMenu .skuinfo_check");
@@ -284,8 +276,6 @@
                }    
                 _this.reqDetailIds = _this.reqDetailIds.substring(0,(_this.reqDetailIds.lastIndexOf(",")));
                 _this.LineNos = _this.LineNos.substring(0,(_this.LineNos.lastIndexOf(",")));
-//              console.log(_this.reqDetailIds);
-//              console.log(_this.LineNos);
                 var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
                 var inPoRemarkVal = $("#inPoRemark").val(); //备注
                 var bizStatusVal = $("#inputDivAmend")[0].value; //业务状态
@@ -326,8 +316,6 @@
 		                }
                 	} 
                 }
-//              console.log(_this.fromOfficeId);
-//              console.log(_this.bizOfficeId);
                 $.ajax({
                     type: "post", 
                     url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
@@ -342,15 +330,9 @@
                     	"LineNos":_this.LineNos, //行号
                     	"fromType": localOriginType,  //备货方
                     	"fromOffice.id": _this.fromOfficeId //采购中心 id
-//                  	'fromOffice.name': $('#inOrordNum').val(),//采购中心名称
-//                  	'fromOffice.type': _this.fromOfficeType,//采购中心机构类型
-//                  	'bizVendInfo.office.id ': _this.bizOfficeId //供应商 id
-//                  	'bizVendInfo.office.name': _this.bizOfficeName,//供应商名称
-//                  	'bizVendInfo.office.type': _this.bizOfficeType,//供应商所在机构类型
                     },
                     dataType: 'json',
                     success: function (resule) {
-//                  	console.log(resule)
                         if (resule == true) {
                             mui.toast("保存备货单成功！");
                             window.setTimeout(function(){
@@ -393,16 +375,13 @@
 				                    },
 				                    dataType: 'json',
 				                    success: function (resule) {
-//				                    	console.log(resule)
 				                        if (resule == true) {
 				                            mui.toast("本次申请付款成功！");
-				//                          window.setTimeout(function(){
 				                          	GHUTILS.OPENPAGE({
-					                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
-					                                extras: {
-					                                }
-					                            })
-				//                          },500)                            
+				                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+				                                extras: {
+				                                }
+				                            })
 				                        }
 				                    }
 				                })
@@ -431,9 +410,6 @@
 						mui.prompt('请输入开启理由：', '开启理由', '', btnArray, function(a) {
 							if(a.index == 1) {
 								var inText = a.value;
-//								console.log(id)
-//								console.log(inText)
-//								console.log(prew)
 								if(a.value == '') {
 									mui.toast('开启理由不能为空！')
 									return;
@@ -449,16 +425,13 @@
 					                    },
 					                    dataType: 'json',
 					                    success: function (result) {
-//					                    	console.log(result)
 					                        if (result.ret == true || result.ret == 'true') {
 					                            mui.toast("开启审核成功！");
-					//                          window.setTimeout(function(){
 					                          	GHUTILS.OPENPAGE({
-						                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
-						                                extras: {
-						                                }
-						                            })
-					//                          },500)                            
+					                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+					                                extras: {
+					                                }
+					                            })
 					                        }
 					                    }
 					                })
@@ -683,7 +656,6 @@
                 data: {vendorId:supplierId},		                
                 dataType: "json",
                 success: function(rest){
-//              	console.log(rest);               	
                 	if(rest){
                 		$('#inSta').val(rest.office.id);
                 		$('#insupplier').attr('officeid',rest.office.id);
@@ -747,8 +719,6 @@
                 data: {id:idval},
                 dataType: "json",
                 success: function(res){
-//              	console.log('---')
-//              	console.log(res.data);
                 	if (res.data.detailHeaderFlg != true && res.data.detailSchedulingFlg != true) {
                         $("#inSchedultype").val("未排产");
                     }
@@ -767,17 +737,14 @@
         paylistHtml:function(data){
         	var _this = this;
         	var htmlPaylist = '';
-//      	console.log(data)
         	if(data.paymentOrderList != null && data.paymentOrderList.length > 0){
         		$.each(data.paymentOrderList, function(i, item) {
-//					console.log(item);
 					if(item.payTime){
 						var realitypayTime="";
 						var realitypayTime=_this.formatDateTime(item.payTime);
 					}else{
 						var realitypayTime="";
 					}
-//					console.log(realitypayTime)
 					htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
 						'<div class="mui-media-body">'+
 							'<div class="mui-input-row">'+
@@ -837,9 +804,7 @@
 			if(data.bizRequestHeader.commonProcessList) {
 				var CheckHtmlList ='';
 				$.each(data.bizRequestHeader.commonProcessList, function(i, item) {
-//					console.log(item)
 					var auditLen = data.bizRequestHeader.commonProcessList.length;
-//					console.log(auditLen-1)
 					var step = i + 1;
 					if(i!=auditLen-1) {
 						CheckHtmlList +='<li class="step_item">'+
@@ -872,10 +837,7 @@
 				});
 				if(data.bizRequestHeader.bizPoHeader!=""){
 					$.each(data.bizRequestHeader.bizPoHeader.commonProcessList, function(a, items) {
-//						console.log(items)
 						var len = data.bizRequestHeader.bizPoHeader.commonProcessList.length;
-//						console.log(len)
-//						console.log(auditLen)
 						var totalStep = auditLen + a;
                         if(a==0&&len>1){
                         	CheckHtmlList +='<li class="step_item">'+
@@ -930,13 +892,10 @@
             var _this = this;
             var htmlCommodity = '';
             $.each(data.reqDetailList, function(i, item) {
-//          	console.log(item)
                 _this.skuInfoIds_1 += item.skuInfo.id + ","
                 _this.reqQtys_1 += item.reqQty + ","
                 _this.reqDetailIds += item.id + ","
                 _this.LineNos += item.lineNo + ","
-//              console.log(_this.reqDetailIds)
-//              console.log(_this.LineNos)
                 htmlCommodity +=                
                 '<div class="mui-row app_bline" id="' + item.id + '">' +
                 	'<input style="display:none;" name="" class="skuinfo_check" id="' + item.skuInfo.id + '" type="checkbox">' +
@@ -1069,14 +1028,11 @@
                     data: {'productInfo.office.id': $('#inSta').val(),itemNo: itemNo},
                     success: function (result) { 
                     	var datas = JSON.parse(result).data;                                          		
-//                  	console.log('修改查询数据');  
-//                  	console.log(datas)
 	                        $("#searchInfo").empty();
 	                        if($.isEmptyObject(datas)){
 	                        	mui.toast("此供应商下没有此类商品！");
 	                        }else{
 	                        $.each(datas,function (keys,skuInfoList) {
-//	                        	console.log(datas);
 	                            var prodKeys= keys.split(",");
 	                            var prodId= prodKeys[0];
 	                            var prodUrl= prodKeys[2];
@@ -1084,7 +1040,6 @@
 	                            var resultListHtml="";
 	                            var t=0;
 	                            $.each(skuInfoList,function (index,skuInfo) {
-//	                                console.log(skuInfo)
 	                                if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
 	                                    return;
 	                                }
@@ -1198,7 +1153,6 @@
                             cheDiv.append(resultHtml)
                         $("#commodityMenu").append($(cheDiv))
                         _this.skuInfoIds_2 += cheId + ",";
-//                      console.log(_this.skuInfoIds_2)
                     }
                 })
             });
