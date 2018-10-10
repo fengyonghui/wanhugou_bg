@@ -84,11 +84,11 @@
 					var RemarkHtml="";
 					$.each(res.data.commentList, function(q, w) {
 						console.log(w)						
-						RemarkHtml +='<div class="step_item">'+
+						RemarkHtml +='<div class="">'+
 						    w.comments
                             +
 					    '</div>'
-						$('#staPoRemark').append(RemarkHtml);//备注
+						$('#staPoRemark').html(RemarkHtml);//备注
 					})
 					//订单id
 					$('#ordId').val(_this.userInfo.staOrdId);					
