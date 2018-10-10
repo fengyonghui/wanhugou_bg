@@ -118,7 +118,9 @@
 								}
                                 //tr_tds+= "<td><a href="+ "'${ctx}/sys/office/supplierForm?id=" + skuInfo.productInfo.office.id + "&gysFlag=onlySelect'>"+ skuInfo.productInfo.office.name + "</a></td>";
                                 tr_tds+= "<td>"+ skuInfo.productInfo.office.name + "</td>";
-                                tr_tds+= "<td>" + skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
+                                tr_tds+= "<td>" + skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td>" +
+									// "<td>"+skuInfo.buyPrice+"</td>" +
+									"<td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
 								if(flag){
 
                                     tr_tds+= "<td id='td_"+prodId+"' rowspan='"+skuInfoList.length+"'>" +
@@ -207,7 +209,7 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
-                            poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
                         }
@@ -254,7 +256,7 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
-                            poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
 
@@ -1238,7 +1240,7 @@
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<th>结算价</th>
+					<%--<th>结算价</th>--%>
 					<th>申报数量</th>
 
 					<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
@@ -1273,9 +1275,9 @@
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
-							<td style="white-space: nowrap">
-									${reqDetail.unitPrice}
-							</td>
+							<%--<td style="white-space: nowrap">--%>
+									<%--${reqDetail.unitPrice}--%>
+							<%--</td>--%>
 							<td>
 								<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
 								<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
@@ -1333,7 +1335,7 @@
 						<th>商品编码</th>
 						<th>商品货号</th>
 						<%--<th>商品属性</th>--%>
-						<th>结算价</th>
+						<%--<th>结算价</th>--%>
 							<%--<th>商品类型</th>--%>
 						<th>申报数量</th>
 							<%--<th>已收货数量</th>--%>
@@ -1392,7 +1394,7 @@
 							<th>商品编码</th>
 							<th>商品货号</th>
 								<%--<th>商品属性</th>--%>
-							<th>结算价</th>
+							<%--<th>结算价</th>--%>
 								<%--<th>商品类型</th>--%>
 							<th>申报数量</th>
 								<%--<th>已收货数量</th>--%>
@@ -1538,7 +1540,7 @@
 							<th>商品名称</th>
 							<th>商品货号</th>
 							<th>采购数量</th>
-							<th>结算价</th>
+							<%--<th>结算价</th>--%>
 							<th>总金额</th>
 						</tr>
 						</thead>
@@ -1583,7 +1585,7 @@
 							<th>商品名称</th>
 							<th>商品货号</th>
 							<th>采购数量</th>
-							<th>结算价</th>
+							<%--<th>结算价</th>--%>
 							<th>总金额</th>
 						</tr>
 						</thead>
@@ -1787,7 +1789,7 @@
 							<th>商品名称</th>
 							<th>商品编码</th>
 							<th>商品货号</th>
-							<th>结算价</th>
+							<%--<th>结算价</th>--%>
 							<th>申报数量</th>
 						</tr>
 						</thead>
@@ -1802,9 +1804,9 @@
 									<td>${reqDetail.skuInfo.name}</td>
 									<td>${reqDetail.skuInfo.partNo}</td>
 									<td>${reqDetail.skuInfo.itemNo}</td>
-									<td style="white-space: nowrap">
-											${reqDetail.unitPrice}
-									</td>
+									<%--<td style="white-space: nowrap">--%>
+											<%--${reqDetail.unitPrice}--%>
+									<%--</td>--%>
 									<td>
 										<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
 										<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
@@ -1885,7 +1887,7 @@
 							<th>商品名称</th>
 							<th>商品编码</th>
 							<th>商品货号</th>
-							<th>结算价</th>
+							<%--<th>结算价</th>--%>
 							<th>申报数量</th>
 						</tr>
 						</thead>
@@ -1900,9 +1902,9 @@
 									<td>${reqDetail.skuInfo.name}</td>
 									<td>${reqDetail.skuInfo.partNo}</td>
 									<td>${reqDetail.skuInfo.itemNo}</td>
-									<td style="white-space: nowrap">
-											${reqDetail.unitPrice}
-									</td>
+									<%--<td style="white-space: nowrap">--%>
+											<%--${reqDetail.unitPrice}--%>
+									<%--</td>--%>
 									<td>
 										<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
 										<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
