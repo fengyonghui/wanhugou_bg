@@ -88,7 +88,7 @@
 							}
 						}
 					}
-					//备货单审核
+//修改：------		//备货单审核
 					if(_this.inLastPayDateFlag == true) {
 						if(res.data.bizRequestHeader.str== 'audit') {
 							if(res.data.bizRequestHeader.commonProcess.type != res.data.autProcessId && res.data.bizRequestHeader.processPo != 'processPo') {
@@ -292,7 +292,6 @@
 						$('#insuppliercontract').parent().hide();//供应商合同
 					    $('#insuppliercardID').parent().hide();//供应商身份证
 					}
-
 				}
 			});
 		},
@@ -674,8 +673,6 @@
 		},
 		comfirDialig: function(res) {
 			var _this = this;
-//			alert('方法')
-//			console.log(res)
 			document.getElementById("inRejectBtn").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
@@ -730,14 +727,10 @@
 			});
 		},
 		afterAjaxData: function(inText, num, dm) {
-			alert('afterAjaxData')
 			var _this = this;
 			var schedulingType = $("input[name='schedulType']:checked").val();
-            console.log(_this.poId)
-            console.log(schedulingType)
             if (schedulingType == 0) {
             	var purchNums = $('#purchNum').val();
-            	console.log(purchNums)
             	if(purchNums != undefined) {
             		_this.saveComplete("0", _this.poId);
             	}
@@ -1137,13 +1130,13 @@
 					'<div class="mui-row app_f13 app_bline">'+
 						'<div class="mui-input-row">'+
 							'<label>总申报数量：</label>'+
-							'<input type="text" value="'+ item.reqQty +'" id="totalOrdQtyForSku_'+ item.skuInfo.id+'" class="commdOrdQty"></div>'+
+							'<input type="text" value="'+ item.reqQty +'" id="totalOrdQtyForSku_'+ item.skuInfo.id+'" class="commdOrdQty" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>总待排产量：</label>'+
-							'<input type="text" value="'+ waiteNum +'" class="commdWaiteNum"></div>'+	
+							'<input type="text" value="'+ waiteNum +'" class="commdWaiteNum" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>已排产数量：</label>'+
-							'<input type="text" name="toalSchedulingNumForSku" value="'+ item.sumCompleteNum +'" class="commdCompleteNum"></div>'+
+							'<input type="text" name="toalSchedulingNumForSku" value="'+ item.sumCompleteNum +'" class="commdCompleteNum" disabled></div>'+
 						'<button type="submit" class="commdAddBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
 						'<div classs="app_bline"></div>'+
 					'<div class="mui-row comdPlan">'+
@@ -1177,29 +1170,33 @@
 					'<input type="date" name="" class="addCommdDate"></div>'+
 				'<div class="mui-input-row">'+
 					'<label>排产数量：</label>'+
-					'<input type="text" name="" class="addCommdNum mui-input-clear"></div>'+
+					'<input type="text" class="addCommdNum mui-input-clear"></div>'+
 				'<button type="submit" class="removeBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">删除</button>'+
 			'</div>';
-			$(".schedPurch").on("tap", "#purchAddBtn", function() {
-				$('#purchAddCont').append(htmlPurchPlan);
-			})
-			$(".schedCommd").on("tap", ".commdAddBtn", function() {
-				$(this).parent('.app_f13').find('.commdAddPlan').append(htmlcommdPlan);
-			})
 			var addPurchNum = _this.userInfo.inListId;
-			$('.purchAddCont').attr('name', addPurchNum);
 			$('#purchPlan').attr('name', addPurchNum);
-			$('.addpurchDate').attr('name', addPurchNum + '_date');
-			$('.addpurchNum').attr('name', addPurchNum + '_value');
 			$('#purchDate').attr('name', addPurchNum + '_date');
 			$('#purchNum').attr('name', addPurchNum + '_value');
-			
-			var commdDateName = ($('.commdDate').attr('name'));
-			var commdNumName = ($('.commdNum').attr('name'));
-			var commdPlanName = ($('.commdPlan').attr('name'));
-			$('.addCommdDate').attr('name', commdDateName);
-			$('.addCommdNum').attr('name', commdNumName);
-			$('.commdAddCont').attr('name', commdPlanName);
+
+			$(".schedPurch").on("tap", "#purchAddBtn", function() {
+				$('#purchAddCont').append(htmlPurchPlan);
+				var addPurchNum = _this.userInfo.inListId;
+				$('.purchAddCont').attr('name', addPurchNum);
+				$('.addpurchDate').attr('name', addPurchNum + '_date');
+				$('.addpurchNum').attr('name', addPurchNum + '_value');
+			})
+			var commdDateName = '';
+			var commdNumName = '';
+			var commdPlanName = '';
+			$(".schedCommd").on("tap", ".commdAddBtn", function() {
+				$(this).parent('.app_f13').find('.commdAddPlan').append(htmlcommdPlan);
+				commdPlanName = $(this).parent('.app_f13').find('.commdPlan').attr('name');
+				commdDateName = $(this).parent('.app_f13').find('.commdDate').attr('name');
+				commdNumName = $(this).parent('.app_f13').find('.commdNum').attr('name');
+				$(this).parent('.app_f13').find('.commdAddCont').attr('name', commdPlanName);
+				$(this).parent('.app_f13').find('.addCommdDate').attr('name', commdDateName);
+				$(this).parent('.app_f13').find('.addCommdNum').attr('name', commdNumName);
+			})
 			_this.removeSchedul();
 		},
 		removeSchedul: function() {
@@ -1276,7 +1273,6 @@
                 params[i]=entity;
                 //totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
             }
-            console.log(params)
             $.ajax({
                 url: '/a/biz/po/bizPoHeader/saveSchedulingPlan',
                 contentType: 'application/json',
@@ -1284,7 +1280,6 @@
                 datatype:"json",
                 type: 'post',
                 success: function (result) {
-                	console.log(result)
                 	if(result == true || result == 'true') {
                 		mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
@@ -1299,10 +1294,11 @@
                     console.info(error);
                 }
             });
-       },
-       batchSave: function(schedulingType,poId,vndm) {
+		},
+		batchSave: function(schedulingType,poId,vndm) {
 			var _this = this;
-			var skuInfoIdListList = vndm.data.skuInfoIdListListJson;
+//			console.log(vn)
+			var skuInfoIdListList = vn.data.skuInfoIdListListJson;
             var params = new Array();
             var totalSchedulingNum = 0;
             var totalOriginalNum = 0;
@@ -1319,7 +1315,7 @@
                 var skuInfoId = skuInfoIdListList[index];
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
-                totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+                totalOriginalNum = parseInt(totalOriginalNum) + parseInt(originalNum);
             }
 
             for(var index in skuInfoIdListList) {
@@ -1336,6 +1332,7 @@
 
             for(var index in skuInfoIdListList) {
                 var skuInfoId = skuInfoIdListList[index];
+                var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
                 var trArray = $("[name='" + skuInfoId + "']");
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];
@@ -1379,7 +1376,7 @@
                 count++;
             }
             if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
-                alert("排产量总和太大，请从新输入!")
+                alert("排产量总和太大，请重新输入!")
                 return false
             }
             $.ajax({

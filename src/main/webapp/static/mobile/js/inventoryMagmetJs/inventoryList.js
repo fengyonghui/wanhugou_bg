@@ -170,7 +170,6 @@
 								if(_this.cancelAmendPayFlag == true){
 									if(userId == 1) {
 										/*修改按钮*/
-//								requestHeader.delFlag!=null && requestHeader.delFlag!=0
 										if(item.delFlag!=null && item.delFlag!=0) {
 											inAmend = '修改'
 											inAmendBtn = 'inAmendBtn'
@@ -567,7 +566,6 @@
 				dataType: 'json',
 				success: function(res) {
 					console.log(res)
-//		            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 		            var returnData = res.data.page.list;
 		            var dataRow = res.data.roleSet;
 					var arrLen = res.data.page.list.length; 
@@ -598,7 +596,6 @@
 		                data: {type: "req_from_type"},
 		                async:false,
 		                success: function(bss){                 
-//					            console.log(bss)
 							arrbss = bss
 		                }
 		            });	
@@ -612,20 +609,16 @@
 		                data: {type: "biz_req_status"},
 		                async:false,
 		                success: function(ass){                 
-//					            console.log(ass)
 				            arrass = ass
 		                }
 		            });
                     if(arrLen > 0) {
 						$.each(returnData, function(i, item) {
-//								console.log(item)
-//								console.log(arrbss)
 							$.each(arrbss, function(b, bs) {
 								if(bs.value==item.fromType) {
 									stock = bs.label
 								}
 							})
-//								console.log(arrass)
 							$.each(arrass, function(a, as) {
 				               	if(as.value==item.bizStatus) {
 				               		bizstatusTxt = as.label
@@ -643,9 +636,6 @@
 								if(item.bizPoHeader) {
 									purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
 								}
-	//								<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
-	//							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
-	//							}">
 								var DataRoleGener = '';
 								if(item.commonProcess) {
 									DataRoleGener = requestOrderProcess.roleEnNameEnum;

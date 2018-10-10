@@ -23,7 +23,6 @@
                 data: {id:_this.userInfo.inListId,str:'detail'},
                 dataType: "json",
                 success: function(res){
-                	console.log(res)
                 	//调取供应商信息
                 	if(res.data.bizRequestHeader.bizVendInfo){
                 		var officeId = res.data.bizRequestHeader.bizVendInfo.office.id;
@@ -44,7 +43,7 @@
 		                url: "/a/getUser",
 		                dataType: "json",
 		                async:false,
-		                success: function(user){                 
+		                success: function(user){
 							userId = user.data.id
 		                }
 		           });
@@ -76,7 +75,6 @@
 			                data: {type:"poSchType"},		                
 			                dataType: "json",
 			                success: function(reslt){
-			                	console.log(reslt)
 			                	$.each(reslt,function(i,item){
 			                		if(item.value==itempoSchType){
 			                		 	SchedulstatusTxt = item.label 
@@ -294,34 +292,38 @@
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
 									'</div>'+
 								'</div>'+
-							'</li>'							
+							'</li>'	+
+							'<div class="mui-row app_bline2">'+
+								'<label class="app_pr0 app_f13">排产记录:</label>'+
+								'<ul id="schedulingHeaders" class="schedulingHeaders mui-table-view app_fr app_w70p">'+_this.eachCompletePaln(v)+'</ul>'+
+							'</div>'
                         });
                         $("#purchaseMenus").append(poDetailHtmls);
-                        //按商品排产中的排产记录
-                        var completePalnHtml = "";
-                        $.each(res.data.bizPoHeader.poDetailList,function(n,v){
-                            $.each(v.bizSchedulingPlan.completePalnList,function(n,v){
-                            	completePalnHtml +='<li class="mui-table-view-cell mui-media app_pr app_pl0">'+
-								'<div class="mui-media-body">'+
-									'<div class="mui-input-row">'+
-										'<label>完成日期：</label>'+
-										'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(v.planDate) +'" disabled>'+
-									'</div>'+
-									'<div class="mui-input-row">'+
-										'<label>排产数量：</label>'+
-										'<input type="text" class="mui-input-clear" value="'+ v.completeNum +'" disabled>'+
-									'</div>'+
-								'</div>'+
-							    '</li>'
-	                             $("#schedulingHeaders").append(completePalnHtml);
-                            });
-                        });
                         //按商品排产中的排产备注
                         var remarkHtmls = "<textarea id='schRemarkOrder' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
-                        $(".schedulingHeaderRemarks").append(remarkHtmls);    
+                        $(".schedulingHeaderRemarks").append(remarkHtmls);
                 	}
 				}
 			})
+		},
+		eachCompletePaln: function(ak) {
+			var _this = this;
+			var completePalnHtml = "";
+			$.each(ak.bizSchedulingPlan.completePalnList,function(a,k){
+            	completePalnHtml +='<li class="mui-table-view-cell mui-media app_pr app_pl0">'+
+				'<div class="mui-media-body">'+
+					'<div class="mui-input-row">'+
+						'<label>完成日期：</label>'+
+						'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(k.planDate) +'" disabled>'+
+					'</div>'+
+					'<div class="mui-input-row">'+
+						'<label>排产数量：</label>'+
+						'<input type="text" class="mui-input-clear" value="'+ k.completeNum +'" disabled>'+
+					'</div>'+
+				'</div>'+
+			    '</li>'
+            });
+            return completePalnHtml;
 		},
         //支付列表
         paylistHtml:function(data){
@@ -419,9 +421,7 @@
 			if(data.bizRequestHeader.commonProcessList) {
 				var CheckHtmlList ='';
 				$.each(data.bizRequestHeader.commonProcessList, function(i, item) {
-//					console.log(item)
 					var auditLen = data.bizRequestHeader.commonProcessList.length;
-//					console.log(auditLen-1)
 					var step = i + 1;
 					if(i!=auditLen-1) {
 						CheckHtmlList +='<li class="step_item">'+
@@ -437,7 +437,7 @@
 						    '</div>'+
 						'</div>'+
 					'</li>'
-					}	
+					}
 					if(i==auditLen-1 && data.bizRequestHeader.processPo != 'processPo' && item.requestOrderProcess.name != '审核完成') {
 						if(item.requestOrderProcess.name != '审核完成'){
 							CheckHtmlList +='<li class="step_item">'+

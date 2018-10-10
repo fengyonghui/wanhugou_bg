@@ -60,6 +60,7 @@
 						}else {
 							bizstatusTxt = "未知类型"
 						}
+					
 					$('#inPoDizstatus').val(bizstatusTxt)
 					$('#inPoordNum').val(res.data.entity.reqNo)
 					$('#inOrordNum').val(res.data.entity.fromOffice.name)
