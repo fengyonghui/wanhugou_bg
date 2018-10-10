@@ -193,14 +193,13 @@
 				                    '<input type="hidden" class="mui-input-clear" value="'  +skuInfo.id + '">'+ 
 				                    '<input type="text" class="mui-input-clear" placeholder="请输入数量" id="reqQty_' +skuInfo.id+ '">'+ 
 				                    '<font>*</font>'+
-				                    '</div></li></div></div>'+
+				                    '</div></li></div></div></div>'
 				                    
 	                            });
 //	                            t++;
 	                            $("#searchInfo").append(resultListHtml);
 	                        })
-	                        var addButtonHtml = '<button type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>'+
-								'</div>';
+	                        var addButtonHtml = '<button type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>';
                        		$("#searchInfo").append(addButtonHtml);
 //                      }
                     }
@@ -212,11 +211,11 @@
         addSku:function () {
             var _this = this;
             mui('#searchInfo').on('tap','.addSkuButton',function(){
-            	$(this).parent().
-            	
-            	var removeButtonHtml = '<button id="" type="submit" class="removeSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除</button>'+
-                    '</div>';
+            	var removeButtonHtml = '<button id="" type="submit" class="removeSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除</button>';
+                console.log($(this).parent())
+                $(this).parent().append(removeButtonHtml)
             	$('#commodityMenu').append($(this).parent());
+            	$(this).hide();
 //              $(".skuinfo_check").each(function () {
 //                  var cheId = $(this)[0].id;
 //
