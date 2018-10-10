@@ -284,6 +284,7 @@ public class BizInventorySkuController extends BaseController {
                 customerIdArr = bizInventorySkus.getCustomerIds().split(",");
             }
             String[] invTypeArr = bizInventorySkus.getInvTypes().split(",");
+            String[] skuTypeArr = bizInventorySkus.getSkuTypes().split(",");
             String[] skuInfoIdArr = bizInventorySkus.getSkuInfoIds().split(",");
             String[] stockQtyArr = bizInventorySkus.getStockQtys().split(",");
             BizInventorySku bizInventorySku = new BizInventorySku();
@@ -296,6 +297,8 @@ public class BizInventorySkuController extends BaseController {
                 }
                 bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
                 bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
+                bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_DELETE);
+                bizInventorySku.setSkuType(Integer.parseInt(skuTypeArr[i].trim()));
                 bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
                 bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
                 bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
