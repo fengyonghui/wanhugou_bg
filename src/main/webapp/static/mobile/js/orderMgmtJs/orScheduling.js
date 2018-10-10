@@ -534,7 +534,7 @@
                 var reqDetailId = reqDetailIdList[index];
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + reqDetailId)).val();
-                totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+                totalOriginalNum = parseInt(totalOriginalNum) + parseInt(originalNum);
             }
 
             var toalSchedulingNumForSkuHtml = $("[name=toalSchedulingNumForSku]");
