@@ -20,22 +20,24 @@
 			var _this = this;
 			$.ajax({
                 type: "GET",
+                //a/biz/order/bizOrderDetail/form
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
+//              url: "/a/biz/order/bizOrderDetail/form",
                 data: {id:_this.userInfo.amendId},
                 dataType: "json",
                 success: function(res){
 					console.log(res)
-					$('#ordCenter').val(res.data.bizOrderHeader.centersName);
+					$('#ordCenter').val(res.data.bizOrderHeader.centersName);//采购中心
 					
 					var orderDetailList = res.data.bizOrderHeader.orderDetailList;
 					$.each(orderDetailList, function(y,j) {
 						console.log(j)
-						$('#skuInfoName').val(j.skuInfo.name);
-						$('#partNo').val(j.partNo);
-						$('#itemNo').val(j.skuInfo.itemNo);
+						$('#skuInfoName').val(j.skuInfo.name);//商品名称
+						$('#partNo').val(j.partNo);//商品编码
+						$('#itemNo').val(j.skuInfo.itemNo);//商品货号
 						
 					});
-					
+//					 _this.commodityHtml(res.data, strTxt);//备货商品反填
 //					resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
 //                  
 //                  '<div class="mui-row lineStyle">' +
@@ -98,6 +100,7 @@
                 }
             });
             _this.searchSkuHtml();
+            _this.removeItem();
 		},
 		searchSkuHtml: function() {
             var _this = this;
@@ -105,6 +108,7 @@
                 var itemNo = $("#ordAmendPoLastDa").val();
                 $.ajax({
                     type: "post",
+//                  url: "/a/biz/shelf/bizOpShelfSku/findOpShelfSku",
                     url: "/a/biz/sku/bizSkuInfo/findSkuList",
                     data: {
                     	itemNo: itemNo,//输入的商品货号
@@ -169,11 +173,11 @@
 				                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.partNo + '" disabled></div></li></div>'+ 
 									
 				                    '<div class="mui-row">'+ 
-				                    '<div class="mui-col-sm-6 mui-col-xs-6">'+ 
-				                    '<li class="mui-table-view-cell app_bline3">'+ 
-				                    '<div class="mui-input-row ">'+ 
-				                    '<label>货架名称:</label>'+ 
-				                    '<input type="text" class="mui-input-clear" id="" value="'  +skuInfo.productInfo.brandName+ '" disabled></div></li></div>'+ 
+				                        '<div class="mui-col-sm-6 mui-col-xs-6">'+ 
+				                            '<li class="mui-table-view-cell app_bline3">'+ 
+				                                '<div class="mui-input-row ">'+ 
+				                                    '<label>货架名称:</label>'+ 
+				                                    '<input type="text" class="mui-input-clear" id="" value="'  +skuInfo.productInfo.brandName+ '" disabled></div></li></div>'+ 
 				                    '<div class="mui-col-sm-6 mui-col-xs-6">'+
 				                    '<li class="mui-table-view-cell app_bline3">'+ 
 				                    '<div class="mui-input-row ">'+ 
@@ -187,31 +191,35 @@
 				                    '<label>现价:</label>'+ 
 				                    '<input type="text" class="mui-input-clear" id="" value="'  +skuInfo.buyPrice+  '" disabled></div></li></div>'+ 
 				                    '<div class="mui-col-sm-6 mui-col-xs-6">'+ 
-				                    '<li class="mui-table-view-cell app_bline3">'+ 
-				                    '<div class="mui-input-row">'+ 
-				                    '<label>采购数量:</label>'+ 
-				                    '<input type="hidden" class="mui-input-clear" value="'  +skuInfo.id + '">'+ 
-				                    '<input type="text" class="mui-input-clear" placeholder="请输入数量" id="reqQty_' +skuInfo.id+ '">'+ 
-				                    '<font>*</font>'+
-				                    '</div></li></div></div></div>'
+				                        '<li class="mui-table-view-cell app_bline3">'+ 
+				                            '<div class="mui-input-row">'+ 
+				                                '<label>采购数量:</label>'+ 
+				                                    '<input type="hidden" class="mui-input-clear" value="'  +skuInfo.id + '">'+ 
+				                                    '<input type="text" class="mui-input-clear" placeholder="请输入数量" id="reqQty_' +skuInfo.id+ '">'+ 
+				                                    '<font>*</font>'+
+				                    '</div></li></div>'+
 				                    
+				                       '</div>'+
+				                       '<button type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>'+ 
+				                    '</div>'
 	                            });
 //	                            t++;
 	                            $("#searchInfo").append(resultListHtml);
 	                        })
-	                        var addButtonHtml = '<button type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>';
-                       		$("#searchInfo").append(addButtonHtml);
+//	                        var addButtonHtml = '<button type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>';
+//                     		$("#searchInfo").append(addButtonHtml);
 //                      }
                     }
                 })
             });
             //$("#searchInfo").html(htmlCommodity)
-            _this.addSku()
+            _this.addSku();
         },
+        //查询之后添加
         addSku:function () {
             var _this = this;
             mui('#searchInfo').on('tap','.addSkuButton',function(){
-            	var removeButtonHtml = '<button id="" type="submit" class="removeSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除</button>';
+            	var removeButtonHtml = '<button id="" type="submit" class="removeButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除</button>';
                 console.log($(this).parent())
                 $(this).parent().append(removeButtonHtml)
             	$('#commodityMenu').append($(this).parent());
@@ -234,120 +242,21 @@
 //              })
             });
         },
-//		statusListHtml:function(data){
-//			var _this = this;
-////			console.log(data)
-//			var pHtmlList = '';
-////			var len = data.bizPoHeader.commonProcessList.length
-//			$.each(data.statusList, function(i, item) {
-////				console.log(item)
-////				0未审核 1首付款支付,2是全部支付 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
-//				var checkBizStatus = '';
-//				if(item.bizStatus==0) {
-//					checkBizStatus = '未审核'
-//				}else if(item.bizStatus==1) {
-//					checkBizStatus = '首付款支付'
-//				}else if(item.bizStatus==2) {
-//					checkBizStatus = '全部支付'
-//				}else if(item.bizStatus==5) {
-//					checkBizStatus = '审核通过'
-//				}else if(item.bizStatus==10) {
-//					checkBizStatus = '采购中'
-//				}else if(item.bizStatus==15) {
-//					checkBizStatus = '采购完成'
-//				}else if(item.bizStatus==20) {
-//					checkBizStatus = '备货中'
-//				}else if(item.bizStatus==25) {
-//					checkBizStatus = '供货完成'
-//				}else if(item.bizStatus==30) {
-//					checkBizStatus = '收货完成'
-//				}else if(item.bizStatus==35) {
-//					checkBizStatus = '关闭'
-//				}else {
-//					checkBizStatus = ''
-//				}
-//				var step = i + 1;
-//				pHtmlList +='<li class="step_item">'+
-//					'<div class="step_num">'+ step +' </div>'+
-//					'<div class="step_num_txt">'+
-//						'<div class="mui-input-row">'+
-//							'<label>处理人:</label>'+
-//					        '<textarea name="" rows="" cols="" disabled>'+ item.createBy.name +'</textarea>'+
-//					    '</div>'+
-//						'<br />'+
-//						'<div class="mui-input-row">'+
-//					        '<label>状态:</label>'+
-//					        '<input type="text" value="'+ checkBizStatus +'" class="mui-input-clear" disabled>'+
-//					    	'<label>时间:</label>'+
-//					        '<input type="text" value=" '+ _this.formatDateTime(item.createDate) +' " class="mui-input-clear" disabled>'+
-//					    '</div>'+
-//					'</div>'+
-//				'</li>'
-//			});
-//			$("#inCheckAddMenu").html(pHtmlList)
-//		},
-//		commodityHtml: function(data) {
-//			var _this = this;
-////			console.log(data)
-//			var htmlCommodity = '';
-//			$.each(data.reqDetailList, function(i, item) {
-////				console.log(item)
-//				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
-////		产品图片
-//					'<div class="photoParent mui-pull-left app_pr">'+
-//						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'">'+
-//					'</div>'+
-////		产品信息
-//					'<div class="mui-media-body commodity">'+
-//						'<div class="mui-input-row">'+
-//							'<label>品牌名称：</label>'+
-//							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.brandName +'" disabled>'+
-//						'</div>'+
-//						'<div class="mui-input-row">'+
-//							'<label>供应商：</label>'+
-//							'<input type="text" class="font-color mui-input-clear" value="'+ item.skuInfo.productInfo.vendorName +'" disabled>'+
-//						'</div>'+
-//						'<div class="mui-input-row">'+
-//							'<label>商品名称：</label>'+
-//							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.name +'" disabled>'+
-//						'</div>'+
-//						'<div class="mui-input-row">'+
-//							'<label>商品编码：</label>'+
-//							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.productInfo.prodCode +'" disabled>'+
-//						'</div>'+
-//						'<div class="mui-input-row">'+
-//							'<label>商品货号：</label>'+
-//							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled>'+
-//						'</div>'+
-//						'<div class="mui-input-row">'+
-//							'<label>单价：</label>'+
-//							'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled>'+
-//						'</div>'+
-//						'<div class="mui-input-row">'+
-//							'<label>申报数量：</label>'+
-//							'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" reqQty disabled>'+
-//						'</div>'+
-//						'<div class="mui-input-row">'+
-//							'<label>仓库名称：</label>'+
-//							'<input type="text" class="mui-input-clear" disabled>'+
-//						'</div>'+
-//						'<div class="mui-input-row">'+
-//							'<label>库存数量：</label>'+
-//							'<input type="text" class="mui-input-clear" disabled>'+
-//						'</div>'+
-//						'<div class="mui-input-row">'+
-//							'<label>总库存数量：</label>'+
-//							'<input type="text" class="mui-input-clear" disabled>'+
-//						'</div>'+
-//						'<div class="mui-input-row">'+
-//							'<label>已收货数量：</label>'+
-//							'<input type="text" class="mui-input-clear" value="'+ item.recvQty +'" disabled>'+
-//						'</div>'+
-//					'</div>'+
-//				'</li>'
-//			});
-//			$("#commodityMenu").html(htmlCommodity)
-//		},
+        //订单商品移除按钮操作
+        removeItem:function () {
+            var _this = this;
+            mui('#commodityMenu').on('tap','.removeButton',function(e){
+            	alert(1)
+//              var obj = e.detail.target.id;
+//              var cheId = obj.split("_")[1]
+//              var cheDiv = $("#serskudiv_" + cheId);
+//              $("#" + cheId).show();
+//              $("#batchAddDiv").before(cheDiv)
+//              $("#removeBtn_" + cheId).remove();
+//              _this.skuInfoIds_2 = _this.skuInfoIds_2.replace(cheId, "");
+            });
+        },
+
 		formatDateTime: function(unix) {
         	var _this = this;
 

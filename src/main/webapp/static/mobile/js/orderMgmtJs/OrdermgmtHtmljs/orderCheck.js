@@ -89,14 +89,24 @@
 						$('#staPayTime').val();
 						$('#staPayMoney').val();
 					}
+					//备注
 					var RemarkHtml="";
 					$.each(res.data.commentList, function(q, w) {
 						console.log(w)						
-						RemarkHtml +='<div class="">'+
-						    w.comments
-                            +
-					    '</div>'
-						$('#staPoRemark').html(RemarkHtml);//备注
+						RemarkHtml +='<li class="step_items">'+
+							'<div class="step_num_txt">'+
+								'<div class="">'+
+									w.comments +
+							    '</div>'+
+								'<div class="">'+
+                                    w.createBy.name +
+							    '</div>'+
+							    '<div class="">'+
+                                    _this.formatDateTime(w.createDate) +
+							    '</div>'+
+							'</div>'+
+						'</li>'
+						$('#Remarks').html(RemarkHtml);
 					})
 					//订单id
 					$('#ordId').val(_this.userInfo.staOrdId);					
@@ -276,6 +286,8 @@
 					'</li>'
 				});
 				$("#staStatusMenu").html(pHtmlList)
+			}else{
+				$("#staStatusMenu").parent().hide();
 			}
 		},
 		//审核流程
@@ -473,11 +485,8 @@
 				e.detail.gesture.preventDefault(); 
 				var btnArray = ['取消', '确定'];
 				mui.prompt('请输入你要添加的备注', '系统提示！', '系统提示！',btnArray, function(e) {
-					console.log(e)
 					if(e.index == 1) {
 						var inText = e.value;
-                        console.log(inText)
-                        console.log($('#ordId').val())
                         if (inText == null) {
 			                return false;
 			            }
@@ -486,12 +495,11 @@
 			                url:"/a/biz/order/bizOrderComment/addComment",
 			                data:{orderId:$('#ordId').val(),remark:inText},
 			                success:function (data) {
-			                	console.log(data)
 			                    if (data == "error") {
-			                        alert("添加订单备注失败，备注可能为空");
+			                        mui.toast("添加订单备注失败，备注可能为空!");
 			                    }
 			                    if (data == "ok") {
-			                        alert("添加订单备注成功");
+			                        mui.toast("添加订单备注成功!");
 			                    }
 			                }
 			            });

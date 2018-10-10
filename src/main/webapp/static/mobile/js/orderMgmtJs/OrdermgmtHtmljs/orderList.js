@@ -664,37 +664,142 @@
 		                        		orderTypeTxt = items.label
 		                        	}
 	                            })
-//								//审核
-	                        	var staCheckBtnTxt = '';
-				                if(_this.staOrdFlag == true) {
+	                            /*当前用户信息*/
+								var userId = '';
+								$.ajax({
+					                type: "GET",
+					                url: "/a/getUser",
+					                dataType: "json",
+					                async:false,
+					                success: function(user){                 
+										userId = user.data.id
+					                }
+					            });
+	                            var staSupplyBtnTxt = '';
+								if(_this.staOrdFlag == true) {
+				                	//审核
                                     if(item.bizStatus != res.data.CANCLE){
                                         if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING){
+                                        	console.log('审核1')
                                          	if(_this.staOrdauditFlag == false){
-//                                       		(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) || fns:getUser().isAdmin())
-//									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
-//									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
 												var DataRoleGener = '';
 												if(item.commonProcess) {
 													DataRoleGener = item.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
 												}
+												console.log(DataRoleGener)
 												var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));	
                                          		if((fileRoleData || userId==1)&& item.commonProcess.doOrderHeaderProcessFifth.name != '驳回'&& item.commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
+                                         			
                                          			staCheckBtnTxt="审核";
                                          		}
-//                                       		fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOriginProcess.roleEnNameEnum) && orderHeader.commonProcess.jointOperationOriginProcess.name != '驳回' && orderHeader.commonProcess.jointOperationOriginProcess.code != auditStatus
-//								 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state
-												var DataRoleGeners = '';
-												if(item.commonProcess) {
-													DataRoleGeners = item.commonProcess.jointOperationOriginProcess.roleEnNameEnum;
-												}
-												var fileRoleDatas = dataRow.filter(v => DataRoleGener.includes(v));
-												console.log(res.data.auditStatus)
-                                         		if(fileRoleDatas&& item.commonProcess.jointOperationOriginProcess.name != '驳回'&& item.commonProcess.jointOperationOriginProcess.code != res.data.auditStatus&& item.orderType == res.data.ORDINARY_ORDER){
-                                         			staCheckBtnTxt="审核";
-                                         		}
+//												var DataRoleGeners = '';
+//												if(item.commonProcess) {
+//													console.log(item.commonProcess)
+//													DataRoleGeners = item.commonProcess.jointOperationOriginProcess.roleEnNameEnum;
+//												}
+//												console.log(DataRoleGeners)
+//												var fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
+//												console.log(res.data.auditStatus)
+//												var auditStatu = '';
+//					                            $.each(res.data.auditStatus,function(q,s){
+//					                            	console.log(s)
+//						                        	auditStatu=s
+//					                            })
+//					                            console.log(auditStatu)
+//                                       		if(fileRoleDatas&& item.commonProcess.jointOperationOriginProcess.name != '驳回'&& item.commonProcess.jointOperationOriginProcess.code != auditStatu&& item.orderType == res.data.ORDINARY_ORDER){
+//                                       			staCheckBtnTxt="审核";
+//                                       		}
                                          	}
                                         }
+                                        if(_this.staOrdauditFlag == false){
+                                        	console.log('审核2')
+//                                      	orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
+//							&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
+//							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+//							&& (fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationLocalProcess)
+//							 	|| fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationOriginProcess)
+//							 	 || fns:getUser().isAdmin()
+//                                          console.log(dataRow)
+                                            var DataRole = '';
+											if(item.commonProcess) {
+												DataRole = item.commonProcess.jointOperationLocalProcess;
+											}
+											console.log(DataRole)
+//											var fileRole = dataRow.filter(v => DataRole.includes(v));
+											var DataRoles = '';
+											if(item.commonProcess) {
+												DataRoles = item.commonProcess.jointOperationOriginProcess;
+											}
+											console.log(DataRoles)
+//											var fileRoles = dataRow.filter(v => DataRoles.includes(v));
+                                            if(item.commonProcess != null && item.commonProcess.id != null && item.commonProcess.purchaseOrderProcess.name != '驳回' && item.commonProcess.purchaseOrderProcess.name != '审批完成' && (DataRole||DataRoles||userId==1)){
+                                                if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING){
+                                                    if(item.suplys == 0 ){
+                                                     	staCheckBtnTxt="审核";
+                                                    }
+                                                    if(item.suplys != 0 ){
+                                                     	staCheckBtnTxt="审核";
+                                                    }
+                                                }
+                                        	}
+                                        }
+                                        //出库确认
+                                        if(_this.staOrdsupplyFlag == false){
+                                        	if(item.bizStatus >= res.data.SUPPLYING && item.bizStatus <= res.data.STOCKING && item.suplys != 0 && item.suplys != 721){
+                                        		if(item.bizInvoiceList.length <= 0){
+                                        			staSupplyBtnTxt="出库";
+                                        		}
+                                        	}
+                                        }
                                     }
+                                    if(item.delFlag!=null && item.delFlag == '1'){
+                                    	//支付流水
+                                    	var staPaymentBtnTxt ="";
+                                    	if(item.bizStatus != res.data.CANCLE){
+                                    		if(item.statu == 'unline' || userId==1){
+                                    			staPaymentBtnTxt ="支付";
+                                    		}
+                                    	}
+                                    	//详情
+	                                    var staDetailBtnTxt ="";
+	                                    if(item.orderType != res.data.PHOTO_ORDER){
+	                                    	staDetailBtnTxt="详情";
+	                                    }
+	                                    if(item.orderType == res.data.PHOTO_ORDER){
+	                                    	staDetailBtnTxt="详情";
+	                                    }
+	                                    //修改、删除
+	                                    var staAmendTxt ="";
+	                                    var staDeleteTxt ="";
+	                                    if(item.bizStatus != res.data.CANCLE){
+	                                    	if(_this.staOrdeditFlag==true){
+	                                    		if(item.orderType != res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)){
+	                                    			staAmendTxt ="修改";
+	                                    		}
+	                                    		if(item.orderType == res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)){
+	                                    			staAmendTxt ="修改";
+	                                    		}
+	                                    		if(userId==1){
+	                                    			staDeleteTxt ="删除";
+	                                    		}
+	                                    	}
+	                                    }
+	                                }else{
+	                                	staPaymentBtnTxt ="";
+	                                	staDetailBtnTxt="";
+	                                	staAmendTxt ="";
+	                                	staDeleteTxt ="";
+	                                }
+	                                //详情另一种情况
+//	                                var staDetailBtnTxt ="";
+	                                var staRecoveryBtnTxt ="";//h恢复
+	                                if(_this.staOrdeditFlag==true){
+	                                	if(item.delFlag!=null && item.delFlag == '0'){
+	                                		staDetailBtnTxt ="详情";
+	                                		staRecoveryBtnTxt ="恢复";
+	                                	}
+	                                }
+                                    
 				                }
 				                else {
 				                	staCheckBtnTxt = ''
@@ -723,23 +828,32 @@
 											'<label>更新时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 										'</div>' +
-										//业务状态需要添加权限
+										//业务状态需要添加权限 mui-col-xs-2 
 //										'<div class="mui-input-row">' +
 //											'<label>业务状态:</label>' +
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
-										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-											'<div class="mui-col-xs-3 ordCheckBtn" staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell" id="flagid">'+ staCheckBtnTxt +'</li>' +
+										'<div class="app_color40 mui-row app_text_center content_part operation " id="foot">' +
+											'<div class="ordCheckBtn" staOrdId="'+ item.id +'">' +
+												 staCheckBtnTxt +
 											'</div>'+
-//											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">出库确认</li>' +
-//											'</div>'+
-											'<div class="mui-col-xs-3 ordAmendBtn"  staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">审核成功</li>' +
+											'<div class="ordSupplyBtn"  staOrdId="'+ item.id +'">' +
+												staSupplyBtnTxt +
 											'</div>'+
-											'<div class="mui-col-xs-3 ordDetailBtn" staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">详情</li>' +
+											'<div class="ordPaymentBtn"  staOrdId="'+ item.id +'">' +
+												 staPaymentBtnTxt +
+											'</div>'+
+											'<div class="ordAmendBtn"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+												staAmendTxt +
+											'</div>'+
+											'<div class="ordDeleteBtn"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+												staDeleteTxt +
+											'</div>'+
+											'<div class="ordDetailBtn" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+												staDetailBtnTxt +
+											'</div>'+
+											'<div class="ordRecoveryBtn" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+												staRecoveryBtnTxt +
 											'</div>'+
 										'</div>' +
 									'</div>'

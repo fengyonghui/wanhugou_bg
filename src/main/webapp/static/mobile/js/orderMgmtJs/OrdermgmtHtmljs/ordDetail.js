@@ -14,6 +14,7 @@
 		},
 		pageInit: function() {
 			var _this = this;
+			_this.addRemark();
 		},
 		getData: function() {
 			var _this = this;
@@ -77,8 +78,24 @@
 						$('#staPayTime').val();
 						$('#staPayMoney').val();
 					}
+					//备注
+					var RemarkHtml="";
 					$.each(res.data.commentList, function(q, w) {
-						$('#staPoRemark').val(w.comments);//备注
+						console.log(w)						
+						RemarkHtml +='<li class="step_items">'+
+							'<div class="step_num_txt">'+
+								'<div class="">'+
+									w.comments +
+							    '</div>'+
+								'<div class="">'+
+                                    w.createBy.name +
+							    '</div>'+
+							    '<div class="">'+
+                                    _this.formatDateTime(w.createDate) +
+							    '</div>'+
+							'</div>'+
+						'</li>'
+						$('#Remarks').html(RemarkHtml);
 					})
 					var item = res.data.bizOrderHeader;
 					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
@@ -164,6 +181,36 @@
 					}	
                 }
             });
+		},
+		//添加备注
+		addRemark:function(){
+			var _this = this;
+			document.getElementById("addRemarkBtn").addEventListener('tap', function(e) {
+				e.detail.gesture.preventDefault(); 
+				var btnArray = ['取消', '确定'];
+				mui.prompt('请输入你要添加的备注', '系统提示！', '系统提示！',btnArray, function(e) {
+					if(e.index == 1) {
+						var inText = e.value;
+                        if (inText == null) {
+			                return false;
+			            }
+                        $.ajax({
+			                type:"post",
+			                url:"/a/biz/order/bizOrderComment/addComment",
+			                data:{orderId:$('#ordId').val(),remark:inText},
+			                success:function (data) {
+			                    if (data == "error") {
+			                        mui.toast("添加订单备注失败，备注可能为空!");
+			                    }
+			                    if (data == "ok") {
+			                        mui.toast("添加订单备注成功!");
+			                    }
+			                }
+			            });
+					} else {						
+					}
+				})
+			});
 		},
 		//供应商信息
 		supplier:function(supplierId){						
@@ -418,6 +465,8 @@
 					'</li>'
 				});
 				$("#staEvoMenu").html(pHtmlList)
+			}else{
+				$("#staEvoMenu").parent().hide();
 			}
 		},
 		checkProcessHtml:function(data){
