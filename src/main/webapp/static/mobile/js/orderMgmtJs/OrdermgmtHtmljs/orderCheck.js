@@ -49,6 +49,14 @@
 //              			$('#yes').attr("checked","checked" );
 //              		}
 //              	}
+					/*判断是否是品类主管*/
+					var ordLastDate = '';
+					if(res.data.createPoHeader == 'yes') {	//品类主管审核才生成PO
+						ordLastDate = '<label>最后时间：</label>'+
+							'<input type="date" class="mui-input-clear" id="lastDate" placehohder="必填！">'+
+							'<font>*</font>'
+						$('#ordLastDate').append(ordLastDate);
+					}
                     //调取供应商信息
                 	if(res.data.entity2){
                 		var officeId = res.data.entity2.sellersId;
@@ -580,6 +588,13 @@
 	                mui.toast("代采订单需至少付款20%，请付款后刷新页面再审核");
 	                return;
 	            }
+				if(res.data.createPoHeader == 'yes') {//品类主管审核才生成PO
+					var lastDates = $('#lastDate').val();
+					if(lastDates == null || lastDates == '') {
+						mui.toast('最后付款时间不能为空！')
+						return;
+					}
+				}
 				var btnArray = ['取消', '确定'];
 				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
 					if(e.index == 1) {
@@ -615,6 +630,10 @@
 //              }
 //          }
 //          console.log(localOriginType)
+			var lastDateTxt = '';
+			if(createPo == 'yes') {
+				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
+			}
 			$.ajax({
 				type: "GET",
 				url: "/a/biz/order/bizOrderHeader/auditSo",
@@ -625,7 +644,7 @@
 					description: inText,//通过/驳回理由
 					orderType: orderType,//订单类型
 					createPo: createPo,//是否生成po标识
-					lastPayDateVal: ,//最后付款时间
+					lastPayDateVal: lastDateTxt,//最后付款时间
 				},
 				dataType: "json",
 				success: function(res) {
