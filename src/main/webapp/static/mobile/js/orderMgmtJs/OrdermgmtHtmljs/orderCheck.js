@@ -4,6 +4,8 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.prew = false;
+		this.checkResult = false;
+		this.poId = '';
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -31,6 +33,7 @@
 //		},
 		getData: function() {
 			var _this = this;
+			$('#schedulingTxt').hide();
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
@@ -42,20 +45,17 @@
                 dataType: "json",
                 success: function(res){
                 	console.log(res)
-//              	if(res.data.bizOrderHeader.flag=='check_pending') {
-//              		if(res.data.orderType == 5) {
-//              			$('#orderTypebox').hide();
-//              			$('#nochecked').attr("checked","false" );
-//              			$('#yes').attr("checked","checked" );
-//              		}
-//              	}
 					/*判断是否是品类主管*/
+					console.log(res.data.createPo)
+					$('#createPo').val(res.data.createPo);
 					var ordLastDate = '';
-					if(res.data.createPoHeader == 'yes') {	//品类主管审核才生成PO
+					if(res.data.createPo == 'yes') {	//品类主管审核才生成PO
 						ordLastDate = '<label>最后时间：</label>'+
 							'<input type="date" class="mui-input-clear" id="lastDate" placehohder="必填！">'+
 							'<font>*</font>'
 						$('#ordLastDate').append(ordLastDate);
+						$('#schedulingTxt').show();
+						_this.schedulGetData(res.data)
 					}
                     //调取供应商信息
                 	if(res.data.entity2){
@@ -89,24 +89,14 @@
 						$('#staPayTime').val();
 						$('#staPayMoney').val();
 					}
-					//备注
 					var RemarkHtml="";
 					$.each(res.data.commentList, function(q, w) {
 						console.log(w)						
-						RemarkHtml +='<li class="step_items">'+
-							'<div class="step_num_txt">'+
-								'<div class="">'+
-									w.comments +
-							    '</div>'+
-								'<div class="">'+
-                                    w.createBy.name +
-							    '</div>'+
-							    '<div class="">'+
-                                    _this.formatDateTime(w.createDate) +
-							    '</div>'+
-							'</div>'+
-						'</li>'
-						$('#Remarks').html(RemarkHtml);
+						RemarkHtml +='<div class="">'+
+						    w.comments
+                            +
+					    '</div>'
+						$('#staPoRemark').html(RemarkHtml);//备注
 					})
 					//订单id
 					$('#ordId').val(_this.userInfo.staOrdId);					
@@ -195,10 +185,10 @@
 					$('#staShippAddress').val(item.bizLocation.pcrName);
 					$('#staDateilAddress').val(item.bizLocation.address);
 					$('#staEvolve').val();					
-					_this.statusListHtml(res.data);
+					_this.statusListHtml(res.data);//状态流程
 					_this.checkProcessHtml(res.data);//审核流程
-					_this.commodityHtml(res.data);
-					_this.comfirDialig(res.data);
+					_this.commodityHtml(res.data);//商品信息
+					_this.comfirDialig(res.data);//审核
 					
                 }
             });
@@ -286,8 +276,6 @@
 					'</li>'
 				});
 				$("#staStatusMenu").html(pHtmlList)
-			}else{
-				$("#staStatusMenu").parent().hide();
 			}
 		},
 		//审核流程
@@ -297,6 +285,7 @@
 			if(auditLen > 0) {
 				var CheckHtmlList ='';
 				$.each(data.auditList, function(i, item) {
+					$('#audiType').val(item.type);
 					var ProcessName = '';
 					var step = i + 1;
 					var current = item.current;
@@ -364,6 +353,7 @@
 		},
 		commodityHtml: function(data) {
 			var _this = this;
+			console.log(data)
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
 			console.log(orderDetailLen)
 			if(orderDetailLen > 0) {
@@ -476,7 +466,7 @@
 	                    
                     '</div>'
 				});
-				$("#staCheckCommodity").html(htmlCommodity)
+				$("#orCheckCommodity").html(htmlCommodity)
 			}
 		},
 		addRemark:function(){
@@ -485,8 +475,11 @@
 				e.detail.gesture.preventDefault(); 
 				var btnArray = ['取消', '确定'];
 				mui.prompt('请输入你要添加的备注', '系统提示！', '系统提示！',btnArray, function(e) {
+					console.log(e)
 					if(e.index == 1) {
 						var inText = e.value;
+                        console.log(inText)
+                        console.log($('#ordId').val())
                         if (inText == null) {
 			                return false;
 			            }
@@ -495,14 +488,12 @@
 			                url:"/a/biz/order/bizOrderComment/addComment",
 			                data:{orderId:$('#ordId').val(),remark:inText},
 			                success:function (data) {
+			                	console.log(data)
 			                    if (data == "error") {
-			                        mui.toast("添加订单备注失败，备注可能为空!");
+			                        alert("添加订单备注失败，备注可能为空");
 			                    }
 			                    if (data == "ok") {
-			                        mui.toast("添加订单备注成功!");
-			                        window.setTimeout(function(){
-					                    _this.getData();
-					                },500);
+			                        alert("添加订单备注成功");
 			                    }
 			                }
 			            });
@@ -581,25 +572,62 @@
 		comfirDialig: function(data) {
 			var _this = this;
 			console.log(data)
+			var ordType = '';
+			var commonProcessList = '';
+			if(data.entity2.bizPoHeader) {
+				commonProcessList = data.entity2.bizPoHeader.commonProcessList;
+			}
+			var bizPoHeader = data.entity2.bizPoHeader;
+			/*代采订单*/
+			console.log(data.entity2.str)
+			console.log(data.entity2.orderType)
+			console.log(data.type)
+			console.log(data.currentAuditStatus.type)
+			if(data.entity2.str == 'audit' && data.entity2.orderType == 5) {
+				if(commonProcessList == null) {
+					ordType = 'DO'
+				}
+			}
+			/*普通订单*/
+			if(data.entity2.str == 'audit' && (data.type != 0 || data.type != 1)) {
+				if(data.entity2.orderType == 1 && data.currentAuditStatus.type != 777 && data.currentAuditStatus.type != 666) {
+					ordType = 'JO'
+				}
+			}
+			console.log(ordType)
 			console.log(_this.userInfo.staOrdId)
-			var orderType = data.orderType;
 			var createPo = data.createPo;
 			document.getElementById("rejectBtns").addEventListener('tap', function() {
-				var btnArray = ['否', '是'];
-				mui.confirm('确定审核驳回吗？', '系统提示！', btnArray, function(choice) {
-					if(choice.index == 1) {
-						_this.rejectData(45)
-					} else {						
-					}
+				var btnArray = ['取消', '确定'];
+				mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
+					if(a.index == 1) {
+						var rejectTxt = a.value;
+						if(a.value == '') {
+							mui.toast('驳回理由不能为空！')
+							return;
+						} else {
+							var btnArray = ['取消', '确定'];
+							mui.confirm('确定驳回该流程吗？', '系统提示！', btnArray, function(choice) {
+								if(choice.index == 1) {
+									if(ordType == 'JO') {
+										_this.auditJo(rejectTxt,2,createPo,data)
+									}
+									if(ordType == 'DO') {
+										_this.auditDo(rejectTxt,2,createPo,data)
+									}
+								} else {}
+							})
+						}
+					} else {}
 				})
 			});
 			document.getElementById("checkBtns").addEventListener('tap', function(e) {
 				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
-				if(data.orderType == 5 && data.statusEnumState == 0) {
+				if(data.entity2.orderType == 5 && data.statusEnumState == 0) {
 	                mui.toast("代采订单需至少付款20%，请付款后刷新页面再审核");
 	                return;
 	            }
-				if(res.data.createPoHeader == 'yes') {//品类主管审核才生成PO
+				if(createPo == 'yes') {//品类主管审核才生成PO
 					var lastDates = $('#lastDate').val();
 					if(lastDates == null || lastDates == '') {
 						mui.toast('最后付款时间不能为空！')
@@ -617,40 +645,62 @@
 							var btnArray = ['否', '是'];
 							mui.confirm('确定审核通过吗？', '系统提示！', btnArray, function(choice) {
 								if(choice.index == 1) {
-									if(orderType == 1) {
-										_this.ajaxDataSo(inText,1,orderType,createPo)
+									if(_this.checkResult == true) {
+										_this.afterAjaxData(data)
 									}
-									if(orderType == 2) {
-										_this.ajaxData(inText,1,orderType,createPo)
+									if(_this.checkResult == false) {
+										alert(ordType)
+										if(ordType == 'JO') {
+											alert('JO')
+											_this.auditJo(inText,1,createPo,data)
+										}
+										if(ordType == 'DO') {
+											alert('DO')
+											_this.auditDo(inText,1,createPo,data)
+										}
 									}
-								} else {						
-								}
+								} else {}
 							})
 						}	
 					} else {}
 				})
 			});
 		},
-		ajaxDataSo:function(inText, num, orderType, createPo) {
+		afterAjaxData: function(dm) {
 			var _this = this;
-//			var r2 = document.getElementsByName("localOriginType");
-//          var localOriginType = "";
-//          for (var i = 0; i < r2.length; i++) {
-//              if (r2[i].checked == true) {
-//                  localOriginType = r2[i].value;
-//              }
-//          }
-//          console.log(localOriginType)
+			var schedulingType = $("input[name='schedulType']:checked").val();
+            if (schedulingType == 0) {
+//          	var purchNums = $('#purchNum').val();
+//          	if(purchNums != undefined) {
+            		_this.saveComplete("0", _this.poId);
+//          	}
+            }
+            if (schedulingType == 1) {
+//          	var commdNums = $('.commdNum').val();
+//          	if(commdNums != undefined) {
+            		_this.batchSave("1", _this.poId, dm);
+//          	}
+            }
+		},
+		auditJo:function(inText, num, createPo, vn) {
+			var _this = this;
+			console.log(vn)
 			var lastDateTxt = '';
-			if(createPo == 'yes') {
+			if(createPo == 'yes' && num == 1) {
 				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
 			}
+			var suplys = vn.entity2.suplys;
+			var orderType = 1;
+			if (suplys == 0 || suplys == 721) {
+                orderType = 0;
+            }
+			var audiType = $('#audiType').val();
 			$.ajax({
 				type: "GET",
 				url: "/a/biz/order/bizOrderHeader/auditSo",
 				data:{
 					id: _this.userInfo.staOrdId,//采购单id
-					currentType: ,//当前审核状态
+					currentType: audiType,//当前审核状态
 					auditType: num,//审核标识1：审核通过， 2：驳回
 					description: inText,//通过/驳回理由
 					orderType: orderType,//订单类型
@@ -659,19 +709,51 @@
 				},
 				dataType: "json",
 				success: function(res) {
-//					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;
 					console.log(res)
-//					if(res.data=='ok'){
-//						mui.toast('发货成功!')
-//						window.setTimeout(function(){
-//			                GHUTILS.OPENPAGE({
-//							url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
-//							extras: {
-//								staListId:stcheckIdTxt,
-//								}
-//							})
-//			            },800);						
-//					}
+					_this.checkResult = res.ret
+                    if(_this.checkResult == true || _this.checkResult == 'true') {
+						if(num == 2) {
+							mui.toast('操作成功!')
+							GHUTILS.OPENPAGE({
+								url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+								extras: {}
+							})
+						}
+						if(num == 1) {
+							if($('#createPo').val() == 'yes') {
+								//订单排产
+		                        var resultData = res.data;
+		                        var resultDataArr = resultData.split(",");
+		                        if(resultDataArr[0] == "采购单生成") {
+		                            _this.poId = resultDataArr[1];
+		                            var schedulingType = $("input[name='schedulType']:checked").val();
+		                            console.log(_this.poId)
+		                            console.log(schedulingType)
+		                            if (schedulingType == 0) {
+//		                            	var purchNums = $('#purchNum').val();
+//		                            	console.log(purchNums)
+//		                            	if(purchNums != undefined) {
+		                            		_this.saveComplete("0", _this.poId);
+//		                            	}
+		                            }
+		                            if (schedulingType == 1) {
+//		                            	var commdNums = $('.commdNum').val();
+//		                            	if(commdNums != undefined) {
+		                            		_this.batchSave("1", _this.poId, vn);
+//		                            	}
+		                            }
+		                        }
+							}else {
+								mui.toast('操作成功!')
+								GHUTILS.OPENPAGE({
+									url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+									extras: {}
+								})
+							}
+						}
+                    }else {
+                        alert("操作失败！");
+					}
 				},
 				error: function (e) {
 				    //服务器响应失败处理函数
@@ -679,93 +761,75 @@
 				}
 			});
 		},
-		ajaxData:function(num) {
+		auditDo:function(inText, num, createPo,vn) {
 			var _this = this;
-			var r2 = document.getElementsByName("localOriginType");
-            var localOriginType = "";
-            for (var i = 0; i < r2.length; i++) {
-                if (r2[i].checked == true) {
-                    localOriginType = r2[i].value;
-                }
-            }
-//          console.log(localOriginType)
+			var lastDateTxt = '';
+			if(createPo == 'yes' && num == 1) {
+				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
+			}
+			var audiType = $('#audiType').val();
 			$.ajax({
-				type: "POST",
-				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
+				type: "GET",
+				url: "/a/biz/order/bizOrderHeader/audit",
 				data:{
-					id:$('#ordId').val(),
-					flag:$('#flag').val(),
-					objJsp:num,
-					'bizLocation.address':$('#staDateilAddress').val(),
-					'bizLocation.appointedTime': $('#appointedTime').val(),
-					localSendIds: $('#localSendIds').val(),
-					'bizLocation.province.id': $('#provinceId').val() ,
-					'bizLocation.city.id': $('#cityId').val(), 
-					'bizLocation.region.id': $('#regionId').val(),
-					boo: _this.prew,
-					localOriginType:localOriginType
+					id: _this.userInfo.staOrdId,//采购单id
+					currentType: audiType,//当前审核状态
+					auditType: num,//审核标识1：审核通过， 2：驳回
+					description: inText,//通过/驳回理由
+					createPo: createPo,//是否生成po标识
+					lastPayDateVal: lastDateTxt,//最后付款时间
 				},
 				dataType: "json",
 				success: function(res) {
-					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;
-//					console.log(res)
-					if(res.data=='ok'){
-						mui.toast('审核成功!')
-						window.setTimeout(function(){
-			                GHUTILS.OPENPAGE({
-							url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
-							extras: {
-								staListId:stcheckIdTxt,
-								}
+					console.log(res)
+					_this.checkResult = res.ret
+                    if(_this.checkResult == true || _this.checkResult == 'true') {
+						if(num == 2) {
+							mui.toast('操作成功!')
+							GHUTILS.OPENPAGE({
+								url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+								extras: {}
 							})
-			            },800);						
+						}
+						if(num == 1) {
+							if($('#createPo').val() == 'yes') {
+								//订单排产
+		                        var resultData = res.data;
+		                        var resultDataArr = resultData.split(",");
+		                        if(resultDataArr[0] == "采购单生成") {
+		                            _this.poId = resultDataArr[1];
+		                            var schedulingType = $("input[name='schedulType']:checked").val();
+		                            console.log(_this.poId)
+		                            console.log(schedulingType)
+		                            if (schedulingType == 0) {
+//		                            	var purchNums = $('#purchNum').val();
+//		                            	console.log(purchNums)
+//		                            	if(purchNums != undefined) {
+		                            		_this.saveComplete("0", _this.poId);
+//		                            	}
+		                            }
+		                            if (schedulingType == 1) {
+//		                            	var commdNums = $('.commdNum').val();
+//		                            	if(commdNums != undefined) {
+		                            		_this.batchSave("1", _this.poId, vn);
+//		                            	}
+		                            }
+		                        }
+							}else {
+								mui.toast('操作成功!')
+								GHUTILS.OPENPAGE({
+									url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+									extras: {}
+								})
+							}
+						}
+                    }else {
+                        alert("操作失败！");
 					}
 				},
 				error: function (e) {
 				    //服务器响应失败处理函数
 //				    console.info(e);
-				}
-			});
-		},
-		rejectData:function(num) {
-			var _this = this;
-			var r2 = document.getElementsByName("localOriginType");
-            var localOriginType = "";
-            for (var i = 0; i < r2.length; i++) {
-                if (r2[i].checked == true) {
-                    localOriginType = r2[i].value;
-                }
-            }
-			$.ajax({
-				type: "POST",
-				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
-				data: {
-					id:$('#ordId').val(),
-					flag:$('#flag').val(),
-					objJsp:num,
-					'bizLocation.address':$('#staDateilAddress').val(),
-					'bizLocation.appointedTime': $('#appointedTime').val(),
-					localSendIds: $('#localSendIds').val(),
-					'bizLocation.province.id': $('#provinceId').val() ,
-					'bizLocation.city.id': $('#cityId').val(), 
-					'bizLocation.region.id': $('#regionId').val(),
-					localOriginType:localOriginType
-				},
-				dataType: "json",
-				success: function(res) {
-					var stcheckIdTxt = _this.userInfo.stcheckIdTxt;
-					if(res.data=='comError'){
-						mui.toast('审核失败!')
-						window.setTimeout(function(){
-			                GHUTILS.OPENPAGE({
-								url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
-								extras: {
-									staListId:stcheckIdTxt,
-									}
-							})
-			            },800);
-//						
-					}
 				}
 			});
 		},
@@ -822,7 +886,457 @@
 	            now = now.replace("-"); //  2014-7-6 07:17:43
 	        }
 	        return now;
-		}
+		},
+		//排产
+		schedulGetData: function(chData) {
+			console.log(chData)
+			var _this = this;
+        	var htmlPurch = '';
+        	var totalOrdQtyNumNums = 0;
+        	$.each(chData.bizOrderHeader.orderDetailList, function(i,item) {
+        		console.log(item)
+				var primaryMobile = '';
+				if(item.primary.mobile) {
+					primaryMobile = item.primary.mobile
+				}else {
+					primaryMobile = ''
+				}
+        		var ordQtyNum = item.ordQty;
+        		totalOrdQtyNumNums = parseInt(totalOrdQtyNumNums) + parseInt(ordQtyNum);
+			htmlPurch +='<li class="mui-table-view-cell mui-media app_bline app_pr">'+
+//		产品图片
+//			'<div class="photoParent mui-pull-left app_pa">'+
+//				'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'"></div>'+
+//		产品信息
+			'<div class="mui-media-body app_w80p app_fr">'+
+				'<div class="mui-input-row">'+
+					'<label>商品名称：</label>'+
+					'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuName +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>商品编号：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.partNo +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>商品货号：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>供应商：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.vendor.name +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>供应商电话：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ primaryMobile +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>商品单价：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>采购数量：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.ordQty +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>总额：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ (item.unitPrice * item.ordQty).toFixed(2) +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>已发货数量：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.sentQty +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>创建时间：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.createDate) +'" disabled></div>'+
+
+				'</div></div></li>'
+			});
+			$("#purchOrdQty").val(totalOrdQtyNumNums);
+			$("#orSchedPurch").html(htmlPurch)
+			_this.btnshow(chData);
+			_this.schedulPlan();
+		},
+		btnshow: function(data) {
+			var _this = this;
+			$('.schedCommd').hide();
+			$('input[name=schedulType]').on('change', function() {
+				if(this.checked && this.value == 0) {
+					$('.schedPurch').show();
+					$('.schedCommd').hide();
+					_this.purchContent(data);
+				}
+				if(this.checked && this.value == 1) {
+					$('.schedPurch').hide();
+					$('.schedCommd').show();
+					_this.commdContent(data);
+				}
+			})
+		},
+		purchContent: function(a) {
+			var _this = this;
+			var htmlPurch = '';
+			var htmlSave = '';
+			$.each(a.bizOrderHeader.orderDetailList, function(i,item) {
+				var primaryMobile = '';
+				if(item.primary.mobile) {
+					primaryMobile = item.primary.mobile
+				}else {
+					primaryMobile = ''
+				}
+			htmlPurch +='<li class="mui-table-view-cell mui-media app_bline app_pr">'+
+//		产品图片
+//			'<div class="photoParent mui-pull-left app_pa">'+
+//				'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'"></div>'+
+//		产品信息
+			'<div class="mui-media-body app_w80p app_fr">'+
+				'<div class="mui-input-row">'+
+					'<label>商品名称：</label>'+
+					'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuName +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>商品编号：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.partNo +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>商品货号：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>供应商：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.vendor.name +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>供应商电话：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ primaryMobile +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>商品单价：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>采购数量：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.ordQty +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>总额：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ (item.unitPrice * item.ordQty).toFixed(2) +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>已发货数量：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.sentQty +'" disabled></div>'+
+				'<div class="mui-input-row">'+
+					'<label>创建时间：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.createDate) +'" disabled></div>'+
+				'</div></div></li>'
+			});
+    		$("#orSchedPurch").html(htmlPurch)
+		},
+		commdContent: function(b) {
+			var _this = this;
+			var htmlCommodity = '';
+			var htmlAllSave = '';
+			$.each(b.bizOrderHeader.orderDetailList, function(i,item) {
+				var waiteNum = item.ordQty - item.sumCompleteNum;
+				var primaryMobile = '';
+				if(item.primary.mobile) {
+					primaryMobile = item.primary.mobile
+				}else {
+					primaryMobile = ''
+				}
+				htmlCommodity += '<li class="mui-table-view-cell app_bline2">'+
+				'<div class="mui-input-row inComdty inDetailComdty app_pall11_15">'+
+	//							<!--产品图片-->
+//					'<div class="photoParent mui-pull-left app_pa">'+
+//						'<img class="app_pa" src="'+item.skuInfo.productInfo.imgUrl+'"></div>'+
+	//							<!--产品信息-->
+					'<div class="mui-media-body app_w80p app_fr">'+
+						'<div class="mui-input-row">'+
+							'<label>商品名称：</label>'+
+							'<input type="text" class="app_color40 mui-input-clear" value="'+ item.skuName +'" disabled></div>'+
+						'<div class="mui-input-row">'+
+							'<label>商品编号：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.partNo +'" disabled></div>'+
+						'<div class="mui-input-row">'+
+							'<label>商品货号：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled></div>'+
+						'<div class="mui-input-row">'+
+							'<label>供应商：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.vendor.name +'" disabled></div>'+
+						'<div class="mui-input-row">'+
+							'<label>供应商电话：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ primaryMobile +'" disabled></div>'+
+						'<div class="mui-input-row">'+
+							'<label>商品单价：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+						'<div class="mui-input-row">'+
+							'<label>采购数量：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.ordQty +'" disabled></div>'+
+						'<div class="mui-input-row">'+
+							'<label>总额：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ (item.unitPrice * item.ordQty).toFixed(2) +'" disabled></div>'+
+						'<div class="mui-input-row">'+
+							'<label>已发货数量：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ item.sentQty +'" disabled></div>'+
+						'<div class="mui-input-row">'+
+							'<label>创建时间：</label>'+
+							'<input type="text" class="mui-input-clear" value="'+ _this.formatDateTime(item.createDate) +'" disabled></div>'+
+				'</div></div>'+
+				'<div class="mui-row app_f13 app_bline">'+
+					'<div class="mui-input-row">'+
+						'<label>总申报数量：</label>'+
+						'<input type="text" value="'+ item.ordQty +'" id="totalOrdQtyForSku_'+ item.skuInfo.id+'" class="commdOrdQty" disabled></div>'+
+//					'<div class="mui-input-row">'+
+//						'<label>总待排产量：</label>'+
+//						'<input type="text" value="'+ waiteNum +'" class="commdWaiteNum" disabled></div>'+
+//					'<div class="mui-input-row">'+
+//						'<label>已排产数量：</label>'+
+//						'<input type="text" name="toalSchedulingNumForSku" value="'+ item.sumCompleteNum +'" class="commdCompleteNum" disabled></div>'+
+					'<button type="submit" class="commdAddBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
+					'<div classs="app_bline"></div>'+
+				'<div class="mui-row comdPlan">'+
+					'<div class="labelLf">排产计划</div>'+
+					'<div class="mui-row app_f13 commdAddPlan" id="'+ item.skuInfo.id+'">'+
+						'<div class="mui-row app_bline commdPlan" name="'+ item.skuInfo.id +'">'+
+							'<div class="mui-input-row">'+
+								'<label>完成日期：</label>'+
+								'<input type="date" name="'+ item.skuInfo.id +'_date" class="commdDate"></div>'+
+							'<div class="mui-input-row">'+
+								'<label>排产数量：</label>'+
+								'<input type="text" name="'+ item.skuInfo.id +'_value" class="commdNum mui-input-clear"></div>'+
+				'</div></div></div></div></li>'
+			});
+    		$("#orSchedCommd").html(htmlCommodity)
+		},
+		schedulPlan: function() {
+			var _this = this;
+			var htmlPurchPlan = '<div class="mui-row app_bline purchAddCont">'+
+				'<div class="mui-input-row">'+
+					'<label>完成日期：</label>'+
+					'<input type="date" class="addpurchDate"></div>'+
+				'<div class="mui-input-row">'+
+					'<label>排产数量：</label>'+
+					'<input type="text" class="addpurchNum mui-input-clear"></div>'+
+				'<button type="submit" class="removeBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">删除</button>'+
+			'</div>';
+			var htmlcommdPlan = '<div class="mui-row app_bline commdAddCont">'+
+				'<div class="mui-input-row">'+
+					'<label>完成日期：</label>'+
+					'<input type="date" name="" class="addCommdDate"></div>'+
+				'<div class="mui-input-row">'+
+					'<label>排产数量：</label>'+
+					'<input type="text" class="addCommdNum mui-input-clear"></div>'+
+				'<button type="submit" class="removeBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">删除</button>'+
+			'</div>';
+			var addPurchNum = _this.userInfo.staOrdId;
+			$('#purchPlan').attr('name', addPurchNum);
+			$('#purchDate').attr('name', addPurchNum + '_date');
+			$('#purchNum').attr('name', addPurchNum + '_value');
+
+			$(".schedPurch").on("tap", "#purchAddBtn", function() {
+				$('#purchAddCont').append(htmlPurchPlan);
+				var addPurchNum = _this.userInfo.staOrdId;
+				$('.purchAddCont').attr('name', addPurchNum);
+				$('.addpurchDate').attr('name', addPurchNum + '_date');
+				$('.addpurchNum').attr('name', addPurchNum + '_value');
+			})
+			var commdDateName = '';
+			var commdNumName = '';
+			var commdPlanName = '';
+			$(".schedCommd").on("tap", ".commdAddBtn", function() {
+				$(this).parent('.app_f13').find('.commdAddPlan').append(htmlcommdPlan);
+				commdPlanName = $(this).parent('.app_f13').find('.commdPlan').attr('name');
+				commdDateName = $(this).parent('.app_f13').find('.commdDate').attr('name');
+				commdNumName = $(this).parent('.app_f13').find('.commdNum').attr('name');
+				$(this).parent('.app_f13').find('.commdAddCont').attr('name', commdPlanName);
+				$(this).parent('.app_f13').find('.addCommdDate').attr('name', commdDateName);
+				$(this).parent('.app_f13').find('.addCommdNum').attr('name', commdNumName);
+			})
+			_this.removeSchedul();
+		},
+		removeSchedul: function() {
+			var _this = this;
+			$('.mui-content').on('tap', '.removeBtn', function() {
+				$(this.parentNode).remove();
+			})
+		},
+		saveComplete: function(schedulingType,poId) {
+			var _this = this;
+            var reqId = _this.userInfo.staOrdId;
+            var trArray = $("[name='" + reqId + "']");
+            var params = new Array();
+            var schRemark = "";
+            var originalNum = $("#purchOrdQty").val();
+            schRemark = $("#orRemark").val();
+
+            var totalSchedulingHeaderNum = 0;
+            var totalSchedulingDetailNum = 0;
+            var poSchType = 0;
+            for(i=0;i<trArray.length;i++){
+                var div = trArray[i];
+                var jqDiv = $(div);
+                var value = jqDiv.find("[name='" + reqId + "_value']").val();
+
+                totalSchedulingHeaderNum = parseInt(totalSchedulingHeaderNum) + parseInt(value);
+            }
+
+            var totalTotalSchedulingNum = 0;
+            poSchType = originalNum >  parseInt(totalSchedulingHeaderNum)  ? 1 : 2;
+
+            if(parseInt(totalSchedulingHeaderNum) > parseInt(originalNum)) {
+                alert("排产量总和太大，请重新输入!")
+                return;
+            }
+
+            for(i=0;i<trArray.length;i++){
+                var div = trArray[i];
+                var jqDiv = $(div);
+                var date = jqDiv.find("[name='" + reqId + "_date']").val();
+                var value = jqDiv.find("[name='" + reqId + "_value']").val();
+
+                if (date == "") {
+                    if (value != "") {
+                        alert("第" + count + "个商品完成日期不能为空!")
+                        return;
+                    }
+                }
+                if (value == "") {
+                    if (date != "") {
+                        alert("第" + count + "个商品排产数量不能为空!")
+                        return;
+                    }
+                }
+                if (date == "" && value == "") {
+                    continue;
+                }
+                var reg= /^[0-9]+[0-9]*]*$/;
+                if (value != "" && (parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value))) {
+                    alert("确认值输入不正确!")
+                    return;
+                }
+                var entity = {};
+                entity.id = poId;
+                entity.objectId = poId;
+                entity.originalNum = originalNum;
+                entity.schedulingNum = value;
+                entity.planDate=date + " 00:00:00";
+                entity.schedulingType=schedulingType;
+                entity.remark=schRemark;
+                entity.poSchType = poSchType;
+                //totalSchedulingHeaderNum = parseInt(totalSchedulingHeaderNum) + parseInt(value);
+                params[i]=entity;
+                //totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
+            }
+            $.ajax({
+                url: '/a/biz/po/bizPoHeader/saveSchedulingPlan',
+                contentType: 'application/json',
+                data:JSON.stringify(params),
+                datatype:"json",
+                type: 'post',
+                success: function (result) {
+                	if(result == true || result == 'true') {
+                		mui.toast('操作成功!')
+						GHUTILS.OPENPAGE({
+							url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+							extras: {}
+						})
+                	}else{
+                		mui.toast('操作失败!')
+                	}
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+		},
+		batchSave: function(schedulingType,poId,vndm) {
+			var _this = this;
+			console.log(vndm)
+			var skuInfoIdListList = vndm.skuInfoIdListListJson;
+            var params = new Array();
+            var totalSchedulingNum = 0;
+            var totalOriginalNum = 0;
+            var count = 1
+            var ind = 0;
+            var schRemark = "";
+            schRemark = $("#orRemark").val();
+
+            var totalSchedulingHeaderNum = 0;
+            var totalSchedulingDetailNum = 0;
+            var poSchType = 0;
+
+            for(var index in skuInfoIdListList) {
+                var skuInfoId = skuInfoIdListList[index];
+
+                var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
+                totalOriginalNum = parseInt(totalOriginalNum) + parseInt(originalNum);
+            }
+
+            for(var index in skuInfoIdListList) {
+                var skuInfoId = skuInfoIdListList[index];
+                var trArray = $("[name='" + skuInfoId + "']");
+                for(i=0;i<trArray.length;i++) {
+                    var div = trArray[i];
+                    var jqDiv = $(div);
+                    var value = jqDiv.find("[name='" + skuInfoId + "_value']").val();
+                    totalSchedulingDetailNum = parseInt(totalSchedulingDetailNum) + parseInt(value);
+                }
+            }
+            poSchType = totalOriginalNum > parseInt(totalSchedulingDetailNum) ? 1 : 2;
+
+            for(var index in skuInfoIdListList) {
+                var skuInfoId = skuInfoIdListList[index];
+                var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
+                var trArray = $("[name='" + skuInfoId + "']");
+                for(i=0;i<trArray.length;i++) {
+                    var div = trArray[i];
+                    var jqDiv = $(div);
+                    var date = jqDiv.find("[name='" + skuInfoId + "_date']").val();
+                    var value = jqDiv.find("[name='" + skuInfoId + "_value']").val();
+                    if (date == "") {
+                        if (value != "") {
+                            alert("第" + count + "个商品完成日期不能为空!")
+                            return;
+                        }
+                    }
+                    if (value == "") {
+                        if (date != "") {
+                            alert("第" + count + "个商品排产数量不能为空!")
+                            return;
+                        }
+                    }
+                    if (date == "" && value == "") {
+                        continue;
+                    }
+                    var reg = /^[0-9]+[0-9]*]*$/;
+                    if (value != "" && (parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value))) {
+                        alert("第" + count + "个商品确认值输入不正确!")
+                        return;
+                    }
+                    var entity = {};
+                    entity.id = poId;
+                    entity.objectId = skuInfoId;
+                    entity.originalNum = originalNum;
+                    entity.schedulingNum = value;
+                    entity.planDate=date + " 00:00:00";
+                    entity.schedulingType=schedulingType;
+                    entity.remark=schRemark;
+                    entity.poSchType = poSchType;
+
+                    params[ind]=entity;
+                    totalSchedulingNum = parseInt(totalSchedulingNum) + parseInt(value);
+                    ind++;
+                }
+                count++;
+            }
+            if(parseInt(totalSchedulingNum) > parseInt(totalOriginalNum)) {
+                alert("排产量总和太大，请重新输入!")
+                return false
+            }
+            $.ajax({
+                url: '/a/biz/po/bizPoHeader/batchSaveSchedulingPlan',
+                contentType: 'application/json',
+                data:JSON.stringify(params),
+                datatype:"json",
+                type: 'post',
+                success: function (result) {
+                	if(result == true || result == 'true') {
+                		mui.toast('操作成功!')
+						GHUTILS.OPENPAGE({
+							url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+							extras: {}
+						})
+                	}else{
+                		mui.toast('操作失败!')
+                	}
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
 	}
 	$(function() {
 

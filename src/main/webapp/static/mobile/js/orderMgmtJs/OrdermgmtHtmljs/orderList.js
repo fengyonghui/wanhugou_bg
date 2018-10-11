@@ -120,7 +120,7 @@
                                     if(item.bizStatus != res.data.CANCLE){
                                         if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING){
                                         	console.log('审核1')
-                                         	if(_this.staOrdauditFlag == false){
+                                         	if(_this.staOrdauditFlag == true){
 												var DataRoleGener = '';
 												if(item.commonProcess) {
 													DataRoleGener = item.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
@@ -150,15 +150,8 @@
 //                                       		}
                                          	}
                                         }
-                                        if(_this.staOrdauditFlag == false){
+                                        if(_this.staOrdauditFlag == true){
                                         	console.log('审核2')
-//                                      	orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
-//							&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
-//							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
-//							&& (fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationLocalProcess)
-//							 	|| fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationOriginProcess)
-//							 	 || fns:getUser().isAdmin()
-//                                          console.log(dataRow)
                                             var DataRole = '';
 											if(item.commonProcess) {
 												DataRole = item.commonProcess.jointOperationLocalProcess;
