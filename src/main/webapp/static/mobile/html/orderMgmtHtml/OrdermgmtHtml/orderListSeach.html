@@ -64,7 +64,13 @@
 				</div>
 				<div class="mui-input-row">
 					<label>经销店名称：</label>
-					<input type="text" class="inOrdNum" placeholder="请输入">
+					<div class="pre">
+						<input class="newinput" type="text" placeholder="请选择采购中心">
+						<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAdd"></span>
+						<div class="input_div" style="display: none;"></div>											
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
 				</div>
 				<div class="mui-input-row">
 					<label>采购中心：</label>
@@ -116,7 +122,9 @@
 			</form>
 		</div>
 		<div class="SearchBtnClass">
-			<button id="inSearchBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">查询</button>
+			<button id="inSearchBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">
+				查询
+			</button>
 		</div>
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/mui.min.js"></script>

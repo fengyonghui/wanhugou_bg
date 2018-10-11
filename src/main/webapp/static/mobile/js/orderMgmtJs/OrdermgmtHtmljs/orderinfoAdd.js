@@ -18,10 +18,11 @@
 		},
 		getData: function() {
 			var _this = this;
+			            	//orderHeader.id=9535&orderHeader.oneOrder=&orderType=1
 			$.ajax({
                 type: "GET",
-                url: "/a/biz/order/bizOrderDetail/form4Mobile",
-                data: {id:_this.userInfo.amendId,orderId:_this.userInfo.orderId,
+                url: "/a/biz/order/bizOrderDetail/form",
+                data: {'orderHeader.id':_this.userInfo.orderId,
                 	'orderHeader.oneOrder':_this.userInfo.oneOrderId,orderType:_this.userInfo.orderType},
                 dataType: "json",
                 success: function(res){
@@ -246,7 +247,6 @@
             var _this = this;
             mui('#commodityMenu').on('tap','.removeButton',function(e){
             	alert(1)
-            	
 //              var obj = e.detail.target.id;
 //              var cheId = obj.split("_")[1]
 //              var cheDiv = $("#serskudiv_" + cheId);

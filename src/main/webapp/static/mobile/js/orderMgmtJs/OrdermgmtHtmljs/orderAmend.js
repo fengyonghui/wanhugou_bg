@@ -3,6 +3,8 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+		this.OrdFlag = false;
+		this.OrdDetailFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -10,6 +12,8 @@
 			this.pageInit(); //页面初始化
 			this.getData();//获取数据			
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
+			this.getPermissionList('biz:sku:bizSkuInfo:edit','OrdFlag');//true 订单信息操作
+			this.getPermissionList1('biz:order:bizOrderDetail:edit','OrdDetailFlag');//false订单信息操作中的修改、删除
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
@@ -19,9 +23,10 @@
 		getData: function() {
 			var _this = this;
 			var datas={};
-			var idd=_this.userInfo.staOrdId;
+			var idd=_this.userInfo.staOrdId;//订单id
 			var statu=_this.userInfo.statu;
 			var source=_this.userInfo.source;
+			console.log(idd)
 			datas={
 				id:idd,
                 statu:statu,
@@ -71,7 +76,7 @@
 					//备注
 					var RemarkHtml="";
 					$.each(res.data.commentList, function(q, w) {
-						console.log(w)						
+//						console.log(w)						
 						RemarkHtml +='<li class="step_items">'+
 							'<div class="step_num_txt">'+
 								'<div class="">'+
@@ -87,6 +92,8 @@
 						'</li>'
 						$('#Remarks').html(RemarkHtml);
 					})
+					//订单id
+					$('#ordId').val(_this.userInfo.staOrdId);	
 					var item = res.data.bizOrderHeader;
 					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staPoordNum').val(item.orderNum);//订单编号
@@ -152,12 +159,41 @@
 					}else {
 						$('#notes').html('<ul><li>注：</li><li>（1）本订单作为丙方采购、验货和收货的依据，丙方可持本订单及付款凭证到甲方的仓库提货。</li><li>（2）本订单商品价格为未含税价，如果丙方需要发票，则乙方有义务提供正规发票，税点由丙方承担。</li><li>（3）乙方负责处理在甲方平台上销售的全部商品的质量问题和售后服务问题，由乙丙双方自行解决；甲方可配合协调处理；</li><li>（4）本订单在万户通平台经甲、乙、丙三方线上确认后生效，与纸质盖章订单具有同等的法律效力。在系统出现故障时，甲、乙、丙三方也可采用纸质订单签字或盖章后生效。)</li></ul>')
 					}
-					_this.statusListHtml(res.data)
-					_this.checkProcessHtml(res.data);
-					_this.commodityHtml(res.data)
+					_this.statusListHtml(res.data);//状态流程
+					_this.checkProcessHtml(res.data);//审核流程
+					_this.commodityHtml(res.data);//商品信息
+					_this.saveBtn();//商品信息
                 }
             });
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+//              	console.log(res.data)//true
+                    _this.OrdFlag = res.data;
+                }
+            });
+        },
+        getPermissionList1: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                	console.log(res.data)//false
+                    _this.OrdDetailFlag = res.data;
+                }
+            });
+        },
 		//添加备注
 		addRemark:function(){
 			var _this = this;
@@ -180,6 +216,9 @@
 			                    }
 			                    if (data == "ok") {
 			                        mui.toast("添加订单备注成功!");
+			                        window.setTimeout(function(){
+					                    _this.getData();
+					                },500);
 			                    }
 			                }
 			            });
@@ -244,6 +283,22 @@
                 	}
 				}
 			});
+		},
+		saveBtn:function(){
+			var _this = this;
+			/*保存*/
+            $('.inSaveBtn').on('tap','#saveDetailBtn', function() {
+            	alert('保存')
+            	$.ajax({
+	                type: "GET",
+	                url: "/a/biz/order/bizOrderHeader/save",
+	                data: {statuPath:""},		                
+	                dataType: "json",
+	                success: function(rest){
+	                	console.log(rest)
+	                }
+				});
+			})
 		},
 		//状态流程
 		statusListHtml:function(data){
@@ -347,7 +402,12 @@
 				$("#staCheckMenu").parent().hide();
 			}
 		},
+		//商品信息
 		commodityHtml: function(data) {
+			console.log(data)
+			$('#orderId').val(data.bizOrderHeader.id);
+			$('#oneOrderId').val(data.bizOrderHeader.oneOrder);
+			$('#orderType').val(data.orderType);
 			var _this = this;
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
 			if(orderDetailLen > 0) {
@@ -461,14 +521,39 @@
 	                    '<div class="mui-row lineStyle">' +
 		                    '<li class="mui-table-view-cell">' +
 			                    '<div class="mui-input-row ">' +
-				                    '<button type="submit" style="float:left;margin-left:50px;" amendId="'+item.id+'" class="ordAmendBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">修改</button>'+
-									'<button type="submit" style="float:right;margin-right:50px;" class="inAddBtn app_btn_search mui-btn-blue mui-btn-block">删除</button>'+
+				                    '<button type="submit" style="float:left;margin-left:50px;" amendId="'+item.id+'" orderId="'+data.bizOrderHeader.id+'" oneOrderId="'+data.bizOrderHeader.oneOrder
++'" orderType="'+data.orderType+'" class="ordAmendBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">修改</button>'+
+									'<button type="submit" style="float:right;margin-right:50px;" amendId="'+item.id+'" oneOrderId="'+data.bizOrderHeader.oneOrder
++'" orderType="'+data.orderType+'"  class="orddeleteBtn inAddBtn app_btn_search mui-btn-blue mui-btn-block">删除</button>'+
 		                    	'</div></li></div>' +
+		                    	
 	                   
                     '</div>'
 				});
-				$("#staCommodity").html(htmlCommodity)
+				$("#staCommodity").append(htmlCommodity);				
 				_this.ordHrefHtml();
+				//操作权限
+				if(_this.OrdFlag == true){
+						if(data.bizOrderHeader.str != 'audit' && data.bizOrderHeader.str!='detail' && data.bizOrderHeader.str!='createPay'){
+							if(data.bizOrderHeader.orderNoEditable=="" && data.bizOrderHeader.flag ==""&& data.bizOrderHeader.orderDetails==""){
+								$('.ordAmendBtn').parent().parent().parent().show();							
+							}
+						}
+				}
+				if(_this.OrdDetailFlag == false){
+					if(data.bizOrderHeader.str != 'audit'){
+						if(data.bizOrderHeader.orderNoEditable=="" && data.bizOrderHeader.flag ==""&& data.bizOrderHeader.orderDetails==""){
+							if(data.bizOrderHeader.clientModify ==""){
+								$('.ordAmendBtn').show();
+								$('.orddeleteBtn').show();
+							}
+							if(data.bizOrderHeader.clientModify == 'client_modify'){
+								$('.ordAmendBtn').show();
+								$('.orddeleteBtn').show();
+							}
+						}
+					}
+				}
 			}
 		},
 		ordHrefHtml: function() {
@@ -476,17 +561,56 @@
 			/*修改*/
             $('#staCommodity').on('tap','.ordAmendBtn', function() {
                 var amendId = $(this).attr('amendId');
+                var orderId = $(this).attr('orderId');
+                var oneOrderId = $(this).attr('oneOrderId');
+                var orderType = $(this).attr('orderType');
 				GHUTILS.OPENPAGE({
 					url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orDetailAmend.html",
 					extras: {
                         amendId: amendId,
+                        orderId: orderId,
+                        oneOrderId: oneOrderId,
+                        orderType: orderType,
+					}
+				})
+			})
+            //删除
+            $('#staCommodity').on('tap','.orddeleteBtn', function() {
+                var amendId = $(this).attr('amendId');
+                var oneOrderId = $(this).attr('oneOrderId');
+                var orderType = $(this).attr('orderType');
+                $.ajax({
+	                type: "GET",
+	                url: "/a/biz/order/bizOrderDetail/delete4Mobile",
+	                data: {
+	                	id:amendId,
+	                	sign:1,
+	                	'orderHeader.oneOrder':oneOrderId,
+	                	orderType:orderType
+	                },
+	                dataType: "json",
+	                success: function(res){
+	                	console.log(res)
+					}
+				})
+			})
+            //订单商品信息添加
+            $('.staCommodity').on('tap','#secDetailBtn', function() {		
+                var orderId = $('#orderId').val();
+                var oneOrderId =$('#oneOrderId').val();
+                var orderType = $('#orderType').val();
+				GHUTILS.OPENPAGE({
+					url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderinfoAdd.html",
+					extras: {
+                        orderId: orderId,
+                        oneOrderId: oneOrderId,
+                        orderType: orderType,
 					}
 				})
 			})
 		},
 		formatDateTime: function(unix) {
         	var _this = this;
-
     		var now = new Date(parseInt(unix) * 1);
 	        now =  now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
 	        if(now.indexOf("下午") > 0) {

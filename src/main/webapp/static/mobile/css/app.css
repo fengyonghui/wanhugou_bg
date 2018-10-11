@@ -622,7 +622,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .app_btn_search:active {color: #fff;border: 1px solid #046d90;background-color: #007aff !important;}
 /*备货单保存按钮*/
 .inSaveBtn {width: 70%;margin: 20px auto;}
-
+.secSaveBtn {width: 50%;margin: 8px auto;}
 /*移除、添加、删除---小按钮*/
 .inAddBtn {font-size: 15px;padding: 0;width: 30%;margin: 5px auto;}
 /*查询小按钮--备货单添加、修改  和  经销店添加*/
