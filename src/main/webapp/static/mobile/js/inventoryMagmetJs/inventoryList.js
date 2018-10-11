@@ -64,8 +64,6 @@
 				                for(var i = childs.length - 1; i >= 0; i--) {
 				                    f.removeChild(childs[i]);
 				                }
-//				                console.log('222')
-//				                console.log(pager)
 				                $('.mui-pull-caption-down').html('');				                
 				                getData(pager);
 			            }
@@ -80,8 +78,6 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		          	    console.log(res)
-//		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 			            var returnData = res.data.page.list;
 			            var dataRow = res.data.roleSet;
 						var arrLen = res.data.page.list.length; 
@@ -112,7 +108,6 @@
 			                data: {type: "req_from_type"},
 			                async:false,
 			                success: function(bss){                 
-//					            console.log(bss)
 								arrbss = bss
 			                }
 			            });	
@@ -126,20 +121,16 @@
 			                data: {type: "biz_req_status"},
 			                async:false,
 			                success: function(ass){                 
-//					            console.log(ass)
 					            arrass = ass
 			                }
 			            });
                         if(arrLen > 0) {
 							$.each(returnData, function(i, item) {
-//								console.log(item.commonProcess.requestOrderProcess)
-//								console.log(item)
 								$.each(arrbss, function(b, bs) {
 									if(bs.value==item.fromType) {
 										stock = bs.label
 									}
 								})
-//								console.log(arrass)
 								$.each(arrass, function(a, as) {
 					               	if(as.value==item.bizStatus) {
 					               		bizstatusTxt = as.label
@@ -157,9 +148,6 @@
 									purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
 								}
 								if(_this.checkFlag == true) {
-//								<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
-//							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
-//							}">
 									var DataRoleGener = '';
 									if(item.commonProcess) {
 										DataRoleGener = requestOrderProcess.roleEnNameEnum;
@@ -184,7 +172,6 @@
 								if(_this.cancelAmendPayFlag == true){
 									if(userId == 1) {
 										/*修改按钮*/
-//								requestHeader.delFlag!=null && requestHeader.delFlag!=0
 										if(item.delFlag!=null && item.delFlag!=0) {
 											inAmend = '修改'
 											inAmendBtn = 'inAmendBtn'
@@ -317,9 +304,6 @@
 							$('.mui-pull-caption').html('');
 							$('#list').append('<p class="noneTxt">暂无数据</p>');
 						}
-//						totalPage = res.data.page.count%pager.size!=0?
-//		                parseInt(res.data.page.count/pager.size)+1:
-//		                res.data.page.count/pager.size;
 		                if(res.data.page.totalPage==pager.pageNo){		                	
 			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 			            }else{
@@ -356,7 +340,6 @@
                 async:false,
                 success: function(res){
 					_this.cancelAmendPayFlag = res.data;
-//					console.log(_this.cancelAmendPayFlag)
                 }
             });
         },
@@ -585,7 +568,6 @@
 				dataType: 'json',
 				success: function(res) {
 					console.log(res)
-//		            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 		            var returnData = res.data.page.list;
 		            var dataRow = res.data.roleSet;
 					var arrLen = res.data.page.list.length; 
@@ -616,7 +598,6 @@
 		                data: {type: "req_from_type"},
 		                async:false,
 		                success: function(bss){                 
-//					            console.log(bss)
 							arrbss = bss
 		                }
 		            });	
@@ -630,20 +611,16 @@
 		                data: {type: "biz_req_status"},
 		                async:false,
 		                success: function(ass){                 
-//					            console.log(ass)
 				            arrass = ass
 		                }
 		            });
                     if(arrLen > 0) {
 						$.each(returnData, function(i, item) {
-//								console.log(item)
-//								console.log(arrbss)
 							$.each(arrbss, function(b, bs) {
 								if(bs.value==item.fromType) {
 									stock = bs.label
 								}
 							})
-//								console.log(arrass)
 							$.each(arrass, function(a, as) {
 				               	if(as.value==item.bizStatus) {
 				               		bizstatusTxt = as.label
@@ -661,9 +638,6 @@
 								if(item.bizPoHeader) {
 									purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
 								}
-	//								<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
-	//							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
-	//							}">
 								var DataRoleGener = '';
 								if(item.commonProcess) {
 									DataRoleGener = requestOrderProcess.roleEnNameEnum;
