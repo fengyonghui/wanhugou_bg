@@ -474,4 +474,21 @@
 
 	</select>
 
+	<select id="findOrderRegion" resultType="com.wanhutong.backend.modules.biz.entity.logistic.AddressVoEntity">
+		SELECT
+			a.id AS "id",
+			a.receiver AS "receiver",
+			a.phone AS "phone",
+			CONCAT(a.pcr_name, a.address ) AS "address"
+		FROM
+			biz_order_address a
+			left join biz_order_header boh on boh.id = a.order_id and boh.status=1
+		WHERE
+			1=1
+			AND a.order_id=#{orderId}
+			AND a.type =#{type}
+			AND a.STATUS = 1
+			LIMIT 1;
+	</select>
+
 </mapper>
