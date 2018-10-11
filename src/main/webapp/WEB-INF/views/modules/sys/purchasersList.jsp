@@ -149,6 +149,8 @@
 					<c:if test="${off.delRemark==0}">
 						<a href="${ctx}/sys/office/recovery?id=${off.id}&source=purchListDelete" onclick="return confirmx('要恢复该机构及所有子机构项吗？', this.href)">恢复</a>
 					</c:if>
+					<a href="${ctx}/sys/office/sysOfficeAddress?office.type=6&office.id=${off.id}">地址信息</a>
+					<%--<a href="${ctx}/sys/user/contact?office.type=6&office.id=${off.id}">地址信息</a>--%>
                 </td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
