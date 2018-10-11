@@ -542,6 +542,21 @@
 					})
 				}
 			})
+			//出库 Stock- Out /
+			$('.content_part').on('tap', '.ordSupplyBtn', function() {
+				var url = $(this).attr('url');
+				var staOrdId = $(this).attr('staOrdId');			
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(staOrdId == staOrdId) {
+                    GHUTILS.OPENPAGE({
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderstockOut.html",
+						extras: {
+							staOrdId: staOrdId,
+						}
+					})
+				}
+			})
         },
         //时间戳转化方法：
 		formatDateTime: function(unix) {
@@ -626,7 +641,7 @@
                     retainage: _this.userInfo.retainage,//尾款
                     'customer.phone': _this.userInfo.customerPhone,//经销商电话
                     itemNo: _this.userInfo.itemNo,//商品货号
-                    'customer.name': _this.userInfo.customerName,//经销店名称
+                    'customer.id': _this.userInfo.customerName,//经销店名称
                     centersName: _this.userInfo.centersName,//采购中心
                     'con.name': _this.userInfo.conName,//客户专员
 					mobileAuditStatus: _this.userInfo.mobileAuditStatus,//待同意发货
@@ -649,6 +664,17 @@
 				                ass=res;
 			                }
 			        });
+			        /*当前用户信息*/
+					var userId = '';
+					$.ajax({
+		                type: "GET",
+		                url: "/a/getUser",
+		                dataType: "json",
+		                async:false,
+		                success: function(user){                 
+							userId = user.data.id
+		                }
+		            });
 		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						var arrLen = res.data.page.list.length;	
                         var that=this;
@@ -664,17 +690,7 @@
 		                        		orderTypeTxt = items.label
 		                        	}
 	                            })
-	                            /*当前用户信息*/
-								var userId = '';
-								$.ajax({
-					                type: "GET",
-					                url: "/a/getUser",
-					                dataType: "json",
-					                async:false,
-					                success: function(user){                 
-										userId = user.data.id
-					                }
-					            });
+	                            var staCheckBtnTxt = '';
 	                            var staSupplyBtnTxt = '';
 								if(_this.staOrdFlag == true) {
 				                	//审核

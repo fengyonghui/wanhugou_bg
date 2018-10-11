@@ -20,8 +20,6 @@
 		pageInit: function() {
 			var _this = this;
 			_this.getData();
-			_this.ajaxinvoiceStatus();//发票状态
-			_this.ajaxPoStatus();//业务状态
 			_this.ajaxorderStatus();//订单状态
 			_this.ajaxcheckStatus();//审核状态
 		},
@@ -35,30 +33,26 @@
 							_this.sureSelect();
 						}else{
 							mui.toast('请选择匹配的选项');
-						}
-					
+						}					
 				}else{
-					alert(1)
-					_this.sureSelect();
-					
+					_this.sureSelect();					
 				}
-				
-
 			})
 		},
 		sureSelect:function(){
 			var _this = this;
 				_this.selectOpen = false;
-				console.log($('#input_div_ordStatus').val());//订单状态
-				console.log($('#input_div_cheStatus').val());//审核状态
-				console.log($('#input_div_finalMoney').val());//尾款
-				console.log($('.inOrdPhone').val());//经销商电话
-				console.log($('.inItemNum').val());//商品货号
-				console.log($('.centersName').val());//采购中心
-				console.log($('.conName').val());//客户专员
-				console.log($('#input_div_waitchkStatus').val());//待同意发货
-				console.log($('#input_div_waitsendgoods').val());//待发货
-				console.log($('#input_div_outbound').val());//待出库
+//				console.log($('#input_div_ordStatus').val());//订单状态
+//				console.log($('#input_div_cheStatus').val());//审核状态
+//				console.log($('#input_div_finalMoney').val());//尾款
+//				console.log($('.inOrdPhone').val());//经销商电话
+//				console.log($('.inItemNum').val());//商品货号
+//				console.log($('.hasoid').attr('id'));//经销店名称companyId: $('.hasoid').attr('id'),
+//				console.log($('.centersName').val());//采购中心
+//				console.log($('.conName').val());//客户专员
+//				console.log($('#input_div_waitchkStatus').val());//待同意发货
+//				console.log($('#input_div_waitsendgoods').val());//待发货
+//				console.log($('#input_div_outbound').val());//待出库
 				GHUTILS.OPENPAGE({
 					url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 					extras: {
@@ -68,7 +62,7 @@
                         retainage:$('#input_div_finalMoney').val(),//尾款
                         customerPhone:$('.inOrdPhone').val(),//经销商电话
                         itemNo:$('.inItemNum').val(),//商品货号
-//                      customerName://经销店名称
+                        customerName:$('.hasoid').attr('id'),//经销店名称
                         centersName:$('.centersName').val(),//采购中心
                         conName:$('.centersName').val(),//客户专员
 						mobileAuditStatus: $('.inReqNum').val(),//待同意发货
@@ -76,7 +70,7 @@
 						waitOutput: $('#input_div_outbound').val(),//待出库
 						includeTestData: _this.includeTestData,//测试数据
 						isFunc: true
-						}
+					}
 				})
 		},
 		testData:function() {
@@ -91,11 +85,10 @@
         },
 		hrefHtml: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
-			_this.ajaxSupplier();//供应商
-//			_this.ajaxCheckStatus();
+			_this.ajaxSupplier();//经销店名称
 
 			$(newinput).on('focus', function() {
-				//$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
 				$(hideSpanAdd).show()
 			})
@@ -132,13 +125,12 @@
 					}
 				})
 			$.each(reult, function(i, item) {
-//				console.log(item)
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
 
 		},
-		//供应商
+		//经销店名称
 		ajaxSupplier: function() {
 			var _this = this;
 			var htmlSupplier = ''
@@ -146,52 +138,16 @@
 				type: 'GET',
 				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
-					type: 7
+					type: 6
 				},
 				dataType: 'json',
 				success: function(res) {
+					console.log(res)
 					_this.dataSupplier = res
 					$.each(res, function(i, item) {
 						htmlSupplier += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="' + item.name + '">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlSupplier)
-				}
-			});
-		},
-		//发票状态
-		ajaxinvoiceStatus: function() {
-			var _this = this;
-			var optHtml ='<option value="">请选择</option>';
-			var htmlinvoice = ''
-			$.ajax({
-				type: 'GET',
-				url: '/a/sys/dict/listData',
-				data: {type:'biz_order_invStatus'},
-				dataType: 'json',
-				success: function(res) {
-					$.each(res, function(i, item) {
-						htmlinvoice += '<option class="soption"  value="' + item.id + '">' + item.label + '</option>'
-					});
-					$('#input_div_invoiceStatus').html(optHtml+htmlinvoice);
-					
-				}
-			});
-		},
-		//业务状态
-		ajaxPoStatus: function() {
-			var _this = this;
-			var optHtml ='<option value="">请选择</option>';
-			var htmlClass = '';
-			$.ajax({
-				type: 'GET',
-				url: '/a/sys/dict/listData',
-				data: {type:'biz_po_status'},
-				dataType: 'json',
-				success: function(res) {
-					$.each(res, function(i, item) {
-						htmlClass += '<option class="soption" value="' + item.id + '">' + item.label + '</option>'
-					});
-					$('#input_div_poStatus').html(optHtml+htmlClass)
 				}
 			});
 		},	
@@ -206,9 +162,7 @@
 				data: {type:'biz_order_status'},
 				dataType: 'json',
 				success: function(res) {
-//					console.log(res)
 					$.each(res, function(i, item) {
-//						console.log(item)
 						htmlOrdstatus += '<option class="soption" value="' + item.value + '">' + item.label + '</option>'
 					});
 					$('#input_div_ordStatus').html(optHtml+htmlOrdstatus);
@@ -223,7 +177,6 @@
 			$.ajax({
 				type: 'GET',
 				url: '/a/biz/order/bizOrderHeader/listData4mobile',
-//				data: {type:'biz_po_status'},
 				dataType: 'json',
 				success: function(res) {
 					console.log(res.data)

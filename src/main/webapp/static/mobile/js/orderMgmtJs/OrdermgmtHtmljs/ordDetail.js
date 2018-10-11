@@ -97,6 +97,8 @@
 						'</li>'
 						$('#Remarks').html(RemarkHtml);
 					})
+					//订单id
+					$('#ordId').val(_this.userInfo.staOrdId);	
 					var item = res.data.bizOrderHeader;
 					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staPoordNum').val(item.orderNum);//订单编号
@@ -204,6 +206,9 @@
 			                    }
 			                    if (data == "ok") {
 			                        mui.toast("添加订单备注成功!");
+			                        window.setTimeout(function(){
+					                    _this.getData();
+					                },500);
 			                    }
 			                }
 			            });

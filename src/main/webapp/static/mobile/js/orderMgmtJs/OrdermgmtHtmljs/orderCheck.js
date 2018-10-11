@@ -500,6 +500,9 @@
 			                    }
 			                    if (data == "ok") {
 			                        mui.toast("添加订单备注成功!");
+			                        window.setTimeout(function(){
+					                    _this.getData();
+					                },500);
 			                    }
 			                }
 			            });
