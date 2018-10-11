@@ -448,4 +448,30 @@
 		AND id = #{id}
 	</update>
 
+	<select id="findOfficeRegion" resultType="com.wanhutong.backend.modules.biz.entity.logistic.AddressVoEntity">
+		SELECT
+			a.id AS "id",
+			a.receiver AS "receiver",
+			a.phone AS "phone",
+			CONCAT(cl.pcr_name, cl.address ) AS "address",
+			a.default_status AS "defaultStatus",
+			sr_region.code AS "regionCode",
+			sr_prov.code AS "provCode",
+			sr_city.code AS "cityCode"
+		FROM
+		  sys_office_address a, common_location cl
+		  LEFT JOIN sys_region as sr_prov ON sr_prov.id=cl.province_id
+		  LEFT JOIN sys_region as sr_city ON sr_city.id=cl.city_id
+		  LEFT JOIN sys_region as sr_region ON sr_region.id=cl.region_id
+		WHERE
+			  cl.id = a.addr_id
+			  AND a.office_id  = #{officeId}
+			  AND a.type = #{type}
+			  AND a.default_status = true
+			  AND a.STATUS = 1
+			  AND cl.STATUS = 1
+			  LIMIT 1;
+
+	</select>
+
 </mapper>

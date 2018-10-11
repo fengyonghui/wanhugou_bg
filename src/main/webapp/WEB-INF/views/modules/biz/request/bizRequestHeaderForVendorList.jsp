@@ -258,11 +258,13 @@
 
 			</td>
 			<td>
-				<c:if test="${requestHeader.commonProcess.requestOrderProcess.name != '审核完成'}">
-					${requestHeader.commonProcess.requestOrderProcess.name}
-				</c:if>
-				<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">
-					订单支出信息审核
+				<c:if test="${requestHeader.bizStatus != ReqHeaderStatusEnum.CLOSE.state}">
+					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name != '审核完成'}">
+						${requestHeader.commonProcess.requestOrderProcess.name}
+					</c:if>
+					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">
+						订单支出信息审核
+					</c:if>
 				</c:if>
 			</td>
 			<td>
@@ -312,8 +314,10 @@
 						<%--</c:when>--%>
 					</c:choose>
 					<shiro:hasPermission name="biz:requestHeader:pay">
-						<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
-							<a href="#" data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
+						<c:if test="${requestHeader.bizStatus != ReqHeaderStatusEnum.CLOSE.state}">
+							<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
+								<a href="#" data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
+							</c:if>
 						</c:if>
 					</shiro:hasPermission>
 
@@ -329,10 +333,12 @@
 					<%--</c:if>--%>
 					<%--</shiro:hasPermission>--%>
 				<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
-							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
-							}">
-						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
+					<c:if test="${requestHeader.bizStatus != ReqHeaderStatusEnum.CLOSE.state}">
+						<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
+								&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
+								}">
+							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
+						</c:if>
 					</c:if>
 					<%--<!-- 本地备货审核 -->--%>
 					<%--<c:if test="${(fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'--%>

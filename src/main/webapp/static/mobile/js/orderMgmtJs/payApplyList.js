@@ -320,7 +320,7 @@
 				type: "GET",
 				url: "/a/biz/po/bizPoHeader/auditPay",
 				data: {
-					id: inListId,
+					poPayId: inListId,
 					currentType: currentType,
 					money: money,
 					auditType: num,
@@ -354,7 +354,7 @@
 				type: "GET",
 				url: "/a/biz/po/bizPoHeader/auditPay",
 				data: {
-					id: inListId,
+					poPayId: inListId,
 					currentType: currentType,
 					money: money,
 					auditType: num,
