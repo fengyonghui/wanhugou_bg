@@ -36,10 +36,6 @@
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
-//              data: {
-//              	id:_this.userInfo.staOrdId,
-//              	orderDetails: 'details',
-//              },
                 data:datas,
                 dataType: "json",
                 success: function(res){
