@@ -790,24 +790,11 @@ public class BizOrderHeaderController extends BaseController {
             }
         } else if (bizOrderHeader.getOrderNum().startsWith("SO") && bizOrderHeader.getCommonProcess() != null && (bizOrderHeader.getSuplys() ==0 || bizOrderHeader.getSuplys() == 721)) {
             String processType = bizOrderHeader.getCommonProcess().getType();
-            switch (statusEnum) {
-                case ZERO:
-                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getZeroCreatePoProcessId()).equals(processType)){
-                        createPo = "yes";
-                    }
-                    break;
-                case FIFTH:
-                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getFifthCreatePoProcessId()).equals(processType)){
-                        createPo = "yes";
-                    }
-                    break;
-                case ALL:
-                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getAllCreatePoProcessId()).equals(processType)){
-                        createPo = "yes";
-                    }
-                    break;
-                default:
-                    break;
+            String zeroCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getZeroCreatePoProcessId());
+            String fifthCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getFifthCreatePoProcessId());
+            String allCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getAllCreatePoProcessId());
+            if (zeroCreatePoProcessId.equals(processType) || fifthCreatePoProcessId.equals(processType) || allCreatePoProcessId.equals(processType)) {
+                createPo = "yes";
             }
         }
         model.addAttribute("createPo",createPo);
