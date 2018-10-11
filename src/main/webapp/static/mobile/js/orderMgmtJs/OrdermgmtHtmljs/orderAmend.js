@@ -5,6 +5,7 @@
 		this.expTipNum = 0;
 		this.OrdFlag = false;
 		this.OrdDetailFlag = false;
+		this.OrdviewFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -14,6 +15,7 @@
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			this.getPermissionList('biz:sku:bizSkuInfo:edit','OrdFlag');//true 订单信息操作
 			this.getPermissionList1('biz:order:bizOrderDetail:edit','OrdDetailFlag');//false订单信息操作中的修改、删除
+			this.getPermissionList2('biz:order:bizOrderDetail:view','OrdviewFlag');//true订单信息操作中的修改、删除
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
@@ -162,7 +164,7 @@
 					_this.statusListHtml(res.data);//状态流程
 					_this.checkProcessHtml(res.data);//审核流程
 					_this.commodityHtml(res.data);//商品信息
-					_this.saveBtn();//商品信息
+					_this.saveBtn();//商品信息保存
                 }
             });
 		},
@@ -191,6 +193,20 @@
                 success: function(res){
                 	console.log(res.data)//false
                     _this.OrdDetailFlag = res.data;
+                }
+            });
+        },
+        getPermissionList2: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                	console.log(res.data)//true
+                    _this.OrdviewFlag = res.data;
                 }
             });
         },
@@ -564,35 +580,51 @@
                 var orderId = $(this).attr('orderId');
                 var oneOrderId = $(this).attr('oneOrderId');
                 var orderType = $(this).attr('orderType');
-				GHUTILS.OPENPAGE({
-					url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orDetailAmend.html",
-					extras: {
-                        amendId: amendId,
-                        orderId: orderId,
-                        oneOrderId: oneOrderId,
-                        orderType: orderType,
-					}
-				})
+                if(_this.OrdviewFlag==true){
+                	GHUTILS.OPENPAGE({
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orDetailAmend.html",
+						extras: {
+	                        amendId: amendId,
+	                        orderId: orderId,
+	                        oneOrderId: oneOrderId,
+	                        orderType: orderType,
+						}
+					})
+                }				
 			})
             //删除
             $('#staCommodity').on('tap','.orddeleteBtn', function() {
                 var amendId = $(this).attr('amendId');
                 var oneOrderId = $(this).attr('oneOrderId');
                 var orderType = $(this).attr('orderType');
-                $.ajax({
-	                type: "GET",
-	                url: "/a/biz/order/bizOrderDetail/delete4Mobile",
-	                data: {
-	                	id:amendId,
-	                	sign:1,
-	                	'orderHeader.oneOrder':oneOrderId,
-	                	orderType:orderType
-	                },
-	                dataType: "json",
-	                success: function(res){
-	                	console.log(res)
-					}
-				})
+                console.log(_this.OrdviewFlag);
+                if(_this.OrdviewFlag==true){
+                	var btnArray = ['取消', '确定'];
+					mui.confirm('确认要删除该sku商品吗？', '系统提示！',btnArray, function(e) {
+						if(e.index == 1) {
+	                        $.ajax({
+				                type: "GET",
+				                url: "/a/biz/order/bizOrderDetail/delete4Mobile",
+				                data: {
+				                	id:amendId,
+				                	sign:1,
+				                	'orderHeader.oneOrder':oneOrderId,
+				                	orderType:orderType
+				                },
+				                dataType: "json",
+				                success: function(res){
+				                	console.log(res)
+				                	if(res.data.value=="操作成功!"){
+				                		$('#staCommodity').html('');				                		
+				                		_this.getData();
+				                	}
+								}
+							})
+						} else {						
+						}
+					})
+                  	
+                }
 			})
             //订单商品信息添加
             $('.staCommodity').on('tap','#secDetailBtn', function() {		
@@ -666,7 +698,6 @@
 		}
 	}
 	$(function() {
-
 		var ac = new ACCOUNT();
 		ac.init();
 	});
