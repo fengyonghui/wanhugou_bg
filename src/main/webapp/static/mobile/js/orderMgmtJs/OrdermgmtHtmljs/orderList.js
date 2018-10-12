@@ -102,6 +102,37 @@
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
                             	console.log(item)
+                            	var ProcessName = '';
+                            	var objectName = item.commonProcess.objectName; 
+                            	var commonProcess = item.commonProcess;
+								if(item.bizStatus != res.data.CANCLE && item.bizStatus != res.data.DELETE && item.bizStatus != res.data.UNAPPROVE) {
+									if(item.bizStatus < res.data.SUPPLYING) {
+										ProcessName = '待客户专员审核'
+									}
+									if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING) {
+										if(objectName == 'biz_order_header') {
+											if(commonProcess.doOrderHeaderProcessFifth.name != '审批完成') {
+												ProcessName = commonProcess.doOrderHeaderProcessFifth.name
+											}
+											if(commonProcess.doOrderHeaderProcessFifth.name == '审批完成') {
+												ProcessName = '订单支出信息审核'
+											}
+										}
+									}
+									if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING) {
+										if(objectName == 'ORDER_HEADER_SO_LOCAL') {
+											ProcessName = commonProcess.jointOperationLocalProcess.name
+										}
+										if(objectName == 'ORDER_HEADER_SO_ORIGIN') {
+											if(commonProcess.jointOperationOriginProcess.name != '审批完成') {
+												ProcessName = commonProcess.jointOperationOriginProcess.name
+											}
+											if(commonProcess.jointOperationOriginProcess.name == '审批完成') {
+												ProcessName = '订单支出信息审核'
+											}
+										}
+									}
+								}
 	                        	$('#consultantIda').val(item.consultantId);
 								$('#statu').val(item.statu);
 								$('#source').val(item.source);
@@ -112,8 +143,53 @@
 		                        		orderTypeTxt = items.label
 		                        	}
 	                            })
-	                        	
+//	                        	c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state}">
+//									<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+//										<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
+//											<c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) || fns:getUser().isAdmin())
+//													&& orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
+//													&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
+//													}">
+//												<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
+//											</c:if>
+//				
+//											<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOriginProcess.roleEnNameEnum) && orderHeader.commonProcess.jointOperationOriginProcess.name != '驳回' && orderHeader.commonProcess.jointOperationOriginProcess.code != auditStatus
+//												 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
+//												<a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}">审核</a>
+//											</c:if>
+//										</shiro:hasPermission>
+//									</c:if >
+//									<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
+//										<c:if test="${orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
+//											&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
+//											&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+//											&& (fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationLocalProcess)
+//											 	|| fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationOriginProcess)
+//											 	 || fns:getUser().isAdmin())
+//											}">
+//											<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+//												<%--<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>
+//													<c:if test="${orderHeader.suplys == 0 }">
+//														<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
+//													</c:if>
+//													<c:if test="${orderHeader.suplys != 0 }">
+//														<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
+//													</c:if>
+//												<%--</c:if>--%>
+//											</c:if>
+//										</c:if>
+//									</shiro:hasPermission>
+//									<shiro:hasPermission name="biz:order:bizOrderHeader:supplying">
+//										<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus <= OrderHeaderBizStatusEnum.STOCKING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">
+//											<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">
+//												<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>
+//											</c:if>
+//										</c:if>
+//									</shiro:hasPermission>
+//								</c:if >
+								var ordCheckBtn = '';
 	                        	var staCheckBtnTxt = '';
+	                        	var ordSupplyBtn = '';
 	                        	var staSupplyBtnTxt = '';
 				                if(_this.staOrdFlag == true) {
 				                	//审核
@@ -122,19 +198,20 @@
                                         	console.log('审核1')
                                          	if(_this.staOrdauditFlag == true){
 												var DataRoleGener = '';
-												if(item.commonProcess) {
-													DataRoleGener = item.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
+												if(commonProcess) {
+													DataRoleGener = commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
 												}
 												console.log(DataRoleGener)
 												var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));	
-                                         		if((fileRoleData || userId==1)&& item.commonProcess.doOrderHeaderProcessFifth.name != '驳回'&& item.commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
-                                         			
+                                         		if((fileRoleData || userId==1) && commonProcess.doOrderHeaderProcessFifth.name != '驳回'
+                                         		&& commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
                                          			staCheckBtnTxt="审核";
+                                         			ordCheckBtn = 'ordCheckBtn';
                                          		}
 //												var DataRoleGeners = '';
-//												if(item.commonProcess) {
-//													console.log(item.commonProcess)
-//													DataRoleGeners = item.commonProcess.jointOperationOriginProcess.roleEnNameEnum;
+//												if(commonProcess) {
+//													console.log(commonProcess)
+//													DataRoleGeners = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
 //												}
 //												console.log(DataRoleGeners)
 //												var fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
@@ -145,96 +222,110 @@
 //						                        	auditStatu=s
 //					                            })
 //					                            console.log(auditStatu)
-//                                       		if(fileRoleDatas&& item.commonProcess.jointOperationOriginProcess.name != '驳回'&& item.commonProcess.jointOperationOriginProcess.code != auditStatu&& item.orderType == res.data.ORDINARY_ORDER){
+//                                       		if(fileRoleDatas && commonProcess.jointOperationOriginProcess.name != '驳回'
+//                                       		&& commonProcess.jointOperationOriginProcess.code != auditStatu
+//                                       		&& item.orderType == res.data.ORDINARY_ORDER){
 //                                       			staCheckBtnTxt="审核";
+//													ordCheckBtn = 'ordCheckBtn';
 //                                       		}
                                          	}
                                         }
                                         if(_this.staOrdauditFlag == true){
                                         	console.log('审核2')
                                             var DataRole = '';
-											if(item.commonProcess) {
-												DataRole = item.commonProcess.jointOperationLocalProcess;
+											if(commonProcess) {
+												DataRole = commonProcess.jointOperationLocalProcess;
 											}
 											console.log(DataRole)
 //											var fileRole = dataRow.filter(v => DataRole.includes(v));
 											var DataRoles = '';
-											if(item.commonProcess) {
-												DataRoles = item.commonProcess.jointOperationOriginProcess;
+											if(commonProcess) {
+												DataRoles = commonProcess.jointOperationOriginProcess;
 											}
 											console.log(DataRoles)
 //											var fileRoles = dataRow.filter(v => DataRoles.includes(v));
-                                            if(item.commonProcess != null && item.commonProcess.id != null && item.commonProcess.purchaseOrderProcess.name != '驳回' && item.commonProcess.purchaseOrderProcess.name != '审批完成' && (DataRole||DataRoles||userId==1)){
+                                            if(commonProcess != null && commonProcess.id != null
+                                            	&& commonProcess.purchaseOrderProcess.name != '驳回' 
+                                            	&& commonProcess.purchaseOrderProcess.name != '审批完成'
+                                            	&& DataRole.name != "全额支付不需要审批"
+                                            	&& (DataRole||DataRoles||userId==1)){
                                                 if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING){
                                                     if(item.suplys == 0 ){
                                                      	staCheckBtnTxt="审核";
+                                                     	ordCheckBtn = 'ordCheckBtn';
                                                     }
                                                     if(item.suplys != 0 ){
                                                      	staCheckBtnTxt="审核";
+                                                     	ordCheckBtn = 'ordCheckBtn';
                                                     }
                                                 }
                                         	}
                                         }
                                         //出库确认
-                                        if(_this.staOrdsupplyFlag == false){
+                                        if(_this.staOrdsupplyFlag == true){
                                         	if(item.bizStatus >= res.data.SUPPLYING && item.bizStatus <= res.data.STOCKING && item.suplys != 0 && item.suplys != 721){
                                         		if(item.bizInvoiceList.length <= 0){
                                         			staSupplyBtnTxt="出库";
+                                        			ordSupplyBtn = 'ordSupplyBtn';
                                         		}
                                         	}
                                         }
                                     }
+                                    var ordPaymentBtn = '';
+                                	var staPaymentBtnTxt ="";
+                                	var ordAmendBtn = '';
+                                    var staAmendTxt ="";
+                                    var ordDeleteBtn = '';
+                                    var staDeleteTxt ="";
+                                    var ordDetailBtn = '';
+                                    var staDetailBtnTxt ="";
                                     if(item.delFlag!=null && item.delFlag == '1'){
                                     	//支付流水
-                                    	var staPaymentBtnTxt ="";
                                     	if(item.bizStatus != res.data.CANCLE){
                                     		if(item.statu == 'unline' || userId==1){
                                     			staPaymentBtnTxt ="支付";
+                                    			ordPaymentBtn = 'ordPaymentBtn';
                                     		}
                                     	}
                                     	//详情
-	                                    var staDetailBtnTxt ="";
 	                                    if(item.orderType != res.data.PHOTO_ORDER){
 	                                    	staDetailBtnTxt="详情";
+	                                    	ordDetailBtn = 'ordDetailBtn';
 	                                    }
 	                                    if(item.orderType == res.data.PHOTO_ORDER){
 	                                    	staDetailBtnTxt="详情";
+	                                    	ordDetailBtn = 'ordDetailBtn';
 	                                    }
 	                                    //修改、删除
-	                                    var staAmendTxt ="";
-	                                    var staDeleteTxt ="";
 	                                    if(item.bizStatus != res.data.CANCLE){
 	                                    	if(_this.staOrdeditFlag==true){
 	                                    		if(item.orderType != res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)){
 	                                    			staAmendTxt ="修改";
+	                                    			ordAmendBtn = 'ordAmendBtn';
 	                                    		}
 	                                    		if(item.orderType == res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)){
 	                                    			staAmendTxt ="修改";
+	                                    			ordAmendBtn = 'ordAmendBtn';
 	                                    		}
 	                                    		if(userId==1){
 	                                    			staDeleteTxt ="删除";
+	                                    			ordDeleteBtn = 'ordDeleteBtn';
 	                                    		}
 	                                    	}
 	                                    }
-	                                }else{
-	                                	staPaymentBtnTxt ="";
-	                                	staDetailBtnTxt="";
-	                                	staAmendTxt ="";
-	                                	staDeleteTxt ="";
 	                                }
 	                                //详情另一种情况
-//	                                var staDetailBtnTxt ="";
+									var ordRecoveryBtn = '';
 	                                var staRecoveryBtnTxt ="";//h恢复
 	                                if(_this.staOrdeditFlag==true){
 	                                	if(item.delFlag!=null && item.delFlag == '0'){
 	                                		staDetailBtnTxt ="详情";
+	                                		ordDetailBtn = 'ordDetailBtn';
 	                                		staRecoveryBtnTxt ="恢复";
+	                                		ordRecoveryBtn = 'ordRecoveryBtn';
 	                                	}
 	                                }
                                     
-				                }
-				                else {
-				                	staCheckBtnTxt = ''
 				                }
 	                        	var staCheckSucBtn = '';
 	                        	var staCheckSuc = '';
@@ -252,6 +343,10 @@
 											'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+orderTypeTxt+' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
+											'<label>审核状态:</label>' +
+											'<input type="text" class="mui-input-clear" value=" '+ ProcessName +' " disabled="disabled">' + 
+										'</div>' +
+										'<div class="mui-input-row">' +
 											'<label>创建时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.createDate)+' ">' +
 										'</div>' +
@@ -265,25 +360,25 @@
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation " id="foot">' +
-											'<div class="ordCheckBtn" staOrdId="'+ item.id +'">' +
+											'<div class="'+ ordCheckBtn +'" staOrdId="'+ item.id +'">' +
 												 staCheckBtnTxt +
 											'</div>'+
-											'<div class="ordSupplyBtn"  staOrdId="'+ item.id +'">' +
+											'<div class="'+ordSupplyBtn+'"  staOrdId="'+ item.id +'">' +
 												staSupplyBtnTxt +
 											'</div>'+
-											'<div class="ordPaymentBtn"  staOrdId="'+ item.id +'">' +
+											'<div class="'+ordPaymentBtn+'"  staOrdId="'+ item.id +'">' +
 												 staPaymentBtnTxt +
 											'</div>'+
-											'<div class="ordAmendBtn"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staAmendTxt +
 											'</div>'+
-											'<div class="ordDeleteBtn"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordDeleteBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staDeleteTxt +
 											'</div>'+
-											'<div class="ordDetailBtn" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordDetailBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staDetailBtnTxt +
 											'</div>'+
-											'<div class="ordRecoveryBtn" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordRecoveryBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staRecoveryBtnTxt +
 											'</div>'+
 										'</div>' +
@@ -673,7 +768,39 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-//	                        	console.log(item)
+                            	console.log(item)
+                            	var ProcessName = '';
+                            	var objectName = item.commonProcess.objectName; 
+                            	var commonProcess = item.commonProcess;
+								if(item.bizStatus != res.data.CANCLE && item.bizStatus != res.data.DELETE && item.bizStatus != res.data.UNAPPROVE) {
+									if(item.bizStatus < res.data.SUPPLYING) {
+										ProcessName = '待客户专员审核'
+									}
+									if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING) {
+										if(objectName == 'biz_order_header') {
+											if(commonProcess.doOrderHeaderProcessFifth.name != '审批完成') {
+												ProcessName = commonProcess.doOrderHeaderProcessFifth.name
+											}
+											if(commonProcess.doOrderHeaderProcessFifth.name == '审批完成') {
+												ProcessName = '订单支出信息审核'
+											}
+										}
+									}
+									if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING) {
+										if(objectName == 'ORDER_HEADER_SO_LOCAL') {
+											ProcessName = commonProcess.jointOperationLocalProcess.name
+										}
+										if(objectName == 'ORDER_HEADER_SO_ORIGIN') {
+											if(commonProcess.jointOperationOriginProcess.name != '审批完成') {
+												ProcessName = commonProcess.jointOperationOriginProcess.name
+											}
+											if(commonProcess.jointOperationOriginProcess.name == '审批完成') {
+												ProcessName = '订单支出信息审核'
+											}
+										}
+									}
+								}
+	                        	$('#consultantIda').val(item.consultantId);
 								$('#statu').val(item.statu);
 								$('#source').val(item.source);
 	                        	//订单类型  1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5.代采订单 6.拍照下单
@@ -683,28 +810,31 @@
 		                        		orderTypeTxt = items.label
 		                        	}
 	                            })
-	                            var staCheckBtnTxt = '';
-	                            var staSupplyBtnTxt = '';
-								if(_this.staOrdFlag == true) {
+								var ordCheckBtn = '';
+	                        	var staCheckBtnTxt = '';
+	                        	var ordSupplyBtn = '';
+	                        	var staSupplyBtnTxt = '';
+				                if(_this.staOrdFlag == true) {
 				                	//审核
                                     if(item.bizStatus != res.data.CANCLE){
                                         if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING){
                                         	console.log('审核1')
-                                         	if(_this.staOrdauditFlag == false){
+                                         	if(_this.staOrdauditFlag == true){
 												var DataRoleGener = '';
-												if(item.commonProcess) {
-													DataRoleGener = item.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
+												if(commonProcess) {
+													DataRoleGener = commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
 												}
 												console.log(DataRoleGener)
 												var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));	
-                                         		if((fileRoleData || userId==1)&& item.commonProcess.doOrderHeaderProcessFifth.name != '驳回'&& item.commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
-                                         			
+                                         		if((fileRoleData || userId==1) && commonProcess.doOrderHeaderProcessFifth.name != '驳回'
+                                         		&& commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
                                          			staCheckBtnTxt="审核";
+                                         			ordCheckBtn = 'ordCheckBtn';
                                          		}
 //												var DataRoleGeners = '';
-//												if(item.commonProcess) {
-//													console.log(item.commonProcess)
-//													DataRoleGeners = item.commonProcess.jointOperationOriginProcess.roleEnNameEnum;
+//												if(commonProcess) {
+//													console.log(commonProcess)
+//													DataRoleGeners = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
 //												}
 //												console.log(DataRoleGeners)
 //												var fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
@@ -715,107 +845,113 @@
 //						                        	auditStatu=s
 //					                            })
 //					                            console.log(auditStatu)
-//                                       		if(fileRoleDatas&& item.commonProcess.jointOperationOriginProcess.name != '驳回'&& item.commonProcess.jointOperationOriginProcess.code != auditStatu&& item.orderType == res.data.ORDINARY_ORDER){
+//                                       		if(fileRoleDatas && commonProcess.jointOperationOriginProcess.name != '驳回'
+//                                       		&& commonProcess.jointOperationOriginProcess.code != auditStatu
+//                                       		&& item.orderType == res.data.ORDINARY_ORDER){
 //                                       			staCheckBtnTxt="审核";
+//													ordCheckBtn = 'ordCheckBtn';
 //                                       		}
                                          	}
                                         }
-                                        if(_this.staOrdauditFlag == false){
+                                        if(_this.staOrdauditFlag == true){
                                         	console.log('审核2')
-//                                      	orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
-//							&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
-//							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
-//							&& (fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationLocalProcess)
-//							 	|| fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationOriginProcess)
-//							 	 || fns:getUser().isAdmin()
-//                                          console.log(dataRow)
                                             var DataRole = '';
-											if(item.commonProcess) {
-												DataRole = item.commonProcess.jointOperationLocalProcess;
+											if(commonProcess) {
+												DataRole = commonProcess.jointOperationLocalProcess;
 											}
 											console.log(DataRole)
 //											var fileRole = dataRow.filter(v => DataRole.includes(v));
 											var DataRoles = '';
-											if(item.commonProcess) {
-												DataRoles = item.commonProcess.jointOperationOriginProcess;
+											if(commonProcess) {
+												DataRoles = commonProcess.jointOperationOriginProcess;
 											}
 											console.log(DataRoles)
 //											var fileRoles = dataRow.filter(v => DataRoles.includes(v));
-                                            if(item.commonProcess != null && item.commonProcess.id != null && item.commonProcess.purchaseOrderProcess.name != '驳回' && item.commonProcess.purchaseOrderProcess.name != '审批完成' && (DataRole||DataRoles||userId==1)){
+                                            if(commonProcess != null && commonProcess.id != null
+                                            	&& commonProcess.purchaseOrderProcess.name != '驳回' 
+                                            	&& commonProcess.purchaseOrderProcess.name != '审批完成'
+                                            	&& DataRole.name != "全额支付不需要审批"
+                                            	&& (DataRole||DataRoles||userId==1)){
                                                 if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING){
                                                     if(item.suplys == 0 ){
                                                      	staCheckBtnTxt="审核";
+                                                     	ordCheckBtn = 'ordCheckBtn';
                                                     }
                                                     if(item.suplys != 0 ){
                                                      	staCheckBtnTxt="审核";
+                                                     	ordCheckBtn = 'ordCheckBtn';
                                                     }
                                                 }
                                         	}
                                         }
                                         //出库确认
-                                        if(_this.staOrdsupplyFlag == false){
+                                        if(_this.staOrdsupplyFlag == true){
                                         	if(item.bizStatus >= res.data.SUPPLYING && item.bizStatus <= res.data.STOCKING && item.suplys != 0 && item.suplys != 721){
                                         		if(item.bizInvoiceList.length <= 0){
                                         			staSupplyBtnTxt="出库";
+                                        			ordSupplyBtn = 'ordSupplyBtn';
                                         		}
                                         	}
                                         }
                                     }
+                                    var ordPaymentBtn = '';
+                                	var staPaymentBtnTxt ="";
+                                	var ordAmendBtn = '';
+                                    var staAmendTxt ="";
+                                    var ordDeleteBtn = '';
+                                    var staDeleteTxt ="";
+                                    var ordDetailBtn = '';
+                                    var staDetailBtnTxt ="";
                                     if(item.delFlag!=null && item.delFlag == '1'){
                                     	//支付流水
-                                    	var staPaymentBtnTxt ="";
                                     	if(item.bizStatus != res.data.CANCLE){
                                     		if(item.statu == 'unline' || userId==1){
                                     			staPaymentBtnTxt ="支付";
+                                    			ordPaymentBtn = 'ordPaymentBtn';
                                     		}
                                     	}
                                     	//详情
-	                                    var staDetailBtnTxt ="";
 	                                    if(item.orderType != res.data.PHOTO_ORDER){
 	                                    	staDetailBtnTxt="详情";
+	                                    	ordDetailBtn = 'ordDetailBtn';
 	                                    }
 	                                    if(item.orderType == res.data.PHOTO_ORDER){
 	                                    	staDetailBtnTxt="详情";
+	                                    	ordDetailBtn = 'ordDetailBtn';
 	                                    }
 	                                    //修改、删除
-	                                    var staAmendTxt ="";
-	                                    var staDeleteTxt ="";
 	                                    if(item.bizStatus != res.data.CANCLE){
 	                                    	if(_this.staOrdeditFlag==true){
 	                                    		if(item.orderType != res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)){
 	                                    			staAmendTxt ="修改";
+	                                    			ordAmendBtn = 'ordAmendBtn';
 	                                    		}
 	                                    		if(item.orderType == res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)){
 	                                    			staAmendTxt ="修改";
+	                                    			ordAmendBtn = 'ordAmendBtn';
 	                                    		}
 	                                    		if(userId==1){
 	                                    			staDeleteTxt ="删除";
+	                                    			ordDeleteBtn = 'ordDeleteBtn';
 	                                    		}
 	                                    	}
 	                                    }
-	                                }else{
-	                                	staPaymentBtnTxt ="";
-	                                	staDetailBtnTxt="";
-	                                	staAmendTxt ="";
-	                                	staDeleteTxt ="";
 	                                }
 	                                //详情另一种情况
-//	                                var staDetailBtnTxt ="";
+									var ordRecoveryBtn = '';
 	                                var staRecoveryBtnTxt ="";//h恢复
 	                                if(_this.staOrdeditFlag==true){
 	                                	if(item.delFlag!=null && item.delFlag == '0'){
 	                                		staDetailBtnTxt ="详情";
+	                                		ordDetailBtn = 'ordDetailBtn';
 	                                		staRecoveryBtnTxt ="恢复";
+	                                		ordRecoveryBtn = 'ordRecoveryBtn';
 	                                	}
 	                                }
                                     
 				                }
-				                else {
-				                	staCheckBtnTxt = ''
-				                }
 	                        	var staCheckSucBtn = '';
 	                        	var staCheckSuc = '';
-	                
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
 											'<label>订单编号:</label>' +
@@ -828,6 +964,10 @@
 										'<div class="mui-input-row">' +
 											'<label>订单类型:</label>' +
 											'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+orderTypeTxt+' ">' +
+										'</div>' +
+										'<div class="mui-input-row">' +
+											'<label>审核状态:</label>' +
+											'<input type="text" class="mui-input-clear" value=" '+ ProcessName +' " disabled="disabled">' + 
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>创建时间:</label>' +
@@ -843,25 +983,25 @@
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation " id="foot">' +
-											'<div class="ordCheckBtn" staOrdId="'+ item.id +'">' +
+											'<div class="'+ ordCheckBtn +'" staOrdId="'+ item.id +'">' +
 												 staCheckBtnTxt +
 											'</div>'+
-											'<div class="ordSupplyBtn"  staOrdId="'+ item.id +'">' +
+											'<div class="'+ordSupplyBtn+'"  staOrdId="'+ item.id +'">' +
 												staSupplyBtnTxt +
 											'</div>'+
-											'<div class="ordPaymentBtn"  staOrdId="'+ item.id +'">' +
+											'<div class="'+ordPaymentBtn+'"  staOrdId="'+ item.id +'">' +
 												 staPaymentBtnTxt +
 											'</div>'+
-											'<div class="ordAmendBtn"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staAmendTxt +
 											'</div>'+
-											'<div class="ordDeleteBtn"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordDeleteBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staDeleteTxt +
 											'</div>'+
-											'<div class="ordDetailBtn" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordDetailBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staDetailBtnTxt +
 											'</div>'+
-											'<div class="ordRecoveryBtn" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordRecoveryBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staRecoveryBtnTxt +
 											'</div>'+
 										'</div>' +
