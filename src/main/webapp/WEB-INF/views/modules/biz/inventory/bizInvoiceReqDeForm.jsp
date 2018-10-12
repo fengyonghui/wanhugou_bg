@@ -175,6 +175,7 @@
 	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
         <input id="str" name="str" type="hidden" value="${bizInvoice.str}"/>
+        <input id="creOrdLogistics" name="creOrdLogistics" type="hidden" value="${bizInvoice.creOrdLogistics}"/>
 		<sys:message content="${message}"/>
 		<c:if test="${bizInvoice.id != null && bizInvoice.id != ''}">
 			<div class="control-group">
