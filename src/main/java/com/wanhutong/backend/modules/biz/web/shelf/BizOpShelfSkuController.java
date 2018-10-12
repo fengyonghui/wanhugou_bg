@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
@@ -183,9 +184,18 @@ public class BizOpShelfSkuController extends BaseController {
 		Map<String, Object> resultMap = Maps.newHashMap();
 		AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
 		List<BizOpShelfSku> list=null;
-		boolean emptyName = bizOpShelfSku.getSkuInfo().getName().isEmpty();//商品名称
-		boolean emptyPart = bizOpShelfSku.getSkuInfo().getPartNo().isEmpty();//商品编码
-		boolean emptyItemNo = bizOpShelfSku.getSkuInfo().getItemNo().isEmpty();//商品货号
+		boolean emptyName = false;//商品名称
+		boolean emptyPart = false;//商品编码
+		boolean emptyItemNo = false;//商品货号
+		if (StringUtils.isBlank(bizOpShelfSku.getSkuInfo().getName())){
+			emptyName = true;
+		}
+		if (StringUtils.isBlank(bizOpShelfSku.getSkuInfo().getPartNo())) {
+			emptyPart = true;
+		}
+		if (StringUtils.isBlank(bizOpShelfSku.getSkuInfo().getItemNo())) {
+			emptyItemNo = true;
+		}
 		if(emptyName==true && emptyPart==true && emptyItemNo==true){
 			System.out.println("为空 不查询sku商品");
 		}else {
