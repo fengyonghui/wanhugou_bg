@@ -8,11 +8,17 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao;
+import com.wanhutong.backend.modules.biz.dao.request.BizRequestDetailDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.dao.OfficeDao;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,12 +40,14 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	private BizInventorySkuDao bizInventorySkuDao;
 	@Autowired
 	private BizCollectGoodsRecordDao bizCollectGoodsRecordDao;
-
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
-
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+	private OfficeDao officeDao;
+	@Autowired
+	private BizRequestDetailDao bizRequestDetailDao;
 
 	@Override
 	public BizInventorySku get(Integer id) {
@@ -163,5 +171,33 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	 */
 	public Integer getStockQtyBySkuIdCentIdSkuType(Integer skuId, Integer centId, Integer skuType) {
 		return dao.getStockQtyBySkuIdCentIdSkuType(skuId, centId, skuType);
+	}
+
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
+	public void correctOutQty() {
+		List<BizSkuInfo> skuInfoList = bizSkuInfoService.findList(new BizSkuInfo());
+		List<Office> centList = officeDao.findListByType(OfficeTypeEnum.PURCHASINGCENTER.getType());
+		for (Office cent : centList) {
+			for (BizSkuInfo skuInfo : skuInfoList) {
+				int stockTotal = bizInventorySkuDao.findStockTotal(cent.getId(), skuInfo.getId());
+				int recvTotal = bizRequestDetailDao.findRecvTotal(cent.getId(), skuInfo.getId());
+				int alOutQty = recvTotal - stockTotal;
+				List<BizRequestDetail> requestDetailList = bizRequestDetailDao.findListByCentIdAndSkuId(cent.getId(), skuInfo.getId());
+				if (CollectionUtils.isNotEmpty(requestDetailList)) {
+					for (BizRequestDetail requestDetail : requestDetailList) {
+						if (alOutQty == 0) {
+							break;
+						}
+						if (alOutQty - requestDetail.getRecvQty() >= 0) {
+							bizRequestDetailDao.updateOutQty(requestDetail.getId(),requestDetail.getRecvQty());
+							alOutQty -= alOutQty - requestDetail.getRecvQty();
+						} else {
+							bizRequestDetailDao.updateOutQty(requestDetail.getId(),alOutQty);
+							alOutQty = 0;
+						}
+					}
+				}
+			}
+		}
 	}
 }
