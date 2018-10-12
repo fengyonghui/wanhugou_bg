@@ -262,19 +262,21 @@
 				<td>
 						${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
 
-				</td>
-				<td>
+			</td>
+			<td>
+				<c:if test="${requestHeader.bizStatus != ReqHeaderStatusEnum.CLOSE.state}">
 					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name != '审核完成'}">
 						${requestHeader.commonProcess.requestOrderProcess.name}
 					</c:if>
 					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">
 						订单支出信息审核
 					</c:if>
-				</td>
-				<td>
-					<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<td>
+				</c:if>
+			</td>
+			<td>
+				<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+			</td>
+			<td>
 					${requestHeader.varietyInfo.name}
 				</td>
 				<td>
@@ -314,102 +316,106 @@
 						</c:when>
 
 						<%--<c:when test="${requestHeader.bizStatus==ReqHeaderStatusEnum.COMPLETE.state}">--%>
-							<%--<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},this.value,${requestHeader.id})">关闭</a>--%>
+						<%--<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},this.value,${requestHeader.id})">关闭</a>--%>
 						<%--</c:when>--%>
 					</c:choose>
 					<shiro:hasPermission name="biz:requestHeader:pay">
-						<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
-							<a href="#" data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
+						<c:if test="${requestHeader.bizStatus != ReqHeaderStatusEnum.CLOSE.state}">
+							<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
+								<a href="#" data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
+							</c:if>
 						</c:if>
 					</shiro:hasPermission>
 
 				</shiro:hasPermission>
 				<!-- 保证金支付申请 -->
-				<%--<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">--%>
+					<%--<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">--%>
 					<%--<c:if test="${requestHeader.bizPoHeader.currentPaymentId == null--%>
-						<%--&& requestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state--%>
-						<%--&& requestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state--%>
-						<%--&& (requestHeader.bizPoHeader.payTotal == null ? 0 : requestHeader.bizPoHeader.payTotal) < requestHeader.totalDetail--%>
-						<%--}">--%>
-						<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=createPay">申请付款</a>--%>
+					<%--&& requestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state--%>
+					<%--&& requestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state--%>
+					<%--&& (requestHeader.bizPoHeader.payTotal == null ? 0 : requestHeader.bizPoHeader.payTotal) < requestHeader.totalDetail--%>
+					<%--}">--%>
+					<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=createPay">申请付款</a>--%>
 					<%--</c:if>--%>
-				<%--</shiro:hasPermission>--%>
+					<%--</shiro:hasPermission>--%>
 				<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-					<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
-							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
-							}">
-						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
+					<c:if test="${requestHeader.bizStatus != ReqHeaderStatusEnum.CLOSE.state}">
+						<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
+								&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
+								}">
+							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>
+						</c:if>
 					</c:if>
 					<%--<!-- 本地备货审核 -->--%>
 					<%--<c:if test="${(fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.CENTER_TYPE.type && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'--%>
-						<%--&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus--%>
-						<%--}">--%>
-						<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>--%>
+					<%--&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus--%>
+					<%--}">--%>
+					<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>--%>
 					<%--</c:if>--%>
 					<%--<!-- 供应商备货审核 -->--%>
 					<%--<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.EXAMINE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'--%>
-						<%--&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus--%>
-						<%--&& !(fn:containsIgnoreCase(fns:getUser().roleList, RoleEnNameEnum.MARKETINGMANAGER.state))--%>
-						<%--}">--%>
-						<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>--%>
+					<%--&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus--%>
+					<%--&& !(fn:containsIgnoreCase(fns:getUser().roleList, RoleEnNameEnum.MARKETINGMANAGER.state))--%>
+					<%--}">--%>
+					<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>--%>
 					<%--</c:if>--%>
 					<%--<!-- 保证金审核 -->--%>
 					<%--<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">--%>
-				<%--<shiro:hasPermission name="biz:po:pay:list">--%>
+					<%--<shiro:hasPermission name="biz:po:pay:list">--%>
 					<%--<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${requestHeader.id}">支付申请列表</a>--%>
-				<%--</shiro:hasPermission>--%>
+					<%--</shiro:hasPermission>--%>
 					<%--</c:if>--%>
 				</shiro:hasPermission>
 
-				<%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
+					<%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
 					<%--<c:if test="${requestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state}">--%>
-						<%--<c:if test="${requestHeader.bizPoHeader.commonProcess.id != null--%>
+					<%--<c:if test="${requestHeader.bizPoHeader.commonProcess.id != null--%>
 					<%--&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'--%>
 					<%--&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'--%>
 					<%--&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus--%>
 					<%--&& (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())--%>
 					<%--}">--%>
-							<%--&lt;%&ndash;<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&type=audit">审核</a>&ndash;%&gt;--%>
-							<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>--%>
-						<%--</c:if>--%>
+					<%--&lt;%&ndash;<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&type=audit">审核</a>&ndash;%&gt;--%>
+					<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>--%>
 					<%--</c:if>--%>
-				<%--</shiro:hasPermission>--%>
+					<%--</c:if>--%>
+					<%--</shiro:hasPermission>--%>
 					<%--<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">--%>
-						<%--&lt;%&ndash;<c:if test="${requestHeader.bizPoHeader.totalOrdQty != null && requestHeader.bizPoHeader.totalOrdQty != 0}">&ndash;%&gt;--%>
-							<%--<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">--%>
-								<%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>--%>
-							<%--</shiro:hasPermission>--%>
-							<%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
-								<%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>--%>
-							<%--</shiro:hasPermission>--%>
-						<%--&lt;%&ndash;</c:if>&ndash;%&gt;--%>
+					<%--&lt;%&ndash;<c:if test="${requestHeader.bizPoHeader.totalOrdQty != null && requestHeader.bizPoHeader.totalOrdQty != 0}">&ndash;%&gt;--%>
+					<%--<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">--%>
+					<%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>--%>
+					<%--</shiro:hasPermission>--%>
+					<%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
+					<%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>--%>
+					<%--</shiro:hasPermission>--%>
+					<%--&lt;%&ndash;</c:if>&ndash;%&gt;--%>
 					<%--</c:if>--%>
 
-				<%--<shiro:hasPermission name="biz:request:bizRequestHeader:startAudit">--%>
+					<%--<shiro:hasPermission name="biz:request:bizRequestHeader:startAudit">--%>
 					<%--<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.EXAMINE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'--%>
-						<%--&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus--%>
-						<%--}">--%>
+					<%--&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus--%>
+					<%--}">--%>
 					<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=startAudit">审核</a>--%>
 					<%--</c:if>--%>
-				<%--</shiro:hasPermission>--%>
-				<%--<c:if test="${requestHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">--%>
+					<%--</shiro:hasPermission>--%>
+					<%--<c:if test="${requestHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">--%>
 					<%--<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus >= ReqHeaderStatusEnum.EXAMINE.state}">--%>
-						<%--<c:if test="${requestHeader.totalOrdQty != null && requestHeader.totalOrdQty != 0}">--%>
-							<%--<shiro:hasPermission name="biz:request:bizPoHeader:addScheduling">--%>
-								<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}">排产</a>--%>
-							<%--</shiro:hasPermission>--%>
-							<%--<shiro:hasPermission name="biz:request:bizPoHeader:confirmScheduling">--%>
-								<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}&forward=confirmScheduling">确认排产</a>--%>
-							<%--</shiro:hasPermission>--%>
-						<%--</c:if>--%>
+					<%--<c:if test="${requestHeader.totalOrdQty != null && requestHeader.totalOrdQty != 0}">--%>
+					<%--<shiro:hasPermission name="biz:request:bizPoHeader:addScheduling">--%>
+					<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}">排产</a>--%>
+					<%--</shiro:hasPermission>--%>
+					<%--<shiro:hasPermission name="biz:request:bizPoHeader:confirmScheduling">--%>
+					<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}&forward=confirmScheduling">确认排产</a>--%>
+					<%--</shiro:hasPermission>--%>
 					<%--</c:if>--%>
-				<%--</c:if>--%>
+					<%--</c:if>--%>
+					<%--</c:if>--%>
 
-				</td></shiro:hasPermission>
-			</tr>
-		</c:forEach>
-		</tbody>
-	</table>
+			</td></shiro:hasPermission>
+		</tr>
+	</c:forEach>
+	</tbody>
+</table>
 
 	<!-- 模态框（Modal） -->
 	<div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

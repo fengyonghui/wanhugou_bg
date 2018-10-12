@@ -275,8 +275,8 @@
                                 completePalnHtml += "</div></td></tr>";
                             }
                             poDetailHtml += completePalnHtml;
-                            prodInfo2Schedu.append(poDetailHtml)
                         }
+                        prodInfo2Schedu.append(poDetailHtml)
 
                         var schedulingDetailRemarkHtml = "<tr><td colspan='7'><div><label>排产备注：</label>";
                         schedulingDetailRemarkHtml += "<textarea id='schRemarkOrder' maxlength='200' class='input-xlarge '>" + bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
@@ -685,7 +685,7 @@
                 var skuInfoId = skuInfoIdListList[index];
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
-                totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+                totalOriginalNum = parseInt(totalOriginalNum) + parseInt(originalNum);
             }
 
             for(var index in skuInfoIdListList) {
@@ -701,6 +701,7 @@
 
             for(var index in skuInfoIdListList) {
                 var skuInfoId = skuInfoIdListList[index];
+                var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
                 var trArray = $("[name='" + skuInfoId + "']");
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];
@@ -853,7 +854,7 @@
                 var skuInfoId = skuInfoIdListList[index];
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
-                totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+                totalOriginalNum = parseInt(totalOriginalNum) + parseInt(originalNum);
             }
 
             for(var index in skuInfoIdListList) {
@@ -870,6 +871,7 @@
 
             for(var index in skuInfoIdListList) {
                 var skuInfoId = skuInfoIdListList[index];
+                var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
                 var trArray = $("[name='" + skuInfoId + "']");
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];
@@ -895,10 +897,6 @@
                     }
 
                     var reg = /^[0-9]+[0-9]*]*$/;
-                    console.log(value)
-                    console.log(parseInt(value) <= 0)
-                    console.log(parseInt(value) > originalNum)
-                    console.log(!reg.test(value))
                     if (value != "" && (parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value))) {
                         alert("第" + count + "个商品确认值输入不正确!")
                         return false;
@@ -1602,15 +1600,15 @@
 						</tr>
 						</thead>
 						<tbody id="prodInfo2Schedu">
-						<c:forEach items="${bizPoHeader.poDetailList}" var="poDetail" varStatus="state">
-							<tr>
-								<td colspan="7">
-									<table id="schedulingForDetail_${poDetail.id}" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
+						<%--<c:forEach items="${bizPoHeader.poDetailList}" var="poDetail" varStatus="state">--%>
+							<%--<tr>--%>
+								<%--<td colspan="7">--%>
+									<%--<table id="schedulingForDetail_${poDetail.id}" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">--%>
 
-									</table>
-								</td>
-							</tr>
-						</c:forEach>
+									<%--</table>--%>
+								<%--</td>--%>
+							<%--</tr>--%>
+						<%--</c:forEach>--%>
 
 						</tbody>
 					</table>
@@ -1943,13 +1941,13 @@
 													<label>排产计划：</label>
 												</td>
 											</tr>
-											<tr id="detail_${bizOrderDetail.skuInfo.id}" name="detailScheduling">
+											<tr id="detail_${reqDetail.skuInfo.id}" name="detailScheduling">
 												<td>
-													<div name="${bizOrderDetail.skuInfo.id}">
+													<div name="${reqDetail.skuInfo.id}">
 														<label>完成日期：</label>
-														<input name="${bizOrderDetail.skuInfo.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;
+														<input name="${reqDetail.skuInfo.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;
 														<label>排产数量：</label>
-														<input name="${bizOrderDetail.skuInfo.id}_value" class="input-medium" type="text" maxlength="30" />
+														<input name="${reqDetail.skuInfo.id}_value" class="input-medium" type="text" maxlength="30" />
 													</div>
 												</td>
 											</tr>

@@ -130,6 +130,13 @@
 			</association>
 		</collection>
 
+		<collection property="bizOrderLogisticsList" ofType="BizOrderLogistics">
+			<id property="id" column="bizOrderLogisticsList.id" />
+			<result property="orderId" column="bizOrderLogisticsList.orderId" />
+			<result property="logisticsLinesCode" column="bizOrderLogisticsList.logisticsLinesCode" />
+			<result property="stopPointCode" column="bizOrderLogisticsList.stopPointCode" />
+		</collection>
+
 
 	</resultMap>
 
@@ -262,6 +269,7 @@
 		LEFT JOIN common_process cp ON cp.id = bph.process_id
 		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
 		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bph.current_payment_id
+		LEFT JOIN biz_order_logistics bol ON bol.order_id = a.id AND bol.status = 1 AND bol.logistic_status=1
 	</sql>
 
 
@@ -284,6 +292,7 @@
 		LEFT JOIN common_process cp ON cp.id = bph.process_id
 		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
 		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bph.current_payment_id
+		LEFT JOIN biz_order_logistics bol ON bol.order_id = a.id AND bol.status = 1 AND bol.logistic_status=1
 	</sql>
 
 	<select id="get" resultType="BizOrderHeader">
@@ -327,6 +336,8 @@
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
 		si.item_no AS "orderDetailList.skuInfo.itemNo",
 		pi.vendor_name AS "orderDetailList.vendor.name",
+		bol.logistics_lines_code AS "bizOrderLogisticsList.logisticsLinesCode",
+		bol.stop_point_code AS "bizOrderLogisticsList.stopPointCode",
 		(SELECT SUM(bod.suply_id)
 		FROM biz_order_detail bod
 		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
@@ -611,7 +622,7 @@
 				)
 			</if>
 			<if test="waitOutput != null and waitOutput == 1">
-				AND a.biz_status = 16 or a.biz_status = 15
+				AND (a.biz_status = 16 or a.biz_status = 15)
 				and (SELECT SUM(bod.suply_id)
 				FROM
 				biz_order_detail bod
@@ -1133,7 +1144,7 @@
 	</update>
 
 	<update id="delete">
-		UPDATE biz_order_header SET 
+		UPDATE biz_order_header SET
 			status = #{delFlag}
 		WHERE id = #{id}
 	</update>

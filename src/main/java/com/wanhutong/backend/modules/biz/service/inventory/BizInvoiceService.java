@@ -3,15 +3,23 @@
  */
 package com.wanhutong.backend.modules.biz.service.inventory;
 
+import com.google.common.collect.Maps;
+import com.sun.mail.imap.protocol.ID;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
+import com.wanhutong.backend.common.utils.CloseableHttpClientUtil;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizInvoiceDao;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.*;
+import com.wanhutong.backend.modules.biz.entity.logistic.AddressVoEntity;
+import com.wanhutong.backend.modules.biz.entity.logistic.BizOrderLogistics;
+import com.wanhutong.backend.modules.biz.entity.logistic.VarietyInfoIdSParams;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
@@ -28,27 +36,47 @@ import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.web.order.BizOrderHeaderController;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
+import java.net.URI;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+
+import static java.util.regex.Pattern.*;
 
 /**
  * 发货单Service
@@ -60,6 +88,7 @@ import java.util.Set;
 @Transactional(readOnly = true)
 public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
+    private static final Logger LOGISTICS_LOGGER = LoggerFactory.getLogger("logistics");
     @Autowired
     private BizSendGoodsRecordService bizSendGoodsRecordService;
     @Autowired
@@ -92,8 +121,15 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
     private BizInventoryInfoService bizInventoryInfoService;
     @Autowired
     private BizOrderStatusService bizOrderStatusService;
+    @Autowired
+    private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
+
+    public static final String GUANGZHOU_PROV_CODE = "440000";
+    public static final String BRANCHES_CODE = "1";
+    public static final String CATEGORY = "1";
+
 
     @Override
     public BizInvoice get(Integer id) {
@@ -172,6 +208,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 //        List<BizRequestHeader> requestHeaderList = bizInvoice.getRequestHeaderList();
         if (StringUtils.isNotBlank(orderHeaders)) {
             Integer ordId = 0;
+            String  orderNum = null;
             String[] orders = orderHeaders.split(",");
             for (int a = 0; a < orders.length; a++) {
                 boolean ordFlag = true;
@@ -185,13 +222,50 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     bizDetailInvoiceService.save(bizDetailInvoice);
                 }
                 ordId = orderHeader.getId();
+                orderNum = orderHeader.getOrderNum();
+
+                int goodsquantity = 0;
+                String receivername = null;
+                String receiverphone = null;
+                String receiverdetailedaddress = null;
+                String logisticsOrderCode = bizInvoice.getTrackingNumber();
+                String sentGoodsCode = bizInvoice.getSendNumber();
+
+                //获取收货人信息
+                List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOrderRegion(ordId, 2);
+                if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
+                    AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
+
+                    receivername = addressVoEntity.getReceiver();
+                    receiverphone = addressVoEntity.getPhone();
+                    receiverdetailedaddress = addressVoEntity.getAddress();
+                }
+
+//                List<BizOrderDetail> bizOrderDetailList = bizOrderDetailService.findOrderDetailList(bizInvoice.getId());
+//                if (CollectionUtils.isNotEmpty(bizOrderDetailList)) {
+//                    BizOrderDetail orderDetail = bizOrderDetailList.get(0);
+//                    Office cust = orderDetail.getCust();
+//                    if (cust != null) {
+//                        receivername = cust.getName();
+//                        receiverphone = cust.getPhone();
+//                        Integer custId = cust.getId();
+//                        List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOfficeRegion(custId, 1);
+//                        if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
+//                            AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
+//                            receiverdetailedaddress = addressVoEntity.getAddress();
+//                        }
+//                    }
+//                }
+
                 String[] odNumArr = oheaders[1].split("\\*");
                 for (int i = 0; i < odNumArr.length; i++) {
                     String[] odArr = odNumArr[i].split("-");
                     BizOrderDetail orderDetail = bizOrderDetailService.get(Integer.parseInt(odArr[0]));
+
                     //商品
                     BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                     int sendNum = Integer.parseInt(odArr[1]);    //供货数
+                    goodsquantity += sendNum;
                     valuePrice += bizSkuInfo.getBuyPrice() * sendNum;//累计货值
                     //采购商
                     Office office = officeService.get(orderHeader.getCustomer().getId());
@@ -393,6 +467,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         }
                     }
                 }
+
+                String creOrdLogistics = bizInvoice.getCreOrdLogistics();
+                if ("yes".equals(creOrdLogistics)) {
+                    this.creOrdLogisticsForOrder(ordId, orderNum, receivername,receiverphone, receiverdetailedaddress, goodsquantity, logisticsOrderCode, sentGoodsCode);
+                }
             }
             if ("new".equals(bizInvoice.getSource())) {
                 bizInvoice.setValuePrice(valuePrice);
@@ -407,10 +486,29 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         if (StringUtils.isNotBlank(requestHeaders)) {
             boolean reqFlag = true;
             Integer reqId = 0;
+            String reqNo = null;
             String[] requests = requestHeaders.split(",".trim());
             for (int b = 0; b < requests.length; b++) {
                 String[] rheaders = requests[b].split("#".trim());
                 BizRequestHeader requestHeader = bizRequestHeaderService.get(Integer.parseInt(rheaders[0]));
+                Office fromOffice = requestHeader.getFromOffice();
+                Integer officeId = null;
+                String receivername = null;
+                String receiverphone = null;
+                String receiverdetailedaddress = null;
+                String logisticsOrderCode = bizInvoice.getTrackingNumber();
+                String sentGoodsCode = bizInvoice.getSendNumber();
+                if (fromOffice != null) {
+                    officeId = fromOffice.getId();
+                    receivername = fromOffice.getName();
+                    receiverphone = fromOffice.getPhone();
+
+                    List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOfficeRegion(officeId, 2);
+                    if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
+                        AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
+                        receiverdetailedaddress = addressVoEntity.getAddress();
+                    }
+                }
                 //加入中间表关联关系
                 if ((BizInvoice.IsConfirm.NO.getIsConfirm().equals(bizInvoice.getIsConfirm()) || "new".equals(bizInvoice.getSource())) && !reqId.equals(requestHeader.getId())) {
                     BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
@@ -419,13 +517,33 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     bizDetailInvoiceService.save(bizDetailInvoice);
                 }
                 reqId = requestHeader.getId();
+                reqNo = requestHeader.getReqNo();
+
+                int goodsquantity = 0;
+
+                List<VarietyInfoIdSParams> varietyParamsList = new ArrayList<VarietyInfoIdSParams>();
                 String[] reNumArr = rheaders[1].split("\\*");
                 for (int i = 0; i < reNumArr.length; i++) {
+                    VarietyInfoIdSParams varietyParams = new VarietyInfoIdSParams();
                     String[] reArr = reNumArr[i].split("-");
                     BizRequestDetail requestDetail = bizRequestDetailService.get(Integer.parseInt(reArr[0]));
+                    Integer reqQty = requestDetail.getReqQty();
+                    varietyParams.setNumberCode(reqQty);
                     //商品
                     BizSkuInfo bizSkuInfo = bizSkuInfoService.get(requestDetail.getSkuInfo().getId());
+                    BizSkuInfo sku = bizSkuInfoService.findListProd(bizSkuInfo);
+                    BizVarietyInfo varietyInfo = sku.getProductInfo().getBizVarietyInfo();
+                    Integer variId = null;
+                    if (varietyInfo != null) {
+                        variId = varietyInfo.getId();
+                    }
+                    varietyParams.setBizVarietyInfoId(variId);
+                    varietyParamsList.add(varietyParams);
+
                     int sendNum = Integer.parseInt(reArr[1]);     //供货数
+
+                    goodsquantity += sendNum;
+
                     valuePrice += bizSkuInfo.getBuyPrice() * sendNum;//累计货值
                     //采购中心
                     Office office = officeService.get(requestHeader.getFromOffice().getId());
@@ -535,6 +653,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         }
                     }
                 }
+
+                String creOrdLogistics = bizInvoice.getCreOrdLogistics();
+                if ("yes".equals(creOrdLogistics)) {
+                    this.creOrdLogisticsForReqHeader(reqId, reqNo, receivername,receiverphone, receiverdetailedaddress, goodsquantity, officeId, varietyParamsList, logisticsOrderCode, sentGoodsCode);
+                }
             }
             if ("new".equals(bizInvoice.getSource())) {
                 bizInvoice.setValuePrice(valuePrice);
@@ -546,6 +669,216 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         }
     }
 
+    public void creOrdLogisticsForOrder(Integer orderCode, String orderNum, String receivername, String receiverphone,
+                                        String receiverdetailedaddress, Integer goodsquantity, String logisticsOrderCode, String sentGoodsCode) {
+
+        List<BizOrderLogistics> orderLogisticsList = new ArrayList<BizOrderLogistics>();
+        BizOrderHeader orderHeader = new BizOrderHeader();
+        orderHeader.setId(orderCode);
+        List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(orderHeader);
+        if (CollectionUtils.isNotEmpty(orderHeaderList)) {
+            orderHeader = orderHeaderList.get(0);
+            orderLogisticsList = orderHeader.getBizOrderLogisticsList();
+        }
+
+        String logisticsLinesCode = null;
+        String stopPointCode = null;
+        if (CollectionUtils.isNotEmpty(orderLogisticsList)) {
+            BizOrderLogistics orderLogistics = orderLogisticsList.get(0);
+            logisticsLinesCode = orderLogistics.getLogisticsLinesCode();
+            stopPointCode = orderLogistics.getStopPointCode();
+        }
+        User user = UserUtils.getUser();
+        String creator = user.getLoginName();
+        String senderphoneTemp = "";
+
+        Pattern compile = compile("[0-9]*");
+        Boolean boo = compile.matcher(creator).matches();
+        if (boo && creator != null && !"".equals(creator)) {
+            senderphoneTemp = creator;
+        }
+        if ("".equals(senderphoneTemp)) {
+            senderphoneTemp = null;
+        }
+        String senderphone = senderphoneTemp;
+        String linecode = logisticsLinesCode;
+        String linepointcode = stopPointCode;
+
+        //物流运单生成
+        ThreadPoolManager.getDefaultThreadPool().execute(() -> {
+            //测试环境
+            //String postUrl = ConfigGeneral.TESTURI + ConfigGeneral.ADD_ORDER_WHT;
+            //生产环境
+            String postUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
+            LOGISTICS_LOGGER.info("订单物流postUrl=================" + postUrl);
+            CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
+            HttpPost httpPost = new HttpPost(postUrl);
+            CloseableHttpResponse httpResponse = null;
+            String result = null;
+            try {
+                HashMap<String, Object> map = Maps.newHashMap();
+                map.put("orderCode", orderNum);
+                map.put("linecode", linecode);
+                map.put("linepointcode", linepointcode);
+                map.put("creator", creator);
+                map.put("sendername", "北京万户通");
+                map.put("senderphone", "15383129116");
+                //map.put("senderphone", senderphone);
+                map.put("receivername", receivername);
+                map.put("receiverphone", receiverphone);
+                map.put("receiverdetailedaddress", receiverdetailedaddress);
+                map.put("goodsquantity", goodsquantity);
+                map.put("logisticsOrderCode", logisticsOrderCode);
+                map.put("sentGoodsCode", sentGoodsCode);
+
+                httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
+                httpPost.setHeader("Accept", "application/json");
+
+                String jsonstr = JSONObject.fromObject(map).toString();
+                httpPost.setEntity(new StringEntity(jsonstr, Charset.forName("UTF-8")));
+
+                httpResponse = httpClient.execute(httpPost);
+
+                result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                LOGISTICS_LOGGER.info("订单物流返回结果result=================" + result);
+
+            }catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (httpClient != null) {
+                    try {
+                        httpClient.close();
+                    } catch (IOException e) {
+                        LOGISTICS_LOGGER.error("关闭异常，710",e);
+                    }
+                }
+            }
+        });
+    }
+
+
+    public void creOrdLogisticsForReqHeader(Integer orderCode, String reqNo, String receivername, String receiverphone, String receiverdetailedaddress,
+                                            Integer goodsquantity, Integer officeId, List<VarietyInfoIdSParams> varietyInfoIdSParams, String logisticsOrderCode, String sentGoodsCode) {
+        List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOfficeRegion(officeId, 2);
+        if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
+            AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
+
+            Map<String, Object> params = Maps.newHashMap();
+            //设置起始站点
+            params.put("transitStartPointCode", null);
+            Boolean executeFlag = true;
+
+            if (StringUtils.isNotBlank(addressVoEntity.getRegionCode())) {
+                params.put("transitStopPointCode", addressVoEntity.getRegionCode());
+                params.put("level", 3);
+            } else if (StringUtils.isNotBlank(addressVoEntity.getCityCode())) {
+                params.put("transitStopPointCode", addressVoEntity.getCityCode());
+                params.put("level", 2);
+            } else {
+                executeFlag = false;
+            }
+            if (executeFlag) {
+                //如果收货地址为广东 则把起始站点设置为2
+                if (StringUtils.isNotBlank(addressVoEntity.getProvCode()) && addressVoEntity.getProvCode().equals(GUANGZHOU_PROV_CODE)) {
+                    params.put("transitStartPointCode", 2);
+                }
+                //设置网点
+                params.put("branchesCode", BRANCHES_CODE);
+                //设置线路类别（1=发货线路，2=到货线路） 默认发货路线
+                params.put("category", CATEGORY);
+                params.put("varietyInfoIdSParams", varietyInfoIdSParams);
+
+                //物流运单生成
+                ThreadPoolManager.getDefaultThreadPool().execute(() -> {
+                    //测试环境
+                    //String reginUrl = ConfigGeneral.TESTURI + ConfigGeneral.GET_START_AND_STOP_POINT_CODE_WHT;
+                    //String createLogisticUrl = ConfigGeneral.TESTURI + ConfigGeneral.ADD_ORDER_WHT;
+                    //生产环境
+                    String reginUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.GET_START_AND_STOP_POINT_CODE_WHT;
+                    String createLogisticUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
+
+
+                    LOGISTICS_LOGGER.info("订单物流reginUrl=================" + reginUrl);
+                    LOGISTICS_LOGGER.info("订单物流createLogisticUrl=================" + createLogisticUrl);
+                    CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
+                    HttpPost httpPost = new HttpPost(reginUrl);
+                    CloseableHttpResponse httpResponse = null;
+                    String result = null;
+                    String resultInfo = null;
+                    try {
+                        httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
+                        httpPost.setHeader("Accept", "application/json");
+
+                        String jsonstr = JSONObject.fromObject(params).toString();
+                        httpPost.setEntity(new StringEntity(jsonstr, Charset.forName("UTF-8")));
+
+                        httpResponse = httpClient.execute(httpPost);
+
+                        result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                        LOGISTICS_LOGGER.info("备货单物流路线返回结果result=================" + result);
+                        JSONObject  jasonObject = JSONObject.fromObject(result);
+                        Map map = (Map)jasonObject;
+                        List dataList = (List) map.get("data");
+                        if (CollectionUtils.isNotEmpty(dataList)) {
+                            Map logisticInfo = (Map) dataList.get(0);
+                            String linecode = (String) logisticInfo.get("line_code");
+                            String linepointcode = (String) logisticInfo.get("transitStopPointCode");
+
+                            httpPost.setURI(new URI(createLogisticUrl));
+
+                            User user = UserUtils.getUser();
+                            String creator = user.getLoginName();
+                            String senderphoneTemp = "";
+
+                            Pattern compile = compile("[0-9]*");
+                            Boolean boo = compile.matcher(creator).matches();
+                            if (boo && creator != null && !"".equals(creator)) {
+                                senderphoneTemp = creator;
+                            }
+                            if ("".equals(senderphoneTemp)) {
+                                senderphoneTemp = null;
+                            }
+                            String senderphone = senderphoneTemp;
+
+                            HashMap<String, Object> paramMap = Maps.newHashMap();
+                            paramMap.put("orderCode", reqNo);
+                            paramMap.put("linecode", linecode);
+                            paramMap.put("linepointcode", linepointcode);
+                            paramMap.put("creator", creator);
+                            paramMap.put("sendername", "北京万户通");
+                            paramMap.put("senderphone", "15383129116");
+                            //paramMap.put("senderphone", senderphone);
+                            paramMap.put("receivername", receivername);
+                            paramMap.put("receiverphone", receiverphone);
+                            paramMap.put("receiverdetailedaddress", receiverdetailedaddress);
+                            paramMap.put("goodsquantity", goodsquantity);
+                            paramMap.put("logisticsOrderCode", logisticsOrderCode);
+                            paramMap.put("sentGoodsCode", sentGoodsCode);
+
+                            String jsonstrParam = JSONObject.fromObject(paramMap).toString();
+                            httpPost.setEntity(new StringEntity(jsonstrParam, Charset.forName("UTF-8")));
+
+                            httpResponse = httpClient.execute(httpPost);
+
+                            resultInfo = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                            LOGISTICS_LOGGER.info("备货单物流信息返回结果resultInfo=================" + resultInfo);
+                        }
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (httpClient != null) {
+                            try {
+                                httpClient.close();
+                            } catch (IOException e) {
+                                LOGISTICS_LOGGER.error("关闭异常，710",e);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+    }
     /**
      * 保存物流信息图片
      *

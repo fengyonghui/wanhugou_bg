@@ -99,6 +99,8 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	 */
 	private String source;
 
+	private String creOrdLogistics;
+
 
 	public BizInvoice() {
 		super();
@@ -430,4 +432,12 @@ public class BizInvoice extends DataEntity<BizInvoice> {
             return isConfirm;
         }
     }
+
+	public String getCreOrdLogistics() {
+		return creOrdLogistics;
+	}
+
+	public void setCreOrdLogistics(String creOrdLogistics) {
+		this.creOrdLogistics = creOrdLogistics;
+	}
 }

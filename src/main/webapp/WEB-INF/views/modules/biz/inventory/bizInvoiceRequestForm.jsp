@@ -159,6 +159,7 @@
 		<form:hidden path="bizStatus"/>
 		<input name="source" type="hidden" value="new"/>
 		<input type="hidden" name="isConfirm" value="1"/>
+		<input id="creOrdLogistics" name="creOrdLogistics" type="hidden" value="${bizInvoice.creOrdLogistics}"/>
 		<c:if test="${bizInvoice.id != null && bizInvoice.id != ''}">
 			<div class="control-group">
 				<label class="control-label">发货单号：</label>

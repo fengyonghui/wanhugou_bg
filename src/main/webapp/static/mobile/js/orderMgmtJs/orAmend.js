@@ -24,7 +24,6 @@
                 data: {id:_this.userInfo.inListId},
                 dataType: "json",
                 success: function(res){
-//					console.log(res)
 					/*业务状态*/
 						var bizstatus = res.bizStatus;
 						var bizstatusTxt = '';
@@ -76,11 +75,8 @@
 		},
 		statusListHtml:function(data){
 			var _this = this;
-//			console.log(data)
 			var pHtmlList = '';
-//			var len = data.bizPoHeader.commonProcessList.length
 			$.each(data.statusList, function(i, item) {
-//				console.log(item)
 //				0未审核 1首付款支付,2是全部支付 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
 				var checkBizStatus = '';
 				if(item.bizStatus==0) {
@@ -128,10 +124,8 @@
 		},
 		commodityHtml: function(data) {
 			var _this = this;
-//			console.log(data)
 			var htmlCommodity = '';
 			$.each(data.reqDetailList, function(i, item) {
-//				console.log(item)
 				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
 //		产品图片
 					'<div class="photoParent mui-pull-left app_pr">'+

@@ -101,10 +101,10 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 				//当收货数量和申报数量不相等时，更改备货单状态
 				if (bcgr.getBizRequestDetail().getReqQty() != (recvQty + receiveNum)) {
 					flagRequest = false;
+					Integer bizStatus = bizRequestHeader.getBizStatus();
 					//改状态为收货中
 					bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.COMPLETEING.getState());
 					bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
-					Integer bizStatus = bizRequestHeader.getBizStatus();
 					if (bizStatus == null || !bizStatus.equals(ReqHeaderStatusEnum.COMPLETEING.getState())) {
 						bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizCollectGoodsRecord.getBizRequestHeader().getId());
 					}
