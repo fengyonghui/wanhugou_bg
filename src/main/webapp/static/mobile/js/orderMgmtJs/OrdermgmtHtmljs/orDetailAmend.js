@@ -3,13 +3,14 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+		this.OrdviewFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
 			this.getData();//获取数据
-			
+			this.getPermissionList2('biz:order:bizOrderDetail:view','OrdviewFlag');//true订单信息操作中的删除
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
@@ -49,6 +50,20 @@
             _this.removeItem();
             
 		},
+		getPermissionList2: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                	console.log(res.data)//true
+                    _this.OrdviewFlag = res.data;
+                }
+            });
+        },
 //		commodityHtml: function(data) {
 //      	//备货商品初始化反填
 //      	console.log(data)
@@ -308,7 +323,8 @@
 			var source=data.orderHeader.source;
             var _this = this;
             mui('.buttonCont').on('tap','.inAddBtn',function(e){
-            	var btnArray = ['取消', '确定'];
+            	if(_this.OrdviewFlag==true){
+            		var btnArray = ['取消', '确定'];
 					mui.confirm('确认要删除该商品吗？', '系统提示！',btnArray, function(e) {
 						if(e.index == 1) {
 	                        $.ajax({
@@ -339,7 +355,8 @@
 							})
 						} else {						
 						}
-				})
+				    })
+                }            	    
             });
         },
         //保存按钮操作

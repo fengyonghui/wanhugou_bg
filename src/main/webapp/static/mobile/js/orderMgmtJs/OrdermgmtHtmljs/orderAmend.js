@@ -41,6 +41,7 @@
                 dataType: "json",
                 success: function(res){
                 	console.log(res)
+                	console.log(res.data.bizOrderHeader)
                 	$('#statuPath').val(res.data.statuPath);
                 	//调取供应商信息
                 	if(res.data.entity2){
@@ -98,10 +99,25 @@
 					//订单id
 					$('#ordId').val(_this.userInfo.staOrdId);	
 					var item = res.data.bizOrderHeader;
+					console.log(item)
+					console.log(item.invStatus)
+					console.log(item.bizStatus)
 					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staPoordNum').val(item.orderNum);//订单编号
 					$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
 					$('#staRelNum').val(item.customer.name);//经销店名称
+					
+					$('#custId').val(item.customer.id);//经销店id
+					$('#invStatus').val(item.invStatus);//发票状态
+					$('#bizStatus').val(item.bizStatus);//状态
+					$('#bizType').val(item.bizType);//状态
+					$('#plateformId').val(item.platformInfo.id);//状态
+					$('#shiptoAddr').val(item.bizLocation.id);//地址					
+					$('#orderType').val(item.orderType);
+					$('#address').val(item.updateBy.id);
+                    $('#staPoLastDas').val(item.receiveTotal);//已付金额
+					$('#staPototals').val(item.totalDetail);//商品总价
+					
 					$('#staPototal').val(item.totalDetail.toFixed(2));//商品总价
 					$('#staAdjustmentMoney').val(item.totalExp);//调整金额
 					$('#staFreight').val(item.freight.toFixed(2));//运费
@@ -132,6 +148,7 @@
 		                		 }
 		                	})
 		                	$('#staInvoice').val(invStatusTxt);
+		                	$('#staInvoice').attr('value','');
 						}
 					})
 					//业务状态
@@ -304,12 +321,31 @@
 		saveBtn:function(){
 			var _this = this;
 			/*保存*/
+			var saveData={};
+			saveData={
+				statuPath:$('#statuPath').val(),
+				'orderNum': $('#staPoordNum').val(),
+				'customer.id' :$('#custId').val(),
+				'sellers.id':$('#supplierId').val(),
+				'totalDetail':$('#staPototals').val(),
+				'totalExp' :$('#staAdjustmentMoney').val(),
+				'freight' :$('#staFreight').val(),
+				'invStatus' :$('#invStatus').val(),
+				'bizStatus' :$('#bizStatus').val(),
+				'bizType' :$('#bizType').val(),
+				'platformInfo.id': $('#plateformId').val(),
+				'bizLocation.id':$('#shiptoAddr').val(),
+				'orderType':$('#orderType').val(),
+				'address':$('#staDateilAddress').val(),
+				'receiveTotal':$('#staPoLastDas').val()
+			};
+			console.log(saveData)
             $('.inSaveBtn').on('tap','#saveDetailBtn', function() {
             	alert('保存')
             	$.ajax({
 	                type: "GET",
 	                url: "/a/biz/order/bizOrderHeader/save4mobile",
-	                data: {statuPath:$('#statuPath').val()},		                
+	                data: saveData,		                
 	                dataType: "json",
 	                success: function(rest){
 	                	console.log(rest)
@@ -560,8 +596,10 @@
 		                    	
 	                   
                     '</div>'
+                    
 				});
-				$("#staCommodity").append(htmlCommodity);				
+				$("#staCommodity").append(htmlCommodity);
+				 _this.deleteItem();//删除
 				_this.ordHrefHtml();
 				//操作权限
 				if(_this.OrdFlag == true){
@@ -587,32 +625,14 @@
 				}
 			}
 		},
-		ordHrefHtml: function() {
-			var _this = this;
-			/*修改*/
-            $('#staCommodity').on('tap','.ordAmendBtn', function() {
-                var amendId = $(this).attr('amendId');
-                var orderId = $(this).attr('orderId');
-                var oneOrderId = $(this).attr('oneOrderId');
-                var orderType = $(this).attr('orderType');
-                if(_this.OrdviewFlag==true){
-                	GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orDetailAmend.html",
-						extras: {
-	                        amendId: amendId,
-	                        orderId: orderId,
-	                        oneOrderId: oneOrderId,
-	                        orderType: orderType,
-						}
-					})
-                }				
-			})
-            //删除
+		//订单商品删除按钮操作
+        deleteItem:function (data) {
+        	var _this=this;
             $('#staCommodity').on('tap','.orddeleteBtn', function() {
                 var amendId = $(this).attr('amendId');
                 var oneOrderId = $(this).attr('oneOrderId');
                 var orderType = $(this).attr('orderType');
-                console.log(_this.OrdviewFlag);
+//              console.log(_this.OrdviewFlag);
                 if(_this.OrdviewFlag==true){
                 	var btnArray = ['取消', '确定'];
 					mui.confirm('确认要删除该sku商品吗？', '系统提示！',btnArray, function(e) {
@@ -638,12 +658,34 @@
 				                	}
 								}
 							})
-						} else {						
+						} else {	
+							console.log('11')
 						}
 					})
                   	
                 }
 			})
+        },
+		ordHrefHtml: function() {
+			var _this = this;
+			/*修改*/
+            $('#staCommodity').on('tap','.ordAmendBtn', function() {
+                var amendId = $(this).attr('amendId');
+                var orderId = $(this).attr('orderId');
+                var oneOrderId = $(this).attr('oneOrderId');
+                var orderType = $(this).attr('orderType');
+                if(_this.OrdviewFlag==true){
+                	GHUTILS.OPENPAGE({
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orDetailAmend.html",
+						extras: {
+	                        amendId: amendId,
+	                        orderId: orderId,
+	                        oneOrderId: oneOrderId,
+	                        orderType: orderType,
+						}
+					})
+                }				
+			})            
             //订单商品信息添加
             $('.staCommodity').on('tap','#secDetailBtn', function() {		
                 var orderId = $('#orderId').val();

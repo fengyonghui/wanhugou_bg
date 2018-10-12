@@ -463,7 +463,6 @@
 			var _this = this;
 		/*查询*/
 			$('.app_header').on('tap', '#OrdSechBtn', function() {
-				alert(1)
 				var url = $(this).attr('url');
 //				var staListIds = $('#consultantId').val();
 //				var staListIdTxts = $('#staListIdTxt').val(); 
@@ -722,12 +721,12 @@
 		seachFunc:function(){
 			var _this = this;
 			var staffHtmlList = '';
-//			var nameTxt = '';
-//			if(_this.userInfo.checkStatus) {
-//				nameTxt = decodeURIComponent(_this.userInfo.checkStatus)
-//			}else {
-//				nameTxt = ''
-//			}
+			var nameTxt = '';
+			if(_this.userInfo.selectAuditStatus) {
+				nameTxt = decodeURIComponent(_this.userInfo.selectAuditStatus)
+			}else {
+				nameTxt = ''
+			}
 			var nameTxts = '';
 			if(_this.userInfo.Purchasing) {
 				nameTxts = decodeURIComponent(_this.userInfo.Purchasing)
@@ -741,7 +740,7 @@
 					pageNo: 1,
 					orderNum: _this.userInfo.orderNum,//订单编号
 					bizStatus: _this.userInfo.bizStatus,//订单状态
-                    selectAuditStatus: _this.userInfo.selectAuditStatus,//审核状态
+                    selectAuditStatus: nameTxt,//审核状态
                     retainage: _this.userInfo.retainage,//尾款
                     'customer.phone': _this.userInfo.customerPhone,//经销商电话
                     itemNo: _this.userInfo.itemNo,//商品货号
