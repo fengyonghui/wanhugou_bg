@@ -209,7 +209,7 @@
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label">销售订单编号：</label>
+		<label class="control-label">业务状态：</label>
 		<div class="controls">
 			<input type="text" class="input-xlarge" readonly="readonly" value="${fns:getDictLabel(bizOrderHeader.bizStatus,'biz_order_status','未知')}"/>
 		</div>
