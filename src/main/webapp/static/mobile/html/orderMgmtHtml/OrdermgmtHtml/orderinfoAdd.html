@@ -3,20 +3,26 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title>订单商品修改</title>
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<title>订单商品信息添加</title>
 		<link href="../../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../../css/app.css?time=20180930" rel="stylesheet" />
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
-			<p class="app_cf app_nav_text_center">订单修改</p>
+			<p class="app_cf app_nav_text_center">订单商品信息添加</p>
 		</header>
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row commodityClear" id="ordAmendPoLastDaDiv">
 				<label>选择商品：</label>
 				<input type="text" class="mui-input-clear" id="ordAmendPoLastDa" placeholder="请输入商品货号">
-				<button id="ordComChoiceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">查询</button>
+				<button id="ordComChoiceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">
+					查询
+				</button>
 			</div>
 			<div class="mui-input-row ordCommodity">
 				<div class="labelLf">订单商品：</div>
@@ -50,14 +56,14 @@
 	                    <li class="mui-table-view-cell app_bline3"> 
 	                    <div class="mui-input-row "> 
 	                    <label class="">商品编码:</label> 
-	                    <input type="text" class="mui-input-clear" id="partNo" value="'  skuInfo.partNo  '" disabled> 
+	                    <input type="text" class="mui-input-clear" id="partNo" value="" disabled> 
 	                    </div></li></div> 
 	                    
 	                    <div class="mui-row lineStyle"> 
 	                    <li class="mui-table-view-cell app_bline3"> 
 	                    <div class="mui-input-row "> 
 	                    <label class="">商品属性:</label> 
-	                    <input type="text" class="mui-input-clear" id="comProperty" value="'  skuInfo.partNo  '" disabled> 
+	                    <input type="text" class="mui-input-clear" id="comProperty" value="" disabled> 
 	                    </div></li></div> 
 						
 	                    <div class="mui-row"> 
@@ -65,7 +71,7 @@
 			                    <li class="mui-table-view-cell app_bline3"> 
 				                    <div class="mui-input-row "> 
 					                    <label>货架名称:</label> 
-					                    <input type="text" class="mui-input-clear" id="brandName" value="'  skuInfo.productInfo.brandName '" disabled> 
+					                    <input type="text" class="mui-input-clear" id="brandName" value="" disabled> 
 			                    	</div>
 			                    </li>
 		                    </div> 
@@ -73,7 +79,7 @@
 			                    <li class="mui-table-view-cell app_bline3"> 
 				                    <div class="mui-input-row "> 
 					                    <label>数量区间:</label> 
-					                    <input type="text" class="mui-input-clear" id="numberInterval" value="'  skuInfo.productInfo.brandName  '" disabled> 
+					                    <input type="text" class="mui-input-clear" id="numberInterval" value="" disabled> 
 		                    		</div>
 			                    </li>
 		                    </div>
@@ -84,7 +90,7 @@
 	                    <li class="mui-table-view-cell app_bline3"> 
 	                    <div class="mui-input-row"> 
 	                    <label>现价:</label> 
-	                    <input type="text" class="mui-input-clear" id="buyPrice" value="'  skuInfo.buyPrice  '" disabled></div></li></div> 
+	                    <input type="text" class="mui-input-clear" id="buyPrice" value="" disabled></div></li></div> 
 	                    <div class="mui-col-sm-6 mui-col-xs-6"> 
 	                    <li class="mui-table-view-cell app_bline3"> 
 	                    <div class="mui-input-row"> 
@@ -93,19 +99,22 @@
 	                    <input type="text" class="mui-input-clear" id="reqQty" disabled> 
 	                    </div></li></div></div>
 	                    <div class="buttonCont mui-row">
-	                    	<button type="submit" class="inAddBtn app_btn_search mui-btn-blue mui-btn-block">删除</button>
+	                    	<button type="submit" class="inAddBtn app_btn_search mui-btn-blue mui-btn-block">
+	                    		删除
+	                    	</button>
 						</div>
-                    </div>
-					
+                    </div>					
 				</div>
 			</div>
 			<div class="mui-input-row ordCommodity">
 				<div class="labelLf">可选商品：</div>
-				<div class="app_pl15 mui-row app_bline2 inComdty inAddComdty" id="searchInfo">
-					
-				</div>
-			</div>	
-					
+				<div class="app_pl15 mui-row app_bline2 inComdty inAddComdty" id="searchInfo"></div>
+			</div>						
+		</div>
+		<div class="inSaveBtn">
+			<button id="saveDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">
+				保存
+			</button>
 		</div>
 		<div class="clear"></div>
 		<script src="../../../js/component/mui.min.js"></script>

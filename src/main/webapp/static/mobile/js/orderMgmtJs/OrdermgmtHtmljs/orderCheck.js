@@ -307,16 +307,30 @@
 								ProcessName = item.doOrderHeaderProcessAll.name
 							}
 						}
+						//处理人
+						var userName ="";
+						if(item.user){
+							userName = item.user.name;
+						}else{
+							userName = "";
+						}
+						//批注
+						var Description ="";
+						if(item.user){
+							Description = item.description;
+						}else{
+							Description = "";
+						}
 						CheckHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
 						'<div class="step_num_txt">'+
 							'<div class="mui-input-row">'+
 								'<label>处理人:</label>'+
-								'<input type="text" value="'+ item.user.name +'" class="mui-input-clear" disabled>'+
+								'<input type="text" value="'+ userName +'" class="mui-input-clear" disabled>'+
 						    '</div>'+
 							'<div class="mui-input-row">'+
 						        '<label>批注:</label>'+
-						        '<input type="text" value="'+ item.description +'" class="mui-input-clear" disabled>'+
+						        '<input type="text" value="'+ Description +'" class="mui-input-clear" disabled>'+
 						    	'<label>状态:</label>'+
 						        '<input type="text" value=" '+ ProcessName +' " class="mui-input-clear" disabled>'+
 						    '</div>'+

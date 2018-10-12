@@ -463,6 +463,7 @@
 			var _this = this;
 		/*查询*/
 			$('.app_header').on('tap', '#OrdSechBtn', function() {
+				alert(1)
 				var url = $(this).attr('url');
 //				var staListIds = $('#consultantId').val();
 //				var staListIdTxts = $('#staListIdTxt').val(); 
@@ -631,6 +632,21 @@
 				}
 			})
 			//出库 Stock- Out /
+			$('.content_part').on('tap', '.ordSupplyBtn', function() {
+				var url = $(this).attr('url');
+				var staOrdId = $(this).attr('staOrdId');			
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(staOrdId == staOrdId) {
+                    GHUTILS.OPENPAGE({
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderstockOut.html",
+						extras: {
+							staOrdId: staOrdId,
+						}
+					})
+				}
+			})
+			//支付流水
 			$('.content_part').on('tap', '.ordSupplyBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');			

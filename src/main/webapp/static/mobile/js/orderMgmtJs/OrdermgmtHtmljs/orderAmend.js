@@ -41,6 +41,7 @@
                 dataType: "json",
                 success: function(res){
                 	console.log(res)
+                	$('#statuPath').val(res.data.statuPath);
                 	//调取供应商信息
                 	if(res.data.entity2){
                 		var officeId = res.data.entity2.sellersId;
@@ -307,8 +308,8 @@
             	alert('保存')
             	$.ajax({
 	                type: "GET",
-	                url: "/a/biz/order/bizOrderHeader/save",
-	                data: {statuPath:""},		                
+	                url: "/a/biz/order/bizOrderHeader/save4mobile",
+	                data: {statuPath:$('#statuPath').val()},		                
 	                dataType: "json",
 	                success: function(rest){
 	                	console.log(rest)
@@ -374,16 +375,30 @@
 								ProcessName = item.doOrderHeaderProcessAll.name
 							}
 						}
+						//处理人
+						var userName ="";
+						if(item.user){
+							userName = item.user.name;
+						}else{
+							userName = "";
+						}
+						//批注
+						var Description ="";
+						if(item.user){
+							Description = item.description;
+						}else{
+							Description = "";
+						}
 						CheckHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
 						'<div class="step_num_txt">'+
 							'<div class="mui-input-row">'+
 								'<label>处理人:</label>'+
-								'<input type="text" value="'+ item.user.name +'" class="mui-input-clear" disabled>'+
+								'<input type="text" value="'+ userName +'" class="mui-input-clear" disabled>'+
 						    '</div>'+
 							'<div class="mui-input-row">'+
 						        '<label>批注:</label>'+
-						        '<input type="text" value="'+ item.description +'" class="mui-input-clear" disabled>'+
+						        '<input type="text" value="'+ Description +'" class="mui-input-clear" disabled>'+
 						    	'<label>状态:</label>'+
 						        '<input type="text" value=" '+ ProcessName +' " class="mui-input-clear" disabled>'+
 						    '</div>'+
@@ -615,8 +630,11 @@
 				                success: function(res){
 				                	console.log(res)
 				                	if(res.data.value=="操作成功!"){
-				                		$('#staCommodity').html('');				                		
-				                		_this.getData();
+				                		mui.toast('删除商品成功！')
+				                		window.setTimeout(function(){
+				                			$('#staCommodity').html('');				                		
+				                		    _this.getData();
+				                		},500)
 				                	}
 								}
 							})
