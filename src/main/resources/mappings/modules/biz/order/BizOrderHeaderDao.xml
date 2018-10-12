@@ -526,11 +526,11 @@
 				and od.suply_id = #{supplyId}
 			</if>
 			<if test="consultantId!=null">
-				and ccs.consultant_id = #{consultantId}
+				and a.consultant_id = #{consultantId}
 			</if>
 
 			<if test="centerId!=null">
-				and (ccs.center_id = #{centerId} or s.parent_ids like concat('%',#{centerId},',%'))
+				and (a.center_id = #{centerId} or s.parent_ids like concat('%',#{centerId},',%'))
 			</if>
 
 			<if test="itemNo !=null and itemNo !=''">
@@ -834,11 +834,11 @@
 				and od.suply_id = #{supplyId}
 			</if>
 			<if test="consultantId!=null">
-				and ccs.consultant_id = #{consultantId}
+				and a.consultant_id = #{consultantId}
 			</if>
 
 			<if test="centerId!=null">
-				and (ccs.center_id = #{centerId} or s.parent_ids like concat('%',#{centerId},',%'))
+				and (a.center_id = #{centerId} or s.parent_ids like concat('%',#{centerId},',%'))
 			</if>
 
 			<if test="itemNo !=null and itemNo !=''">
@@ -977,11 +977,11 @@
 				AND a.inv_status=#{invStatus}
 			</if>
 			<if test="consultantId!=null">
-				and ccs.consultant_id = #{consultantId}
+				and a.consultant_id = #{consultantId}
 			</if>
 
 			<if test="centerId!=null">
-				and ccs.center_id = #{centerId}
+				and a.center_id = #{centerId}
 			</if>
 
 			<if test="itemNo !=null and itemNo !=''">
