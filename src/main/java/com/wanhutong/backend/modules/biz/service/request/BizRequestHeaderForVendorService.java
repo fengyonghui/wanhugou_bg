@@ -591,4 +591,7 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		return bizRequestHeaderForVendorDao.findOfficeRegion(officeId, type);
 	}
 
+	public List<AddressVoEntity> findOrderRegion(Integer orderId, Integer type) {
+		return bizRequestHeaderForVendorDao.findOrderRegion(orderId, type);
+	}
 }

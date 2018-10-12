@@ -52,4 +52,6 @@ public interface BizRequestHeaderForVendorDao extends CrudDao<BizRequestHeader> 
 
     List<AddressVoEntity> findOfficeRegion(@Param("officeId") Integer officeId, @Param("type") Integer type);
 
+    List<AddressVoEntity> findOrderRegion(@Param("orderId") Integer orderId, @Param("type") Integer type);
+
 }

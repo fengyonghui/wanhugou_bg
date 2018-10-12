@@ -231,21 +231,31 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String logisticsOrderCode = bizInvoice.getTrackingNumber();
                 String sentGoodsCode = bizInvoice.getSendNumber();
 
-                List<BizOrderDetail> bizOrderDetailList = bizOrderDetailService.findOrderDetailList(bizInvoice.getId());
-                if (CollectionUtils.isNotEmpty(bizOrderDetailList)) {
-                    BizOrderDetail orderDetail = bizOrderDetailList.get(0);
-                    Office cust = orderDetail.getCust();
-                    if (cust != null) {
-                        receivername = cust.getName();
-                        receiverphone = cust.getPhone();
-                        Integer custId = cust.getId();
-                        List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOfficeRegion(custId, 1);
-                        if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
-                            AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
-                            receiverdetailedaddress = addressVoEntity.getAddress();
-                        }
-                    }
+                //获取收货人信息
+                List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOrderRegion(ordId, 2);
+                if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
+                    AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
+
+                    receivername = addressVoEntity.getReceiver();
+                    receiverphone = addressVoEntity.getPhone();
+                    receiverdetailedaddress = addressVoEntity.getAddress();
                 }
+
+//                List<BizOrderDetail> bizOrderDetailList = bizOrderDetailService.findOrderDetailList(bizInvoice.getId());
+//                if (CollectionUtils.isNotEmpty(bizOrderDetailList)) {
+//                    BizOrderDetail orderDetail = bizOrderDetailList.get(0);
+//                    Office cust = orderDetail.getCust();
+//                    if (cust != null) {
+//                        receivername = cust.getName();
+//                        receiverphone = cust.getPhone();
+//                        Integer custId = cust.getId();
+//                        List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOfficeRegion(custId, 1);
+//                        if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
+//                            AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
+//                            receiverdetailedaddress = addressVoEntity.getAddress();
+//                        }
+//                    }
+//                }
 
                 String[] odNumArr = oheaders[1].split("\\*");
                 for (int i = 0; i < odNumArr.length; i++) {
