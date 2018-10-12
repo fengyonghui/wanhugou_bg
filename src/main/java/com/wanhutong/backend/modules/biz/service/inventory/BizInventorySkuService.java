@@ -16,6 +16,7 @@ import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao;
+import com.wanhutong.backend.modules.biz.dao.request.BizRequestDetailDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
@@ -30,10 +31,13 @@ import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
 import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
+import com.wanhutong.backend.modules.sys.dao.OfficeDao;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -65,10 +69,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	private BizInventorySkuDao bizInventorySkuDao;
 	@Autowired
 	private BizCollectGoodsRecordDao bizCollectGoodsRecordDao;
-
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
-
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
@@ -81,6 +83,10 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
     private BizRequestDetailService bizRequestDetailService;
 	@Autowired
 	private BizInventoryViewLogService bizInventoryViewLogService;
+	@Autowired
+	private BizRequestDetailDao bizRequestDetailDao;
+	@Autowired
+	private OfficeDao officeDao;
 
 	@Override
 	public BizInventorySku get(Integer id) {
@@ -411,5 +417,33 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		}
 
 		return Pair.of(Boolean.TRUE,  "操作成功!");
+	}
+
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
+	public void correctOutQty() {
+		List<BizSkuInfo> skuInfoList = bizSkuInfoService.findList(new BizSkuInfo());
+		List<Office> centList = officeDao.findListByType(OfficeTypeEnum.PURCHASINGCENTER.getType());
+		for (Office cent : centList) {
+			for (BizSkuInfo skuInfo : skuInfoList) {
+				int stockTotal = bizInventorySkuDao.findStockTotal(cent.getId(), skuInfo.getId());
+				int recvTotal = bizRequestDetailDao.findRecvTotal(cent.getId(), skuInfo.getId());
+				int alOutQty = recvTotal - stockTotal;
+				List<BizRequestDetail> requestDetailList = bizRequestDetailDao.findListByCentIdAndSkuId(cent.getId(), skuInfo.getId());
+				if (CollectionUtils.isNotEmpty(requestDetailList)) {
+					for (BizRequestDetail requestDetail : requestDetailList) {
+						if (alOutQty == 0) {
+							break;
+						}
+						if (alOutQty - requestDetail.getRecvQty() >= 0) {
+							bizRequestDetailDao.updateOutQty(requestDetail.getId(),requestDetail.getRecvQty());
+							alOutQty -= alOutQty - requestDetail.getRecvQty();
+						} else {
+							bizRequestDetailDao.updateOutQty(requestDetail.getId(),alOutQty);
+							alOutQty = 0;
+						}
+					}
+				}
+			}
+		}
 	}
 }

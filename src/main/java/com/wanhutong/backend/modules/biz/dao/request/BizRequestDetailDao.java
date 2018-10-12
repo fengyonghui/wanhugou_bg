@@ -5,7 +5,6 @@ package com.wanhutong.backend.modules.biz.dao.request;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import org.apache.ibatis.annotations.Param;
@@ -34,5 +33,17 @@ public interface BizRequestDetailDao extends CrudDao<BizRequestDetail> {
     List<BizRequestDetail> findInventorySkuByskuIdAndcentId(@Param("centerId") Integer centerId, @Param("skuId") Integer skuId);
 
     List<BizRequestDetail> findInvReqByOrderDetailId(@Param("orderDetailId") Integer orderDetailId);
+
+    /**
+     * 根据采购中心和商品查询已收货总数
+     * @param centId
+     * @param skuId
+     * @return
+     */
+    int findRecvTotal(@Param("centId") Integer centId, @Param("skuId") Integer skuId);
+
+    void updateOutQty(@Param("id") int id, @Param("outQty") int outQty);
+
+    List<BizRequestDetail> findListByCentIdAndSkuId(@Param("centId") Integer centId, @Param("skuId") Integer skuId);
 	
 }
