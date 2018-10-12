@@ -547,7 +547,7 @@ public class BizStatisticsPlatformController extends BaseController {
             endDate = simpleDateFormatDay.format(new Date());
         }
 
-        List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = bizStatisticsPlatformService.orderStatisticData(startDate, endDate, type, centerType, orderType);
+        List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = bizStatisticsPlatformService.orderPlatformStatisticData(startDate, endDate, type, centerType, orderType);
 
         List<String> nameList = Lists.newArrayList();
 

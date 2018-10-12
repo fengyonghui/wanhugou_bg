@@ -2034,13 +2034,60 @@
 
 
 
+	<select id="getPlatformValidOrderTotalAndCount" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+SELECT
+		count(1) as orderCount,
+		sum(receive_total) AS receiveTotal,
+		sum(total_detail + total_exp + oh.freight)           AS totalMoney,
+		(SELECT sum(detail1.buy_price * detail1.ord_qty)
+		FROM biz_order_header AS header1
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		WHERE header1.order_type != 4 and header1.`status` = 1 AND detail1.status = 1 AND
+		NOT EXISTS(select 1
+		from sys_test_account ta
+		where header1.cust_id = ta.object_id and ta.object_name = 'sys_office') and
+		header1.receive_total > 10 AND header1.create_time BETWEEN #{startDate} AND #{endDate}
+		<if test="type == 1">
+			AND date_format(oh.create_time, '%Y-%m-%d') = date_format(header1.create_time, '%Y-%m-%d')
+		</if>
+		<if test="type != 1">
+			AND date_format(oh.create_time, '%Y-%m') = date_format(header1.create_time, '%Y-%m')
+		</if>
+		) AS buyPrice,
+		<if test="type == null or type == 0">
+			CASE date_format(oh.create_time, '%Y-%m')
+			WHEN '2017-06'
+			THEN '2017-09'
+			WHEN '2017-07'
+			THEN '2017-10'
+			WHEN '2017-08'
+			THEN '2017-09'
+			ELSE date_format(oh.create_time, '%Y-%m')
+			END   createDate
+		</if>
+		<if test="type == 1">
+			date_format(oh.create_time, '%Y-%m-%d') AS createDate
+		</if>
+
+FROM
+  biz_order_header oh
+WHERE
+  create_time BETWEEN #{startDate} AND #{endDate}
+  AND receive_total > 10
+  and oh.status = 1
+  AND NOT EXISTS(SELECT 1
+                 FROM sys_test_account ta
+                 WHERE ta.object_id = oh.cust_id AND ta.object_name = 'sys_office')
+GROUP BY
+  createDate
+	</select>
+
 	<select id="getValidOrderTotalAndCount" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT count(1) as orderCount,
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
-		sum(receive_total) AS receiveTotal,
+		sum(oh.receive_total) AS receiveTotal,
 		(SELECT sum(detail1.buy_price * detail1.ord_qty)
 		FROM biz_order_header AS header1
--- 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON header1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		WHERE header1.order_type != 4
@@ -2250,7 +2297,7 @@ FROM sys_office so, sys_user u, biz_order_header oh
 		AND so.type IN (8, 10, 11)
 		AND
 		oh.receive_total > 10
-      AND oh.`status` = 1 AND u.`status` = 1 AND cc.`status` = 1 AND so.id in
+      AND oh.`status` = 1 AND u.`status` = 1 AND so.id in
 		(select id from sys_office where type IN (8, 10, 11) and status = 1)
 		AND oh.create_time BETWEEN #{startDate} AND #{endDate}
 		GROUP BY so.id
@@ -2295,7 +2342,7 @@ FROM sys_office so, sys_user u, biz_order_header oh
         AND so.type IN (8, 10, 11)
         AND
 		oh.receive_total > 10
-        AND oh.`status` = 1 AND u.`status` = 1 AND cc.`status` = 1 AND so.id in
+        AND oh.`status` = 1 AND u.`status` = 1 AND so.id in
         (select id from sys_office where type IN (8, 10, 11) and status = 1)
         AND oh.create_time BETWEEN #{startDate} AND #{endDate}
         and so.id = #{officeId}
@@ -2804,7 +2851,6 @@ FROM
 		FROM
 		biz_order_header bo
 		INNER JOIN biz_pay_record bp on bo.order_num = bp.order_num
--- 		LEFT JOIN biz_custom_center_consultant bcc ON bcc.cust_id = bo.cust_id AND bcc.status = 1
 		WHERE
 		bo.status = 1
 		AND bp.status = 1
@@ -2882,7 +2928,6 @@ FROM
 		</if>
 		) as "officeCount"
 		FROM biz_order_header AS oh
--- 		LEFT JOIN biz_custom_center_consultant bcc on bcc.cust_id=oh.cust_id and bcc.status=1
 		WHERE
 		oh.status=1
 		and oh.consultant_id=#{con.id}
