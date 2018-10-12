@@ -1624,7 +1624,6 @@
 		from sys_test_account ta
 		where oh.cust_id = ta.object_id
 		and oh.status = 1
-		and ccc.status = 1
 		and ta.object_name = 'sys_office'
 		)
 		and	oh.`status` = 1
@@ -2930,7 +2929,6 @@ FROM
 		WHERE
 		aa.status=1
 		and bb.status=1
-		and cc.status=1
 		and dd.status=1
 		and hh.status=1
 		AND NOT EXISTS (
