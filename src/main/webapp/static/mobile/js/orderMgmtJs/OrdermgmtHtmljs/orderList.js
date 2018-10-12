@@ -653,7 +653,7 @@
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
                     GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordwaterCourse.html",
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordwaterCourseList.html",
 						extras: {
 							staOrdId: staOrdId,
 						}
