@@ -185,7 +185,7 @@
 
             }
 
-            function audit(auditType, description, id, currentType, money,type) {
+            function audit(auditType, description, poPayId, currentType, money,type) {
                 $.ajax({
                     url: '${ctx}/biz/po/bizPoHeader/auditPay',
                     contentType: 'application/json',
