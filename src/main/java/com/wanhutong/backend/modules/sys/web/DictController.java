@@ -9,6 +9,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.common.utils.JsonUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -80,6 +83,17 @@ public class DictController extends BaseController {
 		addMessage(redirectAttributes, "保存字典'" + dict.getLabel() + "'成功");
 		return "redirect:" + adminPath + "/sys/dict/?repage&type="+dict.getType();
 	}
+
+	@RequiresPermissions("sys:dict:edit")
+	@RequestMapping(value = "save4Mobile")
+	@ResponseBody
+	public String save4Mobile(Dict dict, Model model, RedirectAttributes redirectAttributes) {
+		if (!beanValidator(model, dict)){
+			return JsonUtil.generateData(Pair.of(false, "数据检查失败!"), null);
+		}
+		dictService.save(dict);
+		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
+	}
 	
 	@RequiresPermissions("sys:dict:edit")
 	@RequestMapping(value = "delete")
@@ -120,4 +134,15 @@ public class DictController extends BaseController {
 		return dictService.findList(dict);
 	}
 
+	@RequiresPermissions("sys:dict:view")
+	@RequestMapping(value = "commissionRatioView")
+	public String commissionRatioView(Dict dict, HttpServletRequest request, HttpServletResponse response, Model model) {
+		dict.setType("commission_ratio");
+		List<Dict> dictList = dictService.findList(dict);
+		if (CollectionUtils.isNotEmpty(dictList)) {
+			dict = dictList.get(0);
+			model.addAttribute("dict", dict);
+		}
+		return "modules/sys/commissionRatio";
+	}
 }
