@@ -401,25 +401,39 @@
         function selectedColum(){
             <%--属于选中货架名称下的 本地备货--%>
             var type = 0;
+            var retail = false;
             $("input:checkbox[name='shelfs']:checked").each(function (i) {
                 var opshelf = $(this);
                 var opShelfId=$(this).val();
+                var price = $("#price").text();
+                var market = $("#market");
                 $.ajax({
 					type:"post",
 					url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
 					success:function (data) {
-						if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.getLocal()}){
+                        if (data.type==${BizOpShelfInfoEnum.SELL_OFF.local}) {
+                            sellOff();
+                            retail = true;
+                        } else {
+                            notSellOff();
+                        }
+						if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.local}){
                             if (type != 0 && type != data.type) {
-                                alert("平台商品和本地商品不能同时选择");
+                                alert("平台商品和本地商品和代销不能同时选择");
                                 opshelf.removeAttr("checked");
+                                $("#price").text(price);
                                 return false;
                             }
                             type = data.type;
                             $("#PurchaseID").css("display","block");
 						}else{
                             if (type != 0 && type != data.type) {
-                                alert("平台商品和本地商品不能同时选择");
+                                alert("平台商品和本地商品和代销不能同时选择");
                                 opshelf.removeAttr("checked");
+                                $("#price").text(price);
+                                if (market != null) {
+                                    $("#market").remove();
+                                }
                                 return false;
                             }
                             type = data.type;
@@ -429,6 +443,20 @@
 					}
 				});
 			});
+            if (retail) {
+                $("#tbody").append("<c:set var='retail' value='1'/>");
+            } else {
+                $("#tbody").append("<c:remove var="retail"/>");
+            }
+        }
+
+        function sellOff() {
+			$("#price").text("零售价(元)");
+			$("#price").after("<th id='market'>市场价(元)</th>");
+        }
+        function notSellOff() {
+            $("#price").text("销售单价(元)");
+            $("#market").remove();
         }
 	</script>
 	<meta name="decorator" content="default"/>
@@ -444,9 +472,7 @@
 	<%--<input type="hidden" id="opShelfId" value="${bizOpShelfSku.opShelfInfo.id}"/>--%>
 	<%--<form:hidden id="shelfId" path="opShelfInfo.id"/>--%>
 	<sys:message content="${message}"/>
-
 	<%--<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">--%>
-
 	<c:if test="${bizOpShelfSku.id == null}">
 		<div class="control-group">
 			<label class="control-label">货架名称：</label>
@@ -542,7 +568,10 @@
 						<%--</c:if>--%>
 					<th>上架数量(个)：</th>
 					<th>出厂价(元)：</th>
-					<th>销售单价(元)</th>
+					<th id="price">
+						<c:if test="${bizOpshelfSku.opShelfInfo.type == 5}">零售价(元)</c:if>
+						<c:if test="${bizOpshelfSku.opShelfInfo.type != 5}">销售单价(元)</c:if>
+					</th>
 					<th>最低销售数量(个)：</th>
 					<th>最高销售数量(个，9999表示不限制)：</th>
 					<th>上架时间：</th>
@@ -597,7 +626,10 @@
 					<th>商品名称：</th>
 					<th>上架数量(个)：</th>
 					<th>出厂价(元)：</th>
-					<th>销售单价(元)</th>
+					<th id="price">
+						<c:if test="${bizOpshelfSku.opShelfInfo.type == 5}">零售价(元)</c:if>
+						<c:if test="${bizOpshelfSku.opShelfInfo.type != 5}">销售单价(元)</c:if>
+					</th>
 					<th>最低销售数量(个)：</th>
 					<th>最高销售数量(个，9999表示不限制)：</th>
 					<th>上架时间：</th>
