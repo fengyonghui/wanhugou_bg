@@ -244,7 +244,7 @@
 											'<input type="text" class="mui-input-clear staPayBtns" disabled="disabled" podid="'+ staCheckSuc +'" podids="'+ staCheck +'">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
-											'<label>备货单号:</label>' +
+											'<label>订单/备货单号:</label>' +
 											'<input type="text" class="mui-input-clear dd" disabled="disabled" value=" '+ poNumTxt+' " id="poNum_' + itemId + '">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
@@ -293,19 +293,19 @@
 								$('#orderinfoList').append(orderHtmlList);
 								_this.stOrdHrefHtml();
 								//先隐藏订单信息
-								var pos=$(".ctn_show_row .dd");
-								var posd=$(".ctn_show_row .staPayBtns");
-								$.each(pos,function(n,v){
-	                            	var poNumid=$(this).attr('id').substr(6);
-	                            	$.each(posd,function(n,v){
-	                            		var that=this;
-                                        var y=$(that).attr('podid');
-		                            	var divs=$("#poNum_"+poNumid);
-		                            	if(poNumid==y){
-		                            		divs.parent().parent().hide()
-		                            	}
-		                            })
-	                            })
+//								var pos=$(".ctn_show_row .dd");
+//								var posd=$(".ctn_show_row .staPayBtns");
+//								$.each(pos,function(n,v){
+//	                            	var poNumid=$(this).attr('id').substr(6);
+//	                            	$.each(posd,function(n,v){
+//	                            		var that=this;
+//                                      var y=$(that).attr('podid');
+//		                            	var divs=$("#poNum_"+poNumid);
+//		                            	if(poNumid==y){
+//		                            		divs.parent().parent().hide()
+//		                            	}
+//		                            })
+//	                            })
 					    }else {
 								$('.mui-pull-bottom-pocket').html('');
 								$('#orderinfoList').append('<p class="noneTxt">暂无数据</p>');

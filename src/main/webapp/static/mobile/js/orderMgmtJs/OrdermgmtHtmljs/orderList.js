@@ -271,8 +271,8 @@
                                         	}
                                         }
                                     }
-                                    var ordPaymentBtn = '';
-                                	var staPaymentBtnTxt ="";
+                                    var ordwaterCourseBtn = '';
+                                	var ordwaterCourseBtnTxt ="";
                                 	var ordAmendBtn = '';
                                     var staAmendTxt ="";
                                     var ordDeleteBtn = '';
@@ -283,8 +283,8 @@
                                     	//支付流水
                                     	if(item.bizStatus != res.data.CANCLE){
                                     		if(item.statu == 'unline' || userId==1){
-                                    			staPaymentBtnTxt ="支付";
-                                    			ordPaymentBtn = 'ordPaymentBtn';
+                                    			ordwaterCourseBtnTxt ="流水";
+                                    			ordwaterCourseBtn = 'ordwaterCourseBtn';
                                     		}
                                     	}
                                     	//详情
@@ -366,8 +366,8 @@
 											'<div class="'+ordSupplyBtn+'"  staOrdId="'+ item.id +'">' +
 												staSupplyBtnTxt +
 											'</div>'+
-											'<div class="'+ordPaymentBtn+'"  staOrdId="'+ item.id +'">' +
-												 staPaymentBtnTxt +
+											'<div class="'+ordwaterCourseBtn+'"  staOrdId="'+ item.id +'">' +
+												 ordwaterCourseBtnTxt +
 											'</div>'+
 											'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staAmendTxt +
@@ -647,14 +647,14 @@
 				}
 			})
 			//支付流水
-			$('.content_part').on('tap', '.ordSupplyBtn', function() {
+			$('.content_part').on('tap', '.ordwaterCourseBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');			
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
                     GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderstockOut.html",
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordwaterCourse.html",
 						extras: {
 							staOrdId: staOrdId,
 						}
@@ -910,8 +910,8 @@
                                         	}
                                         }
                                     }
-                                    var ordPaymentBtn = '';
-                                	var staPaymentBtnTxt ="";
+                                    var ordwaterCourseBtn = '';
+                                	var ordwaterCourseBtnTxt ="";
                                 	var ordAmendBtn = '';
                                     var staAmendTxt ="";
                                     var ordDeleteBtn = '';
@@ -922,8 +922,8 @@
                                     	//支付流水
                                     	if(item.bizStatus != res.data.CANCLE){
                                     		if(item.statu == 'unline' || userId==1){
-                                    			staPaymentBtnTxt ="支付";
-                                    			ordPaymentBtn = 'ordPaymentBtn';
+                                    			ordwaterCourseBtnTxt ="流水";
+                                    			ordwaterCourseBtn = 'ordwaterCourseBtn';
                                     		}
                                     	}
                                     	//详情
@@ -1005,8 +1005,8 @@
 											'<div class="'+ordSupplyBtn+'"  staOrdId="'+ item.id +'">' +
 												staSupplyBtnTxt +
 											'</div>'+
-											'<div class="'+ordPaymentBtn+'"  staOrdId="'+ item.id +'">' +
-												 staPaymentBtnTxt +
+											'<div class="'+ordwaterCourseBtn+'"  staOrdId="'+ item.id +'">' +
+												 ordwaterCourseBtnTxt +
 											'</div>'+
 											'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
 												staAmendTxt +
