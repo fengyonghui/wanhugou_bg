@@ -213,6 +213,7 @@ public class BizOrderDetailController extends BaseController {
 
 	@RequiresPermissions("biz:order:bizOrderDetail:edit")
 	@RequestMapping(value = "save4Mobile")
+	@ResponseBody
 	public String save4Mobile(BizOrderDetail bizOrderDetail, Model model, RedirectAttributes redirectAttributes) {
 		bizOrderDetailService.save(bizOrderDetail);
 		addMessage(redirectAttributes, "保存订单详情成功");

@@ -4,9 +4,11 @@
 package com.wanhutong.backend.modules.biz.web.order;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
@@ -46,6 +48,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 线下支付订单(线下独有)Controller
@@ -91,6 +94,17 @@ public class BizOrderHeaderUnlineController extends BaseController {
         Page<BizOrderHeaderUnline> page = bizOrderHeaderUnlineService.findPage(new Page<BizOrderHeaderUnline>(request, response), bizOrderHeaderUnline);
         model.addAttribute("page", page);
         return "modules/biz/order/bizOrderHeaderUnlineList";
+    }
+
+    @RequiresPermissions("biz:order:bizOrderHeaderUnline:view")
+    @RequestMapping(value = "list4Mobile")
+    @ResponseBody
+    public String list4Mobile(BizOrderHeaderUnline bizOrderHeaderUnline, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        Page<BizOrderHeaderUnline> page = bizOrderHeaderUnlineService.findPage(new Page<BizOrderHeaderUnline>(request, response), bizOrderHeaderUnline);
+        model.addAttribute("page", page);
+        resultMap.put("page", page);
+        return JsonUtil.generateData(resultMap, null);
     }
 
     @RequiresPermissions("biz:order:bizOrderHeaderUnline:view")
