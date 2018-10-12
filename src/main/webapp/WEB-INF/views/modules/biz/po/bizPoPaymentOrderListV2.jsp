@@ -189,7 +189,7 @@
                 $.ajax({
                     url: '${ctx}/biz/po/bizPoHeader/auditPay',
                     contentType: 'application/json',
-                    data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "money": money},
+                    data: {"poPayId": poPayId, "currentType": currentType, "auditType": auditType, "description": description, "money": money},
                     type: 'get',
                     success: function (result) {
                         result = JSON.parse(result);
