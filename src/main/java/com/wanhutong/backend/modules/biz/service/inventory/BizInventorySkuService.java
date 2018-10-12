@@ -9,6 +9,8 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestDetailDao;
+import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoDao;
+import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV3Dao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
@@ -48,6 +50,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	private OfficeDao officeDao;
 	@Autowired
 	private BizRequestDetailDao bizRequestDetailDao;
+	@Autowired
+	private BizSkuInfoV3Dao bizSkuInfoDao;
 
 	@Override
 	public BizInventorySku get(Integer id) {
@@ -175,14 +179,20 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 
 	@Transactional(readOnly = false,rollbackFor = Exception.class)
 	public void correctOutQty() {
-		List<BizSkuInfo> skuInfoList = bizSkuInfoService.findList(new BizSkuInfo());
+		List<Integer> skuInfoList = bizSkuInfoDao.findReqSku();
 		List<Office> centList = officeDao.findListByType(OfficeTypeEnum.PURCHASINGCENTER.getType());
 		for (Office cent : centList) {
-			for (BizSkuInfo skuInfo : skuInfoList) {
-				int stockTotal = bizInventorySkuDao.findStockTotal(cent.getId(), skuInfo.getId());
-				int recvTotal = bizRequestDetailDao.findRecvTotal(cent.getId(), skuInfo.getId());
+			for (Integer skuId : skuInfoList) {
+				int stockTotal = bizInventorySkuDao.findStockTotal(cent.getId(), skuId) == null ? 0 : bizInventorySkuDao.findStockTotal(cent.getId(), skuId);
+				if (stockTotal <= 0) {
+					continue;
+				}
+				int recvTotal = bizRequestDetailDao.findRecvTotal(cent.getId(), skuId) == null ? 0 : bizRequestDetailDao.findRecvTotal(cent.getId(), skuId);
 				int alOutQty = recvTotal - stockTotal;
-				List<BizRequestDetail> requestDetailList = bizRequestDetailDao.findListByCentIdAndSkuId(cent.getId(), skuInfo.getId());
+				if (alOutQty < 0) {
+					continue;
+				}
+				List<BizRequestDetail> requestDetailList = bizRequestDetailDao.findListByCentIdAndSkuId(cent.getId(), skuId);
 				if (CollectionUtils.isNotEmpty(requestDetailList)) {
 					for (BizRequestDetail requestDetail : requestDetailList) {
 						if (alOutQty == 0) {
