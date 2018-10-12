@@ -3,9 +3,11 @@
  */
 package com.wanhutong.backend.modules.biz.web.shelf;
 
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
@@ -35,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品上架管理Controller
@@ -171,6 +174,35 @@ public class BizOpShelfSkuController extends BaseController {
 			}
 		}
 		return 	list;
+	}
+
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
+	@ResponseBody
+	@RequestMapping(value = "findOpShelfSku4Mobile")
+	public String findOpShelfSku4Mobile(BizOpShelfSku bizOpShelfSku){
+		Map<String, Object> resultMap = Maps.newHashMap();
+		AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
+		List<BizOpShelfSku> list=null;
+		boolean emptyName = bizOpShelfSku.getSkuInfo().getName().isEmpty();//商品名称
+		boolean emptyPart = bizOpShelfSku.getSkuInfo().getPartNo().isEmpty();//商品编码
+		boolean emptyItemNo = bizOpShelfSku.getSkuInfo().getItemNo().isEmpty();//商品货号
+		if(emptyName==true && emptyPart==true && emptyItemNo==true){
+			System.out.println("为空 不查询sku商品");
+		}else {
+			list = bizOpShelfSkuService.findList(bizOpShelfSku);
+		}
+		if(list!=null){
+			for (BizOpShelfSku skuValue : list) {
+				bizSkuPropValue.setObjectId(skuValue.getSkuInfo().getId());//sku_Id
+				bizSkuPropValue.setObjectName("biz_sku_info");
+				List<AttributeValueV2> skuValueList = attributeValueService.findList(bizSkuPropValue);
+				if(skuValueList.size()!=0){
+					skuValue.setSkuValueList(skuValueList);
+				}
+			}
+		}
+		resultMap.put("list", list);
+		return JsonUtil.generateData(resultMap, null);
 	}
 
     /**

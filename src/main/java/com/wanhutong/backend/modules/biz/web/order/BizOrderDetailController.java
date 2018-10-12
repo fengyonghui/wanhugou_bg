@@ -210,6 +210,28 @@ public class BizOrderDetailController extends BaseController {
 		}
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
 	}
+
+	@RequiresPermissions("biz:order:bizOrderDetail:edit")
+	@RequestMapping(value = "save4Mobile")
+	public String save4Mobile(BizOrderDetail bizOrderDetail, Model model, RedirectAttributes redirectAttributes) {
+		bizOrderDetailService.save(bizOrderDetail);
+		addMessage(redirectAttributes, "保存订单详情成功");
+		Integer orderId=bizOrderDetail.getOrderHeader().getId();
+		String consultantId ="";
+		String a="header_save";
+		if(bizOrderDetail.getOrderHeader()!=null && bizOrderDetail.getOrderHeader().getConsultantId()!=null){
+			consultantId = String.valueOf(bizOrderDetail.getOrderHeader().getConsultantId());
+		}
+//		if(bizOrderDetail.getOrderHeader().getClientModify()!=null && bizOrderDetail.getOrderHeader().getClientModify().equals("client_modify")){
+//			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId+"&clientModify=client_modify"+
+//					"&consultantId="+consultantId;
+//		}else if(bizOrderDetail.getDetailFlag()!=null && bizOrderDetail.getDetailFlag().equals(a)){
+//			//跳回C端
+//			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/cendform?id="+orderId;
+//		}
+//		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
+		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
+	}
 	
 	@RequiresPermissions("biz:order:bizOrderDetail:edit")
 	@RequestMapping(value = "delete")
@@ -306,6 +328,42 @@ public class BizOrderDetailController extends BaseController {
 			e.printStackTrace();
 		}
 		return aa;
+	}
+
+	/**
+	 * 手机端订单商品详情实现不刷新删除
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:order:bizOrderDetail:edit")
+	@RequestMapping(value = "Detaildelete4Mobile")
+	public String Detaildelete4Mobile(BizOrderDetail bizOrderDetail,String orderDetailDetele) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		String aa="error";
+		try {
+			bizOrderDetailService.delete(bizOrderDetail);
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			bizOrderHeader.setId(bizOrderDetail.getOrderHeader().getId());
+			BizOrderDetail deta = new BizOrderDetail();
+			deta.setOrderHeader(bizOrderDetail.getOrderHeader());
+			List<BizOrderDetail> list = bizOrderDetailService.findList(deta);
+			Double sum=0.0;
+			if(list != null){
+				for(BizOrderDetail bod:list){
+					Double price = bod.getUnitPrice();//商品单价
+					Integer ordQty = bod.getOrdQty();//采购数量
+					if(price==null){price=0.0; }
+					if(ordQty==null){ordQty=0; }
+					sum+=price*ordQty;
+				}
+				bizOrderHeader.setTotalDetail(sum);
+				bizOrderHeaderService.updateMoney(bizOrderHeader);
+			}
+			aa="ok";
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		resultMap.put("aa",aa);
+		return JsonUtil.generateData(resultMap, null);
 	}
 
 }

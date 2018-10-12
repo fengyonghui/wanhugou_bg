@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.web.sku;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -389,6 +390,32 @@ public class BizSkuInfoController extends BaseController {
         }
         return purseSkuList;
     }
+
+	/**
+	 * 手机端代采订单添加详情时。搜索商品
+	 * @param bizSkuInfo
+	 * @return
+	 */
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findPurseSkuList4Mobile")
+	public String findPurseSkuList4Mobile(BizSkuInfo bizSkuInfo) {
+//        BizProductInfo bizProductInfo = new BizProductInfo();
+//        bizProductInfo.setProdType(Byte.parseByte(ProdTypeEnum.CUSTPROD.getType()));
+//        bizSkuInfo.setProductInfo(bizProductInfo);
+//        List<BizSkuInfo> skuList = bizSkuInfoService.findList(bizSkuInfo);
+		Map<String, Object> resultMap = Maps.newHashMap();
+		List<BizSkuInfo> purseSkuList = bizSkuInfoService.findPurseSkuList(bizSkuInfo);
+		for (BizSkuInfo skuInfo:purseSkuList) {
+			AttributeValueV2 valueV2 = new AttributeValueV2();
+			valueV2.setObjectId(skuInfo.getId());
+			valueV2.setObjectName("biz_sku_info");
+			List<AttributeValueV2> attributeValueV2List = attributeValueV2Service.findList(valueV2);
+			skuInfo.setAttrValueList(attributeValueV2List);
+		}
+		resultMap.put("purseSkuList", purseSkuList);
+		return JsonUtil.generateData(resultMap, null);
+	}
 
 	/**
 	 * 删除产品或者删除商品时，判断这个产品/商品在某些状态下不能被删除：
