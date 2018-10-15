@@ -214,6 +214,10 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+        //判断是否为代销订单
+        if ("CONSIGNED_ORDER".equals(bizOrderHeader.getTargetPage())){
+            bizOrderHeader.setOrderType(8);
+        }
         if (bizOrderHeader.getSkuChickCount() != null) {
             //商品下单量标识
             bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
@@ -235,6 +239,10 @@ public class BizOrderHeaderController extends BaseController {
 
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+        if ("CONSIGNED_ORDER".equals(bizOrderHeader.getTargetPage())){
+
+        }
+
         model.addAttribute("page", page);
         if (bizOrderHeader.getSource() != null) {
             model.addAttribute("source", bizOrderHeader.getSource());
@@ -326,6 +334,10 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
         model.addAttribute("auditFithStatus", doOrderHeaderProcessFifthConfig.getAutProcessId());
         model.addAttribute("auditStatus", originConfig.getPayProcessId());
+        //判断是否为代销订单
+        if ("CONSIGNED_ORDER".equals(bizOrderHeader.getTargetPage())){
+            return "modules/biz/order/bizConsignedOrderHeaderList";
+        }
 
         return "modules/biz/order/bizOrderHeaderList";
     }

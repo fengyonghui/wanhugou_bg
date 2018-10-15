@@ -256,6 +256,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private Integer needOut;
 
+    /**
+     * 跳转目标页面
+     */
+    private String targetPage;
+
+    private BigDecimal consignedMoney;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -1065,6 +1072,22 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setNeedOut(Integer needOut) {
         this.needOut = needOut;
+    }
+
+    public String getTargetPage() {
+        return targetPage;
+    }
+
+    public void setTargetPage(String targetPage) {
+        this.targetPage = targetPage;
+    }
+
+    public BigDecimal getConsignedMoney() {
+        return consignedMoney;
+    }
+
+    public void setConsignedMoney(BigDecimal consignedMoney) {
+        this.consignedMoney = consignedMoney;
     }
 }
 

@@ -335,6 +335,8 @@
 		si.id AS "orderDetailList.skuInfo.id",
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
 		si.item_no AS "orderDetailList.skuInfo.itemNo",
+		boss.org_price AS "orderDetailList.skuInfo.bizOpShelfSku.orgPrice",
+		boss.sale_price AS "orderDetailList.skuInfo.bizOpShelfSku.salePrice",
 		pi.vendor_name AS "orderDetailList.vendor.name",
 		bol.logistics_lines_code AS "bizOrderLogisticsList.logisticsLinesCode",
 		bol.stop_point_code AS "bizOrderLogisticsList.stopPointCode",
@@ -362,6 +364,7 @@
 			LEFT JOIN biz_drawback bd on bd.order_id = a.id
 		</if>
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
+		LEFT JOIN biz_op_shelf_sku boss ON boss.sku_id = si.id and boss.status=1
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
 		<!-- 供应商id -->
 		<if test="vendorId !=null and vendorId != ''">

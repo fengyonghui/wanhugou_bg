@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -112,6 +113,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	 * 未上架
 	 */
 	private Integer notPutaway;
+
+	private BizOpShelfSku bizOpShelfSku;
 
 	public BizSkuInfo() {
 		super();
@@ -443,5 +446,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setNotPutaway(Integer notPutaway) {
 		this.notPutaway = notPutaway;
+	}
+
+	public BizOpShelfSku getBizOpShelfSku() {
+		return bizOpShelfSku;
+	}
+
+	public void setBizOpShelfSku(BizOpShelfSku bizOpShelfSku) {
+		this.bizOpShelfSku = bizOpShelfSku;
 	}
 }
