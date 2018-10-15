@@ -173,11 +173,11 @@ public class BizOrderHeaderUnlineController extends BaseController {
         if (!beanValidator(model, bizOrderHeaderUnline)) {
             return form(bizOrderHeaderUnline, model);
         }
-        bizOrderHeaderUnline = bizOrderHeaderUnlineService.get(bizOrderHeaderUnline.getId());
-        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderHeaderUnline.getOrderHeader().getId());
-        bizOrderHeaderUnline.setRealMoney(bizOrderHeaderUnline.getUnlinePayMoney());
-        bizOrderHeaderUnline.setBizStatus(BIZSTATUSONE);
-        bizOrderHeaderUnlineService.save(bizOrderHeaderUnline);
+        BizOrderHeaderUnline orderHeaderUnline = bizOrderHeaderUnlineService.get(bizOrderHeaderUnline.getId());
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderHeaderUnline.getOrderHeader().getId());
+        orderHeaderUnline.setRealMoney(bizOrderHeaderUnline.getRealMoney());
+        orderHeaderUnline.setBizStatus(BIZSTATUSONE);
+        bizOrderHeaderUnlineService.save(orderHeaderUnline);
         try {
             User user = UserUtils.getUser();
             BizPayRecord bizPayRecord = new BizPayRecord();
