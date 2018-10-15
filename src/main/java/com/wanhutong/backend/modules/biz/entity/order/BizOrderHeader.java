@@ -261,6 +261,9 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private String targetPage;
 
+    /**
+     * 代销佣金
+     */
     private BigDecimal consignedMoney;
 
     public String getLocationAddress() {

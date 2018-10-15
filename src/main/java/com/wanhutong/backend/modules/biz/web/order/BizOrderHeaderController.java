@@ -24,6 +24,7 @@ import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
@@ -240,7 +241,20 @@ public class BizOrderHeaderController extends BaseController {
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         if ("CONSIGNED_ORDER".equals(bizOrderHeader.getTargetPage())){
-
+            List<BizOrderHeader> bizOrderHeaderList = page.getList();
+            if (CollectionUtils.isNotEmpty(bizOrderHeaderList)) {
+                for (BizOrderHeader orderHeader :bizOrderHeaderList) {
+                    List<BizOrderDetail> orderDetails = orderHeader.getOrderDetailList();
+                    if (CollectionUtils.isNotEmpty(orderDetails)) {
+                        for (BizOrderDetail orderDetail : orderDetails) {
+                            BizOpShelfSku bizOpShelfSku = orderDetail.getSkuInfo().getBizOpShelfSku();
+                            BigDecimal orgPrice = new BigDecimal(bizOpShelfSku.getOrgPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+                            BigDecimal salePrice = new BigDecimal(bizOpShelfSku.getSalePrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+                            Integer ordQty = orderDetail.getOrdQty();
+                        }
+                    }
+                }
+            }
         }
 
         model.addAttribute("page", page);

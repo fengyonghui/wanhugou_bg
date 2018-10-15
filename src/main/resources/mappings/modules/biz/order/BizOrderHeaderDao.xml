@@ -123,6 +123,11 @@
 				<result property="partNo" column="orderDetailList.skuInfo.partNo"/>
 				<result property="buyPrice" column="orderDetailList.skuInfo.buyPrice" />
 				<result property="itemNo" column="orderDetailList.skuInfo.itemNo"/>
+				<association property="bizOpShelfSku" javaType="BizOpShelfSku" column="bizOpShelfSku.id">
+					<id property="id" column="orderDetailList.skuInfo.bizOpShelfSku.id"/>
+					<result property="orgPrice" column="orderDetailList.skuInfo.bizOpShelfSku.orgPrice"/>
+					<result property="salePrice" column="orderDetailList.skuInfo.bizOpShelfSku.salePrice"/>
+				</association>
 			</association>
 			<association property="vendor" javaType="Office" column="vendor.id">
 				<id property="id" column="orderDetailList.vendor.id"/>
@@ -335,6 +340,7 @@
 		si.id AS "orderDetailList.skuInfo.id",
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
 		si.item_no AS "orderDetailList.skuInfo.itemNo",
+		boss.id AS "orderDetailList.skuInfo.bizOpShelfSku.id",
 		boss.org_price AS "orderDetailList.skuInfo.bizOpShelfSku.orgPrice",
 		boss.sale_price AS "orderDetailList.skuInfo.bizOpShelfSku.salePrice",
 		pi.vendor_name AS "orderDetailList.vendor.name",
