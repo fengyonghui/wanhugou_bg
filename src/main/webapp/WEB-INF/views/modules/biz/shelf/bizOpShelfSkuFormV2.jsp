@@ -10,7 +10,10 @@
 	<script type="text/javascript">
         var opShelfType="";
         $(document).ready(function() {
-
+            var opShelfInfoType=$("#opShelfInfoType").val();
+            if (opShelfInfoType == 5) {
+                sellOff();
+			}
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
@@ -397,8 +400,6 @@
         }
 
         function shelfInfoChanged() {
-            var opShelfId=$("#shelfInfoId").val();
-            if ()
             $.ajax({
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
@@ -525,6 +526,7 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+		<input id="opShelfInfoType" type="hidden" value="${bizOpShelfSku.opShelfInfo.type}"/>
 	</c:if>
 
 	<div class="control-group" id="PurchaseID" style="display:none">
