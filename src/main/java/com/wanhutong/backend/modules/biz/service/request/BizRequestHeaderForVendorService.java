@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.request;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
@@ -15,6 +16,7 @@ import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestExpandDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
+import com.wanhutong.backend.modules.biz.entity.logistic.AddressVoEntity;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
@@ -50,6 +52,7 @@ import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +69,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 备货清单Service
@@ -583,4 +587,11 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		bizRequestHeaderForVendorDao.updateSchedulingType(requestHeader);
 	}
 
+	public List<AddressVoEntity> findOfficeRegion(Integer officeId, Integer type) {
+		return bizRequestHeaderForVendorDao.findOfficeRegion(officeId, type);
+	}
+
+	public List<AddressVoEntity> findOrderRegion(Integer orderId, Integer type) {
+		return bizRequestHeaderForVendorDao.findOrderRegion(orderId, type);
+	}
 }

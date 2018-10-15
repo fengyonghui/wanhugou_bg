@@ -54,6 +54,12 @@ import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -70,6 +76,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -775,29 +782,14 @@ public class BizOrderHeaderController extends BaseController {
             }
         } else if (bizOrderHeader.getOrderNum().startsWith("SO") && bizOrderHeader.getCommonProcess() != null && (bizOrderHeader.getSuplys() ==0 || bizOrderHeader.getSuplys() == 721)) {
             String processType = bizOrderHeader.getCommonProcess().getType();
-            switch (statusEnum) {
-                case ZERO:
-                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getZeroCreatePoProcessId()).equals(processType)){
-                        createPo = "yes";
-                    }
-                    break;
-                case FIFTH:
-                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getFifthCreatePoProcessId()).equals(processType)){
-                        createPo = "yes";
-                    }
-                    break;
-                case ALL:
-                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getAllCreatePoProcessId()).equals(processType)){
-                        createPo = "yes";
-                    }
-                    break;
-                default:
-                    break;
+            String zeroCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getZeroCreatePoProcessId());
+            String fifthCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getFifthCreatePoProcessId());
+            String allCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getAllCreatePoProcessId());
+            if (zeroCreatePoProcessId.equals(processType) || fifthCreatePoProcessId.equals(processType) || allCreatePoProcessId.equals(processType)) {
+                createPo = "yes";
             }
         }
         model.addAttribute("createPo",createPo);
-
-
 
         return "modules/biz/order/bizOrderHeaderForm";
     }
@@ -1152,24 +1144,11 @@ public class BizOrderHeaderController extends BaseController {
             }
         } else if (bizOrderHeader.getOrderNum().startsWith("SO") && bizOrderHeader.getCommonProcess() != null && (bizOrderHeader.getSuplys() ==0 || bizOrderHeader.getSuplys() == 721)) {
             String processType = bizOrderHeader.getCommonProcess().getType();
-            switch (statusEnum) {
-                case ZERO:
-                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getZeroCreatePoProcessId()).equals(processType)){
-                        createPo = "yes";
-                    }
-                    break;
-                case FIFTH:
-                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getFifthCreatePoProcessId()).equals(processType)){
-                        createPo = "yes";
-                    }
-                    break;
-                case ALL:
-                    if(String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getAllCreatePoProcessId()).equals(processType)){
-                        createPo = "yes";
-                    }
-                    break;
-                default:
-                    break;
+            String zeroCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getZeroCreatePoProcessId());
+            String fifthCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getFifthCreatePoProcessId());
+            String allCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getAllCreatePoProcessId());
+            if (zeroCreatePoProcessId.equals(processType) || fifthCreatePoProcessId.equals(processType) || allCreatePoProcessId.equals(processType)) {
+                createPo = "yes";
             }
         }
         model.addAttribute("createPo",createPo);
@@ -1691,6 +1670,46 @@ public class BizOrderHeaderController extends BaseController {
                     } else {
                         genAuditProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE);
                     }
+
+                    //物流运单生成
+                    ThreadPoolManager.getDefaultThreadPool().execute(() -> {
+                        String postUrl = "http://wuliu.guojingec.com:8081/test/order/logistic/add_order_WHT";
+                        CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
+                        HttpPost httpPost = new HttpPost(postUrl);
+                        CloseableHttpResponse httpResponse = null;
+                        String result = null;
+                        try {
+                            HashMap<String, Object> map = Maps.newHashMap();
+                            map.put("orderCode", 1);
+                            map.put("linecode", 1);
+                            map.put("linepointcode", null);
+                            map.put("creator", 1);
+                            map.put("senderphone", 1);
+                            map.put("receiverphone", 1);
+
+                            httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
+                            httpPost.setHeader("Accept", "application/json");
+
+                            String jsonstr = JSONObject.fromObject(map).toString();
+                            httpPost.setEntity(new StringEntity(jsonstr, Charset.forName("UTF-8")));
+
+                            httpResponse = httpClient.execute(httpPost);
+
+                            result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                            LOGGER.info("返回结果result=================" + result);
+
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (httpClient != null) {
+                                try {
+                                    httpClient.close();
+                                } catch (IOException e) {
+                                    LOGGER.error("关闭异常，710",e);
+                                }
+                            }
+                        }
+                    });
                 }
             }
         } catch (Exception e) {

@@ -440,6 +440,7 @@ public class BizInventorySkuController extends BaseController {
                     bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
                 }
             }
+            bizInventorySku.setDataStatus("filter");
             invList = bizInventorySkuService.findList(bizInventorySku);
             //1库存盘点信息
             List<List<String>> data = new ArrayList<List<String>>();
@@ -561,5 +562,12 @@ public class BizInventorySkuController extends BaseController {
         return "modules/biz/inventory/bizInventoryAge";
     }
 
+    /**
+     * 初始化备货详情出库数量
+     */
+    @RequestMapping("correctOutQty")
+    public void correctOutQty() {
+        bizInventorySkuService.correctOutQty();
+    }
 
 }
