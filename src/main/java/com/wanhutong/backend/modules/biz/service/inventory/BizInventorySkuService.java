@@ -3,23 +3,23 @@
  */
 package com.wanhutong.backend.modules.biz.service.inventory;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao;
+import com.wanhutong.backend.modules.biz.dao.inventory.BizInventorySkuDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestDetailDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
+import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV3Dao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -50,10 +50,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
-import com.wanhutong.backend.modules.biz.dao.inventory.BizInventorySkuDao;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 商品库存详情Service
@@ -87,6 +87,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	private BizRequestDetailDao bizRequestDetailDao;
 	@Autowired
 	private OfficeDao officeDao;
+	@Autowired
+	private BizSkuInfoV3Dao bizSkuInfoDao;
 
 	@Override
 	public BizInventorySku get(Integer id) {
@@ -421,14 +423,20 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 
 	@Transactional(readOnly = false,rollbackFor = Exception.class)
 	public void correctOutQty() {
-		List<BizSkuInfo> skuInfoList = bizSkuInfoService.findList(new BizSkuInfo());
+		List<Integer> skuInfoList = bizSkuInfoDao.findReqSku();
 		List<Office> centList = officeDao.findListByType(OfficeTypeEnum.PURCHASINGCENTER.getType());
 		for (Office cent : centList) {
-			for (BizSkuInfo skuInfo : skuInfoList) {
-				int stockTotal = bizInventorySkuDao.findStockTotal(cent.getId(), skuInfo.getId());
-				int recvTotal = bizRequestDetailDao.findRecvTotal(cent.getId(), skuInfo.getId());
+			for (Integer skuId : skuInfoList) {
+				int stockTotal = bizInventorySkuDao.findStockTotal(cent.getId(), skuId) == null ? 0 : bizInventorySkuDao.findStockTotal(cent.getId(), skuId);
+				if (stockTotal <= 0) {
+					continue;
+				}
+				int recvTotal = bizRequestDetailDao.findRecvTotal(cent.getId(), skuId) == null ? 0 : bizRequestDetailDao.findRecvTotal(cent.getId(), skuId);
 				int alOutQty = recvTotal - stockTotal;
-				List<BizRequestDetail> requestDetailList = bizRequestDetailDao.findListByCentIdAndSkuId(cent.getId(), skuInfo.getId());
+				if (alOutQty < 0) {
+					continue;
+				}
+				List<BizRequestDetail> requestDetailList = bizRequestDetailDao.findListByCentIdAndSkuId(cent.getId(), skuId);
 				if (CollectionUtils.isNotEmpty(requestDetailList)) {
 					for (BizRequestDetail requestDetail : requestDetailList) {
 						if (alOutQty == 0) {
@@ -436,7 +444,7 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 						}
 						if (alOutQty - requestDetail.getRecvQty() >= 0) {
 							bizRequestDetailDao.updateOutQty(requestDetail.getId(),requestDetail.getRecvQty());
-							alOutQty -= alOutQty - requestDetail.getRecvQty();
+							alOutQty = alOutQty - requestDetail.getRecvQty();
 						} else {
 							bizRequestDetailDao.updateOutQty(requestDetail.getId(),alOutQty);
 							alOutQty = 0;

@@ -47,7 +47,6 @@ import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
-import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -118,8 +117,6 @@ public class BizInventorySkuController extends BaseController {
     private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
     @Autowired
     private BizPoHeaderService bizPoHeaderService;
-    @Autowired
-    private CommonProcessService commonProcessService;
     @Autowired
     private BizSendGoodsRecordService bizSendGoodsRecordService;
 

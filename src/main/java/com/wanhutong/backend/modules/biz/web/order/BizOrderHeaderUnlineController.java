@@ -136,23 +136,6 @@ public class BizOrderHeaderUnlineController extends BaseController {
         bizOrderHeaderUnline.setRealMoney(bizOrderHeaderUnline.getUnlinePayMoney());
         bizOrderHeaderUnline.setBizStatus(BIZSTATUSONE);
         bizOrderHeaderUnlineService.save(bizOrderHeaderUnline);
-        bizOrderHeader.setReceiveTotal(bizOrderHeader.getReceiveTotal() + bizOrderHeaderUnline.getRealMoney().doubleValue());
-//        bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-        if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.UNPAY.getState().intValue()) {
-            if (bizOrderHeader.getTotalDetail().compareTo(bizOrderHeader.getReceiveTotal()) == 0) {
-                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
-            } else {
-                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.INITIAL_PAY.getState());
-            }
-        }
-        if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.INITIAL_PAY.getState().intValue()) {
-            if (bizOrderHeader.getTotalDetail().compareTo(bizOrderHeader.getReceiveTotal()) == 0) {
-                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
-            }
-        }
-        bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-        bizOrderStatusService.saveOrderStatus(bizOrderHeader);
-
         try {
             User user = UserUtils.getUser();
             BizPayRecord bizPayRecord = new BizPayRecord();
