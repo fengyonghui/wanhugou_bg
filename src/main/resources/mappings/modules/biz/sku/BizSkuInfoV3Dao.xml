@@ -682,4 +682,11 @@
 
 	</select>
 
+	<select id="findReqSku" resultType="Integer">
+		SELECT a.id
+		FROM biz_sku_info a,biz_request_detail b
+		WHERE a.id = b.sku_id
+		AND a.status = 1 AND b.status = 1
+	</select>
+
 </mapper>

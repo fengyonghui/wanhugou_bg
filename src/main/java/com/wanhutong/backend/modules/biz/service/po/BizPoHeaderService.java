@@ -822,7 +822,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> auditPay(int id, String currentType, int auditType, String description, BigDecimal money) {
+    public Pair<Boolean, String> auditPay(Integer id, String currentType, int auditType, String description, BigDecimal money) {
         BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(id);
         BizPoHeader bizPoHeader = new BizPoHeader();
         BizRequestHeader bizRequestHeader = new BizRequestHeader();
