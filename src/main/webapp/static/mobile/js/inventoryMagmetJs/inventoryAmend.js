@@ -96,10 +96,13 @@
 	        }
 	        var btnMeun = '';
 	        if(strs == 'createPay') {
+	        	$('#changeHeader').html('申请付款');
 	        	btnMeun = '<button id="payMentBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">申请付款</button>'
 	        }else if(strs == 'startAudit') {
+	        	$('#changeHeader').html('开启审核');
 	        	btnMeun = '<button id="startCheckBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">开启审核</button>'
 	        }else {
+	        	$('#changeHeader').html('备货单修改');
 	        	btnMeun = '<button id="saveDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
 	        }
 	        $('.inSaveBtn').html(btnMeun);
