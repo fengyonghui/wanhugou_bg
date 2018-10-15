@@ -485,7 +485,7 @@
                        <%--style="color:#088A29" class="input-xlarge" disabled="true" />--%>
                         <%-----${bizOrderHeader.receiveTotal}----%>
                 <font color="#088A29">
-                    <fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />
+                    <fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/fn:trim(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>

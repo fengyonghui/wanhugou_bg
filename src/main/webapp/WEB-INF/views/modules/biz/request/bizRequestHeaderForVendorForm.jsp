@@ -119,7 +119,7 @@
                                 //tr_tds+= "<td><a href="+ "'${ctx}/sys/office/supplierForm?id=" + skuInfo.productInfo.office.id + "&gysFlag=onlySelect'>"+ skuInfo.productInfo.office.name + "</a></td>";
                                 tr_tds+= "<td>"+ skuInfo.productInfo.office.name + "</td>";
                                 tr_tds+= "<td>" + skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td>" +
-									// "<td>"+skuInfo.buyPrice+"</td>" +
+									 "<td>"+skuInfo.buyPrice+"</td>" +
 									"<td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
 								if(flag){
 
@@ -256,7 +256,7 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
-                            // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                             poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
 
@@ -275,8 +275,8 @@
                                 completePalnHtml += "</div></td></tr>";
                             }
                             poDetailHtml += completePalnHtml;
-                            prodInfo2Schedu.append(poDetailHtml)
                         }
+                        prodInfo2Schedu.append(poDetailHtml)
 
                         var schedulingDetailRemarkHtml = "<tr><td colspan='7'><div><label>排产备注：</label>";
                         schedulingDetailRemarkHtml += "<textarea id='schRemarkOrder' maxlength='200' class='input-xlarge '>" + bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
@@ -685,7 +685,7 @@
                 var skuInfoId = skuInfoIdListList[index];
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
-                totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+                totalOriginalNum = parseInt(totalOriginalNum) + parseInt(originalNum);
             }
 
             for(var index in skuInfoIdListList) {
@@ -701,6 +701,7 @@
 
             for(var index in skuInfoIdListList) {
                 var skuInfoId = skuInfoIdListList[index];
+                var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
                 var trArray = $("[name='" + skuInfoId + "']");
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];
@@ -853,7 +854,7 @@
                 var skuInfoId = skuInfoIdListList[index];
 
                 var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
-                totalOriginalNum += parseInt(totalOriginalNum) + parseInt(originalNum);
+                totalOriginalNum = parseInt(totalOriginalNum) + parseInt(originalNum);
             }
 
             for(var index in skuInfoIdListList) {
@@ -870,6 +871,7 @@
 
             for(var index in skuInfoIdListList) {
                 var skuInfoId = skuInfoIdListList[index];
+                var originalNum = $(eval("totalOrdQtyForSku_" + skuInfoId)).val();
                 var trArray = $("[name='" + skuInfoId + "']");
                 for(i=0;i<trArray.length;i++) {
                     var div = trArray[i];
@@ -895,10 +897,6 @@
                     }
 
                     var reg = /^[0-9]+[0-9]*]*$/;
-                    console.log(value)
-                    console.log(parseInt(value) <= 0)
-                    console.log(parseInt(value) > originalNum)
-                    console.log(!reg.test(value))
                     if (value != "" && (parseInt(value) <= 0 || parseInt(value) > originalNum || !reg.test(value))) {
                         alert("第" + count + "个商品确认值输入不正确!")
                         return false;
@@ -1242,7 +1240,7 @@
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<%--<th>结算价</th>--%>
+					<th>结算价</th>
 					<th>申报数量</th>
 
 					<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
@@ -1277,9 +1275,9 @@
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
-							<%--<td style="white-space: nowrap">--%>
-									<%--${reqDetail.unitPrice}--%>
-							<%--</td>--%>
+							<td style="white-space: nowrap">
+									${reqDetail.unitPrice}
+							</td>
 							<td>
 								<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
 								<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
@@ -1337,7 +1335,7 @@
 						<th>商品编码</th>
 						<th>商品货号</th>
 						<%--<th>商品属性</th>--%>
-						<%--<th>结算价</th>--%>
+						<th>结算价</th>
 							<%--<th>商品类型</th>--%>
 						<th>申报数量</th>
 							<%--<th>已收货数量</th>--%>
@@ -1592,15 +1590,15 @@
 						</tr>
 						</thead>
 						<tbody id="prodInfo2Schedu">
-						<c:forEach items="${bizPoHeader.poDetailList}" var="poDetail" varStatus="state">
-							<tr>
-								<td colspan="7">
-									<table id="schedulingForDetail_${poDetail.id}" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">
+						<%--<c:forEach items="${bizPoHeader.poDetailList}" var="poDetail" varStatus="state">--%>
+							<%--<tr>--%>
+								<%--<td colspan="7">--%>
+									<%--<table id="schedulingForDetail_${poDetail.id}" style="width:100%;float:left" class="table table-striped table-bordered table-condensed">--%>
 
-									</table>
-								</td>
-							</tr>
-						</c:forEach>
+									<%--</table>--%>
+								<%--</td>--%>
+							<%--</tr>--%>
+						<%--</c:forEach>--%>
 
 						</tbody>
 					</table>
@@ -1933,13 +1931,13 @@
 													<label>排产计划：</label>
 												</td>
 											</tr>
-											<tr id="detail_${bizOrderDetail.skuInfo.id}" name="detailScheduling">
+											<tr id="detail_${reqDetail.skuInfo.id}" name="detailScheduling">
 												<td>
-													<div name="${bizOrderDetail.skuInfo.id}">
+													<div name="${reqDetail.skuInfo.id}">
 														<label>完成日期：</label>
-														<input name="${bizOrderDetail.skuInfo.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;
+														<input name="${reqDetail.skuInfo.id}_date" type="text" maxlength="20" class="input-medium Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});" /> &nbsp;
 														<label>排产数量：</label>
-														<input name="${bizOrderDetail.skuInfo.id}_value" class="input-medium" type="text" maxlength="30" />
+														<input name="${reqDetail.skuInfo.id}_value" class="input-medium" type="text" maxlength="30" />
 													</div>
 												</td>
 											</tr>

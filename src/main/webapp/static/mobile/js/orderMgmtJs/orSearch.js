@@ -16,7 +16,6 @@
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
 			this.testData();
-//			this.ajaxGoodName()
 		},
 		pageInit: function() {
 			var _this = this;
@@ -79,8 +78,6 @@
 		hrefHtml: function(newinput, input_div,hideSpanAdd) {
 			var _this = this;
 			_this.ajaxSupplier();//供应商
-//			_this.ajaxCheckStatus();
-
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
@@ -119,7 +116,6 @@
 					}
 				})
 			$.each(reult, function(i, item) {
-//				console.log(item)
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)

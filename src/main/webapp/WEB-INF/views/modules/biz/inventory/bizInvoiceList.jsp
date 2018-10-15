@@ -42,7 +42,7 @@
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单列表</a></li>
 		<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
-			<li><a href="${ctx}/biz/inventory/bizInvoice/form?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单添加</a></li>
+			<li><a href="${ctx}/biz/inventory/bizInvoice/form?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}&creOrdLogistics=yes">发货单添加</a></li>
 		</shiro:hasPermission>
 		<li class=""><a href="${ctx}/biz/order/bizOrderHeader/list">订单列表</a></li>
 	</ul>
@@ -129,7 +129,7 @@
 					<c:if test="${bizInvoice.ship==0}">
 						<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
                             <c:if test="${bizInvoice.isConfirm == 0}">
-							    <a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&str=audit">确认发货单</a>
+							    <a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&str=audit&creOrdLogistics=yes">确认发货单</a>
                             </c:if>
 							<c:if test="${bizInvoice.freight == '0.00'}">
 								<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&str=freight">添加运费</a>
@@ -140,7 +140,7 @@
 					<c:if test="${bizInvoice.ship==1}">
 						<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
                             <c:if test="${bizInvoice.isConfirm == 0}">
-							    <a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&str=audit">确认发货单</a>
+							    <a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&str=audit&creOrdLogistics=yes">确认发货单</a>
                             </c:if>
 							<c:if test="${bizInvoice.freight == '0.00'}">
                             	<a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&str=freight">添加运费</a>
