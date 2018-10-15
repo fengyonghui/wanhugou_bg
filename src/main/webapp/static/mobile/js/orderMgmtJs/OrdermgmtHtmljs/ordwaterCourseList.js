@@ -18,7 +18,7 @@
 				this.seachFunc()
 			}else{
 				this.pageInit(); //页面初始化
-			}
+			}						
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
@@ -96,7 +96,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		            	console.log(res)
+		            	console.log(res)		            	
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
@@ -120,6 +120,8 @@
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
                             	console.log(item)
+//                          	console.log(item.orderHeader.id)
+                            	$('#orderId').val(item.orderHeader.id);
                             	$.each(orWaterStatusList,function(z, l) {
 			                		if(item.bizStatus == l.value) {
 			                			orWaterStatus = l.label//流水状态

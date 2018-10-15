@@ -31,7 +31,8 @@
 			</div>
 			<div class="mui-input-row">
 				<label>调整金额：</label>
-				<input type="text" class="mui-input-clear" id="staAdjustmentMoney" disabled>
+				<input type="text" class="mui-input-clear" id="staAdjustmentMoney">
+				<font>*</font>
 			</div>
 			<div class="mui-input-row">
 				<label>增值服务费：</label>
@@ -40,6 +41,7 @@
 			<div class="mui-input-row">
 				<label>运费：</label>
 				<input type="text" class="mui-input-clear" id="staFreight">
+				<font>*</font>
 			</div>
 			<div class="mui-input-row">
 				<label>万户币抵扣：</label>
@@ -86,14 +88,32 @@
 				<label>身份证：</label>
 				<div id="insuppliercardID"></div>	
 			</div>
-			<div class="mui-input-row">
+			<!--<div class="mui-input-row">
 				<label>发票状态：</label>
 				<input type="text" class="mui-input-clear" id="staInvoice" disabled>
-			</div>
-			<div class="mui-input-row">
+			</div>-->
+			<!--<div class="mui-input-row">
 				<label>业务状态：</label>
 				<input type="text" class="mui-input-clear doubleInput app_cred3" id="staFinal" disabled>
 				<input type="text" class="mui-input-clear doubleInput" id="staStatus" disabled>
+			</div>-->
+			<div class="mui-input-row">
+				<label>发票状态：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="staInvoice"></select>					
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+				<font>*</font>
+			</div>
+			<div class="mui-input-row">
+				<label>业务状态：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="inputDivAmend"></select>					
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+				<font>*</font>
 			</div>
 			<div class="mui-input-row">
 				<label>收货人：</label>
@@ -109,7 +129,8 @@
 			</div>
 			<div class="mui-input-row">
 				<label>详细地址：</label>
-				<input type="text" class="mui-input-clear" id="staDateilAddress" disabled>
+				<input type="text" class="mui-input-clear" id="staDateilAddress">
+				<font>*</font>
 			</div>
 			<div class="mui-input-row">
 				<label>备注：</label>

@@ -21,8 +21,6 @@
 			var datas={};
 			var idd=_this.userInfo.waterCourseId;
 			var source=_this.userInfo.source;
-//			console.log(idd)
-//			console.log(source)
 			datas={
 				id:idd,
                 source:source
@@ -33,9 +31,10 @@
                 data:datas,
                 dataType: "json",
                 success: function(res){
-                	console.log(res)
+                	console.log(res);
                 	var bizOrderHeaderUnline = res.data.bizOrderHeaderUnline;
                 	var imgUrlList = res.data.imgUrlList;
+                	$('#orderId').val(bizOrderHeaderUnline.orderHeader.id);//订单id
                 	$('#orWaterCouNum').val(bizOrderHeaderUnline.orderHeader.orderNum);//订单号
                 	$('#waterCouNum').val(bizOrderHeaderUnline.serialNum);//流水号
                 	$('#unlineMoney').val(bizOrderHeaderUnline.unlinePayMoney);//线下付款金额
@@ -61,7 +60,6 @@
                 		}
                 	});
                 	_this.checkBtns(bizOrderHeaderUnline.id);
-                	console.log(bizOrderHeaderUnline.id)
 			        _this.rejectBtns(bizOrderHeaderUnline.id);
                 }
             });
@@ -87,7 +85,12 @@
 			                	console.log(res)
 			                	mui.toast('审核通过！');
 			                	window.setTimeout(function(){
-                                    _this.getData();
+			                		GHUTILS.OPENPAGE({
+										url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordwaterCourseList.html",
+										extras: {
+												staOrdId:$('#orderId').val(),
+										}
+									})
 			                	},500)			                	
 	                		}
 	                	});	
@@ -113,7 +116,12 @@
 			                	console.log(res)
 			                	mui.toast('审核驳回！');
 			                	window.setTimeout(function(){
-			                		_this.getData();
+			                		GHUTILS.OPENPAGE({
+										url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordwaterCourseList.html",
+										extras: {
+												staOrdId:$('#orderId').val(),
+										}
+									})
 			                	},500)			                	
 	                		}
 	                	});	
