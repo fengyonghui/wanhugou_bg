@@ -332,7 +332,7 @@
 
 	<select id="findRecvTotal" resultType="Integer">
 		SELECT
-		SUM(a.recv_qty) AS recvTotal
+		SUM(a.recv_qty)
 		FROM biz_request_detail a
 		LEFT JOIN biz_request_header rh ON rh.id = a.header_id
 		WHERE a.status = 1

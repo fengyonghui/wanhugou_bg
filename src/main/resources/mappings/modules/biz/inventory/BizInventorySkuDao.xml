@@ -335,7 +335,7 @@
 
 	<select id="findStockTotal" resultType="Integer">
 		SELECT
-		SUM(bis.stock_qty) AS stockTotal
+		SUM(bis.stock_qty)
 		FROM biz_inventory_sku bis
 		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
 		WHERE bis.status = 1

@@ -200,7 +200,7 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 						}
 						if (alOutQty - requestDetail.getRecvQty() >= 0) {
 							bizRequestDetailDao.updateOutQty(requestDetail.getId(),requestDetail.getRecvQty());
-							alOutQty -= alOutQty - requestDetail.getRecvQty();
+							alOutQty = alOutQty - requestDetail.getRecvQty();
 						} else {
 							bizRequestDetailDao.updateOutQty(requestDetail.getId(),alOutQty);
 							alOutQty = 0;
