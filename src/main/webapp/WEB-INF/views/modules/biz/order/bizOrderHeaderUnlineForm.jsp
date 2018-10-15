@@ -10,8 +10,6 @@
             $("#inputForm").validate({
                 submitHandler: function(form){
                     if (confirm("请再次确认实收金额是否正确？")==true) {
-                        var unlinePayMoney = $("#unlinePayMoney").val();
-                        $("#realMoney").val(unlinePayMoney);
                         loading('正在提交，请稍等...');
                         form.submit();
                     }
