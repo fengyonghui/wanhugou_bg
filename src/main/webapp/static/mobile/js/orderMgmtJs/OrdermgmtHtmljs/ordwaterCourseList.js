@@ -202,7 +202,6 @@
 			var _this = this;
 		/*查询*/
 			$('.app_header').on('tap', '#orWaterSechBtn', function() {
-				alert(1)
 				var url = $(this).attr('url');
 				if(url) {
 					mui.toast('子菜单不存在')

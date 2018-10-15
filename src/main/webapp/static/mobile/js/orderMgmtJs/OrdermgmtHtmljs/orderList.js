@@ -92,6 +92,7 @@
 								userId = user.data.id
 			                }
 			            });
+			            console.log(userId)
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
@@ -102,6 +103,7 @@
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
                             	console.log(item)
+                            	console.log(item.statu)//空的
                             	var ProcessName = '';
                             	var objectName = item.commonProcess.objectName; 
                             	var commonProcess = item.commonProcess;
@@ -143,50 +145,6 @@
 		                        		orderTypeTxt = items.label
 		                        	}
 	                            })
-//	                        	c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state}">
-//									<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
-//										<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-//											<c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) || fns:getUser().isAdmin())
-//													&& orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
-//													&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
-//													}">
-//												<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
-//											</c:if>
-//				
-//											<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOriginProcess.roleEnNameEnum) && orderHeader.commonProcess.jointOperationOriginProcess.name != '驳回' && orderHeader.commonProcess.jointOperationOriginProcess.code != auditStatus
-//												 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
-//												<a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}">审核</a>
-//											</c:if>
-//										</shiro:hasPermission>
-//									</c:if >
-//									<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-//										<c:if test="${orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
-//											&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
-//											&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
-//											&& (fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationLocalProcess)
-//											 	|| fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationOriginProcess)
-//											 	 || fns:getUser().isAdmin())
-//											}">
-//											<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
-//												<%--<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>
-//													<c:if test="${orderHeader.suplys == 0 }">
-//														<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
-//													</c:if>
-//													<c:if test="${orderHeader.suplys != 0 }">
-//														<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
-//													</c:if>
-//												<%--</c:if>--%>
-//											</c:if>
-//										</c:if>
-//									</shiro:hasPermission>
-//									<shiro:hasPermission name="biz:order:bizOrderHeader:supplying">
-//										<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus <= OrderHeaderBizStatusEnum.STOCKING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">
-//											<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">
-//												<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>
-//											</c:if>
-//										</c:if>
-//									</shiro:hasPermission>
-//								</c:if >
 								var ordCheckBtn = '';
 	                        	var staCheckBtnTxt = '';
 	                        	var ordSupplyBtn = '';
@@ -198,57 +156,65 @@
                                         	console.log('审核1')
                                          	if(_this.staOrdauditFlag == true){
 												var DataRoleGener = '';
-												if(commonProcess) {
+												var fileRoleData = '';
+												if(commonProcess.doOrderHeaderProcessFifth) {
 													DataRoleGener = commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
+													fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 												}
 												console.log(DataRoleGener)
-												var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));	
                                          		if((fileRoleData || userId==1) && commonProcess.doOrderHeaderProcessFifth.name != '驳回'
                                          		&& commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
                                          			staCheckBtnTxt="审核";
                                          			ordCheckBtn = 'ordCheckBtn';
                                          		}
-//												var DataRoleGeners = '';
-//												if(commonProcess) {
-//													console.log(commonProcess)
-//													DataRoleGeners = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
-//												}
-//												console.log(DataRoleGeners)
-//												var fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
-//												console.log(res.data.auditStatus)
-//												var auditStatu = '';
-//					                            $.each(res.data.auditStatus,function(q,s){
-//					                            	console.log(s)
-//						                        	auditStatu=s
-//					                            })
-//					                            console.log(auditStatu)
-//                                       		if(fileRoleDatas && commonProcess.jointOperationOriginProcess.name != '驳回'
-//                                       		&& commonProcess.jointOperationOriginProcess.code != auditStatu
-//                                       		&& item.orderType == res.data.ORDINARY_ORDER){
-//                                       			staCheckBtnTxt="审核";
-//													ordCheckBtn = 'ordCheckBtn';
-//                                       		}
+												var DataRoleGeners = '';
+												var fileRoleDatas = '';
+												if(commonProcess.jointOperationOriginProcess) {
+													DataRoleGeners = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
+													fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
+												}
+												console.log(DataRoleGeners)
+												console.log(res.data.auditStatus)
+												var auditStatu = '';
+					                            $.each(res.data.auditStatus,function(q,s){
+					                            	console.log(s)
+						                        	auditStatu=s
+					                            })
+					                            console.log(auditStatu)
+                                         		if(fileRoleDatas && commonProcess.jointOperationOriginProcess.name != '驳回'
+                                         		&& commonProcess.jointOperationOriginProcess.code != auditStatu
+                                         		&& item.orderType == res.data.ORDINARY_ORDER){
+                                         			staCheckBtnTxt="审核";
+													ordCheckBtn = 'ordCheckBtn';
+                                         		}
                                          	}
                                         }
                                         if(_this.staOrdauditFlag == true){
                                         	console.log('审核2')
                                             var DataRole = '';
-											if(commonProcess) {
-												DataRole = commonProcess.jointOperationLocalProcess;
+                                            var fileRole = '';
+                                            var DataRoleName = '';
+											if(commonProcess.jointOperationLocalProcess) {
+												DataRoleName = commonProcess.jointOperationLocalProcess;
+												DataRole = commonProcess.jointOperationLocalProcess.roleEnNameEnum;
+												fileRole = dataRow.filter(v => DataRole.includes(v));
 											}
 											console.log(DataRole)
-//											var fileRole = dataRow.filter(v => DataRole.includes(v));
 											var DataRoles = '';
-											if(commonProcess) {
-												DataRoles = commonProcess.jointOperationOriginProcess;
+											var fileRoles = '';
+											if(commonProcess.jointOperationOriginProcess) {
+												DataRoles = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
+												fileRoles = dataRow.filter(v => DataRoles.includes(v));
 											}
-											console.log(DataRoles)
-//											var fileRoles = dataRow.filter(v => DataRoles.includes(v));
+											console.log(fileRole.length)
+											console.log(fileRoles.length)
+											console.log(userId)
+											
                                             if(commonProcess != null && commonProcess.id != null
                                             	&& commonProcess.purchaseOrderProcess.name != '驳回' 
                                             	&& commonProcess.purchaseOrderProcess.name != '审批完成'
-                                            	&& DataRole.name != "全额支付不需要审批"
-                                            	&& (DataRole||DataRoles||userId==1)){
+//                                          	&& DataRoleName != "全额支付不需要审批"
+                                            	&& (fileRole.length !=0 || fileRoles.length !=0 || userId==1)){
                                                 if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING){
                                                     if(item.suplys == 0 ){
                                                      	staCheckBtnTxt="审核";
@@ -754,6 +720,7 @@
 				},
 				dataType: 'json',
 				success: function(res) {
+					console.log(res)
 					var dataRow = res.data.roleSet;
 					$('#flag').val(_this.userInfo.flagTxt)
 					$('#staListIdTxt').val(_this.userInfo.staListSehId)//查询出来的客户专员 ID
@@ -836,57 +803,65 @@
                                         	console.log('审核1')
                                          	if(_this.staOrdauditFlag == true){
 												var DataRoleGener = '';
-												if(commonProcess) {
+												var fileRoleData = '';
+												if(commonProcess.doOrderHeaderProcessFifth) {
 													DataRoleGener = commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
+													fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 												}
 												console.log(DataRoleGener)
-												var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));	
                                          		if((fileRoleData || userId==1) && commonProcess.doOrderHeaderProcessFifth.name != '驳回'
                                          		&& commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
                                          			staCheckBtnTxt="审核";
                                          			ordCheckBtn = 'ordCheckBtn';
                                          		}
-//												var DataRoleGeners = '';
-//												if(commonProcess) {
-//													console.log(commonProcess)
-//													DataRoleGeners = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
-//												}
-//												console.log(DataRoleGeners)
-//												var fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
-//												console.log(res.data.auditStatus)
-//												var auditStatu = '';
-//					                            $.each(res.data.auditStatus,function(q,s){
-//					                            	console.log(s)
-//						                        	auditStatu=s
-//					                            })
-//					                            console.log(auditStatu)
-//                                       		if(fileRoleDatas && commonProcess.jointOperationOriginProcess.name != '驳回'
-//                                       		&& commonProcess.jointOperationOriginProcess.code != auditStatu
-//                                       		&& item.orderType == res.data.ORDINARY_ORDER){
-//                                       			staCheckBtnTxt="审核";
-//													ordCheckBtn = 'ordCheckBtn';
-//                                       		}
+												var DataRoleGeners = '';
+												var fileRoleDatas = '';
+												if(commonProcess.jointOperationOriginProcess) {
+													DataRoleGeners = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
+													fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
+												}
+												console.log(DataRoleGeners)
+												console.log(res.data.auditStatus)
+												var auditStatu = '';
+					                            $.each(res.data.auditStatus,function(q,s){
+					                            	console.log(s)
+						                        	auditStatu=s
+					                            })
+					                            console.log(auditStatu)
+                                         		if(fileRoleDatas && commonProcess.jointOperationOriginProcess.name != '驳回'
+                                         		&& commonProcess.jointOperationOriginProcess.code != auditStatu
+                                         		&& item.orderType == res.data.ORDINARY_ORDER){
+                                         			staCheckBtnTxt="审核";
+													ordCheckBtn = 'ordCheckBtn';
+                                         		}
                                          	}
                                         }
                                         if(_this.staOrdauditFlag == true){
                                         	console.log('审核2')
                                             var DataRole = '';
-											if(commonProcess) {
-												DataRole = commonProcess.jointOperationLocalProcess;
+                                            var fileRole = '';
+                                            var DataRoleName = '';
+											if(commonProcess.jointOperationLocalProcess) {
+												DataRoleName = commonProcess.jointOperationLocalProcess;
+												DataRole = commonProcess.jointOperationLocalProcess.roleEnNameEnum;
+												fileRole = dataRow.filter(v => DataRole.includes(v));
 											}
 											console.log(DataRole)
-//											var fileRole = dataRow.filter(v => DataRole.includes(v));
 											var DataRoles = '';
-											if(commonProcess) {
-												DataRoles = commonProcess.jointOperationOriginProcess;
+											var fileRoles = '';
+											if(commonProcess.jointOperationOriginProcess) {
+												DataRoles = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
+												fileRoles = dataRow.filter(v => DataRoles.includes(v));
 											}
-											console.log(DataRoles)
-//											var fileRoles = dataRow.filter(v => DataRoles.includes(v));
+											console.log(fileRole.length)
+											console.log(fileRoles.length)
+											console.log(userId)
+											
                                             if(commonProcess != null && commonProcess.id != null
                                             	&& commonProcess.purchaseOrderProcess.name != '驳回' 
                                             	&& commonProcess.purchaseOrderProcess.name != '审批完成'
-                                            	&& DataRole.name != "全额支付不需要审批"
-                                            	&& (DataRole||DataRoles||userId==1)){
+//                                          	&& DataRoleName != "全额支付不需要审批"
+                                            	&& (fileRole.length !=0 || fileRoles.length !=0 || userId==1)){
                                                 if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING){
                                                     if(item.suplys == 0 ){
                                                      	staCheckBtnTxt="审核";

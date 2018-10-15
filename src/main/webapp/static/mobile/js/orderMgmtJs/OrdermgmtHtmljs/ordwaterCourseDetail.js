@@ -39,10 +39,11 @@
                 	$('#waterCouNum').val(bizOrderHeaderUnline.serialNum);//流水号
                 	$('#unlineMoney').val(bizOrderHeaderUnline.unlinePayMoney);//线下付款金额
                 	//单据凭证
-                	$.each(imgUrlList, function(i,item) {
-                		$("#orWaterPototal").append("<a><img width=\"100px\" src=\"" + item+ "\"></a>");
-                	});
-                	
+                	if(imgUrlList) {
+                		$.each(imgUrlList, function(i,item) {
+	                		$("#orWaterPototal").append("<a><img width=\"100px\" src=\"" + item+ "\"></a>");
+	                	});
+                	}
                 	$.ajax({
                 		type: "GET",
 		                url: "/a/sys/dict/listData",

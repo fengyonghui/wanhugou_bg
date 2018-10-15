@@ -33,14 +33,22 @@
 		},
 		getData: function() {
 			var _this = this;
+			if(_this.userInfo.flagTxt = 'check_pending') {
+				datas = {
+					id: _this.userInfo.staOrdId,
+                	orderDetails: 'details',
+	                flag: _this.userInfo.flagTxt
+				}
+			}else {
+				datas = {
+					id: _this.userInfo.staOrdId,
+					str: _this.userInfo.str
+				}
+			}
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
-                data: {
-                	id: _this.userInfo.staOrdId,
-                	orderDetails: 'details',
-	                flag: _this.userInfo.flagTxt
-                },
+                data: datas,
                 dataType: "json",
                 success: function(res){
 //              	console.log(res)

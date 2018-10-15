@@ -663,13 +663,13 @@
 										_this.afterAjaxData(data)
 									}
 									if(_this.checkResult == false) {
-										alert(ordType)
+										console.log(ordType)
 										if(ordType == 'JO') {
-											alert('JO')
+											console.log('JO')
 											_this.auditJo(inText,1,createPo,data)
 										}
 										if(ordType == 'DO') {
-											alert('DO')
+											console.log('DO')
 											_this.auditDo(inText,1,createPo,data)
 										}
 									}
@@ -698,7 +698,7 @@
 		},
 		auditJo:function(inText, num, createPo, vn) {
 			var _this = this;
-			console.log(vn)
+//			console.log(vn)
 			var lastDateTxt = '';
 			if(createPo == 'yes' && num == 1) {
 				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
@@ -723,7 +723,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					_this.checkResult = res.ret
                     if(_this.checkResult == true || _this.checkResult == 'true') {
 						if(num == 2) {
