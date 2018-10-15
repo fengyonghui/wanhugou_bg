@@ -329,5 +329,34 @@
 			a.status = 1
 		   AND a.object_id =#{objectId}
 	</select>
+
+	<select id="findRecvTotal" resultType="Integer">
+		SELECT
+		SUM(a.recv_qty) AS recvTotal
+		FROM biz_request_detail a
+		LEFT JOIN biz_request_header rh ON rh.id = a.header_id
+		WHERE a.status = 1
+		AND rh.status = 1
+		AND rh.from_id = #{centId}
+		AND a.sku_id = #{skuId}
+	</select>
+
+	<select id="findListByCentIdAndSkuId" resultType="BizRequestDetail">
+		SELECT
+		a.id AS "id",
+		a.recv_qty AS "recvQty",
+		a.out_qty AS "outQty"
+		FROM biz_request_detail a
+		LEFT JOIN biz_request_header rh ON rh.id = a.header_id
+		WHERE a.sku_id =#{skuId}
+		AND rh.from_id = #{centId}
+		ORDER BY a.create_time ASC
+	</select>
+
+	<update id="updateOutQty">
+		UPDATE biz_request_detail SET
+		out_qty = #{outQty}
+		WHERE id = #{id}
+	</update>
 	
 </mapper>

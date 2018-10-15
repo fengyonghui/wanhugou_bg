@@ -562,5 +562,12 @@ public class BizInventorySkuController extends BaseController {
         return "modules/biz/inventory/bizInventoryAge";
     }
 
+    /**
+     * 初始化备货详情出库数量
+     */
+    @RequestMapping("correctOutQty")
+    public void correctOutQty() {
+        bizInventorySkuService.correctOutQty();
+    }
 
 }
