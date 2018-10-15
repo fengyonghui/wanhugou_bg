@@ -255,7 +255,7 @@
 	                        return;
 	                    }
 	                    reqQtysTemp += "," + reqQty;
-	              }
+	                }
 	                _this.reqQtys_2 = reqQtysTemp.substring(1);
 	                skuInfoIds = _this.skuInfoIds_1 + _this.skuInfoIds_2;
                     reqQtys = _this.reqQtys_1 + _this.reqQtys_2;
