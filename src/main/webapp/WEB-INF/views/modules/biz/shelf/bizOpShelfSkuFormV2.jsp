@@ -12,7 +12,8 @@
         $(document).ready(function() {
             var opShelfInfoType=$("#opShelfInfoType").val();
             if (opShelfInfoType == 5) {
-                sellOff();
+                $("#tbody").append("<c:set var='retail' value='1'/>");
+                $("#tbody").append("<input id='retail' type='hidden' value='1'/>");
 			}
             //$("#name").focus();
             $("#inputForm").validate({
@@ -519,7 +520,7 @@
 		<div class="control-group">
 			<label class="control-label">货架名称：</label>
 			<div class="controls">
-				<form:select id="shelfInfoId" path="opShelfInfo.id" class="input-xlarge required" onchange="shelfInfoChanged()">
+				<form:select id="shelfInfoId" path="opShelfInfo.id" class="input-xlarge required" disabled="true" onchange="shelfInfoChanged()">
 					<form:option value="">请选择</form:option>
 					<form:options items="${shelfList}" itemLabel="name" itemValue="id"/>
 				</form:select>
@@ -605,7 +606,7 @@
 					</th>
 					<c:if test="${bizOpShelfSku.opShelfInfo.type == 5}">
 						<th>市场价</th>
-						<th>佣金比</th>
+						<th>佣金比(%)</th>
 						<th>佣金</th>
 					</c:if>
 					<th>最低销售数量(个)：</th>
@@ -674,7 +675,7 @@
 					</th>
 					<c:if test="${bizOpShelfSku.opShelfInfo.type == 5}">
 						<th>市场价</th>
-						<th>佣金比</th>
+						<th>佣金比(%)</th>
 						<th>佣金</th>
 					</c:if>
 					<th>最低销售数量(个)：</th>
