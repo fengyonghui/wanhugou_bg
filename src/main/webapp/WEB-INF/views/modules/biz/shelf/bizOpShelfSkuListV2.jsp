@@ -149,6 +149,7 @@
 				<%--<th>上架数量(个)</th>--%>
 				<th>原价(元)</th>
 				<th>现价(元)</th>
+				<th>佣金(元)</th>
 				<th>最低销售数量(个)</th>
 				<th>最高销售数量(个，9999：不限制)</th>
                 <th>显示次序</th>
@@ -199,6 +200,9 @@
 				</td>
 				<td>
 					${bizOpShelfSku.salePrice}
+				</td>
+				<td>
+					${bizOpShelfSku.salePrice * bizOpShelfSku.commissionRatio / 100}
 				</td>
 				<td>
 					${bizOpShelfSku.minQty}

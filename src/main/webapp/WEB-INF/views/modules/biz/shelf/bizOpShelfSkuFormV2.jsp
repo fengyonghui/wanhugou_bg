@@ -430,6 +430,8 @@
                 var opShelfId=$(this).val();
                 var price = $("#price").text();
                 var market = $("#market");
+                var commission = $("#commission");
+                var commissions = $("#commissions");
                 $.ajax({
 					type:"post",
                     async:false,
@@ -457,6 +459,12 @@
                                 $("#price").text(price);
                                 if (market != null) {
                                     $("#market").remove();
+                                }
+                                if (commission != null) {
+                                    $("#commission").remove();
+                                }
+                                if (commissions != null) {
+                                    $("#commissions").remove();
                                 }
                                 return false;
                             }
