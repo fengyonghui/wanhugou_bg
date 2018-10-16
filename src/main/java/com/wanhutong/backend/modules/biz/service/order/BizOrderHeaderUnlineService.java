@@ -86,7 +86,7 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
                 bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
             }
         }
-		bizOrderHeader.setReceiveTotal(bizOrderHeaderUnline.getRealMoney().doubleValue());
+		bizOrderHeader.setReceiveTotal(bizOrderHeader.getReceiveTotal() + bizOrderHeaderUnline.getRealMoney().doubleValue());
 		bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 
 		/*用于 订单状态表 insert状态*/

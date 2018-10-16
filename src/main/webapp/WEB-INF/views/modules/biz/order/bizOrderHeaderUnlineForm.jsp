@@ -6,11 +6,10 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
         $(document).ready(function() {
+            $("#realMoney").val($("#unlinePayMoney").val());
             $("#inputForm").validate({
                 submitHandler: function(form){
                     if (confirm("请再次确认实收金额是否正确？")==true) {
-                        var unlinePayMoney = $("#unlinePayMoney").val();
-                        $("#realMoney").val(unlinePayMoney);
                         loading('正在提交，请稍等...');
                         form.submit();
                     }
@@ -83,13 +82,12 @@
                 <form:input id="unlinePayMoney" readonly="true" class="input-mini" path="unlinePayMoney"/>
 			</div>
 		</div>
-		<%--<div class="control-group">--%>
-			<%--<label class="control-label">实收金额：</label>--%>
-			<%--<div class="controls">--%>
-				<form:hidden id="realMoney" class="input-mini" path="realMoney"/>
-				<%--<button id="confirm" disabled="disabled" type="button" class="btn btn-primary">确认</button>--%>
-			<%--</div>--%>
-		<%--</div>--%>
+		<div class="control-group">
+			<label class="control-label">实收金额：</label>
+			<div class="controls">
+				<form:input id="realMoney" class="input-mini" path="realMoney"/>
+			</div>
+		</div>
 		<div class="control-group">
 			<label class="control-label">流水状态：</label>
 			<div class="controls">

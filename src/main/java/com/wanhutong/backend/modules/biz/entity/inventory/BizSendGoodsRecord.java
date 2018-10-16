@@ -51,6 +51,11 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	 */
 	private Integer effect;
 
+	/**
+	 * 出库单号
+	 */
+	private String sendNo;
+
 	public BizSendGoodsRecord() {
 		super();
 	}
@@ -228,5 +233,13 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 
 	public void setEffect(Integer effect) {
 		this.effect = effect;
+	}
+
+	public String getSendNo() {
+		return sendNo;
+	}
+
+	public void setSendNo(String sendNo) {
+		this.sendNo = sendNo;
 	}
 }

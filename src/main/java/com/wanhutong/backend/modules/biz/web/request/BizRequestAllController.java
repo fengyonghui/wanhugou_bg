@@ -2,50 +2,46 @@ package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
-import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
-import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.inventory.*;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
-import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
-import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
-import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
-import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
-import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.service.inventory.*;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
-import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
-import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
+import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
-import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
-import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +54,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 备货清单和销售订单（source=gh审核通过、采购中，source=kc 采购中、采购完成、供应中心供货, source=sh 备货中, source=ghs 供货详情，ship=xs 销售单，ship=bh 备货单）
@@ -85,8 +80,6 @@ public class BizRequestAllController {
     @Autowired
     private BizInventoryInfoService bizInventoryInfoService;
     @Autowired
-    private SystemService systemService;
-    @Autowired
     private BizLogisticsService bizLogisticsService;
     @Autowired
     private OfficeService officeService;
@@ -100,6 +93,18 @@ public class BizRequestAllController {
     private BizPoHeaderService bizPoHeaderService;
     @Autowired
     private BizInvoiceService bizInvoiceService;
+    @Autowired
+    private BizCollectGoodsRecordService bizCollectGoodsRecordService;
+    @Autowired
+    private BizVarietyUserInfoService bizVarietyUserInfoService;
+    @Autowired
+    private BizCustomCenterConsultantService bizCustomCenterConsultantService;
+    @Autowired
+    private BizSendGoodsRecordService bizSendGoodsRecordService;
+    @Autowired
+    private SysOfficeAddressService officeAddressService;
+    @Autowired
+    private CommonLocationService commonLocationService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -258,8 +263,29 @@ public class BizRequestAllController {
                     requestHeader.setPoSource("poHeaderSource");
                 }
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+                List<AttributeValueV2> colorList = bizSkuInfoService.getSkuProperty(skuInfo.getId(), BizProductInfoV3Service.SKU_TABLE, "颜色");
+                if (CollectionUtils.isNotEmpty(colorList)) {
+                    skuInfo.setColor(colorList.get(0).getValue());
+                }
+                List<AttributeValueV2> sizeList = bizSkuInfoService.getSkuProperty(skuInfo.getId(), BizProductInfoV3Service.SKU_TABLE, "尺寸");
+                if (CollectionUtils.isNotEmpty(sizeList)) {
+                    skuInfo.setSize(sizeList.get(0).getValue());
+                }
                 requestDetail.setSkuInfo(skuInfo);
+                BizVarietyUserInfo bizVarietyUserInfo = new BizVarietyUserInfo();
+                bizVarietyUserInfo.setVarietyInfo(skuInfo.getProductInfo().getBizVarietyInfo());
+                List<BizVarietyUserInfo> varietyUserInfoList = bizVarietyUserInfoService.findList(bizVarietyUserInfo);
+                if (CollectionUtils.isNotEmpty(varietyUserInfoList)) {
+                    requestDetail.setVarietyUser(varietyUserInfoList.get(0).getUser());
+                }
                 reqDetailList.add(requestDetail);
+            }
+            SysOfficeAddress officeAddress = new SysOfficeAddress();
+            officeAddress.setOffice(user.getCompany());
+            List<SysOfficeAddress> officeAddressList = officeAddressService.findList(officeAddress);
+            if (CollectionUtils.isNotEmpty(officeAddressList)) {
+                CommonLocation logistics = commonLocationService.get(officeAddressList.get(0).getBizLocation().getId());
+                model.addAttribute("logistics",logistics);
             }
             if(requestDetailList.size()==0){
                 requestHeader.setPoSource("poHeaderSource");
@@ -350,14 +376,137 @@ public class BizRequestAllController {
         if (source != null && "ghs".equals(source)) {
             return "modules/biz/request/bizRequestKcXqForm";
         }
+        BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+        bizInventoryInfo.setReqHeader(new BizRequestHeader(id));
+        List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+        model.addAttribute("invInfoList", invInfoList);
+        List<String> deliverNoList = findDeliverNoByReqId(new BizRequestHeader(id));
+        model.addAttribute("deliverNoList",deliverNoList);
+        BizCollectGoodsRecord bizCollectGoodsRecord = new BizCollectGoodsRecord();
+        bizCollectGoodsRecord.setBizRequestHeader(bizRequestHeader);
+        List<BizCollectGoodsRecord> bizCollectGoodsRecordList = bizCollectGoodsRecordService.findList(bizCollectGoodsRecord);
         if (source != null && "sh".equals(source)) {
-            BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
-            bizInventoryInfo.setReqHeader(new BizRequestHeader(id));
-            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-            model.addAttribute("invInfoList", invInfoList);
+            Integer s = bizCollectGoodsRecordService.findContByCentId(bizRequestHeader.getFromOffice().getId());
+            String collectNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.RIO,bizRequestHeader.getFromOffice().getId(),bizRequestHeader.getToOffice().getId(),s+1);
+            if (CollectionUtils.isEmpty(bizCollectGoodsRecordList)) {
+                model.addAttribute("collectNo",collectNo+"_1");
+            }else {
+                BizCollectGoodsRecord c = bizCollectGoodsRecordList.get(0);
+                if (StringUtils.isNotBlank(c.getCollectNo())) {
+                    String[] split = c.getCollectNo().split("_");
+                    model.addAttribute("collectNo", collectNo + "_" + (Integer.valueOf(split[1]) + 1));
+                } else {
+                    model.addAttribute("collectNo",collectNo + "_1");
+                }
+            }
             return "modules/biz/request/bizRequestKcForm";
         }
+        if (CollectionUtils.isNotEmpty(bizCollectGoodsRecordList)) {
+            BizCollectGoodsRecord collectGoodsRecord = bizCollectGoodsRecordList.get(0);
+            model.addAttribute("collectGoodsRecord",collectGoodsRecord);
+        }
         return "modules/biz/request/bizRequestHeaderGhForm";
+    }
+
+    /**
+     * 根据备货单ID查询发货单
+     * @param bizRequestHeader
+     * @return
+     */
+    private List<String> findDeliverNoByReqId(BizRequestHeader bizRequestHeader) {
+        return bizInvoiceService.findDeliverNoByReqId(bizRequestHeader.getId());
+    }
+
+    /**
+     * 出库页面跳转
+     * @param orderHeaderId
+     * @param source
+     * @param model
+     * @return
+     */
+    @RequiresPermissions("biz:request:confirmOut:view")
+    @RequestMapping(value = "confirmOut")
+    public String confirmOut(Integer orderHeaderId, String source, Model model) {
+        if (orderHeaderId == null) {
+            return "";
+        }
+        model.addAttribute("source",source);
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(orderHeaderId);
+        BizCustomCenterConsultant bizCustomCenterConsultant = new BizCustomCenterConsultant();
+        bizCustomCenterConsultant.setCustoms(orderHeader.getCustomer());
+        List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(bizCustomCenterConsultant);
+        Office center = new Office();
+        if (CollectionUtils.isNotEmpty(list)) {
+            center = list.get(0).getCenters();
+        }
+        //订单详情，库存
+        List<BizOrderDetail> orderDetailList = findOrderDetailAndInvSku(orderHeaderId,source);
+        model.addAttribute("orderDetailList",orderDetailList);
+        model.addAttribute("bizOrderHeader",orderHeader);
+        //出库详情的出库单
+        if ("detail".equals(source)) {
+            BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
+            bsgr.setBizOrderHeader(orderHeader);
+            List<BizSendGoodsRecord> bsgrList = bizSendGoodsRecordService.findList(bsgr);
+            if (CollectionUtils.isNotEmpty(bsgrList)) {
+                model.addAttribute("bizSendGoodsRecord",bsgrList.get(0));
+                model.addAttribute("sendNo",bsgrList.get(0).getSendNo());
+            }
+            return "modules/biz/request/bizRequestConfirmOut";
+        }
+        //出库单号
+        Integer s = bizOrderHeaderService.findCountByCentId(center.getId());
+        String sendNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.ODO,orderHeader.getCustomer().getId(),orderHeader.getCenterId(),s + 1);
+        BizSendGoodsRecord bizSendGoodsRecord = new BizSendGoodsRecord();
+        bizSendGoodsRecord.setBizOrderHeader(orderHeader);
+        bizSendGoodsRecord.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());
+        List<BizSendGoodsRecord> sendGoodsRecordList = bizSendGoodsRecordService.findList(bizSendGoodsRecord);
+        if (CollectionUtils.isEmpty(sendGoodsRecordList)) {
+            model.addAttribute("sendNo", sendNo + "_1");
+        } else {
+            BizSendGoodsRecord sendGoodsRecord = sendGoodsRecordList.get(0);
+            if (StringUtils.isNotBlank(sendGoodsRecord.getSendNo())) {
+                String[] split = sendGoodsRecord.getSendNo().split("_");
+                model.addAttribute("sendNo", sendNo + "_" + (Integer.valueOf(split[1]) + 1));
+            } else {
+                model.addAttribute("sendNo", sendNo + "_1");
+            }
+        }
+        return "modules/biz/request/bizRequestConfirmOut";
+    }
+
+    private List<BizOrderDetail> findOrderDetailAndInvSku(Integer orderHeaderId, String source) {
+        BizOrderDetail bizOrderDetail = new BizOrderDetail();
+        bizOrderDetail.setOrderHeader(new BizOrderHeader(orderHeaderId));
+        List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(orderHeaderId);
+        BizCustomCenterConsultant ccc = new BizCustomCenterConsultant();
+        ccc.setCustoms(orderHeader.getCustomer());
+        List<BizCustomCenterConsultant> cccList = bizCustomCenterConsultantService.findList(ccc);
+        Office center = new Office();
+        if (CollectionUtils.isNotEmpty(cccList)) {
+            center = cccList.get(0).getCenters();
+        }
+        if (CollectionUtils.isNotEmpty(orderDetailList)) {
+            for (BizOrderDetail orderDetail : orderDetailList) {
+                List<AttributeValueV2> valueV2List = bizSkuInfoService.getSkuProperty(orderDetail.getSkuInfo().getId(),BizProductInfoV3Service.SKU_TABLE,"颜色");
+                if (CollectionUtils.isNotEmpty(valueV2List)) {
+                    orderDetail.setColor(valueV2List.get(0).getValue());
+                }
+                List<AttributeValueV2> valueV2s = bizSkuInfoService.getSkuProperty(orderDetail.getSkuInfo().getId(),BizProductInfoV3Service.SKU_TABLE,"尺寸");
+                if (CollectionUtils.isNotEmpty(valueV2s)) {
+                    orderDetail.setStandard(valueV2s.get(0).getValue());
+                }
+                if ("detail".equals(source)) {
+                    List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInvReqByOrderDetailId(orderDetail.getId());
+                    orderDetail.setRequestDetailList(requestDetailList);
+                } else {
+                    List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInventorySkuByskuIdAndcentId(center.getId(), orderDetail.getSkuInfo().getId());
+                    orderDetail.setRequestDetailList(requestDetailList);
+                }
+            }
+        }
+        return orderDetailList;
     }
 
     /**
