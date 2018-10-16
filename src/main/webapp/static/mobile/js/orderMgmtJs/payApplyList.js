@@ -56,11 +56,11 @@
 		                    pager['poId'] = _this.userInfo.staOrdId;
 		                    pager['type'] = 1;
 		                    if(fromPage == 'requestHeader') {
-		                    	pager['fromPage'] = 'requestHeader';
+		                    	pager['fromPage'] = fromPage;
 		                    	pager['orderId'] = _this.userInfo.staInvenId;
 		                    }
 		                    if(fromPage == 'orderHeader') {
-		                    	pager['fromPage'] = 'orderHeader';
+		                    	pager['fromPage'] = fromPage;
 		                    	pager['orderId'] = _this.userInfo.staOrderId;
 		                    }
 			                var f = document.getElementById("payApplyList");
@@ -139,30 +139,46 @@
 										}
 									}
 								}
-								//确认付款
 //								var affirmBtn = '';
 //								var affirmBtnTxt = '';
 //								if(_this.editFlag == true) {
 //									if(_this.affirmFlag == true) {
-//										if(item.orderType == 1			//PO_TYPE=1
-//										&& item.id == res.data.bizPoHeader.bizPoPaymentOrder.id
+//										if(item.orderType == 1
+//										&& item.id == bizPoHeader.bizPoPaymentOrder.id
 //										&& item.commonProcess.paymentOrderProcess.name == '审批完成'
-//										&& res.data.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成') {
-//											if(res.data.fromPage != null && res.data.fromPage == 'requestHeader') {
-//												affirmBtn = 'affirmBtn';
-//												affirmBtnTxt = '确认付款';
-//											}
-//											if(res.data.fromPage != null && res.data.fromPage == 'orderHeader') {
-//												affirmBtn = 'affirmBtn';
-//												affirmBtnTxt = '确认付款';
-//											}
-//											if(res.data.fromPage == null) {
-//												affirmBtn = 'affirmBtn';
-//												affirmBtnTxt = '确认付款';
-//											}
+//										&& res.data.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成') {//PO_TYPE=1
+//											if() {}
+//											if() {}
+//											if() {}
 //										}
 //									}
 //								}
+//								<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
+//									<shiro:hasPermission name="biz:po:payment:sure:pay">
+//										<c:if test="${bizPoPaymentOrder.orderType == PoPayMentOrderTypeEnum.PO_TYPE.type && bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id
+//										&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
+//										&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
+//										}">
+//											<c:if test="${fromPage != null && fromPage == 'requestHeader'}">
+//												<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认付款</a>
+//											</c:if>
+//											<c:if test="${fromPage != null && fromPage == 'orderHeader'}">
+//												<a href="${ctx}/biz/order/bizOrderHeader/form?bizPoHeader.id=${bizPoHeader.id}&id=${orderId}&str=pay">确认付款</a>
+//												<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>--%>
+//											</c:if>
+//											<c:if test="${fromPage == null}">
+//												<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
+//											</c:if>
+//										</c:if>
+//								</shiro:hasPermission>
+								//单次支付审批状态
+								var paymentOrderProcess="";
+								if(item.total == '0.00' && item.commonProcess.paymentOrderProcess.name != '审批完成'){
+									paymentOrderProcess="待确认支付金额";
+								}
+								if(item.total != '0.00'){
+									paymentOrderProcess=item.commonProcess.paymentOrderProcess.name
+								}
 								var mt = item;
 								inPayHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 									'<div class="mui-input-row">' +
@@ -191,7 +207,7 @@
 									'</div>' +
 									'<div class="mui-input-row">' +
 										'<label>单次支付审批状态:</label>' +
-										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.commonProcess.paymentOrderProcess.name+' ">' +
+										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+paymentOrderProcess+' ">' +
 									'</div>' +
 									'<div class="mui-input-row">' +
 										'<label>备注:</label>' +
@@ -203,7 +219,7 @@
 										'</div>' +
 									'</div>' +
 									'<div class="app_color40 mui-row app_text_center operation">' +
-										'<div class="'+inPayBtn+'" inListId="'+ item.id +'">' +
+										'<div class="'+inPayBtn+'" inListId="'+ item.id +'" fromPage="'+ res.data.fromPage +'">' +
 											'<div class="" >'+inPay+'</div>' +
 										'</div>' +
 									'</div>' +
@@ -443,17 +459,19 @@
 		inHrefHtml: function() {
 			var _this = this;
 			_this.comfirDialig();
-		/*	确认支付金额*/
+		    /*确认支付金额*/
 			$('#payApplyList').on('tap', '.inPayBtn', function() {
 				$('.payMoney').show();
 				var inListId = $(this).attr('inListId');
 				console.log(inListId)
+				var frompage = $(this).attr('frompage');
+				console.log(frompage)
 				console.log(_this.userInfo.staOrdId)
 				$.ajax({
 	                type: "GET",
 	                url: "/a/biz/po/bizPoPaymentOrder/form4Mobile",
 	                dataType: "json",
-	                data: {id:inListId,poHeaderId:_this.userInfo.staOrdId,fromPage:'requestHeader'},
+	                data: {id:inListId,poHeaderId:_this.userInfo.staOrdId,fromPage:frompage},
 	                async:false,
 	                success: function(res){
 	                    console.log(res);
@@ -484,7 +502,6 @@
 				                    	window.setTimeout(function(){
 						                    _this.pageInit();
 						                },800);
-				                    	
 				                    }else{
 				                    	mui.toast('保存失败！！');
 				                    }

@@ -796,7 +796,7 @@
 	                        	var staCheckBtnTxt = '';
 	                        	var ordSupplyBtn = '';
 	                        	var staSupplyBtnTxt = '';
-				                if(_this.staOrdFlag == true) {
+				                if(_this.staOrdFlag == false) {
 				                	//审核
                                     if(item.bizStatus != res.data.CANCLE){
                                         if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING){
@@ -836,7 +836,7 @@
                                          		}
                                          	}
                                         }
-                                        if(_this.staOrdauditFlag == true){
+                                        if(_this.staOrdauditFlag == false){
                                         	console.log('审核2')
                                             var DataRole = '';
                                             var fileRole = '';

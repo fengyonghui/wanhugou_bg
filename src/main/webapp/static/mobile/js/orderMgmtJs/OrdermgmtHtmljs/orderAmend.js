@@ -606,9 +606,9 @@
 	                    '<div class="mui-row lineStyle">' +
 		                    '<li class="mui-table-view-cell">' +
 			                    '<div class="mui-input-row ">' +
-				                    '<button type="submit" style="float:left;margin-left:50px;" amendId="'+item.id+'" orderId="'+data.bizOrderHeader.id+'" oneOrderId="'+data.bizOrderHeader.oneOrder
+				                    '<button type="submit" style="float:left;margin:0 0 0 50px;" amendId="'+item.id+'" orderId="'+data.bizOrderHeader.id+'" oneOrderId="'+data.bizOrderHeader.oneOrder
 +'" orderType="'+data.orderType+'" class="ordAmendBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">修改</button>'+
-									'<button type="submit" style="float:right;margin-right:50px;" amendId="'+item.id+'" oneOrderId="'+data.bizOrderHeader.oneOrder
+									'<button type="submit" style="float:right;margin:0 50px 0 0;" amendId="'+item.id+'" oneOrderId="'+data.bizOrderHeader.oneOrder
 +'" orderType="'+data.orderType+'"  class="orddeleteBtn inAddBtn app_btn_search mui-btn-blue mui-btn-block">删除</button>'+
 		                    	'</div></li></div>' +
 		                    	

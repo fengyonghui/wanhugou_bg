@@ -175,9 +175,7 @@
 				url: '/a/biz/order/bizOrderHeader/listData4mobile',
 				dataType: 'json',
 				success: function(res) {
-					console.log(res.data)
 					$.each(res.data.originConfigMap, function(i, item) {
-						console.log(item)
 						htmlChstatus += '<option class="soption" value="' + item+ '">' + item + '</option>'
 					});
 					$('#input_div_cheStatus').html(optHtml+htmlChstatus);

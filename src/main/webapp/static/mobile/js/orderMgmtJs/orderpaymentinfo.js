@@ -462,7 +462,9 @@
 				var staOrdId = $(this).attr('staordid');//采购单id
                 var staOrderId = $(this).attr('staOrderId');//订单id
                 var staInvenId = $(this).attr('staInvenId');//备货单id
-				if(staInvenId){
+//              console.log(typeof(staOrderId))
+//              console.log(staInvenId)
+				if(staInvenId!=""&&staOrderId=='undefined'){
 					GHUTILS.OPENPAGE({
 						//备货单						
 						url: "../../html/orderMgmtHtml/payApplyList.html",
@@ -473,9 +475,9 @@
 						}
 					})
 				}
-				if(staOrderId) {
+				if(staOrderId!=""&&staInvenId=='undefined') {
 					GHUTILS.OPENPAGE({
-						//备货单						
+						//订单						
 						url: "../../html/orderMgmtHtml/payApplyList.html",
 						extras: {
 							staOrdId: staOrdId,
@@ -848,19 +850,19 @@
 								$('#orderinfoList').append(orderHtmlList);
 								_this.stOrdHrefHtml();
 								//先隐藏订单信息
-								var pos=$(".ctn_show_row .dd");
-								var posd=$(".ctn_show_row .staPayBtns");
-								$.each(pos,function(n,v){
-	                            	var poNumid=$(this).attr('id').substr(6);
-	                            	$.each(posd,function(n,v){
-	                            		var that=this;
-		                            	var y=$(that).attr('podid');
-		                            	var divs=$("#poNum_"+poNumid);
-		                            	if(poNumid==y){
-		                            		divs.parent().parent().hide()
-		                            	}
-		                            })
-	                            })
+//								var pos=$(".ctn_show_row .dd");
+//								var posd=$(".ctn_show_row .staPayBtns");
+//								$.each(pos,function(n,v){
+//	                            	var poNumid=$(this).attr('id').substr(6);
+//	                            	$.each(posd,function(n,v){
+//	                            		var that=this;
+//		                            	var y=$(that).attr('podid');
+//		                            	var divs=$("#poNum_"+poNumid);
+//		                            	if(poNumid==y){
+//		                            		divs.parent().parent().hide()
+//		                            	}
+//		                            })
+//	                            })
 					}else{
 						$('#orderinfoList').append('<p class="noneTxt">暂无数据</p>');
 						$('#staOrdSechBtn').hide();
