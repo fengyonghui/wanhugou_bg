@@ -961,4 +961,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     public Integer getOrderDetailIdBySkuInfoId(Integer poHeaderId, Integer skuInfoId){
         return bizOrderHeaderDao.getOrderDetailIdBySkuInfoId(poHeaderId, skuInfoId);
     }
+
+    public Integer findCountByCentId(Integer centId) {
+        return bizOrderHeaderDao.findCountByCentId(centId);
+    }
 }

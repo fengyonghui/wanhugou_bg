@@ -106,7 +106,7 @@
                                     tr_tds+= "<td rowspan='"+requestHeader.requestDetailList.length+"'><a href='${ctx}/biz/request/bizRequestHeader/form?id="+requestHeader.id+"&str=detail'>"+requestHeader.reqNo+"</a></td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+requestHeader.fromOffice.name+"</td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+bizName+"</td>" ;
                                 }
                                  tr_tds+="<input title='details_"+requestHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
-                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.vendorName+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
+                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.vendorName+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+(detail.skuInfo.skuPropertyInfos == undefined ? "" : detail.skuInfo.skuPropertyInfos) +"</td>" ;
 
                                 tr_tds+= "<td>"+detail.reqQty+"</td><td>"+detail.sendQty+"</td>";
                                 tr_tds+="<td><input type='text' title='sent_"+requestHeader.id+"' name='' onchange='checkNum("+detail.reqQty+","+detail.sendQty+",this)' value='0'></td>";

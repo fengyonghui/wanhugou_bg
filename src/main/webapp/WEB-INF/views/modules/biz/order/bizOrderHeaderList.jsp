@@ -464,13 +464,13 @@
 							</c:if>
 						</c:if>
 					</shiro:hasPermission>
-					<shiro:hasPermission name="biz:order:bizOrderHeader:supplying">
-						<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus <= OrderHeaderBizStatusEnum.STOCKING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">
-							<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">
-								<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>
-							</c:if>
-						</c:if>
-					</shiro:hasPermission>
+					<%--<shiro:hasPermission name="biz:order:bizOrderHeader:supplying">--%>
+						<%--<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus <= OrderHeaderBizStatusEnum.STOCKING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">--%>
+							<%--<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">--%>
+								<%--<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>--%>
+							<%--</c:if>--%>
+						<%--</c:if>--%>
+					<%--</shiro:hasPermission>--%>
 				</c:if >
 					<%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
 					<%--<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>

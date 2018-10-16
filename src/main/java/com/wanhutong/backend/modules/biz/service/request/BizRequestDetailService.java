@@ -68,4 +68,12 @@ public class BizRequestDetailService extends CrudService<BizRequestDetailDao, Bi
 		return bizRequestDetailDao.getsumSchedulingNum(objectId);
 	}
 
+	public List<BizRequestDetail> findInventorySkuByskuIdAndcentId(Integer centerId, Integer skuId) {
+		return dao.findInventorySkuByskuIdAndcentId(centerId, skuId);
+	}
+
+	public List<BizRequestDetail> findInvReqByOrderDetailId(Integer orderDetailId) {
+		return dao.findInvReqByOrderDetailId(orderDetailId);
+	}
+
 }
