@@ -430,7 +430,7 @@
 				var staOrdIdd = $(this).attr('staordids');//订单 ID
 				var audit = 'audit', processPo = 'processPo';
 				var baseURL='../../html/inventoryMagmetHtml/inCheck.html';
-				var baseURLs='../../html/staffMgmtHtml/orderHtml/staOrdCheck.html';
+				var baseURLs='../../html/orderMgmtHtml/OrdermgmtHtml/orderCheck.html';
 				if(url) {
 					mui.toast('子菜单不存在')
 				}
@@ -451,8 +451,7 @@
 						url: baseURLs,
 						extras: {
 							staOrdId: staOrdIdd,
-							str: audit,
-
+							checkType: "auditSo"
 						}
 					})
 				}

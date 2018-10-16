@@ -34,11 +34,11 @@
 				<label>商品总价：</label>
 				<input type="text" class="mui-input-clear" id="staPototal" disabled>
 			</div>
-			<div class="mui-input-row">
+			<!--<div class="mui-input-row">
 				<label>调整金额：</label>
 				<input type="text" class="mui-input-clear" id="staAdjustmentMoney">
-				<!--<button id="changePriceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">修改</button>-->
-			</div>
+				<button id="changePriceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">修改</button>
+			</div>-->
 			<div class="mui-input-row">
 				<label>增值服务费：</label>
 				<input type="text" class="mui-input-clear" id="staAddprice" disabled>
@@ -251,6 +251,9 @@
 			<button id="rejectBtns" type="submit" class="mui-btn mui-btn-blue app_fr RejectBtn">审核驳回</button>
 		</div>
 		<div class="clear"></div>
+		
+		<input type="hidden" id="soId"/>
+		<input type="hidden" id="currentType"/>
 		<input type="hidden" id="createPo"/>
 		<input type="hidden" id="audiType"/>
 		<input type="hidden" id="supplierId"/>

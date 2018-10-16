@@ -33,25 +33,17 @@
 		},
 		getData: function() {
 			var _this = this;
-			if(_this.userInfo.flagTxt = 'check_pending') {
-				datas = {
-					id: _this.userInfo.staOrdId,
-                	orderDetails: 'details',
-	                flag: _this.userInfo.flagTxt
-				}
-			}else {
-				datas = {
-					id: _this.userInfo.staOrdId,
-					str: _this.userInfo.str
-				}
-			}
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
-                data: datas,
+                data: {
+                	id: _this.userInfo.staOrdId,
+                	orderDetails: 'details',
+	                flag: _this.userInfo.flagTxt
+                },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	console.log(res)
                 	if(res.data.bizOrderHeader.flag=='check_pending') {
                 		if(res.data.orderType == 5) {
                 			$('#orderTypebox').hide();
