@@ -189,7 +189,7 @@
 			<label>商品货号：</label>
 			<form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 		</li>
-		<li><label>经销店名称：</label>
+		<li><label>代销商/经销商：</label>
 			<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
 				<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
 								labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
@@ -461,7 +461,7 @@
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
-				<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">申请结佣</a>
+				<a href="${ctx}/biz/order/bizOrderHeader/consignedForm?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">申请结佣</a>
 
 
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">

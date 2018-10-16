@@ -851,6 +851,330 @@ public class BizOrderHeaderController extends BaseController {
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:view")
+    @RequestMapping(value = "consignedForm")
+    public String consignedForm(BizOrderHeader bizOrderHeader, Model model,
+                       String orderNoEditable, String orderDetails,
+                       HttpServletRequest request, HttpServletResponse response
+    ) {
+        model.addAttribute("orderType", bizOrderHeader.getOrderType());
+        String str = bizOrderHeader.getStr();
+        if ("pay".equals(str)) {
+            BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+            bizPoPaymentOrder.setPoHeaderId(bizOrderHeader.getBizPoHeader().getId());
+            bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
+            bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
+            List<BizPoPaymentOrder> payList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+            if (CollectionUtils.isNotEmpty(payList)) {
+                bizPoPaymentOrder = payList.get(0);
+            }
+            bizOrderHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
+        }
+        if (bizOrderHeader.getSource() != null) {
+            model.addAttribute("source", bizOrderHeader.getSource());
+        }
+        BizOrderComment bizOrderComment = new BizOrderComment();
+        bizOrderComment.setOrder(bizOrderHeader);
+        List<BizOrderComment> commentList = bizOrderCommentService.findList(bizOrderComment);
+        model.addAttribute("commentList", commentList);
+        List<BizOrderDetail> ordDetailList = Lists.newArrayList();
+        Map<Integer, String> orderNumMap = new HashMap<Integer, String>();
+        Map<Integer, Integer> detailIdMap = new HashMap<Integer, Integer>();
+        if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
+            Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+            if (office != null) {
+                bizOrderHeader.setCustomer(office);
+                model.addAttribute("entity2", bizOrderHeader);
+            }
+//			用于销售订单页面展示属于哪个采购中心哪个客户专员
+            BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
+            if (bizCustomCenterConsultant != null && bizCustomCenterConsultant.getConsultants() != null &&
+                    bizCustomCenterConsultant.getConsultants().getName() != null) {
+                bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
+                model.addAttribute("orderCenter", bizCustomCenterConsultant);
+            } else {
+                model.addAttribute("orderCenter", new BizCustomCenterConsultant());
+            }
+        }
+        BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
+
+        String type = "1";
+        if (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721) {
+            type = "0";
+        }
+
+        bizOrderHeaderTwo.setStr(bizOrderHeader.getStr());
+        bizOrderHeaderTwo.setCommonProcess(bizOrderHeader.getCommonProcess());
+        if (bizOrderHeader.getId() != null) {
+            Double totalDetail = bizOrderHeaderTwo.getTotalDetail();//订单详情总价
+            Double totalExp = bizOrderHeaderTwo.getTotalExp();//订单总费用
+            Double freight = bizOrderHeaderTwo.getFreight();//运费
+            Double orderHeaderTotal = totalDetail + totalExp + freight;
+            bizOrderHeader.setTobePaid(orderHeaderTotal - bizOrderHeaderTwo.getReceiveTotal());//页面显示待支付总价
+            if (orderNoEditable != null && orderNoEditable.equals("editable")) {//不可编辑标识符
+                bizOrderHeaderTwo.setOrderNoEditable("editable");//待支付页面不能修改
+            }
+            if (orderDetails != null && orderDetails.equals("details")) {
+                bizOrderHeaderTwo.setOrderDetails("details");//查看详情页面不能修改
+            }
+            BizOrderAddress bizOrderAddress = new BizOrderAddress();
+            bizOrderAddress.setId(bizOrderHeaderTwo.getBizLocation().getId());
+            List<BizOrderAddress> list = bizOrderAddressService.findList(bizOrderAddress);
+            for (BizOrderAddress orderAddress : list) {
+//				    收货地址
+                if (orderAddress.getType() == 1) {
+                    model.addAttribute("orderAddress", orderAddress);
+                }
+            }
+            BizOrderAddress orderAddress = new BizOrderAddress();
+            orderAddress.setOrderHeaderID(bizOrderHeaderTwo);
+            List<BizOrderAddress> addresslist = bizOrderAddressService.findList(orderAddress);
+            if (CollectionUtils.isNotEmpty(addresslist)) {
+                for (BizOrderAddress address : addresslist) {
+                    //				交货地址
+                    if (address.getType() == 2) {
+                        model.addAttribute("address", address);
+                    }
+                }
+            }
+
+            //经销店
+            Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+            if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
+                User user = systemService.getUser(office.getPrimaryPerson().getId());
+                model.addAttribute("custUser", user);
+            }
+            //供应商
+            List<User> vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
+            if (CollectionUtils.isNotEmpty(vendUser)) {
+                model.addAttribute("vendUser", vendUser.get(0));
+//                entity.sellers.bizVendInfo.office.id
+                bizOrderHeader.setVendorId(vendUser.get(0).getVendor().getId());
+                bizOrderHeader.setVendorName(vendUser.get(0).getVendor().getName());
+                bizOrderHeader.setSellersId(vendUser.get(0).getVendor().getId());
+            }
+
+            //代采
+            if (bizOrderHeaderTwo != null && BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
+                if (bizOrderHeaderTwo.getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
+                    BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
+                    bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
+                    List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);
+                    if (appointedTimeList != null && !appointedTimeList.isEmpty()) {
+                        model.addAttribute("appointedTimeList", appointedTimeList);
+                    }
+                }
+            }
+
+            BizOrderDetail bizOrderDetail = new BizOrderDetail();
+            bizOrderDetail.setOrderHeader(bizOrderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+
+            List<Integer> skuInfoIdList = Lists.newArrayList();
+            List<BizOrderDetail> bizOrderDetails = bizOrderHeader.getOrderDetailList();
+            if (CollectionUtils.isNotEmpty(bizOrderDetails)) {
+                for (BizOrderDetail orderDetail : bizOrderDetails) {
+                    BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
+                    skuInfoIdList.add(bizSkuInfo.getId());
+                }
+                model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
+            }
+
+            for (BizOrderDetail orderDetail : orderDetailList) {
+                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
+                if (bizSkuInfo != null) {
+                    BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfo);
+                    if (skuInfo != null) {
+                        orderDetail.setSkuInfo(skuInfo);
+                    }
+                }
+                ordDetailList.add(orderDetail);
+                int keyId = orderDetail.getLineNo();
+                if (orderDetail.getPoHeader() != null && orderDetail.getPoHeader().getOrderNum() != null) {
+                    String orderNum = orderDetail.getPoHeader().getOrderNum();
+                    orderNumMap.put(keyId, orderNum);
+                }
+                if (orderDetail.getPoHeader() != null && orderDetail.getPoHeader().getId() != null) {
+                    int detailId = orderDetail.getPoHeader().getId();
+                    detailIdMap.put(keyId, detailId);
+                }
+            }
+        }
+        boolean flag = false;
+        User user = UserUtils.getUser();
+        if (user.getRoleList() != null) {
+
+            for (Role role : user.getRoleList()) {
+                if (RoleEnNameEnum.FINANCE.getState().equals(role.getEnname())) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
+            }
+        }
+        model.addAttribute("roleSet", roleSet);
+        model.addAttribute("roleEnNameSet", roleEnNameSet);
+
+        if (bizOrderHeader.getId() != null) {
+            BizOrderHeaderUnline bizOrderHeaderUnline = new BizOrderHeaderUnline();
+            bizOrderHeaderUnline.setOrderHeader(bizOrderHeader);
+            List<BizOrderHeaderUnline> unlineList = bizOrderHeaderUnlineService.findList(bizOrderHeaderUnline);
+            if (CollectionUtils.isNotEmpty(unlineList)) {
+                model.addAttribute("unlineList", unlineList);
+            }
+        }
+
+        BizOrderStatus bizOrderStatus = new BizOrderStatus();
+        bizOrderStatus.setOrderHeader(bizOrderHeader);
+        bizOrderStatus.setOrderType(BizOrderStatus.OrderType.ORDER.getType());
+        List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
+        statusList.sort(Comparator.comparing(BizOrderStatus::getCreateDate).thenComparing(BizOrderStatus::getId));
+
+        Map<Integer, OrderHeaderBizStatusEnum> statusMap = OrderHeaderBizStatusEnum.getStatusMap();
+
+        String statuPath = request.getParameter("statu");
+        model.addAttribute("statuPath", statuPath);
+
+        String refundSkip = request.getParameter("refundSkip");
+        model.addAttribute("refundSkip", refundSkip);
+
+        model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
+        String drawbackStatusStr = request.getParameter("drawbackStatus");
+        if (StringUtils.isNotBlank(drawbackStatusStr)) {
+            Integer drawbackStatus = Integer.valueOf(drawbackStatusStr);
+            BizDrawBack bizDrawBack = new BizDrawBack();
+            bizDrawBack.setDrawbackStatus(drawbackStatus);
+            bizOrderHeader.setDrawBack(bizDrawBack);
+        }
+        model.addAttribute("entity", bizOrderHeader);
+        model.addAttribute("ordDetailList", ordDetailList);
+        model.addAttribute("statusList", statusList);
+        model.addAttribute("orderNumMap", orderNumMap);
+        model.addAttribute("detailIdMap", detailIdMap);
+        model.addAttribute("statusMap", statusMap);
+
+        //图片处理
+        CommonImg commonImg = new CommonImg();
+        commonImg.setImgType(ImgEnum.UNlINE_REFUND_VOUCHER.getCode());
+        commonImg.setObjectId(bizOrderHeader.getId());
+        commonImg.setObjectName("biz_order_header");
+        if (bizOrderHeader.getId() != null) {
+            List<CommonImg> imgList = commonImgService.findList(commonImg);
+            String photos = "";
+            Map<String, Integer> photosMap = new LinkedHashMap<>();
+
+            for (CommonImg img : imgList) {
+                photos += img.getImgServer().concat(img.getImgPath()).concat("|");
+                photosMap.put(img.getImgServer() + img.getImgPath(), img.getImgSort());
+            }
+            if (StringUtils.isNotBlank(photos)) {
+                bizOrderHeader.setPhotos(photos);
+            }
+            if (imgList != null && !imgList.isEmpty()) {
+                model.addAttribute("photosMap", photosMap);
+            }
+        }
+
+        if ("audit".equalsIgnoreCase(bizOrderHeaderTwo.getStr()) && bizOrderHeaderTwo.getBizPoHeader() != null && bizOrderHeaderTwo.getBizPoHeader().getCommonProcess() != null) {
+            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizOrderHeaderTwo.getBizPoHeader().getCommonProcess().getType()));
+            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+        }
+
+        // type = 0 产地直发
+        // type = 1 本地备货
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
+        commonProcessEntity.setObjectName("0".equals(type) ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+        if (bizOrderHeader.getOrderNum().startsWith("DO")) {
+            commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+        }
+
+        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+
+        List<CommonProcessEntity> poAuditList = null;
+        if (bizOrderHeader.getId() != null) {
+            BizPoHeader bizPoHeader = new BizPoHeader();
+            bizPoHeader.setBizOrderHeader(bizOrderHeader);
+            List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+
+            if (CollectionUtils.isNotEmpty(poList)) {
+                bizPoHeader = poList.get(0);
+                CommonProcessEntity poCommonProcessEntity = new CommonProcessEntity();
+                poCommonProcessEntity.setObjectId(String.valueOf(bizPoHeader.getId()));
+                poCommonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+                poAuditList = commonProcessService.findList(poCommonProcessEntity);
+
+                BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+                bizPoPaymentOrder.setPoHeaderId(poList.get(0).getId());
+                List<BizPoPaymentOrder> bizPoPaymentOrderList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+                BigDecimal totalPayTotal = new BigDecimal(String.valueOf(BigDecimal.ZERO));
+                for (BizPoPaymentOrder poPaymentOrder :bizPoPaymentOrderList) {
+                    BigDecimal payTotal = poPaymentOrder.getPayTotal();
+                    totalPayTotal = totalPayTotal.add(payTotal);
+                }
+                model.addAttribute("totalPayTotal", totalPayTotal);
+            }
+        }
+
+
+        if (CollectionUtils.isNotEmpty(poAuditList) && CollectionUtils.isNotEmpty(list)) {
+            if (bizOrderHeader.getOrderNum().startsWith("DO")) {
+                if (String.valueOf(ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getAutProcessId()).equals(list.get(list.size() - 1).getType())) {
+                    list.remove(list.size() - 1);
+                    list.addAll(poAuditList);
+                    list.get(list.size() - 1).setCurrent(1);
+                }
+            }
+            if (bizOrderHeader.getOrderNum().startsWith("SO") && ("666".equals(list.get(list.size() - 1).getType()) || "777".equals(list.get(list.size() - 1).getType()))) {
+                list.remove(list.size() - 1);
+                list.addAll(poAuditList);
+                list.get(list.size() - 1).setCurrent(1);
+            }
+        }
+
+        commonProcessEntity.setCurrent(1);
+        List<CommonProcessEntity> currentList = commonProcessService.findList(commonProcessEntity);
+
+        request.setAttribute("id", bizOrderHeader.getId());
+        request.setAttribute("auditList", list);
+        request.setAttribute("currentAuditStatus", CollectionUtils.isNotEmpty(currentList) ? currentList.get(0) : new CommonProcessEntity());
+        request.setAttribute("type", type);
+        request.setAttribute("processMap", "0".equals(type) ?
+                ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap()
+                : ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getProcessMap());
+
+        String createPo = "no";
+        Integer orderType = bizOrderHeader.getOrderType();
+        OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader);
+        Integer statusEnumState = statusEnum.getState();
+        request.setAttribute("statusEnumState", statusEnumState);
+        if (BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(orderType)){
+            if (bizOrderHeader.getCommonProcess() != null && ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get().getCreatePoProcessId().toString().equals(bizOrderHeader.getCommonProcess().getType())) {
+                createPo = "yes";
+            }
+        } else if (bizOrderHeader.getOrderNum().startsWith("SO") && bizOrderHeader.getCommonProcess() != null && (bizOrderHeader.getSuplys() ==0 || bizOrderHeader.getSuplys() == 721)) {
+            String processType = bizOrderHeader.getCommonProcess().getType();
+            String zeroCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getZeroCreatePoProcessId());
+            String fifthCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getFifthCreatePoProcessId());
+            String allCreatePoProcessId = String.valueOf(ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get().getAllCreatePoProcessId());
+            if (zeroCreatePoProcessId.equals(processType) || fifthCreatePoProcessId.equals(processType) || allCreatePoProcessId.equals(processType)) {
+                createPo = "yes";
+            }
+        }
+        model.addAttribute("createPo",createPo);
+
+        return "modules/biz/order/bizOrderHeaderForm";
+    }
+
+    @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "form4Mobile")
     @ResponseBody
     public String form4Mobile(BizOrderHeader bizOrderHeader, Model model,
