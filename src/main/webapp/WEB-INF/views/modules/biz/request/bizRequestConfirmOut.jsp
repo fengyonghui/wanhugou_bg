@@ -32,7 +32,6 @@
 						    if (sentQty == '' || sentQty == 0) {
                                 flag1 = false;
 							}
-							alert(sentQty+"---"+okQty);
 							if (sentQty > okQty) {
 						        flag2 = false;
 							}
