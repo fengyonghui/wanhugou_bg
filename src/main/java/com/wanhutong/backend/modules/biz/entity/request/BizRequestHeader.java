@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
@@ -20,6 +21,8 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +43,16 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private Integer bizStatus;		// 业务状态：0未审核 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
 	private Double totalDetail;
 	private Double recvTotal;
+
+	/**
+	 * 已卖出数量
+	 */
+	private Integer outQtys;
+
+	/**
+	 * 备货单类型
+	 */
+	private Byte headerType;
 
 	/**
 	 * 备货清单查看 已生成的采购单
@@ -198,9 +211,37 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String processPo;
 
 	/**
+	 * 仓库
+	 */
+	private BizInventoryInfo invInfo;
+
+	/**
+	 * 供应商名
+	 */
+	private String vendName;
+
+	/**
+	 * 库存审核
+	 */
+	private CommonProcessEntity invCommonProcess;
+
+	/**
+	 * 库存已审核列表
+	 */
+	private List<CommonProcessEntity> invCommonProcessList;
+
+	/**
+	 * 页面传值
+	 */
+	private String invReqDetail;
+
+	private Long inventoryAgeDay;
+
+	/**
 	 * 需要入库的筛选条件
 	 */
 	private Integer needIn;
+
 
 	public BizRequestHeader() {
 		super();
@@ -668,6 +709,7 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	public void setTotalCompleteScheduHeaderNum(Integer totalCompleteScheduHeaderNum) {
 		this.totalCompleteScheduHeaderNum = totalCompleteScheduHeaderNum;
 	}
+	private String inventoryAgeDate;
 
 	public BizPoHeader getBizPoHeader() {
 		return bizPoHeader;
@@ -709,11 +751,99 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 		this.processPo = processPo;
 	}
 
+	public Byte getHeaderType() {
+		return headerType;
+	}
+
+	public void setHeaderType(Byte headerType) {
+		this.headerType = headerType;
+	}
+
+	public BizInventoryInfo getInvInfo() {
+		return invInfo;
+	}
+
+	public void setInvInfo(BizInventoryInfo invInfo) {
+		this.invInfo = invInfo;
+	}
+
+	public String getVendName() {
+		return vendName;
+	}
+
+	public void setVendName(String vendName) {
+		this.vendName = vendName;
+	}
+
+	public CommonProcessEntity getInvCommonProcess() {
+		return invCommonProcess;
+	}
+
+	public void setInvCommonProcess(CommonProcessEntity invCommonProcess) {
+		this.invCommonProcess = invCommonProcess;
+	}
+
+	public List<CommonProcessEntity> getInvCommonProcessList() {
+		return invCommonProcessList;
+	}
+
+	public void setInvCommonProcessList(List<CommonProcessEntity> invCommonProcessList) {
+		this.invCommonProcessList = invCommonProcessList;
+	}
+
+	public String getInvReqDetail() {
+		return invReqDetail;
+	}
+
+	public void setInvReqDetail(String invReqDetail) {
+		this.invReqDetail = invReqDetail;
+	}
+
+	public enum HeaderType{
+		ROUTINE(1),
+		SAMPLE(2),
+		;
+		private Integer headerType;
+
+		HeaderType(Integer headerType){this.headerType = headerType;}
+
+		public Integer getHeaderType() {
+			return headerType;
+		}
+	}
+	public enum FromType{
+
+	}
+
+	public Long getInventoryAgeDay() {
+		return inventoryAgeDay;
+	}
+
+	public void setInventoryAgeDay(Long inventoryAgeDay) {
+		this.inventoryAgeDay = inventoryAgeDay;
+	}
+	public String getInventoryAgeDate() {
+		LocalDate today = LocalDate.now();
+		if (this.getInventoryAgeDay() != null) {
+			LocalDate date = today.minus(this.getInventoryAgeDay(), ChronoUnit.DAYS);
+			return date.toString();
+		}
+		return null;
+	}
+
 	public Integer getNeedIn() {
 		return needIn;
 	}
 
 	public void setNeedIn(Integer needIn) {
 		this.needIn = needIn;
+	}
+
+	public Integer getOutQtys() {
+		return outQtys;
+	}
+
+	public void setOutQtys(Integer outQtys) {
+		this.outQtys = outQtys;
 	}
 }

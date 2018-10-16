@@ -3283,5 +3283,12 @@ FROM
 			group by bpd.id
 	</select>
 
+	<select id="findCountByCentId" resultType="Integer">
+		SELECT COUNT(1)
+		FROM biz_order_header a
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = a.id
+		WHERE ccc.center_id = #{centId}
+	</select>
+
 
 </mapper>

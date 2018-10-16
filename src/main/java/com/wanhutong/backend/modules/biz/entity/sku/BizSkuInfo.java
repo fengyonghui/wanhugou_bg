@@ -76,6 +76,16 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private Integer orderCount;
 
 	/**
+	 * 尺寸
+	 */
+	private String size;
+
+	/**
+	 * 颜色
+	 */
+	private String color;
+
+	/**
 	 * 订单详情
 	 */
 	private BizOrderDetail orderDetail;
@@ -107,6 +117,11 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	 * 订单更新结束时间
 	 * */
 	private Date orderCreatEndTime;
+
+	/**
+	 * 图片
+	 */
+	private String skuImgUrl;
 
 
 	/**
@@ -438,6 +453,30 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setVendorId(String vendorId) {
 		this.vendorId = vendorId;
+	}
+
+	public String getSkuImgUrl() {
+		return skuImgUrl;
+	}
+
+	public void setSkuImgUrl(String skuImgUrl) {
+		this.skuImgUrl = skuImgUrl;
+	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
 	}
 
 	public Integer getNotPutaway() {

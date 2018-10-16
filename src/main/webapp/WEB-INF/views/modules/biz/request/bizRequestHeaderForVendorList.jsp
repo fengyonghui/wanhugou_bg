@@ -41,58 +41,58 @@
         function checkInfo(obj,val,hid) {
             if(confirm("您确认取消该采购单吗？")){
 
-                $.ajax({
-                    type:"post",
-                    url:"${ctx}/biz/request/bizRequestHeaderForVendor/saveInfo",
-                    data:{checkStatus:obj,id:hid},
-                    success:function (data) {
-                        if(data){
-                            alert(val+"成功！");
-                            window.location.href="${ctx}/biz/request/bizRequestHeaderForVendor";
+               $.ajax({
+                   type:"post",
+                   url:"${ctx}/biz/request/bizRequestHeaderForVendor/saveInfo",
+                   data:{checkStatus:obj,id:hid},
+                   success:function (data) {
+                       if(data){
+                           alert(val+"成功！");
+                           window.location.href="${ctx}/biz/request/bizRequestHeaderForVendor";
 
-                        }
-                    }
-                })
+                       }
+                   }
+               })
 
-            }
+			}
 
         }
         function pay(reqId){
-            $("#myModal").find("#reqId").val(reqId);
+			$("#myModal").find("#reqId").val(reqId);
             var totalMoney= $("#total_"+reqId).text();
             var revMoney=$("#rev_"+reqId).val();
             $("#toPay").text(parseFloat(totalMoney)-parseFloat(revMoney))
 
 
-        }
+		}
         function genPayQRCode(obj) {
-            var payMoney =$("#payMoneyId").val();
-            var reqId = $("#reqId").val();
-            var payMethod=$("input:radio[name='payMethod']:checked").val();
+			var payMoney =$("#payMoneyId").val();
+			var reqId = $("#reqId").val();
+			var payMethod=$("input:radio[name='payMethod']:checked").val();
             var totalMoney= $("#total_"+reqId).text();
             var revMoney=$("#rev_"+reqId).val();
 
             if(parseFloat(totalMoney)-parseFloat(revMoney)-parseFloat(payMoney)<0){
                 alert("应付金额超出范围!");
                 return;
-            }
+			}
 
-            if(payMoney==''||parseFloat(payMoney)==0.0){
-                alert("请输入金额！");
-                return;
-            }
+			if(payMoney==''||parseFloat(payMoney)==0.0){
+			    alert("请输入金额！");
+			    return;
+			}
 
-            if(payMethod=="" || payMethod==undefined || payMethod==null){
-                alert("请选择支付方式！");
-                return;
-            }
+			if(payMethod=="" || payMethod==undefined || payMethod==null){
+			    alert("请选择支付方式！");
+			    return;
+			}
             $.ajax({
                 type:"post",
                 url:"${ctx}/biz/request/bizRequestPay/genPayQRCode",
                 data:{payMoney:payMoney,reqId:reqId,payMethod:payMethod},
                 success:function (data) {
                     var img="<img src='"+data['imgUrl']+"'/>";
-                    $("#payNum").val(data['payNum']);
+					$("#payNum").val(data['payNum']);
                     $("#img").html(img);
 
                 }
@@ -138,7 +138,7 @@
 			<form:input path="reqNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 		</li>
 			<%--<li><label>货号：</label>--%>
-			<%--<form:input path="itemNo" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
+				<%--<form:input path="itemNo" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
 			<%--</li>--%>
 		<li><label>供应商：</label>
 			<form:input path="name" htmlEscape="false" maxlength="30" class="input-medium"/>
@@ -197,6 +197,7 @@
 	<tr>
 		<td>序号</td>
 		<th>备货单号</th>
+		<th>类型</th>
 		<th>采购中心</th>
 		<th>期望收货时间</th>
 		<th>备货方</th>
@@ -206,6 +207,7 @@
 		<th>已收保证金</th>
 		<th>付款比例</th>
 		<th>已到货数量</th>
+		<th>已卖出数量</th>
 		<th>备注</th>
 		<th>业务状态</th>
 		<th>审核状态</th>
@@ -231,30 +233,34 @@
 						</c:choose>
 							${requestHeader.reqNo}
 					</a>
-			</td>
-			<td>
+				</td>
+				<td>
+					${fns:getDictLabel(requestHeader.headerType,'req_header_type','未知')}
+				</td>
+				<td>
 					${requestHeader.fromOffice.name}
-			</td>
-			<td>
-				<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
-			</td>
-			<td>${fns:getDictLabel(requestHeader.fromType,'req_from_type' ,'未知' )}</td>
-			<td>
-					${requestHeader.name}
-			</td>
-			<td>${requestHeader.reqQtys}</td>
-			<td id="total_${requestHeader.id}">${requestHeader.totalMoney}</td>
-			<input type="hidden" id="rev_${requestHeader.id}" value="${requestHeader.recvTotal}">
-			<td>${requestHeader.recvTotal}</td>
-			<td>
-				<fmt:formatNumber type="number" value="${requestHeader.recvTotal*100/requestHeader.totalMoney}" pattern="0.00" />%
-			</td>
-			<td>${requestHeader.recvQtys}</td>
-			<td>
+				</td>
+				<td>
+					<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>${fns:getDictLabel(requestHeader.fromType,'req_from_type' ,'未知' )}</td>
+				<td>
+						${requestHeader.name}
+				</td>
+				<td>${requestHeader.reqQtys}</td>
+				<td id="total_${requestHeader.id}">${requestHeader.totalMoney}</td>
+					<input type="hidden" id="rev_${requestHeader.id}" value="${requestHeader.recvTotal}">
+				<td>${requestHeader.recvTotal}</td>
+				<td>
+					<fmt:formatNumber type="number" value="${requestHeader.recvTotal*100/requestHeader.totalMoney}" pattern="0.00" />%
+				</td>
+				<td>${requestHeader.recvQtys}</td>
+				<td>${requestHeader.outQtys}</td>
+				<td>
 					${requestHeader.remark}
-			</td>
-			<td>
-					${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
+				</td>
+				<td>
+						${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
 
 			</td>
 			<td>
@@ -272,16 +278,16 @@
 			</td>
 			<td>
 					${requestHeader.varietyInfo.name}
-			</td>
-			<td>
+				</td>
+				<td>
 					${requestHeader.createBy.name}
-			</td>
-			<td>
-				<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-			</td>
-			<shiro:hasPermission name="biz:request:bizRequestHeader:view"><td>
+				</td>
+				<td>
+					<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<shiro:hasPermission name="biz:request:bizRequestHeader:view"><td>
 
-				<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=detail">详情</a>
+					<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=detail">详情</a>
 
 				<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
 					<c:choose>
@@ -411,32 +417,32 @@
 	</tbody>
 </table>
 
-<!-- 模态框（Modal） -->
-<div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="myModalLabel">付款</h4>
-			</div>
-			<div class="modal-body">
-				<input id="reqId" type="hidden" value="" />
-				<div style="color: red; font-size: 16px">应付金额:<span id="toPay"></span></div>
-				<div style="margin-top: 14px">
+	<!-- 模态框（Modal） -->
+	<div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">付款</h4>
+				</div>
+				<div class="modal-body">
+					<input id="reqId" type="hidden" value="" />
+					<div style="color: red; font-size: 16px">应付金额:<span id="toPay"></span></div>
+					<div style="margin-top: 14px">
 					支付金额：<input type="text" id="payMoneyId" />
 					支付方式：<input type="radio" name="payMethod"  value="0"> 支付宝
-					<input type="radio" name="payMethod"  value="1"> 微信
+							<input type="radio" name="payMethod"  value="1"> 微信
+					</div>
+					二维码：<div style="margin-top: 14px" id="img"></div>
 				</div>
-				二维码：<div style="margin-top: 14px" id="img"></div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-				<button type="button" onclick="genPayQRCode();" class="btn btn-primary">提交</button>
-			</div>
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal -->
-</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" onclick="genPayQRCode();" class="btn btn-primary">提交</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+	</div>
 
-<div class="pagination">${page}</div>
+	<div class="pagination">${page}</div>
 </body>
 </html>
