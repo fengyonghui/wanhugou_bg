@@ -519,8 +519,6 @@
 			a.from_type AS "fromType",
 			a.req_no AS "reqNo",
 			prod.vendor_name AS "vendName",
-			prod.vari_id AS "varietyInfo.id",
-			bvi.name AS "varietyInfo.name",
 			process.id AS "invCommonProcess.id",
 			process.object_id AS "invCommonProcess.objectId",
 			process.object_name AS "invCommonProcess.objectName",
@@ -536,7 +534,6 @@
 		LEFT JOIN biz_request_detail rd ON rd.header_id = a.id
 		LEFT JOIN biz_sku_info sku ON sku.id = rd.sku_id
 		LEFT JOIN biz_product_info prod ON prod.id = sku.prod_id
-		LEFT JOIN biz_variety_info bvi ON bvi.id = prod.vari_id
 		LEFT JOIN biz_collect_goods_record bcgr ON bcgr.request_id = a.id
 		LEFT JOIN biz_inventory_info inv ON inv.id = bcgr.inv_id
 		LEFT JOIN sys_user su ON su.id = a.create_id
@@ -547,21 +544,15 @@
 			<if test="dbName == 'mssql'">'%'+#{vendName}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{vendName},'%')</if>
 		</if>
-
 		<if test="invInfo!=null and invInfo.id !=null">
 			and inv.id = #{invInfo.id}
 		</if>
-
 		<if test="reqNo != null and reqNo != ''">
 			AND a.req_no
 			LIKE
 			<if test="dbName == 'oracle'">'%'||#{reqNo}||'%'</if>
 			<if test="dbName == 'mssql'">'%'+#{reqNo}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{reqNo},'%')</if>
-		</if>
-
-		<if test="varietyInfo != null and varietyInfo.id != null">
-			AND prod.vari_id = #{varietyInfo.id}
 		</if>
 		<if test="invCommonProcess != null and invCommonProcess.type != null and invCommonProcess.type != ''">
 			AND process.type = #{invCommonProcess.type}

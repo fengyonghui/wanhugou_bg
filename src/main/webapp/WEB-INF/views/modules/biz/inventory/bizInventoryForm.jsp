@@ -27,7 +27,7 @@
 				    $("#invReq").find("input[name='reqDetailId']").each(function () {
 				        var reqDetailId = $(this).val();
 						var actualQty = $(this).parent().find("input[name='actualQtys']").val();
-						if (actualQty != 0) {
+						if (actualQty != 0 && actualQty != '') {
                             var html = "<input name='invReqDetail' value='" + reqDetailId + "-" + actualQty +"' type='hidden'/>";
 						}
 						$(this).append(html);
@@ -136,7 +136,7 @@
 								    <td>${requestDetail.sumSendNum == null ? 0 : requestDetail.sumSendNum}</td>
                                 </c:if>
 								<c:if test="${source == null}">
-                                	<td><input name="actualQtys" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini required"/></td>
+                                	<td><input id="${v.index}" name="actualQtys" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini required"/></td>
 								</c:if>
 								<c:if test="${source != null}">
 									<td>${requestDetail.actualQty}</td>
