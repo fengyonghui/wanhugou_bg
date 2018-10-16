@@ -214,7 +214,9 @@
 				</c:if>
 			</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
-            <input class="btn btn-primary" type="button" onclick="doPrint()" value="打印"/>
+			<c:if test="${source eq 'detail'}">
+            	<input class="btn btn-primary" type="button" onclick="doPrint()" value="打印"/>
+			</c:if>
 
 		</div>
 	</form:form>
