@@ -333,4 +333,20 @@
 		WHERE id = #{id}
 	</update>
 
+	<update id="updateStockQty">
+		UPDATE biz_inventory_sku SET
+		stock_qty = #{stockQty}
+		WHERE id = #{id}
+	</update>
+
+	<select id="findStockTotal" resultType="Integer">
+		SELECT
+		SUM(bis.stock_qty)
+		FROM biz_inventory_sku bis
+		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		WHERE bis.status = 1
+		AND bii.cust_id = #{centId}
+		AND bis.sku_id = #{skuId}
+	</select>
+
 </mapper>

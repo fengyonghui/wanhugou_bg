@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
 import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -79,6 +80,11 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
      * 订单发货查看 已经生成的采购单
      * */
     private BizPoHeader poHeader;
+
+    /**
+     * 用于发货传值
+     */
+    private List<BizRequestDetail> requestDetailList;
 
     public BizOrderDetail getOrderDaillist() {
         return orderDaillist;
@@ -412,5 +418,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setCust(Office cust) {
         this.cust = cust;
+    }
+
+    public List<BizRequestDetail> getRequestDetailList() {
+        return requestDetailList;
+    }
+
+    public void setRequestDetailList(List<BizRequestDetail> requestDetailList) {
+        this.requestDetailList = requestDetailList;
     }
 }

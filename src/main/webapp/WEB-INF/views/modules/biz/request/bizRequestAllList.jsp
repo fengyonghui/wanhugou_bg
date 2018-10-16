@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <html>
 <head>
 	<title>备货清单管理</title>
@@ -178,6 +179,10 @@
 				<c:if test="${ship eq 'xs'}">
 					<th>销售单号</th>
 				</c:if>
+				<c:if test="${ship eq 'bh'}">
+					<th>备货方</th>
+					<th>备货单类型</th>
+				</c:if>
 				<th>类型</th>
 				<c:if test="${ship eq 'bh'}">
 					<th>采购中心</th>
@@ -185,7 +190,9 @@
 				<c:if test="${ship eq 'xs'}">
 					<th>采购客户</th>
 				</c:if>
-				<th>期望收货时间</th>
+				<c:if test="${ship eq 'bh'}">
+					<th>期望收货时间</th>
+				</c:if>
 				<c:if test="${ship eq 'xs'}">
 					<th>收货地址</th>
 				</c:if>
@@ -211,6 +218,8 @@
 					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&bizStatu=${bizStatu}">
 						${requestHeader.reqNo}
 					</a></td>
+					<td>${fns:getDictLabel(requestHeader.fromType, 'req_from_type', '未知')}</td>
+					<td>${fns:getDictLabel(requestHeader.headerType, 'req_header_type', '未知')}</td>
 					<td>
 						${fns:getDictLabel(requestHeader.reqType, 'biz_req_type', '未知类型')}
 					</td>
@@ -244,7 +253,7 @@
 							<c:when test="${source=='sh'}">
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&bizStatu=${bizStatu}">备货详情</a>
 								<c:if test="${requestHeader.bizStatus < ReqHeaderStatusEnum.COMPLETE.state}">
-									<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">收货</a>
+									<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">入库</a>
 								</c:if>
 							</c:when>
 							<c:when test="${bizStatu=='1'}">
@@ -274,10 +283,6 @@
 					<td>
 							${orderHeader.customer.name}
 					</td>
-
-					<td>
-						<fmt:formatDate value="${orderHeader.deliveryDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-					</td>
 					<c:if test="${ship eq 'xs'}">
 						<td>
 							${orderHeader.bizLocation.province.name}${orderHeader.bizLocation.city.name}
@@ -305,7 +310,11 @@
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}">详情</a>
 							</c:when>
 							<c:otherwise>
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs&bizStatu=${bizStatu}">发货详情</a>
+								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs&bizStatu=${bizStatu}&ship=${ship}">发货详情</a>--%>
+								<a href="${ctx}/biz/request/bizRequestAll/confirmOut?orderHeaderId=${orderHeader.id}&source=detail">出库详情</a>
+								<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SEND.state}">
+									<a href="${ctx}/biz/request/bizRequestAll/confirmOut?orderHeaderId=${orderHeader.id}">出库</a>
+								</c:if>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=xs">发货</a>--%>
 							</c:otherwise>
 						</c:choose>

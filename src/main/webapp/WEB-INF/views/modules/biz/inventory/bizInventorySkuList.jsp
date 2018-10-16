@@ -74,7 +74,7 @@
 			<li><label>商品货号：</label>
 				<form:input path="skuInfo.itemNo" htmlEscape="false"  class="input-medium"/>
 			</li>
-			<li><label>货权：</label>
+			<li><label>备货方：</label>
 				<form:select path="skuType" htmlEscape="false"  class="input-medium">
 					<form:option value="" label="全部"/>
 					<form:options items="${fns:getDictList('inventory_sku_type')}" itemLabel="label" itemValue="value"/>
@@ -125,7 +125,7 @@
 				<td>序号</td>
 				<th>库存类型</th>
 				<th>仓库名称</th>
-				<th>货权归属</th>
+				<th>备货方</th>
 				<th>采购中心</th>
 				<th style="width: 15%">商品名称</th>
 				<th>出厂价</th>
@@ -154,9 +154,7 @@
 					<th>修改时间</th>
 					<th>修改人</th>
 				</c:if>
-				<c:if test="${zt eq '2' || zt eq '3'}">
-					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><th>操作</th></shiro:hasPermission>
-				</c:if>
+					<th>操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -232,8 +230,9 @@
 						${bizInventorySku.updateBy.name}
 					</td>
 				</c:if>
-				<c:if test="${zt eq '2' || zt eq '3'}">
-					<td>
+				<td>
+					<a href="${ctx}/biz/inventory/bizInventorySku/inventorySkuDetail?id=${bizInventorySku.id}">详情</a>
+					<c:if test="${zt eq '2' || zt eq '3'}">
 						<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 							<c:if test="${bizInventorySku.delFlag!=null && bizInventorySku.delFlag!=0}">
 								<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}&invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">修改</a>
@@ -245,8 +244,8 @@
 								   onclick="return confirmx('确认要恢复该商品库存详情吗？', this.href)">恢复</a>
 							</c:if>
 						</shiro:hasPermission>
-					</td>
-				</c:if>
+					</c:if>
+				</td>
 			</tr>
 		</c:forEach>
 		</tbody>

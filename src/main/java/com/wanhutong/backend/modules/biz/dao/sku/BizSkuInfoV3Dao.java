@@ -51,4 +51,6 @@ public interface BizSkuInfoV3Dao extends CrudDao<BizSkuInfo> {
      * @return
      */
     int findCount(BizSkuInfo bizSkuInfo);
+
+    List<Integer> findReqSku();
 }

@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
+import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
 import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
@@ -57,6 +58,7 @@ public class XmlUtils {
 		X_STREAM.processAnnotations(DoOrderHeaderProcessFifthConfig.class);
 		X_STREAM.processAnnotations(JointOperationOrderProcessLocalConfig.class);
 		X_STREAM.processAnnotations(JointOperationOrderProcessOriginConfig.class);
+		X_STREAM.processAnnotations(InventorySkuRequestProcessConfig.class);
 	}
 
 	@SuppressWarnings("unchecked")
