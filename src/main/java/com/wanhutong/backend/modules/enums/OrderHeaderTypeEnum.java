@@ -14,6 +14,8 @@ public enum OrderHeaderTypeEnum {
     DO(5, "普通订单"),
     //6.拍照下单 DPO
     DPO(6, "普通订单"),
+    //8.零售订单
+    RO(8, "零售订单"),
 
     //100.线下支付流水单  FO
     FO(100, "线下支付流水单"),
