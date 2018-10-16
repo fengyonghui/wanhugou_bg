@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -24,4 +25,6 @@ public interface BizInvoiceDao extends CrudDao<BizInvoice> {
      * @return
      */
     List<BizOrderDetail> findLogisticsDetail(BizInvoice bizInvoice);
+
+    List<String> findDeliverNoByReqId(@Param("requestId") Integer requestId);
 }

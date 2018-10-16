@@ -2,8 +2,8 @@ package com.wanhutong.backend.modules.enums;
 
 
 public enum OrderTypeEnum {
-    //SO销售订单 PO采购订单 SE发货单 ，CEND微店订单，FO线下支付流水
-    ORDER("0"),SO("1"),PO("2"),RE("6"),SE("7"),CO("4"),FO("3"),DO("5");
+    //SO销售订单 PO采购订单 SE发货单 ，CEND微店订单，FO线下支付流水,ODO 出库单, RIO(入库单)
+    ORDER("0"),SO("1"),PO("2"),RE("6"),SE("7"),CO("4"),FO("3"),DO("5"),ODO("8"),RIO("9");
     private String orderType;
 
     OrderTypeEnum(String orderType) {

@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.request;
 
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
@@ -45,6 +46,19 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	private String vendorName;
 	private Integer sendNum;		//记录页面传的供货数量
 
+	/**
+	 * 已出库数量
+	 */
+	private Integer outQty;
+
+	/**
+	 * 实际库存
+	 */
+	private Integer actualQty;
+	/**
+	 * 库存
+	 */
+	private BizInventorySku inventorySku;
 	/**
 	 * 备货清单查看 已生成的采购单
 	 * */
@@ -90,6 +104,16 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	 * detail商品对应的各个采购中心的库存，Map<采购中心ID,库存数>
 	 */
 	private Map<String,Integer> invSkuMap;
+
+	/**
+	 * 品类主管
+	 */
+	private User varietyUser;
+
+	/**
+	 * 前一天的出库数量
+	 */
+	private Integer sumSendNum;
 
 	public BizRequestDetail() {
 		super();
@@ -315,5 +339,45 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setInvSkuMap(Map<String, Integer> invSkuMap) {
 		this.invSkuMap = invSkuMap;
+	}
+
+	public User getVarietyUser() {
+		return varietyUser;
+	}
+
+	public void setVarietyUser(User varietyUser) {
+		this.varietyUser = varietyUser;
+	}
+
+	public Integer getOutQty() {
+		return outQty;
+	}
+
+	public void setOutQty(Integer outQty) {
+		this.outQty = outQty;
+	}
+
+	public BizInventorySku getInventorySku() {
+		return inventorySku;
+	}
+
+	public void setInventorySku(BizInventorySku inventorySku) {
+		this.inventorySku = inventorySku;
+	}
+
+	public Integer getActualQty() {
+		return actualQty;
+	}
+
+	public void setActualQty(Integer actualQty) {
+		this.actualQty = actualQty;
+	}
+
+	public Integer getSumSendNum() {
+		return sumSendNum;
+	}
+
+	public void setSumSendNum(Integer sumSendNum) {
+		this.sumSendNum = sumSendNum;
 	}
 }

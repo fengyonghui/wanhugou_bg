@@ -50,15 +50,17 @@
 		<thead>
 			<tr>
 				<td>序号</td>
-				<th>仓库</th>
+				<th>盘点日期</th>
+				<th>盘点人</th>
+				<th>仓库名称</th>
+				<th>备货方</th>
 				<th>库存类型</th>
 				<th>商品</th>
 				<th>原库存数量</th>
 				<th>现库存数量</th>
 				<th>改变数量</th>
-				<th>创建人</th>
-				<th>创建时间</th>
-				<shiro:hasPermission name="biz:inventoryviewlog:bizInventoryViewLog:edit"><th>操作</th></shiro:hasPermission>
+				<th>备货单号</th>
+				<shiro:hasPermission name="biz:inventoryviewlog:bizInventoryViewLog:view"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
@@ -66,7 +68,16 @@
 			<tr>
 				<td>${state.index+1}</td>
 				<td>
+					<fmt:formatDate value="${bizInventoryViewLog.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+						${bizInventoryViewLog.createBy.name}
+				</td>
+				<td>
 					${bizInventoryViewLog.invInfo.name}
+				</td>
+				<td>
+					${bizInventoryViewLog.requestHeader.fromType==1?'采购中心备货':'厂商备货'}
 				</td>
 				<td>
 					${fns:getDictLabel(bizInventoryViewLog.invType, 'inv_type', '未知状态')}
@@ -84,14 +95,11 @@
 					${bizInventoryViewLog.stockChangeQty}
 				</td>
 				<td>
-					${bizInventoryViewLog.createBy.name}
+					${bizInventoryViewLog.requestHeader.reqNo}
 				</td>
-				<td>
-					<fmt:formatDate value="${bizInventoryViewLog.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<shiro:hasPermission name="biz:inventoryviewlog:bizInventoryViewLog:edit"><td>
-    				<a href="${ctx}/biz/inventoryviewlog/bizInventoryViewLog/form?id=${bizInventoryViewLog.id}">修改</a>
-					<a href="${ctx}/biz/inventoryviewlog/bizInventoryViewLog/delete?id=${bizInventoryViewLog.id}" onclick="return confirmx('确认要删除该库存盘点记录吗？', this.href)">删除</a>
+
+				<shiro:hasPermission name="biz:inventoryviewlog:bizInventoryViewLog:view"><td>
+    				<a href="${ctx}/biz/inventoryviewlog/bizInventoryViewLog/form?id=${bizInventoryViewLog.id}">详情</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

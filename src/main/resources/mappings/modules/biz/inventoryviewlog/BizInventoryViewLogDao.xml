@@ -13,6 +13,9 @@
 		a.stock_change_qty AS "stockChangeQty",
 		a.now_stock_qty as "nowStockQty",
 		a.create_id AS "createBy.id",
+		a.req_id AS "requestHeader.id",
+		rh.req_no AS "requestHeader.reqNo",
+		rh.from_type AS "requestHeader.fromType",
 		u.name as "createBy.name",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
@@ -23,6 +26,8 @@
 	
 	<sql id="bizInventoryViewLogJoins">
 		LEFT JOIN biz_inventory_info bi on bi.id = a.inv_id
+		Left JOIN biz_request_header rh on rh.id=a.req_id
+		LEFT JOIN sys_office cent ON cent.id = rh.from_id
 		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
 		LEFT JOIN sys_user u on  u.id = a.create_id
 	</sql>
@@ -53,6 +58,9 @@
 					<if test="dbName == 'oracle'">'%'||#{skuInfo.name}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{skuInfo.name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
+			</if>
+			<if test="sqlMap != null and sqlMap.viewLog != null and sqlMap.viewLog != ''">
+				${sqlMap.viewLog}
 			</if>
 		</where>
 		<choose>
@@ -91,6 +99,7 @@
 			stock_qty,
 			stock_change_qty,
 			now_stock_qty,
+			req_id,
 			create_id,
 			create_time,
 			u_version,
@@ -105,6 +114,7 @@
 			#{stockQty},
 			#{stockChangeQty},
 			#{nowStockQty},
+			#{requestHeader.id},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
