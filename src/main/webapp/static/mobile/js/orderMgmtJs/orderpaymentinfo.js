@@ -186,8 +186,6 @@
 	                        	var staCheckSuc = item.bizOrderHeader.id;
 	                        	var staCheck = item.bizRequestHeader.id;
 	                        	//支付申请列表
-	                        	var staPayBtn = '';//订单
-	                        	var staPayBtns = '';//备货单
 	                        	var staPayBtnTxt = '';
 	                        	var staPayBtnes = '';
 	                        	var sta = '';
@@ -198,7 +196,6 @@
 	                        			if(_this.OrdFlagpay==true){
 	                        				staPayBtnTxt = '支付列表';
 	                        				staPayBtnes = 'staPayBtnes';
-	                        				staPayBtn = item.bizOrderHeader.id;
 	                        			}
 	                        		}
 	                        		if(item.bizRequestHeader != null){
@@ -206,7 +203,6 @@
 	                        			if(_this.OrdFlagpay==true){
 	                        				staPayBtnTxt = '支付列表';
 	                        				staPayBtnes = 'staPayBtnes';
-	                        				staPayBtns = item.bizRequestHeader.id;
 	                        			}	                        			
 	                        		}
 	                        	}
@@ -283,7 +279,7 @@
 											'<div class="mui-col-xs-2 '+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-3 '+staPayBtnes+'" staordid="'+ item.id +'" ordid="'+ staPayBtn +'" ordids="'+ staPayBtns +'">' +
+											'<div class="mui-col-xs-3 '+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
 												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li>' +
 											'</div>'+
 											'<div class="mui-col-xs-3 '+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
@@ -460,15 +456,27 @@
 			 $('.content_part').on('tap', '.staPayBtnes', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staordid');//采购单id
-                var OrdId = $(this).attr('ordid');//订单id
-                var OrdIds = $(this).attr('ordids');//备货单id
-				if(OrdIds){
+                var staOrderId = $(this).attr('staOrderId');//订单id
+                var staInvenId = $(this).attr('staInvenId');//备货单id
+				if(staInvenId){
 					GHUTILS.OPENPAGE({
 						//备货单						
 						url: "../../html/orderMgmtHtml/payApplyList.html",
 						extras: {
 							staOrdId: staOrdId,
-							orderId:OrdIds,
+							staInvenId:staInvenId,
+							fromPage: 'requestHeader',
+						}
+					})
+				}
+				if(staOrderId) {
+					GHUTILS.OPENPAGE({
+						//备货单						
+						url: "../../html/orderMgmtHtml/payApplyList.html",
+						extras: {
+							staOrdId: staOrdId,
+							staOrderId:staOrderId,
+							fromPage: 'orderHeader',
 						}
 					})
 				}
@@ -726,8 +734,6 @@
 	                        	var staCheckSuc = item.bizOrderHeader.id;
 	                        	var staCheck = item.bizRequestHeader.id;
 	                        	//支付申请列表
-	                        	var staPayBtn = '';//订单
-	                        	var staPayBtns = '';//备货单
 	                        	var staPayBtnTxt = '';
 	                        	var staPayBtnes = '';//按钮
 	                        	var sta = '';
@@ -737,7 +743,6 @@
 	                        			if(_this.OrdFlagpay==true){
 	                        				staPayBtnTxt = '支付列表';
 	                        				staPayBtnes = 'staPayBtnes';
-	                        				staPayBtn = item.bizOrderHeader.id;
 	                        			}	                        			
 	                        		}
 	                        		if(item.bizRequestHeader != null){
@@ -745,7 +750,6 @@
 	                        			if(_this.OrdFlagpay==true){
 	                        				staPayBtnTxt = '支付列表';
 	                        				staPayBtnes = 'staPayBtnes';
-	                        				staPayBtns = item.bizRequestHeader.id;
 	                        			}	                        			
 	                        		}
 	                        	}
@@ -822,7 +826,7 @@
 											'<div class="mui-col-xs-2 '+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
 												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
 											'</div>'+
-											'<div class="mui-col-xs-3 '+staPayBtnes+'" staordid="'+ item.id +'" ordid="'+ staPayBtn +'" ordids="'+ staPayBtns +'">' +
+											'<div class="mui-col-xs-3 '+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
 												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li>' +
 											'</div>'+
 											'<div class="mui-col-xs-3 '+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +

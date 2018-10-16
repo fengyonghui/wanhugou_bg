@@ -9,6 +9,7 @@
 //		this.cancelFlag = "false"
 		this.editFlag = "false"
 		this.checkFlag = "false"
+		this.affirmFlag = false
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -16,6 +17,7 @@
 			this.getPermissionList('biz:po:sure:bizPoPaymentOrder','PaymentFlag')
 			this.getPermissionList2('biz:po:bizpopaymentorder:bizPoPaymentOrder:edit','editFlag')
 			this.getPermissionList1('biz:po:bizpopaymentorder:bizPoPaymentOrder:audit','checkFlag')
+			this.getPermissionList3('biz:po:payment:sure:pay','affirmFlag')
 //			if(this.userInfo.isFunc){
 //				this.seachFunc()
 //			}else{
@@ -47,20 +49,27 @@
 			            contentdown : "",
 			            contentover : "",
 			            contentrefresh : "正在加载...",
-			            callback :function(){ 
+			            callback :function(){
+			            	var fromPage = _this.userInfo.fromPage;
 			            	pager['size']= 20;
 		                    pager['pageNo'] = 1;
-			                    pager['poId'] = _this.userInfo.staOrdId;
-			                    pager['type'] = 1;
-			                    pager['fromPage'] = 'requestHeader';
-			                    pager['orderId'] = _this.userInfo.orderId;
-				                var f = document.getElementById("payApplyList");
-				                var childs = f.childNodes;
-				                for(var i = childs.length - 1; i >= 0; i--) {
-				                    f.removeChild(childs[i]);
-				                }
-				                $('.mui-pull-caption-down').html('');				                
-				                getData(pager);
+		                    pager['poId'] = _this.userInfo.staOrdId;
+		                    pager['type'] = 1;
+		                    if(fromPage == 'requestHeader') {
+		                    	pager['fromPage'] = 'requestHeader';
+		                    	pager['orderId'] = _this.userInfo.staInvenId;
+		                    }
+		                    if(fromPage == 'orderHeader') {
+		                    	pager['fromPage'] = 'orderHeader';
+		                    	pager['orderId'] = _this.userInfo.staOrderId;
+		                    }
+			                var f = document.getElementById("payApplyList");
+			                var childs = f.childNodes;
+			                for(var i = childs.length - 1; i >= 0; i--) {
+			                    f.removeChild(childs[i]);
+			                }
+			                $('.mui-pull-caption-down').html('');				                
+			                getData(pager);
 			            }
 			        }
 			    })
@@ -104,15 +113,24 @@
 								//操作确认支付金额
 								var inPay ="";								
 								var inPayBtn="";
-								if(_this.PaymentFlag ==true){
+								console.log(_this.PaymentFlag)
+								console.log(res.data.fromPage)
+								console.log(item.total)
+								
+								if(_this.PaymentFlag == true){
 									if(res.data.fromPage == 'requestHeader' && item.total == '0.00' && (res.data.requestHeader == null || res.data.requestHeader.bizStatus < res.data.CLOSE)){
 										inPay = '确认支付金额';
+										inPayBtn = 'inPayBtn';
+									}
+									if(res.data.fromPage == 'orderHeader' && item.total == '0.00') {
+										inPay = '确认支付金额';
+										inPayBtn = 'inPayBtn';
 									}
 								}
 								//操作审核
 								var inCheck ="";
 								var inChecks ="";
-								if(_this.checkFlag ==true){	
+								if(_this.checkFlag == true){	
 									if(item.total != '0.00'){
 										console.log(item.commonProcess.paymentOrderProcess.name)
 										if(item.id == res.data.bizPoHeader.bizPoPaymentOrder.id && item.commonProcess.paymentOrderProcess.name != '审批完成' && item.total != 0){
@@ -121,6 +139,41 @@
 										}
 									}
 								}
+								var affirmBtn = '';
+								var affirmBtnTxt = '';
+								if(_this.editFlag == true) {
+									if(_this.affirmFlag == true) {
+										if(item.orderType == 1
+										&& item.id == bizPoHeader.bizPoPaymentOrder.id
+										&& item.commonProcess.paymentOrderProcess.name == '审批完成'
+										&& res.data.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成') {//PO_TYPE=1
+											if() {}
+											if() {}
+											if() {}
+										}
+									}
+								}
+								<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
+									<shiro:hasPermission name="biz:po:payment:sure:pay">
+										<c:if test="${bizPoPaymentOrder.orderType == PoPayMentOrderTypeEnum.PO_TYPE.type && bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id
+										&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
+										&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
+										}">
+											<c:if test="${fromPage != null && fromPage == 'requestHeader'}">
+												<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认付款</a>
+											</c:if>
+											<c:if test="${fromPage != null && fromPage == 'orderHeader'}">
+												<a href="${ctx}/biz/order/bizOrderHeader/form?bizPoHeader.id=${bizPoHeader.id}&id=${orderId}&str=pay">确认付款</a>
+												<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>--%>
+											</c:if>
+											<c:if test="${fromPage == null}">
+												<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
+											</c:if>
+										</c:if>
+								</shiro:hasPermission>
+								
+								
+								
 								var mt = item;
 								inPayHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 									'<div class="mui-input-row">' +
@@ -161,8 +214,13 @@
 										'</div>' +
 									'</div>' +
 									'<div class="app_color40 mui-row app_text_center operation">' +
-										'<div class="inPayBtn" inListId="'+ item.id +'">' +
+										'<div class="'+inPayBtn+'" inListId="'+ item.id +'">' +
 											'<div class="" >'+inPay+'</div>' +
+										'</div>' +
+									'</div>' +
+									'<div class="app_color40 mui-row app_text_center operation">' +
+										'<div class="'+affirmBtn+'" inListId="'+ item.id +'">' +
+											'<div class="" >'+affirmBtnTxt+'</div>' +
 										'</div>' +
 									'</div>' +
 									'<div class="app_color40 mui-row app_text_center operation">' +
@@ -248,6 +306,20 @@
                 success: function(res){
                     _this.editFlag = res.data;
                     console.log(_this.editFlag)
+                }
+            });
+        },
+        getPermissionList3: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.affirmFlag = res.data;
+                    console.log(_this.affirmFlag)
                 }
             });
         },
