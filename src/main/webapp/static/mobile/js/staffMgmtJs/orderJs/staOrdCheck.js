@@ -71,7 +71,7 @@
 					//订单id
 					$('#ordId').val(_this.userInfo.staOrdId);					
 					var item = res.data.bizOrderHeader;
-//					console.log(item)
+					console.log(item)
 					//交货时间
 					$('#appointedTime').val(item.bizLocation.appointedTime);
 					//标志位
@@ -326,6 +326,7 @@
 				                    url:"/a/biz/order/bizOrderHeader/checkTotalExp4Mobile",
 				                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
 				                    success:function (data) {
+				                    	console.log(data)
 				                    	var dataVal=JSON.parse(data)
 				                        if (dataVal.data.resultValue == "serviceCharge") {
 				                            mui.toast("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
