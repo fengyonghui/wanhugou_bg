@@ -80,8 +80,7 @@
 					}
 					//备注
 					var RemarkHtml="";
-					$.each(res.data.commentList, function(q, w) {
-//						console.log(w)						
+					$.each(res.data.commentList, function(q, w) {						
 						RemarkHtml +='<li class="step_items">'+
 							'<div class="step_num_txt">'+
 								'<div class="">'+
@@ -518,7 +517,7 @@
 					}else {
 						suplyisName = ''
 					}
-					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
+					htmlCommodity += '<div class="mui-row app_bline commodity" id="commoditybox_' + item.id + '">' +
 	                    
                     	'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
@@ -627,7 +626,7 @@
 							}
 						}
 				}
-				if(_this.OrdDetailFlag == false){
+				if(_this.OrdDetailFlag == true){
 					if(data.bizOrderHeader.str != 'audit'){
 						if(data.bizOrderHeader.orderNoEditable=="" && data.bizOrderHeader.flag ==""&& data.bizOrderHeader.orderDetails==""){
 							if(data.bizOrderHeader.clientModify ==""){
@@ -682,12 +681,12 @@
                 }				
 			}) 
 			//订单商品删除按钮操作
-			$('#staCommodity').on('click','.orddeleteBtn', function() {
+			mui('#staCommodity').on('tap','.orddeleteBtn', function() {
                 var amendId = $(this).attr('amendId');
                 var oneOrderId = $(this).attr('oneOrderId');
                 var orderType = $(this).attr('orderType');
-                if(_this.OrdviewFlag==true){
-                	var btnArray = ['取消', '确定'];
+	            if(_this.OrdviewFlag==true){
+	              	var btnArray = ['取消', '确定'];
 					mui.confirm('确认要删除该sku商品吗？', '系统提示！',btnArray, function(e) {
 						if(e.index == 1) {
 	                        $.ajax({
@@ -703,22 +702,17 @@
 				                success: function(res){
 				                	console.log(res)
 				                	if(res.data.value=="操作成功!"){
-				                		mui.toast('删除商品成功！')
-				                		window.setTimeout(function(){
-				                			$('#staCommodity').html('');				                		
-				                		    _this.getData();
-				                		},500)
+				                		mui.toast('删除商品成功！')                                    
+                                        $("#commoditybox_" + amendId).remove();
 				                	}
 								}
 							})
-						} else {	
-							console.log('11')
+						} else {
+							
 						}
-					})
-                  	
-                }
-			})
-            
+					})	                	
+	            }
+			})           
 		},
 		formatDateTime: function(unix) {
         	var _this = this;
