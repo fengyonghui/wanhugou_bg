@@ -12,6 +12,8 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.hibernate.validator.constraints.Length;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -74,7 +76,17 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	 * 用来筛选查询未下架的商品
 	 */
 	private String batchDownShelf;
-	
+
+	/**
+	 * 市场参考价
+	 */
+	private BigDecimal marketPrice;
+
+    /**
+     * 佣金比（百分比）存入百分号之前的数值
+     */
+	private BigDecimal commissionRatio;
+
 	public BizOpShelfSku() {
 		super();
 	}
@@ -302,4 +314,20 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	public void setBatchDownShelf(String batchDownShelf) {
 		this.batchDownShelf = batchDownShelf;
 	}
+
+	public BigDecimal getMarketPrice() {
+		return marketPrice;
+	}
+
+	public void setMarketPrice(BigDecimal marketPrice) {
+		this.marketPrice = marketPrice;
+	}
+
+    public BigDecimal getCommissionRatio() {
+        return commissionRatio;
+    }
+
+    public void setCommissionRatio(BigDecimal commissionRatio) {
+        this.commissionRatio = commissionRatio;
+    }
 }

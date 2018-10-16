@@ -127,6 +127,7 @@
 					<id property="id" column="orderDetailList.skuInfo.bizOpShelfSku.id"/>
 					<result property="orgPrice" column="orderDetailList.skuInfo.bizOpShelfSku.orgPrice"/>
 					<result property="salePrice" column="orderDetailList.skuInfo.bizOpShelfSku.salePrice"/>
+					<result property="commissionRatio" column="orderDetailList.skuInfo.bizOpShelfSku.commissionRatio"/>
 				</association>
 			</association>
 			<association property="vendor" javaType="Office" column="vendor.id">
@@ -343,6 +344,7 @@
 		boss.id AS "orderDetailList.skuInfo.bizOpShelfSku.id",
 		boss.org_price AS "orderDetailList.skuInfo.bizOpShelfSku.orgPrice",
 		boss.sale_price AS "orderDetailList.skuInfo.bizOpShelfSku.salePrice",
+		boss.commission_ratio AS "orderDetailList.skuInfo.bizOpShelfSku.commissionRatio",
 		pi.vendor_name AS "orderDetailList.vendor.name",
 		bol.logistics_lines_code AS "bizOrderLogisticsList.logisticsLinesCode",
 		bol.stop_point_code AS "bizOrderLogisticsList.stopPointCode",

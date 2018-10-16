@@ -80,34 +80,46 @@
                         }
                     }
                 })
-
             }
-
         }
 	</script>
 
 	<script type="text/javascript">
+        function orderCommission() {
+            var totalCommissionMoney = 0;
+            $("[name=settlement]").each(function(){
+                if ($(this).is(':checked')) {
+                    var orderId = $(this).val();
+                    var consignedMoney = $("#" + orderId).text();
+                    totalCommissionMoney = parseInt(totalCommissionMoney) + parseInt(consignedMoney);
+				}
+            });
+            $('#totalCommissionMoney').text(totalCommissionMoney);
+        }
+
         function checkOrCancelAll(){
-			//1.获取checkbo的元素对象
-            var chElt=document.getElementById("chElt");
-			//2.获取选中状态
-            var checkedElt=chElt.checked;
-			//3.若checked=true,将所有的复选框选中,checked=false,将所有的复选框取消
-            var allCheck=document.getElementsByName("settlement");
-			//4.循环遍历取出每一个复选框中的元素
-            var mySpan=document.getElementById("mySpan");
+            var chElt=$('#chElt')
+            var checkedElt=chElt.is(':checked');
+            var allCheck=$("[name=settlement]");
+            var mySpan=$('#mySpan');
             if(checkedElt){
-				//全选
                 for(var i=0;i<allCheck.length;i++){
-					//设置复选框的选中状态
                     allCheck[i].checked=true;
                 }
+
+                var totalCommissionMoney = 0;
+                var checkOrCancelAllTd = $('.consignedMoney');
+                $(".consignedMoney").each(function(){
+                    totalCommissionMoney = parseInt(totalCommissionMoney) + parseInt($(this).text());
+                });
+                console.log(totalCommissionMoney)
+                $('#totalCommissionMoney').text(totalCommissionMoney);
                 mySpan.innerHTML="取消全选";
             }else{
-				//取消全选
                 for(var i=0;i<allCheck.length;i++){
                     allCheck[i].checked=false;
                 }
+                $('#totalCommissionMoney').text(0.00);
                 mySpan.innerHTML="全选";
             }
         }
@@ -296,10 +308,8 @@
 		<th>运费</th>
 		<th>万户币抵扣</th>
 		<th>应付金额</th>
-		<c:if test="${source ne 'vendor'}">
-			<th>服务费</th>
-			<th>佣金</th>
-		</c:if>
+		<th>服务费</th>
+		<th>佣金</th>
 		<th>发票状态</th>
 		<th>业务状态</th>
 		<th>审核状态</th>
@@ -313,7 +323,7 @@
 	<c:forEach items="${page.list}" var="orderHeader" varStatus="state">
 		<tr>
 			<td>
-				<input class="orderChk" type="checkbox" name="settlement" value="${bizOrderHeader.id}" />
+				<input class="orderChk" onclick="orderCommission();" type="checkbox" name="settlement" value="${orderHeader.id}" />
 			</td>
 			<td>${state.index+1}</td>
 			<td>
@@ -377,18 +387,16 @@
 			<td><font color="#0A2A0A">
 				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.scoreMoney}" pattern="0.00"/>
 			</font></td>
-			<c:if test="${source ne 'vendor'}">
-				<td>
-					<%--<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
-						${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}
-					<%--</c:if>--%>
-					<%--<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
-						<%--<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.totalBuyPrice}" pattern="0.00"/>--%>
-					<%--</c:if>--%>
-				</td>
-			</c:if>
 			<td>
-				<fmt:formatNumber type="number" value="${orderHeader.totalDetail-orderHeader.totalBuyPrice}" pattern="0.00"/>
+				<%--<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
+					${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}
+				<%--</c:if>--%>
+				<%--<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
+					<%--<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.totalBuyPrice}" pattern="0.00"/>--%>
+				<%--</c:if>--%>
+			</td>
+			<td class="consignedMoney" id="${orderHeader.id}">
+				<fmt:formatNumber type="number" value="${orderHeader.consignedMoney}" pattern="0.00"/>
 			</td>
 			<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
@@ -423,27 +431,11 @@
 			</td>
 
 			<td>
-				<c:if test="${orderHeader.bizStatus == OrderHeaderBizStatusEnum.CANCLE.state || orderHeader.bizStatus == OrderHeaderBizStatusEnum.DELETE.state || orderHeader.bizStatus == OrderHeaderBizStatusEnum.UNAPPROVE.state}">
-
-				</c:if>
 				<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.DELETE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.UNAPPROVE.state}">
 					<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state}">
 						待客户专员审核
 					</c:if>
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state
-								&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state
-								}">
-						<c:if test="${orderHeader.commonProcess.objectName == 'biz_order_header'}">
-							<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '审批完成'}">
-								${orderHeader.commonProcess.doOrderHeaderProcessFifth.name}
-							</c:if>
-							<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成'}">
-								订单支出信息审核
-							</c:if>
-						</c:if>
-					</c:if>
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state &&
-				 orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+					<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 						<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_LOCAL'}">
 							${orderHeader.commonProcess.jointOperationLocalProcess.name}
 						</c:if>
@@ -469,97 +461,8 @@
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
-				<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state}">
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
-						<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-							<c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) || fns:getUser().isAdmin())
-									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
-									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
-									}">
-								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
-							</c:if>
+				<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">申请结佣</a>
 
-							<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOriginProcess.roleEnNameEnum) && orderHeader.commonProcess.jointOperationOriginProcess.name != '驳回' && orderHeader.commonProcess.jointOperationOriginProcess.code != auditStatus
-								 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
-								<a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}">审核</a>
-							</c:if>
-						</shiro:hasPermission>
-					</c:if >
-					<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-						<c:if test="${orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
-							&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
-							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
-							&& (fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationLocalProcess)
-							 	|| fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationOriginProcess)
-							 	 || fns:getUser().isAdmin())
-							}">
-							<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
-								<%--<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>
-									<c:if test="${orderHeader.suplys == 0 }">
-										<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
-									</c:if>
-									<c:if test="${orderHeader.suplys != 0 }">
-										<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
-									</c:if>
-								<%--</c:if>--%>
-							</c:if>
-						</c:if>
-					</shiro:hasPermission>
-					<shiro:hasPermission name="biz:order:bizOrderHeader:supplying">
-						<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus <= OrderHeaderBizStatusEnum.STOCKING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">
-							<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">
-								<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>
-							</c:if>
-						</c:if>
-					</shiro:hasPermission>
-				</c:if >
-					<%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
-					<%--<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>
-					<%--<c:if test="${orderHeader.bizPoHeader.commonProcess.id != null--%>
-					<%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'--%>
-					<%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'--%>
-					<%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus--%>
-					<%--&& (fns:hasRole(roleSet, orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())--%>
-					<%--}">--%>
-					<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>--%>
-					<%--</c:if>--%>
-					<%--</c:if>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--<shiro:hasPermission name="biz:po:bizPoPaymentOrder:view">--%>
-					<%--<c:if test="${orderHeader.bizPoHeader !=null}">--%>
-					<%--<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${orderHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${orderHeader.id}">支付申请列表</a>--%>
-					<%--</c:if>--%>
-					<%--</shiro:hasPermission>--%>
-
-					<%--<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizPoHeader.id != null && orderHeader.bizPoHeader.id != 0 && orderHeader.payProportion !=null}">--%>
-					<%--<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">--%>
-					<%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
-					<%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--</c:if>--%>
-
-					<%--<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PURCHASE_ORDER.state}">--%>
-					<%--<c:if test="${orderHeader.bizPoHeader.id != null && orderHeader.bizPoHeader.id != 0--%>
-					<%--}">--%>
-					<%--<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">--%>
-					<%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
-					<%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--</c:if>--%>
-					<%--</c:if>--%>
-
-					<%--<shiro:hasPermission name="biz:request:bizOrderHeader:createPayOrder">--%>
-					<%--<c:if test="${orderHeader.bizPoHeader.currentPaymentId == null--%>
-					<%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'--%>
-					<%--&& (orderHeader.bizPoHeader.payTotal == null ? 0 : orderHeader.bizPoHeader.payTotal) < orderHeader.totalDetail--%>
-					<%--}">--%>
-					<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=createPay">申请付款</a>--%>
-					<%--</c:if>--%>
-					<%--</shiro:hasPermission>--%>
 
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
 				<c:choose>
@@ -600,9 +503,6 @@
 					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
 					<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">详情</a>
 					</c:if>
-					<%--<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15 && orderHeader.bizStatus!=45}">--%>
-						<%--${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}--%>
-					<%--</c:if>--%>
 					</shiro:hasPermission>
 					</c:when>
 					<c:otherwise>
@@ -675,7 +575,7 @@
 	<input class="orderChk" id="chElt"  type="checkbox" onclick="checkOrCancelAll();"  /><span id="mySpan">全选</span>
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	合计佣金：
-	<span style="color: red">00.00</span>
+	<span id="totalCommissionMoney" style="color: red">00.00</span>
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	<input type="button"
 		   onclick="updateCommissionRatio()"

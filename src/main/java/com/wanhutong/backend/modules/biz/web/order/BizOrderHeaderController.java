@@ -217,7 +217,10 @@ public class BizOrderHeaderController extends BaseController {
     public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         //判断是否为代销订单
         if ("CONSIGNED_ORDER".equals(bizOrderHeader.getTargetPage())){
+            //零售订单
             bizOrderHeader.setOrderType(8);
+            //收货完成
+            bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.COMPLETE.getState());
         }
         if (bizOrderHeader.getSkuChickCount() != null) {
             //商品下单量标识
@@ -242,19 +245,31 @@ public class BizOrderHeaderController extends BaseController {
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         if ("CONSIGNED_ORDER".equals(bizOrderHeader.getTargetPage())){
             List<BizOrderHeader> bizOrderHeaderList = page.getList();
+            List<BizOrderHeader> bizOrderHeaderListNew = new ArrayList<BizOrderHeader>();
             if (CollectionUtils.isNotEmpty(bizOrderHeaderList)) {
                 for (BizOrderHeader orderHeader :bizOrderHeaderList) {
+                    BigDecimal commission = BigDecimal.ZERO;
                     List<BizOrderDetail> orderDetails = orderHeader.getOrderDetailList();
                     if (CollectionUtils.isNotEmpty(orderDetails)) {
+                        BigDecimal detailCommission = BigDecimal.ZERO;
                         for (BizOrderDetail orderDetail : orderDetails) {
                             BizOpShelfSku bizOpShelfSku = orderDetail.getSkuInfo().getBizOpShelfSku();
                             BigDecimal orgPrice = new BigDecimal(bizOpShelfSku.getOrgPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
                             BigDecimal salePrice = new BigDecimal(bizOpShelfSku.getSalePrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
                             Integer ordQty = orderDetail.getOrdQty();
+                            BigDecimal commissionRatio = bizOpShelfSku.getCommissionRatio();
+                            if (commissionRatio == null || commissionRatio.compareTo(BigDecimal.ZERO) <= 0) {
+                                commissionRatio = BigDecimal.ZERO;
+                            }
+                            detailCommission = (salePrice.subtract(orgPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
+                            commission = commission.add(detailCommission);
                         }
                     }
+                    orderHeader.setConsignedMoney(commission);
+                    bizOrderHeaderListNew.add(orderHeader);
                 }
             }
+            page.setList(bizOrderHeaderListNew);
         }
 
         model.addAttribute("page", page);
