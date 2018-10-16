@@ -189,18 +189,22 @@
 	                        	var staPayBtnTxt = '';
 	                        	var staPayBtnes = '';
 	                        	var sta = '';
+	                        	console.log(item.commonProcess.type)
+	                        	console.log(item.bizOrderHeader)
+	                        	console.log(item.bizRequestHeader)
+	                        	console.log(_this.OrdFlagpay)
 	                        	if(item.commonProcess.type != -1){
 	                        		if(item.bizOrderHeader != null){
 //	                        			console.log(_this.OrdFlagpay)
 	                        			//订单
-	                        			if(_this.OrdFlagpay==true){
+	                        			if(_this.OrdFlagpay == true){
 	                        				staPayBtnTxt = '支付列表';
 	                        				staPayBtnes = 'staPayBtnes';
 	                        			}
 	                        		}
 	                        		if(item.bizRequestHeader != null){
 	                        			//备货单
-	                        			if(_this.OrdFlagpay==true){
+	                        			if(_this.OrdFlagpay == true){
 	                        				staPayBtnTxt = '支付列表';
 	                        				staPayBtnes = 'staPayBtnes';
 	                        			}	                        			
