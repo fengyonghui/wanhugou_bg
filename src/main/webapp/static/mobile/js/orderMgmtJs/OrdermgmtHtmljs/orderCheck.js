@@ -5,32 +5,56 @@
 		this.expTipNum = 0;
 		this.prew = false;
 		this.checkResult = false;
+		this.DOPOFlag = false;
+		this.POFlag = false;
 		this.poId = '';
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
+//			权限:
+//			biz:order:bizOrderHeader:audit    DO、JO
+//			biz:po:bizPoHeader:audit     PO
+			this.getPermissionList1('biz:order:bizOrderHeader:audit', 'DOPOFlag');
+			this.getPermissionList2('biz:po:bizPoHeader:audit', 'POFlag');
 			this.pageInit(); //页面初始化
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 					//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
-//			_this.btnshow()
 			_this.getData();
-//			_this.changePrice();
 			_this.addRemark();
 		},
-//		btnshow: function() {
-//			var _this = this;
-//			$('input[type=radio]').on('change', function() {
-//				if(this.id && this.checked) {
-//					_this.prew = true
-//				} else {
-//					_this.prew = false
-//				}
-//			})
-//		},
+		getPermissionList1: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.DOPOFlag = res.data;
+                    console.log(_this.DOPOFlag)
+                }
+            });
+        },
+        getPermissionList2: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+//              	console.log(res.data)
+                    _this.POFlag = res.data;
+                    console.log(_this.POFlag)
+                }
+            });
+        },
 		getData: function() {
 			var _this = this;
 			$('#schedulingTxt').hide();
@@ -48,6 +72,7 @@
 					/*判断是否是品类主管*/
 					console.log(res.data.createPo)
 					$('#createPo').val(res.data.createPo);
+					$("#soId").val(res.data.bizOrderHeader.id);
 					var ordLastDate = '';
 					if(res.data.createPo == 'yes') {	//品类主管审核才生成PO
 						ordLastDate = '<label>最后时间：</label>'+
@@ -188,8 +213,14 @@
 					_this.statusListHtml(res.data);//状态流程
 					_this.checkProcessHtml(res.data);//审核流程
 					_this.commodityHtml(res.data);//商品信息
-					_this.comfirDialig(res.data);//审核
-					
+					var checkType = _this.userInfo.checkType;
+//					if(checkType == "auditSo") {
+//						//支出信息的审核
+//						_this.comfirDialigs()
+//					}else {
+						//订单审核
+						_this.comfirDialig(res.data);//审核
+//					}
                 }
             });
 		},
@@ -516,96 +547,124 @@
 				})
 			});
 		},
-//		changePrice: function() {
+//		comfirDialigs: function() {
 //			var _this = this;
-//			document.getElementById("changePriceBtn").addEventListener('tap', function(e) {
-//				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
-//				var btnArray = ['取消', '确定'];
-//				mui.confirm('确定修改价格吗？', '系统提示！', btnArray, function(choice) {
+//			document.getElementById("rejectBtns").addEventListener('tap', function() {
+//				var id= $(this).attr('soId');
+//				var currentType= $('#currentType').val();
+//				var btnArray = ['否', '是'];
+//				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
 //					if(choice.index == 1) {
-//						var ss = $('#staAdjustmentMoney').val();
-//						IsNum(ss)
-//						function IsNum(num) {
-//							if (num) {
-//								var reNum = /^\d+(\.\d+)?$/;
-//								if(reNum.test(num)) {
-//									var orderId = _this.userInfo.staOrdId;
-//					                var totalExp = $('#staAdjustmentMoney').val();
-//					                var totalDetail =$('#staPototal').val();
-//					                $.ajax({
-//					                    type:"post",
-//					                    url:"/a/biz/order/bizOrderHeader/checkTotalExp4Mobile",
-//					                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
-//					                    success:function (data) {
-//					                    	var dataVal=JSON.parse(data)
-//					                        if (dataVal.data.resultValue == "serviceCharge") {
-//					                            mui.toast("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
-//					                        } else if (dataVal.data.resultValue == "orderLoss") {
-//					                            mui.toast("优惠后订单金额不能低于结算价，请修改调整金额");
-//					                        } else if (dataVal.data.resultValue == "orderLowest") {
-//					                            mui.toast("优惠后订单金额不能低于结算价的95%，请修改调整金额");
-//					                        } else if (dataVal.data.resultValue == "orderLowest8") {
-//					                            mui.toast("优惠后订单金额不能低于结算价的80%，请修改调整金额");
-//					                        } else if (dataVal.data.resultValue == "ok") {
-//					                            $.ajax({
-//					                                type:"post",
-//					                                url:"/a/biz/order/bizOrderHeader/saveBizOrderHeader4Mobile",
-//					                                data:{orderId:orderId,money:totalExp},					                              
-//					                                success:function(flag){
-//					                    	            var flagVal=JSON.parse(flag)
-//					                                    if(flagVal.data.flag=="ok"){
-//					                                        mui.toast("修改成功！");
-//					                                       _this.getData();
-//					                                    }else{
-//					                                        mui.toast(" 修改失败 ");
-//					                                    }
-//					                                }
-//					                            });
-//					                        }
-//					                    }
-//					                });									
-//									return true;
+//						var btnArray = ['取消', '确定'];
+//						mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
+//							if(a.index == 1) {
+//								var rejectTxt = a.value;
+//								if(a.value == '') {
+//									mui.toast('驳货理由不能为空！')
 //								} else {
-//									if(num < 0) {
-//										mui.toast("价格不能为负数！");
-//									}else {
-//										mui.toast("价格必须为数字！");
-//									}
-//									return false;
+//									_this.payOutAudit(id,rejectTxt, 2,currentType)
 //								}
-//							}else {
-//								mui.toast("价格不能为空！");
-//								return false;
-//							}
+//							} else {}
+//						})
+//					} else {}
+//				})
+//			});
+//			document.getElementById("checkBtns").addEventListener('tap', function(e) {
+//				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+//				var id= $(this).attr('soId');
+//				var currentType= $('#currentType').val();
+//				var btnArray = ['取消', '确定'];
+//				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
+//					if(e.index == 1) {
+//						var inText = e.value;
+//						if(e.value == '') {
+//							mui.toast('通过理由不能为空！')
+//							return;
+//						} else {
+//							var btnArray = ['否', '是'];
+//							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
+//								if(choice.index == 1) {
+//									_this.payOutAudit(id,inText, 1,currentType)
+//								} else {}
+//							})
 //						}
-//					} else {						
-//					}
+//					} else {}
 //				})
 //			});
 //		},
+//		payOutAudit: function(id,inText, num,currentType) {
+//			var _this = this;
+//			$.ajax({
+//				type: "GET",
+//				url: "/a/biz/po/bizPoHeader/audit",
+//				data: {
+//					id: id,
+//					currentType: currentType,
+//					fromPage: 'requestHeader',
+//					auditType: num,
+//					description: inText
+//				},
+//				dataType: "json",
+//				success: function(res) {
+//					if(res.ret == true) {
+//						mui.toast('操作成功!')
+//						GHUTILS.OPENPAGE({
+//							url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+//							extras: {}
+//						})
+//					}
+//					if(res.ret == false) {
+//						mui.toast(res.errmsg)
+//					}
+//				},
+//				error: function(e) {
+//					//服务器响应失败处理函数
+//				}
+//			});
+//
+//		},
 		comfirDialig: function(data) {
 			var _this = this;
-			console.log(data)
+			var id = data.entity2.bizPoHeader.id;
 			var ordType = '';
 			var commonProcessList = '';
 			if(data.entity2.bizPoHeader) {
 				commonProcessList = data.entity2.bizPoHeader.commonProcessList;
+				var comProListLen = commonProcessList.length;
 			}
 			var bizPoHeader = data.entity2.bizPoHeader;
-			/*代采订单*/
-			console.log(data.entity2.str)
-			console.log(data.entity2.orderType)
-			console.log(data.type)
-			console.log(data.currentAuditStatus.type)
-			if(data.entity2.str == 'audit' && data.entity2.orderType == 5) {
-				if(commonProcessList == null) {
-					ordType = 'DO'
+			if(_this.DOPOFlag == true) {
+				/*代采订单*/
+				if(data.entity2.str == 'audit' && data.entity2.orderType == data.PURCHASE_ORDER) {
+					if(commonProcessList == null) {
+						ordType = 'DO'
+					}
 				}
-			}
-			/*普通订单*/
-			if(data.entity2.str == 'audit' && (data.type != 0 || data.type != 1)) {
-				if(data.entity2.orderType == 1 && data.currentAuditStatus.type != 777 && data.currentAuditStatus.type != 666) {
-					ordType = 'JO'
+				/*普通订单*/
+				if(data.entity2.str == 'audit' && (data.type != data.REFUND || data.type != data.ORDINARY_ORDER)) {
+					if(data.entity2.orderType == 1 && data.currentAuditStatus.type != 777 && data.currentAuditStatus.type != 666) {
+						ordType = 'JO'
+					}
+				}
+			}	
+			//采购单---支出信息审核
+			if(_this.POFlag == true) {
+				if(data.entity2.str == 'audit') {
+					if(data.orderType != data.PURSEHANGER) {
+						if(commonProcessList != null 
+						&& comProListLen > 0
+						&& data.currentAuditStatus.type == 777 || data.currentAuditStatus.type == 666) {
+							$("#currentType").val(data.purchaseOrderProcess.code);
+							ordType = 'PO'
+						}
+					}
+					if(data.orderType == data.PURSEHANGER) {
+						if(commonProcessList != null
+						&& comProListLen > 0) {
+							$("#currentType").val(data.purchaseOrderProcess.code);
+							ordType = 'PO'
+						}
+					}
 				}
 			}
 			console.log(ordType)
@@ -628,6 +687,9 @@
 									}
 									if(ordType == 'DO') {
 										_this.auditDo(rejectTxt,2,createPo,data)
+									}
+									if(ordType == 'PO') {
+										_this.auditPo(rejectTxt,2,id)
 									}
 								} else {}
 							})
@@ -665,12 +727,13 @@
 									if(_this.checkResult == false) {
 										console.log(ordType)
 										if(ordType == 'JO') {
-											console.log('JO')
 											_this.auditJo(inText,1,createPo,data)
 										}
 										if(ordType == 'DO') {
-											console.log('DO')
 											_this.auditDo(inText,1,createPo,data)
+										}
+										if(ordType == 'PO') {
+											_this.auditPo(inText,1,id)
 										}
 									}
 								} else {}
@@ -813,8 +876,6 @@
 		                        if(resultDataArr[0] == "采购单生成") {
 		                            _this.poId = resultDataArr[1];
 		                            var schedulingType = $("input[name='schedulType']:checked").val();
-		                            console.log(_this.poId)
-		                            console.log(schedulingType)
 		                            if (schedulingType == 0) {
 //		                            	var purchNums = $('#purchNum').val();
 //		                            	console.log(purchNums)
@@ -846,6 +907,37 @@
 //				    console.info(e);
 				}
 			});
+		},
+		auditPo: function(Text,num,id) {
+			var _this = this;
+            var currentType = $('#currentType').val();
+            $.ajax({
+                url: '/a/biz/po/bizPoHeader/audit',
+                dataType: "json",
+                data: {
+                	"id": id, 
+                	"currentType": currentType, 
+                	"auditType": num, 
+                	"description": Text, 
+                	"fromPage": "orderHeader"
+            	},
+                type: 'get',
+                success: function (result) {
+                	console.log(result)
+                    if(result.ret == true || result.ret == 'true') {
+                        mui.toast('操作成功!')
+						GHUTILS.OPENPAGE({
+							url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
+							extras: {}
+						})
+                    }else {
+                        alert(result.errmsg);
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
 		},
 		formatDateTime: function(unix) {
     		var now = new Date(parseInt(unix) * 1);
