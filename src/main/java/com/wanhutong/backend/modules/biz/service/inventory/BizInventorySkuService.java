@@ -317,6 +317,10 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
             List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
             if (CollectionUtils.isNotEmpty(requestDetailList)) {
                 for (BizRequestDetail requestDetail : requestDetailList) {
+                    if (requestDetail.getActualQty() == null) {
+                        continue;
+                    }
+                    Integer outQty = requestDetail.getOutQty();
                     requestDetail.setOutQty(requestDetail.getRecvQty() - requestDetail.getActualQty());
                     bizRequestDetailService.save(requestDetail);
 					BizInventorySku inventorySku = new BizInventorySku();
@@ -339,17 +343,17 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 					if (CollectionUtils.isNotEmpty(inventorySkuList)) {
 						BizInventorySku invSku = inventorySkuList.get(0);
 						int stock = invSku.getStockQty();
-						Integer num = requestDetail.getRecvQty() - (requestDetail.getOutQty() == null ? 0 : requestDetail.getOutQty()) - requestDetail.getActualQty();
-						invSku.setStockQty(invSku.getStockQty() - num);
+						Integer num = requestDetail.getRecvQty() - (outQty == null ? 0 : outQty) - requestDetail.getActualQty();
+						invSku.setStockQty(stock - num);
 						bizInventorySkuDao.update(invSku);
 						//盘点记录
-						while (stock != invSku.getStockQty()) {
+						if (stock != invSku.getStockQty()) {
 							BizInventoryViewLog viewLog = new BizInventoryViewLog();
 							viewLog.setInvInfo(new BizInventoryInfo(invId));
 							viewLog.setInvType(inventorySku.getInvType());
 							viewLog.setSkuInfo(requestDetail.getSkuInfo());
 							viewLog.setStockQty(stock);
-							viewLog.setStockChangeQty(num);
+							viewLog.setStockChangeQty(-num);
 							viewLog.setNowStockQty(invSku.getStockQty());
 							viewLog.setRequestHeader(bizRequestHeader);
 							bizInventoryViewLogService.save(viewLog);
