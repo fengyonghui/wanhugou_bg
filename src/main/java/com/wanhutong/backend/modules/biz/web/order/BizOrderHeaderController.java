@@ -1171,7 +1171,7 @@ public class BizOrderHeaderController extends BaseController {
         }
         model.addAttribute("createPo",createPo);
 
-        return "modules/biz/order/bizOrderHeaderForm";
+        return "modules/biz/order/bizConsignedOrderHeaderForm";
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:view")
