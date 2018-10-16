@@ -18,6 +18,7 @@
 		},
 		pageInit: function() {
 			var _this = this;
+			_this.testData();
 			_this.getData();
 			_this.ajaxorderStatus();//订单状态
 			_this.ajaxcheckStatus();//审核状态
