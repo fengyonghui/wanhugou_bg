@@ -77,15 +77,16 @@
 //                                 $('#saveDetailBtn').attr('saleqty',skuInfo.id);
 //                                 $('#saveDetailBtn').attr('detaId',skuInfo.skuInfo.id);
 //	                                //skuInfoId+=","+skuInfo.id;
-//	                                if($("#commodityMenu").children("#serskudiv_"+skuInfo.id).length>0){
-//	                                    return;
-//	                                }skuValueList
+                                if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length>0){
+                                	mui.toast('已有此类商品！请选择其他商品！');
+                                    return;
+                                }
 			                    //商品属性
 								var ListHtml="";
 								$.each(skuInfo.skuValueList, function(i, item) {
 								 	ListHtml+=item.value;                                                              
 								});								
-	                            resultListHtml += '<div class="mui-row app_bline">'+ 
+	                            resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">'+ 
 	                                '<div class="mui-row lineStyle">'+ 
 				                    '<li class="mui-table-view-cell app_bline3">'+ 
 				                    '<div class="mui-input-row ">'+ 
@@ -146,17 +147,29 @@
 				                       '</div>'+
 				                       '<button id="'+skuInfo.id+'" detaId="'+skuInfo.skuInfo.id+'" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>'+ 
 				                    '</div>'
-	                            });
-//	                            t++;
+	                           });
 	                            $("#searchInfo").append(resultListHtml);
+	                            //判断是否有相同的商品 
+	                            var dis=$("#searchInfo .addSkuButton");//可选商品
+	                            var dos=$("#commodityMenu .addSkuButton ");//订单商品
+	                            $.each(dis,function(n,v){
+	                            	var s=$(this).attr('id')
+	                            	console.log(s)	
+	                            	$.each(dos,function(n,v){
+	                            		var that=this;	                            	
+		                            	var y=$(that).attr('id')
+		                            	console.log(y)
+		                            	var divs=$("#searchInfo #serskudiv_"+s);
+		                            	if (s==y) {
+		                            		mui.toast('已有此类商品！请选择其他商品！！');
+		                            		divs.html('');
+		                            	}
+		                            })
+	                            })
 	                        })
-//	                        var addButtonHtml = '<button type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>';
-//                     		$("#searchInfo").append(addButtonHtml);
-//                      }
                     }
                 })
             });
-            //$("#searchInfo").html(htmlCommodity)
             _this.addSku();
         },
         //查询之后添加

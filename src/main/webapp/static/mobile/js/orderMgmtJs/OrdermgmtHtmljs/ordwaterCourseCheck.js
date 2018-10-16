@@ -38,7 +38,8 @@
                 	$('#orWaterCouNum').val(bizOrderHeaderUnline.orderHeader.orderNum);//订单号
                 	$('#waterCouNum').val(bizOrderHeaderUnline.serialNum);//流水号
                 	$('#unlineMoney').val(bizOrderHeaderUnline.unlinePayMoney);//线下付款金额
-                	$('#courseId').val(bizOrderHeaderUnline.id);//线下付款金额
+                	$('#realMoney').val($('#unlineMoney').val());//实收金额
+//              	$('#courseId').val(bizOrderHeaderUnline.id);
                 	//单据凭证
                 	if(imgUrlList){
                 		$.each(imgUrlList, function(i,item) {
@@ -74,10 +75,11 @@
 						$.ajax({
 	                		type: "GET",
 			                url: "/a/biz/order/bizOrderHeaderUnline/save4Mobile",
-			                data:{'orderHeader.orderNum':$('#orWaterCouNum').val(),
+			                data:{
+			                	'orderHeader.orderNum':$('#orWaterCouNum').val(),
 				                serialNum:$('#waterCouNum').val(),
 				                unlinePayMoney:$('#unlineMoney').val(),
-				                realMoney:$('#unlineMoney').val(),
+				                realMoney:$('#realMoney').val(),
 				                id:courseId
 				            },
 			                dataType: "json",

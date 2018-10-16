@@ -38,6 +38,7 @@
                 	$('#orWaterCouNum').val(bizOrderHeaderUnline.orderHeader.orderNum);//订单号
                 	$('#waterCouNum').val(bizOrderHeaderUnline.serialNum);//流水号
                 	$('#unlineMoney').val(bizOrderHeaderUnline.unlinePayMoney);//线下付款金额
+                	$('#realMoney').val($('#unlineMoney').val());
                 	//单据凭证
                 	if(imgUrlList) {
                 		$.each(imgUrlList, function(i,item) {
