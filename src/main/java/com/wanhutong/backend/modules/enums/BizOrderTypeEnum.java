@@ -10,7 +10,8 @@ public enum BizOrderTypeEnum {
     ALLOCATION_PURCHASE(3, "配资采购"),
     MICRO_BUSINESS_ORDER(4, "微商订单"),
     PURCHASE_ORDER(5, "代采订单"),
-    PHOTO_ORDER(6, "拍照下单");
+    PHOTO_ORDER(6, "拍照下单"),
+    COMMISSION_ORDER(8, "零售订单");
 
     private Integer state;
     private String desc;
