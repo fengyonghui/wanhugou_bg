@@ -240,10 +240,14 @@
 		a.status as "delFlag"
 		from biz_send_goods_record a
 		LEFT JOIN biz_inventory_info inv ON inv.id = a.inv_id
+		LEFT JOIN sys_office cent ON inv.cust_id = cent.id
 		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
 		LEFT JOIN sys_office s ON a.cust_id = s.id
 		left join sys_user su on su.id=a.create_id
 		where a.biz_status = 0
+		<if test="sqlMap != null and sqlMap.bcgr != null and sqlMap.bcgr != ''">
+			${sqlMap.bcgr}
+		</if>
 		union all
 		select
 		b.id as "id",
@@ -275,6 +279,11 @@
 		LEFT JOIN sys_office cent ON cent.id = inv.cust_id
 		LEFT JOIN biz_sku_info sku ON b.sku_id = sku.id
 		left join sys_user su on su.id=b.create_id
+		WHERE
+		1 =1
+		<if test="sqlMap != null and sqlMap.bcgr != null and sqlMap.bcgr != ''">
+			${sqlMap.bcgr}
+		</if>
 		) collectSend
 		<where>
 			collectSend.delFlag=1

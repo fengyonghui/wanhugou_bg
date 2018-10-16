@@ -116,7 +116,6 @@
 				<th>采购中心</th>
 				<th>备货方</th>
 				<th>备货单号</th>
-				<th>品类</th>
 				<th>供应商</th>
 				<th>审核状态</th>
 				<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><th>操作</th></shiro:hasPermission>
@@ -141,9 +140,6 @@
 				</td>
 				<td>
 					${bizRequestHeader.reqNo}
-				</td>
-				<td>
-					${bizRequestHeader.varietyInfo.name}
 				</td>
 				<td>
 					${bizRequestHeader.vendName}
