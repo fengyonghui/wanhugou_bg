@@ -102,6 +102,7 @@
                     var orderId = $("#id").val();
                     var totalExp = $("#totalExp").val();
                     var totalDetail = $("#totalDetail").val();
+
                     $.ajax({
                         type:"post",
                         url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
