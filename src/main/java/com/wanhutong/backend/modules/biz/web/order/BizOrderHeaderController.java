@@ -2335,7 +2335,7 @@ public class BizOrderHeaderController extends BaseController {
 
         User user = UserUtils.getUser();
 
-        BigDecimal resultPrice = totalDetail.subtract(totalExp);
+        BigDecimal resultPrice = totalDetail.subtract(totalExp).add(freight);
 
         if (parse != null && (System.currentTimeMillis() < parse.getTime()) && allActivityShlef) {
             if (resultPrice.compareTo(totalBuyPrice.multiply(BigDecimal.valueOf(0.8))) < 0) {
@@ -2438,7 +2438,7 @@ public class BizOrderHeaderController extends BaseController {
 
         User user = UserUtils.getUser();
 
-        BigDecimal resultPrice = totalDetail.subtract(totalExp);
+        BigDecimal resultPrice = totalDetail.subtract(totalExp).add(freight);
 
         if (parse != null && (System.currentTimeMillis() < parse.getTime()) && allActivityShlef) {
             if (resultPrice.compareTo(totalBuyPrice.multiply(BigDecimal.valueOf(0.8))) < 0) {
