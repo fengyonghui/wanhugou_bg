@@ -32,11 +32,13 @@
                 success: function(res){
                     var htmlList = '';
                     $.each(res.data, function(i, item) {
-                       		 htmlList += '<li class="mui-table-view-cell mui-collapse menuBtn" indexNum = "'+ i+'" dataId="'+item.id+'">'+
+                    	if(item.id == 121 || item.id == 122 || item.id == 227) {
+                    		htmlList += '<li class="mui-table-view-cell mui-collapse menuBtn" indexNum = "'+ i+'" dataId="'+item.id+'">'+
 									'<a class="mui-navigate-right">'+ item.name + '</a>'+
 									'<div  class = "mui-collapse-content childData'+ i+'">'
 									'</div>'+
 									'</li>'
+                    	}
                     });
                 	$('#menuMaget').html(htmlList)
                 }
@@ -57,7 +59,8 @@
 //                      	console.log(res)
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
-                                if(item.id!==694){
+                                if(item.id == 132 || item.id == 229 || item.id == 679 
+                                	|| item.id == 235 || item.id == 727 || item.id == 699){
                                 	pHtmlList += '<p class="childMenu" purchId="'+item.id+'">'+ item.name+'</p>'
                                 }
                             });
