@@ -676,14 +676,14 @@
 			/*修改*/
 			$('.content_part').on('tap', '.orAmendBtn', function() {
 				var url = $(this).attr('url');
-				var paymentId = $(this).attr('paymentId');
+				var staordid = $(this).attr('staordid');
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(paymentId == paymentId) {
+				} else if(staordid == staordid) {
 					GHUTILS.OPENPAGE({
 						url: "../../html/inventoryMagmetHtml/inventoryAmend.html",
 						extras: {
-							paymentId: paymentId,
+							staordid: staordid,
 							createPayStr: 'createPay',
 						}
 					})
