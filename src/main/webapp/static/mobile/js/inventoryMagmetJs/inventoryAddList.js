@@ -20,6 +20,8 @@
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
+			this.ajaxTypeStatus();
+			
 		},
 		pageInit: function() {
 			var _this = this;
@@ -59,6 +61,19 @@
 		getData: function() {
 			var _this = this;
             _this.removeItem();
+		},
+		sureSelect:function(){
+			var _this = this;
+				            //备货单类型
+	            var r2 = document.getElementsByName("headerType");
+	            var headerType = "";
+	            for (var i = 0; i < r2.length; i++) {
+	                if (r2[i].checked == true) {
+	                    headerType = r2[i].value;
+	                }
+	            };
+//	            var headerType=$('#headerType').val();
+	            console.log(headerType)
 		},
         saveDetail: function (userId) {
             var _this = this;
@@ -120,36 +135,38 @@
 	                if (r2[i].checked == true) {
 	                    localOriginType = r2[i].value;
 	                }
-	            }
-                $.ajax({
-                    type: "post",
-                    url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
-                    dataType: 'json',
-                    data: {
-                    	"fromOffice.id": _this.fromOfficeId, //采购中心 id
-                    	'fromOffice.name': _this.fromOfficeName,//采购中心名称
-                    	'fromOffice.type': _this.fromOfficeType,//采购中心机构类型1：公司；2：部门；3：小组
-                    	'bizVendInfo.office.id ': _this.bizOfficeId,//供应商 id
-                    	'bizVendInfo.office.name': _this.bizOfficeName,//供应商名称
-                    	'bizVendInfo.office.type': _this.bizOfficeType,//供应商所在机构类型
-                    	fromType: localOriginType, //备货方
-                    	recvEta: inPoLastDaVal, //newinput02期望收货时间
-                    	remark: inPoRemarkVal, //备注信息
-                    	bizStatus: bizStatusVal, //业务状态
-                    	skuInfoIds: _this.skuInfoIds, //要添加的商品 id
-                    	reqQtys: _this.reqQtys //申报数量
-                    },
-                    success: function (resule) {
-                        if (resule == true) {
-                            mui.toast("添加备货单成功！");
-                            GHUTILS.OPENPAGE({
-                                url: "../../html/inventoryMagmetHtml/inventoryList.html",
-                                extras: {
-                                }
-                            })
-                        }
-                    }
-                })
+	            };
+
+//              $.ajax({
+//                  type: "post",
+//                  url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
+//                  dataType: 'json',
+//                  data: {
+//                  	'headerType':
+//                  	"fromOffice.id": _this.fromOfficeId, //采购中心 id
+//                  	'fromOffice.name': _this.fromOfficeName,//采购中心名称
+//                  	'fromOffice.type': _this.fromOfficeType,//采购中心机构类型1：公司；2：部门；3：小组
+//                  	'bizVendInfo.office.id ': _this.bizOfficeId,//供应商 id
+//                  	'bizVendInfo.office.name': _this.bizOfficeName,//供应商名称
+//                  	'bizVendInfo.office.type': _this.bizOfficeType,//供应商所在机构类型
+//                  	fromType: localOriginType, //备货方
+//                  	recvEta: inPoLastDaVal, //newinput02期望收货时间
+//                  	remark: inPoRemarkVal, //备注信息
+//                  	bizStatus: bizStatusVal, //业务状态
+//                  	skuInfoIds: _this.skuInfoIds, //要添加的商品 id
+//                  	reqQtys: _this.reqQtys //申报数量
+//                  },
+//                  success: function (resule) {
+//                      if (resule == true) {
+//                          mui.toast("添加备货单成功！");
+//                          GHUTILS.OPENPAGE({
+//                              url: "../../html/inventoryMagmetHtml/inventoryList.html",
+//                              extras: {
+//                              }
+//                          })
+//                      }
+//                  }
+//              })
             })
         },
         removeItem:function () {
@@ -363,7 +380,7 @@
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
                 _this.bizOfficeId = $(this).attr("id");
                 _this.bizOfficeName = $(this).attr("name");
-                _this.bizOfficeType = $(this).attr("type");
+                _this.bizOfficeType = $(this).attr("type");                
 				$(newinput).val($(this).text());
 				$(input_div).hide();
 				$(hideSpanAdd).hide();
@@ -495,6 +512,26 @@
 					});
 					$('#inputDivAdd').html(optHtml+htmlStatusAdd)
 					_this.getData()
+				}
+			});
+		},
+		ajaxTypeStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlStatusAdd = ''
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/dict/listData',
+				data: {type:'req_header_type'},
+				dataType: 'json',
+				success: function(res) {
+					console.log(res)
+					$.each(res, function(i, item) {
+						htmlStatusAdd += '<option class="soption" name="headerType" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort + '" value="' + item.value + '">' + item.label + '</option>'
+					});
+					$('#headerType').html(optHtml+htmlStatusAdd)
+					_this.getData();
+					_this.sureSelect();
 				}
 			});
 		}
