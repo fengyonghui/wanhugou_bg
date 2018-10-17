@@ -62,10 +62,13 @@
                         var data = JSON.parse(result).data;
 //                      console.log(data)
 //                      if($.isEmptyObject(data)){
-//                      	mui.toast("您输入的货号有误，或者此供应商暂无商品！");
+//                      	mui.toast("暂无商品！");
 //	                    }else {
 	                        $.each(data,function (keys,skuInfoList) {
-	                        	console.log(skuInfoList)
+//	                        	console.log(skuInfoList)
+	                        	if(skuInfoList==""){
+	                        		mui.toast("暂无商品！");
+	                        	}
 	                            var prodKeys= keys.split(",");
 	                            var prodId= prodKeys[0];
 	                            var prodUrl= prodKeys[2];
@@ -73,7 +76,7 @@
 	                            var resultListHtml="";
 	                            var t=0;
 	                            $.each(skuInfoList,function (index,skuInfo) {
-                            		console.log(skuInfo);
+//                          		console.log(skuInfo);
 //                                 $('#saveDetailBtn').attr('saleqty',skuInfo.id);
 //                                 $('#saveDetailBtn').attr('detaId',skuInfo.skuInfo.id);
 //	                                //skuInfoId+=","+skuInfo.id;
@@ -145,7 +148,7 @@
 				                    '</div></li></div>'+
 				                    
 				                       '</div>'+
-				                       '<button id="'+skuInfo.id+'" detaId="'+skuInfo.skuInfo.id+'" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>'+ 
+				                       '<button id="'+skuInfo.id+'" detaid="'+skuInfo.skuInfo.id+'" type="submit" class="addSkuButton inAddBtn skuinfo_check app_btn_search mui-btn-blue mui-btn-block">添加</button>'+ 
 				                    '</div>'
 	                           });
 	                            $("#searchInfo").append(resultListHtml);
@@ -154,11 +157,9 @@
 	                            var dos=$("#commodityMenu .addSkuButton ");//订单商品
 	                            $.each(dis,function(n,v){
 	                            	var s=$(this).attr('id')
-	                            	console.log(s)	
 	                            	$.each(dos,function(n,v){
 	                            		var that=this;	                            	
-		                            	var y=$(that).attr('id')
-		                            	console.log(y)
+		                            	var y=$(that).attr('id');
 		                            	var divs=$("#searchInfo #serskudiv_"+s);
 		                            	if (s==y) {
 		                            		mui.toast('已有此类商品！请选择其他商品！！');
@@ -167,38 +168,58 @@
 		                            })
 	                            })
 	                        })
-                    }
+                    }   
                 })
             });
             _this.addSku();
         },
         //查询之后添加
         addSku:function () {
+//      	   var ss=$('#searchInfo .app_bline button');
+//          	console.log(ss)
             var _this = this;
-            mui('#searchInfo').on('tap','.addSkuButton',function(){
-            		var reqQtyId = $(this).attr('id');
-            		console.log(reqQtyId)//reqQtysTemp += "," + reqQty;
-            		_this.skuInFoIds +=  ","+ reqQtyId;
-            		_this.skuInfoIds += ","+ reqQtyId;
-            		var reqQtyIds = $(this).attr('detaId');
+            mui('#searchInfo').on('tap','.addSkuButton',function(){        	
+
+      		var reqQtyId = $(this).attr('id');
+            		console.log(reqQtyId)
+            		$('#skuInfoid').val(reqQtyId);           		            		           		
+            		var reqQtyIds = $(this).attr("detaid");
             		console.log(reqQtyIds)
-	            	_this.skuInfoIds2 += "," + reqQtyIds;
-	            	console.log(_this.skuInfoIds2)
-	            	var removeButtonHtml = '<button id="" type="submit" class="removeButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除</button>';             
-	                $(this).parent().append(removeButtonHtml)
+            		$('#detaId').val(reqQtyIds);
+	            	var removeButtonHtml = '<button id="'+reqQtyId+'" type="submit" class="removeButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除</button>'; 
+
+	                $(this).parent().append(removeButtonHtml);
 	            	$('#commodityMenu').append($(this).parent());
-	            	$(this).hide();            	
+	            	$(this).hide();  
+	            	_this.skuInFoIds +=reqQtyId+",";
+	            	console.log(_this.skuInFoIds);
+	            	_this.skuInfoIds2 += reqQtyIds+",";
+	            	console.log(_this.skuInfoIds2);
+	            	_this.skuInfoIds += reqQtyId+",";
+	            	console.log(_this.skuInfoIds);
+        		
             });
         },
         //订单商品移除按钮操作
         removeItem:function () {
             var _this = this;
             mui('#commodityMenu').on('tap','.removeButton',function(e){
+            	var reqQtyId = $(this).attr('id');
             	var addBtnId=$('#skuInfoid').val();
+            	var addBtndetaId=$('#detaId').val();           	
+            	console.log(addBtndetaId)
+            	console.log(_this.skuInFoIds)
+            	console.log(_this.skuInfoIds2)
+            	_this.skuInFoIds =  _this.skuInFoIds.replace(reqQtyId, "");
+            	_this.skuInfoIds2 = _this.skuInfoIds2.replace(addBtndetaId, "");
+            	_this.skuInfoIds =  _this.skuInFoIds.replace(reqQtyId, "");
+                console.log(_this.skuInFoIds)
+            	console.log(_this.skuInfoIds2)
             	$(this).hide();
-            	var addButtonHtml =  '<button id="'+ addBtnId +'" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>';
+            	var addButtonHtml =  '<button id="'+ addBtnId +'" detaId="'+addBtndetaId+'" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>';
             	$(this).parent().append(addButtonHtml)
             	$('#searchInfo').append($(this).parent());
+            	
             });
         },
         /*保存*/
@@ -209,13 +230,20 @@
             $('.inSaveBtn').on('tap','#saveDetailBtn', function() {
             	var statu=$(this).attr('statu');
             	var source=$(this).attr('source');
-            	var skuIds = _this.skuInFoIds.substring(1).split(",");
-            	var skuIds1 = _this.skuInfoIds.substring(1);
-            	var skuIds2 = _this.skuInfoIds2.substring(1);                
+            	console.log(_this.skuInFoIds)
+            	  console.log(_this.skuInfoIds)
+            	   console.log(_this.skuInfoIds2) 
+            	var skuIds = _this.skuInFoIds.substring(0,_this.skuInFoIds.length-1).split(",");
+            	var skuIds1 = _this.skuInfoIds.substring(0,_this.skuInFoIds.length-1);
+            	var skuIds2 = _this.skuInfoIds2.substring(0,_this.skuInFoIds.length-1);  
+            	 console.log(skuIds)
+            	  console.log(skuIds1)
+            	   console.log(skuIds2)
                 for (var j=0; j<skuIds.length; j++) {
                     var cheIds = skuIds[j];
                     console.log(cheIds)
-                    var reqQty = $("#reqQty_" + cheIds).val()
+                    //  $("#commodityMenu #reqQty_"+cheIds).val();
+                    var reqQty = $("#reqQty_"+cheIds).val();
                     console.log(reqQty)
                     if (reqQty == null || reqQty == "") {
                   	    mui.toast("请输入采购数量！！")
@@ -235,28 +263,28 @@
 					shelfSkus:skuIds1,//按钮上的id			
 				}; 
 				console.log(saveData)
-              	$.ajax({
-	                type: "post",
-	                url: "/a/biz/order/bizOrderDetail/save4Mobile",
-	                data: saveData,		                
-	                dataType: "json",
-	                success: function(rest){
-	                	console.log(rest);
-	                	if(rest.ret==true){		                		
-	                		mui.toast('保存成功！');
-	                		window.setTimeout(function(){
-			                	GHUTILS.OPENPAGE({
-									url:"../../../html/orderMgmtHtml/OrdermgmtHtml/orderAmend.html",
-										extras: {
-											staOrdId:orid,
-											source:source,
-											statu:statu
-										}
-								})
-		                	},500)
-	                	}
-	                }	
-				})
+//            	$.ajax({
+//	                type: "post",
+//	                url: "/a/biz/order/bizOrderDetail/save4Mobile",
+//	                data: saveData,		                
+//	                dataType: "json",
+//	                success: function(rest){
+//	                	console.log(rest);
+//	                	if(rest.ret==true){		                		
+//	                		mui.toast('保存成功！');
+//	                		window.setTimeout(function(){
+//			                	GHUTILS.OPENPAGE({
+//									url:"../../../html/orderMgmtHtml/OrdermgmtHtml/orderAmend.html",
+//										extras: {
+//											staOrdId:orid,
+//											source:source,
+//											statu:statu
+//										}
+//								})
+//		                	},500)
+//	                	}
+//	                }	
+//				})
 
 			})
 		},

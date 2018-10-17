@@ -1146,7 +1146,7 @@
             mui('#searchInfo').on('tap','.addSkuButton ',function(){
                 $(".skuinfo_check").each(function () {
                     var cheId = $(this)[0].id;
-
+//                  console.log(cheId)
                     var cheFlag = $("#" + cheId).is(':checked');
                     if (cheFlag == true) {
                         var cheDiv = $("#serskudiv_" + cheId);

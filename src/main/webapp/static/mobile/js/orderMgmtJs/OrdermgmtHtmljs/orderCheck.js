@@ -114,14 +114,32 @@
 						$('#staPayTime').val();
 						$('#staPayMoney').val();
 					}
+//					var RemarkHtml="";
+//					$.each(res.data.commentList, function(q, w) {
+//						console.log(w)						
+//						RemarkHtml +='<div class="">'+
+//						    w.comments
+//                          +
+//					    '</div>'
+//						$('#staPoRemark').html(RemarkHtml);//备注
+//					})
+					//备注
 					var RemarkHtml="";
-					$.each(res.data.commentList, function(q, w) {
-						console.log(w)						
-						RemarkHtml +='<div class="">'+
-						    w.comments
-                            +
-					    '</div>'
-						$('#staPoRemark').html(RemarkHtml);//备注
+					$.each(res.data.commentList, function(q, w) {						
+						RemarkHtml +='<li class="step_items">'+
+							'<div class="step_num_txt">'+
+								'<div class="">'+
+									w.comments +
+							    '</div>'+
+								'<div class="">'+
+                                    w.createBy.name +
+							    '</div>'+
+							    '<div class="">'+
+                                    _this.formatDateTime(w.createDate) +
+							    '</div>'+
+							'</div>'+
+						'</li>'
+						$('#Remarks').html(RemarkHtml);
 					})
 					//订单id
 					$('#ordId').val(_this.userInfo.staOrdId);					
@@ -533,12 +551,14 @@
 			                url:"/a/biz/order/bizOrderComment/addComment",
 			                data:{orderId:$('#ordId').val(),remark:inText},
 			                success:function (data) {
-			                	console.log(data)
 			                    if (data == "error") {
-			                        alert("添加订单备注失败，备注可能为空");
+			                        mui.toast("添加订单备注失败，备注可能为空!");
 			                    }
 			                    if (data == "ok") {
-			                        alert("添加订单备注成功");
+			                        mui.toast("添加订单备注成功!");
+			                        window.setTimeout(function(){
+					                    _this.getData();
+					                },500);
 			                    }
 			                }
 			            });

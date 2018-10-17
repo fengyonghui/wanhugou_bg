@@ -57,6 +57,7 @@
                         data: {parentId:dataId},
                         dataType: "json",
                         success: function(res){
+                        	console.log(res)
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
                                 if(item.mobileUrl){

@@ -29,7 +29,7 @@
 			this.getPermissionList('biz:po:bizPoHeader:createPayOrder','poCreatPayFlag')//申请付款po
 			this.getPermissionList('biz:po:bizPoHeader:edit','orCancAmenFlag')//修改、取消
 			this.getPermissionList('biz:po:bizPoHeader:confirmScheduling','affirmSchedulingFlag')
-			
+
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -179,7 +179,7 @@
 	                            	}
 	                            }else{
 	                            	paycheckTxt='当前无审批流程';
-	                            }  
+	                            }
 //	                            var values = item.bizStatus;
 //								$.ajax({
 //					                type: "GET",
@@ -194,7 +194,7 @@
 //					                success: function(res){
 //						                console.log(res)
 //					                }
-//					            });	
+//					            });
 					            if(_this.OrdFlaginfo == true) {
 					            	if(item.bizStatus != 10) {
 					            		//申请付款
@@ -238,7 +238,7 @@
 					//				                success: function(res){
 					//					                console.log(res)
 					//				                }
-					//				            });	
+					//				            });
 												if(item.bizPoPaymentOrder.id == null
 												&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
 					//							&& fns:getDictLabel(item.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
@@ -300,7 +300,7 @@
 					                			if(_this.OrdFlagpay == true){
 					                				staPayBtnTxt = '支付列表';
 					                				staPayBtnes = 'staPayBtnes';
-					                			}	                        			
+					                			}
 					                		}
 					                	}
 										//开启审核
@@ -332,7 +332,7 @@
 										var orCancleBtn = '';
 										var orCancleBtnTxt = '';
 					                	if(_this.orCancAmenFlag == true) {
-					                		if(item.commonProcess.purchaseOrderProcess.name == null 
+					                		if(item.commonProcess.purchaseOrderProcess.name == null
 				                			|| item.commonProcess.purchaseOrderProcess.name == '驳回') {
 					                			orAmendBtn = 'orAmendBtn';
 					                			orAmendBtnTxt = '修改';
@@ -476,37 +476,37 @@
 		        })
 		    }
 	    },
-		stOrdHrefHtml: function() {
-			var _this = this;
-			/*取消*/
-			$('.content_part').on('tap','.orCancleBtn',function(){
-            	var url = $(this).attr('url');
-				var staordid = $(this).attr('staordid');
+        stOrdHrefHtml: function() {
+            var _this = this;
+            /*取消*/
+            $('.content_part').on('tap','.orCancleBtn',function(){
+                var url = $(this).attr('url');
+                var staordid = $(this).attr('staordid');
                 if(url) {
-                	mui.toast('子菜单不存在')
+                    mui.toast('子菜单不存在')
                 }else if(staordid==staordid) {
-                	var btnArray = ['取消', '确定'];
-					mui.confirm('您确认要取消吗？', '系统提示！', btnArray, function(choice) {
-						if(choice.index == 1) {
-							$.ajax({
-				                type: "GET",
-				                url: "/a/biz/po/bizPoHeader/cancel4Mobile",
-				                data: {id:staordid},
-				                dataType: "json",
-				                success: function(res){
-				                	mui.toast('操作成功！')
-				                	GHUTILS.OPENPAGE({
-										url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
-										extras: {
-											
-										}
-									})
-			                	}
-			            	})
-						}else {
-							
-						}
-					})	
+                    var btnArray = ['取消', '确定'];
+                    mui.confirm('您确认要取消吗？', '系统提示！', btnArray, function(choice) {
+                        if(choice.index == 1) {
+                            $.ajax({
+                                type: "GET",
+                                url: "/a/biz/po/bizPoHeader/cancel4Mobile",
+                                data: {id:staordid},
+                                dataType: "json",
+                                success: function(res){
+                                    mui.toast('操作成功！')
+                                    GHUTILS.OPENPAGE({
+                                        url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+                                        extras: {
+
+                                        }
+                                    })
+                                }
+                            })
+                        }else {
+
+                        }
+                    })
                 }
 			}),
 			/*查询*/
@@ -522,7 +522,7 @@
 					})
 				}
 			}),
-		/*首页*/
+		    /*首页*/
 			$('#nav').on('tap','.staHomePage', function() {
 				var url = $(this).attr('url');
 				GHUTILS.OPENPAGE({
@@ -532,8 +532,8 @@
 					}
 				})
 			}),	
-		 /*审核*/
-	       $('.content_part').on('tap', '.staCheckBtns', function() {
+		    /*审核*/
+	        $('.content_part').on('tap', '.staCheckBtns', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staordid');//备货单 ID
 				var staOrdIdd = $(this).attr('staordids');//订单 ID
@@ -545,7 +545,6 @@
 				}
 				else if(staOrdId) {
 					//备货单
-//					alert(7)
 					GHUTILS.OPENPAGE({
 						url: baseURL,
 						extras: {
@@ -566,13 +565,11 @@
 				}
 			}),
 			//支付申请列表
-			 $('.content_part').on('tap', '.staPayBtnes', function() {
+			$('.content_part').on('tap', '.staPayBtnes', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staordid');//采购单id
                 var staOrderId = $(this).attr('staOrderId');//订单id
                 var staInvenId = $(this).attr('staInvenId');//备货单id
-//              console.log(typeof(staOrderId))
-//              console.log(staInvenId)
 				if(staInvenId!=""&&staOrderId=='undefined'){
 					GHUTILS.OPENPAGE({
 						//备货单						
@@ -596,8 +593,8 @@
 					})
 				}
 			}),
-		/*开启审核*/
-	       $('.content_part').on('tap', '.stastartCheckBtn', function() {
+		    /*开启审核*/
+	        $('.content_part').on('tap', '.stastartCheckBtn', function() {
 				var url = $(this).attr('url');
 				var paymentId = $(this).attr('paymentId');
 				if(url) {
@@ -689,7 +686,7 @@
 					})
 				}
 			})
-			
+
         },
         //时间戳转化方法：
 		formatDateTime: function(unix) {

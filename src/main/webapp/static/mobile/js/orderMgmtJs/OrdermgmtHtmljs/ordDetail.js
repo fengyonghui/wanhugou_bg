@@ -76,8 +76,7 @@
 					}
 					//备注
 					var RemarkHtml="";
-					$.each(res.data.commentList, function(q, w) {
-						console.log(w)						
+					$.each(res.data.commentList, function(q, w) {					
 						RemarkHtml +='<li class="step_items">'+
 							'<div class="step_num_txt">'+
 								'<div class="">'+

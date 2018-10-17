@@ -200,10 +200,14 @@
             mui('#searchInfo').on('tap','.addSkuButton',function(){
             	var reqQtyId=$(this).attr('id');
             	$('#skuInfoid').val(reqQtyId);
-        		_this.skuInFoIds +=  ","+ reqQtyId;
-        		_this.skuInfoIds += ","+ reqQtyId;
+//      		_this.skuInFoIds +=  ","+ reqQtyId;
+//      		_this.skuInfoIds += ","+ reqQtyId;
+                _this.skuInFoIds +=reqQtyId+",";
         		var reqQtyIds = $(this).attr('detaId');
-            	_this.skuInfoIds2 += "," + reqQtyIds;
+        		$('#detaId').val(reqQtyIds);
+//          	_this.skuInfoIds2 += "," + reqQtyIds;
+                _this.skuInfoIds2 += reqQtyIds+",";
+            	console.log(_this.skuInfoIds2)
             	var removeButtonHtml = '<button id="" type="submit" class="removeButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除</button>';             
                 $(this).parent().append(removeButtonHtml)
             	$('#commodityMenu').append($(this).parent());
@@ -215,8 +219,11 @@
             var _this = this;
             mui('#commodityMenu').on('tap','.removeButton',function(e){
             	var addBtnId=$('#skuInfoid').val();
+            	var addBtndetaId=$('#detaId').val();
+//          	var cheId = obj.split("_")[1]
             	$(this).hide();
-            	var addButtonHtml =  '<button id="'+ addBtnId +'" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>';
+//          	_this.skuInfoIds2 = (_this.skuInfoIds2.replace(addBtndetaId, "")).substring(1);
+            	var addButtonHtml =  '<button id="'+ addBtnId +'" detaId="'+addBtndetaId+'" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>';
             	$(this).parent().append(addButtonHtml)
             	$('#searchInfo').append($(this).parent());
             });
