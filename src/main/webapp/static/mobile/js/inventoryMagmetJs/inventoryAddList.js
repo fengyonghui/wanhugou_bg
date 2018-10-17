@@ -61,11 +61,12 @@
 		getData: function() {
 			var _this = this;
             _this.removeItem();
-            _this.sureSelect();
+           
 		},
 		sureSelect:function(){
 			var _this = this;
 			var optionsClass = $("#headerType option").eq($("#headerType").attr("selectedIndex"));//品类名称
+			console.log(optionsClass);
 				            //备货单类型
 //	            var r2 = document.getElementsByName("headerType");
 //	            var headerType = "";
@@ -137,37 +138,40 @@
 	                    localOriginType = r2[i].value;
 	                }
 	            };
-
-//              $.ajax({
-//                  type: "post",
-//                  url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
-//                  dataType: 'json',
-//                  data: {
-//                  	'headerType':
-//                  	"fromOffice.id": _this.fromOfficeId, //采购中心 id
-//                  	'fromOffice.name': _this.fromOfficeName,//采购中心名称
-//                  	'fromOffice.type': _this.fromOfficeType,//采购中心机构类型1：公司；2：部门；3：小组
-//                  	'bizVendInfo.office.id ': _this.bizOfficeId,//供应商 id
-//                  	'bizVendInfo.office.name': _this.bizOfficeName,//供应商名称
-//                  	'bizVendInfo.office.type': _this.bizOfficeType,//供应商所在机构类型
-//                  	fromType: localOriginType, //备货方
-//                  	recvEta: inPoLastDaVal, //newinput02期望收货时间
-//                  	remark: inPoRemarkVal, //备注信息
-//                  	bizStatus: bizStatusVal, //业务状态
-//                  	skuInfoIds: _this.skuInfoIds, //要添加的商品 id
-//                  	reqQtys: _this.reqQtys //申报数量
-//                  },
-//                  success: function (resule) {
-//                      if (resule == true) {
-//                          mui.toast("添加备货单成功！");
-//                          GHUTILS.OPENPAGE({
-//                              url: "../../html/inventoryMagmetHtml/inventoryList.html",
-//                              extras: {
-//                              }
-//                          })
-//                      }
-//                  }
-//              })
+//              _this.sureSelect();
+                var optionsClass = $("#headerType option").eq($("#headerType").attr("selectedIndex"));//品类名称
+			     console.log(optionsClass);
+                console.log(optionsClass.val())
+                $.ajax({
+                    type: "post",
+                    url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
+                    dataType: 'json',
+                    data: {
+                    	'headerType':optionsClass.val(),
+                    	"fromOffice.id": _this.fromOfficeId, //采购中心 id
+                    	'fromOffice.name': _this.fromOfficeName,//采购中心名称
+                    	'fromOffice.type': _this.fromOfficeType,//采购中心机构类型1：公司；2：部门；3：小组
+                    	'bizVendInfo.office.id ': _this.bizOfficeId,//供应商 id
+                    	'bizVendInfo.office.name': _this.bizOfficeName,//供应商名称
+                    	'bizVendInfo.office.type': _this.bizOfficeType,//供应商所在机构类型
+                    	fromType: localOriginType, //备货方
+                    	recvEta: inPoLastDaVal, //newinput02期望收货时间
+                    	remark: inPoRemarkVal, //备注信息
+                    	bizStatus: bizStatusVal, //业务状态
+                    	skuInfoIds: _this.skuInfoIds, //要添加的商品 id
+                    	reqQtys: _this.reqQtys //申报数量
+                    },
+                    success: function (resule) {
+                        if (resule == true) {
+                            mui.toast("添加备货单成功！");
+                            GHUTILS.OPENPAGE({
+                                url: "../../html/inventoryMagmetHtml/inventoryList.html",
+                                extras: {
+                                }
+                            })
+                        }
+                    }
+                })
             })
         },
         removeItem:function () {
