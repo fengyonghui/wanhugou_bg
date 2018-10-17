@@ -102,11 +102,16 @@ public class MenuController extends BaseController {
 	@ResponseBody
 	public String permissionList1(HttpServletRequest request, @RequestParam(value = "marking") String marking) {
 		Boolean falg = false;
-		List<String> permissionAllList = UserUtils.getPermissionAllList();
-		for (String permission:permissionAllList) {
-			if (permission.equals(marking)){
-				falg = true;
-				break;
+		User user = UserUtils.getUser();
+		if (user.isAdmin()) {
+			falg = true;
+		} else {
+			List<String> permissionAllList = UserUtils.getPermissionAllList();
+			for (String permission:permissionAllList) {
+				if (permission.equals(marking)){
+					falg = true;
+					break;
+				}
 			}
 		}
 		return JsonUtil.generateData(falg, request.getParameter("callback"));

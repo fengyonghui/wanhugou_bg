@@ -15,8 +15,8 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			this.getPermissionList('biz:po:sure:bizPoPaymentOrder','PaymentFlag')
-			this.getPermissionList2('biz:po:bizpopaymentorder:bizPoPaymentOrder:edit','editFlag')
 			this.getPermissionList1('biz:po:bizpopaymentorder:bizPoPaymentOrder:audit','checkFlag')
+			this.getPermissionList2('biz:po:bizpopaymentorder:bizPoPaymentOrder:edit','editFlag')
 			this.getPermissionList3('biz:po:payment:sure:pay','affirmFlag')
 //			if(this.userInfo.isFunc){
 //				this.seachFunc()
@@ -143,34 +143,25 @@
 //								var affirmBtnTxt = '';
 //								if(_this.editFlag == true) {
 //									if(_this.affirmFlag == true) {
-//										if(item.orderType == 1
+//										if(item.orderType == res.data.PO_TYPE   /*PO_TYPE=1*/
 //										&& item.id == bizPoHeader.bizPoPaymentOrder.id
 //										&& item.commonProcess.paymentOrderProcess.name == '审批完成'
-//										&& res.data.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成') {//PO_TYPE=1
-//											if() {}
-//											if() {}
-//											if() {}
+//										&& res.data.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成') {
+//											if(res.data.fromPage != null && res.data.fromPage == 'requestHeader') {
+//												affirmBtnTxt = '确认付款';
+//												affirmBtn = 'affirmBtn';
+//											}
+//											if(res.data.fromPage != null && res.data.fromPage == 'orderHeader') {
+//												affirmBtnTxt = '确认付款';
+//												affirmBtn = 'affirmBtn';
+//											}
+//											if(res.data.fromPage == null) {
+//												affirmBtnTxt = '确认付款';
+//												affirmBtn = 'affirmBtn';
+//											}
 //										}
 //									}
 //								}
-//								<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
-//									<shiro:hasPermission name="biz:po:payment:sure:pay">
-//										<c:if test="${bizPoPaymentOrder.orderType == PoPayMentOrderTypeEnum.PO_TYPE.type && bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id
-//										&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
-//										&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
-//										}">
-//											<c:if test="${fromPage != null && fromPage == 'requestHeader'}">
-//												<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认付款</a>
-//											</c:if>
-//											<c:if test="${fromPage != null && fromPage == 'orderHeader'}">
-//												<a href="${ctx}/biz/order/bizOrderHeader/form?bizPoHeader.id=${bizPoHeader.id}&id=${orderId}&str=pay">确认付款</a>
-//												<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>--%>
-//											</c:if>
-//											<c:if test="${fromPage == null}">
-//												<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
-//											</c:if>
-//										</c:if>
-//								</shiro:hasPermission>
 								//单次支付审批状态
 								var paymentOrderProcess="";
 								if(item.total == '0.00' && item.commonProcess.paymentOrderProcess.name != '审批完成'){
