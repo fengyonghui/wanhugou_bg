@@ -2335,7 +2335,7 @@ public class BizOrderHeaderController extends BaseController {
 
         User user = UserUtils.getUser();
 
-        BigDecimal resultPrice = totalDetail.subtract(totalExp);
+        BigDecimal resultPrice = totalDetail.subtract(totalExp).add(freight);
 
         if (parse != null && (System.currentTimeMillis() < parse.getTime()) && allActivityShlef) {
             if (resultPrice.compareTo(totalBuyPrice.multiply(BigDecimal.valueOf(0.8))) < 0) {
@@ -2408,8 +2408,12 @@ public class BizOrderHeaderController extends BaseController {
         if (orderDetailList != null && !orderDetailList.isEmpty()) {
             for (BizOrderDetail bizOrderDetail : orderDetailList) {
                 totalBuyPrice = totalBuyPrice.add(BigDecimal.valueOf(bizOrderDetail.getBuyPrice()).multiply(BigDecimal.valueOf(bizOrderDetail.getOrdQty())));
-                if (!StringUtils.equals(String.valueOf(systemConfig.getActivityShelfId()), String.valueOf(bizOrderDetail.getShelfInfo().getOpShelfInfo().getId()))) {
+                if (BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(orderHeader.getOrderType())) {
                     allActivityShlef = false;
+                } else {
+                    if (!StringUtils.equals(String.valueOf(systemConfig.getActivityShelfId()), String.valueOf(bizOrderDetail.getShelfInfo().getOpShelfInfo().getId()))) {
+                        allActivityShlef = false;
+                    }
                 }
             }
         }
@@ -2434,7 +2438,7 @@ public class BizOrderHeaderController extends BaseController {
 
         User user = UserUtils.getUser();
 
-        BigDecimal resultPrice = totalDetail.subtract(totalExp);
+        BigDecimal resultPrice = totalDetail.subtract(totalExp).add(freight);
 
         if (parse != null && (System.currentTimeMillis() < parse.getTime()) && allActivityShlef) {
             if (resultPrice.compareTo(totalBuyPrice.multiply(BigDecimal.valueOf(0.8))) < 0) {
@@ -2450,7 +2454,9 @@ public class BizOrderHeaderController extends BaseController {
         List<String> orderLowestAudit = systemConfig.getOrderLowestAudit();
 
         boolean serviceChargeStatus = RoleUtils.hasRole(user, serviceChargeAudit);
-        if (!serviceChargeStatus && totalExp.compareTo(totalDetail.subtract(totalBuyPrice).multiply(BigDecimal.valueOf(0.5))) > 0) {
+        //if (!serviceChargeStatus && totalExp.compareTo(totalDetail.subtract(totalBuyPrice).multiply(BigDecimal.valueOf(0.5))) > 0) {
+        BigDecimal totalService = (BigDecimal.valueOf(bizOrderHeader.getServiceFee())).add(BigDecimal.valueOf(bizOrderHeader.getFreight()));
+        if (!serviceChargeStatus && totalExp.compareTo(totalService.multiply(BigDecimal.valueOf(0.5))) > 0) {
             resultMap.put("resultValue","serviceCharge");
             return JsonUtil.generateData(resultMap, null);
         }
