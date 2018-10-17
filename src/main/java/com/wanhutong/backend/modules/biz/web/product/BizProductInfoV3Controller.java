@@ -33,6 +33,7 @@ import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.enums.TagInfoEnum;
 import com.wanhutong.backend.modules.enums.VarietyAttrEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -712,6 +713,20 @@ public class BizProductInfoV3Controller extends BaseController {
             listForVendor.removeIf(o -> o.getId().intValue() == id);
         }
         return String.valueOf(CollectionUtils.isNotEmpty(list) || CollectionUtils.isNotEmpty(listForVendor));
+    }
+
+    @RequestMapping(value = "mergeProduct")
+    public String mergeProduct() {
+        return "modules/biz/product/bizSpuAndSkuForm";
+    }
+
+    @RequestMapping(value = "mergeSpu")
+    public void mergeSpu(String itemNo, Integer vendId) {
+        BizProductInfo bizProductInfo = new BizProductInfo();
+        bizProductInfo.setItemNo(itemNo);
+        bizProductInfo.setOffice(new Office(vendId));
+        List<BizProductInfo> productList = bizProductInfoService.findList(bizProductInfo);
+
     }
 
 //    private List<AttributeValueV2> specificAttr(BizProductInfo bizProductInfo) {
