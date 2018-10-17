@@ -90,8 +90,8 @@
             $("[name=settlement]").each(function(){
                 if ($(this).is(':checked')) {
                     var orderId = $(this).val();
-                    var consignedMoney = $("#" + orderId).text();
-                    totalCommissionMoney = parseInt(totalCommissionMoney) + parseInt(consignedMoney);
+                    var commissionMoney = $("#" + orderId).text();
+                    totalCommissionMoney = parseInt(totalCommissionMoney) + parseInt(commissionMoney);
 				}
             });
             $('#totalCommissionMoney').text(totalCommissionMoney);
@@ -108,8 +108,8 @@
                 }
 
                 var totalCommissionMoney = 0;
-                var checkOrCancelAllTd = $('.consignedMoney');
-                $(".consignedMoney").each(function(){
+                var checkOrCancelAllTd = $('.commissionMoney');
+                $(".commissionMoney").each(function(){
                     totalCommissionMoney = parseInt(totalCommissionMoney) + parseInt($(this).text());
                 });
                 console.log(totalCommissionMoney)
@@ -395,8 +395,8 @@
 					<%--<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.totalBuyPrice}" pattern="0.00"/>--%>
 				<%--</c:if>--%>
 			</td>
-			<td class="consignedMoney" id="${orderHeader.id}">
-				<fmt:formatNumber type="number" value="${orderHeader.consignedMoney}" pattern="0.00"/>
+			<td class="commissionMoney" id="${orderHeader.id}">
+				<fmt:formatNumber type="number" value="${orderHeader.commissionMoney}" pattern="0.00"/>
 			</td>
 			<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
@@ -461,7 +461,7 @@
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
-				<a href="${ctx}/biz/order/bizOrderHeader/consignedForm?id=${orderHeader.id}">申请结佣</a>
+				<a href="${ctx}/biz/order/bizOrderHeader/commissionForm?id=${orderHeader.id}">申请结佣</a>
 
 
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">

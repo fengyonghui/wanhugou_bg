@@ -264,7 +264,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     /**
      * 代销佣金
      */
-    private BigDecimal consignedMoney;
+    private BigDecimal commission;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -1085,12 +1085,12 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.targetPage = targetPage;
     }
 
-    public BigDecimal getConsignedMoney() {
-        return consignedMoney;
+    public BigDecimal getCommission() {
+        return commission;
     }
 
-    public void setConsignedMoney(BigDecimal consignedMoney) {
-        this.consignedMoney = consignedMoney;
+    public void setCommission(BigDecimal commission) {
+        this.commission = commission;
     }
 }
 

@@ -265,7 +265,7 @@ public class BizOrderHeaderController extends BaseController {
                             commission = commission.add(detailCommission);
                         }
                     }
-                    orderHeader.setConsignedMoney(commission);
+                    orderHeader.setCommission(commission);
                     bizOrderHeaderListNew.add(orderHeader);
                 }
             }
@@ -365,7 +365,7 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("auditStatus", originConfig.getPayProcessId());
         //判断是否为代销订单
         if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
-            return "modules/biz/order/bizConsignedOrderHeaderList";
+            return "modules/biz/order/bizCommissionOrderHeaderList";
         }
 
         return "modules/biz/order/bizOrderHeaderList";
@@ -851,8 +851,8 @@ public class BizOrderHeaderController extends BaseController {
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:view")
-    @RequestMapping(value = "consignedForm")
-    public String consignedForm(BizOrderHeader bizOrderHeader, Model model,
+    @RequestMapping(value = "commissionForm")
+    public String commissionForm(BizOrderHeader bizOrderHeader, Model model,
                        String orderNoEditable, String orderDetails,
                        HttpServletRequest request, HttpServletResponse response
     ) {
@@ -1171,7 +1171,7 @@ public class BizOrderHeaderController extends BaseController {
         }
         model.addAttribute("createPo",createPo);
 
-        return "modules/biz/order/bizConsignedOrderHeaderForm";
+        return "modules/biz/order/bizCommissionOrderHeaderForm";
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:view")
