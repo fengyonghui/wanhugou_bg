@@ -30,14 +30,15 @@
                 data: {parentId:_this.userInfo.idData},
                 dataType: "json",
                 success: function(res){
+//              	console.log(res)
                     var htmlList = '';
                     $.each(res.data, function(i, item) {
-                    	if(item.id == 121 || item.id == 122 || item.id == 227 || item.id == 247) {
+                    	if(item.mobileUrl == -1) {
                     		htmlList += '<li class="mui-table-view-cell mui-collapse menuBtn" indexNum = "'+ i+'" dataId="'+item.id+'">'+
-									'<a class="mui-navigate-right">'+ item.name + '</a>'+
-									'<div  class = "mui-collapse-content childData'+ i+'">'
-									'</div>'+
-									'</li>'
+							'<a class="mui-navigate-right">'+ item.name + '</a>'+
+							'<div  class = "mui-collapse-content childData'+ i+'">'
+							'</div>'+
+							'</li>'
                     	}
                     });
                 	$('#menuMaget').html(htmlList)
@@ -56,11 +57,10 @@
                         data: {parentId:dataId},
                         dataType: "json",
                         success: function(res){
-//                      	console.log(res)
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
-                                if(item.id == 132 || item.id == 229 || item.id == 235 || item.id == 727){
-                                	pHtmlList += '<p class="childMenu" purchId="'+item.id+'">'+ item.name+'</p>'
+                                if(item.mobileUrl){
+                                	pHtmlList += '<p class="childMenu" purchId="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</p>'
                                 }
                             });
                             $(".childData"+indexNum).html(pHtmlList)
@@ -78,10 +78,11 @@
 		/*采购单管理*/
             $('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');
+				var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');
                 if(url) {
                 	mui.toast('子菜单不存在')
-                }else if(purchId==132) {
+                }else if(mobileUrl == '/mobile/html/purchaseMagmetHtml/purchase.html') {
                 	GHUTILS.OPENPAGE({
 						url: "../html/purchaseMagmetHtml/purchase.html",
 						extras: {
@@ -93,10 +94,11 @@
         /*备货单管理*/
             $('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');
+				var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');
                 if(url) {
                 	mui.toast('子菜单不存在')
-                }else if(purchId==229 || purchId==679) {
+                }else if(mobileUrl == '/mobile/html/inventoryMagmetHtml/inventoryList.html') {
                 	GHUTILS.OPENPAGE({
 						url: "../html/inventoryMagmetHtml/inventoryList.html",
 						extras: {
@@ -108,10 +110,11 @@
         /*员工管理*/
             $('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');
+				var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');
                 if(url) {
                 	mui.toast('子菜单不存在')
-                }else if(purchId==235) {
+                }else if(mobileUrl == '/mobile/html/staffMgmtHtml/staffList.html') {
                 	GHUTILS.OPENPAGE({
 						url: "../html/staffMgmtHtml/staffList.html",
 						extras: {
@@ -139,10 +142,11 @@
             /*订单支出信息*/
             $('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');
+				var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');
                 if(url) {
                 	mui.toast('子菜单不存在')
-                }else if(purchId==727 || purchId==699) {
+                }else if(mobileUrl == '/mobile/html/orderMgmtHtml/orderpaymentinfo.html') {
                 	GHUTILS.OPENPAGE({
 						url: "../html/orderMgmtHtml/orderpaymentinfo.html",
 						extras: {
