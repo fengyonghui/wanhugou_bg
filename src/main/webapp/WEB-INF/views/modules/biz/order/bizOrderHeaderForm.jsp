@@ -102,6 +102,21 @@
                     var orderId = $("#id").val();
                     var totalExp = $("#totalExp").val();
                     var totalDetail = $("#totalDetail").val();
+                    var freight = $("#freight").val();
+                    totalExp = Number(totalExp)
+                    if(totalExp < 0) {
+                        var totalExpTemp = Math.abs(totalExp)
+                        if (totalExpTemp > Number(freight)) {
+                            alert("调整金额不能大于运费");
+                            return;
+                        }
+                        console.log(totalExpTemp)
+                        console.log(Number(totalDetail) * 0.015)
+                        if (totalExpTemp > Number(totalDetail) * 0.015) {
+                            alert("调整金额不能大于商品总价的1.5%倍");
+                            return;
+                        }
+                    }
                     $.ajax({
                         type:"post",
                         url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
@@ -467,12 +482,14 @@
                 totalExp = Number(totalExp)
                 if(totalExp < 0) {
                     var totalExpTemp = Math.abs(totalExp)
-                    if (totalExpTemp >= Number(freight)) {
-                        alert("调整金额要小于运费");
+                    if (totalExpTemp > Number(freight)) {
+                        alert("调整金额不能大于运费");
                         return;
                     }
-                    if (totalExpTemp >= Number(totalDetail) * 1.5) {
-                        alert("调整金额要小于商品总价总价的1.5倍");
+                    console.log(totalExpTemp)
+                    console.log(Number(totalDetail) * 0.015)
+                    if (totalExpTemp > Number(totalDetail) * 0.015) {
+                        alert("调整金额不能大于商品总价的1.5%倍");
                         return;
                     }
                 }
