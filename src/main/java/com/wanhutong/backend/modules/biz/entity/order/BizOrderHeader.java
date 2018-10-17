@@ -266,6 +266,16 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private BigDecimal commission;
 
+    /**
+     * 总代销佣金
+     */
+    private BigDecimal totalCommission;
+
+    /**
+     * 订单总价
+     */
+    private BigDecimal commissionTotalDetail;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -1091,6 +1101,22 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setCommission(BigDecimal commission) {
         this.commission = commission;
+    }
+
+    public BigDecimal getTotalCommission() {
+        return totalCommission;
+    }
+
+    public void setTotalCommission(BigDecimal totalCommission) {
+        this.totalCommission = totalCommission;
+    }
+
+    public BigDecimal getCommissionTotalDetail() {
+        return commissionTotalDetail;
+    }
+
+    public void setCommissionTotalDetail(BigDecimal commissionTotalDetail) {
+        this.commissionTotalDetail = commissionTotalDetail;
     }
 }
 
