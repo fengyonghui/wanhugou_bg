@@ -129,20 +129,20 @@
 <ul class="nav nav-tabs">
 	<c:choose>
 		<c:when test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
-			<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?partNo=${bizOrderHeader.partNo}&skuChickCount=${bizOrderHeader.skuChickCount}&source=${source}&targetPage=CONSIGNED_ORDER">佣金管理列表</a></li>
+			<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?partNo=${bizOrderHeader.partNo}&skuChickCount=${bizOrderHeader.skuChickCount}&source=${source}&targetPage=COMMISSION_ORDER">佣金管理列表</a></li>
 		</c:when>
 		<c:otherwise>
 			<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
-				<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}&targetPage=CONSIGNED_ORDER">佣金管理列表</a></li>
+				<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}&targetPage=COMMISSION_ORDER">佣金管理列表</a></li>
 			</c:if>
 			<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-				<li class="active"><a href="${ctx}/biz/order/bizOrderHeader?statu=${statu}&source=${source}&targetPage=CONSIGNED_ORDER">佣金管理列表</a></li>
+				<li class="active"><a href="${ctx}/biz/order/bizOrderHeader?statu=${statu}&source=${source}&targetPage=COMMISSION_ORDER">佣金管理列表</a></li>
 				<%--<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><li><a href="${ctx}/biz/order/bizOrderHeader/form">订单信息添加</a></li></shiro:hasPermission>--%>
 			</c:if>
 		</c:otherwise>
 	</c:choose>
 </ul>
-<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader?statu=${statu}&targetPage=CONSIGNED_ORDER" method="post" class="breadcrumb form-search">
+<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader?statu=${statu}&targetPage=COMMISSION_ORDER" method="post" class="breadcrumb form-search">
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 	<input id="previousPage" name="previousPage" type="hidden" value="${bizOrderHeader.previousPage}"/>

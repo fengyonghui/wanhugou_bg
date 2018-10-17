@@ -216,7 +216,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = {"list", ""})
     public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         //判断是否为代销订单
-        if ("CONSIGNED_ORDER".equals(bizOrderHeader.getTargetPage())){
+        if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
             //零售订单
             bizOrderHeader.setOrderType(8);
             //收货完成
@@ -243,7 +243,7 @@ public class BizOrderHeaderController extends BaseController {
 
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
-        if ("CONSIGNED_ORDER".equals(bizOrderHeader.getTargetPage())){
+        if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
             List<BizOrderHeader> bizOrderHeaderList = page.getList();
             List<BizOrderHeader> bizOrderHeaderListNew = new ArrayList<BizOrderHeader>();
             if (CollectionUtils.isNotEmpty(bizOrderHeaderList)) {
@@ -364,7 +364,7 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("auditFithStatus", doOrderHeaderProcessFifthConfig.getAutProcessId());
         model.addAttribute("auditStatus", originConfig.getPayProcessId());
         //判断是否为代销订单
-        if ("CONSIGNED_ORDER".equals(bizOrderHeader.getTargetPage())){
+        if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
             return "modules/biz/order/bizConsignedOrderHeaderList";
         }
 
