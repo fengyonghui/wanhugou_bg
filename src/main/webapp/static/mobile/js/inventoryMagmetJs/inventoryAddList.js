@@ -61,19 +61,20 @@
 		getData: function() {
 			var _this = this;
             _this.removeItem();
+            _this.sureSelect();
 		},
 		sureSelect:function(){
 			var _this = this;
+			var optionsClass = $("#headerType option").eq($("#headerType").attr("selectedIndex"));//品类名称
 				            //备货单类型
-	            var r2 = document.getElementsByName("headerType");
-	            var headerType = "";
-	            for (var i = 0; i < r2.length; i++) {
-	                if (r2[i].checked == true) {
-	                    headerType = r2[i].value;
-	                }
-	            };
-//	            var headerType=$('#headerType').val();
-	            console.log(headerType)
+//	            var r2 = document.getElementsByName("headerType");
+//	            var headerType = "";
+//	            for (var i = 0; i < r2.length; i++) {
+//	                if (r2[i].checked == true) {
+//	                    headerType = r2[i].value;
+//	                }
+//	            };
+//	            console.log(headerType)
 		},
         saveDetail: function (userId) {
             var _this = this;
@@ -531,7 +532,7 @@
 					});
 					$('#headerType').html(optHtml+htmlStatusAdd)
 					_this.getData();
-					_this.sureSelect();
+					
 				}
 			});
 		}
