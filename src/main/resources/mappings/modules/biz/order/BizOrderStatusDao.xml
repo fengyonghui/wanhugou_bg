@@ -103,6 +103,7 @@
 			order_id,
 			biz_status,
 			status,
+			order_type,
 			create_id,
 			create_time,
 			u_version,
@@ -113,6 +114,7 @@
 			#{orderHeader.id},
 			#{bizStatus},
 			#{delFlag},
+			#{orderType},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
@@ -179,5 +181,12 @@
 		</if>
 		WHERE br.id = #{id}
 	</insert>
+
+	<select id="findCurrentStatus" resultType="Integer">
+		SELECT max(id)
+		FROM biz_order_status
+		WHERE order_id = #{orderId}
+		AND order_type = #{orderType}
+	</select>
 	
 </mapper>

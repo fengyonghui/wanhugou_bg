@@ -14,5 +14,7 @@ import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryVie
  */
 @MyBatisDao
 public interface BizInventoryViewLogDao extends CrudDao<BizInventoryViewLog> {
+
+    void saveCurrentViewLog(BizInventoryViewLog inventoryViewLog);
 	
 }
