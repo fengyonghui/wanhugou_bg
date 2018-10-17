@@ -154,5 +154,39 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<insert id="saveCurrentViewLog">
+		INSERT INTO biz_inventory_view_log(
+			id,
+			inv_id,
+			inv_type,
+			sku_id,
+			stock_qty,
+			stock_change_qty,
+			now_stock_qty,
+			req_id,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time,
+			status
+			) VALUES (
+			#{id},
+			#{invInfo.id},
+			#{invType},
+			#{skuInfo.id},
+			#{stockQty},
+			#{stockChangeQty},
+			#{nowStockQty},
+			#{requestHeader.id},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+			)
+	</insert>
 	
 </mapper>

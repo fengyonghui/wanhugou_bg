@@ -65,6 +65,7 @@ public class BizOrderStatus extends DataEntity<BizOrderStatus> {
 	public enum OrderType{
 		ORDER(0, "订单"),
 		REQUEST(1, "备货单"),
+		INVENTORY(3,"盘点"),
 		;
 
 

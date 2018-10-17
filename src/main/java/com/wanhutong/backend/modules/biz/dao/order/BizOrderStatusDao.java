@@ -25,4 +25,6 @@ public interface BizOrderStatusDao extends CrudDao<BizOrderStatus> {
      * @return
      */
     public int insertAfterBizStatusChanged(@Param("bizStatusTemp") Integer bizStatusTemp, @Param("createTime") Date createTime, @Param("updateTime") Date updateTime, @Param("orderTypeDesc") String orderTypeDesc, @Param("orderType") Integer orderType, @Param("id") Integer id);
+
+    int findCurrentStatus(@Param("orderId") Integer orderId, @Param("orderType") Integer orderType);
 }
