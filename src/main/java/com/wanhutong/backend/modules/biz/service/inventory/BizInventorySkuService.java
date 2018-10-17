@@ -21,10 +21,13 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
@@ -89,6 +92,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	private OfficeDao officeDao;
 	@Autowired
 	private BizSkuInfoV3Dao bizSkuInfoDao;
+	@Autowired
+	private BizOrderStatusService bizOrderStatusService;
 
 	@Override
 	public BizInventorySku get(Integer id) {
@@ -243,7 +248,12 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void inventorySave(BizRequestHeader requestHeader) {
-		BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorDao.get(requestHeader.getId());
+		//发起盘点记录
+		BizOrderStatus bizOrderStatus = new BizOrderStatus();
+		bizOrderStatus.setOrderHeader(new BizOrderHeader(requestHeader.getId()));
+		bizOrderStatus.setOrderType(BizOrderStatus.OrderType.INVENTORY.getType());
+		bizOrderStatus.setBizStatus(0);
+		bizOrderStatusService.save(bizOrderStatus);
 		String invReqDetail = requestHeader.getInvReqDetail();
 		Integer requestHeaderId = 0;
 		String[] invReqDetailArr = invReqDetail.split(",");
@@ -314,7 +324,11 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
         if (ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getAutProcessId().equals(nextProcess.getCode())) {
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
             bizRequestDetail.setRequestHeader(new BizRequestHeader(id));
-            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+            //盘点人
+			int currentStatusId = bizOrderStatusService.findCurrentStatus(id,BizOrderStatus.OrderType.INVENTORY.getType());
+			BizOrderStatus currentStatus = bizOrderStatusService.get(currentStatusId);
+
+			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
             if (CollectionUtils.isNotEmpty(requestDetailList)) {
                 for (BizRequestDetail requestDetail : requestDetailList) {
                     if (requestDetail.getActualQty() == null) {
@@ -356,7 +370,12 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 							viewLog.setStockChangeQty(-num);
 							viewLog.setNowStockQty(invSku.getStockQty());
 							viewLog.setRequestHeader(bizRequestHeader);
-							bizInventoryViewLogService.save(viewLog);
+							viewLog.setCreateBy(currentStatus.getCreateBy());
+							viewLog.setCreateDate(currentStatus.getCreateDate());
+							viewLog.setUpdateBy(currentStatus.getUpdateBy());
+							viewLog.setUpdateDate(currentStatus.getUpdateDate());
+							viewLog.setuVersion(1);
+							bizInventoryViewLogService.saveCurrentViewLog(viewLog);
 						}
                 }
             }
