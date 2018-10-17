@@ -61,7 +61,7 @@
 		getData: function() {
 			var _this = this;
             _this.removeItem();
-           
+
 		},
 		sureSelect:function(){
 			var _this = this;
