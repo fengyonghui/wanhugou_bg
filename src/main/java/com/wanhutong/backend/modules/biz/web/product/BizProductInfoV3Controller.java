@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.supcan.treelist.cols.Col;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
@@ -722,11 +723,7 @@ public class BizProductInfoV3Controller extends BaseController {
 
     @RequestMapping(value = "mergeSpu")
     public void mergeSpu(String itemNo, Integer vendId) {
-        BizProductInfo bizProductInfo = new BizProductInfo();
-        bizProductInfo.setItemNo(itemNo);
-        bizProductInfo.setOffice(new Office(vendId));
-        List<BizProductInfo> productList = bizProductInfoService.findList(bizProductInfo);
-
+        bizProductInfoService.mergeSpu(itemNo,vendId);
     }
 
 //    private List<AttributeValueV2> specificAttr(BizProductInfo bizProductInfo) {

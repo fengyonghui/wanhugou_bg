@@ -64,6 +64,8 @@ import java.util.*;
 @Transactional(readOnly = true)
 public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, BizProductInfo> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BizProductInfoV3Service.class);
+
     @Resource
     private PropertyInfoService propertyInfoService;
     @Resource
@@ -644,6 +646,21 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
     @Transactional(readOnly = false)
     public void delete(BizProductInfo bizProductInfo) {
         super.delete(bizProductInfo);
+    }
+
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void mergeSpu(String itemNo, Integer vendId) {
+        BizProductInfo bizProductInfo = new BizProductInfo();
+        bizProductInfo.setItemNo(itemNo);
+        bizProductInfo.setOffice(new Office(vendId));
+        List<BizProductInfo> productList = findList(bizProductInfo);
+        if (CollectionUtils.isNotEmpty(productList)) {
+            for (BizProductInfo productInfo : productList) {
+                LOGGER.info("产品ID【{}】",productInfo.getId());
+
+            }
+        }
     }
 
 

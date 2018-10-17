@@ -39,13 +39,12 @@
 	<div class="control-group">
 		<label class="control-label">货号：</label>
 		<div class="controls">
-			<input readonly="readonly" name="collectNo" type="text" class="input-xlarge" value=""/>
+			<input name="itemNo" type="text" class="input-xlarge" value=""/>
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label">请选择供应商：</label>
 		<div class="controls">
-				<input type="hidden" value="1" id="supplyIsNull">
 				<sys:treeselect id="office" name="vendId" value="${entity.office.id}" labelName="office.name"
 								labelValue="${entity.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
 								title="供应商" url="/sys/office/queryTreeList?type=7" extId="${office.id}"
@@ -54,7 +53,20 @@
 			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>
+	<div class="control-group">
+		<label class="control-label">需要的产品ID：</label>
+		<div class="controls">
+			<input name="itemNo" type="text" class="input-xlarge" value=""/>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">被替换的产品ID：</label>
+		<div class="controls">
+			<input name="itemNo" type="text" class="input-xlarge" value=""/>
+		</div>
+	</div>
 	<div class="form-actions">
+		<input id="btnSubmit" class="btn btn-primary" type="submit" value="合并"/>
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 	</div>
 </form:form>
