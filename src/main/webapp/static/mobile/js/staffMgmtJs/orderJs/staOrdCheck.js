@@ -306,16 +306,16 @@
 								var orderId = _this.userInfo.staOrdId;
 				                var totalExp = $('#staAdjustmentMoney').val();
 				                var totalDetail =$('#staPototal').val();
-				                var totalDetails = totalDetail * 1.5;
+				                var totalDetails = totalDetail * 0.015;
 				                var staFreights = $('#staFreight').val();
 				                var abss = Math.abs(num);
 				                if(num < 0) {
-									if(abss >= totalDetails) {
-										mui.toast("调整金额需小于总价的1.5倍！");
+									if(abss > totalDetails) {
+										mui.toast("调整金额不能大于总价的1.5%倍！");
 										return false;
 									}
-									if(abss >= staFreights) {
-										mui.toast("调整金额需小于运费！");
+									if(abss > staFreights) {
+										mui.toast("调整金额不能大于运费！");
 										return false;
 									}
 								}

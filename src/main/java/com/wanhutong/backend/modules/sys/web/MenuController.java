@@ -85,7 +85,7 @@ public class MenuController extends BaseController {
 				map.put("id", o.getId() == null ? StringUtils.EMPTY : o.getId());
 				map.put("isShow", o.getIsShow() == null ? StringUtils.EMPTY : o.getIsShow());
 				map.put("url", o.getHref() == null ? StringUtils.EMPTY : o.getHref());
-				map.put("mobileUrl", o.getHref() == null ? StringUtils.EMPTY : o.getHref());
+				map.put("mobileUrl", o.getHref() == null ? StringUtils.EMPTY : o.getMobileHref());
 				map.put("target", o.getTarget() == null ? StringUtils.EMPTY : o.getTarget());
 				result.add(map);
 			});
