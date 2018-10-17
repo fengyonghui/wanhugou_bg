@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventory;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -11,10 +12,20 @@ import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -33,6 +44,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +64,12 @@ public class BizSendGoodsRecordController extends BaseController {
 	private BizSendGoodsRecordService bizSendGoodsRecordService;
     @Autowired
     private BizInventoryInfoService bizInventoryInfoService;
+	@Autowired
+	private BizOrderDetailService bizOrderDetailService;
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
+	@Autowired
+	private BizInvoiceService bizInvoiceService;
 
 	@ModelAttribute
 	public BizSendGoodsRecord get(@RequestParam(required=false) Integer id) {
@@ -120,13 +140,54 @@ public class BizSendGoodsRecordController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:edit")
 	@RequestMapping("outTreasury")
-	public String outTreasury(HttpServletRequest request, @RequestBody String treasuryList) {
-		List<BizOutTreasuryEntity> outTreasuryList = JsonUtil.parseArray(treasuryList, new TypeReference<List<BizOutTreasuryEntity>>() {
-		});
+	public String outTreasury(HttpServletRequest request, @RequestBody String data) throws ParseException {
+		try {
+			data = URLDecoder.decode(data, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = JsonUtil.parseJson(data);
+		String treasuryList = jsonObject.getString("treasuryList");
+		String bizInvoiceStr = jsonObject.getString("bizInvoiceStr");
+		JSONObject bizInvoiceJson = JsonUtil.parseJson(bizInvoiceStr);
+
+		List<BizOutTreasuryEntity> outTreasuryList = JsonUtil.parseArray(treasuryList, new TypeReference<List<BizOutTreasuryEntity>>() {});
 		if (CollectionUtils.isEmpty(outTreasuryList)) {
 			return "error";
 		}
-		return bizSendGoodsRecordService.outTreasury(outTreasuryList);
+		BizInvoice bizInvoice = new BizInvoice();
+		bizInvoice.setBizStatus(0);
+		bizInvoice.setShip(0);
+		bizInvoice.setIsConfirm(1);
+//		"trackingNumber":trackingNumber,
+		bizInvoice.setTrackingNumber(bizInvoiceJson.getString("trackingNumber"));
+//				"inspectorId":inspectorId,
+		bizInvoice.setInspector(new User(bizInvoiceJson.getInteger("inspectorId")));
+//				"inspectDate":inspectDate,
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		bizInvoice.setInspectDate(simpleDateFormat.parse(bizInvoiceJson.getString("inspectDate")));
+//				"inspectRemark":inspectRemark,
+		bizInvoice.setRemarks(bizInvoiceJson.getString("inspectRemark"));
+//				"collLocate":collLocate,
+		bizInvoice.setCollLocate(bizInvoiceJson.getByte("collLocate"));
+//				"sendDate":sendDate,
+		bizInvoice.setSendDate(simpleDateFormat.parse(bizInvoiceJson.getString("sendDate")));
+//				"settlementStatus":settlementStatus
+		bizInvoice.setSettlementStatus(bizInvoiceJson.getInteger("settlementStatus"));
+
+		for (BizOutTreasuryEntity outTreasuryEntity : outTreasuryList) {
+			Integer orderDetailId = outTreasuryEntity.getOrderDetailId();
+			BizOrderDetail bizOrderDetail = bizOrderDetailService.get(orderDetailId);
+			BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
+			if (StringUtils.isNotBlank(orderHeader.getOrderNum())) {
+				bizInvoice.setOrderNum(orderHeader.getOrderNum());
+				break;
+			}
+		}
+
+		bizInvoiceService.save(bizInvoice);
+//		return bizSendGoodsRecordService.outTreasury(outTreasuryList);
+		return "ok";
 	}
 
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:view")
