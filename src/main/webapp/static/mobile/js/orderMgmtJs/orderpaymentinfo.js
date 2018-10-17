@@ -476,107 +476,40 @@
 		        })
 		    }
 	    },
-        getPermissionList1: function (markVal,flag) {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": markVal},
-                async:false,
-                success: function(res){
-                    _this.OrdFlagpay =  res.data;
-//                  console.log(_this.OrdFlagpay)
-                }
-            });
-        },
-        getPermissionList2: function (markVal,flag) {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": markVal},
-                async:false,
-                success: function(res){
-                    _this.OrdFlagstartAudit = res.data;
-//                  console.log(_this.OrdFlagstartAudit)
-                }
-            });
-        },
-        getPermissionList3: function (markVal,flag) {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": markVal},
-                async:false,
-                success: function(res){
-                    _this.OrdFlagScheduling = res.data;
-//                  console.log(_this.OrdFlagScheduling)
-                }
-            });
-        },
-        getPermissionList4: function (markVal,flag) {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": markVal},
-                async:false,
-                success: function(res){
-                    _this.creatPayFlag = res.data;
-//                  console.log(_this.creatPayFlag)
-                }
-            });
-        },
-        getPermissionList5: function (markVal,flag) {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": markVal},
-                async:false,
-                success: function(res){
-                    _this.OrdFlaginfo = res.data;
-                    console.log(_this.OrdFlaginfo)
-                }
-            });
-        },
-        getPermissionList6: function (markVal,flag) {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": markVal},
-                async:false,
-                success: function(res){
-                    _this.ordCreatPayFlag = res.data;
-                    console.log(_this.ordCreatPayFlag)
-                }
-            });
-        },
-        getPermissionList7: function (markVal,flag) {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": markVal},
-                async:false,
-                success: function(res){
-                    _this.poCreatPayFlag = res.data;
-                    console.log(_this.poCreatPayFlag)
-                }
-            });
-        },
 		stOrdHrefHtml: function() {
 			var _this = this;
-		/*查询*/
+			/*取消*/
+			$('.content_part').on('tap','.orCancleBtn',function(){
+            	var url = $(this).attr('url');
+				var staordid = $(this).attr('staordid');
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(staordid==staordid) {
+                	var btnArray = ['取消', '确定'];
+					mui.confirm('您确认要取消吗？', '系统提示！', btnArray, function(choice) {
+						if(choice.index == 1) {
+							$.ajax({
+				                type: "GET",
+				                url: "/a/biz/po/bizPoHeader/cancel4Mobile",
+				                data: {id:staordid},
+				                dataType: "json",
+				                success: function(res){
+				                	mui.toast('操作成功！')
+				                	GHUTILS.OPENPAGE({
+										url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+										extras: {
+											
+										}
+									})
+			                	}
+			            	})
+						}else {
+							
+						}
+					})	
+                }
+			}),
+			/*查询*/
 			$('.app_header').on('tap', '#OrdSechBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
@@ -679,21 +612,21 @@
 					})
 				}
 			}),
-		/*详情*/
-//			$('.content_part').on('tap', '.staOrDetailBtn', function() {
-//				var url = $(this).attr('url');
-//				var staOrdId = $(this).attr('staOrdId');
-//				if(url) {
-//					mui.toast('子菜单不存在')
-//				} else if(staOrdId == staOrdId) {
-//					GHUTILS.OPENPAGE({
-//						url: "../../../html/staffMgmtHtml/orderHtml/staOrdDetail.html",
-//						extras: {
-//							staOrdId: staOrdId,
-//						}
-//					})
-//				}
-//			})
+			/*详情*/
+			$('.content_part').on('tap', '.orDetailBtn', function() {
+				var url = $(this).attr('url');
+				var staOrdId = $(this).attr('staOrdId');
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(staOrdId == staOrdId) {
+					GHUTILS.OPENPAGE({
+						url: "../../html/orderMgmtHtml/orderHtml/orDetails.html",
+						extras: {
+							staOrdId: staOrdId,
+						}
+					})
+				}
+			})
 			/*排产*/
 			$('.content_part').on('tap', '.SchedulingBtn', function() {
 				var url = $(this).attr('url');
@@ -703,6 +636,21 @@
 				} else if(staOrdId == staOrdId) {
 					GHUTILS.OPENPAGE({
 						url: "../../html/orderMgmtHtml/orScheduling.html",
+						extras: {
+							staOrdId: staOrdId,
+						}
+					})
+				}
+			})
+			/*确认排产*/
+			$('.content_part').on('tap', '.affirmSchedulingBtn', function() {
+				var url = $(this).attr('url');
+				var staOrdId = $(this).attr('staordid');
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(staOrdId == staOrdId) {
+					GHUTILS.OPENPAGE({
+						url: "../../html/orderMgmtHtml/affirmScheduling.html",
 						extras: {
 							staOrdId: staOrdId,
 						}
@@ -725,6 +673,23 @@
 					})
 				}
 			})
+			/*修改*/
+			$('.content_part').on('tap', '.orAmendBtn', function() {
+				var url = $(this).attr('url');
+				var paymentId = $(this).attr('paymentId');
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(paymentId == paymentId) {
+					GHUTILS.OPENPAGE({
+						url: "../../html/inventoryMagmetHtml/inventoryAmend.html",
+						extras: {
+							paymentId: paymentId,
+							createPayStr: 'createPay',
+						}
+					})
+				}
+			})
+			
         },
         //时间戳转化方法：
 		formatDateTime: function(unix) {
