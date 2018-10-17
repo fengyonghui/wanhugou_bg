@@ -253,7 +253,12 @@
 	</div>
 
 	<div class="form-actions">
-		<input class="btn btn-primary" type="button" onclick="doPrint()" value="打印"/>
+		<c:if test="${bizStatu == 0}">
+			<input class="btn btn-primary" type="button" onclick="doPrint()" value="打印"/>
+		</c:if>
+		<c:if test="${bizStatu == 1}">
+			<input onclick="window.print();" type="button" class="btn btn-primary" value="打印"/>
+		</c:if>
 		&nbsp;&nbsp;&nbsp;
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 	</div>

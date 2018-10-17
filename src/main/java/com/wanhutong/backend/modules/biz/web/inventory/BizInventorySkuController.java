@@ -309,72 +309,7 @@ public class BizInventorySkuController extends BaseController {
 //		if (!beanValidator(model, bizInventorySku)){
 //			return form(bizInventorySku,request,model);
 //		}
-        if (bizInventorySkus != null && bizInventorySkus.getSkuInfoIds() != null) {
-            String[] invInfoIdArr = bizInventorySkus.getInvInfoIds().split(",");
-            String[] customerIdArr = null;
-            if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
-                customerIdArr = bizInventorySkus.getCustomerIds().split(",");
-            }
-            String[] invTypeArr = bizInventorySkus.getInvTypes().split(",");
-            String[] skuTypeArr = bizInventorySkus.getSkuTypes().split(",");
-            String[] skuInfoIdArr = bizInventorySkus.getSkuInfoIds().split(",");
-            String[] stockQtyArr = bizInventorySkus.getStockQtys().split(",");
-            BizInventorySku bizInventorySku = new BizInventorySku();
-            BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
-            for (int i = 0; i < skuInfoIdArr.length; i++) {
-                bizInventorySku.setId(null);
-                bizInventorySku.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
-                if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
-                    bizInventorySku.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
-                }
-                bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
-                bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
-                bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_DELETE);
-                bizInventorySku.setSkuType(Integer.parseInt(skuTypeArr[i].trim()));
-                bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
-                bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
-                bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
-                //查询是否有已删除的该商品库存
-                BizInventorySku only = bizInventorySkuService.findOnly(bizInventorySku);
-                if (only == null) {
-                    bizInventoryViewLog.setStockQty(0);
-                    bizInventorySku.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
-                    bizInventoryViewLog.setStockChangeQty(bizInventorySku.getStockQty());
-                    bizInventoryViewLog.setNowStockQty(bizInventorySku.getStockQty());
-                    bizInventorySkuService.save(bizInventorySku);
-                } else {
-                    if (StringUtils.isNotBlank(bizInventorySkus.getCustomerIds())) {
-                        only.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
-                    }
-                    bizInventoryViewLog.setStockQty(0);
-                    only.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
-                    bizInventoryViewLog.setStockChangeQty(only.getStockQty());
-                    bizInventoryViewLog.setNowStockQty(only.getStockQty());
-                    bizInventorySkuService.save(only);
-                }
-                bizInventoryViewLogService.save(bizInventoryViewLog);
-            }
-        }//修改
-        else if (bizInventorySkus != null && bizInventorySkus.getStockQtys() != null && !bizInventorySkus.getStockQtys().equals("")) {
-            BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
-            BizInventorySku bizInventorySku = bizInventorySkuService.get(bizInventorySkus.getId());
-            if (bizInventorySku != null) {
-                Integer stockQtys = Integer.parseInt(bizInventorySkus.getStockQtys());
-                if (!stockQtys.equals(bizInventorySku.getStockQty())) {
-                    bizInventoryViewLog.setStockQty(bizInventorySku.getStockQty());//原
-                    bizInventoryViewLog.setStockChangeQty(Integer.parseInt(bizInventorySkus.getStockQtys()) - bizInventorySku.getStockQty());
-                    bizInventoryViewLog.setNowStockQty(Integer.parseInt(bizInventorySkus.getStockQtys()));//现
-                    bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
-                    bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
-                    bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
-                    bizInventoryViewLogService.save(bizInventoryViewLog);
-                }
-            }
-            bizInventorySku.setStockQty(Integer.parseInt(bizInventorySkus.getStockQtys()));
-            bizInventorySkuService.save(bizInventorySku);
-        }
-
-
+        bizInventorySkuService.saveBizInventorySku(bizInventorySkus);
         String zt = request.getParameter("zt");
         addMessage(redirectAttributes, "保存商品库存详情成功");
         return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizInventorySku/?repage&zt=" + zt;

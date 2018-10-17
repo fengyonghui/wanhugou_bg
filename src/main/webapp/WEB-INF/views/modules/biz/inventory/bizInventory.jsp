@@ -116,7 +116,6 @@
 				<th>采购中心</th>
 				<th>备货方</th>
 				<th>备货单号</th>
-				<th>品类</th>
 				<th>供应商</th>
 				<th>审核状态</th>
 				<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><th>操作</th></shiro:hasPermission>
@@ -143,9 +142,6 @@
 					${bizRequestHeader.reqNo}
 				</td>
 				<td>
-					${bizRequestHeader.varietyInfo.name}
-				</td>
-				<td>
 					${bizRequestHeader.vendName}
 				</td>
 				<td>
@@ -155,10 +151,10 @@
 					<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invId=${bizRequestHeader.invInfo.id}&source=detail">详情</a>
 					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 						<c:if test="${(bizRequestHeader.invCommonProcess.id == null || bizRequestHeader.invCommonProcess.invRequestProcess.name == '审批完成')}">
-							<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invId=${bizRequestHeader.invInfo.id}">盘点</a>
+							<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invId=${bizRequestHeader.invInfo.id}">日常异动</a>
 						</c:if>
 					</shiro:hasPermission>
-					<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invId=${bizRequestHeader.invInfo.id}&source=pChange">日常异动</a>
+					<%--<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invId=${bizRequestHeader.invInfo.id}&source=pChange">日常异动</a>--%>
 					<shiro:hasPermission name="biz:inventory:bizInventorySku:audit">
 						<c:if test="${bizRequestHeader.invCommonProcess.id != null && bizRequestHeader.invCommonProcess.invRequestProcess.name != '审批完成' && (fns:hasRole(roleSet, bizRequestHeader.invCommonProcess.invRequestProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
 							<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invId=${bizRequestHeader.invInfo.id}&source=audit">审核</a>

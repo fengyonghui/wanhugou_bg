@@ -71,7 +71,6 @@
 					//订单id
 					$('#ordId').val(_this.userInfo.staOrdId);					
 					var item = res.data.bizOrderHeader;
-//					console.log(item)
 					//交货时间
 					$('#appointedTime').val(item.bizLocation.appointedTime);
 					//标志位
