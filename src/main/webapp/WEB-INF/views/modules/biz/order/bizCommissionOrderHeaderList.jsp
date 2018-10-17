@@ -396,7 +396,7 @@
 				<%--</c:if>--%>
 			</td>
 			<td class="commissionMoney" id="${orderHeader.id}">
-				<fmt:formatNumber type="number" value="${orderHeader.commissionMoney}" pattern="0.00"/>
+				<fmt:formatNumber type="number" value="${orderHeader.commission}" pattern="0.00"/>
 			</td>
 			<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
