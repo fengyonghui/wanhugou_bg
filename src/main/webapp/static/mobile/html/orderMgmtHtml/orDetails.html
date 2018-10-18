@@ -1,44 +1,16 @@
 <!DOCTYPE html>
 <html>
-
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
 		<title>详情</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css?time=20181009" rel="stylesheet" />
-		<style type="text/css">
-			.mui-content div.content_part li {
-				padding: 0;
-				list-style: none;
-			}
-			
-			.mui-content div.ctn_li_h li {
-				height: 30px;
-			}
-			
-			.mui-input-row label {
-				padding: 14px 14px;
-			}
-			
-			#Date {
-				text-indent: 30px;
-			}
-			
-			.sucessColor {
-				color: #40ABE9;
-			}
-			.commodity {font-size: 13px;}
-			.commodity div.mui-input-row>input {padding: 0;font-size: 13px;}
-			.commodity div.mui-input-row>label {padding: 0;}
-			.photoParent {width: 15%;height: 220px;margin-right: 15px;}
-			.photoParent img {top: 50%;margin-top: -8px;width: 50px;}
-			.mui-input-group .mui-input-row:after {background-color: #ececec;}
-			.listBlue>li {border-bottom: 1px solid #40ABE9;}
-			#inCheckAddMenu>li:last-child {color: #40ABE9;}
-		</style>
 	</head>
-
 	<body>
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
@@ -46,75 +18,75 @@
 		</header>
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
-				<label>订单编号：</label>
-				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
+				<label>订单/备货单号：</label>
+				<input type="text" class="mui-input-clear" id="orpoNum" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>经销店：</label>
-				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>商品总价：</label>
-				<input type="text" class="mui-input-clear" id="inPototal" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>调整金额：</label>
-				<input type="text" class="mui-input-clear" id="inMoneyReceive" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>运费：</label>
-				<input type="text" class="mui-input-clear" id="inMarginLevel" disabled>
+				<label>订单总价：</label>
+				<input type="text" class="mui-input-clear" id="ordtotal" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>应付金额：</label>
-				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
+				<input type="text" class="mui-input-clear" id="orshouldPay" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>已付金额：</label>
-				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
+				<label>最后时间：</label>
+				<input type="text" class="mui-input-clear" id="orLastDa" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>服务费：</label>
-				<input type="text" class="mui-input-clear" id="inPoordNum" disabled>
+				<label>交货地点：</label>
+				<input type="text" class="mui-input-clear" id="delSite" disabled>
 			</div>
-			<div class="mui-input-row">
-				<label>发票状态：</label>
-				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>业务状态：</label>
-				<input type="text" class="mui-input-clear" id="inPototal" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>收货人：</label>
-				<input type="text" class="mui-input-clear" id="inMoneyReceive" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>联系电话：</label>
-				<input type="text" class="mui-input-clear" id="inMarginLevel" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>收货地址：</label>
-				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>详细地址：</label>
-				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
-			</div>
-			<div class="mui-input-row">
+			<div class="mui-input-row remark">
 				<label>备注：</label>
-				<textarea id="inPoRemark" name="" rows="" cols="" disabled></textarea>
+				<textarea id="orRemark" name="" rows="" cols="" disabled></textarea>
 			</div>
 			<div class="mui-input-row">
-				<label>进展信息：</label>
-				<input type="text" id="inPoDizstatus" class="mui-input-clear" disabled>
+				<label>订单状态：</label>
+				<input type="text" class="mui-input-clear" id="orTypes" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商：</label>
+				<input type="text" class="mui-input-clear" id="orSupplier" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商卡号：</label>
+				<input type="text" class="mui-input-clear" id="orSupplierNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>收款人：</label>
+				<input type="text" class="mui-input-clear" id="orSupplierMoney" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>开户行：</label>
+				<input type="text" class="mui-input-clear" id="orSupplierBank" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商合同：</label>
+				<div id="orSuppliercontract"></div>									
+			</div>
+			<div class="mui-input-row">
+				<label>身份证：</label>
+				<div id="orSuppliercardID"></div>	
+			</div>
+			<div class="mui-input-row">
+				<label>申请金额：</label>
+				<input type="text" class="mui-input-clear" id="orApplyNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>本次申请付款时间：</label>
+				<input type="text" class="mui-input-clear" id="orDateNow" disabled>
 			</div>
 			<!--审批流程块 有的话显示-->
 			<div class="mui-input-row">
-				<div class="labelLf">状态流程：</div>
+				<div class="labelLf">审批流程：</div>
 				<ul class="" id="inCheckAddMenu">
 					
 				</ul>
+			</div>
+			<div class="app_bline2 mui-input-row staCommodity">
+				<div class="labelLf">商品信息：</div>
+				<ul id="orCheckCommodity" class="mui-table-view app_pl10"></ul>				
 			</div>
 		</div>
 		<div class="clear"></div>
@@ -124,5 +96,4 @@
 		<script src="../../js/component/GHutils.js"></script>
 		<script src="../../js/orderMgmtJs/orDetails.js?time=20181009"></script>
 	</body>
-
 </html>

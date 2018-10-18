@@ -20,55 +20,35 @@
 			var _this = this;
 			$.ajax({
                 type: "GET",
-                url: "/a/biz/request/bizRequestHeader/form4Mobile",
-                data: {id:_this.userInfo.inListId},
+                url: "/a/biz/po/bizPoHeader/form4Mobile",
+                data: {
+                	id:_this.userInfo.staOrdId,
+                	str:_this.userInfo.str,
+                	fromPage:_this.userInfo.fromPage
+                },
                 dataType: "json",
                 success: function(res){
+                console.log(res)
 					/*业务状态*/
-						var bizstatus = res.bizStatus;
-						var bizstatusTxt = '';
-						if(bizstatus==0) {
-							bizstatusTxt = "未审核"
-						}else if(bizstatus==1) {
-							bizstatusTxt = "首付支付"
-						}else if(bizstatus==2) {
-							bizstatusTxt = "全部支付"
-						}else if(bizstatus==4) {
-							bizstatusTxt = "审核中"
-						}else if(bizstatus==5) {
-							bizstatusTxt = "审核通过"
-						}else if(bizstatus==6) {
-							bizstatusTxt = "审批中"
-						}else if(bizstatus==7) {
-							bizstatusTxt = "审批完成"
-						}else if(bizstatus==10) {
-							bizstatusTxt = "采购中"
-						}else if(bizstatus==13) {
-							bizstatusTxt = "部分结算"
-						}else if(bizstatus==15) {
-							bizstatusTxt = "采购完成"
-						}else if(bizstatus==20) {
-							bizstatusTxt = "备货中"
-						}else if(bizstatus==25) {
-							bizstatusTxt = "供货完成"
-						}else if(bizstatus==30) {
-							bizstatusTxt = "收货完成"
-						}else if(bizstatus==37) {
-							bizstatusTxt = "结算完成"
-						}else if(bizstatus==40) {
-							bizstatusTxt = "取消"
-						}else {
-							bizstatusTxt = "未知类型"
-						}
-					$('#inPoDizstatus').val(bizstatusTxt)
-					$('#inPoordNum').val(res.data.entity.reqNo)
-					$('#inOrordNum').val(res.data.entity.fromOffice.name)
-					$('#inPototal').val(res.data.entity.totalMoney)
-					$('#inMoneyReceive').val(res.data.entity.recvQtys)
-					$('#inMarginLevel').val(res.data.entity.recvTotal + '%')
-					$('#inPoLastDa').val(_this.formatDateTime(res.data.entity.recvEta))
-					_this.commodityHtml(res.data)
-					_this.statusListHtml(res.data)
+					$('#orpoNum').val(res.data.bizOrderHeader.orderNumber)//单号
+					$('#ordtotal').val(res.data.entity.fromOffice.name)//总价
+					$('#orshouldPay').val(res.data.entity.totalMoney)//应付金额
+					$('#orLastDa').val(res.data.entity.recvQtys)//最后付款时间
+					$('#delSite').val(res.data.entity.recvTotal + '%')//交货地点
+					$('#orRemark').val(_this.formatDateTime(res.data.entity.recvEta))//备注
+					$('#orTypes').val(_this.formatDateTime(res.data.entity.recvEta))//订单状态
+					$('#orSupplier').val(_this.formatDateTime(res.data.entity.recvEta))//供应商
+					
+					$('#orSupplierNum').val(_this.formatDateTime(res.data.entity.recvEta))//供应商卡号
+					$('#orSupplierMoney').val(_this.formatDateTime(res.data.entity.recvEta))//供应商收款人
+					$('#orSupplierBank').val(_this.formatDateTime(res.data.entity.recvEta))//供应商开户行
+					$('#orSuppliercontract').val(_this.formatDateTime(res.data.entity.recvEta))//供应商合同
+					$('#orSuppliercardID').val(_this.formatDateTime(res.data.entity.recvEta))//供应商身份证
+					$('#orApplyNum').val(_this.formatDateTime(res.data.entity.recvEta))//申请时间
+					$('#orDateNow').val(_this.formatDateTime(res.data.entity.recvEta))//本次申请付款时间
+					
+//					_this.commodityHtml(res.data)
+//					_this.statusListHtml(res.data)
                 }
             });
 		},
@@ -76,31 +56,6 @@
 			var _this = this;
 			var pHtmlList = '';
 			$.each(data.statusList, function(i, item) {
-//				0未审核 1首付款支付,2是全部支付 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
-				var checkBizStatus = '';
-				if(item.bizStatus==0) {
-					checkBizStatus = '未审核'
-				}else if(item.bizStatus==1) {
-					checkBizStatus = '首付款支付'
-				}else if(item.bizStatus==2) {
-					checkBizStatus = '全部支付'
-				}else if(item.bizStatus==5) {
-					checkBizStatus = '审核通过'
-				}else if(item.bizStatus==10) {
-					checkBizStatus = '采购中'
-				}else if(item.bizStatus==15) {
-					checkBizStatus = '采购完成'
-				}else if(item.bizStatus==20) {
-					checkBizStatus = '备货中'
-				}else if(item.bizStatus==25) {
-					checkBizStatus = '供货完成'
-				}else if(item.bizStatus==30) {
-					checkBizStatus = '收货完成'
-				}else if(item.bizStatus==35) {
-					checkBizStatus = '关闭'
-				}else {
-					checkBizStatus = ''
-				}
 				var step = i + 1;
 				pHtmlList +='<li class="step_item">'+
 					'<div class="step_num">'+ step +' </div>'+
