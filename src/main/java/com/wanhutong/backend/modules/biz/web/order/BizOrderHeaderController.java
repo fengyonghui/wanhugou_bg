@@ -150,7 +150,7 @@ public class BizOrderHeaderController extends BaseController {
             entity = bizOrderHeaderService.get(id);
 
             String type = "1";
-            if (entity.getSuplys() == 0 || entity.getSuplys() == 721) {
+            if (entity.getSuplys() != null && (0 == entity.getSuplys() || 721 == entity.getSuplys())) {
                 type = "0";
             }
             CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
@@ -533,7 +533,7 @@ public class BizOrderHeaderController extends BaseController {
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
 
         String type = "1";
-        if (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721) {
+        if (bizOrderHeaderTwo.getSuplys() != null && (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721)) {
             type = "0";
         }
 
@@ -586,6 +586,14 @@ public class BizOrderHeaderController extends BaseController {
                 bizOrderHeader.setVendorId(vendUser.get(0).getVendor().getId());
                 bizOrderHeader.setVendorName(vendUser.get(0).getVendor().getName());
                 bizOrderHeader.setSellersId(vendUser.get(0).getVendor().getId());
+            }
+
+            if (OrderTypeEnum.ODO.getOrderType().equals(String.valueOf(bizOrderHeader.getOrderType()))) {
+                //代销商
+                Office sellerOffice = officeService.get(bizOrderHeader.getSellersId());
+                if (sellerOffice != null) {
+                    model.addAttribute("sellerOffice", sellerOffice);
+                }
             }
 
             //代采

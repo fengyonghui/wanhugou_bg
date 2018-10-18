@@ -11,6 +11,7 @@ import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
@@ -19,6 +20,7 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.service.inventory.BizDetailInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
@@ -70,6 +72,8 @@ public class BizSendGoodsRecordController extends BaseController {
 	private BizOrderHeaderService bizOrderHeaderService;
 	@Autowired
 	private BizInvoiceService bizInvoiceService;
+	@Autowired
+	private BizDetailInvoiceService bizDetailInvoiceService;
 
 	@ModelAttribute
 	public BizSendGoodsRecord get(@RequestParam(required=false) Integer id) {
@@ -159,33 +163,39 @@ public class BizSendGoodsRecordController extends BaseController {
 		bizInvoice.setBizStatus(0);
 		bizInvoice.setShip(0);
 		bizInvoice.setIsConfirm(1);
+		if (bizInvoiceJson != null && StringUtils.isNotBlank(bizInvoiceJson.getString("trackingNumber"))) {
 //		"trackingNumber":trackingNumber,
-		bizInvoice.setTrackingNumber(bizInvoiceJson.getString("trackingNumber"));
+			bizInvoice.setTrackingNumber(bizInvoiceJson.getString("trackingNumber"));
 //				"inspectorId":inspectorId,
-		bizInvoice.setInspector(new User(bizInvoiceJson.getInteger("inspectorId")));
+			bizInvoice.setInspector(new User(bizInvoiceJson.getInteger("inspectorId")));
 //				"inspectDate":inspectDate,
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-		bizInvoice.setInspectDate(simpleDateFormat.parse(bizInvoiceJson.getString("inspectDate")));
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			bizInvoice.setInspectDate(simpleDateFormat.parse(bizInvoiceJson.getString("inspectDate")));
 //				"inspectRemark":inspectRemark,
-		bizInvoice.setRemarks(bizInvoiceJson.getString("inspectRemark"));
+			bizInvoice.setRemarks(bizInvoiceJson.getString("inspectRemark"));
 //				"collLocate":collLocate,
-		bizInvoice.setCollLocate(bizInvoiceJson.getByte("collLocate"));
+			bizInvoice.setCollLocate(bizInvoiceJson.getByte("collLocate"));
 //				"sendDate":sendDate,
-		bizInvoice.setSendDate(simpleDateFormat.parse(bizInvoiceJson.getString("sendDate")));
+			bizInvoice.setSendDate(simpleDateFormat.parse(bizInvoiceJson.getString("sendDate")));
 //				"settlementStatus":settlementStatus
-		bizInvoice.setSettlementStatus(bizInvoiceJson.getInteger("settlementStatus"));
+			bizInvoice.setSettlementStatus(bizInvoiceJson.getInteger("settlementStatus"));
+			bizInvoice.setSource("new");
 
-		for (BizOutTreasuryEntity outTreasuryEntity : outTreasuryList) {
-			Integer orderDetailId = outTreasuryEntity.getOrderDetailId();
-			BizOrderDetail bizOrderDetail = bizOrderDetailService.get(orderDetailId);
-			BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
-			if (StringUtils.isNotBlank(orderHeader.getOrderNum())) {
-				bizInvoice.setOrderNum(orderHeader.getOrderNum());
-				break;
+			bizInvoiceService.save(bizInvoice);
+
+			for (BizOutTreasuryEntity outTreasuryEntity : outTreasuryList) {
+				Integer orderDetailId = outTreasuryEntity.getOrderDetailId();
+				BizOrderDetail bizOrderDetail = bizOrderDetailService.get(orderDetailId);
+				BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
+				if (StringUtils.isNotBlank(orderHeader.getOrderNum())) {
+					BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
+					bizDetailInvoice.setInvoice(bizInvoice);
+					bizDetailInvoice.setOrderHeader(orderHeader);
+					bizDetailInvoiceService.save(bizDetailInvoice);
+					break;
+				}
 			}
 		}
-
-		bizInvoiceService.save(bizInvoice);
 //		return bizSendGoodsRecordService.outTreasury(outTreasuryList);
 		return "ok";
 	}
