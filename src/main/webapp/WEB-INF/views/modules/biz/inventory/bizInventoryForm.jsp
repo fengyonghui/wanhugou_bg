@@ -27,7 +27,7 @@
 				    $("#invReq").find("input[name='reqDetailId']").each(function () {
 				        var reqDetailId = $(this).val();
 						var actualQty = $(this).parent().find("input[name='actualQtys']").val();
-						if (actualQty != 0) {
+						if (actualQty != 0 && actualQty != '') {
                             var html = "<input name='invReqDetail' value='" + reqDetailId + "-" + actualQty +"' type='hidden'/>";
 						}
 						$(this).append(html);
@@ -136,7 +136,7 @@
 								    <td>${requestDetail.sumSendNum == null ? 0 : requestDetail.sumSendNum}</td>
                                 </c:if>
 								<c:if test="${source == null}">
-                                	<td><input name="actualQtys" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini required"/></td>
+                                	<td><input id="${v.index}" name="actualQtys" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini required"/></td>
 								</c:if>
 								<c:if test="${source != null}">
 									<td>${requestDetail.actualQty}</td>
@@ -214,7 +214,9 @@
 				</c:if>
 			</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
-            <input class="btn btn-primary" type="button" onclick="doPrint()" value="打印"/>
+			<c:if test="${source eq 'detail'}">
+            	<input class="btn btn-primary" type="button" onclick="doPrint()" value="打印"/>
+			</c:if>
 
 		</div>
 	</form:form>
@@ -263,6 +265,8 @@
                 <td width="100px">颜色</td>
                 <td width="100px">规格</td>
                 <td width="100px">现有库存数</td>
+                <td width="100px">库存金额</td>
+                <td width="100px">盘点金额</td>
             </tr>
             <c:forEach items="${requestDetailList}" var="requestDetail" varStatus="v">
                 <tr align="center">
@@ -271,6 +275,8 @@
                     <td>${requestDetail.skuInfo.color}</td>
                     <td>${requestDetail.skuInfo.size}</td>
                     <td>${requestDetail.recvQty - requestDetail.outQty}</td>
+					<td>${requestDetail.skuInfo.buyPrice * (requestDetail.recvQty - requestDetail.outQty)}</td>
+					<td>${requestDetail.skuInfo.buyPrice * (requestDetail.actualQty == null ? 0 : requestDetail.actualQty)}</td>
                 </tr>
             </c:forEach>
             <tr align="center">

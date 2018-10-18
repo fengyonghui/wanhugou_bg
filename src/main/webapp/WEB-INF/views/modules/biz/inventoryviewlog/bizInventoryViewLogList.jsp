@@ -37,6 +37,15 @@
 			<li><label>仓库：</label>
 				<form:input path="invInfo.name" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
+			<li><label>备货单号：</label>
+				<form:input path="requestHeader.reqNo" htmlEscape="false" class="input-medium"/>
+			</li>
+			<li><label>备货方：</label>
+				<form:select path="requestHeader.fromType" htmlEscape="false" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('req_from_type')}" itemLabel="label" itemValue="value"/>
+				</form:select>
+			</li>
 			<li><label>商品：</label>
 				<form:input path="skuInfo.name" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
@@ -53,6 +62,7 @@
 				<th>盘点日期</th>
 				<th>盘点人</th>
 				<th>仓库名称</th>
+				<th>采购中心</th>
 				<th>备货方</th>
 				<th>库存类型</th>
 				<th>商品</th>
@@ -77,7 +87,10 @@
 					${bizInventoryViewLog.invInfo.name}
 				</td>
 				<td>
-					${bizInventoryViewLog.requestHeader.fromType==1?'采购中心备货':'厂商备货'}
+					${bizInventoryViewLog.requestHeader.fromOffice.name}
+				</td>
+				<td>
+					${fns:getDictLabel(bizInventoryViewLog.requestHeader.fromType,'req_from_type','未知')}
 				</td>
 				<td>
 					${fns:getDictLabel(bizInventoryViewLog.invType, 'inv_type', '未知状态')}

@@ -16,6 +16,7 @@
 		a.req_id AS "requestHeader.id",
 		rh.req_no AS "requestHeader.reqNo",
 		rh.from_type AS "requestHeader.fromType",
+		cent.name AS "requestHeader.fromOffice.name",
 		u.name as "createBy.name",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
@@ -27,7 +28,7 @@
 	<sql id="bizInventoryViewLogJoins">
 		LEFT JOIN biz_inventory_info bi on bi.id = a.inv_id
 		Left JOIN biz_request_header rh on rh.id=a.req_id
-		LEFT JOIN sys_office cent ON cent.id = rh.from_id
+		LEFT JOIN sys_office cent ON cent.id = bi.cust_id
 		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
 		LEFT JOIN sys_user u on  u.id = a.create_id
 	</sql>
@@ -52,6 +53,15 @@
 					<if test="dbName == 'oracle'">'%'||#{invInfo.name}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{invInfo.name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{invInfo.name},'%')</if>
+			</if>
+			<if test="requestHeader != null and requestHeader.reqNo != null and requestHeader.reqNo != ''">
+				AND rh.req_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{requestHeader.reqNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{requestHeader.reqNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{requestHeader.reqNo},'%')</if>
+			</if>
+			<if test="requestHeader != null and requestHeader.fromType != null and requestHeader.fromType != ''">
+				AND rh.from_type = #{requestHeader.fromType}
 			</if>
 			<if test="skuInfo != null and skuInfo != '' and skuInfo.name != '' ">
 				AND bsi.name  LIKE
@@ -99,7 +109,9 @@
 			stock_qty,
 			stock_change_qty,
 			now_stock_qty,
-			req_id,
+			<if test="requestHeader != null and requestHeader.id != null">
+				req_id,
+			</if>
 			create_id,
 			create_time,
 			u_version,
@@ -114,7 +126,9 @@
 			#{stockQty},
 			#{stockChangeQty},
 			#{nowStockQty},
-			#{requestHeader.id},
+			<if test="requestHeader != null and requestHeader.id != null">
+				#{requestHeader.id},
+			</if>
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
@@ -144,5 +158,39 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<insert id="saveCurrentViewLog">
+		INSERT INTO biz_inventory_view_log(
+			id,
+			inv_id,
+			inv_type,
+			sku_id,
+			stock_qty,
+			stock_change_qty,
+			now_stock_qty,
+			req_id,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time,
+			status
+			) VALUES (
+			#{id},
+			#{invInfo.id},
+			#{invType},
+			#{skuInfo.id},
+			#{stockQty},
+			#{stockChangeQty},
+			#{nowStockQty},
+			#{requestHeader.id},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+			)
+	</insert>
 	
 </mapper>
