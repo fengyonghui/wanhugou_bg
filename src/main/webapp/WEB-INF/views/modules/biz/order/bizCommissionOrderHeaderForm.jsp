@@ -412,6 +412,23 @@
                     return false;
                 }
             }
+            var payTotal = $("#payTotal").val();
+            var lastPayDate = $('#lastPayDate').val();
+            var payDeadline = $('#payDeadline').val();
+            var id = '${entity.id}'
+            if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
+                alert("请输入申请金额!");
+                return false;
+            }
+            if ($String.isNullOrBlank(lastPayDate)) {
+                alert("请选择最后付款时间!");
+                return false;
+            }
+            if ($String.isNullOrBlank(payDeadline)) {
+                alert("请选择本次申请付款时间!");
+                return false;
+            }
+
 
             var paymentApplyRemark = $("#paymentApplyRemark").val();
 
@@ -1200,9 +1217,9 @@
                         <input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
                     </c:if>
 
-                    <c:if test="${entity.str == 'createPay'}">
-                        <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>
-                    </c:if>
+                    <%--<c:if test="${entity.str == 'createPay'}">--%>
+                        <%--<input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>--%>
+                    <%--</c:if>--%>
                 </shiro:hasPermission>
 
                 <c:if test="${entity.str == 'startAudit'}">
@@ -1237,7 +1254,7 @@
                     </c:if>
                 </shiro:hasPermission>
 
-                <input id="btnSubmit" class="btn btn-primary" type="submit" value="申请付款"/>&nbsp;
+                <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>
                 &nbsp;&nbsp;&nbsp;
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </div>
@@ -1252,33 +1269,17 @@
     <tr>
         <%--<th>详情行号</th>--%>
         <th>订单号</th>
-        <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-            <th>货架名称</th>
-        </c:if>
         <th>商品名称</th>
         <th>商品编号</th>
         <th>商品货号</th>
-        <%--<th>已生成的采购单</th>--%>
-        <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
-            <th>商品结算价</th>
-        </c:if>
-        <th>供应商</th>
-        <th>供应商电话</th>
-        <th>商品单价</th>
         <th>采购数量</th>
         <th>总 额</th>
         <th>已发货数量</th>
         <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
             <th>发货方</th>
         </c:if>
-        <th>创建时间</th>
-        <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-            <c:if test="${entity.str != 'audit' && entity.str!='detail' && entity.str!='createPay'}">
-                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                    <th>操作</th>
-                </c:if>
-            </c:if>
-        </shiro:hasPermission>
+        <th>商品零售价</th>
+        <th>佣金</th>
     </tr>
     </thead>
     <tbody>
@@ -1290,11 +1291,6 @@
             <td>
                     ${bizOrderHeader.orderNum}
             </td>
-            <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-                <td>
-                        ${bizOrderDetail.shelfInfo.opShelfInfo.name}
-                </td>
-            </c:if>
             <td>
                 <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
                     ${bizOrderDetail.skuName}
@@ -1316,23 +1312,6 @@
             <td>
                     ${bizOrderDetail.skuInfo.itemNo}
             </td>
-                <%--<td>--%>
-                <%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>--%>
-                <%--</td>--%>
-            <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
-                <td>
-                        ${bizOrderDetail.buyPrice}
-                </td>
-            </c:if>
-            <td>
-                    ${bizOrderDetail.vendor.name}
-            </td>
-            <td>
-                    ${bizOrderDetail.primary.mobile}
-            </td>
-            <td>
-                    ${bizOrderDetail.unitPrice}
-            </td>
             <td>
                     ${bizOrderDetail.ordQty}
             </td>
@@ -1350,26 +1329,11 @@
                 </td>
             </c:if>
             <td>
-                <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                    ${bizOrderDetail.salePrice}
             </td>
-            <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
-                <c:if test="${entity.str != 'audit'}">
-                    <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                        <td>
-                            <c:if test="${empty bizOrderHeader.clientModify}">
-                                <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}">修改</a>
-                                <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}"
-                                   onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
-                            </c:if>
-                            <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
-                                <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">修改</a>
-                                <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}"
-                                   onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
-                            </c:if>
-                        </td>
-                    </c:if>
-                </c:if>
-            </shiro:hasPermission>
+            <td>
+                    ${bizOrderDetail.detailCommission}
+            </td>
         </tr>
     </c:forEach>
     </tbody>

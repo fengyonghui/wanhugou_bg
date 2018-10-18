@@ -36,6 +36,7 @@ import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
@@ -142,6 +143,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizInvoiceService bizInvoiceService;
     @Autowired
     private BizVendInfoService bizVendInfoService;
+    @Autowired
+    private BizOpShelfSkuService bizOpShelfSkuService;
 
 
     @ModelAttribute
@@ -971,13 +974,35 @@ public class BizOrderHeaderController extends BaseController {
 
             List<Integer> skuInfoIdList = Lists.newArrayList();
             List<BizOrderDetail> bizOrderDetails = bizOrderHeader.getOrderDetailList();
+            List<BizOrderDetail> bizOrderDetailsNew = new ArrayList<BizOrderDetail>();
+            BigDecimal detailCommission = BigDecimal.ZERO;
             if (CollectionUtils.isNotEmpty(bizOrderDetails)) {
                 for (BizOrderDetail orderDetail : bizOrderDetails) {
                     BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
+
+                    BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+                    bizOpShelfSku.setSkuInfo(bizSkuInfo);
+                    List<BizOpShelfSku> opShelfSkuList = bizOpShelfSkuService.findList(bizOpShelfSku);
+                    if (CollectionUtils.isNotEmpty(opShelfSkuList)) {
+                        bizOpShelfSku = opShelfSkuList.get(0);
+                        BigDecimal orgPrice = new BigDecimal(bizOpShelfSku.getOrgPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+                        BigDecimal salePrice = new BigDecimal(bizOpShelfSku.getSalePrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+                        Integer ordQty = orderDetail.getOrdQty();
+                        BigDecimal commissionRatio = bizOpShelfSku.getCommissionRatio();
+                        if (commissionRatio == null || commissionRatio.compareTo(BigDecimal.ZERO) <= 0) {
+                            commissionRatio = BigDecimal.ZERO;
+                        }
+                        detailCommission = (salePrice.subtract(orgPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
+                        orderDetail.setSalePrice(salePrice);
+                        orderDetail.setDetailCommission(detailCommission);
+                    }
+                    bizOrderDetailsNew.add(orderDetail);
                     skuInfoIdList.add(bizSkuInfo.getId());
                 }
                 model.addAttribute("skuInfoIdListListJson", skuInfoIdList);
             }
+            bizOrderHeader.setOrderDetailList(bizOrderDetailsNew);
+
 
             for (BizOrderDetail orderDetail : orderDetailList) {
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());

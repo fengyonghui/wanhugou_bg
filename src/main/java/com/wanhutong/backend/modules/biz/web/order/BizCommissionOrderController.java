@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizCommission;
+import com.wanhutong.backend.modules.biz.service.order.BizCommissionService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,6 +35,9 @@ public class BizCommissionOrderController extends BaseController {
 
 	@Autowired
 	private BizCommissionOrderService bizCommissionOrderService;
+	@Autowired
+	private BizCommissionService bizCommissionService;
+
 	
 	@ModelAttribute
 	public BizCommissionOrder get(@RequestParam(required=false) Integer id) {
@@ -70,6 +75,15 @@ public class BizCommissionOrderController extends BaseController {
 		bizCommissionOrderService.save(bizCommissionOrder);
 		addMessage(redirectAttributes, "保存佣金付款订单关系表成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizCommissionOrder/?repage";
+	}
+
+	@RequiresPermissions("biz:order:bizCommissionOrder:edit")
+	@RequestMapping(value = "saveCommission")
+	public String saveCommission(BizCommission bizCommission, Model model, RedirectAttributes redirectAttributes, Integer orderId) {
+
+		String msg = bizCommissionService.createCommissionOrder(bizCommission, orderId).getRight();
+
+		return msg;
 	}
 	
 	@RequiresPermissions("biz:order:bizCommissionOrder:edit")

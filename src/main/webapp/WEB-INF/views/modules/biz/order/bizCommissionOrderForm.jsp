@@ -43,7 +43,7 @@
 		<div class="control-group">
 			<label class="control-label">佣金付款单id,biz_commission_pay.id：</label>
 			<div class="controls">
-				<form:input path="comPayId" htmlEscape="false" maxlength="11" class="input-xlarge required digits"/>
+				<form:input path="commId" htmlEscape="false" maxlength="11" class="input-xlarge required digits"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

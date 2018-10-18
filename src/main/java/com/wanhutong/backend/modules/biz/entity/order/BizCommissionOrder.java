@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.math.BigDecimal;
+
 /**
  * 佣金付款订单关系表Entity
  * @author wangby
@@ -16,8 +18,8 @@ public class BizCommissionOrder extends DataEntity<BizCommissionOrder> {
 	
 	private static final long serialVersionUID = 1L;
 	private Integer orderId;		// 订单id,biz_order_header.id
-	private Integer comPayId;		// 佣金付款单id,biz_commission_pay.id
-	private Double commission;		// 佣金
+	private Integer commId;		// 佣金付款单id,biz_commission_pay.id
+	private BigDecimal commission;		// 佣金
 
 	public BizCommissionOrder() {
 		super();
@@ -35,20 +37,20 @@ public class BizCommissionOrder extends DataEntity<BizCommissionOrder> {
 		this.orderId = orderId;
 	}
 
-	public Integer getComPayId() {
-		return comPayId;
+	public Integer getCommId() {
+		return commId;
 	}
 
-	public void setComPayId(Integer comPayId) {
-		this.comPayId = comPayId;
+	public void setCommId(Integer commId) {
+		this.commId = commId;
 	}
 
-	public Double getCommission() {
+	public BigDecimal getCommission() {
 		return commission;
 	}
 
-	public void setCommission(Double commission) {
+	public void setCommission(BigDecimal commission) {
 		this.commission = commission;
 	}
-	
+
 }

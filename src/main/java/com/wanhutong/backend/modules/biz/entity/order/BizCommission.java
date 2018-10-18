@@ -3,8 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.order;
 
-import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -18,8 +17,8 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 public class BizCommission extends DataEntity<BizCommission> {
 	
 	private static final long serialVersionUID = 1L;
-	private Integer totalCommission;		// 总的待付款金额
-	private Integer payTotal;		// 实际付款金额
+	private BigDecimal totalCommission;		// 总的待付款金额
+	private BigDecimal payTotal;		// 实际付款金额
 	private String imgUrl;		// 付款凭证图片
 	private Date deadline;		// 最后付款时间
 	private Date payTime;		// 支付时间
@@ -34,19 +33,19 @@ public class BizCommission extends DataEntity<BizCommission> {
 		super(id);
 	}
 
-	public Integer getTotalCommission() {
+	public BigDecimal getTotalCommission() {
 		return totalCommission;
 	}
 
-	public void setTotalCommission(Integer totalCommission) {
+	public void setTotalCommission(BigDecimal totalCommission) {
 		this.totalCommission = totalCommission;
 	}
 
-	public Integer getPayTotal() {
+	public BigDecimal getPayTotal() {
 		return payTotal;
 	}
 
-	public void setPayTotal(Integer payTotal) {
+	public void setPayTotal(BigDecimal payTotal) {
 		this.payTotal = payTotal;
 	}
 
@@ -88,6 +87,27 @@ public class BizCommission extends DataEntity<BizCommission> {
 
 	public void setBizStatus(Integer bizStatus) {
 		this.bizStatus = bizStatus;
+	}
+
+	public enum BizStatus {
+		NO_PAY(0, "未支付"),
+		ALL_PAY(1, "已支付"),
+		;
+		private int status;
+		private String desc;
+
+		BizStatus(int status, String desc) {
+			this.status = status;
+			this.desc = desc;
+		}
+
+		public int getStatus() {
+			return status;
+		}
+
+		public String getDesc() {
+			return desc;
+		}
 	}
 	
 }

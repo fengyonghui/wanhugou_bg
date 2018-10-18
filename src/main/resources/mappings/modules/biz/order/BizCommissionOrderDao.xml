@@ -5,7 +5,7 @@
 	<sql id="bizCommissionOrderColumns">
 		a.id AS "id",
 		a.order_id AS "orderId",
-		a.com_pay_id AS "comPayId",
+		a.comm_id AS "commId",
 		a.commission AS "commission",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -64,7 +64,7 @@
 		INSERT INTO biz_commission_order(
 			id,
 			order_id,
-			com_pay_id,
+			comm_id,
 			commission,
 			create_id,
 			create_time,
@@ -75,7 +75,7 @@
 		) VALUES (
 			#{id},
 			#{orderId},
-			#{comPayId},
+			#{commId},
 			#{commission},
 			#{createBy.id},
 			#{createDate},
@@ -89,7 +89,7 @@
 	<update id="update">
 		UPDATE biz_commission_order SET 	
 			order_id = #{orderId},
-			com_pay_id = #{comPayId},
+			comm_id = #{commId},
 			commission = #{commission},
 			create_time = #{createDate},
 			u_version = #{uVersion},
