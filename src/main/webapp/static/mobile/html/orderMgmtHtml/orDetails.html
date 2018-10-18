@@ -3,10 +3,6 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<meta http-equiv="Expires" content="0">
-		<meta http-equiv="Pragma" content="no-cache">
-		<meta http-equiv="Cache-control" content="no-cache">
-		<meta http-equiv="Cache" content="no-cache">
 		<title>详情</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css?time=20181009" rel="stylesheet" />
@@ -33,10 +29,15 @@
 				<label>最后时间：</label>
 				<input type="text" class="mui-input-clear" id="orLastDa" disabled>
 			</div>
-			<div class="mui-input-row">
+			<div class="mui-input-row" id="orderTypebox">
 				<label>交货地点：</label>
-				<input type="text" class="mui-input-clear" id="delSite" disabled>
-			</div>
+		    	<div id="changeTxt" class="labelri inStock">
+		    		采购中心
+			        <input id="fromType1" type="radio" name="fromType" value="0"/ class="inputRadio" disabled>
+	                                供应商  
+			        <input id="fromType2" type="radio" name="fromType" value="1"/ class="inputRadio" disabled>
+		        </div>	
+		    </div>
 			<div class="mui-input-row remark">
 				<label>备注：</label>
 				<textarea id="orRemark" name="" rows="" cols="" disabled></textarea>
@@ -69,22 +70,14 @@
 				<label>身份证：</label>
 				<div id="orSuppliercardID"></div>	
 			</div>
-			<div class="mui-input-row">
-				<label>申请金额：</label>
-				<input type="text" class="mui-input-clear" id="orApplyNum" disabled>
-			</div>
-			<div class="mui-input-row">
-				<label>本次申请付款时间：</label>
-				<input type="text" class="mui-input-clear" id="orDateNow" disabled>
-			</div>
 			<!--审批流程块 有的话显示-->
 			<div class="mui-input-row">
 				<div class="labelLf">审批流程：</div>
-				<ul class="" id="inCheckAddMenu">
+				<ul class="" id="orCheckMenu">
 					
 				</ul>
 			</div>
-			<div class="app_bline2 mui-input-row staCommodity">
+			<div class="mui-input-row inComdty inDetailComdty">
 				<div class="labelLf">商品信息：</div>
 				<ul id="orCheckCommodity" class="mui-table-view app_pl10"></ul>				
 			</div>

@@ -633,6 +633,8 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeaderMap.put("id", bizPoHeader.getId());
         bizPoHeaderMap.put("orderNumber", bizPoHeader.getOrderNum());
         bizPoHeaderMap.put("totalDetail", bizPoHeader.getTotalDetail());
+        bizPoHeaderMap.put("totalExp", bizPoHeader.getTotalExp());
+        bizPoHeaderMap.put("freight", bizPoHeader.getFreight());
         bizPoHeaderMap.put("total", bizPoHeader.getTotalDetail() + bizPoHeader.getTotalExp() + bizPoHeader.getFreight());
         bizPoHeaderMap.put("lastPayDate", bizPoHeader.getLastPayDate());
         bizPoHeaderMap.put("deliveryStatus", bizPoHeader.getDeliveryStatus());
@@ -642,6 +644,8 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeaderMap.put("vendOffice", bizPoHeader.getVendOffice());
         bizPoHeaderMap.put("process", bizPoHeader.getCommonProcess());
         bizPoHeaderMap.put("commonProcessList", bizPoHeader.getCommonProcessList());
+        bizPoHeaderMap.put("poDetailList", bizPoHeader.getPoDetailList());
+
 
         Map<String, Object> bizOrderHeaderMap = Maps.newHashMap();
         bizOrderHeaderMap.put("id",bizOrderHeader == null ? StringUtils.EMPTY : bizOrderHeader.getId());
