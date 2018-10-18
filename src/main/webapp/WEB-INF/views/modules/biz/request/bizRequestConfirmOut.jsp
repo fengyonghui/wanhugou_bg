@@ -32,10 +32,10 @@
 						    if (sentQty == '' || sentQty == 0) {
                                 flag1 = false;
 							}
-							if (sentQty > okQty) {
+							if (parseInt(sentQty) > parseInt(okQty)) {
 						        flag2 = false;
 							}
-							if (ordQty - sQty < sentQty) {
+							if (parseInt(ordQty) - parseInt(sQty) < parseInt(sentQty)) {
 						        flag3 = false;
 							}
 						}

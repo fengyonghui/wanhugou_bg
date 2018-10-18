@@ -155,5 +155,11 @@
       a.status=1
       and a.object_id = #{objectId}
 	</select>
+
+	<update id="updateSkuId">
+		UPDATE biz_po_detail SET
+		sku_id = #{needSkuId}
+		WHERE id = #{id}
+	</update>
 	
 </mapper>

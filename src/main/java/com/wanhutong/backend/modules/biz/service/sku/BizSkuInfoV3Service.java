@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.*;
 
@@ -385,4 +386,12 @@ public class BizSkuInfoV3Service extends CrudService<BizSkuInfoV3Dao, BizSkuInfo
 		attributeValueV2.setAttributeInfo(attributeInfoV2);
 		return attributeValueService.findList(attributeValueV2);
 	}
+
+	public void updateProdId(Integer skuId, Integer prodId) {bizSkuInfoDao.updateProdId(skuId,prodId);}
+
+	public List<BizSkuInfo> findSkuBySpuAndSize(Integer prodId, String size){
+		return bizSkuInfoDao.findSkuBySpuAndSize(prodId,size);
+	}
+
+	public void updatePrice(Integer id, BigDecimal settlementPrice) {bizSkuInfoDao.updatePrice(id,settlementPrice);}
 }

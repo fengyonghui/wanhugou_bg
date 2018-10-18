@@ -8,22 +8,37 @@ import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.common.supcan.treelist.cols.Col;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoV3Dao;
+import com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfSkuV2Dao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.inventory.BizCollectGoodsRecordService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
+import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuV2Service;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -50,8 +65,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -91,10 +113,27 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
     @Resource
     private AttributeValueV2Service attributeValueV2Service;
     @Resource
-    private BizSkuInfoV2Service bizSkuInfoV2Service;
+    private BizSkuInfoV3Service bizSkuInfoV3Service;
     @Autowired
     private BizSkuViewLogService bizSkuViewLogService;
-
+    @Autowired
+    private BizOpShelfSkuV2Dao bizOpShelfSkuV2Dao;
+    @Autowired
+    private BizOpShelfSkuV2Service bizOpShelfSkuV2Service;
+    @Autowired
+    private BizOrderDetailService bizOrderDetailService;
+    @Autowired
+    private BizRequestDetailService bizRequestDetailService;
+    @Autowired
+    private BizPoDetailService bizPoDetailService;
+    @Autowired
+    private BizSendGoodsRecordService bizSendGoodsRecordService;
+    @Autowired
+    private BizCollectGoodsRecordService bizCollectGoodsRecordService;
+    @Autowired
+    private BizInventorySkuService bizInventorySkuService;
+    @Autowired
+    private BizInventoryViewLogService bizInventoryViewLogService;
 
     /**
      * 材质ID 临时解决文案 需优化
@@ -196,7 +235,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
 
             BizSkuInfo oldSkuEntity = new BizSkuInfo();
             oldSkuEntity.setProductInfo(bizProductInfo);
-            List<BizSkuInfo> oldSkuList = bizSkuInfoV2Service.findListIgnoreStatus(oldSkuEntity);
+            List<BizSkuInfo> oldSkuList = bizSkuInfoV3Service.findListIgnoreStatus(oldSkuEntity);
             List<BizSkuInfo> newSkuList = Lists.newArrayList();
 
             Set<String> skuAttrStrSet = Sets.newHashSet(skuAttrStrList);
@@ -217,7 +256,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                     //保存商品出厂价日志表
                     Double aftBuyPrice=StringUtils.isBlank(price)? 0 : Double.valueOf(price);
                     BizSkuViewLog skuViewLog = new BizSkuViewLog();
-                    BizSkuInfo skuInfo = bizSkuInfoV2Service.get(bizSkuInfo);
+                    BizSkuInfo skuInfo = bizSkuInfoV3Service.get(bizSkuInfo);
                     if(skuInfo!=null){
                         if(!aftBuyPrice.equals(skuInfo.getBuyPrice())) {
                             skuViewLog.setSkuInfo(skuInfo);//商品名称
@@ -245,13 +284,13 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                 bizSkuInfo.setSort(String.valueOf(index));
                 bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
 
-                BizSkuInfo oldBizSkuInfo = bizSkuInfoV2Service.getSkuInfoByItemNoProdId(bizSkuInfo.getItemNo(), bizProductInfo.getId());
+                BizSkuInfo oldBizSkuInfo = bizSkuInfoV3Service.getSkuInfoByItemNoProdId(bizSkuInfo.getItemNo(), bizProductInfo.getId());
                 if (oldBizSkuInfo != null && !copy) {
                     bizSkuInfo.setId(oldBizSkuInfo.getId());
                 }else {
                     index ++;
                 }
-                bizSkuInfoV2Service.save(bizSkuInfo);
+                bizSkuInfoV3Service.save(bizSkuInfo);
                 newSkuList.add(bizSkuInfo);
 
                 AttributeValueV2 sizeAttrVal = new AttributeValueV2();
@@ -301,7 +340,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                     }
                 }
                 if (hasDel) {
-                    bizSkuInfoV2Service.delete(oldS);
+                    bizSkuInfoV3Service.delete(oldS);
                 }
             }
 
@@ -648,17 +687,112 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
         super.delete(bizProductInfo);
     }
 
-
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public void mergeSpu(String itemNo, Integer vendId) {
+    public void mergeSpu(String itemNo, Integer vendId, Integer needId, Integer replaceId) {
         BizProductInfo bizProductInfo = new BizProductInfo();
         bizProductInfo.setItemNo(itemNo);
         bizProductInfo.setOffice(new Office(vendId));
         List<BizProductInfo> productList = findList(bizProductInfo);
+        //被替换的产品ID，替换
+        BizSkuInfo skuInfo = new BizSkuInfo();
+        skuInfo.setProductInfo(new BizProductInfo(replaceId));
+        List<BizSkuInfo> skuInfoList = bizSkuInfoV3Service.findList(skuInfo);
+        if (CollectionUtils.isNotEmpty(skuInfoList)) {
+            for (BizSkuInfo bizSkuInfo : skuInfoList) {
+                bizSkuInfoV3Service.updateProdId(bizSkuInfo.getId(),needId);    //修改prod_id
+                updateProdIdForOpShelfSku(bizSkuInfo.getId(),needId);//修改上架商品对应的prod_id
+            }
+        }
+
         if (CollectionUtils.isNotEmpty(productList)) {
             for (BizProductInfo productInfo : productList) {
-                LOGGER.info("产品ID【{}】",productInfo.getId());
+                if (!needId.equals(productInfo.getId()) && !replaceId.equals(productInfo.getId())) {
+                    LOGGER.info("产品ID【{}】", productInfo.getId());
+                    //对比needId对应的SPU下的SKU
+                    contrastSku(productInfo.getId(),needId);
+                    //删除无用的SPU
+                    delete(new BizProductInfo(productInfo.getId()));
+                }
+            }
+        }
+        //替换货号
+    }
 
+    private void updateProdIdForOpShelfSku(Integer skuId, Integer prodId) {
+        BizOpShelfSku opShelfSku = new BizOpShelfSku();
+        opShelfSku.setSkuInfo(new BizSkuInfo(skuId));
+        List<BizOpShelfSku> opShelfSkuList = bizOpShelfSkuV2Dao.findList(opShelfSku);
+        if (CollectionUtils.isNotEmpty(opShelfSkuList)) {
+            for (BizOpShelfSku bizOpShelfSku : opShelfSkuList) {
+                bizOpShelfSkuV2Dao.updateProdId(bizOpShelfSku.getId(),prodId);
+            }
+        }
+    }
+
+    private void contrastSku(Integer spuId, Integer needId) {
+        BizSkuInfo skuInfo = new BizSkuInfo();
+        skuInfo.setProductInfo(new BizProductInfo(needId));
+        List<BizSkuInfo> needSkuList = bizSkuInfoV3Service.findList(skuInfo);
+        skuInfo.setProductInfo(new BizProductInfo(spuId));
+        List<BizSkuInfo> skuInfoList = bizSkuInfoV3Service.findList(skuInfo);
+        List<BizSkuInfo> skuList = Lists.newArrayList();
+        if (CollectionUtils.isNotEmpty(needSkuList) && CollectionUtils.isNotEmpty(skuInfoList)) {
+            for (BizSkuInfo needSku : needSkuList) {
+                String needItemNo = needSku.getItemNo();
+                String needProperty = StringUtils.substring(needItemNo, needItemNo.indexOf("/"));
+                for (BizSkuInfo bizSkuInfo : skuInfoList) {
+                    String itemNo = bizSkuInfo.getItemNo();
+                    String property = StringUtils.substring(itemNo, itemNo.indexOf("/"));
+                    if (property.equals(needProperty)) {
+                        skuList.add(bizSkuInfo);
+                        changeSku(needSku.getId(),bizSkuInfo.getId());
+                        break;
+                    }
+                }
+                //不同商品
+                skuInfoList.removeAll(skuList);
+                if (CollectionUtils.isNotEmpty(skuInfoList)) {
+                    for (BizSkuInfo bizSkuInfo : skuInfoList) {
+                        bizSkuInfoV3Service.updateProdId(bizSkuInfo.getId(),needId);
+                        updateProdIdForOpShelfSku(bizSkuInfo.getId(),needId);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 删除多余重复商品，修改其它表对应的skuId
+     * @param needSkuId
+     * @param skuId
+     */
+    private void changeSku(Integer needSkuId, Integer skuId) {
+        bizSkuInfoV3Service.delete(new BizSkuInfo(skuId));
+        bizOpShelfSkuV2Service.updateSkuId(needSkuId,skuId);
+        bizOrderDetailService.updateSkuId(needSkuId,skuId);
+        bizRequestDetailService.updateSkuId(needSkuId,skuId);
+        bizPoDetailService.updateSkuId(needSkuId,skuId);
+        bizSendGoodsRecordService.updateSkuId(needSkuId,skuId);
+        bizCollectGoodsRecordService.updateSkuId(needSkuId,skuId);
+        bizInventorySkuService.updateSkuId(needSkuId,skuId);
+        bizInventoryViewLogService.updateSkuId(needSkuId,skuId);
+    }
+
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void changePrice(Integer prodId, String size, BigDecimal settlementPrice, BigDecimal marketingPrice) {
+        List<BizSkuInfo> bizSkuInfos = bizSkuInfoV3Service.findSkuBySpuAndSize(prodId, size);
+        if (CollectionUtils.isNotEmpty(bizSkuInfos)) {
+            for (BizSkuInfo bizSkuInfo : bizSkuInfos) {
+                bizSkuInfoV3Service.updatePrice(bizSkuInfo.getId(),settlementPrice);
+                BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+                bizOpShelfSku.setSkuInfo(bizSkuInfo);
+                List<BizOpShelfSku> opShelfSkus = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
+                if (CollectionUtils.isNotEmpty(opShelfSkus)) {
+                    for (BizOpShelfSku opShelfSku : opShelfSkus) {
+                        bizOpShelfSkuV2Service.updatePrice(opShelfSku.getId(),settlementPrice,marketingPrice);
+                    }
+                }
             }
         }
     }

@@ -458,4 +458,16 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			}
 		}
 	}
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void updateSkuId(Integer needSkuId, Integer skuId) {
+        BizInventorySku orderDetail = new BizInventorySku();
+        orderDetail.setSkuInfo(new BizSkuInfo(skuId));
+        List<BizInventorySku> orderDetails = findList(orderDetail);
+        if (CollectionUtils.isNotEmpty(orderDetails)) {
+            for (BizInventorySku bizOrderDetail : orderDetails) {
+                bizInventorySkuDao.updateSkuId(needSkuId,bizOrderDetail.getId());
+            }
+        }
+    }
 }

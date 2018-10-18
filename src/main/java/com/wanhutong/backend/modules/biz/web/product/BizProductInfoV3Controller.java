@@ -61,6 +61,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -722,9 +723,26 @@ public class BizProductInfoV3Controller extends BaseController {
     }
 
     @RequestMapping(value = "mergeSpu")
-    public void mergeSpu(String itemNo, Integer vendId) {
-        bizProductInfoService.mergeSpu(itemNo,vendId);
+    public void mergeSpu(String itemNo, Integer vendId, Integer needId, Integer replaceId) {
+        bizProductInfoService.mergeSpu(itemNo,vendId,needId,replaceId);
     }
+
+    @RequestMapping(value = "changePriceForm")
+    public String changePriceForm() {return "modules/biz/product/updatePriceForSkuAndShelfSku";}
+
+    @RequestMapping(value = "changePrice")
+    @ResponseBody
+    public String changePrice(Integer prodId, String size, BigDecimal settlementPrice, BigDecimal marketingPrice) {
+        bizProductInfoService.changePrice(prodId,size,settlementPrice,marketingPrice);
+        return "ok";
+    }
+
+//    @RequestMapping(value = "changeSpu")
+//    @ResponseBody
+//    public String changeSpu(Integer prodId) {
+//        bizProductInfoService.changeSpu(prodId);
+//        return "ok";
+//    }
 
 //    private List<AttributeValueV2> specificAttr(BizProductInfo bizProductInfo) {
 //        AttributeValueV2 valueV2 = new AttributeValueV2();

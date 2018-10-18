@@ -324,4 +324,10 @@
 			AND a.create_time BETWEEN #{oneDayBefore} AND #{yesterdayEnd}
 	</select>
 
+	<update id="updateSkuId">
+		UPDATE biz_send_goods_record SET
+		sku_id = #{needSkuId}
+		WHERE id = #{id}
+	</update>
+
 </mapper>
