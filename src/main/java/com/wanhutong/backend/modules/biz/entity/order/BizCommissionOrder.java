@@ -18,8 +18,7 @@ public class BizCommissionOrder extends DataEntity<BizCommissionOrder> {
 	private Integer orderId;		// 订单id,biz_order_header.id
 	private Integer comPayId;		// 佣金付款单id,biz_commission_pay.id
 	private Double commission;		// 佣金
-	private Integer uVersion;		// 版本控制
-	
+
 	public BizCommissionOrder() {
 		super();
 	}
@@ -50,14 +49,6 @@ public class BizCommissionOrder extends DataEntity<BizCommissionOrder> {
 
 	public void setCommission(Double commission) {
 		this.commission = commission;
-	}
-
-	public Integer getUVersion() {
-		return uVersion;
-	}
-
-	public void setUVersion(Integer uVersion) {
-		this.uVersion = uVersion;
 	}
 	
 }

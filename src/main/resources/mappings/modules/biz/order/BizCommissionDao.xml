@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizCommissionDao">
+    
+	<sql id="bizCommissionColumns">
+		a.id AS "id",
+		a.total_commission AS "totalCommission",
+		a.pay_total AS "payTotal",
+		a.img_url AS "imgUrl",
+		a.deadline AS "deadline",
+		a.pay_time AS "payTime",
+		a.remark AS "remark",
+		a.biz_status AS "bizStatus",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.status AS "delFlag"
+	</sql>
+	
+	<sql id="bizCommissionJoins">
+	</sql>
+    
+	<select id="get" resultType="BizCommission">
+		SELECT 
+			<include refid="bizCommissionColumns"/>
+		FROM biz_commission a
+		<include refid="bizCommissionJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizCommission">
+		SELECT 
+			<include refid="bizCommissionColumns"/>
+		FROM biz_commission a
+		<include refid="bizCommissionJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizCommission">
+		SELECT 
+			<include refid="bizCommissionColumns"/>
+		FROM biz_commission a
+		<include refid="bizCommissionJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_commission(
+			id,
+			total_commission,
+			pay_total,
+			img_url,
+			deadline,
+			pay_time,
+			remark,
+			biz_status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time,
+			status
+		) VALUES (
+			#{id},
+			#{totalCommission},
+			#{payTotal},
+			#{imgUrl},
+			#{deadline},
+			#{payTime},
+			#{remark},
+			#{bizStatus},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_commission SET 	
+			total_commission = #{totalCommission},
+			pay_total = #{payTotal},
+			img_url = #{imgUrl},
+			deadline = #{deadline},
+			pay_time = #{payTime},
+			remark = #{remark},
+			biz_status = #{bizStatus},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_commission SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
