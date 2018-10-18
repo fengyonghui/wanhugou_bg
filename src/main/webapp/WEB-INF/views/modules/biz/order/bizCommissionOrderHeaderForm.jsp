@@ -430,10 +430,10 @@
             }
 
 
-            var paymentApplyRemark = $("#paymentApplyRemark").val();
+            var remark = $("#paymentApplyRemark").val();
 
-            window.location.href="${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal
-                + "&payDeadline=" + payDeadline + "&fromPage=orderHeader" + "&paymentApplyRemark=" + paymentApplyRemark;
+            window.location.href="${ctx}/biz/order/bizCommissionOrder/saveCommission?totalCommission=" + payTotal + "&deadline=" + lastPayDate
+                + "&payTime=" + payDeadline + "&remark=" + remark;
 
             <%--$("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader");--%>
             <%--$("#inputForm").submit();--%>
