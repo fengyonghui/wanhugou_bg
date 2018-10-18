@@ -461,7 +461,7 @@
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
-				<a href="${ctx}/biz/order/bizOrderHeader/commissionForm?id=${orderHeader.id}&commissionTotalDetail=${orderHeader.commission}&totalCommission=${orderHeader.commission}">申请结佣</a>
+				<a href="${ctx}/biz/order/bizOrderHeader/commissionForm?id=${orderHeader.id}&commissionTotalDetail=${orderHeader.totalDetail}&totalCommission=${orderHeader.commission}">申请结佣</a>
 
 
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
