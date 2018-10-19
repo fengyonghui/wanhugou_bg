@@ -46,8 +46,16 @@
 			            contentover : "",
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
+			            	    var statu = _this.userInfo.statu;
+			            	    console.log(statu)
 			                    pager['size']= 20;
-			                    pager['pageNo'] = 1;
+			                    pager['pageNo'] = 1;			                    
+			                    if(statu == '') {
+			                    	pager['statu'] = '';
+			                    }
+			                    if(statu == statu) {
+			                    	pager['statu'] = statu;
+			                    }
 				                var f = document.getElementById("orderList");
 				                var childs = f.childNodes;
 				                for(var i = childs.length - 1; i >= 0; i--) {
@@ -335,16 +343,16 @@
 											'<div class="'+ordwaterCourseBtn+'"  staOrdId="'+ item.id +'">' +
 												 ordwaterCourseBtnTxt +
 											'</div>'+
-											'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 												staAmendTxt +
 											'</div>'+
-											'<div class="'+ordDeleteBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordDeleteBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 												staDeleteTxt +
 											'</div>'+
-											'<div class="'+ordDetailBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordDetailBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 												staDetailBtnTxt +
 											'</div>'+
-											'<div class="'+ordRecoveryBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordRecoveryBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 												staRecoveryBtnTxt +
 											'</div>'+
 										'</div>' +
@@ -982,16 +990,16 @@
 											'<div class="'+ordwaterCourseBtn+'"  staOrdId="'+ item.id +'">' +
 												 ordwaterCourseBtnTxt +
 											'</div>'+
-											'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 												staAmendTxt +
 											'</div>'+
-											'<div class="'+ordDeleteBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordDeleteBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 												staDeleteTxt +
 											'</div>'+
-											'<div class="'+ordDetailBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordDetailBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 												staDetailBtnTxt +
 											'</div>'+
-											'<div class="'+ordRecoveryBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ item.statu +'" ordsource="'+ item.source +'">' +
+											'<div class="'+ordRecoveryBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 												staRecoveryBtnTxt +
 											'</div>'+
 										'</div>' +

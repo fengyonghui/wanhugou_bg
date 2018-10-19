@@ -162,6 +162,7 @@
 					_this.statusListHtml(res.data)
 					_this.checkProcessHtml(res.data);
 					_this.commodityHtml(res.data);
+					_this.paylistHtml(res.data);//支付信息					
 					//排产信息
 					if(res.data.bizOrderHeader.orderDetails=='details'){
 						var poheaderId = res.data.bizOrderHeader.bizPoHeader.id;
@@ -220,7 +221,6 @@
                 data: {vendorId:supplierId},		                
                 dataType: "json",
                 success: function(rest){
-                	console.log(rest)
                 	if(rest){
                 		if(rest.vendName){
                 			$('#insupplier').val(rest.vendName);//供应商
@@ -555,6 +555,59 @@
 				$("#staCheckMenu").parent().hide();
 			}
 		},
+		//支付列表
+        paylistHtml:function(data){
+        	var _this = this;
+        	var htmlPaylist = '';
+        	if(data.statu != '' && data.statu =='unline'){
+        		var orWaterStatus = '';
+                $.ajax({
+            		type: "GET",
+	                url: "/a/sys/dict/listData",
+	                data:{type:'biz_order_unline_bizStatus'},
+	                dataType: "json",
+	                async:false,
+	                success: function(zl){
+	                	$.each(zl,function(z, l) {
+	                		$.each(data.unlineList,function(u, n) {
+	                		     if(n.bizStatus==l.value){
+	                		     	orWaterStatus=l.label
+	                		     }
+	                	    });
+	                	});
+            		}
+            	});
+        		$.each(data.unlineList, function(i, item) {
+					htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
+						'<div class="mui-media-body">'+
+							'<div class="mui-input-row">'+
+								'<label>流水号：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.serialNum +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>支付金额：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.unlinePayMoney.toFixed(2) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>实收金额：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.realMoney.toFixed(2) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>状态：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ orWaterStatus +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>创建时间：</label>'+
+								'<input type="text" class="mui-input-clear realitypayTime" value="'+ _this.formatDateTime(item.createDate) +'" disabled>'+
+							'</div>'+
+						'</div>'+
+					'</li>'
+			    });
+			    $("#inPaylist").html(htmlPaylist);
+        	}else{
+        		$('#inPaylistbox').hide();
+        	}       	
+        },
 		commodityHtml: function(data) {
 			var _this = this;
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;

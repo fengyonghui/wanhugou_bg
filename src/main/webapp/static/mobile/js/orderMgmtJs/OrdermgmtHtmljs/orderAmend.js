@@ -4,6 +4,7 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.OrdFlag = false;
+		this.OrdeditFlag = false;
 		this.OrdDetailFlag = false;
 		this.OrdviewFlag = false;
 		return this;
@@ -13,6 +14,7 @@
 			this.pageInit(); //页面初始化					
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			this.getPermissionList('biz:sku:bizSkuInfo:edit','OrdFlag');//true 订单信息操作
+			this.getPermissionList('biz:order:bizOrderHeader:edit','OrdeditFlag');//true 订单信息操作
 			this.getPermissionList1('biz:order:bizOrderDetail:edit','OrdDetailFlag');//false订单信息操作中的修改、删除
 			this.getPermissionList2('biz:order:bizOrderDetail:view','OrdviewFlag');//true订单信息操作中的修改、删除
 			//GHUTILS.nativeUI.showWaiting()//开启
@@ -150,7 +152,13 @@
 					_this.statusListHtml(res.data);//状态流程
 					_this.checkProcessHtml(res.data);//审核流程
 					_this.commodityHtml(res.data);//商品信息
-					_this.saveBtn(res.data.bizOrderHeader.id);//保存
+					_this.paylistHtml(res.data);//支付信息
+					if(res.data.bizOrderHeader.orderNoEditable==""&& res.data.bizOrderHeader.flag=="" &&  res.data.bizOrderHeader.orderDetails=="" && res.data.bizOrderHeader.str!='audit' && res.data.bizOrderHeader.str!='startAudit'){      
+						if(_this.OrdeditFlag==true){
+						    _this.saveBtn(res.data.bizOrderHeader.id);//保存
+					    }					
+					}
+					
                 }
             });
 		},
@@ -165,6 +173,7 @@
                 success: function(res){
 //              	console.log(res.data)//true
                     _this.OrdFlag = res.data;
+                    _this.OrdeditFlag = res.data;
                 }
             });
         },
@@ -487,6 +496,59 @@
 				$("#staCheckMenu").parent().hide();
 			}
 		},
+		//支付列表
+        paylistHtml:function(data){
+        	var _this = this;
+        	var htmlPaylist = '';
+        	if(data.statu != '' && data.statu =='unline'){
+        		var orWaterStatus = '';
+                $.ajax({
+            		type: "GET",
+	                url: "/a/sys/dict/listData",
+	                data:{type:'biz_order_unline_bizStatus'},
+	                dataType: "json",
+	                async:false,
+	                success: function(zl){
+	                	$.each(zl,function(z, l) {
+	                		$.each(data.unlineList,function(u, n) {
+	                		     if(n.bizStatus==l.value){
+	                		     	orWaterStatus=l.label
+	                		     }
+	                	    });
+	                	});
+            		}
+            	});
+        		$.each(data.unlineList, function(i, item) {
+					htmlPaylist +='<li class="mui-table-view-cell mui-media payList">'+
+						'<div class="mui-media-body">'+
+							'<div class="mui-input-row">'+
+								'<label>流水号：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.serialNum +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>支付金额：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.unlinePayMoney.toFixed(2) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>实收金额：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.realMoney.toFixed(2) +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>状态：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ orWaterStatus +'" disabled>'+
+							'</div>'+
+							'<div class="mui-input-row">'+
+								'<label>创建时间：</label>'+
+								'<input type="text" class="mui-input-clear realitypayTime" value="'+ _this.formatDateTime(item.createDate) +'" disabled>'+
+							'</div>'+
+						'</div>'+
+					'</li>'
+			    });
+			    $("#inPaylist").html(htmlPaylist);
+        	}else{
+        		$('#inPaylistbox').hide();
+        	}       	
+        },
 		//商品信息
 		commodityHtml: function(data) {
 			console.log(data)

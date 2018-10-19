@@ -28,10 +28,14 @@
 			.paybox{
 				text-align: center;
 			}
+			.paybox label{
+				display: inline-block;
+			}
 			.payMoney input,.payMoney textarea{
-				margin-top:5px;
+				display: block;
 				width:80%;
-				margin-left:10%;
+				text-align: center;
+				margin:5px auto; 
 			}
 			.btnbox{
 				margin:5px 0;
@@ -59,7 +63,7 @@
 		</div>
 		<div class="payMoney">
 			<div class="paybox">
-				<label>订单总金额:</label>
+				<label style="margin-top:5px;">订单总金额:</label>
 			    <input class="mui-input-clear" type="text" id="totalMoney" disabled>
 			</div>
 			<div class="paybox">

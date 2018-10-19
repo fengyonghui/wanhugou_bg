@@ -60,9 +60,9 @@
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
                             	console.log(item)
-                                if(item.mobileUrl){
+//                              if(item.mobileUrl){
                                 	pHtmlList += '<p class="childMenu" purchId="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</p>'
-                                }
+//                              }
                             });
                             $(".childData"+indexNum).html(pHtmlList)
                         }

@@ -3,22 +3,34 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
-		this.skuInFoIds="";
-		this.skuInfoIds="";
-		this.skuInfoIds2="";
+		this.OrdFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
-			this.getData();//获取数据
-			
+			this.getData();//获取数据	
+			this.getPermissionList('biz:order:bizOrderDetail:edit','OrdFlag');//true 订单信息操作
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;         
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+//              	console.log(res.data)//true
+                    _this.OrdFlag = res.data;
+                }
+            });
+        },
 		getData: function() {
 			var _this = this;
 			$.ajax({
@@ -34,156 +46,14 @@
 					$('#saveDetailBtn').attr('consultant',res.data.bizOrderDetail.orderHeader.consultantId);
 					$('#saveDetailBtn').attr('source',res.data.bizOrderDetail.orderHeader.source);
 					$('#saveDetailBtn').attr('statu',res.data.bizOrderDetail.orderHeader.statu);
-					_this.saveBtn(res.data.bizOrderDetail.orderHeader.id,res.data.bizOrderDetail.orderHeader.clientModify,res.data.bizOrderDetail.orderHeader.consultantId);//保存
+					if(_this.OrdFlag = true){
+						_this.saveBtn(res.data.bizOrderDetail.orderHeader.id,res.data.bizOrderDetail.orderHeader.clientModify,res.data.bizOrderDetail.orderHeader.consultantId);//保存
+					}					
                 }
             });
             _this.searchSkuHtml();
             _this.removeItem();
 		},
-//		searchSkuHtml: function() {
-//          var _this = this;
-//          mui('#ordAmendPoLastDaDiv').on('tap','#ordComChoiceBtn',function(){
-//              var itemNo = $("#ordAmendPoLastDa").val();//商品货号
-//              if(itemNo==""){
-//              	mui.toast('请输入商品货号！');
-//              	return;
-//              };
-//              $.ajax({
-//                  type: "post",
-//                  url: "/a/biz/shelf/bizOpShelfSku/findOpShelfSku4Mobile",
-//                  data: {
-//                  	'skuInfo.itemNo': itemNo,
-//              	},
-//                  success: function (result) {
-//                      var data = JSON.parse(result).data;
-//                      $.each(data,function (keys,skuInfoList) {
-////	                        	console.log(skuInfoList)
-//                      	if(skuInfoList==""){
-//                      		mui.toast("暂无商品！");
-//                      	}
-//                          var prodKeys= keys.split(",");
-//                          var prodId= prodKeys[0];
-//                          var prodUrl= prodKeys[2];
-//                          var  brandName=prodKeys[6];
-//                          var resultListHtml="";
-//                          var t=0;
-//                          $.each(skuInfoList,function (index,skuInfo) {
-//                      		console.log(skuInfo);
-//                              if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length>0){
-//                              	mui.toast('已有此类商品！请选择其他商品！！');
-//                                  return;
-//                              };
-//			                    //商品属性
-//								var ListHtml="";
-//								$.each(skuInfo.skuValueList, function(i, item) {
-//								 	ListHtml+=item.value;                                                              
-//								});								
-//                              resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">' +
-//                              '<div class="mui-row mui-checkbox mui-left">' +
-//                              '<input style="top:61px" name="" class="skuinfo_check" id="' + skuInfo.id + '" type="checkbox"></div>' +
-//                              '<div class="mui-row">' +
-//                               '<div class="mui-row lineStyle">' +
-//                              '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-//                              '<div class="mui-col-sm-10 mui-col-xs-10">' +
-//                              '<li class="mui-table-view-cell app_bline3">' +
-//                              '<div class="mui-input-row">' +
-//                              '<label>采购中心:</label>' +
-//                              '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.centerOffice.name + '" disabled>' +
-//                              '</div></li></div></div>' +
-//                              
-//                              '<div class="mui-row lineStyle">' +
-//                              '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-//                              '<div class="mui-col-sm-10 mui-col-xs-10">' +
-//                              '<li class="mui-table-view-cell app_bline3">' +
-//                              '<div class="mui-input-row">' +
-//                              '<label>商品名称:</label>' +
-//                              '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.skuInfo.name + '" disabled>' +
-//                              '</div></li></div></div>' +
-//                             
-//                            	'<div class="mui-row lineStyle">' +
-//                              '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-//                              '<div class="mui-col-sm-10 mui-col-xs-10">' +
-//                              '<li class="mui-table-view-cell app_bline3">' +
-//                              '<div class="mui-input-row">' +
-//                              '<label>商品货号:</label>' +
-//                              '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + skuInfo.skuInfo.itemNo + '" disabled>' +
-//                              '</div></li></div></div>' +
-//                              
-//                              '<div class="mui-row lineStyle">' +
-//			                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-//			                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
-//			                    '<li class="mui-table-view-cell app_bline3">' +
-//			                    '<div class="mui-input-row ">' +
-//			                    '<label class="">商品编码:</label>' +
-//			                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.skuInfo.partNo + '" disabled>' +
-//			                    '</div></li></div></div>' +
-//                              '<div class="mui-row lineStyle">' +
-//			                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-//			                    '<div class="mui-col-sm-10 mui-col-xs-10">' +
-//			                    '<li class="mui-table-view-cell app_bline3">' +
-//			                    '<div class="mui-input-row ">' +
-//			                    '<label class="">商品属性:</label>' +
-//			                    '<input type="text" class="mui-input-clear" id="" value="' + ListHtml + '" disabled>' +
-//			                    '</div></li></div></div>' +
-//                              '<div class="mui-row">' +
-//                              '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-//                              '<div class="mui-col-sm-5 mui-col-xs-5">' +
-//                              '<li class="mui-table-view-cell app_bline3">' +
-//                              '<div class="mui-input-row">' +
-//                              '<label>数量区间:</label>' +
-//                              '<input type="text" class="mui-input-clear" id="" value="' +(skuInfo.minQty+ '-'+skuInfo.maxQty) + '" disabled>' +
-//                              '</div></li></div>' +
-//                              '<div class="mui-col-sm-5 mui-col-xs-5">' +
-//                              '<li class="mui-table-view-cell app_bline3">' +
-//                              '<div class="mui-input-row">' +
-//                              '<label>货架名称:</label>' +
-//                              '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.opShelfInfo.name + '" disabled>' +
-//                              '</div></li></div></div>' +
-//                              
-//                              '<div class="mui-row inAddFont">' +
-//                              '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-//                              '<div class="mui-col-sm-5 mui-col-xs-5">' +
-//                              '<li class="mui-table-view-cell app_bline3">' +
-//                              '<div class="mui-input-row">' +
-//                              '<label>现价:</label>' +
-//                              '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.salePrice + '" disabled></div></li></div>' +
-//                              '<div class="mui-col-sm-5 mui-col-xs-5">' +
-//                              '<li class="mui-table-view-cell app_bline3">' +
-//                              '<div class="mui-input-row">' +
-//                              '<label>采购数量:</label>' +
-//                              '<input type="hidden" class="mui-input-clear" value="' + skuInfo.id + '">' +
-//                              '<input type="text" class="mui-input-clear" placeholder="请输入数量" id="reqQty_'+ skuInfo.id +'">' +
-//                              '<font>*</font>'+
-//                              '</div></li></div></div></div></div>';
-//                          });
-//	                        t++; 
-//                          $("#searchInfo").append(resultListHtml);
-//                      });
-//                      var addButtonHtml = '<div id="batchAddDiv">' +
-//                          '<button id="batchAdd" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加' +
-//                          '</button></div>';
-//                      $("#searchInfo").append(addButtonHtml);
-//                      //判断是否有相同的商品 
-//                      var dis=$("#searchInfo .skuinfo_check");
-//                      var dos=$("#commodityMenu .skuinfo_check");
-//                      $.each(dis,function(n,v){
-//                      	var s=$(this).attr('id')
-//                      	$.each(dos,function(n,v){
-//                      		var that=this;	                            	
-//                          	var y=$(that).attr('id')
-//                          	var divs=$("#serskudiv_"+s);
-//                          	if (s==y) {
-//                          		mui.toast('已有此类商品！请选择其他商品！');
-//                          		divs.html('');
-//                          		$('#batchAddDiv').hide();
-//                          	}
-//                          })
-//                      })
-//                  }   
-//              })
-//          });
-//          _this.addSku();
-//      },
 		searchSkuHtml: function() {
             var _this = this;
             mui('#ordAmendPoLastDaDiv').on('tap','#ordComChoiceBtn',function(){
@@ -199,28 +69,16 @@
                     	'skuInfo.itemNo': itemNo,
                 	},
                     success: function (result) {
-//                  	console.log(result)
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
-//                      console.log(data)
-//                      if($.isEmptyObject(data)){
-//                      	mui.toast("暂无商品！");
-//	                    }else {
 	                        $.each(data,function (keys,skuInfoList) {
-//	                        	console.log(skuInfoList)
 	                        	if(skuInfoList==""){
 	                        		mui.toast("暂无商品！");
 	                        	}
-	                            var prodKeys= keys.split(",");
-	                            var prodId= prodKeys[0];
-	                            var prodUrl= prodKeys[2];
-	                            var  brandName=prodKeys[6];
 	                            var resultListHtml="";
 	                            var t=0;
 	                            $.each(skuInfoList,function (index,skuInfo) {
                             		console.log(skuInfo);
-
-//	                                //skuInfoId+=","+skuInfo.id;
                                 if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length>0){
                                 	mui.toast('已有此类商品！请选择其他商品！');
                                     return;
@@ -327,20 +185,21 @@
 	      		var saleQty= $("#saleQty_"+reqQtyId).val();
 	      		if(saleQty==''){
 	      			mui.toast("请输入数量");
-	                 return;
+	                return;
 	      		}
 	      		var maxQty=$("#maxQty_"+reqQtyId).attr('max');
 	            if(parseInt(saleQty)>parseInt(maxQty)){
 	            	mui.toast("购买的数量与当前价格不符");
-	                 return;
+	                return;
 	            }
+	            
         		$('#skuInfoid').val(reqQtyId);           		            		           		
         		var reqQtyIds = $(this).attr("detaid");
         		$('#detaId').val(reqQtyIds);
             	var removeButtonHtml = '<button id="'+reqQtyId+'" type="submit" class="removeButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除</button>'; 
-
                 $(this).parent().append(removeButtonHtml);
             	$('#commodityMenu').append($(this).parent());
+            	$("#commodityMenu").find($("#saleQty_"+reqQtyId)).attr('readonly','readonly');
             	$(this).hide();        		
             });
         },
@@ -353,8 +212,9 @@
             	var addBtndetaId=$('#detaId').val();           	
             	$(this).hide();
             	var addButtonHtml =  '<button id="'+ addBtnId +'" detaId="'+addBtndetaId+'" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>';
-            	$(this).parent().append(addButtonHtml)
-            	$('#searchInfo').append($(this).parent());            	
+            	$(this).parent().append(addButtonHtml);
+            	$('#searchInfo').append($(this).parent()); 
+            	$("#searchInfo").find($("#saleQty_"+reqQtyId)).removeAttr('readonly');
             });
         },
         /*保存*/
@@ -369,17 +229,14 @@
             	var skuIds2="";
             	$.each(DetaIdsList,function(m,n){
             		skuIds2+=$(this).val()+',';
-            	    console.log(skuIds2)
             	})
             	var orderDetaId = skuIds2.substring(0,skuIds2.length-1); 
-            	console.log(orderDetaId);
             	//数量saleQtys
             	var saleQtysList=$('#commodityMenu input[id^=saleQty_]');
             	var reqQty="";
             	$.each(saleQtysList,function(m,n){
             		reqQty+=$(this).val()+',';
             		var ss=$(this).attr('id').substring(8);
-            		console.log(ss)
             		var ReqQty= $("#commodityMenu #saleQty_"+ss).val();
             		 console.log(ReqQty)
             		if (ReqQty == null || ReqQty == "") {
@@ -388,16 +245,13 @@
                     }            	   
             	})
             	var reqQtys = reqQty.substring(0,reqQty.length-1); 
-            	console.log(reqQtys)
             	
             	var shelfSkusList=$('#commodityMenu input[id^=shelfSkuId_]');
             	var shelfSku="";
             	$.each(shelfSkusList,function(m,n){
             		shelfSku+=$(this).val()+',';
-            	    console.log(shelfSku)
             	})
             	var shelfSkus = shelfSku.substring(0,shelfSku.length-1); 
-            	console.log(shelfSkus)
 
             	saveData={
 					id:"",

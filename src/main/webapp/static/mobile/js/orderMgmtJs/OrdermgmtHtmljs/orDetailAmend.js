@@ -4,12 +4,7 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.OrdviewFlag = false;
-		this.skuInfoIds_1 ="";
-        this.reqQtys_1 = "";
-        this.reqDetailIds = "";
-        this.skuInFoIds="";
-		this.skuInfoIds="";
-		this.skuInfoIds2="";
+		this.OrdFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -17,6 +12,7 @@
 			this.pageInit(); //页面初始化
 			this.getData();//获取数据
 			this.getPermissionList2('biz:order:bizOrderDetail:view','OrdviewFlag');//true订单信息操作中的删除
+			this.getPermissionList2('biz:order:bizOrderDetail:edit','OrdFlag');//保存
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
@@ -49,17 +45,18 @@
 					$('#numberInterval').val(res.data.shelfSku.minQty+ '-'+ res.data.shelfSku.maxQty)//数量区间
 					$('#buyPrice').val(res.data.shelfSku.salePrice)//现价
 					$('#reqQty').val(res.data.detail.ordQty)//采购数量
-//					_this.commodityHtml(res.data);//备货商品反填
-
 
                     $('#saveDetailBtn').attr('orderid',res.data.bizOrderDetail.orderHeader.id);					
 					$('#saveDetailBtn').attr('client',res.data.bizOrderDetail.orderHeader.clientModify);
 					$('#saveDetailBtn').attr('consultant',res.data.bizOrderDetail.orderHeader.consultantId);
 					$('#saveDetailBtn').attr('source',res.data.bizOrderDetail.orderHeader.source);
 					$('#saveDetailBtn').attr('statu',res.data.bizOrderDetail.orderHeader.statu);
-                    _this.deleteItem(res.data.detail);                              _this.save(res.data.bizOrderDetail.id,res.data.bizOrderDetail.orderHeader.id,
+                    _this.deleteItem(res.data.detail); 
+                    if(this.OrdFlag = true){
+                    	_this.save(res.data.bizOrderDetail.id,res.data.bizOrderDetail.orderHeader.id,
                     	res.data.bizOrderDetail.orderHeader.clientModify,
                     	res.data.bizOrderDetail.orderHeader.consultantId);//保存
+                    }
                  }
             });
             _this.searchSkuHtml();
@@ -98,10 +95,6 @@
                         console.log(data)
 	                        $.each(data,function (keys,skuInfoList) {
 	                        	console.log(skuInfoList)
-	                            var prodKeys= keys.split(",");
-	                            var prodId= prodKeys[0];
-	                            var prodUrl= prodKeys[2];
-	                            var  brandName=prodKeys[6];
 	                            var resultListHtml="";
 	                            var t=0;
 	                            $.each(skuInfoList,function (index,skuInfo) {
@@ -216,9 +209,9 @@
         		var reqQtyIds = $(this).attr("detaid");
         		$('#detaId').val(reqQtyIds);
             	var removeButtonHtml = '<button id="'+reqQtyId+'" type="submit" class="removeButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">移除</button>'; 
-
                 $(this).parent().append(removeButtonHtml);
             	$('#commodityMenu').append($(this).parent());
+            	$("#commodityMenu").find($("#saleQty_"+reqQtyId)).attr('readonly','readonly');
             	$(this).hide();        		
             });
         },
@@ -232,7 +225,8 @@
             	$(this).hide();
             	var addButtonHtml =  '<button id="'+ addBtnId +'" detaId="'+addBtndetaId+'" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加</button>';
             	$(this).parent().append(addButtonHtml)
-            	$('#searchInfo').append($(this).parent());            	
+            	$('#searchInfo').append($(this).parent()); 
+            	$("#searchInfo").find($("#saleQty_"+reqQtyId)).removeAttr('readonly');
             });
         },
         //订单商品删除按钮操作

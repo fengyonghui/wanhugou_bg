@@ -50,7 +50,7 @@
                     console.log(_this.orWaterCheckFlag)
                 }
             });
-        },
+        },      
 		pageInit: function() {
 			var _this = this;
 			var pager = {};//分页 
@@ -131,7 +131,7 @@
 								var waterCourseDetailBtnTxt = '';
 								var waterCourseCheckBtn = '';
 								var waterCourseCheckBtnTxt = '';
-			                	if(_this.orWaterConFlag == false) {
+			                	if(_this.orWaterConFlag == true) {
 			                		waterCourseDetailBtn = 'waterCourseDetailBtn'
 			                		waterCourseDetailBtnTxt = '详情'
 			                		if(_this.orWaterCheckFlag == true) {
@@ -181,7 +181,7 @@
 								'</div>'
 								});
 								$('#ordWaterCourseList').append(waterCourseHtml);
-								_this.stOrdHrefHtml();
+								_this.stOrdHrefHtml(res.data.page.list);
 						} else {
 								$('.mui-pull-bottom-pocket').html('');
 								$('#ordWaterCourseList').append('<p class="noneTxt">暂无数据</p>');
@@ -200,8 +200,29 @@
 		        })
 		    }
 	    },
-		stOrdHrefHtml: function() {
+		stOrdHrefHtml: function(data) {
 			var _this = this;
+			if(data==""){
+				$('#back').on('tap', function() {
+					var url = $(this).attr('url');
+					GHUTILS.OPENPAGE({
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+						extras: {
+							statu:''
+						}
+					})
+			    });
+			}else{
+				$('#back').on('tap', function() {
+					var url = $(this).attr('url');
+					GHUTILS.OPENPAGE({
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+						extras: {
+							statu:'unline'
+						}
+					})
+			    });
+			}
 		/*查询*/
 			$('.app_header').on('tap', '#orWaterSechBtn', function() {
 				var url = $(this).attr('url');
@@ -217,12 +238,14 @@
 				}
 			}),
 		/*首页*/
+		
 			$('#nav').on('tap','.staHomePage', function() {
 				var url = $(this).attr('url');
 				GHUTILS.OPENPAGE({
-					url: "../../../html/backstagemgmt.html",
+//					url: "../../../html/backstagemgmt.html",
+                    url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 					extras: {
-						
+//						statu:''
 					}
 				})
 			}),	

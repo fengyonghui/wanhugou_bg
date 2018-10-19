@@ -3,19 +3,33 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+		this.OrdFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
-			this.getData();//获取数据			
-			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
+			this.getData();//获取数据				
+			this.getPermissionList('biz:order:bizOrderHeaderUnline:edit','OrdFlag');//true 审核操作
+			GHUTILS.nativeUI.closeWaiting();//关闭等待状态			
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
-			var _this = this;
-			
+			var _this = this;			
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.OrdFlag = res.data;
+                }
+            });
+        },
 		getData: function() {
 			var _this = this;
 			var datas={};
@@ -30,22 +44,20 @@
                 url: "/a/biz/order/bizOrderHeaderUnline/form4Mobile",
                 data:datas,
                 dataType: "json",
-                success: function(res){
-                	console.log(res);
+                success: function(res){             	
                 	var bizOrderHeaderUnline = res.data.bizOrderHeaderUnline;
-                	var imgUrlList = res.data.imgUrlList;
+                	var imgUrlList = res.data.imgUrlList;               	
                 	$('#orderId').val(bizOrderHeaderUnline.orderHeader.id);//订单id
                 	$('#orWaterCouNum').val(bizOrderHeaderUnline.orderHeader.orderNum);//订单号
                 	$('#waterCouNum').val(bizOrderHeaderUnline.serialNum);//流水号
                 	$('#unlineMoney').val(bizOrderHeaderUnline.unlinePayMoney);//线下付款金额
                 	$('#realMoney').val($('#unlineMoney').val());//实收金额
-//              	$('#courseId').val(bizOrderHeaderUnline.id);
                 	//单据凭证
                 	if(imgUrlList){
                 		$.each(imgUrlList, function(i,item) {
 	                		$("#orWaterPototal").append("<a><img width=\"100px\" src=\"" + item+ "\"></a>");
 	                	});
-                	}               	
+                	};               	
                 	$.ajax({
                 		type: "GET",
 		                url: "/a/sys/dict/listData",
@@ -60,8 +72,12 @@
 		                	});
                 		}
                 	});
-                	_this.checkBtns(bizOrderHeaderUnline.id);
-			        _this.rejectBtns(bizOrderHeaderUnline.id);
+                	if(_this.OrdFlag==true){
+                		if(bizOrderHeaderUnline.source == 'examine'){
+                			_this.checkBtns(bizOrderHeaderUnline.id);
+			                _this.rejectBtns(bizOrderHeaderUnline.id);
+                		}
+                	};               	
                 }
             });
 		},
