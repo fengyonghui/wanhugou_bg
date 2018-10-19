@@ -632,6 +632,9 @@ body{font-size: 15px;color:#3b3b3b;}
 /*按商品排产---一行两个按钮*/
 .schedull {font-size: 15px;padding: 0;width: 30%;margin: 5px 0 5px 50px;float: left;}
 .schedulr {font-size: 15px;padding: 0;width: 30%;margin: 5px 50px 5px 0;float: right;}
+/*确认排产*/
+.alleryAffirm {width: 20%;float: right;position: relative;top: 28px;text-align: center;}
+
 
 /*======订单管理=======*/
 /*订单支出列表---排产*/

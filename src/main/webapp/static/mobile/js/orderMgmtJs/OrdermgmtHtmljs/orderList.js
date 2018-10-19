@@ -50,7 +50,7 @@
 			            	    console.log(statu)
 			                    pager['size']= 20;
 			                    pager['pageNo'] = 1;			                    
-			                    if(statu == '') {
+			                    if(statu == '' || statu == undefined) {
 			                    	pager['statu'] = '';
 			                    }
 			                    if(statu == statu) {

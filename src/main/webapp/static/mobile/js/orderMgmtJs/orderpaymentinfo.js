@@ -20,15 +20,15 @@
 			//权限添加
 //			biz:order:bizOrderHeader:view  		操作
 			this.getPermissionList('biz:po:bizPoHeader:view','OrdFlaginfo');//操作总权限
-			this.getPermissionList('biz:po:bizPoHeader:audit','OrdFlagaudit');
-			this.getPermissionList('biz:po:pay:list','OrdFlagpay');
-			this.getPermissionList('biz:po:bizPoHeader:startAuditAfterReject','OrdFlagstartAudit');
-			this.getPermissionList('biz:po:bizPoHeader:addScheduling','OrdFlagScheduling');
-			this.getPermissionList('biz:request:bizRequestHeader:createPayOrder','creatPayFlag')//申请付款re
-			this.getPermissionList('biz:request:bizOrderHeader:createPayOrder','ordCreatPayFlag')//申请付款or
-			this.getPermissionList('biz:po:bizPoHeader:createPayOrder','poCreatPayFlag')//申请付款po
-			this.getPermissionList('biz:po:bizPoHeader:edit','orCancAmenFlag')//修改、取消
-			this.getPermissionList('biz:po:bizPoHeader:confirmScheduling','affirmSchedulingFlag')
+			this.getPermissionList1('biz:po:bizPoHeader:audit','OrdFlagaudit');
+			this.getPermissionList2('biz:po:pay:list','OrdFlagpay');
+			this.getPermissionList3('biz:po:bizPoHeader:startAuditAfterReject','OrdFlagstartAudit');
+			this.getPermissionList4('biz:po:bizPoHeader:addScheduling','OrdFlagScheduling');
+			this.getPermissionList5('biz:request:bizRequestHeader:createPayOrder','creatPayFlag')//申请付款re
+			this.getPermissionList6('biz:request:bizOrderHeader:createPayOrder','ordCreatPayFlag')//申请付款or
+			this.getPermissionList7('biz:po:bizPoHeader:createPayOrder','poCreatPayFlag')//申请付款po
+			this.getPermissionList8('biz:po:bizPoHeader:edit','orCancAmenFlag')//修改、取消
+			this.getPermissionList9('biz:po:bizPoHeader:confirmScheduling','affirmSchedulingFlag')
 
 			if(this.userInfo.isFunc){
 				this.seachFunc()
@@ -49,15 +49,123 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
+                	_this.OrdFlaginfo = res.data;
+                }
+            });
+        },
+        getPermissionList1: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
                     _this.OrdFlagaudit = res.data;
-                    _this.OrdFlagpay = res.data;
+                }
+            });
+        },
+        getPermissionList2: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+					_this.OrdFlagpay = res.data;
+                }
+            });
+        },
+        getPermissionList3: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
                     _this.OrdFlagstartAudit = res.data;
+                }
+            });
+        },
+        getPermissionList4: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
                     _this.OrdFlagScheduling = res.data;
+                }
+            });
+        },
+        getPermissionList5: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
                     _this.creatPayFlag = res.data;
-                    _this.OrdFlaginfo = res.data;
+                }
+            });
+        },
+        getPermissionList6: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
                     _this.ordCreatPayFlag = res.data;
+                }
+            });
+        },
+        getPermissionList7: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
                     _this.poCreatPayFlag = res.data;
+                }
+            });
+        },
+        getPermissionList8: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
                     _this.orCancAmenFlag = res.data;
+                }
+            });
+        },
+        getPermissionList9: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
                     _this.affirmSchedulingFlag = res.data;
                 }
             });
@@ -128,7 +236,7 @@
 				                postatus=res;
 			                }
 			            });	
-			            console.log(postatus)
+//			            console.log(postatus)
 						var arrLen = res.data.page.list.length;
 //						console.log(arrLen)
 						if(arrLen <20 ){
@@ -137,9 +245,10 @@
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true)
 						}
                         var that=this;
+//                      console.log(_this.OrdFlaginfo)
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-                            	console.log(item)
+//                          	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";
@@ -361,7 +470,7 @@
 			                	var staCheckSuc = "";
 			                	var staCheckSuc = item.bizOrderHeader.id;
 			                	var staCheck = item.bizRequestHeader.id;
-								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
+								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline2 app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row" style="display:none">' +
 										    '<label>备货单号:</label>' +
 											'<input type="text" class="mui-input-clear staPayBtns" disabled="disabled" podid="'+ staCheckSuc +'" podids="'+ staCheck +'">' +
@@ -394,54 +503,50 @@
 											'<label>创建时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ _this.formatDateTime(item.createDate)+' ">' +
 										'</div>' +
+										'<div class="app_bline3 app_color40 mui-row app_text_center content_part operation " id="foot">' +
+							/*详情*/			'<div name="commBtn" class="'+orDetailBtn+'" staOrdId="'+ item.id +'">' +
+												'<div class="" >'+orDetailBtnTxt+'</div></div>' +	
+							/*审核*/			'<div name="commBtn" class="'+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
+												'<div class="" >'+staCheckBtnTxt+'</div></div>' +													
+							/*申请付款*/		'<div name="commBtn" class="'+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
+												'<div class="" >'+creatPay+'</div></div>' +
+							/*开启审核*/		'<div name="commBtn" class="'+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
+												'<div class="" >'+stastartCheckBtnTxt+'</div></div>' +												
+//							/*修改*/			'<div name="commBtn" class="'+orAmendBtn+'" staordid="'+ item.id +'">' +
+//												'<div class="" >'+orAmendBtnTxt+'</div></div>' +
+										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation " id="foot">' +
-											'<div class="'+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
-												'<div class="" >'+staCheckBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
-												'<div class="" >'+staPayBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
-												'<div class="" >'+stastartCheckBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
-												'<div class="" >'+creatPay+'</div>' +
-											'</div>' +
-											'<div class="'+SchedulingBtn+'" staordid="'+ item.id +'">' +
-												'<div class="" >'+SchedulingBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+orCancleBtn+'" staordid="'+ item.id +'">' +
-												'<div class="" >'+orCancleBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+orDetailBtn+'" staOrdId="'+ item.id +'">' +
-												'<div class="" >'+orDetailBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+affirmSchedulingBtn+'" staordid="'+ item.id +'">' +
-												'<div class="" >'+affirmSchedulingBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+orAmendBtn+'" staordid="'+ item.id +'">' +
-												'<div class="" >'+orAmendBtnTxt+'</div>' +
-											'</div>' +
+							/*取消*/			'<div name="commBtn" class="'+orCancleBtn+'" staordid="'+ item.id +'">' +
+												'<div class="" >'+orCancleBtnTxt+'</div></div>' +				
+							/*排产*/			'<div name="commBtn" class="'+SchedulingBtn+'" staordid="'+ item.id +'">' +
+												'<div class="" >'+SchedulingBtnTxt+'</div></div>' +	
+							/*支付列表*/		'<div name="commBtn" class="'+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
+												'<div class="" >'+staPayBtnTxt+'</div></div>' +														
+							/*确认排产*/		'<div name="commBtn" class="'+affirmSchedulingBtn+'" staordid="'+ item.id +'">' +
+												'<div class="" >'+affirmSchedulingBtnTxt+'</div></div>' +
 										'</div>' +
 //										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-//											'<div class="mui-col-xs-2 '+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
-//												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-3 '+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
-//												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-3 '+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
-//												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-2 '+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
-//												'<li class="mui-table-view-cell">'+creatPay+'</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-2 '+SchedulingBtn+'" staordid="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
-//											'</div>'+
+//								/*审核*/		'<div class="mui-col-xs-1 '+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
+//												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li></div>'+
+//							/*支付列表*/		'<div class="mui-col-xs-2 '+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
+//												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li></div>'+
+//							/*开启审核*/		'<div class="mui-col-xs-2 '+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
+//												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li></div>'+
+//							/*申请付款*/		'<div class="mui-col-xs-2 '+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
+//												'<li class="mui-table-view-cell">'+creatPay+'</li></div>'+
+//								/*排产*/		'<div class="mui-col-xs-1 '+SchedulingBtn+'" staordid="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li></div>'+
+//								/*取消*/		'<div class="mui-col-xs-1 '+orCancleBtn+'" staordid="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">'+ orCancleBtnTxt +'</li></div>'+
+//								/*详情*/		'<div class="mui-col-xs-1 '+orDetailBtn+'" staOrdId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">'+ orDetailBtnTxt +'</li></div>'+
+//							/*确认排产*/		'<div class="mui-col-xs-2 '+affirmSchedulingBtn+'" staordid="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">'+ affirmSchedulingBtnTxt +'</li></div>'+
+////								/*修改*/		'<div class="mui-col-xs-2 '+orAmendBtn+'" staordid="'+ item.id +'">' +
+////												'<li class="mui-table-view-cell">'+ orAmendBtnTxt +'</li></div>'+
 //										'</div>' +
 									'</div>'
-							});	
+								});
 								$('#orderinfoList').append(orderHtmlList);
 								_this.stOrdHrefHtml();
 								//先隐藏订单信息

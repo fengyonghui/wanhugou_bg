@@ -30,6 +30,7 @@
                 success: function(res){
 					/*业务状态*/
 					var bizPoHeader = res.data.bizPoHeader;
+					console.log(bizPoHeader)
 					var orshouldPay = bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight
 					$('#orpoNum').val(res.data.bizOrderHeader.orderNumber)//单号
 					$('#ordtotal').val(bizPoHeader.totalDetail)//总价
@@ -48,13 +49,13 @@
 					$('#orRemark').val(bizPoHeader.remark)//备注
 					$('#orTypes').val()//订单状态 getDictLabel接口
 					$('#orSupplier').val(bizPoHeader.vendOffice.name)//供应商
-					
-					$('#orSupplierNum').val(bizPoHeader.vendOffice.bizVendInfo.cardNumber)//供应商卡号
-					$('#orSupplierMoney').val(bizPoHeader.vendOffice.bizVendInfo.payee)//供应商收款人
-					$('#orSupplierBank').val(bizPoHeader.vendOffice.bizVendInfo.bankName)//供应商开户行
-					$('#orSuppliercontract').val(bizPoHeader.vendOffice.bizVendInfo.compactImgList)//供应商合同
-					$('#orSuppliercardID').val(bizPoHeader.vendOffice.bizVendInfo.identityCardImgList)//供应商身份证
-					
+					if(bizPoHeader.vendOffice.bizVendInfo) {
+						$('#orSupplierNum').val(bizPoHeader.vendOffice.bizVendInfo.cardNumber)//供应商卡号
+						$('#orSupplierMoney').val(bizPoHeader.vendOffice.bizVendInfo.payee)//供应商收款人
+						$('#orSupplierBank').val(bizPoHeader.vendOffice.bizVendInfo.bankName)//供应商开户行
+						$('#orSuppliercontract').val(bizPoHeader.vendOffice.bizVendInfo.compactImgList)//供应商合同
+						$('#orSuppliercardID').val(bizPoHeader.vendOffice.bizVendInfo.identityCardImgList)//供应商身份证
+					}
 					_this.commodityHtml(res.data)
 					_this.statusListHtml(res.data)
                 }

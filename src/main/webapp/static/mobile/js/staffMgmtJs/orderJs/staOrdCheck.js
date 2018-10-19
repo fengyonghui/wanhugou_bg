@@ -33,6 +33,7 @@
 		},
 		getData: function() {
 			var _this = this;
+			console.log(_this.userInfo.stcheckIdTxt)
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
@@ -43,7 +44,7 @@
                 },
                 dataType: "json",
                 success: function(res){
-                	console.log(res)
+//              	console.log(res)
                 	if(res.data.bizOrderHeader.flag=='check_pending') {
                 		if(res.data.orderType == 5) {
                 			$('#orderTypebox').hide();

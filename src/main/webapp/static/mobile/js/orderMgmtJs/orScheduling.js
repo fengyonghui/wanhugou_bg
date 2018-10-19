@@ -169,9 +169,12 @@
 				})
 				$('#purchSchedRecord').html(htmlPurchPlans);
 			}
+			console.log(a.data.bizPoHeader)
 			if(a.data.bizPoHeader.poSchType == 2) {
 				$('#purchAddCont').parent().remove();
 				$('#chedulingStatus').val('排产完成');
+				$('#purchAddBtn').hide();
+				
 				$('.saveBtnPt').hide();
 			}
 			var htmlPurch = '';
