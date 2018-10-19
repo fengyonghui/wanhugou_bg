@@ -52,11 +52,10 @@
                         var uVersion = $(this).parent().parent().find("input[name='uVersion']").val();
                         var sendNo = $("#sendNo").val();
                         stockQty = $(this).parent().parent().find("input[name='stockQty']").val();
-                        sumSentQty = sumSentQty + sentQty;
+                        sumSentQty = parseInt(sumSentQty) + parseInt(sentQty);
                         treasuryList[i] = createTreasury(orderDetailId,reqDetailId,invSkuId,sentQty,uVersion,sendNo);
                         i = i + 1;
                     });
-
                     console.info(JSON.stringify(treasuryList));
                     
                     if(window.confirm('你确定要出库吗？')){
@@ -73,7 +72,7 @@
                             alert("选中出库的备货单，本次出库数量不能大于订单的剩余需求数量");
                             return false;
 						} else if (parseInt(sumSentQty) > parseInt(stockQty)) {
-                            alert("该商品没有库存");
+                            alert("该商品库存不足");
                             return false;
 						}else {
 							$.ajax({
