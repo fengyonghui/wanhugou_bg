@@ -42,6 +42,8 @@
                     });
                     var treasuryList = new Array();
                     var i = 0;
+                    var sumSentQty = 0;
+                    var stockQty = 0;
                     $("input[name='reqDetail'][checked='checked']").each(function () {
                         var orderDetailId = $(this).parent().parent().find("input[name='orderDetailId']").val();
                         var reqDetailId = $(this).parent().parent().find("input[name='reqDetailId']").val();
@@ -49,9 +51,12 @@
                         var sentQty = $(this).parent().parent().find("input[name='sentQty']").val();
                         var uVersion = $(this).parent().parent().find("input[name='uVersion']").val();
                         var sendNo = $("#sendNo").val();
+                        stockQty = $(this).parent().parent().find("input[name='stockQty']").val();
+                        sumSentQty = sumSentQty + sentQty;
                         treasuryList[i] = createTreasury(orderDetailId,reqDetailId,invSkuId,sentQty,uVersion,sendNo);
                         i = i + 1;
                     });
+
                     console.info(JSON.stringify(treasuryList));
                     
                     if(window.confirm('你确定要出库吗？')){
@@ -67,7 +72,10 @@
 						} else if (!flag3){
                             alert("选中出库的备货单，本次出库数量不能大于订单的剩余需求数量");
                             return false;
-						} else {
+						} else if (parseInt(sumSentQty) > parseInt(stockQty)) {
+                            alert("该商品没有库存");
+                            return false;
+						}else {
 							$.ajax({
 								type:"post",
 								contentType: 'application/json;charset=utf-8',
@@ -325,6 +333,7 @@
 										<input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
 										<input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>
 										<input name="uVersion" value="${requestDetail.inventorySku.uVersion}" type="hidden"/>
+										<input name="stockQty" value="${requestDetail.inventorySku.stockQty}" type="hidden"/>
 										<td>${requestDetail.inventorySku.stockQty}</td>
 										<c:if test="${source ne 'detail'}">
 											<td><input type="text" name="sentQty" value="0"/></td>
