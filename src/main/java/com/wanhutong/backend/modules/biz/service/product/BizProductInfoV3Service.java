@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.service.product;
 
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
@@ -716,6 +717,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
             }
         }
         //替换货号
+        updateItemNo(itemNo,needId);
     }
 
     private void updateProdIdForOpShelfSku(Integer skuId, Integer prodId) {
@@ -778,6 +780,20 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
         bizInventoryViewLogService.updateSkuId(needSkuId,skuId);
     }
 
+    private void updateItemNo(String itemNo, Integer prodId) {
+        StringBuilder sb = new StringBuilder(itemNo);
+        bizProductInfoDao.updateItemNo(prodId,sb.append("#").toString());
+        BizSkuInfo bizSkuInfo = new BizSkuInfo();
+        bizSkuInfo.setProductInfo(new BizProductInfo(prodId));
+        List<BizSkuInfo> skuList = bizSkuInfoV3Service.findList(bizSkuInfo);
+        if (CollectionUtils.isNotEmpty(skuList)) {
+            for (BizSkuInfo skuInfo : skuList) {
+                String s = skuInfo.getItemNo().substring(skuInfo.getItemNo().indexOf("/"));
+                bizSkuInfoV3Service.updateItemNo(skuInfo.getId(),sb.append(s).toString());
+            }
+        }
+    }
+
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void changePrice(Integer prodId, String size, BigDecimal settlementPrice, BigDecimal marketingPrice) {
@@ -795,6 +811,34 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                 }
             }
         }
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void changeSpu(Integer prodId) {
+        BizProductInfo bizProductInfo = get(prodId);
+        BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+        bizOpShelfSku.setProductInfo(new BizProductInfo(prodId));
+        List<BizOpShelfSku> opShelfSkuList = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
+        if (CollectionUtils.isNotEmpty(opShelfSkuList)) {
+            for(int i = 0; i < opShelfSkuList.size(); i++) {
+                if (i == 0) {
+                    bizProductInfo.setMinPrice(opShelfSkuList.get(i).getSalePrice());
+                    bizProductInfo.setMaxPrice(opShelfSkuList.get(i).getSalePrice());
+                }
+                if (opShelfSkuList.get(i).getSalePrice() < bizProductInfo.getMinPrice()) {
+                    bizProductInfo.setMinPrice(opShelfSkuList.get(i).getSalePrice());
+                }
+                if (opShelfSkuList.get(i).getSalePrice() > bizProductInfo.getMaxPrice()) {
+                    bizProductInfo.setMaxPrice(opShelfSkuList.get(i).getSalePrice());
+                }
+            }
+            updateMinAndMaxPrice(prodId,bizProductInfo.getMinPrice(),bizProductInfo.getMaxPrice());
+        }
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void updateMinAndMaxPrice(Integer prodId, Double minPrice, Double maxPrice) {
+        bizProductInfoDao.updateMinAndMaxPrice(prodId,minPrice,maxPrice);
     }
 
 

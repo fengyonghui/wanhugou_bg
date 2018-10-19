@@ -737,12 +737,12 @@ public class BizProductInfoV3Controller extends BaseController {
         return "ok";
     }
 
-//    @RequestMapping(value = "changeSpu")
-//    @ResponseBody
-//    public String changeSpu(Integer prodId) {
-//        bizProductInfoService.changeSpu(prodId);
-//        return "ok";
-//    }
+    @RequestMapping(value = "changeSpu")
+    @ResponseBody
+    public String changeSpu(Integer prodId) {
+        bizProductInfoService.changeSpu(prodId);
+        return "ok";
+    }
 
 //    private List<AttributeValueV2> specificAttr(BizProductInfo bizProductInfo) {
 //        AttributeValueV2 valueV2 = new AttributeValueV2();

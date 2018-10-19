@@ -720,4 +720,10 @@
 		WHERE id = #{id}
 	</update>
 
+	<update id="updateItemNo">
+		UPDATE biz_sku_info SET
+		item_no = #{itemNo}
+		WHERE id = #{id}
+	</update>
+
 </mapper>

@@ -394,4 +394,6 @@ public class BizSkuInfoV3Service extends CrudService<BizSkuInfoV3Dao, BizSkuInfo
 	}
 
 	public void updatePrice(Integer id, BigDecimal settlementPrice) {bizSkuInfoDao.updatePrice(id,settlementPrice);}
+
+	public void updateItemNo(Integer id, String itemNo) {bizSkuInfoDao.updateItemNo(id,itemNo);}
 }
