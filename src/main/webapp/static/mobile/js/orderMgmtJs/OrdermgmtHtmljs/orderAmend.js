@@ -341,6 +341,20 @@
             	$('#staDateilAddress').attr('class','DateilAddress');//详细地址
             	var bizStatusVal = $("#inputDivAmend")[0].value;//业务状态
             	var bizInvoiceVal = $("#staInvoice")[0].value;//发票状态
+            	var totalExp = $(".totalExp").val();//调整金额
+                var totalDetail = $("#staPototal").val();//商品总价
+                var freight = $(".freight").val();//运费
+            	if(totalExp<0){
+            		var totalExpTemp = Math.abs(totalExp)
+                    if (totalExpTemp > Number(freight)) {
+                        mui.toast("调整金额不能大于运费！");
+                        return;
+                    }
+                    if (totalExpTemp > Number(totalDetail) * 0.015) {
+                        mui.toast("调整金额不能大于商品总价的1.5%倍！");
+                        return;
+                    }
+            	}
             	saveData={
 					statuPath:$('#statuPath').val(),
 					'id':orid,
@@ -350,10 +364,10 @@
 					'sellers.id':$('#supplierId').val(),
 					'totalDetail':$('#staPototals').val(),
 					'receiveTotal':$('#staPoLastDas').val(),
-					'totalExp' :$('.totalExp').val(),//调整金额  #staAdjustmentMoney
+					'totalExp' :$('.totalExp').val(),//调整金额 
 					'freight' :$('.freight').val(),//运费
-					'invStatus' :bizInvoiceVal,//发票状态$('#invStatus').val()
-					'bizStatus' :bizStatusVal,//业务状态$('#bizStatus').val()                 
+					'invStatus' :bizInvoiceVal,//发票状态
+					'bizStatus' :bizStatusVal,//业务状态              
 					'bizType' :$('#bizType').val(),
 					'platformInfo.id': $('#plateformId').val(),
 					'bizLocation.id':$('#shiptoAddr').val(),				
@@ -378,7 +392,6 @@
 	                	}
 	                }	
 				})
-
 			})
 		},
 		//状态流程

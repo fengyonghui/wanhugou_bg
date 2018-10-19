@@ -236,14 +236,14 @@
                                         	}
                                         }
                                         //出库确认
-                                        if(_this.staOrdsupplyFlag == true){
-                                        	if(item.bizStatus >= res.data.SUPPLYING && item.bizStatus <= res.data.STOCKING && item.suplys != 0 && item.suplys != 721){
-                                        		if(item.bizInvoiceList.length <= 0){
-                                        			staSupplyBtnTxt="出库";
-                                        			ordSupplyBtn = 'ordSupplyBtn';
-                                        		}
-                                        	}
-                                        }
+//                                      if(_this.staOrdsupplyFlag == true){
+//                                      	if(item.bizStatus >= res.data.SUPPLYING && item.bizStatus <= res.data.STOCKING && item.suplys != 0 && item.suplys != 721){
+//                                      		if(item.bizInvoiceList.length <= 0){
+//                                      			staSupplyBtnTxt="出库";
+//                                      			ordSupplyBtn = 'ordSupplyBtn';
+//                                      		}
+//                                      	}
+//                                      }
                                     }
                                     var ordwaterCourseBtn = '';
                                 	var ordwaterCourseBtnTxt ="";
@@ -804,7 +804,7 @@
 	                        	var staCheckBtnTxt = '';
 	                        	var ordSupplyBtn = '';
 	                        	var staSupplyBtnTxt = '';
-				                if(_this.staOrdFlag == false) {
+				                if(_this.staOrdFlag == true) {
 				                	//审核
                                     if(item.bizStatus != res.data.CANCLE){
                                         if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING){
@@ -883,14 +883,14 @@
                                         	}
                                         }
                                         //出库确认
-                                        if(_this.staOrdsupplyFlag == true){
-                                        	if(item.bizStatus >= res.data.SUPPLYING && item.bizStatus <= res.data.STOCKING && item.suplys != 0 && item.suplys != 721){
-                                        		if(item.bizInvoiceList.length <= 0){
-                                        			staSupplyBtnTxt="出库";
-                                        			ordSupplyBtn = 'ordSupplyBtn';
-                                        		}
-                                        	}
-                                        }
+//                                      if(_this.staOrdsupplyFlag == true){
+//                                      	if(item.bizStatus >= res.data.SUPPLYING && item.bizStatus <= res.data.STOCKING && item.suplys != 0 && item.suplys != 721){
+//                                      		if(item.bizInvoiceList.length <= 0){
+//                                      			staSupplyBtnTxt="出库";
+//                                      			ordSupplyBtn = 'ordSupplyBtn';
+//                                      		}
+//                                      	}
+//                                      }
                                     }
                                     var ordwaterCourseBtn = '';
                                 	var ordwaterCourseBtnTxt ="";
