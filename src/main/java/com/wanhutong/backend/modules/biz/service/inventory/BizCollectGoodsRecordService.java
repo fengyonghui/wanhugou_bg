@@ -186,6 +186,8 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	 * 库存变更记录，分页
 	 * */
 	public Page<BizCollectGoodsRecord> collectSendFindPage(Page<BizCollectGoodsRecord> page, BizCollectGoodsRecord bizCollectGoodsRecord) {
+		User user = UserUtils.getUser();
+		bizCollectGoodsRecord.getSqlMap().put("bcgr", BaseService.dataScopeFilter(user, "cent", "su"));
 		bizCollectGoodsRecord.setPage(page);
 		page.setList(dao.collectSendFindPage(bizCollectGoodsRecord));
 		return page;

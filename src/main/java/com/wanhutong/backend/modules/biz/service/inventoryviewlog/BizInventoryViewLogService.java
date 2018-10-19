@@ -47,5 +47,8 @@ public class BizInventoryViewLogService extends CrudService<BizInventoryViewLogD
 	public void delete(BizInventoryViewLog bizInventoryViewLog) {
 		super.delete(bizInventoryViewLog);
 	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void saveCurrentViewLog(BizInventoryViewLog inventoryViewLog) {dao.saveCurrentViewLog(inventoryViewLog);}
 	
 }

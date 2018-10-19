@@ -731,6 +731,14 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 map.put("logisticsOrderCode", logisticsOrderCode);
                 map.put("sentGoodsCode", sentGoodsCode);
 
+                LOGISTICS_LOGGER.info("生成运单的参数===" + "orderCode:" + orderNum + ", "
+                        + "linecode:" + linecode + ", " + "linepointcode:" + linepointcode + ", "
+                        + "creator:" + creator + ", " + "sendername:" + "北京万户通" + ","
+                        + "senderphone:" + "15383129116" + ", " + "receivername:" + receivername + ","
+                        + "receiverphone:" + receiverphone + ", " + "receiverdetailedaddress:" + receiverdetailedaddress + ", "
+                        + "goodsquantity:" + goodsquantity + ", " + "logisticsOrderCode:" + logisticsOrderCode + ", "
+                        + "sentGoodsCode:" + sentGoodsCode);
+
                 httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
                 httpPost.setHeader("Accept", "application/json");
 
@@ -854,6 +862,14 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             paramMap.put("goodsquantity", goodsquantity);
                             paramMap.put("logisticsOrderCode", logisticsOrderCode);
                             paramMap.put("sentGoodsCode", sentGoodsCode);
+
+                            LOGISTICS_LOGGER.info("生成运单的参数===" + "orderCode:" + reqNo + ", "
+                                    + "linecode:" + linecode + ", " + "linepointcode:" + linepointcode + ", "
+                                    + "creator:" + creator + ", " + "sendername:" + "北京万户通" + ","
+                                    + "senderphone:" + "15383129116" + ", " + "receivername:" + receivername + ","
+                                    + "receiverphone:" + receiverphone + ", " + "receiverdetailedaddress:" + receiverdetailedaddress + ", "
+                                    + "goodsquantity:" + goodsquantity + ", " + "logisticsOrderCode:" + logisticsOrderCode + ", "
+                                    + "sentGoodsCode:" + sentGoodsCode);
 
                             String jsonstrParam = JSONObject.fromObject(paramMap).toString();
                             httpPost.setEntity(new StringEntity(jsonstrParam, Charset.forName("UTF-8")));
