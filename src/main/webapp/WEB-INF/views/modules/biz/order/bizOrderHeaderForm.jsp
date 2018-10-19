@@ -1725,6 +1725,7 @@
             </c:if>
         </div>
     </div>
+    <c:if test="${entity.orderType != 8}">
     <div class="control-group">
         <label class="control-label">增值服务费：</label>
         <div class="controls">
@@ -1732,6 +1733,7 @@
             <span class="help-inline"><font color="red">*</font></span>
         </div>
     </div>
+    </c:if>
     <div class="control-group">
         <label class="control-label">运费：</label>
         <div class="controls">
@@ -1744,12 +1746,14 @@
             </c:if>
         </div>
     </div>
+    <c:if test="${entity.orderType != 8}">
     <div class="control-group">
         <label class="control-label">万户币抵扣：</label>
         <div class="controls">
             <form:input path="scoreMoney" htmlEscape="false" readonly="true" class="input-xlarge"/>
         </div>
     </div>
+    </c:if>
     <div class="control-group">
         <label class="control-label">应付金额：</label>
         <div class="controls">
