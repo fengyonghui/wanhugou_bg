@@ -5,9 +5,13 @@ package com.wanhutong.backend.modules.biz.entity.order;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 
 /**
  * 佣金付款表Entity
@@ -24,7 +28,7 @@ public class BizCommission extends DataEntity<BizCommission> {
 	private Date payTime;		// 支付时间
 	private String remark;		// 备注
 	private Integer bizStatus;		// 当前业务状态
-	
+
 	public BizCommission() {
 		super();
 	}
@@ -32,6 +36,10 @@ public class BizCommission extends DataEntity<BizCommission> {
 	public BizCommission(Integer id){
 		super(id);
 	}
+
+	private List<CommonImg> imgList;
+
+	private CommonProcessEntity commonProcess;
 
 	public BigDecimal getTotalCommission() {
 		return totalCommission;
@@ -109,5 +117,20 @@ public class BizCommission extends DataEntity<BizCommission> {
 			return desc;
 		}
 	}
-	
+
+	public List<CommonImg> getImgList() {
+		return imgList;
+	}
+
+	public void setImgList(List<CommonImg> imgList) {
+		this.imgList = imgList;
+	}
+
+	public CommonProcessEntity getCommonProcess() {
+		return commonProcess;
+	}
+
+	public void setCommonProcess(CommonProcessEntity commonProcess) {
+		this.commonProcess = commonProcess;
+	}
 }

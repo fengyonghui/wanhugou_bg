@@ -79,11 +79,11 @@ public class BizCommissionOrderController extends BaseController {
 
 	@RequiresPermissions("biz:order:bizCommissionOrder:edit")
 	@RequestMapping(value = "saveCommission")
-	public String saveCommission(BizCommission bizCommission, Model model, RedirectAttributes redirectAttributes, Integer orderId) {
+	public String saveCommission(BizCommission bizCommission, Model model, RedirectAttributes redirectAttributes, String orderId) {
 
 		String msg = bizCommissionService.createCommissionOrder(bizCommission, orderId).getRight();
 
-		return msg;
+		return "";
 	}
 	
 	@RequiresPermissions("biz:order:bizCommissionOrder:edit")

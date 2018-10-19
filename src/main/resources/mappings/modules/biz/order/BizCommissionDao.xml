@@ -16,10 +16,20 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		a.status AS "delFlag"
+		a.status AS "delFlag",
+		process.id AS "commonProcess.id",
+		process.object_id AS "commonProcess.objectId",
+		process.object_name AS "commonProcess.objectName",
+		process.prev_id AS "commonProcess.prevId",
+		process.biz_status AS "commonProcess.bizStatus",
+		process.processor AS "commonProcess.processor",
+		process.description AS "commonProcess.description",
+		process.type AS "commonProcess.type",
+		process.create_time AS "commonProcess.createTime"
 	</sql>
 	
 	<sql id="bizCommissionJoins">
+		LEFT JOIN common_process process ON process.object_id = a.id and process.object_name = 'biz_commission' and process.current = 1
 	</sql>
     
 	<select id="get" resultType="BizCommission">
@@ -72,14 +82,10 @@
 			img_url,
 			deadline,
 			pay_time,
-			remark,
-			biz_status,
-			create_id,
-			create_time,
-			u_version,
-			update_id,
-			update_time,
-			status
+			<if test="remark != null and remark != ''">
+				remark,
+			</if>
+			biz_status
 		) VALUES (
 			#{id},
 			#{totalCommission},
@@ -87,14 +93,10 @@
 			#{imgUrl},
 			#{deadline},
 			#{payTime},
-			#{remark},
-			#{bizStatus},
-			#{createBy.id},
-			#{createDate},
-			#{uVersion},
-			#{updateBy.id},
-			#{updateDate},
-			#{delFlag}
+			<if test="remark != null and remark != ''">
+				#{remark},
+			</if>
+			#{bizStatus}
 		)
 	</insert>
 	

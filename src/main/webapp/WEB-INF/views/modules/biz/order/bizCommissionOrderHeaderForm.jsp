@@ -433,7 +433,7 @@
             var remark = $("#paymentApplyRemark").val();
 
             window.location.href="${ctx}/biz/order/bizCommissionOrder/saveCommission?totalCommission=" + payTotal + "&deadline=" + lastPayDate
-                + "&payTime=" + payDeadline + "&remark=" + remark;
+                + "&payTime=" + payDeadline + "&remark=" + remark + "&orderId=" + id;
 
             <%--$("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader");--%>
             <%--$("#inputForm").submit();--%>
@@ -991,12 +991,14 @@
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
-    <div class="control-group">
-        <label class="control-label">订单总价：</label>
-        <div class="controls">
-            <form:input path="commissionTotalDetail" readonly="readonly" placeholder="由系统自动生成" htmlEscape="false" maxlength="30" class="input-xlarge"/>
+    <c:if test="${entity.str != 'pay'}">
+        <div class="control-group">
+            <label class="control-label">订单总价：</label>
+            <div class="controls">
+                <form:input path="commissionTotalDetail" readonly="readonly" placeholder="由系统自动生成" htmlEscape="false" maxlength="30" class="input-xlarge"/>
+            </div>
         </div>
-    </div>
+
 
     <div class="control-group">
         <label class="control-label">业务状态：</label>
@@ -1006,6 +1008,7 @@
                 <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/></form:select>
         </div>
     </div>
+    </c:if>
 
     <div id="vendor" class="control-group" >
         <label class="control-label">供应商：</label>
@@ -1075,37 +1078,32 @@
         </div>
     </div>
 
-    <div class="control-group">
-        <label class="control-label">支付备注：</label>
-        <div class="controls">
-            <textarea id="paymentApplyRemark" maxlength="200" class="input-xlarge"></textarea>
-        </div>
-    </div>
-
-    <c:if test="${photosMap != null && photosMap.size()>0 }">
+    <c:if test="${entity.str == 'pay'}">
         <div class="control-group">
-            <label class="control-label">退货凭证:
-                <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
-                <p style="opacity: 0.5;">图片建议比例为1:1</p>
-                <p style="opacity: 0.5;">点击图片删除</p>
-                <p style="opacity: 0.5;color: red;">数字小的会排在前边，请不要输入重复序号</p>
-            </label>
+            <label class="control-label" style="color: red">实际付款金额：</label>
             <div class="controls">
-                <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
+                <input id="truePayTotal" name="payTotal" type="text" readonly="true"
+                       value="${entity.totalCommission}"
+                       htmlEscape="false" maxlength="30" class="input-xlarge "/>
             </div>
-            <div id="prodMainImgDiv">
-                <table>
-                    <tr id="prodMainImgImg">
-                        <c:forEach items="${photosMap}" var="photo" varStatus="status">
-                            <td><img src="${photo.key}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,'#mainImg'+${status.index});"></td>
-                        </c:forEach>
-                    </tr>
-                    <tr id="imgPhotosSorts">
-                        <c:forEach items="${photosMap}" var="photo" varStatus="status">
-                            <td><input id="mainImg${status.index}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.value}"/></td>
-                        </c:forEach>
-                    </tr>
-                </table>
+        </div>
+        <div class="control-group">
+            <label class="control-label">上传付款凭证：
+                <p style="opacity: 0.5;">点击图片删除</p>
+            </label>
+
+            <div class="controls">
+                <input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" multiple="multiple" id="payImg"/>
+            </div>
+            <div id="payImgDiv">
+                <img src="${entity.bizCommission.imgUrl}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">支付备注：</label>
+            <div class="controls">
+					<textarea id="paymentRemark" maxlength="200"
+                              class="input-xlarge">${entity.bizPoHeader.bizPoPaymentOrder.remark}</textarea>
             </div>
         </div>
     </c:if>

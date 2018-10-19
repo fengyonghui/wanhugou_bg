@@ -21,6 +21,8 @@ public class BizCommissionOrder extends DataEntity<BizCommissionOrder> {
 	private Integer commId;		// 佣金付款单id,biz_commission_pay.id
 	private BigDecimal commission;		// 佣金
 
+	private BizCommission bizCommission;
+
 	public BizCommissionOrder() {
 		super();
 	}
@@ -53,4 +55,11 @@ public class BizCommissionOrder extends DataEntity<BizCommissionOrder> {
 		this.commission = commission;
 	}
 
+	public BizCommission getBizCommission() {
+		return bizCommission;
+	}
+
+	public void setBizCommission(BizCommission bizCommission) {
+		this.bizCommission = bizCommission;
+	}
 }

@@ -145,6 +145,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizVendInfoService bizVendInfoService;
     @Autowired
     private BizOpShelfSkuService bizOpShelfSkuService;
+    @Autowired
+    private BizCommissionOrderService bizCommissionOrderService;
 
 
     @ModelAttribute
@@ -862,15 +864,17 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
         String str = bizOrderHeader.getStr();
         if ("pay".equals(str)) {
-            BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
-            bizPoPaymentOrder.setPoHeaderId(bizOrderHeader.getBizPoHeader().getId());
-            bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
-            bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
-            List<BizPoPaymentOrder> payList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
-            if (CollectionUtils.isNotEmpty(payList)) {
-                bizPoPaymentOrder = payList.get(0);
+            BizCommissionOrder bizCommissionOrder = bizOrderHeader.getBizCommissionOrder();
+            List<BizCommissionOrder> commissionOrderList = bizCommissionOrderService.findList(bizCommissionOrder);
+            if (CollectionUtils.isNotEmpty(commissionOrderList)) {
+                bizCommissionOrder = commissionOrderList.get(0);
+                Integer orderId = bizCommissionOrder.getOrderId();
+                bizOrderHeader = bizOrderHeaderService.get(orderId);
+                bizOrderHeader.setStr("pay");
+                BizCommission bizCommission = bizCommissionOrder.getBizCommission();
+                bizOrderHeader.setTotalCommission(bizCommission.getPayTotal());
+                bizOrderHeader.setBizCommission(bizCommission);
             }
-            bizOrderHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
         }
         if (bizOrderHeader.getSource() != null) {
             model.addAttribute("source", bizOrderHeader.getSource());

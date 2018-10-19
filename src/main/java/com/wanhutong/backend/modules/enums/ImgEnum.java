@@ -36,7 +36,7 @@ public enum ImgEnum{
     /**线下支付凭证*/
     UNlINE_PAYMENT_VOUCHER((byte)27,"线下支付凭证","biz_order_header_unline"),
     /**线下退款凭证*/
-    UNlINE_REFUND_VOUCHER((byte)27,"线下退款凭证","biz_order_header"),
+    UNlINE_REFUND_VOUCHER((byte)31,"线下退款凭证","biz_order_header"),
 
     /**订单备注*/
     ORDER_REMARK((byte)29,"订单备注","biz_order_header"),
@@ -44,6 +44,10 @@ public enum ImgEnum{
      * 采购单支付凭证
      */
     BIZ_PO_HEADER_PAY_OFFLINE((byte)61,"采购单支付凭证","biz_po_header_pay_offline"),
+    /**
+     * 零售代销订单佣金支付凭证
+     */
+    BIZ_COMMISSION_HEADER_PAY_OFFLINE((byte)62,"采购单支付凭证","biz_commission_header_pay_offline"),
     /**
      * 拍照下单的商品信息图
      */

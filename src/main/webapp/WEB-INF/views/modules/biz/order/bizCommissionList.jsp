@@ -15,6 +15,73 @@
         	return false;
         }
 	</script>
+
+	<script type="text/javascript">
+        function checkPass(commId, currentType, money) {
+            var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+            var submit = function (v, h, f) {
+                if ($String.isNullOrBlank(f.description)) {
+                    jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                    return false;
+                }
+                top.$.jBox.confirm("确认审核通过吗？", "系统提示", function (v1, h1, f1) {
+                    if (v1 == "ok") {
+                        audit(1, f.description, commId, currentType, money);
+                    }
+                }, {buttonsFocus: 1});
+                return true;
+            };
+
+            jBox(html, {
+                title: "请输入通过理由:", submit: submit, loaded: function (h) {
+                }
+            });
+
+        }
+
+        function checkReject(commId, currentType, money) {
+            var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
+            var submit = function (v, h, f) {
+                if ($String.isNullOrBlank(f.description)) {
+                    jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                    return false;
+                }
+                top.$.jBox.confirm("确认驳回该流程吗？", "系统提示", function (v1, h1, f1) {
+                    if (v1 == "ok") {
+                        audit(2, f.description, commId, currentType, money);
+                    }
+                }, {buttonsFocus: 1});
+                return true;
+            };
+
+            jBox(html, {
+                title: "请输入驳回理由:", submit: submit, loaded: function (h) {
+                }
+            });
+
+        }
+
+        function audit(auditType, description, commId, currentType, money) {
+            $.ajax({
+                url: '${ctx}/biz/order/bizCommission/auditPay',
+                contentType: 'application/json',
+                data: {"commId": commId, "currentType": currentType, "auditType": auditType, "description": description, "money": money},
+                type: 'get',
+                success: function (result) {
+                    result = JSON.parse(result);
+                    if(result.ret == true || result.ret == 'true') {
+                        alert('操作成功!');
+                        window.location.href = "${ctx}/biz/order/bizCommission";
+                    }else {
+                        alert(result.errmsg);
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
+	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -33,16 +100,76 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<shiro:hasPermission name="biz:order:bizCommission:edit"><th>操作</th></shiro:hasPermission>
+				<th>id</th>
+				<th>付款金额</th>
+				<th>实际付款金额</th>
+				<th>最后付款时间</th>
+				<th>实际付款时间</th>
+				<th>当前状态</th>
+				<th>单次支付审批状态</th>
+				<th>备注</th>
+				<th>支付凭证</th>
+				<th>操作</th>
+				<%--<shiro:hasPermission name="biz:order:bizCommission:edit"><th>操作</th></shiro:hasPermission>--%>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizCommission">
 			<tr>
-				<shiro:hasPermission name="biz:order:bizCommission:edit"><td>
-    				<a href="${ctx}/biz/order/bizCommission/form?id=${bizCommission.id}">修改</a>
-					<a href="${ctx}/biz/order/bizCommission/delete?id=${bizCommission.id}" onclick="return confirmx('确认要删除该佣金付款表吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
+				<td>
+						${bizCommission.id}
+				</td>
+				<td>
+						${bizCommission.totalCommission}
+				</td>
+				<td>
+						${bizCommission.payTotal}
+				</td>
+				<td>
+					<fmt:formatDate value="${bizCommission.deadline}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+					<fmt:formatDate value="${bizCommission.payTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+						${bizCommission.bizStatus == 0 ? '未支付' : '已支付'}
+				</td>
+				<td>
+					<c:if test="${bizCommission.totalCommission == '0.00' && bizCommission.commonProcess.paymentOrderProcess.name != '审批完成'}">
+						待确认支付金额
+					</c:if>
+					<c:if test="${bizCommission.totalCommission != '0.00'}">
+						${bizCommission.commonProcess.paymentOrderProcess.name}
+					</c:if>
+				</td>
+				<td>
+						${bizCommission.remark}
+				</td>
+				<td>
+					<c:forEach items="${bizCommission.imgList}" var="v">
+						<a target="_blank" href="${v.imgServer}${v.imgPath}"><img style="width: 100px" src="${v.imgServer}${v.imgPath}"/></a>
+					</c:forEach>
+				</td>
+				<td>
+					<shiro:hasPermission name="biz:order:sure:bizCommission">
+						<c:if test="${bizCommission.payTotal == '0.00'}">
+							<a href="${ctx}/biz/order/bizCommission/form?id=${bizCommission.id}">确认支付金额</a>
+						</c:if>
+					</shiro:hasPermission>
+
+					<shiro:hasPermission name="biz:order:bizCommission:audit">
+						<c:if test="${bizCommission.payTotal != '0.00' && bizCommission.commonProcess.paymentOrderProcess.name != '审批完成' && bizCommission.totalCommission != 0}">
+							<a href="#" onclick="checkPass(${bizCommission.id}, ${bizCommission.commonProcess.paymentOrderProcess.code}, ${bizCommission.totalCommission})">审核通过</a>
+							<a href="#" onclick="checkReject(${bizCommission.id}, ${bizCommission.commonProcess.paymentOrderProcess.code}, ${bizCommission.totalCommission})">审核驳回</a>
+						</c:if>
+					</shiro:hasPermission>
+
+					<shiro:hasPermission name="biz:order:bizCommission:sure:pay">
+						<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认付款</a>--%>
+
+						<a href="${ctx}/biz/order/bizOrderHeader/commissionForm?bizCommissionOrder.commId=${bizCommission.id}&str=pay">确认付款</a>
+					</shiro:hasPermission>
+				</td>
 			</tr>
 		</c:forEach>
 		</tbody>
