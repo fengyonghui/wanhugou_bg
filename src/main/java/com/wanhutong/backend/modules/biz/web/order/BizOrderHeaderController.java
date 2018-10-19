@@ -1609,7 +1609,8 @@ public class BizOrderHeaderController extends BaseController {
                         //order.setPayProportion(orderPayProportionStatusEnum.getState());
                         order.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                         bizOrderHeaderService.saveOrderHeader(order);
-                        bizOrderStatusService.saveOrderStatus(order);
+                        //bizOrderStatusService.saveOrderStatus(order);
+                        bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(),BizOrderStatusOrderTypeEnum.SELLORDER.getState(),order.getId());
                         BizOrderAddress orderAddres = new BizOrderAddress();
                         orderAddres.setOrderHeaderID(order);
                         List<BizOrderAddress> list = bizOrderAddressService.findList(orderAddres);
@@ -1738,7 +1739,8 @@ public class BizOrderHeaderController extends BaseController {
                         //order.setPayProportion(orderPayProportionStatusEnum.getState());
                         order.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                         bizOrderHeaderService.saveOrderHeader(order);
-                        bizOrderStatusService.saveOrderStatus(order);
+                        //bizOrderStatusService.saveOrderStatus(order);
+                        bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(),BizOrderStatusOrderTypeEnum.SELLORDER.getState(),order.getId());
                         BizOrderAddress orderAddres = new BizOrderAddress();
                         orderAddres.setOrderHeaderID(order);
                         List<BizOrderAddress> list = bizOrderAddressService.findList(orderAddres);

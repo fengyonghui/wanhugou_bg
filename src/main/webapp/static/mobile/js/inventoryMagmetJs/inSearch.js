@@ -74,6 +74,7 @@
 			var optionsBusiness = $("#input_div_business option").eq($("#input_div_business").attr("selectedIndex"));//业务状态
 			var optionsClass = $("#input_div_class option").eq($("#input_div_class").attr("selectedIndex"));//品类名称
 			var optionscheck = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"));//审核状态
+//			console.log(optionscheck)
 			GHUTILS.OPENPAGE({
 				url: "../../html/inventoryMagmetHtml/inventoryList.html",
 				extras: {

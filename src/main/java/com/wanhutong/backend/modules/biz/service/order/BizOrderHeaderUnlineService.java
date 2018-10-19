@@ -13,6 +13,7 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
@@ -96,7 +97,7 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 		if (money.compareTo(bizOrderHeaderUnline.getRealMoney())==0) {
 			bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
 		}
-        bizOrderStatusService.saveOrderStatus(bizOrderHeader);
+		bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(),BizOrderStatusOrderTypeEnum.SELLORDER.getState(),bizOrderHeader.getId());
 	}
 
 	/**

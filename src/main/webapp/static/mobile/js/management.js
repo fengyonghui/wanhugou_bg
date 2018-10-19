@@ -1,4 +1,4 @@
-(function($) {
+ (function($) {
 	var ACCOUNT = function() {
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
@@ -57,12 +57,12 @@
                         data: {parentId:dataId},
                         dataType: "json",
                         success: function(res){
-//                      	console.log(res)
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
-//                              if(item.mobileUrl){
+                            	console.log(item)
+                                if(item.mobileUrl){
                                 	pHtmlList += '<p class="childMenu" purchId="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</p>'
-//                              }
+                                }
                             });
                             $(".childData"+indexNum).html(pHtmlList)
                         }
