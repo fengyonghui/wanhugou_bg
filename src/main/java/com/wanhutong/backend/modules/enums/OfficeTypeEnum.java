@@ -5,9 +5,21 @@ package com.wanhutong.backend.modules.enums;
  */
 public enum OfficeTypeEnum {
 
-   OFFICE("0") ,COMPANY("1"),DEPARTMENT("2"), GROUP("3"),OTHER("4"),WANHUTONG("5"),CUSTOMER("6"),VENDOR("7"),PURCHASINGCENTER("8"),SUPPLYCENTER("9"),WITHCAPITAL("10"),NETWORKSUPPLY("11"),NETWORK("13");
+    OFFICE("0"),
+    COMPANY("1"),
+    DEPARTMENT("2"),
+    GROUP("3"),
+    OTHER("4"),
+    WANHUTONG("5"),
+    CUSTOMER("6"),
+    VENDOR("7"),
+    PURCHASINGCENTER("8"),
+    SUPPLYCENTER("9"),
+    WITHCAPITAL("10"),
+    NETWORKSUPPLY("11"),
+    NETWORK("13");
 
-   private String type;
+    private String type;
 
     OfficeTypeEnum(String type) {
         this.type = type;
@@ -33,7 +45,7 @@ public enum OfficeTypeEnum {
     public static void main(String[] args) {
 
 
-        System.out.println( OfficeTypeEnum.VENDOR.ordinal() );
+        System.out.println(OfficeTypeEnum.VENDOR.ordinal());
 
 
     }

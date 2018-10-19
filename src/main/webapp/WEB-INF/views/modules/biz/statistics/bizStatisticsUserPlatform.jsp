@@ -20,7 +20,7 @@
         <select class="input-medium" id="centerType">
             <option value="0" label="全部"></option>
             <option value="8" label="采购中心"></option>
-            <option value="11" label="网供"></option>
+            <option value="13" label="网供"></option>
             <option value="10" label="配资业务"></option>
         </select>
     </label>

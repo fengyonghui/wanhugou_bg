@@ -1180,7 +1180,6 @@
 		sum(detail1.buy_price * detail1.ord_qty)
 		FROM
 		biz_order_header AS header1
--- 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON header1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		WHERE office.id = office1.id AND header1.order_type != 4 AND detail1.status = 1
@@ -1195,7 +1194,6 @@
 		)
 		GROUP BY office.id)                     AS buyPrice
 		FROM biz_order_header AS header
--- 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON header.center_id = office.id
 		WHERE
 		header.order_type != 4
@@ -1223,7 +1221,6 @@
 		sum(detail1.buy_price * detail1.ord_qty)
 		FROM
 		biz_order_header AS header1
--- 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON header1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		WHERE office.id = office1.id AND header1.order_type != 4 AND header1.order_type != 6 and detail1.status = 1
@@ -1240,7 +1237,6 @@
 		and office1.id = #{officeId}
 		GROUP BY office1.id)                     AS buyPrice
 		FROM biz_order_header AS header
--- 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON header.center_id = office.id
 		WHERE
 		header.order_type != 4 and header.order_type != 6 and header.status = 1
@@ -1347,7 +1343,6 @@
 		us.id AS usId,
 		(SELECT sum(detail1.buy_price * detail1.ord_qty)
 		FROM biz_order_header AS header1
--- 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON header1.consultant_id = us1.id
 		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
@@ -1377,7 +1372,6 @@
 		END   createTime
 		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
--- 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = oh.consultant_id
 		WHERE
 		oh.order_type != 4
@@ -1415,7 +1409,6 @@
 		us.id AS usId,
 		(SELECT sum(detail1.buy_price * detail1.ord_qty)
 		FROM biz_order_header AS header1
--- 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS header1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON header1.consultant_id = us1.id
 		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
@@ -1443,7 +1436,6 @@
 		END   createTime
 		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
--- 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = oh.consultant_id
 	    WHERE
 		oh.order_type != 4
@@ -1479,7 +1471,6 @@
 		sum(detail1.buy_price * detail1.ord_qty)
 		FROM
 		biz_order_header AS header1
--- 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON header1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		WHERE office.id = office1.id AND header1.order_type != 4 AND detail1.status = 1
@@ -1494,7 +1485,6 @@
 		date_format(header1.create_time, '%Y-%m-%d') = #{day}
 		GROUP BY office.id)  AS buyPrice
 		FROM biz_order_header AS header
--- 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON header.center_id = office.id
 		WHERE
 		header.order_type != 4
@@ -1580,7 +1570,6 @@
 		date_format(oh.create_time, '%Y-%m-%d') AS createTime
 		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
--- 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = oh.consultant_id
 		WHERE
 		oh.order_type != 4
@@ -1615,7 +1604,6 @@
 		date_format(oh.create_time, '%Y-%m-%d') AS createTime
 		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
--- 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = oh.consultant_id
 		WHERE
 		oh.order_type != 4
@@ -1652,7 +1640,6 @@
 		sum(detail1.buy_price * detail1.ord_qty)
 		FROM
 		biz_order_header AS header1
--- 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON header1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		WHERE office.id = office1.id AND header1.order_type != 4 and header1.order_type != 6  AND detail1.status = 1
@@ -1667,7 +1654,6 @@
 		header1.create_time BETWEEN #{startDate} AND #{endDate}
 		GROUP BY office.id) AS buyPrice
 		FROM biz_order_header AS header
--- 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON header.center_id = office.id
 		WHERE
 		header.order_type != 4
@@ -1830,7 +1816,6 @@
 		date_format(oh.create_time, '%Y-%m-%d') AS createTime,
 		(SELECT sum(detail1.buy_price * detail1.ord_qty)
 		FROM biz_order_header AS header1
--- 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON header1.consultant_id = us1.id
 		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
@@ -1848,7 +1833,6 @@
 		GROUP BY us1.id)   AS buyPrice
 		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
--- 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = oh.consultant_id
 		WHERE
 		oh.order_type != 4
@@ -1880,7 +1864,6 @@
 		date_format(oh.create_time, '%Y-%m-%d') AS createTime
 		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
--- 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = oh.consultant_id
 		WHERE
 		oh.order_type != 4
@@ -1924,7 +1907,6 @@
 	<select id="getUserStatisticDataPlatform" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
 		SELECT count(1) AS count,
 		<if test="type == null or type == 0">
-			-- 			date_format(so.create_date, '%Y-%m') AS createDate
 			CASE date_format(so.create_date, '%Y-%m')
 			WHEN '2017-06'
 			THEN '2017-09'
@@ -1950,7 +1932,7 @@
 			AND date_format(so.create_date, '%Y-%m') = #{month}
 		</if>
 		<if test="centerType == null or centerType == 0">
-			and o.type in (8, 10, 11)
+			and o.type in (8, 10, 11, 13)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and o.type = #{centerType}
@@ -1970,7 +1952,6 @@
 		sum(receive_total) AS receiveTotal,
 		(SELECT sum(detail1.buy_price * detail1.ord_qty)
 		FROM biz_order_header AS header1
--- 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON header1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		WHERE header1.order_type != 4
@@ -1984,7 +1965,7 @@
 		and ta.object_name = 'sys_office'
 		)
 		<if test="centerType == null or centerType == 0">
-			and office1.type in (8, 10, 11)
+			and office1.type in (8, 10, 11, 13)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and office1.type = #{centerType}
@@ -1996,7 +1977,6 @@
 		)   AS buyPrice,
 
 		<if test="type == null or type == 0">
-			--             date_format(oh.create_time, '%Y-%m') AS createDate
 			CASE date_format(oh.create_time, '%Y-%m')
 			WHEN '2017-06'
 			THEN '2017-09'
@@ -2012,11 +1992,10 @@
 		</if>
 
 		FROM biz_order_header oh
--- 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = oh.cust_id
 		LEFT JOIN sys_office AS office ON oh.center_id = office.id
 		WHERE oh.`status` = 1
 		<if test="centerType == null or centerType == 0">
-			and office.type in (8, 10, 11)
+			and office.type in (8, 10, 11, 13)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and office.type = #{centerType}
@@ -2101,7 +2080,7 @@ GROUP BY
 		and ta.object_name = 'sys_office'
 		)
 		<if test="centerType == null or centerType == 0">
-			and office1.type in (8, 10, 11)
+			and office1.type in (8, 10, 11, 13)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and office1.type = #{centerType}
@@ -2138,17 +2117,18 @@ GROUP BY
 		<if test="type == 1">
 			date_format(oh.create_time, '%Y-%m-%d') AS createDate
 		</if>
-		from sys_user u, biz_order_header oh, sys_office so
-		WHERE oh.consultant_id = u.id
-		AND NOT EXISTS(
+		from  biz_order_header oh
+		left JOIN sys_user u on oh.consultant_id = u.id
+		LEFT JOIN sys_office so on so.id = oh.center_id
+		WHERE
+		NOT EXISTS(
 		select 1
 		from sys_test_account ta
 		where oh.cust_id = ta.object_id
 		and ta.object_name = 'sys_office'
 		)
-		and so.id = u.company_id
 		<if test="centerType == null or centerType == 0">
-			and so.type in (8, 10, 11)
+			and so.type in (8, 10, 11, 13)
 		</if>
 		<if test="centerType != null and centerType != 0">
 			and so.type = #{centerType}
@@ -2186,7 +2166,6 @@ GROUP BY
 		cent.name AS centName
 		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
--- 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = oh.consultant_id
 		LEFT JOIN sys_office cent ON cent.id = us.office_id
 		WHERE
@@ -2290,15 +2269,17 @@ SELECT
 		and bsi.`status` = 1
 		AND ii.cust_id = so.id
 		GROUP BY ii.cust_id) AS stockAmount
-FROM sys_office so, sys_user u, biz_order_header oh
-	WHERE oh.consultant_id = u.id
-		AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
+FROM  biz_order_header oh
+LEFT JOIN sys_office so on oh.center_id = so.id
+ LEFT JOIN sys_user u on oh.consultant_id = u.id
+	WHERE
+		NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
 		AND so.id = u.office_id
-		AND so.type IN (8, 10, 11)
+		AND so.type IN (8, 10, 11, 13)
 		AND
 		oh.receive_total > 10
       AND oh.`status` = 1 AND u.`status` = 1 AND so.id in
-		(select id from sys_office where type IN (8, 10, 11) and status = 1)
+		(select id from sys_office where type IN (8, 10, 11, 13) and status = 1)
 		AND oh.create_time BETWEEN #{startDate} AND #{endDate}
 		GROUP BY so.id
 
@@ -2311,9 +2292,7 @@ FROM sys_office so, sys_user u, biz_order_header oh
         sum(receive_total)                                   AS receiveTotal,
         (SELECT sum(detail1.buy_price * detail1.ord_qty)
         FROM biz_order_header AS header1
---         LEFT JOIN biz_custom_center_consultant AS consultant1  ON consultant1.cust_id = header1.cust_id
         LEFT JOIN sys_office AS office1 ON header1.center_id = office1.id
---         LEFT JOIN biz_custom_center_consultant AS cc1 ON  header1.cust_id = cc1.cust_id
         LEFT JOIN sys_user AS u1 ON header1.consultant_id = u1.id
         LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
         WHERE u1.id = u.id AND header1.order_type != 4 AND header1.order_type != 6 AND header1.`status` = 1 AND detail1.status = 1 AND
@@ -2335,15 +2314,17 @@ FROM sys_office so, sys_user u, biz_order_header oh
         u.name AS name,
         so.type AS officeType,
         u.id AS userId
-        FROM sys_office so, sys_user u, biz_order_header oh
-        WHERE oh.consultant_id = u.id
-        AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
+        FROM biz_order_header oh
+        LEFT JOIN sys_office so on oh.center_id = so.id
+         LEFT JOIN sys_user u on oh.consultant_id = u.id
+        WHERE
+        NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
         AND so.id = u.office_id
-        AND so.type IN (8, 10, 11)
+        AND so.type IN (8, 10, 11, 13)
         AND
 		oh.receive_total > 10
         AND oh.`status` = 1 AND u.`status` = 1 AND so.id in
-        (select id from sys_office where type IN (8, 10, 11) and status = 1)
+        (select id from sys_office where type IN (8, 10, 11, 13) and status = 1)
         AND oh.create_time BETWEEN #{startDate} AND #{endDate}
         and so.id = #{officeId}
         GROUP BY u.id
@@ -2489,7 +2470,6 @@ FROM
 		LEFT JOIN sys_region reg ON c.region_id = reg.id
 	<!-- end  -->
 	<!-- 采购中心 -->
--- 		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office sx ON sx.id = a.center_id
 	<!-- end  -->
 	WHERE 1=1 and a.order_type != 4
@@ -2591,7 +2571,6 @@ FROM
 		LEFT JOIN sys_region reg ON c.region_id = reg.id
 	<!-- end  -->
 	<!-- 采购中心 -->
--- 		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office sx ON sx.id = a.center_id
 	<!-- end  -->
 	WHERE 1=1 and a.order_type != 4
@@ -2700,7 +2679,6 @@ FROM
 		FROM biz_order_header a
 		LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
 		LEFT JOIN sys_office so on so.id = a.cust_id
--- 		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office s on s.id=a.center_id
 		WHERE a.status = 1
 		AND ohu.id is not NULL

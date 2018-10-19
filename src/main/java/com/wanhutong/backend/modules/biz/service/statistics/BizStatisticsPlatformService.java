@@ -200,7 +200,8 @@ public class BizStatisticsPlatformService {
         List<Office> listByType = officeDao.findListByTypeList(Lists.newArrayList(
                 OfficeTypeEnum.PURCHASINGCENTER.getType(),
                 OfficeTypeEnum.WITHCAPITAL.getType(),
-                OfficeTypeEnum.NETWORKSUPPLY.getType()
+                OfficeTypeEnum.NETWORKSUPPLY.getType(),
+                OfficeTypeEnum.NETWORK.getType()
         ));
         listByType.removeIf(office -> office.getName().contains("测试"));
         listByType.forEach(office -> {
