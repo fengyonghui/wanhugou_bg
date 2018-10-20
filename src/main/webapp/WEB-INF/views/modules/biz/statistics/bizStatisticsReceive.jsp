@@ -8,8 +8,8 @@
 </head>
 <body>
 <div>
-    <input id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
-    <input id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    起始时间:<input id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    结束时间:<input id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
     <select class="input-medium" id="centerType">
         <option value="8" label="采购中心">采购中心</option>
         <option value="13" label="网供">网供</option>

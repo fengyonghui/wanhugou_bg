@@ -191,6 +191,15 @@ public class BizStatisticsService {
         list.removeIf(o -> o.getName().contains("测试".intern()));
         return list;
     }
+    /**
+     * 根据type取 office
+     * @return office
+     */
+    public List<Office> getOfficeList(String... type) {
+        List<Office> list = officeDao.findListByTypeList(Lists.newArrayList(type));
+        list.removeIf(o -> o.getName().contains("测试".intern()));
+        return list;
+    }
 
     /**
      * 取某一个销售的销售业绩
