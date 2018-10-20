@@ -16,5 +16,8 @@ import org.apache.ibatis.annotations.Param;
 @MyBatisDao
 public interface BizInventoryViewLogDao extends CrudDao<BizInventoryViewLog> {
 
+    void saveCurrentViewLog(BizInventoryViewLog inventoryViewLog);
+
+
     void updateSkuId(@Param("needSkuId") Integer needSkuId, @Param("id") Integer id);
 }

@@ -338,12 +338,7 @@
 			</font></td>
 			<c:if test="${source ne 'vendor'}">
 				<td>
-					<%--<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
-						${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}
-					<%--</c:if>--%>
-					<%--<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
-						<%--<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.totalBuyPrice}" pattern="0.00"/>--%>
-					<%--</c:if>--%>
+						<fmt:formatNumber type="number" value="${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}" pattern="0.00"/>
 				</td>
 			</c:if>
 			<td>

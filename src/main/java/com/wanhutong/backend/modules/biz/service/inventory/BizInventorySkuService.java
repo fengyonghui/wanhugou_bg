@@ -17,14 +17,18 @@ import com.wanhutong.backend.modules.biz.dao.inventory.BizInventorySkuDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestDetailDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
 import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV3Dao;
+import com.wanhutong.backend.modules.biz.entity.dto.BizInventorySkus;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
@@ -40,6 +44,7 @@ import com.wanhutong.backend.modules.sys.dao.OfficeDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -89,6 +94,10 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	private OfficeDao officeDao;
 	@Autowired
 	private BizSkuInfoV3Dao bizSkuInfoDao;
+	@Autowired
+	private BizOrderStatusService bizOrderStatusService;
+	@Autowired
+	private OfficeService officeService;
 
 	@Override
 	public BizInventorySku get(Integer id) {
@@ -120,6 +129,75 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			super.save(invSku);
 		} else {
 			super.save(bizInventorySku);
+		}
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void saveBizInventorySku(BizInventorySkus bizInventorySkus) {
+		if (bizInventorySkus != null && bizInventorySkus.getSkuInfoIds() != null) {
+			String[] invInfoIdArr = bizInventorySkus.getInvInfoIds().split(",");
+			String[] customerIdArr = null;
+			if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
+				customerIdArr = bizInventorySkus.getCustomerIds().split(",");
+			}
+			String[] invTypeArr = bizInventorySkus.getInvTypes().split(",");
+			String[] skuTypeArr = bizInventorySkus.getSkuTypes().split(",");
+			String[] skuInfoIdArr = bizInventorySkus.getSkuInfoIds().split(",");
+			String[] stockQtyArr = bizInventorySkus.getStockQtys().split(",");
+			BizInventorySku bizInventorySku = new BizInventorySku();
+			BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
+			for (int i = 0; i < skuInfoIdArr.length; i++) {
+				bizInventorySku.setId(null);
+				bizInventorySku.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
+				if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
+					bizInventorySku.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
+				}
+				bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
+				bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
+				bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_DELETE);
+				bizInventorySku.setSkuType(Integer.parseInt(skuTypeArr[i].trim()));
+				bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
+				bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
+				bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
+				//查询是否有已删除的该商品库存
+				BizInventorySku only = findOnly(bizInventorySku);
+				if (only == null) {
+					bizInventoryViewLog.setStockQty(0);
+					bizInventorySku.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
+					bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_NORMAL);
+					bizInventoryViewLog.setStockChangeQty(bizInventorySku.getStockQty());
+					bizInventoryViewLog.setNowStockQty(bizInventorySku.getStockQty());
+					this.save(bizInventorySku);
+				} else {
+					if (StringUtils.isNotBlank(bizInventorySkus.getCustomerIds())) {
+						only.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
+					}
+					bizInventoryViewLog.setStockQty(0);
+					only.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
+					bizInventoryViewLog.setStockChangeQty(only.getStockQty());
+					bizInventoryViewLog.setNowStockQty(only.getStockQty());
+					this.save(only);
+				}
+				bizInventoryViewLogService.save(bizInventoryViewLog);
+			}
+		}//修改
+		else if (bizInventorySkus != null && bizInventorySkus.getStockQtys() != null && !bizInventorySkus.getStockQtys().equals("")) {
+			BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
+			BizInventorySku bizInventorySku = this.get(bizInventorySkus.getId());
+			if (bizInventorySku != null) {
+				Integer stockQtys = Integer.parseInt(bizInventorySkus.getStockQtys());
+				if (!stockQtys.equals(bizInventorySku.getStockQty())) {
+					bizInventoryViewLog.setStockQty(bizInventorySku.getStockQty());//原
+					bizInventoryViewLog.setStockChangeQty(Integer.parseInt(bizInventorySkus.getStockQtys()) - bizInventorySku.getStockQty());
+					bizInventoryViewLog.setNowStockQty(Integer.parseInt(bizInventorySkus.getStockQtys()));//现
+					bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
+					bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
+					bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
+					bizInventoryViewLogService.save(bizInventoryViewLog);
+				}
+			}
+			bizInventorySku.setStockQty(Integer.parseInt(bizInventorySkus.getStockQtys()));
+			this.save(bizInventorySku);
 		}
 	}
 
@@ -243,7 +321,12 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void inventorySave(BizRequestHeader requestHeader) {
-		BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorDao.get(requestHeader.getId());
+		//发起盘点记录
+		BizOrderStatus bizOrderStatus = new BizOrderStatus();
+		bizOrderStatus.setOrderHeader(new BizOrderHeader(requestHeader.getId()));
+		bizOrderStatus.setOrderType(BizOrderStatus.OrderType.INVENTORY.getType());
+		bizOrderStatus.setBizStatus(0);
+		bizOrderStatusService.save(bizOrderStatus);
 		String invReqDetail = requestHeader.getInvReqDetail();
 		Integer requestHeaderId = 0;
 		String[] invReqDetailArr = invReqDetail.split(",");
@@ -314,7 +397,11 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
         if (ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getAutProcessId().equals(nextProcess.getCode())) {
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
             bizRequestDetail.setRequestHeader(new BizRequestHeader(id));
-            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+            //盘点人
+			int currentStatusId = bizOrderStatusService.findCurrentStatus(id,BizOrderStatus.OrderType.INVENTORY.getType());
+			BizOrderStatus currentStatus = bizOrderStatusService.get(currentStatusId);
+
+			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
             if (CollectionUtils.isNotEmpty(requestDetailList)) {
                 for (BizRequestDetail requestDetail : requestDetailList) {
                     if (requestDetail.getActualQty() == null) {
@@ -356,7 +443,12 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 							viewLog.setStockChangeQty(-num);
 							viewLog.setNowStockQty(invSku.getStockQty());
 							viewLog.setRequestHeader(bizRequestHeader);
-							bizInventoryViewLogService.save(viewLog);
+							viewLog.setCreateBy(currentStatus.getCreateBy());
+							viewLog.setCreateDate(currentStatus.getCreateDate());
+							viewLog.setUpdateBy(currentStatus.getUpdateBy());
+							viewLog.setUpdateDate(currentStatus.getUpdateDate());
+							viewLog.setuVersion(1);
+							bizInventoryViewLogService.saveCurrentViewLog(viewLog);
 						}
                 }
             }

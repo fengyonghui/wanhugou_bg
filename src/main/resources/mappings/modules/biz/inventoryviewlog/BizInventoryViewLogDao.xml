@@ -109,7 +109,9 @@
 			stock_qty,
 			stock_change_qty,
 			now_stock_qty,
-			req_id,
+			<if test="requestHeader != null and requestHeader.id != null">
+				req_id,
+			</if>
 			create_id,
 			create_time,
 			u_version,
@@ -124,7 +126,9 @@
 			#{stockQty},
 			#{stockChangeQty},
 			#{nowStockQty},
-			#{requestHeader.id},
+			<if test="requestHeader != null and requestHeader.id != null">
+				#{requestHeader.id},
+			</if>
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
@@ -155,10 +159,44 @@
 		WHERE id = #{id}
 	</update>
 
+	<insert id="saveCurrentViewLog">
+		INSERT INTO biz_inventory_view_log(
+			id,
+			inv_id,
+			inv_type,
+			sku_id,
+			stock_qty,
+			stock_change_qty,
+			now_stock_qty,
+			req_id,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time,
+			status
+			) VALUES (
+			#{id},
+			#{invInfo.id},
+			#{invType},
+			#{skuInfo.id},
+			#{stockQty},
+			#{stockChangeQty},
+			#{nowStockQty},
+			#{requestHeader.id},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+			)
+	</insert>
+
 	<update id="updateSkuId">
 		UPDATE biz_inventory_view_log SET
 		sku_id = #{needSkuId}
 		WHERE id = #{id}
 	</update>
-	
+
 </mapper>

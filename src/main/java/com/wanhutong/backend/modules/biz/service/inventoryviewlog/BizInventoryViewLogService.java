@@ -51,6 +51,9 @@ public class BizInventoryViewLogService extends CrudService<BizInventoryViewLogD
 	}
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void saveCurrentViewLog(BizInventoryViewLog inventoryViewLog) {dao.saveCurrentViewLog(inventoryViewLog);}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void updateSkuId(Integer needSkuId, Integer skuId) {
 		BizInventoryViewLog orderDetail = new BizInventoryViewLog();
 		orderDetail.setSkuInfo(new BizSkuInfo(skuId));
@@ -61,5 +64,5 @@ public class BizInventoryViewLogService extends CrudService<BizInventoryViewLogD
 			}
 		}
 	}
-	
+
 }
