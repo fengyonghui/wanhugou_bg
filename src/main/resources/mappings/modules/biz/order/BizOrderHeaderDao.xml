@@ -1183,7 +1183,7 @@
 		LEFT JOIN sys_office AS office1 ON header1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		WHERE office.id = office1.id AND header1.order_type != 4 AND detail1.status = 1
-		AND header.receive_total > 10
+		AND header1.receive_total > 10
 		AND
 		header1.create_time LIKE #{month}
 		AND NOT EXISTS(
