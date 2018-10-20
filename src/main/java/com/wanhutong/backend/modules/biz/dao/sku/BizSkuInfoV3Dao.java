@@ -62,7 +62,7 @@ public interface BizSkuInfoV3Dao extends CrudDao<BizSkuInfo> {
     */
    void updateProdId(@Param("skuId") Integer skuId, @Param("prodId") Integer prodId);
 
-   List<BizSkuInfo> findSkuBySpuAndSize(@Param("prodId")Integer prodId, @Param("size")String size);
+   List<BizSkuInfo> findSkuBySpuAndSize(@Param("prodId")Integer prodId, @Param("itemNo")String itemNo, @Param("size")String size);
 
    void updatePrice(@Param("id")Integer id, @Param("settlementPrice")BigDecimal settlementPrice);
 

@@ -7,6 +7,7 @@ import com.alibaba.druid.sql.visitor.functions.If;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.BaseEntity;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.supcan.treelist.cols.Col;
@@ -68,6 +69,7 @@ import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -688,12 +690,21 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
         super.delete(bizProductInfo);
     }
 
+    /**
+     * 合并产品
+     * @param itemNo
+     * @param vendId
+     * @param needId
+     * @param replaceId
+     */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void mergeSpu(String itemNo, Integer vendId, Integer needId, Integer replaceId) {
         BizProductInfo bizProductInfo = new BizProductInfo();
         bizProductInfo.setItemNo(itemNo);
         bizProductInfo.setOffice(new Office(vendId));
         List<BizProductInfo> productList = findList(bizProductInfo);
+        //初步规范化商品货号
+        updateItemNoSize(productList);
         //被替换的产品ID，替换
         BizSkuInfo skuInfo = new BizSkuInfo();
         skuInfo.setProductInfo(new BizProductInfo(replaceId));
@@ -712,14 +723,67 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                     //对比needId对应的SPU下的SKU
                     contrastSku(productInfo.getId(),needId);
                     //删除无用的SPU
-                    delete(new BizProductInfo(productInfo.getId()));
+                    BizProductInfo prod = new BizProductInfo();
+                    prod.setId(productInfo.getId());
+                    prod.setDelFlag(BaseEntity.DEL_FLAG_DELETE);
+                    delete(prod);
                 }
             }
         }
+        BizProductInfo productInfo = new BizProductInfo();
+        productInfo.setId(replaceId);
+        productInfo.setDelFlag(BaseEntity.DEL_FLAG_DELETE);
+        delete(productInfo);
         //替换货号
         updateItemNo(itemNo,needId);
+        //删除以图为准和套二套三的商品
+        deleteSomeSku(needId);
     }
 
+    /**
+     * 初步规范化商品货号
+     * @param productInfos
+     */
+    private void updateItemNoSize(List<BizProductInfo> productInfos) {
+        if (CollectionUtils.isNotEmpty(productInfos)) {
+            for (BizProductInfo productInfo : productInfos) {
+                BizSkuInfo bizSkuInfo = new BizSkuInfo();
+                bizSkuInfo.setProductInfo(productInfo);
+                List<BizSkuInfo> skuInfos = bizSkuInfoV3Service.findList(bizSkuInfo);
+                if (CollectionUtils.isNotEmpty(skuInfos)) {
+                    for (BizSkuInfo skuInfo : skuInfos) {
+                        String itemNo = skuInfo.getItemNo();
+                        itemNo = itemNo.replaceAll("寸", "");
+                        itemNo = itemNo.replaceAll("工厂", "装车");
+                        itemNo = itemNo.replaceAll("打包价","打包");
+                        itemNo = itemNo.replaceAll("装车价","装车");
+                        itemNo = itemNo.replaceAll("色","");
+                        String start = itemNo.substring(0, itemNo.indexOf("/") + 1);
+                        String after = itemNo.substring(itemNo.indexOf("/") + 1, itemNo.length());
+                        String middle = after.substring(0, after.indexOf("/"));
+                        String end = after.substring(after.indexOf("/"),after.length());
+                        StringBuilder sb = new StringBuilder();
+                         if (!itemNo.contains("打包") && !itemNo.contains("装车")) {
+                             itemNo = sb.append(start).append(middle).append("打包").append(end).toString();
+                         }
+                         if (start.contains("打包") && !middle.contains("打包")) {
+                             itemNo = sb.append(start).append(middle).append("打包").append(end).toString();
+                         }
+                         if (start.contains("装车") && !middle.contains("装车")) {
+                             itemNo = sb.append(start).append(middle).append("装车").append(end).toString();
+                         }
+                        bizSkuInfoV3Service.updateItemNo(skuInfo.getId(),itemNo);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 修改上架商品表对应的产品ID
+     * @param skuId
+     * @param prodId
+     */
     private void updateProdIdForOpShelfSku(Integer skuId, Integer prodId) {
         BizOpShelfSku opShelfSku = new BizOpShelfSku();
         opShelfSku.setSkuInfo(new BizSkuInfo(skuId));
@@ -741,10 +805,10 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
         if (CollectionUtils.isNotEmpty(needSkuList) && CollectionUtils.isNotEmpty(skuInfoList)) {
             for (BizSkuInfo needSku : needSkuList) {
                 String needItemNo = needSku.getItemNo();
-                String needProperty = StringUtils.substring(needItemNo, needItemNo.indexOf("/"));
+                String needProperty = StringUtils.substring(needItemNo, needItemNo.indexOf("/")).replaceAll("\\s*","");
                 for (BizSkuInfo bizSkuInfo : skuInfoList) {
                     String itemNo = bizSkuInfo.getItemNo();
-                    String property = StringUtils.substring(itemNo, itemNo.indexOf("/"));
+                    String property = StringUtils.substring(itemNo, itemNo.indexOf("/")).replaceAll("\\s*","");
                     if (property.equals(needProperty)) {
                         skuList.add(bizSkuInfo);
                         changeSku(needSku.getId(),bizSkuInfo.getId());
@@ -776,8 +840,8 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
         bizPoDetailService.updateSkuId(needSkuId,skuId);
         bizSendGoodsRecordService.updateSkuId(needSkuId,skuId);
         bizCollectGoodsRecordService.updateSkuId(needSkuId,skuId);
-        bizInventorySkuService.updateSkuId(needSkuId,skuId);
         bizInventoryViewLogService.updateSkuId(needSkuId,skuId);
+        bizInventorySkuService.updateSkuId(needSkuId,skuId);
     }
 
     private void updateItemNo(String itemNo, Integer prodId) {
@@ -789,15 +853,31 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
         if (CollectionUtils.isNotEmpty(skuList)) {
             for (BizSkuInfo skuInfo : skuList) {
                 String s = skuInfo.getItemNo().substring(skuInfo.getItemNo().indexOf("/"));
-                bizSkuInfoV3Service.updateItemNo(skuInfo.getId(),sb.append(s).toString());
+                StringBuilder stringBuilder = new StringBuilder(itemNo);
+                bizSkuInfoV3Service.updateItemNo(skuInfo.getId(),stringBuilder.append("#").append(s).toString().replaceAll("\\s*",""));
+            }
+        }
+    }
+
+    private void deleteSomeSku(Integer needId) {
+        BizSkuInfo bizSkuInfo = new BizSkuInfo();
+        bizSkuInfo.setProductInfo(new BizProductInfo(needId));
+        List<BizSkuInfo> skuInfos = bizSkuInfoV3Service.findList(bizSkuInfo);
+        if (CollectionUtils.isNotEmpty(skuInfos)) {
+            for (BizSkuInfo skuInfo : skuInfos) {
+                String itemNo = skuInfo.getItemNo();
+                if (itemNo.contains("以图为准") || itemNo.contains("套二") || itemNo.contains("套三")) {
+                    bizSkuInfoV3Service.delete(skuInfo);
+                    LOGGER.info("商品ID为【{}】,货号为【{}】的商品删除成功",skuInfo.getId(),itemNo);
+                }
             }
         }
     }
 
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public void changePrice(Integer prodId, String size, BigDecimal settlementPrice, BigDecimal marketingPrice) {
-        List<BizSkuInfo> bizSkuInfos = bizSkuInfoV3Service.findSkuBySpuAndSize(prodId, size);
+    public void changePrice(Integer prodId, String itemNo, String size, BigDecimal settlementPrice, BigDecimal marketingPrice) {
+        List<BizSkuInfo> bizSkuInfos = bizSkuInfoV3Service.findSkuBySpuAndSize(prodId,itemNo,size);
         if (CollectionUtils.isNotEmpty(bizSkuInfos)) {
             for (BizSkuInfo bizSkuInfo : bizSkuInfos) {
                 bizSkuInfoV3Service.updatePrice(bizSkuInfo.getId(),settlementPrice);

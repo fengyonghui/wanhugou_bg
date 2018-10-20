@@ -389,8 +389,8 @@ public class BizSkuInfoV3Service extends CrudService<BizSkuInfoV3Dao, BizSkuInfo
 
 	public void updateProdId(Integer skuId, Integer prodId) {bizSkuInfoDao.updateProdId(skuId,prodId);}
 
-	public List<BizSkuInfo> findSkuBySpuAndSize(Integer prodId, String size){
-		return bizSkuInfoDao.findSkuBySpuAndSize(prodId,size);
+	public List<BizSkuInfo> findSkuBySpuAndSize(Integer prodId, String itemNo, String size){
+		return bizSkuInfoDao.findSkuBySpuAndSize(prodId,itemNo,size);
 	}
 
 	public void updatePrice(Integer id, BigDecimal settlementPrice) {bizSkuInfoDao.updatePrice(id,settlementPrice);}

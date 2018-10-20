@@ -158,7 +158,7 @@
 
 	<update id="updateSkuId">
 		UPDATE biz_po_detail SET
-		sku_id = #{needSkuId}
+		sku_no = #{needSkuId}
 		WHERE id = #{id}
 	</update>
 	

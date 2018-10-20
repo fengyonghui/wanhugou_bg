@@ -732,8 +732,8 @@ public class BizProductInfoV3Controller extends BaseController {
 
     @RequestMapping(value = "changePrice")
     @ResponseBody
-    public String changePrice(Integer prodId, String size, BigDecimal settlementPrice, BigDecimal marketingPrice) {
-        bizProductInfoService.changePrice(prodId,size,settlementPrice,marketingPrice);
+    public String changePrice(Integer prodId, String itemNo, String size, BigDecimal settlementPrice, BigDecimal marketingPrice) {
+        bizProductInfoService.changePrice(prodId,itemNo,size,settlementPrice,marketingPrice);
         return "ok";
     }
 

@@ -709,8 +709,9 @@
 		AND sai.name = '尺寸'
 		AND bpi.status = 1
 		AND sav.status = 1
+		AND a.item_no LIKE concat('%',#{itemNo},'%')
 		AND bpi.id = #{prodId}
-		AND sav.value = #{size}
+		AND sav.value LIKE concat('%',#{size},'%')
 	</select>
 
 	<update id="updatePrice">

@@ -29,15 +29,16 @@
 
         function changePrice() {
             var prodId = $("#prodId").val();
+            var itemNo = $("#itemNo").val();
 			var size = $("#size").val();
 			var settlementPrice = $("#settlementPrice").val();
 			var marketingPrice = $("#marketingPrice").val();
 			$.ajax({
 				type:"post",
 				url:"${ctx}/biz/product/bizProductInfoV3/changePrice",
-				data:{"prodId":prodId,"size":size,"settlementPrice":settlementPrice,"marketingPrice":marketingPrice},
+				data:{"prodId":prodId,"itemNo":itemNo,"size":size,"settlementPrice":settlementPrice,"marketingPrice":marketingPrice},
 				success:function (data) {
-					return data;
+					alert(data);
                 }
 			});
         }
@@ -49,7 +50,7 @@
                 url:"${ctx}/biz/product/bizProductInfoV3/changeSpu",
                 data:{"prodId":prodId},
                 success:function (data) {
-                    return data;
+                    alert(data);
                 }
             });
         }
@@ -63,6 +64,12 @@
 </ul><br/>
 <form:form id="inputForm" action="${ctx}/biz/product/bizProductInfoV3/mergeSpu" method="post" class="form-horizontal">
 
+	<div class="control-group">
+		<label class="control-label">货号：</label>
+		<div class="controls">
+			<input id="itemNo" name="itemNo" type="text" class="input-xlarge" value=""/>
+		</div>
+	</div>
 	<div class="control-group">
 		<label class="control-label">尺寸：</label>
 		<div class="controls">

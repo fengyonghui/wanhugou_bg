@@ -379,7 +379,7 @@
 
 	<update id="updatePrice">
 		UPDATE biz_op_shelf_sku SET
-		org_price = #{settlementPrice}
+		org_price = #{settlementPrice},
 		sale_price = #{marketingPrice}
 		WHERE id = #{id}
 	</update>
