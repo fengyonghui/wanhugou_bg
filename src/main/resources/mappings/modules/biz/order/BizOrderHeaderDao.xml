@@ -1399,17 +1399,15 @@
 		SELECT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		sum(receive_total) AS receiveTotal,
-		<!--start-->
 		(SELECT count(1) FROM
 		biz_custom_center_consultant cc WHERE cc.consultant_id = us.id
 		) AS custCount,
-		<!--end-->
 		count(1) AS orderCount,
 		us.name AS name,
 		us.id AS usId,
 		(SELECT sum(detail1.buy_price * detail1.ord_qty)
 		FROM biz_order_header AS header1
-		LEFT JOIN biz_order_detail AS header1 ON detail1.order_id = header1.id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN sys_user us1 ON header1.consultant_id = us1.id
 		WHERE us.id = us1.id AND header1.order_type != 4 AND detail1.status = 1
 		AND header1.status = 1
@@ -1424,7 +1422,6 @@
 		AND
 		header1.receive_total > 10
 		GROUP BY us1.name)   AS buyPrice,
-		-- 		date_format(oh.create_time, '%Y-%m') AS createTime
 		CASE date_format(oh.create_time, '%Y-%m')
 		WHEN '2017-06'
 		THEN '2017-09'
