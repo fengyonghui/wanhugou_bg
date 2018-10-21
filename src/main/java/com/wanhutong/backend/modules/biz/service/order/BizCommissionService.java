@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.service.order;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.ImmutableMap;
@@ -16,12 +17,16 @@ import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizCommissionOrder;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
+import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -264,5 +269,38 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		}
 
 		return Pair.of(Boolean.TRUE, "操作成功!");
+	}
+
+	/**
+	 * 支付订单
+	 *
+	 * @return
+	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public String payOrder(Integer commId, String img, String remark) {
+		// 当前流程
+		User user = UserUtils.getUser();
+		Role role = new Role();
+		role.setEnname(RoleEnNameEnum.FINANCE.getState());
+		Role role1 = new Role();
+		role1.setEnname(RoleEnNameEnum.TELLER.getState());
+		if (!user.isAdmin() && !user.getRoleList().contains(role) && !user.getRoleList().contains(role1)) {
+			return "操作失败,该用户没有权限!";
+		}
+
+		BizCommission bizCommission = this.get(commId);
+		if (bizCommission.getBizStatus() != BizCommission.BizStatus.NO_PAY.getStatus()) {
+			LOGGER.warn("[exception]BizCommissionController payOrder currentType mismatching [{}]", commId);
+			return "操作失败,当前状态有误!";
+		}
+
+		bizCommission.setImgUrl(img);
+		bizCommission.setBizStatus(BizCommission.BizStatus.ALL_PAY.getStatus());
+		bizCommission.setPayTime(new Date());
+		bizCommission.setRemark(remark);
+		this.save(bizCommission);
+
+
+		return "操作成功!";
 	}
 }

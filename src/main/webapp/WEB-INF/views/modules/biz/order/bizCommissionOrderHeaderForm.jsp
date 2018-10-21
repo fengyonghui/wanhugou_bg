@@ -1054,29 +1054,32 @@
         </div>
     </div>
 
+    <c:if test="${entity.str != 'pay'}">
     <div class="control-group">
         <label class="control-label">最后付款时间：</label>
         <div class="controls">
             <input name="lastPayDate" id="lastPayDate" type="text" readonly="readonly"
                    maxlength="20"
                    class="input-medium Wdate required"
-                   value="<fmt:formatDate value="${entity.bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
+                   value="<fmt:formatDate value="${entity.bizCommission.lastPayDate}"  pattern="yyyy-MM-dd"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
                    placeholder="必填！"/>
             <span class="help-inline"><font color="red">*</font></span>
         </div>
     </div>
 
+
     <div class="control-group">
         <label class="control-label">本次申请付款时间：</label>
         <div class="controls">
             <input name="payDeadline" id="payDeadline" type="text" readonly="readonly" maxlength="20"
                    class="input-medium Wdate required"
-                   value="<fmt:formatDate value="${entity.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+                   value="<fmt:formatDate value="${entity.bizCommission.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
                     onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
                    placeholder="必填！"/>
         </div>
     </div>
+    </c:if>
 
     <c:if test="${entity.str == 'pay'}">
         <div class="control-group">
@@ -1085,6 +1088,7 @@
                 <input id="truePayTotal" name="payTotal" type="text" readonly="true"
                        value="${entity.totalCommission}"
                        htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                &nbsp;&nbsp;<span style="color: red">※:需一次付清，禁止修改</span>
             </div>
         </div>
         <div class="control-group">
@@ -1262,6 +1266,7 @@
 
 <%--详情列表--%>
 <sys:message content="${message}"/>
+<c:if test="${entity.str != 'pay'}">
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
     <thead>
     <tr>
@@ -1336,5 +1341,6 @@
     </c:forEach>
     </tbody>
 </table>
+</c:if>
 </body>
 </html>

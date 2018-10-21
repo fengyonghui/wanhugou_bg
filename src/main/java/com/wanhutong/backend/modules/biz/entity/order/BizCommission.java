@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 
 /**
@@ -40,6 +41,17 @@ public class BizCommission extends DataEntity<BizCommission> {
 	private List<CommonImg> imgList;
 
 	private CommonProcessEntity commonProcess;
+
+	private Integer sellerId;
+
+	private String str;
+
+	private BizVendInfo bizVendInfo;
+
+	/**
+	 * 根据代销商姓名搜索
+	 */
+	private String payee;
 
 	public BigDecimal getTotalCommission() {
 		return totalCommission;
@@ -132,5 +144,37 @@ public class BizCommission extends DataEntity<BizCommission> {
 
 	public void setCommonProcess(CommonProcessEntity commonProcess) {
 		this.commonProcess = commonProcess;
+	}
+
+	public Integer getSellerId() {
+		return sellerId;
+	}
+
+	public void setSellerId(Integer sellerId) {
+		this.sellerId = sellerId;
+	}
+
+	public String getStr() {
+		return str;
+	}
+
+	public void setStr(String str) {
+		this.str = str;
+	}
+
+	public BizVendInfo getBizVendInfo() {
+		return bizVendInfo;
+	}
+
+	public void setBizVendInfo(BizVendInfo bizVendInfo) {
+		this.bizVendInfo = bizVendInfo;
+	}
+
+	public String getPayee() {
+		return payee;
+	}
+
+	public void setPayee(String payee) {
+		this.payee = payee;
 	}
 }

@@ -63,7 +63,7 @@ public class BizCommissionController extends BaseController {
 	@RequiresPermissions("biz:order:bizCommission:view")
 	@RequestMapping(value = "form")
 	public String form(BizCommission bizCommission, Model model) {
-		model.addAttribute("bizCommission", bizCommission);
+		model.addAttribute("entity", bizCommission);
 		return "modules/biz/order/bizCommissionForm";
 	}
 
@@ -95,6 +95,13 @@ public class BizCommissionController extends BaseController {
 			return JsonUtil.generateData(result, request.getParameter("callback"));
 		}
 		return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
+	}
+
+	@RequiresPermissions("biz:po:bizPoHeader:audit")
+	@RequestMapping(value = "payOrder")
+	@ResponseBody
+	public String payOrder(Integer commId, String img, String remark) {
+		return bizCommissionService.payOrder(commId, img, remark);
 	}
 
 }

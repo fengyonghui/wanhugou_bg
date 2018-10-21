@@ -86,7 +86,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/order/bizCommission/">佣金付款表列表</a></li>
-		<shiro:hasPermission name="biz:order:bizCommission:edit"><li><a href="${ctx}/biz/order/bizCommission/form">佣金付款表添加</a></li></shiro:hasPermission>
+		<%--<shiro:hasPermission name="biz:order:bizCommission:edit"><li><a href="${ctx}/biz/order/bizCommission/form">佣金付款表添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizCommission" action="${ctx}/biz/order/bizCommission/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -165,9 +165,12 @@
 					</shiro:hasPermission>
 
 					<shiro:hasPermission name="biz:order:bizCommission:sure:pay">
-						<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认付款</a>--%>
-
-						<a href="${ctx}/biz/order/bizOrderHeader/commissionForm?bizCommissionOrder.commId=${bizCommission.id}&str=pay">确认付款</a>
+						<c:if test="${bizCommission.commonProcess.paymentOrderProcess.name == '审批完成' }">
+							<a href="${ctx}/biz/order/bizCommission/form?id=${bizCommission.id}&str=pay">确认付款</a>
+						</c:if>
+						<%--<c:if test="${bizCommission.commonProcess.paymentOrderProcess.name == '审批完成' && bizCommission.bizStatus == '1'}">--%>
+							<%--支付完成--%>
+						<%--</c:if>--%>
 					</shiro:hasPermission>
 				</td>
 			</tr>
