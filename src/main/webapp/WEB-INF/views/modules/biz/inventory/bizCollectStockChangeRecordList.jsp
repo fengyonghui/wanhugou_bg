@@ -99,11 +99,11 @@
 				</td>
 				<td>
 					<c:if test="${fn:contains(collectGoods.orderNum,'RE')}">
-						<a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizRequestHeader.id}&source=gh">
+						<a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizRequestHeader.id}&source=gh&bizStatu=0">
 								${collectGoods.orderNum}</a>
 					</c:if>
 					<c:if test="${!fn:contains(collectGoods.orderNum,'RE')}">
-						<a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizOrderHeader.id}&source=ghs">
+						<a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizOrderHeader.id}&source=ghs&bizStatu=0">
 								${collectGoods.orderNum}</a>
 					</c:if>
 				</td>
