@@ -202,7 +202,7 @@
 					${bizOpShelfSku.salePrice}
 				</td>
 				<td>
-					${bizOpShelfSku.salePrice * bizOpShelfSku.commissionRatio / 100}
+					${(bizOpShelfSku.salePrice - bizOpShelfSku.orgPrice) * bizOpShelfSku.commissionRatio / 100}
 				</td>
 				<td>
 					${bizOpShelfSku.minQty}

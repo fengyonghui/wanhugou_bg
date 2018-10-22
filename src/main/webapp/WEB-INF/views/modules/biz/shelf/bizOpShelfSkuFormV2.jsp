@@ -267,7 +267,6 @@
                 var s=myDate.getSeconds();
                 var now=year+'-'+p(month)+"-"+p(date)+" "+p(h)+':'+p(m)+":"+p(s);
                 var commissionRatio = $("#commissionRatio").val();
-                alert(commissionRatio);
                 $.ajax({
                     type:"POST",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuNameListV2?ids="+skuIds,
@@ -318,12 +317,24 @@
                             pri += 10;
                         });
                         $("#tbody").append(htmlInfo);
-                        $("#ShelfSkuTable").tablesMergeCell({
-                            // automatic: true
-                            // 是否根据内容来合并
-                            cols:[0,1,2,6,7,8,9]
-                            // rows:[0,2]
-                        });
+                        alert(retail);
+                        if (retail != 1) {
+							$("#ShelfSkuTable").tablesMergeCell({
+								// automatic: true
+								// 是否根据内容来合并
+								cols:[0,1,2,6,7,8,9]
+								// rows:[0,2]
+							});
+                        }
+						if (retail == 1) {
+                            alert("======");
+							$("#ShelfSkuTable").tablesMergeCell({
+								// automatic: true
+								// 是否根据内容来合并
+								cols:[0,1,2,9,10,11,12]
+								// rows:[0,2]
+							});
+						}
 
                         <%--遍历每个tr下td--%>
                         <%--var leng = $("#tbody tr").length;--%>
@@ -389,15 +400,17 @@
         }
 
         function getCommission(item) {
+            var orgPrice = $(item).parent().parent().find("input[name='orgPrices']");
 			var commissionRatios = $(item).parent().parent().find("input[name='commissionRatios']");
 			var commission = $(item).parent().parent().find("input[name='commission']");
-			$(commission).val($(item).val() * $(commissionRatios).val() / 100);
+			$(commission).val((parseFloat($(item).val()) - parseFloat($(orgPrice).val())) * parseFloat($(commissionRatios).val()) / 100);
         }
 
         function getCommissionByRatio(item) {
+            var orgPrice = $(item).parent().parent().find("input[name='orgPrices']");
 			var salePrice = $(item).parent().parent().find("input[name='salePrices']");
             var commission = $(item).parent().parent().find("input[name='commission']");
-            $(commission).val($(salePrice).val() * $(item).val() / 100);
+            $(commission).val(parseFloat(($(salePrice).val()) - parseFloat($(orgPrice).val())) * parseFloat($(item).val()) / 100);
         }
 
         function shelfInfoChanged() {
