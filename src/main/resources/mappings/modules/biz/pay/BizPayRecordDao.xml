@@ -339,5 +339,14 @@
       	((oh.biz_status != 45 AND oh.biz_status != 35 AND oh.biz_status != 0 AND oh.biz_status != 40) OR (oh.biz_status = 40 AND receive_total > 0)) AND office.id = #{officeId}
 		group by us.id
 	</select>
+
+	<select id="findListByCustomerId" resultType="BizPayRecord">
+		SELECT
+		a.cust_id AS "customer.id",a.pay_money AS "payMoney"
+		FROM biz_pay_record a
+		WHERE
+			a.cust_id = #{custId}
+			AND a.record_type = #{tradeTypeCode}
+	</select>
 	
 </mapper>

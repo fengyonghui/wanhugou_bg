@@ -7,6 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -27,6 +35,8 @@ import com.wanhutong.backend.modules.biz.entity.order.BizCommission;
 import com.wanhutong.backend.modules.biz.service.order.BizCommissionService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 佣金付款表Controller
@@ -39,6 +49,12 @@ public class BizCommissionController extends BaseController {
 
 	@Autowired
 	private BizCommissionService bizCommissionService;
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
+	@Autowired
+	private BizOrderDetailService bizOrderDetailService;
+	@Autowired
+	private BizOpShelfSkuService bizOpShelfSkuService;
 	
 	@ModelAttribute
 	public BizCommission get(@RequestParam(required=false) Integer id) {
@@ -65,6 +81,63 @@ public class BizCommissionController extends BaseController {
 	public String form(BizCommission bizCommission, Model model) {
 		model.addAttribute("entity", bizCommission);
 		return "modules/biz/order/bizCommissionForm";
+	}
+
+	@RequiresPermissions("biz:order:bizCommission:view")
+	@RequestMapping(value = "applyCommissionForm")
+	public String applyCommissionForm(BizCommission bizCommission, Model model) {
+		String orderIds = bizCommission.getOrderIds();
+		List<Integer> orderIdList = new ArrayList<Integer>();
+		if (orderIds != null && orderIds.length() > 0 && !orderIds.contains(",")) {
+			Integer orderId = Integer.valueOf(orderIds);
+			orderIdList.add(orderId);
+		} else if (orderIds != null && orderIds.length() > 0 && orderIds.contains(",")) {
+			String[] orderIdArr = orderIds.split(",");
+			for (int i=0; i<(orderIdArr.length); i++) {
+				orderIdList.add(Integer.valueOf(orderIdArr[i]));
+			}
+		}
+
+		List<BizOrderHeader> orderHeaderList = new ArrayList<BizOrderHeader>();
+		if (CollectionUtils.isNotEmpty(orderIdList)) {
+			for (Integer id : orderIdList) {
+				BizOrderHeader entity = bizOrderHeaderService.get(id);
+
+				BizOrderDetail bizOrderDetail = new BizOrderDetail();
+				bizOrderDetail.setOrderHeader(entity);
+				List<BizOrderDetail> bizOrderDetails = bizOrderDetailService.findList(bizOrderDetail);
+				List<BizOrderDetail> bizOrderDetailsNew = new ArrayList<BizOrderDetail>();
+				BigDecimal detailCommission = BigDecimal.ZERO;
+				if (CollectionUtils.isNotEmpty(bizOrderDetails)) {
+					for (BizOrderDetail orderDetail : bizOrderDetails) {
+						BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
+						BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+						bizOpShelfSku.setSkuInfo(bizSkuInfo);
+						List<BizOpShelfSku> opShelfSkuList = bizOpShelfSkuService.findList(bizOpShelfSku);
+						if (CollectionUtils.isNotEmpty(opShelfSkuList)) {
+							bizOpShelfSku = opShelfSkuList.get(0);
+							BigDecimal orgPrice = new BigDecimal(bizOpShelfSku.getOrgPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+							BigDecimal salePrice = new BigDecimal(bizOpShelfSku.getSalePrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+							Integer ordQty = orderDetail.getOrdQty();
+							BigDecimal commissionRatio = bizOpShelfSku.getCommissionRatio();
+							if (commissionRatio == null || commissionRatio.compareTo(BigDecimal.ZERO) <= 0) {
+								commissionRatio = BigDecimal.ZERO;
+							}
+							detailCommission = (salePrice.subtract(orgPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
+							orderDetail.setSalePrice(salePrice);
+							orderDetail.setDetailCommission(detailCommission);
+						}
+						bizOrderDetailsNew.add(orderDetail);
+					}
+				}
+				entity.setOrderDetailList(bizOrderDetailsNew);
+				orderHeaderList.add(entity);
+			}
+		}
+
+		model.addAttribute("orderHeaderList", orderHeaderList);
+		model.addAttribute("entity", bizCommission);
+		return "modules/biz/order/bizCommissionOrderHeaderForm";
 	}
 
 	@RequiresPermissions("biz:order:bizCommission:edit")

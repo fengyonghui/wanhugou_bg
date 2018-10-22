@@ -286,6 +286,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private BizCommission bizCommission;
 
+    /**
+     * 结佣状态0:未结佣， 1:已结佣
+     */
+    private Integer commissionStatus;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -1143,6 +1148,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setBizCommission(BizCommission bizCommission) {
         this.bizCommission = bizCommission;
+    }
+
+    public Integer getCommissionStatus() {
+        return commissionStatus;
+    }
+
+    public void setCommissionStatus(Integer commissionStatus) {
+        this.commissionStatus = commissionStatus;
     }
 }
 

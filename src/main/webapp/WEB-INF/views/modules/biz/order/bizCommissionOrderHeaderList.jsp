@@ -54,6 +54,10 @@
 				},{buttonsFocus:1});
 				top.$('.jbox-body .jbox-icon').css('top','55px');
 			});
+
+            // $("#applyCommission").click(function () {
+            //     applyCommission();
+            // });
 		});
         function page(n,s,t){
             $("#pageNo").val(n);
@@ -122,6 +126,45 @@
                 $('#totalCommissionMoney').text(0.00);
                 mySpan.innerHTML="全选";
             }
+        }
+	</script>
+
+	<script type="text/javascript">
+		function singleApplyCommission(orderIds, totalDetail, totalCommission) {
+		    console.log("orderIds:" + orderIds);
+		    console.log("totalDetail:" + totalDetail);
+		    console.log("totalCommission:" + totalCommission);
+
+		    window.location.href = "${ctx}/biz/order/bizCommission/applyCommissionForm?orderIds=" + orderIds
+											+ "&totalDetail=" + totalDetail + "&totalCommission=" + totalCommission;
+
+        }
+
+
+        function applyCommission() {
+            var orderIds = ""
+            var totalDetail = 0;
+            var totalCommission = 0;
+            $("[name=settlement]").each(function(){
+                if ($(this).is(':checked')) {
+                    var orderIdTemp = $(this).val();
+                    orderIds += orderIdTemp + ",";
+                    var commission = $("#" + orderIdTemp).text();
+                    totalCommission = parseInt(totalCommission) + parseInt(commission);
+
+                    var detail = $("#" + "totalDetail_" + orderIdTemp).text();
+                    totalDetail = parseInt(totalDetail) + parseInt(detail);
+                }
+            });
+
+            if(orderIds == "") {
+                alert("请选择待结算清单！");
+                return
+			}
+
+            window.location.href = "${ctx}/biz/order/bizCommission/applyCommissionForm?orderIds=" + orderIds
+                + "&totalDetail=" + totalDetail + "&totalCommission=" + totalCommission;
+
         }
 	</script>
 </head>
@@ -372,7 +415,7 @@
 			<td>
 				<fmt:formatNumber type="number" value="${orderHeader.receiveTotal==null?0.00:orderHeader.receiveTotal}" pattern="0.00"/>
 			</td>
-			<td><font color="#848484">
+			<td id="totalDetail_${orderHeader.id}"><font color="#848484">
 				<fmt:formatNumber type="number" value="${orderHeader.totalDetail}" pattern="0.00"/>
 			</font></td>
 			<td><font color="#848484">
@@ -461,8 +504,7 @@
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
-				<a href="${ctx}/biz/order/bizOrderHeader/commissionForm?id=${orderHeader.id}&commissionTotalDetail=${orderHeader.totalDetail}&totalCommission=${orderHeader.commission}">申请结佣</a>
-
+				<a href="#" onclick="singleApplyCommission('${orderHeader.id}', ${orderHeader.totalDetail}, ${orderHeader.commission})">申请结佣</a>
 
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
 				<c:choose>
@@ -578,7 +620,7 @@
 	<span id="totalCommissionMoney" style="color: red">00.00</span>
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	<input type="button"
-		   onclick="updateCommissionRatio()"
+		   onclick="applyCommission()"
 		   class="btn btn-primary"
 		   value="结算"/>
 </div>

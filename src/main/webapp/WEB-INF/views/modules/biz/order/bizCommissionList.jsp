@@ -165,12 +165,12 @@
 					</shiro:hasPermission>
 
 					<shiro:hasPermission name="biz:order:bizCommission:sure:pay">
-						<c:if test="${bizCommission.commonProcess.paymentOrderProcess.name == '审批完成' }">
+						<c:if test="${bizCommission.commonProcess.paymentOrderProcess.name == '审批完成' && bizCommission.bizStatus == '0'}">
 							<a href="${ctx}/biz/order/bizCommission/form?id=${bizCommission.id}&str=pay">确认付款</a>
 						</c:if>
-						<%--<c:if test="${bizCommission.commonProcess.paymentOrderProcess.name == '审批完成' && bizCommission.bizStatus == '1'}">--%>
-							<%--支付完成--%>
-						<%--</c:if>--%>
+						<c:if test="${bizCommission.commonProcess.paymentOrderProcess.name == '审批完成' && bizCommission.bizStatus == '1'}">
+							支付完成
+						</c:if>
 					</shiro:hasPermission>
 				</td>
 			</tr>

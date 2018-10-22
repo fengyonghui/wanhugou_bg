@@ -18,12 +18,6 @@
 		<result column="commonProcess.description" property="commonProcess.description"/>
 		<result column="commonProcess.type" property="commonProcess.type"/>
 		<result column="commonProcess.createTime" property="commonProcess.createTime"/>
-		<association property="bizVendInfo" javaType="BizVendInfo" column="bizVendInfo.id">
-			<id property="id" column="bizVendInfo.id"/>
-			<result property="payee" column="bizVendInfo.payee"/>
-			<result property="cardNumber" column="bizVendInfo.cardNumber"/>
-			<result property="bankName" column="bizVendInfo.bankName"/>
-		</association>
 		<collection property="imgList" ofType="CommonImg" select="getImgList" column="id">
 		</collection>
 	</resultMap>
@@ -53,16 +47,11 @@
 		process.processor AS "commonProcess.processor",
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
-		process.create_time AS "commonProcess.createTime",
-		bvi.office_id AS "bizVendInfo.id",
-		bvi.payee AS "bizVendInfo.payee",
-		bvi.card_number AS "bizVendInfo.cardNumber",
-		bvi.bank_name AS "bizVendInfo.bankName"
+		process.create_time AS "commonProcess.createTime"
 	</sql>
 	
 	<sql id="bizCommissionJoins">
 		LEFT JOIN common_process process ON process.object_id = a.id and process.object_name = 'biz_commission' and process.current = 1
-		LEFT JOIN biz_vend_info bvi ON bvi.id = a.seller_id
 	</sql>
 
 	<select id="getImgList" parameterType="int" resultType="CommonImg">
@@ -101,12 +90,12 @@
 		<include refid="bizCommissionJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="payee != null and payee != ''" >
-				AND bvi.payee like
-				<if test="dbName == 'oracle'">'%'||#{payee}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{payee}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{payee},'%')</if>
-			</if>
+			<!--<if test="payee != null and payee != ''" >-->
+				<!--AND bvi.payee like-->
+				<!--<if test="dbName == 'oracle'">'%'||#{payee}||'%'</if>-->
+				<!--<if test="dbName == 'mssql'">'%'+#{payee}+'%'</if>-->
+				<!--<if test="dbName == 'mysql'">concat('%',#{payee},'%')</if>-->
+			<!--</if>-->
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

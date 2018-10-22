@@ -27,6 +27,7 @@
         <result property="consultantId" column="consultantId"/>
         <result property="serviceFee" column="serviceFee"/>
 		<result property="mobileAuditStatus" column="mobileAuditStatus"/>
+		<result property="commissionStatus" column="commissionStatus"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -153,6 +154,7 @@
 		a.order_type AS "orderType",
 		a.cust_id AS "customer.id",
 		a.consultant_id AS "consultantId",
+		a.commission_status AS "commissionStatus",
 		so.name as "customer.name",
 		so.phone AS "customer.phone",
 		a.seller_id as "sellers.id",
@@ -240,6 +242,7 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
+		a.commission_status AS "commissionStatus",
 		wxsu.name AS "customer.name",
 		su.name as "createBy.name",
 		suu.name as "updateBy.name",
@@ -458,6 +461,9 @@
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="commissionStatus != null and commissionStatus != ''">
+				AND commission_status = #{commissionStatus}
 			</if>
 			<if test="skuChickCount!=null and skuChickCount!=''">
 				AND (
@@ -1148,6 +1154,9 @@
 		biz_type = #{bizType},
 		plateform_id = #{platformInfo.id},
 		ship_to_addr = #{bizLocation.id},
+		<if test="commissionStatus != null and commissionStatus != ''">
+			commission_status = #{commissionStatus},
+		</if>
 		u_version = #{uVersion},
 		update_id = #{updateBy.id},
 		update_time = #{updateDate}

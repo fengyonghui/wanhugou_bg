@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.service.order;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,25 +17,32 @@ import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.order.BizCommissionOrder;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.ibatis.mapping.ResultFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +68,16 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 	private static final Logger LOGGER = LoggerFactory.getLogger(BizCommissionService.class);
 	@Autowired
 	private CommonProcessService commonProcessService;
-
 	@Autowired
 	private BizCommissionOrderService bizCommissionOrderService;
+	@Autowired
+	private BizPayRecordService bizPayRecordService;
+	@Autowired
+	private OfficeService officeService;
+	@Autowired
+	private BizCustCreditService bizCustCreditService;
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
 
 	@Resource
 	private CommonImgService commonImgService;
@@ -120,7 +135,7 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 	}
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public Pair<Boolean, String> createCommissionOrder(BizCommission bizCommission, String orderId){
+	public Pair<Boolean, String> createCommissionOrder(BizCommission bizCommission){
 		PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
 		PaymentOrderProcessConfig.Process purchaseOrderProcess = null;
 		if (paymentOrderProcessConfig.getDefaultBaseMoney().compareTo(bizCommission.getTotalCommission()) > 0) {
@@ -140,12 +155,27 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		this.save(bizCommission);
 		commonProcessEntity.setObjectId(String.valueOf(bizCommission.getId()));
 
+		String orderIds = bizCommission.getOrderIds();
+		List<Integer> orderIdList = new ArrayList<Integer>();
+		if (orderIds != null && orderIds.length() > 0 && !orderIds.contains(",")) {
+			Integer orderId = Integer.valueOf(orderIds);
+			orderIdList.add(orderId);
+		} else if (orderIds != null && orderIds.length() > 0 && orderIds.contains(",")) {
+			String[] orderIdArr = orderIds.split(",");
+			for (int i=0; i<(orderIdArr.length); i++) {
+				orderIdList.add(Integer.valueOf(orderIdArr[i]));
+			}
+		}
 
-		BizCommissionOrder bizCommissionOrder = new BizCommissionOrder();
-		bizCommissionOrder.setOrderId(Integer.valueOf(orderId));
-		bizCommissionOrder.setCommId(bizCommission.getId());
-		bizCommissionOrder.setCommission(bizCommission.getTotalCommission());
-		bizCommissionOrderService.save(bizCommissionOrder);
+		if (CollectionUtils.isNotEmpty(orderIdList)) {
+			for (Integer id : orderIdList) {
+				BizCommissionOrder bizCommissionOrder = new BizCommissionOrder();
+				bizCommissionOrder.setOrderId(id);
+				bizCommissionOrder.setCommId(bizCommission.getId());
+				bizCommissionOrder.setCommission(bizCommission.getTotalCommission());
+				bizCommissionOrderService.save(bizCommissionOrder);
+			}
+		}
 
 		return Pair.of(Boolean.TRUE, "操作成功!");
 	}
@@ -294,13 +324,91 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 			return "操作失败,当前状态有误!";
 		}
 
+		Boolean resultFlag = checkPay(bizCommission);
+		if (!resultFlag) {
+			LOGGER.warn("[exception]BizCustCredit commissioned mismatching BizPayRecord totalPayMoney, BizCommission is [{}]", commId);
+			return "累积获得佣金和佣金支付记录总和不相符，请联系技术人员";
+		}
+
 		bizCommission.setImgUrl(img);
 		bizCommission.setBizStatus(BizCommission.BizStatus.ALL_PAY.getStatus());
 		bizCommission.setPayTime(new Date());
 		bizCommission.setRemark(remark);
 		this.save(bizCommission);
 
+		//更新付款单对应订单的结佣状态
+		BizCommissionOrder commissionOrder = new BizCommissionOrder();
+		commissionOrder.setCommId(commId);
+		List<BizCommissionOrder> commissionOrderList = bizCommissionOrderService.findList(commissionOrder);
+		if (CollectionUtils.isNotEmpty(commissionOrderList)) {
+			for (BizCommissionOrder bizCommissionOrder : commissionOrderList) {
+				Integer orderId = bizCommissionOrder.getOrderId();
+				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderId);
+				bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.COMMISSION_COMPLETE.getComStatus());
+				bizOrderHeaderService.save(bizOrderHeader);
+			}
+		}
+
+		//更新钱包中累积获得佣金
+		Office customer = officeService.get(bizCommission.getSellerId());
+		BizCustCredit bizCustCredit = new BizCustCredit();
+		bizCustCredit.setCustomer(customer);
+
+		bizCustCredit = bizCustCreditService.get(bizCustCredit);
+		BigDecimal commission = bizCustCredit.getCommission().multiply(bizCommission.getPayTotal()).setScale(2, BigDecimal.ROUND_HALF_UP);
+		BigDecimal commissioned = bizCustCredit.getCommissioned().add(bizCommission.getPayTotal()).setScale(2, BigDecimal.ROUND_HALF_UP);
+		bizCustCredit.setCommission(commission);
+		bizCustCredit.setCommissioned(commissioned);
+		bizCustCreditService.save(bizCustCredit);
+
+
+		//保存支付记录
+		BizPayRecord bizPayRecord = new BizPayRecord();
+		// 支付编号 *同订单号*
+		bizPayRecord.setPayNum("1");
+		// 订单编号
+		bizPayRecord.setOrderNum("1");
+		// 支付人
+		bizPayRecord.setPayer(user.getId());
+		// 零售单佣金收款人
+		bizPayRecord.setCustomer(customer);
+		// 支付到账户
+		bizPayRecord.setToAccount("1");
+		// 交易类型：充值、提现、支付
+		bizPayRecord.setRecordType(TradeTypeEnum.COMMISSION_PAY_TYPE.getCode());
+		bizPayRecord.setRecordTypeName(TradeTypeEnum.COMMISSION_PAY_TYPE.getTradeNoType());
+		// 支付类型：wx(微信) alipay(支付宝)
+		bizPayRecord.setPayType(OutTradeNoTypeEnum.OFFLINE_PAY_TYPE.getCode());
+		bizPayRecord.setPayTypeName(OutTradeNoTypeEnum.OFFLINE_PAY_TYPE.getMessage());
+		bizPayRecord.setPayMoney(bizCommission.getPayTotal().doubleValue());
+		bizPayRecord.setBizStatus(1);
+		bizPayRecord.setCreateBy(user);
+		bizPayRecord.setUpdateBy(user);
+		bizPayRecordService.save(bizPayRecord);
 
 		return "操作成功!";
+	}
+
+	public Boolean checkPay(BizCommission bizCommission) {
+		Boolean resultFlg = false;
+		List<BizPayRecord> bizPayRecordList = bizPayRecordService.findListByCustomerId(bizCommission.getSellerId(), TradeTypeEnum.COMMISSION_PAY_TYPE.getCode());
+		BigDecimal totalRecComm = BigDecimal.ZERO;
+		if (CollectionUtils.isNotEmpty(bizPayRecordList)) {
+			for (BizPayRecord payRecord : bizPayRecordList) {
+				totalRecComm = totalRecComm.add(BigDecimal.valueOf(payRecord.getPayMoney()));
+			}
+		}
+
+		Office customer = officeService.get(bizCommission.getSellerId());
+		BizCustCredit bizCustCredit = new BizCustCredit();
+		bizCustCredit.setCustomer(customer);
+
+		bizCustCredit = bizCustCreditService.get(bizCustCredit);
+		BigDecimal commissioned = bizCustCredit.getCommissioned();
+		if (commissioned.compareTo(totalRecComm) == 0) {
+			resultFlg = true;
+		}
+
+		return resultFlg;
 	}
 }

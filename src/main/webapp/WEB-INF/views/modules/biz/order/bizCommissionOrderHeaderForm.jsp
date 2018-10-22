@@ -10,6 +10,7 @@
 <html>
 <head>
     <title>订单信息管理</title>
+    <script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
     <meta name="decorator" content="default"/>
     <style type="text/css">
         .help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;border-top:1px solid #FFF;width: 100%}
@@ -54,6 +55,12 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
+            $("#contentTable").tablesMergeCell({
+                automatic: true,
+                // 是否根据内容来合并
+                cols: [0]
+                // rows:[0,2]
+            });
             //$("#name").focus();
             var bizStatus = $("#bizStatus").val();
             if (!${fns:getUser().isAdmin()}) {
@@ -179,9 +186,6 @@
                 var officeName =$("#officeName").val();
                 window.location.href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id="+officeId+"&office.name="+officeName+"&flag=order"
             });
-            $("#updateMoney").click(function () {
-                updateMoney();
-            });
 
             if($("#id").val() !="" && $("#bizStatus").val()!=""){
                 <%--定义订单进度状态--%>
@@ -299,144 +303,25 @@
             });
         }
     </script>
-    <script type="text/javascript">
-        function updateMoney() {
-            if(confirm("确定修改价钱吗？")){
-
-                var orderId = $("#id").val();
-                var totalExp = $("#totalExp").val();
-                var totalDetail = $("#totalDetail").val();
-                var freight = $("#freight").val();
-                totalExp = Number(totalExp)
-                if(totalExp < 0) {
-                    var totalExpTemp = Math.abs(totalExp)
-                    if (totalExpTemp >= Number(freight)) {
-                        alert("调整金额要小于运费");
-                        return;
-                    }
-                    if (totalExpTemp >= Number(totalDetail) * 1.5) {
-                        alert("调整金额要小于商品总价总价的1.5倍");
-                        return;
-                    }
-                }
-
-                $.ajax({
-                    type:"post",
-                    url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
-                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
-                    success:function (data) {
-                        if (data == "serviceCharge") {
-                            alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
-                        } else if (data == "orderLoss") {
-                            alert("优惠后订单金额不能低于结算价，请修改调整金额");
-                        } else if (data == "orderLowest") {
-                            alert("优惠后订单金额不能低于结算价的95%，请修改调整金额");
-                        } else if (data == "orderLowest8") {
-                            alert("优惠后订单金额不能低于结算价的80%，请修改调整金额");
-                        } else if (data == "ok") {
-                            $.ajax({
-                                type:"post",
-                                url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",
-                                data:{orderId:$("#id").val(),money:totalExp},
-                                <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
-                                success:function(flag){
-                                    if(flag=="ok"){
-                                        alert(" 修改成功 ");
-                                    }else{
-                                        alert(" 修改失败 ");
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-        }
-    </script>
-
-    <script type="text/javascript">
-        function pay() {
-            var id = $("#poHeaderId").val();
-            var paymentOrderId = $("#paymentOrderId").val();
-            var payTotal = $("#truePayTotal").val();
-
-            var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
-            var img = "";
-            if(mainImg.length >= 2) {
-                for (var i = 1; i < mainImg.length; i ++) {
-                    img += $(mainImg[i]).attr("src") + ",";
-                }
-            }
-
-            if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
-                alert("错误提示:请输入支付金额");
-                return false;
-            }
-            if ($String.isNullOrBlank(img)) {
-                alert("错误提示:请上传支付凭证");
-                return false;
-            }
-
-            var paymentRemark = $("#paymentRemark").val();
-
-            $.ajax({
-                url: '${ctx}/biz/po/bizPoHeader/payOrder',
-                contentType: 'application/json',
-                data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img, "paymentRemark":paymentRemark},
-                type: 'get',
-                success: function (result) {
-                    alert(result);
-                    if (result == '操作成功!') {
-                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
-                    }
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-        }
-    </script>
 
     <script type="text/javascript">
         function saveMon(type) {
-            if (type == 'createPay') {
-                var payTotal = $("#payTotal").val();
-                var payDeadline = $("#payDeadline").val();
-                var id = $("#poHeaderId").val();
-                if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
-                    alert("请输入申请金额!");
-                    return false;
-                }
-                if ($String.isNullOrBlank(payDeadline)) {
-                    alert("请选择本次申请付款时间!");
-                    return false;
-                }
-            }
+            var orderIds = '${entity.orderIds}'
             var payTotal = $("#payTotal").val();
             var lastPayDate = $('#lastPayDate').val();
-            var payDeadline = $('#payDeadline').val();
+            var remark = $("#remark").val();
             var id = '${entity.id}'
             if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
-                alert("请输入申请金额!");
+                alert("申请金额不正确!");
                 return false;
             }
             if ($String.isNullOrBlank(lastPayDate)) {
                 alert("请选择最后付款时间!");
                 return false;
             }
-            if ($String.isNullOrBlank(payDeadline)) {
-                alert("请选择本次申请付款时间!");
-                return false;
-            }
-
-
-            var remark = $("#paymentApplyRemark").val();
 
             window.location.href="${ctx}/biz/order/bizCommissionOrder/saveCommission?totalCommission=" + payTotal + "&deadline=" + lastPayDate
-                + "&payTime=" + payDeadline + "&remark=" + remark + "&orderId=" + id;
-
-            <%--$("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader");--%>
-            <%--$("#inputForm").submit();--%>
+                 + "&remark=" + remark + "&orderIds=" + orderIds;
         }
     </script>
 
@@ -449,405 +334,8 @@
     <script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>
     <script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="${ctxStatic}/common/base.js" type="text/javascript"></script>
-    <%--<script type="text/javascript">--%>
-        <%--$(document).ready(function(){--%>
-            <%--$("#flip").click(function(){--%>
-                <%--$("#remark").slideToggle("slow");--%>
-            <%--});--%>
-        <%--});--%>
-    <%--</script>--%>
-    <style type="text/css">
-        #remark,#flip,#addRemark
-        {
-            margin:0px;
-            padding:5px;
-            text-align:center;
-            background:#e5eecc;
-            border:solid 1px #c3c3c3;
-        }
-        #remark
-        {
-            height:120px;
-            /*display:none;*/
-        }
-    </style>
-    <script type="text/javascript">
-        function submitPic(id, multiple) {
-            var f = $("#" + id).val();
-            if (f == null || f == "") {
-                alert("错误提示:上传文件不能为空,请重新选择文件");
-                return false;
-            } else {
-                var extname = f.substring(f.lastIndexOf(".") + 1, f.length);
-                extname = extname.toLowerCase();//处理了大小写
-                if (extname != "jpeg" && extname != "jpg" && extname != "gif" && extname != "png") {
-                    $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
-                    return false;
-                }
-            }
-            var file = document.getElementById(id).files;
-            var size = file[0].size;
-            if (size > 2097152) {
-                alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
-                return false;
-            }
-            if("payImg" == id) {
-                ajaxFileUploadPicForPoHeader(id, multiple)
-            } else if ("prodMainImg" == id) {
-                ajaxFileUploadPicForRefund(id, multiple);
-            }
-        }
-
-        function ajaxFileUploadPicForPoHeader(id, multiple) {
-            $.ajaxFileUpload({
-                url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
-                secureuri : false, //一般设置为false
-                fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
-                type : 'POST',
-                dataType : 'text', //返回值类型 一般设置为json
-                success : function(data, status) {
-                    //服务器成功响应处理函数
-                    var msg = data.substring(data.indexOf("{"), data.indexOf("}")+1);
-                    var msgJSON = JSON.parse(msg);
-                    var imgList = msgJSON.imgList;
-                    var imgDiv = $("#" + id + "Div");
-                    var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
-                    if (imgList && imgList.length > 0 && multiple) {
-                        for (var i = 0; i < imgList.length; i ++) {
-                            imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
-                        }
-                    }else if (imgList && imgList.length > 0 && !multiple) {
-                        imgDiv.empty();
-                        for (var i = 0; i < imgList.length; i ++) {
-                            imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
-                        }
-                    }else {
-                        var img = $("#" + id + "Img");
-                        img.attr("src", msgJSON.fullName);
-                    }
-                },
-                error : function(data, status, e) {
-                    //服务器响应失败处理函数
-                    console.info(data);
-                    console.info(status);
-                    console.info(e);
-                    alert("上传失败");
-                }
-            });
-            return false;
-        }
-
-        var a = 0;
-        function ajaxFileUploadPicForRefund(id, multiple) {
-            $.ajaxFileUpload({
-                url: '${ctx}/biz/order/bizOrderHeader/saveColorImg', //用于文件上传的服务器端请求地址
-                secureuri: false, //一般设置为false
-                fileElementId: id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
-                type: 'POST',
-                dataType: 'text', //返回值类型 一般设置为json
-                success: function (data, status) {
-                    //服务器成功响应处理函数
-                    var msg = data.substring(data.indexOf("{"), data.indexOf("}") + 1);
-                    var msgJSON = JSON.parse(msg);
-                    var imgList = msgJSON.imgList;
-                    var imgDiv = $("#" + id + "Div");
-                    var imgDivHtml = "<td><img src=\"$Src\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this);\"></td>";
-                    var imgPhotosSorts = "<td id=''><input name='imgPhotosSorts' style='width: 70px' type='number'/></td>";
-                    if (imgList && imgList.length > 0 && multiple) {
-                        for (var i = 0; i < imgList.length; i++) {
-                            // imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
-                            if (id == "prodMainImg") {
-                                $("#imgPhotosSorts").append("<td><input id='" + "main" + i + "' name='imgPhotosSorts' value='" + a + "' style='width: 70px' type='number'/></td>");
-                                // $("#prodMainImgImg").append(imgDivHtml.replace("$Src", imgList[i]));
-                                $("#prodMainImgImg").append("<td><img src=\"" + imgList[i] + "\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this," + "$('#main" + i + "'));\"></td>");
-                                a += 1;
-                            }
-                        }
-                    } else if (imgList && imgList.length > 0 && !multiple) {
-                        imgDiv.empty();
-                        for (var i = 0; i < imgList.length; i++) {
-                            imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
-                        }
-                    } else {
-                        var img = $("#" + id + "Img");
-                        img.attr("src", msgJSON.fullName);
-                    }
-                },
-                error: function (data, status, e) {
-                    //服务器响应失败处理函数
-                    console.info(data);
-                    console.info(status);
-                    console.info(e);
-                    alert("上传失败");
-                }
-            });
-            return false;
-        }
-
-        function deletePic(id) {
-            var f = $("#" + id);
-            f.attr("src", "");
-        }
-
-        function removeThis(obj, item) {
-            $(obj).remove();
-            $(item).remove();
-        }
-
-        function deleteParentParentEle(that) {
-            $(that).parent().parent().remove();
-        }
-
-    </script>
-    <script type="text/javascript">
-        function saveRemark() {
-            var orderId = $("#id").val();
-            var remark;
-            remark=prompt("请输入你要添加的备注");
-            // alert(remark);
-            if (remark == null) {
-                return false;
-            }
-            $.ajax({
-                type:"post",
-                url:"${ctx}/biz/order/bizOrderComment/addComment",
-                data:{orderId:orderId,remark:remark},
-                success:function (data) {
-                    if (data == "error") {
-                        alert("添加订单备注失败，备注可能为空");
-                    }
-                    if (data == "ok") {
-                        alert("添加订单备注成功");
-                        window.location.reload();
-                    }
-                }
-            });
-        }
-
-    </script>
 
     <script type="text/javascript">
-        //代采订单：审核通过
-        function checkPass(obj) {
-            if('${createPo == 'yes'}'){
-                var lastPayDateVal = $("#lastPayDate").val();
-                if (lastPayDateVal == ""){
-                    alert("请输入最后付款时间！");
-                    return false;
-                }
-            }
-            var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
-            var submit = function (v, h, f) {
-                top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v1,h1,f1){
-                    if(v1=="ok"){
-                        if ($String.isNullOrBlank(f.description)) {
-                            jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                            return false;
-                        }
-                        if (obj == "DO") {
-                            audit(1, f.description);
-                        }
-                        if (obj == "JO") {
-                            auditJo(1, f.description);
-                        }
-                        if (obj == "PO") {
-                            poAudit(1,f.description);
-                        }
-                        return true;
-                    }
-                },{buttonsFocus:1});
-            };
-            jBox(html, {
-                title: "请输入通过理由:", submit: submit, loaded: function (h) {
-                }
-            });
-        }
-
-        //代采订单：审核驳回
-        function checkReject(obj) {
-            var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
-            var submit = function (v, h, f) {
-                top.$.jBox.confirm("确认驳回该流程吗？","系统提示",function(v1,h1,f1){
-                    if(v1=="ok"){
-                        if ($String.isNullOrBlank(f.description)) {
-                            jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                            return false;
-                        }
-                        if (obj == "DO" || obj == 'SO') {
-                            audit(2, f.description);
-                        }
-                        if (obj == "JO") {
-                            auditJo(2, f.description);
-                        }
-                        if (obj == "PO") {
-                            poAudit(2,f.description);
-                        }
-                        return true;
-                    }
-                },{buttonsFocus:1});
-            };
-
-            jBox(html, {
-                title: "请输入驳回理由:", submit: submit, loaded: function (h) {
-                }
-            });
-        }
-
-        function audit(auditType, description) {
-            //判断排产数据合法性
-            var createPo = $("#createPo").val();
-            if(auditType == 2) {
-                createPo = "no"
-            }
-            if(createPo == "yes") {
-                var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
-                if (schedulingType == 0) {
-                    var checkResult = saveCompleteCheck();
-                    if(checkResult == false) {
-                        return;
-                    }
-                }
-                if (schedulingType == 1) {
-                    var checkResult = batchSaveCheck();
-                    if(checkResult == false) {
-                        return;
-                    }
-                }
-            }
-
-            var id = $("#id").val();
-            var currentType = $("#currentJoType").val();
-            var lastPayDateVal = $("#lastPayDate").val();
-
-            $.ajax({
-                url: '${ctx}/biz/order/bizOrderHeader/audit',
-                contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "createPo": createPo, "lastPayDateVal":lastPayDateVal},
-                type: 'get',
-                async: false,
-                success: function (result) {
-                    result = JSON.parse(result);
-                    if(result.ret == true || result.ret == 'true') {
-                        alert('操作成功!');
-
-                        //订单排产
-                        var resultData = result.data;
-                        var resultDataArr = resultData.split(",");
-                        console.log(resultDataArr)
-                        console.log(resultDataArr[0])
-                        console.log(resultDataArr[1])
-                        if(resultDataArr[0] == "采购单生成") {
-                            var poId = resultDataArr[1];
-                            var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
-                            console.log(poId)
-                            console.log(schedulingType)
-                            if (schedulingType == 0) {
-                                saveComplete("0", poId);
-                            }
-                            if (schedulingType == 1) {
-                                batchSave("1", poId);
-                            }
-                        }
-
-                        window.location.href = "${ctx}/biz/order/bizOrderHeader";
-                    }
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-        }
-
-        //采购单审核
-        function poAudit(auditType, description) {
-            var id = $("#poHeaderId").val();
-            var currentType = $("#poCurrentType").val();
-            $.ajax({
-                url: '${ctx}/biz/po/bizPoHeader/audit',
-                contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "fromPage": "orderHeader"},
-                type: 'get',
-                success: function (result) {
-                    result = JSON.parse(result);
-                    if(result.ret == true || result.ret == 'true') {
-                        alert('操作成功!');
-                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
-                    }else {
-                        alert(result.errmsg);
-                    }
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-        }
-
-        function auditJo(auditType, description) {
-            var id = $("#id").val();
-            var currentType = $("#currentJoType").val();
-            var suplys = $("#suplys").val();
-            var orderType = 1;
-            var createPo = $("#createPo").val();
-            var lastPayDateVal = $("#lastPayDate").val();
-
-
-            if(createPo == "yes") {
-                var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
-                if (schedulingType == 0) {
-                    var checkResult = saveCompleteCheck();
-                    if(checkResult == false) {
-                        return;
-                    }
-                }
-                if (schedulingType == 1) {
-                    var checkResult = batchSaveCheck();
-                    if(checkResult == false) {
-                        return;
-                    }
-                }
-            }
-
-            if (suplys == 0 || suplys == 721) {
-                orderType = 0;
-            }
-            $.ajax({
-                url: '${ctx}/biz/order/bizOrderHeader/auditSo',
-                contentType: 'application/json',
-                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "orderType": orderType, "createPo": createPo, "lastPayDateVal":lastPayDateVal},
-                type: 'get',
-                success: function (result) {
-                    result = JSON.parse(result);
-                    if(result.ret == true || result.ret == 'true') {
-                        alert('操作成功!');
-                        // window.history.go(-1);
-                        var resultData = result.data;
-                        var resultDataArr = resultData.split(",");
-                        console.log(resultDataArr)
-                        console.log(resultDataArr[0])
-                        console.log(resultDataArr[1])
-                        if(resultDataArr[0] == "采购单生成") {
-                            var poId = resultDataArr[1];
-                            var schedulingType = $('#schedulingPlanRadio input[name="bizPoHeader.schedulingType"]:checked ').val();
-                            console.log(poId)
-                            console.log(schedulingType)
-                            if (schedulingType == 0) {
-                                saveComplete("0", poId);
-                            }
-                            if (schedulingType == 1) {
-                                batchSave("1", poId);
-                            }
-                        }
-                        window.location.href = "${ctx}/biz/order/bizOrderHeader/list"
-                    }else {
-                        alert(result.errmsg);
-                    }
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
-        }
-
         function deleteStyle() {
             //$("#remark").removeAttr("style");
             $("#cardNumber").removeAttr("style");
@@ -881,54 +369,6 @@
                 }
             });
         }
-
-        function startAudit() {
-            var prew = false;
-            var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
-            var submit = function (v, h, f) {
-                if ($String.isNullOrBlank(f.description)) {
-                    jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                    return false;
-                }
-                top.$.jBox.confirm("确认开始审核流程吗？", "系统提示", function (v1, h1, f1) {
-                    if (v1 == "ok") {
-                        var id = "${entity.bizPoHeader.id}";
-                        $.ajax({
-                            url: '${ctx}/biz/po/bizPoHeader/startAudit',
-                            contentType: 'application/json',
-                            data: {
-                                "id": id,
-                                "prew": prew,
-                                "desc": f.description,
-                                "action" : "startAuditAfterReject"
-                            },
-                            type: 'get',
-                            success: function (result) {
-                                result = JSON.parse(result);
-                                if(result.ret == true || result.ret == 'true') {
-                                    alert('操作成功!');
-                                    window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
-                                }else {
-                                    alert(result.errmsg);
-                                }
-                            },
-                            error: function (error) {
-                                console.info(error);
-                            }
-                        });
-                    }
-                }, {buttonsFocus: 1});
-                return true;
-            };
-
-            jBox(html, {
-                title: "请输入通过理由:", submit: submit, loaded: function (h) {
-                }
-            });
-
-
-        }
-
     </script>
 </head>
 <body>
@@ -946,98 +386,35 @@
             <li><a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizOrderHeader.consultantId}&source=${source}">订单信息列表</a></li>
         </c:if>
     </c:if>
-
-    <li class="active">
-        <c:if test="${entity.orderNoEditable eq 'editable'}">
-            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&orderNoEditable=${entity.orderNoEditable}&source=${source}">订单信息支付</a>
-        </c:if>
-        <c:if test="${entity.orderDetails eq 'details'}">
-            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&orderDetails=${entity.orderDetails}&source=${source}">订单信息详情</a>
-        </c:if>
-        <c:if test="${bizOrderHeader.flag eq 'check_pending'}">
-            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">订单信息审核</a>
-        </c:if>
-        <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-            <c:if test="${empty bizOrderHeader.clientModify}">
-                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&source=${source}">订单信息<shiro:hasPermission
-                        name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
-                        name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a>
-            </c:if>
-            <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
-                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&flag=check_pending&consultantId=${bizOrderHeader.consultantId}&source=${source}">订单信息<shiro:hasPermission
-                        name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
-                        name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a>
-            </c:if>
-        </c:if>
-    </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save?statuPath=${statuPath}" method="post" class="form-horizontal">
+<form:form id="inputForm" modelAttribute="bizCommission" action="${ctx}/biz/order/bizOrderHeader/save?statuPath=${statuPath}" method="post" class="form-horizontal">
     <form:hidden path="id"/>
-    <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
-    <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
-    <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
-    <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
-    <input type="hidden" name="source" value="${source}"/>
-    <input type="hidden" id="suplys" value="${entity.suplys}"/>
-    <input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
-    <input type="hidden" value="${entity.bizPoPaymentOrder.id}" id="paymentOrderId"/>
-    <input type="hidden" name="receiveTotal" value="${bizOrderHeader.receiveTotal}" />
-    <%--<input id="vendId" type="hidden" value="${entity.sellers.bizVendInfo.office.id}"/>--%>
-    <input id="vendId" type="hidden" value="${entity.sellersId}"/>
-    <input id="createPo" type="hidden" value="${createPo}"/>
-    <input id="totalPayTotal" type="hidden" value="${totalPayTotal}"/>
-    <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
-    <form:input path="photos" id="photos" cssStyle="display: none"/>
-    <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
-    <c:if test="${entity.str != 'pay'}">
-        <div class="control-group">
-            <label class="control-label">订单总价：</label>
-            <div class="controls">
-                <form:input path="commissionTotalDetail" readonly="readonly" placeholder="由系统自动生成" htmlEscape="false" maxlength="30" class="input-xlarge"/>
-            </div>
-        </div>
-
 
     <div class="control-group">
-        <label class="control-label">业务状态：</label>
+        <label class="control-label">订单总价：</label>
         <div class="controls">
-            <form:select path="bizStatus" class="input-xlarge" disabled="true">
-                <form:option value="" label="请选择"/>
-                <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/></form:select>
+            <form:input path="totalDetail" readonly="readonly" placeholder="由系统自动生成" htmlEscape="false" maxlength="30" class="input-xlarge"/>
         </div>
     </div>
-    </c:if>
 
-    <div id="vendor" class="control-group" >
-        <label class="control-label">供应商：</label>
-        <div class="controls">
-            <input type="text" id="ecpectPay" value="${entity.vendorName}" disabled="true" class="input-xlarge">
-            <%--<sys:treeselect id="officeVendor" name="bizVendInfo.office.id" value="${entity.vendorId}" labelName="bizVendInfo.office.name"--%>
-                            <%--labelValue="${entity.vendorName}" notAllowSelectParent="true"--%>
-                            <%--title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium required"--%>
-                            <%--allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息" onchange="deleteStyle()"/>--%>
-            <%--<span class="help-inline"><font color="red">*</font> </span>--%>
-            <input id="remarkInput" type="hidden" value=""/>
-        </div>
-    </div>
-    <div id="cardNumber" class="control-group" style="display: none">
-        <label class="control-label">供应商卡号：</label>
+    <div id="cardNumber" class="control-group" >
+        <label class="control-label">零售商卡号：</label>
         <div class="controls">
             <input id="cardNumberInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
                    class="input-xlarge "/>
         </div>
     </div>
-    <div id="payee" class="control-group" style="display: none">
-        <label class="control-label">供应商收款人：</label>
+    <div id="payee" class="control-group" >
+        <label class="control-label">零售商收款人：</label>
         <div class="controls">
             <input id="payeeInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
                    class="input-xlarge "/>
         </div>
     </div>
-    <div id="bankName" class="control-group" style="display: none">
-        <label class="control-label">供应商开户行：</label>
+    <div id="bankName" class="control-group" >
+        <label class="control-label">零售商开户行：</label>
         <div class="controls">
             <input id="bankNameInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
                    class="input-xlarge "/>
@@ -1048,69 +425,30 @@
         <label class="control-label">申请金额：</label>
         <div class="controls">
             <input id="payTotal" name="planPay" type="text" readonly="readonly"
-                   <c:if test="${entity.str == 'audit' || entity.str == 'pay'}">readonly</c:if>
                    value="${entity.totalCommission}"
                    htmlEscape="false" maxlength="30" class="input-xlarge"/>
         </div>
     </div>
 
-    <c:if test="${entity.str != 'pay'}">
     <div class="control-group">
         <label class="control-label">最后付款时间：</label>
         <div class="controls">
             <input name="lastPayDate" id="lastPayDate" type="text" readonly="readonly"
                    maxlength="20"
                    class="input-medium Wdate required"
-                   value="<fmt:formatDate value="${entity.bizCommission.lastPayDate}"  pattern="yyyy-MM-dd"/>"
+                   value="<fmt:formatDate value="${entity.deadline}"  pattern="yyyy-MM-dd"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
                    placeholder="必填！"/>
             <span class="help-inline"><font color="red">*</font></span>
         </div>
     </div>
 
-
     <div class="control-group">
-        <label class="control-label">本次申请付款时间：</label>
+        <label class="control-label">备注：</label>
         <div class="controls">
-            <input name="payDeadline" id="payDeadline" type="text" readonly="readonly" maxlength="20"
-                   class="input-medium Wdate required"
-                   value="<fmt:formatDate value="${entity.bizCommission.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
-                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
-                   placeholder="必填！"/>
+            <form:textarea path="remark" maxlength="200" class="input-xlarge "/>
         </div>
     </div>
-    </c:if>
-
-    <c:if test="${entity.str == 'pay'}">
-        <div class="control-group">
-            <label class="control-label" style="color: red">实际付款金额：</label>
-            <div class="controls">
-                <input id="truePayTotal" name="payTotal" type="text" readonly="true"
-                       value="${entity.totalCommission}"
-                       htmlEscape="false" maxlength="30" class="input-xlarge "/>
-                &nbsp;&nbsp;<span style="color: red">※:需一次付清，禁止修改</span>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">上传付款凭证：
-                <p style="opacity: 0.5;">点击图片删除</p>
-            </label>
-
-            <div class="controls">
-                <input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" multiple="multiple" id="payImg"/>
-            </div>
-            <div id="payImgDiv">
-                <img src="${entity.bizCommission.imgUrl}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">支付备注：</label>
-            <div class="controls">
-					<textarea id="paymentRemark" maxlength="200"
-                              class="input-xlarge">${entity.bizPoHeader.bizPoPaymentOrder.remark}</textarea>
-            </div>
-        </div>
-    </c:if>
 
     <c:if test="${fn:length(auditList) > 0}">
         <div class="control-group">
@@ -1224,10 +562,6 @@
                     <%--</c:if>--%>
                 </shiro:hasPermission>
 
-                <c:if test="${entity.str == 'startAudit'}">
-                    <input type="button" onclick="startAudit()" class="btn btn-primary" value="开启审核"/>
-                </c:if>
-
                     <!-- 一单到底，采购单审核 -->
                 <shiro:hasPermission name="biz:po:bizPoHeader:audit">
                     <c:if test="${entity.str == 'audit'}">
@@ -1266,11 +600,10 @@
 
 <%--详情列表--%>
 <sys:message content="${message}"/>
-<c:if test="${entity.str != 'pay'}">
+<c:if test="${fn:length(orderHeaderList) > 0}">
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
     <thead>
     <tr>
-        <%--<th>详情行号</th>--%>
         <th>订单号</th>
         <th>商品名称</th>
         <th>商品编号</th>
@@ -1278,66 +611,49 @@
         <th>采购数量</th>
         <th>总 额</th>
         <th>已发货数量</th>
-        <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
-            <th>发货方</th>
-        </c:if>
+        <th>发货方</th>
         <th>商品零售价</th>
         <th>佣金</th>
     </tr>
     </thead>
     <tbody>
-    <c:forEach items="${bizOrderHeader.orderDetailList}" var="bizOrderDetail">
-        <tr>
-            <%--<td>--%>
-                    <%--${bizOrderDetail.lineNo}--%>
-            <%--</td>--%>
-            <td>
-                    ${bizOrderHeader.orderNum}
-            </td>
-            <td>
-                <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
-                    ${bizOrderDetail.skuName}
-                </c:if>
-                <c:if test="${empty entity.orderNoEditable || empty entity.orderDetails || empty bizOrderHeader.flag}">
-                    <c:if test="${empty entity.orderNoEditable && empty entity.orderDetails && empty bizOrderHeader.flag && empty bizOrderHeader.clientModify}">
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
-                                ${bizOrderDetail.skuName}</a>
+    <c:forEach items="${orderHeaderList}" var="bizOrderHeader">
+        <c:forEach items="${bizOrderHeader.orderDetailList}" var="bizOrderDetail">
+            <tr>
+                <td>
+                        ${bizOrderHeader.orderNum}
+                </td>
+                <td>
+                        ${bizOrderDetail.skuName}
+                </td>
+                <td>
+                        ${bizOrderDetail.partNo}
+                </td>
+                <td>
+                        ${bizOrderDetail.skuInfo.itemNo}
+                </td>
+                <td>
+                        ${bizOrderDetail.ordQty}
+                </td>
+                <td>
+                    <c:if test="${bizOrderDetail.unitPrice !=null && bizOrderDetail.ordQty !=null}">
+                        <fmt:formatNumber type="number" value=" ${bizOrderDetail.unitPrice * bizOrderDetail.ordQty}" pattern="0.00"/>
                     </c:if>
-                    <c:if test="${not empty bizOrderHeader.clientModify && bizOrderHeader.clientModify eq 'client_modify'}">
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
-                                ${bizOrderDetail.skuName}</a>
-                    </c:if>
-                </c:if>
-            </td>
-            <td>
-                    ${bizOrderDetail.partNo}
-            </td>
-            <td>
-                    ${bizOrderDetail.skuInfo.itemNo}
-            </td>
-            <td>
-                    ${bizOrderDetail.ordQty}
-            </td>
-            <td>
-                <c:if test="${bizOrderDetail.unitPrice !=null && bizOrderDetail.ordQty !=null}">
-                    <fmt:formatNumber type="number" value=" ${bizOrderDetail.unitPrice * bizOrderDetail.ordQty}" pattern="0.00"/>
-                </c:if>
-            </td>
-            <td>
-                    ${bizOrderDetail.sentQty}
-            </td>
-            <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
+                </td>
+                <td>
+                        ${bizOrderDetail.sentQty}
+                </td>
                 <td>
                         ${bizOrderDetail.suplyis.name}
                 </td>
-            </c:if>
-            <td>
-                    ${bizOrderDetail.salePrice}
-            </td>
-            <td>
-                    ${bizOrderDetail.detailCommission}
-            </td>
-        </tr>
+                <td>
+                        ${bizOrderDetail.salePrice}
+                </td>
+                <td>
+                        ${bizOrderDetail.detailCommission}
+                </td>
+            </tr>
+        </c:forEach>
     </c:forEach>
     </tbody>
 </table>

@@ -226,6 +226,8 @@ public class BizOrderHeaderController extends BaseController {
             bizOrderHeader.setOrderType(8);
             //收货完成
             bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.COMPLETE.getState());
+            //未结佣
+            bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.NO_COMMISSSION.getComStatus());
         }
         if (bizOrderHeader.getSkuChickCount() != null) {
             //商品下单量标识

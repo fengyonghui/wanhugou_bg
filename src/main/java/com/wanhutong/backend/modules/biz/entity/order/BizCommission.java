@@ -46,7 +46,15 @@ public class BizCommission extends DataEntity<BizCommission> {
 
 	private String str;
 
-	private BizVendInfo bizVendInfo;
+	/**
+	 * 订单id
+	 */
+	private String orderIds;
+
+	/**
+	 * 订单总价
+	 */
+	private BigDecimal totalDetail;
 
 	/**
 	 * 根据代销商姓名搜索
@@ -162,19 +170,27 @@ public class BizCommission extends DataEntity<BizCommission> {
 		this.str = str;
 	}
 
-	public BizVendInfo getBizVendInfo() {
-		return bizVendInfo;
-	}
-
-	public void setBizVendInfo(BizVendInfo bizVendInfo) {
-		this.bizVendInfo = bizVendInfo;
-	}
-
 	public String getPayee() {
 		return payee;
 	}
 
 	public void setPayee(String payee) {
 		this.payee = payee;
+	}
+
+	public String getOrderIds() {
+		return orderIds;
+	}
+
+	public void setOrderIds(String orderIds) {
+		this.orderIds = orderIds;
+	}
+
+	public BigDecimal getTotalDetail() {
+		return totalDetail;
+	}
+
+	public void setTotalDetail(BigDecimal totalDetail) {
+		this.totalDetail = totalDetail;
 	}
 }
