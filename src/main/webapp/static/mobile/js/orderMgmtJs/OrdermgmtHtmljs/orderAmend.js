@@ -40,18 +40,21 @@
 			console.log(source)
 			console.log(str)
 			if(_this.userInfo.starStr){
+				console.log(str)
 				datas={
 					id:idd,
 	                str:str,
 	                statu:statu,
 	                source:source
 				};
-			}if(_this.userInfo.createPayStr){
+			}else if(_this.userInfo.createPayStr){
+				console.log(str)
 				datas={
 					id:idd,
 					str:createPayStr,
 				};
 			}else{
+				console.log('33')
 				datas={
 					id:idd,
 	                statu:statu,
@@ -185,6 +188,10 @@
 					_this.checkProcessHtml(res.data);//审核流程
 					_this.commodityHtml(res.data);//商品信息
 					_this.paylistHtml(res.data);//支付信息
+					var poHeaderId = res.data.bizOrderHeader.bizPoHeader.id;
+					if(res.data.bizOrderHeader.str == 'startAudit'){
+						_this.startCheck(poHeaderId);//开启审核
+					}					
 					if(res.data.bizOrderHeader.orderNoEditable==""&& res.data.bizOrderHeader.flag=="" &&  res.data.bizOrderHeader.orderDetails=="" && res.data.bizOrderHeader.str!='audit' && res.data.bizOrderHeader.str!='startAudit'){      
 						if(_this.OrdeditFlag==true){
 						    _this.saveBtn(res.data.bizOrderHeader.id);//保存
@@ -272,6 +279,50 @@
                     $('#staInvoice').html(optHtml+htmlInvoiceAmend);
                 }
             });
+        },
+        //开启审核
+        startCheck: function(id) {
+        	var _this = this;
+        	var prew = false;
+        	$("#startCheckBtn").on('tap', function() {
+				var btnArray = ['否', '是'];
+				mui.confirm('确认开启审核吗？', '系统提示！', btnArray, function(choice) {
+					if(choice.index == 1) {
+						var btnArray = ['取消', '确定'];
+						mui.prompt('请输入开启理由：', '开启理由', '', btnArray, function(a) {
+							if(a.index == 1) {
+								var inText = a.value;
+								if(a.value == '') {
+									mui.toast('开启理由不能为空！')
+									return;
+								} else {
+									$.ajax({
+					                    type: "get", 
+					                    url: "/a/biz/po/bizPoHeader/startAudit",
+					                    data: {
+					                    	id:id, 
+					                    	prew: prew, 
+					                    	desc: inText, 
+					                    	action: 'startAuditAfterReject'
+					                    },
+					                    dataType: 'json',
+					                    success: function (result) {
+					                        if (result.ret == true || result.ret == 'true') {
+					                            mui.toast("开启审核成功！");
+					                          	GHUTILS.OPENPAGE({
+					                                url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
+					                                extras: {
+					                                }
+					                            })
+					                        }
+					                    }
+					                })
+								}
+							} else {}
+						})
+					} else {}
+				})
+			});
         },
 		//添加备注
 		addRemark:function(){

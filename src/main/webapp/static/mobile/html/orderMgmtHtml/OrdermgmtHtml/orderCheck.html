@@ -96,6 +96,10 @@
 				<label>发票状态：</label>
 				<input type="text" id="staInvoice" class="mui-input-clear" disabled>
 			</div>
+			<!--<div class="mui-input-row">
+				<label>审核状态：</label>
+				<input type="hidden" id="stacheStatus" class="mui-input-clear" disabled>
+			</div>-->
 			<div class="mui-input-row">
 				<label>业务状态：</label>
 				<input type="text" class="mui-input-clear doubleInput app_cred3" id="staFinal" disabled>
@@ -251,7 +255,7 @@
 			<button id="rejectBtns" type="submit" class="mui-btn mui-btn-blue app_fr RejectBtn">审核驳回</button>
 		</div>
 		<div class="clear"></div>
-		
+		<input type="hidden" id="currentTypes"/>
 		<input type="hidden" id="soId"/>
 		<input type="hidden" id="currentType"/>
 		<input type="hidden" id="createPo"/>
