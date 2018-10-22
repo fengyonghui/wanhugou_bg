@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.order;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizCustomerInfo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 机构信息entityDAO接口
@@ -14,5 +15,6 @@ import com.wanhutong.backend.modules.biz.entity.order.BizCustomerInfo;
  */
 @MyBatisDao
 public interface BizCustomerInfoDao extends CrudDao<BizCustomerInfo> {
-	
+
+    BizCustomerInfo getByOfficeId(@Param("officeId") Integer officeId);
 }

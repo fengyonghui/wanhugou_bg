@@ -71,11 +71,6 @@
                 $("#totalExp").attr("disabled","disabled");
             }
 
-            if ($("#vendId").val() != "") {
-                $("#vendor").removeAttr("style");
-                deleteStyle();
-            }
-
             $("#inputForm").validate({
                 submitHandler: function(form){
                     if('${totalPayTotal}' > 0){
@@ -335,41 +330,6 @@
     <script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="${ctxStatic}/common/base.js" type="text/javascript"></script>
 
-    <script type="text/javascript">
-        function deleteStyle() {
-            //$("#remark").removeAttr("style");
-            $("#cardNumber").removeAttr("style");
-            $("#payee").removeAttr("style");
-            $("#bankName").removeAttr("style");
-            $("#compact").removeAttr("style");
-            $("#identityCard").removeAttr("style");
-            var vendId = $("#vendId").val();
-            $.ajax({
-                type:"post",
-                url:"${ctx}/biz/order/bizOrderHeader/selectVendInfo?vendorId="+vendId,
-                success:function (data) {
-                    if (data == null) {
-                        return false;
-                    }
-                    $("#cardNumberInput").val(data.cardNumber);
-                    $("#remarkInput").val(data.remark);
-                    $("#payeeInput").val(data.payee);
-                    $("#bankNameInput").val(data.bankName);
-                    if (data.compactImgList != undefined) {
-                        $.each(data.compactImgList,function (index, compact) {
-                            $("#compactImgs").append("<a href=\"" + compact.imgServer + compact.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + compact.imgServer + compact.imgPath + "\"></a>");
-                        });
-                    }
-                    if (data.identityCardImgList != undefined) {
-                        $.each(data.identityCardImgList,function (index, identity) {
-                            $("#identityCards").append("<a href=\"" + identity.imgServer + identity.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + identity.imgServer + identity.imgPath + "\"></a>");
-                        });
-                    }
-                    $("#remark").val(data.remarks);
-                }
-            });
-        }
-    </script>
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -390,6 +350,7 @@
 <br/>
 <form:form id="inputForm" modelAttribute="bizCommission" action="${ctx}/biz/order/bizOrderHeader/save?statuPath=${statuPath}" method="post" class="form-horizontal">
     <form:hidden path="id"/>
+    <input type="hidden" name="sellerId" value="${entity.sellerId}" />
     <sys:message content="${message}"/>
 
     <div class="control-group">
@@ -402,21 +363,21 @@
     <div id="cardNumber" class="control-group" >
         <label class="control-label">零售商卡号：</label>
         <div class="controls">
-            <input id="cardNumberInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+            <input id="cardNumberInput" readonly="readonly" value="${entity.customerInfo.cardNumber}" htmlEscape="false" maxlength="30"
                    class="input-xlarge "/>
         </div>
     </div>
     <div id="payee" class="control-group" >
         <label class="control-label">零售商收款人：</label>
         <div class="controls">
-            <input id="payeeInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+            <input id="payeeInput" readonly="readonly" value="${entity.customerInfo.payee}" htmlEscape="false" maxlength="30"
                    class="input-xlarge "/>
         </div>
     </div>
     <div id="bankName" class="control-group" >
         <label class="control-label">零售商开户行：</label>
         <div class="controls">
-            <input id="bankNameInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+            <input id="bankNameInput" readonly="readonly" value="${entity.customerInfo.bankName}" htmlEscape="false" maxlength="30"
                    class="input-xlarge "/>
         </div>
     </div>

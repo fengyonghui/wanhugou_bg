@@ -23,6 +23,14 @@
 		<include refid="bizCustomerInfoJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<select id="getByOfficeId" resultType="BizCustomerInfo">
+		SELECT
+		<include refid="bizCustomerInfoColumns"/>
+		FROM biz_customer_info a
+		<include refid="bizCustomerInfoJoins"/>
+		WHERE a.office_id = #{officeId}
+	</select>
 	
 	<select id="findList" resultType="BizCustomerInfo">
 		SELECT 

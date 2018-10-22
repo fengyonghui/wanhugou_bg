@@ -130,13 +130,10 @@
 	</script>
 
 	<script type="text/javascript">
-		function singleApplyCommission(orderIds, totalDetail, totalCommission) {
-		    console.log("orderIds:" + orderIds);
-		    console.log("totalDetail:" + totalDetail);
-		    console.log("totalCommission:" + totalCommission);
+		function singleApplyCommission(orderIds, totalDetail, totalCommission, sellerId) {
 
 		    window.location.href = "${ctx}/biz/order/bizCommission/applyCommissionForm?orderIds=" + orderIds
-											+ "&totalDetail=" + totalDetail + "&totalCommission=" + totalCommission;
+											+ "&totalDetail=" + totalDetail + "&totalCommission=" + totalCommission + "&sellerId=" + sellerId;
 
         }
 
@@ -145,6 +142,7 @@
             var orderIds = ""
             var totalDetail = 0;
             var totalCommission = 0;
+            var sellerId = 0;
             $("[name=settlement]").each(function(){
                 if ($(this).is(':checked')) {
                     var orderIdTemp = $(this).val();
@@ -154,6 +152,16 @@
 
                     var detail = $("#" + "totalDetail_" + orderIdTemp).text();
                     totalDetail = parseInt(totalDetail) + parseInt(detail);
+
+                    var sellerIdTemp = $("#" + "sellerId_" + orderIdTemp).val();
+                    if (sellerId == 0) {
+                        sellerId = sellerIdTemp;
+					}
+
+                    if (sellerId != sellerIdTemp) {
+                        alert("请选择同意代销商的订单，再计算！")
+						return;
+                    }
                 }
             });
 
@@ -163,7 +171,7 @@
 			}
 
             window.location.href = "${ctx}/biz/order/bizCommission/applyCommissionForm?orderIds=" + orderIds
-                + "&totalDetail=" + totalDetail + "&totalCommission=" + totalCommission;
+                + "&totalDetail=" + totalDetail + "&totalCommission=" + totalCommission + "&sellerId=" + sellerId;;
 
         }
 	</script>
@@ -504,7 +512,8 @@
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
-				<a href="#" onclick="singleApplyCommission('${orderHeader.id}', ${orderHeader.totalDetail}, ${orderHeader.commission})">申请结佣</a>
+				<input id="sellerId_${orderHeader.id}" type="hidden" value="${orderHeader.sellersId}"/>
+				<a href="#" onclick="singleApplyCommission('${orderHeader.id}', ${orderHeader.totalDetail}, ${orderHeader.commission}, ${orderHeader.sellersId})">申请结佣</a>
 
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
 				<c:choose>

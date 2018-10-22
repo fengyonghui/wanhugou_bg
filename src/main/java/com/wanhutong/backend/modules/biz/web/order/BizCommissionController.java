@@ -7,10 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.modules.biz.entity.order.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.order.BizCustomerInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
@@ -55,6 +57,8 @@ public class BizCommissionController extends BaseController {
 	private BizOrderDetailService bizOrderDetailService;
 	@Autowired
 	private BizOpShelfSkuService bizOpShelfSkuService;
+	@Autowired
+	private BizCustomerInfoService bizCustomerInfoService;
 	
 	@ModelAttribute
 	public BizCommission get(@RequestParam(required=false) Integer id) {
@@ -136,6 +140,8 @@ public class BizCommissionController extends BaseController {
 		}
 
 		model.addAttribute("orderHeaderList", orderHeaderList);
+		BizCustomerInfo bizCustomerInfo = bizCustomerInfoService.getByOfficeId(bizCommission.getSellerId());
+		bizCommission.setCustomerInfo(bizCustomerInfo);
 		model.addAttribute("entity", bizCommission);
 		return "modules/biz/order/bizCommissionOrderHeaderForm";
 	}
