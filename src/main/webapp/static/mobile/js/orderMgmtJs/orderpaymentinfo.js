@@ -237,9 +237,7 @@
 				                postatus=res;
 			                }
 			            });	
-//			            console.log(postatus)
 						var arrLen = res.data.page.list.length;
-//						console.log(arrLen)
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}else{
@@ -249,7 +247,7 @@
 //                      console.log(_this.OrdFlaginfo)
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-//                          	console.log(item)
+                            	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";
@@ -290,21 +288,6 @@
 	                            }else{
 	                            	paycheckTxt='当前无审批流程';
 	                            }
-//	                            var values = item.bizStatus;
-//								$.ajax({
-//					                type: "GET",
-//					                url: "/a/sys/dict/listData",
-//					                dataType: "json",
-//					                data: {
-//					                	value:values,
-//					                	type: "biz_po_status",
-//					                	defaultValue: '未知类型'
-//				                	},
-//					                async:false,
-//					                success: function(res){
-//						                console.log(res)
-//					                }
-//					            });
 					            if(_this.OrdFlaginfo == true) {
 					            	if(item.bizStatus != 10) {
 					            		//申请付款
@@ -312,55 +295,59 @@
 										var creatPay = '';
 										if(item.bizOrderHeader != null || item.bizRequestHeader != null) {
 											if(_this.ordCreatPayFlag == true) {
-										if(item.bizOrderHeader != null || item.bizRequestHeader != null) {
-											if(_this.ordCreatPayFlag == true) {
-					                        	if(item.bizOrderHeader != null) {
-					                        		if(item.currentPaymentId == null
-					                        		&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
-					                        		&& (item.payTotal == null ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
-					                        			console.log('订单申请付款')
-					                        			creatPay = '申请付款'
-														creatPayBt = 'creatPayBtn'
-					                        		}
-					                        	}
-					                        }
-											if(_this.creatPayFlag == true) {
-												if(item.bizRequestHeader != null) {
-													if((item.currentPaymentId == null || item.currentPaymentId == '') 
-													&& item.bizRequestHeader.bizStatus >= 5 
-													&& item.bizRequestHeader.bizStatus < 37 
-													&& (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
-														console.log('备货单申请付款')
-														creatPay = '申请付款'
-														creatPayBt = 'creatPayBtn'
+												if(item.bizOrderHeader != null || item.bizRequestHeader != null){
+													console.log(item.bizOrderHeader)
+													console.log(item.bizRequestHeader)
+													if(_this.ordCreatPayFlag == true) {
+							                        	if(item.bizOrderHeader != null) {
+							                        		if(item.currentPaymentId == null
+							                        		&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
+							                        		&& (item.payTotal == null ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
+							                        			console.log('订单申请付款')
+							                        			creatPay = '申请付款'
+																creatPayBt = 'creatPayBtn'
+							                        		}
+							                        	}
+							                        }
+													if(_this.creatPayFlag == true) {
+														if(item.bizRequestHeader != null) {
+															if((item.currentPaymentId == null || item.currentPaymentId == '') 
+															&& item.bizRequestHeader.bizStatus >= 5 
+															&& item.bizRequestHeader.bizStatus < 37 
+															&& (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
+																console.log('备货单申请付款')
+																creatPay = '申请付款'
+																creatPayBt = 'creatPayBtn'
+															}
+														}
 													}
-												}
-											}
-										}else {
-											if(_this.poCreatPayFlag == true) {
-												var values = item.bizStatus;
-												var dictLabel = '';
-												$.ajax({
-									                type: "GET",
-									                url: "/a/sys/dict/getDictLabel4Mobile",
-									                dataType: "json",
-									                data: {
-									                	value:values,
-									                	type: "biz_po_status",
-									                	defaultValue: '未知类型'
-								                	},
-									                async:false,
-									                success: function(res){
-										                console.log(res.data.dictLabel)
-										                dictLabel = res.data.dictLabel;
-									                }
-									            });
-												if(item.bizPoPaymentOrder.id == null
-												&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
-												&& dictLabel != '全部支付'
-												&& item.payTotal < (item.totalDetail+item.totalExp)) {
-													creatPay = '申请付款'
-													creatPayBt = 'creatPayBtn'
+												}else {
+													if(_this.poCreatPayFlag == true) {
+														var values = item.bizStatus;
+														var dictLabel = '';
+														$.ajax({
+											                type: "GET",
+											                url: "/a/sys/dict/getDictLabel4Mobile",
+											                dataType: "json",
+											                data: {
+											                	value:values,
+											                	type: "biz_po_status",
+											                	defaultValue: '未知类型'
+										                	},
+											                async:false,
+											                success: function(res){
+												                console.log(res.data.dictLabel)
+												                dictLabel = res.data.dictLabel;
+											                }
+											            });
+														if(item.bizPoPaymentOrder.id == null
+														&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
+														&& dictLabel != '全部支付'
+														&& item.payTotal < (item.totalDetail+item.totalExp)) {
+															creatPay = '申请付款'
+															creatPayBt = 'creatPayBtn'
+														}
+													}
 												}
 											}
 										}
@@ -534,30 +521,10 @@
 							/*确认排产*/		'<div name="commBtn" class="'+affirmSchedulingBtn+'" staordid="'+ item.id +'">' +
 												'<div class="" >'+affirmSchedulingBtnTxt+'</div></div>' +
 										'</div>' +
-//										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-//								/*审核*/		'<div class="mui-col-xs-1 '+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
-//												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li></div>'+
-//							/*支付列表*/		'<div class="mui-col-xs-2 '+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
-//												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li></div>'+
-//							/*开启审核*/		'<div class="mui-col-xs-2 '+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
-//												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li></div>'+
-//							/*申请付款*/		'<div class="mui-col-xs-2 '+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
-//												'<li class="mui-table-view-cell">'+creatPay+'</li></div>'+
-//								/*排产*/		'<div class="mui-col-xs-1 '+SchedulingBtn+'" staordid="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li></div>'+
-//								/*取消*/		'<div class="mui-col-xs-1 '+orCancleBtn+'" staordid="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ orCancleBtnTxt +'</li></div>'+
-//								/*详情*/		'<div class="mui-col-xs-1 '+orDetailBtn+'" staOrdId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ orDetailBtnTxt +'</li></div>'+
-//							/*确认排产*/		'<div class="mui-col-xs-2 '+affirmSchedulingBtn+'" staordid="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ affirmSchedulingBtnTxt +'</li></div>'+
-////								/*修改*/		'<div class="mui-col-xs-2 '+orAmendBtn+'" staordid="'+ item.id +'">' +
-////												'<li class="mui-table-view-cell">'+ orAmendBtnTxt +'</li></div>'+
-//										'</div>' +
 									'</div>'
-								});
-								$('#orderinfoList').append(orderHtmlList);
-								_this.stOrdHrefHtml();
+							});
+							$('#orderinfoList').append(orderHtmlList);
+							_this.stOrdHrefHtml();
 								//先隐藏订单信息
 //								var pos=$(".ctn_show_row .dd");
 //								var posd=$(".ctn_show_row .staPayBtns");
@@ -573,10 +540,10 @@
 //		                            })
 //	                            })
 					    }else {
-								$('.mui-pull-bottom-pocket').html('');
-								$('#orderinfoList').append('<p class="noneTxt">暂无数据</p>');
-								$('#staOrdSechBtn').hide();
-								mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);							
+							$('.mui-pull-bottom-pocket').html('');
+							$('#orderinfoList').append('<p class="noneTxt">暂无数据</p>');
+							$('#staOrdSechBtn').hide();
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);							
 						}
 		                if(res.data.page.totalPage==pager.pageNo){		                	
 			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
