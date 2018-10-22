@@ -34,6 +34,7 @@
                     var htmlList = '';
                     $.each(res.data, function(i, item) {
                     	if(item.mobileUrl == -1) {
+//                  		console.log(item)
                     		htmlList += '<li class="mui-table-view-cell mui-collapse menuBtn" indexNum = "'+ i+'" dataId="'+item.id+'">'+
 							'<a class="mui-navigate-right">'+ item.name + '</a>'+
 							'<div  class = "mui-collapse-content childData'+ i+'">'
@@ -59,10 +60,10 @@
                         success: function(res){
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
-                            	console.log(item)
-//                              if(item.mobileUrl){
+//                          	console.log(item)
+                                if(item.mobileUrl){
                                 	pHtmlList += '<p class="childMenu" purchId="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</p>'
-//                              }
+                                }
                             });
                             $(".childData"+indexNum).html(pHtmlList)
                         }
@@ -128,10 +129,11 @@
         /*订单管理*/
             $('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');
+            	var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');
                 if(url) {
                 	mui.toast('子菜单不存在')
-                }else if(purchId==133) {
+                }else if(mobileUrl == '/mobile/html/orderMgmtHtml/OrdermgmtHtml/orderList.html') {
                 	GHUTILS.OPENPAGE({
 						url: "../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 						extras: {

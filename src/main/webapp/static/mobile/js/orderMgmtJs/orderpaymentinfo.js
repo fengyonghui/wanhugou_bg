@@ -248,7 +248,7 @@
 //                      console.log(_this.OrdFlaginfo)
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-                            	console.log(item)
+//                          	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";
@@ -289,40 +289,17 @@
 	                            }else{
 	                            	paycheckTxt='当前无审批流程';
 	                            }
-//	                            var values = item.bizStatus;
-//								$.ajax({
-//					                type: "GET",
-//					                url: "/a/sys/dict/listData",
-//					                dataType: "json",
-//					                data: {
-//					                	value:values,
-//					                	type: "biz_po_status",
-//					                	defaultValue: '未知类型'
-//				                	},
-//					                async:false,
-//					                success: function(res){
-//						                console.log(res)
-//					                }
-//					            });
 					            if(_this.OrdFlaginfo == true) {
 					            	if(item.bizStatus != 10) {
-					            		
 					            		//申请付款
 										var creatPayBt = '';
 										var creatPay = '';
 										if(item.bizOrderHeader != null || item.bizRequestHeader != null) {
-											
 											if(_this.ordCreatPayFlag == true) {
-												
 					                        	if(item.bizOrderHeader != null) {
-					                        		console.log (item.currentPaymentId == null)
-					                        		console.log (item.commonProcess.purchaseOrderProcess.name)
-					                        		console.log (item.payTotal)
-					                        		console.log (item.bizOrderHeader.totalDetail)
 					                        		if(item.currentPaymentId == null
 					                        		&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
 					                        		&& (item.payTotal == null ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
-					                        			console.log ('啦啦啦')
 					                        			creatPay = '申请付款'
 														creatPayBt = 'creatPayBtn'
 					                        		}
@@ -334,7 +311,6 @@
 													&& item.bizRequestHeader.bizStatus >= 5 
 													&& item.bizRequestHeader.bizStatus < 37 
 													&& (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
-														console.log ('333')
 														creatPay = '申请付款'
 														creatPayBt = 'creatPayBtn'
 													}
@@ -342,25 +318,26 @@
 											}
 										}else {
 											if(_this.poCreatPayFlag == true) {
-												console.log ('哈哈哈')
-					//							var values = item.bizStatus;
-					//							$.ajax({
-					//				                type: "GET",
-					//				                url: "/a/sys/dict/listData",
-					//				                dataType: "json",
-					//				                data: {
-					//				                	value:values,
-					//				                	type: "biz_po_status",
-					//				                	defaultValue: '未知类型'
-					//			                	},
-					//				                async:false,
-					//				                success: function(res){
-					//					                console.log(res)
-					//				                }
-					//				            });
+												var values = item.bizStatus;
+												var dictLabel = '';
+												$.ajax({
+									                type: "GET",
+									                url: "/a/sys/dict/getDictLabel4Mobile",
+									                dataType: "json",
+									                data: {
+									                	value:values,
+									                	type: "biz_po_status",
+									                	defaultValue: '未知类型'
+								                	},
+									                async:false,
+									                success: function(res){
+										                console.log(res.data.dictLabel)
+										                dictLabel = res.data.dictLabel;
+									                }
+									            });
 												if(item.bizPoPaymentOrder.id == null
 												&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
-					//							&& fns:getDictLabel(item.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
+												&& dictLabel != '全部支付'
 												&& item.payTotal < (item.totalDetail+item.totalExp)) {
 													creatPay = '申请付款'
 													creatPayBt = 'creatPayBtn'
@@ -480,7 +457,7 @@
 			                	var staCheckSuc = "";
 			                	var staCheckSuc = item.bizOrderHeader.id;
 			                	var staCheck = item.bizRequestHeader.id;
-								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline2 app_li_text_linhg mui-input-group">'+
+								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row" style="display:none">' +
 										    '<label>备货单号:</label>' +
 											'<input type="text" class="mui-input-clear staPayBtns" disabled="disabled" podid="'+ staCheckSuc +'" podids="'+ staCheck +'">' +
@@ -513,23 +490,25 @@
 											'<label>创建时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ _this.formatDateTime(item.createDate)+' ">' +
 										'</div>' +
-										'<div class="app_bline3 app_color40 mui-row app_text_center content_part operation " id="foot">' +
-							/*详情*/			'<div name="commBtn" class="'+orDetailBtn+'" staOrdId="'+ item.id +'">' +
-												'<div class="" >'+orDetailBtnTxt+'</div></div>' +	
+										'<div class="mui-input-row app_color40 app_text_center content_part operation " id="foot">' +
+							/*kong*/		'<div name="commBtn" class="" staordid="'+ item.id +'">' +
+												'<div class="" ></div></div>' +
+							/*修改*/			'<div name="commBtn" class="'+orAmendBtn+'" staOrdId="'+ item.id +'">' +
+												'<div class="" >'+orAmendBtnTxt+'</div></div>' +
 							/*审核*/			'<div name="commBtn" class="'+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
-												'<div class="" >'+staCheckBtnTxt+'</div></div>' +													
+												'<div class="" >'+staCheckBtnTxt+'</div></div>' +
 							/*申请付款*/		'<div name="commBtn" class="'+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'" payOrderId="'+item.bizOrderHeader.id+'">' +
 												'<div class="" >'+creatPay+'</div></div>' +
 							/*开启审核*/		'<div name="commBtn" class="'+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'" payOrderId="'+item.bizOrderHeader.id+'" statu="'+item.bizOrderHeader.statu+'" source="'+item.bizOrderHeader.source+'">' +
-												'<div class="" >'+stastartCheckBtnTxt+'</div></div>' +												
-//							/*修改*/			'<div name="commBtn" class="'+orAmendBtn+'" staordid="'+ item.id +'">' +
-//												'<div class="" >'+orAmendBtnTxt+'</div></div>' +
+												'<div class="" >'+stastartCheckBtnTxt+'</div></div>' +
 										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation " id="foot">' +
 							/*取消*/			'<div name="commBtn" class="'+orCancleBtn+'" staordid="'+ item.id +'">' +
 												'<div class="" >'+orCancleBtnTxt+'</div></div>' +				
+							/*详情*/			'<div name="commBtn" class="'+orDetailBtn+'" staOrdId="'+ item.id +'">' +
+												'<div class="" >'+orDetailBtnTxt+'</div></div>' +
 							/*排产*/			'<div name="commBtn" class="'+SchedulingBtn+'" staordid="'+ item.id +'">' +
-												'<div class="" >'+SchedulingBtnTxt+'</div></div>' +	
+												'<div class="" >'+SchedulingBtnTxt+'</div></div>' +
 							/*支付列表*/		'<div name="commBtn" class="'+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
 												'<div class="" >'+staPayBtnTxt+'</div></div>' +														
 							/*确认排产*/		'<div name="commBtn" class="'+affirmSchedulingBtn+'" staordid="'+ item.id +'">' +
@@ -814,15 +793,16 @@
 			/*修改*/
 			$('.content_part').on('tap', '.orAmendBtn', function() {
 				var url = $(this).attr('url');
-				var staordid = $(this).attr('staordid');
+				var staOrdId = $(this).attr('staOrdId');
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(staordid == staordid) {
+				} else if(staOrdId == staOrdId) {
 					GHUTILS.OPENPAGE({
-						url: "../../html/orderMgmtHtml/inventoryAmend.html",
+						url: "../../html/orderMgmtHtml/orAmend.html",
 						extras: {
-							staordid: staordid,
-							createPayStr: 'createPay',
+							staOrdId: staOrdId,
+							str: 'detail',
+							fromPage: 'orderHeader',
 						}
 					})
 				}
@@ -941,7 +921,7 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-                            	console.log(item)
+//                          	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";
@@ -981,22 +961,7 @@
 	                            	}
 	                            }else{
 	                            	paycheckTxt='当前无审批流程';
-	                            }  
-//	                            var values = item.bizStatus;
-//								$.ajax({
-//					                type: "GET",
-//					                url: "/a/sys/dict/listData",
-//					                dataType: "json",
-//					                data: {
-//					                	value:values,
-//					                	type: "biz_po_status",
-//					                	defaultValue: '未知类型'
-//				                	},
-//					                async:false,
-//					                success: function(res){
-//						                console.log(res)
-//					                }
-//					            });	
+	                            }
 					            if(_this.OrdFlaginfo == true) {
 					            	if(item.bizStatus != 10) {
 					            		//申请付款
@@ -1026,24 +991,26 @@
 											}
 										}else {
 											if(_this.poCreatPayFlag == true) {
-					//							var values = item.bizStatus;
-					//							$.ajax({
-					//				                type: "GET",
-					//				                url: "/a/sys/dict/listData",
-					//				                dataType: "json",
-					//				                data: {
-					//				                	value:values,
-					//				                	type: "biz_po_status",
-					//				                	defaultValue: '未知类型'
-					//			                	},
-					//				                async:false,
-					//				                success: function(res){
-					//					                console.log(res)
-					//				                }
-					//				            });	
+												var values = item.bizStatus;
+												var dictLabel = '';
+												$.ajax({
+									                type: "GET",
+									                url: "/a/sys/dict/getDictLabel4Mobile",
+									                dataType: "json",
+									                data: {
+									                	value:values,
+									                	type: "biz_po_status",
+									                	defaultValue: '未知类型'
+								                	},
+									                async:false,
+									                success: function(res){
+										                console.log(res.data.dictLabel)
+										                dictLabel = res.data.dictLabel;
+									                }
+									            });
 												if(item.bizPoPaymentOrder.id == null
 												&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
-					//							&& fns:getDictLabel(item.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
+												&& dictLabel != '全部支付'
 												&& item.payTotal < (item.totalDetail+item.totalExp)) {
 													creatPay = '申请付款'
 													creatPayBt = 'creatPayBtn'
@@ -1102,7 +1069,7 @@
 					                			if(_this.OrdFlagpay == true){
 					                				staPayBtnTxt = '支付列表';
 					                				staPayBtnes = 'staPayBtnes';
-					                			}	                        			
+					                			}
 					                		}
 					                	}
 										//开启审核
@@ -1163,7 +1130,7 @@
 			                	var staCheckSuc = "";
 			                	var staCheckSuc = item.bizOrderHeader.id;
 			                	var staCheck = item.bizRequestHeader.id;
-								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
+								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline2 app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row" style="display:none">' +
 										    '<label>备货单号:</label>' +
 											'<input type="text" class="mui-input-clear staPayBtns" disabled="disabled" podid="'+ staCheckSuc +'" podids="'+ staCheck +'">' +
@@ -1196,54 +1163,52 @@
 											'<label>创建时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ _this.formatDateTime(item.createDate)+' ">' +
 										'</div>' +
+										'<div class="mui-input-row app_color40 app_text_center content_part operation " id="foot">' +
+							/*kong*/		'<div name="commBtn" class="" staordid="'+ item.id +'">' +
+												'<div class="" ></div></div>' +
+							/*修改*/			'<div name="commBtn" class="'+orAmendBtn+'" staOrdId="'+ item.id +'">' +
+												'<div class="" >'+orAmendBtnTxt+'</div></div>' +
+							/*审核*/			'<div name="commBtn" class="'+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
+												'<div class="" >'+staCheckBtnTxt+'</div></div>' +
+							/*申请付款*/		'<div name="commBtn" class="'+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
+												'<div class="" >'+creatPay+'</div></div>' +
+							/*开启审核*/		'<div name="commBtn" class="'+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
+												'<div class="" >'+stastartCheckBtnTxt+'</div></div>' +
+										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation " id="foot">' +
-											'<div class="'+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
-												'<div class="" >'+staCheckBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
-												'<div class="" >'+staPayBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'" payOrderId="'+item.bizOrderHeader.id+'" statu="'+item.bizOrderHeader.statu+'" source="'+item.bizOrderHeader.source+'">' +
-												'<div class="" >'+stastartCheckBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'" payOrderId="'+item.bizOrderHeader.id+'">' +
-												'<div class="" >'+creatPay+'</div>' +
-											'</div>' +
-											'<div class="'+SchedulingBtn+'" staordid="'+ item.id +'">' +
-												'<div class="" >'+SchedulingBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+orCancleBtn+'" staordid="'+ item.id +'">' +
-												'<div class="" >'+orCancleBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+orDetailBtn+'" staordid="'+ item.id +'">' +
-												'<div class="" >'+orDetailBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+affirmSchedulingBtn+'" staordid="'+ item.id +'">' +
-												'<div class="" >'+affirmSchedulingBtnTxt+'</div>' +
-											'</div>' +
-											'<div class="'+orAmendBtn+'" staordid="'+ item.id +'">' +
-												'<div class="" >'+orAmendBtnTxt+'</div>' +
-											'</div>' +
+							/*取消*/			'<div name="commBtn" class="'+orCancleBtn+'" staordid="'+ item.id +'">' +
+												'<div class="" >'+orCancleBtnTxt+'</div></div>' +
+							/*详情*/			'<div name="commBtn" class="'+orDetailBtn+'" staOrdId="'+ item.id +'">' +
+												'<div class="" >'+orDetailBtnTxt+'</div></div>' +
+							/*排产*/			'<div name="commBtn" class="'+SchedulingBtn+'" staordid="'+ item.id +'">' +
+												'<div class="" >'+SchedulingBtnTxt+'</div></div>' +
+							/*支付列表*/		'<div name="commBtn" class="'+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
+												'<div class="" >'+staPayBtnTxt+'</div></div>' +
+							/*确认排产*/		'<div name="commBtn" class="'+affirmSchedulingBtn+'" staordid="'+ item.id +'">' +
+												'<div class="" >'+affirmSchedulingBtnTxt+'</div></div>' +
 										'</div>' +
 //										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-//											'<div class="mui-col-xs-2 '+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
-//												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-3 '+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
-//												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-3 '+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
-//												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-2 '+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
-//												'<li class="mui-table-view-cell">'+creatPay+'</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-2 '+SchedulingBtn+'" staordid="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li>' +
-//											'</div>'+
+//								/*审核*/		'<div class="mui-col-xs-1 '+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
+//												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li></div>'+
+//							/*支付列表*/		'<div class="mui-col-xs-2 '+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
+//												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li></div>'+
+//							/*开启审核*/		'<div class="mui-col-xs-2 '+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
+//												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li></div>'+
+//							/*申请付款*/		'<div class="mui-col-xs-2 '+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
+//												'<li class="mui-table-view-cell">'+creatPay+'</li></div>'+
+//								/*排产*/		'<div class="mui-col-xs-1 '+SchedulingBtn+'" staordid="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li></div>'+
+//								/*取消*/		'<div class="mui-col-xs-1 '+orCancleBtn+'" staordid="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">'+ orCancleBtnTxt +'</li></div>'+
+//								/*详情*/		'<div class="mui-col-xs-1 '+orDetailBtn+'" staOrdId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">'+ orDetailBtnTxt +'</li></div>'+
+//							/*确认排产*/		'<div class="mui-col-xs-2 '+affirmSchedulingBtn+'" staordid="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">'+ affirmSchedulingBtnTxt +'</li></div>'+
+////								/*修改*/		'<div class="mui-col-xs-2 '+orAmendBtn+'" staordid="'+ item.id +'">' +
+////												'<li class="mui-table-view-cell">'+ orAmendBtnTxt +'</li></div>'+
 //										'</div>' +
 									'</div>'
-							});
+								});
 								$('#orderinfoList').append(orderHtmlList);
 								_this.stOrdHrefHtml();
 								//先隐藏订单信息
