@@ -192,5 +192,11 @@
 			#{delFlag}
 			)
 	</insert>
-	
+
+	<update id="updateSkuId">
+		UPDATE biz_inventory_view_log SET
+		sku_id = #{needSkuId}
+		WHERE id = #{id}
+	</update>
+
 </mapper>

@@ -21,6 +21,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizCustSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.DefaultPropEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -245,5 +246,17 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
 
     public List<BizOrderDetail> findOrderDetailList(Integer invoiceId) {
         return bizOrderDetailDao.findOrderDetailList(invoiceId);
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void updateSkuId(Integer needSkuId, Integer skuId) {
+        BizOrderDetail orderDetail = new BizOrderDetail();
+        orderDetail.setSkuInfo(new BizSkuInfo(skuId));
+        List<BizOrderDetail> orderDetails = findList(orderDetail);
+        if (CollectionUtils.isNotEmpty(orderDetails)) {
+            for (BizOrderDetail bizOrderDetail : orderDetails) {
+                bizOrderDetailDao.updateSkuId(needSkuId,bizOrderDetail.getId());
+            }
+        }
     }
 }
