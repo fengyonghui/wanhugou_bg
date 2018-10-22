@@ -518,7 +518,8 @@
 	<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?id=${bizOpShelfSku.id}">商品上架<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">${not empty bizOpShelfSku.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:shelf:bizOpShelfSku:edit">查看</shiro:lacksPermission></a></li>
 </ul><br/>
 <form:form id="inputForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSkuV2/save" method="post" class="form-horizontal">
-	<form:hidden path="id" var="id"/>
+	<form:hidden path="id"/>
+    <c:set var="id" value="${bizOpShelfSku.id}"/>
 	<form:hidden path="shelfSign"/>
 	<input id="commissionRatio" type="hidden" value="${commissionRatio}"/>
 	<%--<input type="hidden" id="opShelfId" value="${bizOpShelfSku.opShelfInfo.id}"/>--%>
