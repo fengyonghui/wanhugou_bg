@@ -71,6 +71,8 @@
                 	console.log(res)
 					/*判断是否是品类主管*/
 					console.log(res.data.createPo)
+					$('#checkBtns').attr('poid',res.data.bizOrderHeader.bizPoHeader.id);
+					$('#rejectBtns').attr('poids',res.data.bizOrderHeader.bizPoHeader.id);
 					$('#createPo').val(res.data.createPo);
 					$("#soId").val(res.data.bizOrderHeader.id);
 					var ordLastDate = '';
@@ -231,14 +233,20 @@
 					_this.statusListHtml(res.data);//状态流程
 					_this.checkProcessHtml(res.data);//审核流程
 					_this.commodityHtml(res.data);//商品信息
-					var checkType = _this.userInfo.checkType;
-//					if(checkType == "auditSo") {
-//						//支出信息的审核
-//						_this.comfirDialigs()
-//					}else {
+					var str = _this.userInfo.str;//审核
+					console.log(str)
+					if(res.data.bizOrderHeader.str == 'audit' && res.data.bizOrderHeader.bizPoHeader.commonProcessList != null && res.data.bizOrderHeader.bizPoHeader.commonProcessList.length > 0){
+						$('#currentTypes').val(res.data.bizOrderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code)
+					}
+					if(str == "audit") {
+						//支出信息的审核
+						console.log('支出审核')
+						_this.comfirDialigs();
+					}else {
 						//订单审核
+						console.log('订单审核')
 						_this.comfirDialig(res.data);//审核
-//					}
+					}
                 }
             });
 		},
@@ -250,7 +258,6 @@
                 data: {vendorId:supplierId},		                
                 dataType: "json",
                 success: function(rest){
-                	console.log(rest)
                 	if(rest){
                 		if(rest.vendName){
                 			$('#insupplier').val(rest.vendName);//供应商
@@ -567,82 +574,86 @@
 				})
 			});
 		},
-//		comfirDialigs: function() {
-//			var _this = this;
-//			document.getElementById("rejectBtns").addEventListener('tap', function() {
+		comfirDialigs: function() {
+			var _this = this;
+			document.getElementById("rejectBtns").addEventListener('tap', function() {
 //				var id= $(this).attr('soId');
 //				var currentType= $('#currentType').val();
-//				var btnArray = ['否', '是'];
-//				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
-//					if(choice.index == 1) {
-//						var btnArray = ['取消', '确定'];
-//						mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
-//							if(a.index == 1) {
-//								var rejectTxt = a.value;
-//								if(a.value == '') {
-//									mui.toast('驳货理由不能为空！')
-//								} else {
-//									_this.payOutAudit(id,rejectTxt, 2,currentType)
-//								}
-//							} else {}
-//						})
-//					} else {}
-//				})
-//			});
-//			document.getElementById("checkBtns").addEventListener('tap', function(e) {
-//				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+				var id= $(this).attr('poids');
+				var currentType= $('#currentTypes').val();
+				var btnArray = ['否', '是'];
+				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
+					if(choice.index == 1) {
+						var btnArray = ['取消', '确定'];
+						mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
+							if(a.index == 1) {
+								var rejectTxt = a.value;
+								if(a.value == '') {
+									mui.toast('驳货理由不能为空！')
+								} else {
+									_this.payOutAudit(id,rejectTxt, 2,currentType)
+								}
+							} else {}
+						})
+					} else {}
+				})
+			});
+			document.getElementById("checkBtns").addEventListener('tap', function(e) {
+				e.detail.gesture.preventDefault(); 
 //				var id= $(this).attr('soId');
 //				var currentType= $('#currentType').val();
-//				var btnArray = ['取消', '确定'];
-//				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
-//					if(e.index == 1) {
-//						var inText = e.value;
-//						if(e.value == '') {
-//							mui.toast('通过理由不能为空！')
-//							return;
-//						} else {
-//							var btnArray = ['否', '是'];
-//							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
-//								if(choice.index == 1) {
-//									_this.payOutAudit(id,inText, 1,currentType)
-//								} else {}
-//							})
-//						}
-//					} else {}
-//				})
-//			});
-//		},
-//		payOutAudit: function(id,inText, num,currentType) {
-//			var _this = this;
-//			$.ajax({
-//				type: "GET",
-//				url: "/a/biz/po/bizPoHeader/audit",
-//				data: {
-//					id: id,
-//					currentType: currentType,
-//					fromPage: 'requestHeader',
-//					auditType: num,
-//					description: inText
-//				},
-//				dataType: "json",
-//				success: function(res) {
-//					if(res.ret == true) {
-//						mui.toast('操作成功!')
-//						GHUTILS.OPENPAGE({
-//							url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
-//							extras: {}
-//						})
-//					}
-//					if(res.ret == false) {
-//						mui.toast(res.errmsg)
-//					}
-//				},
-//				error: function(e) {
-//					//服务器响应失败处理函数
-//				}
-//			});
-//
-//		},
+				var id= $(this).attr('poid');
+				var currentType= $('#currentTypes').val();
+				var btnArray = ['取消', '确定'];
+				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
+					if(e.index == 1) {
+						var inText = e.value;
+						if(e.value == '') {
+							mui.toast('通过理由不能为空！')
+							return;
+						} else {
+							var btnArray = ['否', '是'];
+							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
+								if(choice.index == 1) {
+									_this.payOutAudit(id,inText, 1,currentType)
+								} else {}
+							})
+						}
+					} else {}
+				})
+			});
+		},
+		payOutAudit: function(id,inText, num,currentType) {
+			var _this = this;
+			$.ajax({
+				type: "GET",
+				url: "/a/biz/po/bizPoHeader/audit",
+				data: {
+					id: id,
+					currentType: currentType,
+					fromPage: 'orderHeader',
+					auditType: num,
+					description: inText
+				},
+				dataType: "json",
+				success: function(res) {
+					if(res.ret == true) {
+						mui.toast('操作成功!')
+						GHUTILS.OPENPAGE({
+							url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
+							extras: {}
+						})
+					}
+					if(res.ret == false) {
+						mui.toast(res.errmsg)
+					}
+				},
+				error: function(e) {
+					//服务器响应失败处理函数
+				}
+			});
+
+		},
 		comfirDialig: function(data) {
 			var _this = this;
 			var id = data.entity2.bizPoHeader.id;

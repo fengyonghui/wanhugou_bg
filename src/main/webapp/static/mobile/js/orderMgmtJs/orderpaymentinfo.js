@@ -213,6 +213,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
+		            	console.log (res)
 		            	var dataRow = res.data.roleSet;
 		            	/*当前用户信息*/
 						var userId = '';
@@ -289,6 +290,21 @@
 	                            }else{
 	                            	paycheckTxt='当前无审批流程';
 	                            }
+//	                            var values = item.bizStatus;
+//								$.ajax({
+//					                type: "GET",
+//					                url: "/a/sys/dict/listData",
+//					                dataType: "json",
+//					                data: {
+//					                	value:values,
+//					                	type: "biz_po_status",
+//					                	defaultValue: '未知类型'
+//				                	},
+//					                async:false,
+//					                success: function(res){
+//						                console.log(res)
+//					                }
+//					            });
 					            if(_this.OrdFlaginfo == true) {
 					            	if(item.bizStatus != 10) {
 					            		//申请付款
@@ -296,10 +312,13 @@
 										var creatPay = '';
 										if(item.bizOrderHeader != null || item.bizRequestHeader != null) {
 											if(_this.ordCreatPayFlag == true) {
+										if(item.bizOrderHeader != null || item.bizRequestHeader != null) {
+											if(_this.ordCreatPayFlag == true) {
 					                        	if(item.bizOrderHeader != null) {
 					                        		if(item.currentPaymentId == null
 					                        		&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
 					                        		&& (item.payTotal == null ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
+					                        			console.log('订单申请付款')
 					                        			creatPay = '申请付款'
 														creatPayBt = 'creatPayBtn'
 					                        		}
@@ -311,6 +330,7 @@
 													&& item.bizRequestHeader.bizStatus >= 5 
 													&& item.bizRequestHeader.bizStatus < 37 
 													&& (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
+														console.log('备货单申请付款')
 														creatPay = '申请付款'
 														creatPayBt = 'creatPayBtn'
 													}
@@ -653,7 +673,7 @@
 						url: baseURLs,
 						extras: {
 							staOrdId: staOrdIdd,
-							checkType: "auditSo"
+							str:'audit'//checkType: "auditSo"
 						}
 					})
 				}
