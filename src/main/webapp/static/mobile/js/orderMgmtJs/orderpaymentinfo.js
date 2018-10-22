@@ -785,7 +785,7 @@
 					mui.toast('子菜单不存在')
 				} else if(staordid == staordid) {
 					GHUTILS.OPENPAGE({
-						url: "../../html/inventoryMagmetHtml/inventoryAmend.html",
+						url: "../../html/orderMgmtHtml/inventoryAmend.html",
 						extras: {
 							staordid: staordid,
 							createPayStr: 'createPay',

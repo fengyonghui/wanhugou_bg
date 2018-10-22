@@ -36,7 +36,6 @@
 					$('#ordtotal').val(bizPoHeader.totalDetail)//总价
 					$('#orshouldPay').val(orshouldPay)//应付金额
 					$('#orLastDa').val(_this.formatDateTime(bizPoHeader.lastPayDate))//最后付款时间
-//					$('#delSite').val(res.data.entity.recvTotal + '%')
 					//交货地点
 					if(bizPoHeader.deliveryStatus==0 || bizPoHeader.deliveryStatus == ''){
 						$('#fromType1').attr('checked','checked');
@@ -47,7 +46,11 @@
 						$('#fromType2').attr('checked','checked');						
 					}
 					$('#orRemark').val(bizPoHeader.remark)//备注
-					$('#orTypes').val()//订单状态 getDictLabel接口
+//					$('#orTypes').val()
+					//订单状态 
+					var valueTxt = res.data.bizPoHeader.bizStatus;
+					console.log(valueTxt)
+					$('#orTypes').val(valueTxt);
 					$('#orSupplier').val(bizPoHeader.vendOffice.name)//供应商
 					if(bizPoHeader.vendOffice.bizVendInfo) {
 						$('#orSupplierNum').val(bizPoHeader.vendOffice.bizVendInfo.cardNumber)//供应商卡号

@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -118,6 +120,22 @@ public class DictController extends BaseController {
 		Dict dict = new Dict();
 		dict.setType(type);
 		return dictService.findList(dict);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "getDictLabel4Mobile")
+	public static String getDictLabel4Mobile(String value, String type, String defaultValue){
+		Map<String, Object> resultMap = Maps.newHashMap();
+		if (org.apache.commons.lang3.StringUtils.isNotBlank(type) && org.apache.commons.lang3.StringUtils.isNotBlank(value)){
+			for (Dict dict : DictUtils.getDictList(type)){
+				if (type.equals(dict.getType()) && value.equals(dict.getValue())){
+					resultMap.put("dictLabel", dict.getLabel());
+					return JsonUtil.generateData(resultMap, null);
+				}
+			}
+		}
+		resultMap.put("dictLabel", defaultValue);
+		return JsonUtil.generateData(resultMap, null);
 	}
 
 }
