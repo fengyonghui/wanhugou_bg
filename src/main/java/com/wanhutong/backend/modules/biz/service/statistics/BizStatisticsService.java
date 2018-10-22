@@ -191,6 +191,15 @@ public class BizStatisticsService {
         list.removeIf(o -> o.getName().contains("测试".intern()));
         return list;
     }
+    /**
+     * 根据type取 office
+     * @return office
+     */
+    public List<Office> getOfficeList(String... type) {
+        List<Office> list = officeDao.findListByTypeList(Lists.newArrayList(type));
+        list.removeIf(o -> o.getName().contains("测试".intern()));
+        return list;
+    }
 
     /**
      * 取某一个销售的销售业绩
@@ -205,13 +214,9 @@ public class BizStatisticsService {
         Integer skuCount = bizTotalStatisticsDao.getTotalSkuCount();
         Integer custCount = bizTotalStatisticsDao.getTotalCustCount();
         Integer centCount = bizTotalStatisticsDao.getTotalCentCount(Integer.parseInt(OfficeTypeEnum.PURCHASINGCENTER.getType()));
-        /*Integer capitalCount = bizTotalStatisticsDao.getTotalCentCount(Integer.parseInt(OfficeTypeEnum.WITHCAPITAL.getType()));
-        Integer supplyCount = bizTotalStatisticsDao.getTotalCentCount(Integer.parseInt(OfficeTypeEnum.NETWORKSUPPLY.getType()));*/
         Integer orderCount = totalStatisticsDto.getOrderCount();
         totalStatisticsDto.setCustCount(custCount);
         totalStatisticsDto.setCentCount(centCount);
-        /*totalStatisticsDto.setCapitalCount(capitalCount);
-        totalStatisticsDto.setSupplyCount(supplyCount);*/
         totalStatisticsDto.setSkuCount(skuCount);
         totalStatisticsDto.setAvgPrice(totalStatisticsDto.getReceiveMoney().divide(new BigDecimal(orderCount),2,BigDecimal.ROUND_HALF_UP));
 

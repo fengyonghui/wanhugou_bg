@@ -372,4 +372,23 @@
 		</if>
 
 	</select>
+
+	<update id="updateProdId">
+		UPDATE biz_op_shelf_sku SET
+		prod_id = #{prodId}
+		WHERE id = #{opShelfSkuId}
+	</update>
+
+	<update id="updateSkuId">
+		UPDATE biz_op_shelf_sku SET
+		sku_id = #{needSkuId}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updatePrice">
+		UPDATE biz_op_shelf_sku SET
+		org_price = #{settlementPrice},
+		sale_price = #{marketingPrice}
+		WHERE id = #{id}
+	</update>
 </mapper>

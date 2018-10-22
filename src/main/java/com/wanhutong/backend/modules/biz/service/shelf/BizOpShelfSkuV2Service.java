@@ -15,6 +15,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,5 +158,21 @@ public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuV2Dao, BizO
 
 	public List<BizOpShelfSku> findShelfSkuList(BizOpShelfSku bizOpShelfSku) {
 		return bizOpShelfSkuV2Dao.findShelfSkuList(bizOpShelfSku);
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void updateSkuId(Integer needSkuId, Integer skuId) {
+		BizOpShelfSku opShelfSku = new BizOpShelfSku();
+		opShelfSku.setSkuInfo(new BizSkuInfo(skuId));
+		List<BizOpShelfSku> opShelfSkus = findList(opShelfSku);
+		if (CollectionUtils.isNotEmpty(opShelfSkus)) {
+			for (BizOpShelfSku bizOpShelfSku : opShelfSkus) {
+				bizOpShelfSkuV2Dao.updateSkuId(needSkuId,bizOpShelfSku.getId());
+			}
+		}
+	}
+
+	public void updatePrice(Integer id, BigDecimal settlementPrice, BigDecimal marketingPrice) {
+		bizOpShelfSkuV2Dao.updatePrice(id,settlementPrice,marketingPrice);
 	}
 }
