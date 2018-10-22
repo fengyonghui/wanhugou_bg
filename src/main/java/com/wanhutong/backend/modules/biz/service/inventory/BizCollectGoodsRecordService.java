@@ -24,6 +24,7 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -209,5 +210,17 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 
 	public Integer findContByCentId(Integer centId) {
 		return dao.findContByCentId(centId);
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void updateSkuId(Integer needSkuId, Integer skuId) {
+		BizCollectGoodsRecord orderDetail = new BizCollectGoodsRecord();
+		orderDetail.setSkuInfo(new BizSkuInfo(skuId));
+		List<BizCollectGoodsRecord> orderDetails = findList(orderDetail);
+		if (CollectionUtils.isNotEmpty(orderDetails)) {
+			for (BizCollectGoodsRecord bizOrderDetail : orderDetails) {
+				dao.updateSkuId(needSkuId,bizOrderDetail.getId());
+			}
+		}
 	}
 }

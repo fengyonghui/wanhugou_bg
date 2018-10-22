@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.supcan.treelist.cols.Col;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
@@ -33,6 +34,7 @@ import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.enums.TagInfoEnum;
 import com.wanhutong.backend.modules.enums.VarietyAttrEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -59,6 +61,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -712,6 +715,33 @@ public class BizProductInfoV3Controller extends BaseController {
             listForVendor.removeIf(o -> o.getId().intValue() == id);
         }
         return String.valueOf(CollectionUtils.isNotEmpty(list) || CollectionUtils.isNotEmpty(listForVendor));
+    }
+
+    @RequestMapping(value = "mergeProduct")
+    public String mergeProduct() {
+        return "modules/biz/product/bizSpuAndSkuForm";
+    }
+
+    @RequestMapping(value = "mergeSpu")
+    public void mergeSpu(String itemNo, Integer vendId, Integer needId, Integer replaceId) {
+        bizProductInfoService.mergeSpu(itemNo,vendId,needId,replaceId);
+    }
+
+    @RequestMapping(value = "changePriceForm")
+    public String changePriceForm() {return "modules/biz/product/updatePriceForSkuAndShelfSku";}
+
+    @RequestMapping(value = "changePrice")
+    @ResponseBody
+    public String changePrice(Integer prodId, String itemNo, String size, BigDecimal settlementPrice, BigDecimal marketingPrice) {
+        bizProductInfoService.changePrice(prodId,itemNo,size,settlementPrice,marketingPrice);
+        return "ok";
+    }
+
+    @RequestMapping(value = "changeSpu")
+    @ResponseBody
+    public String changeSpu(Integer prodId) {
+        bizProductInfoService.changeSpu(prodId);
+        return "ok";
     }
 
 //    private List<AttributeValueV2> specificAttr(BizProductInfo bizProductInfo) {

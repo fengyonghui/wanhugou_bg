@@ -435,4 +435,10 @@
 		WHERE id = #{id}
 	</update>
 
+	<update id="updateSkuId">
+		UPDATE biz_request_detail SET
+		sku_id = #{needSkuId}
+		WHERE id = #{id}
+	</update>
+
 </mapper>

@@ -674,4 +674,10 @@ GROUP BY
 
 	</select>
 
+	<update id="updateSkuId">
+		UPDATE biz_order_detail SET
+		sku_id = #{needSkuId}
+		WHERE id = #{id}
+	</update>
+
 </mapper>
