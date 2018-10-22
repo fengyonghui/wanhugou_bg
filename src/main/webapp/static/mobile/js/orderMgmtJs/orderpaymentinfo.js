@@ -248,7 +248,7 @@
 //                      console.log(_this.OrdFlaginfo)
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-//                          	console.log(item)
+                            	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";
@@ -306,15 +306,23 @@
 //					            });
 					            if(_this.OrdFlaginfo == true) {
 					            	if(item.bizStatus != 10) {
+					            		
 					            		//申请付款
 										var creatPayBt = '';
 										var creatPay = '';
 										if(item.bizOrderHeader != null || item.bizRequestHeader != null) {
+											
 											if(_this.ordCreatPayFlag == true) {
+												
 					                        	if(item.bizOrderHeader != null) {
+					                        		console.log (item.currentPaymentId == null)
+					                        		console.log (item.commonProcess.purchaseOrderProcess.name)
+					                        		console.log (item.payTotal)
+					                        		console.log (item.bizOrderHeader.totalDetail)
 					                        		if(item.currentPaymentId == null
 					                        		&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
 					                        		&& (item.payTotal == null ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
+					                        			console.log ('啦啦啦')
 					                        			creatPay = '申请付款'
 														creatPayBt = 'creatPayBtn'
 					                        		}
@@ -326,6 +334,7 @@
 													&& item.bizRequestHeader.bizStatus >= 5 
 													&& item.bizRequestHeader.bizStatus < 37 
 													&& (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
+														console.log ('333')
 														creatPay = '申请付款'
 														creatPayBt = 'creatPayBtn'
 													}
@@ -333,6 +342,7 @@
 											}
 										}else {
 											if(_this.poCreatPayFlag == true) {
+												console.log ('哈哈哈')
 					//							var values = item.bizStatus;
 					//							$.ajax({
 					//				                type: "GET",
@@ -508,9 +518,9 @@
 												'<div class="" >'+orDetailBtnTxt+'</div></div>' +	
 							/*审核*/			'<div name="commBtn" class="'+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
 												'<div class="" >'+staCheckBtnTxt+'</div></div>' +													
-							/*申请付款*/		'<div name="commBtn" class="'+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
+							/*申请付款*/		'<div name="commBtn" class="'+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'" payOrderId="'+item.bizOrderHeader.id+'">' +
 												'<div class="" >'+creatPay+'</div></div>' +
-							/*开启审核*/		'<div name="commBtn" class="'+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
+							/*开启审核*/		'<div name="commBtn" class="'+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'" payOrderId="'+item.bizOrderHeader.id+'" statu="'+item.bizOrderHeader.statu+'" source="'+item.bizOrderHeader.source+'">' +
 												'<div class="" >'+stastartCheckBtnTxt+'</div></div>' +												
 //							/*修改*/			'<div name="commBtn" class="'+orAmendBtn+'" staordid="'+ item.id +'">' +
 //												'<div class="" >'+orAmendBtnTxt+'</div></div>' +
@@ -702,14 +712,29 @@
 	        $('.content_part').on('tap', '.stastartCheckBtn', function() {
 				var url = $(this).attr('url');
 				var paymentId = $(this).attr('paymentId');
+				var staOrdId = $(this).attr('payorderid');
+				var statu = $(this).attr('statu');
+				var source = $(this).attr('source');
+				console.log(paymentId)
+				console.log(staOrdId)
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(paymentId == paymentId) {
+				} else if(paymentId!=""&&staOrdId=='undefined') {
 					GHUTILS.OPENPAGE({
 						url: "../../html/inventoryMagmetHtml/inventoryAmend.html",
 						extras: {
 							paymentId: paymentId,
 							starStr: 'startAudit',
+						}
+					})
+				}else if(staOrdId!=""&&paymentId=='undefined'){
+					GHUTILS.OPENPAGE({
+						url: "../../html/orderMgmtHtml/OrdermgmtHtml/orderAmend.html",
+						extras: {
+							staOrdId: staOrdId,
+							starStr: 'startAudit',
+							statu:statu,
+							source:source
 						}
 					})
 				}
@@ -765,13 +790,22 @@
 			$('.content_part').on('tap', '.creatPayBtn', function() {
 				var url = $(this).attr('url');
 				var paymentId = $(this).attr('paymentId');
+				var staOrdId = $(this).attr('payorderid');
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(paymentId == paymentId) {
+				} else if(paymentId!=""&&staOrdId=='undefined') {
 					GHUTILS.OPENPAGE({
 						url: "../../html/inventoryMagmetHtml/inventoryAmend.html",
 						extras: {
 							paymentId: paymentId,
+							createPayStr: 'createPay',
+						}
+					})
+				}else if(staOrdId!=""&&paymentId=='undefined'){
+					GHUTILS.OPENPAGE({
+						url: "../../html/orderMgmtHtml/OrdermgmtHtml/orderAmend.html",
+						extras: {
+							staOrdId: staOrdId,
 							createPayStr: 'createPay',
 						}
 					})
@@ -1169,10 +1203,10 @@
 											'<div class="'+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
 												'<div class="" >'+staPayBtnTxt+'</div>' +
 											'</div>' +
-											'<div class="'+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
+											'<div class="'+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'" payOrderId="'+item.bizOrderHeader.id+'" statu="'+item.bizOrderHeader.statu+'" source="'+item.bizOrderHeader.source+'">' +
 												'<div class="" >'+stastartCheckBtnTxt+'</div>' +
 											'</div>' +
-											'<div class="'+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
+											'<div class="'+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'" payOrderId="'+item.bizOrderHeader.id+'">' +
 												'<div class="" >'+creatPay+'</div>' +
 											'</div>' +
 											'<div class="'+SchedulingBtn+'" staordid="'+ item.id +'">' +

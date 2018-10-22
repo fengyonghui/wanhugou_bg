@@ -33,11 +33,43 @@
 			var idd=_this.userInfo.staOrdId;//订单id
 			var statu=_this.userInfo.statu;
 			var source=_this.userInfo.source;
-			datas={
-				id:idd,
-                statu:statu,
-                source:source
-			};
+			var str=_this.userInfo.starStr;
+			var createPayStr=_this.userInfo.createPayStr;
+			console.log(idd)
+			console.log(statu)
+			console.log(source)
+			console.log(str)
+			if(_this.userInfo.starStr){
+				datas={
+					id:idd,
+	                str:str,
+	                statu:statu,
+	                source:source
+				};
+			}if(_this.userInfo.createPayStr){
+				datas={
+					id:idd,
+					str:createPayStr,
+				};
+			}else{
+				datas={
+					id:idd,
+	                statu:statu,
+	                source:source
+				};
+			}
+			var btnMeun = '';
+	        if(createPayStr == 'createPay') {
+	        	$('#changeHeader').html('申请付款');
+	        	btnMeun = '<button id="payMentBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">申请付款</button>'
+	        }else if(str == 'startAudit') {
+	        	$('#changeHeader').html('开启审核');
+	        	btnMeun = '<button id="startCheckBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">开启审核</button>'
+	        }else {
+	        	$('#changeHeader').html('备货单修改');
+	        	btnMeun = '<button id="saveDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+	        }
+	        $('.inSaveBtn').html(btnMeun);
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
