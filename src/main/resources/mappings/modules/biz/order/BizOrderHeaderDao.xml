@@ -1407,6 +1407,7 @@
 		sum( receive_total ) AS 'receiveTotal',
 		sum( total_detail + total_exp+ oh.freight ) AS 'totalMoney',
 		sum( total_exp+ oh.freight ) AS 'serviceTotal',
+-- 		sum(gm) as 'brokerage'
 		sum(gm) as 'buyPrice'
 		FROM
 		biz_order_header oh
