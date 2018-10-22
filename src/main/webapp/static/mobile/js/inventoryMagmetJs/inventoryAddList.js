@@ -20,6 +20,8 @@
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
+			this.ajaxTypeStatus();
+			
 		},
 		pageInit: function() {
 			var _this = this;
@@ -59,6 +61,21 @@
 		getData: function() {
 			var _this = this;
             _this.removeItem();
+
+		},
+		sureSelect:function(){
+			var _this = this;
+			var optionsClass = $("#headerType option").eq($("#headerType").attr("selectedIndex"));//品类名称
+			console.log(optionsClass);
+				            //备货单类型
+//	            var r2 = document.getElementsByName("headerType");
+//	            var headerType = "";
+//	            for (var i = 0; i < r2.length; i++) {
+//	                if (r2[i].checked == true) {
+//	                    headerType = r2[i].value;
+//	                }
+//	            };
+//	            console.log(headerType)
 		},
         saveDetail: function (userId) {
             var _this = this;
@@ -120,12 +137,17 @@
 	                if (r2[i].checked == true) {
 	                    localOriginType = r2[i].value;
 	                }
-	            }
+	            };
+//              _this.sureSelect();
+                var optionsClass = $("#headerType option").eq($("#headerType").attr("selectedIndex"));//品类名称
+			     console.log(optionsClass);
+                console.log(optionsClass.val())
                 $.ajax({
                     type: "post",
                     url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
                     dataType: 'json',
                     data: {
+                    	'headerType':optionsClass.val(),
                     	"fromOffice.id": _this.fromOfficeId, //采购中心 id
                     	'fromOffice.name': _this.fromOfficeName,//采购中心名称
                     	'fromOffice.type': _this.fromOfficeType,//采购中心机构类型1：公司；2：部门；3：小组
@@ -363,7 +385,7 @@
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
                 _this.bizOfficeId = $(this).attr("id");
                 _this.bizOfficeName = $(this).attr("name");
-                _this.bizOfficeType = $(this).attr("type");
+                _this.bizOfficeType = $(this).attr("type");                
 				$(newinput).val($(this).text());
 				$(input_div).hide();
 				$(hideSpanAdd).hide();
@@ -495,6 +517,26 @@
 					});
 					$('#inputDivAdd').html(optHtml+htmlStatusAdd)
 					_this.getData()
+				}
+			});
+		},
+		ajaxTypeStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlStatusAdd = ''
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/dict/listData',
+				data: {type:'req_header_type'},
+				dataType: 'json',
+				success: function(res) {
+					console.log(res)
+					$.each(res, function(i, item) {
+						htmlStatusAdd += '<option class="soption" name="headerType" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort + '" value="' + item.value + '">' + item.label + '</option>'
+					});
+					$('#headerType').html(optHtml+htmlStatusAdd)
+					_this.getData();
+					
 				}
 			});
 		}

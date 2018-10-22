@@ -7,23 +7,28 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
-import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,8 +48,6 @@ public class BizSendGoodsRecordController extends BaseController {
 
 	@Autowired
 	private BizSendGoodsRecordService bizSendGoodsRecordService;
-    @Autowired
-    private BizInventorySkuService bizInventorySkuService;
     @Autowired
     private BizInventoryInfoService bizInventoryInfoService;
 
@@ -112,6 +115,18 @@ public class BizSendGoodsRecordController extends BaseController {
 		bizSendGoodsRecordService.delete(bizSendGoodsRecord);
 		addMessage(redirectAttributes, "恢复供货记录成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizSendGoodsRecord/?repage";
+	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:edit")
+	@RequestMapping("outTreasury")
+	public String outTreasury(HttpServletRequest request, @RequestBody String treasuryList) {
+		List<BizOutTreasuryEntity> outTreasuryList = JsonUtil.parseArray(treasuryList, new TypeReference<List<BizOutTreasuryEntity>>() {
+		});
+		if (CollectionUtils.isEmpty(outTreasuryList)) {
+			return "error";
+		}
+		return bizSendGoodsRecordService.outTreasury(outTreasuryList);
 	}
 
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:view")

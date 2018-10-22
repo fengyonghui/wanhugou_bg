@@ -3,14 +3,8 @@
  */
 package com.wanhutong.backend.modules.biz.entity.order;
 
-import com.wanhutong.backend.modules.sys.entity.Office;
-import org.hibernate.validator.constraints.Length;
-import com.wanhutong.backend.modules.sys.entity.User;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.sys.entity.Office;
 
 /**
  * 订单状态修改日志Entity
@@ -65,6 +59,7 @@ public class BizOrderStatus extends DataEntity<BizOrderStatus> {
 	public enum OrderType{
 		ORDER(0, "订单"),
 		REQUEST(1, "备货单"),
+		INVENTORY(3,"盘点"),
 		;
 
 

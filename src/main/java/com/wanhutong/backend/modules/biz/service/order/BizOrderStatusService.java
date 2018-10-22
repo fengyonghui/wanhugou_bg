@@ -104,4 +104,8 @@ public class BizOrderStatusService extends CrudService<BizOrderStatusDao, BizOrd
 		}
 	}
 
+	public Integer findCurrentStatus(Integer orderId, Integer orderType) {
+		return bizOrderStatusDao.findCurrentStatus(orderId, orderType);
+	}
+
 }

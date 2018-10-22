@@ -4,6 +4,7 @@
 package com.wanhutong.backend.common.utils;
 
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -169,7 +170,46 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 		long afterTime = after.getTime();
 		return (afterTime - beforeTime) / (1000 * 60 * 60 * 24);
 	}
-	
+
+	/**
+	 * 获取凌晨时间
+	 * @return
+	 */
+	public static Date getTodayStartTime(){
+		Calendar todayEnd = Calendar.getInstance();
+		todayEnd.set(Calendar.HOUR_OF_DAY, 0);
+		todayEnd.set(Calendar.MINUTE, 0);
+		todayEnd.set(Calendar.SECOND, 0);
+		todayEnd.set(Calendar.MILLISECOND, 0);
+		return todayEnd.getTime();
+	}
+
+	/**
+	 * //获取昨天半夜23:59:59
+	 * @return
+	 */
+	public static Date getYesterdayEnd(){
+		Calendar todayEnd = Calendar.getInstance();
+		todayEnd.set(Calendar.MINUTE, 59);
+		todayEnd.set(Calendar.SECOND, 59);
+		todayEnd.set(Calendar.MILLISECOND, 0);
+		todayEnd.add(Calendar.DATE, -1);
+		todayEnd.set(Calendar.HOUR_OF_DAY, 23);
+		return todayEnd.getTime();
+	}
+
+	/**
+	 * 获取某时刻过去的24小时
+	 * @param dateEnd
+	 * @return
+	 */
+	public static Date getOneDayBefore(Date dateEnd){
+		Calendar date = Calendar.getInstance();
+		date.setTime(dateEnd);
+		date.set(Calendar.DATE, date.get(Calendar.DATE) - 1);
+		return date.getTime();
+	}
+
 	/**
 	 * @param args
 	 * @throws ParseException

@@ -46,14 +46,25 @@
                         alert("该订单已付款，请与系统管理员联系")
                         return;
                     }
+                    var prodInfo=$("#prodInfo").find("tr");
+                    if(prodInfo.length<0){
+                        alert("请选择商品") ;
+                        return;
+                    }
 
+                    var req=0;
                     $("input[name='reqQtys']").each(function () {
                         if($(this).val()==''){
-                            $(this).val(0)
-						}
+                            $(this).val(0);
+                        }
+                        req+=$(this).val();
                     });
-					loading('正在提交，请稍等...');
-
+                    if(req==0){
+                        alert("请输入数量");
+                        return;
+                    }
+                    $("#btnSubmit").attr("disabled","disabled ");
+                    loading('正在提交，请稍等...');
 					form.submit();
 				},
 				errorContainer: "#messageBox",
@@ -1021,6 +1032,16 @@
 				</div>
 			</div>
 		</c:if>
+		<div class="control-group">
+			<label class="control-label">备货单类型：</label>
+			<div class="controls">
+				<form:select path="headerType" cssClass="input-xlarge">
+					<form:option value="0" label="请选择"/>
+					<form:options items="${fns:getDictList('req_header_type')}" itemValue="value" itemLabel="label"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
 		<div class="control-group">
 			<label class="control-label">备货方：</label>
 			<div class="controls">

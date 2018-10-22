@@ -338,12 +338,7 @@
 			</font></td>
 			<c:if test="${source ne 'vendor'}">
 				<td>
-					<%--<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
-						${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}
-					<%--</c:if>--%>
-					<%--<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
-						<%--<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.totalBuyPrice}" pattern="0.00"/>--%>
-					<%--</c:if>--%>
+						<fmt:formatNumber type="number" value="${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}" pattern="0.00"/>
 				</td>
 			</c:if>
 			<td>
@@ -464,13 +459,13 @@
 							</c:if>
 						</c:if>
 					</shiro:hasPermission>
-					<shiro:hasPermission name="biz:order:bizOrderHeader:supplying">
-						<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus <= OrderHeaderBizStatusEnum.STOCKING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">
-							<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">
-								<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>
-							</c:if>
-						</c:if>
-					</shiro:hasPermission>
+					<%--<shiro:hasPermission name="biz:order:bizOrderHeader:supplying">--%>
+						<%--<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus <= OrderHeaderBizStatusEnum.STOCKING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">--%>
+							<%--<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">--%>
+								<%--<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>--%>
+							<%--</c:if>--%>
+						<%--</c:if>--%>
+					<%--</shiro:hasPermission>--%>
 				</c:if >
 					<%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
 					<%--<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>

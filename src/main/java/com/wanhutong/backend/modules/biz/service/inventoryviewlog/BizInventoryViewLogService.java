@@ -5,6 +5,8 @@ package com.wanhutong.backend.modules.biz.service.inventoryviewlog;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,8 @@ public class BizInventoryViewLogService extends CrudService<BizInventoryViewLogD
 	}
 	
 	public Page<BizInventoryViewLog> findPage(Page<BizInventoryViewLog> page, BizInventoryViewLog bizInventoryViewLog) {
+		User user = UserUtils.getUser();
+		bizInventoryViewLog.getSqlMap().put("viewLog",dataScopeFilter(user,"cent","u"));
 		return super.findPage(page, bizInventoryViewLog);
 	}
 	
@@ -43,5 +47,8 @@ public class BizInventoryViewLogService extends CrudService<BizInventoryViewLogD
 	public void delete(BizInventoryViewLog bizInventoryViewLog) {
 		super.delete(bizInventoryViewLog);
 	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void saveCurrentViewLog(BizInventoryViewLog inventoryViewLog) {dao.saveCurrentViewLog(inventoryViewLog);}
 	
 }

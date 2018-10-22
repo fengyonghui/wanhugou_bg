@@ -46,13 +46,15 @@
                     success: function(res){
                         var htmlList = '';
                         $.each(res.data, function(i, item) {
-                            htmlList += '<li class="mui-table-view-cell mui-col-xs-4  text-align-center app_pl0 app_border_rb app_prot0"  idData="'+item.id +'" url="'+item.url +'">' +
+                        	if(item.id == 110) {
+                        		htmlList = '<li class="mui-table-view-cell mui-col-xs-4  text-align-center app_pl0 app_border_rb app_prot0"  idData="'+item.id +'" url="'+item.url +'">' +
 //                              '<div>' +
 //                              '<div class="app_icon_myt0 app_color_myt0 app_pt10 app_f30"></div>' +
                                 '<div class="app_mt20 app_mb30">' + item.name + '</div>' +
 //                              '<div class="app_cgray app_mb20"><span>&nbsp;</span></div>' +
 //                              '</div>' +
                                 '</li>'
+                        	}
                         });
                         $('#htmlMenu').html(htmlList)
                     }

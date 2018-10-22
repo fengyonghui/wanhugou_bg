@@ -333,6 +333,12 @@
 		WHERE id = #{id}
 	</update>
 
+	<update id="updateStockQty">
+		UPDATE biz_inventory_sku SET
+		stock_qty = #{stockQty}
+		WHERE id = #{id}
+	</update>
+
 	<select id="findStockTotal" resultType="Integer">
 		SELECT
 		SUM(bis.stock_qty)
