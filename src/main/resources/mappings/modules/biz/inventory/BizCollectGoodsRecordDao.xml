@@ -467,4 +467,10 @@
 		AND sku.id = #{skuId}
 	</select>
 
+	<update id="updateSkuId">
+		UPDATE biz_collect_goods_record SET
+		sku_id = #{needSkuId}
+		WHERE id = #{id}
+	</update>
+
 </mapper>

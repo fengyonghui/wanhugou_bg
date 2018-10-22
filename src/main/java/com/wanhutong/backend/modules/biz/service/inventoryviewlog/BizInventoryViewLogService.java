@@ -5,8 +5,10 @@ package com.wanhutong.backend.modules.biz.service.inventoryviewlog;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,5 +52,17 @@ public class BizInventoryViewLogService extends CrudService<BizInventoryViewLogD
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void saveCurrentViewLog(BizInventoryViewLog inventoryViewLog) {dao.saveCurrentViewLog(inventoryViewLog);}
-	
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void updateSkuId(Integer needSkuId, Integer skuId) {
+		BizInventoryViewLog orderDetail = new BizInventoryViewLog();
+		orderDetail.setSkuInfo(new BizSkuInfo(skuId));
+		List<BizInventoryViewLog> orderDetails = findList(orderDetail);
+		if (CollectionUtils.isNotEmpty(orderDetails)) {
+			for (BizInventoryViewLog bizOrderDetail : orderDetails) {
+				dao.updateSkuId(needSkuId,bizOrderDetail.getId());
+			}
+		}
+	}
+
 }
