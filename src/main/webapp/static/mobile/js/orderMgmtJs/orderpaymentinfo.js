@@ -247,7 +247,7 @@
 //                      console.log(_this.OrdFlaginfo)
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-                            	console.log(item)
+//                          	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";
@@ -293,16 +293,15 @@
 					            		//申请付款
 										var creatPayBt = '';
 										var creatPay = '';
-										if(item.bizOrderHeader != null || item.bizRequestHeader != null) {
+										if(item.bizOrderHeader != null || item.bizOrderHeader != '' 
+										|| item.bizRequestHeader != null || item.bizRequestHeader != '') {
 											if(_this.ordCreatPayFlag == true) {
 												if(item.bizOrderHeader != null || item.bizRequestHeader != null){
-													console.log(item.bizOrderHeader)
-													console.log(item.bizRequestHeader)
 													if(_this.ordCreatPayFlag == true) {
-							                        	if(item.bizOrderHeader != null) {
-							                        		if(item.currentPaymentId == null
+							                        	if(item.bizOrderHeader != null || item.bizOrderHeader != '') {
+							                        		if((item.currentPaymentId == null || item.currentPaymentId == '') 
 							                        		&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
-							                        		&& (item.payTotal == null ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
+							                        		&& ((item.payTotal == null || item.payTotal == '') ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
 							                        			console.log('订单申请付款')
 							                        			creatPay = '申请付款'
 																creatPayBt = 'creatPayBtn'
@@ -310,11 +309,11 @@
 							                        	}
 							                        }
 													if(_this.creatPayFlag == true) {
-														if(item.bizRequestHeader != null) {
+														if(item.bizRequestHeader != null || item.bizRequestHeader != '') {
 															if((item.currentPaymentId == null || item.currentPaymentId == '') 
 															&& item.bizRequestHeader.bizStatus >= 5 
 															&& item.bizRequestHeader.bizStatus < 37 
-															&& (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
+															&& ((item.bizRequestHeader.bizPoHeader.payTotal == null || item.bizRequestHeader.bizPoHeader.payTotal == '') ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
 																console.log('备货单申请付款')
 																creatPay = '申请付款'
 																creatPayBt = 'creatPayBtn'
