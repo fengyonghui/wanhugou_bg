@@ -550,4 +550,20 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			}
 		}
 	}
+
+    @Transactional(readOnly = false, noRollbackFor = Exception.class)
+    public void updateSkuId(Integer needSkuId, Integer skuId) {
+		try {
+			BizInventorySku orderDetail = new BizInventorySku();
+			orderDetail.setSkuInfo(new BizSkuInfo(skuId));
+			List<BizInventorySku> orderDetails = findList(orderDetail);
+			if (CollectionUtils.isNotEmpty(orderDetails)) {
+                for (BizInventorySku bizOrderDetail : orderDetails) {
+                    bizInventorySkuDao.updateSkuId(needSkuId,bizOrderDetail.getId());
+                }
+            }
+		} catch (Exception e) {
+			LOGGER.error("库存有重复，商品ID：【{}】,修改后的商品ID【{}】",skuId,needSkuId);
+		}
+	}
 }
