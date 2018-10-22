@@ -85,7 +85,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				bizSendGoodsRecord.setDataStatus("filter");
 				if(user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType()) ||
                    user.getCompany().getType().equals(OfficeTypeEnum.WITHCAPITAL.getType()) ||
-                   user.getCompany().getType().equals(OfficeTypeEnum.NETWORKSUPPLY.getType())){
+                   user.getCompany().getType().equals(OfficeTypeEnum.NETWORKSUPPLY.getType()) ||
+                   user.getCompany().getType().equals(OfficeTypeEnum.NETWORK.getType())){
 					bizSendGoodsRecord.getSqlMap().put("sendGoodsRecord", BaseService.dataScopeFilter(user, "cent", "su"));
 				}
 
