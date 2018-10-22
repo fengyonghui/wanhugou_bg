@@ -86,12 +86,33 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/order/bizCommission/">佣金付款表列表</a></li>
-		<%--<shiro:hasPermission name="biz:order:bizCommission:edit"><li><a href="${ctx}/biz/order/bizCommission/form">佣金付款表添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizCommission" action="${ctx}/biz/order/bizCommission/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+
 		<ul class="ul-form">
+			<li><label>收款人</label>
+				<form:input path="payee" htmlEscape="false" maxlength="25" class="input-medium"/>
+			</li>
+			<%--<li><span style="margin-left: 10px"><label>订单编号</label></span>--%>
+				<%--<form:input path="orderIds"  htmlEscape="false" maxlength="25" class="input-medium"/>--%>
+			<%--</li>--%>
+
+			<li><label>业务状态：</label>
+				<form:select path="bizStatus" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('biz_commission_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+			</li>
+
+			<%--<li><label>审核状态：</label>--%>
+				<%--<form:select path="commonProcess.type" class="input-medium">--%>
+					<%--<form:option value="" label="请选择"/>--%>
+					<%--<form:options items="${processList}" itemLabel="name" itemValue="code" htmlEscape="false"/>--%>
+				<%--</form:select>--%>
+			<%--</li>--%>
+
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -103,6 +124,7 @@
 				<th>id</th>
 				<th>付款金额</th>
 				<th>实际付款金额</th>
+				<th>收款人</th>
 				<th>最后付款时间</th>
 				<th>实际付款时间</th>
 				<th>当前状态</th>
@@ -124,6 +146,9 @@
 				</td>
 				<td>
 						${bizCommission.payTotal}
+				</td>
+				<td>
+						${bizCommission.customerInfo.payee}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizCommission.deadline}" pattern="yyyy-MM-dd HH:mm:ss"/>

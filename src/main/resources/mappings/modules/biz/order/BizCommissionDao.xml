@@ -47,11 +47,22 @@
 		process.processor AS "commonProcess.processor",
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
-		process.create_time AS "commonProcess.createTime"
+		process.create_time AS "commonProcess.createTime",
+		so.id AS "customer.id",
+		so.name AS "customer.name",
+		bci.id AS "customerInfo.id",
+		bci.office_id AS "customerInfo.officeId",
+		bci.bank_name AS "customerInfo.bankName",
+		bci.card_number AS "customerInfo.cardNumber",
+		bci.payee AS "customerInfo.payee",
+		bci.remark AS "customerInfo.remark",
+		bci.apply_for_level AS "customerInfo.applyForLevel"
 	</sql>
 	
 	<sql id="bizCommissionJoins">
 		LEFT JOIN common_process process ON process.object_id = a.id and process.object_name = 'biz_commission' and process.current = 1
+		LEFT JOIN sys_office so ON so.id = a.seller_id
+		LEFT JOIN biz_customer_info bci ON bci.office_id = so.id
 	</sql>
 
 	<select id="getImgList" parameterType="int" resultType="CommonImg">
@@ -90,12 +101,15 @@
 		<include refid="bizCommissionJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<!--<if test="payee != null and payee != ''" >-->
-				<!--AND bvi.payee like-->
-				<!--<if test="dbName == 'oracle'">'%'||#{payee}||'%'</if>-->
-				<!--<if test="dbName == 'mssql'">'%'+#{payee}+'%'</if>-->
-				<!--<if test="dbName == 'mysql'">concat('%',#{payee},'%')</if>-->
-			<!--</if>-->
+			<if test="payee != null and payee != ''" >
+				AND bci.payee like
+				<if test="dbName == 'oracle'">'%'||#{payee}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{payee}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{payee},'%')</if>
+			</if>
+			<if test="bizStatus != null" >
+				AND a.biz_status = #{bizStatus}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

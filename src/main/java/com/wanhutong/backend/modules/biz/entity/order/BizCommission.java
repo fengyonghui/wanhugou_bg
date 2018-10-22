@@ -13,6 +13,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.sys.entity.Office;
 
 /**
  * 佣金付款表Entity
@@ -60,6 +61,10 @@ public class BizCommission extends DataEntity<BizCommission> {
 	 * 根据代销商姓名搜索
 	 */
 	private String payee;
+
+	private Office customer;
+
+	private BizCustomerInfo customerInfo;
 
 	public BigDecimal getTotalCommission() {
 		return totalCommission;
@@ -192,5 +197,21 @@ public class BizCommission extends DataEntity<BizCommission> {
 
 	public void setTotalDetail(BigDecimal totalDetail) {
 		this.totalDetail = totalDetail;
+	}
+
+	public Office getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Office customer) {
+		this.customer = customer;
+	}
+
+	public BizCustomerInfo getCustomerInfo() {
+		return customerInfo;
+	}
+
+	public void setCustomerInfo(BizCustomerInfo customerInfo) {
+		this.customerInfo = customerInfo;
 	}
 }
