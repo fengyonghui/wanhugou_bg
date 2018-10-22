@@ -27,7 +27,7 @@
 			</div>
 			<div class="mui-input-row">
 				<label>最后时间：</label>
-				<input type="date" class="mui-input-clear" id="orLastDa">
+				<input type="date" class="" id="orLastDa">
 			</div>
 			<div class="mui-input-row" id="orderTypebox">
 				<label>交货地点：</label>
@@ -51,7 +51,7 @@
 			</div>
 			<div class="mui-input-row remark">
 				<label>备注：</label>
-				<textarea id="orRemark" name="" rows="" cols="" disabled></textarea>
+				<textarea id="orRemark" name="" rows="" cols=""></textarea>
 			</div>
 			<div class="mui-input-row">
 				<label>订单状态：</label>
@@ -81,6 +81,15 @@
 				<label>身份证：</label>
 				<div id="orSuppliercardID"></div>	
 			</div>
+			<div class="mui-input-row">
+				<label>申请金额：</label>
+				<input type="text" class="mui-input-clear" id="orapplyNum">
+				<font>*</font>
+			</div>
+			<div class="mui-input-row">
+				<label>本次申请付款：</label>
+				<input type="text" class="mui-input-clear" id="orNowDate" disabled>
+			</div>
 			<!--审批流程块 有的话显示-->
 			<div class="mui-input-row">
 				<div class="labelLf">审批流程：</div>
@@ -93,6 +102,10 @@
 				<ul id="orCheckCommodity" class="mui-table-view app_pl10"></ul>				
 			</div>
 		</div>
+		<div class="inSaveBtn">
+			<button id="orSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>
+		</div>
+		<input type="hidden" name="deliveryStatus" id="deliveryStatus" value="" />
 		<div class="clear"></div>
 
 		<script src="../../js/component/mui.min.js"></script>

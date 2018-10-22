@@ -36,7 +36,6 @@
                 async:false,
                 success: function(res){
                     _this.DOPOFlag = res.data;
-                    console.log(_this.DOPOFlag)
                 }
             });
         },
@@ -49,9 +48,7 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-//              	console.log(res.data)
                     _this.POFlag = res.data;
-                    console.log(_this.POFlag)
                 }
             });
         },
@@ -68,9 +65,7 @@
                 },
                 dataType: "json",
                 success: function(res){
-                	console.log(res)
 					/*判断是否是品类主管*/
-					console.log(res.data.createPo)
 					$('#checkBtns').attr('poid',res.data.bizOrderHeader.bizPoHeader.id);
 					$('#rejectBtns').attr('poids',res.data.bizOrderHeader.bizPoHeader.id);
 					$('#createPo').val(res.data.createPo);
@@ -118,7 +113,6 @@
 					}
 //					var RemarkHtml="";
 //					$.each(res.data.commentList, function(q, w) {
-//						console.log(w)						
 //						RemarkHtml +='<div class="">'+
 //						    w.comments
 //                          +
@@ -146,7 +140,6 @@
 					//订单id
 					$('#ordId').val(_this.userInfo.staOrdId);					
 					var item = res.data.bizOrderHeader;
-//					console.log(item)
 					//交货时间
 					$('#appointedTime').val(item.bizLocation.appointedTime);
 					//标志位
@@ -313,7 +306,6 @@
 			if(statusLen > 0) {
 				var pHtmlList = '';
 				$.each(data.statusList, function(i, item) {
-//					console.log(item)
 					var step = i + 1;
 					pHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
@@ -423,13 +415,10 @@
 		},
 		commodityHtml: function(data) {
 			var _this = this;
-			console.log(data)
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
-			console.log(orderDetailLen)
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-//					console.log(data)
 					var opShelfInfo = '';
 					if(item.shelfInfo.opShelfInfo) {
 						opShelfInfo = item.shelfInfo.opShelfInfo.name
@@ -545,11 +534,8 @@
 				e.detail.gesture.preventDefault(); 
 				var btnArray = ['取消', '确定'];
 				mui.prompt('请输入你要添加的备注', '系统提示！', '系统提示！',btnArray, function(e) {
-					console.log(e)
 					if(e.index == 1) {
 						var inText = e.value;
-                        console.log(inText)
-                        console.log($('#ordId').val())
                         if (inText == null) {
 			                return false;
 			            }
@@ -599,7 +585,7 @@
 				})
 			});
 			document.getElementById("checkBtns").addEventListener('tap', function(e) {
-				e.detail.gesture.preventDefault(); 
+				e.detail.gesture.preventDefault();
 //				var id= $(this).attr('soId');
 //				var currentType= $('#currentType').val();
 				var id= $(this).attr('poid');
@@ -698,8 +684,6 @@
 					}
 				}
 			}
-			console.log(ordType)
-			console.log(_this.userInfo.staOrdId)
 			var createPo = data.createPo;
 			document.getElementById("rejectBtns").addEventListener('tap', function() {
 				var btnArray = ['取消', '确定'];
@@ -756,7 +740,6 @@
 										_this.afterAjaxData(data)
 									}
 									if(_this.checkResult == false) {
-										console.log(ordType)
 										if(ordType == 'JO') {
 											_this.auditJo(inText,1,createPo,data)
 										}
@@ -792,7 +775,6 @@
 		},
 		auditJo:function(inText, num, createPo, vn) {
 			var _this = this;
-//			console.log(vn)
 			var lastDateTxt = '';
 			if(createPo == 'yes' && num == 1) {
 				lastDateTxt = $('#lastDate').val() + ' 00:00:00'
@@ -817,7 +799,6 @@
 				},
 				dataType: "json",
 				success: function(res) {
-//					console.log(res)
 					_this.checkResult = res.ret
                     if(_this.checkResult == true || _this.checkResult == 'true') {
 						if(num == 2) {
@@ -835,11 +816,8 @@
 		                        if(resultDataArr[0] == "采购单生成") {
 		                            _this.poId = resultDataArr[1];
 		                            var schedulingType = $("input[name='schedulType']:checked").val();
-		                            console.log(_this.poId)
-		                            console.log(schedulingType)
 		                            if (schedulingType == 0) {
 //		                            	var purchNums = $('#purchNum').val();
-//		                            	console.log(purchNums)
 //		                            	if(purchNums != undefined) {
 		                            		_this.saveComplete("0", _this.poId);
 //		                            	}
@@ -889,7 +867,6 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
 					_this.checkResult = res.ret
                     if(_this.checkResult == true || _this.checkResult == 'true') {
 						if(num == 2) {
@@ -909,7 +886,6 @@
 		                            var schedulingType = $("input[name='schedulType']:checked").val();
 		                            if (schedulingType == 0) {
 //		                            	var purchNums = $('#purchNum').val();
-//		                            	console.log(purchNums)
 //		                            	if(purchNums != undefined) {
 		                            		_this.saveComplete("0", _this.poId);
 //		                            	}
@@ -954,7 +930,6 @@
             	},
                 type: 'get',
                 success: function (result) {
-                	console.log(result)
                     if(result.ret == true || result.ret == 'true') {
                         mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
@@ -1026,12 +1001,10 @@
 		},
 		//排产
 		schedulGetData: function(chData) {
-			console.log(chData)
 			var _this = this;
         	var htmlPurch = '';
         	var totalOrdQtyNumNums = 0;
         	$.each(chData.bizOrderHeader.orderDetailList, function(i,item) {
-        		console.log(item)
 				var primaryMobile = '';
 				if(item.primary.mobile) {
 					primaryMobile = item.primary.mobile
@@ -1370,7 +1343,6 @@
 		},
 		batchSave: function(schedulingType,poId,vndm) {
 			var _this = this;
-			console.log(vndm)
 			var skuInfoIdListList = vndm.skuInfoIdListListJson;
             var params = new Array();
             var totalSchedulingNum = 0;

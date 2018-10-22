@@ -645,6 +645,7 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeaderMap.put("process", bizPoHeader.getCommonProcess());
         bizPoHeaderMap.put("commonProcessList", bizPoHeader.getCommonProcessList());
         bizPoHeaderMap.put("poDetailList", bizPoHeader.getPoDetailList());
+        bizPoHeaderMap.put("bizPoPaymentOrder", bizPoHeader.getBizPoPaymentOrder());
 
 
         Map<String, Object> bizOrderHeaderMap = Maps.newHashMap();

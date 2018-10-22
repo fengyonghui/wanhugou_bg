@@ -29,6 +29,7 @@
                 },
                 dataType: "json",
                 success: function(res){
+                	console.log(res)
 					/*业务状态*/
 					var bizPoHeader = res.data.bizPoHeader;
 					console.log(bizPoHeader)
@@ -41,10 +42,12 @@
 					if(bizPoHeader.deliveryStatus==0 || bizPoHeader.deliveryStatus == ''){
 						$('#fromType1').attr('checked','checked');
 						$('#fromType2').removeAttr('checked');
+						$('#deliveryStatus').val('0');
 					}
 					if(bizPoHeader.deliveryStatus==1){
 						$('#fromType1').removeAttr('checked');
-						$('#fromType2').attr('checked','checked');						
+						$('#fromType2').attr('checked','checked');
+						$('#deliveryStatus').val('1');
 					}
 					$('#orRemark').val(bizPoHeader.remark)//备注
 //					$('#orTypes').val()
@@ -60,10 +63,30 @@
 						$('#orSuppliercontract').val(bizPoHeader.vendOffice.bizVendInfo.compactImgList)//供应商合同
 						$('#orSuppliercardID').val(bizPoHeader.vendOffice.bizVendInfo.identityCardImgList)//供应商身份证
 					}
+					var orapplyNum = bizPoHeader.bizPoPaymentOrder.id != null ?
+                    bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal)
+                    $('#orapplyNum').val(orapplyNum.toFixed(2));//申请金额
+                    $('#orNowDate').val(_this.formatDateTime(bizPoHeader.bizPoPaymentOrder.deadline));//本次申请付款时间
+                    
 					_this.commodityHtml(res.data)
 					_this.statusListHtml(res.data)
+					_this.saveDetail(res.data)
                 }
             });
+            _this.btnshow();
+		},
+		btnshow: function(data) {
+			var _this = this;
+			$('input[type=radio]').on('change', function() {
+				if(this.checked && this.value == 0) {
+					$('#buyCenterId').show();
+					$('#deliveryStatus').val(this.value);
+				}
+				if(this.checked && this.value == 1) {
+					$('#buyCenterId').hide();
+					$('#deliveryStatus').val(this.value);
+				}
+			})
 		},
 		hrefHtml: function(newinput, input_div,hideSpanAmend) {
 			var _this = this;
@@ -231,6 +254,65 @@
 				console.log(data.bizPoHeader.poDetailList==null)
 			}
 		},
+		//保存按钮操作
+        saveDetail: function (res) {
+            var _this = this;
+            
+            //点击保存按钮操作 保存按钮控制修改商品申报数量和备货商品的添加
+            $('#orSaveBtn').on('tap',function(){
+            	console.log(res)
+            	var id = res.bizPoHeader.id;
+            	var bizPoPaymentOrderId = res.bizPoHeader.bizPoPaymentOrder.id; 
+            	var vendOfficeId = res.bizPoHeader.vendOffice.id;
+            	var lastPayDate = $('#orLastDa').val() + ' 00:00:00';
+            	var deliveryStatus = $('#deliveryStatus').val();
+            	var deliveryOfficeId = res.bizPoHeader.deliveryOffice.id;
+            	var deliveryOfficeName = res.bizPoHeader.deliveryOffice.name;
+            	var remarks = $('#orRemark').val();
+            	var planPay = $('#orapplyNum').val();
+            	var payDeadline = $('#orNowDate').val();
+//          	console.log(id)
+//          	console.log(bizPoPaymentOrderId)
+//          	console.log(vendOfficeId)
+//          	console.log(lastPayDate)
+//          	console.log(deliveryStatus)
+//          	console.log(deliveryOfficeId)
+//          	console.log(deliveryOfficeName)
+//          	console.log(remarks)
+//          	console.log(planPay)
+//          	console.log(payDeadline)
+                $.ajax({
+                    type: "post", 
+                    url: "/a/biz/po/bizPoHeader/savePoHeader4Mobile",
+                    data: {
+						id: id,
+						'bizPoPaymentOrder.id': bizPoPaymentOrderId,
+						'vendOffice.id': vendOfficeId,
+						lastPayDate: lastPayDate,
+						deliveryStatus: deliveryStatus,
+						'deliveryOffice.id': deliveryOfficeId,
+						'deliveryOffice.name': deliveryOfficeName,
+						remark: remarks,
+						planPay: planPay,
+						payDeadline: payDeadline
+                    },
+                    dataType: 'json',
+                    success: function (resule) {
+                    	console.log(resule)
+                        if (resule.data.right == "操作成功!") {
+                            mui.toast("操作成功！");
+//                          window.setTimeout(function(){
+                            	GHUTILS.OPENPAGE({
+	                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+	                                extras: {
+	                                }
+	                            })
+//                          },500)                            
+                        }
+                    }
+                })
+           })
+        },
 		//时间格式转化
         newData:function(da){
         	var _this = this;
