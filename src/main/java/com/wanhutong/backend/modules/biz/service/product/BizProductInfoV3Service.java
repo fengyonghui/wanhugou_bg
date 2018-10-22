@@ -763,9 +763,6 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                         String middle = after.substring(0, after.indexOf("/"));
                         String end = after.substring(after.indexOf("/"),after.length());
                         StringBuilder sb = new StringBuilder();
-                         if (!itemNo.contains("打包") && !itemNo.contains("装车")) {
-                             itemNo = sb.append(start).append(middle).append("打包").append(end).toString();
-                         }
                          if (start.contains("打包") && !middle.contains("打包")) {
                              itemNo = sb.append(start).append(middle).append("打包").append(end).toString();
                          }
@@ -812,7 +809,6 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                     if (property.equals(needProperty)) {
                         skuList.add(bizSkuInfo);
                         changeSku(needSku.getId(),bizSkuInfo.getId());
-                        break;
                     }
                 }
                 //不同商品
@@ -859,6 +855,10 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
         }
     }
 
+    /**
+     *删除以图为准，套二，套三，没有装车和打包的商品，并记录
+     * @param needId
+     */
     private void deleteSomeSku(Integer needId) {
         BizSkuInfo bizSkuInfo = new BizSkuInfo();
         bizSkuInfo.setProductInfo(new BizProductInfo(needId));
@@ -867,6 +867,10 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
             for (BizSkuInfo skuInfo : skuInfos) {
                 String itemNo = skuInfo.getItemNo();
                 if (itemNo.contains("以图为准") || itemNo.contains("套二") || itemNo.contains("套三")) {
+                    bizSkuInfoV3Service.delete(skuInfo);
+                    LOGGER.info("商品ID为【{}】,货号为【{}】的商品删除成功",skuInfo.getId(),itemNo);
+                }
+                if (!itemNo.contains("打包") && !itemNo.contains("装车")) {
                     bizSkuInfoV3Service.delete(skuInfo);
                     LOGGER.info("商品ID为【{}】,货号为【{}】的商品删除成功",skuInfo.getId(),itemNo);
                 }
