@@ -276,7 +276,6 @@
             	var deliveryOfficeId = '';
             	var deliveryOfficeName = '';
             	if($('#inOrordNum').val() == '') {
-            		alert(999)
             		_this.fromOfficeId = '';
             	}
             	if(deliveryStatus == 0) {
@@ -294,17 +293,16 @@
             	var remarks = $('#orRemark').val();
             	var planPay = $('#orapplyNum').val();
             	var payDeadline = $('#orNowDate').val();
-            	console.log(id)
-            	console.log(bizPoPaymentOrderId)
-            	console.log(vendOfficeId)
-            	console.log(lastPayDate)
-            	console.log(deliveryStatus)
-            	console.log(deliveryOfficeId)
-            	console.log(deliveryOfficeName)
-            	console.log(remarks)
-            	console.log(planPay)
-            	console.log(payDeadline)
-return;
+//          	console.log(id)
+//          	console.log(bizPoPaymentOrderId)
+//          	console.log(vendOfficeId)
+//          	console.log(lastPayDate)
+//          	console.log(deliveryStatus)
+//          	console.log(deliveryOfficeId)
+//          	console.log(deliveryOfficeName)
+//          	console.log(remarks)
+//          	console.log(planPay)
+//          	console.log(payDeadline)
                 $.ajax({
                     type: "post", 
                     url: "/a/biz/po/bizPoHeader/savePoHeader4Mobile",
