@@ -702,6 +702,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
         BizProductInfo bizProductInfo = new BizProductInfo();
         bizProductInfo.setItemNo(itemNo);
         bizProductInfo.setOffice(new Office(vendId));
+        bizProductInfo.setProdType((byte)1);
         List<BizProductInfo> productList = findList(bizProductInfo);
         //初步规范化商品货号
         updateItemNoSize(productList);
