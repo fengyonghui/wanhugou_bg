@@ -771,6 +771,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                              itemNo = sb.append(start).append(middle).append("装车").append(end).toString();
                          }
                         bizSkuInfoV3Service.updateItemNo(skuInfo.getId(),itemNo);
+                        bizSkuInfoV3Service.updateSizeAndColor(skuInfo);
                     }
                 }
             }
