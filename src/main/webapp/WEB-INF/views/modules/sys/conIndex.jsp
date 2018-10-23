@@ -35,7 +35,7 @@
 		};
 
 		function refreshTree(){
-			$.getJSON("${ctx}/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex",function(data){
+			$.getJSON("${ctx}/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&customerTypeThirteen=13&source=officeConnIndex",function(data){
 				$.fn.zTree.init($("#ztree"), setting, data).expandAll(true);
 			});
 		}
