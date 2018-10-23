@@ -307,5 +307,12 @@
 		GROUP BY oh.order_num ,bi.send_number
 		ORDER BY oh.order_num
 	</select>
+
+	<select id="findDeliverNoByReqId" resultType="String">
+		SELECT bi.send_number
+		FROM biz_invoice bi
+		LEFT JOIN biz_detail_invoice bdi ON bdi.invoice_id = bi.id
+		WHERE bdi.request_header_id = #{requestId}
+	</select>
 	
 </mapper>

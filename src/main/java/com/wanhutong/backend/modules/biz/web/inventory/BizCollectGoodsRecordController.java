@@ -53,8 +53,6 @@ public class BizCollectGoodsRecordController extends BaseController {
 
 	@Autowired
 	private BizCollectGoodsRecordService bizCollectGoodsRecordService;
-
-
     @Autowired
     private BizRequestDetailService bizRequestDetailService;
     @Autowired

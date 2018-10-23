@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.service.request;
 import java.util.List;
 
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,6 +68,26 @@ public class BizRequestDetailService extends CrudService<BizRequestDetailDao, Bi
 	@Transactional(readOnly = false)
 	public BizRequestDetail getsumSchedulingNum(Integer objectId){
 		return bizRequestDetailDao.getsumSchedulingNum(objectId);
+	}
+
+	public List<BizRequestDetail> findInventorySkuByskuIdAndcentId(Integer centerId, Integer skuId) {
+		return dao.findInventorySkuByskuIdAndcentId(centerId, skuId);
+	}
+
+	public List<BizRequestDetail> findInvReqByOrderDetailId(Integer orderDetailId) {
+		return dao.findInvReqByOrderDetailId(orderDetailId);
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void updateSkuId(Integer needSkuId, Integer skuId) {
+		BizRequestDetail orderDetail = new BizRequestDetail();
+		orderDetail.setSkuInfo(new BizSkuInfo(skuId));
+		List<BizRequestDetail> orderDetails = findList(orderDetail);
+		if (CollectionUtils.isNotEmpty(orderDetails)) {
+			for (BizRequestDetail bizOrderDetail : orderDetails) {
+				bizRequestDetailDao.updateSkuId(needSkuId,bizOrderDetail.getId());
+			}
+		}
 	}
 
 }

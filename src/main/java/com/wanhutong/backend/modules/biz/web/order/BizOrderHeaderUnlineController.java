@@ -131,28 +131,11 @@ public class BizOrderHeaderUnlineController extends BaseController {
         if (!beanValidator(model, bizOrderHeaderUnline)) {
             return form(bizOrderHeaderUnline, model);
         }
-        bizOrderHeaderUnline = bizOrderHeaderUnlineService.get(bizOrderHeaderUnline.getId());
-        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderHeaderUnline.getOrderHeader().getId());
-        bizOrderHeaderUnline.setRealMoney(bizOrderHeaderUnline.getUnlinePayMoney());
-        bizOrderHeaderUnline.setBizStatus(BIZSTATUSONE);
-        bizOrderHeaderUnlineService.save(bizOrderHeaderUnline);
-        bizOrderHeader.setReceiveTotal(bizOrderHeader.getReceiveTotal() + bizOrderHeaderUnline.getRealMoney().doubleValue());
-//        bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-        if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.UNPAY.getState().intValue()) {
-            if (bizOrderHeader.getTotalDetail().compareTo(bizOrderHeader.getReceiveTotal()) == 0) {
-                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
-            } else {
-                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.INITIAL_PAY.getState());
-            }
-        }
-        if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.INITIAL_PAY.getState().intValue()) {
-            if (bizOrderHeader.getTotalDetail().compareTo(bizOrderHeader.getReceiveTotal()) == 0) {
-                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
-            }
-        }
-        bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-        bizOrderStatusService.saveOrderStatus(bizOrderHeader);
-
+        BizOrderHeaderUnline orderHeaderUnline = bizOrderHeaderUnlineService.get(bizOrderHeaderUnline.getId());
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderHeaderUnline.getOrderHeader().getId());
+        orderHeaderUnline.setRealMoney(bizOrderHeaderUnline.getRealMoney());
+        orderHeaderUnline.setBizStatus(BIZSTATUSONE);
+        bizOrderHeaderUnlineService.save(orderHeaderUnline);
         try {
             User user = UserUtils.getUser();
             BizPayRecord bizPayRecord = new BizPayRecord();

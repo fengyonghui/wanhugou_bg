@@ -1779,7 +1779,7 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequestMapping(value = "consultantOrderAnalysisTables")
     public String consultantOrderAnalysisTables (HttpServletRequest request, String startDate, String endDate, Integer purchasingId){
         request.setAttribute("adminPath", adminPath);
-        request.setAttribute("purchasingList", bizStatisticsBetweenService.getBizPurchasingList("8"));
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8", "10", "11", "13"));
         request.setAttribute("startDate", startDate);
         request.setAttribute("endDate", endDate);
         List<BizCustomCenterConsultant> resultList = bizStatisticsBetweenService.consultantOrderList(startDate, endDate, purchasingId);

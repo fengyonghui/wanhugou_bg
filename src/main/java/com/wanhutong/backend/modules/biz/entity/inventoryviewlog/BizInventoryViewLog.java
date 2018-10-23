@@ -3,15 +3,10 @@
  */
 package com.wanhutong.backend.modules.biz.entity.inventoryviewlog;
 
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import org.hibernate.validator.constraints.Length;
-import com.wanhutong.backend.modules.sys.entity.User;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 
 /**
  * 库存盘点记录Entity
@@ -36,6 +31,8 @@ public class BizInventoryViewLog extends DataEntity<BizInventoryViewLog> {
 	private Integer stockChangeQty;
 	//现库存数量
 	private Integer nowStockQty;
+	//备货单信息
+	private BizRequestHeader requestHeader;
 	
 	public BizInventoryViewLog() {
 		super();
@@ -91,5 +88,13 @@ public class BizInventoryViewLog extends DataEntity<BizInventoryViewLog> {
 
 	public void setNowStockQty(Integer nowStockQty) {
 		this.nowStockQty = nowStockQty;
+	}
+
+	public BizRequestHeader getRequestHeader() {
+		return requestHeader;
+	}
+
+	public void setRequestHeader(BizRequestHeader requestHeader) {
+		this.requestHeader = requestHeader;
 	}
 }

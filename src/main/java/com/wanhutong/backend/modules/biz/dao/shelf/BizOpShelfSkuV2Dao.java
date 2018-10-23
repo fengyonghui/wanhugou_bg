@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.shelf;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
+import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,4 +33,10 @@ public interface BizOpShelfSkuV2Dao extends CrudDao<BizOpShelfSku> {
 
 
     Map<String,BigDecimal>  findMinMaxPrice(BizOpShelfSku bizOpShelfSku);
+
+	void updateProdId(@Param("opShelfSkuId") Integer opShelfSkuId, @Param("prodId") Integer prodId);
+
+	void updateSkuId(@Param("needSkuId") Integer needSkuId, @Param("id") Integer id);
+
+	void updatePrice(@Param("id")Integer id, @Param("settlementPrice")BigDecimal settlementPrice, @Param("marketingPrice") BigDecimal marketingPrice);
 }

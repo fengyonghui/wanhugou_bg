@@ -3,49 +3,72 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventory;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.BaseEntity;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.BizInventorySkus;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
 import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,8 +76,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 商品库存详情Controller
@@ -86,7 +111,14 @@ public class BizInventorySkuController extends BaseController {
     private BizVarietyInfoService bizVarietyInfoService;
     @Autowired
     private BizProductInfoService bizProductInfoService;
-
+    @Autowired
+    private BizRequestDetailService bizRequestDetailService;
+    @Autowired
+    private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
+    @Autowired
+    private BizPoHeaderService bizPoHeaderService;
+    @Autowired
+    private BizSendGoodsRecordService bizSendGoodsRecordService;
 
     @ModelAttribute
     public BizInventorySku get(@RequestParam(required = false) Integer id) {
@@ -277,72 +309,7 @@ public class BizInventorySkuController extends BaseController {
 //		if (!beanValidator(model, bizInventorySku)){
 //			return form(bizInventorySku,request,model);
 //		}
-        if (bizInventorySkus != null && bizInventorySkus.getSkuInfoIds() != null) {
-            String[] invInfoIdArr = bizInventorySkus.getInvInfoIds().split(",");
-            String[] customerIdArr = null;
-            if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
-                customerIdArr = bizInventorySkus.getCustomerIds().split(",");
-            }
-            String[] invTypeArr = bizInventorySkus.getInvTypes().split(",");
-            String[] skuTypeArr = bizInventorySkus.getSkuTypes().split(",");
-            String[] skuInfoIdArr = bizInventorySkus.getSkuInfoIds().split(",");
-            String[] stockQtyArr = bizInventorySkus.getStockQtys().split(",");
-            BizInventorySku bizInventorySku = new BizInventorySku();
-            BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
-            for (int i = 0; i < skuInfoIdArr.length; i++) {
-                bizInventorySku.setId(null);
-                bizInventorySku.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
-                if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
-                    bizInventorySku.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
-                }
-                bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
-                bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
-                bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_DELETE);
-                bizInventorySku.setSkuType(Integer.parseInt(skuTypeArr[i].trim()));
-                bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
-                bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
-                bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
-                //查询是否有已删除的该商品库存
-                BizInventorySku only = bizInventorySkuService.findOnly(bizInventorySku);
-                if (only == null) {
-                    bizInventoryViewLog.setStockQty(0);
-                    bizInventorySku.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
-                    bizInventoryViewLog.setStockChangeQty(bizInventorySku.getStockQty());
-                    bizInventoryViewLog.setNowStockQty(bizInventorySku.getStockQty());
-                    bizInventorySkuService.save(bizInventorySku);
-                } else {
-                    if (StringUtils.isNotBlank(bizInventorySkus.getCustomerIds())) {
-                        only.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
-                    }
-                    bizInventoryViewLog.setStockQty(0);
-                    only.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
-                    bizInventoryViewLog.setStockChangeQty(only.getStockQty());
-                    bizInventoryViewLog.setNowStockQty(only.getStockQty());
-                    bizInventorySkuService.save(only);
-                }
-                bizInventoryViewLogService.save(bizInventoryViewLog);
-            }
-        }//修改
-        else if (bizInventorySkus != null && bizInventorySkus.getStockQtys() != null && !bizInventorySkus.getStockQtys().equals("")) {
-            BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
-            BizInventorySku bizInventorySku = bizInventorySkuService.get(bizInventorySkus.getId());
-            if (bizInventorySku != null) {
-                Integer stockQtys = Integer.parseInt(bizInventorySkus.getStockQtys());
-                if (!stockQtys.equals(bizInventorySku.getStockQty())) {
-                    bizInventoryViewLog.setStockQty(bizInventorySku.getStockQty());//原
-                    bizInventoryViewLog.setStockChangeQty(Integer.parseInt(bizInventorySkus.getStockQtys()) - bizInventorySku.getStockQty());
-                    bizInventoryViewLog.setNowStockQty(Integer.parseInt(bizInventorySkus.getStockQtys()));//现
-                    bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
-                    bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
-                    bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
-                    bizInventoryViewLogService.save(bizInventoryViewLog);
-                }
-            }
-            bizInventorySku.setStockQty(Integer.parseInt(bizInventorySkus.getStockQtys()));
-            bizInventorySkuService.save(bizInventorySku);
-        }
-
-
+        bizInventorySkuService.saveBizInventorySku(bizInventorySkus);
         String zt = request.getParameter("zt");
         addMessage(redirectAttributes, "保存商品库存详情成功");
         return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizInventorySku/?repage&zt=" + zt;
@@ -560,6 +527,137 @@ public class BizInventorySkuController extends BaseController {
         Map<String, Object> resultMap = bizInventorySkuService.getInventoryAge(skuId, centId, invInfoId);
         request.setAttribute("data", resultMap);
         return "modules/biz/inventory/bizInventoryAge";
+    }
+
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping(value = "inventorySkuDetail")
+    public String inventorySkuDetail(Integer id, Model model) {
+        BizInventorySku inventorySku = bizInventorySkuService.get(id);
+        List<BizCollectGoodsRecord> bcgrList = bizInventorySkuService.getInventoryDetail(id, inventorySku.getSkuInfo().getId());
+        if (CollectionUtils.isNotEmpty(bcgrList)) {
+            for (BizCollectGoodsRecord collectGoodsRecord : bcgrList) {
+                List<AttributeValueV2> colorList = bizSkuInfoService.getSkuProperty(collectGoodsRecord.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "颜色");
+                if (CollectionUtils.isNotEmpty(colorList)) {
+                    collectGoodsRecord.getSkuInfo().setColor(colorList.get(0).getValue());
+                }
+                List<AttributeValueV2> sizeList = bizSkuInfoService.getSkuProperty(collectGoodsRecord.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "尺寸");
+                if (CollectionUtils.isNotEmpty(sizeList)) {
+                    collectGoodsRecord.getSkuInfo().setSize(sizeList.get(0).getValue());
+                }
+                List<CommonImg> imgList = bizSkuInfoService.getImg(collectGoodsRecord.getSkuInfo().getId(), ImgEnum.SKU_TYPE.getTableName(), ImgEnum.SKU_TYPE.getCode());
+                if (CollectionUtils.isNotEmpty(imgList)) {
+                    collectGoodsRecord.getSkuInfo().setSkuImgUrl(imgList.get(0).getImgServer() + imgList.get(0).getImgPath());
+                }
+            }
+        }
+        model.addAttribute("bcgrList",bcgrList);
+        return "modules/biz/inventory/bizInventorySkuDetail";
+    }
+
+    /**
+     * 盘点列表
+     * @param requestHeader
+     * @param request
+     * @param response
+     * @param model
+     * @return
+     */
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping(value = "inventory")
+    public String inventory(BizRequestHeader requestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Page<BizRequestHeader> requestHeaderPage = bizInventorySkuService.inventoryPage(new Page<BizRequestHeader>(request, response),requestHeader);
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Set<String> rolsSet = Sets.newHashSet();
+        if (CollectionUtils.isNotEmpty(roleList)) {
+            for (Role role : roleList) {
+                RoleEnNameEnum parse = RoleEnNameEnum.parse(role.getEnname());
+                if (parse != null) {
+                    rolsSet.add(parse.name());
+                }
+            }
+        }
+        List<InventorySkuRequestProcessConfig.InvRequestProcess> processList = ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getProcessList();
+        List<BizVarietyInfo> varietyList= bizVarietyInfoService.findList(new BizVarietyInfo());
+        model.addAttribute("processList", processList);
+        model.addAttribute("roleSet",rolsSet);
+        model.addAttribute("page",requestHeaderPage);
+        model.addAttribute("requestHeader",requestHeader);
+        model.addAttribute("varietyList",varietyList);
+        return "modules/biz/inventory/bizInventory";
+    }
+
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping(value = "inventoryForm")
+    public String inventoryForm(BizRequestHeader requestHeader,String source, Integer invId, Model model) {
+        BizRequestDetail requestDetail = new BizRequestDetail();
+        requestDetail.setRequestHeader(requestHeader);
+        List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(requestDetail);
+        if (CollectionUtils.isNotEmpty(requestDetailList)) {
+            for (BizRequestDetail bizRequestDetail : requestDetailList) {
+                List<AttributeValueV2> colorList = bizSkuInfoService.getSkuProperty(bizRequestDetail.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "颜色");
+                if (CollectionUtils.isNotEmpty(colorList)) {
+                    bizRequestDetail.getSkuInfo().setColor(colorList.get(0).getValue());
+                }
+                List<AttributeValueV2> sizeList = bizSkuInfoService.getSkuProperty(bizRequestDetail.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "尺寸");
+                if (CollectionUtils.isNotEmpty(sizeList)) {
+                    bizRequestDetail.getSkuInfo().setSize(sizeList.get(0).getValue());
+                }
+                List<CommonImg> imgList = bizSkuInfoService.getImg(bizRequestDetail.getSkuInfo().getId(), ImgEnum.SKU_TYPE.getTableName(), ImgEnum.SKU_TYPE.getCode());
+                if (CollectionUtils.isNotEmpty(imgList)) {
+                    bizRequestDetail.getSkuInfo().setSkuImgUrl(imgList.get(0).getImgServer() + imgList.get(0).getImgPath());
+                }
+                if ("pChange".equals(source)) {
+                    Integer sumSendNum = bizSendGoodsRecordService.getSumSendNumByReqDetailId(bizRequestDetail.getId());
+                    bizRequestDetail.setSumSendNum(sumSendNum);
+                }
+            }
+        }
+        BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(requestHeader.getId());
+        if (bizRequestHeader.getInvCommonProcess() != null && bizRequestHeader.getInvCommonProcess().getId() != null) {
+            List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
+            bizPoHeaderService.getCommonProcessListFromDB(bizRequestHeader.getInvCommonProcess().getId(), commonProcessList);
+            Collections.reverse(commonProcessList);
+            bizRequestHeader.setInvCommonProcessList(commonProcessList);
+        }
+        bizRequestHeader.setInvInfo(bizInventoryInfoService.get(invId));
+        Integer autProcessId = ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getAutProcessId();
+        model.addAttribute("autProcessId",autProcessId);
+        model.addAttribute("source",source);
+        model.addAttribute("requestHeader",bizRequestHeader);
+        model.addAttribute("requestDetailList",requestDetailList);
+        return "modules/biz/inventory/bizInventoryForm";
+    }
+
+    @ResponseBody
+    @RequiresPermissions("biz:inventory:bizInventorySku:audit")
+    @RequestMapping(value = "audit")
+    public String audit(HttpServletRequest request, int id, int invId, String currentType, int auditType, String description) {
+        Pair<Boolean, String> result = bizInventorySkuService.auditInventory(id, invId, currentType, auditType, description);
+        if (result.getLeft()) {
+            return JsonUtil.generateData(result, request.getParameter("callback"));
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
+    }
+
+    @RequiresPermissions("biz:inventory:bizInventorySku:edit")
+    @RequestMapping(value = "inventorySave")
+    public String inventorySave(BizRequestHeader requestHeader, RedirectAttributes redirectAttributes) {
+        String invReqDetail = requestHeader.getInvReqDetail();
+        if (StringUtils.isBlank(invReqDetail)) {
+            addMessage(redirectAttributes,"保存库存失败");
+            return "redirect:" + adminPath + "/biz/inventory/bizInventorySku/inventory";
+        }
+        bizInventorySkuService.inventorySave(requestHeader);
+        return "redirect:" + adminPath + "/biz/inventory/bizInventorySku/inventory";
+    }
+
+    /**
+     * 初始化备货详情出库数量
+     */
+    @RequestMapping("correctOutQty")
+    public void correctOutQty() {
+        bizInventorySkuService.correctOutQty();
     }
 
 

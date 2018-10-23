@@ -46,14 +46,25 @@
                         alert("该订单已付款，请与系统管理员联系")
                         return;
                     }
+                    var prodInfo=$("#prodInfo").find("tr");
+                    if(prodInfo.length<0){
+                        alert("请选择商品") ;
+                        return;
+                    }
 
+                    var req=0;
                     $("input[name='reqQtys']").each(function () {
                         if($(this).val()==''){
-                            $(this).val(0)
-						}
+                            $(this).val(0);
+                        }
+                        req+=$(this).val();
                     });
-					loading('正在提交，请稍等...');
-
+                    if(req==0){
+                        alert("请输入数量");
+                        return;
+                    }
+                    $("#btnSubmit").attr("disabled","disabled ");
+                    loading('正在提交，请稍等...');
 					form.submit();
 				},
 				errorContainer: "#messageBox",
@@ -119,7 +130,7 @@
                                 //tr_tds+= "<td><a href="+ "'${ctx}/sys/office/supplierForm?id=" + skuInfo.productInfo.office.id + "&gysFlag=onlySelect'>"+ skuInfo.productInfo.office.name + "</a></td>";
                                 tr_tds+= "<td>"+ skuInfo.productInfo.office.name + "</td>";
                                 tr_tds+= "<td>" + skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td>" +
-									// "<td>"+skuInfo.buyPrice+"</td>" +
+									 "<td>"+skuInfo.buyPrice+"</td>" +
 									"<td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
 								if(flag){
 
@@ -256,7 +267,7 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
-                            // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                             poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
 
@@ -1022,6 +1033,16 @@
 			</div>
 		</c:if>
 		<div class="control-group">
+			<label class="control-label">备货单类型：</label>
+			<div class="controls">
+				<form:select path="headerType" cssClass="input-xlarge">
+					<form:option value="0" label="请选择"/>
+					<form:options items="${fns:getDictList('req_header_type')}" itemValue="value" itemLabel="label"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">备货方：</label>
 			<div class="controls">
 				<input id="fromType1" type="radio" name="fromType" value="1" checked onclick="addAllStyle()"/>采购中心备货
@@ -1240,7 +1261,7 @@
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<%--<th>结算价</th>--%>
+					<th>结算价</th>
 					<th>申报数量</th>
 
 					<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
@@ -1275,9 +1296,9 @@
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
-							<%--<td style="white-space: nowrap">--%>
-									<%--${reqDetail.unitPrice}--%>
-							<%--</td>--%>
+							<td style="white-space: nowrap">
+									${reqDetail.unitPrice}
+							</td>
 							<td>
 								<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
 								<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
@@ -1335,7 +1356,7 @@
 						<th>商品编码</th>
 						<th>商品货号</th>
 						<%--<th>商品属性</th>--%>
-						<%--<th>结算价</th>--%>
+						<th>结算价</th>
 							<%--<th>商品类型</th>--%>
 						<th>申报数量</th>
 							<%--<th>已收货数量</th>--%>

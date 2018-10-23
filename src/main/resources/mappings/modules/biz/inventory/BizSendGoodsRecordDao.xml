@@ -4,6 +4,7 @@
     
 	<sql id="bizSendGoodsRecordColumns">
 		a.id AS "id",
+		a.send_no AS "sendNo",
 		a.sku_id AS "skuInfo.id",
 		sku.name AS "skuInfo.name",
 		a.inv_id AS "invInfo.id",
@@ -32,7 +33,9 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		su.name AS "createBy.name",
+		su.mobile AS "createBy.mobile"
 	</sql>
 	
 	<sql id="bizSendGoodsRecordJoins">
@@ -64,6 +67,12 @@
 			1=1
 			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+			<if test="sendNo != null and sendNo != ''">
+				AND a.send_no LIKE #{sendNo}
+				<if test="dbName == 'oracle'">'%'||#{sendNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{sendNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{sendNo},'%')</if>
 			</if>
 			<if test="bizStatus != null">
 				AND a.biz_status = #{bizStatus}
@@ -145,6 +154,7 @@
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_send_goods_record(
 			id,
+			send_no,
 			<if test="skuInfo != null and skuInfo.id != null">
 				sku_id,
 			</if>
@@ -196,6 +206,7 @@
 			update_time
 		) VALUES (
 			#{id},
+			#{sendNo},
 			<if test="skuInfo != null and skuInfo.id != null">
 				#{skuInfo.id},
 			</if>
@@ -299,6 +310,23 @@
 	<update id="delete">
 		UPDATE biz_send_goods_record SET 
 			status = #{delFlag}
+		WHERE id = #{id}
+	</update>
+
+	<select id="getSumSendNumByReqDetailId" resultType="Integer">
+		SELECT
+			sum(a.send_num)
+		FROM biz_send_goods_record a
+		LEFT JOIN biz_order_detail od ON od.order_id = a.order_id AND od.sku_id = a.sku_id
+		LEFT JOIN biz_inventory_order_request bior ON bior.order_detail_id = od.id
+		WHERE
+			bior.request_detail_id = #{reqDetailId}
+			AND a.create_time BETWEEN #{oneDayBefore} AND #{yesterdayEnd}
+	</select>
+
+	<update id="updateSkuId">
+		UPDATE biz_send_goods_record SET
+		sku_id = #{needSkuId}
 		WHERE id = #{id}
 	</update>
 

@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -51,4 +52,19 @@ public interface BizSkuInfoV3Dao extends CrudDao<BizSkuInfo> {
      * @return
      */
     int findCount(BizSkuInfo bizSkuInfo);
+
+    List<Integer> findReqSku();
+
+   /**
+    * 修改商品对应的产品ID
+    * @param skuId
+    * @param prodId
+    */
+   void updateProdId(@Param("skuId") Integer skuId, @Param("prodId") Integer prodId);
+
+   List<BizSkuInfo> findSkuBySpuAndSize(@Param("prodId")Integer prodId, @Param("itemNo")String itemNo, @Param("size")String size);
+
+   void updatePrice(@Param("id")Integer id, @Param("settlementPrice")BigDecimal settlementPrice);
+
+   void updateItemNo(@Param("id")Integer id, @Param("itemNo")String itemNo);
 }

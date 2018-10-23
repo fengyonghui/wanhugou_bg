@@ -231,21 +231,31 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 String logisticsOrderCode = bizInvoice.getTrackingNumber();
                 String sentGoodsCode = bizInvoice.getSendNumber();
 
-                List<BizOrderDetail> bizOrderDetailList = bizOrderDetailService.findOrderDetailList(bizInvoice.getId());
-                if (CollectionUtils.isNotEmpty(bizOrderDetailList)) {
-                    BizOrderDetail orderDetail = bizOrderDetailList.get(0);
-                    Office cust = orderDetail.getCust();
-                    if (cust != null) {
-                        receivername = cust.getName();
-                        receiverphone = cust.getPhone();
-                        Integer custId = cust.getId();
-                        List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOfficeRegion(custId, 1);
-                        if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
-                            AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
-                            receiverdetailedaddress = addressVoEntity.getAddress();
-                        }
-                    }
+                //获取收货人信息
+                List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOrderRegion(ordId, 2);
+                if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
+                    AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
+
+                    receivername = addressVoEntity.getReceiver();
+                    receiverphone = addressVoEntity.getPhone();
+                    receiverdetailedaddress = addressVoEntity.getAddress();
                 }
+
+//                List<BizOrderDetail> bizOrderDetailList = bizOrderDetailService.findOrderDetailList(bizInvoice.getId());
+//                if (CollectionUtils.isNotEmpty(bizOrderDetailList)) {
+//                    BizOrderDetail orderDetail = bizOrderDetailList.get(0);
+//                    Office cust = orderDetail.getCust();
+//                    if (cust != null) {
+//                        receivername = cust.getName();
+//                        receiverphone = cust.getPhone();
+//                        Integer custId = cust.getId();
+//                        List<AddressVoEntity> addressVoEntityList = bizRequestHeaderForVendorService.findOfficeRegion(custId, 1);
+//                        if (CollectionUtils.isNotEmpty(addressVoEntityList)) {
+//                            AddressVoEntity addressVoEntity = addressVoEntityList.get(0);
+//                            receiverdetailedaddress = addressVoEntity.getAddress();
+//                        }
+//                    }
+//                }
 
                 String[] odNumArr = oheaders[1].split("\\*");
                 for (int i = 0; i < odNumArr.length; i++) {
@@ -721,6 +731,14 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 map.put("logisticsOrderCode", logisticsOrderCode);
                 map.put("sentGoodsCode", sentGoodsCode);
 
+                LOGISTICS_LOGGER.info("生成运单的参数===" + "orderCode:" + orderNum + ", "
+                        + "linecode:" + linecode + ", " + "linepointcode:" + linepointcode + ", "
+                        + "creator:" + creator + ", " + "sendername:" + "北京万户通" + ","
+                        + "senderphone:" + "15383129116" + ", " + "receivername:" + receivername + ","
+                        + "receiverphone:" + receiverphone + ", " + "receiverdetailedaddress:" + receiverdetailedaddress + ", "
+                        + "goodsquantity:" + goodsquantity + ", " + "logisticsOrderCode:" + logisticsOrderCode + ", "
+                        + "sentGoodsCode:" + sentGoodsCode);
+
                 httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
                 httpPost.setHeader("Accept", "application/json");
 
@@ -844,6 +862,14 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             paramMap.put("goodsquantity", goodsquantity);
                             paramMap.put("logisticsOrderCode", logisticsOrderCode);
                             paramMap.put("sentGoodsCode", sentGoodsCode);
+
+                            LOGISTICS_LOGGER.info("生成运单的参数===" + "orderCode:" + reqNo + ", "
+                                    + "linecode:" + linecode + ", " + "linepointcode:" + linepointcode + ", "
+                                    + "creator:" + creator + ", " + "sendername:" + "北京万户通" + ","
+                                    + "senderphone:" + "15383129116" + ", " + "receivername:" + receivername + ","
+                                    + "receiverphone:" + receiverphone + ", " + "receiverdetailedaddress:" + receiverdetailedaddress + ", "
+                                    + "goodsquantity:" + goodsquantity + ", " + "logisticsOrderCode:" + logisticsOrderCode + ", "
+                                    + "sentGoodsCode:" + sentGoodsCode);
 
                             String jsonstrParam = JSONObject.fromObject(paramMap).toString();
                             httpPost.setEntity(new StringEntity(jsonstrParam, Charset.forName("UTF-8")));
@@ -1024,6 +1050,10 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             this.save(invoice);
         }
 
+    }
+
+    public List<String> findDeliverNoByReqId (Integer requestId) {
+        return bizInvoiceDao.findDeliverNoByReqId(requestId);
     }
 
 }

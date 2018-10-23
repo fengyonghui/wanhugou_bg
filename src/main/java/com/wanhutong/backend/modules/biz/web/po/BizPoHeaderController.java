@@ -668,7 +668,7 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizpopaymentorder:bizPoPaymentOrder:audit")
     @RequestMapping(value = "auditPay")
     @ResponseBody
-    public String auditPay(HttpServletRequest request, int poPayId, String currentType, int auditType, String description, BigDecimal money) {
+    public String auditPay(HttpServletRequest request, Integer poPayId, String currentType, int auditType, String description, BigDecimal money) {
         Pair<Boolean, String> result = bizPoHeaderService.auditPay(poPayId, currentType, auditType, description, money);
         if (result.getLeft()) {
             return JsonUtil.generateData(result, request.getParameter("callback"));

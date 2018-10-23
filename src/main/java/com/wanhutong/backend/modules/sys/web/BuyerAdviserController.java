@@ -69,7 +69,7 @@ public class BuyerAdviserController extends BaseController {
 //		off.setParent(parentOff);
 		off.setType(center);
 		off.setCustomerTypeTen(OfficeTypeEnum.WITHCAPITAL.getType());
-		off.setCustomerTypeEleven(OfficeTypeEnum.NETWORKSUPPLY.getType());
+		off.setCustomerTypeEleven(OfficeTypeEnum.NETWORK.getType());
 		List<Office> officeList = officeService.queryCenterList(off);
 		office = officeService.get(office.getId());
 		BuyerAdviser buyerAdviser =null;

@@ -41,6 +41,9 @@
 			<if test="attrId != null and attrId != 0">
 				AND a.attr_id = #{attrId}
 			</if>
+			<if test="attributeInfo != null and attributeInfo.name != null and attributeInfo.name != ''">
+				AND ai.name = #{attributeInfo.name}
+			</if>
 			<if test="objectName != null and objectName != ''">
 				AND a.object_name = #{objectName}
 			</if>
