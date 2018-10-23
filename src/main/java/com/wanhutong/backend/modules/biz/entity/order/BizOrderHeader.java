@@ -291,6 +291,10 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private Integer commissionStatus;
 
+    private String applyCommStatus;
+
+    private String commSign;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -1156,6 +1160,22 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setCommissionStatus(Integer commissionStatus) {
         this.commissionStatus = commissionStatus;
+    }
+
+    public String getCommSign() {
+        return commSign;
+    }
+
+    public void setCommSign(String commSign) {
+        this.commSign = commSign;
+    }
+
+    public String getApplyCommStatus() {
+        return applyCommStatus;
+    }
+
+    public void setApplyCommStatus(String applyCommStatus) {
+        this.applyCommStatus = applyCommStatus;
     }
 }
 

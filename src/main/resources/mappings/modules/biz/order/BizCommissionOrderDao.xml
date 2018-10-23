@@ -41,8 +41,11 @@
 		<include refid="bizCommissionOrderJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="commId !=null and commId != ''">
+			<if test="commId !=null">
 				AND a.comm_id = #{commId}
+			</if>
+			<if test="orderId !=null">
+				AND a.order_id = #{orderId}
 			</if>
 		</where>
 		<choose>

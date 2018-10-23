@@ -99,6 +99,10 @@
 			<include refid="bizCommissionColumns"/>
 		FROM biz_commission a
 		<include refid="bizCommissionJoins"/>
+		<if test="orderNum != null and orderNum != ''" >
+			LEFT JOIN biz_commission_order bco ON bco.comm_id=a.id
+			LEFT JOIN biz_order_header boh ON boh.id=bco.order_id AND boh.status=1
+		</if>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="payee != null and payee != ''" >
@@ -109,6 +113,12 @@
 			</if>
 			<if test="bizStatus != null" >
 				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="orderNum != null and orderNum != ''" >
+				AND boh.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 			</if>
 		</where>
 		<choose>

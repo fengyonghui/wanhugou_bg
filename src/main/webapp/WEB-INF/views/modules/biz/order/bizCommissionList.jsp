@@ -95,9 +95,9 @@
 			<li><label>收款人</label>
 				<form:input path="payee" htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
-			<%--<li><span style="margin-left: 10px"><label>订单编号</label></span>--%>
-				<%--<form:input path="orderIds"  htmlEscape="false" maxlength="25" class="input-medium"/>--%>
-			<%--</li>--%>
+			<li><span style="margin-left: 10px"><label>订单编号</label></span>
+				<form:input path="orderNum"  htmlEscape="false" maxlength="25" class="input-medium"/>
+			</li>
 
 			<li><label>业务状态：</label>
 				<form:select path="bizStatus" class="input-medium">

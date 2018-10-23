@@ -255,6 +255,14 @@ public class BizOrderHeaderController extends BaseController {
             List<BizOrderHeader> bizOrderHeaderListNew = new ArrayList<BizOrderHeader>();
             if (CollectionUtils.isNotEmpty(bizOrderHeaderList)) {
                 for (BizOrderHeader orderHeader :bizOrderHeaderList) {
+                    BizCommissionOrder bizCommissionOrder = new BizCommissionOrder();
+                    String applyCommStatus = "no";
+                    bizCommissionOrder.setOrderId(orderHeader.getId());
+                    List<BizCommissionOrder> commissionOrderList = bizCommissionOrderService.findList(bizCommissionOrder);
+                    if (CollectionUtils.isNotEmpty(commissionOrderList)) {
+                        applyCommStatus = "yes";
+                    }
+                    orderHeader.setApplyCommStatus(applyCommStatus);
                     BigDecimal commission = BigDecimal.ZERO;
                     List<BizOrderDetail> orderDetails = orderHeader.getOrderDetailList();
                     if (CollectionUtils.isNotEmpty(orderDetails)) {

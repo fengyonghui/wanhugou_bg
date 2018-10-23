@@ -47,6 +47,8 @@ public class BizCommission extends DataEntity<BizCommission> {
 
 	private String str;
 
+    private Office customer;
+
 	/**
 	 * 订单id
 	 */
@@ -62,7 +64,10 @@ public class BizCommission extends DataEntity<BizCommission> {
 	 */
 	private String payee;
 
-	private Office customer;
+    /**
+     * 根据订单号搜索付款单
+     */
+	private String orderNum;
 
 	private BizCustomerInfo customerInfo;
 
@@ -214,4 +219,12 @@ public class BizCommission extends DataEntity<BizCommission> {
 	public void setCustomerInfo(BizCustomerInfo customerInfo) {
 		this.customerInfo = customerInfo;
 	}
+
+    public String getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(String orderNum) {
+        this.orderNum = orderNum;
+    }
 }
