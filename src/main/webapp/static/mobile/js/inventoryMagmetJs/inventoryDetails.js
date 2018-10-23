@@ -23,7 +23,6 @@
                 data: {id:_this.userInfo.inListId,str:'detail'},
                 dataType: "json",
                 success: function(res){
-                	console.log(res)
                 	//调取供应商信息
                 	if(res.data.bizRequestHeader.bizVendInfo){
                 		var officeId = res.data.bizRequestHeader.bizVendInfo.office.id;
@@ -90,7 +89,25 @@
 				    }else{
 		                $('#inSchedulstatus').val("未排产");
 				    };				    
-					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号						
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号
+					//备货单类型
+					$.ajax({
+						type: 'GET',
+						url: '/a/sys/dict/listData',
+						data: {type:'req_header_type'},
+						dataType: 'json',
+						success: function(restype) {
+							$.each(restype,function(n,v){
+								if(res.data.bizRequestHeader.headerType==v.value){
+								    $('#headerType').val(v.label);
+								}
+								if(res.data.bizRequestHeader.headerType==""){
+									$('#headerType').val('未知');
+								}
+							})
+						}
+					});
 					//备货方
                     if(res.data.bizRequestHeader.fromType==1){
 						$('#fromType1').attr('checked','checked');
@@ -332,6 +349,7 @@
         	var htmlPaylist = '';
         	if(data.paymentOrderList != null && data.paymentOrderList.length > 0){
         		$.each(data.paymentOrderList, function(i, item) {
+//					console.log(item)						
 					if(item.payTime){
 						var realitypayTime="";
 						var realitypayTime=_this.formatDateTime(item.payTime);

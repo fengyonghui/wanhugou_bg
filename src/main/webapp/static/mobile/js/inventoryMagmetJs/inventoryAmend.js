@@ -65,6 +65,7 @@
             _this.searchSkuHtml();
             _this.getData(userId);
             _this.ajaxCheckStatus();//业务状态
+            _this.ajaxTypeStatus();//备货单类型
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
@@ -161,7 +162,10 @@
 	                    $('#inputDivAmend  option[value="' + bizstatus + '"]').attr("selected",true);
 		            }else{
 				       	$('#inputDivAmend').parent().parent().hide();
-		            }	
+		            }
+		            //备货单类型
+	                var typestatus = res.data.bizRequestHeader.headerType;
+                    $('#headerType  option[value="' + typestatus + '"]').attr("selected",true);
                     //排产状态
 				    if(res.data.bizRequestHeader.bizPoHeader){
 				    	var itempoSchType=res.data.bizRequestHeader.bizPoHeader.poSchType;
@@ -227,8 +231,6 @@
             var _this = this;
             //点击保存按钮操作 保存按钮控制修改商品申报数量和备货商品的添加
             $('#saveDetailBtn').on('tap',function(){
-//          	alert(999)
-            	console.log(res.data.totalPayTotal)
         		if (res.data.totalPayTotal > 0) {
                     mui.toast("该订单已付款，请与系统管理员联系")
                     return;
@@ -284,7 +286,7 @@
                 var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
                 var inPoRemarkVal = $("#inPoRemark").val(); //备注
                 var bizStatusVal = $("#inputDivAmend")[0].value; //业务状态
-                 var bizTypeVal = $("#headerType")[0].value; //备货单类型
+                var bizTypeVal = $("#headerType")[0].value; //备货单类型
                 var id = _this.userInfo.reqId; //列表传过来的备货单id；
                 //选择备货方：
                 var r2 = document.getElementsByName("fromType");
@@ -305,7 +307,7 @@
                 if(bizTypeVal == null || bizTypeVal == "") {
                     mui.toast("请选择备货单类型！")
                     return;
-                } 
+                }
                 if(_this.fromOfficeId == null || _this.fromOfficeId == ""){
                     mui.toast("请选择采购中心！")
                     return;
@@ -619,6 +621,24 @@
                 }
             });
         },
+        //备货单类型
+        ajaxTypeStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="0">请选择</option>';
+			var htmlStatusAdd = ''
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/dict/listData',
+				data: {type:'req_header_type'},
+				dataType: 'json',
+				success: function(res) {
+					$.each(res, function(i, item) {
+						htmlStatusAdd += '<option class="soption" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort + '" value="' + item.value + '">' + item.label + '</option>'
+					});
+					$('#headerType').html(optHtml+htmlStatusAdd)
+				}
+			});
+		},
         //业务状态
         ajaxCheckStatus: function() {
             var _this = this;
@@ -1152,7 +1172,7 @@
             mui('#searchInfo').on('tap','.addSkuButton ',function(){
                 $(".skuinfo_check").each(function () {
                     var cheId = $(this)[0].id;
-//                  console.log(cheId)
+
                     var cheFlag = $("#" + cheId).is(':checked');
                     if (cheFlag == true) {
                         var cheDiv = $("#serskudiv_" + cheId);
