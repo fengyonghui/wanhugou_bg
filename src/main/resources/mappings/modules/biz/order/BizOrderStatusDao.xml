@@ -103,7 +103,9 @@
 			order_id,
 			biz_status,
 			status,
-			order_type,
+			<if test="orderType != null and orderType != ''">
+				order_type,
+			</if>
 			create_id,
 			create_time,
 			u_version,
@@ -114,7 +116,9 @@
 			#{orderHeader.id},
 			#{bizStatus},
 			#{delFlag},
-			#{orderType},
+			<if test="orderType != null and orderType != ''">
+				#{orderType},
+			</if>
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},

@@ -36,4 +36,6 @@ public interface BizOrderDetailDao extends CrudDao<BizOrderDetail> {
 	 * @return
 	 */
 	List<Map> findRequestTotalByVendorList(Office office);
+
+	void updateSkuId(@Param("needSkuId") Integer needSkuId, @Param("id") Integer id);
 }

@@ -15,6 +15,7 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
@@ -84,7 +85,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				bizSendGoodsRecord.setDataStatus("filter");
 				if(user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType()) ||
                    user.getCompany().getType().equals(OfficeTypeEnum.WITHCAPITAL.getType()) ||
-                   user.getCompany().getType().equals(OfficeTypeEnum.NETWORKSUPPLY.getType())){
+                   user.getCompany().getType().equals(OfficeTypeEnum.NETWORKSUPPLY.getType()) ||
+                   user.getCompany().getType().equals(OfficeTypeEnum.NETWORK.getType())){
 					bizSendGoodsRecord.getSqlMap().put("sendGoodsRecord", BaseService.dataScopeFilter(user, "cent", "su"));
 				}
 
@@ -177,5 +179,17 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
             }
         }
 		return "ok";
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void updateSkuId(Integer needSkuId, Integer skuId) {
+		BizSendGoodsRecord orderDetail = new BizSendGoodsRecord();
+		orderDetail.setSkuInfo(new BizSkuInfo(skuId));
+		List<BizSendGoodsRecord> orderDetails = findList(orderDetail);
+		if (CollectionUtils.isNotEmpty(orderDetails)) {
+			for (BizSendGoodsRecord bizOrderDetail : orderDetails) {
+				bizSendGoodsRecordDao.updateSkuId(needSkuId,bizOrderDetail.getId());
+			}
+		}
 	}
 }

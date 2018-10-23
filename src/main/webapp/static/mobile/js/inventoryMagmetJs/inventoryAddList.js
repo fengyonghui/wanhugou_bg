@@ -20,6 +20,8 @@
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
+			this.ajaxTypeStatus();
+			
 		},
 		pageInit: function() {
 			var _this = this;
@@ -40,7 +42,7 @@
             }else{
             	$('#inputDivAdd').parent().parent().hide();
             }
-			console.log(userId)
+//			console.log(userId)
 			_this.saveDetail(userId);
 		},
 		getPermissionList: function (markVal,flag) {
@@ -59,6 +61,11 @@
 		getData: function() {
 			var _this = this;
             _this.removeItem();
+		},
+		sureSelect:function(){
+			var _this = this;
+			var optionsClass = $("#headerType option").eq($("#headerType").attr("selectedIndex"));//品类名称
+			console.log(optionsClass);
 		},
         saveDetail: function (userId) {
             var _this = this;
@@ -86,14 +93,19 @@
                     reqQtysTemp += "," + reqQty;
                 }
                 _this.reqQtys = reqQtysTemp.substring(1);
-
+                
+                 //备货单类型
+                var optionsClass = $("#headerType option").eq($("#headerType").attr("selectedIndex"));
                 var inOrordNumVal = $("#inOrordNum").val(); //采购中心
                 var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
                 //console.log("inPoLastDaVal=" + inPoLastDaVal)
 
                 var inPoRemarkVal = $("#inPoRemark").val(); //备注
                 var bizStatusVal = $("#inputDivAdd")[0].value; //业务状态
-
+                if(optionsClass.val() == null || optionsClass.val() == ""){
+				    mui.toast("请选择备货单类型！")
+                    return;
+                }
                 if(_this.fromOfficeId == null || _this.fromOfficeId == ""){
 				    mui.toast("请选择采购中心！")
                     return;
@@ -120,12 +132,14 @@
 	                if (r2[i].checked == true) {
 	                    localOriginType = r2[i].value;
 	                }
-	            }
+	            };
+	           
                 $.ajax({
                     type: "post",
                     url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
                     dataType: 'json',
                     data: {
+                    	'headerType':optionsClass.val(),//备货单类型
                     	"fromOffice.id": _this.fromOfficeId, //采购中心 id
                     	'fromOffice.name': _this.fromOfficeName,//采购中心名称
                     	'fromOffice.type': _this.fromOfficeType,//采购中心机构类型1：公司；2：部门；3：小组
@@ -363,7 +377,7 @@
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
                 _this.bizOfficeId = $(this).attr("id");
                 _this.bizOfficeName = $(this).attr("name");
-                _this.bizOfficeType = $(this).attr("type");
+                _this.bizOfficeType = $(this).attr("type");                
 				$(newinput).val($(this).text());
 				$(input_div).hide();
 				$(hideSpanAdd).hide();
@@ -495,6 +509,25 @@
 					});
 					$('#inputDivAdd').html(optHtml+htmlStatusAdd)
 					_this.getData()
+				}
+			});
+		},
+		ajaxTypeStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlStatusAdd = ''
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/dict/listData',
+				data: {type:'req_header_type'},
+				dataType: 'json',
+				success: function(res) {
+					$.each(res, function(i, item) {
+						htmlStatusAdd += '<option class="soption" name="headerType" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort + '" value="' + item.value + '">' + item.label + '</option>'
+					});
+					$('#headerType').html(optHtml+htmlStatusAdd)
+					_this.getData();
+					
 				}
 			});
 		}

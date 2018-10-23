@@ -38,7 +38,7 @@ public enum OfficeTypeEnum {
 
     ;
 
-   private String type;
+    private String type;
 
     OfficeTypeEnum(String type) {
         this.type = type;
@@ -64,7 +64,7 @@ public enum OfficeTypeEnum {
     public static void main(String[] args) {
 
 
-        System.out.println( OfficeTypeEnum.VENDOR.ordinal() );
+        System.out.println(OfficeTypeEnum.VENDOR.ordinal());
 
 
     }

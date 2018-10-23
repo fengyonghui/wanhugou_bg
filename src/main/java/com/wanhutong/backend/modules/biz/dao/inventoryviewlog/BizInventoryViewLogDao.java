@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.inventoryviewlog;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 库存盘点记录DAO接口
@@ -16,5 +17,7 @@ import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryVie
 public interface BizInventoryViewLogDao extends CrudDao<BizInventoryViewLog> {
 
     void saveCurrentViewLog(BizInventoryViewLog inventoryViewLog);
-	
+
+
+    void updateSkuId(@Param("needSkuId") Integer needSkuId, @Param("id") Integer id);
 }

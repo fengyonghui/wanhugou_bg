@@ -8,6 +8,8 @@ import java.util.List;
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.po.BizSchedulingPlanDao;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,5 +78,17 @@ public class BizPoDetailService extends CrudService<BizPoDetailDao, BizPoDetail>
 	@Transactional(readOnly = false)
 	public BizPoDetail getsumSchedulingNum(Integer objectId){
 		return bizPoDetailDao.getsumSchedulingNum(objectId);
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void updateSkuId(Integer needSkuId, Integer skuId) {
+		BizPoDetail orderDetail = new BizPoDetail();
+		orderDetail.setSkuInfo(new BizSkuInfo(skuId));
+		List<BizPoDetail> orderDetails = findList(orderDetail);
+		if (CollectionUtils.isNotEmpty(orderDetails)) {
+			for (BizPoDetail bizOrderDetail : orderDetails) {
+				bizPoDetailDao.updateSkuId(needSkuId,bizOrderDetail.getId());
+			}
+		}
 	}
 }

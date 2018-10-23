@@ -21,4 +21,6 @@ public interface BizSendGoodsRecordDao extends CrudDao<BizSendGoodsRecord> {
     void effectSendRecord(BizSendGoodsRecord bizSendGoodsRecord);
 
     Integer getSumSendNumByReqDetailId(@Param("reqDetailId") Integer reqDetailId, @Param("oneDayBefore")Date oneDayBefore, @Param("yesterdayEnd")Date yesterdayEnd);
+
+    void updateSkuId(@Param("needSkuId") Integer needSkuId, @Param("id") Integer id);
 }

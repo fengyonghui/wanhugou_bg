@@ -689,4 +689,42 @@
 		AND a.status = 1 AND b.status = 1
 	</select>
 
+	<update id="updateProdId">
+		UPDATE biz_sku_info SET
+		prod_id = #{prodId}
+		WHERE id = #{skuId}
+	</update>
+
+	<select id="findSkuBySpuAndSize" resultType="BizSkuInfo">
+		SELECT
+		a.id,
+		a.buy_price,
+		a.base_price
+		FROM biz_sku_info a
+		LEFT JOIN sys_attribute_value sav ON sav.object_id = a.id AND sav.object_name = 'biz_sku_info'
+		LEFT JOIN biz_product_info bpi ON bpi.id = a.prod_id
+		LEFT JOIN sys_attribute_info sai ON sai.id = sav.attr_id
+		WHERE
+		a.status = 1
+		AND sai.name = '尺寸'
+		AND bpi.status = 1
+		AND sav.status = 1
+		AND a.item_no LIKE concat('%',#{itemNo},'%')
+		AND bpi.id = #{prodId}
+		AND sav.value LIKE concat('%',#{size},'%')
+	</select>
+
+	<update id="updatePrice">
+		UPDATE biz_sku_info SET
+		buy_price = #{settlementPrice},
+		base_price = #{settlementPrice}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateItemNo">
+		UPDATE biz_sku_info SET
+		item_no = #{itemNo}
+		WHERE id = #{id}
+	</update>
+
 </mapper>
