@@ -48,7 +48,7 @@
 	                source:source
 				};
 			}else if(_this.userInfo.createPayStr){
-				console.log(str)
+				console.log(createPayStr)
 				datas={
 					id:idd,
 					str:createPayStr,
@@ -80,6 +80,17 @@
                 dataType: "json",
                 success: function(res){
                 	console.log(res)
+                	var strTxt = res.data.bizOrderHeader.str;
+                	var payMentCont = '';
+                	if(res.data.bizOrderHeader.bizPoPaymentOrder.id != null || strTxt == 'createPay'){
+                		payMentCont = '<div class="mui-input-row"><label>申请金额：</label>'+
+							'<input type="text" id="payMentNum" class="mui-input-clear"><font>*</font></div>'+
+						'<div class="mui-input-row"><label>付款时间：</label>'+
+							'<input type="date" id="payMentDate" class="mui-input-clear"><font>*</font></div>'+
+						'<div class="mui-input-row remark"><label>支付备注：</label>'+
+							'<textarea id="payPoRemark" name="" rows="" cols=""></textarea></div>'
+	        			$('#payMents').append(payMentCont);
+                	}
                 	$('#statuPath').val(res.data.statuPath);
                 	//调取供应商信息
                 	if(res.data.entity2){
@@ -187,8 +198,9 @@
 					_this.statusListHtml(res.data);//状态流程
 					_this.checkProcessHtml(res.data);//审核流程
 					_this.commodityHtml(res.data);//商品信息
-					_this.paylistHtml(res.data);//支付信息
+					_this.paylistHtml(res.data);//支付信息					
 					var poHeaderId = res.data.bizOrderHeader.bizPoHeader.id;
+					_this.apply(strTxt,poHeaderId);//申请付款
 					if(res.data.bizOrderHeader.str == 'startAudit'){
 						_this.startCheck(poHeaderId);//开启审核
 					}					
@@ -279,6 +291,59 @@
                     $('#staInvoice').html(optHtml+htmlInvoiceAmend);
                 }
             });
+        },
+        //申请付款
+        apply: function(type, id) {
+        	$('#payMentBtn').on('tap',function(){
+	            if (type == 'createPay') {
+	            	var ss = $('#payMentNum').val();
+					IsNum(ss)
+					function IsNum(num) {
+						if(num) {
+							var reNum = /^\d+(\.\d+)?$/;
+							if(reNum.test(num)) {
+				                var payDeadline = $("#payMentDate").val() + ' 00:00:00';
+				                if ($("#payMentDate").val() == '') {
+				                    mui.toast("请选择本次申请付款时间!");
+				                    return;
+				                }
+								var paymentApplyRemark = $("#payPoRemark").val();
+								$.ajax({
+				                    type: "get", 
+				                    url: "/a/biz/po/bizPoHeaderReq/savePoHeader4Mobile",
+				                    data: {
+				                    	type:type, 
+				                    	id:id, 
+				                    	planPay: ss, 
+				                    	payDeadline: payDeadline, 
+				                    	fromPage: 'orderHeader', 
+				                    	paymentApplyRemark: paymentApplyRemark
+				                    },
+				                    dataType: 'json',
+				                    success: function (resule) {
+				                        if (resule == true) {
+				                            mui.toast("本次申请付款成功！");
+				                          	GHUTILS.OPENPAGE({
+				                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+				                                extras: {
+				                                }
+				                            })
+				                        }
+				                    }
+				                })
+							} else {
+								if(num < 0) {
+									mui.toast("申请金额不能为负数！");
+								}else {
+									mui.toast("申请金额必须为数字！");
+								}
+							}
+						}else {
+							mui.toast("申请金额不能为空！");
+						}
+					}
+	            }
+	        })
         },
         //开启审核
         startCheck: function(id) {

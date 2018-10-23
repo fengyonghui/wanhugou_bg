@@ -953,23 +953,26 @@
 					            		//申请付款
 										var creatPayBt = '';
 										var creatPay = '';
-										if(item.bizOrderHeader != null || item.bizRequestHeader != null) {
+										if(item.bizOrderHeader != null || item.bizOrderHeader != '' 
+										|| item.bizRequestHeader != null || item.bizRequestHeader != '') {
 											if(_this.ordCreatPayFlag == true) {
-					                        	if(item.bizOrderHeader != null) {
-					                        		if(item.currentPaymentId == null
+					                        	if(item.bizOrderHeader != null || item.bizOrderHeader != '') {
+					                        		if((item.currentPaymentId == null || item.currentPaymentId == '') 
 					                        		&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
-					                        		&& (item.payTotal == null ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
+					                        		&& ((item.payTotal == null || item.payTotal == '') ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
+					                        			console.log('订单申请付款')
 					                        			creatPay = '申请付款'
 														creatPayBt = 'creatPayBtn'
 					                        		}
 					                        	}
 					                        }
 											if(_this.creatPayFlag == true) {
-												if(item.bizRequestHeader != null) {
+												if(item.bizRequestHeader != null || item.bizRequestHeader != '') {
 													if((item.currentPaymentId == null || item.currentPaymentId == '') 
 													&& item.bizRequestHeader.bizStatus >= 5 
 													&& item.bizRequestHeader.bizStatus < 37 
-													&& (item.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
+													&& ((item.bizRequestHeader.bizPoHeader.payTotal == null || item.bizRequestHeader.bizPoHeader.payTotal == '') ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
+														console.log('备货单申请付款')
 														creatPay = '申请付款'
 														creatPayBt = 'creatPayBtn'
 													}
@@ -1156,9 +1159,9 @@
 												'<div class="" >'+orAmendBtnTxt+'</div></div>' +
 							/*审核*/			'<div name="commBtn" class="'+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
 												'<div class="" >'+staCheckBtnTxt+'</div></div>' +
-							/*申请付款*/		'<div name="commBtn" class="'+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
+							/*申请付款*/		'<div name="commBtn" class="'+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'" payOrderId="'+item.bizOrderHeader.id+'">' +
 												'<div class="" >'+creatPay+'</div></div>' +
-							/*开启审核*/		'<div name="commBtn" class="'+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
+							/*开启审核*/		'<div name="commBtn" class="'+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'" payOrderId="'+item.bizOrderHeader.id+'" statu="'+item.bizOrderHeader.statu+'" source="'+item.bizOrderHeader.source+'">' +
 												'<div class="" >'+stastartCheckBtnTxt+'</div></div>' +
 										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation " id="foot">' +
