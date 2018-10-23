@@ -76,6 +76,7 @@
 				data: datas,
 				dataType: "json",
 				success: function(res) {
+					console.log(res)
 					$('#schedulingTxt').hide();
 					console.log(res);
 					$('#inCheckBtn').attr('poid',res.data.bizRequestHeader.bizPoHeader.id);
@@ -176,7 +177,7 @@
 					} else {
 						$('#inSchedulstatus').val("未排产");
 					};
-					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo); //备货单编号	
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo); //备货单编号						
 					//备货方
 					if(res.data.bizRequestHeader.fromType == 1) {
 						$('#fromType1').attr('checked', 'checked');
@@ -593,7 +594,7 @@
 					}
 				});
 	        })
-			$.each(data.inventorySkuList, function(i, item) {
+			$.each(data.inventorySkuList, function(i, item) {				
 				htmlstockGoods +=
 					'<div class="mui-row app_bline" id="' + item.id + '">' +
 
@@ -669,7 +670,7 @@
 					    '</div>'+
 					'</div>' 
 			});
-			$("#Goodsstock").html(htmlstockGoods);
+			$("#Goodsstock").append(htmlstockGoods);
 		},
 		comfirDialig: function(res) {
 			var _this = this;

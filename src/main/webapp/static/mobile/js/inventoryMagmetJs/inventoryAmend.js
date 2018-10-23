@@ -284,6 +284,7 @@
                 var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
                 var inPoRemarkVal = $("#inPoRemark").val(); //备注
                 var bizStatusVal = $("#inputDivAmend")[0].value; //业务状态
+                 var bizTypeVal = $("#headerType")[0].value; //备货单类型
                 var id = _this.userInfo.reqId; //列表传过来的备货单id；
                 //选择备货方：
                 var r2 = document.getElementsByName("fromType");
@@ -301,6 +302,10 @@
                    var insupplierNum = $("#insupplier").val();
                     _this.bizOfficeId = _this.getbizOfficeId(insupplierNum);
                 }
+                if(bizTypeVal == null || bizTypeVal == "") {
+                    mui.toast("请选择备货单类型！")
+                    return;
+                } 
                 if(_this.fromOfficeId == null || _this.fromOfficeId == ""){
                     mui.toast("请选择采购中心！")
                     return;
@@ -326,6 +331,7 @@
                     url: "/a/biz/request/bizRequestHeaderForVendor/saveForMobile",
                     data: {
                     	"id":id, //	备货单id
+                    	'headerType':bizTypeVal,//备货单类型
                     	"recvEta":inPoLastDaVal, //期望收货时间
                     	"remark": inPoRemarkVal, //备注信息
                     	"bizStatus": bizStatusVal, //业务状态

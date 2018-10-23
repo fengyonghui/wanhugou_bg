@@ -23,6 +23,7 @@
                 data: {id:_this.userInfo.inListId,str:'detail'},
                 dataType: "json",
                 success: function(res){
+                	console.log(res)
                 	//调取供应商信息
                 	if(res.data.bizRequestHeader.bizVendInfo){
                 		var officeId = res.data.bizRequestHeader.bizVendInfo.office.id;
@@ -89,7 +90,7 @@
 				    }else{
 		                $('#inSchedulstatus').val("未排产");
 				    };				    
-					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号	
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号						
 					//备货方
                     if(res.data.bizRequestHeader.fromType==1){
 						$('#fromType1').attr('checked','checked');
