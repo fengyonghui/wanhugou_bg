@@ -179,7 +179,7 @@ public class OfficeController extends BaseController {
 
     @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "purchasersForm")
-    public String purchasersForm(Office office, Model model) {
+    public String purchasersForm(Office office, Model model, String option) {
         User user = UserUtils.getUser();
         if (office.getParent() == null || office.getParent().getId() == null) {
             if (OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())) {
