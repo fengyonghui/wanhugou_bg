@@ -157,16 +157,16 @@
                     var totalCompleteScheduHeaderNum = result['totalCompleteScheduHeaderNum'] == null ? 0 : result['totalCompleteScheduHeaderNum'];
                     $("#totalCompleteScheduHeaderNum").val(totalCompleteScheduHeaderNum)
                     $("#totalSchedulingNumToDo").val(parseInt(totalSchedulingHeaderNum) - parseInt(totalCompleteScheduHeaderNum))
-                    console.log(schedulingPlanHeaderFlag)
+//                  console.log(schedulingPlanHeaderFlag)
                     if (schedulingPlanHeaderFlag == true) {
-                    	console.log($("#totalSchedulingNumToDo").val())
+//                  	console.log($("#totalSchedulingNumToDo").val())
                         if($("#totalSchedulingNumToDo").val() == 0) {
-                        	console.log(111)
+//                      	console.log(111)
                             $("#completeBtn").hide()
                             $("#totalCompleteAlert").show()
                         }
                     }
-                    console.log(schedulingPlanDetailFlag)
+//                  console.log(schedulingPlanDetailFlag)
                     if (schedulingPlanDetailFlag == true) {
                         var toalSchedulingNumForSkuHtml = $("[name=toalSchedulingNumForSku]");
                         var toalSchedulingNumForSkuNum = 0;
@@ -379,7 +379,7 @@
 	
 	            params.unshift($('#bizReqReqNo').val());
 	            if(confirm("确定执行该确认排产吗？")) {
-	            	console.log(params)
+//	            	console.log(params)
 	                $.ajax({
 	                    url: '/a/biz/po/bizPoHeader/confirm4Mobile?poHeaderId='+poHeaderId,
 	                    contentType: 'application/json',
@@ -387,7 +387,7 @@
 	                    type: 'post',
 	                    success: function (result) {
 	                    	result = $.parseJSON(result.replace(/<.*?>/ig,""));
-	                    	console.log(result)
+//	                    	console.log(result)
 	                      if(result.data.resultFlag == true) {
 	                      	GHUTILS.OPENPAGE({
 								url: "../../html/orderMgmtHtml/orderpaymentinfo.html",

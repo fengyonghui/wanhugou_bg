@@ -213,7 +213,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		            	console.log (res)
+//		            	console.log (res)
 		            	var dataRow = res.data.roleSet;
 		            	/*当前用户信息*/
 						var userId = '';
@@ -302,7 +302,7 @@
 							                        		if((item.currentPaymentId == null || item.currentPaymentId == '') 
 							                        		&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
 							                        		&& ((item.payTotal == null || item.payTotal == '') ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
-							                        			console.log('订单申请付款')
+//							                        			console.log('订单申请付款')
 							                        			creatPay = '申请付款'
 																creatPayBt = 'creatPayBtn'
 							                        		}
@@ -314,7 +314,7 @@
 															&& item.bizRequestHeader.bizStatus >= 5 
 															&& item.bizRequestHeader.bizStatus < 37 
 															&& ((item.bizRequestHeader.bizPoHeader.payTotal == null || item.bizRequestHeader.bizPoHeader.payTotal == '') ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
-																console.log('备货单申请付款')
+//																console.log('备货单申请付款')
 																creatPay = '申请付款'
 																creatPayBt = 'creatPayBtn'
 															}
@@ -335,7 +335,7 @@
 										                	},
 											                async:false,
 											                success: function(res){
-												                console.log(res.data.dictLabel)
+//												                console.log(res.data.dictLabel)
 												                dictLabel = res.data.dictLabel;
 											                }
 											            });
@@ -680,8 +680,8 @@
 				var staOrdId = $(this).attr('payorderid');
 				var statu = $(this).attr('statu');
 				var source = $(this).attr('source');
-				console.log(paymentId)
-				console.log(staOrdId)
+//				console.log(paymentId)
+//				console.log(staOrdId)
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(paymentId!=""&&staOrdId=='undefined') {
@@ -961,7 +961,7 @@
 					                        		if((item.currentPaymentId == null || item.currentPaymentId == '') 
 					                        		&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
 					                        		&& ((item.payTotal == null || item.payTotal == '') ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
-					                        			console.log('订单申请付款')
+//					                        			console.log('订单申请付款')
 					                        			creatPay = '申请付款'
 														creatPayBt = 'creatPayBtn'
 					                        		}
@@ -973,7 +973,7 @@
 													&& item.bizRequestHeader.bizStatus >= 5 
 													&& item.bizRequestHeader.bizStatus < 37 
 													&& ((item.bizRequestHeader.bizPoHeader.payTotal == null || item.bizRequestHeader.bizPoHeader.payTotal == '') ? 0 : item.payTotal) < item.bizRequestHeader.totalDetail) {
-														console.log('备货单申请付款')
+//														console.log('备货单申请付款')
 														creatPay = '申请付款'
 														creatPayBt = 'creatPayBtn'
 													}
@@ -994,7 +994,7 @@
 								                	},
 									                async:false,
 									                success: function(res){
-										                console.log(res.data.dictLabel)
+//										                console.log(res.data.dictLabel)
 										                dictLabel = res.data.dictLabel;
 									                }
 									            });

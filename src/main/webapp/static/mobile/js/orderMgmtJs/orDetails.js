@@ -30,7 +30,7 @@
                 success: function(res){
 					/*业务状态*/
 					var bizPoHeader = res.data.bizPoHeader;
-					console.log(bizPoHeader)
+//					console.log(bizPoHeader)
 					var orshouldPay = bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight
 					$('#orpoNum').val(res.data.bizOrderHeader.orderNumber)//单号
 					$('#ordtotal').val(bizPoHeader.totalDetail)//总价
@@ -49,7 +49,7 @@
 //					$('#orTypes').val()
 					//订单状态 
 					var valueTxt = res.data.bizPoHeader.bizStatus;
-					console.log(valueTxt)
+//					console.log(valueTxt)
 					$('#orTypes').val(valueTxt);
 					$('#orSupplier').val(bizPoHeader.vendOffice.name)//供应商
 					if(bizPoHeader.vendOffice.bizVendInfo) {

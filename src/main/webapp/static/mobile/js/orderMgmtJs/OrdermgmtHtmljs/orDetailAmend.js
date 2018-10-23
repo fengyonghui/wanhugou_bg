@@ -29,7 +29,7 @@
                 	'orderHeader.oneOrder':_this.userInfo.oneOrderId,orderType:_this.userInfo.orderType},
                 dataType: "json",
                 success: function(res){
-					console.log(res)	
+//					console.log(res)	
 	                $('.buttonCont .addSkuButton').attr('id',res.data.detail.shelfInfo.id);
 					$('#ordCenter').val(res.data.detail.shelfInfo.centerOffice.name)//采购中心
 					$('#brandName').val(res.data.detail.shelfInfo.opShelfInfo.name)//货架名称
@@ -71,7 +71,7 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                	console.log(res.data)//true
+//              	console.log(res.data)
                     _this.OrdviewFlag = res.data;
                 }
             });
@@ -92,13 +92,13 @@
                 	},
                     success: function (result) {
                         var data = JSON.parse(result).data;
-                        console.log(data)
+//                      console.log(data)
 	                        $.each(data,function (keys,skuInfoList) {
-	                        	console.log(skuInfoList)
+//	                        	console.log(skuInfoList)
 	                            var resultListHtml="";
 	                            var t=0;
 	                            $.each(skuInfoList,function (index,skuInfo) {
-                            		console.log(skuInfo)
+//                          		console.log(skuInfo)
                                 //商品属性
 								var ListHtml="";
 								$.each(skuInfo.skuValueList, function(i, item) {
@@ -194,7 +194,7 @@
             var _this = this;
             mui('#searchInfo').on('tap','.addSkuButton',function(){        	
              	var reqQtyId = $(this).attr('id');
-	      		console.log(reqQtyId)
+//	      		console.log(reqQtyId)
 	      		var saleQty= $("#saleQty_"+reqQtyId).val();
 	      		if(saleQty==''){
 	      			mui.toast("请输入数量");
@@ -231,7 +231,7 @@
         },
         //订单商品删除按钮操作
         deleteItem:function (data) {
-        	console.log(data.orderHeader);
+//      	console.log(data.orderHeader);
         	var idd=data.orderHeader.id;//订单id
 			var statu=data.orderHeader.statu;
 			var source=data.orderHeader.source;
@@ -284,35 +284,35 @@
             	var skuIds2="";
             	$.each(DetaIdsList,function(m,n){
             		skuIds2+=$(this).val()+',';
-            	    console.log(skuIds2)
+//          	    console.log(skuIds2)
             	})
             	var orderDetaId = skuIds2.substring(0,skuIds2.length-1); 
-            	console.log(orderDetaId);
+//          	console.log(orderDetaId);
             	//数量saleQtys
             	var saleQtysList=$('#commodityMenu input[id^=saleQty_]');
             	var reqQty="";
             	$.each(saleQtysList,function(m,n){
             		reqQty+=$(this).val()+',';
             		var ss=$(this).attr('id').substring(8);
-            		console.log(ss)
+//          		console.log(ss)
             		var ReqQty= $("#commodityMenu #saleQty_"+ss).val();
-            		 console.log(ReqQty)
+//          		 console.log(ReqQty)
             		if (ReqQty == null || ReqQty == "") {
                   	    mui.toast("请输入采购数量！！")
                         return;
                     }            	   
             	})
             	var reqQtys = reqQty.substring(0,reqQty.length-1); 
-            	console.log(reqQtys)
+//          	console.log(reqQtys)
             	
             	var shelfSkusList=$('#commodityMenu input[id^=shelfSkuId_]');
             	var shelfSku="";
             	$.each(shelfSkusList,function(m,n){
             		shelfSku+=$(this).val()+',';
-            	    console.log(shelfSku)
+//          	    console.log(shelfSku)
             	})
             	var shelfSkus = shelfSku.substring(0,shelfSku.length-1); 
-            	console.log(shelfSkus)
+//          	console.log(shelfSkus)
                 saveData={
 					id:id,
 					'orderHeader.id': orid,
@@ -329,7 +329,7 @@
 	                data: saveData,		                
 	                dataType: "json",
 	                success: function(rest){
-	                	console.log(rest);
+//	                	console.log(rest);
 	                	if(rest.ret==true){		                		
 	                		mui.toast('保存成功！');
 	                		window.setTimeout(function(){

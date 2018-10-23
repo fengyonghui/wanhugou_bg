@@ -64,7 +64,7 @@
 		                data:{type:'biz_order_unline_bizStatus'},
 		                dataType: "json",
 		                success: function(zl){
-		                	console.log(zl)
+//		                	console.log(zl)
 		                	$.each(zl, function(z,l) {
 		                		if(l.value == bizOrderHeaderUnline.bizStatus) {
 		                			$('#orWaterStatus').val(l.label);//流水状态
@@ -100,7 +100,7 @@
 				            },
 			                dataType: "json",
 			                success: function(res){
-			                	console.log(res)
+//			                	console.log(res)
 			                	mui.toast('审核通过！');
 			                	window.setTimeout(function(){
 			                		GHUTILS.OPENPAGE({
@@ -131,7 +131,7 @@
 				            },
 			                dataType: "json",
 			                success: function(res){
-			                	console.log(res)
+//			                	console.log(res)
 			                	mui.toast('审核驳回！');
 			                	window.setTimeout(function(){
 			                		GHUTILS.OPENPAGE({

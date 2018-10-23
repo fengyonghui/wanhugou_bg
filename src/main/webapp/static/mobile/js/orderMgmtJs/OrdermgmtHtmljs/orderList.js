@@ -115,7 +115,6 @@
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
 //                          	console.log(item)
-//                          	console.log(item.statu)//空的
                             	var ProcessName = '';
                             	var objectName = item.commonProcess.objectName; 
                             	var commonProcess = item.commonProcess;
@@ -189,7 +188,7 @@
 //												console.log(res.data.auditStatus)
 												var auditStatu = '';
 					                            $.each(res.data.auditStatus,function(q,s){
-					                            	console.log(s)
+//					                            	console.log(s)
 						                        	auditStatu=s
 					                            })
 //					                            console.log(auditStatu)
@@ -218,10 +217,9 @@
 												DataRoles = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
 												fileRoles = dataRow.filter(v => DataRoles.includes(v));
 											}
-											console.log(fileRole.length)
-											console.log(fileRoles.length)
-											console.log(userId)
-											
+//											console.log(fileRole.length)
+//											console.log(fileRoles.length)
+//											console.log(userId)
                                             if(commonProcess != null && commonProcess.id != null
                                             	&& commonProcess.purchaseOrderProcess.name != '驳回' 
                                             	&& commonProcess.purchaseOrderProcess.name != '审批完成'
@@ -432,7 +430,7 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                	console.log(res.data) //false
+//              	console.log(res.data) 
                     _this.staOrdeditFlag = res.data;
                 }
             });
@@ -732,7 +730,7 @@
 				},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					var dataRow = res.data.roleSet;
 					$('#flag').val(_this.userInfo.flagTxt)
 					$('#staListIdTxt').val(_this.userInfo.staListSehId)//查询出来的客户专员 ID
@@ -762,7 +760,7 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-                            	console.log(item)
+//                          	console.log(item)
                             	var ProcessName = '';
                             	var objectName = item.commonProcess.objectName; 
                             	var commonProcess = item.commonProcess;
@@ -812,7 +810,7 @@
 				                	//审核
                                     if(item.bizStatus != res.data.CANCLE){
                                         if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING){
-                                        	console.log('审核1')
+//                                      	console.log('审核1')
                                          	if(_this.staOrdauditFlag == true){
 												var DataRoleGener = '';
 												var fileRoleData = '';
@@ -820,7 +818,7 @@
 													DataRoleGener = commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
 													fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 												}
-												console.log(DataRoleGener)
+//												console.log(DataRoleGener)
                                          		if((fileRoleData || userId==1) && commonProcess.doOrderHeaderProcessFifth.name != '驳回'
                                          		&& commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
                                          			staCheckBtnTxt="审核";
@@ -832,14 +830,14 @@
 													DataRoleGeners = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
 													fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
 												}
-												console.log(DataRoleGeners)
-												console.log(res.data.auditStatus)
+//												console.log(DataRoleGeners)
+//												console.log(res.data.auditStatus)
 												var auditStatu = '';
 					                            $.each(res.data.auditStatus,function(q,s){
-					                            	console.log(s)
+//					                            	console.log(s)
 						                        	auditStatu=s
 					                            })
-					                            console.log(auditStatu)
+//					                            console.log(auditStatu)
                                          		if(fileRoleDatas && commonProcess.jointOperationOriginProcess.name != '驳回'
                                          		&& commonProcess.jointOperationOriginProcess.code != auditStatu
                                          		&& item.orderType == res.data.ORDINARY_ORDER){
@@ -849,7 +847,7 @@
                                          	}
                                         }
                                         if(_this.staOrdauditFlag == true){
-                                        	console.log('审核2')
+//                                      	console.log('审核2')
                                             var DataRole = '';
                                             var fileRole = '';
                                             var DataRoleName = '';
@@ -858,17 +856,16 @@
 												DataRole = commonProcess.jointOperationLocalProcess.roleEnNameEnum;
 												fileRole = dataRow.filter(v => DataRole.includes(v));
 											}
-											console.log(DataRole)
+//											console.log(DataRole)
 											var DataRoles = '';
 											var fileRoles = '';
 											if(commonProcess.jointOperationOriginProcess) {
 												DataRoles = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
 												fileRoles = dataRow.filter(v => DataRoles.includes(v));
 											}
-											console.log(fileRole.length)
-											console.log(fileRoles.length)
-											console.log(userId)
-											
+//											console.log(fileRole.length)
+//											console.log(fileRoles.length)
+//											console.log(userId)
                                             if(commonProcess != null && commonProcess.id != null
                                             	&& commonProcess.purchaseOrderProcess.name != '驳回' 
                                             	&& commonProcess.purchaseOrderProcess.name != '审批完成'

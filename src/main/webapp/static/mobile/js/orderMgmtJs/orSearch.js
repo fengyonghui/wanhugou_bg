@@ -153,6 +153,7 @@
 				dataType: 'json',
 				success: function(res) {
 					$.each(res, function(i, item) {
+//						console.log(item)
 						htmlinvoice += '<option class="soption"  value="' + item.value + '">' + item.label + '</option>'
 					});
 					$('#input_div_invoiceStatus').html(optHtml+htmlinvoice);
@@ -189,7 +190,9 @@
 //				data: {type:'biz_po_status'},
 				dataType: 'json',
 				success: function(res) {
+//					console.log(res)
 					$.each(res.data.processList, function(i, item) {
+						console.log(item)
 						htmlClass += '<option class="soption" value="' + item.name + '">' + item.name + '</option>'
 					});
 					$('#input_div_orderStatus').html(optHtml+htmlClass)

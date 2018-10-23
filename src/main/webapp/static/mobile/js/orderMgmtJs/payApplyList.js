@@ -21,7 +21,6 @@
 //			if(this.userInfo.isFunc){
 //				this.seachFunc()
 //			}else{
-				
 				this.pageInit(); //页面初始化
                 this.removeBtn();
 //			}
@@ -83,7 +82,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		          	    console.log(res)
+//		          	    console.log(res)
 			            var returnData = res.data.page.list;
 			            var dataRow = res.data.roleSet;
 						var arrLen = res.data.page.list.length; 
@@ -94,7 +93,7 @@
 						}
                         if(arrLen > 0) {
 							$.each(returnData, function(i, item) {
-								console.log(item)
+//								console.log(item)
 								//当前状态
 								var nowbizStatus="";
 								var nowbizStatus="";
@@ -113,10 +112,9 @@
 								//操作确认支付金额
 								var inPay ="";								
 								var inPayBtn="";
-								console.log(_this.PaymentFlag)
-								console.log(res.data.fromPage)
-								console.log(item.total)
-								
+//								console.log(_this.PaymentFlag)
+//								console.log(res.data.fromPage)
+//								console.log(item.total)
 								if(_this.PaymentFlag == true){
 									if(res.data.fromPage == 'requestHeader' && item.total == '0.00' && (res.data.requestHeader == null || res.data.requestHeader.bizStatus < res.data.CLOSE)){
 										inPay = '确认支付金额';
@@ -273,7 +271,7 @@
                 async:false,
                 success: function(res){
                     _this.PaymentFlag = res.data;
-                    console.log(_this.PaymentFlag)
+//                  console.log(_this.PaymentFlag)
                 }
             });
         },
@@ -287,7 +285,7 @@
                 async:false,
                 success: function(res){
                     _this.checkFlag = res.data;
-                    console.log(_this.checkFlag)
+//                  console.log(_this.checkFlag)
                 }
             });
         },
@@ -301,7 +299,7 @@
                 async:false,
                 success: function(res){
                     _this.editFlag = res.data;
-                    console.log(_this.editFlag)
+//                  console.log(_this.editFlag)
                 }
             });
         },
@@ -315,7 +313,7 @@
                 async:false,
                 success: function(res){
                     _this.affirmFlag = res.data;
-                    console.log(_this.affirmFlag)
+//                  console.log(_this.affirmFlag)
                 }
             });
         },
@@ -328,13 +326,13 @@
 			var _this = this;
 			document.getElementById("inCheckBtns").addEventListener('tap', function() {
 				var inListId = $(this).attr('inlistid');
-				console.log(inListId);
+//				console.log(inListId);
 				var auditType= $(this).attr('ordertype');
-				console.log(auditType);
+//				console.log(auditType);
 				var money= $(this).attr('total');
-				console.log(money);
+//				console.log(money);
 				var currentType= $(this).attr('curtype');
-				console.log(currentType);
+//				console.log(currentType);
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
@@ -355,13 +353,13 @@
 			document.getElementById("inCheckBtn").addEventListener('tap', function(e) {
 				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了                
 				var inListId = $(this).attr('inlistid');
-				console.log(inListId)
+//				console.log(inListId)
 				var auditType= $(this).attr('ordertype');
-				console.log(auditType);
+//				console.log(auditType);
 				var money= $(this).attr('total');
-				console.log(money);
+//				console.log(money);
 				var currentType= $(this).attr('curtype');
-				console.log(currentType);
+//				console.log(currentType);
 				var btnArray = ['取消', '确定'];
 				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
 					if(e.index == 1) {
@@ -396,7 +394,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret == true) {
 						mui.toast(res.data.right);
 						window.setTimeout(function(){
@@ -454,10 +452,10 @@
 			$('#payApplyList').on('tap', '.inPayBtn', function() {
 				$('.payMoney').show();
 				var inListId = $(this).attr('inListId');
-				console.log(inListId)
+//				console.log(inListId)
 				var frompage = $(this).attr('frompage');
-				console.log(frompage)
-				console.log(_this.userInfo.staOrdId)
+//				console.log(frompage)
+//				console.log(_this.userInfo.staOrdId)
 				$.ajax({
 	                type: "GET",
 	                url: "/a/biz/po/bizPoPaymentOrder/form4Mobile",
@@ -465,7 +463,7 @@
 	                data: {id:inListId,poHeaderId:_this.userInfo.staOrdId,fromPage:frompage},
 	                async:false,
 	                success: function(res){
-	                    console.log(res);
+//	                    console.log(res);
 	                    var resid=res.data.bizPoPaymentOrder.id;
 	                    var poHeaderIds=res.data.bizPoPaymentOrder.poHeaderId;
 	                     var orderTypes=res.data.bizPoPaymentOrder.orderType;

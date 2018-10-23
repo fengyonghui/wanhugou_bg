@@ -31,9 +31,9 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                	console.log(res)
+//              	console.log(res)
                     _this.orWaterConFlag = res.data;
-                    console.log(_this.orWaterConFlag)
+//                  console.log(_this.orWaterConFlag)
                 }
             });
         },
@@ -47,7 +47,7 @@
                 async:false,
                 success: function(res){
                     _this.orWaterCheckFlag = res.data;
-                    console.log(_this.orWaterCheckFlag)
+//                  console.log(_this.orWaterCheckFlag)
                 }
             });
         },      
@@ -96,7 +96,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		            	console.log(res)		            	
+//		            	console.log(res)		            	
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
@@ -119,7 +119,7 @@
 	                	});
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-                            	console.log(item)
+//                          	console.log(item)
 //                          	console.log(item.orderHeader.id)
                             	$('#orderId').val(item.orderHeader.id);
                             	$.each(orWaterStatusList,function(z, l) {
@@ -382,7 +382,7 @@
 					var arrLen = res.data.page.list.length;
                     if(arrLen > 0) {
                         $.each(res.data.page.list, function(i, item) {
-                        	console.log(item)
+//                      	console.log(item)
                         	$.each(orWaterStatusList,function(z, l) {
 		                		if(item.bizStatus == l.value) {
 		                			orWaterStatus = l.label//流水状态
