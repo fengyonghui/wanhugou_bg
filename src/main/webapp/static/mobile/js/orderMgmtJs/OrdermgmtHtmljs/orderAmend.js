@@ -35,12 +35,7 @@
 			var source=_this.userInfo.source;
 			var str=_this.userInfo.starStr;
 			var createPayStr=_this.userInfo.createPayStr;
-			console.log(idd)
-			console.log(statu)
-			console.log(source)
-			console.log(str)
 			if(_this.userInfo.starStr){
-				console.log(str)
 				datas={
 					id:idd,
 	                str:str,
@@ -48,13 +43,11 @@
 	                source:source
 				};
 			}else if(_this.userInfo.createPayStr){
-				console.log(createPayStr)
 				datas={
 					id:idd,
 					str:createPayStr,
 				};
 			}else{
-				console.log('33')
 				datas={
 					id:idd,
 	                statu:statu,
@@ -69,7 +62,7 @@
 	        	$('#changeHeader').html('开启审核');
 	        	btnMeun = '<button id="startCheckBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">开启审核</button>'
 	        }else {
-	        	$('#changeHeader').html('备货单修改');
+	        	$('#changeHeader').html('订单修改');
 	        	btnMeun = '<button id="saveDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
 	        }
 	        $('.inSaveBtn').html(btnMeun);
