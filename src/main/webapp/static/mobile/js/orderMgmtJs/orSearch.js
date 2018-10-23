@@ -28,14 +28,12 @@
 			var _this = this;
 			$('#inSearchBtn').on('tap', function() {
 				if(_this.selectOpen){
-						if($('.hasoid').attr('id')){
-							console.log('---')
-							_this.sureSelect()
-						}else{
-							mui.toast('请选择匹配的选项')
-						}
+					if($('.hasoid').attr('id')){
+						_this.sureSelect()
+					}else{
+						mui.toast('请选择匹配的选项')
+					}
 				}else{
-					console.log('+++')
 					_this.sureSelect()
 				}
 			})
@@ -43,13 +41,14 @@
 		sureSelect:function(){
 			var _this = this;
 				_this.selectOpen = false
-				console.log($('#inSupply').val());
-				console.log($('.hasoid').attr('id'));
-				console.log($('#input_div_invoiceStatus').val());
-				console.log($('#input_div_poStatus').val());
-				console.log($('#input_div_orderStatus').val());
-				console.log($('#input_div_poSchType').val());
-				console.log($('#wait_pay').val());
+//				console.log($('#inSupply').val());
+//				console.log($('.hasoid').attr('id'));
+//				console.log($('#input_div_invoiceStatus').val());
+//				console.log($('#input_div_poStatus').val());
+//				console.log($('#input_div_orderStatus').val());
+//				console.log($('#input_div_poSchType').val());
+//				console.log($('#wait_pay').val());
+//				console.log($('#apply_pay').val());
 				GHUTILS.OPENPAGE({
 					url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
 					extras: {
@@ -60,10 +59,11 @@
 						processTypeStr:$('#input_div_orderStatus').val(),//审核状态
 						poSchType:$('#input_div_poSchType').val(),//排产状态
                         waitPay: $('#wait_pay').val(),//待支付
+                        applyPayment:$('#apply_pay').val(),//可申请付款
                         includeTestData: _this.includeTestData,//测试数据
                         isFunc: true
 						}
-					})
+				})
 		},
 		testData:function() {
 			var _this = this;
@@ -153,7 +153,6 @@
 				dataType: 'json',
 				success: function(res) {
 					$.each(res, function(i, item) {
-						console.log(item)
 						htmlinvoice += '<option class="soption"  value="' + item.value + '">' + item.label + '</option>'
 					});
 					$('#input_div_invoiceStatus').html(optHtml+htmlinvoice);
@@ -190,9 +189,7 @@
 //				data: {type:'biz_po_status'},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
 					$.each(res.data.processList, function(i, item) {
-						console.log(item)
 						htmlClass += '<option class="soption" value="' + item.name + '">' + item.name + '</option>'
 					});
 					$('#input_div_orderStatus').html(optHtml+htmlClass)

@@ -865,7 +865,7 @@
 				type: 'GET',
                 url: '/a/biz/po/bizPoHeader/listV2Data4Mobile',
 				data: {
-					//pageNo: 1,
+					pageNo: 1,
 					num: _this.userInfo.num ,//备货单号
 					'vendOffice.id': _this.userInfo.vendOffice ,//供应商
 					invStatus: _this.userInfo.invStatus , //发票状态
@@ -873,6 +873,7 @@
 					processTypeStr:nameTxt ,//审核状态
 					poSchType:_this.userInfo.poSchType ,//排产状态
                     waitPay: _this.userInfo.waitPay ,//待支付
+                    applyPayment: _this.userInfo.applyPayment ,//可申请付款
                     includeTestData: _this.userInfo.includeTestData ,//测试数据
 //                  isFunc: true
 				},
