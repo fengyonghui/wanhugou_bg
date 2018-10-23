@@ -4,16 +4,16 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.fs == false;
-		this.outSaveFlag = "false"
-		this.inSsaveFlag = "false"
+//		this.outSaveFlag = "false"
+//		this.inSsaveFlag = "false"
 		this.htmlcommdPlans = '';
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			//biz:po:bizPoHeader:addScheduling		biz:po:bizPoHeader:saveScheduling	保存、批量保存	
-			this.getPermissionList('biz:po:bizPoHeader:addScheduling','outSaveFlag')	
-			this.getPermissionList('biz:po:bizPoHeader:saveScheduling','inSsaveFlag')	
+//			this.getPermissionList1('biz:po:bizPoHeader:addScheduling','outSaveFlag')	
+//			this.getPermissionList2('biz:po:bizPoHeader:saveScheduling','inSsaveFlag')	
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			this.pageInit(); //页面初始化
 		},
@@ -21,20 +21,19 @@
 			var _this = this;
 			_this.getData();
 		},
-		getPermissionList: function (markVal,flag) {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": markVal},
-                async:false,
-                success: function(res){
-                    _this.outSaveFlag = res.data;
-					_this.inSsaveFlag = res.data;
-                }
-            });
-        },
+//		getPermissionList1: function (markVal,flag) {
+//          var _this = this;
+//          $.ajax({
+//              type: "GET",
+//              url: "/a/sys/menu/permissionList",
+//              dataType: "json",
+//              data: {"marking": markVal},
+//              async:false,
+//              success: function(res){
+//                  _this.outSaveFlag = res.data;
+//              }
+//          });
+//      },
 		getData: function() {
 			var _this = this;
 			$.ajax({

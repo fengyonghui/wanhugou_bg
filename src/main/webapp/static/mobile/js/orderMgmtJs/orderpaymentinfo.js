@@ -1177,26 +1177,6 @@
 							/*确认排产*/		'<div name="commBtn" class="'+affirmSchedulingBtn+'" staordid="'+ item.id +'">' +
 												'<div class="" >'+affirmSchedulingBtnTxt+'</div></div>' +
 										'</div>' +
-//										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-//								/*审核*/		'<div class="mui-col-xs-1 '+staCheckBtns+'" staordid="'+ staCheckBtn +'" staordids="'+ staCheckbtns +'">' +
-//												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li></div>'+
-//							/*支付列表*/		'<div class="mui-col-xs-2 '+staPayBtnes+'" staordid="'+ item.id +'" staOrderId="'+ item.bizOrderHeader.id +'" staInvenId="'+ item.bizRequestHeader.id +'">' +
-//												'<li class="mui-table-view-cell">'+ staPayBtnTxt +'</li></div>'+
-//							/*开启审核*/		'<div class="mui-col-xs-2 '+stastartCheckBtn+'" paymentId="'+item.bizRequestHeader.id+'">' +
-//												'<li class="mui-table-view-cell">'+ stastartCheckBtnTxt +'</li></div>'+
-//							/*申请付款*/		'<div class="mui-col-xs-2 '+creatPayBt+'" paymentId="'+item.bizRequestHeader.id+'">' +
-//												'<li class="mui-table-view-cell">'+creatPay+'</li></div>'+
-//								/*排产*/		'<div class="mui-col-xs-1 '+SchedulingBtn+'" staordid="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ SchedulingBtnTxt +'</li></div>'+
-//								/*取消*/		'<div class="mui-col-xs-1 '+orCancleBtn+'" staordid="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ orCancleBtnTxt +'</li></div>'+
-//								/*详情*/		'<div class="mui-col-xs-1 '+orDetailBtn+'" staOrdId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ orDetailBtnTxt +'</li></div>'+
-//							/*确认排产*/		'<div class="mui-col-xs-2 '+affirmSchedulingBtn+'" staordid="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ affirmSchedulingBtnTxt +'</li></div>'+
-////								/*修改*/		'<div class="mui-col-xs-2 '+orAmendBtn+'" staordid="'+ item.id +'">' +
-////												'<li class="mui-table-view-cell">'+ orAmendBtnTxt +'</li></div>'+
-//										'</div>' +
 									'</div>'
 								});
 								$('#orderinfoList').append(orderHtmlList);
