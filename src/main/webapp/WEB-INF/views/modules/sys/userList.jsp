@@ -79,7 +79,7 @@
 </div>
 <ul class="nav nav-tabs">
 	<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex'}">
-		<li class="active"><a href="${ctx}/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户列表</a></li>
+		<li class="active"><a href="${ctx}/sys/user/list?company.type=8,13&company.customerTypeTen=10&company.customerTypeEleven=11&office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户列表</a></li>
 		<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form?office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户添加</a></li></shiro:hasPermission>
 	</c:if>
 	<c:if test="${empty user.conn}">
@@ -107,6 +107,7 @@
 				<input type="hidden" name="company.type" value="8">
 				<input type="hidden" name="company.customerTypeTen" value="10">
 				<input type="hidden" name="company.customerTypeEleven" value="11">
+				<input type="hidden" name="company.customerTypeThirteen" value="13">
 				<input type="hidden" name="conn" value="${user.conn}"></li>
 			</c:if>
 			<c:if test="${empty user.conn}">
