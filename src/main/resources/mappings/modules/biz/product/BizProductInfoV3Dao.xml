@@ -295,4 +295,17 @@
 			</if>
 		</foreach>
 	</insert>
+
+	<update id="updateMinAndMaxPrice">
+		UPDATE biz_product_info SET
+		min_price = #{minPrice},
+		max_price = #{maxPrice}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateItemNo">
+		UPDATE biz_product_info SET
+		item_no = #{itemNo}
+		WHERE id = #{id}
+	</update>
 </mapper>

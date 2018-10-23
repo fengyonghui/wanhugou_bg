@@ -11,7 +11,8 @@
 				submitHandler: function(form){
                     var totalVal = $("#total").val();
                     if ($String.isNullOrBlank(totalVal) || Number(totalVal) <= 0) {
-                        alert("付款金额输入不正确，请重新输入！")
+                        alert("付款金额输入不正确，请重新输入！");
+						return;
                     }
                     loading('正在提交，请稍等...');
 					form.submit();

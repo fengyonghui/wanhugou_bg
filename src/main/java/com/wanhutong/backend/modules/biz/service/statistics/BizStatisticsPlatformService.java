@@ -79,6 +79,16 @@ public class BizStatisticsPlatformService {
      * @param startDate 取数据的月份
      * @return 根据不同机构分类的统计数据
      */
+    public List<BizOrderStatisticsDto> orderPlatformStatisticData(String startDate, String endDate, String type, String centerType, String orderType) {
+        return bizOrderHeaderDao.getPlatformValidOrderTotalAndCount(startDate, endDate, type);
+    }
+
+    /**
+     * 根据月份取订单统计相关数据
+     *
+     * @param startDate 取数据的月份
+     * @return 根据不同机构分类的统计数据
+     */
     public List<BizOrderStatisticsDto> orderStatisticData(String startDate, String endDate, String type, String centerType, String orderType) {
 //        if (StringUtils.isBlank(centerType) || Integer.valueOf(centerType) == 0) {
 //            return bizOrderHeaderDao.getAllValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, null);
@@ -190,7 +200,8 @@ public class BizStatisticsPlatformService {
         List<Office> listByType = officeDao.findListByTypeList(Lists.newArrayList(
                 OfficeTypeEnum.PURCHASINGCENTER.getType(),
                 OfficeTypeEnum.WITHCAPITAL.getType(),
-                OfficeTypeEnum.NETWORKSUPPLY.getType()
+                OfficeTypeEnum.NETWORKSUPPLY.getType(),
+                OfficeTypeEnum.NETWORK.getType()
         ));
         listByType.removeIf(office -> office.getName().contains("测试"));
         listByType.forEach(office -> {

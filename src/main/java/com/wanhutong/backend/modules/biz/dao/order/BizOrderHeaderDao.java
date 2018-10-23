@@ -254,6 +254,17 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * 用户平台订单统计 根据机构区分
      *
      * @param startDate   时间
+     * @param type
+     * @return
+     */
+    List<BizOrderStatisticsDto> getPlatformValidOrderTotalAndCount(
+            @Param("startDate") String startDate, @Param("endDate") String endDate,
+            @Param("type") String type);
+
+    /**
+     * 用户平台订单统计 根据机构区分
+     *
+     * @param startDate   时间
      * @param validStatus
      * @param type
      * @return

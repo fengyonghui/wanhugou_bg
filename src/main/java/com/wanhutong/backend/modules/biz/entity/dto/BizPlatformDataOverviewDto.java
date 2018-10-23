@@ -181,6 +181,8 @@ public class BizPlatformDataOverviewDto {
                 return province;
             case NETWORKSUPPLY:
                 return "网供";
+            case NETWORK:
+                return "网供";
             case WITHCAPITAL:
                 return "配资";
             default:

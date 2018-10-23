@@ -136,7 +136,7 @@ public class BizStatisticsPlatformController extends BaseController {
             e.printStackTrace();
         }
 
-        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
+        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11", "13")));
         request.setAttribute("officeId", officeId);
         request.setAttribute("adminPath", adminPath);
         if (officeId == null || officeId == 0) {
@@ -547,7 +547,7 @@ public class BizStatisticsPlatformController extends BaseController {
             endDate = simpleDateFormatDay.format(new Date());
         }
 
-        List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = bizStatisticsPlatformService.orderStatisticData(startDate, endDate, type, centerType, orderType);
+        List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = bizStatisticsPlatformService.orderPlatformStatisticData(startDate, endDate, type, centerType, orderType);
 
         List<String> nameList = Lists.newArrayList();
 

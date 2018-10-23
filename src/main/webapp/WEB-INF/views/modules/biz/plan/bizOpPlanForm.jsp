@@ -72,7 +72,7 @@
 			<sys:treeselect id="centerOffice" name="objectId" value="${bizOpPlan.objectId}"
 							labelName="objectName1" labelValue="${bizOpPlan.objectName1}" notAllowSelectParent="true"
 							onchange="centerOffUser();"
-							title="采购中心" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" cssClass="input-xlarge required"
+							title="采购中心" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&customerTypeThirteen=${OfficeTypeEnum.NETWORK.type}&source=officeConnIndex" cssClass="input-xlarge required"
 							dataMsgRequired="必填信息">
 			</sys:treeselect>
 			<span class="help-inline"><font color="red">*</font></span>
