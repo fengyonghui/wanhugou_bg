@@ -192,8 +192,8 @@
 								if(res.data.bizRequestHeader.headerType==v.value){
 								    $('#headerType').val(v.label);
 								}
-								if(res.data.bizRequestHeader.headerType==v.value){
-									$('#headerType').val(v.label);
+								if(res.data.bizRequestHeader.headerType==""){
+									$('#headerType').val('未知');
 								}
 							})							
 						}
