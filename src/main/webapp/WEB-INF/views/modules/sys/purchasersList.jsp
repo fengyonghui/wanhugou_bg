@@ -137,12 +137,6 @@
 						<shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:change">
 							<a href="${ctx}/sys/office/purchasersForm?id=${off.id}">变更客户专员</a>
 						</shiro:hasPermission>
-						<shiro:hasPermission name="sys:office:upgrade">
-							<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgrade">申请</a>
-						</shiro:hasPermission>
-						<shiro:hasPermission name="sys:office:upgradeAudit">
-							<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgradeAudit">审核</a>
-						</shiro:hasPermission>
 						<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">修改</a>
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
@@ -154,6 +148,14 @@
 						</c:if>
 					<c:if test="${off.delRemark==0}">
 						<a href="${ctx}/sys/office/recovery?id=${off.id}&source=purchListDelete" onclick="return confirmx('要恢复该机构及所有子机构项吗？', this.href)">恢复</a>
+					</c:if>
+					<c:if test="${off.type==15 || off.type==16}">
+						<shiro:hasPermission name="sys:office:upgrade">
+							<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgrade">申请</a>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="sys:office:upgradeAudit">
+							<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgradeAudit">审核</a>
+						</shiro:hasPermission>
 					</c:if>
                 </td></shiro:hasPermission>
 			</tr>
