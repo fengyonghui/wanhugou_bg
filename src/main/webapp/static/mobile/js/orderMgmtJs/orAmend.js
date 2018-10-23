@@ -3,6 +3,7 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+		this.fromOfficeId="";
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -29,10 +30,13 @@
                 },
                 dataType: "json",
                 success: function(res){
-                	console.log(res)
+//              	console.log(res)
+                	if(res.data.bizPoHeader.deliveryStatus == 1) {
+                		$('#buyCenterId').hide();
+                	}
 					/*业务状态*/
 					var bizPoHeader = res.data.bizPoHeader;
-					console.log(bizPoHeader)
+//					console.log(bizPoHeader)
 					var orshouldPay = bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight
 					$('#orpoNum').val(res.data.bizOrderHeader.orderNumber)//单号
 					$('#ordtotal').val(bizPoHeader.totalDetail)//总价
@@ -53,7 +57,7 @@
 //					$('#orTypes').val()
 					//订单状态 
 					var valueTxt = res.data.bizPoHeader.bizStatus;
-					console.log(valueTxt)
+//					console.log(valueTxt)
 					$('#orTypes').val(valueTxt);
 					$('#orSupplier').val(bizPoHeader.vendOffice.name)//供应商
 					if(bizPoHeader.vendOffice.bizVendInfo) {
@@ -85,6 +89,8 @@
 				if(this.checked && this.value == 1) {
 					$('#buyCenterId').hide();
 					$('#deliveryStatus').val(this.value);
+					$('#inOrordNum').val('');
+					_this.fromOfficeId = '';
 				}
 			})
 		},
@@ -260,27 +266,45 @@
             
             //点击保存按钮操作 保存按钮控制修改商品申报数量和备货商品的添加
             $('#orSaveBtn').on('tap',function(){
-            	console.log(res)
+//          	console.log(res)
             	var id = res.bizPoHeader.id;
             	var bizPoPaymentOrderId = res.bizPoHeader.bizPoPaymentOrder.id; 
-            	var vendOfficeId = res.bizPoHeader.vendOffice.id;
+//          	var vendOfficeId = res.bizPoHeader.vendOffice.id;
+            	var vendOfficeId = '';
             	var lastPayDate = $('#orLastDa').val() + ' 00:00:00';
             	var deliveryStatus = $('#deliveryStatus').val();
-            	var deliveryOfficeId = res.bizPoHeader.deliveryOffice.id;
-            	var deliveryOfficeName = res.bizPoHeader.deliveryOffice.name;
+            	var deliveryOfficeId = '';
+            	var deliveryOfficeName = '';
+            	if($('#inOrordNum').val() == '') {
+            		alert(999)
+            		_this.fromOfficeId = '';
+            	}
+            	if(deliveryStatus == 0) {
+            		if(_this.fromOfficeId) {
+            			deliveryOfficeId = _this.fromOfficeId; //采购中心 id
+            			deliveryOfficeName = $('#inOrordNum').val();//采购中心name
+            		}else {
+            			deliveryOfficeId = res.bizPoHeader.deliveryOffice.id;
+            			deliveryOfficeName = '';
+            		}
+            	}
+            	if(deliveryStatus == 1) {
+            		deliveryOfficeId = res.bizPoHeader.deliveryOffice.id;
+            	}
             	var remarks = $('#orRemark').val();
             	var planPay = $('#orapplyNum').val();
             	var payDeadline = $('#orNowDate').val();
-//          	console.log(id)
-//          	console.log(bizPoPaymentOrderId)
-//          	console.log(vendOfficeId)
-//          	console.log(lastPayDate)
-//          	console.log(deliveryStatus)
-//          	console.log(deliveryOfficeId)
-//          	console.log(deliveryOfficeName)
-//          	console.log(remarks)
-//          	console.log(planPay)
-//          	console.log(payDeadline)
+            	console.log(id)
+            	console.log(bizPoPaymentOrderId)
+            	console.log(vendOfficeId)
+            	console.log(lastPayDate)
+            	console.log(deliveryStatus)
+            	console.log(deliveryOfficeId)
+            	console.log(deliveryOfficeName)
+            	console.log(remarks)
+            	console.log(planPay)
+            	console.log(payDeadline)
+return;
                 $.ajax({
                     type: "post", 
                     url: "/a/biz/po/bizPoHeader/savePoHeader4Mobile",
@@ -298,7 +322,7 @@
                     },
                     dataType: 'json',
                     success: function (resule) {
-                    	console.log(resule)
+//                  	console.log(resule)
                         if (resule.data.right == "操作成功!") {
                             mui.toast("操作成功！");
 //                          window.setTimeout(function(){

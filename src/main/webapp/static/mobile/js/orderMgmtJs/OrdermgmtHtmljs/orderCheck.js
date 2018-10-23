@@ -567,20 +567,21 @@
 //				var currentType= $('#currentType').val();
 				var id= $(this).attr('poids');
 				var currentType= $('#currentTypes').val();
-				var btnArray = ['否', '是'];
-				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
-					if(choice.index == 1) {
-						var btnArray = ['取消', '确定'];
-						mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
-							if(a.index == 1) {
-								var rejectTxt = a.value;
-								if(a.value == '') {
-									mui.toast('驳货理由不能为空！')
-								} else {
+				var btnArray = ['取消', '确定'];
+				mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
+					if(a.index == 1) {
+						var rejectTxt = a.value;
+						if(a.value == '') {
+							mui.toast('驳货理由不能为空！')
+							return;
+						} else {
+							var btnArray = ['取消', '确定'];
+							mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
+								if(choice.index == 1) {
 									_this.payOutAudit(id,rejectTxt, 2,currentType)
-								}
-							} else {}
-						})
+								} else {}
+							})
+						}
 					} else {}
 				})
 			});
