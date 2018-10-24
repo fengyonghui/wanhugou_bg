@@ -159,7 +159,9 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
             }
 			if (!bizOrderDetail.getOrdQty().equals(bizOrderDetail.getSentQty())) {
                 orderFlag = false;
-            }
+            } else {
+            	orderFlag = true;
+			}
 			//订单关联出库备货单
 			BizInventoryOrderRequest ior = new BizInventoryOrderRequest();
             ior.setInvSku(inventorySku);
