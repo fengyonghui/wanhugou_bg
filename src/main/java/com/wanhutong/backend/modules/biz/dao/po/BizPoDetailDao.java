@@ -22,4 +22,6 @@ public interface BizPoDetailDao extends CrudDao<BizPoDetail> {
      * @return
      */
     BizPoDetail getsumSchedulingNum(@Param("objectId") Integer objectId);
+
+    void updateSkuId(@Param("needSkuId") Integer needSkuId, @Param("id") Integer id);
 }

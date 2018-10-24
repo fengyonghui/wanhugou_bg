@@ -10,7 +10,7 @@
     <input name="applyDate" id="applyDate" value="${month}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
     <select class="input-medium" id="centerType">
         <option value="8" label="采购中心">采购中心</option>
-        <option value="11" label="网供">网供</option>
+        <option value="13" label="网供">网供</option>
         <option value="10" label="配资业务">配资业务</option>
     </select>
     <input id="search" class="btn btn-primary" type="button" onclick="initData()" value="查询"/>

@@ -5,8 +5,12 @@ package com.wanhutong.backend.modules.sys.service.attribute;
 
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.sys.dao.attribute.AttributeValueDao;
 import com.wanhutong.backend.modules.sys.dao.attribute.AttributeValueV2Dao;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfo;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,5 +56,29 @@ public class AttributeValueV2Service extends CrudService<AttributeValueV2Dao, At
 	public void delete(AttributeValueV2 attributeValue) {
 		super.delete(attributeValue);
 	}
-	
+
+	/**
+	 * 查找SKU的尺寸
+	 * @param bizSkuInfo
+	 * @return
+	 */
+	public AttributeValueV2 findSkuProp(BizSkuInfo bizSkuInfo,String prop) {
+		AttributeValueV2 propValue = new AttributeValueV2();
+		propValue.setObjectId(bizSkuInfo.getId());
+		propValue.setObjectName(BizProductInfoV2Service.SKU_TABLE);
+		AttributeInfoV2 attributeInfoV2 = new AttributeInfoV2();
+		attributeInfoV2.setName(prop);
+		propValue.setAttributeInfo(attributeInfoV2);
+		return attributeValueV2Dao.findSkuSize(propValue);
+	}
+
+	/**
+	 * 修改属性值
+	 * @param id
+	 * @param value
+	 */
+	@Transactional(readOnly = false)
+	public void updateValue(Integer id, String value) {
+		attributeValueV2Dao.updateValue(id,value);
+	}
 }

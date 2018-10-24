@@ -46,4 +46,6 @@ public interface BizRequestDetailDao extends CrudDao<BizRequestDetail> {
 
     List<BizRequestDetail> findListByCentIdAndSkuId(@Param("centId") Integer centId, @Param("skuId") Integer skuId);
 
+    void updateSkuId(@Param("needSkuId") Integer needSkuId, @Param("id") Integer id);
+
 }

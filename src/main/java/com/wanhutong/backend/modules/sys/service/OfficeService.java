@@ -734,6 +734,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         office.setType(String.valueOf(officeType.ordinal()));
         office.setCustomerTypeTen(OfficeTypeEnum.WITHCAPITAL.getType());
         office.setCustomerTypeEleven(OfficeTypeEnum.NETWORKSUPPLY.getType());
+        office.setCustomerTypeThirteen(OfficeTypeEnum.NETWORK.getType());
         office.setDelFlag(DEL_FLAG_NORMAL);
 
         List<Office> list = queryList(office);
@@ -757,7 +758,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
             Office office1 = iterator.next();
             Integer id = office1.getId();
             if (!parentSet.contains(id) && !String.valueOf(officeType.ordinal()).equals(office1.getType()) &&
-                    !String.valueOf(10).equals(office1.getType()) && !String.valueOf(11).equals(office1.getType())) {
+                    !String.valueOf(10).equals(office1.getType()) && !String.valueOf(11).equals(office1.getType()) && !String.valueOf(13).equals(office1.getType())) {
                 iterator.remove();   //注意这个地方
             }
         }
@@ -773,7 +774,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         Office office = new Office();
         User user = UserUtils.getUser();
         if (!user.isAdmin() && !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) && !OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType())
-                || user.getCompany().getType().equals(OfficeTypeEnum.WITHCAPITAL.getType()) || user.getCompany().getType().equals(OfficeTypeEnum.NETWORKSUPPLY.getType())) {
+                || user.getCompany().getType().equals(OfficeTypeEnum.WITHCAPITAL.getType()) || user.getCompany().getType().equals(OfficeTypeEnum.NETWORKSUPPLY.getType())
+                || user.getCompany().getType().equals(OfficeTypeEnum.NETWORK.getType())) {
             office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
         } else if (StringUtils.isNotBlank(source) && (source.equals("ghs") || source.equals("gys") || source.equals("cgs"))) {
 
@@ -816,8 +818,6 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         }
 
         office.setType(String.valueOf(officeType.ordinal()));
-        //office.setCustomerTypeTen(OfficeTypeEnum.WITHCAPITAL.getType());
-        //office.setCustomerTypeEleven(OfficeTypeEnum.NETWORKSUPPLY.getType());
         office.setDelFlag(DEL_FLAG_NORMAL);
 
         List<Office> list = queryList(office);
