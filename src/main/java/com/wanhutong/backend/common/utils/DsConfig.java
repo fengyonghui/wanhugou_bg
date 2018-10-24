@@ -52,9 +52,19 @@ public class DsConfig {
         return getConfig().getString("activityMsgUrl");
     }
 
-
-
     public static void main(String[] args) {
         System.out.println(getImgServer());
+    }
+
+    public static String getCreateLogisticUrl() {
+        return getConfig().getString("createLogisticUrl");
+    }
+
+    public static String getStartAndStopPointCodeWht() {
+        return getConfig().getString("GET_START_AND_STOP_POINT_CODE_WHT");
+    }
+
+    public static String getAddOrderWht() {
+        return getConfig().getString("ADD_ORDER_WHT");
     }
 }
