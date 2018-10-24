@@ -813,13 +813,13 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                         changeSku(needSku.getId(),bizSkuInfo.getId());
                     }
                 }
-                //不同商品
-                skuInfoList.removeAll(skuList);
-                if (CollectionUtils.isNotEmpty(skuInfoList)) {
-                    for (BizSkuInfo bizSkuInfo : skuInfoList) {
-                        bizSkuInfoV3Service.updateProdId(bizSkuInfo.getId(),needId);
-                        updateProdIdForOpShelfSku(bizSkuInfo.getId(),needId);
-                    }
+            }
+            //不同商品
+            skuInfoList.removeAll(skuList);
+            if (CollectionUtils.isNotEmpty(skuInfoList)) {
+                for (BizSkuInfo bizSkuInfo : skuInfoList) {
+                    bizSkuInfoV3Service.updateProdId(bizSkuInfo.getId(),needId);
+                    updateProdIdForOpShelfSku(bizSkuInfo.getId(),needId);
                 }
             }
         }
