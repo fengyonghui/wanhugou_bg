@@ -26,7 +26,6 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-//              	console.log(res.data)//true
                     _this.OrdFlag = res.data;
                 }
             });
@@ -40,7 +39,6 @@
                 	'orderHeader.oneOrder':_this.userInfo.oneOrderId,orderType:_this.userInfo.orderType},
                 dataType: "json",
                 success: function(res){
-					console.log(res);
 					$('#saveDetailBtn').attr('orderid',res.data.bizOrderDetail.orderHeader.id);					
 					$('#saveDetailBtn').attr('client',res.data.bizOrderDetail.orderHeader.clientModify);
 					$('#saveDetailBtn').attr('consultant',res.data.bizOrderDetail.orderHeader.consultantId);
@@ -48,13 +46,26 @@
 					$('#saveDetailBtn').attr('statu',res.data.bizOrderDetail.orderHeader.statu);
 					if(_this.OrdFlag = true){
 						_this.saveBtn(res.data.bizOrderDetail.orderHeader.id,res.data.bizOrderDetail.orderHeader.clientModify,res.data.bizOrderDetail.orderHeader.consultantId);//保存
-					}					
+					}	
+					var orderTypes="";
+		            var purchaserId="";
+		            if(res.data.bizOrderDetail.orderType==1){
+		            	var url= "/a/biz/shelf/bizOpShelfSku/findOpShelfSku4Mobile",
+		            	orderTypes=res.data.bizOrderDetail.orderType;
+		            	_this.searchSkuHtml(url,purchaserId,orderTypes);
+		            }
+		            if(res.data.bizOrderDetail.orderType==5){
+		            	var url= "/a/biz/sku/bizSkuInfo/findPurseSkuList4Mobile",
+		            	purchaserId=res.data.customer.id;
+		            	orderTypes=res.data.bizOrderDetail.orderType;
+		            	_this.searchSkuHtml(url,purchaserId,orderTypes);
+		            }
                 }
             });
-            _this.searchSkuHtml();
+            
             _this.removeItem();
 		},
-		searchSkuHtml: function() {
+		searchSkuHtml: function(url,purchaserId,orderTypes) {
             var _this = this;
             mui('#ordAmendPoLastDaDiv').on('tap','#ordComChoiceBtn',function(){
                 var itemNo = $("#ordAmendPoLastDa").val();//商品货号
@@ -62,12 +73,22 @@
                 	mui.toast('请输入商品货号！');
                 	return;
                 };
+                var datas={};
+                if(orderTypes==1){
+                	datas={
+                		'skuInfo.itemNo': itemNo,
+                	}
+                }
+                if(orderTypes==5){
+                	datas={
+                		itemNo: itemNo,
+                		'purchaser.id':purchaserId
+                	}
+                }
                 $.ajax({
                     type: "post",
-                    url: "/a/biz/shelf/bizOpShelfSku/findOpShelfSku4Mobile",
-                    data: {
-                    	'skuInfo.itemNo': itemNo,
-                	},
+                    url: url,
+                    data:datas,
                     success: function (result) {
                         $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
@@ -165,7 +186,6 @@
 		                            	var y=$(that).attr('id');
 		                            	var divs=$("#searchInfo #serskudiv_"+s);
 		                            	if (s==y) {
-		                            		mui.toast('已有此类商品！请选择其他商品！！');
 		                            		divs.html('');
 		                            	}
 		                            })

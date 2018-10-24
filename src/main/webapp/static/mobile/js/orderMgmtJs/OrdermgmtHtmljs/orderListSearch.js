@@ -40,17 +40,6 @@
 		sureSelect:function(){
 			var _this = this;
 				_this.selectOpen = false;
-//				console.log($('#input_div_ordStatus').val());//订单状态
-//				console.log($('#input_div_cheStatus').val());//审核状态
-//				console.log($('#input_div_finalMoney').val());//尾款
-//				console.log($('.inOrdPhone').val());//经销商电话
-//				console.log($('.inItemNum').val());//商品货号
-//				console.log($('.hasoid').attr('id'));//经销店名称companyId: $('.hasoid').attr('id'),
-//				console.log($('.centersName').val());//采购中心
-//				console.log($('.conName').val());//客户专员
-//				console.log($('#input_div_waitchkStatus').val());//待同意发货
-//				console.log($('#input_div_waitsendgoods').val());//待发货
-//				console.log($('#input_div_outbound').val());//待出库
 				GHUTILS.OPENPAGE({
 					url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 					extras: {
@@ -63,7 +52,7 @@
                         customerName:$('.hasoid').attr('id'),//经销店名称
                         centersName:$('.centersName').val(),//采购中心
                         conName:$('.centersName').val(),//客户专员
-						mobileAuditStatus: $('.inReqNum').val(),//待同意发货
+						mobileAuditStatus: $('#input_div_waitchkStatus').val(),//待同意发货
 						waitShipments: $('#input_div_waitsendgoods').val(),//待发货
 						waitOutput: $('#input_div_outbound').val(),//待出库
 						includeTestData: _this.includeTestData,//测试数据
