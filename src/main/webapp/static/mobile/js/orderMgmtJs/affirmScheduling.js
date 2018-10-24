@@ -65,7 +65,8 @@
 	              			$('#schedOrdNum').val(n.orderNumStr);
 	              		})
 	              	})
-//		            console.log(res.data.bizPoHeader.poSchType)
+		            console.log(res)
+					var poDetailList = res.data.bizPoHeader.poDetailList;
 		            if(res.data.bizPoHeader.poSchType != 0) {
 		            	$('#schedPurch').hide();
 		            }else {
@@ -124,7 +125,7 @@
 				$('#schedPurch').hide();
 				$(".inputRadio").attr("disabled", true);
 				schedulingPlanDetailFlag = true;
-				_this.commdContent(data);
+				_this.commdContent(data,'yes');
 			}
 			if (data.data.detailHeaderFlg != true && data.data.detailSchedulingFlg != true) {
 //              $("#stockGoods").show();
@@ -149,12 +150,14 @@
                 data: {id: _this.userInfo.staOrdId},
                 async:false,
                 success: function(result){
-//              console.log(result)
-                var totalOrdQty = result['totalOrdQty'];
+//              	console.log(result)
+               	 	var totalOrdQty = result['totalOrdQty'];
                     $("#totalOrdQty").val(totalOrdQty)
                     var totalSchedulingHeaderNum = result['totalSchedulingHeaderNum'] == null ? 0 : result['totalSchedulingHeaderNum'];
                     var totalCompleteScheduHeaderNum = result['totalCompleteScheduHeaderNum'] == null ? 0 : result['totalCompleteScheduHeaderNum'];
                     $("#totalCompleteScheduHeaderNum").val(totalCompleteScheduHeaderNum)
+//                  console.log(totalSchedulingHeaderNum)
+//                  console.log(totalCompleteScheduHeaderNum)
                     $("#totalSchedulingNumToDo").val(parseInt(totalSchedulingHeaderNum) - parseInt(totalCompleteScheduHeaderNum))
 //                  console.log(schedulingPlanHeaderFlag)
                     if (schedulingPlanHeaderFlag == true) {
@@ -193,7 +196,7 @@
 				if(this.checked && this.value == 1) {
 					$('#schedPurch').hide();
 					$('#schedCommd').show();
-					_this.commdContent(data);
+					_this.commdContent(data,'no');
 				}
 			})
 		},
@@ -264,7 +267,7 @@
 			});
     		$("#orSchedPurch").html(htmlPurch)
 		},
-		commdContent: function(b) {
+		commdContent: function(b,choice) {
 			var _this = this;
 			var htmlCommodity = '';
 			$.each(b.data.bizPoHeader.poDetailList, function(i,item) {
@@ -273,7 +276,12 @@
 					$('.commdSchedRecord').hide();
 				}
 				var waiteNum = item.sumCompleteNum - item.sumCompleteDetailNum;
-				var comPlanTx = _this.htmlcommdPlanTxt(item);
+				var comPlanTx = '';
+				if(choice == 'yes') {
+					comPlanTx = _this.htmlcommdPlanTxt(item);
+				}else {
+					comPlanTx = '';
+				}
 				var alreaAffirm = '';
 				if(item.sumCompleteDetailNum) {
 					alreaAffirm = item.sumCompleteDetailNum;
