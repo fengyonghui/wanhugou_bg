@@ -164,7 +164,7 @@
             });
         },
 		pageInit: function() {
-			var _this = this;			
+			var _this = this;
 			var pager = {};//参数
 		    var totalPage;//总页码
 		    pullRefresh(pager);//启用上拉下拉 
@@ -217,12 +217,12 @@
 							}
 							if(_this.userInfo.includeTestData==undefined){
 								_this.userInfo.includeTestData="";
-							}			                   
+							}
 			                var f = document.getElementById("orderinfoList");
 			                var childs = f.childNodes;
 			                for(var i = childs.length - 1; i >= 0; i--) {
 			                    f.removeChild(childs[i]);
-			                }			                
+			                }
 			                $('.mui-pull-caption-down').html('');
 			                if(_this.userInfo.isFunc){
 			                	//查询过来传的参数
@@ -244,7 +244,7 @@
 		                        pager['pageNo'] = 1;
 		                    	getData(pager);
 		                    }
-				                
+
 			            }
 			        }
 			    })

@@ -11,7 +11,7 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			this.hrefHtml('.newinput', '.input_div','#hideSpanAdd' );
+			this.hrefHtml('.newinput', '.input_div','#hideSpanAdd','#showSpanAdd');
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
@@ -75,35 +75,42 @@
             	}
 	        })
         },
-		hrefHtml: function(newinput, input_div,hideSpanAdd) {
+		hrefHtml: function(newinput, input_div,hideSpanAdd,showSpanAdd) {
 			var _this = this;
 			_this.ajaxSupplier();//供应商
 			$(newinput).on('focus', function() {
 				//$(input_div).find('hasoid').removeClass('hasoid')
-				$(input_div).show()
-				$(hideSpanAdd).show()
+				$(input_div).show();
+				$(hideSpanAdd).show();
+				$(showSpanAdd).hide();
 			})
 			$(newinput).on('keyup', function() {
 				if($(this).val()==''){
-					_this.selectOpen = false
+					_this.selectOpen = false;
 				}else{
-					_this.selectOpen = true
+					_this.selectOpen = true;
 				}
 				_this.rendHtml(_this.dataSupplier,$(this).val());
 			})
-			
+			$(showSpanAdd).on('click', function() {
+				$(showSpanAdd).hide();
+				$(input_div).show();
+				$(hideSpanAdd).show();
+			})
 			$(hideSpanAdd).on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
-				$(input_div).hide()
-				$(hideSpanAdd).hide()
+				$(input_div).hide();
+				$(hideSpanAdd).hide();
+				$(showSpanAdd).show();
 			})
 
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
-				$(newinput).val($(this).text())
-				$(input_div).hide()
-				$(hideSpanAdd).hide()
-				_this.selectOpen = true
+				$(newinput).val($(this).text());
+				$(input_div).hide();
+				$(hideSpanAdd).hide();
+				$(showSpanAdd).show();
+				_this.selectOpen = true;
 			})
 		},
 		rendHtml: function(data, key) {

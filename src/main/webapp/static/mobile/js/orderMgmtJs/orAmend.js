@@ -13,7 +13,7 @@
 			
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
-			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAmend01');
+			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAmend01','#showSpanAmend01');
 		},
 		pageInit: function() {
 			var _this = this;
@@ -94,13 +94,14 @@
 				}
 			})
 		},
-		hrefHtml: function(newinput, input_div,hideSpanAmend) {
+		hrefHtml: function(newinput, input_div,hideSpanAmend,showSpanAmend) {
 			var _this = this;
 			_this.ajaxGoodList();
 			$(newinput).on('focus', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
 				$(hideSpanAmend).show();
+				$(showSpanAmend).hide()
 			})
 			$(newinput).on('keyup', function() {
 				if($(this).val()==''){
@@ -110,11 +111,16 @@
 				}
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
-			
+			$(showSpanAmend).on('click', function() {
+				$(showSpanAmend).hide()
+				$(input_div).show()
+				$(hideSpanAmend).show()
+			})
 			$(hideSpanAmend).on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
 				$(hideSpanAmend).hide()
+				$(showSpanAmend).show()
 			})
 
 			$(input_div).on('click', '.soption', function() {
@@ -123,6 +129,7 @@
 				$(newinput).val($(this).text())
 				$(input_div).hide()
 				$(hideSpanAmend).hide()
+				$(showSpanAmend).show()
 				_this.selectOpen = true
 			})
 		},
