@@ -396,4 +396,31 @@ public class BizSkuInfoV3Service extends CrudService<BizSkuInfoV3Dao, BizSkuInfo
 	public void updatePrice(Integer id, BigDecimal settlementPrice) {bizSkuInfoDao.updatePrice(id,settlementPrice);}
 
 	public void updateItemNo(Integer id, String itemNo) {bizSkuInfoDao.updateItemNo(id,itemNo);}
+
+	/**
+	 * 修改商品的尺寸和颜色
+	 * @param bizSkuInfo
+	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void updateSizeAndColor(BizSkuInfo bizSkuInfo) {
+		String itemNo = bizSkuInfo.getItemNo();
+		AttributeValueV2 sizeValue = attributeValueService.findSkuProp(bizSkuInfo,"尺寸");
+		AttributeValueV2 colorValue = attributeValueService.findSkuProp(bizSkuInfo,"颜色");
+		String size = sizeValue.getValue().replaceAll("\\s*","");
+		String color = colorValue.getValue().replaceAll("\\s*","");
+		size = size.replaceAll("寸","");
+		size = size.replaceAll("工厂","装车");
+		size = size.replaceAll("价","");
+		color = color.replaceAll("色","");
+		if (itemNo.contains("装车") && !size.contains("装车") && !size.contains("打包")) {
+			StringBuilder sb = new StringBuilder();
+			size= sb.append(size).append("装车").toString();
+		}
+		if (itemNo.contains("打包") && !size.contains("打包") && !size.contains("装车")) {
+			StringBuilder sb = new StringBuilder();
+			size = sb.append(size).append("打包").toString();
+		}
+		attributeValueService.updateValue(sizeValue.getId(),size);
+		attributeValueService.updateValue(colorValue.getId(),color);
+	}
 }
