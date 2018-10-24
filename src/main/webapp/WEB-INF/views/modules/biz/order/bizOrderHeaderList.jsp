@@ -85,6 +85,29 @@
 
         }
 	</script>
+    <script type="text/javascript">
+        function cancel(id) {
+            top.$.jBox.confirm("确认要取消吗？", "系统提示", function (v, h, f) {
+                if (v == "ok") {
+                    $.ajax({
+                        url: "${ctx}/biz/po/bizPoHeader/cancel?id=" + id,
+                        type: "post",
+                        cache: false,
+                        success: function (data) {
+                            alert(data);
+                            if (data == "取消采购订单成功") {
+                                <%--使用setTimeout（）方法设定定时600毫秒--%>
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 600);
+                            }
+                        }
+                    });
+                }
+            }, {buttonsFocus: 1});
+            top.$('.jbox-body .jbox-icon').css('top', '55px');
+        }
+    </script>
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -503,16 +526,32 @@
 											&& (fns:hasRole(roleSet, orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
 											}">
 
-								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">财务审核</a>
+								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">付款单审核</a>
 							</c:if>
 							</shiro:hasPermission>
 							<!-- 支付申请列表获取 -->
-							'${orderHeader.bizPoHeader.commonProcess.type}'
 							<c:if test="${orderHeader.bizPoHeader.commonProcess.type != -1}">
 								<shiro:hasPermission name="biz:po:pay:list">
-									<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${orderHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${orderHeader.id}">支付申请列表</a>
+									<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${orderHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${orderHeader.id}">付款单列表</a>
 								</shiro:hasPermission>
 							</c:if>
+
+                            <shiro:hasPermission name="biz:po:bizPoHeader:edit">
+                            <c:if test="${orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == null || orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '驳回'}">
+                            <a href="${ctx}/biz/po/bizPoHeader/form?id=${orderHeader.bizPoHeader.id}">付款单修改</a>
+                            </c:if>
+                            <a href="javascript:void(0);" onclick="cancel(${orderHeader.bizPoHeader.id});">付款单取消</a>
+                            </shiro:hasPermission>
+                            <shiro:hasPermission name="biz:po:bizPoHeader:view">
+                            <a href="${ctx}/biz/po/bizPoHeader/form?id=${orderHeader.bizPoHeader.id}&str=detail&fromPage=orderHeader">付款单详情</a>
+                            </shiro:hasPermission>
+                                <%--<c:if test="${bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">--%>
+                            <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+                            <a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>
+                            </shiro:hasPermission>
+                            <shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+                            <a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
+                            </shiro:hasPermission>
 						</c:if>
 					</shiro:hasPermission>
 
