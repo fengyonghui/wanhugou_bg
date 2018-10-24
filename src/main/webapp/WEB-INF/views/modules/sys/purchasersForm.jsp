@@ -119,12 +119,13 @@
 			});
 		});
 
-		/* $(function(){
-			$("#s2id_levelID").html("");
-			
-		}) */
-		
-
+		function upgradeAudit () {
+            var applyForLevel = $("#applyForLevel").val();
+            var id = $("#id").val();
+            alert(id);
+            alert(applyForLevel);
+            window.location.href="${ctx}/sys/office/upgradeAudit?id="+id+"&applyForLevel="+applyForLevel;
+        }
     </script>
 </head>
 <body>
@@ -136,8 +137,8 @@
             name="sys:office:edit">查看</shiro:lacksPermission></a></li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/purchaserSave" method="post" class="form-horizontal">
-    <form:hidden path="id"/>
+<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/purchaserSave?option=${option}" method="post" class="form-horizontal">
+    <form:hidden path="id" id="id"/>
     <form:hidden path="source"/>
     <sys:message content="${message}"/>
     <div class="control-group">
@@ -181,6 +182,43 @@
             </form:select>
         </div>
     </div>
+    <c:if test="${option == 'upgradeAudit' || option == 'upgrade'}">
+    <div class="control-group">
+        <label class="control-label">申请机构类型:</label>
+        <div class="controls">
+            <c:if test="${option == 'upgradeAudit'}">
+                <input type="hidden" value="${office.bizCustomerInfo.applyForLevel}" id="applyForLevel"/>
+                <select class="input-medium">
+                    <option value="${office.bizCustomerInfo.applyForLevel}">${fns:getDictLabel(office.bizCustomerInfo.applyForLevel, 'sys_office_type', '')}</option>
+                </select>
+            </c:if>
+            <c:if test="${option == 'upgrade'}">
+            <form:select path="bizCustomerInfo.applyForLevel" class="input-medium">
+                <form:options items="${fns:getDictList('sys_office_type')}" itemLabel="label" itemValue="value"
+                              htmlEscape="false"/>
+            </form:select>
+            </c:if>
+        </div>
+    </div>
+        <div class="control-group">
+            <label class="control-label">代销商/经销商卡号:</label>
+            <div class="controls">
+                <form:input path="bizCustomerInfo.cardNumber" htmlEscape="false" maxlength="50" cssClass="required"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">代销商/经销商收款人:</label>
+            <div class="controls">
+                <form:input path="bizCustomerInfo.payee" htmlEscape="false" maxlength="50" cssClass="required"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">代销商/经销商开户行:</label>
+            <div class="controls">
+                <form:input path="bizCustomerInfo.bankName" htmlEscape="false" maxlength="50" cssClass="required"/>
+            </div>
+        </div>
+    </c:if>
     <div class="control-group">
         <label class="control-label">机构级别:</label>
         <div class="controls">
@@ -280,8 +318,22 @@
         </div>
     </c:if>
     <div class="form-actions">
-        <shiro:hasPermission name="sys:office:edit"><input id="btnSubmit" class="btn btn-primary" type="submit"
-                                                           value="保 存"/>&nbsp;</shiro:hasPermission>
+            <c:if test="${option != 'upgradeAudit' && option != 'upgrade'}">
+                <shiro:hasPermission name="sys:office:edit">
+                <input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
+                </shiro:hasPermission>
+            </c:if>
+            <c:if test="${option == 'upgradeAudit'}">
+                <shiro:hasPermission name="sys:office:edit">
+                <input class="btn btn-primary" type="button" onclick="upgradeAudit()" value="审核通过"/>&nbsp;
+                <%--<input id="btnSubmit" class="btn btn-primary" type="submit" value="审核驳回"/>&nbsp;--%>
+                </shiro:hasPermission>
+            </c:if>
+            <c:if test="${option == 'upgrade'}">
+                <shiro:hasPermission name="sys:office:edit">
+                    <input id="btnSubmit" class="btn btn-primary" type="submit" value="确认申请"/>&nbsp;
+                </shiro:hasPermission>
+            </c:if>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
 

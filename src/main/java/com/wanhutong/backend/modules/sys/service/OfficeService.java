@@ -15,10 +15,12 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomerInfoService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
@@ -76,6 +78,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     private BizVarietyInfoService bizVarietyInfoService;
     @Autowired
     private BizVendInfoService bizVendInfoService;
+    @Autowired
+    private BizCustomerInfoService bizCustomerInfoService;
     @Autowired
     private CommonImgService commonImgService;
 
@@ -935,4 +939,19 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     }
 
 
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Pair<Boolean, String> upgradeAudit(Integer id, Integer applyForLevel) {
+        if (applyForLevel == null) {
+            return Pair.of(Boolean.FALSE, "操作失败, 申请等级不能为空!");
+        }
+        BizCustomerInfo byOfficeId = bizCustomerInfoService.getByOfficeId(id);
+        if (!applyForLevel.equals(byOfficeId.getApplyForLevel())) {
+            return Pair.of(Boolean.FALSE, "操作失败, 申请等级异常,请重试或联系技术人员!");
+        }
+        dao.updateOfficeType(id, applyForLevel);
+        byOfficeId.setApplyForLevel(0);
+        bizCustomerInfoService.save(byOfficeId);
+        return Pair.of(Boolean.TRUE, "操作成功!");
+
+    }
 }

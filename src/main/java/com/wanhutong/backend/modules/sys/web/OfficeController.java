@@ -18,12 +18,14 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.chat.BizChatRecordService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomerInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -88,6 +90,8 @@ public class OfficeController extends BaseController {
     private BizVarietyInfoService bizVarietyInfoService;
     @Autowired
     private BizVendInfoService bizVendInfoService;
+    @Autowired
+    private BizCustomerInfoService bizCustomerInfoService;
     @Autowired
     private DictService dictService;
     @Autowired
@@ -216,6 +220,7 @@ public class OfficeController extends BaseController {
 //            office.setLevel(bizCustCredit.getLevel());
 //        }
         model.addAttribute("office", office);
+        model.addAttribute("option", option);
         return "modules/sys/purchasersForm";
     }
 
@@ -387,9 +392,22 @@ public class OfficeController extends BaseController {
         return mapList;
     }
 
+    @RequiresPermissions("sys:office:upgradeAudit")
+    @RequestMapping(value = "upgradeAudit")
+    public String upgradeAudit(RedirectAttributes redirectAttributes, int id, int applyForLevel) {
+        Pair<Boolean, String> result = officeService.upgradeAudit(id, applyForLevel);
+        if (result.getLeft()) {
+            addMessage(redirectAttributes, "审核成功!");
+        }else {
+            addMessage(redirectAttributes, "审核失败!");
+        }
+        return "redirect:" + adminPath + "/sys/office/purchasersList";
+
+    }
+
     @RequiresPermissions("sys:office:edit")
     @RequestMapping(value = "purchaserSave")
-    public String purchaserSave(Office office, Model model, RedirectAttributes redirectAttributes) {
+    public String purchaserSave(Office office, Model model, RedirectAttributes redirectAttributes, String option) {
         if (Global.isDemoMode()) {
             addMessage(redirectAttributes, "演示模式，不允许操作！");
             return "redirect:" + adminPath + "/sys/office/";
@@ -397,8 +415,7 @@ public class OfficeController extends BaseController {
         if (!beanValidator(model, office)) {
             return form(office, model, null, null);
         }
-//        BizCustCredit bizCustCredit = new BizCustCredit();
-//        bizCustCredit.setLevel(office.getLevel());
+
         officeService.save(office, null);
         if (office.getChildDeptList() != null) {
             Office childOffice = null;
@@ -414,7 +431,14 @@ public class OfficeController extends BaseController {
             }
         }
         addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-        Integer id = office.getParentId() == 0 ? null : office.getParentId();
+
+        if ("upgrade".equals(option)) {
+            BizCustomerInfo byOfficeId = bizCustomerInfoService.getByOfficeId(office.getId());
+            byOfficeId.setApplyForLevel(office.getBizCustomerInfo().getApplyForLevel());
+            bizCustomerInfoService.save(byOfficeId);
+            addMessage(redirectAttributes, "申请成功!");
+        }
+
         if(office.getSource()!=null && office.getSource().equals("chatRecordSave")){
             try {
                 return "redirect:" + adminPath + "/biz/chat/bizChatRecord/form?office.id="+office.getId()+"&office.name="+

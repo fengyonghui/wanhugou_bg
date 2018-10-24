@@ -306,6 +306,12 @@
 		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
 	</update>
 
+	<update id="updateOfficeType">
+		UPDATE sys_office SET
+		type = #{applyForLevel}
+		WHERE id = #{id}
+	</update>
+
 	<select id="queryList" resultType="Office">
 		SELECT
 		<include refid="officeColumns"/>

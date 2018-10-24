@@ -71,4 +71,12 @@ public interface OfficeDao extends TreeDao<Office> {
      * @return
      */
     List<Office> findOfficeById4Mobile(BizCustomCenterConsultant bizCustomCenterConsultant);
+
+    /**
+     * 更新office type
+     * @param id
+     * @param applyForLevel
+     * @return
+     */
+    int updateOfficeType(@Param("id")Integer id, @Param("applyForLevel")Integer applyForLevel);
 }

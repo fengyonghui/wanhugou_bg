@@ -211,7 +211,7 @@ public class Office extends TreeEntity<Office> {
 //		this.sort = sort;
 //	}
 	
-	@Length(min=1, max=1)
+	@Length(min=1, max=2)
 	public String getType() {
 		return type;
 	}

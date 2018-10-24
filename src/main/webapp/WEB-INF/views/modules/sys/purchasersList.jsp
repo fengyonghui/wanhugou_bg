@@ -78,26 +78,6 @@
 		</ul>
 	</form:form>
 	<sys:message content="${message}"/>
-	<%--用于属性展示,太卡换掉--%>
-	<%--<table id="treeTable" class="table table-striped table-bordered table-condensed">--%>
-		<%--<thead><tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>机构类型</th><th>备注</th><shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr></thead>--%>
-		<%--<tbody id="treeTableList"></tbody>--%>
-	<%--</table>--%>
-	<%--<script type="text/template" id="treeTableTpl">--%>
-		<%--<tr id="{{row.id}}" pId="{{pid}}">--%>
-			<%--<td><a href="${ctx}/sys/office/purchasersForm?id={{row.id}}">{{row.name}}</a></td>--%>
-			<%--<td>{{row.area.name}}</td>--%>
-			<%--<td>{{row.code}}</td>--%>
-			<%--<td>{{dict.type}}</td>--%>
-			<%--<td>{{row.remarks}}</td>--%>
-			<%--<shiro:hasPermission name="sys:office:edit"><td>--%>
-				<%--<a href="${ctx}/sys/buyerAdviser/interrelatedForm?id={{row.id}}">变更客户专员</a>--%>
-				<%--<a href="${ctx}/sys/office/purchasersForm?id={{row.id}}">修改</a>--%>
-				<%--<a href="${ctx}/sys/office/delete?id={{row.id}}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>--%>
-				<%--<a href="${ctx}/sys/office/purchasersForm?parent.id={{row.id}}">添加下级机构</a> --%>
-			<%--</td></shiro:hasPermission>--%>
-		<%--</tr>--%>
-	<%--</script>--%>
 	<table id="treeTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
@@ -155,7 +135,7 @@
 								<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgrade">申请</a>
 							</shiro:hasPermission>
 						</c:if>
-						<c:if test="${off.bizCustomerInfo.applyForLevel!=0}">
+						<c:if test="${off.bizCustomerInfo.applyForLevel!=0 && off.bizCustomerInfo.applyForLevel!=off.type}">
 							<shiro:hasPermission name="sys:office:upgradeAudit">
 								<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgradeAudit">审核</a>
 							</shiro:hasPermission>
