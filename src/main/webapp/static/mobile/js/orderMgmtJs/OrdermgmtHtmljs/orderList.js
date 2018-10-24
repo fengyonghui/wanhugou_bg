@@ -80,7 +80,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		            	console.log(res)
+//		            	console.log(res)
 		            	var dataRow = res.data.roleSet;
 		            	//订单类型
 		          	    $.ajax({
@@ -113,8 +113,7 @@
 						}
                         var that=this;
                         if(arrLen > 0) {
-                            $.each(res.data.page.list, function(i, item) {   
-                            	console.log(item)
+                            $.each(res.data.page.list, function(i, item) {
                             	var ProcessName = '';
                             	var objectName = item.commonProcess.objectName; 
                             	var commonProcess = item.commonProcess;
@@ -164,36 +163,38 @@
 				                	//审核
                                     if(item.bizStatus != res.data.CANCLE){
                                         if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING){
-//                                      	console.log('审核1')
                                          	if(_this.staOrdauditFlag == true){
 												var DataRoleGener = '';
 												var fileRoleData = '';
+												var doOrderHeaderProcessFifthName = '';
+												var doOrderHeaderProcessFifthCode = '';
 												if(commonProcess.doOrderHeaderProcessFifth) {
+													doOrderHeaderProcessFifthName = commonProcess.doOrderHeaderProcessFifth.name;
+													doOrderHeaderProcessFifthCode = commonProcess.doOrderHeaderProcessFifth.code
 													DataRoleGener = commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
 													fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 												}
-//												console.log(DataRoleGener)
-                                         		if((fileRoleData || userId==1) && (commonProcess==""||commonProcess.doOrderHeaderProcessFifth.name != '驳回')
-                                         		&& (commonProcess==""||commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus)){
+												if((fileRoleData.length != 0 || userId==1) && doOrderHeaderProcessFifthName != '驳回'
+                                         			&& doOrderHeaderProcessFifthCode != res.data.auditFithStatus){
                                          			staCheckBtnTxt="审核";
                                          			ordCheckBtn = 'ordCheckBtn';
                                          		}
 												var DataRoleGeners = '';
 												var fileRoleDatas = '';
+												var jointOperationOriginName = '';
+												var jointOperationOriginCode = '';
 												if(commonProcess.jointOperationOriginProcess) {
+													jointOperationOriginName = commonProcess.jointOperationOriginProcess.name;
+													jointOperationOriginCode = commonProcess.jointOperationOriginProcess.code;
 													DataRoleGeners = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
 													fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
 												}
-//												console.log(DataRoleGeners)
-//												console.log(res.data.auditStatus)
 												var auditStatu = '';
 					                            $.each(res.data.auditStatus,function(q,s){
-//					                            	console.log(s)
 						                        	auditStatu=s
 					                            })
-//					                            console.log(auditStatu)
-                                         		if(fileRoleDatas && commonProcess.jointOperationOriginProcess.name != '驳回'
-                                         		&& commonProcess.jointOperationOriginProcess.code != auditStatu
+                                         		if(fileRoleDatas.length != 0 && jointOperationOriginName != '驳回'
+                                         		&& jointOperationOriginCode != auditStatu
                                          		&& item.orderType == res.data.ORDINARY_ORDER){
                                          			staCheckBtnTxt="审核";
 													ordCheckBtn = 'ordCheckBtn';
@@ -201,29 +202,26 @@
                                          	}
                                         }
                                         if(_this.staOrdauditFlag == true){
-//                                      	console.log('审核2')
                                             var DataRole = '';
                                             var fileRole = '';
-                                            var DataRoleName = '';
 											if(commonProcess.jointOperationLocalProcess) {
-												DataRoleName = commonProcess.jointOperationLocalProcess;
 												DataRole = commonProcess.jointOperationLocalProcess.roleEnNameEnum;
 												fileRole = dataRow.filter(v => DataRole.includes(v));
 											}
-//											console.log(DataRole)
 											var DataRoles = '';
 											var fileRoles = '';
 											if(commonProcess.jointOperationOriginProcess) {
 												DataRoles = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
 												fileRoles = dataRow.filter(v => DataRoles.includes(v));
 											}
-//											console.log(fileRole.length)
-//											console.log(fileRoles.length)
-//											console.log(userId)
-                                            if(commonProcess != null && commonProcess.id != null
-                                            	&& commonProcess.purchaseOrderProcess.name != '驳回' 
-                                            	&& commonProcess.purchaseOrderProcess.name != '审批完成'
-//                                          	&& DataRoleName != "全额支付不需要审批"
+											var purchaseOrdName = '';
+											if(commonProcess.purchaseOrderProcess) {
+												purchaseOrdName = commonProcess.purchaseOrderProcess.name;
+											}
+											if((commonProcess != null || commonProcess != '')
+												&& (commonProcess.id != null || commonProcess.id != '')
+                                            	&& purchaseOrdName != '驳回'
+                                            	&& purchaseOrdName != '审批完成'
                                             	&& (fileRole.length !=0 || fileRoles.length !=0 || userId==1)){
                                                 if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING){
                                                     if(item.suplys == 0 ){
@@ -760,7 +758,6 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-//                          	console.log(item)
                             	var ProcessName = '';
                             	var objectName = item.commonProcess.objectName; 
                             	var commonProcess = item.commonProcess;
@@ -810,36 +807,38 @@
 				                	//审核
                                     if(item.bizStatus != res.data.CANCLE){
                                         if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING){
-//                                      	console.log('审核1')
                                          	if(_this.staOrdauditFlag == true){
 												var DataRoleGener = '';
 												var fileRoleData = '';
+												var doOrderHeaderProcessFifthName = '';
+												var doOrderHeaderProcessFifthCode = '';
 												if(commonProcess.doOrderHeaderProcessFifth) {
+													doOrderHeaderProcessFifthName = commonProcess.doOrderHeaderProcessFifth.name;
+													doOrderHeaderProcessFifthCode = commonProcess.doOrderHeaderProcessFifth.code
 													DataRoleGener = commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
 													fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 												}
-//												console.log(DataRoleGener)
-                                         		if((fileRoleData || userId==1) && commonProcess.doOrderHeaderProcessFifth.name != '驳回'
-                                         		&& commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
+												if((fileRoleData.length != 0 || userId==1) && doOrderHeaderProcessFifthName != '驳回'
+                                         			&& doOrderHeaderProcessFifthCode != res.data.auditFithStatus){
                                          			staCheckBtnTxt="审核";
                                          			ordCheckBtn = 'ordCheckBtn';
                                          		}
 												var DataRoleGeners = '';
 												var fileRoleDatas = '';
+												var jointOperationOriginName = '';
+												var jointOperationOriginCode = '';
 												if(commonProcess.jointOperationOriginProcess) {
+													jointOperationOriginName = commonProcess.jointOperationOriginProcess.name;
+													jointOperationOriginCode = commonProcess.jointOperationOriginProcess.code;
 													DataRoleGeners = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
 													fileRoleDatas = dataRow.filter(v => DataRoleGeners.includes(v));
 												}
-//												console.log(DataRoleGeners)
-//												console.log(res.data.auditStatus)
 												var auditStatu = '';
 					                            $.each(res.data.auditStatus,function(q,s){
-//					                            	console.log(s)
 						                        	auditStatu=s
 					                            })
-//					                            console.log(auditStatu)
-                                         		if(fileRoleDatas && commonProcess.jointOperationOriginProcess.name != '驳回'
-                                         		&& commonProcess.jointOperationOriginProcess.code != auditStatu
+                                         		if(fileRoleDatas.length != 0 && jointOperationOriginName != '驳回'
+                                         		&& jointOperationOriginCode != auditStatu
                                          		&& item.orderType == res.data.ORDINARY_ORDER){
                                          			staCheckBtnTxt="审核";
 													ordCheckBtn = 'ordCheckBtn';
@@ -847,29 +846,26 @@
                                          	}
                                         }
                                         if(_this.staOrdauditFlag == true){
-//                                      	console.log('审核2')
                                             var DataRole = '';
                                             var fileRole = '';
-                                            var DataRoleName = '';
 											if(commonProcess.jointOperationLocalProcess) {
-												DataRoleName = commonProcess.jointOperationLocalProcess;
 												DataRole = commonProcess.jointOperationLocalProcess.roleEnNameEnum;
 												fileRole = dataRow.filter(v => DataRole.includes(v));
 											}
-//											console.log(DataRole)
 											var DataRoles = '';
 											var fileRoles = '';
 											if(commonProcess.jointOperationOriginProcess) {
 												DataRoles = commonProcess.jointOperationOriginProcess.roleEnNameEnum;
 												fileRoles = dataRow.filter(v => DataRoles.includes(v));
 											}
-//											console.log(fileRole.length)
-//											console.log(fileRoles.length)
-//											console.log(userId)
-                                            if(commonProcess != null && commonProcess.id != null
-                                            	&& commonProcess.purchaseOrderProcess.name != '驳回' 
-                                            	&& commonProcess.purchaseOrderProcess.name != '审批完成'
-//                                          	&& DataRoleName != "全额支付不需要审批"
+											var purchaseOrdName = '';
+											if(commonProcess.purchaseOrderProcess) {
+												purchaseOrdName = commonProcess.purchaseOrderProcess.name;
+											}
+											if((commonProcess != null || commonProcess != '')
+												&& (commonProcess.id != null || commonProcess.id != '')
+                                            	&& purchaseOrdName != '驳回'
+                                            	&& purchaseOrdName != '审批完成'
                                             	&& (fileRole.length !=0 || fileRoles.length !=0 || userId==1)){
                                                 if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING){
                                                     if(item.suplys == 0 ){
