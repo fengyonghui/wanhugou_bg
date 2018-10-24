@@ -113,6 +113,7 @@ public class BizPoPaymentOrderController extends BaseController {
                         List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
                         if (CollectionUtils.isNotEmpty(requestHeaderList)) {
                             model.addAttribute("requestHeader", requestHeaderList.get(0));
+                            model.addAttribute("headerNum", requestHeaderList.get(0).getReqNo());
                         }
                     case "orderHeader":
                         BizOrderHeader bizOrderHeader = new BizOrderHeader();
@@ -120,6 +121,7 @@ public class BizPoPaymentOrderController extends BaseController {
                         List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
                         if (CollectionUtils.isNotEmpty(orderHeaderList)) {
                             model.addAttribute("orderHeader", orderHeaderList.get(0));
+                            model.addAttribute("headerNum", orderHeaderList.get(0).getOrderNum());
                         }
                         break;
                     default:

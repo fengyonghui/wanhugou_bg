@@ -247,6 +247,72 @@
 		<li class="clearfix"></li>
 	</ul>
 </form:form>
+
+<form:form id="searchFormPO" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/listV2" method="post"
+		   class="breadcrumb form-search">
+	----2--
+	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+	<input id="previousPage" name="previousPage" type="hidden" value="${bizPoHeader.previousPage}"/>
+	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
+	<ul class="ul-form">
+			<%--<li><label>采购单号</label>--%>
+			<%--<form:input path="orderNum" htmlEscape="false" maxlength="25" class="input-medium"/>--%>
+			<%--</li>--%>
+		<li><span style="margin-left: 10px"><label>订单/备货清单编号</label></span>
+			<input id="num" name="num" class="input-medium" type="text" value="" maxlength="25">
+		</li>
+
+		<li><label>业务状态：</label>
+			<select id="bizStatus" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
+				<option value="">请选择</option>
+				<c:forEach items="${fns:getDictList('biz_po_status')}" var="item" varStatus="vs">
+					<option value='${item.id}'> ${item.name}</option>
+				</c:forEach>
+			</select>
+			<%--<form:select path="bizStatus" class="input-medium">--%>
+				<%--<form:option value="" label="请选择"/>--%>
+				<%--<form:options items="${fns:getDictList('biz_po_status')}" itemLabel="label" itemValue="value"--%>
+							  <%--htmlEscape="false"/>--%>
+			<%--</form:select>--%>
+		</li>
+
+		<%--<li><label>审核状态：</label>--%>
+			<%--<form:select path="processTypeStr" class="input-medium">--%>
+				<%--<form:option value="" label="请选择"/>--%>
+				<%--<form:options items="${processList}" htmlEscape="false"/>--%>
+			<%--</form:select>--%>
+		<%--</li>--%>
+		<%--<li><label>排产状态：</label>--%>
+			<%--<form:select path="poSchType" class="input-medium">--%>
+				<%--<form:option value="" label="请选择"/>--%>
+				<%--<form:option value="0" label="未排产"/>--%>
+				<%--<form:option value="1" label="排产中"/>--%>
+				<%--<form:option value="2" label="排产完成"/>--%>
+			<%--</form:select>--%>
+		<%--</li>--%>
+		<%--<li><label>待支付</label>--%>
+			<%--<form:select path="waitPay" class="input-medium">--%>
+				<%--<form:option value="" label="请选择"/>--%>
+				<%--<form:option value="1" label="是"/>--%>
+			<%--</form:select>--%>
+		<%--</li>--%>
+		<%--<li><label>可申请付款</label>--%>
+			<%--<form:select path="applyPayment" class="input-medium">--%>
+				<%--<form:option value="" label="请选择"/>--%>
+				<%--<form:option value="1" label="是"/>--%>
+			<%--</form:select>--%>
+		<%--</li>--%>
+		<%--<li><label>测试数据</label>--%>
+			<%--<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium"--%>
+						   <%--onclick="testData(this)"/>--%>
+		<%--</li>--%>
+
+		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
+		<li class="clearfix"></li>
+	</ul>
+</form:form>
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead>

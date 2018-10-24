@@ -24,6 +24,17 @@
 		<li class="active"><a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/">支付申请列表</a></li>
 	</ul>
 	<sys:message content="${message}"/>
+
+	<div class="form-horizontal">
+		<div class="control-group">
+			<label class="control-label">订单/备货单号：</label>
+			<div class="controls">
+				<input type="text" disabled="disabled" value="${headerNum}" htmlEscape="false"
+					   maxlength="30" class="input-xlarge "/>
+			</div>
+		</div>
+	</div>
+
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
@@ -128,6 +139,7 @@
 		</c:forEach>
 		</tbody>
 	</table>
+
 	<div ><input type="button" class="btn" onclick="window.history.go(-1);" value="返回"/></div>
 	<div class="pagination">${page}</div>
 	<script type="text/javascript">
