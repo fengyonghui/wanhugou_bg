@@ -247,7 +247,6 @@
 //                      console.log(_this.OrdFlaginfo)
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-//                          	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";
@@ -908,7 +907,6 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-//                          	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";
@@ -944,7 +942,7 @@
 	                            var paycheckTxt = '';
 	                            if(item.commonProcess){
 	                            	if(item.commonProcess.purchaseOrderProcess.name){
-	                            		paycheckTxt=item.commonProcess.purchaseOrderProcess.name;
+	                            		paycheckTxt=item.commonProcess.purchaseOrderProcess.name;	                         		
 	                            	}
 	                            }else{
 	                            	paycheckTxt='当前无审批流程';
@@ -959,7 +957,7 @@
 											if(_this.ordCreatPayFlag == true) {
 					                        	if(item.bizOrderHeader != null || item.bizOrderHeader != '') {
 					                        		if((item.currentPaymentId == null || item.currentPaymentId == '') 
-					                        		&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
+					                        		&& (paycheckTxt == '审批完成')
 					                        		&& ((item.payTotal == null || item.payTotal == '') ? 0 : item.payTotal) < item.bizOrderHeader.totalDetail) {
 //					                        			console.log('订单申请付款')
 					                        			creatPay = '申请付款'
@@ -999,7 +997,7 @@
 									                }
 									            });
 												if(item.bizPoPaymentOrder.id == null
-												&& item.commonProcess.purchaseOrderProcess.name == '审批完成'
+												&& paycheckTxt == '审批完成'
 												&& dictLabel != '全部支付'
 												&& item.payTotal < (item.totalDetail+item.totalExp)) {
 													creatPay = '申请付款'
@@ -1019,8 +1017,8 @@
 											}
 											var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 					                        if(item.commonProcess.id != null
-					                        	&& item.commonProcess.purchaseOrderProcess.name != '驳回'
-					                        	&& item.commonProcess.purchaseOrderProcess.name != '审批完成'
+					                        	&& paycheckTxt != '驳回'
+					                        	&& paycheckTxt != '审批完成'
 					                        	&& (fileRoleData.length>0 || userId==1))             {
 					                        	if(item.bizOrderHeader != null || item.bizRequestHeader != null){
 					                        		//订单审核
@@ -1091,8 +1089,8 @@
 										var orCancleBtn = '';
 										var orCancleBtnTxt = '';
 					                	if(_this.orCancAmenFlag == true) {
-					                		if(item.commonProcess.purchaseOrderProcess.name == null 
-				                			|| item.commonProcess.purchaseOrderProcess.name == '驳回') {
+					                		if(paycheckTxt == null 
+				                			|| paycheckTxt == '驳回') {
 					                			orAmendBtn = 'orAmendBtn';
 					                			orAmendBtnTxt = '修改';
 					                		}

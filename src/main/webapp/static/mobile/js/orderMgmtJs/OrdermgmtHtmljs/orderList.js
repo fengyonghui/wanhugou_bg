@@ -80,7 +80,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		            	console.log(res)
+		            	console.log(res)
 		            	var dataRow = res.data.roleSet;
 		            	//订单类型
 		          	    $.ajax({
@@ -113,8 +113,8 @@
 						}
                         var that=this;
                         if(arrLen > 0) {
-                            $.each(res.data.page.list, function(i, item) {
-//                          	console.log(item)
+                            $.each(res.data.page.list, function(i, item) {   
+                            	console.log(item)
                             	var ProcessName = '';
                             	var objectName = item.commonProcess.objectName; 
                             	var commonProcess = item.commonProcess;
@@ -173,8 +173,8 @@
 													fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 												}
 //												console.log(DataRoleGener)
-                                         		if((fileRoleData || userId==1) && commonProcess.doOrderHeaderProcessFifth.name != '驳回'
-                                         		&& commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus){
+                                         		if((fileRoleData || userId==1) && (commonProcess==""||commonProcess.doOrderHeaderProcessFifth.name != '驳回')
+                                         		&& (commonProcess==""||commonProcess.doOrderHeaderProcessFifth.code != res.data.auditFithStatus)){
                                          			staCheckBtnTxt="审核";
                                          			ordCheckBtn = 'ordCheckBtn';
                                          		}
