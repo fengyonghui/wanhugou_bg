@@ -150,13 +150,19 @@
 						<a href="${ctx}/sys/office/recovery?id=${off.id}&source=purchListDelete" onclick="return confirmx('要恢复该机构及所有子机构项吗？', this.href)">恢复</a>
 					</c:if>
 					<c:if test="${off.type==15 || off.type==16}">
-						<shiro:hasPermission name="sys:office:upgrade">
-							<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgrade">申请</a>
-						</shiro:hasPermission>
-						<shiro:hasPermission name="sys:office:upgradeAudit">
-							<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgradeAudit">审核</a>
-						</shiro:hasPermission>
+						<c:if test="${off.bizCustomerInfo.applyForLevel==0}">
+							<shiro:hasPermission name="sys:office:upgrade">
+								<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgrade">申请</a>
+							</shiro:hasPermission>
+						</c:if>
+						<c:if test="${off.bizCustomerInfo.applyForLevel!=0}">
+							<shiro:hasPermission name="sys:office:upgradeAudit">
+								<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgradeAudit">审核</a>
+							</shiro:hasPermission>
+						</c:if>
 					</c:if>
+
+
                 </td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

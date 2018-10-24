@@ -37,6 +37,11 @@
 		bvi.bank_name AS "bizVendInfo.bankName",
 		bvi.payee AS "bizVendInfo.payee",
 		bvi.vend_name AS "bizVendInfo.vendName",
+		bci.bank_name AS "bizCustomerInfo.bankName",
+		bci.apply_for_level AS "bizCustomerInfo.applyForLevel",
+		bci.card_number AS "bizCustomerInfo.cardNumber",
+		bci.payee AS "bizCustomerInfo.payee",
+		bci.remark AS "bizCustomerInfo.remark",
 		pp.mobile AS "user.mobile"
 	</sql>
 
@@ -47,6 +52,7 @@
 		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
 		LEFT JOIN biz_custom_center_consultant ccc on a.id = ccc.cust_id
 		LEFT JOIN biz_vend_info bvi on a.id=bvi.office_id
+		LEFT JOIN biz_customer_info bci on a.id=bci.office_id
     </sql>
 
 	<select id="get" resultType="Office">

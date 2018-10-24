@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.sys.entity;
 
 import com.wanhutong.backend.common.persistence.TreeEntity;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import org.hibernate.validator.constraints.Length;
@@ -55,6 +56,11 @@ public class Office extends TreeEntity<Office> {
 	private Integer ccStatus;
 
 	private BizVendInfo bizVendInfo;		//供应商拓展
+	/**
+	 * 会员拓展
+	 */
+	private BizCustomerInfo bizCustomerInfo;
+
 
 	/**
 	 * 供应商新增页面显示，新增地址
@@ -444,5 +450,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setVendor(String vendor) {
 		this.vendor = vendor;
+	}
+
+	public BizCustomerInfo getBizCustomerInfo() {
+		return bizCustomerInfo;
+	}
+
+	public void setBizCustomerInfo(BizCustomerInfo bizCustomerInfo) {
+		this.bizCustomerInfo = bizCustomerInfo;
 	}
 }
