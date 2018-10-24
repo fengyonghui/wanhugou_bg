@@ -404,18 +404,16 @@
 									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
 									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
 									}">
-								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核--1</a>
+								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
 							</c:if>
 
 							<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOriginProcess.roleEnNameEnum) && orderHeader.commonProcess.jointOperationOriginProcess.name != '驳回' && orderHeader.commonProcess.jointOperationOriginProcess.code != auditStatus
 								 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
-								<a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}">审核--2</a>
+								<a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}">审核</a>
 							</c:if>
 						</shiro:hasPermission>
 					</c:if >
 					<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-						<%--'${orderHeader.commonProcess.purchaseOrderProcess.name}'--%>
-						<%--'${orderHeader.commonProcess.jointOperationLocalProcess}'--%>
 						<c:if test="${orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
 							&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
 							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
@@ -425,10 +423,10 @@
 							}">
 							<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 								<c:if test="${orderHeader.suplys == 0 }">
-									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核--3</a>
+									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
 								</c:if>
 								<c:if test="${orderHeader.suplys != 0 }">
-									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核--4</a>
+									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
 								</c:if>
 							</c:if>
 						</c:if>
@@ -492,6 +490,32 @@
 					   onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 					</c:if>
 					</shiro:hasPermission>
+
+					<!-- 订单支出信息合并 -->
+					<shiro:hasPermission name="biz:order:bizOrderHeader:view">
+						<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成' || orderHeader.commonProcess.jointOperationOriginProcess.name == '审批完成'}">
+							<!-- 财务审核采购单按钮控制 -->
+							<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+							<c:if test="${orderHeader.bizPoHeader.commonProcess.id != null
+											&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
+											&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+											&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
+											&& (fns:hasRole(roleSet, orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+											}">
+
+								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">财务审核</a>
+							</c:if>
+							</shiro:hasPermission>
+							<!-- 支付申请列表获取 -->
+							'${orderHeader.bizPoHeader.commonProcess.type}'
+							<c:if test="${orderHeader.bizPoHeader.commonProcess.type != -1}">
+								<shiro:hasPermission name="biz:po:pay:list">
+									<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${orderHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${orderHeader.id}">支付申请列表</a>
+								</shiro:hasPermission>
+							</c:if>
+						</c:if>
+					</shiro:hasPermission>
+
 					<shiro:hasPermission name="biz:order:bizOrderHeader:refund">
 					<!-- 退款增加 -->
 					<c:if test='${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUND.state}'>
