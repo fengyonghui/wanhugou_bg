@@ -319,7 +319,7 @@
         },
         removeBtn:function(){
         	$('#payBtnremove').on('tap',  function() {
-        		$('.payMoney').hide();
+        		$('#tanchuang_pay').hide();
         	})
         },
         comfirDialig: function() {
@@ -450,7 +450,7 @@
 			_this.comfirDialig();
 		    /*确认支付金额*/
 			$('#payApplyList').on('tap', '.inPayBtn', function() {
-				$('.payMoney').show();
+				$('#tanchuang_pay').show();
 				var inListId = $(this).attr('inListId');
 //				console.log(inListId)
 				var frompage = $(this).attr('frompage');
@@ -487,7 +487,7 @@
 				                success: function(res){				                   
 				                    if(res.data.result==true){
 				                    	mui.toast('保存成功！！');
-				                    	$('.payMoney').hide();
+				                    	$('#tanchuang_pay').hide();
 				                    	window.setTimeout(function(){
 						                    _this.pageInit();
 						                },800);

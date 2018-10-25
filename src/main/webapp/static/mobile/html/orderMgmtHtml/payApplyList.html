@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 	<head>
 		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -13,75 +14,106 @@
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css?time=20181023" rel="stylesheet" />
 		<style>
-			.payMoney{
-				display: none;
-				background: #CECECE;
-				width:90%;	
-				left:5%;			
-				position: fixed;
-				top:180px;
-				z-index: 100;
-				border:1px solid #007AFF;
-				text-align: center;
-				border-radius: 8px;
-			}
-			.paybox{
+			.paybox {
 				text-align: center;
 			}
-			.paybox label{
+			
+			.paybox label {
 				display: inline-block;
 			}
-			.payMoney input,.payMoney textarea{
+			
+			.payMoney input,
+			.payMoney textarea {
 				display: block;
-				width:80%;
+				width: 80%;
 				text-align: center;
-				margin:5px auto; 
+				margin: 5px auto;
 			}
-			.btnbox{
-				margin:5px 0;
+			
+			.btnbox {
+				margin: 13px 30px;
 				display: none;
+			}
+			
+			.tanchuang_wrap {
+				width: 100%;
+				;
+				height: 100%;
+				;
+				position: absolute;
+				left: 0px;
+				top: 0px;
+				z-index: 100;
+				display: none;
+			}
+			
+			.lightbox {
+				width: 100%;
+				z-index: 101;
+				height: 100%;
+				background-color: #000000;
+				filter: alpha(Opacity=20);
+				-moz-opacity: 0.2;
+				opacity: 0.2;
+				position: absolute;
+				top: 0px;
+				left: 0px;
+			}
+			
+			.payMoney {
+				width: 300px;
+				height: 300px;
+				border: solid 1px #40ABE9;
+				background-color: #FFF;
+				position: absolute;
+				z-index: 105;
+				left: 50%;
+				top: 50%;
+				margin-left: -150px;
+				margin-top: -150px;
 			}
 		</style>
 	</head>
+
 	<body>
 		<header class="app_header mui-bar mui-bar-nav">
-		    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
-		    <p class="app_cf app_nav_text_center">支付申请列表</p>
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">支付申请列表</p>
 		</header>
-		<!--<nav class="mui-bar mui-bar-tab footClass" id="nav">
-			<a class="mui-tab-item app_cf staHomePage">
-				<span class="mui-icon mui-icon-home"></span>
-				<span class="mui-tab-label">返回首页</span>
-			</a>
-		</nav>-->
-		<div class="app_content mui-content mui-scroll-wrapper" id="refreshContainer">			
+		<div class="app_content mui-content mui-scroll-wrapper" id="refreshContainer">
 			<div class="mui-scroll">
 				<ul class="mui-table-view mui-table-view-chevron" id="payApplyList">
-                        
-                </ul>
+
+				</ul>
 			</div>
 		</div>
-		<div class="payMoney">
-			<div class="paybox">
-				<label style="margin-top:5px;">订单总金额:</label>
-			    <input class="mui-input-clear" type="text" id="totalMoney" disabled>
+		<div class="tanchuang_wrap" id="tanchuang_pay">
+			<div class="payMoney">
+				<div class="paybox">
+					<label style="margin-top:5px;">订单总金额:</label>
+					<input class="mui-input-clear" type="text" id="totalMoney" disabled>
+				</div>
+				<div class="paybox">
+					<label>付款金额:</label>
+					<input class="mui-input-clear" type="text" id="paymoney">
+				</div>
+				<div class="paybox">
+					<label>备注:</label>
+					<textarea id="textxt"></textarea>
+				</div>
+				<div class="btnbox">
+					<button id="payBtnsave" style="background: #40ABE9;color:#fff;width:100px">保存</button>
+					<button id="payBtnremove" style="background: #40ABE9;color:#fff;width:100px;float:right;">取消</button>
+				</div>
 			</div>
-			<div class="paybox">
-				<label>付款金额:</label>
-			    <input class="mui-input-clear" type="text" id="paymoney">
+			<div class="lightbox">
+
 			</div>
-			<div class="paybox">
-				<label>备注:</label>
-			    <textarea id="textxt"></textarea>
-			</div>			
-			<div class="btnbox">
-				<button id="payBtnsave" style="background: #40ABE9;color:#fff;width:100px">保存</button>
-				<button id="payBtnremove" style="background: #40ABE9;color:#fff;width:100px">取消</button>
-			</div>			
 		</div>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
 		<script src="../../js/orderMgmtJs/payApplyList.js?time=20181025"></script>
 	</body>
+
 </html>
