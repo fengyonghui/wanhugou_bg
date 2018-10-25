@@ -21,12 +21,25 @@
 		},
 		pageInit: function() {
 			var _this = this;
+			_this.inInitHrefHtml();
 			_this.getData();//获取数据	
 			_this.addRemark();//添加备注
 			_this.ajaxCheckStatus();//业务状态
 			_this.ajaxInvoiceStatus();//发票状态
 			_this.addItem();//订单商品信息添加
 		},
+		inInitHrefHtml: function() {
+        	var _this = this;
+        	/*返回订单列表*/
+			$('#nav').on('tap','.ordList', function() {
+				GHUTILS.OPENPAGE({
+					url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+					extras: {
+						
+					}
+				})
+			})
+        },
 		getData: function() {
 			var _this = this;
 			var datas={};
