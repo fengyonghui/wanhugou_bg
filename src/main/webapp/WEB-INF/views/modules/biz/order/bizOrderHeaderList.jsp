@@ -311,10 +311,18 @@
 				<option value="1">是</option>
 			</select>
 		</li>
+
+		<li><label>发票状态：</label>
+			<select id="invStatus" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
+				<option value="">请选择</option>
+				<c:forEach items="${fns:getDictList('biz_order_invStatus')}" var="item" varStatus="vs">
+					<option value="${item.value}">${item.label}</option>
+				</c:forEach>
+			</select>
+		</li>
 		<li><label>测试数据</label>
 			<input id="page.includeTestData1" name="page.includeTestData" onclick="testData(this)" maxlength="100" class="input-medium" type="checkbox" value="true">
 		</li>
-		<li><label></label></li>
 
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
@@ -590,7 +598,8 @@
 
 					<!-- 订单支出信息合并 -->
 					<shiro:hasPermission name="biz:order:bizOrderHeader:view">
-						<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成' || orderHeader.commonProcess.jointOperationOriginProcess.name == '审批完成'}">
+						<%--<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成' || orderHeader.commonProcess.jointOperationOriginProcess.name == '审批完成'}">--%>
+						<c:if test="${orderHeader.bizPoHeader.id != null}">
 							<!-- 财务审核采购单按钮控制 -->
 							<shiro:hasPermission name="biz:po:bizPoHeader:audit">
 							<c:if test="${orderHeader.bizPoHeader.commonProcess.id != null
@@ -628,8 +637,8 @@
 								</shiro:hasPermission>
                             </shiro:hasPermission>
                                 <%--<c:if test="${bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">--%>
-
 						</c:if>
+						<%--</c:if>--%>
 					</shiro:hasPermission>
 
 					<shiro:hasPermission name="biz:order:bizOrderHeader:refund">
