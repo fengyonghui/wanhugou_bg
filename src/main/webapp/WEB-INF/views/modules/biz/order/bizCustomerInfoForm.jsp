@@ -65,12 +65,6 @@
 				<form:input path="remark" htmlEscape="false" maxlength="500" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">申请等级：</label>
-			<div class="controls">
-				<form:input path="applyForLevel" htmlEscape="false" maxlength="4" class="input-xlarge  digits"/>
-			</div>
-		</div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:order:bizCustomerInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

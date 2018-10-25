@@ -55,8 +55,7 @@
 		bci.bank_name AS "customerInfo.bankName",
 		bci.card_number AS "customerInfo.cardNumber",
 		bci.payee AS "customerInfo.payee",
-		bci.remark AS "customerInfo.remark",
-		bci.apply_for_level AS "customerInfo.applyForLevel"
+		bci.remark AS "customerInfo.remark"
 	</sql>
 	
 	<sql id="bizCommissionJoins">
