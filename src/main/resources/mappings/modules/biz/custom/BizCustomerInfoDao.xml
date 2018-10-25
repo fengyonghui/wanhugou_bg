@@ -8,8 +8,7 @@
         a.bank_name AS "bankName",
         a.card_number AS "cardNumber",
         a.payee AS "payee",
-        a.remark AS "remark",
-        a.apply_for_level AS "applyForLevel"
+        a.remark AS "remark"
     </sql>
 
     <sql id="bizCustomerInfoJoins">
@@ -73,27 +72,32 @@
         bank_name,
         card_number,
         payee,
-        remark,
-        apply_for_level
+        remark
         ) VALUES (
         #{id},
         #{officeId},
         #{bankName},
         #{cardNumber},
         #{payee},
-        #{remark},
-        #{applyForLevel}
+        #{remark}
         )
     </insert>
 
     <update id="update">
         UPDATE biz_customer_info SET
-        office_id = #{officeId},
-        bank_name = #{bankName},
-        card_number = #{cardNumber},
-        payee = #{payee},
-        remark = #{remark},
-        apply_for_level = #{applyForLevel}
+        <if test="bankName != null and bankName != ''">
+          bank_name = #{bankName},
+        </if>
+        <if test="cardNumber != null and cardNumber != ''">
+          card_number = #{cardNumber},
+        </if>
+        <if test="payee != null and payee != ''">
+          payee = #{payee},
+        </if>
+        <if test="remark != null and remark != ''">
+          remark = #{remark},
+        </if>
+        update_time = NOW()
         WHERE id = #{id}
     </update>
 

@@ -85,6 +85,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     private CommonImgService commonImgService;
     @Autowired
     private CommonProcessService commonProcessService;
+    @Autowired
+    private BizCustomerInfoService bizCustomerInfoService;
 
     public static final String PHOTO_SPLIT_CHAR = "\\|";
     public static final String CUSTOMER_APPLY_LEVEL_OBJECT_NAME = "CUSTOMER_APPLY_LEVEL_OBJECT_NAME";
@@ -564,6 +566,11 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
             bizCustCredit.setCustomer(office);
             bizCustCredit.setLevel(StringUtils.isBlank(office.getLevel()) ? "1" : office.getLevel());
             bizCustCreditService.save(bizCustCredit);
+        }
+
+        if (office.getBizCustomerInfo() != null) {
+            office.getBizCustomerInfo().setOfficeId(office.getId());
+            bizCustomerInfoService.save(office.getBizCustomerInfo());
         }
 
         //经销店保存新建联系人
