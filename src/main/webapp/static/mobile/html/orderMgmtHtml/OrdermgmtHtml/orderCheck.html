@@ -12,9 +12,6 @@
 		<title>订单审核</title>
 		<link href="../../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../../css/app.css?time=20181023" rel="stylesheet" />
-		<style type="text/css">
-			.mui-input-row .mui-input-clear~.mui-icon-clear {right: 4em;}
-		</style>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
@@ -119,10 +116,12 @@
 			</div>
 			<div class="mui-input-row">
 				<label>详细地址：</label>
-				<input type="text" id="staDateilAddress" class="mui-input-clear">
+				<input type="text" id="staDateilAddress" disabled>
 			</div>
-			<div class="mui-input-row" id="ordLastDate">
-				
+			<div class="mui-input-row app_none" id="ordLastDate">
+				<label>最后时间：</label>
+				<input type="date" class="mui-input-clear" id="lastDate" placehohder="必填！">
+				<font>*</font>
 			</div>
 			<div class="mui-input-row">
 				<label>备注：</label>

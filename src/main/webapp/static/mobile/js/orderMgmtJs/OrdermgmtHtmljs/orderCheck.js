@@ -70,13 +70,9 @@
 					$('#rejectBtns').attr('poids',res.data.bizOrderHeader.bizPoHeader.id);
 					$('#createPo').val(res.data.createPo);
 					$("#soId").val(res.data.bizOrderHeader.id);
-					var ordLastDate = '';
 					if(res.data.createPo == 'yes') {	//品类主管审核才生成PO
-						ordLastDate = '<label>最后时间：</label>'+
-							'<input type="date" class="mui-input-clear" id="lastDate" placehohder="必填！">'+
-							'<font>*</font>'
-						$('#ordLastDate').append(ordLastDate);
 						$('#schedulingTxt').show();
+						$('#ordLastDate').show();
 						_this.schedulGetData(res.data)
 					}
                     //调取供应商信息
@@ -227,17 +223,17 @@
 					_this.checkProcessHtml(res.data);//审核流程
 					_this.commodityHtml(res.data);//商品信息
 					var str = _this.userInfo.str;//审核
-					console.log(str)
+//					console.log(str)
 					if(res.data.bizOrderHeader.str == 'audit' && res.data.bizOrderHeader.bizPoHeader.commonProcessList != null && res.data.bizOrderHeader.bizPoHeader.commonProcessList.length > 0){
 						$('#currentTypes').val(res.data.bizOrderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code)
 					}
 					if(str == "audit") {
 						//支出信息的审核
-						console.log('支出审核')
+//						console.log('支出审核')
 						_this.comfirDialigs();
 					}else {
 						//订单审核
-						console.log('订单审核')
+//						console.log('订单审核')
 						_this.comfirDialig(res.data);//审核
 					}
                 }
@@ -658,7 +654,7 @@
 			if(_this.DOPOFlag == true) {
 				/*代采订单*/
 				if(data.entity2.str == 'audit' && data.entity2.orderType == data.PURCHASE_ORDER) {
-					if(commonProcessList == null) {
+					if(commonProcessList == null || commonProcessList == '') {
 						ordType = 'DO'
 					}
 				}
@@ -669,11 +665,12 @@
 					}
 				}
 			}	
+//			console.log(ordType)
 			//采购单---支出信息审核
 			if(_this.POFlag == true) {
 				if(data.entity2.str == 'audit') {
 					if(data.orderType != data.PURSEHANGER) {
-						if(commonProcessList != null 
+						if((commonProcessList != null || commonProcessList != '') 
 						&& comProListLen > 0
 						&& data.currentAuditStatus.type == 777 || data.currentAuditStatus.type == 666) {
 							$("#currentType").val(data.purchaseOrderProcess.code);
@@ -681,7 +678,7 @@
 						}
 					}
 					if(data.orderType == data.PURSEHANGER) {
-						if(commonProcessList != null
+						if((commonProcessList != null || commonProcessList != '')
 						&& comProListLen > 0) {
 							$("#currentType").val(data.purchaseOrderProcess.code);
 							ordType = 'PO'
@@ -745,6 +742,7 @@
 										_this.afterAjaxData(data)
 									}
 									if(_this.checkResult == false) {
+//										console.log(ordType)sss
 										if(ordType == 'JO') {
 											_this.auditJo(inText,1,createPo,data)
 										}
