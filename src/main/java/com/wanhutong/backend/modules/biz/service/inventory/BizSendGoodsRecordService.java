@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.service.inventory;
 
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
@@ -41,7 +42,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 供货记录表Service
@@ -116,6 +119,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 	public String outTreasury(List<BizOutTreasuryEntity> outTreasuryList) {
 	    boolean orderFlag = true; //用于判断订单是否已全部出库
         BizOrderHeader orderHeader = new BizOrderHeader();
+		Map<Integer, Integer> orderDetailMap = Maps.newHashMap();
 		for (BizOutTreasuryEntity outTreasuryEntity : outTreasuryList) {
 			Integer orderDetailId = outTreasuryEntity.getOrderDetailId();
 			Integer reqDetailId = outTreasuryEntity.getReqDetailId();
@@ -150,6 +154,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			//修改订单详情已发货数量
 			bizOrderDetail.setSentQty((bizOrderDetail.getSentQty() == null ? 0 : bizOrderDetail.getSentQty()) + outQty);
 			bizOrderDetailService.saveStatus(bizOrderDetail);
+			orderDetailMap.put(bizOrderDetail.getId(),bizOrderDetail.getSentQty());
 			//修改订单状态
             int status = orderHeader.getBizStatus();
             orderHeader.setBizStatus(OrderHeaderBizStatusEnum.APPROVE.getState());
@@ -157,11 +162,6 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
             if (status < OrderHeaderBizStatusEnum.APPROVE.getState()) {
                 bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(),BizOrderStatusOrderTypeEnum.SELLORDER.getState(),orderHeader.getId());
             }
-			if (!bizOrderDetail.getOrdQty().equals(bizOrderDetail.getSentQty())) {
-                orderFlag = false;
-            } else {
-            	orderFlag = true;
-			}
 			//订单关联出库备货单
 			BizInventoryOrderRequest ior = new BizInventoryOrderRequest();
             ior.setInvSku(inventorySku);
@@ -170,6 +170,24 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			List<BizInventoryOrderRequest> iorList = bizInventoryOrderRequestService.findList(ior);
 			if (CollectionUtils.isEmpty(iorList)) {
 				bizInventoryOrderRequestService.save(ior);
+			}
+		}
+//		if (!bizOrderDetail.getOrdQty().equals(bizOrderDetail.getSentQty())) {
+//			orderFlag = false;
+//		} else {
+//			orderFlag = true;
+//		}
+		BizOrderDetail orderDetail = new BizOrderDetail();
+		orderDetail.setOrderHeader(new BizOrderHeader(orderHeader.getId()));
+		List<BizOrderDetail> detailList = bizOrderDetailService.findList(orderDetail);
+		if (CollectionUtils.isNotEmpty(detailList)) {
+			for (BizOrderDetail bizOrderDetail : detailList) {
+				Integer ordQty = bizOrderDetail.getOrdQty();
+				Integer id = bizOrderDetail.getId();
+				if (!orderDetailMap.get(id).equals(ordQty)) {
+					orderFlag = false;
+					break;
+				}
 			}
 		}
 		if (orderFlag) {
