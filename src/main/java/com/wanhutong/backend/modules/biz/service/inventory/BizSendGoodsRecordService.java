@@ -154,7 +154,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			//修改订单详情已发货数量
 			bizOrderDetail.setSentQty((bizOrderDetail.getSentQty() == null ? 0 : bizOrderDetail.getSentQty()) + outQty);
 			bizOrderDetailService.saveStatus(bizOrderDetail);
-			if (orderDetailMap.get(bizOrderDetail.getId()) != null) {
+			if (orderDetailMap.containsKey(bizOrderDetail.getId())) {
 			    orderDetailMap.put(bizOrderDetail.getId(),orderDetailMap.get(bizOrderDetail.getId()) + outQty);
             } else {
                 orderDetailMap.put(bizOrderDetail.getId(), bizOrderDetail.getSentQty());
@@ -187,8 +187,13 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 		if (CollectionUtils.isNotEmpty(detailList)) {
 			for (BizOrderDetail bizOrderDetail : detailList) {
 				Integer ordQty = bizOrderDetail.getOrdQty();
+				Integer sentQty = bizOrderDetail.getSentQty();
 				Integer id = bizOrderDetail.getId();
-				if (!orderDetailMap.get(id).equals(ordQty)) {
+				if (orderDetailMap.containsKey(id) && !orderDetailMap.get(id).equals(ordQty)) {
+					orderFlag = false;
+					break;
+				}
+				if (!orderDetailMap.containsKey(id) && !ordQty.equals(sentQty)) {
 					orderFlag = false;
 					break;
 				}
