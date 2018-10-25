@@ -31,6 +31,7 @@ import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.PhoneConfig;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
@@ -327,6 +328,17 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		Boolean resultFlag = checkPay(bizCommission);
 		if (!resultFlag) {
 			LOGGER.warn("[exception]BizCustCredit commissioned mismatching BizPayRecord totalPayMoney, BizCommission is [{}]", commId);
+
+			PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.SETTLEMENT_COMMISSION_EXCEPTION.name());
+			AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.EXCEPTION_WARN.getCode(), phone.getNumber(), ImmutableMap.of("type", "Warn", "service", "佣金结算邮件提醒,commId:" + commId));
+			EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.SETTLEMENT_COMMISSION_EXCEPTION.name());
+			AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(), email.getSubject(),
+					String.format(email.getBody(),
+							"commId:" + commId,
+							"Exception",
+							"佣金结算异常",
+							LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)));
+
 			return "累积获得佣金和佣金支付记录总和不相符，请联系技术人员";
 		}
 
@@ -355,7 +367,7 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		bizCustCredit.setCustomer(customer);
 
 		bizCustCredit = bizCustCreditService.get(bizCustCredit);
-		BigDecimal commission = bizCustCredit.getCommission().multiply(bizCommission.getPayTotal()).setScale(2, BigDecimal.ROUND_HALF_UP);
+		BigDecimal commission = bizCustCredit.getCommission().subtract(bizCommission.getPayTotal()).setScale(2, BigDecimal.ROUND_HALF_UP);
 		BigDecimal commissioned = bizCustCredit.getCommissioned().add(bizCommission.getPayTotal()).setScale(2, BigDecimal.ROUND_HALF_UP);
 		bizCustCredit.setCommission(commission);
 		bizCustCredit.setCommissioned(commissioned);
