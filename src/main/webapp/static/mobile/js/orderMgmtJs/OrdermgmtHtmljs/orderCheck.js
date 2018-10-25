@@ -107,14 +107,6 @@
 						$('#staPayTime').val();
 						$('#staPayMoney').val();
 					}
-//					var RemarkHtml="";
-//					$.each(res.data.commentList, function(q, w) {
-//						RemarkHtml +='<div class="">'+
-//						    w.comments
-//                          +
-//					    '</div>'
-//						$('#staPoRemark').html(RemarkHtml);//备注
-//					})
 					//备注
 					var RemarkHtml="";
 					$.each(res.data.commentList, function(q, w) {						
@@ -223,17 +215,14 @@
 					_this.checkProcessHtml(res.data);//审核流程
 					_this.commodityHtml(res.data);//商品信息
 					var str = _this.userInfo.str;//审核
-//					console.log(str)
 					if(res.data.bizOrderHeader.str == 'audit' && res.data.bizOrderHeader.bizPoHeader.commonProcessList != null && res.data.bizOrderHeader.bizPoHeader.commonProcessList.length > 0){
 						$('#currentTypes').val(res.data.bizOrderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code)
 					}
 					if(str == "audit") {
 						//支出信息的审核
-//						console.log('支出审核')
 						_this.comfirDialigs();
 					}else {
 						//订单审核
-//						console.log('订单审核')
 						_this.comfirDialig(res.data);//审核
 					}
                 }
@@ -670,7 +659,7 @@
 			if(_this.POFlag == true) {
 				if(data.entity2.str == 'audit') {
 					if(data.orderType != data.PURSEHANGER) {
-						if((commonProcessList != null || commonProcessList != '') 
+						if((commonProcessList != null || commonProcessList != '')
 						&& comProListLen > 0
 						&& data.currentAuditStatus.type == 777 || data.currentAuditStatus.type == 666) {
 							$("#currentType").val(data.purchaseOrderProcess.code);

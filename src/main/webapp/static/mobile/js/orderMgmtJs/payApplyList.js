@@ -137,29 +137,29 @@
 										}
 									}
 								}
-								var affirmBtn = '';
-								var affirmBtnTxt = '';
-								if(_this.editFlag == true) {
-									if(_this.affirmFlag == true) {
-										if(item.orderType == res.data.PO_TYPE   /*PO_TYPE=1*/
-										&& item.id == res.data.bizPoHeader.bizPoPaymentOrder.id
-										&& item.commonProcess.paymentOrderProcess.name == '审批完成'
-										&& res.data.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成') {
-											if(res.data.fromPage != null && res.data.fromPage == 'requestHeader') {
-												affirmBtnTxt = '确认付款';
-												affirmBtn = 'affirmBtn';
-											}
-											if(res.data.fromPage != null && res.data.fromPage == 'orderHeader') {
-												affirmBtnTxt = '确认付款';
-												affirmBtn = 'affirmBtn';
-											}
-											if(res.data.fromPage == null) {
-												affirmBtnTxt = '确认付款';
-												affirmBtn = 'affirmBtn';
-											}
-										}
-									}
-								}
+//								var affirmBtn = '';
+//								var affirmBtnTxt = '';
+//								if(_this.editFlag == true) {
+//									if(_this.affirmFlag == true) {
+//										if(item.orderType == res.data.PO_TYPE   /*PO_TYPE=1*/
+//										&& item.id == res.data.bizPoHeader.bizPoPaymentOrder.id
+//										&& item.commonProcess.paymentOrderProcess.name == '审批完成'
+//										&& res.data.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成') {
+//											if(res.data.fromPage != null && res.data.fromPage == 'requestHeader') {
+//												affirmBtnTxt = '确认付款';
+//												affirmBtn = 'affirmBtn';
+//											}
+//											if(res.data.fromPage != null && res.data.fromPage == 'orderHeader') {
+//												affirmBtnTxt = '确认付款';
+//												affirmBtn = 'affirmBtn';
+//											}
+//											if(res.data.fromPage == null) {
+//												affirmBtnTxt = '确认付款';
+//												affirmBtn = 'affirmBtn';
+//											}
+//										}
+//									}
+//								}
 								//单次支付审批状态
 								var paymentOrderProcess="";
 								if(item.total == '0.00' && item.commonProcess.paymentOrderProcess.name != '审批完成'){
@@ -212,11 +212,11 @@
 											'<div class="" >'+inPay+'</div>' +
 										'</div>' +
 									'</div>' +
-									'<div class="app_color40 mui-row app_text_center operation">' +
-										'<div class="'+affirmBtn+'" inListId="'+ item.id +'">' +
-											'<div class="" >'+affirmBtnTxt+'</div>' +
-										'</div>' +
-									'</div>' +
+//									'<div class="app_color40 mui-row app_text_center operation">' +
+//										'<div class="'+affirmBtn+'" inListId="'+ item.id +'">' +
+//											'<div class="" >'+affirmBtnTxt+'</div>' +
+//										'</div>' +
+//									'</div>' +
 									'<div class="app_color40 mui-row app_text_center operation">' +
 										'<div class="mui-col-xs-6 inCheckBtn" id="inCheckBtn" inListId="'+ item.id +'" curType="'+ item.commonProcess.paymentOrderProcess.code +'" total="'+ item.total +'" orderType="'+ item.orderType +'">' +
 											'<div class="">'+inCheck+'</div>' +
