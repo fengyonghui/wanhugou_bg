@@ -706,11 +706,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
         //物流运单生成
         ThreadPoolManager.getDefaultThreadPool().execute(() -> {
-            //测试环境
-            //String postUrl = ConfigGeneral.TESTURI + ConfigGeneral.ADD_ORDER_WHT;
-            //生产环境
-            String postUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
+            String postUrl = DsConfig.getCreateLogisticUrl() + DsConfig.getAddOrderWht();
             LOGISTICS_LOGGER.info("订单物流postUrl=================" + postUrl);
+
             CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
             HttpPost httpPost = new HttpPost(postUrl);
             CloseableHttpResponse httpResponse = null;
@@ -798,16 +796,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
                 //物流运单生成
                 ThreadPoolManager.getDefaultThreadPool().execute(() -> {
-                    //测试环境
-                    //String reginUrl = ConfigGeneral.TESTURI + ConfigGeneral.GET_START_AND_STOP_POINT_CODE_WHT;
-                    //String createLogisticUrl = ConfigGeneral.TESTURI + ConfigGeneral.ADD_ORDER_WHT;
-                    //生产环境
-                    String reginUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.GET_START_AND_STOP_POINT_CODE_WHT;
-                    String createLogisticUrl = ConfigGeneral.PRODUCEURI + ConfigGeneral.ADD_ORDER_WHT;
-
-
+                    String reginUrl = DsConfig.getCreateLogisticUrl() + DsConfig.getStartAndStopPointCodeWht();
+                    String createLogisticUrl = DsConfig.getCreateLogisticUrl() + DsConfig.getAddOrderWht();
                     LOGISTICS_LOGGER.info("订单物流reginUrl=================" + reginUrl);
                     LOGISTICS_LOGGER.info("订单物流createLogisticUrl=================" + createLogisticUrl);
+
                     CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
                     HttpPost httpPost = new HttpPost(reginUrl);
                     CloseableHttpResponse httpResponse = null;

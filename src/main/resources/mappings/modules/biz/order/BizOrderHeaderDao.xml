@@ -1925,7 +1925,6 @@
 		and so.id = cc.cust_id
 		and so.`status` = 1
 		and o.status = 1
-		and us.`status` = 1
 		and cc.`status` = 1
 		GROUP BY createDate
 	</select>
@@ -2091,8 +2090,8 @@ GROUP BY
 			date_format(oh.create_time, '%Y-%m-%d') AS createDate
 		</if>
 		from  biz_order_header oh
-		left JOIN sys_user u on oh.consultant_id = u.id
-		LEFT JOIN sys_office so on so.id = oh.center_id
+		INNER JOIN sys_user u on oh.consultant_id = u.id
+		INNER JOIN sys_office so on so.id = oh.center_id
 		WHERE
 		NOT EXISTS(
 		select 1
@@ -2108,7 +2107,6 @@ GROUP BY
 		<if test="orderType != null and orderType != 0">
 			and oh.`order_type` = #{orderType}
 		</if>
-		and u.`status` = 1
 		<if test="officeId != null and officeId != 0">
 			and so.id = #{officeId}
 		</if>
@@ -2247,7 +2245,7 @@ LEFT JOIN sys_office so on oh.center_id = so.id
 		AND so.id = u.office_id
 		AND
 		oh.receive_total > 10
-      AND oh.`status` = 1 AND u.`status` = 1
+      AND oh.`status` = 1
 		AND oh.create_time BETWEEN #{startDate} AND #{endDate}
 		GROUP BY so.id
 
@@ -2290,7 +2288,7 @@ LEFT JOIN sys_office so on oh.center_id = so.id
         AND so.id = u.office_id
         AND
 		oh.receive_total > 10
-        AND oh.`status` = 1 AND u.`status` = 1
+        AND oh.`status` = 1
         AND oh.create_time BETWEEN #{startDate} AND #{endDate}
         and so.id = #{officeId}
         GROUP BY u.id
@@ -2769,7 +2767,7 @@ FROM
 		SELECT
 		(
 		select count(1) FROM biz_chat_record bcr
-		LEFT JOIN sys_user su on su.id=bcr.user_id and su.status=1
+		LEFT JOIN sys_user su on su.id=bcr.user_id
 		left join sys_office so on so.id=bcr.office_id and so.status=1
 		where
 		bcr.status=1
@@ -2827,7 +2825,6 @@ FROM
 		WHERE
 			bcc.status=1
 		and su.id=bcc.consultant_id
-		and su.status=1
 		and su.id=#{con.id}
 		and bcc.cust_id = ANY (
 		SELECT
@@ -2960,7 +2957,6 @@ FROM
 		qq.status=1
 		and bpi.status=1
 		and bvi.status=1
-		and su.status=1
 		and su.id=#{id}
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(qq.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
@@ -2982,7 +2978,6 @@ FROM
 		WHERE
 		bizcr. STATUS = 1
 		and so.status=1
-		and su.status=1
 		and su.id=#{id}
 		and bizcr.create_id=#{id}
 		and so.type=6
@@ -3011,7 +3006,6 @@ FROM
 		WHERE
 		a.status=1
 		and su.id=#{id}
-		and su.status=1
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(a.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>

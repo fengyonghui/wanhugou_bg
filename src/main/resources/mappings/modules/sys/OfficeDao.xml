@@ -315,6 +315,9 @@
 			<if test="customerTypeEleven != null and customerTypeEleven != ''">
 				or a.type=#{customerTypeEleven}
 			</if>
+			<if test="customerTypeThirteen != null and customerTypeThirteen != ''">
+				or a.type=#{customerTypeThirteen}
+			</if>
 		</if>
 		<if test="name != null and name != ''">
 			AND a.name = #{name}

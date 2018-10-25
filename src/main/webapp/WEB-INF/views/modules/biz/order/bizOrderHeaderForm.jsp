@@ -117,25 +117,28 @@
                             return;
                         }
                     }
-                    $.ajax({
-                        type:"post",
-                        url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
-                        data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
-                        success:function (data) {
-                            if (data == "serviceCharge") {
-                                alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
-                            } else if (data == "orderLoss") {
-                                alert("优惠后订单金额不能低于结算价，请修改调整金额");
-                            } else if (data == "orderLowest") {
-                                alert("优惠后订单金额不能低于结算价的95%，请修改调整金额");
-                            } else if (data == "orderLowest8") {
-                                alert("优惠后订单金额不能低于结算价的80%，请修改调整金额");
-                            } else if (data == "ok") {
-                                loading('正在提交，请稍等...');
-                                form.submit();
-                            }
-                        }
-                    });
+
+                    loading('正在提交，请稍等...');
+                    form.submit();
+                    <%--$.ajax({--%>
+                        <%--type:"post",--%>
+                        <%--url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",--%>
+                        <%--data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},--%>
+                        <%--success:function (data) {--%>
+                            <%--if (data == "serviceCharge") {--%>
+                                <%--alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");--%>
+                            <%--} else if (data == "orderLoss") {--%>
+                                <%--alert("优惠后订单金额不能低于结算价，请修改调整金额");--%>
+                            <%--} else if (data == "orderLowest") {--%>
+                                <%--alert("优惠后订单金额不能低于结算价的95%，请修改调整金额");--%>
+                            <%--} else if (data == "orderLowest8") {--%>
+                                <%--alert("优惠后订单金额不能低于结算价的80%，请修改调整金额");--%>
+                            <%--} else if (data == "ok") {--%>
+                                <%--loading('正在提交，请稍等...');--%>
+                                <%--form.submit();--%>
+                            <%--}--%>
+                        <%--}--%>
+                    <%--});--%>
                 },
                 errorContainer: "#messageBox",
                 errorPlacement: function(error, element) {
@@ -496,34 +499,47 @@
 
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
-                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
-                    success:function (data) {
-                        if (data == "serviceCharge") {
-                            alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
-                        } else if (data == "orderLoss") {
-                            alert("优惠后订单金额不能低于结算价，请修改调整金额");
-                        } else if (data == "orderLowest") {
-                            alert("优惠后订单金额不能低于结算价的95%，请修改调整金额");
-                        } else if (data == "orderLowest8") {
-                            alert("优惠后订单金额不能低于结算价的80%，请修改调整金额");
-                        } else if (data == "ok") {
-                            $.ajax({
-                                type:"post",
-                                url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",
-                                data:{orderId:$("#id").val(),money:totalExp},
-                                <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
-                                success:function(flag){
-                                    if(flag=="ok"){
-                                        alert(" 修改成功 ");
-                                    }else{
-                                        alert(" 修改失败 ");
-                                    }
-                                }
-                            });
+                    url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",
+                    data:{orderId:$("#id").val(),money:totalExp},
+                    <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
+                    success:function(flag){
+                        if(flag=="ok"){
+                            alert(" 修改成功 ");
+                        }else{
+                            alert(" 修改失败 ");
                         }
                     }
                 });
+                <%--$.ajax({--%>
+                    <%--type:"post",--%>
+                    <%--url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",--%>
+                    <%--data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},--%>
+                    <%--success:function (data) {--%>
+                        <%--if (data == "serviceCharge") {--%>
+                            <%--alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");--%>
+                        <%--} else if (data == "orderLoss") {--%>
+                            <%--alert("优惠后订单金额不能低于结算价，请修改调整金额");--%>
+                        <%--} else if (data == "orderLowest") {--%>
+                            <%--alert("优惠后订单金额不能低于结算价的95%，请修改调整金额");--%>
+                        <%--} else if (data == "orderLowest8") {--%>
+                            <%--alert("优惠后订单金额不能低于结算价的80%，请修改调整金额");--%>
+                        <%--} else if (data == "ok") {--%>
+                            <%--$.ajax({--%>
+                                <%--type:"post",--%>
+                                <%--url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",--%>
+                                <%--data:{orderId:$("#id").val(),money:totalExp},--%>
+                                <%--&lt;%&ndash;"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),&ndash;%&gt;--%>
+                                <%--success:function(flag){--%>
+                                    <%--if(flag=="ok"){--%>
+                                        <%--alert(" 修改成功 ");--%>
+                                    <%--}else{--%>
+                                        <%--alert(" 修改失败 ");--%>
+                                    <%--}--%>
+                                <%--}--%>
+                            <%--});--%>
+                        <%--}--%>
+                    <%--}--%>
+                <%--});--%>
             }
         }
     </script>
