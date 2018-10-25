@@ -50,14 +50,14 @@ public class BizCustomerInfoController extends BaseController {
 	public String list(BizCustomerInfo bizCustomerInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizCustomerInfo> page = bizCustomerInfoService.findPage(new Page<BizCustomerInfo>(request, response), bizCustomerInfo); 
 		model.addAttribute("page", page);
-		return "modules/biz/order/bizCustomerInfoList";
+		return "modules/biz/custom/bizCustomerInfoList";
 	}
 
 	@RequiresPermissions("biz:order:bizCustomerInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizCustomerInfo bizCustomerInfo, Model model) {
 		model.addAttribute("bizCustomerInfo", bizCustomerInfo);
-		return "modules/biz/order/bizCustomerInfoForm";
+		return "modules/biz/custom/bizCustomerInfoForm";
 	}
 
 	@RequiresPermissions("biz:order:bizCustomerInfo:edit")
