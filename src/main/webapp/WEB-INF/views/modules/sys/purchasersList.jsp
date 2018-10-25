@@ -112,7 +112,11 @@
                     ${fns:getDictLabel(off.type, 'sys_office_type', '未知状态')}
                 </td>
 				<td>${off.remarks}</td>
-                <shiro:hasPermission name="sys:office:edit"><td>
+                <td>
+					<shiro:hasPermission name="sys:office:view">
+						<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=view">详情</a>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="sys:office:edit">
 					<c:if test="${off.delRemark==1}">
 						<shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:change">
 							<a href="${ctx}/sys/office/purchasersForm?id=${off.id}">变更客户专员</a>
@@ -129,21 +133,20 @@
 					<c:if test="${off.delRemark==0}">
 						<a href="${ctx}/sys/office/recovery?id=${off.id}&source=purchListDelete" onclick="return confirmx('要恢复该机构及所有子机构项吗？', this.href)">恢复</a>
 					</c:if>
+				</shiro:hasPermission>
 					<c:if test="${off.type==15 || off.type==16}">
-						<c:if test="${off.bizCustomerInfo.applyForLevel==0}">
+						<c:if test="${off.commonProcess.type==null}">
 							<shiro:hasPermission name="sys:office:upgrade">
 								<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgrade">申请</a>
 							</shiro:hasPermission>
 						</c:if>
-						<c:if test="${off.bizCustomerInfo.applyForLevel!=0 && off.bizCustomerInfo.applyForLevel!=off.type}">
+						<c:if test="${off.commonProcess.type!=null && off.commonProcess.type!=0 && off.commonProcess.type!=off.type}">
 							<shiro:hasPermission name="sys:office:upgradeAudit">
 								<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgradeAudit">审核</a>
 							</shiro:hasPermission>
 						</c:if>
 					</c:if>
-
-
-                </td></shiro:hasPermission>
+                </td>
 			</tr>
 		</c:forEach>
 		</tbody>

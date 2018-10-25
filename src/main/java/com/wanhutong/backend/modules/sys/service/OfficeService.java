@@ -27,6 +27,8 @@ import com.wanhutong.backend.modules.common.service.location.CommonLocationServi
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.dao.OfficeDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -35,6 +37,7 @@ import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,11 +82,12 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     @Autowired
     private BizVendInfoService bizVendInfoService;
     @Autowired
-    private BizCustomerInfoService bizCustomerInfoService;
-    @Autowired
     private CommonImgService commonImgService;
+    @Autowired
+    private CommonProcessService commonProcessService;
 
-    public String PHOTO_SPLIT_CHAR = "\\|";
+    public static final String PHOTO_SPLIT_CHAR = "\\|";
+    public static final String CUSTOMER_APPLY_LEVEL_OBJECT_NAME = "CUSTOMER_APPLY_LEVEL_OBJECT_NAME";
 
 
     public List<Office> findAll() {
@@ -940,17 +944,39 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> upgradeAudit(Integer id, Integer applyForLevel) {
+    public Pair<Boolean, String> upgradeAudit(Integer id, Integer applyForLevel, CommonProcessEntity.AuditType auditType, User user, String desc) {
         if (applyForLevel == null) {
             return Pair.of(Boolean.FALSE, "操作失败, 申请等级不能为空!");
         }
-        BizCustomerInfo byOfficeId = bizCustomerInfoService.getByOfficeId(id);
-        if (!applyForLevel.equals(byOfficeId.getApplyForLevel())) {
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+        commonProcessEntity.setObjectId(String.valueOf(id));
+        commonProcessEntity.setCurrent(1);
+        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+        if (CollectionUtils.isEmpty(list) || list.size() != 1) {
+            return Pair.of(Boolean.FALSE, "操作失败, 申请等级数据异常,请联系技术人员!");
+        }
+
+        if (!applyForLevel.equals(Integer.valueOf(list.get(0).getType()))) {
             return Pair.of(Boolean.FALSE, "操作失败, 申请等级异常,请重试或联系技术人员!");
         }
-        dao.updateOfficeType(id, applyForLevel);
-        byOfficeId.setApplyForLevel(0);
-        bizCustomerInfoService.save(byOfficeId);
+
+        commonProcessEntity = list.get(0);
+        commonProcessEntity.setBizStatus(auditType.getCode());
+        commonProcessEntity.setCurrent(0);
+        commonProcessEntity.setProcessor(String.valueOf(user.getId()));
+        commonProcessEntity.setDescription(desc);
+        commonProcessService.save(commonProcessEntity);
+        switch (auditType) {
+            case PASS:
+                dao.updateOfficeType(id, applyForLevel);
+                break;
+            case REJECT:
+                break;
+            default:
+                break;
+        }
         return Pair.of(Boolean.TRUE, "操作成功!");
 
     }

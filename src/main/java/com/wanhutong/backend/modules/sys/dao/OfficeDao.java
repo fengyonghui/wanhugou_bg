@@ -75,8 +75,8 @@ public interface OfficeDao extends TreeDao<Office> {
     /**
      * 更新office type
      * @param id
-     * @param applyForLevel
+     * @param type
      * @return
      */
-    int updateOfficeType(@Param("id")Integer id, @Param("applyForLevel")Integer applyForLevel);
+    int updateOfficeType(@Param("id")Integer id, @Param("type")Integer type);
 }

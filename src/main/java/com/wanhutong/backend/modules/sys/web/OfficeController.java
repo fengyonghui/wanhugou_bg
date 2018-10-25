@@ -31,6 +31,8 @@ import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.BuyerAdviser;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -68,6 +70,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.wanhutong.backend.modules.sys.service.OfficeService.CUSTOMER_APPLY_LEVEL_OBJECT_NAME;
+
 /**
  * 机构Controller
  *
@@ -102,7 +106,8 @@ public class OfficeController extends BaseController {
     private BizProductInfoV2Service bizProductInfoV2Service;
     @Autowired
     private CommonImgService commonImgService;
-
+    @Autowired
+    private CommonProcessService commonProcessService;
 
 
     @ModelAttribute("office")
@@ -219,8 +224,15 @@ public class OfficeController extends BaseController {
 //        if (bizCustCredit != null && !bizCustCredit.getDelFlag().equals(b)) {
 //            office.setLevel(bizCustCredit.getLevel());
 //        }
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+        commonProcessEntity.setObjectId(String.valueOf(office.getId()));
+        List<CommonProcessEntity> processList = commonProcessService.findList(commonProcessEntity);
+
         model.addAttribute("office", office);
         model.addAttribute("option", option);
+        model.addAttribute("processList", processList);
         return "modules/sys/purchasersForm";
     }
 
@@ -394,8 +406,8 @@ public class OfficeController extends BaseController {
 
     @RequiresPermissions("sys:office:upgradeAudit")
     @RequestMapping(value = "upgradeAudit")
-    public String upgradeAudit(RedirectAttributes redirectAttributes, int id, int applyForLevel) {
-        Pair<Boolean, String> result = officeService.upgradeAudit(id, applyForLevel);
+    public String upgradeAudit(RedirectAttributes redirectAttributes, int id, int applyForLevel, int auditType, String desc) {
+        Pair<Boolean, String> result = officeService.upgradeAudit(id, applyForLevel, CommonProcessEntity.AuditType.parse(auditType), UserUtils.getUser(), desc);
         if (result.getLeft()) {
             addMessage(redirectAttributes, "审核成功!");
         }else {
@@ -433,9 +445,12 @@ public class OfficeController extends BaseController {
         addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 
         if ("upgrade".equals(option)) {
-            BizCustomerInfo byOfficeId = bizCustomerInfoService.getByOfficeId(office.getId());
-            byOfficeId.setApplyForLevel(office.getBizCustomerInfo().getApplyForLevel());
-            bizCustomerInfoService.save(byOfficeId);
+            CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+            commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+            commonProcessEntity.setObjectId(String.valueOf(office.getId()));
+            commonProcessEntity.setCurrent(1);
+            commonProcessEntity.setType(office.getCommonProcess().getType());
+            commonProcessService.save(commonProcessEntity);
             addMessage(redirectAttributes, "申请成功!");
         }
 

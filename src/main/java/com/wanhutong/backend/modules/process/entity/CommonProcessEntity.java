@@ -257,5 +257,12 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 		AuditType(int code) {
 			this.code = code;
 		}
+
+		public static AuditType parse(int code) {
+			if (code == 1) {
+				return PASS;
+			}
+			return REJECT;
+		}
 	}
 }
