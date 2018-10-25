@@ -349,7 +349,7 @@
     </c:if>
     <c:if test="${fn:length(processList) > 0}">
         <div class="control-group">
-            <label class="control-label">审批流程：</label>
+            <label class="control-label">升级申请记录：</label>
             <div class="controls help_wrap">
                 <div class="help_step_box fa">
                     <c:forEach items="${processList}" var="v" varStatus="stat">
