@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
-package com.wanhutong.backend.modules.biz.service.order;
+package com.wanhutong.backend.modules.biz.service.common;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.entity.order.BizCustomerInfo;
-import com.wanhutong.backend.modules.biz.dao.order.BizCustomerInfoDao;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
+import com.wanhutong.backend.modules.biz.dao.common.BizCustomerInfoDao;
 
 /**
  * 机构信息entityService

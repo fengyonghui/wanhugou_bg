@@ -1,10 +1,7 @@
 /**
  * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
-package com.wanhutong.backend.modules.biz.entity.order;
-
-import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.Length;
+package com.wanhutong.backend.modules.biz.entity.custom;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
