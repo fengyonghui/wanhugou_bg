@@ -214,6 +214,72 @@
 		<li class="clearfix"></li>
 	</ul>
 </form:form>
+
+<!-- 订单支付合并 搜索 -->
+<form:form id="searchFormPO" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/listV2" method="post"
+		   class="breadcrumb form-search">
+	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+	<input id="previousPage" name="previousPage" type="hidden" value="${bizPoHeader.previousPage}"/>
+	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
+	<ul class="ul-form">
+			<%--<li><label>采购单号</label>--%>
+			<%--<form:input path="orderNum" htmlEscape="false" maxlength="25" class="input-medium"/>--%>
+			<%--</li>--%>
+		<div class="control-group">
+			<label class="control-label">付款单搜索：</label>
+		</div>
+		<li><span style="margin-left: 10px"><label>订单编号</label></span>
+			<input id="num" name="num" class="input-medium" type="text" value="" maxlength="25">
+		</li>
+
+		<li><label>业务状态：</label>
+			<select id="bizStatus" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
+				<option value="">请选择</option>
+				<c:forEach items="${fns:getDictList('biz_po_status')}" var="item" varStatus="vs">
+					<option value="${item.value}">${item.label}</option>
+				</c:forEach>
+			</select>
+		</li>
+
+		<li><label>审核状态：</label>
+			<select id="processTypeStr" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
+				<option value="">请选择</option>
+				<c:forEach items="${processList}" var="item" varStatus="vs">
+					<option value="${item}">${item}</option>
+				</c:forEach>
+			</select>
+		</li>
+		<li><label>排产状态：</label>
+			<select id="poSchType" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
+				<option value="">请选择</option>
+				<c:forEach items="${fns:getDictList('poSchType')}" var="item" varStatus="vs">
+					<option value="${item.value}">${item.label}</option>
+				</c:forEach>
+			</select>
+		</li>
+		<li><label>待支付</label>
+			<select id="waitPay" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
+				<option value="">请选择</option>
+				<option value="1">是</option>
+			</select>
+		</li>
+		<li><label>可申请付款</label>
+			<select id="applyPayment" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
+				<option value="">请选择</option>
+				<option value="1">是</option>
+			</select>
+		</li>
+		<li><label>测试数据</label>
+			<input id="page.includeTestData1" name="page.includeTestData" onclick="testData(this)" maxlength="100" class="input-medium" type="checkbox" value="true">
+		</li>
+		<li><label></label></li>
+
+		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
+		<li class="clearfix"></li>
+	</ul>
+</form:form>
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead>
@@ -421,14 +487,17 @@
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&str=detail&fromPage=orderHeader">付款单详情</a>
+
+					<!-- 排产，确认排产 -->
+					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
+					</shiro:hasPermission>
 				</shiro:hasPermission>
 				<%--<c:if test="${bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">--%>
-				<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
-					<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>
-				</shiro:hasPermission>
-				<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
-					<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
-				</shiro:hasPermission>
+
 				</c:if>
 			</shiro:hasPermission>
 

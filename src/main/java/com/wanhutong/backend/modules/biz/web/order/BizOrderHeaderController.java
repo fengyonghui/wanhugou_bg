@@ -320,8 +320,18 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
 
-        model.addAttribute("originConfigMap", originConfigMap);
+        //支付申请单合并搜索条件审核状态
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
 
+        Set<String> processSet = Sets.newHashSet();
+        for (com.wanhutong.backend.modules.config.parse.Process process : processList) {
+            processSet.add(process.getName());
+        }
+        model.addAttribute("processList", processSet);
+
+
+        model.addAttribute("originConfigMap", originConfigMap);
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
         model.addAttribute("auditFithStatus", doOrderHeaderProcessFifthConfig.getAutProcessId());
