@@ -154,7 +154,11 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			//修改订单详情已发货数量
 			bizOrderDetail.setSentQty((bizOrderDetail.getSentQty() == null ? 0 : bizOrderDetail.getSentQty()) + outQty);
 			bizOrderDetailService.saveStatus(bizOrderDetail);
-			orderDetailMap.put(bizOrderDetail.getId(),bizOrderDetail.getSentQty());
+			if (orderDetailMap.get(bizOrderDetail.getId()) != null) {
+			    orderDetailMap.put(bizOrderDetail.getId(),orderDetailMap.get(bizOrderDetail.getId()) + outQty);
+            } else {
+                orderDetailMap.put(bizOrderDetail.getId(), bizOrderDetail.getSentQty());
+            }
 			//修改订单状态
             int status = orderHeader.getBizStatus();
             orderHeader.setBizStatus(OrderHeaderBizStatusEnum.APPROVE.getState());
