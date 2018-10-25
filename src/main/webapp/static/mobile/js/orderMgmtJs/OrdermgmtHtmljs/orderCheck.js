@@ -333,6 +333,7 @@
 			if(auditLen > 0) {
 				var CheckHtmlList ='';
 				$.each(data.auditList, function(i, item) {
+					console.log(item)
 					$('#audiType').val(item.type);
 					var ProcessName = '';
 					var step = i + 1;
@@ -394,6 +395,9 @@
 						}
 						if(item.objectName == 'biz_po_header') {
 							ProcessName = item.purchaseOrderProcess.name
+						}
+						if(item.objectName == 'biz_order_header') {
+							ProcessName = item.doOrderHeaderProcessFifth.name
 						}
 						CheckHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
@@ -1196,7 +1200,7 @@
 								'<input type="date" name="'+ item.skuInfo.id +'_date" class="commdDate"></div>'+
 							'<div class="mui-input-row">'+
 								'<label>排产数量：</label>'+
-								'<input type="text" name="'+ item.skuInfo.id +'_value" class="commdNum mui-input-clear"></div>'+
+								'<input type="text" name="'+ item.skuInfo.id +'_value" class="commdNum mui-input-clear" placeholder="请输入排产数量"></div>'+
 				'</div></div></div></div></li>'
 			});
     		$("#orSchedCommd").html(htmlCommodity)
@@ -1209,7 +1213,7 @@
 					'<input type="date" class="addpurchDate"></div>'+
 				'<div class="mui-input-row">'+
 					'<label>排产数量：</label>'+
-					'<input type="text" class="addpurchNum mui-input-clear"></div>'+
+					'<input type="text" class="addpurchNum mui-input-clear" placeholder="请输入排产数量"></div>'+
 				'<button type="submit" class="removeBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">删除</button>'+
 			'</div>';
 			var htmlcommdPlan = '<div class="mui-row app_bline commdAddCont">'+
@@ -1218,7 +1222,7 @@
 					'<input type="date" name="" class="addCommdDate"></div>'+
 				'<div class="mui-input-row">'+
 					'<label>排产数量：</label>'+
-					'<input type="text" class="addCommdNum mui-input-clear"></div>'+
+					'<input type="text" class="addCommdNum mui-input-clear" placeholder="请输入排产数量"></div>'+
 				'<button type="submit" class="removeBtn inAddBtn app_btn_search  mui-btn-blue mui-btn-block">删除</button>'+
 			'</div>';
 			var addPurchNum = _this.userInfo.staOrdId;

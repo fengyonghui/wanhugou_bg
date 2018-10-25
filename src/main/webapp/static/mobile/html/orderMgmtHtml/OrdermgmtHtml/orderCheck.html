@@ -24,65 +24,65 @@
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
 				<label>订单编号：</label>
-				<input type="text" class="mui-input-clear" id="staPoordNum" disabled>
+				<input type="text" id="staPoordNum" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>经销店名称：</label>
-				<input type="text" class="mui-input-clear" id="staRelNum" disabled>
+				<input type="text" id="staRelNum" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>商品总价：</label>
-				<input type="text" class="mui-input-clear" id="staPototal" disabled>
+				<input type="text" id="staPototal" disabled>
 			</div>
 			<!--<div class="mui-input-row">
 				<label>调整金额：</label>
-				<input type="text" class="mui-input-clear" id="staAdjustmentMoney">
+				<input type="text" id="staAdjustmentMoney">
 				<button id="changePriceBtn" type="submit" class="comChoiceBtn mui-btn-blue mui-btn-block">修改</button>
 			</div>-->
 			<div class="mui-input-row">
 				<label>增值服务费：</label>
-				<input type="text" class="mui-input-clear" id="staAddprice" disabled>
+				<input type="text" id="staAddprice" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>运费：</label>
-				<input type="text" class="mui-input-clear" id="staFreight" disabled>
+				<input type="text" id="staFreight" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>万户币抵扣：</label>
-				<input type="text" class="mui-input-clear" id="staCoin" disabled>
+				<input type="text" id="staCoin" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>应付金额：</label>
-				<input type="text" class="mui-input-clear" id="staShouldPay" disabled>
+				<input type="text" id="staShouldPay" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>已付金额：</label>
-				<input type="text" class="mui-input-clear doubleInput" id="staPoLastDa" disabled>
-				<input type="text" class="mui-input-clear doubleInput" id="staPoLastDaPerent" style="color: #088A29;" disabled>
+				<input type="text" class="doubleInput" id="staPoLastDa" disabled>
+				<input type="text" class="doubleInput" id="staPoLastDaPerent" style="color: #088A29;" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>服务费：</label>
-				<input type="text" id="staServerPrice" class="mui-input-clear" disabled>
+				<input type="text" id="staServerPrice" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>佣金：</label>
-				<input type="text" id="staCommission" class="mui-input-clear" disabled>
+				<input type="text" id="staCommission" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>供应商：</label>
-				<input type="text" class="mui-input-clear" id="insupplier" disabled>
+				<input type="text" id="insupplier" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>供应商卡号：</label>
-				<input type="text" class="mui-input-clear" id="insupplierNum" disabled>
+				<input type="text" id="insupplierNum" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>收款人：</label>
-				<input type="text" class="mui-input-clear" id="insupplierMoney" disabled>
+				<input type="text" id="insupplierMoney" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>开户行：</label>
-				<input type="text" class="mui-input-clear" id="insupplierBank" disabled>
+				<input type="text" id="insupplierBank" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>供应商合同：</label>
@@ -94,11 +94,11 @@
 			</div>
 			<div class="mui-input-row">
 				<label>发票状态：</label>
-				<input type="text" id="staInvoice" class="mui-input-clear" disabled>
+				<input type="text" id="staInvoice" disabled>
 			</div>
 			<!--<div class="mui-input-row">
 				<label>审核状态：</label>
-				<input type="hidden" id="stacheStatus" class="mui-input-clear" disabled>
+				<input type="hidden" id="stacheStatus" disabled>
 			</div>-->
 			<div class="mui-input-row">
 				<label>业务状态：</label>
@@ -107,15 +107,15 @@
 			</div>
 			<div class="mui-input-row">
 				<label>收货人：</label>
-				<input type="text" id="staConsignee" class="mui-input-clear" disabled>
+				<input type="text" id="staConsignee" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>联系电话：</label>
-				<input type="text" id="staMobile" class="mui-input-clear" disabled>
+				<input type="text" id="staMobile" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>收货地址：</label>
-				<input type="text" id="staShippAddress" class="mui-input-clear" disabled>
+				<input type="text" id="staShippAddress" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>详细地址：</label>
@@ -182,7 +182,7 @@
 								</div>
 								<div class="mui-input-row">
 									<label>排产数量：</label>
-									<input type="text" id="purchNum" class="mui-input-clear">
+									<input type="text" id="purchNum" class="mui-input-clear" placeholder="请输入排产数量">
 								</div>
 							</div>	
 							
@@ -271,6 +271,6 @@
 		<script src="../../../js/component/mui.min.js"></script>	
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>
-		<script src="../../../js/orderMgmtJs/OrdermgmtHtmljs/orderCheck.js?v=20181023"></script>
+		<script src="../../../js/orderMgmtJs/OrdermgmtHtmljs/orderCheck.js?v=20181025"></script>
 	</body>
 </html>

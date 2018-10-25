@@ -632,6 +632,9 @@
 						if(item.objectName == 'biz_po_header') {
 							ProcessName = item.purchaseOrderProcess.name
 						}
+						if(item.objectName == 'biz_order_header') {
+							ProcessName = item.doOrderHeaderProcessFifth.name
+						}
 						CheckHtmlList +='<li class="step_item">'+
 						'<div class="step_num">'+ step +' </div>'+
 						'<div class="step_num_txt">'+
