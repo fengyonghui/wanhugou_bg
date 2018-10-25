@@ -27,7 +27,7 @@
 			this.getPermissionList5('biz:request:bizRequestHeader:createPayOrder','creatPayFlag')//申请付款re
 			this.getPermissionList6('biz:request:bizOrderHeader:createPayOrder','ordCreatPayFlag')//申请付款or
 			this.getPermissionList7('biz:po:bizPoHeader:createPayOrder','poCreatPayFlag')//申请付款po
-			this.getPermissionList8('biz:po:bizPoHeader:edit','orCancAmenFlag')//修改、取消
+			this.getPermissionList8('biz:po:bizPoHeader:edit','orCancAmenFlag')//修改、取消 false
 			this.getPermissionList9('biz:po:bizPoHeader:confirmScheduling','affirmSchedulingFlag')
 			this.pageInit(); //页面初始化
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
