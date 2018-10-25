@@ -122,8 +122,6 @@
 		function upgradeAudit () {
             var applyForLevel = $("#applyForLevel").val();
             var id = $("#id").val();
-            alert(id);
-            alert(applyForLevel);
             window.location.href="${ctx}/sys/office/upgradeAudit?id="+id+"&applyForLevel="+applyForLevel;
         }
     </script>
@@ -194,8 +192,11 @@
             </c:if>
             <c:if test="${option == 'upgrade'}">
             <form:select path="bizCustomerInfo.applyForLevel" class="input-medium">
-                <form:options items="${fns:getDictList('sys_office_type')}" itemLabel="label" itemValue="value"
-                              htmlEscape="false"/>
+                <c:if test="${office.type == 15}">
+                <form:option value="16"  label="代销商" htmlEscape="false"/>
+                </c:if>
+                <form:option value="6"  label="经销店" htmlEscape="false"/>
+
             </form:select>
             </c:if>
         </div>
