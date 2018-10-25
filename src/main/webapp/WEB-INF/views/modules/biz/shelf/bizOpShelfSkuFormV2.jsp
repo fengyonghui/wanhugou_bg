@@ -437,7 +437,8 @@
         function selectedColum(){
             <%--属于选中货架名称下的 本地备货--%>
             var type = 0;
-            var retail = false;
+            var retail = "first";
+            var ret = $("#retail").val();
             $("input:checkbox[name='shelfs']:checked").each(function (i) {
                 var opshelf = $(this);
                 var opShelfId=$(this).val();
@@ -450,10 +451,11 @@
                     async:false,
 					url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
 					success:function (data) {
-                        if (data.type==${BizOpShelfInfoEnum.SELL_OFF.local}) {
+                        if (data.type==${BizOpShelfInfoEnum.SELL_OFF.local} && retail == 'first' && ret != 1) {
                             sellOff();
-                            retail = true;
-                        } else {
+                            retail += 1;
+                        }
+                        if (retail = 'first1') {
                             notSellOff();
                         }
 						if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.local}){
@@ -488,11 +490,13 @@
 					}
 				});
 			});
-            if (retail) {
+            if (retail == 'first1') {
                 $("#tbody").append("<c:set var='retail' value='1'/>");
                 $("#tbody").append("<input id='retail' type='hidden' value='1'/>");
-            } else {
+            }
+            if (retail == 'first') {
                 $("#tbody").append("<c:remove var="retail"/>");
+                notSellOff();
                 $("#retail").remove();
             }
         }
@@ -682,7 +686,6 @@
 	<<input type="hidden" value="${hasUnderPriceRole}" id="hasUnderPriceRole">
 </form:form>
 <c:if test="${bizOpShelfSkuList.size() > 0 }">
-	22
 	<div class="control-group">
 		<div class="controls">
 			<table id="ShelfSkuTableRefer" class="table table-striped table-bordered table-condensed">
@@ -732,7 +735,7 @@
 								<td><input name="commissionRatios" value="${bizOpShelfSku.commissionRatio}" htmlEscape="false"
 										   maxlength="6" class="input-medium required" readonly="readonly" type="number"
 										   placeholder="必填！"/></td>
-								<td><input name="commission" value="${bizOpShelfSku.salePrice * bizOpShelfSku.commissionRatio / 100}" htmlEscape="false"
+								<td><input name="commission" value="${(bizOpShelfSku.salePrice - bizOpShelfSku.orgPrice) * bizOpShelfSku.commissionRatio / 100}" htmlEscape="false"
 										   maxlength="6" class="input-medium required" readonly="readonly" type="number"
 										   placeholder="必填！"/></td>
 							</c:if>
