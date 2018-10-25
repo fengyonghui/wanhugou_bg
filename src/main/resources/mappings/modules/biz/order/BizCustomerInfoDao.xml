@@ -8,8 +8,7 @@
 		a.bank_name AS "bankName",
 		a.card_number AS "cardNumber",
 		a.payee AS "payee",
-		a.remark AS "remark",
-		a.apply_for_level AS "applyForLevel"
+		a.remark AS "remark"
 	</sql>
 	
 	<sql id="bizCustomerInfoJoins">
@@ -73,16 +72,14 @@
 			bank_name,
 			card_number,
 			payee,
-			remark,
-			apply_for_level
+			remark
 		) VALUES (
 			#{id},
 			#{officeId},
 			#{bankName},
 			#{cardNumber},
 			#{payee},
-			#{remark},
-			#{applyForLevel}
+			#{remark}
 		)
 	</insert>
 	
@@ -92,8 +89,7 @@
 			bank_name = #{bankName},
 			card_number = #{cardNumber},
 			payee = #{payee},
-			remark = #{remark},
-			apply_for_level = #{applyForLevel}
+			remark = #{remark}
 		WHERE id = #{id}
 	</update>
 	

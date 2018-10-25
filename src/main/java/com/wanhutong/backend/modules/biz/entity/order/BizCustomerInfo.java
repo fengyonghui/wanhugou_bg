@@ -21,7 +21,6 @@ public class BizCustomerInfo extends DataEntity<BizCustomerInfo> {
 	private String cardNumber;		// 银行卡号
 	private String payee;		// 收款人
 	private String remark;		// 备注
-	private Integer applyForLevel;		// 申请等级
 	
 	public BizCustomerInfo() {
 		super();
@@ -70,13 +69,4 @@ public class BizCustomerInfo extends DataEntity<BizCustomerInfo> {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	
-	public Integer getApplyForLevel() {
-		return applyForLevel;
-	}
-
-	public void setApplyForLevel(Integer applyForLevel) {
-		this.applyForLevel = applyForLevel;
-	}
-	
 }
