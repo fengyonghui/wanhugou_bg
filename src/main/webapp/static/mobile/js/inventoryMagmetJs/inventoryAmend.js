@@ -114,22 +114,6 @@
                 dataType: "json",
                 success: function(res){
 //              	console.log(res)
-                	//备货方
-                	var fromType = '';
-                	if(res.data.bizRequestHeader) {
-                		fromType = res.data.bizRequestHeader.fromType;
-                	}
-                	if(strs == 'createPay') {//申请付款
-                		$('input[name="fromType"]').attr('disabled','disabled');
-		        		if(fromType==1){
-							$('#fromType1').attr('checked','checked');
-							$('#fromType2').removeAttr('checked');
-						}
-						if(fromType==2){
-							$('#fromType1').removeAttr('checked');
-							$('#fromType2').attr('checked','checked');						
-						}
-			        }
                 	//支付申请
                 	var strTxt = res.data.bizRequestHeader.str;
                 	var payMentCont = '';
@@ -158,11 +142,18 @@
 					    $('#insuppliercardID').parent().hide();//供应商身份证
                 	}     
                 	//备货方
-					if(res.data.bizRequestHeader.fromType==1){
+                	var fromType = '';
+                	if(res.data.bizRequestHeader) {
+                		fromType = res.data.bizRequestHeader.fromType;
+                	}
+                	if(strs == 'createPay') {//申请付款
+                		$('input[name="fromType"]').attr('disabled','disabled');
+			        }
+					if(fromType==1){
 						$('#fromType1').attr('checked','checked');
 						$('#fromType2').removeAttr('checked');
 					}
-					if(res.data.bizRequestHeader.fromType==2){
+					if(fromType==2){
 						$('#fromType1').removeAttr('checked');
 						$('#fromType2').attr('checked','checked');						
 					}
