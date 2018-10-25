@@ -329,6 +329,7 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		if (!resultFlag) {
 			LOGGER.warn("[exception]BizCustCredit commissioned mismatching BizPayRecord totalPayMoney, BizCommission is [{}]", commId);
 
+			//短信，邮件报警
 			PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.SETTLEMENT_COMMISSION_EXCEPTION.name());
 			AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.EXCEPTION_WARN.getCode(), phone.getNumber(), ImmutableMap.of("type", "Warn", "service", "佣金结算邮件提醒,commId:" + commId));
 			EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.SETTLEMENT_COMMISSION_EXCEPTION.name());
