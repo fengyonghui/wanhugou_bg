@@ -278,12 +278,16 @@
              	var reqQtyId = $(this).attr('id');
 	      		var saleQty= $("#saleQty_"+reqQtyId).val();
 	      		if(saleQty==''){
-	      			mui.toast("请输入数量");
+	      			mui.toast("请输入采购数量");
 	                 return;
+	      		}
+	      		if(saleQty<=0){
+	      			mui.toast("请输入一个最小为 1 的值");
+	                return;
 	      		}
 	      		var maxQty=$("#maxQty_"+reqQtyId).attr('max');
 	            if(parseInt(saleQty)>parseInt(maxQty)){
-	            	mui.toast("购买的数量与当前价格不符");
+	            	mui.toast("购买的数量与当前销售数量区间不符");
 	                 return;
 	            }
         		$('#skuInfoid').val(reqQtyId);           		            		           		
