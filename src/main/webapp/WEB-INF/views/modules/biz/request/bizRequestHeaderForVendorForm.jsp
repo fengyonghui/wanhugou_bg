@@ -548,6 +548,10 @@
 	</script>
 	<script type="text/javascript">
 		function deleteStyle() {
+		    if ($("#id").val() == null || $("#id").val() == '') {
+		        $("#prodInfo").text("");
+		        $("#prodInfo2").text("");
+			}
             $("#remark").removeAttr("style");
             $("#cardNumber").removeAttr("style");
             $("#payee").removeAttr("style");
@@ -1063,9 +1067,9 @@
 			<label class="control-label">供应商：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="bizVendInfo.office.id" value="${entity.bizVendInfo.office.id}" labelName="bizVendInfo.office.name"
-								labelValue="${entity.bizVendInfo.vendName}" notAllowSelectParent="true"
+								labelValue="${entity.bizVendInfo.vendName}" notAllowSelectParent="true" onchange="deleteStyle()"
 								title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium required"
-								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息" onchange="deleteStyle()"/>
+								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 				<a href="#" id="remark" onclick="selectRemark()" style="display: none">《厂家退换货流程》</a>
 			</div>

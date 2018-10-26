@@ -437,8 +437,7 @@
         function selectedColum(){
             <%--属于选中货架名称下的 本地备货--%>
             var type = 0;
-            var retail = "first";
-            var ret = $("#retail").val();
+            var retail = false;
             $("input:checkbox[name='shelfs']:checked").each(function (i) {
                 var opshelf = $(this);
                 var opShelfId=$(this).val();
@@ -451,13 +450,16 @@
                     async:false,
 					url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
 					success:function (data) {
-                        if (data.type==${BizOpShelfInfoEnum.SELL_OFF.local} && retail == 'first' && ret != 1) {
+                        if (data.type==${BizOpShelfInfoEnum.SELL_OFF.local}) {
+                            notSellOff();
                             sellOff();
-                            retail += 1;
-                        }
-                        if (retail = 'first1') {
+                            retail = true;
+                        } else {
                             notSellOff();
                         }
+                        // if (retail = 'first1') {
+                        //     notSellOff();
+                        // }
 						if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.local}){
                             if (type != 0 && type != data.type) {
                                 alert("平台商品和本地商品和代销不能同时选择");
@@ -490,11 +492,11 @@
 					}
 				});
 			});
-            if (retail == 'first1') {
+            if (retail) {
                 $("#tbody").append("<c:set var='retail' value='1'/>");
                 $("#tbody").append("<input id='retail' type='hidden' value='1'/>");
             }
-            if (retail == 'first') {
+            if (!retail) {
                 $("#tbody").append("<c:remove var="retail"/>");
                 notSellOff();
                 $("#retail").remove();
@@ -660,7 +662,7 @@
 						<c:if test="${bizOpShelfSku.opShelfInfo.type == 5}">
 							<td><input name="marketPrices" value="${bizOpShelfSku.marketPrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 							<td><input name="commissionRatios" value="${bizOpShelfSku.commissionRatio}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" min="0" placeholder="必填！" onchange="getCommissionByRatio(this)"/></td>
-							<td><input name="commission" value="${bizOpShelfSku.salePrice * bizOpShelfSku.commissionRatio / 100}" htmlEscape="false" maxlength="6" class="input-medium required" readonly="readonly" type="number" placeholder="必填！"/></td>
+							<td><input name="commission" value="${(bizOpShelfSku.salePrice - bizOpShelfSku.orgPrice) * bizOpShelfSku.commissionRatio / 100}" htmlEscape="false" maxlength="6" class="input-medium required" readonly="readonly" type="number" placeholder="必填！"/></td>
 						</c:if>
 						<td><input name="minQtys" value="${bizOpShelfSku.minQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 						<td><input name="maxQtys" value="${bizOpShelfSku.maxQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>

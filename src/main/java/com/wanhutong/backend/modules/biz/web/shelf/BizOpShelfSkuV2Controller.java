@@ -434,7 +434,8 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	@RequestMapping(value = "findDownOpShelfSku")
 	public List<BizOpShelfSku> findDownOpShelfSku(BizOpShelfSku bizOpShelfSku) {
         if (bizOpShelfSku.getSkuInfo().getItemNo().isEmpty() && bizOpShelfSku.getSkuInfo().getPartNo().isEmpty()
-                && bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getProductInfo().getBrandName().isEmpty()) {
+                && bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getProductInfo().getBrandName().isEmpty()
+				&& bizOpShelfSku.getOpShelfInfo().getName().isEmpty()) {
 			bizOpShelfSku.setShelfSign(5);
 			List<BizOpShelfSku> list=Lists.newArrayList();
 			list.add(bizOpShelfSku);
