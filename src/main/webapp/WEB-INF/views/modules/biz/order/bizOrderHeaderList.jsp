@@ -548,7 +548,7 @@
 					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
 					<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">
 						</c:if>
-						<c:if test="${fns:getUser().id == orderHeader.consultantId}">
+						<c:if test="${fns:getUser().id == orderHeader.consultantId || fns:getUser().isAdmin()}">
 							<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 || orderHeader.bizStatus==10}">
 								待审核
 								<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
