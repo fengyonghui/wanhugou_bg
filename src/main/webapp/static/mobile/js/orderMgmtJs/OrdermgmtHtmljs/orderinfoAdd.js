@@ -89,9 +89,8 @@
                     type: "post",
                     url: url,
                     data:datas,
-                    success: function (result) {
-                        $("#searchInfo").empty();
                         var data = JSON.parse(result).data;
+                        $("#searchInfo").empty();
 	                        $.each(data,function (keys,skuInfoList) {
 	                        	if(skuInfoList==""){
 	                        		mui.toast("暂无商品！");

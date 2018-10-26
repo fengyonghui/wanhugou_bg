@@ -136,6 +136,7 @@
                     data:datas,
                     success: function (result) {
                         var data = JSON.parse(result).data;
+                        $("#searchInfo").empty();
 	                        $.each(data,function (keys,skuInfoList) {
 	                        	if(skuInfoList==""){
 	                        		mui.toast("暂无商品！");
