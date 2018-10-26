@@ -331,11 +331,38 @@
 	                            }else{
 	                            	paycheckTxt='当前无审批流程';
 	                            }
+	                            //申请付款
+								var creatPayBt = '';
+								var creatPay = '';
+								//审核
+	                            var staCheckBtn = '';
+			                	var staCheckbtns = '';
+			                	var staCheckBtnTxt = '';
+			                	var staCheckBtns = '';
+	                            //支付申请列表
+			                	var staPayBtnTxt = '';
+			                	var staPayBtnes = '';
+	                            //开启审核
+			                	var stastartCheckBtn = '';
+			                	var stastartCheckBtnTxt = '';
+	                            //排产
+			                	var SchedulingBtnTxt = '';
+			                	var SchedulingBtn = '';
+			                	//修改
+			                	var orAmendBtn = '';
+			                	var orAmendBtnTxt = '';
+			                	//取消
+								var orCancleBtn = '';
+								var orCancleBtnTxt = '';
+								//详情
+								var orDetailBtn = '';
+								var orDetailBtnTxt = '';
+								//确认排产
+								var affirmSchedulingBtn = '';
+								var affirmSchedulingBtnTxt = '';
 					            if(_this.OrdFlaginfo == true) {
 					            	if(item.bizStatus != 10) {
 					            		//申请付款
-										var creatPayBt = '';
-										var creatPay = '';
 										if(item.bizOrderHeader != null || item.bizOrderHeader != '' 
 										|| item.bizRequestHeader != null || item.bizRequestHeader != '') {
 											if(_this.ordCreatPayFlag == true) {
@@ -394,10 +421,6 @@
 											}
 										}
 										//审核
-					                	var staCheckBtn = '';
-					                	var staCheckbtns = '';
-					                	var staCheckBtnTxt = '';
-					                	var staCheckBtns = '';
 						                if(_this.OrdFlagaudit == true) {   
 											var DataRoleGener = '';
 											if(item.commonProcess) {
@@ -430,8 +453,6 @@
 					                        }
 						                }
 					                	//支付申请列表
-					                	var staPayBtnTxt = '';
-					                	var staPayBtnes = '';
 					                	if(item.commonProcess.type != -1){
 					                		if(item.bizOrderHeader != null){
 					                			//订单
@@ -449,8 +470,6 @@
 					                		}
 					                	}
 										//开启审核
-					                	var stastartCheckBtn = '';
-					                	var stastartCheckBtnTxt = '';
 					                	if(_this.OrdFlagstartAudit==true){
 					                		if(item.commonProcess.type == -1){
 					                			if(item.bizOrderHeader != null) {
@@ -464,18 +483,12 @@
 					                		}
 					                	}
 										//排产
-					                	var SchedulingBtnTxt = '';
-					                	var SchedulingBtn = '';
 					                	if(_this.OrdFlagScheduling==true){
 					                		SchedulingBtnTxt = '排产';
 					                		SchedulingBtn = 'SchedulingBtn';
 					                	}
 					                	//修改
-					                	var orAmendBtn = '';
-					                	var orAmendBtnTxt = '';
 					                	//取消
-										var orCancleBtn = '';
-										var orCancleBtnTxt = '';
 					                	if(_this.orCancAmenFlag == true) {
 					                		if(paycheckTxt == null
 				                			|| paycheckTxt == '驳回') {
@@ -486,15 +499,11 @@
 											orCancleBtnTxt = '取消';
 					                	}
 					            		//详情
-										var orDetailBtn = '';
-										var orDetailBtnTxt = '';
 					                	if(_this.OrdFlaginfo == true) {
 											var orDetailBtn = 'orDetailBtn';
 											var orDetailBtnTxt = '详情';
 					                	}
 					                	//确认排产
-										var affirmSchedulingBtn = '';
-										var affirmSchedulingBtnTxt = '';
 					                	if(_this.affirmSchedulingFlag == true) {
 					                		affirmSchedulingBtn = 'affirmSchedulingBtn';
 											affirmSchedulingBtnTxt = '确认排产';
