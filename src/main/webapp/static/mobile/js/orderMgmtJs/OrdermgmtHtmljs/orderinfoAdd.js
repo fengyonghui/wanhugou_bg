@@ -107,12 +107,12 @@
 									var ListHtml="";
 									if(skuInfo.skuValueList){
 										$.each(skuInfo.skuValueList, function(i, item) {
-										 	ListHtml+=item.value;                                                              
+										 	ListHtml+=item.value+',';                                                              
 										});	
 									}
 									if(skuInfo.attrValueList){
 										$.each(skuInfo.attrValueList, function(i, item) {
-										 	ListHtml+=item.attributeInfo.name+':'+item.value;                                                              
+										 	ListHtml+=item.attributeInfo.name+':'+item.value+',';                                                              
 										});	
 									}
 									//采购中心
@@ -120,9 +120,6 @@
 	                                if(skuInfo.centerOffice){
 	                                	centerOfficeName=skuInfo.centerOffice.name;
 	                                }
-	//                              else{
-	//                              	centerOfficeName="";
-	//                              }
 	                                var skuInfoName="";//商品名称
 	                                var skuInfoitemNo="";//商品货号
 	                                var skuInfopartNo="";//商品编码

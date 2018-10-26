@@ -29,60 +29,70 @@
                 	'orderHeader.oneOrder':_this.userInfo.oneOrderId,orderType:_this.userInfo.orderType},
                 dataType: "json",
                 success: function(res){	
-	                $('.buttonCont .addSkuButton').attr('id',res.data.detail.shelfInfo.id);
-	                if(res.data.detail.shelfInfo){
-	                	$('#ordCenter').val(res.data.detail.shelfInfo.centerOffice.name)//采购中心
-	                }else{
-	                	$('#ordCenter').val()//采购中心
-	                }
-	                if(res.data.detail.shelfInfo){
-	                	$('#brandName').val(res.data.detail.shelfInfo.opShelfInfo.name)//货架名称
-	                }else{
-	                	$('#brandName').val()//货架名称
-	                }					
-					$('#skuInfoName').val(res.data.detail.skuName)//商品名称
-					$('#itemNo').val(res.data.detail.skuInfo.itemNo)//商品货号
-					$('#partNo').val(res.data.detail.partNo)//商品编码
-					//商品属性
-					var ListHtml="";
-					$.each(res.data.detail.attributeValueV2List, function(i, item) {
-					 	ListHtml+=item.attributeInfo.name + ':'+ item.value;                                                              
-					});
-					$('#comProperty').val(ListHtml);  
-					if(res.data.shelfSku){
-						$('#numberInterval').val(res.data.shelfSku.minQty+ '-'+ res.data.shelfSku.maxQty)//数量区间
-					    $('#buyPrice').val(res.data.shelfSku.salePrice)//现价
-					}else{
-						$('#numberInterval').val()//数量区间
-					    $('#buyPrice').val()//现价
-					}					
-					$('#reqQty').val(res.data.detail.ordQty)//采购数量
-
-                    $('#saveDetailBtn').attr('orderid',res.data.bizOrderDetail.orderHeader.id);					
-					$('#saveDetailBtn').attr('client',res.data.bizOrderDetail.orderHeader.clientModify);
-					$('#saveDetailBtn').attr('consultant',res.data.bizOrderDetail.orderHeader.consultantId);
-					$('#saveDetailBtn').attr('source',res.data.bizOrderDetail.orderHeader.source);
-					$('#saveDetailBtn').attr('statu',res.data.bizOrderDetail.orderHeader.statu);
-                    _this.deleteItem(res.data.detail); 
-                    if(this.OrdFlag = true){
-                    	_this.save(res.data.bizOrderDetail.id,res.data.bizOrderDetail.orderHeader.id,
-                    	res.data.bizOrderDetail.orderHeader.clientModify,
-                    	res.data.bizOrderDetail.orderHeader.consultantId);//保存
-                    }
-                    var orderTypes="";
-		            var purchaserId="";
-                    if(res.data.bizOrderDetail.orderType==1){
-		            	var url= "/a/biz/shelf/bizOpShelfSku/findOpShelfSku4Mobile",
-		            	orderTypes=res.data.bizOrderDetail.orderType;
-		            	_this.searchSkuHtml(url,purchaserId,orderTypes);
-		            }
-		            if(res.data.bizOrderDetail.orderType==5){
-		            	$('.addSkuButton').attr('id',res.data.skuInfo.id);
-		            	var url= "/a/biz/sku/bizSkuInfo/findPurseSkuList4Mobile",
-		            	purchaserId=res.data.customer.id;
-		            	orderTypes=res.data.bizOrderDetail.orderType;
-		            	_this.searchSkuHtml(url,purchaserId,orderTypes);
-		            }
+                	if(res.data.bizOrderDetail.id!=null){                		
+                		if(res.data.orderH.orderType != res.data.PURSEHANGER){
+                			if(res.data.detail.shelfInfo){
+			                	$('#ordCenter').val(res.data.detail.shelfInfo.centerOffice.name)//采购中心
+			                	$('#brandName').val(res.data.detail.shelfInfo.opShelfInfo.name)//货架名称
+				            }else{
+				                $('#ordCenter').val();
+				                $('#brandName').val();
+				            }
+				            if(res.data.shelfSku){
+								$('#numberInterval').val(res.data.shelfSku.minQty+ '-'+ res.data.shelfSku.maxQty)//数量区间
+							    $('#buyPrice').val(res.data.shelfSku.salePrice)//现价
+							}else{
+							    $('#numberInterval').val();
+				                $('#buyPrice').val();
+							}
+                	}		                					
+						$('#skuInfoName').val(res.data.detail.skuName)//商品名称
+						$('#itemNo').val(res.data.detail.skuInfo.itemNo)//商品货号
+						$('#partNo').val(res.data.detail.partNo)//商品编码
+						//商品属性
+						var ListHtml="";
+						$.each(res.data.detail.attributeValueV2List, function(i, item) {
+						 	ListHtml+=item.attributeInfo.name + ':'+ item.value+',';                                                              
+						});
+						$('#comProperty').val(ListHtml); 
+						//已发货数量
+						if(res.data.orderH.bizStatus==res.data.SUPPLYING || res.data.orderH.bizStatus==res.data.APPROVE){
+							$('#sentQty').val(res.data.detail.sentQty);
+						}else{
+							$('#sentQty').parent().parent().parent().hide();
+						}
+						if(res.data.orderH.orderType == res.data.PURSEHANGER){
+							$('#buyPrice').val(res.data.detail.unitPrice)//现价
+						}
+						$('#reqQty').val(res.data.detail.ordQty)//采购数量
+	
+	                    $('#saveDetailBtn').attr('orderid',res.data.bizOrderDetail.orderHeader.id);					
+						$('#saveDetailBtn').attr('client',res.data.bizOrderDetail.orderHeader.clientModify);
+						$('#saveDetailBtn').attr('consultant',res.data.bizOrderDetail.orderHeader.consultantId);
+						$('#saveDetailBtn').attr('source',res.data.bizOrderDetail.orderHeader.source);
+						$('#saveDetailBtn').attr('statu',res.data.bizOrderDetail.orderHeader.statu);
+	                    _this.deleteItem(res.data.detail); 
+	                    if(this.OrdFlag = true){
+	                    	_this.save(res.data.bizOrderDetail.id,res.data.bizOrderDetail.orderHeader.id,
+	                    	res.data.bizOrderDetail.orderHeader.clientModify,
+	                    	res.data.bizOrderDetail.orderHeader.consultantId);//保存
+	                    }
+	                    var orderTypes="";
+			            var purchaserId="";
+	                    if(res.data.bizOrderDetail.orderType==1){
+	                    	$('.buttonCont .addSkuButton').attr('id',res.data.detail.shelfInfo.id);
+			            	var url= "/a/biz/shelf/bizOpShelfSku/findOpShelfSku4Mobile",
+			            	orderTypes=res.data.bizOrderDetail.orderType;
+			            	_this.searchSkuHtml(url,purchaserId,orderTypes);
+			            }
+			            if(res.data.bizOrderDetail.orderType==5){
+			            	$('.addSkuButton').attr('id',res.data.skuInfo.id);
+			            	var url= "/a/biz/sku/bizSkuInfo/findPurseSkuList4Mobile",
+			            	purchaserId=res.data.customer.id;
+			            	orderTypes=res.data.bizOrderDetail.orderType;
+			            	_this.searchSkuHtml(url,purchaserId,orderTypes);
+			            }
+                	}	                
                 }
            });
             _this.removeItem();           
@@ -144,6 +154,11 @@
 									 	ListHtml+=item.value;                                                              
 									});
                                 }
+                                if(skuInfo.attrValueList){
+									$.each(skuInfo.attrValueList, function(i, item) {
+									 	ListHtml+=item.attributeInfo.name+':'+item.value+',';                                                              
+									});	
+								}
                                 //采购中心
                                 var centerOfficeName="";
                                 if(skuInfo.centerOffice){
@@ -158,6 +173,11 @@
                                 	skuInfoitemNo=skuInfo.skuInfo.itemNo;
                                 	skuInfopartNo=skuInfo.skuInfo.partNo;
                                 	orderDetaIdsVal=skuInfo.skuInfo.id;
+                                }else{
+                                	skuInfoName=skuInfo.name;
+                                	skuInfoitemNo=skuInfo.itemNo;
+                                	skuInfopartNo=skuInfo.partNo;
+                                	orderDetaIdsVal=skuInfo.id;
                                 }
                                 //货架名称
                                 var opShelfInfoName="";
@@ -227,7 +247,7 @@
 				                    '<li class="mui-table-view-cell app_bline3">'+ 
 				                    '<div class="mui-input-row ">'+ 
 				                    '<label>数量区间:</label>'+ 
-				                    '<input type="text" class="mui-input-clear" max="' +maxQty+ '" id="maxQty_' +skuInfo.id+ '" value="'  +(minQty+ '-'+maxQty) + '" disabled></div></li></div></div>'+
+				                    '<input type="text" class="mui-input-clear" max="' +maxQty+ '" id="maxQty_' +skuInfo.id+ '" value="'  +(minQty+maxQty) + '" disabled></div></li></div></div>'+
 			                   
 				                    '<div class="mui-row  inAddFont">'+ 
 				                    '<div class="mui-col-sm-6 mui-col-xs-6">'+ 
@@ -260,7 +280,6 @@
 		                            	var y=$(that).attr('id');
 		                            	var divs=$("#searchInfo #serskudiv_"+s);
 		                            	if (s==y) {
-		                            		mui.toast('已有此类商品！')
 		                            		divs.html('');
 		                            	}
 		                            })

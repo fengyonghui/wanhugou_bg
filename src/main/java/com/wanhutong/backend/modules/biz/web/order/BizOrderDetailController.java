@@ -21,6 +21,7 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.DefaultPropEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
@@ -187,6 +188,10 @@ public class BizOrderDetailController extends BaseController {
 			model.addAttribute("shelfSku", bizOpShelfSku);
 			resultMap.put("shelfSku", bizOpShelfSku);
 		}
+		resultMap.put("PURSEHANGER", DefaultPropEnum.PURSEHANGER.getPropValue());
+		resultMap.put("SUPPLYING", OrderHeaderBizStatusEnum.SUPPLYING.getState());
+		resultMap.put("APPROVE", OrderHeaderBizStatusEnum.APPROVE.getState());
+
 		return JsonUtil.generateData(resultMap, null);
 	}
 
