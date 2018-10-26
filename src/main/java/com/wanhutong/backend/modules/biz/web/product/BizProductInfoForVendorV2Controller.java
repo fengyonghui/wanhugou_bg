@@ -118,8 +118,8 @@ public class BizProductInfoForVendorV2Controller extends BaseController {
         User user = UserUtils.getUser();
         List<Role> roleList = user.getRoleList();
         Role role = new Role();
-        role.setEnname(RoleEnNameEnum.MARKETINGMANAGER.getState());
-        if (!user.isAdmin() && !roleList.contains(role)) {
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (!user.isAdmin() && roleList.contains(role)) {
             bizProductInfo.setOffice(user.getCompany());
         }
 
