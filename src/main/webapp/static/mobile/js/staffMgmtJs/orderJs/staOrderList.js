@@ -52,7 +52,7 @@
 				                }
 				                $('#consultantId').val(pager.consultantId);
 				                $('#flag').val(pager.flag);				                
-				                $('.mui-pull-caption-down').html('');				                
+				                $('.mui-pull-caption-down').html('');
 				                getData(pager);
 			            }
 			        }
@@ -76,13 +76,13 @@
 			                success: function(res){                 
 				                ass=res;
 			                }
-			            });		 
+			            });	
 						var arrLen = res.data.page.list.length;
-						if(arrLen <20 ){
+						if(arrLen <20){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}else{
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true)
-						}
+						}												
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {

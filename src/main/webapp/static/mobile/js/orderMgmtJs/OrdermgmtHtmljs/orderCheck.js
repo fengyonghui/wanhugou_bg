@@ -409,10 +409,12 @@
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
 					var opShelfInfo = '';
-					if(item.shelfInfo.opShelfInfo) {
-						opShelfInfo = item.shelfInfo.opShelfInfo.name
-					}else {
-						opShelfInfo = ''
+					if(data.orderType != data.pursehanger){
+						if(item.shelfInfo.opShelfInfo) {
+							opShelfInfo = item.shelfInfo.opShelfInfo.name
+						}else {
+							opShelfInfo = ''
+						}
 					}
 					var primaryMobile = '';
 					if(item.primary.mobile) {
@@ -426,6 +428,11 @@
 					}else {
 						suplyisName = ''
 					}
+					//总额
+					var totalMoney="";
+					if(item.unitPrice !=null && item.ordQty !=null){
+						totalMoney=(item.unitPrice * item.ordQty).toFixed(2);						
+					}
 					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
 	                    
                     	'<div class="mui-row">' +
@@ -434,7 +441,7 @@
 	                    '<div class="mui-input-row ">' +
 	                    '<label>详情行号:</label>' +
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="opShelfInfo">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>货架名称:</label>' +
@@ -446,10 +453,10 @@
 	                    '<div class="mui-input-row ">' +
 	                    '<label>供应商:</label>' + 
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div>' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="buyPrice">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
-	                    '<label>商品出厂价:</label>' +
+	                    '<label>商品结算价:</label>' +
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div></div>' +
 	                   
                     	 '<div class="mui-row">' +
@@ -474,7 +481,7 @@
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>总 额:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + (item.unitPrice * item.ordQty).toFixed(2) + '" disabled></div></li></div></div>'+
+	                    '<input type="text" class="mui-input-clear" id="" value="' + totalMoney + '" disabled></div></li></div></div>'+
 					
 						'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
@@ -514,7 +521,15 @@
 	                    
                     '</div>'
 				});
-				$("#orCheckCommodity").html(htmlCommodity)
+				$("#orCheckCommodity").html(htmlCommodity);
+				if(data.orderType == data.PURSEHANGER){
+					$('#opShelfInfo').hide();
+				}
+				if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){
+					$('#buyPrice').show();
+				}else{
+					$('#buyPrice').hide();
+				}
 			}
 		},
 		addRemark:function(){
