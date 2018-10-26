@@ -243,7 +243,6 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                	console.log(res.data)//false
                     _this.OrdDetailFlag = res.data;
                 }
             });
@@ -257,7 +256,6 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                	console.log(res.data)//true
                     _this.OrdviewFlag = res.data;
                 }
             });
@@ -721,7 +719,6 @@
         },
 		//商品信息
 		commodityHtml: function(data) {
-			console.log(data)
 			$('#orderId').val(data.bizOrderHeader.id);
 			$('#oneOrderId').val(data.bizOrderHeader.oneOrder);
 			$('#orderType').val(data.orderType);
@@ -730,7 +727,6 @@
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-					console.log(item)
 					var opShelfInfo = '';
 					if(item.shelfInfo.opShelfInfo) {
 						opShelfInfo = item.shelfInfo.opShelfInfo.name

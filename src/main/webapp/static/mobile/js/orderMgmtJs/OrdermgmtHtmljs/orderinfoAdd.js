@@ -89,161 +89,161 @@
                     type: "post",
                     url: url,
                     data:datas,
+                    success: function (result) {
                         var data = JSON.parse(result).data;
                         $("#searchInfo").empty();
-	                        $.each(data,function (keys,skuInfoList) {
-	                        	if(skuInfoList==""){
-	                        		mui.toast("暂无商品！");
-	                        	}
-	                            var resultListHtml="";
-	                            var t=0;
-	                            $.each(skuInfoList,function (index,skuInfo) {
-	                                if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length>0){
-	                                	mui.toast('已有此类商品！请选择其他商品！');
-	                                    return;
-	                                }
-				                    //商品属性
-									var ListHtml="";
-									if(skuInfo.skuValueList){
-										$.each(skuInfo.skuValueList, function(i, item) {
-										 	ListHtml+=item.value+',';                                                              
-										});	
-									}
-									if(skuInfo.attrValueList){
-										$.each(skuInfo.attrValueList, function(i, item) {
-										 	ListHtml+=item.attributeInfo.name+':'+item.value+',';                                                              
-										});	
-									}
-									//采购中心
-	                                var centerOfficeName="";
-	                                if(skuInfo.centerOffice){
-	                                	centerOfficeName=skuInfo.centerOffice.name;
-	                                }
-	                                var skuInfoName="";//商品名称
-	                                var skuInfoitemNo="";//商品货号
-	                                var skuInfopartNo="";//商品编码
-	                                var orderDetaIdsVal="";
-	                                if(skuInfo.skuInfo){
-	                                	skuInfoName=skuInfo.skuInfo.name;
-	                                	skuInfoitemNo=skuInfo.skuInfo.itemNo;
-	                                	skuInfopartNo=skuInfo.skuInfo.partNo;
-	                                	orderDetaIdsVal=skuInfo.skuInfo.id;
-	                                }else{
-	                                	skuInfoName=skuInfo.name;
-	                                	skuInfoitemNo=skuInfo.itemNo;
-	                                	skuInfopartNo=skuInfo.partNo;
-	                                	orderDetaIdsVal=skuInfo.id;
-	                                }
-	                                //货架名称
-	                                var opShelfInfoName="";
-	                                if(skuInfo.opShelfInfo){
-	                                	opShelfInfoName=skuInfo.opShelfInfo.name;
-	                                }else{
-	                                	opShelfInfoName="";
-	                                }
-	                                //现价
-	                                var salePrice="";
-	                                if(skuInfo.salePrice){
-	                                	salePrice=skuInfo.salePrice;
-	                                }else{
-	                                	salePrice="";
-	                                }
-	                                //数量区间
-	                                var minQty="";
-	                                var maxQty="";
-	                                if(skuInfo.minQty){
-	                                	minQty=skuInfo.minQty+'-';
-	                                }else{
-	                                	minQty="";
-	                                }
-	                                if(skuInfo.maxQty){
-	                                	maxQty=skuInfo.maxQty;
-	                                }else{
-	                                	maxQty="";
-	                                }
-		                            resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">'+ 
-		                            
-		                                '<div class="mui-row lineStyle">'+ 
-					                    '<li class="mui-table-view-cell app_bline3">'+ 
-					                    '<div class="mui-input-row ">'+ 
-					                    '<label class="">采购中心:</label>'+ 
-					                    '<input type="text" class="mui-input-clear" id="" value="'  + centerOfficeName + '" disabled></div></li></div>'+ 
-		                             
-										'<div class="mui-row lineStyle">'+ 
-					                    '<li class="mui-table-view-cell app_bline3">'+ 
-					                    '<div class="mui-input-row ">'+ 
-					                    '<label class="">商品名称:</label>'+ 
-					                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfoName  +'" disabled></div></li></div>'+ 
-				                   
-					                  	'<div class="mui-row lineStyle">'+ 
-					                    '<li class="mui-table-view-cell app_bline3">'+ 
-					                    '<div class="mui-input-row ">'+ 
-					                    '<label class="">商品货号:</label>'+ 
-					                    '<input type="text" class="mui-input-clear" id="" value="'  +skuInfoitemNo+ '" disabled></div></li></div>'+ 
-					                    
-					                    '<div class="mui-row lineStyle">'+ 
-					                    '<li class="mui-table-view-cell app_bline3">'+ 
-					                    '<div class="mui-input-row ">'+ 
-					                    '<label class="">商品编码:</label>'+ 
-					                    '<input type="text" class="mui-input-clear" id="" value="'  +skuInfopartNo + '" disabled></div></li></div>'+ 
-					                    
-					                    '<div class="mui-row lineStyle">'+ 
-					                    '<li class="mui-table-view-cell app_bline3">'+ 
-					                    '<div class="mui-input-row ">'+ 
-					                    '<label class="">商品属性:</label>'+ 
-					                    '<input type="text" class="mui-input-clear" id="" value="' + ListHtml + '" disabled></div></li></div>'+ 
-										
-					                    '<div class="mui-row">'+ 
-					                        '<div class="mui-col-sm-6 mui-col-xs-6">'+ 
-					                            '<li class="mui-table-view-cell app_bline3">'+ 
-					                                '<div class="mui-input-row ">'+ 
-					                                    '<label>货架名称:</label>'+ 
-					                                    '<input type="text" class="mui-input-clear" id="" value="'  +opShelfInfoName+ '" disabled></div></li></div>'+ 
-					                    '<div class="mui-col-sm-6 mui-col-xs-6">'+
-					                    '<li class="mui-table-view-cell app_bline3">'+ 
-					                    '<div class="mui-input-row ">'+ 
-					                    '<label>数量区间:</label>'+ 
-					                    '<input type="text" class="mui-input-clear" max="' +maxQty+ '" id="maxQty_' +skuInfo.id+ '" value="' +(minQty+maxQty) + '" disabled></div></li></div></div>'+
-				                   
-					                    '<div class="mui-row  inAddFont">'+ 
-					                    '<div class="mui-col-sm-6 mui-col-xs-6">'+ 
-					                    '<li class="mui-table-view-cell app_bline3">'+ 
-					                    '<div class="mui-input-row">'+ 
-					                    '<label>现价:</label>'+ 
-					                    '<input type="text" class="mui-input-clear" id="" value="'  +salePrice+  '" disabled></div></li></div>'+ 
-					                    '<div class="mui-col-sm-6 mui-col-xs-6">'+ 
-					                        '<li class="mui-table-view-cell app_bline3">'+ 
-					                            '<div class="mui-input-row">'+ 
-					                                '<label>采购数量:</label>'+ 
-					                                    '<input type="hidden" class="mui-input-clear" value="'  +skuInfo.id + '">'+ 
-				                                    '<input type="text" class="mui-input-clear" placeholder="请输入数量" id="saleQty_' +skuInfo.id+ '">'+ 
-					                                    '<font>*</font>'+
-					                    '</div></li></div>'+
-					                    '<input type="hidden" class="mui-input-clear" id="orderDetaIds_' +skuInfo.id+ '" value="'  +orderDetaIdsVal+  '" disabled>'+ 
-					                    '<input type="hidden" class="mui-input-clear" id="shelfSkuId_' +skuInfo.id+ '" value="'  +skuInfo.id+  '" disabled>'+
-					                       '</div>'+
-					                       
-					                    '<button id="' +skuInfo.id+ '" detaid="'+orderDetaIdsVal+'" type="submit" class="addSkuButton inAddBtn skuinfo_check app_btn_search mui-btn-blue mui-btn-block">添加</button>'+ 
-					                       
-					                    '</div>'
-	                            });
-	                            $("#searchInfo").append(resultListHtml);
-	                            //判断是否有相同的商品 
-	                            var dis=$("#searchInfo .addSkuButton");//可选商品
-	                            var dos=$("#commodityMenu .addSkuButton ");//订单商品
-	                            $.each(dis,function(n,v){
-	                            	var s=$(this).attr('id')
-	                            	$.each(dos,function(n,v){
-	                            		var that=this;	                            	
-		                            	var y=$(that).attr('id');
-		                            	var divs=$("#searchInfo #serskudiv_"+s);
-		                            	if (s==y) {
-		                            		mui.toast('已有此类商品！')
-		                            		divs.html('');
-		                            	}
-		                            })
+                        $.each(data,function (keys,skuInfoList) {
+                        	if(skuInfoList==""){
+                        		mui.toast("暂无商品！");
+                        	}
+                            var resultListHtml="";
+                            $.each(skuInfoList,function (index,skuInfo) {
+                                if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length>0){
+                                	mui.toast('已有此类商品！请选择其他商品！');
+                                    return;
+                                }
+			                    //商品属性
+								var ListHtml="";
+								if(skuInfo.skuValueList){
+									$.each(skuInfo.skuValueList, function(i, item) {
+									 	ListHtml+=item.value+',';                                                              
+									});	
+								}
+								if(skuInfo.attrValueList){
+									$.each(skuInfo.attrValueList, function(i, item) {
+									 	ListHtml+=item.attributeInfo.name+':'+item.value+',';                                                              
+									});	
+								}
+								//采购中心
+                                var centerOfficeName="";
+                                if(skuInfo.centerOffice){
+                                	centerOfficeName=skuInfo.centerOffice.name;
+                                }
+                                var skuInfoName="";//商品名称
+                                var skuInfoitemNo="";//商品货号
+                                var skuInfopartNo="";//商品编码
+                                var orderDetaIdsVal="";
+                                if(skuInfo.skuInfo){
+                                	skuInfoName=skuInfo.skuInfo.name;
+                                	skuInfoitemNo=skuInfo.skuInfo.itemNo;
+                                	skuInfopartNo=skuInfo.skuInfo.partNo;
+                                	orderDetaIdsVal=skuInfo.skuInfo.id;
+                                }else{
+                                	skuInfoName=skuInfo.name;
+                                	skuInfoitemNo=skuInfo.itemNo;
+                                	skuInfopartNo=skuInfo.partNo;
+                                	orderDetaIdsVal=skuInfo.id;
+                                }
+                                //货架名称
+                                var opShelfInfoName="";
+                                if(skuInfo.opShelfInfo){
+                                	opShelfInfoName=skuInfo.opShelfInfo.name;
+                                }else{
+                                	opShelfInfoName="";
+                                }
+                                //现价
+                                var salePrice="";
+                                if(skuInfo.salePrice){
+                                	salePrice=skuInfo.salePrice;
+                                }else{
+                                	salePrice="";
+                                }
+                                //数量区间
+                                var minQty="";
+                                var maxQty="";
+                                if(skuInfo.minQty){
+                                	minQty=skuInfo.minQty+'-';
+                                }else{
+                                	minQty="";
+                                }
+                                if(skuInfo.maxQty){
+                                	maxQty=skuInfo.maxQty;
+                                }else{
+                                	maxQty="";
+                                }
+	                            resultListHtml += '<div class="mui-row app_bline" id="serskudiv_' + skuInfo.id + '">'+ 
+	                            
+	                                '<div class="mui-row lineStyle">'+ 
+				                    '<li class="mui-table-view-cell app_bline3">'+ 
+				                    '<div class="mui-input-row ">'+ 
+				                    '<label class="">采购中心:</label>'+ 
+				                    '<input type="text" class="mui-input-clear" id="" value="'  + centerOfficeName + '" disabled></div></li></div>'+ 
+	                             
+									'<div class="mui-row lineStyle">'+ 
+				                    '<li class="mui-table-view-cell app_bline3">'+ 
+				                    '<div class="mui-input-row ">'+ 
+				                    '<label class="">商品名称:</label>'+ 
+				                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfoName  +'" disabled></div></li></div>'+ 
+			                   
+				                  	'<div class="mui-row lineStyle">'+ 
+				                    '<li class="mui-table-view-cell app_bline3">'+ 
+				                    '<div class="mui-input-row ">'+ 
+				                    '<label class="">商品货号:</label>'+ 
+				                    '<input type="text" class="mui-input-clear" id="" value="'  +skuInfoitemNo+ '" disabled></div></li></div>'+ 
+				                    
+				                    '<div class="mui-row lineStyle">'+ 
+				                    '<li class="mui-table-view-cell app_bline3">'+ 
+				                    '<div class="mui-input-row ">'+ 
+				                    '<label class="">商品编码:</label>'+ 
+				                    '<input type="text" class="mui-input-clear" id="" value="'  +skuInfopartNo + '" disabled></div></li></div>'+ 
+				                    
+				                    '<div class="mui-row lineStyle">'+ 
+				                    '<li class="mui-table-view-cell app_bline3">'+ 
+				                    '<div class="mui-input-row ">'+ 
+				                    '<label class="">商品属性:</label>'+ 
+				                    '<input type="text" class="mui-input-clear" id="" value="' + ListHtml + '" disabled></div></li></div>'+ 
+									
+				                    '<div class="mui-row">'+ 
+				                        '<div class="mui-col-sm-6 mui-col-xs-6">'+ 
+				                            '<li class="mui-table-view-cell app_bline3">'+ 
+				                                '<div class="mui-input-row ">'+ 
+				                                    '<label>货架名称:</label>'+ 
+				                                    '<input type="text" class="mui-input-clear" id="" value="'  +opShelfInfoName+ '" disabled></div></li></div>'+ 
+				                    '<div class="mui-col-sm-6 mui-col-xs-6">'+
+				                    '<li class="mui-table-view-cell app_bline3">'+ 
+				                    '<div class="mui-input-row ">'+ 
+				                    '<label>数量区间:</label>'+ 
+				                    '<input type="text" class="mui-input-clear" max="' +maxQty+ '" id="maxQty_' +skuInfo.id+ '" value="' +(minQty+maxQty) + '" disabled></div></li></div></div>'+
+			                   
+				                    '<div class="mui-row  inAddFont">'+ 
+				                    '<div class="mui-col-sm-6 mui-col-xs-6">'+ 
+				                    '<li class="mui-table-view-cell app_bline3">'+ 
+				                    '<div class="mui-input-row">'+ 
+				                    '<label>现价:</label>'+ 
+				                    '<input type="text" class="mui-input-clear" id="" value="'  +salePrice+  '" disabled></div></li></div>'+ 
+				                    '<div class="mui-col-sm-6 mui-col-xs-6">'+ 
+				                        '<li class="mui-table-view-cell app_bline3">'+ 
+				                            '<div class="mui-input-row">'+ 
+				                                '<label>采购数量:</label>'+ 
+				                                    '<input type="hidden" class="mui-input-clear" value="'  +skuInfo.id + '">'+ 
+			                                    '<input type="text" class="mui-input-clear" placeholder="请输入数量" id="saleQty_' +skuInfo.id+ '">'+ 
+				                                    '<font>*</font>'+
+				                    '</div></li></div>'+
+				                    '<input type="hidden" class="mui-input-clear" id="orderDetaIds_' +skuInfo.id+ '" value="'  +orderDetaIdsVal+  '" disabled>'+ 
+				                    '<input type="hidden" class="mui-input-clear" id="shelfSkuId_' +skuInfo.id+ '" value="'  +skuInfo.id+  '" disabled>'+
+				                       '</div>'+
+				                       
+				                    '<button id="' +skuInfo.id+ '" detaid="'+orderDetaIdsVal+'" type="submit" class="addSkuButton inAddBtn skuinfo_check app_btn_search mui-btn-blue mui-btn-block">添加</button>'+ 
+				                       
+				                    '</div>'
+                            });
+                            $("#searchInfo").append(resultListHtml);
+                            //判断是否有相同的商品 
+                            var dis=$("#searchInfo .addSkuButton");//可选商品
+                            var dos=$("#commodityMenu .addSkuButton ");//订单商品
+                            $.each(dis,function(n,v){
+                            	var s=$(this).attr('id')
+                            	$.each(dos,function(n,v){
+                            		var that=this;	                            	
+	                            	var y=$(that).attr('id');
+	                            	var divs=$("#searchInfo #serskudiv_"+s);
+	                            	if (s==y) {
+	                            		mui.toast('已有此类商品！')
+	                            		divs.html('');
+	                            	}
 	                            })
-	                        })
+                            })
+                        })
                     }   
                 })
             });

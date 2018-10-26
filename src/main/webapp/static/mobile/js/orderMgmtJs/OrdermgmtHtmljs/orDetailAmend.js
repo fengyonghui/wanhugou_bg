@@ -45,7 +45,7 @@
 							    $('#numberInterval').val();
 				                $('#buyPrice').val();
 							}
-                	}		                					
+                	    }		                					
 						$('#skuInfoName').val(res.data.detail.skuName)//商品名称
 						$('#itemNo').val(res.data.detail.skuInfo.itemNo)//商品货号
 						$('#partNo').val(res.data.detail.partNo)//商品编码
@@ -142,7 +142,6 @@
 	                        		mui.toast("暂无商品！");
 	                        	}
 	                            var resultListHtml="";
-	                            var t=0;
 	                            $.each(skuInfoList,function (index,skuInfo) {
 	                            if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length>0){
                                 	mui.toast('已有此类商品！请选择其他商品！');
