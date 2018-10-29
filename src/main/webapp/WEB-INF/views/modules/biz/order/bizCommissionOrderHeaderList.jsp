@@ -210,6 +210,12 @@
 		<li><label>订单编号：</label>
 			<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 		</li>
+		<li><label>零售商名称：</label>
+			<form:input path="serllerName" htmlEscape="false" maxlength="30" class="input-medium"/>
+		</li>
+		<li><label>零售商电话：</label>
+			<form:input path="serllerPhone" htmlEscape="false" maxlength="30" class="input-medium"/>
+		</li>
 		<%--<li><label>订单状态：</label>--%>
 			<%--<form:select path="bizStatus" class="input-medium">--%>
 				<%--<form:option value="" label="请选择"/>--%>
@@ -248,7 +254,7 @@
 			<label>商品货号：</label>
 			<form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 		</li>
-		<li><label>代销商/经销商：</label>
+		<li><label>经销店名称：</label>
 			<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
 				<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
 								labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
@@ -355,6 +361,7 @@
 		<td>结佣</td>
 		<td>序号</td>
 		<th>订单编号</th>
+		<th>零售商名称</th>
 		<th>订单类型</th>
 		<th>经销店名称</th>
 		<th>所属采购中心</th>
@@ -413,6 +420,9 @@
 							${orderHeader.orderNum}</a>
 					</c:if>
 				</c:if>
+			</td>
+			<td>
+					${orderHeader.seller.name}
 			</td>
 			<td>
 					${fns:getDictLabel(orderHeader.orderType, 'biz_order_type', '未知状态')}

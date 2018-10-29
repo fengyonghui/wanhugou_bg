@@ -56,6 +56,22 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * */
     private Office sellers;
     private Integer sellersId;
+
+    /**
+     * 零售商
+     */
+    private Office seller;
+
+    /**
+     * 零售商名称
+     */
+    private String serllerName;
+
+    /**
+     * 零售商电话
+     */
+    private String serllerPhone;
+
     /**
      * 订单备注
      * */
@@ -1176,6 +1192,30 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setApplyCommStatus(String applyCommStatus) {
         this.applyCommStatus = applyCommStatus;
+    }
+
+    public Office getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Office seller) {
+        this.seller = seller;
+    }
+
+    public String getSerllerName() {
+        return serllerName;
+    }
+
+    public void setSerllerName(String serllerName) {
+        this.serllerName = serllerName;
+    }
+
+    public String getSerllerPhone() {
+        return serllerPhone;
+    }
+
+    public void setSerllerPhone(String serllerPhone) {
+        this.serllerPhone = serllerPhone;
     }
 }
 
