@@ -65,6 +65,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
     public static final Integer VENDORROLEID = 29;
     public static final Integer PURCHASERSPEOPLE = 9;
+    public static final Integer SHOPKEEPER = 63;
+    public static final Integer COMMISSION_MERCHANT = 64;
     @Autowired
     private OfficeDao officeDao;
     @Autowired
@@ -583,7 +585,20 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
                     primaryPerson.setPassword((SystemService.entryptPassword(primaryPerson.getNewPassword())));
                     primaryPerson.setLoginFlag("1");
                     List<Role> roleList = Lists.newArrayList();
-                    roleList.add(systemService.getRole(PURCHASERSPEOPLE));
+                    switch (OfficeTypeEnum.stateOf(office.getType())) {
+                        case CUSTOMER:
+                            roleList.add(systemService.getRole(PURCHASERSPEOPLE));
+                            break;
+                        case SHOPKEEPER:
+                            roleList.add(systemService.getRole(SHOPKEEPER));
+                            break;
+                        case COMMISSION_MERCHANT:
+                            roleList.add(systemService.getRole(COMMISSION_MERCHANT));
+                            break;
+                        default:
+                            break;
+                    }
+
                     primaryPerson.setRoleList(roleList);
                     systemService.saveUser(primaryPerson);
                     UserUtils.clearCache(primaryPerson);
