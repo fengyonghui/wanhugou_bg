@@ -269,24 +269,24 @@ public class BizOrderHeaderController extends BaseController {
                         orderHeader.setBizCommission(bizCommission);
                     }
                     orderHeader.setApplyCommStatus(applyCommStatus);
-                    BigDecimal commission = BigDecimal.ZERO;
-                    List<BizOrderDetail> orderDetails = orderHeader.getOrderDetailList();
-                    if (CollectionUtils.isNotEmpty(orderDetails)) {
-                        BigDecimal detailCommission = BigDecimal.ZERO;
-                        for (BizOrderDetail orderDetail : orderDetails) {
-                            BizOpShelfSku bizOpShelfSku = orderDetail.getSkuInfo().getBizOpShelfSku();
-                            BigDecimal orgPrice = new BigDecimal(bizOpShelfSku.getOrgPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
-                            BigDecimal salePrice = new BigDecimal(bizOpShelfSku.getSalePrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
-                            Integer ordQty = orderDetail.getOrdQty();
-                            BigDecimal commissionRatio = bizOpShelfSku.getCommissionRatio();
-                            if (commissionRatio == null || commissionRatio.compareTo(BigDecimal.ZERO) <= 0) {
-                                commissionRatio = BigDecimal.ZERO;
-                            }
-                            detailCommission = (salePrice.subtract(orgPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
-                            commission = commission.add(detailCommission);
-                        }
-                    }
-                    orderHeader.setCommission(commission);
+//                    BigDecimal commission = BigDecimal.ZERO;
+//                    List<BizOrderDetail> orderDetails = orderHeader.getOrderDetailList();
+//                    if (CollectionUtils.isNotEmpty(orderDetails)) {
+//                        BigDecimal detailCommission = BigDecimal.ZERO;
+//                        for (BizOrderDetail orderDetail : orderDetails) {
+//                            BizOpShelfSku bizOpShelfSku = orderDetail.getSkuInfo().getBizOpShelfSku();
+//                            BigDecimal orgPrice = new BigDecimal(bizOpShelfSku.getOrgPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+//                            BigDecimal salePrice = new BigDecimal(bizOpShelfSku.getSalePrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+//                            Integer ordQty = orderDetail.getOrdQty();
+//                            BigDecimal commissionRatio = bizOpShelfSku.getCommissionRatio();
+//                            if (commissionRatio == null || commissionRatio.compareTo(BigDecimal.ZERO) <= 0) {
+//                                commissionRatio = BigDecimal.ZERO;
+//                            }
+//                            detailCommission = (salePrice.subtract(orgPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
+//                            commission = commission.add(detailCommission);
+//                        }
+//                    }
+//                    orderHeader.setCommission(commission);
                     bizOrderHeaderListNew.add(orderHeader);
                 }
             }
