@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
-import com.wanhutong.backend.modules.biz.dao.common.BizCustomerInfoDao;
+import com.wanhutong.backend.modules.biz.dao.custom.BizCustomerInfoDao;
 
 /**
  * 机构信息entityService
