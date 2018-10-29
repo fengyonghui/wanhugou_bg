@@ -348,6 +348,7 @@ public class BizCustomCenterConsultantController extends BaseController {
         off.setType(center);
         off.setCustomerTypeTen("10");
         off.setCustomerTypeEleven("11");
+        off.setCustomerTypeThirteen("13");
         List<Office> officeList = officeService.queryCenterList(off);
         for (int i = 0; i < officeList.size(); i++) {
             if (officeList.get(i).getId().equals(user.getOffice().getId())) {//关联时，判断采购中心
@@ -381,6 +382,7 @@ public class BizCustomCenterConsultantController extends BaseController {
         off.setType(center);
         off.setCustomerTypeTen("10");
         off.setCustomerTypeEleven("11");
+        off.setCustomerTypeThirteen("13");
         List<Office> officeList = officeService.queryCenterList(off);
         for (int i = 0; i < officeList.size(); i++) {
             if (officeList.get(i).getId().equals(user.getOffice().getId())) {//关联时，判断采购中心
