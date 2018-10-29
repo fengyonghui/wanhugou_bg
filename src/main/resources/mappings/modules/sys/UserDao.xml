@@ -442,10 +442,14 @@
 
 	<!-- 更新用户 -->
 	<update id="update">
-		UPDATE sys_user SET 
-			company_id = #{company.id}, 
-			office_id = #{office.id}, 
-			login_name = #{loginName}, 
+		UPDATE sys_user SET
+		<if test="company != null and company.id != null and company.id != ''">
+			company_id = #{company.id},
+		</if>
+		<if test="office != null and office.id != null and office.id != ''">
+			office_id = #{office.id},
+		</if>
+			login_name = #{loginName},
 			password = #{password}, 
 			no = #{no}, 
 			name = #{name}, 

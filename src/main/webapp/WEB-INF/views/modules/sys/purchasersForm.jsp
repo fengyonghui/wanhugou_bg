@@ -134,7 +134,7 @@
                     jBox.tip("请输入理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
                     return false;
                 }
-                top.$.jBox.confirm("确认开始审核流程吗？", "系统提示", function (v1, h1, f1) {
+                top.$.jBox.confirm("确认进行此操作吗？", "系统提示", function (v1, h1, f1) {
                     if (v1 == "ok") {
                         var applyForLevel = $("#applyForLevel").val();
                         var id = $("#id").val();
