@@ -615,6 +615,9 @@
 			<if test="vendorId !=null and vendorId != ''">
 				AND  sv.id = ${vendorId}
 			</if>
+			<if test="commissionStatus !=null">
+				AND  a.commission_status = ${commissionStatus}
+			</if>
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
 			</if>

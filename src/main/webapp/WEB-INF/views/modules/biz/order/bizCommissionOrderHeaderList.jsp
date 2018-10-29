@@ -210,26 +210,34 @@
 		<li><label>订单编号：</label>
 			<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 		</li>
-		<li><label>订单状态：</label>
-			<form:select path="bizStatus" class="input-medium">
-				<form:option value="" label="请选择"/>
-				<form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
-							  htmlEscape="false"/></form:select>
-		</li>
+		<%--<li><label>订单状态：</label>--%>
+			<%--<form:select path="bizStatus" class="input-medium">--%>
+				<%--<form:option value="" label="请选择"/>--%>
+				<%--<form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"--%>
+							  <%--htmlEscape="false"/></form:select>--%>
+		<%--</li>--%>
 
-		<li><label>审核状态：</label>
-			<form:select path="selectAuditStatus" class="input-medium">
+		<li><label>结佣状态：</label>
+			<form:select path="commissionStatus" class="input-medium">
 				<form:option value="" label="请选择"/>
-				<form:options items="${originConfigMap}"  htmlEscape="false"/>
+				<%--<form:options items="${fns:getDictList('biz_commission_status')}" itemLabel="label" itemValue="value"--%>
+							  <%--htmlEscape="false"/>--%>
+				<form:option value="0" label="未支付"/>
+				<form:option value="1" label="已支付"/>
 			</form:select>
 		</li>
 
-		<li><label>尾款：</label>
-			<form:select path="retainage" class="input-medium">
-				<form:option value="" label="请选择"/>
-				<form:option value="1" label="有尾款"/>
-			</form:select>
-		</li>
+		<%--<form:select path="invStatus" class="input-xlarge" disabled="true">--%>
+			<%--<form:option value="" label="请选择"/>--%>
+			<%--<form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"--%>
+						  <%--htmlEscape="false"/></form:select>--%>
+
+		<%--<li><label>尾款：</label>--%>
+			<%--<form:select path="retainage" class="input-medium">--%>
+				<%--<form:option value="" label="请选择"/>--%>
+				<%--<form:option value="1" label="有尾款"/>--%>
+			<%--</form:select>--%>
+		<%--</li>--%>
 
 		<c:if test="${source ne 'vendor'}">
 			<li><label>经销店电话：</label>
@@ -283,26 +291,26 @@
                    value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
         </li>
-		<li><label>待同意发货:</label>
-			<form:select path="mobileAuditStatus" class="input-medium">
-				<form:option value="">请选择</form:option>
-				<form:option value="0">待审核</form:option>
-				<form:option value="1">审核失败</form:option>
-				<form:option value="2">其他</form:option>
-			</form:select>
-		</li>
-		<li><label>待发货</label>
-			<form:select path="waitShipments" class="input-medium">
-				<form:option value="" label="请选择"/>
-				<form:option value="1" label="是"/>
-			</form:select>
-		</li>
-		<li><label>待出库</label>
-			<form:select path="waitOutput" class="input-medium">
-				<form:option value="" label="请选择"/>
-				<form:option value="1" label="是"/>
-			</form:select>
-		</li>
+		<%--<li><label>待同意发货:</label>--%>
+			<%--<form:select path="mobileAuditStatus" class="input-medium">--%>
+				<%--<form:option value="">请选择</form:option>--%>
+				<%--<form:option value="0">待审核</form:option>--%>
+				<%--<form:option value="1">审核失败</form:option>--%>
+				<%--<form:option value="2">其他</form:option>--%>
+			<%--</form:select>--%>
+		<%--</li>--%>
+		<%--<li><label>待发货</label>--%>
+			<%--<form:select path="waitShipments" class="input-medium">--%>
+				<%--<form:option value="" label="请选择"/>--%>
+				<%--<form:option value="1" label="是"/>--%>
+			<%--</form:select>--%>
+		<%--</li>--%>
+		<%--<li><label>待出库</label>--%>
+			<%--<form:select path="waitOutput" class="input-medium">--%>
+				<%--<form:option value="" label="请选择"/>--%>
+				<%--<form:option value="1" label="是"/>--%>
+			<%--</form:select>--%>
+		<%--</li>--%>
 		<c:if test="${statu == 'unline'}">
 			<li><label>审核状态:</label>
 				<form:select path="examine" class="input-medium">
