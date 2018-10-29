@@ -306,7 +306,7 @@
 	                        	}
 	                        	//排产状态
 	                            var poSchTypeTxt = '';
-	                            if(item.poSchType == 0 || item.poSchType == null){
+	                            if(item.poSchType == 0 || item.poSchType == null || item.poSchType == ''){
 	                            	poSchTypeTxt = res.data.SCHEDULING_NOT;
 	                            }else{
 	                            	if(item.poSchType == 1){
@@ -367,7 +367,8 @@
 										if(item.bizOrderHeader != null || item.bizOrderHeader != '' 
 										|| item.bizRequestHeader != null || item.bizRequestHeader != '') {
 											if(_this.ordCreatPayFlag == true) {
-												if(item.bizOrderHeader != null || item.bizRequestHeader != null){
+												if(item.bizOrderHeader != null || item.bizRequestHeader != null
+												|| item.bizOrderHeader != '' || item.bizRequestHeader != ''){
 													if(_this.ordCreatPayFlag == true) {
 							                        	if(item.bizOrderHeader != null || item.bizOrderHeader != '') {
 							                        		if((item.currentPaymentId == null || item.currentPaymentId == '') 
@@ -410,7 +411,7 @@
 												                dictLabel = res.data.dictLabel;
 											                }
 											            });
-														if(item.bizPoPaymentOrder.id == null
+														if((item.bizPoPaymentOrder.id == null || item.bizPoPaymentOrder.id == '')
 														&& paycheckTxt == '审批完成'
 														&& dictLabel != '全部支付'
 														&& item.payTotal < (item.totalDetail+item.totalExp)) {
@@ -428,11 +429,12 @@
 												DataRoleGener = item.commonProcess.purchaseOrderProcess.roleEnNameEnum;
 											}
 											var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
-					                        if(item.commonProcess.id != null
+					                        if((item.commonProcess.id != null || item.commonProcess.id != '')
 					                        	&& paycheckTxt != '驳回'
 					                        	&& paycheckTxt != '审批完成'
 					                        	&& (fileRoleData.length>0 || userId==1))             {
-					                        	if(item.bizOrderHeader != null || item.bizRequestHeader != null){
+					                        	if(item.bizOrderHeader != null || item.bizOrderHeader != ''
+					                        		|| item.bizRequestHeader != null || item.bizRequestHeader != ''){
 					                        		//订单审核
 					                        	   	if(item.bizOrderHeader != ""){
 					                        	   		staCheckBtnTxt = '审核';
@@ -455,14 +457,14 @@
 						                }
 					                	//支付申请列表
 					                	if(item.commonProcess.type != -1){
-					                		if(item.bizOrderHeader != null){
+					                		if(item.bizOrderHeader != null || item.bizOrderHeader != ''){
 					                			//订单
 					                			if(_this.OrdFlagpay == true){
 					                				staPayBtnTxt = '支付列表';
 					                				staPayBtnes = 'staPayBtnes';
 					                			}
 					                		}
-					                		if(item.bizRequestHeader != null){
+					                		if(item.bizRequestHeader != null || item.bizRequestHeader != ''){
 					                			//备货单
 					                			if(_this.OrdFlagpay == true){
 					                				staPayBtnTxt = '支付列表';
@@ -473,11 +475,11 @@
 										//开启审核
 					                	if(_this.OrdFlagstartAudit==true){
 					                		if(item.commonProcess.type == -1){
-					                			if(item.bizOrderHeader != null) {
+					                			if(item.bizOrderHeader != null || item.bizOrderHeader != '') {
 					                				stastartCheckBtnTxt = '开启审核';
 					                				stastartCheckBtn = 'stastartCheckBtn'
 					                			}
-					                			if(item.bizRequestHeader != null){
+					                			if(item.bizRequestHeader != null || item.bizRequestHeader != ''){
 					                				stastartCheckBtnTxt = '开启审核';
 					                				stastartCheckBtn = 'stastartCheckBtn'
 					                			}
@@ -491,7 +493,7 @@
 					                	//修改
 					                	//取消
 					                	if(_this.orCancAmenFlag == true) {
-					                		if(paycheckTxt == null
+					                		if(paycheckTxt == null || paycheckTxt == ''
 				                			|| paycheckTxt == '驳回') {
 					                			orAmendBtn = 'orAmendBtn';
 					                			orAmendBtnTxt = '修改';

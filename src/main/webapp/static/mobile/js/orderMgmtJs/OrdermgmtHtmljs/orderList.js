@@ -354,7 +354,7 @@
 									var ordRecoveryBtn = '';
 	                                var staRecoveryBtnTxt ="";//h恢复
 	                                if(_this.staOrdeditFlag==true){
-	                                	if(item.delFlag!=null && item.delFlag == '0'){
+	                                	if((item.delFlag!=null || item.delFlag!='') && item.delFlag == '0'){
 	                                		staDetailBtnTxt ="详情";
 	                                		ordDetailBtn = 'ordDetailBtn';
 	                                		staRecoveryBtnTxt ="恢复";
