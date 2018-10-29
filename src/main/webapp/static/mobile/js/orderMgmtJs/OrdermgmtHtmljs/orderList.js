@@ -167,10 +167,11 @@
 			                }
 			           });
 						var arrLen = res.data.page.list.length;
-						if(arrLen <20 ){
+						if(arrLen <20){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}else{
-							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true)
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						}
                         var that=this;
                         if(arrLen > 0) {
@@ -428,18 +429,17 @@
 								$(RoList).hide();
 								
 					}else{
-							$('.mui-pull-bottom-pocket').html('');
-							$('#orderList').append('<p class="noneTxt">暂无数据</p>');
-							$('#OrdSechBtn').hide();
-							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+						$('.mui-pull-bottom-pocket').html('');
+						$('#orderList').append('<p class="noneTxt">暂无数据</p>');
+						$('#OrdSechBtn').hide();
+						mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 					}
-
-		                if(res.data.page.totalPage==pager.pageNo){		                	
-			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
-			            }else{
-			                pager.pageNo++;
-			                mui('#refreshContainer').pullRefresh().refresh(true);
-			            } 			           
+	                if(res.data.page.totalPage==pager.pageNo){		                	
+		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
+		            }else{
+		                pager.pageNo++;
+		                mui('#refreshContainer').pullRefresh().refresh(true);
+		            } 			           
 			        },
 		            error:function(xhr,type,errorThrown){
 			            console.log(type);

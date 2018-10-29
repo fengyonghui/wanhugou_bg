@@ -98,6 +98,7 @@
                         	}
                             var resultListHtml="";
                             $.each(skuInfoList,function (index,skuInfo) {
+                            	console.log(skuInfo)
                                 if($("#searchInfo").children("#serskudiv_"+skuInfo.id).length>0){
                                 	mui.toast('已有此类商品！请选择其他商品！');
                                     return;

@@ -29,6 +29,7 @@
                 	'orderHeader.oneOrder':_this.userInfo.oneOrderId,orderType:_this.userInfo.orderType},
                 dataType: "json",
                 success: function(res){	
+                	console.log(res)
                 	if(res.data.bizOrderDetail.id!=null){                		
                 		if(res.data.orderH.orderType != res.data.PURSEHANGER){
                 			if(res.data.detail.shelfInfo){

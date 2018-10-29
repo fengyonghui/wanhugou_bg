@@ -85,6 +85,7 @@
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}else{
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						}
 						/*当前用户信息*/

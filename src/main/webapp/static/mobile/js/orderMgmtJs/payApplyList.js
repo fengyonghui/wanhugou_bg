@@ -89,11 +89,11 @@
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}else{
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						}
                         if(arrLen > 0) {
 							$.each(returnData, function(i, item) {
-//								console.log(item)
 								//当前状态
 								var nowbizStatus="";
 								var nowbizStatus="";

@@ -645,7 +645,7 @@
 					if(item.unitPrice !=null && item.ordQty !=null){
 						totalMoney=(item.unitPrice * item.ordQty).toFixed(2);						
 					}
-					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
+					htmlCommodity += '<div class="mui-row app_bline commodity" id="commoditybox">' +
 	                    
                     	'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
@@ -735,12 +735,22 @@
 				});
 				$("#staCommodity").html(htmlCommodity);
 				if(data.orderType == data.PURSEHANGER){
-					$('#opShelfInfo').hide();
+					var buyPriceArr=$('.commodity #opShelfInfo')			
+					$.each(buyPriceArr, function(o,p) {
+						$(p).hide();
+					});
 				}
 				if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){
-					$('#buyPrice').show();
+					var buyPriceArr=$('#commoditybox #buyPrice')			
+					$.each(buyPriceArr, function(o,p) {
+						$(p).show();
+					});
+					
 				}else{
-					$('#buyPrice').hide();
+					var buyPriceArr=$('#commoditybox #buyPrice')			
+					$.each(buyPriceArr, function(o,p) {
+						$(p).hide();
+					});
 				}
 			}
 		},

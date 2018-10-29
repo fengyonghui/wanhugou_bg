@@ -853,12 +853,21 @@
 				});
 				$("#staCommodity").append(htmlCommodity);
 				if(data.orderType == data.PURSEHANGER){
-					$('#opShelfInfo').hide();
+					var buyPriceArr=$('.commodity #opShelfInfo')			
+					$.each(buyPriceArr, function(o,p) {
+						$(p).hide();
+					});
 				}
-				if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){					
-					$('#buyPrice').show();
+				if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){	
+                    var buyPriceArr=$('.commodity #buyPrice');
+					$.each(buyPriceArr, function(o,p) {
+						$(p).show();
+					});
 				}else{
-					$('#buyPrice').hide();
+					var buyPriceArr=$('.commodity #buyPrice');
+					$.each(buyPriceArr, function(o,p) {
+						$(p).hide();
+					});
 				}
 				_this.ordHrefHtml();
 				//操作权限
