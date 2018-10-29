@@ -52,6 +52,12 @@
 							}else {
 								nameTxt = ''
 							}
+							var nameTxts = '';
+							if(_this.userInfo.conName) {
+								nameTxts = decodeURIComponent(_this.userInfo.conName)
+							}else {
+								nameTxts = ''
+							}
 							//查询页面传过来的值
 							if(_this.userInfo.orderNum==undefined){
 								_this.userInfo.orderNum="";
@@ -62,6 +68,9 @@
 							if(nameTxt==undefined){
 								nameTxt="";
 							}
+							if(nameTxts==undefined){
+								nameTxts="";
+							}							
 							if(_this.userInfo.retainage==undefined){
 								_this.userInfo.retainage="";
 							}
@@ -112,7 +121,7 @@
 		                    	pager['itemNo'] = _this.userInfo.itemNo,//商品货号
 		                    	pager['customer.id'] = _this.userInfo.customerName,//经销店名称
 		                    	pager['centersName'] = _this.userInfo.centersName,//采购中心
-		                    	pager['con.name'] = _this.userInfo.conName,//客户专员
+		                    	pager['con.name'] = nameTxts,//客户专员
 		                    	pager['mobileAuditStatus'] = _this.userInfo.mobileAuditStatus,//待同意发货
 		                    	pager['waitShipments'] = _this.userInfo.waitShipments,//待发货
 								pager['waitOutput'] = _this.userInfo.waitOutput,//待出库

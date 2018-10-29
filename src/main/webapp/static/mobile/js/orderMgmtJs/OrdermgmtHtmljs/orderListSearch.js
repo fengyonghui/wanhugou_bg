@@ -51,7 +51,7 @@
                         itemNo:$('.inItemNum').val(),//商品货号
                         customerName:$('.hasoid').attr('id'),//经销店名称
                         centersName:$('.centersName').val(),//采购中心
-                        conName:$('.centersName').val(),//客户专员
+                        conName:$('.conName').val(),//客户专员
 						mobileAuditStatus: $('#input_div_waitchkStatus').val(),//待同意发货
 						waitShipments: $('#input_div_waitsendgoods').val(),//待发货
 						waitOutput: $('#input_div_outbound').val(),//待出库
