@@ -412,7 +412,7 @@ public class BizSkuInfoV3Service extends CrudService<BizSkuInfoV3Dao, BizSkuInfo
 		size = size.replaceAll("工厂","装车");
 		size = size.replaceAll("价","");
 		color = color.replaceAll("色","");
-		if (itemNo.contains("装车") && !size.contains("装车") && !size.contains("打包")) {
+		if ((itemNo.contains("装车") || itemNo.contains("工厂")) && !size.contains("装车") && !size.contains("打包")) {
 			StringBuilder sb = new StringBuilder();
 			size= sb.append(size).append("装车").toString();
 		}
