@@ -19,7 +19,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
-import com.wanhutong.backend.modules.biz.service.common.BizCustomerInfoService;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomerInfoService;
 
 /**
  * 机构信息entityController
