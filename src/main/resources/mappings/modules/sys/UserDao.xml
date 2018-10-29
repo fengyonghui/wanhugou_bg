@@ -227,6 +227,13 @@
 			)
 		</if>
 
+		<if test="company != null and company.types != null and company.types != ''">
+			AND c.type in
+			<foreach collection="company.types" item="e" separator="," open="(" close=")">
+				${e}
+			</foreach>
+		</if>
+
 		<if test="office != null and office.id != null and office.id != ''">
 			AND (o.id = #{office.id} OR o.parent_ids LIKE
 			<if test="dbName == 'oracle'">'%,'||#{office.id}||',%')</if>
