@@ -227,6 +227,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			if(user.getRoleList()!=null && (!user.getRoleIdList().isEmpty())){
 				userDao.deleteUserRole(user);
 				userDao.insertUserRole(user);
+				UserUtils.clearCache(user);
 			}
 		}
 		if (user.getId() == null){

@@ -995,6 +995,28 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         switch (auditType) {
             case PASS:
                 dao.updateOfficeType(id, applyForLevel);
+                Office office = officeDao.get(id);
+                User primaryPerson = office.getPrimaryPerson();
+                UserUtils.clearCache(primaryPerson);
+                primaryPerson = systemService.getUser(primaryPerson.getId());
+                List<Role> roleList = primaryPerson.getRoleList();
+                switch (OfficeTypeEnum.stateOf(applyForLevel.toString())) {
+                                case CUSTOMER:
+                                    roleList.add(systemService.getRole(PURCHASERSPEOPLE));
+                                    roleList.removeIf(role -> role.getId().equals(SHOPKEEPER) || role.getId().equals(COMMISSION_MERCHANT));
+                                    break;
+                                case SHOPKEEPER:
+                                    roleList.add(systemService.getRole(SHOPKEEPER));
+                                    roleList.removeIf(role -> role.getId().equals(PURCHASERSPEOPLE) || role.getId().equals(COMMISSION_MERCHANT));
+                                    break;
+                                case COMMISSION_MERCHANT:
+                                    roleList.add(systemService.getRole(COMMISSION_MERCHANT));
+                                    roleList.removeIf(role -> role.getId().equals(PURCHASERSPEOPLE) || role.getId().equals(SHOPKEEPER));
+                                    break;
+                                default:
+                                    break;
+                            }
+                systemService.saveUser(primaryPerson);
                 break;
             case REJECT:
                 break;
