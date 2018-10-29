@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
-package com.wanhutong.backend.modules.biz.service.common;
+package com.wanhutong.backend.modules.biz.service.custom;
 
 import java.util.List;
 
