@@ -562,8 +562,10 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 
         //保存钱包
-        String purchasersId = DictUtils.getDictValue("经销店", "sys_office_type", "");
-        if (StringUtils.isNotBlank(purchasersId) && purchasersId.equals(office.getType())) {
+        if (StringUtils.equals(office.getType(),OfficeTypeEnum.CUSTOMER.getType())
+            || StringUtils.equals(office.getType(),OfficeTypeEnum.SHOPKEEPER.getType())
+            || StringUtils.equals(office.getType(),OfficeTypeEnum.COMMISSION_MERCHANT.getType())
+        ) {
             bizCustCredit = new BizCustCredit();
             bizCustCredit.setCustomer(office);
             bizCustCredit.setLevel(StringUtils.isBlank(office.getLevel()) ? "1" : office.getLevel());
