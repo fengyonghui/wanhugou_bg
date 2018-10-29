@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
-package com.wanhutong.backend.modules.biz.dao.common;
+package com.wanhutong.backend.modules.biz.dao.custom;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
