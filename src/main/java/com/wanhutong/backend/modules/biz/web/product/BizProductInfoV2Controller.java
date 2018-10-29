@@ -16,7 +16,6 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdViewLog;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
@@ -31,10 +30,7 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendor
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
-import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
-import com.wanhutong.backend.modules.enums.SkuTypeEnum;
-import com.wanhutong.backend.modules.enums.TagInfoEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -243,6 +239,9 @@ public class BizProductInfoV2Controller extends BaseController {
                 dictList = dictService.findList(dict);
             }
             if (attributeInfo.getLevel() != null && TagInfoEnum.PRODTAG.ordinal() == attributeInfo.getLevel()) {
+                if (!VarietyAttrEnum.NOT_VARIETY_ATTR.contains(attributeInfo.getId())) {
+                    continue;
+                }
                 attributeInfo.setDictList(dictList);
                 tagInfos.add(attributeInfo);
             }
