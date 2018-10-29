@@ -95,7 +95,7 @@
                 if ($(this).is(':checked')) {
                     var orderId = $(this).val();
                     var commissionMoney = $("#" + orderId).text();
-                    totalCommissionMoney = parseInt(totalCommissionMoney) + parseInt(commissionMoney);
+                    totalCommissionMoney = Number(totalCommissionMoney) + Number(commissionMoney);
 				}
             });
             $('#totalCommissionMoney').text(totalCommissionMoney);
@@ -106,18 +106,17 @@
             var checkedElt=chElt.is(':checked');
             var allCheck=$("[name=settlement]");
             var mySpan=$('#mySpan');
+            var totalCommission = 0;
             if(checkedElt){
                 for(var i=0;i<allCheck.length;i++){
                     allCheck[i].checked=true;
+                    var orderIdTemp = $(allCheck[i]).val();
+                    var commission = $("#" + orderIdTemp).text();
+                    totalCommission = Number(totalCommission) + Number(commission);
                 }
 
-                var totalCommissionMoney = 0;
-                var checkOrCancelAllTd = $('.commissionMoney');
-                $(".commissionMoney").each(function(){
-                    totalCommissionMoney = parseInt(totalCommissionMoney) + parseInt($(this).text());
-                });
-                console.log(totalCommissionMoney)
-                $('#totalCommissionMoney').text(totalCommissionMoney);
+                console.log(totalCommission)
+                $('#totalCommissionMoney').text(totalCommission);
                 mySpan.innerHTML="取消全选";
             }else{
                 for(var i=0;i<allCheck.length;i++){
@@ -137,7 +136,6 @@
 
         }
 
-
         function applyCommission() {
             var orderIds = ""
             var totalDetail = 0;
@@ -148,10 +146,10 @@
                     var orderIdTemp = $(this).val();
                     orderIds += orderIdTemp + ",";
                     var commission = $("#" + orderIdTemp).text();
-                    totalCommission = parseInt(totalCommission) + parseInt(commission);
+                    totalCommission = Number(totalCommission) + Number(commission);
 
                     var detail = $("#" + "totalDetail_" + orderIdTemp).text();
-                    totalDetail = parseInt(totalDetail) + parseInt(detail);
+                    totalDetail = Number(totalDetail) + Number(detail);
 
                     var sellerIdTemp = $("#" + "sellerId_" + orderIdTemp).val();
                     if (sellerId == 0) {
@@ -159,7 +157,7 @@
 					}
 
                     if (sellerId != sellerIdTemp) {
-                        alert("请选择同意代销商的订单，再计算！")
+                        alert("请选择同一代销商的订单，再计算！")
 						return;
                     }
                 }
@@ -389,7 +387,15 @@
 	<c:forEach items="${page.list}" var="orderHeader" varStatus="state">
 		<tr>
 			<td>
-				<input class="orderChk" onclick="orderCommission();" type="checkbox" name="settlement" value="${orderHeader.id}" />
+				<c:if test="${orderHeader.applyCommStatus == 'no'}">
+					<input class="orderChk" onclick="orderCommission();" type="checkbox" name="settlement" value="${orderHeader.id}" />
+				</c:if>
+				<c:if test="${orderHeader.applyCommStatus == 'yes' && orderHeader.bizCommission.bizStatus == '0'}">
+					<a href="${ctx}/biz/order/bizCommission/list?orderNum=${orderHeader.orderNum}&str=detail">未结佣</a>
+				</c:if>
+				<c:if test="${orderHeader.applyCommStatus == 'yes' && orderHeader.bizCommission.bizStatus == '1'}">
+					<a href="${ctx}/biz/order/bizCommission/list?orderNum=${orderHeader.orderNum}&str=detail">已结佣</a>
+				</c:if>
 			</td>
 			<td>${state.index+1}</td>
 			<td>
@@ -534,8 +540,11 @@
 				<c:if test="${orderHeader.applyCommStatus == 'no'}">
 					<a href="#" onclick="singleApplyCommission('${orderHeader.id}', ${orderHeader.totalDetail}, ${orderHeader.commission}, ${orderHeader.sellersId})">申请结佣</a>
 				</c:if>
-				<c:if test="${orderHeader.applyCommStatus == 'yes'}">
-					<a href="${ctx}/biz/order/bizCommission/list?orderNum=${orderHeader.orderNum}&str=detail">去付款</a>
+				<c:if test="${orderHeader.applyCommStatus == 'yes' && orderHeader.bizCommission.bizStatus == '0'}">
+					<a href="${ctx}/biz/order/bizCommission/list?orderNum=${orderHeader.orderNum}&str=detail">未结佣</a>
+				</c:if>
+				<c:if test="${orderHeader.applyCommStatus == 'yes' && orderHeader.bizCommission.bizStatus == '1'}">
+					<a href="${ctx}/biz/order/bizCommission/list?orderNum=${orderHeader.orderNum}&str=detail">已结佣</a>
 				</c:if>
 				<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}&commission=${orderHeader.commission}&commSign=commSign">查看详情</a>
 

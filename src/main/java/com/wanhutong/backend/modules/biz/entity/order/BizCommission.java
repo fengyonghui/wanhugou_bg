@@ -27,7 +27,11 @@ public class BizCommission extends DataEntity<BizCommission> {
 	private Date deadline;		// 最后付款时间
 	private Date payTime;		// 支付时间
 	private String remark;		// 备注
-	private Integer bizStatus;		// 当前业务状态
+
+	/**
+	 * 当前业务状态，0：未支付， 1：已支付
+	 */
+	private Integer bizStatus;
 
 	public BizCommission() {
 		super();

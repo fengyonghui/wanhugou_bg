@@ -147,6 +147,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizOpShelfSkuService bizOpShelfSkuService;
     @Autowired
     private BizCommissionOrderService bizCommissionOrderService;
+    @Autowired
+    private BizCommissionService bizCommissionService;
 
 
     @ModelAttribute
@@ -261,6 +263,10 @@ public class BizOrderHeaderController extends BaseController {
                     List<BizCommissionOrder> commissionOrderList = bizCommissionOrderService.findList(bizCommissionOrder);
                     if (CollectionUtils.isNotEmpty(commissionOrderList)) {
                         applyCommStatus = "yes";
+                        bizCommissionOrder = commissionOrderList.get(0);
+                        Integer commId = bizCommissionOrder.getCommId();
+                        BizCommission bizCommission = bizCommissionService.get(commId);
+                        orderHeader.setBizCommission(bizCommission);
                     }
                     orderHeader.setApplyCommStatus(applyCommStatus);
                     BigDecimal commission = BigDecimal.ZERO;
