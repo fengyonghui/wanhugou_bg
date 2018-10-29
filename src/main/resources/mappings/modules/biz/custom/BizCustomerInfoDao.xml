@@ -84,12 +84,23 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_customer_info SET 	
+		UPDATE biz_customer_info SET
+		<if test="officeId != null and officeId != ''">
 			office_id = #{officeId},
+		</if>
+		<if test="bankName != null and bankName != ''">
 			bank_name = #{bankName},
+		</if>
+		<if test="cardNumber != null and cardNumber != ''">
 			card_number = #{cardNumber},
+		</if>
+		<if test="payee != null and payee != ''">
 			payee = #{payee},
-			remark = #{remark}
+		</if>
+		<if test="remark != null and remark != ''">
+			remark = #{remark},
+		</if>
+		update_time = NOW()
 		WHERE id = #{id}
 	</update>
 	
