@@ -91,6 +91,8 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     private BigDecimal detailCommission;
 
+    private BigDecimal commissionRatio;
+
     public BizOrderDetail getOrderDaillist() {
         return orderDaillist;
     }
@@ -447,5 +449,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setDetailCommission(BigDecimal detailCommission) {
         this.detailCommission = detailCommission;
+    }
+
+    public BigDecimal getCommissionRatio() {
+        return commissionRatio;
+    }
+
+    public void setCommissionRatio(BigDecimal commissionRatio) {
+        this.commissionRatio = commissionRatio;
     }
 }

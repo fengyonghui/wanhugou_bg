@@ -35,6 +35,7 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
+		a.commission_ratio AS "commissionRatio",
 		off.id AS "vendor.id",
 		off.name AS "vendor.name",
 		us.id AS "primary.id",

@@ -28,6 +28,7 @@
         <result property="serviceFee" column="serviceFee"/>
 		<result property="mobileAuditStatus" column="mobileAuditStatus"/>
 		<result property="commissionStatus" column="commissionStatus"/>
+		<result property="commission" column="commission"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -160,6 +161,7 @@
 		a.cust_id AS "customer.id",
 		a.consultant_id AS "consultantId",
 		a.commission_status AS "commissionStatus",
+		a.commission AS "commission",
 		so.name as "customer.name",
 		so.phone AS "customer.phone",
 		a.seller_id as "sellers.id",
@@ -250,6 +252,7 @@
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
 		a.commission_status AS "commissionStatus",
+		a.commission AS "commission",
 		wxsu.name AS "customer.name",
 		su.name as "createBy.name",
 		suu.name as "updateBy.name",
