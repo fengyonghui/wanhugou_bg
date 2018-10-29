@@ -48,6 +48,16 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 	 * */
 	private String cendShelf;
 
+	/**
+	 * 佣金比例
+	 */
+	private String commissionRatios;
+
+	/**
+	 * 市场参考价
+	 */
+	private String marketPrices;
+
 
 	public BizOpShelfSkus() {
 		super();
@@ -191,5 +201,21 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 
 	public void setShelfs(String shelfs) {
 		this.shelfs = shelfs;
+	}
+
+	public String getCommissionRatios() {
+		return commissionRatios;
+	}
+
+	public void setCommissionRatios(String commissionRatios) {
+		this.commissionRatios = commissionRatios;
+	}
+
+	public String getMarketPrices() {
+		return marketPrices;
+	}
+
+	public void setMarketPrices(String marketPrices) {
+		this.marketPrices = marketPrices;
 	}
 }
