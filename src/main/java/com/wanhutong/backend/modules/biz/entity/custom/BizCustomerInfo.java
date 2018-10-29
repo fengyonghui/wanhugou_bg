@@ -1,7 +1,10 @@
+package com.wanhutong.backend.modules.biz.entity.custom;
+
 /**
  * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
-package com.wanhutong.backend.modules.biz.entity.custom;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
@@ -11,59 +14,61 @@ import com.wanhutong.backend.common.persistence.DataEntity;
  * @version 2018-10-22
  */
 public class BizCustomerInfo extends DataEntity<BizCustomerInfo> {
-	
-	private static final long serialVersionUID = 1L;
-	private Integer officeId;		// 机构id
-	private String bankName;		// 开户行
-	private String cardNumber;		// 银行卡号
-	private String payee;		// 收款人
-	private String remark;		// 备注
-	
-	public BizCustomerInfo() {
-		super();
-	}
 
-	public BizCustomerInfo(Integer id){
-		super(id);
-	}
+    private static final long serialVersionUID = 1L;
+    private Integer officeId;		// 机构id
+    private String bankName;		// 开户行
+    private String cardNumber;		// 银行卡号
+    private String payee;		// 收款人
+    private String remark;		// 备注
 
-	public Integer getOfficeId() {
-		return officeId;
-	}
+    public BizCustomerInfo() {
+        super();
+    }
 
-	public void setOfficeId(Integer officeId) {
-		this.officeId = officeId;
-	}
-	
-	public String getBankName() {
-		return bankName;
-	}
+    public BizCustomerInfo(Integer id){
+        super(id);
+    }
 
-	public void setBankName(String bankName) {
-		this.bankName = bankName;
-	}
-	
-	public String getCardNumber() {
-		return cardNumber;
-	}
+    public Integer getOfficeId() {
+        return officeId;
+    }
 
-	public void setCardNumber(String cardNumber) {
-		this.cardNumber = cardNumber;
-	}
-	
-	public String getPayee() {
-		return payee;
-	}
+    public void setOfficeId(Integer officeId) {
+        this.officeId = officeId;
+    }
 
-	public void setPayee(String payee) {
-		this.payee = payee;
-	}
-	
-	public String getRemark() {
-		return remark;
-	}
+    public String getBankName() {
+        return bankName;
+    }
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
+    public String getPayee() {
+        return payee;
+    }
+
+    public void setPayee(String payee) {
+        this.payee = payee;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+
 }

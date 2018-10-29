@@ -4,7 +4,9 @@
 package com.wanhutong.backend.modules.sys.entity;
 
 import com.wanhutong.backend.common.persistence.TreeEntity;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import org.hibernate.validator.constraints.Length;
 
@@ -55,6 +57,14 @@ public class Office extends TreeEntity<Office> {
 	private Integer ccStatus;
 
 	private BizVendInfo bizVendInfo;		//供应商拓展
+	/**
+	 * 会员拓展
+	 */
+	private BizCustomerInfo bizCustomerInfo;
+
+	private CommonProcessEntity commonProcess;
+
+
 
 	/**
 	 * 供应商新增页面显示，新增地址
@@ -205,7 +215,7 @@ public class Office extends TreeEntity<Office> {
 //		this.sort = sort;
 //	}
 	
-	@Length(min=1, max=1)
+	@Length(min=1, max=2)
 	public String getType() {
 		return type;
 	}
@@ -445,4 +455,20 @@ public class Office extends TreeEntity<Office> {
 	public void setVendor(String vendor) {
 		this.vendor = vendor;
 	}
+
+	public BizCustomerInfo getBizCustomerInfo() {
+		return bizCustomerInfo;
+	}
+
+	public void setBizCustomerInfo(BizCustomerInfo bizCustomerInfo) {
+		this.bizCustomerInfo = bizCustomerInfo;
+	}
+
+    public CommonProcessEntity getCommonProcess() {
+        return commonProcess;
+    }
+
+    public void setCommonProcess(CommonProcessEntity commonProcess) {
+        this.commonProcess = commonProcess;
+    }
 }

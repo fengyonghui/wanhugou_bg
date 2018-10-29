@@ -32,7 +32,7 @@ public class BizCustomerInfoController extends BaseController {
 
 	@Autowired
 	private BizCustomerInfoService bizCustomerInfoService;
-	
+
 	@ModelAttribute
 	public BizCustomerInfo get(@RequestParam(required=false) Integer id) {
 		BizCustomerInfo entity = null;
@@ -44,11 +44,11 @@ public class BizCustomerInfoController extends BaseController {
 		}
 		return entity;
 	}
-	
+
 	@RequiresPermissions("biz:order:bizCustomerInfo:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizCustomerInfo bizCustomerInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizCustomerInfo> page = bizCustomerInfoService.findPage(new Page<BizCustomerInfo>(request, response), bizCustomerInfo); 
+		Page<BizCustomerInfo> page = bizCustomerInfoService.findPage(new Page<BizCustomerInfo>(request, response), bizCustomerInfo);
 		model.addAttribute("page", page);
 		return "modules/biz/custom/bizCustomerInfoList";
 	}
@@ -70,7 +70,7 @@ public class BizCustomerInfoController extends BaseController {
 		addMessage(redirectAttributes, "保存机构信息entity成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizCustomerInfo/?repage";
 	}
-	
+
 	@RequiresPermissions("biz:order:bizCustomerInfo:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizCustomerInfo bizCustomerInfo, RedirectAttributes redirectAttributes) {

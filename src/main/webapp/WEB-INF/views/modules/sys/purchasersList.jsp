@@ -78,26 +78,6 @@
 		</ul>
 	</form:form>
 	<sys:message content="${message}"/>
-	<%--用于属性展示,太卡换掉--%>
-	<%--<table id="treeTable" class="table table-striped table-bordered table-condensed">--%>
-		<%--<thead><tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>机构类型</th><th>备注</th><shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr></thead>--%>
-		<%--<tbody id="treeTableList"></tbody>--%>
-	<%--</table>--%>
-	<%--<script type="text/template" id="treeTableTpl">--%>
-		<%--<tr id="{{row.id}}" pId="{{pid}}">--%>
-			<%--<td><a href="${ctx}/sys/office/purchasersForm?id={{row.id}}">{{row.name}}</a></td>--%>
-			<%--<td>{{row.area.name}}</td>--%>
-			<%--<td>{{row.code}}</td>--%>
-			<%--<td>{{dict.type}}</td>--%>
-			<%--<td>{{row.remarks}}</td>--%>
-			<%--<shiro:hasPermission name="sys:office:edit"><td>--%>
-				<%--<a href="${ctx}/sys/buyerAdviser/interrelatedForm?id={{row.id}}">变更客户专员</a>--%>
-				<%--<a href="${ctx}/sys/office/purchasersForm?id={{row.id}}">修改</a>--%>
-				<%--<a href="${ctx}/sys/office/delete?id={{row.id}}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>--%>
-				<%--<a href="${ctx}/sys/office/purchasersForm?parent.id={{row.id}}">添加下级机构</a> --%>
-			<%--</td></shiro:hasPermission>--%>
-		<%--</tr>--%>
-	<%--</script>--%>
 	<table id="treeTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
@@ -132,10 +112,14 @@
                     ${fns:getDictLabel(off.type, 'sys_office_type', '未知状态')}
                 </td>
 				<td>${off.remarks}</td>
-                <shiro:hasPermission name="sys:office:edit"><td>
+                <td>
+					<shiro:hasPermission name="sys:office:view">
+						<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=view">详情</a>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="sys:office:edit">
 					<c:if test="${off.delRemark==1}">
 						<shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:change">
-							<a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更客户专员</a>
+							<a href="${ctx}/sys/office/purchasersForm?id=${off.id}">变更客户专员</a>
 						</shiro:hasPermission>
 						<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">修改</a>
 						<c:if test="${fns:getUser().isAdmin()}">
@@ -149,7 +133,20 @@
 					<c:if test="${off.delRemark==0}">
 						<a href="${ctx}/sys/office/recovery?id=${off.id}&source=purchListDelete" onclick="return confirmx('要恢复该机构及所有子机构项吗？', this.href)">恢复</a>
 					</c:if>
-                </td></shiro:hasPermission>
+				</shiro:hasPermission>
+					<c:if test="${off.type==15 || off.type==16}">
+						<c:if test="${off.commonProcess.type==null}">
+							<shiro:hasPermission name="sys:office:upgrade">
+								<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgrade">申请</a>
+							</shiro:hasPermission>
+						</c:if>
+						<c:if test="${off.commonProcess.type!=null && off.commonProcess.type!=0 && off.commonProcess.type!=off.type}">
+							<shiro:hasPermission name="sys:office:upgradeAudit">
+								<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&option=upgradeAudit">审核</a>
+							</shiro:hasPermission>
+						</c:if>
+					</c:if>
+                </td>
 			</tr>
 		</c:forEach>
 		</tbody>
