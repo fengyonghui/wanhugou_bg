@@ -29,6 +29,11 @@ public enum SmsTemplateCode {
      */
     COMPLETE_SCHEDULING("SMS_138070188","${order}:${reqNo_1}${reqNo_2}已有商品生成完成，请及时与供应商联系","order:%s,reqNo_1:%s,reqNo_2:%s","阿里云"),
 
+    /**
+     * 佣金结算异常
+     */
+    //SETTLEMENT_COMMISSION_EXCEPTION("SMS_138070189", "佣金结算异常: 结算单id:${commId}", "commId:%s", "阿里云"),
+
     UNKNOWN("0", "未知", "未知", "未知"),;
 
     /**

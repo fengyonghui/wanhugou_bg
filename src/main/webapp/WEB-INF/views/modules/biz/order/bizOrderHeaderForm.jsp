@@ -1647,6 +1647,16 @@
             <span class="help-inline">自动计算</span>
         </div>
     </div>
+    <c:if test="${entity.commSign == 'commSign'}">
+        <div class="control-group">
+            <label class="control-label">代销佣金：</label>
+            <div class="controls">
+                <form:input path="commission" htmlEscape="false" placeholder="0.0" readOnly="true" class="input-xlarge"/>
+                <input name="totalDetail" value="${entity.commission}" htmlEscape="false" type="hidden"/>
+                <span class="help-inline">自动计算</span>
+            </div>
+        </div>
+    </c:if>
     <div class="control-group">
         <label class="control-label">调整金额：</label>
         <div class="controls">

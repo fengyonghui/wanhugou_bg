@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizCommissionOrderDao">
+    
+	<sql id="bizCommissionOrderColumns">
+		a.id AS "id",
+		a.order_id AS "orderId",
+		a.comm_id AS "commId",
+		a.commission AS "commission",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.status AS "delFlag",
+		bc.id AS "bizCommission.id",
+		bc.total_commission AS "bizCommission.totalCommission",
+		bc.pay_total AS "bizCommission.payTotal",
+		bc.img_url AS "bizCommission.imgUrl",
+		bc.deadline AS "bizCommission.deadline",
+		bc.pay_time AS "bizCommission.payTime",
+		bc.remark AS "bizCommission.remark"
+	</sql>
+	
+	<sql id="bizCommissionOrderJoins">
+		LEFT JOIN biz_commission as bc on bc.id = a.comm_id AND bc.status = 1
+	</sql>
+    
+	<select id="get" resultType="BizCommissionOrder">
+		SELECT 
+			<include refid="bizCommissionOrderColumns"/>
+		FROM biz_commission_order a
+		<include refid="bizCommissionOrderJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizCommissionOrder">
+		SELECT 
+			<include refid="bizCommissionOrderColumns"/>
+		FROM biz_commission_order a
+		<include refid="bizCommissionOrderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="commId !=null">
+				AND a.comm_id = #{commId}
+			</if>
+			<if test="orderId !=null">
+				AND a.order_id = #{orderId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizCommissionOrder">
+		SELECT 
+			<include refid="bizCommissionOrderColumns"/>
+		FROM biz_commission_order a
+		<include refid="bizCommissionOrderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_commission_order(
+			id,
+			order_id,
+			comm_id,
+			commission,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time,
+			status
+		) VALUES (
+			#{id},
+			#{orderId},
+			#{commId},
+			#{commission},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_commission_order SET 	
+			order_id = #{orderId},
+			comm_id = #{commId},
+			commission = #{commission},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_commission_order SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

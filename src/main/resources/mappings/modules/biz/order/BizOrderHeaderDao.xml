@@ -27,6 +27,7 @@
         <result property="consultantId" column="consultantId"/>
         <result property="serviceFee" column="serviceFee"/>
 		<result property="mobileAuditStatus" column="mobileAuditStatus"/>
+		<result property="commissionStatus" column="commissionStatus"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -78,6 +79,11 @@
 			<id property="id" column="drawBack.id"/>
 			<result property="drawbackStatus" column="drawBack.drawbackStatus"/>
 		</association>
+		<association property="seller" javaType="Office" column="seller.id">
+			<id property="id" column="seller.id"/>
+			<result property="name" column="seller.name"/>
+			<result property="phone" column="seller.phone"/>
+		</association>
 
 		<association property="commonProcess" javaType="CommonProcessEntity" column="commonProcess.id">
 			<id property="id" column="commonProcess.id"/>
@@ -123,6 +129,12 @@
 				<result property="partNo" column="orderDetailList.skuInfo.partNo"/>
 				<result property="buyPrice" column="orderDetailList.skuInfo.buyPrice" />
 				<result property="itemNo" column="orderDetailList.skuInfo.itemNo"/>
+				<association property="bizOpShelfSku" javaType="BizOpShelfSku" column="bizOpShelfSku.id">
+					<id property="id" column="orderDetailList.skuInfo.bizOpShelfSku.id"/>
+					<result property="orgPrice" column="orderDetailList.skuInfo.bizOpShelfSku.orgPrice"/>
+					<result property="salePrice" column="orderDetailList.skuInfo.bizOpShelfSku.salePrice"/>
+					<result property="commissionRatio" column="orderDetailList.skuInfo.bizOpShelfSku.commissionRatio"/>
+				</association>
 			</association>
 			<association property="vendor" javaType="Office" column="vendor.id">
 				<id property="id" column="orderDetailList.vendor.id"/>
@@ -147,6 +159,7 @@
 		a.order_type AS "orderType",
 		a.cust_id AS "customer.id",
 		a.consultant_id AS "consultantId",
+		a.commission_status AS "commissionStatus",
 		so.name as "customer.name",
 		so.phone AS "customer.phone",
 		a.seller_id as "sellers.id",
@@ -207,7 +220,9 @@
 		cp.type AS "bizPoHeader.commonProcess.type",
 		bsp.po_sch_type AS "bizPoHeader.poSchType",
 		vendi.office_id AS "sellers.bizVendInfo.office.id",
-		vendi.vend_name AS "sellers.bizVendInfo.vendName"
+		vendi.vend_name AS "sellers.bizVendInfo.vendName",
+		seller.name AS "seller.name",
+		seller.phone AS "seller.phone"
 	</sql>
 
 	<!-- C端订单管理 -->
@@ -234,6 +249,7 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
+		a.commission_status AS "commissionStatus",
 		wxsu.name AS "customer.name",
 		su.name as "createBy.name",
 		suu.name as "updateBy.name",
@@ -269,6 +285,7 @@
 		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
 		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bph.current_payment_id
 		LEFT JOIN biz_order_logistics bol ON bol.order_id = a.id AND bol.status = 1 AND bol.logistic_status=1
+		LEFT JOIN  sys_office seller ON seller.id = a.seller_id
 	</sql>
 
 
@@ -333,6 +350,10 @@
 		si.id AS "orderDetailList.skuInfo.id",
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
 		si.item_no AS "orderDetailList.skuInfo.itemNo",
+		boss.id AS "orderDetailList.skuInfo.bizOpShelfSku.id",
+		boss.org_price AS "orderDetailList.skuInfo.bizOpShelfSku.orgPrice",
+		boss.sale_price AS "orderDetailList.skuInfo.bizOpShelfSku.salePrice",
+		boss.commission_ratio AS "orderDetailList.skuInfo.bizOpShelfSku.commissionRatio",
 		pi.vendor_name AS "orderDetailList.vendor.name",
 		bol.logistics_lines_code AS "bizOrderLogisticsList.logisticsLinesCode",
 		bol.stop_point_code AS "bizOrderLogisticsList.stopPointCode",
@@ -360,6 +381,7 @@
 			LEFT JOIN biz_drawback bd on bd.order_id = a.id
 		</if>
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
+		LEFT JOIN biz_op_shelf_sku boss ON boss.sku_id = si.id and boss.status=1
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
 		<!-- 供应商id -->
 		<if test="vendorId !=null and vendorId != ''">
@@ -445,6 +467,21 @@
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="commissionStatus != null and commissionStatus != ''">
+				AND commission_status = #{commissionStatus}
+			</if>
+			<if test="serllerName != null and serllerName !=''">
+				AND seller.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{serllerName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{serllerName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{serllerName},'%')</if>
+			</if>
+			<if test="serllerPhone != null and serllerPhone !=''">
+				AND seller.phone LIKE
+				<if test="dbName == 'oracle'">'%'||#{serllerPhone}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{serllerPhone}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{serllerPhone},'%')</if>
 			</if>
 			<if test="skuChickCount!=null and skuChickCount!=''">
 				AND (
@@ -597,6 +634,9 @@
 			</if>
 			<if test="vendorId !=null and vendorId != ''">
 				AND  sv.id = ${vendorId}
+			</if>
+			<if test="commissionStatus !=null">
+				AND  a.commission_status = ${commissionStatus}
 			</if>
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
@@ -1127,6 +1167,9 @@
 		biz_type = #{bizType},
 		plateform_id = #{platformInfo.id},
 		ship_to_addr = #{bizLocation.id},
+		<if test="commissionStatus != null and commissionStatus != ''">
+			commission_status = #{commissionStatus},
+		</if>
 		u_version = #{uVersion},
 		update_id = #{updateBy.id},
 		update_time = #{updateDate}

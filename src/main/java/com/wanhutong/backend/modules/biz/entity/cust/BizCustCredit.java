@@ -35,6 +35,16 @@ public class BizCustCredit extends DataEntity<BizCustCredit> {
 
 	private String CgsType;	//查询类型
 
+	/**
+	 * 待结佣金
+	 */
+	private BigDecimal commission;
+
+	/**
+	 * 累积获得佣金
+	 */
+	private BigDecimal commissioned;
+
 	public BizCustCredit() {
 		super();
 	}
@@ -121,5 +131,21 @@ public class BizCustCredit extends DataEntity<BizCustCredit> {
 
 	public void setCustFalg(String custFalg) {
 		this.custFalg = custFalg;
+	}
+
+	public BigDecimal getCommission() {
+		return commission;
+	}
+
+	public void setCommission(BigDecimal commission) {
+		this.commission = commission;
+	}
+
+	public BigDecimal getCommissioned() {
+		return commissioned;
+	}
+
+	public void setCommissioned(BigDecimal commissioned) {
+		this.commissioned = commissioned;
 	}
 }

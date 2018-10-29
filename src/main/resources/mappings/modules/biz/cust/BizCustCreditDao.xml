@@ -38,6 +38,8 @@
 		a.money AS "money",
 		a.ali_account AS "aliAccount",
 		a.ali_name AS "aliName",
+		a.commission AS "commission",
+		a.commissioned AS "commissioned",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -131,6 +133,12 @@
 		<if test="aliName!=null and aliName!=''">
 			ali_name,
 		</if>
+		<if test="commission!=null and commission!=''">
+			commission,
+		</if>
+		<if test="commissioned!=null and commissioned!=''">
+			commissioned,
+		</if>
 			status,
 			create_id,
 			create_time,
@@ -149,6 +157,12 @@
 		</if>
 		<if test="aliName!=null and aliName!=''">
 			#{aliName},
+		</if>
+		<if test="commission!=null and commission!=''">
+			#{commission},
+		</if>
+		<if test="commissioned!=null and commissioned!=''">
+			#{commissioned},
 		</if>
 			#{delFlag},
 			#{createBy.id},
@@ -174,6 +188,12 @@
 		</if>
 		<if test="aliName!=null and aliName!=''">
 			ali_name = #{aliName},
+		</if>
+		<if test="commission!=null and commission!=''">
+			commission = #{commission},
+		</if>
+		<if test="commissioned!=null and commissioned!=''">
+			commissioned= #{commissioned},
 		</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},

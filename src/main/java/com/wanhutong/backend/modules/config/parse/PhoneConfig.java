@@ -69,6 +69,10 @@ public class PhoneConfig extends ConfigGeneral {
         /**
          * 发货提醒异常
          */
-        DELIVER_EXCEPTION
+        DELIVER_EXCEPTION,
+        /**
+         * 佣金结算异常
+         */
+        SETTLEMENT_COMMISSION_EXCEPTION
     }
 }
