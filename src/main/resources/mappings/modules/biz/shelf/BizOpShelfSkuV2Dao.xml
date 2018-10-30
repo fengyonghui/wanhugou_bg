@@ -18,6 +18,7 @@
 		a.shelf_qty AS "shelfQty",
 		a.org_price AS "orgPrice",
 		a.sale_price AS "salePrice",
+		a.market_price AS "marketPrice",
 		a.min_qty AS "minQty",
 		a.max_qty AS "maxQty",
 		a.shelf_time AS "shelfTime",
@@ -32,6 +33,7 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
+		a.commission_ratio AS "commissionRatio",
 		su.name AS "updateBy.name",
 		bsi.name AS "skuInfo.name",
 		bsi.part_no AS "skuInfo.partNo",
@@ -211,6 +213,12 @@
 			shelf_qty,
 			org_price,
 			sale_price,
+			<if test="marketPrice != null and marketPrice != ''">
+				market_price,
+			</if>
+			<if test="commissionRatio != null and commissionRatio != ''">
+				commission_ratio,
+			</if>
 			min_qty,
 			max_qty,
 			shelf_time,
@@ -235,6 +243,12 @@
 			#{shelfQty},
 			#{orgPrice},
 			#{salePrice},
+			<if test="marketPrice != null and marketPrice != ''">
+				#{marketPrice},
+			</if>
+			<if test="commissionRatio != null and commissionRatio != ''">
+				#{commissionRatio},
+			</if>
 			#{minQty},
 			#{maxQty},
 			#{shelfTime},
@@ -264,6 +278,9 @@
 			shelf_qty = #{shelfQty},
 			org_price = #{orgPrice},
 			sale_price = #{salePrice},
+			<if test="marketPrice != null and marketPrice != ''">
+				market_price = #{marketPrice},
+			</if>
 			min_qty = #{minQty},
 			max_qty = #{maxQty},
 			shelf_time = #{shelfTime},
@@ -274,7 +291,8 @@
 			priority = #{priority},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+			update_time = #{updateDate},
+            commission_ratio = #{commissionRatio}
 		WHERE id = #{id}
 	</update>
 	
