@@ -30,7 +30,19 @@
                 success: function(res){
 					/*业务状态*/
 					var bizPoHeader = res.data.bizPoHeader;
-//					console.log(bizPoHeader)
+					//申请金额，最后付款时间显示
+					var bizPoPaymentOrderId = '';
+					if(bizPoHeader.bizPoPaymentOrder) {
+						bizPoPaymentOrderId = bizPoHeader.bizPoPaymentOrder.id;
+					}
+					if(bizPoPaymentOrderId != null || bizPoPaymentOrderId != '' || res.data.type == 'createPay') {
+						$('#orNumDate').show();
+						var orApplyNum = (bizPoPaymentOrderId != null || bizPoPaymentOrderId != '') ? bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal);
+						$('#orApplyNum').val(orApplyNum)//申请金额
+						$('#orNowDate').val(_this.formatDateTime(bizPoHeader.bizPoPaymentOrder.deadline))//本次申请付款时间
+					}else {
+						$('#orNumDate').hide();
+					}  
 					var orshouldPay = bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight
 					$('#orpoNum').val(res.data.bizOrderHeader.orderNumber)//单号
 					$('#ordtotal').val(bizPoHeader.totalDetail)//总价
