@@ -609,7 +609,7 @@
                         ${bizOrderDetail.suplyis.name}
                 </td>
                 <td>
-                        ${bizOrderDetail.salePrice}
+                        ${bizOrderDetail.unitPrice}
                 </td>
                 <td>
                         ${bizOrderDetail.detailCommission}
