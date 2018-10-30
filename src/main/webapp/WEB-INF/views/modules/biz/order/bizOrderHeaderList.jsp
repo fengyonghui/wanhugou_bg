@@ -12,49 +12,49 @@
 	<script type="text/javascript">
         <%--用于页面按下键盘Backspace键回退页面的问题--%>
         <%--处理键盘事件 禁止后退键（Backspace）密码或单行、多行文本框除外   --%>
-    function banBackSpace(e){
-        var ev = e || window.event;<%--获取event对象--%>
-        var obj = ev.target || ev.srcElement;<%--获取事件源--%>
-        var t = obj.type || obj.getAttribute('type');<%--获取事件源类型--%>
-        <%--获取作为判断条件的事件类型--%>
-        var vReadOnly = obj.getAttribute('readonly');
-        var vEnabled = obj.getAttribute('enabled');
-        <%--处理null值情况--%>
-        vReadOnly = (vReadOnly == null) ? false : vReadOnly;
-        vEnabled = (vEnabled == null) ? true : vEnabled;
-        <%--当敲Backspace键时，事件源类型为密码或单行、多行文本的--%>
-        <%--并且readonly属性为true或enabled属性为false的，则退格键失效--%>
-        var flag1=(ev.keyCode == 8 && (t=="password" || t=="text" || t=="textarea")
-        && (vReadOnly==true || vEnabled!=true))?true:false;
-        <%--当敲Backspace键时，事件源类型非密码或单行、多行文本的，则退格键失效--%>
-        var flag2=(ev.keyCode == 8 && t != "password" && t != "text" && t != "textarea")
-        ?true:false;
-        <%--判断--%>
+        function banBackSpace(e){
+            var ev = e || window.event;<%--获取event对象--%>
+            var obj = ev.target || ev.srcElement;<%--获取事件源--%>
+            var t = obj.type || obj.getAttribute('type');<%--获取事件源类型--%>
+            <%--获取作为判断条件的事件类型--%>
+            var vReadOnly = obj.getAttribute('readonly');
+            var vEnabled = obj.getAttribute('enabled');
+            <%--处理null值情况--%>
+            vReadOnly = (vReadOnly == null) ? false : vReadOnly;
+            vEnabled = (vEnabled == null) ? true : vEnabled;
+            <%--当敲Backspace键时，事件源类型为密码或单行、多行文本的--%>
+            <%--并且readonly属性为true或enabled属性为false的，则退格键失效--%>
+            var flag1=(ev.keyCode == 8 && (t=="password" || t=="text" || t=="textarea")
+                && (vReadOnly==true || vEnabled!=true))?true:false;
+            <%--当敲Backspace键时，事件源类型非密码或单行、多行文本的，则退格键失效--%>
+            var flag2=(ev.keyCode == 8 && t != "password" && t != "text" && t != "textarea")
+                ?true:false;
+            <%--判断--%>
             if(flag2){
                 return false;
             }
             if(flag1){
                 return false;
             }
-    }
+        }
         <%--禁止后退键 作用于Firefox、Opera--%>
         document.onkeypress=banBackSpace;
         <%--禁止后退键 作用于IE、Chrome--%>
         document.onkeydown=banBackSpace;
-    </script><%--用于键盘Bcackspace回退BUG问题--%>
+	</script><%--用于键盘Bcackspace回退BUG问题--%>
 	<script type="text/javascript">
-		$(document).ready(function() {
-			$("#buttonExport").click(function(){
-				top.$.jBox.confirm("确认要导出订单数据吗？","系统提示",function(v,h,f){
-					if(v=="ok"){
-						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/orderHeaderExport?statu=${statu}");
-						$("#searchForm").submit();
-						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader?statu=${statu}");
-					}
-				},{buttonsFocus:1});
-				top.$('.jbox-body .jbox-icon').css('top','55px');
-			});
-		});
+        $(document).ready(function() {
+            $("#buttonExport").click(function(){
+                top.$.jBox.confirm("确认要导出订单数据吗？","系统提示",function(v,h,f){
+                    if(v=="ok"){
+                        $("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/orderHeaderExport?statu=${statu}");
+                        $("#searchForm").submit();
+                        $("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader?statu=${statu}");
+                    }
+                },{buttonsFocus:1});
+                top.$('.jbox-body .jbox-icon').css('top','55px');
+            });
+        });
         function page(n,s,t){
             $("#pageNo").val(n);
             $("#pageSize").val(s);
@@ -181,18 +181,18 @@
 				   value="<fmt:formatDate value="${bizOrderHeader.orderCreatEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 		</li>
-        <li><label>客户专员：</label>
-            <form:input path="con.name" htmlEscape="false" maxlength="100" class="input-medium"/>
-        </li>
-        <li><label>更新日期：</label>
-            <input name="orderUpdaStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-                   value="<fmt:formatDate value="${bizOrderHeader.orderUpdaStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-            至
-            <input name="orderUpdaEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-                   value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-        </li>
+		<li><label>客户专员：</label>
+			<form:input path="con.name" htmlEscape="false" maxlength="100" class="input-medium"/>
+		</li>
+		<li><label>更新日期：</label>
+			<input name="orderUpdaStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+				   value="<fmt:formatDate value="${bizOrderHeader.orderUpdaStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+			至
+			<input name="orderUpdaEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+				   value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+		</li>
 		<li><label>待同意发货:</label>
 			<form:select path="mobileAuditStatus" class="input-medium">
 				<form:option value="">请选择</form:option>
@@ -279,7 +279,7 @@
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
 					<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}">
-							${orderHeader.orderNum}</a>
+								${orderHeader.orderNum}</a>
 					</c:if>
 					<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
 						<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}">
@@ -287,7 +287,7 @@
 					</c:if>
 					<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">
-							${orderHeader.orderNum}</a>
+								${orderHeader.orderNum}</a>
 					</c:if>
 					<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
 						<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">
@@ -299,8 +299,8 @@
 						<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">${orderHeader.orderNum}</a>
 					</c:if>
 					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
-					<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">
-							${orderHeader.orderNum}</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">
+								${orderHeader.orderNum}</a>
 					</c:if>
 				</c:if>
 			</td>
@@ -338,7 +338,7 @@
 			</font></td>
 			<c:if test="${source ne 'vendor'}">
 				<td>
-						<fmt:formatNumber type="number" value="${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}" pattern="0.00"/>
+					<fmt:formatNumber type="number" value="${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}" pattern="0.00"/>
 				</td>
 			</c:if>
 			<td>
@@ -368,8 +368,6 @@
 						<a style="display: none">
 							<fmt:formatNumber type="number" var="total" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee}" pattern="0.00"/>
 							<fmt:formatNumber type="number" var="receive" value="${orderHeader.receiveTotal + orderHeader.scoreMoney}" pattern="0.00"/>
-							${total}
-							${receive}
 						</a>
 						<c:if test="${total > receive && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=35 && orderHeader.bizStatus!=40 && orderHeader.bizStatus!=45 && orderHeader.bizStatus!=60}">
 							<font color="#FF0000">(有尾款)</font>
@@ -451,22 +449,22 @@
 							}">
 							<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 								<%--<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>
-									<c:if test="${orderHeader.suplys == 0 }">
-										<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
-									</c:if>
-									<c:if test="${orderHeader.suplys != 0 }">
-										<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
-									</c:if>
+								<c:if test="${orderHeader.suplys == 0 }">
+									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
+								</c:if>
+								<c:if test="${orderHeader.suplys != 0 }">
+									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
+								</c:if>
 								<%--</c:if>--%>
 							</c:if>
 						</c:if>
 					</shiro:hasPermission>
 					<%--<shiro:hasPermission name="biz:order:bizOrderHeader:supplying">--%>
-						<%--<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus <= OrderHeaderBizStatusEnum.STOCKING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">--%>
-							<%--<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">--%>
-								<%--<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>--%>
-							<%--</c:if>--%>
-						<%--</c:if>--%>
+					<%--<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus <= OrderHeaderBizStatusEnum.STOCKING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">--%>
+					<%--<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">--%>
+					<%--<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>--%>
+					<%--</c:if>--%>
+					<%--</c:if>--%>
 					<%--</shiro:hasPermission>--%>
 				</c:if >
 					<%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
@@ -556,9 +554,9 @@
 					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
 					<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">详情</a>
 					</c:if>
-					<%--<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15 && orderHeader.bizStatus!=45}">--%>
+						<%--<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15 && orderHeader.bizStatus!=45}">--%>
 						<%--${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}--%>
-					<%--</c:if>--%>
+						<%--</c:if>--%>
 					</shiro:hasPermission>
 					</c:when>
 					<c:otherwise>

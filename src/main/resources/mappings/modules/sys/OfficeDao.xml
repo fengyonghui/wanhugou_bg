@@ -37,21 +37,6 @@
 		bvi.bank_name AS "bizVendInfo.bankName",
 		bvi.payee AS "bizVendInfo.payee",
 		bvi.vend_name AS "bizVendInfo.vendName",
-		bci.id AS "bizCustomerInfo.id",
-		bci.office_id AS "bizCustomerInfo.officeId",
-		bci.bank_name AS "bizCustomerInfo.bankName",
-		bci.card_number AS "bizCustomerInfo.cardNumber",
-		bci.payee AS "bizCustomerInfo.payee",
-		bci.remark AS "bizCustomerInfo.remark",
-		cp.id AS "commonProcess.id",
-		cp.object_id AS "commonProcess.objectId",
-		cp.object_name AS "commonProcess.objectName",
-		cp.prev_id AS "commonProcess.prevId",
-		cp.biz_status AS "commonProcess.bizStatus",
-		cp.processor AS "commonProcess.processor",
-		cp.description AS "commonProcess.description",
-		cp.type AS "commonProcess.type",
-		cp.create_time AS "commonProcess.createTime",
 		pp.mobile AS "user.mobile"
 	</sql>
 
@@ -62,9 +47,7 @@
 		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
 		LEFT JOIN biz_custom_center_consultant ccc on a.id = ccc.cust_id
 		LEFT JOIN biz_vend_info bvi on a.id=bvi.office_id
-		LEFT JOIN biz_customer_info bci on a.id=bci.office_id
-		LEFT JOIN common_process cp on a.id=cp.object_id and cp.object_name = 'CUSTOMER_APPLY_LEVEL_OBJECT_NAME' and cp.current = 1
-    </sql>
+	</sql>
 
 	<select id="get" resultType="Office">
 		SELECT
@@ -223,87 +206,87 @@
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO sys_office(
-			id,
-			parent_id,
-			parent_ids,
-			area_id,
-			code,
-			name,
-			sort,
-			type,
-			grade,
-			address,
-			zip_code,
-			master,
-			phone,
-			fax,
-			email,
-			create_id,
-			create_date,
-			update_id,
-			update_date,
-			remarks,
-			status,
-			useable,
-			primary_person,
-			deputy_person
+		id,
+		parent_id,
+		parent_ids,
+		area_id,
+		code,
+		name,
+		sort,
+		type,
+		grade,
+		address,
+		zip_code,
+		master,
+		phone,
+		fax,
+		email,
+		create_id,
+		create_date,
+		update_id,
+		update_date,
+		remarks,
+		status,
+		useable,
+		primary_person,
+		deputy_person
 		) VALUES (
-			#{id},
-			#{parent.id},
-			#{parentIds},
-			#{area.id},
-			#{code},
-			#{name},
-			#{sort},
-			#{type},
-			#{grade},
-			#{address},
-			#{zipCode},
-			#{master},
-			#{phone},
-			#{fax},
-			#{email},
-			#{createBy.id},
-			#{createDate},
-			#{updateBy.id},
-			#{updateDate},
-			#{remarks},
-			#{delFlag},
-			#{useable},
-			#{primaryPerson.id},
-			#{deputyPerson.id}
+		#{id},
+		#{parent.id},
+		#{parentIds},
+		#{area.id},
+		#{code},
+		#{name},
+		#{sort},
+		#{type},
+		#{grade},
+		#{address},
+		#{zipCode},
+		#{master},
+		#{phone},
+		#{fax},
+		#{email},
+		#{createBy.id},
+		#{createDate},
+		#{updateBy.id},
+		#{updateDate},
+		#{remarks},
+		#{delFlag},
+		#{useable},
+		#{primaryPerson.id},
+		#{deputyPerson.id}
 		)
 	</insert>
 
 	<update id="update">
 		UPDATE sys_office SET
-			parent_id = #{parent.id},
-			parent_ids = #{parentIds},
-			area_id = #{area.id},
-			code = #{code},
-			name = #{name},
-			type = #{type},
-			grade = #{grade},
-			address = #{address},
-			zip_code = #{zipCode},
-			master = #{master},
-			phone = #{phone},
-			fax = #{fax},
-			email = #{email},
-			update_id = #{updateBy.id},
-			update_date = #{updateDate},
-			remarks = #{remarks},
-			useable=#{useable},
-			primary_person=#{primaryPerson.id},
-			deputy_person=#{deputyPerson.id}
+		parent_id = #{parent.id},
+		parent_ids = #{parentIds},
+		area_id = #{area.id},
+		code = #{code},
+		name = #{name},
+		type = #{type},
+		grade = #{grade},
+		address = #{address},
+		zip_code = #{zipCode},
+		master = #{master},
+		phone = #{phone},
+		fax = #{fax},
+		email = #{email},
+		update_id = #{updateBy.id},
+		update_date = #{updateDate},
+		remarks = #{remarks},
+		useable=#{useable},
+		primary_person=#{primaryPerson.id},
+		deputy_person=#{deputyPerson.id}
 		WHERE id = #{id}
 	</update>
 
 	<update id="updateParentIds">
 		UPDATE sys_office SET
-			parent_id = #{parent.id},
-			update_id = #{updateBy.id},
-			parent_ids = #{parentIds}
+		parent_id = #{parent.id},
+		update_id = #{updateBy.id},
+		parent_ids = #{parentIds}
 		WHERE id = #{id}
 	</update>
 
@@ -315,12 +298,6 @@
 		<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
 		<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
 		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
-	</update>
-
-	<update id="updateOfficeType">
-		UPDATE sys_office SET
-		type = #{type}
-		WHERE id = #{id}
 	</update>
 
 	<select id="queryList" resultType="Office">
@@ -395,9 +372,9 @@
 			<if test="dataStatus==null or  dataStatus==''">
 				AND  a.status = #{DEL_FLAG_NORMAL}
 			</if>
-            <if test="parentIds!=null and parentIds!=''">
-                AND a.parent_ids LIKE #{parentIds}
-            </if>
+			<if test="parentIds!=null and parentIds!=''">
+				AND a.parent_ids LIKE #{parentIds}
+			</if>
 			<if test="parentId != null and parentId != ''">
 				AND a.parent_id = #{parentId}
 			</if>
@@ -458,8 +435,8 @@
 		WHERE a.status = 1
 		AND a.type in
 		<foreach collection="typeList" item="i" index="index"
-		open="(" close=")" separator=",">
-		#{i}
+				 open="(" close=")" separator=",">
+			#{i}
 		</foreach>
 		AND NOT EXISTS(
 		select 1

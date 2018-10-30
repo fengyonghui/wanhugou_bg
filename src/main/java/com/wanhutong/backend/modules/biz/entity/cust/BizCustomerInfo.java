@@ -1,11 +1,8 @@
-package com.wanhutong.backend.modules.biz.entity.custom;
+package com.wanhutong.backend.modules.biz.entity.cust;
 
 /**
  * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
-import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.Length;
-
 import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**

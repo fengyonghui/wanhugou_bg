@@ -3,23 +3,17 @@
  */
 package com.wanhutong.backend.modules.process.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
-import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
-import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
-import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
-import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.*;
 import com.wanhutong.backend.modules.config.parse.Process;
-import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
-import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
-import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import javax.validation.constraints.NotNull;
 
-import com.wanhutong.backend.common.persistence.DataEntity;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * 通用流程Entity
@@ -27,7 +21,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
  * @version 2018-04-28
  */
 public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
-	
+
 	private static final long serialVersionUID = 1L;
 	public static final Integer CURRENT = 1;
 	public static final Integer NOT_CURRENT = 0;
@@ -75,7 +69,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
 	}
-	
+
 	@Length(min=1, max=32, message="object_name长度必须介于 1 和 32 之间")
 	public String getObjectName() {
 		return objectName;
@@ -93,7 +87,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	public void setPrevId(int prevId) {
 		this.prevId = prevId;
 	}
-	
+
 	@Length(min=1, max=4, message="处理结果 0:未处理 1:通过 2:驳回 长度必须介于 1 和 4 之间")
 	public int getBizStatus() {
 		return bizStatus;
@@ -102,7 +96,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	public void setBizStatus(int bizStatus) {
 		this.bizStatus = bizStatus;
 	}
-	
+
 	@Length(min=1, max=11, message="处理人长度必须介于 1 和 11 之间")
 	public String getProcessor() {
 		return processor;
@@ -111,7 +105,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	public void setProcessor(String processor) {
 		this.processor = processor;
 	}
-	
+
 	@Length(min=0, max=512, message="描述长度必须介于 0 和 512 之间")
 	public String getDescription() {
 		return description;
@@ -120,7 +114,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	@Length(min=1, max=11, message="类型, 对应JAVA中的枚举数据长度必须介于 1 和 11 之间")
 	public String getType() {
 		return type;
@@ -129,7 +123,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@NotNull(message="创建时间不能为空")
 	public Date getCreateTime() {
@@ -139,7 +133,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
-	
+
 	public CommonProcessEntity getPrevProcess() {
 		return prevProcess;
 	}
@@ -256,13 +250,6 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 
 		AuditType(int code) {
 			this.code = code;
-		}
-
-		public static AuditType parse(int code) {
-			if (code == 1) {
-				return PASS;
-			}
-			return REJECT;
 		}
 	}
 }

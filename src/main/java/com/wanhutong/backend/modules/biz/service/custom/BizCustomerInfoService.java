@@ -29,20 +29,20 @@ public class BizCustomerInfoService extends CrudService<BizCustomerInfoDao, BizC
 	public BizCustomerInfo get(Integer id) {
 		return super.get(id);
 	}
-	
+
 	public List<BizCustomerInfo> findList(BizCustomerInfo bizCustomerInfo) {
 		return super.findList(bizCustomerInfo);
 	}
-	
+
 	public Page<BizCustomerInfo> findPage(Page<BizCustomerInfo> page, BizCustomerInfo bizCustomerInfo) {
 		return super.findPage(page, bizCustomerInfo);
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void save(BizCustomerInfo bizCustomerInfo) {
 		super.save(bizCustomerInfo);
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void delete(BizCustomerInfo bizCustomerInfo) {
 		super.delete(bizCustomerInfo);
@@ -51,5 +51,5 @@ public class BizCustomerInfoService extends CrudService<BizCustomerInfoDao, BizC
 	public BizCustomerInfo getByOfficeId(Integer officeId) {
 		return bizCustomerInfoDao.getByOfficeId(officeId);
 	}
-	
+
 }
