@@ -55,6 +55,7 @@
 		&nbsp;&nbsp;示例：</br>
 		&nbsp;&nbsp;零售价90元；</br>
 		&nbsp;&nbsp;工厂价50元；</br>
+		&nbsp;&nbsp;佣金比例50%；</br>
 		&nbsp;&nbsp;佣金：（90-50）*50%=20元；
 	</div>
 
