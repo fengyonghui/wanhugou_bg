@@ -507,7 +507,7 @@
                     <%--</c:if>--%>
 
                     <c:if test="${entity.str == 'audit' && (type != 0 || type != 1)}">
-                        <c:if test="${entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && currentAuditStatus.type != 777 && currentAuditStatus.type != 666}">
+                        <c:if test="${(entity.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state || entity.orderType == BizOrderTypeEnum.COMMISSION_ORDER.state) && currentAuditStatus.type != 777 && currentAuditStatus.type != 666}">
                                 <input type="button" onclick="checkPass('JO')" class="btn btn-primary"
                                        value="通过"/>
                                 <input type="button" onclick="checkReject('JO')" class="btn btn-primary"

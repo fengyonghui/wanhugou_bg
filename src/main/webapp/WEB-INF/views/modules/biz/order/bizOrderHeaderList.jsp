@@ -396,8 +396,8 @@
 							</c:if>
 						</c:if>
 					</c:if>
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state &&
-				 orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+					<c:if test="${(orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state || orderHeader.orderType == BizOrderTypeEnum.COMMISSION_ORDER.state) &&
+				 			orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 						<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_LOCAL'}">
 							${orderHeader.commonProcess.jointOperationLocalProcess.name}
 						</c:if>
@@ -447,7 +447,7 @@
 							 	|| fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationOriginProcess)
 							 	 || fns:getUser().isAdmin())
 							}">
-							<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+							<c:if test="${(orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state || orderHeader.orderType == BizOrderTypeEnum.COMMISSION_ORDER.state) && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 								<%--<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>
 								<c:if test="${orderHeader.suplys == 0 }">
 									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
