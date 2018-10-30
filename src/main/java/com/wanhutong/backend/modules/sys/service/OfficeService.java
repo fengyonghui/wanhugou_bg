@@ -993,7 +993,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         commonProcessService.save(commonProcessEntity);
         switch (auditType) {
             case PASS:
-                //dao.updateOfficeType(id, applyForLevel);
+                dao.updateOfficeType(id, applyForLevel);
                 Office office = officeDao.get(id);
                 User primaryPerson = office.getPrimaryPerson();
                 UserUtils.clearCache(primaryPerson);
