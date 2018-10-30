@@ -225,7 +225,6 @@
 				success: function(res) {
 					console.log(res)
 					$.each(res.data.varietyInfoList, function(i, item) {
-//						console.log(item)
 						htmlClass += '<option class="soption" value="' + item.id + '">' + item.name + '</option>'
 					});
 					$('#input_div_class').html(optHtml+htmlClass)

@@ -2,6 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ProdTypeEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <html>
 <head>
     <title>订单详情管理</title>

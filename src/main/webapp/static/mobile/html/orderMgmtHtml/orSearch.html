@@ -7,27 +7,28 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<meta name="full-screen" content="yes">
 		<meta name="x5-fullscreen" content="true">
-		<title>订单查询</title>
+		<title>清单查询</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
-		<link href="../../css/app.css?time=20181008" rel="stylesheet" />
+		<link href="../../css/app.css?time=20181024" rel="stylesheet" />
 	</head>
 
 	<body>
 		<header class="header mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
-			<p class="app_cf app_nav_text_center">订单查询</p>
+			<p class="app_cf app_nav_text_center">清单查询</p>
 		</header>
 		<div class="mui-content">
 			<form class="mui-input-group">
 				<div class="mui-input-row">
 					<label>清单编号：</label>
-					<input type="text" class="inOrdNum" placeholder="请输入备货单号">
+					<input type="text" class="inOrdNum" placeholder="请输入清单编号">
 				</div>
 				<div class="mui-input-row">
 					<label>供应商：</label>
 					<div class="pre">
-						<input class="newinput" type="text" placeholder="请选择供应商" id="inSupply">
-						<span class="mui-icon mui-icon-closeempty hideSpan" id="hideSpanAdd"></span>
+						<input class="newinput mui-input-clear" type="text" placeholder="请选择供应商" id="inSupply">
+						<span class="mui-icon mui-icon-arrowup hideSpan app_cb3" id="hideSpanAdd"></span>
+						<span class="mui-icon mui-icon-arrowdown showSpan app_cb3" id="showSpanAdd"></span>
 						<div class="input_div" style="display: none;"></div>
 						<input class="savedata" type="hidden" value=''>
 					</div>
@@ -86,6 +87,16 @@
 					</div>
 				</div>
 				<div class="mui-input-row">
+					<label>可申请付款：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="apply_pay">
+							<option value="">请选择</option>
+							<option value="1">是</option>
+						</select>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+				<div class="mui-input-row">
 					<label>测试数据：</label>
 					<input type="checkbox" name="" id="testCheckbox" value="" class="testCheckbox"/>
 				</div>
@@ -97,7 +108,7 @@
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/orderMgmtJs/orSearch.js?time=20181009"></script>
+		<script src="../../js/orderMgmtJs/orSearch.js?time=20181023"></script>
 	</body>
 
 </html>

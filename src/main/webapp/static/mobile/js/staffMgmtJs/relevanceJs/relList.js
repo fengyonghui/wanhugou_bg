@@ -74,7 +74,8 @@
 						var arrLen = res.data.resultData.length;
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true)
-						}else{							
+						}else{	
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true)
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true)
 						}
                         if(arrLen > 0) {
