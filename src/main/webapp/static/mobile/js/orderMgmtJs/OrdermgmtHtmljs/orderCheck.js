@@ -409,7 +409,7 @@
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
 					var opShelfInfo = '';
-					if(data.orderType != data.pursehanger){
+					if(data.orderType != data.PURSEHANGER){
 						if(item.shelfInfo.opShelfInfo) {
 							opShelfInfo = item.shelfInfo.opShelfInfo.name
 						}else {

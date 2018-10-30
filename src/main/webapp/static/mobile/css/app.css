@@ -604,8 +604,9 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*模糊查询列表显示---查询页面和经销店添加公共样式*/
+/*background: url(./thumb.jpg) no-repeat scroll right center;*/
 .pre {margin-bottom: 0;padding-left: 0;float: right;width: 62%;}
-.newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;background: url(./thumb.jpg) no-repeat scroll right center;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
+.newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
 .input_div {width: 150px;border: 1px solid #ddd;border-bottom: none;border-radius: 0 0 3px 3px;display: none;}
 .hideSpan {position: absolute;right: 52px;top: 8px;border-radius: 13px;display: none;}
 .showSpan {position: absolute;right: 52px;top: 8px;border-radius: 13px;}
