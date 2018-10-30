@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true">
+		<title>确认排产</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/app.css?time=20181023" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="header mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">确认排产</p>
+		</header>
+		<div class="mui-content mui-input-group">
+			<div class="mui-input-row">
+				<label>订单/备货单号：</label>
+				<input type="text" id="schedOrdNum" disabled>
+			</div>
+			<div class="mui-input-row" id="orderTypebox">
+				<label>排产类型：</label>
+				<div id="changeTxt" class="labelri inStock">
+		    		按订单排产
+			        <input id="schedPlan1" type="radio" name="fromType" value="0" class="inputRadio" checked/>
+            		按商品排产
+			        <input id="schedPlan2" type="radio" name="fromType" value="1" class="inputRadio"/>
+		       </div>
+		    </div>
+	<!--按订单排产-->	    
+		    <div class="mui-input-row schedPurch app_bline2" id="schedPurch">
+		    	<div class="mui-input-row inComdty inDetailComdty">
+					<div class="labelLf">采购商品：</div>
+					<ul id="orSchedPurch" class="mui-table-view">
+						
+					</ul>									
+				</div>
+				<div class="labelLf">按订单排产：</div>
+				<div class="mui-row app_f13 app_bline2">
+					<div class="mui-input-row">
+						<label>总申报数量：</label>
+						<input type="text" id="totalOrdQty" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>总待确认量：</label>
+						<input type="text" id="totalSchedulingNumToDo" disabled>
+					</div>
+					<div class="mui-input-row">
+						<label>总已确认量：</label>
+						<input type="text" id="totalCompleteScheduHeaderNum" disabled>
+					</div>
+				</div>
+				<div class="mui-row" id="purhSched">
+					<div class="labelLf">申请记录：</div>
+					<div class="mui-row app_f13" id="purchSchedRecord">
+						
+					</div>
+				</div>
+			</div>
+	<!--按商品排产-->
+			<div class="mui-input-row schedCommd" id="schedCommd">
+				<div class="labelLf">按商品排产：</div>
+				<ul id="orSchedCommd" class="mui-table-view">
+					
+				</ul>
+			</div>
+		</div>	
+		<div class="inSaveBtn">
+			<button id="completeBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">确认</button>
+			<div id="totalCompleteAlert" class="app_cred3 app_text_center app_none">已全部确认</div>
+		</div>
+		<input id="poHeaderId" type="hidden"/>
+		<input id="bizReqReqNo" type="hidden"/>
+		<input id="bizReqReqNo" type="hidden"/>
+		<script src="../../js/component/zepto.min.js"></script>
+		<script src="../../js/component/mui.min.js"></script>
+		<script src="../../js/component/GHutils.js"></script>
+		<script src="../../js/orderMgmtJs/affirmScheduling.js?time=20181024"></script>
+	</body>
+</html>

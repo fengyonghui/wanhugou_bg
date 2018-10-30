@@ -4,7 +4,7 @@
 package com.wanhutong.backend.modules.sys.entity;
 
 import com.wanhutong.backend.common.persistence.TreeEntity;
-import com.wanhutong.backend.modules.biz.entity.cust.BizCustomerInfo;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;

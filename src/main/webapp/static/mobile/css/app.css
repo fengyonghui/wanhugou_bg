@@ -147,6 +147,7 @@ input, select, textarea{font-size: 15px;}
 .app_rline2{border-right: 1px solid rgba(255,255,255,.5);}
 
 .app_bline3{border-bottom: 1px solid #efeff4;}
+.app_bline4{border-top: 5px solid #efeff4;}
 /*背景色*/
 .footClass {background-color: #40ABE9;}
 .app_bgf{background-color: #fff}
@@ -603,10 +604,12 @@ body{font-size: 15px;color:#3b3b3b;}
 
 
 /*模糊查询列表显示---查询页面和经销店添加公共样式*/
+/*background: url(./thumb.jpg) no-repeat scroll right center;*/
 .pre {margin-bottom: 0;padding-left: 0;float: right;width: 62%;}
-.newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;background: url(./thumb.jpg) no-repeat scroll right center;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
+.newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
 .input_div {width: 150px;border: 1px solid #ddd;border-bottom: none;border-radius: 0 0 3px 3px;display: none;}
-.hideSpan {position: absolute;right: 52px;top: 7px;border: 1px solid rgb(204, 204, 204);border-radius: 13px;display: none;}
+.hideSpan {position: absolute;right: 52px;top: 8px;border-radius: 13px;display: none;}
+.showSpan {position: absolute;right: 52px;top: 8px;border-radius: 13px;}
 .secStyle {margin: 5px 0;} 
 .newinput:focus {cursor: text;}
 .soption {display: block;padding: 2px 5px;}
@@ -623,7 +626,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .app_btn_search:active {color: #fff;border: 1px solid #046d90;background-color: #007aff !important;}
 /*备货单保存按钮*/
 .inSaveBtn {width: 70%;margin: 20px auto;}
-
+.secSaveBtn {width: 50%;margin: 8px auto;}
 /*移除、添加、删除---小按钮*/
 .inAddBtn {font-size: 15px;padding: 0;width: 30%;margin: 5px auto;}
 /*查询小按钮--备货单添加、修改  和  经销店添加*/
@@ -631,6 +634,9 @@ body{font-size: 15px;color:#3b3b3b;}
 /*按商品排产---一行两个按钮*/
 .schedull {font-size: 15px;padding: 0;width: 30%;margin: 5px 0 5px 50px;float: left;}
 .schedulr {font-size: 15px;padding: 0;width: 30%;margin: 5px 50px 5px 0;float: right;}
+/*确认排产*/
+.alleryAffirm {width: 20%;float: right;position: relative;top: 28px;text-align: center;}
+
 
 /*======订单管理=======*/
 /*订单支出列表---排产*/
@@ -709,6 +715,14 @@ body{font-size: 15px;color:#3b3b3b;}
 /*订单详情---产品信息--- 一列样式:*/
 .commodity div.lineStyle label {width:20%}
 .commodity div.lineStyle input {width:80%}
+#foot{display: flex;}
+#foot div{flex: 7;}
+/*订单管理--备注:*/
+.mui-input-row .staPoRemark{border: 1px solid #ccc;margin:5px 5px 5px -5px;border-radius: 5px;width:45%;float:left;overflow: auto;height:80px}
+.step_items {margin: 4px;margin-top: 0;font-size: 12px;border-bottom: 1px solid #ccc;color:#000;}
+.app_bline4 .mui-row label{width:100px;display:inline-block;float:left;}
+.app_bline4 .mui-row input{width:60px;display:inline-block;float:left;}
+.app_bline4 .mui-row #scolor{color:#E45038;width:100px;}
 /*进展信息*/
 .nextTxt01 {top: 17px;left: 88px;}
 .nextTxt02 {top: 6px;left: 87px;}

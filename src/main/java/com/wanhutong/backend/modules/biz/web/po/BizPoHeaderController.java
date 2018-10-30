@@ -633,6 +633,8 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeaderMap.put("id", bizPoHeader.getId());
         bizPoHeaderMap.put("orderNumber", bizPoHeader.getOrderNum());
         bizPoHeaderMap.put("totalDetail", bizPoHeader.getTotalDetail());
+        bizPoHeaderMap.put("totalExp", bizPoHeader.getTotalExp());
+        bizPoHeaderMap.put("freight", bizPoHeader.getFreight());
         bizPoHeaderMap.put("total", bizPoHeader.getTotalDetail() + bizPoHeader.getTotalExp() + bizPoHeader.getFreight());
         bizPoHeaderMap.put("lastPayDate", bizPoHeader.getLastPayDate());
         bizPoHeaderMap.put("deliveryStatus", bizPoHeader.getDeliveryStatus());
@@ -642,6 +644,9 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeaderMap.put("vendOffice", bizPoHeader.getVendOffice());
         bizPoHeaderMap.put("process", bizPoHeader.getCommonProcess());
         bizPoHeaderMap.put("commonProcessList", bizPoHeader.getCommonProcessList());
+        bizPoHeaderMap.put("poDetailList", bizPoHeader.getPoDetailList());
+        bizPoHeaderMap.put("bizPoPaymentOrder", bizPoHeader.getBizPoPaymentOrder());
+
 
         Map<String, Object> bizOrderHeaderMap = Maps.newHashMap();
         bizOrderHeaderMap.put("id",bizOrderHeader == null ? StringUtils.EMPTY : bizOrderHeader.getId());
@@ -802,6 +807,25 @@ public class BizPoHeaderController extends BaseController {
 
         addMessage(redirectAttributes, "保存采购订单成功");
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "savePoHeader4Mobile")
+    @ResponseBody
+    public String savePoHeader4Mobile(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
+        if ("createPay".equalsIgnoreCase(type)) {
+            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
+            addMessage(redirectAttributes, msg);
+            return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
+        }
+
+        if (!beanValidator(model, bizPoHeader)) {
+            return form(bizPoHeader, model, prewStatus, null);
+        }
+        bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
+        bizPoHeaderService.savePoHeader(bizPoHeader);
+
+        return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:edit")
@@ -1109,6 +1133,14 @@ public class BizPoHeaderController extends BaseController {
         return "取消采购订单成功";
     }
 
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "cancel4Mobile")
+    @ResponseBody
+    public String cancel4Mobile(int id, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        bizPoHeaderService.updateBizStatus(id, BizPoHeader.BizStatus.CANCEL);
+        bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), id);
+        return JsonUtil.generateData(Pair.of(true, "取消采购订单成功!"), null);
+    }
 
     @RequestMapping(value = "scheduling")
     public String scheduling(HttpServletRequest request, BizPoHeader bizPoHeader, Model model, String prewStatus, String type) {
@@ -1667,5 +1699,48 @@ public class BizPoHeaderController extends BaseController {
         }
 
         return resultFlag;
+    }
+
+    @RequestMapping(value = "confirm4Mobile")
+    @ResponseBody
+    public String confirm4Mobile(HttpServletRequest request, @RequestBody String params, Integer poHeaderId) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        Boolean resultFlag = false;
+        JSONArray jsonArray = JSONArray.fromObject(params);
+        System.out.println(jsonArray);
+        //备货单号
+        String reqNo = (String) jsonArray.get(0);
+
+        List<String> paramList = Lists.newArrayList();
+        for (int i = 1; i < jsonArray.size(); i++) {
+            Object item = jsonArray.get(i);
+            paramList.add(String.valueOf(item));
+        }
+        try {
+            bizCompletePalnService.batchUpdateCompleteStatus(paramList, poHeaderId);
+            resultFlag = true;
+
+//				//供应商已确认排产，发短息通知采销部经理
+//			List<User> userList = systemService.findUserByRoleEnName(MARKETING_MANAGER);
+//			if (!CollectionUtils.isEmpty(userList)) {
+//				String reqNo_1 = reqNo.substring(0,11);
+//				String reqNo_2 = reqNo.substring(11);
+//				StringBuilder phones = new StringBuilder();
+//				for (User user : userList) {
+//					if (StringUtils.isNotBlank(user.getMobile())) {
+//						phones.append(user.getMobile()).append(",");
+//					}
+//				}
+//				AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.COMPLETE_SCHEDULING.getCode(), phones.toString(), ImmutableMap.of("order", "备货单", "reqNo_1", reqNo_1, "reqNo_2", reqNo_2));
+//			}
+
+
+        } catch (Exception e) {
+            resultFlag = false;
+            logger.error(e.getMessage());
+        }
+
+        resultMap.put("resultFlag", resultFlag);
+        return JsonUtil.generateData(resultMap, request.getParameter("callback"));
     }
 }

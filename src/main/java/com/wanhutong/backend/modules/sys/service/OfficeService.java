@@ -15,6 +15,8 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
+import com.wanhutong.backend.modules.biz.entity.dto.OfficeLevelApplyDto;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
@@ -70,8 +72,6 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     private OfficeDao officeDao;
     @Autowired
     private BizCustCreditService bizCustCreditService;
-    @Autowired
-    private BizCustomCenterConsultantDao bizCustomCenterConsultantDao;
     @Autowired
     private CommonLocationService commonLocationService;
     @Autowired
@@ -1022,6 +1022,37 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
             default:
                 break;
         }
+        return Pair.of(Boolean.TRUE, "操作成功!");
+
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Pair<Boolean, String> officeTypeApply(Office office, OfficeLevelApplyDto officeLevelApplyDto) {
+        BizCustomerInfo bizCustomerInfo = office.getBizCustomerInfo();
+        if (bizCustomerInfo == null) {
+            bizCustomerInfo = new BizCustomerInfo();
+        }
+
+        bizCustomerInfo.setOfficeId(office.getId());
+        bizCustomerInfo.setBankName(officeLevelApplyDto.getDepositBank());
+        bizCustomerInfo.setPayee(officeLevelApplyDto.getRealName());
+        bizCustomerInfo.setCardNumber(officeLevelApplyDto.getBankCardNumber());
+        bizCustomerInfo.setIdCardNumber(officeLevelApplyDto.getIdCardNumber());
+        bizCustomerInfoService.save(bizCustomerInfo);
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+        commonProcessEntity.setObjectId(String.valueOf(office.getId()));
+        commonProcessEntity.setCurrent(1);
+
+        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+        if (CollectionUtils.isNotEmpty(list)) {
+            return Pair.of(Boolean.FALSE, "重复申请!");
+        }
+
+        commonProcessEntity.setType(officeLevelApplyDto.getApplyLevel().toString());
+        commonProcessService.save(commonProcessEntity);
+
         return Pair.of(Boolean.TRUE, "操作成功!");
 
     }

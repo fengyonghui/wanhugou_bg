@@ -708,6 +708,7 @@ public class BizPoHeaderReqController extends BaseController {
 
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "savePoHeader4Mobile")
+    @ResponseBody
     public String savePoHeader4Mobile(HttpServletRequest request, BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
         Map<String, Object> resultMap = Maps.newHashMap();
         String paymentApplyRemark = request.getParameter("paymentApplyRemark");

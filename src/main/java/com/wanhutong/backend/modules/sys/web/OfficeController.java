@@ -19,7 +19,6 @@ import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
-import com.wanhutong.backend.modules.biz.entity.roleapply.BizRoleApply;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.chat.BizChatRecordService;
@@ -27,7 +26,6 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomerInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
-import com.wanhutong.backend.modules.biz.service.roleapply.BizRoleApplyService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
@@ -109,8 +107,6 @@ public class OfficeController extends BaseController {
     private CommonImgService commonImgService;
     @Autowired
     private CommonProcessService commonProcessService;
-    @Autowired
-    private BizRoleApplyService bizRoleApplyService;
 
 
     @ModelAttribute("office")
@@ -232,17 +228,6 @@ public class OfficeController extends BaseController {
         commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
         commonProcessEntity.setObjectId(String.valueOf(office.getId()));
         List<CommonProcessEntity> processList = commonProcessService.findList(commonProcessEntity);
-
-        //审核完成之后，更新零售申请表中applyStatus
-        if (StringUtils.isNotBlank(option) && "upgradeAudit".equals(option)) {
-            Integer officeId = office.getId();
-            List<BizRoleApply> roleApplyList = bizRoleApplyService.getByOfficeId(officeId);
-            if (CollectionUtils.isNotEmpty(roleApplyList)) {
-                BizRoleApply bizRoleApply = roleApplyList.get(0);
-                bizRoleApply.setApplyStatus(Integer.valueOf(1));
-                bizRoleApplyService.save(bizRoleApply);
-            }
-        }
 
         model.addAttribute("office", office);
         model.addAttribute("option", option);

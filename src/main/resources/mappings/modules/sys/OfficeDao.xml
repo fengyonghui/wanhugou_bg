@@ -43,6 +43,7 @@
 		bci.card_number AS "bizCustomerInfo.cardNumber",
 		bci.payee AS "bizCustomerInfo.payee",
 		bci.remark AS "bizCustomerInfo.remark",
+		bci.id_card_number AS "bizCustomerInfo.idCardNumber",
 		cp.id AS "commonProcess.id",
 		cp.object_id AS "commonProcess.objectId",
 		cp.object_name AS "commonProcess.objectName",

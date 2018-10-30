@@ -9,17 +9,18 @@
 //		this.cancelFlag = "false"
 		this.editFlag = "false"
 		this.checkFlag = "false"
+		this.affirmFlag = false
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			this.getPermissionList('biz:po:sure:bizPoPaymentOrder','PaymentFlag')
-			this.getPermissionList2('biz:po:bizpopaymentorder:bizPoPaymentOrder:edit','editFlag')
 			this.getPermissionList1('biz:po:bizpopaymentorder:bizPoPaymentOrder:audit','checkFlag')
+			this.getPermissionList2('biz:po:bizpopaymentorder:bizPoPaymentOrder:edit','editFlag')
+			this.getPermissionList3('biz:po:payment:sure:pay','affirmFlag')
 //			if(this.userInfo.isFunc){
 //				this.seachFunc()
 //			}else{
-				
 				this.pageInit(); //页面初始化
                 this.removeBtn();
 //			}
@@ -47,20 +48,27 @@
 			            contentdown : "",
 			            contentover : "",
 			            contentrefresh : "正在加载...",
-			            callback :function(){ 
+			            callback :function(){
+			            	var fromPage = _this.userInfo.fromPage;
 			            	pager['size']= 20;
 		                    pager['pageNo'] = 1;
-			                    pager['poId'] = _this.userInfo.staOrdId;
-			                    pager['type'] = 1;
-			                    pager['fromPage'] = 'requestHeader';
-			                    pager['orderId'] = _this.userInfo.orderId;
-				                var f = document.getElementById("payApplyList");
-				                var childs = f.childNodes;
-				                for(var i = childs.length - 1; i >= 0; i--) {
-				                    f.removeChild(childs[i]);
-				                }
-				                $('.mui-pull-caption-down').html('');				                
-				                getData(pager);
+		                    pager['poId'] = _this.userInfo.staOrdId;
+		                    pager['type'] = 1;
+		                    if(fromPage == 'requestHeader') {
+		                    	pager['fromPage'] = fromPage;
+		                    	pager['orderId'] = _this.userInfo.staInvenId;
+		                    }
+		                    if(fromPage == 'orderHeader') {
+		                    	pager['fromPage'] = fromPage;
+		                    	pager['orderId'] = _this.userInfo.staOrderId;
+		                    }
+			                var f = document.getElementById("payApplyList");
+			                var childs = f.childNodes;
+			                for(var i = childs.length - 1; i >= 0; i--) {
+			                    f.removeChild(childs[i]);
+			                }
+			                $('.mui-pull-caption-down').html('');				                
+			                getData(pager);
 			            }
 			        }
 			    })
@@ -74,18 +82,18 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		          	    console.log(res)
+//		          	    console.log(res)
 			            var returnData = res.data.page.list;
 			            var dataRow = res.data.roleSet;
 						var arrLen = res.data.page.list.length; 
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}else{
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						}
                         if(arrLen > 0) {
 							$.each(returnData, function(i, item) {
-								console.log(item)
 								//当前状态
 								var nowbizStatus="";
 								var nowbizStatus="";
@@ -104,15 +112,23 @@
 								//操作确认支付金额
 								var inPay ="";								
 								var inPayBtn="";
-								if(_this.PaymentFlag ==true){
+//								console.log(_this.PaymentFlag)
+//								console.log(res.data.fromPage)
+//								console.log(item.total)
+								if(_this.PaymentFlag == true){
 									if(res.data.fromPage == 'requestHeader' && item.total == '0.00' && (res.data.requestHeader == null || res.data.requestHeader.bizStatus < res.data.CLOSE)){
 										inPay = '确认支付金额';
+										inPayBtn = 'inPayBtn';
+									}
+									if(res.data.fromPage == 'orderHeader' && item.total == '0.00') {
+										inPay = '确认支付金额';
+										inPayBtn = 'inPayBtn';
 									}
 								}
 								//操作审核
 								var inCheck ="";
 								var inChecks ="";
-								if(_this.checkFlag ==true){	
+								if(_this.checkFlag == true){	
 									if(item.total != '0.00'){
 										console.log(item.commonProcess.paymentOrderProcess.name)
 										if(item.id == res.data.bizPoHeader.bizPoPaymentOrder.id && item.commonProcess.paymentOrderProcess.name != '审批完成' && item.total != 0){
@@ -120,6 +136,37 @@
 											inChecks ="审核驳回";
 										}
 									}
+								}
+//								var affirmBtn = '';
+//								var affirmBtnTxt = '';
+//								if(_this.editFlag == true) {
+//									if(_this.affirmFlag == true) {
+//										if(item.orderType == res.data.PO_TYPE   /*PO_TYPE=1*/
+//										&& item.id == res.data.bizPoHeader.bizPoPaymentOrder.id
+//										&& item.commonProcess.paymentOrderProcess.name == '审批完成'
+//										&& res.data.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成') {
+//											if(res.data.fromPage != null && res.data.fromPage == 'requestHeader') {
+//												affirmBtnTxt = '确认付款';
+//												affirmBtn = 'affirmBtn';
+//											}
+//											if(res.data.fromPage != null && res.data.fromPage == 'orderHeader') {
+//												affirmBtnTxt = '确认付款';
+//												affirmBtn = 'affirmBtn';
+//											}
+//											if(res.data.fromPage == null) {
+//												affirmBtnTxt = '确认付款';
+//												affirmBtn = 'affirmBtn';
+//											}
+//										}
+//									}
+//								}
+								//单次支付审批状态
+								var paymentOrderProcess="";
+								if(item.total == '0.00' && item.commonProcess.paymentOrderProcess.name != '审批完成'){
+									paymentOrderProcess="待确认支付金额";
+								}
+								if(item.total != '0.00'){
+									paymentOrderProcess=item.commonProcess.paymentOrderProcess.name
 								}
 								var mt = item;
 								inPayHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
@@ -149,7 +196,7 @@
 									'</div>' +
 									'<div class="mui-input-row">' +
 										'<label>单次支付审批状态:</label>' +
-										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.commonProcess.paymentOrderProcess.name+' ">' +
+										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+paymentOrderProcess+' ">' +
 									'</div>' +
 									'<div class="mui-input-row">' +
 										'<label>备注:</label>' +
@@ -161,10 +208,15 @@
 										'</div>' +
 									'</div>' +
 									'<div class="app_color40 mui-row app_text_center operation">' +
-										'<div class="inPayBtn" inListId="'+ item.id +'">' +
+										'<div class="'+inPayBtn+'" inListId="'+ item.id +'" fromPage="'+ res.data.fromPage +'">' +
 											'<div class="" >'+inPay+'</div>' +
 										'</div>' +
 									'</div>' +
+//									'<div class="app_color40 mui-row app_text_center operation">' +
+//										'<div class="'+affirmBtn+'" inListId="'+ item.id +'">' +
+//											'<div class="" >'+affirmBtnTxt+'</div>' +
+//										'</div>' +
+//									'</div>' +
 									'<div class="app_color40 mui-row app_text_center operation">' +
 										'<div class="mui-col-xs-6 inCheckBtn" id="inCheckBtn" inListId="'+ item.id +'" curType="'+ item.commonProcess.paymentOrderProcess.code +'" total="'+ item.total +'" orderType="'+ item.orderType +'">' +
 											'<div class="">'+inCheck+'</div>' +
@@ -219,7 +271,7 @@
                 async:false,
                 success: function(res){
                     _this.PaymentFlag = res.data;
-                    console.log(_this.PaymentFlag)
+//                  console.log(_this.PaymentFlag)
                 }
             });
         },
@@ -233,7 +285,7 @@
                 async:false,
                 success: function(res){
                     _this.checkFlag = res.data;
-                    console.log(_this.checkFlag)
+//                  console.log(_this.checkFlag)
                 }
             });
         },
@@ -247,26 +299,40 @@
                 async:false,
                 success: function(res){
                     _this.editFlag = res.data;
-                    console.log(_this.editFlag)
+//                  console.log(_this.editFlag)
+                }
+            });
+        },
+        getPermissionList3: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.affirmFlag = res.data;
+//                  console.log(_this.affirmFlag)
                 }
             });
         },
         removeBtn:function(){
         	$('#payBtnremove').on('tap',  function() {
-        		$('.payMoney').hide();
+        		$('#tanchuang_pay').hide();
         	})
         },
         comfirDialig: function() {
 			var _this = this;
 			document.getElementById("inCheckBtns").addEventListener('tap', function() {
 				var inListId = $(this).attr('inlistid');
-				console.log(inListId);
+//				console.log(inListId);
 				var auditType= $(this).attr('ordertype');
-				console.log(auditType);
+//				console.log(auditType);
 				var money= $(this).attr('total');
-				console.log(money);
+//				console.log(money);
 				var currentType= $(this).attr('curtype');
-				console.log(currentType);
+//				console.log(currentType);
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
@@ -287,13 +353,13 @@
 			document.getElementById("inCheckBtn").addEventListener('tap', function(e) {
 				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了                
 				var inListId = $(this).attr('inlistid');
-				console.log(inListId)
+//				console.log(inListId)
 				var auditType= $(this).attr('ordertype');
-				console.log(auditType);
+//				console.log(auditType);
 				var money= $(this).attr('total');
-				console.log(money);
+//				console.log(money);
 				var currentType= $(this).attr('curtype');
-				console.log(currentType);
+//				console.log(currentType);
 				var btnArray = ['取消', '确定'];
 				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
 					if(e.index == 1) {
@@ -328,7 +394,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret == true) {
 						mui.toast(res.data.right);
 						window.setTimeout(function(){
@@ -382,26 +448,28 @@
 		inHrefHtml: function() {
 			var _this = this;
 			_this.comfirDialig();
-		/*	确认支付金额*/
+		    /*确认支付金额*/
 			$('#payApplyList').on('tap', '.inPayBtn', function() {
-				$('.payMoney').show();
+				$('#tanchuang_pay').show();
 				var inListId = $(this).attr('inListId');
-				console.log(inListId)
-				console.log(_this.userInfo.staOrdId)
+//				console.log(inListId)
+				var frompage = $(this).attr('frompage');
+//				console.log(frompage)
+//				console.log(_this.userInfo.staOrdId)
 				$.ajax({
 	                type: "GET",
 	                url: "/a/biz/po/bizPoPaymentOrder/form4Mobile",
 	                dataType: "json",
-	                data: {id:inListId,poHeaderId:_this.userInfo.staOrdId,fromPage:'requestHeader'},
+	                data: {id:inListId,poHeaderId:_this.userInfo.staOrdId,fromPage:frompage},
 	                async:false,
 	                success: function(res){
-	                    console.log(res);
+//	                    console.log(res);
 	                    var resid=res.data.bizPoPaymentOrder.id;
 	                    var poHeaderIds=res.data.bizPoPaymentOrder.poHeaderId;
 	                     var orderTypes=res.data.bizPoPaymentOrder.orderType;
 	                    $('#totalMoney').val(res.data.totalDetailResult);
 	                    $('#paymoney').val(res.data.bizPoPaymentOrder.total);
-	                    if(_this.editFlag){
+	                    if(_this.editFlag==true){
 	                    	$('.btnbox').show();
 	                    }
 	                    $('#payBtnsave').on('tap',function(){
@@ -419,11 +487,10 @@
 				                success: function(res){				                   
 				                    if(res.data.result==true){
 				                    	mui.toast('保存成功！！');
-				                    	$('.payMoney').hide();
+				                    	$('#tanchuang_pay').hide();
 				                    	window.setTimeout(function(){
 						                    _this.pageInit();
 						                },800);
-				                    	
 				                    }else{
 				                    	mui.toast('保存失败！！');
 				                    }

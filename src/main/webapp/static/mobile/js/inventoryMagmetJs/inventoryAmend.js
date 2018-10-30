@@ -97,10 +97,13 @@
 	        }
 	        var btnMeun = '';
 	        if(strs == 'createPay') {
+	        	$('#changeHeader').html('申请付款');
 	        	btnMeun = '<button id="payMentBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">申请付款</button>'
 	        }else if(strs == 'startAudit') {
+	        	$('#changeHeader').html('开启审核');
 	        	btnMeun = '<button id="startCheckBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">开启审核</button>'
 	        }else {
+	        	$('#changeHeader').html('备货单修改');
 	        	btnMeun = '<button id="saveDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
 	        }
 	        $('.inSaveBtn').html(btnMeun);
@@ -110,6 +113,7 @@
                 data: {id:ids,str:strs},
                 dataType: "json",
                 success: function(res){
+//              	console.log(res)
                 	//支付申请
                 	var strTxt = res.data.bizRequestHeader.str;
                 	var payMentCont = '';
@@ -138,11 +142,18 @@
 					    $('#insuppliercardID').parent().hide();//供应商身份证
                 	}     
                 	//备货方
-					if(res.data.bizRequestHeader.fromType==1){
+                	var fromType = '';
+                	if(res.data.bizRequestHeader) {
+                		fromType = res.data.bizRequestHeader.fromType;
+                	}
+                	if(strs == 'createPay') {//申请付款
+                		$('input[name="fromType"]').attr('disabled','disabled');
+			        }
+					if(fromType==1){
 						$('#fromType1').attr('checked','checked');
 						$('#fromType2').removeAttr('checked');
 					}
-					if(res.data.bizRequestHeader.fromType==2){
+					if(fromType==2){
 						$('#fromType1').removeAttr('checked');
 						$('#fromType2').attr('checked','checked');						
 					}
@@ -254,7 +265,7 @@
 	                        return;
 	                    }
 	                    reqQtysTemp += "," + reqQty;
-	              }
+	                }
 	                _this.reqQtys_2 = reqQtysTemp.substring(1);
 	                skuInfoIds = _this.skuInfoIds_1 + _this.skuInfoIds_2;
                     reqQtys = _this.reqQtys_1 + _this.reqQtys_2;
@@ -277,10 +288,8 @@
 	               })
 	            	skuInfoIds=skuInfoId.substring(1);
 	            	reqQtys=reqQty.substring(1);	              
-               }  
-                console.log(_this.reqDetailIds)
+               }    
                 _this.reqDetailIds = _this.reqDetailIds.substring(0,(_this.reqDetailIds.lastIndexOf(",")));
-                console.log(_this.reqDetailIds)
                 _this.LineNos = _this.LineNos.substring(0,(_this.LineNos.lastIndexOf(",")));
                 var inPoLastDaVal = $("#inPoLastDa").val(); //期望收货时间
                 var inPoRemarkVal = $("#inPoRemark").val(); //备注
@@ -306,7 +315,7 @@
                 if(bizTypeVal == null || bizTypeVal == "") {
                     mui.toast("请选择备货单类型！")
                     return;
-                } 
+                }
                 if(_this.fromOfficeId == null || _this.fromOfficeId == ""){
                     mui.toast("请选择采购中心！")
                     return;
@@ -634,7 +643,7 @@
 					$.each(res, function(i, item) {
 						htmlStatusAdd += '<option class="soption" createDate="' + item.createDate + '" description="' + item.description + '" id="' + item.id + '" isNewRecord="' + item.isNewRecord + '"  sort="' + item.sort + '" value="' + item.value + '">' + item.label + '</option>'
 					});
-					$('#headerType').html(optHtml+htmlStatusAdd)					
+					$('#headerType').html(optHtml+htmlStatusAdd)
 				}
 			});
 		},

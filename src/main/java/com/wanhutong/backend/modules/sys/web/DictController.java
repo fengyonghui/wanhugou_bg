@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -94,7 +96,7 @@ public class DictController extends BaseController {
 		dictService.save(dict);
 		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
 	}
-	
+
 	@RequiresPermissions("sys:dict:edit")
 	@RequestMapping(value = "delete")
 	public String delete(Dict dict, RedirectAttributes redirectAttributes) {
@@ -145,4 +147,20 @@ public class DictController extends BaseController {
 		}
 		return "modules/sys/commissionRatio";
 	}
+	@ResponseBody
+	@RequestMapping(value = "getDictLabel4Mobile")
+	public static String getDictLabel4Mobile(String value, String type, String defaultValue){
+		Map<String, Object> resultMap = Maps.newHashMap();
+		if (org.apache.commons.lang3.StringUtils.isNotBlank(type) && org.apache.commons.lang3.StringUtils.isNotBlank(value)){
+			for (Dict dict : DictUtils.getDictList(type)){
+				if (type.equals(dict.getType()) && value.equals(dict.getValue())){
+					resultMap.put("dictLabel", dict.getLabel());
+					return JsonUtil.generateData(resultMap, null);
+				}
+			}
+		}
+		resultMap.put("dictLabel", defaultValue);
+		return JsonUtil.generateData(resultMap, null);
+	}
+
 }

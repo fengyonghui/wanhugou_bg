@@ -1,112 +1,118 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.custom.BizCustomerInfoDao">
-    
-	<sql id="bizCustomerInfoColumns">
-		a.id AS "id",
-		a.office_id AS "officeId",
-		a.bank_name AS "bankName",
-		a.card_number AS "cardNumber",
-		a.payee AS "payee",
-		a.remark AS "remark"
-	</sql>
-	
-	<sql id="bizCustomerInfoJoins">
-		LEFT JOIN sys_office o2 ON o2.id = a.office_id
-	</sql>
-    
-	<select id="get" resultType="BizCustomerInfo">
-		SELECT 
-			<include refid="bizCustomerInfoColumns"/>
-		FROM biz_customer_info a
-		<include refid="bizCustomerInfoJoins"/>
-		WHERE a.id = #{id}
-	</select>
 
-	<select id="getByOfficeId" resultType="BizCustomerInfo">
-		SELECT
-		<include refid="bizCustomerInfoColumns"/>
-		FROM biz_customer_info a
-		<include refid="bizCustomerInfoJoins"/>
-		WHERE a.office_id = #{officeId}
-	</select>
-	
-	<select id="findList" resultType="BizCustomerInfo">
-		SELECT 
-			<include refid="bizCustomerInfoColumns"/>
-		FROM biz_customer_info a
-		<include refid="bizCustomerInfoJoins"/>
-		<where>
-			
-		</where>
-		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
-			</when>
-			<otherwise>
-			</otherwise>
-		</choose>
-	</select>
-	
-	<select id="findAllList" resultType="BizCustomerInfo">
-		SELECT 
-			<include refid="bizCustomerInfoColumns"/>
-		FROM biz_customer_info a
-		<include refid="bizCustomerInfoJoins"/>
-		<where>
-			
-		</where>		
-		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
-			</when>
-			<otherwise>
-			</otherwise>
-		</choose>
-	</select>
-	
-	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO biz_customer_info(
-			id,
-			office_id,
-			bank_name,
-			card_number,
-			payee,
-			remark
-		) VALUES (
-			#{id},
-			#{officeId},
-			#{bankName},
-			#{cardNumber},
-			#{payee},
-			#{remark}
-		)
-	</insert>
-	
-	<update id="update">
-		UPDATE biz_customer_info SET
-		<if test="officeId != null and officeId != ''">
-			office_id = #{officeId},
-		</if>
-		<if test="bankName != null and bankName != ''">
-			bank_name = #{bankName},
-		</if>
-		<if test="cardNumber != null and cardNumber != ''">
-			card_number = #{cardNumber},
-		</if>
-		<if test="payee != null and payee != ''">
-			payee = #{payee},
-		</if>
-		<if test="remark != null and remark != ''">
-			remark = #{remark},
-		</if>
-		update_time = NOW()
-		WHERE id = #{id}
-	</update>
-	
-	<update id="delete">
-		DELETE FROM biz_customer_info
-		WHERE id = #{id}
-	</update>
-	
+    <sql id="bizCustomerInfoColumns">
+        a.id AS "id",
+        a.office_id AS "officeId",
+        a.bank_name AS "bankName",
+        a.card_number AS "cardNumber",
+        a.payee AS "payee",
+        a.remark AS "remark",
+        a.id_card_number AS "idCardNumber"
+    </sql>
+
+    <sql id="bizCustomerInfoJoins">
+        LEFT JOIN sys_office o2 ON o2.id = a.office_id
+    </sql>
+
+    <select id="get" resultType="BizCustomerInfo">
+        SELECT
+        <include refid="bizCustomerInfoColumns"/>
+        FROM biz_customer_info a
+        <include refid="bizCustomerInfoJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getByOfficeId" resultType="BizCustomerInfo">
+        SELECT
+        <include refid="bizCustomerInfoColumns"/>
+        FROM biz_customer_info a
+        <include refid="bizCustomerInfoJoins"/>
+        WHERE a.office_id = #{officeId}
+    </select>
+
+    <select id="findList" resultType="BizCustomerInfo">
+        SELECT
+        <include refid="bizCustomerInfoColumns"/>
+        FROM biz_customer_info a
+        <include refid="bizCustomerInfoJoins"/>
+        <where>
+
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllList" resultType="BizCustomerInfo">
+        SELECT
+        <include refid="bizCustomerInfoColumns"/>
+        FROM biz_customer_info a
+        <include refid="bizCustomerInfoJoins"/>
+        <where>
+
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO biz_customer_info(
+        id,
+        office_id,
+        bank_name,
+        card_number,
+        payee,
+        remark,
+        id_card_number
+        ) VALUES (
+        #{id},
+        #{officeId},
+        #{bankName},
+        #{cardNumber},
+        #{payee},
+        #{remark},
+        #{idCardNumber}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE biz_customer_info SET
+        <if test="officeId != null and officeId != ''">
+            office_id = #{officeId},
+        </if>
+        <if test="bankName != null and bankName != ''">
+          bank_name = #{bankName},
+        </if>
+        <if test="cardNumber != null and cardNumber != ''">
+          card_number = #{cardNumber},
+        </if>
+        <if test="payee != null and payee != ''">
+          payee = #{payee},
+        </if>
+        <if test="remark != null and remark != ''">
+          remark = #{remark},
+        </if>
+        <if test="idCardNumber != null and idCardNumber != ''">
+            id_card_number = #{idCardNumber},
+        </if>
+        update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="delete">
+        DELETE FROM biz_customer_info
+        WHERE id = #{id}
+    </update>
+
 </mapper>
