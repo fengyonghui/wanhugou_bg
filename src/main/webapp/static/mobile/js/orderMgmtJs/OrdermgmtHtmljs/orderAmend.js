@@ -85,7 +85,6 @@
                 data:datas,
                 dataType: "json",
                 success: function(res){
-                	console.log(res)
                 	var strTxt = res.data.bizOrderHeader.str;
                 	var payMentCont = '';
                 	if(res.data.bizOrderHeader.bizPoPaymentOrder.id != null || strTxt == 'createPay'){
@@ -325,10 +324,10 @@
 				                    },
 				                    dataType: 'json',
 				                    success: function (resule) {
-				                        if (resule == true) {
+				                        if (resule.ret== true || resule.ret == 'true') {
 				                            mui.toast("本次申请付款成功！");
 				                          	GHUTILS.OPENPAGE({
-				                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+				                                url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
 				                                extras: {
 				                                }
 				                            })
@@ -725,11 +724,10 @@
 			var _this = this;
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
 			if(orderDetailLen > 0) {
-				console.log(data)
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
 					var opShelfInfo = '';
-					if(data.orderType != data.pursehanger){
+					if(data.orderType != data.PURSEHANGER){
 						if(item.shelfInfo.opShelfInfo) {
 							opShelfInfo = item.shelfInfo.opShelfInfo.name
 						}else {

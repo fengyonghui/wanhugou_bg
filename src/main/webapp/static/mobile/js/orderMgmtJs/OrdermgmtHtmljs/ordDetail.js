@@ -615,13 +615,10 @@
 			var _this = this;
 			var orderDetailLen = data.bizOrderHeader.orderDetailList.length;
 			if(orderDetailLen > 0) {
-				console.log(data)
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-					
-					console.log(item)
 					var opShelfInfo = '';
-					if(data.orderType != data.pursehanger){
+					if(data.orderType != data.PURSEHANGER){
 						if(item.shelfInfo.opShelfInfo) {
 							opShelfInfo = item.shelfInfo.opShelfInfo.name
 						}else {
