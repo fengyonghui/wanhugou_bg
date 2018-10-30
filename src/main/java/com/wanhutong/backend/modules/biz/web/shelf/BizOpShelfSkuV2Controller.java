@@ -152,8 +152,12 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		String[] shelfQtyArr=bizOpShelfSkus.getShelfQtys().split(",");
 		String[] shelfTimeArr=bizOpShelfSkus.getShelfTimes().split(",");
 		String[] unShelfTimeArr=bizOpShelfSkus.getUnshelfTimes().split(",");
-		String[] commissionRatioArr = bizOpShelfSkus.getCommissionRatios().split(",");
-		String[] marketPriceArr = bizOpShelfSkus.getMarketPrices().split(",");
+		String[] commissionRatioArr = null;
+		String[] marketPriceArr = null;
+		if (bizOpShelfSkus.getCommissionRatios() != null && bizOpShelfSkus.getMarketPrices() != null) {
+			commissionRatioArr = bizOpShelfSkus.getCommissionRatios().split(",");
+			marketPriceArr = bizOpShelfSkus.getMarketPrices().split(",");
+		}
 		boolean flag = false;
         if (bizOpShelfSkus.getShelfs() != null && !"".equals(bizOpShelfSkus.getShelfs())) {
             String[] shelfArr = bizOpShelfSkus.getShelfs().split(",");
@@ -182,8 +186,11 @@ public class BizOpShelfSkuV2Controller extends BaseController {
                     bizOpShelfSku.setSalePrice(Double.parseDouble(salePriceArr[i].trim()));
                     bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
                     bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
-                    bizOpShelfSku.setCommissionRatio(new BigDecimal(commissionRatioArr[i].trim()));
-                    bizOpShelfSku.setMarketPrice(new BigDecimal(marketPriceArr[i].trim()));
+					if (bizOpShelfSkus.getCommissionRatios() != null && bizOpShelfSkus.getMarketPrices() != null
+							&& commissionRatioArr != null) {
+						bizOpShelfSku.setCommissionRatio(new BigDecimal(commissionRatioArr[i].trim()));
+						bizOpShelfSku.setMarketPrice(new BigDecimal(marketPriceArr[i].trim()));
+					}
                     if (unShelfTimeArr.length > 0) {
                         if (!unShelfTimeArr[i].equals("0")) {
                             bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
@@ -218,8 +225,11 @@ public class BizOpShelfSkuV2Controller extends BaseController {
                 bizOpShelfSku.setSalePrice(Double.parseDouble(salePriceArr[i].trim()));
                 bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
                 bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
-				bizOpShelfSku.setCommissionRatio(new BigDecimal(commissionRatioArr[i].trim()));
-				bizOpShelfSku.setMarketPrice(new BigDecimal(marketPriceArr[i].trim()));
+				if (bizOpShelfSkus.getCommissionRatios() != null && bizOpShelfSkus.getMarketPrices() != null
+						&& commissionRatioArr != null) {
+					bizOpShelfSku.setCommissionRatio(new BigDecimal(commissionRatioArr[i].trim()));
+					bizOpShelfSku.setMarketPrice(new BigDecimal(marketPriceArr[i].trim()));
+				}
                 if (unShelfTimeArr.length > 0) {
                     if (!unShelfTimeArr[i].equals("0")) {
                         bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
