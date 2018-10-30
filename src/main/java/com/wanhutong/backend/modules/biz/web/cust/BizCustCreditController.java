@@ -3,10 +3,11 @@
  */
 package com.wanhutong.backend.modules.biz.web.cust;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
+import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -18,11 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
-import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 用户钱包Controller
@@ -50,11 +48,11 @@ public class BizCustCreditController extends BaseController {
 		}
 		return entity;
 	}
-	
+
 	@RequiresPermissions("biz:cust:bizCustCredit:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizCustCredit bizCustCredit, HttpServletRequest request, HttpServletResponse response, Model model) {
-		bizCustCredit.setCgsTypes(Lists.newArrayList(OfficeTypeEnum.CUSTOMER.getType(), OfficeTypeEnum.SHOPKEEPER.getType(), OfficeTypeEnum.COMMISSION_MERCHANT.getType()));//采购商电话查询类型，采购商
+		bizCustCredit.setCgsType(OfficeTypeEnum.CUSTOMER.getType());//采购商电话查询类型，采购商
 		Page<BizCustCredit> page = bizCustCreditService.findPage(new Page<BizCustCredit>(request, response), bizCustCredit);
 		model.addAttribute("page", page);
 		return "modules/biz/cust/bizCustCreditList";
@@ -63,9 +61,9 @@ public class BizCustCreditController extends BaseController {
 	@RequiresPermissions("biz:cust:bizCustCredit:view")
 	@RequestMapping(value = "form")
 	public String form(BizCustCredit bizCustCredit, Model model) {
-        BizCustCredit custCredit = bizCustCreditService.get(bizCustCredit.getCustomer().getId());
-        custCredit.setCustomer(officeService.get(bizCustCredit.getCustomer().getId()));
-        model.addAttribute("bizCustCredit", custCredit);
+		BizCustCredit custCredit = bizCustCreditService.get(bizCustCredit.getCustomer().getId());
+		custCredit.setCustomer(officeService.get(bizCustCredit.getCustomer().getId()));
+		model.addAttribute("bizCustCredit", custCredit);
 		return "modules/biz/cust/bizCustCreditForm";
 	}
 
@@ -79,7 +77,7 @@ public class BizCustCreditController extends BaseController {
 		addMessage(redirectAttributes, "保存钱包成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/cust/bizCustCredit/?repage";
 	}
-	
+
 	@RequiresPermissions("biz:cust:bizCustCredit:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizCustCredit bizCustCredit, RedirectAttributes redirectAttributes) {

@@ -6,7 +6,6 @@ package com.wanhutong.backend.modules.sys.dao;
 import com.wanhutong.backend.common.persistence.TreeDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
-import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.ibatis.annotations.Param;
@@ -71,12 +70,4 @@ public interface OfficeDao extends TreeDao<Office> {
      * @return
      */
     List<Office> findOfficeById4Mobile(BizCustomCenterConsultant bizCustomCenterConsultant);
-
-    /**
-     * 更新office type
-     * @param id
-     * @param type
-     * @return
-     */
-    int updateOfficeType(@Param("id")Integer id, @Param("type")Integer type);
 }
