@@ -7,7 +7,7 @@ package com.wanhutong.backend.modules.biz.web.custom;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.biz.entity.cust.BizCustomerInfo;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomerInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;

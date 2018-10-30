@@ -5,7 +5,7 @@ package com.wanhutong.backend.modules.biz.dao.custom;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
-import com.wanhutong.backend.modules.biz.entity.cust.BizCustomerInfo;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import org.apache.ibatis.annotations.Param;
 
 /**
