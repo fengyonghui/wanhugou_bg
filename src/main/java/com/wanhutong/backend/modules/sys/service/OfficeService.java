@@ -19,12 +19,15 @@ import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomerInfoService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.dao.OfficeDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -33,6 +36,7 @@ import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,6 +64,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
     public static final Integer VENDORROLEID = 29;
     public static final Integer PURCHASERSPEOPLE = 9;
+    public static final Integer SHOPKEEPER = 63;
+    public static final Integer COMMISSION_MERCHANT = 64;
     @Autowired
     private OfficeDao officeDao;
     @Autowired
@@ -78,8 +84,13 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     private BizVendInfoService bizVendInfoService;
     @Autowired
     private CommonImgService commonImgService;
+    @Autowired
+    private CommonProcessService commonProcessService;
+    @Autowired
+    private BizCustomerInfoService bizCustomerInfoService;
 
-    public String PHOTO_SPLIT_CHAR = "\\|";
+    public static final String PHOTO_SPLIT_CHAR = "\\|";
+    public static final String CUSTOMER_APPLY_LEVEL_OBJECT_NAME = "CUSTOMER_APPLY_LEVEL_OBJECT_NAME";
 
 
     public List<Office> findAll() {
@@ -550,12 +561,19 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 
         //保存钱包
-        String purchasersId = DictUtils.getDictValue("经销店", "sys_office_type", "");
-        if (StringUtils.isNotBlank(purchasersId) && purchasersId.equals(office.getType())) {
+        if (StringUtils.equals(office.getType(),OfficeTypeEnum.CUSTOMER.getType())
+            || StringUtils.equals(office.getType(),OfficeTypeEnum.SHOPKEEPER.getType())
+            || StringUtils.equals(office.getType(),OfficeTypeEnum.COMMISSION_MERCHANT.getType())
+        ) {
             bizCustCredit = new BizCustCredit();
             bizCustCredit.setCustomer(office);
             bizCustCredit.setLevel(StringUtils.isBlank(office.getLevel()) ? "1" : office.getLevel());
             bizCustCreditService.save(bizCustCredit);
+        }
+
+        if (office.getBizCustomerInfo() != null) {
+            office.getBizCustomerInfo().setOfficeId(office.getId());
+            bizCustomerInfoService.save(office.getBizCustomerInfo());
         }
 
         //经销店保存新建联系人
@@ -568,7 +586,20 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
                     primaryPerson.setPassword((SystemService.entryptPassword(primaryPerson.getNewPassword())));
                     primaryPerson.setLoginFlag("1");
                     List<Role> roleList = Lists.newArrayList();
-                    roleList.add(systemService.getRole(PURCHASERSPEOPLE));
+                    switch (OfficeTypeEnum.stateOf(office.getType())) {
+                        case CUSTOMER:
+                            roleList.add(systemService.getRole(PURCHASERSPEOPLE));
+                            break;
+                        case SHOPKEEPER:
+                            roleList.add(systemService.getRole(SHOPKEEPER));
+                            break;
+                        case COMMISSION_MERCHANT:
+                            roleList.add(systemService.getRole(COMMISSION_MERCHANT));
+                            break;
+                        default:
+                            break;
+                    }
+
                     primaryPerson.setRoleList(roleList);
                     systemService.saveUser(primaryPerson);
                     UserUtils.clearCache(primaryPerson);
@@ -935,4 +966,63 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     }
 
 
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Pair<Boolean, String> upgradeAudit(Integer id, Integer applyForLevel, CommonProcessEntity.AuditType auditType, User user, String desc) {
+        if (applyForLevel == null) {
+            return Pair.of(Boolean.FALSE, "操作失败, 申请等级不能为空!");
+        }
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+        commonProcessEntity.setObjectId(String.valueOf(id));
+        commonProcessEntity.setCurrent(1);
+        List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+        if (CollectionUtils.isEmpty(list) || list.size() != 1) {
+            return Pair.of(Boolean.FALSE, "操作失败, 申请等级数据异常,请联系技术人员!");
+        }
+
+        if (!applyForLevel.equals(Integer.valueOf(list.get(0).getType()))) {
+            return Pair.of(Boolean.FALSE, "操作失败, 申请等级异常,请重试或联系技术人员!");
+        }
+
+        commonProcessEntity = list.get(0);
+        commonProcessEntity.setBizStatus(auditType.getCode());
+        commonProcessEntity.setCurrent(0);
+        commonProcessEntity.setProcessor(String.valueOf(user.getId()));
+        commonProcessEntity.setDescription(desc);
+        commonProcessService.save(commonProcessEntity);
+        switch (auditType) {
+            case PASS:
+                //dao.updateOfficeType(id, applyForLevel);
+                Office office = officeDao.get(id);
+                User primaryPerson = office.getPrimaryPerson();
+                UserUtils.clearCache(primaryPerson);
+                primaryPerson = systemService.getUser(primaryPerson.getId());
+                List<Role> roleList = primaryPerson.getRoleList();
+                switch (OfficeTypeEnum.stateOf(applyForLevel.toString())) {
+                                case CUSTOMER:
+                                    roleList.add(systemService.getRole(PURCHASERSPEOPLE));
+                                    roleList.removeIf(role -> role.getId().equals(SHOPKEEPER) || role.getId().equals(COMMISSION_MERCHANT));
+                                    break;
+                                case SHOPKEEPER:
+                                    roleList.add(systemService.getRole(SHOPKEEPER));
+                                    roleList.removeIf(role -> role.getId().equals(PURCHASERSPEOPLE) || role.getId().equals(COMMISSION_MERCHANT));
+                                    break;
+                                case COMMISSION_MERCHANT:
+                                    roleList.add(systemService.getRole(COMMISSION_MERCHANT));
+                                    roleList.removeIf(role -> role.getId().equals(PURCHASERSPEOPLE) || role.getId().equals(SHOPKEEPER));
+                                    break;
+                                default:
+                                    break;
+                            }
+                systemService.saveUser(primaryPerson);
+                break;
+            case REJECT:
+                break;
+            default:
+                break;
+        }
+        return Pair.of(Boolean.TRUE, "操作成功!");
+
+    }
 }
