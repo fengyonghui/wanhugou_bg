@@ -158,7 +158,13 @@
 				remark,
 			</if>
 			biz_status,
-			seller_id
+			seller_id,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
 		) VALUES (
 			#{id},
 			#{totalCommission},
@@ -170,7 +176,13 @@
 				#{remark},
 			</if>
 			#{bizStatus},
-			#{sellerId}
+			#{sellerId},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
