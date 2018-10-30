@@ -150,7 +150,7 @@ public class BizOrderHeaderController extends BaseController {
             entity = bizOrderHeaderService.get(id);
 
             String type = "1";
-            if (entity.getSuplys() == 0 || entity.getSuplys() == 721) {
+            if (entity.getSuplys() != null && (0 == entity.getSuplys() || 721 == entity.getSuplys())) {
                 type = "0";
             }
             CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
@@ -243,66 +243,66 @@ public class BizOrderHeaderController extends BaseController {
 
         List<Callable<Pair<Boolean, String>>> tasks = new ArrayList<>();
         for (BizOrderHeader b : page.getList()) {
-            tasks.add(new Callable<Pair<Boolean, String>>() {
-                @Override
-                public Pair<Boolean, String> call() {
-                    BizPoHeader bizPoHeader = new BizPoHeader();
-                    bizPoHeader.setBizOrderHeader(b);
-                    List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
+           tasks.add(new Callable<Pair<Boolean, String>>() {
+               @Override
+               public Pair<Boolean, String> call() {
+                   BizPoHeader bizPoHeader = new BizPoHeader();
+                   bizPoHeader.setBizOrderHeader(b);
+                   List<BizPoHeader> poList = bizPoHeaderService.findList(bizPoHeader);
 
-                    List<CommonProcessEntity> list = null;
-                    if (b.getOrderNum().startsWith("SO")) {
-                        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-                        commonProcessEntity.setObjectId(String.valueOf(b.getId()));
-                        commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+                   List<CommonProcessEntity> list = null;
+                   if (b.getOrderNum().startsWith("SO")) {
+                       CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+                       commonProcessEntity.setObjectId(String.valueOf(b.getId()));
+                       commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
 
-                        if (b.getSuplys() == null || b.getSuplys() == 0 || b.getSuplys() == 721) {
-                            commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
-                        }
+                       if (b.getSuplys() == null || b.getSuplys() == 0 || b.getSuplys() == 721) {
+                           commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
+                       }
 
-                        list = commonProcessService.findList(commonProcessEntity);
+                       list = commonProcessService.findList(commonProcessEntity);
 
-                        if (CollectionUtils.isNotEmpty(list)) {
-                            b.setCommonProcess(list.get(list.size() - 1));
-                        }
+                       if (CollectionUtils.isNotEmpty(list)) {
+                           b.setCommonProcess(list.get(list.size() - 1));
+                       }
 
-                        if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
-                            OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
-                            //b.setPayProportion(orderPayProportionStatusEnum.getState());
-                            bizOrderHeaderService.saveOrderHeader(b);
-                            genAuditProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
-                        }
-                    }
-                    if (b.getOrderNum().startsWith("DO")) {
-                        CommonProcessEntity commonProcessEntityTemp = new CommonProcessEntity();
-                        commonProcessEntityTemp.setObjectId(String.valueOf(b.getId()));
-                        commonProcessEntityTemp.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
-                        list = commonProcessService.findList(commonProcessEntityTemp);
-                        if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
-                            OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
-                            Integer state = orderPayProportionStatusEnum.getState();
-                            if (state > 0) {
-                                bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
-                            }
-                        }
+                       if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                           OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
+                           //b.setPayProportion(orderPayProportionStatusEnum.getState());
+                           bizOrderHeaderService.saveOrderHeader(b);
+                           genAuditProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
+                       }
+                   }
+                   if (b.getOrderNum().startsWith("DO")) {
+                       CommonProcessEntity commonProcessEntityTemp = new CommonProcessEntity();
+                       commonProcessEntityTemp.setObjectId(String.valueOf(b.getId()));
+                       commonProcessEntityTemp.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+                       list = commonProcessService.findList(commonProcessEntityTemp);
+                       if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                           OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
+                           Integer state = orderPayProportionStatusEnum.getState();
+                           if (state > 0) {
+                               bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
+                           }
+                       }
 
-                        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-                        commonProcessEntity.setObjectId(String.valueOf(b.getId()));
-                        commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+                       CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+                       commonProcessEntity.setObjectId(String.valueOf(b.getId()));
+                       commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
 
-                        list = commonProcessService.findList(commonProcessEntity);
+                       list = commonProcessService.findList(commonProcessEntity);
 
-                        if (CollectionUtils.isNotEmpty(list)) {
-                            b.setCommonProcess(list.get(list.size() - 1));
-                        }
-                    }
-                    BizInvoice bizInvoice = new BizInvoice();
-                    bizInvoice.setOrderNum(b.getOrderNum());
-                    bizInvoice.setShip(0);
-                    b.setBizInvoiceList(bizInvoiceService.findList(bizInvoice));
-                    return Pair.of(Boolean.TRUE, "操作成功");
-                }
-            });
+                       if (CollectionUtils.isNotEmpty(list)) {
+                           b.setCommonProcess(list.get(list.size() - 1));
+                       }
+                   }
+                   BizInvoice bizInvoice = new BizInvoice();
+                   bizInvoice.setOrderNum(b.getOrderNum());
+                   bizInvoice.setShip(0);
+                   b.setBizInvoiceList(bizInvoiceService.findList(bizInvoice));
+                   return Pair.of(Boolean.TRUE, "操作成功");
+               }
+           });
         }
         try {
             ThreadPoolManager.getDefaultThreadPool().invokeAll(tasks);
@@ -518,7 +518,7 @@ public class BizOrderHeaderController extends BaseController {
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
 
         String type = "1";
-        if (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721) {
+        if (bizOrderHeaderTwo.getSuplys() != null && (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721)) {
             type = "0";
         }
 
@@ -798,8 +798,8 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "form4Mobile")
     @ResponseBody
     public String form4Mobile(BizOrderHeader bizOrderHeader, Model model,
-                              String orderNoEditable, String orderDetails,
-                              HttpServletRequest request, HttpServletResponse response
+                       String orderNoEditable, String orderDetails,
+                       HttpServletRequest request, HttpServletResponse response
     ) {
         Map<String, Object> resultMap = Maps.newHashMap();
         model.addAttribute("orderType", bizOrderHeader.getOrderType());

@@ -3,17 +3,23 @@
  */
 package com.wanhutong.backend.modules.process.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
-import com.wanhutong.backend.modules.config.parse.*;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessAllConfig;
+import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
+import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
+import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.Process;
+import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.NotNull;
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import javax.validation.constraints.NotNull;
+
+import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
  * 通用流程Entity
@@ -250,6 +256,13 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 
 		AuditType(int code) {
 			this.code = code;
+		}
+
+		public static AuditType parse(int code) {
+			if (code == 1) {
+				return PASS;
+			}
+			return REJECT;
 		}
 	}
 }

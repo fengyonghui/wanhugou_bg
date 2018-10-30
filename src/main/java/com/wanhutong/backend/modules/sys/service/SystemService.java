@@ -106,23 +106,23 @@ public class SystemService extends BaseService implements InitializingBean {
 
 	public Page<User> findUser(Page<User> page, User user) {
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		boolean flag = false;
-		if(UserUtils.getUser().getRoleList()!=null) {
-			for (Role role : UserUtils.getUser().getRoleList()) {
-				if (RoleEnNameEnum.WAREHOUSESPECIALIST.getState().equals(role.getEnname())) {
-					flag = true;
-				}
-			}
-		}
-		//只查询客户专员
-		if (user.getConn() != null && user.getConn().equals("connIndex")) {
-			Role role = new Role();
-			role.setEnname(RoleEnNameEnum.BUYER.getState());
-			List<Role> roleList = findRole(role);
-			if (roleList != null && roleList.size() > 0){
-				role = roleList.get(0);
-			}
-			user.setRole(role);
+        boolean flag = false;
+        if(UserUtils.getUser().getRoleList()!=null) {
+            for (Role role : UserUtils.getUser().getRoleList()) {
+                if (RoleEnNameEnum.WAREHOUSESPECIALIST.getState().equals(role.getEnname())) {
+                    flag = true;
+                }
+            }
+        }
+        //只查询客户专员
+        if (user.getConn() != null && user.getConn().equals("connIndex")) {
+            Role role = new Role();
+            role.setEnname(RoleEnNameEnum.BUYER.getState());
+            List<Role> roleList = findRole(role);
+            if (roleList != null && roleList.size() > 0){
+                role = roleList.get(0);
+            }
+            user.setRole(role);
 		}
 		//只查询仓储专员
 		if (user.getConn() != null && user.getConn().equals("stoIndex")) {
@@ -145,11 +145,11 @@ public class SystemService extends BaseService implements InitializingBean {
 			user.setRole(role);
 		}
 
-		if (flag){
-			user.getSqlMap().put("dsf", dataScopeFilter(UserUtils.getUser(), "", "a"));
-		}else {
-			user.getSqlMap().put("dsf", dataScopeFilter(UserUtils.getUser(), "o", "a"));
-		}
+        if (flag){
+            user.getSqlMap().put("dsf", dataScopeFilter(UserUtils.getUser(), "", "a"));
+        }else {
+            user.getSqlMap().put("dsf", dataScopeFilter(UserUtils.getUser(), "o", "a"));
+        }
 		// 设置分页参数
 		user.setPage(page);
 		// 执行分页查询
@@ -227,6 +227,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			if(user.getRoleList()!=null && (!user.getRoleIdList().isEmpty())){
 				userDao.deleteUserRole(user);
 				userDao.insertUserRole(user);
+				UserUtils.clearCache(user);
 			}
 		}
 		if (user.getId() == null){
@@ -595,11 +596,11 @@ public class SystemService extends BaseService implements InitializingBean {
 				}
 			}
 		}
-		if (nowUser.isAdmin()) {
+        if (nowUser.isAdmin()) {
 			user.setPage(page);
 			page.setList(userDao.contact(user));
 			return page;
-		} else {
+        } else {
 			if(flag){
 				user.setCenterId(nowUser.getCompany().getId());
 				user.setCcStatus(1);
@@ -608,7 +609,7 @@ public class SystemService extends BaseService implements InitializingBean {
 				user.setConsultantId(nowUser.getId());
 				user.setCcStatus(1);
 			}
-		}
+        }
 		user.setPage(page);
 		page.setList(userDao.contact(user));
 		return page;
@@ -630,7 +631,7 @@ public class SystemService extends BaseService implements InitializingBean {
 
 	// 已废弃，同步见：ActGroupEntityServiceFactory.java、ActUserEntityServiceFactory.java
 
-	//	/**
+//	/**
 //	 * 是需要同步Activiti数据，如果从未同步过，则同步数据。
 //	 */
 //	private static boolean isSynActivitiIndetity = true;

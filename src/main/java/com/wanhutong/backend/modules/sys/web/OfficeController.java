@@ -8,7 +8,6 @@ import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
-import com.wanhutong.backend.common.supcan.treelist.cols.Col;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -24,11 +23,14 @@ import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.chat.BizChatRecordService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomerInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.BuyerAdviser;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -66,6 +68,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.wanhutong.backend.modules.sys.service.OfficeService.CUSTOMER_APPLY_LEVEL_OBJECT_NAME;
+
 /**
  * 机构Controller
  *
@@ -89,6 +93,8 @@ public class OfficeController extends BaseController {
     @Autowired
     private BizVendInfoService bizVendInfoService;
     @Autowired
+    private BizCustomerInfoService bizCustomerInfoService;
+    @Autowired
     private DictService dictService;
     @Autowired
     private BuyerAdviserService buyerAdviserService;
@@ -98,7 +104,8 @@ public class OfficeController extends BaseController {
     private BizProductInfoV2Service bizProductInfoV2Service;
     @Autowired
     private CommonImgService commonImgService;
-
+    @Autowired
+    private CommonProcessService commonProcessService;
 
 
     @ModelAttribute("office")
@@ -179,7 +186,7 @@ public class OfficeController extends BaseController {
 
     @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "purchasersForm")
-    public String purchasersForm(Office office, Model model) {
+    public String purchasersForm(Office office, Model model, String option) {
         User user = UserUtils.getUser();
         if (office.getParent() == null || office.getParent().getId() == null) {
             if (OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())) {
@@ -215,7 +222,15 @@ public class OfficeController extends BaseController {
 //        if (bizCustCredit != null && !bizCustCredit.getDelFlag().equals(b)) {
 //            office.setLevel(bizCustCredit.getLevel());
 //        }
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+        commonProcessEntity.setObjectId(String.valueOf(office.getId()));
+        List<CommonProcessEntity> processList = commonProcessService.findList(commonProcessEntity);
+
         model.addAttribute("office", office);
+        model.addAttribute("option", option);
+        model.addAttribute("processList", processList);
         return "modules/sys/purchasersForm";
     }
 
@@ -387,9 +402,22 @@ public class OfficeController extends BaseController {
         return mapList;
     }
 
+    @RequiresPermissions("sys:office:upgradeAudit")
+    @RequestMapping(value = "upgradeAudit")
+    public String upgradeAudit(RedirectAttributes redirectAttributes, int id, int applyForLevel, int auditType, String desc) {
+        Pair<Boolean, String> result = officeService.upgradeAudit(id, applyForLevel, CommonProcessEntity.AuditType.parse(auditType), UserUtils.getUser(), desc);
+        if (result.getLeft()) {
+            addMessage(redirectAttributes, "审核成功!");
+        }else {
+            addMessage(redirectAttributes, "审核失败!");
+        }
+        return "redirect:" + adminPath + "/sys/office/purchasersList";
+
+    }
+
     @RequiresPermissions("sys:office:edit")
     @RequestMapping(value = "purchaserSave")
-    public String purchaserSave(Office office, Model model, RedirectAttributes redirectAttributes) {
+    public String purchaserSave(Office office, Model model, RedirectAttributes redirectAttributes, String option) {
         if (Global.isDemoMode()) {
             addMessage(redirectAttributes, "演示模式，不允许操作！");
             return "redirect:" + adminPath + "/sys/office/";
@@ -397,8 +425,7 @@ public class OfficeController extends BaseController {
         if (!beanValidator(model, office)) {
             return form(office, model, null, null);
         }
-//        BizCustCredit bizCustCredit = new BizCustCredit();
-//        bizCustCredit.setLevel(office.getLevel());
+
         officeService.save(office, null);
         if (office.getChildDeptList() != null) {
             Office childOffice = null;
@@ -414,7 +441,17 @@ public class OfficeController extends BaseController {
             }
         }
         addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-        Integer id = office.getParentId() == 0 ? null : office.getParentId();
+
+        if ("upgrade".equals(option)) {
+            CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+            commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+            commonProcessEntity.setObjectId(String.valueOf(office.getId()));
+            commonProcessEntity.setCurrent(1);
+            commonProcessEntity.setType(office.getCommonProcess().getType());
+            commonProcessService.save(commonProcessEntity);
+            addMessage(redirectAttributes, "申请成功!");
+        }
+
         if(office.getSource()!=null && office.getSource().equals("chatRecordSave")){
             try {
                 return "redirect:" + adminPath + "/biz/chat/bizChatRecord/form?office.id="+office.getId()+"&office.name="+

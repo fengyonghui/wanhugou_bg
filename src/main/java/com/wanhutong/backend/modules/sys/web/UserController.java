@@ -70,8 +70,8 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping(value = "${adminPath}/sys/user")
 public class UserController extends BaseController {
 
-	//用来判断仓储专员
-	private static final String WAREHOUSESPECIALIST = "stoIndex";
+    //用来判断仓储专员
+    private static final String WAREHOUSESPECIALIST = "stoIndex";
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BizStatisticsPlatformController.class);
 	/**
@@ -85,7 +85,7 @@ public class UserController extends BaseController {
 	@Autowired
 	private OfficeService officeService;
 	@Autowired
-	private BizCustomCenterConsultantService bizCustomCenterConsultantService;
+    private BizCustomCenterConsultantService bizCustomCenterConsultantService;
 	@Autowired
 	private BizOrderHeaderDao bizOrderHeaderDao;
 	@Autowired
@@ -169,7 +169,7 @@ public class UserController extends BaseController {
 	@ResponseBody
 	public String listData4mobile(User user, HttpServletRequest request, HttpServletResponse response, Date ordrHeaderStartTime,Date orderHeaderEedTime,
 								  Model model, @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo
-	) {
+								  ) {
 		if (user.getCompany() != null && user.getCompany().getSource() != null && "officeConnIndex".equals(user.getCompany().getSource())) {
 			//属于客户专员左边点击菜单查询
 			Office queryOffice = officeService.get(user.getCompany().getId());
@@ -266,8 +266,8 @@ public class UserController extends BaseController {
 //				}else {
 //					Office parentOffice = officeService.get(office.getParentId());
 //					user.setCompany(parentOffice);
-				user.setCompany(office);
-				user.setOffice(office);
+					user.setCompany(office);
+					user.setOffice(office);
 //				}
 
 			}else{
@@ -321,20 +321,20 @@ public class UserController extends BaseController {
 		return list;
 	}
 
-	@RequestMapping(value = "getAdvisers4mobile")
-	@ResponseBody
-	public String getAdvisers4mobile(User user, HttpServletRequest request, HttpServletResponse response, Model model){
-		List<User> list;
-		if(user.getOffice().getId() == null){
-			list = new ArrayList<>();
-		}else{
-			Role role = new Role();
-			role.setId(Integer.valueOf(DictUtils.getDictValue("角色", "sys_user_role_adviser","")));
-			user.setRole(role);
-			list = systemService.selectUserByOfficeId(user);
-		}
-		return JsonUtil.generateData(list, request.getParameter("callback"));
-	}
+    @RequestMapping(value = "getAdvisers4mobile")
+    @ResponseBody
+    public String getAdvisers4mobile(User user, HttpServletRequest request, HttpServletResponse response, Model model){
+        List<User> list;
+        if(user.getOffice().getId() == null){
+            list = new ArrayList<>();
+        }else{
+            Role role = new Role();
+            role.setId(Integer.valueOf(DictUtils.getDictValue("角色", "sys_user_role_adviser","")));
+            user.setRole(role);
+            list = systemService.selectUserByOfficeId(user);
+        }
+        return JsonUtil.generateData(list, request.getParameter("callback"));
+    }
 
 	@RequiresPermissions("sys:user:edit")
 	@RequestMapping(value = "save")
@@ -397,9 +397,9 @@ public class UserController extends BaseController {
 			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
 		}
 		if(user.getConn() != null && user.getConn().equals(WAREHOUSESPECIALIST)) {
-			//跳回仓储专员界面
-			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
-		}
+		    //跳回仓储专员界面
+            return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
+        }
 		if(user.getConn() != null && user.getConn().equals("selectIndex")) {
 			//跳回选品专员界面
 			return "redirect:" + adminPath + "/sys/user/seleIndexList?conn="+user.getConn();
@@ -437,11 +437,11 @@ public class UserController extends BaseController {
 			return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
 					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
 		}
-		if(user.getConn() != null && user.getConn().equals(WAREHOUSESPECIALIST)) {
-			//跳回仓储专员界面
-			return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
-					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
-		}
+        if(user.getConn() != null && user.getConn().equals(WAREHOUSESPECIALIST)) {
+            //跳回仓储专员界面
+            return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
+                    +"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
+        }
 		if(user.getConn() != null && user.getConn().equals("selectIndex")) {
 			//跳回选品专员界面
 			return "redirect:" + adminPath + "/sys/user/seleIndexList?conn="+user.getConn();
@@ -739,7 +739,8 @@ public class UserController extends BaseController {
 		if (user.getCompany() != null && user.getCompany().getName() != null && !"".equals(user.getCompany().getName())) {
 			company.setName(user.getCompany().getName());
 		}
-		company.setType(OfficeTypeEnum.CUSTOMER.getType());
+		company.setType(null);
+		company.setTypes(Lists.newArrayList(OfficeTypeEnum.CUSTOMER.getType(), OfficeTypeEnum.SHOPKEEPER.getType(), OfficeTypeEnum.COMMISSION_MERCHANT.getType()));
 		user.setCompany(company);
 		if (ordrHeaderStartTime != null) {
 			user.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
@@ -820,48 +821,48 @@ public class UserController extends BaseController {
 	 */
 	@ResponseBody
 	@RequiresPermissions("sys:user:view")
-	@RequestMapping(value = "findVendorUser")
+    @RequestMapping(value = "findVendorUser")
 	public String findVendorUser(String loginName){
-		String flag = "true";
-		User user = systemService.getUserByLoginName(loginName);
-		if (user != null){
-			flag = "false";
-		}
-		return flag;
-	}
+	    String flag = "true";
+        User user = systemService.getUserByLoginName(loginName);
+        if (user != null){
+            flag = "false";
+        }
+        return flag;
+    }
 
 
-	@ResponseBody
+    @ResponseBody
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "selectConsultant")
-	public String selectConsultant(String userId,String companyId,String userRoleIds) {
+    public String selectConsultant(String userId,String companyId,String userRoleIds) {
 		String sflag = "true";
 		boolean flag = false;
 		boolean bflag = true;
 		if (userId != null && !userId.equals("")) {
-			User user = systemService.getUser(Integer.parseInt(userId));
-			String[] roleIds = userRoleIds.split(",".trim());
-			for (String id:roleIds) {
-				Integer roleId = Integer.parseInt(id);
-				Role role = systemService.getRole(roleId);
-				if (role.getEnname().equals(RoleEnNameEnum.BUYER.getState())) {
-					bflag = false;
-				}
-			}
-			if (user.getCompany().getId()!=Integer.parseInt(companyId)) {
-				flag = true;
-			}
-			if (flag || bflag) {
-				BizCustomCenterConsultant ccc = new BizCustomCenterConsultant();
-				User consultant = new User();
-				consultant.setId(user.getId());
-				ccc.setConsultants(consultant);
-				List<BizCustomCenterConsultant> cccList = bizCustomCenterConsultantService.findList(ccc);
-				if (!cccList.isEmpty() && cccList.size() > 0) {
-					sflag = "false";
-				}
-			}
-		}
+            User user = systemService.getUser(Integer.parseInt(userId));
+            String[] roleIds = userRoleIds.split(",".trim());
+            for (String id:roleIds) {
+                Integer roleId = Integer.parseInt(id);
+                Role role = systemService.getRole(roleId);
+                if (role.getEnname().equals(RoleEnNameEnum.BUYER.getState())) {
+                    bflag = false;
+                }
+            }
+            if (user.getCompany().getId()!=Integer.parseInt(companyId)) {
+                flag = true;
+            }
+            if (flag || bflag) {
+                BizCustomCenterConsultant ccc = new BizCustomCenterConsultant();
+                User consultant = new User();
+                consultant.setId(user.getId());
+                ccc.setConsultants(consultant);
+                List<BizCustomCenterConsultant> cccList = bizCustomCenterConsultantService.findList(ccc);
+                if (!cccList.isEmpty() && cccList.size() > 0) {
+                    sflag = "false";
+                }
+            }
+        }
 		return sflag;
 	}
 
@@ -886,11 +887,11 @@ public class UserController extends BaseController {
 	}
 
 	/**
-	 * 品类主管 管理
-	 * */
-	@RequiresPermissions("sys:user:view")
-	@RequestMapping(value = "userSeleForm")
-	public String userSeleForm(User user, Model model,String flag) {
+     * 品类主管 管理
+     * */
+    @RequiresPermissions("sys:user:view")
+    @RequestMapping(value = "userSeleForm")
+    public String userSeleForm(User user, Model model,String flag) {
 		if (user.getOffice() == null || user.getOffice().getId() == null) {
 			String purchasersId = DictUtils.getDictValue("采销部", "office_suppl", "");
 			Office office = officeService.get(Integer.parseInt(purchasersId));
@@ -930,9 +931,9 @@ public class UserController extends BaseController {
 		List<BizVarietyInfo> varietyFactorList = bizVarietyInfoService.findList(new BizVarietyInfo());
 		model.addAttribute("varietyList", varietyFactorList);
 		return "modules/sys/userSeleForm";
-	}
+    }
 
-	/**
+    /**
 	 * 品类主管 保存
 	 * */
 	@RequiresPermissions("sys:user:edit")

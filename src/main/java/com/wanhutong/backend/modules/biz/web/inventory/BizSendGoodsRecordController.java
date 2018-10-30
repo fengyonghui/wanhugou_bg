@@ -67,7 +67,7 @@ public class BizSendGoodsRecordController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(Integer bizStatu, BizSendGoodsRecord bizSendGoodsRecord, HttpServletRequest request, HttpServletResponse response, Model model) {
 //		if ("0".equals(bizStatu)){
-		bizSendGoodsRecord.setBizStatus(bizStatu);
+			bizSendGoodsRecord.setBizStatus(bizStatu);
 //		}
 //		if ("1".equals(bizStatu)){
 //			bizSendGoodsRecord.setBizStatus(1);
@@ -92,8 +92,8 @@ public class BizSendGoodsRecordController extends BaseController {
 //		if (!beanValidator(model, bizSendGoodsRecord)){
 //			return form(bizSendGoodsRecord, model);
 //		}
-		bizSendGoodsRecordService.save(bizSendGoodsRecord);
-		addMessage(redirectAttributes, "保存供货记录成功");
+       		 bizSendGoodsRecordService.save(bizSendGoodsRecord);
+			addMessage(redirectAttributes, "保存供货记录成功");
 //			return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizSendGoodsRecord/?repage&bizStatu="+bizSendGoodsRecord.getBizStatus();
 //		跳回订单发货列表
 		return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestAll?source="+source+"&bizStatu="+bizStatu+"&ship="+ship;
