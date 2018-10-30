@@ -83,7 +83,7 @@ public class BizCommissionOrderController extends BaseController {
 
 		String msg = bizCommissionService.createCommissionOrder(bizCommission).getRight();
 
-		return "";
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/list?targetPage=COMMISSION_ORDER";
 	}
 	
 	@RequiresPermissions("biz:order:bizCommissionOrder:edit")
