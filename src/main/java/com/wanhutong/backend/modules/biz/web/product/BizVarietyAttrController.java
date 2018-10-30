@@ -127,16 +127,25 @@ public class BizVarietyAttrController extends BaseController {
 		String[] attributeArr = StringUtils.split(attributeIds, ",");
 		String[] requiredArr = StringUtils.split(requireds, ",");
 		BizVarietyAttr attr = new BizVarietyAttr();
+		if (attributeArr == null) {
+			addMessage(redirectAttributes, "保存分类属性中间表失败");
+			return "redirect:" + Global.getAdminPath() + "/biz/product/bizVarietyAttr/?repage";
+		}
 		for (int i = 0; i < attributeArr.length; i++) {
 			AttributeInfoV2 attributeInfoV2 = attributeInfoV2Service.get(Integer.parseInt(attributeArr[i].trim()));
 			attr.setAttributeInfo(attributeInfoV2);
 			attr.setVarietyInfo(bizVarietyAttr.getVarietyInfo());
-			for (int j = 0; j < requiredArr.length; j++) {
-				if (requiredArr[j].equals(attributeArr[i])) {
-					attr.setRequired(REQUIRED);
-					break;
-				} else {
-					attr.setRequired(NOTREQUIRED);
+			if (requiredArr == null) {
+				attr.setRequired(NOTREQUIRED);
+			}
+			if (requiredArr != null) {
+				for (int j = 0; j < requiredArr.length; j++) {
+					if (requiredArr[j].equals(attributeArr[i])) {
+						attr.setRequired(REQUIRED);
+						break;
+					} else {
+						attr.setRequired(NOTREQUIRED);
+					}
 				}
 			}
 			bizVarietyAttrService.save(attr);
