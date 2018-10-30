@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.roleapply.BizRoleApplyDao">
+    
+	<sql id="bizRoleApplyColumns">
+		a.id AS "id",
+		a.apply_office_id AS "applyOfficeId",
+		a.role_id AS "roleId",
+		a.apply_role_id AS "applyRoleId",
+		a.apply_status AS "applyStatus",
+		a.apply_result AS "applyResult",
+		a.real_name AS "realName",
+		a.id_card_number AS "idCardNumber",
+		a.credit_card_number AS "creditCardNumber",
+		a.deposit_bank AS "depositBank",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.status AS "delFlag"
+	</sql>
+	
+	<sql id="bizRoleApplyJoins">
+	</sql>
+    
+	<select id="get" resultType="BizRoleApply">
+		SELECT 
+			<include refid="bizRoleApplyColumns"/>
+		FROM biz_role_apply a
+		<include refid="bizRoleApplyJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizRoleApply">
+		SELECT 
+			<include refid="bizRoleApplyColumns"/>
+		FROM biz_role_apply a
+		<include refid="bizRoleApplyJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizRoleApply">
+		SELECT 
+			<include refid="bizRoleApplyColumns"/>
+		FROM biz_role_apply a
+		<include refid="bizRoleApplyJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_role_apply(
+			id,
+			apply_office_id,
+			role_id,
+			apply_role_id,
+			apply_status,
+			apply_result,
+			real_name,
+			id_card_number,
+			credit_card_number,
+			deposit_bank,
+			create_id,
+			create_time,
+			update_id,
+			update_time,
+			status
+		) VALUES (
+			#{id},
+			#{applyOfficeId},
+			#{roleId},
+			#{applyRoleId},
+			#{applyStatus},
+			#{applyResult},
+			#{realName},
+			#{idCardNumber},
+			#{creditCardNumber},
+			#{depositBank},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_role_apply SET
+		<if test="applyOfficeId!=null and applyOfficeId !=''">
+			apply_office_id = #{applyOfficeId},
+		</if>
+		<if test="roleId! = null and roleId !=''">
+			role_id = #{roleId},
+		</if>
+		<if test="applyRoleId! = null and applyRoleId !=''">
+			apply_role_id = #{applyRoleId},
+		</if>
+		<if test="applyStatus! = null and applyStatus !=''">
+			apply_status = #{applyStatus},
+		</if>
+		<if test="applyResult! = null and applyResult !=''">
+			apply_result = #{applyResult},
+		</if>
+		<if test="realName! = null and realName !=''">
+			real_name = #{realName},
+		</if>
+		<if test="idCardNumber! = null and idCardNumber !=''">
+			id_card_number = #{idCardNumber},
+		</if>
+		<if test="creditCardNumber! = null and creditCardNumber !=''">
+			credit_card_number = #{creditCardNumber},
+		</if>
+		<if test="depositBank! = null and depositBank !=''">
+			deposit_bank = #{depositBank},
+		</if>
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_role_apply SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
