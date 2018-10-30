@@ -18,7 +18,6 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
-import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.roleapply.BizRoleApply;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
@@ -71,8 +70,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static com.wanhutong.backend.modules.sys.service.OfficeService.CUSTOMER_APPLY_LEVEL_OBJECT_NAME;
 
 /**
  * 机构Controller
@@ -230,7 +227,7 @@ public class OfficeController extends BaseController {
 //        }
 
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-        commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+        //commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
         commonProcessEntity.setObjectId(String.valueOf(office.getId()));
         List<CommonProcessEntity> processList = commonProcessService.findList(commonProcessEntity);
 
@@ -422,12 +419,12 @@ public class OfficeController extends BaseController {
     @RequiresPermissions("sys:office:upgradeAudit")
     @RequestMapping(value = "upgradeAudit")
     public String upgradeAudit(RedirectAttributes redirectAttributes, int id, int applyForLevel, int auditType, String desc) {
-        Pair<Boolean, String> result = officeService.upgradeAudit(id, applyForLevel, CommonProcessEntity.AuditType.parse(auditType), UserUtils.getUser(), desc);
-        if (result.getLeft()) {
-            addMessage(redirectAttributes, "审核成功!");
-        }else {
-            addMessage(redirectAttributes, "审核失败!");
-        }
+//        Pair<Boolean, String> result = officeService.upgradeAudit(id, applyForLevel, CommonProcessEntity.AuditType.parse(auditType), UserUtils.getUser(), desc);
+//        if (result.getLeft()) {
+//            addMessage(redirectAttributes, "审核成功!");
+//        }else {
+//            addMessage(redirectAttributes, "审核失败!");
+//        }
         return "redirect:" + adminPath + "/sys/office/purchasersList";
 
     }
@@ -461,10 +458,10 @@ public class OfficeController extends BaseController {
 
         if ("upgrade".equals(option)) {
             CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-            commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+            //commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
             commonProcessEntity.setObjectId(String.valueOf(office.getId()));
             commonProcessEntity.setCurrent(1);
-            commonProcessEntity.setType(office.getCommonProcess().getType());
+            //commonProcessEntity.setType(office.getCommonProcess().getType());
             commonProcessService.save(commonProcessEntity);
             addMessage(redirectAttributes, "申请成功!");
         }

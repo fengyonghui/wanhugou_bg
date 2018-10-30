@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.utils.JsonUtil;
-import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
+import com.wanhutong.backend.modules.biz.entity.cust.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
