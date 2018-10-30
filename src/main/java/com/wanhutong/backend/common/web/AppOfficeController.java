@@ -2,7 +2,6 @@ package com.wanhutong.backend.common.web;
 
 import com.wanhutong.backend.common.security.RSA;
 import com.wanhutong.backend.common.utils.JsonUtil;
-import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.dto.OfficeLevelApplyDto;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -10,15 +9,24 @@ import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping(value = "/app/office")
 public class AppOfficeController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppOfficeController.class);
+
     @Autowired
     private OfficeService officeService;
 
@@ -29,12 +37,13 @@ public class AppOfficeController {
             "/tnpstf3V3YtFTVR3QIDAQAB";
 
 
-    @RequestMapping(value = "/officeTypeApply")
+    @RequestMapping(value = "/officeTypeApply", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     @ResponseBody
-    public String officeTypeApply(@RequestBody OfficeLevelApplyDto officeLevelApplyDto) {
+    public String officeTypeApply(HttpServletRequest request, HttpServletResponse response, @RequestBody OfficeLevelApplyDto officeLevelApplyDto) {
         if (officeLevelApplyDto == null || StringUtils.isBlank(officeLevelApplyDto.getSign())) {
             return JsonUtil.generateErrorData(HttpStatus.SC_BAD_REQUEST, "请求参数有误!", null);
         }
+        LOGGER.info("officeTypeApply :[{}]" , officeLevelApplyDto.buildData());
 
         try {
             boolean verify = RSA.verify(officeLevelApplyDto.buildData(), officeLevelApplyDto.getSign(), PUBLIC_KEY, "UTF-8");

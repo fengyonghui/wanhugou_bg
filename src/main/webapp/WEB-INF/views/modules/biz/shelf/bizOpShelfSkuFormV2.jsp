@@ -23,7 +23,7 @@
                     $("input:checkbox[name='shelfs']:checked").each(function (i) {
                         shelfInfoIds += this.value+",";
                     });
-
+                    // alert(shelfInfoIds);
                     var centId = $("#centerOfficeId").val();
                     var flag = true;
                     var vflag = false;
