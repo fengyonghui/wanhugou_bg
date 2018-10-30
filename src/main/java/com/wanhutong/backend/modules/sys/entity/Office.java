@@ -4,7 +4,9 @@
 package com.wanhutong.backend.modules.sys.entity;
 
 import com.wanhutong.backend.common.persistence.TreeEntity;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import org.hibernate.validator.constraints.Length;
 
@@ -28,6 +30,7 @@ public class Office extends TreeEntity<Office> {
 	private String name; 	// 机构名称
 //	private Integer sort;		// 排序
 	private String type; 	// 机构类型（1：公司；2：部门；3：小组）
+	private List<String> types; 	// 机构类型（1：公司；2：部门；3：小组）
 	private String grade; 	// 机构等级（1：一级；2：二级；3：三级；4：四级）
 	private String address; // 联系地址
 	private String zipCode; // 邮政编码
@@ -55,6 +58,14 @@ public class Office extends TreeEntity<Office> {
 	private Integer ccStatus;
 
 	private BizVendInfo bizVendInfo;		//供应商拓展
+	/**
+	 * 会员拓展
+	 */
+	private BizCustomerInfo bizCustomerInfo;
+
+	private CommonProcessEntity commonProcess;
+
+
 
 	/**
 	 * 供应商新增页面显示，新增地址
@@ -205,7 +216,7 @@ public class Office extends TreeEntity<Office> {
 //		this.sort = sort;
 //	}
 	
-	@Length(min=1, max=1)
+	@Length(min=1, max=2)
 	public String getType() {
 		return type;
 	}
@@ -444,5 +455,29 @@ public class Office extends TreeEntity<Office> {
 
 	public void setVendor(String vendor) {
 		this.vendor = vendor;
+	}
+
+	public BizCustomerInfo getBizCustomerInfo() {
+		return bizCustomerInfo;
+	}
+
+	public void setBizCustomerInfo(BizCustomerInfo bizCustomerInfo) {
+		this.bizCustomerInfo = bizCustomerInfo;
+	}
+
+    public CommonProcessEntity getCommonProcess() {
+        return commonProcess;
+    }
+
+    public void setCommonProcess(CommonProcessEntity commonProcess) {
+        this.commonProcess = commonProcess;
+    }
+
+	public List<String> getTypes() {
+		return types;
+	}
+
+	public void setTypes(List<String> types) {
+		this.types = types;
 	}
 }

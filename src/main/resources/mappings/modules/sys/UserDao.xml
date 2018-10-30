@@ -227,6 +227,13 @@
 			)
 		</if>
 
+		<if test="company != null and company.types != null and company.types != ''">
+			AND c.type in
+			<foreach collection="company.types" item="e" separator="," open="(" close=")">
+				${e}
+			</foreach>
+		</if>
+
 		<if test="office != null and office.id != null and office.id != ''">
 			AND (o.id = #{office.id} OR o.parent_ids LIKE
 			<if test="dbName == 'oracle'">'%,'||#{office.id}||',%')</if>
@@ -442,10 +449,14 @@
 
 	<!-- 更新用户 -->
 	<update id="update">
-		UPDATE sys_user SET 
-			company_id = #{company.id}, 
-			office_id = #{office.id}, 
-			login_name = #{loginName}, 
+		UPDATE sys_user SET
+		<if test="company != null and company.id != null and company.id != ''">
+			company_id = #{company.id},
+		</if>
+		<if test="office != null and office.id != null and office.id != ''">
+			office_id = #{office.id},
+		</if>
+			login_name = #{loginName},
 			password = #{password}, 
 			no = #{no}, 
 			name = #{name}, 

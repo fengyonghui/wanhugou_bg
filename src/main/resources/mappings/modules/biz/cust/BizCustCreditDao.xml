@@ -83,6 +83,13 @@
 			<if test="CgsType != null and CgsType !=''">
 				AND so.type = #{CgsType}
 			</if>
+
+			<if test="cgsTypes != null and cgsTypes.size > 0">
+				AND so.type in
+				<foreach collection="cgsTypes" item="e" separator="," open="(" close=")">
+					${e}
+				</foreach>
+			</if>
 			<if test="customer!=null and customer.moblieMoeny!=null and customer.moblieMoeny.mobile != null and customer.moblieMoeny.mobile !=''">
 				AND suso.mobile like
 				<if test="dbName == 'oracle'">'%'||#{customer.moblieMoeny.mobile}||'%'</if>
