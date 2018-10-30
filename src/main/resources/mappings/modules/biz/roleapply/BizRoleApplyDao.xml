@@ -30,6 +30,14 @@
 		<include refid="bizRoleApplyJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<select id="getByOfficeId" resultType="BizRoleApply">
+		SELECT
+		<include refid="bizRoleApplyColumns"/>
+		FROM biz_role_apply a
+		<include refid="bizRoleApplyJoins"/>
+		WHERE a.apply_office_id = #{officeId}
+	</select>
 	
 	<select id="findList" resultType="BizRoleApply">
 		SELECT 
