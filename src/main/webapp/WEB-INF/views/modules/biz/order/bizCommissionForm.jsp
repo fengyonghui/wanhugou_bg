@@ -32,27 +32,8 @@
 					}
 				}
 			});
-
-            getSellerInfo();
 		});
 
-
-		//获取代销商信息
-        function getSellerInfo() {
-            var vendId = $("#vendId").val();
-            $.ajax({
-                type:"post",
-                url:"${ctx}/biz/order/bizOrderHeader/selectVendInfo?vendorId="+vendId,
-                success:function (data) {
-                    if (data == null) {
-                        return false;
-                    }
-                    $("#cardNumberInput").val(data.cardNumber);
-                    $("#payeeInput").val(data.payee);
-                    $("#bankNameInput").val(data.bankName);
-                }
-            });
-        }
 	</script>
 	<script type="text/javascript">
         function pay() {
@@ -249,21 +230,21 @@
 			<div id="cardNumber" class="control-group" >
 				<label class="control-label">代销商卡号：</label>
 				<div class="controls">
-					<input id="cardNumberInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+					<input id="cardNumberInput" readonly="readonly" value="${entity.customerInfo.cardNumber}" htmlEscape="false" maxlength="30"
 						   class="input-xlarge "/>
 				</div>
 			</div>
 			<div id="payee" class="control-group" >
 				<label class="control-label">代销商收款人：</label>
 				<div class="controls">
-					<input id="payeeInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+					<input id="payeeInput" readonly="readonly" value="${entity.customerInfo.payee}" htmlEscape="false" maxlength="30"
 						   class="input-xlarge "/>
 				</div>
 			</div>
 			<div id="bankName" class="control-group" >
 				<label class="control-label">代销商开户行：</label>
 				<div class="controls">
-					<input id="bankNameInput" readonly="readonly" value="" htmlEscape="false" maxlength="30"
+					<input id="bankNameInput" readonly="readonly" value="${entity.customerInfo.bankName}" htmlEscape="false" maxlength="30"
 						   class="input-xlarge "/>
 				</div>
 			</div>

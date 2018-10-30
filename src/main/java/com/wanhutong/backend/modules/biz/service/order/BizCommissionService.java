@@ -155,6 +155,7 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		bizCommission.setBizStatus(BizCommission.BizStatus.NO_PAY.getStatus());
 		this.save(bizCommission);
 		commonProcessEntity.setObjectId(String.valueOf(bizCommission.getId()));
+		commonProcessService.save(commonProcessEntity);
 
 		String orderIds = bizCommission.getOrderIds();
 		List<Integer> orderIdList = new ArrayList<Integer>();
