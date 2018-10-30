@@ -5,38 +5,19 @@ package com.wanhutong.backend.modules.enums;
  */
 public enum OfficeTypeEnum {
 
-    OFFICE("0") ,
+    OFFICE("0"),
     COMPANY("1"),
     DEPARTMENT("2"),
     GROUP("3"),
     OTHER("4"),
     WANHUTONG("5"),
-    /**
-     * 采购商
-     */
     CUSTOMER("6"),
     VENDOR("7"),
     PURCHASINGCENTER("8"),
     SUPPLYCENTER("9"),
     WITHCAPITAL("10"),
-    /**
-     * 网供
-     */
     NETWORKSUPPLY("11"),
-    /**
-     * 网供
-     */
-    NETWORK("13"),
-    /**
-     * 零售商
-     */
-    SHOPKEEPER("15"),
-    /**
-     * 代销商
-     */
-    COMMISSION_MERCHANT("16")
-
-    ;
+    NETWORK("13");
 
     private String type;
 

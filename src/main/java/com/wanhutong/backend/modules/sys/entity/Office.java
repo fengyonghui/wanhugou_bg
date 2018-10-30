@@ -4,9 +4,7 @@
 package com.wanhutong.backend.modules.sys.entity;
 
 import com.wanhutong.backend.common.persistence.TreeEntity;
-import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
-import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import org.hibernate.validator.constraints.Length;
 
@@ -23,14 +21,13 @@ import java.util.List;
 public class Office extends TreeEntity<Office> {
 
 	private static final long serialVersionUID = 1L;
-//	private Office parent;	// 父级编号
+	//	private Office parent;	// 父级编号
 //	private String parentIds; // 所有父级编号
 	private Area area;		// 归属区域
 	private String code; 	// 机构编码
 	private String name; 	// 机构名称
-//	private Integer sort;		// 排序
+	//	private Integer sort;		// 排序
 	private String type; 	// 机构类型（1：公司；2：部门；3：小组）
-	private List<String> types; 	// 机构类型（1：公司；2：部门；3：小组）
 	private String grade; 	// 机构等级（1：一级；2：二级；3：三级；4：四级）
 	private String address; // 联系地址
 	private String zipCode; // 邮政编码
@@ -58,14 +55,6 @@ public class Office extends TreeEntity<Office> {
 	private Integer ccStatus;
 
 	private BizVendInfo bizVendInfo;		//供应商拓展
-	/**
-	 * 会员拓展
-	 */
-	private BizCustomerInfo bizCustomerInfo;
-
-	private CommonProcessEntity commonProcess;
-
-
 
 	/**
 	 * 供应商新增页面显示，新增地址
@@ -138,7 +127,7 @@ public class Office extends TreeEntity<Office> {
 	public Office(Integer id){
 		super(id);
 	}
-	
+
 	public List<String> getChildDeptList() {
 		return childDeptList;
 	}
@@ -171,7 +160,7 @@ public class Office extends TreeEntity<Office> {
 		this.deputyPerson = deputyPerson;
 	}
 
-//	@JsonBackReference
+	//	@JsonBackReference
 //	@NotNull
 	public Office getParent() {
 		return parent;
@@ -198,7 +187,7 @@ public class Office extends TreeEntity<Office> {
 	public void setArea(Area area) {
 		this.area = area;
 	}
-//
+	//
 	@Length(min=1, max=100)
 	public String getName() {
 		return name;
@@ -215,8 +204,8 @@ public class Office extends TreeEntity<Office> {
 //	public void setSort(Integer sort) {
 //		this.sort = sort;
 //	}
-	
-	@Length(min=1, max=2)
+
+	@Length(min=1, max=1)
 	public String getType() {
 		return type;
 	}
@@ -299,7 +288,7 @@ public class Office extends TreeEntity<Office> {
 	//	public String getParentId() {
 //		return parent != null && parent.getId() != null ? parent.getId() : "0";
 //	}
-	
+
 	@Override
 	public String toString() {
 		return name;
@@ -455,29 +444,5 @@ public class Office extends TreeEntity<Office> {
 
 	public void setVendor(String vendor) {
 		this.vendor = vendor;
-	}
-
-	public BizCustomerInfo getBizCustomerInfo() {
-		return bizCustomerInfo;
-	}
-
-	public void setBizCustomerInfo(BizCustomerInfo bizCustomerInfo) {
-		this.bizCustomerInfo = bizCustomerInfo;
-	}
-
-    public CommonProcessEntity getCommonProcess() {
-        return commonProcess;
-    }
-
-    public void setCommonProcess(CommonProcessEntity commonProcess) {
-        this.commonProcess = commonProcess;
-    }
-
-	public List<String> getTypes() {
-		return types;
-	}
-
-	public void setTypes(List<String> types) {
-		this.types = types;
 	}
 }

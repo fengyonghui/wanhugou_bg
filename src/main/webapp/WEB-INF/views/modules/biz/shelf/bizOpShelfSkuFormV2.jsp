@@ -23,7 +23,7 @@
                     $("input:checkbox[name='shelfs']:checked").each(function (i) {
                         shelfInfoIds += this.value+",";
                     });
-                    // alert(shelfInfoIds);
+
                     var centId = $("#centerOfficeId").val();
                     var flag = true;
                     var vflag = false;
@@ -317,7 +317,6 @@
                             pri += 10;
                         });
                         $("#tbody").append(htmlInfo);
-                        alert(retail);
                         if (retail != 1) {
 							$("#ShelfSkuTable").tablesMergeCell({
 								// automatic: true
@@ -327,7 +326,6 @@
 							});
                         }
 						if (retail == 1) {
-                            alert("======");
 							$("#ShelfSkuTable").tablesMergeCell({
 								// automatic: true
 								// 是否根据内容来合并

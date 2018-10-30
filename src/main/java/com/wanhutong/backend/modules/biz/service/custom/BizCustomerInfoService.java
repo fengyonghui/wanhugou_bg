@@ -3,16 +3,16 @@ package com.wanhutong.backend.modules.biz.service.custom;
 /**
  * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
-import java.util.List;
 
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.modules.biz.dao.custom.BizCustomerInfoDao;
+import com.wanhutong.backend.modules.biz.entity.cust.BizCustomerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
-import com.wanhutong.backend.modules.biz.dao.custom.BizCustomerInfoDao;
+import java.util.List;
 
 /**
  * 机构信息entityService
