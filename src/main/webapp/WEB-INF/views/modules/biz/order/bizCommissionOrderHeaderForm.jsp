@@ -55,12 +55,12 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
-            $("#contentTable").tablesMergeCell({
-                automatic: true,
-                // 是否根据内容来合并
-                cols: [0]
-                // rows:[0,2]
-            });
+            // $("#contentTable").tablesMergeCell({
+            //     automatic: true,
+            //     // 是否根据内容来合并
+            //     cols: [0]
+            //     // rows:[0,2]
+            // });
             //$("#name").focus();
             var bizStatus = $("#bizStatus").val();
             if (!${fns:getUser().isAdmin()}) {
@@ -305,6 +305,7 @@
             var payTotal = $("#payTotal").val();
             var lastPayDate = $('#lastPayDate').val();
             var remark = $("#remark").val();
+            var sellerId = '${entity.sellerId}';
             var id = '${entity.id}'
             if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                 alert("申请金额不正确!");
@@ -316,7 +317,7 @@
             }
 
             window.location.href="${ctx}/biz/order/bizCommissionOrder/saveCommission?totalCommission=" + payTotal + "&deadline=" + lastPayDate
-                 + "&remark=" + remark + "&orderIds=" + orderIds;
+                 + "&remark=" + remark + "&orderIds=" + orderIds + "&sellerId=" + sellerId;
         }
     </script>
 

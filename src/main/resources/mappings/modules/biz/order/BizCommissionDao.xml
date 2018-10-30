@@ -150,7 +150,9 @@
 		INSERT INTO biz_commission(
 			id,
 			total_commission,
-			pay_total,
+			<if test="payTotal != null and payTotal != ''">
+				pay_total,
+			</if>
 			img_url,
 			deadline,
 			pay_time,
@@ -168,7 +170,9 @@
 		) VALUES (
 			#{id},
 			#{totalCommission},
-			#{payTotal},
+			<if test="payTotal != null and payTotal != ''">
+				#{payTotal},
+			</if>
 			#{imgUrl},
 			#{deadline},
 			#{payTime},
