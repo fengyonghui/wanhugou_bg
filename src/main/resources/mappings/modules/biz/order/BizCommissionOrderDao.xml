@@ -103,10 +103,19 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_commission_order SET 	
+		UPDATE biz_commission_order SET
+		<if test="orderId != null and orderId !=''">
 			order_id = #{orderId},
+		</if>
+		<if test="commId != null and commId !=''">
 			comm_id = #{commId},
+		</if>
+		<if test="commission != null and commission !=''">
 			commission = #{commission},
+		</if>
+		<if test="delFlag !=null and delFlag != ''">
+			status = #{delFlag},
+		</if>
 			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
