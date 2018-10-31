@@ -369,10 +369,9 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		bizCustCredit.setCustomer(customer);
 
 		bizCustCredit = bizCustCreditService.get(bizCustCredit);
-		BigDecimal commission = bizCustCredit.getCommission().subtract(bizCommission.getPayTotal()).setScale(2, BigDecimal.ROUND_HALF_UP);
-		BigDecimal commissioned = bizCustCredit.getCommissioned().add(bizCommission.getPayTotal()).setScale(2, BigDecimal.ROUND_HALF_UP);
-		bizCustCredit.setCommission(commission);
-		bizCustCredit.setCommissioned(commissioned);
+		BigDecimal commissioned = bizCustCredit.getCommissioned();
+		BigDecimal resultCommissioned = (commissioned.add(bizCommission.getPayTotal())).setScale(2, BigDecimal.ROUND_HALF_UP);
+		bizCustCredit.setCommissioned(resultCommissioned);
 		bizCustCreditService.save(bizCustCredit);
 
 

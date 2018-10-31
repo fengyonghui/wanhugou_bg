@@ -104,11 +104,11 @@
 		</if>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="payee != null and payee != ''" >
-				AND bci.payee like
-				<if test="dbName == 'oracle'">'%'||#{payee}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{payee}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{payee},'%')</if>
+			<if test="customerName != null and customerName != ''" >
+				AND so.name like
+				<if test="dbName == 'oracle'">'%'||#{customerName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customerName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customerName},'%')</if>
 			</if>
 			<if test="bizStatus != null" >
 				AND a.biz_status = #{bizStatus}

@@ -64,6 +64,11 @@ public class BizCommission extends DataEntity<BizCommission> {
 	/**
 	 * 根据代销商姓名搜索
 	 */
+	private String customerName;
+
+	/**
+	 *
+	 */
 	private String payee;
 
     /**
@@ -182,12 +187,12 @@ public class BizCommission extends DataEntity<BizCommission> {
 		this.str = str;
 	}
 
-	public String getPayee() {
-		return payee;
+	public String getCustomerName() {
+		return customerName;
 	}
 
-	public void setPayee(String payee) {
-		this.payee = payee;
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 
 	public String getOrderIds() {
@@ -229,4 +234,12 @@ public class BizCommission extends DataEntity<BizCommission> {
     public void setOrderNum(String orderNum) {
         this.orderNum = orderNum;
     }
+
+	public String getPayee() {
+		return payee;
+	}
+
+	public void setPayee(String payee) {
+		this.payee = payee;
+	}
 }

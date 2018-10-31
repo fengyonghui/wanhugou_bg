@@ -92,10 +92,10 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 
 		<ul class="ul-form">
-			<li><label>收款人</label>
-				<form:input path="payee" htmlEscape="false" maxlength="25" class="input-medium"/>
+			<li><label>代销商：</label>
+				<form:input path="customerName" htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
-			<li><span style="margin-left: 10px"><label>订单编号</label></span>
+			<li><span style="margin-left: 10px"><label>订单编号：</label></span>
 				<form:input path="orderNum"  htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
 
@@ -124,7 +124,7 @@
 				<th>id</th>
 				<th>付款金额</th>
 				<th>实际付款金额</th>
-				<th>收款人</th>
+				<th>代销商</th>
 				<th>最后付款时间</th>
 				<th>实际付款时间</th>
 				<th>当前状态</th>
@@ -148,7 +148,7 @@
 						${bizCommission.payTotal}
 				</td>
 				<td>
-						${bizCommission.customerInfo.payee}
+						${bizCommission.customer.name}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizCommission.deadline}" pattern="yyyy-MM-dd HH:mm:ss"/>
@@ -183,9 +183,11 @@
 					</shiro:hasPermission>
 
 					<shiro:hasPermission name="biz:order:bizCommission:audit">
-						<c:if test="${bizCommission.payTotal != '0.00' && bizCommission.commonProcess.paymentOrderProcess.name != '审批完成' && bizCommission.totalCommission != 0}">
-							<a href="#" onclick="checkPass(${bizCommission.id}, ${bizCommission.commonProcess.paymentOrderProcess.code}, ${bizCommission.totalCommission})">审核通过</a>
-							<a href="#" onclick="checkReject(${bizCommission.id}, ${bizCommission.commonProcess.paymentOrderProcess.code}, ${bizCommission.totalCommission})">审核驳回</a>
+						<c:if test="${bizCommission.commonProcess.paymentOrderProcess.name != '驳回'}">
+							<c:if test="${bizCommission.payTotal != '0.00' && bizCommission.commonProcess.paymentOrderProcess.name != '审批完成' && bizCommission.totalCommission != 0}">
+								<a href="#" onclick="checkPass(${bizCommission.id}, ${bizCommission.commonProcess.paymentOrderProcess.code}, ${bizCommission.totalCommission})">审核通过</a>
+								<a href="#" onclick="checkReject(${bizCommission.id}, ${bizCommission.commonProcess.paymentOrderProcess.code}, ${bizCommission.totalCommission})">审核驳回</a>
+							</c:if>
 						</c:if>
 					</shiro:hasPermission>
 

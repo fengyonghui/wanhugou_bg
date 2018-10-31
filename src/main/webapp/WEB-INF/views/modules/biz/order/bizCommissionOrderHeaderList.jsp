@@ -494,24 +494,21 @@
 			</td>
 
 			<td>
-				<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.DELETE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.UNAPPROVE.state}">
-					<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state}">
-						待客户专员审核
-					</c:if>
-					<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
-						<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_LOCAL'}">
-							${orderHeader.commonProcess.jointOperationLocalProcess.name}
-						</c:if>
-						<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
-							<c:if test="${orderHeader.commonProcess.jointOperationOriginProcess.name != '审批完成'}">
-								${orderHeader.commonProcess.jointOperationOriginProcess.name}
-							</c:if>
-							<c:if test="${orderHeader.commonProcess.jointOperationOriginProcess.name == '审批完成'}">
-								订单支出信息审核
-							</c:if>
-						</c:if>
-					</c:if>
-				</c:if>
+                <c:if test="${orderHeader.applyCommStatus == 'no'}">
+                    待申请
+                </c:if>
+                <c:if test="${orderHeader.applyCommStatus == 'yes' && orderHeader.bizCommission.bizStatus == '0'}">
+                    <c:if test="${orderHeader.bizCommission.totalCommission == '0.00' && orderHeader.bizCommission.paymentOrderProcess.name != '审批完成'}">
+                        待确认支付金额
+                    </c:if>
+                    <c:if test="${bizCommission.totalCommission != '0.00'}">
+                        ${bizCommission.commonProcess.paymentOrderProcess.name}
+                    </c:if>
+                </c:if>
+                <c:if test="${orderHeader.applyCommStatus == 'yes' && orderHeader.bizCommission.bizStatus == '1'}">
+                    已结佣
+                </c:if>
+
 			</td>
 
 			<td>
