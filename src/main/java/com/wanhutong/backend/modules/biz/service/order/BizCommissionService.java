@@ -271,8 +271,8 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 					bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.NO_COMMISSSION.getComStatus());
 					bizOrderHeaderService.save(bizOrderHeader);
 
-					bizCommissionOrder.setDelFlag("0");
-					bizCommissionOrderService.save(bizCommissionOrder);
+					commissionOrder.setDelFlag("0");
+					bizCommissionOrderService.save(commissionOrder);
 				}
 			}
 //			bizCommission.setDelFlag("0");

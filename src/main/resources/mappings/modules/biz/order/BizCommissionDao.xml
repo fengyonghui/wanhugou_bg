@@ -9,6 +9,7 @@
 		<result column="deadline" property="deadline"/>
 		<result column="payTime" property="payTime"/>
 		<result column="remark" property="remark"/>
+		<result column="bizStatus" property="bizStatus"/>
 		<result column="sellerId" property="sellerId"/>
 		<result column="commonProcess.id" property="commonProcess.id"/>
 		<result column="commonProcess.objectName" property="commonProcess.objectName"/>
@@ -111,7 +112,6 @@
 		FROM biz_commission a
 		<include refid="bizCommissionJoins"/>
 		<if test="orderNum != null and orderNum != ''" >
-			-- LEFT JOIN biz_commission_order bco ON bco.comm_id=a.id
 			LEFT JOIN biz_order_header boh ON boh.id=bco.order_id AND boh.status=1
 		</if>
 		<where>
