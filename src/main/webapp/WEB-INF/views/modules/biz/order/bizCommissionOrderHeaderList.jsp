@@ -129,14 +129,7 @@
 	</script>
 
 	<script type="text/javascript">
-		function singleApplyCommission(orderIds, totalDetail, totalCommission, sellerId) {
-
-		    window.location.href = "${ctx}/biz/order/bizCommission/applyCommissionForm?orderIds=" + orderIds
-											+ "&totalDetail=" + totalDetail + "&totalCommission=" + totalCommission + "&sellerId=" + sellerId;
-
-        }
-
-        function applyCommission() {
+		function applyCommission() {
             var orderIds = ""
             var totalDetail = 0;
             var totalCommission = 0;
@@ -538,7 +531,7 @@
 			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
 				<input id="sellerId_${orderHeader.id}" type="hidden" value="${orderHeader.sellersId}"/>
 				<c:if test="${orderHeader.applyCommStatus == 'no'}">
-					<a href="#" onclick="singleApplyCommission('${orderHeader.id}', ${orderHeader.totalDetail}, ${orderHeader.commission}, ${orderHeader.sellersId})">申请结佣</a>
+					<a href="${ctx}/biz/order/bizCommission/applyCommissionForm?orderIds=${orderHeader.id}&totalDetail=${orderHeader.totalDetail}&totalCommission=${orderHeader.commission}&sellerId=${orderHeader.sellersId}">申请结佣</a>
 				</c:if>
 				<c:if test="${orderHeader.applyCommStatus == 'yes' && orderHeader.bizCommission.bizStatus == '0'}">
 					<a href="${ctx}/biz/order/bizCommission/list?orderNum=${orderHeader.orderNum}&str=detail">未结佣</a>
@@ -546,7 +539,8 @@
 				<c:if test="${orderHeader.applyCommStatus == 'yes' && orderHeader.bizCommission.bizStatus == '1'}">
 					<a href="${ctx}/biz/order/bizCommission/list?orderNum=${orderHeader.orderNum}&str=detail">已结佣</a>
 				</c:if>
-				<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}&commission=${orderHeader.commission}&commSign=commSign">查看详情</a>
+				<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}&commission=${orderHeader.commission}&commSign=commSign">查看详情</a>--%>
+				<a href="${ctx}/biz/order/bizCommission/applyCommissionForm?orderIds=${orderHeader.id}&totalDetail=${orderHeader.totalDetail}&totalCommission=${orderHeader.commission}&sellerId=${orderHeader.sellersId}&option=detail">查看详情</a>
 
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
 					<c:if test="${fns:getUser().isAdmin()}">

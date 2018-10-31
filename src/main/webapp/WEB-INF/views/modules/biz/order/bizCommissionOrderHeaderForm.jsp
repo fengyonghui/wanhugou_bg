@@ -303,7 +303,9 @@
                     </c:if>
                 </shiro:hasPermission>
 
-                <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>
+                <c:if test="${option == 'detail'}">
+                    <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>
+                </c:if>
                 &nbsp;&nbsp;&nbsp;
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </div>

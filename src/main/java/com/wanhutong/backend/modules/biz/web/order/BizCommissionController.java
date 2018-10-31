@@ -88,7 +88,7 @@ public class BizCommissionController extends BaseController {
 
 	@RequiresPermissions("biz:order:bizCommission:view")
 	@RequestMapping(value = "applyCommissionForm")
-	public String applyCommissionForm(BizCommission bizCommission, Model model) {
+	public String applyCommissionForm(BizCommission bizCommission, Model model, String option) {
 		String orderIds = bizCommission.getOrderIds();
 		List<Integer> orderIdList = new ArrayList<Integer>();
 		if (orderIds != null && orderIds.length() > 0 && !orderIds.contains(",")) {
@@ -149,6 +149,7 @@ public class BizCommissionController extends BaseController {
 			}
 		}
 
+		model.addAttribute("option", option);
 		model.addAttribute("orderHeaderList", orderHeaderList);
 		BizCustomerInfo bizCustomerInfo = bizCustomerInfoService.getByOfficeId(bizCommission.getSellerId());
 		bizCommission.setCustomerInfo(bizCustomerInfo);
