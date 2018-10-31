@@ -86,7 +86,7 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
      * 佣金比（百分比）存入百分号之前的数值
      */
 	private BigDecimal commissionRatio;
-	
+
 	public BizOpShelfSku() {
 		super();
 	}

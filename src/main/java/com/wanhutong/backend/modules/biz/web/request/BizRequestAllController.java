@@ -39,6 +39,7 @@ import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -105,6 +106,8 @@ public class BizRequestAllController {
     private SysOfficeAddressService officeAddressService;
     @Autowired
     private CommonLocationService commonLocationService;
+    @Autowired
+    private SystemService systemService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -472,6 +475,8 @@ public class BizRequestAllController {
                 model.addAttribute("sendNo", sendNo + "_1");
             }
         }
+        List<User> inspectorList = systemService.findUserByRoleEnName(RoleEnNameEnum.INSPECTOR.getState());
+        model.addAttribute("inspectorList",inspectorList);
         return "modules/biz/request/bizRequestConfirmOut";
     }
 

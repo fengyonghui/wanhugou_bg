@@ -1,8 +1,6 @@
-package com.wanhutong.backend.modules.biz.entity.cust;
+package com.wanhutong.backend.modules.biz.entity.custom;
 
-/**
- * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
- */
+
 import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
@@ -12,12 +10,13 @@ import com.wanhutong.backend.common.persistence.DataEntity;
  */
 public class BizCustomerInfo extends DataEntity<BizCustomerInfo> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 100001000010000L;
     private Integer officeId;		// 机构id
     private String bankName;		// 开户行
     private String cardNumber;		// 银行卡号
     private String payee;		// 收款人
     private String remark;		// 备注
+    private String idCardNumber;		// 身份证号
 
     public BizCustomerInfo() {
         super();
@@ -67,5 +66,11 @@ public class BizCustomerInfo extends DataEntity<BizCustomerInfo> {
         this.remark = remark;
     }
 
+    public String getIdCardNumber() {
+        return idCardNumber;
+    }
 
+    public void setIdCardNumber(String idCardNumber) {
+        this.idCardNumber = idCardNumber;
+    }
 }

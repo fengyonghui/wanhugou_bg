@@ -18,6 +18,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.hibernate.validator.constraints.Length;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -85,6 +86,12 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
      * 用于发货传值
      */
     private List<BizRequestDetail> requestDetailList;
+
+    private BigDecimal salePrice;
+
+    private BigDecimal detailCommission;
+
+    private BigDecimal commissionRatio;
 
     public BizOrderDetail getOrderDaillist() {
         return orderDaillist;
@@ -426,5 +433,29 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setRequestDetailList(List<BizRequestDetail> requestDetailList) {
         this.requestDetailList = requestDetailList;
+    }
+
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public BigDecimal getDetailCommission() {
+        return detailCommission;
+    }
+
+    public void setDetailCommission(BigDecimal detailCommission) {
+        this.detailCommission = detailCommission;
+    }
+
+    public BigDecimal getCommissionRatio() {
+        return commissionRatio;
+    }
+
+    public void setCommissionRatio(BigDecimal commissionRatio) {
+        this.commissionRatio = commissionRatio;
     }
 }

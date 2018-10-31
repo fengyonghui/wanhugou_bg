@@ -8,7 +8,8 @@
         a.bank_name AS "bankName",
         a.card_number AS "cardNumber",
         a.payee AS "payee",
-        a.remark AS "remark"
+        a.remark AS "remark",
+        a.id_card_number AS "idCardNumber"
     </sql>
 
     <sql id="bizCustomerInfoJoins">
@@ -72,14 +73,16 @@
         bank_name,
         card_number,
         payee,
-        remark
+        remark,
+        id_card_number
         ) VALUES (
         #{id},
         #{officeId},
         #{bankName},
         #{cardNumber},
         #{payee},
-        #{remark}
+        #{remark},
+        #{idCardNumber}
         )
     </insert>
 
@@ -96,6 +99,9 @@
         </if>
         <if test="remark != null and remark != ''">
           remark = #{remark},
+        </if>
+        <if test="idCardNumber != null and idCardNumber != ''">
+            id_card_number = #{idCardNumber},
         </if>
         update_time = NOW()
         WHERE id = #{id}

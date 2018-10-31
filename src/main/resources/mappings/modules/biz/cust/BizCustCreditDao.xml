@@ -3,30 +3,30 @@
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.cust.BizCustCreditDao">
 
 	<!--<resultMap id="bizCustCreditMap" type="BizCustCredit">-->
-	<!--<association property="customer" javaType="Office" column="customer.id">-->
-	<!--<id property="id" column="customer.id"/>-->
-	<!--<result property="name" column="customer.name"/>-->
-	<!--<result property="phone" column="customer.phone"/>-->
-	<!--</association>-->
-	<!--<result property="payPwd" column="pay_pwd"/>-->
-	<!--<result property="level" column="level"/>-->
-	<!--<result property="credit" column="credit"/>-->
-	<!--<result property="wallet" column="wallet"/>-->
-	<!--<result property="money" column="money"/>-->
-	<!--<result property="aliAccount" column="ali_account"/>-->
-	<!--<result property="aliName" column="ali_name"/>-->
-	<!--<result property="status" column="status"/>-->
-	<!--<association property="createBy" javaType="User" column="createBy.id">-->
-	<!--<id property="id" column="createBy.id"/>-->
-	<!--<id property="name" column="createBy.name"/>-->
-	<!--</association>-->
-	<!--<result property="createDate" column="create_time"/>-->
-	<!--<result property="uVersion" column="u_version"/>-->
-	<!--<association property="updateBy" javaType="User" column="updateBy.id">-->
-	<!--<id property="id" column="updateBy.id"/>-->
-	<!--<id property="name" column="updateBy.name"/>-->
-	<!--</association>-->
-	<!--<result property="updateDate" column="update_time"/>-->
+		<!--<association property="customer" javaType="Office" column="customer.id">-->
+			<!--<id property="id" column="customer.id"/>-->
+			<!--<result property="name" column="customer.name"/>-->
+			<!--<result property="phone" column="customer.phone"/>-->
+		<!--</association>-->
+		<!--<result property="payPwd" column="pay_pwd"/>-->
+		<!--<result property="level" column="level"/>-->
+		<!--<result property="credit" column="credit"/>-->
+		<!--<result property="wallet" column="wallet"/>-->
+		<!--<result property="money" column="money"/>-->
+		<!--<result property="aliAccount" column="ali_account"/>-->
+		<!--<result property="aliName" column="ali_name"/>-->
+		<!--<result property="status" column="status"/>-->
+		<!--<association property="createBy" javaType="User" column="createBy.id">-->
+			<!--<id property="id" column="createBy.id"/>-->
+			<!--<id property="name" column="createBy.name"/>-->
+		<!--</association>-->
+		<!--<result property="createDate" column="create_time"/>-->
+		<!--<result property="uVersion" column="u_version"/>-->
+		<!--<association property="updateBy" javaType="User" column="updateBy.id">-->
+			<!--<id property="id" column="updateBy.id"/>-->
+			<!--<id property="name" column="updateBy.name"/>-->
+		<!--</association>-->
+		<!--<result property="updateDate" column="update_time"/>-->
 	<!--</resultMap>-->
 
 	<sql id="bizCustCreditColumns">
@@ -38,6 +38,8 @@
 		a.money AS "money",
 		a.ali_account AS "aliAccount",
 		a.ali_name AS "aliName",
+		a.commission AS "commission",
+		a.commissioned AS "commissioned",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -49,24 +51,24 @@
 		su.name as "createBy.name",
 		suso.mobile as "customer.moblieMoeny.mobile"
 	</sql>
-
+	
 	<sql id="bizCustCreditJoins">
 		LEFT JOIN sys_office so ON so.id = a.office_id
 		left join sys_user suso on so.id=suso.company_id and so.primary_person = suso.id and suso.`status`=#{DEL_FLAG_NORMAL}
 		left join sys_user su on a.create_id=su.id
 	</sql>
-
+    
 	<select id="get" resultType="BizCustCredit">
-		SELECT
-		<include refid="bizCustCreditColumns"/>
+		SELECT 
+			<include refid="bizCustCreditColumns"/>
 		FROM biz_cust_credit a
 		<include refid="bizCustCreditJoins"/>
 		WHERE a.office_id = #{customer.id}
 	</select>
-
+	
 	<select id="findList" resultType="BizCustCredit">
-		SELECT
-		<include refid="bizCustCreditColumns"/>
+		SELECT 
+			<include refid="bizCustCreditColumns"/>
 		FROM biz_cust_credit a
 		<include refid="bizCustCreditJoins"/>
 		<where>
@@ -82,6 +84,13 @@
 			</if>
 			<if test="CgsType != null and CgsType !=''">
 				AND so.type = #{CgsType}
+			</if>
+
+			<if test="cgsTypes != null and cgsTypes.size > 0">
+				AND so.type in
+				<foreach collection="cgsTypes" item="e" separator="," open="(" close=")">
+					${e}
+				</foreach>
 			</if>
 			<if test="customer!=null and customer.moblieMoeny!=null and customer.moblieMoeny.mobile != null and customer.moblieMoeny.mobile !=''">
 				AND suso.mobile like
@@ -99,15 +108,15 @@
 			</otherwise>
 		</choose>
 	</select>
-
+	
 	<select id="findAllList" resultType="BizCustCredit">
-		SELECT
-		<include refid="bizCustCreditColumns"/>
+		SELECT 
+			<include refid="bizCustCreditColumns"/>
 		FROM biz_cust_credit a
 		<include refid="bizCustCreditJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-		</where>
+		</where>		
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -116,71 +125,89 @@
 			</otherwise>
 		</choose>
 	</select>
-
+	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_cust_credit(
-		office_id,
-		pay_pwd,
-		`level`,
-		credit,
-		wallet,
-		money,
+			office_id,
+			pay_pwd,
+			`level`,
+			credit,
+			wallet,
+			money,
 		<if test="aliAccount!=null and aliAccount!=''">
 			ali_account,
 		</if>
 		<if test="aliName!=null and aliName!=''">
 			ali_name,
 		</if>
-		status,
-		create_id,
-		create_time,
-		u_version,
-		update_id,
-		update_time
+		<if test="commission!=null and commission!=''">
+			commission,
+		</if>
+		<if test="commissioned!=null and commissioned!=''">
+			commissioned,
+		</if>
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
 		) VALUES (
-		#{customer.id},
-		#{payPwd},
-		#{level},
-		#{credit},
-		#{wallet},
-		#{money},
+			#{customer.id},
+			#{payPwd},
+			#{level},
+			#{credit},
+			#{wallet},
+			#{money},
 		<if test="aliAccount!=null and aliAccount!=''">
 			#{aliAccount},
 		</if>
 		<if test="aliName!=null and aliName!=''">
 			#{aliName},
 		</if>
-		#{delFlag},
-		#{createBy.id},
-		#{createDate},
-		#{uVersion},
-		#{updateBy.id},
-		#{updateDate}
+		<if test="commission!=null and commission!=''">
+			#{commission},
+		</if>
+		<if test="commissioned!=null and commissioned!=''">
+			#{commissioned},
+		</if>
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
-
+	
 	<update id="update">
-		UPDATE biz_cust_credit SET
-		office_id = #{customer.id},
-		pay_pwd = #{payPwd},
+		UPDATE biz_cust_credit SET 	
+			office_id = #{customer.id},
+			pay_pwd = #{payPwd},
 		<if test="level != null and level !=''">
 			`level` = #{level},
 		</if>
-		credit = #{credit},
-		wallet = #{wallet},
-		money = #{money},
+			credit = #{credit},
+			wallet = #{wallet},
+			money = #{money},
 		<if test="aliAccount!=null and aliAccount!=''">
 			ali_account = #{aliAccount},
 		</if>
 		<if test="aliName!=null and aliName!=''">
 			ali_name = #{aliName},
 		</if>
-		u_version = #{uVersion},
-		update_id = #{updateBy.id},
-		update_time = #{updateDate}
+		<if test="commission!=null and commission!=''">
+			commission = #{commission},
+		</if>
+		<if test="commissioned!=null and commissioned!=''">
+			commissioned= #{commissioned},
+		</if>
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE office_id = #{id}
 	</update>
-
+	
 	<update id="delete">
 		UPDATE biz_cust_credit SET 
 			status = #{delFlag}
