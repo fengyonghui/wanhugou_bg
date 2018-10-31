@@ -1043,18 +1043,6 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public Pair<Boolean, String> officeTypeApply(Office office, OfficeLevelApplyDto officeLevelApplyDto) {
-        BizCustomerInfo bizCustomerInfo = office.getBizCustomerInfo();
-        if (bizCustomerInfo == null) {
-            bizCustomerInfo = new BizCustomerInfo();
-        }
-
-        bizCustomerInfo.setOfficeId(office.getId());
-        bizCustomerInfo.setBankName(officeLevelApplyDto.getDepositBank());
-        bizCustomerInfo.setPayee(officeLevelApplyDto.getRealName());
-        bizCustomerInfo.setCardNumber(officeLevelApplyDto.getBankCardNumber());
-        bizCustomerInfo.setIdCardNumber(officeLevelApplyDto.getIdCardNumber());
-        bizCustomerInfoService.save(bizCustomerInfo);
-
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
         commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
         commonProcessEntity.setObjectId(String.valueOf(office.getId()));
@@ -1067,6 +1055,18 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
         commonProcessEntity.setType(officeLevelApplyDto.getApplyLevel().toString());
         commonProcessService.save(commonProcessEntity);
+
+        BizCustomerInfo bizCustomerInfo = office.getBizCustomerInfo();
+        if (bizCustomerInfo == null) {
+            bizCustomerInfo = new BizCustomerInfo();
+        }
+
+        bizCustomerInfo.setOfficeId(office.getId());
+        bizCustomerInfo.setBankName(officeLevelApplyDto.getDepositBank());
+        bizCustomerInfo.setPayee(officeLevelApplyDto.getRealName());
+        bizCustomerInfo.setCardNumber(officeLevelApplyDto.getBankCardNumber());
+        bizCustomerInfo.setIdCardNumber(officeLevelApplyDto.getIdCardNumber());
+        bizCustomerInfoService.save(bizCustomerInfo);
 
         return Pair.of(Boolean.TRUE, "操作成功!");
 
