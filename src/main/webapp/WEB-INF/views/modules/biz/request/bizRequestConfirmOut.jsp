@@ -59,7 +59,7 @@
                     console.info(JSON.stringify(treasuryList));
 
                     var trackingNumber = $("#trackingNumber").val();
-                    var inspectorId = $("#inspector.id").val();
+                    var inspectorId = $("#inspectorId").val();
                     var inspectDate = $("#inspectDate").val();
                     var inspectRemark = $("#inspectRemark").val();
                     var collLocate = $("#collLocate").val();
@@ -171,6 +171,9 @@
             }
         }
 
+        function addTab($this, refresh){
+            parent.addTab($this, refresh);
+        }
 
         function checkReqDetail(obj) {
             if ($(obj).attr("checked")=='checked') {
@@ -225,6 +228,9 @@
 		<label class="control-label">销售订单编号：</label>
 		<div class="controls">
 			<input type="text" class="input-xlarge" readonly="readonly" value="${bizOrderHeader.orderNum}"/>
+			<c:if test="${bizOrderHeader.orderType == 8 && source == 'detail'}">
+				<a onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/biz/inventory/bizInvoice/list?orderNum=${bizOrderHeader.orderNum}&bizStatus=0&ship=0">查看物流信息</a>
+			</c:if>
 		</div>
 	</div>
 	<div class="control-group">
@@ -234,7 +240,7 @@
 			<input type="hidden" name="customer.id" value="${bizOrderHeader.customer.id}">
 		</div>
 	</div>
-	<c:if test="${bizOrderHeader.orderType == 8}">
+	<c:if test="${bizOrderHeader.orderType == 8 && source != 'detail'}">
 		<div class="control-group">
 			<label class="control-label">物流单号：</label>
 			<div class="controls">
@@ -245,7 +251,7 @@
 		<div class="control-group">
 			<label class="control-label">验货员：</label>
 			<div class="controls">
-				<select about="choose" id="inspector.id" class="input-medium ">
+				<select about="choose" id="inspectorId" class="input-medium ">
 					<option value="" label="请选择">请选择</option>
 					<c:forEach var="v" items="${inspectorList}">
 						<option value="${v.id}" label="${v.name}">${v.name}</option>
