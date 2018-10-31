@@ -623,7 +623,7 @@
 				LEFT
 				JOIN biz_order_header boh ON boh.id = bod.order_id
 				WHERE boh.id = a.id) != 0
-				and a.order_num like 'SO%'
+				and (a.order_num like 'SO%' or a.order_num like 'RO%')
 			</if>
 			<if test="bizPoHeader !=null and bizPoHeader.id != null and bizPoHeader.id != ''">
 				AND  bph.id = ${bizPoHeader.id}
