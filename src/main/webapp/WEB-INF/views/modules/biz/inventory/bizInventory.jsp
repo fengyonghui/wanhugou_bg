@@ -150,13 +150,15 @@
 				<td>
 					<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invId=${bizRequestHeader.invInfo.id}&source=detail">详情</a>
 					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-						<c:if test="${(bizRequestHeader.invCommonProcess.id == null || bizRequestHeader.invCommonProcess.invRequestProcess.name == '审批完成')}">
+						<c:if test="${(bizRequestHeader.invCommonProcess.id == null || bizRequestHeader.invCommonProcess.invRequestProcess.name == '审批完成' || bizRequestHeader.invCommonProcess.invRequestProcess.name == '驳回')}">
 							<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invId=${bizRequestHeader.invInfo.id}">日常异动</a>
 						</c:if>
 					</shiro:hasPermission>
 					<%--<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invId=${bizRequestHeader.invInfo.id}&source=pChange">日常异动</a>--%>
 					<shiro:hasPermission name="biz:inventory:bizInventorySku:audit">
-						<c:if test="${bizRequestHeader.invCommonProcess.id != null && bizRequestHeader.invCommonProcess.invRequestProcess.name != '审批完成' && (fns:hasRole(roleSet, bizRequestHeader.invCommonProcess.invRequestProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
+						<c:if test="${bizRequestHeader.invCommonProcess.id != null && bizRequestHeader.invCommonProcess.invRequestProcess.name != '审批完成'
+										&& bizRequestHeader.invCommonProcess.invRequestProcess.name != '驳回'
+										&& (fns:hasRole(roleSet, bizRequestHeader.invCommonProcess.invRequestProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
 							<a href="${ctx}/biz/inventory/bizInventorySku/inventoryForm?id=${bizRequestHeader.id}&invId=${bizRequestHeader.invInfo.id}&source=audit">审核</a>
 						</c:if>
 					</shiro:hasPermission>
