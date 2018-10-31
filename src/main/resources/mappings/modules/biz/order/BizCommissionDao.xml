@@ -111,7 +111,7 @@
 		FROM biz_commission a
 		<include refid="bizCommissionJoins"/>
 		<if test="orderNum != null and orderNum != ''" >
-			LEFT JOIN biz_commission_order bco ON bco.comm_id=a.id
+			-- LEFT JOIN biz_commission_order bco ON bco.comm_id=a.id
 			LEFT JOIN biz_order_header boh ON boh.id=bco.order_id AND boh.status=1
 		</if>
 		<where>
