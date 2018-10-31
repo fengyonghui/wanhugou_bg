@@ -21,7 +21,7 @@
             $("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
-                    if($("#type").val() == 16 || $("#type").val() == 6) {
+                    if(($("#type").val() == 16 || $("#type").val() == 6) && $("#option").val() != 'upgrade') {
                         var cardNumber = $("#cardNumber").val();
                         var bankName = $("#bankName").val();
                         var payee = $("#payee").val();
@@ -183,6 +183,7 @@
 <form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/purchaserSave?option=${option}" method="post" class="form-horizontal">
     <form:hidden path="id" id="id"/>
     <form:hidden path="source"/>
+    <input type="hidden" value="${option}" id="option"/>
     <sys:message content="${message}"/>
     <div class="control-group">
         <label class="control-label">上级机构:</label>
