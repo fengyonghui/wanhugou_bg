@@ -35,9 +35,9 @@
 					if(bizPoHeader.bizPoPaymentOrder) {
 						bizPoPaymentOrderId = bizPoHeader.bizPoPaymentOrder.id;
 					}
-					if(bizPoPaymentOrderId != null || bizPoPaymentOrderId != '' || res.data.type == 'createPay') {
+					if(bizPoPaymentOrderId != '' || res.data.type == 'createPay') {
 						$('#orNumDate').show();
-						var orApplyNum = (bizPoPaymentOrderId != null || bizPoPaymentOrderId != '') ? bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal);
+						var orApplyNum = bizPoPaymentOrderId != '' ? bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal);
 						$('#orApplyNum').val(orApplyNum)//申请金额
 						$('#orNowDate').val(_this.formatDateTime(bizPoHeader.bizPoPaymentOrder.deadline))//本次申请付款时间
 					}else {

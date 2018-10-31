@@ -117,6 +117,7 @@
                                             $(this).removeAttr("style");
                                         }
                                     });
+                                    $("#shelfInfoId").removeAttr("disabled");
                                     loading('正在提交，请稍等...');
                                     form.submit();
                                 }
@@ -408,7 +409,7 @@
             var orgPrice = $(item).parent().parent().find("input[name='orgPrices']");
 			var salePrice = $(item).parent().parent().find("input[name='salePrices']");
             var commission = $(item).parent().parent().find("input[name='commission']");
-            $(commission).val(parseFloat(($(salePrice).val()) - parseFloat($(orgPrice).val())) * parseFloat($(item).val()) / 100);
+            $(commission).val((parseFloat(($(salePrice).val()) - parseFloat($(orgPrice).val())) * parseFloat($(item).val()) / 100).toFixed(2));
         }
 
         function shelfInfoChanged() {
@@ -660,7 +661,7 @@
 						<c:if test="${bizOpShelfSku.opShelfInfo.type == 5}">
 							<td><input name="marketPrices" value="${bizOpShelfSku.marketPrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 							<td><input name="commissionRatios" value="${bizOpShelfSku.commissionRatio}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" min="0" placeholder="必填！" onchange="getCommissionByRatio(this)"/></td>
-							<td><input name="commission" value="${(bizOpShelfSku.salePrice - bizOpShelfSku.orgPrice) * bizOpShelfSku.commissionRatio / 100}" htmlEscape="false" maxlength="6" class="input-medium required" readonly="readonly" type="number" placeholder="必填！"/></td>
+							<td><input name="commission" value=<fmt:formatNumber type="number" value="${(bizOpShelfSku.salePrice - bizOpShelfSku.orgPrice) * bizOpShelfSku.commissionRatio / 100}" maxFractionDigits="2"/> htmlEscape="false" maxlength="6" class="input-medium required" readonly="readonly" type="number" placeholder="必填！"/></td>
 						</c:if>
 						<td><input name="minQtys" value="${bizOpShelfSku.minQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 						<td><input name="maxQtys" value="${bizOpShelfSku.maxQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
@@ -735,7 +736,7 @@
 								<td><input name="commissionRatios" value="${bizOpShelfSku.commissionRatio}" htmlEscape="false"
 										   maxlength="6" class="input-medium required" readonly="readonly" type="number"
 										   placeholder="必填！"/></td>
-								<td><input name="commission" value="${(bizOpShelfSku.salePrice - bizOpShelfSku.orgPrice) * bizOpShelfSku.commissionRatio / 100}" htmlEscape="false"
+								<td><input name="commission" value=<fmt:formatNumber type="number" value="${(bizOpShelfSku.salePrice - bizOpShelfSku.orgPrice) * bizOpShelfSku.commissionRatio / 100}" maxFractionDigits="2"/> htmlEscape="false"
 										   maxlength="6" class="input-medium required" readonly="readonly" type="number"
 										   placeholder="必填！"/></td>
 							</c:if>
