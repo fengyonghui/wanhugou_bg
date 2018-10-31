@@ -209,6 +209,12 @@
             top.$('.jbox-body .jbox-icon').css('top','55px');
         }
 	</script>
+	<script src="${ctxStatic}/jquery/jquery-1.9.1.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+        function addTab($this, refresh){
+            parent.addTab($this, refresh);
+        }
+	</script>
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -225,6 +231,9 @@
 		<label class="control-label">销售订单编号：</label>
 		<div class="controls">
 			<input type="text" class="input-xlarge" readonly="readonly" value="${bizOrderHeader.orderNum}"/>
+			<c:if test="${bizOrderHeader.orderType == 8 && source == 'detail'}">
+				<a onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/biz/inventory/bizInvoice/list?orderNum=${bizOrderHeader.orderNum}&bizStatus=0&ship=0">查看物流信息</a>
+			</c:if>
 		</div>
 	</div>
 	<div class="control-group">
@@ -234,7 +243,7 @@
 			<input type="hidden" name="customer.id" value="${bizOrderHeader.customer.id}">
 		</div>
 	</div>
-	<c:if test="${bizOrderHeader.orderType == 8}">
+	<c:if test="${bizOrderHeader.orderType == 8 && source != 'detail'}">
 		<div class="control-group">
 			<label class="control-label">物流单号：</label>
 			<div class="controls">
