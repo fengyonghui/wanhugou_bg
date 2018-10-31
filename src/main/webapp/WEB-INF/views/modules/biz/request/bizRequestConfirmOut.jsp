@@ -59,7 +59,7 @@
                     console.info(JSON.stringify(treasuryList));
 
                     var trackingNumber = $("#trackingNumber").val();
-                    var inspectorId = $("#inspector.id").val();
+                    var inspectorId = $("#inspectorId").val();
                     var inspectDate = $("#inspectDate").val();
                     var inspectRemark = $("#inspectRemark").val();
                     var collLocate = $("#collLocate").val();
@@ -171,6 +171,9 @@
             }
         }
 
+        function addTab($this, refresh){
+            parent.addTab($this, refresh);
+        }
 
         function checkReqDetail(obj) {
             if ($(obj).attr("checked")=='checked') {
@@ -207,12 +210,6 @@
                 }
             },{buttonsFocus:1});
             top.$('.jbox-body .jbox-icon').css('top','55px');
-        }
-	</script>
-	<script src="${ctxStatic}/jquery/jquery-1.9.1.js" type="text/javascript" charset="utf-8"></script>
-	<script type="text/javascript">
-        function addTab($this, refresh){
-            parent.addTab($this, refresh);
         }
 	</script>
 </head>
@@ -254,7 +251,7 @@
 		<div class="control-group">
 			<label class="control-label">验货员：</label>
 			<div class="controls">
-				<select about="choose" id="inspector.id" class="input-medium ">
+				<select about="choose" id="inspectorId" class="input-medium ">
 					<option value="" label="请选择">请选择</option>
 					<c:forEach var="v" items="${inspectorList}">
 						<option value="${v.id}" label="${v.name}">${v.name}</option>
