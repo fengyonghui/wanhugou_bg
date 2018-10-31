@@ -43,5 +43,8 @@ public class BizCommissionOrderService extends CrudService<BizCommissionOrderDao
 	public void delete(BizCommissionOrder bizCommissionOrder) {
 		super.delete(bizCommissionOrder);
 	}
-	
+
+	public List<BizCommissionOrder> findListForCommonProcess(BizCommissionOrder bizCommissionOrder) {
+		return dao.findListForCommonProcess(bizCommissionOrder);
+	}
 }

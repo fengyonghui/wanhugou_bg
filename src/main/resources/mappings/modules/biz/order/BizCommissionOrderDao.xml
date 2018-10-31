@@ -58,6 +58,29 @@
 			</otherwise>
 		</choose>
 	</select>
+
+	<select id="findListForCommonProcess" resultType="BizCommissionOrder">
+		SELECT
+		<include refid="bizCommissionOrderColumns"/>
+		FROM biz_commission_order a
+		<include refid="bizCommissionOrderJoins"/>
+		<where>
+			1 = 1
+			<if test="commId !=null">
+				AND a.comm_id = #{commId}
+			</if>
+			<if test="orderId !=null">
+				AND a.order_id = #{orderId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
 	
 	<select id="findAllList" resultType="BizCommissionOrder">
 		SELECT 

@@ -7,6 +7,8 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizCommissionOrder;
 
+import java.util.List;
+
 /**
  * 佣金付款订单关系表DAO接口
  * @author wangby
@@ -14,5 +16,6 @@ import com.wanhutong.backend.modules.biz.entity.order.BizCommissionOrder;
  */
 @MyBatisDao
 public interface BizCommissionOrderDao extends CrudDao<BizCommissionOrder> {
-	
+
+    List<BizCommissionOrder> findListForCommonProcess(BizCommissionOrder bizCommissionOrder);
 }

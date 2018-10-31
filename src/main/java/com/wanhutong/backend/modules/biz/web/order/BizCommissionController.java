@@ -179,7 +179,7 @@ public class BizCommissionController extends BaseController {
 
 			BizCommissionOrder bizCommissionOrder = new BizCommissionOrder();
 			bizCommissionOrder.setOrderId(orderIdList.get(0));
-			List<BizCommissionOrder> bizCommissionOrderList = bizCommissionOrderService.findList(bizCommissionOrder);
+			List<BizCommissionOrder> bizCommissionOrderList = bizCommissionOrderService.findListForCommonProcess(bizCommissionOrder);
 			if (CollectionUtils.isNotEmpty(bizCommissionOrderList)) {
 				BizCommission bizCommission1 = bizCommissionOrderList.get(0).getBizCommission();
 				if (bizCommission1 != null && bizCommission1.getId() != null) {
