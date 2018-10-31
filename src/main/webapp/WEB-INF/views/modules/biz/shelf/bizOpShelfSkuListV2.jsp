@@ -202,7 +202,7 @@
 					${bizOpShelfSku.salePrice}
 				</td>
 				<td>
-					${(bizOpShelfSku.salePrice - bizOpShelfSku.orgPrice) * bizOpShelfSku.commissionRatio / 100}
+					<fmt:formatNumber type="number" value="${(bizOpShelfSku.salePrice - bizOpShelfSku.orgPrice) * bizOpShelfSku.commissionRatio / 100}" maxFractionDigits="2"/>
 				</td>
 				<td>
 					${bizOpShelfSku.minQty}
