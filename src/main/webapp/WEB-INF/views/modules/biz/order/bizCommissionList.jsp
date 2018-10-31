@@ -125,6 +125,7 @@
 				<th>付款金额</th>
 				<th>实际付款金额</th>
 				<th>代销商</th>
+				<th>所属单号</th>
 				<th>最后付款时间</th>
 				<th>实际付款时间</th>
 				<th>当前状态</th>
@@ -149,6 +150,9 @@
 				</td>
 				<td>
 						${bizCommission.customer.name}
+				</td>
+				<td>
+						${bizCommission.orderNumsStr}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizCommission.deadline}" pattern="yyyy-MM-dd HH:mm:ss"/>

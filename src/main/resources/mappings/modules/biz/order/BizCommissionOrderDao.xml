@@ -19,11 +19,13 @@
 		bc.img_url AS "bizCommission.imgUrl",
 		bc.deadline AS "bizCommission.deadline",
 		bc.pay_time AS "bizCommission.payTime",
-		bc.remark AS "bizCommission.remark"
+		bc.remark AS "bizCommission.remark",
+		boh.order_num AS "bizOrderHeader.orderNum"
 	</sql>
 	
 	<sql id="bizCommissionOrderJoins">
 		LEFT JOIN biz_commission as bc on bc.id = a.comm_id AND bc.status = 1
+		LEFT JOIN biz_order_header AS boh ON boh.id = a.order_id AND boh.status = 1
 	</sql>
     
 	<select id="get" resultType="BizCommissionOrder">

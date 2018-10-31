@@ -23,6 +23,8 @@ public class BizCommissionOrder extends DataEntity<BizCommissionOrder> {
 
 	private BizCommission bizCommission;
 
+	private BizOrderHeader bizOrderHeader;
+
 	public BizCommissionOrder() {
 		super();
 	}
@@ -61,5 +63,13 @@ public class BizCommissionOrder extends DataEntity<BizCommissionOrder> {
 
 	public void setBizCommission(BizCommission bizCommission) {
 		this.bizCommission = bizCommission;
+	}
+
+	public BizOrderHeader getBizOrderHeader() {
+		return bizOrderHeader;
+	}
+
+	public void setBizOrderHeader(BizOrderHeader bizOrderHeader) {
+		this.bizOrderHeader = bizOrderHeader;
 	}
 }

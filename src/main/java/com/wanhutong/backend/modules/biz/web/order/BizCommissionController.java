@@ -8,11 +8,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
+import com.wanhutong.backend.modules.biz.entity.order.BizCommissionOrder;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomerInfoService;
+import com.wanhutong.backend.modules.biz.service.order.BizCommissionOrderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
@@ -58,6 +60,8 @@ public class BizCommissionController extends BaseController {
 	private BizOpShelfSkuService bizOpShelfSkuService;
 	@Autowired
 	private BizCustomerInfoService bizCustomerInfoService;
+	@Autowired
+	private BizCommissionOrderService bizCommissionOrderService;
 	
 	@ModelAttribute
 	public BizCommission get(@RequestParam(required=false) Integer id) {
@@ -76,6 +80,27 @@ public class BizCommissionController extends BaseController {
 	public String list(BizCommission bizCommission, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizCommission> page = bizCommissionService.findPage(new Page<BizCommission>(request, response), bizCommission); 
 		model.addAttribute("page", page);
+
+		List<BizCommission> bizCommissionList = page.getList();
+		if (CollectionUtils.isNotEmpty(bizCommissionList)) {
+			for (BizCommission commission : bizCommissionList) {
+				String orderNums = "";
+				List<BizCommissionOrder> bizCommissionOrderList = commission.getBizCommissionOrderList();
+				if (CollectionUtils.isNotEmpty(bizCommissionOrderList)) {
+					for (BizCommissionOrder commissionOrder : bizCommissionOrderList) {
+						commissionOrder = bizCommissionOrderService.get(commissionOrder.getId());
+						BizOrderHeader bizOrderHeader = commissionOrder.getBizOrderHeader();
+						if (bizOrderHeader != null && bizOrderHeader.getOrderNum() != null) {
+							String orderNum = bizOrderHeader.getOrderNum();
+							orderNums = orderNums + "," + orderNum;
+						}
+					}
+				}
+				if (orderNums.length() > 0) {
+					commission.setOrderNumsStr(orderNums.substring(1, orderNums.length()));
+				}
+			}
+		}
 		return "modules/biz/order/bizCommissionList";
 	}
 

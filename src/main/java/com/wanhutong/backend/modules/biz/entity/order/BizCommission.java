@@ -76,6 +76,10 @@ public class BizCommission extends DataEntity<BizCommission> {
      */
 	private String orderNum;
 
+	private String orderNumsStr;
+
+	private List<BizCommissionOrder> bizCommissionOrderList;
+
 	private BizCustomerInfo customerInfo;
 
 	public BigDecimal getTotalCommission() {
@@ -241,5 +245,21 @@ public class BizCommission extends DataEntity<BizCommission> {
 
 	public void setPayee(String payee) {
 		this.payee = payee;
+	}
+
+	public List<BizCommissionOrder> getBizCommissionOrderList() {
+		return bizCommissionOrderList;
+	}
+
+	public void setBizCommissionOrderList(List<BizCommissionOrder> bizCommissionOrderList) {
+		this.bizCommissionOrderList = bizCommissionOrderList;
+	}
+
+	public String getOrderNumsStr() {
+		return orderNumsStr;
+	}
+
+	public void setOrderNumsStr(String orderNumsStr) {
+		this.orderNumsStr = orderNumsStr;
 	}
 }
