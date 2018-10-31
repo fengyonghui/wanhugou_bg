@@ -193,8 +193,7 @@ public class BizSendGoodsRecordController extends BaseController {
 				}
 			}
 		}
-//		return bizSendGoodsRecordService.outTreasury(outTreasuryList);
-		return "ok";
+		return bizSendGoodsRecordService.outTreasury(outTreasuryList);
 	}
 
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:view")
