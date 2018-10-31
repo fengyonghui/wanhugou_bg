@@ -18,9 +18,8 @@ import com.wanhutong.backend.modules.biz.service.order.BizCommissionOrderService
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
-import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
-import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
@@ -65,6 +64,8 @@ public class BizCommissionController extends BaseController {
 	private BizCustomerInfoService bizCustomerInfoService;
 	@Autowired
 	private BizCommissionOrderService bizCommissionOrderService;
+	@Autowired
+	private CommonProcessService commonProcessService;
 	
 	@ModelAttribute
 	public BizCommission get(@RequestParam(required=false) Integer id) {
@@ -181,20 +182,18 @@ public class BizCommissionController extends BaseController {
 			List<BizCommissionOrder> bizCommissionOrderList = bizCommissionOrderService.findList(bizCommissionOrder);
 			if (CollectionUtils.isNotEmpty(bizCommissionOrderList)) {
 				BizCommission bizCommission1 = bizCommissionOrderList.get(0).getBizCommission();
-				if (bizCommission1 != null) {
+				if (bizCommission1 != null && bizCommission1.getId() != null) {
 					Integer commId = bizCommission1.getId();
 
+					//审核流程
+					CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+					commonProcessEntity.setObjectId(String.valueOf(commId));
+					commonProcessEntity.setObjectName(BizCommissionService.DATABASE_TABLE_NAME);
+					List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+					model.addAttribute("auditList", list);
 				}
 			}
 		}
-
-		//审核流程
-//		CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-//		commonProcessEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
-//		commonProcessEntity.setObjectName("0".equals(type) ? JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME : JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
-//		if (bizOrderHeader.getOrderNum().startsWith("DO")) {
-//			commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
-//		}
 
 		model.addAttribute("option", option);
 		model.addAttribute("orderHeaderList", orderHeaderList);
