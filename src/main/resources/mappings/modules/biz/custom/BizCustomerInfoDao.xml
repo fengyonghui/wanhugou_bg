@@ -88,9 +88,6 @@
 
     <update id="update">
         UPDATE biz_customer_info SET
-        <if test="officeId != null and officeId != ''">
-            office_id = #{officeId},
-        </if>
         <if test="bankName != null and bankName != ''">
           bank_name = #{bankName},
         </if>

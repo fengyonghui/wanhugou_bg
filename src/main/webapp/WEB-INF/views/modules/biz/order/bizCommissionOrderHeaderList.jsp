@@ -130,10 +130,6 @@
 
 	<script type="text/javascript">
 		function singleApplyCommission(orderIds, totalDetail, totalCommission, sellerId) {
-		    console.log(orderIds)
-		    console.log(totalDetail)
-		    console.log(totalCommission)
-		    console.log(sellerId)
 
 		    window.location.href = "${ctx}/biz/order/bizCommission/applyCommissionForm?orderIds=" + orderIds
 											+ "&totalDetail=" + totalDetail + "&totalCommission=" + totalCommission + "&sellerId=" + sellerId;
