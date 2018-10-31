@@ -130,6 +130,12 @@
 
 	<script type="text/javascript">
 		function applyCommission() {
+            if(orderIds == "") {
+                alert("请选择待结算清单！");
+                return
+            }
+
+		    var executeFlag = true;
             var orderIds = ""
             var totalDetail = 0;
             var totalCommission = 0;
@@ -150,20 +156,17 @@
 					}
 
                     if (sellerId != sellerIdTemp) {
-                        alert("请选择同一代销商的订单，再计算！")
-						return;
+                        executeFlag = false;
                     }
                 }
             });
 
-            if(orderIds == "") {
-                alert("请选择待结算清单！");
-                return
+            if (executeFlag == false) {
+                alert("请选择同一代销商的订单，再计算！")
+			} else {
+                window.location.href = "${ctx}/biz/order/bizCommission/applyCommissionForm?orderIds=" + orderIds
+                    + "&totalDetail=" + totalDetail + "&totalCommission=" + totalCommission + "&sellerId=" + sellerId;;
 			}
-
-            window.location.href = "${ctx}/biz/order/bizCommission/applyCommissionForm?orderIds=" + orderIds
-                + "&totalDetail=" + totalDetail + "&totalCommission=" + totalCommission + "&sellerId=" + sellerId;;
-
         }
 	</script>
 </head>
