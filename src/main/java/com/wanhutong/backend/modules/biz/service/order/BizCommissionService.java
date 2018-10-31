@@ -260,6 +260,22 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		nextProcessEntity.setCurrent(1);
 		commonProcessService.save(nextProcessEntity);
 
+		if (nextProcess.getCode() == paymentOrderProcessConfig.getEndProcessId()) {
+			BizCommissionOrder bizCommissionOrder = new BizCommissionOrder();
+			bizCommissionOrder.setCommId(bizCommission.getId());
+			List<BizCommissionOrder> bizCommissionOrderList = bizCommissionOrderService.findList(bizCommissionOrder);
+			if (CollectionUtils.isNotEmpty(bizCommissionOrderList)) {
+				for (BizCommissionOrder commissionOrder : bizCommissionOrderList) {
+					Integer orderHeaderId = commissionOrder.getOrderId();
+					BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderHeaderId);
+					bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.NO_COMMISSSION.getComStatus());
+					bizOrderHeaderService.save(bizOrderHeader);
+				}
+			}
+//			bizCommission.setDelFlag("0");
+//			this.save(bizCommission);
+		}
+
 		try {
 			List<PaymentOrderProcessConfig.MoneyRole> nextMoneyRoleList = nextProcess.getMoneyRole();
 			PaymentOrderProcessConfig.MoneyRole nextMoneyRole = null;
