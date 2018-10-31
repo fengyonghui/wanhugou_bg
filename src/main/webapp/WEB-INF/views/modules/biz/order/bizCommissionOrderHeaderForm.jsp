@@ -303,7 +303,7 @@
                     </c:if>
                 </shiro:hasPermission>
 
-                <c:if test="${option == 'detail'}">
+                <c:if test="${option != 'detail'}">
                     <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>
                 </c:if>
                 &nbsp;&nbsp;&nbsp;

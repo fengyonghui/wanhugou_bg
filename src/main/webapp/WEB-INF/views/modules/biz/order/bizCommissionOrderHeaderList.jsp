@@ -456,12 +456,7 @@
 				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.scoreMoney}" pattern="0.00"/>
 			</font></td>
 			<td>
-				<%--<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
-					${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}
-				<%--</c:if>--%>
-				<%--<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
-					<%--<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.totalBuyPrice}" pattern="0.00"/>--%>
-				<%--</c:if>--%>
+				${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}
 			</td>
 			<td class="commissionMoney" id="${orderHeader.id}">
 				<fmt:formatNumber type="number" value="${orderHeader.commission}" pattern="0.00"/>
