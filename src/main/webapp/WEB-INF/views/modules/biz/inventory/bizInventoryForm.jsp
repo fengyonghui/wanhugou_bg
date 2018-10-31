@@ -167,11 +167,13 @@
 				<div class="help_step_box fa">
 					<c:forEach items="${requestHeader.invCommonProcessList}" var="v" varStatus="stat">
 						<c:choose>
-							<c:when test="${!stat.last && v.type == autProcessId}">
+							<c:when test="${!stat.last && (v.type == autProcessId || v.type == -1)}">
 								<div class="help_step_item help_step_set">
 									<div class="help_step_left"></div>
 									<div class="help_step_num">${stat.index + 1}</div>
-									当前状态:审核完成<br/><br/>
+									<c:if test="${v.type == autProcessId}">当前状态:审核完成</c:if>
+									<c:if test="${v.type == -1}">当前状态:驳回</c:if>
+									<br/><br/>
 									<br/>
 									<div class="help_step_right"></div>
 								</div>

@@ -353,7 +353,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		}
 		if (CollectionUtils.isNotEmpty(commonProcessEntityList)) {
 			for (CommonProcessEntity processEntity : commonProcessEntityList) {
-				if (ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getAutProcessId().toString().equals(processEntity.getType()) && CommonProcessEntity.CURRENT.equals(processEntity.getCurrent())) {
+				if ((ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getAutProcessId().toString().equals(processEntity.getType()) && CommonProcessEntity.CURRENT.equals(processEntity.getCurrent()))
+					|| (CommonProcessEntity.CURRENT.equals(processEntity.getCurrent()) && ("-1").equals(processEntity.getType()))) {
 					processEntity.setCurrent(CommonProcessEntity.NOT_CURRENT);
 					processEntity.setBizStatus(CommonProcessEntity.AuditType.PASS.getCode());
 					commonProcessService.save(processEntity);
