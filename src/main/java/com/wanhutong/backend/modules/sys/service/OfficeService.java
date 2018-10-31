@@ -16,14 +16,18 @@ import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.dto.OfficeLevelApplyDto;
+import com.wanhutong.backend.modules.biz.entity.message.BizMessageUser;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomerInfoService;
+import com.wanhutong.backend.modules.biz.service.message.BizMessageUserService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.SystemConfig;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
@@ -87,6 +91,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     private CommonProcessService commonProcessService;
     @Autowired
     private BizCustomerInfoService bizCustomerInfoService;
+    @Autowired
+    private BizMessageUserService bizMessageUserService;
 
     public static final String PHOTO_SPLIT_CHAR = "\\|";
     public static final String CUSTOMER_APPLY_LEVEL_OBJECT_NAME = "CUSTOMER_APPLY_LEVEL_OBJECT_NAME";
@@ -1002,14 +1008,24 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
                                 case CUSTOMER:
                                     roleList.add(systemService.getRole(PURCHASERSPEOPLE));
                                     roleList.removeIf(role -> role.getId().equals(SHOPKEEPER) || role.getId().equals(COMMISSION_MERCHANT));
-                                    break;
-                                case SHOPKEEPER:
-                                    roleList.add(systemService.getRole(SHOPKEEPER));
-                                    roleList.removeIf(role -> role.getId().equals(PURCHASERSPEOPLE) || role.getId().equals(COMMISSION_MERCHANT));
+                                    if (ConfigGeneral.SYSTEM_CONFIG.get().getCustomerUpgradeMessageId() != null && ConfigGeneral.SYSTEM_CONFIG.get().getCustomerUpgradeMessageId() != 0) {
+                                        BizMessageUser bizMessageUser = new BizMessageUser();
+                                        bizMessageUser.setUser(primaryPerson);
+                                        bizMessageUser.setBizStatus("0");
+                                        bizMessageUser.setMessageId(ConfigGeneral.SYSTEM_CONFIG.get().getCustomerUpgradeMessageId().toString());
+                                        bizMessageUserService.save(bizMessageUser);
+                                    }
                                     break;
                                 case COMMISSION_MERCHANT:
                                     roleList.add(systemService.getRole(COMMISSION_MERCHANT));
                                     roleList.removeIf(role -> role.getId().equals(PURCHASERSPEOPLE) || role.getId().equals(SHOPKEEPER));
+                                    if (ConfigGeneral.SYSTEM_CONFIG.get().getCommissionMerchantUpgradeMessageId() != null && ConfigGeneral.SYSTEM_CONFIG.get().getCommissionMerchantUpgradeMessageId() != 0) {
+                                        BizMessageUser bizMessageUser = new BizMessageUser();
+                                        bizMessageUser.setUser(primaryPerson);
+                                        bizMessageUser.setBizStatus("0");
+                                        bizMessageUser.setMessageId(ConfigGeneral.SYSTEM_CONFIG.get().getCommissionMerchantUpgradeMessageId().toString());
+                                        bizMessageUserService.save(bizMessageUser);
+                                    }
                                     break;
                                 default:
                                     break;
