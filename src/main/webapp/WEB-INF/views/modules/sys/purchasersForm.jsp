@@ -21,6 +21,22 @@
             $("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
+                    if($("#type").val() == 16 || $("#type").val() == 6) {
+                        var cardNumber = $("#cardNumber").val();
+                        var bankName = $("#bankName").val();
+                        var payee = $("#payee").val();
+                        var idCardNumber = $("#idCardNumber").val();
+
+                        if ($String.isNullOrBlank(cardNumber)
+                            || $String.isNullOrBlank(bankName)
+                            || $String.isNullOrBlank(payee)
+                            || $String.isNullOrBlank(idCardNumber)
+                        ) {
+                            alert("请填写卡号开户行收款人及身份证号");
+                            return false;
+                        }
+                    }
+
                     loading('正在提交，请稍等...');
                     var compactImg = $("#compactImgDiv").find("[customInput = 'compactImgImg']");
                     var compactImgStr = "";
@@ -203,12 +219,40 @@
     <div class="control-group">
         <label class="control-label">机构类型:</label>
         <div class="controls">
-            <form:select path="type" class="input-medium">
+            <form:select id="type" path="type" class="input-medium">
                 <form:options items="${fns:getDictList('sys_office_type')}" itemLabel="label" itemValue="value"
                               htmlEscape="false"/>
             </form:select>
         </div>
     </div>
+    <c:if test="${option != 'upgradeAudit' && option != 'upgrade'}">
+        <div class="control-group">
+            <label class="control-label">代销商/经销商卡号:</label>
+            <div class="controls">
+                <form:input id="cardNumber" path="bizCustomerInfo.cardNumber" htmlEscape="false" maxlength="50" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">代销商/经销商开户行:</label>
+            <div class="controls">
+                <form:input id="bankName" path="bizCustomerInfo.bankName" htmlEscape="false" maxlength="50" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">代销商/经销商收款人:</label>
+            <div class="controls">
+                <form:input id="payee" path="bizCustomerInfo.payee" htmlEscape="false" maxlength="50" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">代销商/经销商收款人身份证号:</label>
+            <div class="controls">
+                <form:input id="idCardNumber" path="bizCustomerInfo.idCardNumber" htmlEscape="false" maxlength="50" />
+            </div>
+        </div>
+    </c:if>
+
+
     <c:if test="${option == 'upgradeAudit' || option == 'upgrade'}">
     <div class="control-group">
         <label class="control-label">申请机构类型:</label>
