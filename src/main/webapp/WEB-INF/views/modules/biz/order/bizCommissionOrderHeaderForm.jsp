@@ -176,24 +176,7 @@
                                 处理人:${v.user.name}<br/><br/>
                                 批注:${v.description}<br/><br/>
                                 状态:
-                                <c:if test="${v.objectName == 'ORDER_HEADER_SO_LOCAL'}">
-                                ${v.jointOperationLocalProcess.name}
-                                </c:if>
-                                <c:if test="${v.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
-                                    ${v.jointOperationOriginProcess.name}
-                                </c:if>
-                                <c:if test="${v.objectName == 'biz_po_header'}">
-                                    ${v.purchaseOrderProcess.name}
-                                </c:if>
-                                <c:if test="${v.objectName == 'biz_order_header'}">
-                                    ${v.doOrderHeaderProcessFifth.name}
-                                    <%--<c:if test="${entity.payProportion == OrderPayProportionStatusEnum.FIFTH.state}">--%>
-                                        <%--${v.doOrderHeaderProcessFifth.name}--%>
-                                    <%--</c:if>--%>
-                                    <%--<c:if test="${entity.payProportion == OrderPayProportionStatusEnum.ALL.state}">--%>
-                                        <%--${v.doOrderHeaderProcessAll.name}--%>
-                                    <%--</c:if>--%>
-                                </c:if>
+                                    ${v.paymentOrderProcess.name}
                                 <br/>
                                 <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                 <div class="help_step_right"></div>
@@ -204,18 +187,7 @@
                                 <div class="help_step_left"></div>
                                 <div class="help_step_num">${stat.index + 1}</div>
                                 当前状态:
-                                <c:if test="${v.objectName == 'ORDER_HEADER_SO_LOCAL'}">
-                                    ${v.jointOperationLocalProcess.name}
-                                </c:if>
-                                <c:if test="${v.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
-                                    ${v.jointOperationOriginProcess.name}
-                                </c:if>
-                                <c:if test="${v.objectName == 'biz_po_header'}">
-                                    ${v.purchaseOrderProcess.name}
-                                </c:if>
-                                <c:if test="${v.objectName == 'biz_order_header'}">
-                                    ${v.doOrderHeaderProcessFifth.name}
-                                </c:if>
+                                    ${v.paymentOrderProcess.name}
                                 <br/>
                                 <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                 <div class="help_step_right"></div>
