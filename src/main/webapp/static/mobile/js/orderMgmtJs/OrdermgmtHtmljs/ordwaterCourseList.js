@@ -50,7 +50,7 @@
 //                  console.log(_this.orWaterCheckFlag)
                 }
             });
-        },      
+        },
 		pageInit: function() {
 			var _this = this;
 			var pager = {};//分页 
@@ -182,7 +182,7 @@
 								'</div>'
 								});
 								$('#ordWaterCourseList').append(waterCourseHtml);
-								_this.stOrdHrefHtml(res.data.page.list);
+								_this.stOrdHrefHtml();
 						} else {
 								$('.mui-pull-bottom-pocket').html('');
 								$('#ordWaterCourseList').append('<p class="noneTxt">暂无数据</p>');
@@ -200,30 +200,20 @@
 		            }
 		        })
 		    }
+		    _this.ordHrefHtml();
 	    },
-		stOrdHrefHtml: function(data) {
-			var _this = this;
-			if(data==""){
-				$('#back').on('tap', function() {
-					var url = $(this).attr('url');
-					GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
-						extras: {
-							statu:''
-						}
-					})
-			    });
-			}else{
-				$('#back').on('tap', function() {
-					var url = $(this).attr('url');
-					GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
-						extras: {
-							statu:'unline'
-						}
-					})
-			    });
-			}
+	    ordHrefHtml: function() {
+        	var _this = this;
+		/*返回*/
+			$('#back').on('tap', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+					extras: {
+						statu:'unline',
+					}
+				})
+		    }),
 		/*查询*/
 			$('.app_header').on('tap', '#orWaterSechBtn', function() {
 				var url = $(this).attr('url');
@@ -237,19 +227,10 @@
 						}
 					})
 				}
-			}),
-		/*首页*/
-		
-			$('#nav').on('tap','.staHomePage', function() {
-				var url = $(this).attr('url');
-				GHUTILS.OPENPAGE({
-//					url: "../../../html/backstagemgmt.html",
-                    url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
-					extras: {
-//						statu:''
-					}
-				})
-			}),	
+			})
+        },
+		stOrdHrefHtml: function() {
+			var _this = this;
 		 /*审核*/
 	       $('.content_part').on('tap', '.waterCourseCheckBtn', function() {
 				var url = $(this).attr('url');

@@ -167,9 +167,10 @@
                 	mui.toast('子菜单不存在')
                 }else if(mobileUrl == '/mobile/html/orderMgmtHtml/OrderUnlinemgmtHtml/orderList.html') {
                 	GHUTILS.OPENPAGE({
-						url: "../html/orderMgmtHtml/OrderUnlinemgmtHtml/orderList.html",
+						url: "../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 						extras: {
-								purchId:purchId,
+							purchId:purchId,
+							statu:'unline',
 						}
 					})
                 }

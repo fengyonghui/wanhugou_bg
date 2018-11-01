@@ -112,7 +112,7 @@
 		                	    //查询过来传的参数
 		                    	pager['size']= 20;
 		                    	pager['pageNo'] = 1;
-		                    	pager['statu'] = '';
+		                    	pager['statu'] = statu;
 		                    	pager['orderNum'] = _this.userInfo.orderNum;//订单编号
 		                    	pager['bizStatus'] = _this.userInfo.bizStatus;//订单状态
 		                    	pager['selectAuditStatus'] = nameTxt;//审核状态
@@ -133,9 +133,11 @@
 			                    pager['pageNo'] = 1;			                    
 			                    if(statu == '' || statu == undefined) {
 			                    	pager['statu'] = '';
+			                    	$('#myStatu').val('');
 			                    }
 			                    if(statu == statu) {
 			                    	pager['statu'] = statu;
+			                    	$('#myStatu').val(statu);
 			                    }
 			                    getData(pager);
 		                    }				                
@@ -434,8 +436,8 @@
 								$('#orderList').append(staffHtmlList);
 								_this.stOrdHrefHtml();
 								//先隐藏Ro订单
-								var RoList=$('#refreshContainer div[id^=rodiv_8]');
-								$(RoList).hide();
+//								var RoList=$('#refreshContainer div[id^=rodiv_8]');
+//								$(RoList).hide();
 								
 					}else{
 						$('.mui-pull-bottom-pocket').html('');
@@ -455,6 +457,7 @@
 		            }
 		        })
 		    }
+		    _this.ordHrefHtml();
 	    },
 		getPermissionList: function (markVal,flag) {
             var _this = this;
@@ -508,9 +511,10 @@
                 }
             });
         },
-		stOrdHrefHtml: function() {
-			var _this = this;
-		/*查询*/
+        ordHrefHtml: function() {
+        	var _this = this;
+        	/*查询*/
+        	var myStatu = $('#myStatu').val();
 			$('.app_header').on('tap', '#OrdSechBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
@@ -519,10 +523,11 @@
 					GHUTILS.OPENPAGE({
 						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderListSeach.html",
 						extras:{
+							statu: myStatu,
 						}
 					})
 				}
-			}),
+			});        		
 		/*首页*/
 			$('#nav').on('tap','.staHomePage', function() {
 				var url = $(this).attr('url');
@@ -532,7 +537,10 @@
 						
 					}
 				})
-			}),	
+			})
+        },
+		stOrdHrefHtml: function() {
+			var _this = this;
 		 /*审核*/
 	       $('.content_part').on('tap', '.ordCheckBtn', function() {
 				var url = $(this).attr('url');
