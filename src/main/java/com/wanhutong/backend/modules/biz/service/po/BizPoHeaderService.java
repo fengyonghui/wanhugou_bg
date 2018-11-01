@@ -1440,7 +1440,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             orderHeader.setId(orderId);
             //orderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
             //orderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
-            Page<BizOrderHeader>  bizOrderHeaderList =bizOrderHeaderService.pageFindList(new Page<BizOrderHeader>(request, response), orderHeader);
+            Page<BizOrderHeader>  bizOrderHeaderList =bizOrderHeaderService.pageFindListV3(new Page<BizOrderHeader>(request, response), orderHeader);
             if (bizOrderHeaderList.getList().size() > 0) {
                 orderHeader = bizOrderHeaderList.getList().get(0);
                 String orderDetailIds = orderHeader.getOrderDetails();
