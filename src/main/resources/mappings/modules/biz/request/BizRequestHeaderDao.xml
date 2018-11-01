@@ -283,15 +283,6 @@
 			GROUP BY id
 			)
 
-			<if test="page != null and page.includeTestData != true">
-				AND NOT EXISTS(
-				select 1
-				from sys_test_account ta
-				where a.from_id = ta.object_id
-				and ta.object_name = 'sys_office'
-				)
-			</if>
-
 			<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
 				${sqlMap.request}
 			</if>

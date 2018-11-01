@@ -517,6 +517,30 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     /**
+     * 订单发货分页V3
+     * @param page
+     * @param bizOrderHeader
+     * @return
+     */
+    public Page<BizOrderHeader> pageFindListV3(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
+        User user = UserUtils.getUser();
+        boolean oflag = false;
+        if (UserUtils.getOfficeList() != null) {
+            for (Office office : UserUtils.getOfficeList()) {
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
+                    oflag = true;
+                }
+            }
+        }
+        if (!user.isAdmin() && !oflag) {
+            bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+        }
+        bizOrderHeader.setPage(page);
+        page.setList(dao.headerFindListV3(bizOrderHeader));
+        return page;
+    }
+
+    /**
      * 订单发货分页
      */
     public Page<BizOrderHeader> pageFindListForPhotoOrder(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {

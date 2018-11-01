@@ -58,8 +58,8 @@
                         if (has) {
                             map[orderDetailId] = parseInt(map[orderDetailId]) + parseInt(sentQty);
                         } else {
-                            map[orderDetailId] = sentQty;
-                            sendMap[orderDetailId] = stockQty;
+                            map[orderDetailId] = parseInt(sentQty);
+                            sendMap[orderDetailId] = parseInt(stockQty);
                         }
                         // sumSentQty = parseInt(sumSentQty) + parseInt(sentQty);
                         treasuryList[i] = createTreasury(orderDetailId,reqDetailId,invSkuId,sentQty,uVersion,sendNo);
@@ -67,7 +67,7 @@
                     });
                     var stockFlag = true;
                     $.each(map,function (key, value) {
-						if (value > sendMap[key]) {
+						if (parseInt(value) > parseInt(sendMap[key])) {
 						    stockFlag = false;
 						}
                     });
