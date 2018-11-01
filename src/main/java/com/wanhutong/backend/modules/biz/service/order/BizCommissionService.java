@@ -99,6 +99,15 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 	public Page<BizCommission> findPage(Page<BizCommission> page, BizCommission bizCommission) {
 		return super.findPage(page, bizCommission);
 	}
+
+	/**
+	 * 忽略biz_commission_order中status为0的状态，获取所有关联的BizCommission数据
+	 */
+	public Page<BizCommission> findPageForAllData(Page<BizCommission> page, BizCommission bizCommission) {
+		bizCommission.setPage(page);
+		page.setList(dao.findPageForAllData(bizCommission));
+		return page;
+	}
 	
 	@Transactional(readOnly = false)
 	public void save(BizCommission bizCommission) {
