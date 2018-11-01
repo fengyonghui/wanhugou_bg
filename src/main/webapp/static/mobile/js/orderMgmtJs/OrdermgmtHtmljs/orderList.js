@@ -101,7 +101,8 @@
 							if(_this.userInfo.includeTestData==undefined){
 								_this.userInfo.includeTestData="";
 							}
-		            	    var statu = _this.userInfo.statu;			                    
+		            	    var statu = _this.userInfo.statu;	
+		            	    console.log(statu)
 			                var f = document.getElementById("orderList");
 			                var childs = f.childNodes;
 			                for(var i = childs.length - 1; i >= 0; i--) {
@@ -414,7 +415,7 @@
 											'<div class="'+ordSupplyBtn+'"  staOrdId="'+ item.id +'">' +
 												staSupplyBtnTxt +
 											'</div>'+
-											'<div class="'+ordwaterCourseBtn+'"  staOrdId="'+ item.id +'">' +
+											'<div class="'+ordwaterCourseBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'">' +
 												 ordwaterCourseBtnTxt +
 											'</div>'+
 											'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
@@ -527,7 +528,7 @@
 						}
 					})
 				}
-			});        		
+			});
 		/*首页*/
 			$('#nav').on('tap','.staHomePage', function() {
 				var url = $(this).attr('url');
@@ -687,7 +688,8 @@
 			//支付流水
 			$('.content_part').on('tap', '.ordwaterCourseBtn', function() {
 				var url = $(this).attr('url');
-				var staOrdId = $(this).attr('staOrdId');			
+				var staOrdId = $(this).attr('staOrdId');
+				var statu=$(this).attr('ordstatu');		
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
@@ -695,6 +697,7 @@
 						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordwaterCourseList.html",
 						extras: {
 							staOrdId: staOrdId,
+							statu:statu
 						}
 					})
 				}

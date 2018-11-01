@@ -22,6 +22,7 @@
 			_this.getData();
 			_this.ajaxorderStatus();//订单状态
 			_this.ajaxcheckStatus();//审核状态
+
 		},
 		getData: function() {
 			var _this = this;
@@ -41,7 +42,7 @@
 			var _this = this;
 			var statuTxt = '';
 			var status = _this.userInfo.statu;
-//			console.log(status)
+			console.log(status)
 			if(status == 'undefined' || status == '') {
 //				console.log(1)
 				statuTxt = '';

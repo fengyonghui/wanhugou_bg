@@ -96,7 +96,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		            	console.log(res)		            	
+		            	console.log(res)
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
@@ -204,17 +204,30 @@
 	    },
 	    ordHrefHtml: function() {
         	var _this = this;
-		/*返回*/
-			$('#back').on('tap', function() {
-				var url = $(this).attr('url');
-				GHUTILS.OPENPAGE({
-					url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
-					extras: {
-						statu:'unline',
-					}
-				})
-		    }),
-		/*查询*/
+        	console.log(_this.userInfo.statu)
+			/*返回*/
+			if(_this.userInfo.statu=='unline'){
+				$('#back').on('tap', function() {
+					var url = $(this).attr('url');
+					GHUTILS.OPENPAGE({
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+						extras: {
+							statu:'unline',
+						}
+					})
+			    })
+			}else if(_this.userInfo.statu==undefined){
+				$('#back').on('tap', function() {
+					var url = $(this).attr('url');
+					GHUTILS.OPENPAGE({
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+						extras: {
+							statu:'',
+						}
+					})
+			    })
+			}
+			/*查询*/
 			$('.app_header').on('tap', '#orWaterSechBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
