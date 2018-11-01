@@ -567,4 +567,29 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			LOGGER.error("库存有重复，商品ID：【{}】,修改后的商品ID【{}】",skuId,needSkuId);
 		}
 	}
+
+	/**
+	 * 出库量
+	 * @param id
+	 * @return
+	 */
+	public Integer findOutWarehouse(Integer id) {return bizInventorySkuDao.findOutWarehouse(id);}
+
+	/**
+	 * 供货部发货数量
+	 * @param id
+	 * @return
+	 */
+	public Integer findSendGoodsNum(Integer id) {
+		BizInventorySku inventorySku = bizInventorySkuDao.get(id);
+		BizInventoryInfo bizInventoryInfo = bizInventoryInfoService.get(inventorySku.getInvInfo().getId());
+		return bizInventorySkuDao.findSendGoodsNum(id);
+	}
+
+	/**
+	 * 入库量
+	 * @param id
+	 * @return
+	 */
+	public Integer findInWarehouse(Integer id) {return bizInventorySkuDao.findInWarehouse(id);}
 }

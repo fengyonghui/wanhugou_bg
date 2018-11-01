@@ -67,4 +67,25 @@ public interface BizInventorySkuDao extends CrudDao<BizInventorySku> {
     Integer findStockTotal(@Param("centId") Integer centId, @Param("skuId") Integer skuId);
 
     void updateSkuId(@Param("needSkuId") Integer needSkuId, @Param("id") Integer id);
+
+    /**
+     * 出库量
+     * @param id
+     * @return
+     */
+    Integer findOutWarehouse(@Param("id")Integer id);
+
+    /**
+     * 供货部发货数量
+     * @param id
+     * @return
+     */
+    Integer findSendGoodsNum(@Param("id")Integer id);
+
+    /**
+     * 入库量
+     * @param id
+     * @return
+     */
+    Integer findInWarehouse(@Param("id")Integer id);
 }
