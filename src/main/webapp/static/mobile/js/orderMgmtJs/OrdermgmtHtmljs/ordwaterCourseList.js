@@ -275,6 +275,7 @@
 						extras: {
 							waterCourseId: waterCourseId,
 							source:source,
+							statu:_this.userInfo.statu,
 						}
 					})
 				}

@@ -18,12 +18,19 @@
 		},
 		ordwaterHrefHtml: function() {
 			var _this = this;
+			var status = '';
+			if(_this.userInfo.statu=='undefined') {
+				status = ''
+			}else {
+				status = _this.userInfo.statu;
+			}
 			/*返回订单列表*/
 			$('#nav').on('tap','.orderList', function() {
 				var url = $(this).attr('url');
 				GHUTILS.OPENPAGE({
                     url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 					extras: {
+						statu:status,
 					}
 				})
 			})
