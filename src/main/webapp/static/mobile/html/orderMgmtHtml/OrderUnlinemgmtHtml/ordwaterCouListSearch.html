@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<title>流水查询</title>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/app.css?time=20181023" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">流水查询</p>
+		</header>
+		<div class="mui-content mui-input-group">
+			<div class="mui-input-row">
+				<label>订单号：</label>
+				<input type="text" class="mui-input-clear" id="orWaterCouNumSc">
+			</div>
+			<div class="mui-input-row">
+				<label>流水号：</label>
+				<input type="text" class="mui-input-clear" id="waterCouNumSc">
+			</div>
+		</div>
+		<div class="SearchBtnClass">
+			<button id="waterSearchBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">查询</button>
+		</div>
+		<div class="clear"></div>
+		<script src="../../../js/component/mui.min.js"></script>	
+		<script src="../../../js/component/zepto.min.js"></script>
+		<script src="../../../js/component/GHutils.js"></script>
+		<script src="../../../js/orderMgmtJs/OrdermgmtHtmljs/ordwaterCouListSearch.js?v=20181023"></script>
+	</body>
+</html>
