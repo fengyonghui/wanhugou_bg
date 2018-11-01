@@ -61,4 +61,11 @@ public interface BizPoHeaderDao extends CrudDao<BizPoHeader> {
     void updateSchedulingType(BizPoHeader bizPoHeader);
 
     int findCount(BizPoHeader bizPoHeader);
+
+    /**
+     * 通过采购单获取订单/备货单号
+     * @param bizPoHeader
+     * @return
+     */
+    List<String> getOrderNumOrReqNoByPoId(BizPoHeader bizPoHeader);
 }

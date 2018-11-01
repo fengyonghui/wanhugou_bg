@@ -13,7 +13,7 @@
                 console.log(value);
                 $.ajax({
                     type:"get",
-                    url:"${ctx}/sys/dict/save4Mobile",
+                    url:"${ctx}/sys/dict/commissionRatioSave",
                     data:{id:dictId, type:type, value:value},
                     success:function (result) {
                         var msg = JSON.parse(result)
@@ -21,6 +21,7 @@
 
                         if (flg == true || flg == "true") {
                             window.location.href="${ctx}/sys/dict/commissionRatioView?type=commission_ratio"
+							alert("修改完成！")
                         } else {
                             alert("修改佣金比例失败")
                             window.location.href="${ctx}/sys/dict/commissionRatioView?type=commission_ratio"
@@ -43,13 +44,16 @@
 		<input id="value" path="value" style="width: 50px" value="${dict.value}" class="input-mini" type='text'/><span>%</span>
 	</form:form>
 
-	<div class="form-actions">
-		<input type="button"
-			   onclick="updateCommissionRatio()"
-			   class="btn btn-primary"
-			   value="保存"/>
-		<%--<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>--%>
-	</div>
+	<shiro:hasPermission name="sys:dict:commissionRatioSave:edit">
+		<div class="form-actions">
+			<input type="button"
+				   onclick="updateCommissionRatio()"
+				   class="btn btn-primary"
+				   value="保存"/>
+				<%--<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>--%>
+		</div>
+	</shiro:hasPermission>
+
 
 	<div class="breadcrumb form-search">
 		&nbsp;&nbsp;示例：</br>
