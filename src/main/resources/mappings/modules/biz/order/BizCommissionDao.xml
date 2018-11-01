@@ -74,7 +74,7 @@
 		LEFT JOIN common_process process ON process.object_id = a.id and process.object_name = 'biz_commission' and process.current = 1
 		LEFT JOIN sys_office so ON so.id = a.seller_id
 		LEFT JOIN biz_customer_info bci ON bci.office_id = so.id
-		LEFT JOIN biz_commission_order bco ON bco.comm_id = a.id
+		LEFT JOIN biz_commission_order bco ON bco.comm_id = a.id AND bco.status = 1
 	</sql>
 
 	<select id="getImgList" parameterType="int" resultType="CommonImg">
@@ -111,6 +111,44 @@
 			<include refid="bizCommissionColumns"/>
 		FROM biz_commission a
 		<include refid="bizCommissionJoins"/>
+		<if test="orderNum != null and orderNum != ''" >
+			LEFT JOIN biz_order_header boh ON boh.id=bco.order_id AND boh.status=1
+		</if>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="customerName != null and customerName != ''" >
+				AND so.name like
+				<if test="dbName == 'oracle'">'%'||#{customerName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customerName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customerName},'%')</if>
+			</if>
+			<if test="bizStatus != null" >
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="orderNum != null and orderNum != ''" >
+				AND boh.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findPageForAllData" resultMap="bizCommissionMaps">
+		SELECT
+			<include refid="bizCommissionColumns"/>
+		FROM biz_commission a
+			LEFT JOIN common_process process ON process.object_id = a.id and process.object_name = 'biz_commission' and process.current = 1
+			LEFT JOIN sys_office so ON so.id = a.seller_id
+			LEFT JOIN biz_customer_info bci ON bci.office_id = so.id
+			LEFT JOIN biz_commission_order bco ON bco.comm_id = a.id
 		<if test="orderNum != null and orderNum != ''" >
 			LEFT JOIN biz_order_header boh ON boh.id=bco.order_id AND boh.status=1
 		</if>

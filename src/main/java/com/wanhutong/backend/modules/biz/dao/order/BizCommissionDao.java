@@ -7,6 +7,8 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizCommission;
 
+import java.util.List;
+
 /**
  * 佣金付款表DAO接口
  * @author wangby
@@ -14,5 +16,9 @@ import com.wanhutong.backend.modules.biz.entity.order.BizCommission;
  */
 @MyBatisDao
 public interface BizCommissionDao extends CrudDao<BizCommission> {
-	
+
+    /**
+     * 忽略biz_commission_order中status为0的状态，获取所有关联的BizCommission数据
+     */
+    List<BizCommission> findPageForAllData(BizCommission bizCommission);
 }
