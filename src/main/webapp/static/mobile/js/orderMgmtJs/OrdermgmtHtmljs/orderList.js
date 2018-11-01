@@ -697,7 +697,6 @@
 						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordwaterCourseList.html",
 						extras: {
 							staOrdId: staOrdId,
-							statu:statu
 						}
 					})
 				}
