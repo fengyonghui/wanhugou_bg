@@ -216,7 +216,8 @@
 						}
 					})
 			    })
-			}else if(_this.userInfo.statu==undefined){
+			}else if(_this.userInfo.statu=='undefined'){
+//				alert(1)
 				$('#back').on('tap', function() {
 					var url = $(this).attr('url');
 					GHUTILS.OPENPAGE({
