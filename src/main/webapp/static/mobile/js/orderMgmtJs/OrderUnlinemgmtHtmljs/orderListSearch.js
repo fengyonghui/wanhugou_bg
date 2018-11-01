@@ -41,7 +41,7 @@
 			var _this = this;
 				_this.selectOpen = false;
 				GHUTILS.OPENPAGE({
-					url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+					url: "../../../html/orderMgmtHtml/OrderUnlinemgmtHtml/orderList.html",
 					extras: {
 						orderNum: $('.inOrdNum').val(),//订单编号
 						bizStatus:$('#input_div_ordStatus').val(),//订单状态

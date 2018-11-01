@@ -112,7 +112,7 @@
 		                	    //查询过来传的参数
 		                    	pager['size']= 20;
 		                    	pager['pageNo'] = 1;
-		                    	pager['statu'] = '';
+		                    	pager['statu'] = 'unline';
 		                    	pager['orderNum'] = _this.userInfo.orderNum;//订单编号
 		                    	pager['bizStatus'] = _this.userInfo.bizStatus;//订单状态
 		                    	pager['selectAuditStatus'] = nameTxt;//审核状态
@@ -130,13 +130,8 @@
 		                    }else{
 		                    	//直接进来的参数数据
 		                    	pager['size']= 20;
-			                    pager['pageNo'] = 1;			                    
-			                    if(statu == '' || statu == undefined) {
-			                    	pager['statu'] = '';
-			                    }
-			                    if(statu == statu) {
-			                    	pager['statu'] = statu;
-			                    }
+			                    pager['pageNo'] = 1;
+			                    pager['statu'] = 'unline';
 			                    getData(pager);
 		                    }				                
 			            }
@@ -517,7 +512,7 @@
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderListSeach.html",
+						url: "../../../html/orderMgmtHtml/OrderUnlinemgmtHtml/orderListSeach.html",
 						extras:{
 						}
 					})
@@ -611,7 +606,7 @@
 				                	mui.toast('操作成功！')
 				                	window.setTimeout(function(){
 					                    GHUTILS.OPENPAGE({
-											url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+											url: "../../../html/orderMgmtHtml/OrderUnlinemgmtHtml/orderList.html",
 											extras: {
 	//												inListId:inListId,
 											}
@@ -646,7 +641,7 @@
 				                	mui.toast('操作成功！')
 				                	window.setTimeout(function(){
 					                    GHUTILS.OPENPAGE({
-											url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+											url: "../../../html/orderMgmtHtml/OrderUnlinemgmtHtml/orderList.html",
 											extras: {
 	//												inListId:inListId,
 											}
@@ -669,7 +664,7 @@
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
                     GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderstockOut.html",
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtm/orderstockOut.html",
 						extras: {
 							staOrdId: staOrdId,
 						}
