@@ -464,15 +464,16 @@
 			<if test="dataStatus==null">
 				and a.status = 1
 			</if>
+			<if test="commissionStatus !=null">
+				AND a.commission_status = #{commissionStatus}
+				AND a.order_type = 8
+			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num
 				LIKE
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
-			</if>
-			<if test="commissionStatus != null and commissionStatus != ''">
-				AND commission_status = #{commissionStatus}
 			</if>
 			<if test="serllerName != null and serllerName !=''">
 				AND seller.name LIKE

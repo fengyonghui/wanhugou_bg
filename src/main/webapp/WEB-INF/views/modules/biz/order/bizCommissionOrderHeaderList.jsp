@@ -222,8 +222,8 @@
 				<form:option value="" label="请选择"/>
 				<%--<form:options items="${fns:getDictList('biz_commission_status')}" itemLabel="label" itemValue="value"--%>
 							  <%--htmlEscape="false"/>--%>
-				<form:option value="0" label="未支付"/>
-				<form:option value="1" label="已支付"/>
+				<form:option value="0" label="未结佣"/>
+				<form:option value="1" label="已结佣"/>
 			</form:select>
 		</li>
 

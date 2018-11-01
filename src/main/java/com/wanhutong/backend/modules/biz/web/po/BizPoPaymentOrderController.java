@@ -108,13 +108,24 @@ public class BizPoPaymentOrderController extends BaseController {
             if (fromPage != null) {
                 switch (fromPage) {
                     case "requestHeader":
+                        bizPoHeader.setFromPage("requestHeader");
+                        List<String> reqNoList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
+                        if (CollectionUtils.isNotEmpty(reqNoList)) {
+                            model.addAttribute("headerNum", reqNoList.get(0));
+                        }
                         BizRequestHeader bizRequestHeader = new BizRequestHeader();
                         bizRequestHeader.setBizPoHeader(bizPoHeader);
                         List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
                         if (CollectionUtils.isNotEmpty(requestHeaderList)) {
                             model.addAttribute("requestHeader", requestHeaderList.get(0));
                         }
+                        break;
                     case "orderHeader":
+                        bizPoHeader.setFromPage("orderHeader");
+                        List<String> orderNumList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
+                        if (CollectionUtils.isNotEmpty(orderNumList)) {
+                            model.addAttribute("headerNum", orderNumList.get(0));
+                        }
                         BizOrderHeader bizOrderHeader = new BizOrderHeader();
                         bizOrderHeader.setBizPoHeader(bizPoHeader);
                         List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
