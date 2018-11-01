@@ -158,6 +158,22 @@
 					})
                 }
 			})
+            //线下支付订单
+            $('#menuMaget').on('click','.childMenu',function(){
+            	var url = $(this).attr('url');
+				var mobileUrl = $(this).attr('mobileUrl');
+				var purchId = $(this).attr('purchId');
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(mobileUrl == '/mobile/html/orderMgmtHtml/OrderUnlinemgmtHtml/orderList.html') {
+                	GHUTILS.OPENPAGE({
+						url: "../html/orderMgmtHtml/OrderUnlinemgmtHtml/orderList.html",
+						extras: {
+								purchId:purchId,
+						}
+					})
+                }
+			})
         /*会员管理*/
 //          $('#menuMaget').on('click','.childMenu',function(){
 //          	var url = $(this).attr('url');
