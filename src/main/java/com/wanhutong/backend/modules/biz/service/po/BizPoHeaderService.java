@@ -166,6 +166,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     }
 
     /**
+     * 通过采购单获取订单/备货单号
+     * @param bizPoHeader
+     * @return
+     */
+    public List<String> getOrderNumOrReqNoByPoId(BizPoHeader bizPoHeader) {
+        return dao.getOrderNumOrReqNoByPoId(bizPoHeader);
+    }
+
+    /**
      * 自动生成采购单
      *
      * @param orderId
@@ -1440,7 +1449,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             orderHeader.setId(orderId);
             //orderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
             //orderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
-            Page<BizOrderHeader>  bizOrderHeaderList =bizOrderHeaderService.pageFindList(new Page<BizOrderHeader>(request, response), orderHeader);
+            Page<BizOrderHeader>  bizOrderHeaderList =bizOrderHeaderService.pageFindListV3(new Page<BizOrderHeader>(request, response), orderHeader);
             if (bizOrderHeaderList.getList().size() > 0) {
                 orderHeader = bizOrderHeaderList.getList().get(0);
                 String orderDetailIds = orderHeader.getOrderDetails();

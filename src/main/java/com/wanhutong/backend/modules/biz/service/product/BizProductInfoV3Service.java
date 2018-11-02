@@ -702,6 +702,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
         BizProductInfo bizProductInfo = new BizProductInfo();
         bizProductInfo.setItemNo(itemNo);
         bizProductInfo.setOffice(new Office(vendId));
+        bizProductInfo.setProdType((byte)1);
         List<BizProductInfo> productList = findList(bizProductInfo);
         //初步规范化商品货号
         updateItemNoSize(productList);
@@ -770,6 +771,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                              itemNo = sb.append(start).append(middle).append("装车").append(end).toString();
                          }
                         bizSkuInfoV3Service.updateItemNo(skuInfo.getId(),itemNo);
+                        bizSkuInfoV3Service.updateSizeAndColor(skuInfo);
                     }
                 }
             }
@@ -811,13 +813,13 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                         changeSku(needSku.getId(),bizSkuInfo.getId());
                     }
                 }
-                //不同商品
-                skuInfoList.removeAll(skuList);
-                if (CollectionUtils.isNotEmpty(skuInfoList)) {
-                    for (BizSkuInfo bizSkuInfo : skuInfoList) {
-                        bizSkuInfoV3Service.updateProdId(bizSkuInfo.getId(),needId);
-                        updateProdIdForOpShelfSku(bizSkuInfo.getId(),needId);
-                    }
+            }
+            //不同商品
+            skuInfoList.removeAll(skuList);
+            if (CollectionUtils.isNotEmpty(skuInfoList)) {
+                for (BizSkuInfo bizSkuInfo : skuInfoList) {
+                    bizSkuInfoV3Service.updateProdId(bizSkuInfo.getId(),needId);
+                    updateProdIdForOpShelfSku(bizSkuInfo.getId(),needId);
                 }
             }
         }

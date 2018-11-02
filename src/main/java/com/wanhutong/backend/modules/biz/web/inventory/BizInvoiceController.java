@@ -746,9 +746,9 @@ public class BizInvoiceController extends BaseController {
             CloseableHttpResponse response = httpClient.execute(httpPost);
             String result = EntityUtils.toString(response.getEntity(), "utf-8");
             LogisticEntity parse = JsonUtil.parse(result, LogisticEntity.class);
-            LOGISTICS_LOGGER.info("物流单号：" + trackingNumber + "---运单信息---begin--");
+            LOGISTICS_LOGGER.info("物流单号：[{}]---运单信息---begin--", trackingNumber);
             LOGISTICS_LOGGER.info(JsonUtil.generateData(parse , null));
-            LOGISTICS_LOGGER.info("物流单号：" + trackingNumber + "---运单信息---end--");
+            LOGISTICS_LOGGER.info("物流单号：[{}]---运单信息---end--", trackingNumber);
             return JsonUtil.generateData(parse , null);
         } catch (Exception e) {
             LOGGER.error("物流运单信息异常",e);

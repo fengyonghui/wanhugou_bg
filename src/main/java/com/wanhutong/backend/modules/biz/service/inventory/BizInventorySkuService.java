@@ -353,7 +353,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		}
 		if (CollectionUtils.isNotEmpty(commonProcessEntityList)) {
 			for (CommonProcessEntity processEntity : commonProcessEntityList) {
-				if (ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getAutProcessId().toString().equals(processEntity.getType()) && CommonProcessEntity.CURRENT.equals(processEntity.getCurrent())) {
+				if ((ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().getAutProcessId().toString().equals(processEntity.getType()) && CommonProcessEntity.CURRENT.equals(processEntity.getCurrent()))
+					|| (CommonProcessEntity.CURRENT.equals(processEntity.getCurrent()) && ("-1").equals(processEntity.getType()))) {
 					processEntity.setCurrent(CommonProcessEntity.NOT_CURRENT);
 					processEntity.setBizStatus(CommonProcessEntity.AuditType.PASS.getCode());
 					commonProcessService.save(processEntity);
@@ -566,4 +567,29 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			LOGGER.error("库存有重复，商品ID：【{}】,修改后的商品ID【{}】",skuId,needSkuId);
 		}
 	}
+
+	/**
+	 * 出库量
+	 * @param id
+	 * @return
+	 */
+	public Integer findOutWarehouse(Integer id) {return bizInventorySkuDao.findOutWarehouse(id);}
+
+	/**
+	 * 供货部发货数量
+	 * @param id
+	 * @return
+	 */
+	public Integer findSendGoodsNum(Integer id) {
+		BizInventorySku inventorySku = bizInventorySkuDao.get(id);
+		BizInventoryInfo bizInventoryInfo = bizInventoryInfoService.get(inventorySku.getInvInfo().getId());
+		return bizInventorySkuDao.findSendGoodsNum(id);
+	}
+
+	/**
+	 * 入库量
+	 * @param id
+	 * @return
+	 */
+	public Integer findInWarehouse(Integer id) {return bizInventorySkuDao.findInWarehouse(id);}
 }

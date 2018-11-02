@@ -35,6 +35,7 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
+		a.commission_ratio AS "commissionRatio",
 		off.id AS "vendor.id",
 		off.name AS "vendor.name",
 		us.id AS "primary.id",
@@ -451,6 +452,9 @@ GROUP BY
 		<if test="suplyis !=null and suplyis.id !=null and suplyis.id !=''">
 			suply_id,
 		</if>
+		<if test="commissionRatio =null and commissionRatio !=''">
+			commission_ratio,
+		</if>
 			create_id,
 			create_time,
 			u_version,
@@ -483,6 +487,9 @@ GROUP BY
 			#{ordQty},
 		<if test="suplyis !=null and suplyis.id !=null and suplyis.id !=''">
 			#{suplyis.id},
+		</if>
+		<if test="commissionRatio =null and commissionRatio !=''">
+			#{commissionRatio},
 		</if>
 			#{createBy.id},
 			#{createDate},
@@ -518,6 +525,9 @@ GROUP BY
 		</if>
 		<if test="buyPrice!=null and buyPrice!=0">
 			buy_price = #{buyPrice},
+		</if>
+		<if test="commissionRatio!=null and commissionRatio!=''">
+			commission_ratio = #{commissionRatio},
 		</if>
 
 			sent_qty = #{sentQty},

@@ -87,6 +87,7 @@
 				<th>货值</th>
 				<th>运费/货值</th>
 				<th>发货人</th>
+				<th>验货员</th>
 				<th>物流结算方式</th>
 				<th>物流信息图</th>
 				<th>备注</th>
@@ -117,6 +118,9 @@
 					<c:if test="${bizInvoice.isConfirm != 0}">
 						${bizInvoice.carrier}
 					</c:if>
+				</td>
+				<td>
+					${bizInvoice.inspector.name}
 				</td>
 				<td>${fns:getDictLabel(bizInvoice.settlementStatus, 'biz_settlement_status', '未知状态')}</td>
 				<td><img src="${bizInvoice.imgUrl}"style="max-width:150px;max-height:150px;_height:150px;border:0;padding:3px;"/></td>

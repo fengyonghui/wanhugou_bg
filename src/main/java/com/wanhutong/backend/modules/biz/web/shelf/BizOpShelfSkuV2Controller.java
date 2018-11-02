@@ -28,6 +28,7 @@ import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -46,6 +47,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -129,7 +131,8 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		SystemConfig systemConfig = ConfigGeneral.SYSTEM_CONFIG.get();
 		boolean hasUnderPriceRole = RoleUtils.hasRole(user, systemConfig.getPutawayUnderCostAudit());
 		model.addAttribute("hasUnderPriceRole", hasUnderPriceRole || user.isAdmin());
-
+		String commissionRatio = DictUtils.getDictValue("佣金比例", "commission_ratio", "");
+		model.addAttribute("commissionRatio",commissionRatio);
 		return "modules/biz/shelf/bizOpShelfSkuFormV2";
 	}
 
@@ -149,7 +152,13 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		String[] shelfQtyArr=bizOpShelfSkus.getShelfQtys().split(",");
 		String[] shelfTimeArr=bizOpShelfSkus.getShelfTimes().split(",");
 		String[] unShelfTimeArr=bizOpShelfSkus.getUnshelfTimes().split(",");
-        boolean flag = false;
+		String[] commissionRatioArr = null;
+		String[] marketPriceArr = null;
+		if (bizOpShelfSkus.getCommissionRatios() != null && bizOpShelfSkus.getMarketPrices() != null) {
+			commissionRatioArr = bizOpShelfSkus.getCommissionRatios().split(",");
+			marketPriceArr = bizOpShelfSkus.getMarketPrices().split(",");
+		}
+		boolean flag = false;
         if (bizOpShelfSkus.getShelfs() != null && !"".equals(bizOpShelfSkus.getShelfs())) {
             String[] shelfArr = bizOpShelfSkus.getShelfs().split(",");
             for (int j = 0; j < shelfArr.length; j++) {
@@ -177,6 +186,11 @@ public class BizOpShelfSkuV2Controller extends BaseController {
                     bizOpShelfSku.setSalePrice(Double.parseDouble(salePriceArr[i].trim()));
                     bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
                     bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
+					if (bizOpShelfSkus.getCommissionRatios() != null && bizOpShelfSkus.getMarketPrices() != null
+							&& commissionRatioArr != null) {
+						bizOpShelfSku.setCommissionRatio(new BigDecimal(commissionRatioArr[i].trim()));
+						bizOpShelfSku.setMarketPrice(new BigDecimal(marketPriceArr[i].trim()));
+					}
                     if (unShelfTimeArr.length > 0) {
                         if (!unShelfTimeArr[i].equals("0")) {
                             bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
@@ -211,6 +225,11 @@ public class BizOpShelfSkuV2Controller extends BaseController {
                 bizOpShelfSku.setSalePrice(Double.parseDouble(salePriceArr[i].trim()));
                 bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
                 bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
+				if (bizOpShelfSkus.getCommissionRatios() != null && bizOpShelfSkus.getMarketPrices() != null
+						&& commissionRatioArr != null) {
+					bizOpShelfSku.setCommissionRatio(new BigDecimal(commissionRatioArr[i].trim()));
+					bizOpShelfSku.setMarketPrice(new BigDecimal(marketPriceArr[i].trim()));
+				}
                 if (unShelfTimeArr.length > 0) {
                     if (!unShelfTimeArr[i].equals("0")) {
                         bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
@@ -425,7 +444,8 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	@RequestMapping(value = "findDownOpShelfSku")
 	public List<BizOpShelfSku> findDownOpShelfSku(BizOpShelfSku bizOpShelfSku) {
         if (bizOpShelfSku.getSkuInfo().getItemNo().isEmpty() && bizOpShelfSku.getSkuInfo().getPartNo().isEmpty()
-                && bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getProductInfo().getBrandName().isEmpty()) {
+                && bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getProductInfo().getBrandName().isEmpty()
+				&& bizOpShelfSku.getOpShelfInfo().getName().isEmpty()) {
 			bizOpShelfSku.setShelfSign(5);
 			List<BizOpShelfSku> list=Lists.newArrayList();
 			list.add(bizOpShelfSku);

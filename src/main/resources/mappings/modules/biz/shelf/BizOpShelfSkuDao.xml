@@ -32,6 +32,7 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
+		a.commission_ratio AS "commissionRatio",
 		su.name AS "updateBy.name",
 		bsi.name AS "skuInfo.name",
 		bsi.part_no AS "skuInfo.partNo",

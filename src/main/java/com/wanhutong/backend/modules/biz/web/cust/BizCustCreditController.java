@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.cust;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -49,11 +50,11 @@ public class BizCustCreditController extends BaseController {
 		}
 		return entity;
 	}
-	
+
 	@RequiresPermissions("biz:cust:bizCustCredit:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizCustCredit bizCustCredit, HttpServletRequest request, HttpServletResponse response, Model model) {
-		bizCustCredit.setCgsType(OfficeTypeEnum.CUSTOMER.getType());//采购商电话查询类型，采购商
+		bizCustCredit.setCgsTypes(Lists.newArrayList(OfficeTypeEnum.CUSTOMER.getType(), OfficeTypeEnum.SHOPKEEPER.getType(), OfficeTypeEnum.COMMISSION_MERCHANT.getType()));//采购商电话查询类型，采购商
 		Page<BizCustCredit> page = bizCustCreditService.findPage(new Page<BizCustCredit>(request, response), bizCustCredit);
 		model.addAttribute("page", page);
 		return "modules/biz/cust/bizCustCreditList";
@@ -78,7 +79,7 @@ public class BizCustCreditController extends BaseController {
 		addMessage(redirectAttributes, "保存钱包成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/cust/bizCustCredit/?repage";
 	}
-	
+
 	@RequiresPermissions("biz:cust:bizCustCredit:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizCustCredit bizCustCredit, RedirectAttributes redirectAttributes) {

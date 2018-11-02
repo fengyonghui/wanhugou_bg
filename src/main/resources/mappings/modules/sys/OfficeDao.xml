@@ -37,6 +37,22 @@
 		bvi.bank_name AS "bizVendInfo.bankName",
 		bvi.payee AS "bizVendInfo.payee",
 		bvi.vend_name AS "bizVendInfo.vendName",
+		bci.id AS "bizCustomerInfo.id",
+		bci.office_id AS "bizCustomerInfo.officeId",
+		bci.bank_name AS "bizCustomerInfo.bankName",
+		bci.card_number AS "bizCustomerInfo.cardNumber",
+		bci.payee AS "bizCustomerInfo.payee",
+		bci.remark AS "bizCustomerInfo.remark",
+		bci.id_card_number AS "bizCustomerInfo.idCardNumber",
+		cp.id AS "commonProcess.id",
+		cp.object_id AS "commonProcess.objectId",
+		cp.object_name AS "commonProcess.objectName",
+		cp.prev_id AS "commonProcess.prevId",
+		cp.biz_status AS "commonProcess.bizStatus",
+		cp.processor AS "commonProcess.processor",
+		cp.description AS "commonProcess.description",
+		cp.type AS "commonProcess.type",
+		cp.create_time AS "commonProcess.createTime",
 		pp.mobile AS "user.mobile"
 	</sql>
 
@@ -47,6 +63,8 @@
 		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
 		LEFT JOIN biz_custom_center_consultant ccc on a.id = ccc.cust_id
 		LEFT JOIN biz_vend_info bvi on a.id=bvi.office_id
+		LEFT JOIN biz_customer_info bci on a.id=bci.office_id
+		LEFT JOIN common_process cp on a.id=cp.object_id and cp.object_name = 'CUSTOMER_APPLY_LEVEL_OBJECT_NAME' and cp.current = 1
     </sql>
 
 	<select id="get" resultType="Office">
@@ -300,6 +318,12 @@
 		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
 	</update>
 
+	<update id="updateOfficeType">
+		UPDATE sys_office SET
+		type = #{type}
+		WHERE id = #{id}
+	</update>
+
 	<select id="queryList" resultType="Office">
 		SELECT
 		<include refid="officeColumns"/>
@@ -314,6 +338,9 @@
 			</if>
 			<if test="customerTypeEleven != null and customerTypeEleven != ''">
 				or a.type=#{customerTypeEleven}
+			</if>
+			<if test="customerTypeThirteen != null and customerTypeThirteen != ''">
+				or a.type=#{customerTypeThirteen}
 			</if>
 		</if>
 		<if test="name != null and name != ''">

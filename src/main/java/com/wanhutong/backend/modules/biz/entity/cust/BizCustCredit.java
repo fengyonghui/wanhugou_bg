@@ -10,6 +10,8 @@ import com.wanhutong.backend.modules.sys.entity.User;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -34,6 +36,18 @@ public class BizCustCredit extends DataEntity<BizCustCredit> {
 	private String custFalg;	//标识符
 
 	private String CgsType;	//查询类型
+
+	private List<String> cgsTypes;	//查询类型
+
+	/**
+	 * 待结佣金
+	 */
+	private BigDecimal commission;
+
+	/**
+	 * 累积获得佣金
+	 */
+	private BigDecimal commissioned;
 
 	public BizCustCredit() {
 		super();
@@ -121,5 +135,29 @@ public class BizCustCredit extends DataEntity<BizCustCredit> {
 
 	public void setCustFalg(String custFalg) {
 		this.custFalg = custFalg;
+	}
+
+	public List<String> getCgsTypes() {
+		return cgsTypes;
+	}
+
+	public void setCgsTypes(List<String> cgsTypes) {
+		this.cgsTypes = cgsTypes;
+	}
+
+	public BigDecimal getCommission() {
+		return commission;
+	}
+
+	public void setCommission(BigDecimal commission) {
+		this.commission = commission;
+	}
+
+	public BigDecimal getCommissioned() {
+		return commissioned;
+	}
+
+	public void setCommissioned(BigDecimal commissioned) {
+		this.commissioned = commissioned;
 	}
 }

@@ -50,11 +50,11 @@ import java.util.Set;
 @Service
 @Transactional(readOnly = true)
 public class SystemService extends BaseService implements InitializingBean {
-	
+
 	public static final String HASH_ALGORITHM = "SHA-1";
 	public static final int HASH_INTERATIONS = 1024;
 	public static final int SALT_SIZE = 8;
-	
+
 	@Autowired
 	private UserDao userDao;
 	@Autowired
@@ -67,7 +67,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	private SystemAuthorizingRealm systemRealm;
 	@Autowired
 	private CommonImgService commonImgService;
-	
+
 	public SessionDAO getSessionDao() {
 		return sessionDao;
 	}
@@ -76,7 +76,7 @@ public class SystemService extends BaseService implements InitializingBean {
 //	private IdentityService identityService;
 
 	//-- User Service --//
-	
+
 	/**
 	 * 获取用户
 	 * @param id
@@ -85,7 +85,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	public User getUser(Integer id) {
 		return UserUtils.get(id);
 	}
-	
+
 	/**
 	 * 通过部门ID与角色ID获取用户列表
 	 * @paramid role.id
@@ -103,7 +103,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	public User getUserByLoginName(String loginName) {
 		return UserUtils.getByLoginName(loginName);
 	}
-	
+
 	public Page<User> findUser(Page<User> page, User user) {
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
         boolean flag = false;
@@ -156,7 +156,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		page.setList(userDao.findList(user));
 		return page;
 	}
-	
+
 	/**
 	 * 无分页查询人员列表
 	 * @param user
@@ -207,7 +207,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		}
 		return list;
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void saveUser(User user) {
 		if (user.getId() == null){
@@ -227,6 +227,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			if(user.getRoleList()!=null && (!user.getRoleIdList().isEmpty())){
 				userDao.deleteUserRole(user);
 				userDao.insertUserRole(user);
+				UserUtils.clearCache(user);
 			}
 		}
 		if (user.getId() == null){
@@ -316,7 +317,7 @@ public class SystemService extends BaseService implements InitializingBean {
 //		// 清除权限缓存
 //		systemRealm.clearAllCachedAuthorizationInfo();
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void deleteUser(User user) {
 		userDao.delete(user);
@@ -352,7 +353,7 @@ public class SystemService extends BaseService implements InitializingBean {
 //		// 清除权限缓存
 //		systemRealm.clearAllCachedAuthorizationInfo();
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void updateUserLoginInfo(User user) {
 		// 保存上次登录信息
@@ -363,7 +364,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		user.setLoginDate(new Date());
 		userDao.updateLoginInfo(user);
 	}
-	
+
 	/**
 	 * 生成安全的密码，生成随机的16位salt并经过1024次 sha-1 hash
 	 */
@@ -373,7 +374,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		byte[] hashPassword = Digests.sha1(plain.getBytes(), salt, HASH_INTERATIONS);
 		return Encodes.encodeHex(salt)+Encodes.encodeHex(hashPassword);
 	}
-	
+
 	/**
 	 * 验证密码
 	 * @param plainPassword 明文密码
@@ -386,7 +387,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		byte[] hashPassword = Digests.sha1(plain.getBytes(), salt, HASH_INTERATIONS);
 		return password.equals(Encodes.encodeHex(salt)+Encodes.encodeHex(hashPassword));
 	}
-	
+
 	/**
 	 * 获得活动会话
 	 * @return
@@ -394,9 +395,9 @@ public class SystemService extends BaseService implements InitializingBean {
 	public Collection<Session> getActiveSessions(){
 		return sessionDao.getActiveSessions(false);
 	}
-	
+
 	//-- Role Service --//
-	
+
 	public Role getRole(Integer id) {
 		return roleDao.get(id);
 	}
@@ -406,21 +407,21 @@ public class SystemService extends BaseService implements InitializingBean {
 		r.setName(name);
 		return roleDao.getByName(r);
 	}
-	
+
 	public Role getRoleByEnname(String enname) {
 		Role r = new Role();
 		r.setEnname(enname);
 		return roleDao.getByEnname(r);
 	}
-	
+
 	public List<Role> findRole(Role role){
 		return roleDao.findList(role);
 	}
-	
+
 	public List<Role> findAllRole(){
 		return UserUtils.getRoleList();
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void saveRole(Role role) {
 		if (role.getId()==null){
@@ -480,7 +481,7 @@ public class SystemService extends BaseService implements InitializingBean {
 //		// 清除权限缓存
 //		systemRealm.clearAllCachedAuthorizationInfo();
 	}
-	
+
 	@Transactional(readOnly = false)
 	public Boolean outUserInRole(Role role, User user) {
 		List<Role> roles = user.getRoleList();
@@ -493,7 +494,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		}
 		return false;
 	}
-	
+
 	@Transactional(readOnly = false)
 	public User assignUserToRole(Role role, User user) {
 		if (user == null){
@@ -509,7 +510,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	}
 
 	//-- Menu Service --//
-	
+
 	public Menu getMenu(Integer id) {
 		return menuDao.get(id);
 	}
@@ -517,16 +518,16 @@ public class SystemService extends BaseService implements InitializingBean {
 	public List<Menu> findAllMenu(){
 		return UserUtils.getMenuList();
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void saveMenu(Menu menu) {
-		
+
 		// 获取父节点实体
 		menu.setParent(this.getMenu(menu.getParent().getId()));
-		
+
 		// 获取修改前的parentIds，用于更新子节点的parentIds
-		String oldParentIds = menu.getParentIds(); 
-		
+		String oldParentIds = menu.getParentIds();
+
 		// 设置新的父节点串
 		menu.setParentIds(menu.getParent().getParentIds()+menu.getParent().getId()+",");
 
@@ -538,7 +539,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			menu.preUpdate();
 			menuDao.update(menu);
 		}
-		
+
 		// 更新子节点 parentIds
 		Menu m = new Menu();
 		m.setParentIds("%,"+menu.getId()+",%");
@@ -613,7 +614,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		page.setList(userDao.contact(user));
 		return page;
 	}
-	
+
 	/**
 	 * 获取Key加载信息
 	 */
@@ -625,9 +626,9 @@ public class SystemService extends BaseService implements InitializingBean {
 		System.out.println(sb.toString());
 		return true;
 	}
-	
+
 	///////////////// Synchronized to the Activiti //////////////////
-	
+
 	// 已废弃，同步见：ActGroupEntityServiceFactory.java、ActUserEntityServiceFactory.java
 
 //	/**
@@ -757,7 +758,7 @@ public class SystemService extends BaseService implements InitializingBean {
 //			identityService.deleteUser(userId);
 //		}
 //	}
-	
+
 	///////////////// Synchronized to the Activiti end //////////////////
 	/**
 	 * 沟通记录查询 品类主管和客户专员

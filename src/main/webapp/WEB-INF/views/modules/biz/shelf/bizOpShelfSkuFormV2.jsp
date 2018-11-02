@@ -10,7 +10,11 @@
 	<script type="text/javascript">
         var opShelfType="";
         $(document).ready(function() {
-
+            var opShelfInfoType=$("#opShelfInfoType").val();
+            if (opShelfInfoType == 5) {
+                $("#tbody").append("<c:set var='retail' value='1'/>");
+                $("#tbody").append("<input id='retail' type='hidden' value='1'/>");
+			}
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
@@ -113,6 +117,7 @@
                                             $(this).removeAttr("style");
                                         }
                                     });
+                                    $("#shelfInfoId").removeAttr("disabled");
                                     loading('正在提交，请稍等...');
                                     form.submit();
                                 }
@@ -248,6 +253,7 @@
 
             <%--点击确定时填写商品数量--%>
             $("#ensureData").click(function () {
+                var retail = $("#retail").val();
                 var skuIds="";
                 $("#prodInfo2").find($('input:checkbox:checked')).each(function(i){
                     skuIds+=$(this).val()+",";
@@ -261,6 +267,7 @@
                 var m=myDate.getMinutes();     //获取当前分钟数(0-59)
                 var s=myDate.getSeconds();
                 var now=year+'-'+p(month)+"-"+p(date)+" "+p(h)+':'+p(m)+":"+p(s);
+                var commissionRatio = $("#commissionRatio").val();
                 $.ajax({
                     type:"POST",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuNameListV2?ids="+skuIds,
@@ -272,13 +279,13 @@
                         var pri = 10;
                         $.each(data,function(index,item) {
                             console.info(item)
-                            if (item.bvFactorList != undefined) {
+                            if (item.bvFactorList != undefined && retail != 1) {
 								$.each(item.bvFactorList,function(index,bvFactor){
 									htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
 										"<td><input about='shQtys"+item.id+"' name='shelfQtys' value='1000' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
 										"<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
-										"<td><input name=\"salePrices\" value=\""+bvFactor.salePrice+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
-										"<td><input name=\"minQtys\" value=\""+bvFactor.minQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
+										"<td><input name=\"salePrices\" value=\""+bvFactor.salePrice+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>";
+                                    	htmlInfo += "<td><input name=\"minQtys\" value=\""+bvFactor.minQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
 										"<td><input name=\"maxQtys\" value=\""+bvFactor.maxQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
 										"<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
 										"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
@@ -292,8 +299,13 @@
                                 htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
                                     "<td><input about='shQtys"+item.id+"' name='shelfQtys' value='1000' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
                                     "<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
-                                    "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
-                                    "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
+                                    "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\" onchange='getCommission(this)'/><label style='display: none' class=\"error\"></label></td>";
+									if (retail == 1) {
+										htmlInfo += "<td><input name='marketPrices' value='' class='input-mini required' type='number'placeholder=\"必填！\"/></td>";
+										htmlInfo += "<td><input name='commissionRatios' value='"+commissionRatio+"' class='input-mini required' type='number' min='0' placeholder=\"必填！\" onchange='getCommissionByRatio(this)'/></td>";
+										htmlInfo += "<td><input name='commission' value='' class='input-mini required' readonly='readonly' type='number' placeholder=\"必填！\"/></td>";
+									}
+                               		 htmlInfo += "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
                                     "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
                                     "<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
                                     "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
@@ -306,12 +318,22 @@
                             pri += 10;
                         });
                         $("#tbody").append(htmlInfo);
-                        $("#ShelfSkuTable").tablesMergeCell({
-                            // automatic: true
-                            // 是否根据内容来合并
-                            cols:[0,1,2,6,7,8,9]
-                            // rows:[0,2]
-                        });
+                        if (retail != 1) {
+							$("#ShelfSkuTable").tablesMergeCell({
+								// automatic: true
+								// 是否根据内容来合并
+								cols:[0,1,2,6,7,8,9]
+								// rows:[0,2]
+							});
+                        }
+						if (retail == 1) {
+							$("#ShelfSkuTable").tablesMergeCell({
+								// automatic: true
+								// 是否根据内容来合并
+								cols:[0,1,2,9,10,11,12]
+								// rows:[0,2]
+							});
+						}
 
                         <%--遍历每个tr下td--%>
                         <%--var leng = $("#tbody tr").length;--%>
@@ -376,8 +398,21 @@
             });
         }
 
+        function getCommission(item) {
+            var orgPrice = $(item).parent().parent().find("input[name='orgPrices']");
+			var commissionRatios = $(item).parent().parent().find("input[name='commissionRatios']");
+			var commission = $(item).parent().parent().find("input[name='commission']");
+			$(commission).val((parseFloat($(item).val()) - parseFloat($(orgPrice).val())) * parseFloat($(commissionRatios).val()) / 100);
+        }
+
+        function getCommissionByRatio(item) {
+            var orgPrice = $(item).parent().parent().find("input[name='orgPrices']");
+			var salePrice = $(item).parent().parent().find("input[name='salePrices']");
+            var commission = $(item).parent().parent().find("input[name='commission']");
+            $(commission).val((parseFloat(($(salePrice).val()) - parseFloat($(orgPrice).val())) * parseFloat($(item).val()) / 100).toFixed(2));
+        }
+
         function shelfInfoChanged() {
-            var opShelfId=$("#shelfInfoId").val();
             $.ajax({
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
@@ -401,25 +436,52 @@
         function selectedColum(){
             <%--属于选中货架名称下的 本地备货--%>
             var type = 0;
+            var retail = false;
             $("input:checkbox[name='shelfs']:checked").each(function (i) {
                 var opshelf = $(this);
                 var opShelfId=$(this).val();
+                var price = $("#price").text();
+                var market = $("#market");
+                var commission = $("#commission");
+                var commissions = $("#commissions");
                 $.ajax({
 					type:"post",
+                    async:false,
 					url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
 					success:function (data) {
-						if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.getLocal()}){
+                        if (data.type==${BizOpShelfInfoEnum.SELL_OFF.local}) {
+                            notSellOff();
+                            sellOff();
+                            retail = true;
+                        } else {
+                            notSellOff();
+                        }
+                        // if (retail = 'first1') {
+                        //     notSellOff();
+                        // }
+						if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.local}){
                             if (type != 0 && type != data.type) {
-                                alert("平台商品和本地商品不能同时选择");
+                                alert("平台商品和本地商品和代销不能同时选择");
                                 opshelf.removeAttr("checked");
+                                $("#price").text(price);
                                 return false;
                             }
                             type = data.type;
                             $("#PurchaseID").css("display","block");
 						}else{
                             if (type != 0 && type != data.type) {
-                                alert("平台商品和本地商品不能同时选择");
+                                alert("平台商品和本地商品和代销不能同时选择");
                                 opshelf.removeAttr("checked");
+                                $("#price").text(price);
+                                if (market != null) {
+                                    $("#market").remove();
+                                }
+                                if (commission != null) {
+                                    $("#commission").remove();
+                                }
+                                if (commissions != null) {
+                                    $("#commissions").remove();
+                                }
                                 return false;
                             }
                             type = data.type;
@@ -429,6 +491,28 @@
 					}
 				});
 			});
+            if (retail) {
+                $("#tbody").append("<c:set var='retail' value='1'/>");
+                $("#tbody").append("<input id='retail' type='hidden' value='1'/>");
+            }
+            if (!retail) {
+                $("#tbody").append("<c:remove var="retail"/>");
+                notSellOff();
+                $("#retail").remove();
+            }
+        }
+
+        function sellOff() {
+			$("#price").text("零售价(元)");
+			$("#price").after("<th id='market'>市场价(元)</th>");
+			$("#market").after("<th id='commission'>佣金比(%)</th>");
+			$("#commission").after("<th id='commissions'>佣金</th>");
+        }
+        function notSellOff() {
+            $("#price").text("销售单价(元)");
+            $("#market").remove();
+            $("#commission").remove();
+            $("#commissions").remove();
         }
 	</script>
 	<meta name="decorator" content="default"/>
@@ -439,14 +523,14 @@
 	<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?id=${bizOpShelfSku.id}">商品上架<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">${not empty bizOpShelfSku.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:shelf:bizOpShelfSku:edit">查看</shiro:lacksPermission></a></li>
 </ul><br/>
 <form:form id="inputForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSkuV2/save" method="post" class="form-horizontal">
-	<form:hidden path="id" var="id"/>
+	<form:hidden path="id"/>
+    <c:set var="id" value="${bizOpShelfSku.id}"/>
 	<form:hidden path="shelfSign"/>
+	<input id="commissionRatio" type="hidden" value="${commissionRatio}"/>
 	<%--<input type="hidden" id="opShelfId" value="${bizOpShelfSku.opShelfInfo.id}"/>--%>
 	<%--<form:hidden id="shelfId" path="opShelfInfo.id"/>--%>
 	<sys:message content="${message}"/>
-
 	<%--<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">--%>
-
 	<c:if test="${bizOpShelfSku.id == null}">
 		<div class="control-group">
 			<label class="control-label">货架名称：</label>
@@ -463,13 +547,14 @@
 		<div class="control-group">
 			<label class="control-label">货架名称：</label>
 			<div class="controls">
-				<form:select id="shelfInfoId" path="opShelfInfo.id" class="input-xlarge required" onchange="shelfInfoChanged()">
+				<form:select id="shelfInfoId" path="opShelfInfo.id" class="input-xlarge required" disabled="true" onchange="shelfInfoChanged()">
 					<form:option value="">请选择</form:option>
 					<form:options items="${shelfList}" itemLabel="name" itemValue="id"/>
 				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+		<input id="opShelfInfoType" type="hidden" value="${bizOpShelfSku.opShelfInfo.type}"/>
 	</c:if>
 
 	<div class="control-group" id="PurchaseID" style="display:none">
@@ -542,7 +627,15 @@
 						<%--</c:if>--%>
 					<th>上架数量(个)：</th>
 					<th>出厂价(元)：</th>
-					<th>销售单价(元)</th>
+					<th id="price">
+						<c:if test="${bizOpShelfSku.opShelfInfo.type == 5}">零售价(元)</c:if>
+						<c:if test="${bizOpShelfSku.opShelfInfo.type != 5}">销售单价(元)</c:if>
+					</th>
+					<c:if test="${bizOpShelfSku.opShelfInfo.type == 5}">
+						<th>市场价</th>
+						<th>佣金比(%)</th>
+						<th>佣金</th>
+					</c:if>
 					<th>最低销售数量(个)：</th>
 					<th>最高销售数量(个，9999表示不限制)：</th>
 					<th>上架时间：</th>
@@ -564,7 +657,12 @@
 							<%--<td><input name="createBy.name" value="${bizOpShelfSku.shelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="number" placeholder="必填！"/></td>--%>
 						<td><input name="shelfQtys" value="${bizOpShelfSku.shelfQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 						<td><input name="orgPrices" value="${bizOpShelfSku.orgPrice}" htmlEscape="false" maxlength="6" class="input-medium required" readonly="readonly" type="number" placeholder="必填！"/></td>
-						<td><input name="salePrices" value="${bizOpShelfSku.salePrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
+						<td><input name="salePrices" value="${bizOpShelfSku.salePrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！" onchange="getCommission(this)"/></td>
+						<c:if test="${bizOpShelfSku.opShelfInfo.type == 5}">
+							<td><input name="marketPrices" value="${bizOpShelfSku.marketPrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
+							<td><input name="commissionRatios" value="${bizOpShelfSku.commissionRatio}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" min="0" placeholder="必填！" onchange="getCommissionByRatio(this)"/></td>
+							<td><input name="commission" value=<fmt:formatNumber type="number" value="${(bizOpShelfSku.salePrice - bizOpShelfSku.orgPrice) * bizOpShelfSku.commissionRatio / 100}" maxFractionDigits="2"/> htmlEscape="false" maxlength="6" class="input-medium required" readonly="readonly" type="number" placeholder="必填！"/></td>
+						</c:if>
 						<td><input name="minQtys" value="${bizOpShelfSku.minQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 						<td><input name="maxQtys" value="${bizOpShelfSku.maxQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 						<td><input name="shelfTimes" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
@@ -597,7 +695,15 @@
 					<th>商品名称：</th>
 					<th>上架数量(个)：</th>
 					<th>出厂价(元)：</th>
-					<th>销售单价(元)</th>
+					<th id="price">
+						<c:if test="${bizOpShelfSku.opShelfInfo.type == 5}">零售价(元)</c:if>
+						<c:if test="${bizOpShelfSku.opShelfInfo.type != 5}">销售单价(元)</c:if>
+					</th>
+					<c:if test="${bizOpShelfSku.opShelfInfo.type == 5}">
+						<th>市场价</th>
+						<th>佣金比(%)</th>
+						<th>佣金</th>
+					</c:if>
 					<th>最低销售数量(个)：</th>
 					<th>最高销售数量(个，9999表示不限制)：</th>
 					<th>上架时间：</th>
@@ -623,6 +729,17 @@
 							<td><input name="salePrices" value="${bizOpShelfSku.salePrice}" htmlEscape="false"
 									   maxlength="6" class="input-medium required" readonly="readonly" type="number"
 									   placeholder="必填！"/></td>
+							<c:if test="${bizOpShelfSku.opShelfInfo.type == 5}">
+								<td><input name="marketPrices" value="${bizOpShelfSku.marketPrice}" htmlEscape="false"
+										   maxlength="6" class="input-medium required" readonly="readonly" type="number"
+										   placeholder="必填！"/></td>
+								<td><input name="commissionRatios" value="${bizOpShelfSku.commissionRatio}" htmlEscape="false"
+										   maxlength="6" class="input-medium required" readonly="readonly" type="number"
+										   placeholder="必填！"/></td>
+								<td><input name="commission" value=<fmt:formatNumber type="number" value="${(bizOpShelfSku.salePrice - bizOpShelfSku.orgPrice) * bizOpShelfSku.commissionRatio / 100}" maxFractionDigits="2"/> htmlEscape="false"
+										   maxlength="6" class="input-medium required" readonly="readonly" type="number"
+										   placeholder="必填！"/></td>
+							</c:if>
 							<td><input name="minQtys" value="${bizOpShelfSku.minQty}" htmlEscape="false" maxlength="6"
 									   class="input-medium required" readonly="readonly" type="number"
 									   placeholder="必填！"/></td>

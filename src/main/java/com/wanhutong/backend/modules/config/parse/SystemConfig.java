@@ -88,6 +88,19 @@ public class SystemConfig extends ConfigGeneral {
     private Boolean sendMessageSwitch;
 
 
+    /**
+     * 代销商角色变更消息ID
+     */
+    @XStreamAlias("commissionMerchantUpgradeMessageId")
+    private Integer commissionMerchantUpgradeMessageId;
+
+     /**
+     * 经销商角色变更消息ID
+     */
+    @XStreamAlias("customerUpgradeMessageId")
+    private Integer customerUpgradeMessageId;
+
+
 
 
 
@@ -132,5 +145,13 @@ public class SystemConfig extends ConfigGeneral {
 
     public Boolean getSendMessageSwitch() {
         return sendMessageSwitch;
+    }
+
+    public Integer getCommissionMerchantUpgradeMessageId() {
+        return commissionMerchantUpgradeMessageId;
+    }
+
+    public Integer getCustomerUpgradeMessageId() {
+        return customerUpgradeMessageId;
     }
 }

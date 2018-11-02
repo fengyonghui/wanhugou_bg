@@ -24,6 +24,15 @@
 		<li class="active"><a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/">支付申请列表</a></li>
 	</ul>
 	<sys:message content="${message}"/>
+	<div class="form-horizontal">
+		<div class="control-group">
+			<label class="control-label">订单/备货单号：</label>
+			<div class="controls">
+				<input type="text" disabled="disabled" value="${headerNum}" htmlEscape="false"
+					   maxlength="30" class="input-xlarge "/>
+			</div>
+		</div>
+	</div>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
@@ -90,6 +99,7 @@
 						<%--<a onclick="checkReject(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.type})">审核驳回</a>--%>
 					<%--</c:if>--%>
 				</shiro:hasPermission>
+
 				<shiro:hasPermission name="biz:po:sure:bizPoPaymentOrder">
 					<c:if test="${fromPage == 'requestHeader' && bizPoPaymentOrder.total == '0.00' && (requestHeader == null || requestHeader.bizStatus < ReqHeaderStatusEnum.CLOSE.state)}">
 						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认支付金额</a>

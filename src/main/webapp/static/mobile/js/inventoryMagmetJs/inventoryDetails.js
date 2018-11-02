@@ -43,7 +43,7 @@
 		                url: "/a/getUser",
 		                dataType: "json",
 		                async:false,
-		                success: function(user){                 
+		                success: function(user){
 							userId = user.data.id
 		                }
 		           });
@@ -89,7 +89,25 @@
 				    }else{
 		                $('#inSchedulstatus').val("未排产");
 				    };				    
-					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号	
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo);//备货单编号
+					//备货单类型
+					$.ajax({
+						type: 'GET',
+						url: '/a/sys/dict/listData',
+						data: {type:'req_header_type'},
+						dataType: 'json',
+						success: function(restype) {
+							$.each(restype,function(n,v){
+								if(res.data.bizRequestHeader.headerType==v.value){
+								    $('#headerType').val(v.label);
+								}
+								if(res.data.bizRequestHeader.headerType==""){
+									$('#headerType').val('未知');
+								}
+							})
+						}
+					});
 					//备货方
                     if(res.data.bizRequestHeader.fromType==1){
 						$('#fromType1').attr('checked','checked');
@@ -180,6 +198,7 @@
                 data: {id:idval},
                 dataType: "json",
                 success: function(res){
+                	console.log(res)
                 	if (res.data.detailHeaderFlg != true && res.data.detailSchedulingFlg != true) {
                         $("#inSchedultype").val("未排产")
                         $("#stockGoods").hide();
@@ -300,7 +319,7 @@
                         $("#purchaseMenus").append(poDetailHtmls);
                         //按商品排产中的排产备注
                         var remarkHtmls = "<textarea id='schRemarkOrder' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
-                        $(".schedulingHeaderRemarks").append(remarkHtmls);    
+                        $(".schedulingHeaderRemarks").append(remarkHtmls);
                 	}
 				}
 			})
@@ -437,7 +456,7 @@
 						    '</div>'+
 						'</div>'+
 					'</li>'
-					}	
+					}
 					if(i==auditLen-1 && data.bizRequestHeader.processPo != 'processPo' && item.requestOrderProcess.name != '审核完成') {
 						if(item.requestOrderProcess.name != '审核完成'){
 							CheckHtmlList +='<li class="step_item">'+

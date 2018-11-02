@@ -138,7 +138,7 @@
         LEFT JOIN sys_user suu ON suu.company_id = soc.id AND suu. STATUS = 1
 		<!--负责人、详细地址-->
         LEFT JOIN sys_user pp ON pp.id = soc.primary_person and pp.status=1
-        LEFT JOIN sys_office_address soa on soa.office_id=soc.id and soa.status=1 and soa.default_status=1
+        LEFT JOIN sys_office_address soa on soa.office_id=soc.id and soa.status=1 and soa.default_status=1 and soa.type = 2
         left join common_location cl on cl.id=soa.addr_id
 		LEFT JOIN sys_region province ON cl.province_id = province.id
 		LEFT JOIN sys_region city ON cl.city_id = city.id

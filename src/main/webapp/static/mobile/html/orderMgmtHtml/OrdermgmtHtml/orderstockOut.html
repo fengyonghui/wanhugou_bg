@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<title>订单信息详情</title>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/app.css?time=20181023" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">订单信息详情</p>
+		</header>
+		<div class="mui-content mui-input-group">
+			<div class="mui-input-row">
+				<label>物流单号：</label>
+				<input type="text" class="mui-input-clear" id="stockNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>发货人：</label>
+				<input type="text" class="mui-input-clear" id="stockPeople" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>发货时间：</label>
+				<input type="date" class="mui-input-clear" id="stockTime">
+			</div>
+			<div class="mui-input-row staCommodity">
+				<div class="labelLf">订单信息：</div>
+				<ul id="staCommodity" class="mui-table-view app_pl10"></ul>									
+			</div>
+			<div class="mui-input-row remark">
+				<label>备注：</label>
+				<textarea id="inPoRemark" name="" rows="" cols="" readonly></textarea>	
+			</div>			
+		</div>
+		<div class="inSaveBtn">
+			<button id="saveDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">
+				发货
+			</button>
+		</div>
+		<div class="clear"></div>
+		<input type="hidden" id="supplierId"/>
+		<input type="hidden" name="ordId" id="ordId"/>
+		<script src="../../../js/component/mui.min.js"></script>	
+		<script src="../../../js/component/zepto.min.js"></script>
+		<script src="../../../js/component/GHutils.js"></script>
+		<script src="../../../js/orderMgmtJs/OrdermgmtHtmljs/orderstockOut.js?v=20181023"></script>
+	</body>
+</html>

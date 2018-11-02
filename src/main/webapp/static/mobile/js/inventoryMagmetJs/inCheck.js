@@ -18,15 +18,12 @@
 			this.getPermissionList1('biz:po:bizPoHeader:audit','inpoFlag')
 			this.pageInit(); //页面初始化
 			//this.radioShow()
-			//			this.btnshow()
-			//			this.searchShow()
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
 			_this.getData();
-
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
@@ -79,11 +76,11 @@
 				data: datas,
 				dataType: "json",
 				success: function(res) {
+					console.log(res)
 					$('#schedulingTxt').hide();
 					console.log(res);
 					$('#inCheckBtn').attr('poid',res.data.bizRequestHeader.bizPoHeader.id);
 					$('#inRejectBtn').attr('poids',res.data.bizRequestHeader.bizPoHeader.id);
-					
 					//订单支出信息进来的备货单审核
 					if(_this.inpoFlag == true) {
 						if(res.data.bizRequestHeader.str=='audit'){
@@ -180,7 +177,25 @@
 					} else {
 						$('#inSchedulstatus').val("未排产");
 					};
-					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo); //备货单编号	
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo); //备货单编号
+					$('#inPoordNum').val(res.data.bizRequestHeader.reqNo); //备货单编号
+					//备货单类型
+					$.ajax({
+						type: 'GET',
+						url: '/a/sys/dict/listData',
+						data: {type:'req_header_type'},
+						dataType: 'json',
+						success: function(restype) {
+							$.each(restype,function(n,v){
+								if(res.data.bizRequestHeader.headerType==v.value){
+								    $('#headerType').val(v.label);
+								}
+								if(res.data.bizRequestHeader.headerType==""){
+									$('#headerType').val('未知');
+								}
+							})
+						}
+					});
 					//备货方
 					if(res.data.bizRequestHeader.fromType == 1) {
 						$('#fromType1').attr('checked', 'checked');
@@ -220,7 +235,6 @@
 					//排产信息
 					if(res.data.bizRequestHeader.str == 'detail'||res.data.bizRequestHeader.str == 'audit') {
 						var poheaderId = res.data.bizRequestHeader.bizPoHeader.id;
-//						console.log(poheaderId)
 						if(poheaderId == null || poheaderId == "") {
 							$("#inSchedultype").val("未排产")
 						}
@@ -1019,7 +1033,6 @@
         	var htmlPurch = '';
         	var totalReqQtyNums = 0;
         	$.each(chData.data.reqDetailList, function(i,item) {
-//      		console.log(item.reqQty)
         		var reqQtyNum = item.reqQty;
         		totalReqQtyNums = parseInt(totalReqQtyNums) + parseInt(reqQtyNum);
 			htmlPurch +='<li class="mui-table-view-cell mui-media app_bline app_pr">'+
@@ -1139,7 +1152,7 @@
 							'<input type="text" value="'+ item.reqQty +'" id="totalOrdQtyForSku_'+ item.skuInfo.id+'" class="commdOrdQty" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>总待排产量：</label>'+
-							'<input type="text" value="'+ waiteNum +'" class="commdWaiteNum" disabled></div>'+	
+							'<input type="text" value="'+ waiteNum +'" class="commdWaiteNum" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>已排产数量：</label>'+
 							'<input type="text" name="toalSchedulingNumForSku" value="'+ item.sumCompleteNum +'" class="commdCompleteNum" disabled></div>'+
@@ -1183,7 +1196,7 @@
 			$('#purchPlan').attr('name', addPurchNum);
 			$('#purchDate').attr('name', addPurchNum + '_date');
 			$('#purchNum').attr('name', addPurchNum + '_value');
-			
+
 			$(".schedPurch").on("tap", "#purchAddBtn", function() {
 				$('#purchAddCont').append(htmlPurchPlan);
 				var addPurchNum = _this.userInfo.inListId;
@@ -1266,7 +1279,6 @@
                     alert("确认值输入不正确!")
                     return;
                 }
-//              console.log(originalNum)
                 var entity = {};
                 entity.id = poId;
                 entity.objectId = poId;
@@ -1304,7 +1316,8 @@
 		},
 		batchSave: function(schedulingType,poId,vndm) {
 			var _this = this;
-			var skuInfoIdListList = vndm.data.skuInfoIdListListJson;
+//			console.log(vn)
+			var skuInfoIdListList = vn.data.skuInfoIdListListJson;
             var params = new Array();
             var totalSchedulingNum = 0;
             var totalOriginalNum = 0;
