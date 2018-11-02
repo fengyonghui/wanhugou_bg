@@ -483,7 +483,6 @@
 			</if>
 			<if test="commissionStatus !=null">
 				AND a.commission_status = #{commissionStatus}
-				AND a.order_type = 8
 			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num
@@ -655,9 +654,6 @@
 			</if>
 			<if test="vendorId !=null and vendorId != ''">
 				AND  sv.id = ${vendorId}
-			</if>
-			<if test="commissionStatus !=null">
-				AND  a.commission_status = ${commissionStatus}
 			</if>
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
