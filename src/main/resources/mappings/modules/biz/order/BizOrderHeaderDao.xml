@@ -386,6 +386,9 @@
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
 		LEFT JOIN biz_op_shelf_sku boss ON boss.sku_id = si.id and boss.status=1
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id=a.cust_id
+		LEFT JOIN sys_office s on s.id=ccc.center_id
+		LEFT JOIN sys_user con ON con.id = ccc.consultant_id
 		<!-- 供应商id -->
 		<if test="vendorId !=null and vendorId != ''">
 			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
@@ -397,17 +400,31 @@
 		<if test="localCode !=null and localCode != ''">
 			LEFT JOIN common_process cpl ON cpl.object_id = a.id and cpl.object_name = 'ORDER_HEADER_SO_LOCAL'	and cpl.current = 1
 		</if>
+		left join sys_office as so on a.cust_id=so.id
+		LEFT JOIN biz_order_address c ON c.id = a.ship_to_addr
+		LEFT JOIN sys_region province ON c.province_id = province.id
+		LEFT JOIN sys_region city ON c.city_id = city.id
+		LEFT JOIN sys_region reg ON c.region_id = reg.id
+		left join sys_user su on a.create_id=su.id
+		left join sys_user us on a.update_id=us.id
+		LEFT JOIN  common_process process on process.object_id = a.id and process.object_name = 'biz_order_header' and process.current = 1
+		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.status = 1 AND bpor.so_type = 1
+		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id AND bph.status = 1
+		LEFT JOIN common_process cp ON cp.id = bph.process_id
+		LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = bph.id AND bsp.object_name='biz_po_header' AND bsp.status = 1
+		LEFT JOIN biz_po_payment_order bppo ON bppo.id = bph.current_payment_id
+		LEFT JOIN biz_order_logistics bol ON bol.order_id = a.id AND bol.status = 1 AND bol.logistic_status=1
 
-		<!-- end  -->
 		<choose>
 			<when test="source != null and source == 'vendor'">
-				<include refid="bizOrderHeaderVendJoins"/>
+				LEFT JOIN sys_office vend ON vend.id = pi.vendor_id
 			</when>
 			<otherwise>
-				<include refid="bizOrderHeaderJoins"/>
+				LEFT JOIN sys_office vend ON vend.id = a.seller_id
+				LEFT JOIN  sys_office seller ON seller.id = a.seller_id
 			</otherwise>
 		</choose>
-
+		LEFT JOIN biz_vend_info vendi ON vendi.office_id = vend.id
 
 
 
@@ -576,7 +593,7 @@
 				and od.suply_id = #{supplyId}
 			</if>
 			<if test="consultantId!=null">
-				and a.consultant_id = #{consultantId}
+				and ccc.consultant_id = #{consultantId}
 			</if>
 
 			<if test="centerId!=null">
