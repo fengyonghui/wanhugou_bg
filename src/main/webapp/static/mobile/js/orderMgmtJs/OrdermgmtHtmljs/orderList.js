@@ -102,7 +102,7 @@
 								_this.userInfo.includeTestData="";
 							}
 		            	    var statu = _this.userInfo.statu;	
-		            	    console.log(statu)
+//		            	    console.log(statu)
 			                var f = document.getElementById("orderList");
 			                var childs = f.childNodes;
 			                for(var i = childs.length - 1; i >= 0; i--) {
@@ -132,13 +132,17 @@
 		                    	//直接进来的参数数据
 		                    	pager['size']= 20;
 			                    pager['pageNo'] = 1;			                    
-			                    if(statu == '' || statu == undefined) {
+			                    if(statu != 'unline') {
+//			                    	console.log(1)
 			                    	pager['statu'] = '';
 			                    	$('#myStatu').val('');
+			                    	$('#listName').html('订单列表');
 			                    }
-			                    if(statu == statu) {
+			                    if(statu == 'unline') {
+//			                    	console.log(2)
 			                    	pager['statu'] = statu;
 			                    	$('#myStatu').val(statu);
+			                    	$('#listName').html('线下支付订单列表');
 			                    }
 			                    getData(pager);
 		                    }				                

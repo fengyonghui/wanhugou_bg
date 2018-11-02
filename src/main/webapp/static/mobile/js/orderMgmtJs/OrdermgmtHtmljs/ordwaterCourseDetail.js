@@ -21,8 +21,10 @@
 			var status = '';
 			if(_this.userInfo.statu=='undefined') {
 				status = ''
+				$('#backCont').html('订单列表');
 			}else {
 				status = _this.userInfo.statu;
+				$('#backCont').html('线下支付订单列表');
 			}
 			/*返回订单列表*/
 			$('#nav').on('tap','.orderList', function() {
