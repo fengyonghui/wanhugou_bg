@@ -10,12 +10,21 @@
 		<title>流水详情</title>
 		<link href="../../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../../css/app.css?time=20181023" rel="stylesheet" />
+		<style type="text/css">
+			.mui-bar-tab~.mui-content {padding-bottom: 0;}
+		</style>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
 			<p class="app_cf app_nav_text_center">流水详情</p>
 		</header>
+		<nav class="mui-bar mui-bar-tab footClass" id="nav">
+			<a class="mui-tab-item app_cf orderList">
+				<span class="mui-icon mui-icon-undo"></span>
+				<span class="mui-tab-label" id="backCont"></span>
+			</a>
+		</nav>
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
 				<label>订单号：</label>
@@ -46,6 +55,6 @@
 		<script src="../../../js/component/mui.min.js"></script>	
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>
-		<script src="../../../js/orderMgmtJs/OrdermgmtHtmljs/ordwaterCourseDetail.js?v=20181023"></script>
+		<script src="../../../js/orderMgmtJs/OrdermgmtHtmljs/ordwaterCourseDetail.js?v=20181102"></script>
 	</body>
 </html>
