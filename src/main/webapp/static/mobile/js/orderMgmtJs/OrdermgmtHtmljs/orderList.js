@@ -159,6 +159,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
+//		            	console.log(res)
 		            	var dataRow = res.data.roleSet;
 		            	//订单类型
 		          	    $.ajax({
@@ -334,7 +335,7 @@
                                     if(item.delFlag!=null && item.delFlag == '1'){
                                     	//支付流水
                                     	if(item.bizStatus != res.data.CANCLE){
-                                    		if(item.statu == 'unline' || userId==1){
+                                    		if(res.data.statu == 'unline' || userId==1){
                                     			ordwaterCourseBtnTxt ="流水";
                                     			ordwaterCourseBtn = 'ordwaterCourseBtn';
                                     		}

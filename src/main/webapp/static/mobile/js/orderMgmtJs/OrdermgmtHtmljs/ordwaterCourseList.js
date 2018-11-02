@@ -96,7 +96,6 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		            	console.log(res)
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
@@ -120,7 +119,6 @@
 	                	});
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-//                          	console.log(item)
 //                          	console.log(item.orderHeader.id)
                             	$('#orderId').val(item.orderHeader.id);
                             	$.each(orWaterStatusList,function(z, l) {
@@ -132,7 +130,7 @@
 								var waterCourseDetailBtnTxt = '';
 								var waterCourseCheckBtn = '';
 								var waterCourseCheckBtnTxt = '';
-			                	if(_this.orWaterConFlag == true) {
+//			                	if(_this.orWaterConFlag == false) {
 			                		waterCourseDetailBtn = 'waterCourseDetailBtn'
 			                		waterCourseDetailBtnTxt = '详情'
 			                		if(_this.orWaterCheckFlag == true) {
@@ -141,7 +139,7 @@
 											waterCourseCheckBtn = 'waterCourseCheckBtn'
 			                			}
 			                		}
-			                	}
+//			                	}
 								waterCourseHtml +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 									'<div class="mui-input-row">' +
 										'<label>订单号:</label>' +
@@ -204,30 +202,6 @@
 	    },
 	    ordHrefHtml: function() {
         	var _this = this;
-//      	console.log(_this.userInfo.statu)
-//			/*返回*/
-//			if(_this.userInfo.statu=='unline'){
-//				$('#back').on('tap', function() {
-//					var url = $(this).attr('url');
-//					GHUTILS.OPENPAGE({
-//						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
-//						extras: {
-//							statu:'unline',
-//						}
-//					})
-//			    })
-//			}else if(_this.userInfo.statu=='undefined'){
-////				alert(1)
-//				$('#back').on('tap', function() {
-//					var url = $(this).attr('url');
-//					GHUTILS.OPENPAGE({
-//						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
-//						extras: {
-//							statu:'',
-//						}
-//					})
-//			    })
-//			}
 			/*查询*/
 			$('.app_header').on('tap', '#orWaterSechBtn', function() {
 				var url = $(this).attr('url');
@@ -389,7 +363,7 @@
 							var waterCourseDetailBtnTxt = '';
 							var waterCourseCheckBtn = '';
 							var waterCourseCheckBtnTxt = '';
-		                	if(_this.orWaterConFlag == false) {
+//			                if(_this.orWaterConFlag == false) {
 		                		waterCourseDetailBtn = 'waterCourseDetailBtn'
 		                		waterCourseDetailBtnTxt = '详情'
 		                		if(_this.orWaterCheckFlag == true) {
@@ -398,7 +372,7 @@
 										waterCourseCheckBtn = 'waterCourseCheckBtn'
 		                			}
 		                		}
-		                	}
+//			                }
 							waterCourseHtml +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 								'<div class="mui-input-row">' +
 									'<label>订单号:</label>' +
