@@ -50,7 +50,7 @@
 //                  console.log(_this.orWaterCheckFlag)
                 }
             });
-        },      
+        },
 		pageInit: function() {
 			var _this = this;
 			var pager = {};//分页 
@@ -96,7 +96,6 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		            	console.log(res)		            	
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
@@ -120,7 +119,6 @@
 	                	});
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-//                          	console.log(item)
 //                          	console.log(item.orderHeader.id)
                             	$('#orderId').val(item.orderHeader.id);
                             	$.each(orWaterStatusList,function(z, l) {
@@ -132,7 +130,7 @@
 								var waterCourseDetailBtnTxt = '';
 								var waterCourseCheckBtn = '';
 								var waterCourseCheckBtnTxt = '';
-			                	if(_this.orWaterConFlag == true) {
+//			                	if(_this.orWaterConFlag == false) {
 			                		waterCourseDetailBtn = 'waterCourseDetailBtn'
 			                		waterCourseDetailBtnTxt = '详情'
 			                		if(_this.orWaterCheckFlag == true) {
@@ -141,7 +139,7 @@
 											waterCourseCheckBtn = 'waterCourseCheckBtn'
 			                			}
 			                		}
-			                	}
+//			                	}
 								waterCourseHtml +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 									'<div class="mui-input-row">' +
 										'<label>订单号:</label>' +
@@ -182,7 +180,7 @@
 								'</div>'
 								});
 								$('#ordWaterCourseList').append(waterCourseHtml);
-								_this.stOrdHrefHtml(res.data.page.list);
+								_this.stOrdHrefHtml();
 						} else {
 								$('.mui-pull-bottom-pocket').html('');
 								$('#ordWaterCourseList').append('<p class="noneTxt">暂无数据</p>');
@@ -200,31 +198,11 @@
 		            }
 		        })
 		    }
+		    _this.ordHrefHtml();
 	    },
-		stOrdHrefHtml: function(data) {
-			var _this = this;
-			if(data==""){
-				$('#back').on('tap', function() {
-					var url = $(this).attr('url');
-					GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
-						extras: {
-							statu:''
-						}
-					})
-			    });
-			}else{
-				$('#back').on('tap', function() {
-					var url = $(this).attr('url');
-					GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
-						extras: {
-							statu:'unline'
-						}
-					})
-			    });
-			}
-		/*查询*/
+	    ordHrefHtml: function() {
+        	var _this = this;
+			/*查询*/
 			$('.app_header').on('tap', '#orWaterSechBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
@@ -237,19 +215,10 @@
 						}
 					})
 				}
-			}),
-		/*首页*/
-		
-			$('#nav').on('tap','.staHomePage', function() {
-				var url = $(this).attr('url');
-				GHUTILS.OPENPAGE({
-//					url: "../../../html/backstagemgmt.html",
-                    url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
-					extras: {
-//						statu:''
-					}
-				})
-			}),	
+			})
+        },
+		stOrdHrefHtml: function() {
+			var _this = this;
 		 /*审核*/
 	       $('.content_part').on('tap', '.waterCourseCheckBtn', function() {
 				var url = $(this).attr('url');
@@ -280,6 +249,7 @@
 						extras: {
 							waterCourseId: waterCourseId,
 							source:source,
+							statu:_this.userInfo.statu,
 						}
 					})
 				}
@@ -393,7 +363,7 @@
 							var waterCourseDetailBtnTxt = '';
 							var waterCourseCheckBtn = '';
 							var waterCourseCheckBtnTxt = '';
-		                	if(_this.orWaterConFlag == false) {
+//			                if(_this.orWaterConFlag == false) {
 		                		waterCourseDetailBtn = 'waterCourseDetailBtn'
 		                		waterCourseDetailBtnTxt = '详情'
 		                		if(_this.orWaterCheckFlag == true) {
@@ -402,7 +372,7 @@
 										waterCourseCheckBtn = 'waterCourseCheckBtn'
 		                			}
 		                		}
-		                	}
+//			                }
 							waterCourseHtml +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 								'<div class="mui-input-row">' +
 									'<label>订单号:</label>' +

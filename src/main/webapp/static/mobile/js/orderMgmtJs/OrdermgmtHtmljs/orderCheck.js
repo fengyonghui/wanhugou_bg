@@ -318,7 +318,6 @@
 			if(auditLen > 0) {
 				var CheckHtmlList ='';
 				$.each(data.auditList, function(i, item) {
-					console.log(item)
 					$('#audiType').val(item.type);
 					var ProcessName = '';
 					var step = i + 1;
