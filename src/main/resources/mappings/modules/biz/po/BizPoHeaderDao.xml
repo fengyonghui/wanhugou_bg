@@ -564,4 +564,28 @@
 		WHERE status=1
 		AND id = #{id}
 	</update>
+
+	<select id="getOrderNumOrReqNoByPoId" resultType="String">
+		SELECT
+		<if test="fromPage != null and fromPage == 'orderHeader'">
+			boh.order_num
+		</if>
+		<if test="fromPage != null and fromPage == 'requestHeader'">
+			brh.req_no
+		</if>
+		FROM biz_po_header a
+			left join biz_po_order_req bpor on bpor.po_id=a.id and bpor.status=1
+		<if test="fromPage != null and fromPage == 'orderHeader'">
+			AND bpor.so_type=1
+			left join biz_order_header boh on boh.id=bpor.so_id and boh.status=1
+		</if>
+		<if test="fromPage != null and fromPage == 'requestHeader'">
+			AND bpor.so_type=2
+			left join  biz_request_header brh on brh.id = bpor.so_id and brh.status=1
+		</if>
+		WHERE
+			a.status = 1
+			AND a.id = #{id}
+	</select>
+
 </mapper>

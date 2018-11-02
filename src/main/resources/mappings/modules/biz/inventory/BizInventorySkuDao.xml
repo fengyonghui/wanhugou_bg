@@ -56,28 +56,7 @@
 	
 	<select id="findList" resultType="BizInventorySku">
 		SELECT 
-			<include refid="bizInventorySkuColumns"/>,
-		(SELECT sum(bsgr.send_num)
-		FROM biz_send_goods_record bsgr
-		LEFT JOIN biz_inventory_sku bis ON bis.inv_id = bsgr.inv_id AND bis.sku_id = bsgr.sku_id
-		WHERE
-		bsgr.biz_status = 0
-		AND bis.id = a.id
-		AND bsgr.status = 1) AS "outWarehouse",
-		(SELECT sum(bsgr.send_num)
-		FROM biz_send_goods_record bsgr
-		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsgr.sku_id
-		WHERE
-		bsgr.biz_status = 1
-		AND bsgr.order_id = 0
-		AND bis.id = a.id
-		AND bsgr.status=1
-		AND bsgr.cust_id = s.id) AS "sendGoodsNum",
-		(SELECT sum(bcgr.receive_num)
-		FROM biz_collect_goods_record bcgr
-		LEFT JOIN biz_inventory_sku bis ON bis.inv_id = bcgr.inv_id AND bis.sku_id = bcgr.sku_id
-		WHERE
-		bis.id = a.id and bcgr.status=1) AS "inWarehouse"
+			<include refid="bizInventorySkuColumns"/>
 		FROM biz_inventory_sku a
 		<include refid="bizInventorySkuJoins"/>
 		<where>
@@ -354,5 +333,37 @@
 		sku_id = #{needSkuId}
 		WHERE id = #{id}
 	</update>
+
+	<select id="findOutWarehouse" resultType="Integer">
+		SELECT sum(bsgr.send_num)
+		FROM biz_send_goods_record bsgr
+		LEFT JOIN biz_inventory_sku bis ON bis.inv_id = bsgr.inv_id AND bis.sku_id = bsgr.sku_id
+		WHERE
+		bsgr.biz_status = 0
+		AND bis.id = #{id}
+		AND bsgr.status = 1
+	</select>
+
+	<select id="findSendGoodsNum" resultType="Integer">
+		SELECT sum(bsgr.send_num)
+		FROM biz_send_goods_record bsgr
+		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsgr.sku_id
+		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		WHERE
+		bsgr.biz_status = 1
+		AND bsgr.order_id = 0
+		AND bis.id = #{id}
+		AND bsgr.status=1
+		AND bsgr.cust_id = bii.cust_id
+	</select>
+
+	<select id="findInWarehouse" resultType="Integer">
+		SELECT sum(bcgr.receive_num)
+		FROM biz_collect_goods_record bcgr
+		LEFT JOIN biz_inventory_sku bis ON bis.inv_id = bcgr.inv_id AND bis.sku_id = bcgr.sku_id
+		WHERE
+		bis.id = #{id}
+		AND bcgr.status=1
+	</select>
 
 </mapper>

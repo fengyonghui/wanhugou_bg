@@ -350,7 +350,15 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param
      * */
     List<BizOrderHeader> headerFindList(BizOrderHeader bizOrderHeader);
- /**
+
+    /**
+     * 订单采购列表V3
+     * @param bizOrderHeader
+     * @return
+     */
+    List<BizOrderHeader> headerFindListV3(BizOrderHeader bizOrderHeader);
+
+    /**
      * 订单采购列表
      * @param
      * */

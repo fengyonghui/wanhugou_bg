@@ -550,6 +550,9 @@ public class BizInventorySkuController extends BaseController {
                 }
             }
         }
+        model.addAttribute("outWarehouse",bizInventorySkuService.findOutWarehouse(id));
+        model.addAttribute("sendGoodsNum",bizInventorySkuService.findSendGoodsNum(id));
+        model.addAttribute("inWarehouse",bizInventorySkuService.findInWarehouse(id));
         model.addAttribute("bcgrList",bcgrList);
         return "modules/biz/inventory/bizInventorySkuDetail";
     }

@@ -44,6 +44,8 @@
                     var i = 0;
                     var sumSentQty = 0;
                     var stockQty = 0;
+                    var map = {};
+                    var sendMap = {};
                     $("input[name='reqDetail'][checked='checked']").each(function () {
                         var orderDetailId = $(this).parent().parent().find("input[name='orderDetailId']").val();
                         var reqDetailId = $(this).parent().parent().find("input[name='reqDetailId']").val();
@@ -52,9 +54,22 @@
                         var uVersion = $(this).parent().parent().find("input[name='uVersion']").val();
                         var sendNo = $("#sendNo").val();
                         stockQty = $(this).parent().parent().find("input[name='stockQty']").val();
-                        sumSentQty = parseInt(sumSentQty) + parseInt(sentQty);
+                        var has = orderDetailId in map;
+                        if (has) {
+                            map[orderDetailId] = parseInt(map[orderDetailId]) + parseInt(sentQty);
+                        } else {
+                            map[orderDetailId] = parseInt(sentQty);
+                            sendMap[orderDetailId] = parseInt(stockQty);
+                        }
+                        // sumSentQty = parseInt(sumSentQty) + parseInt(sentQty);
                         treasuryList[i] = createTreasury(orderDetailId,reqDetailId,invSkuId,sentQty,uVersion,sendNo);
                         i = i + 1;
+                    });
+                    var stockFlag = true;
+                    $.each(map,function (key, value) {
+						if (parseInt(value) > parseInt(sendMap[key])) {
+						    stockFlag = false;
+						}
                     });
                     console.info(JSON.stringify(treasuryList));
 
@@ -90,7 +105,7 @@
 						} else if (!flag3){
                             alert("选中出库的备货单，本次出库数量不能大于订单的剩余需求数量");
                             return false;
-						} else if (parseInt(sumSentQty) > parseInt(stockQty)) {
+                        } else if (!stockFlag) {
                             alert("该商品库存不足");
                             return false;
 						}else {
@@ -206,7 +221,7 @@
                     window.document.body.innerHTML=prnhtml;
                     window.print();
                     location.reload();
-                //    alert("打印出库单成功");
+                    //    alert("打印出库单成功");
                 }
             },{buttonsFocus:1});
             top.$('.jbox-body .jbox-icon').css('top','55px');

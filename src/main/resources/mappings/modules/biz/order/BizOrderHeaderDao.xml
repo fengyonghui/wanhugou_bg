@@ -481,15 +481,16 @@
 			<if test="dataStatus==null">
 				and a.status = 1
 			</if>
+			<if test="commissionStatus !=null">
+				AND a.commission_status = #{commissionStatus}
+				AND a.order_type = 8
+			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num
 				LIKE
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
-			</if>
-			<if test="commissionStatus != null and commissionStatus != ''">
-				AND commission_status = #{commissionStatus}
 			</if>
 			<if test="serllerName != null and serllerName !=''">
 				AND seller.name LIKE
@@ -2529,6 +2530,109 @@ FROM
 	GROUP by a.id
     ORDER BY
 	    a.update_time DESC
+	</select>
+
+	<!--测试自动生成PO专用-->
+	<select id="headerFindListV3" resultType="BizOrderHeader">
+		SELECT
+		a.id AS "id",
+		a.order_num AS "orderNum",
+		a.order_type AS "orderType",
+		a.cust_id AS "customer.id",
+		so.NAME AS "customer.name",
+		a.total_detail AS "totalDetail",
+		a.receive_total AS "receiveTotal",
+		a.total_exp AS "totalExp",
+		a.freight AS "freight",
+		a.inv_status AS "invStatus",
+		a.biz_status AS "bizStatus",
+		a.biz_type AS "bizType",
+		a.plateform_id AS "platformInfo.id",
+		a.ship_to_addr AS "bizLocation.id",
+		c.province_id as "bizLocation.province.id",
+		province.name as "bizLocation.province.name",
+		c.city_id as "bizLocation.city.id",
+		city.name as "bizLocation.city.name",
+		c.region_id as "bizLocation.region.id",
+		reg.name as "bizLocation.region.name",
+		c.address as "bizLocation.address",
+		a.STATUS AS "delFlag",
+		a.create_id AS "createBy.id",
+		su.NAME AS "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		us.NAME AS "updateBy.name",
+		a.update_time AS "updateDate" ,
+		concat(cl.pcr_name, ifnull( cl.address,'')) as locationAddress,
+		GROUP_CONCAT(bod.id) AS "orderDetails",
+		pi.vendor_id AS "onlyVendor",
+		sx.NAME AS "centersName"
+		FROM
+		biz_order_header a
+		LEFT JOIN sys_office so ON a.cust_id = so.id
+		LEFT JOIN sys_user su ON a.create_id = su.id
+		LEFT JOIN sys_user us ON a.update_id = us.id
+		LEFT JOIN common_location cl on a.ship_to_addr = cl.id
+		INNER JOIN biz_order_detail bod on bod.order_id = a.id
+		INNER JOIN biz_sku_info bsi on bod.sku_id = bsi.id
+		INNER JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		<!-- 订单地址 -->
+		LEFT JOIN biz_order_address c ON c.id = a.ship_to_addr
+		LEFT JOIN sys_region province ON c.province_id = province.id
+		LEFT JOIN sys_region city ON c.city_id = city.id
+		LEFT JOIN sys_region reg ON c.region_id = reg.id
+		<!-- end  -->
+		<!-- 采购中心 -->
+		LEFT JOIN sys_office sx ON sx.id = a.center_id
+		<!-- end  -->
+		WHERE 1=1
+		<if test="bizStatusStart !=null and bizStatusEnd !=null">
+			AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+		</if>
+		AND a.STATUS =#{DEL_FLAG_NORMAL}
+		AND bod.status= 1
+		AND (bod.suply_id=0 OR bod.suply_id=721)
+		AND EXISTS(
+		SELECT 1 from
+		(SELECT
+		DISTINCT a.id, pi.vendor_id
+		FROM biz_order_header a,biz_order_detail bod
+		LEFT JOIN biz_sku_info bsi on bod.sku_id = bsi.id
+		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		WHERE bod.order_id = a.id
+		AND bod.status = 1
+		AND  ( bod.suply_id = 0 OR bod.suply_id = 721 )
+		<if test="bizStatusStart !=null and bizStatusEnd !=null">
+			AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			/*AND a.biz_status BETWEEN 15 AND 17*/
+		</if>
+		AND a.STATUS =1 ) t
+		WHERE a.id = t.id
+		GROUP BY id
+		HAVING  count(1) = 1
+		)
+		<if test="orderType != null and orderType != ''">
+			AND a.order_type = #{orderType}
+		</if>
+		<if test="orderNum != null and orderNum != ''">
+			AND a.order_num LIKE
+			<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+		</if>
+		<if test="customer != null and customer.id != null and customer.id!=''">
+			AND a.cust_id LIKE
+			<if test="dbName == 'oracle'">'%'||#{customer.id}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{customer.id}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{customer.id},'%')</if>
+		</if>
+		<if test="id != null and id != ''">
+			AND a.id = #{id}
+		</if>
+		GROUP by a.id
+		ORDER BY
+		a.update_time DESC
 	</select>
 
 

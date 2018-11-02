@@ -1080,6 +1080,8 @@
                         }
 
                         window.location.href = "${ctx}/biz/order/bizOrderHeader";
+                    } else {
+                        alert(result.errmsg);
                     }
                 },
                 error: function (error) {
@@ -1965,6 +1967,19 @@
             </c:if>
         </div>
     </div>
+
+    <c:if test="${entity.orderType == BizOrderTypeEnum.COMMISSION_ORDER.state}">
+        <div class="control-group" >
+            <label class="control-label">结佣状态：</label>
+            <div class="controls">
+                <form:select path="commissionStatus" class="input-xlarge required" disabled="true">
+                    <form:option value="" label="请选择"/>
+                    <form:options items="${fns:getDictList('biz_commission_status')}" itemLabel="label" itemValue="value"
+                                  htmlEscape="false"/></form:select>
+            </div>
+        </div>
+    </c:if>
+
     <c:if test="${source ne 'vendor'}">
         <div class="control-group">
             <label class="control-label">收货人：</label>

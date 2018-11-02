@@ -82,7 +82,7 @@ public class BizCommissionController extends BaseController {
 	@RequiresPermissions("biz:order:bizCommission:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizCommission bizCommission, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizCommission> page = bizCommissionService.findPage(new Page<BizCommission>(request, response), bizCommission); 
+		Page<BizCommission> page = bizCommissionService.findPageForAllData(new Page<BizCommission>(request, response), bizCommission);
 		model.addAttribute("page", page);
 
 		List<BizCommission> bizCommissionList = page.getList();
