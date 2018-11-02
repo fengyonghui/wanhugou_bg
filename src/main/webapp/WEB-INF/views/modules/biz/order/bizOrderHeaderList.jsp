@@ -229,12 +229,12 @@
                 <form:option value="1" label="是"/>
             </form:select>
         </li>
-        <li><label>结佣状态：</label>
-            <form:select path="commissionStatus" class="input-medium">
-                <form:option value="" label="请选择"/>
-                <form:options items="${fns:getDictList('biz_commission_status')}" itemLabel="label" itemValue="value"
-                              htmlEscape="false"/></form:select>
-        </li>
+        <%--<li><label>结佣状态：</label>--%>
+            <%--<form:select path="commissionStatus" class="input-medium">--%>
+                <%--<form:option value="" label="请选择"/>--%>
+                <%--<form:options items="${fns:getDictList('biz_commission_status')}" itemLabel="label" itemValue="value"--%>
+                              <%--htmlEscape="false"/></form:select>--%>
+        <%--</li>--%>
         <c:if test="${statu == 'unline'}">
             <li><label>审核状态:</label>
                 <form:select path="examine" class="input-medium">
