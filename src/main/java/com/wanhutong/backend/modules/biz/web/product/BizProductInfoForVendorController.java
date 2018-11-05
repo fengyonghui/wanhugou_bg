@@ -199,6 +199,9 @@ public class BizProductInfoForVendorController extends BaseController {
                 dictList = dictService.findList(dict);
             }
             if (attributeInfo.getLevel() != null && TagInfoEnum.PRODTAG.ordinal() == attributeInfo.getLevel()) {
+                if (!VarietyAttrEnum.NOT_VARIETY_ATTR.contains(attributeInfo.getId())) {
+                    continue;
+                }
                 attributeInfo.setDictList(dictList);
                 tagInfos.add(attributeInfo);
             }

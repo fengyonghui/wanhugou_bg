@@ -104,5 +104,9 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<select id="getPropByKey" resultType="String">
+		SELECT prop_value FROM sys_default_prop WHERE prop_key = #{propKey}
+	</select>
 	
 </mapper>
