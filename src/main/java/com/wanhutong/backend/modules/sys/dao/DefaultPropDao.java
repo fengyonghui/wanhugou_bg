@@ -14,5 +14,12 @@ import com.wanhutong.backend.modules.sys.entity.DefaultProp;
  */
 @MyBatisDao
 public interface DefaultPropDao extends CrudDao<DefaultProp> {
+
+    /**
+     * 根据key查找默认属性值
+     * @param propKey
+     * @return
+     */
+    String getPropByKey(String propKey);
 	
 }

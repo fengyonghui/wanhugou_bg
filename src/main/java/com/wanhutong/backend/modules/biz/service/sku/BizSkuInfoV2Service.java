@@ -17,6 +17,7 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
@@ -26,6 +27,7 @@ import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
@@ -62,6 +64,8 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	private AttributeValueV2Service attributeValueService;
 	@Autowired
 	private BizOpShelfSkuService bizOpShelfSkuService;
+	@Autowired
+	private DefaultPropService defaultPropService;
 
 	protected Logger log = LoggerFactory.getLogger(BizSkuInfoV2Service.class);
 
@@ -211,6 +215,8 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		}
 
 		super.save(bizSkuInfo);
+		//sku保存属性
+		saveSkuAttr(bizSkuInfo,copy);
 		//sku图片保存
 		saveCommonImg(bizSkuInfo, copy);
 	}
@@ -298,6 +304,33 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 			commonImg.setImgPath("/"+ossPath);
 			commonImg.setImgServer(DsConfig.getImgServer());
 			commonImgService.save(commonImg);
+		}
+	}
+
+	@Transactional(readOnly = false)
+	public void saveSkuAttr(BizSkuInfo bizSkuInfo, boolean copy) {
+		if (bizSkuInfo.getId() == null) {
+			log.error("Can't save sku image without sku ID!");
+			return;
+		}
+		if (bizSkuInfo.getItemNo() == null) {
+			log.error("Can't save sku image without sku itemNo!");
+			return;
+		}
+		if (copy) {
+			AttributeValueV2 attributeValueV2 = new AttributeValueV2();
+			attributeValueV2.setAttributeInfo(new AttributeInfoV2(Integer.valueOf(defaultPropService.getPropByKey("size"))));
+			attributeValueV2.setObjectId(bizSkuInfo.getId());
+			attributeValueV2.setObjectName(BizProductInfoV2Service.SKU_TABLE);
+			String itemNo = bizSkuInfo.getItemNo();
+			String substring = itemNo.substring(itemNo.indexOf("/") + 1, itemNo.length());
+			String size = substring.substring(0, substring.indexOf("/"));
+			String color = substring.substring(substring.indexOf("/") + 1, substring.length());
+			attributeValueV2.setValue(size);
+			attributeValueService.save(attributeValueV2);
+			attributeValueV2.setAttributeInfo(new AttributeInfoV2(Integer.valueOf(defaultPropService.getPropByKey("color"))));
+			attributeValueV2.setValue(color);
+			attributeValueService.save(attributeValueV2);
 		}
 	}
 
