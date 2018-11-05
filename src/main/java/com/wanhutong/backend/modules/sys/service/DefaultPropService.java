@@ -43,5 +43,12 @@ public class DefaultPropService extends CrudService<DefaultPropDao, DefaultProp>
 	public void delete(DefaultProp defaultProp) {
 		super.delete(defaultProp);
 	}
+
+	/**
+	 * 根据key查找默认属性值
+	 * @param propKey
+	 * @return
+	 */
+	public String getPropByKey(String propKey) {return dao.getPropByKey(propKey);}
 	
 }
