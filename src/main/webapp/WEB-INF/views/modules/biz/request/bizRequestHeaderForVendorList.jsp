@@ -526,6 +526,15 @@
 					</shiro:hasPermission>
 				</c:if>
 
+				<!-- 驳回的单子再次开启审核 -->
+				<shiro:hasPermission name="biz:po:bizPoHeader:startAuditAfterReject">
+					<c:if test="${requestHeader.bizPoHeader.commonProcess.type == -1}">
+						<c:if test="${requestHeader.bizPoHeader.bizRequestHeader != null}">
+							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.bizPoHeader.bizRequestHeader.id}&str=startAudit">开启审核</a>
+						</c:if>
+					</c:if>
+				</shiro:hasPermission>
+
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit">
 					<c:if test="${requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == null || requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '驳回'}">
 						<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}">付款单修改</a>

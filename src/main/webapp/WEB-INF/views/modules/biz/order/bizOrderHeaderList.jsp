@@ -730,6 +730,16 @@
 								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">付款单审核</a>
 							</c:if>
 							</shiro:hasPermission>
+
+                            <!-- 驳回的单子再次开启审核 -->
+                            <shiro:hasPermission name="biz:po:bizPoHeader:startAuditAfterReject">
+                                <c:if test="${orderHeader.bizPoHeader.commonProcess.type == -1}">
+                                    <c:if test="${orderHeader.bizPoHeader.bizOrderHeader != null}">
+                                        <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.bizPoHeader.bizOrderHeader.id}&str=startAudit">开启审核</a>
+                                    </c:if>
+                                </c:if>
+                            </shiro:hasPermission>
+
 							<!-- 支付申请列表获取 -->
 							<c:if test="${orderHeader.bizPoHeader.commonProcess.type != -1}">
 								<shiro:hasPermission name="biz:po:pay:list">
