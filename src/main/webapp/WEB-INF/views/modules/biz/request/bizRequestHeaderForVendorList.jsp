@@ -156,6 +156,9 @@
 	<input id="previousPage" name="previousPage" type="hidden" value="${bizRequestHeader.previousPage}"/>
 	<input id="payNum" type="hidden" />
 	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
+	<div class="control-group">
+		<label class="control-label">备货单搜索：</label>
+	</div>
 	<ul class="ul-form">
 		<li><label>备货单号：</label>
 			<form:input path="reqNo" htmlEscape="false" maxlength="30" class="input-medium"/>
@@ -205,89 +208,124 @@
 				<form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 			</form:select>
 		</li>
-		<li><label>测试数据</label>
-			<form:checkbox id="includeTest" path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
-		</li>
-
-		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 		<li class="clearfix"></li>
 	</ul>
+
+	<br>
+	<div class="control-group">
+		<label class="control-label">付款单搜索：</label>
+	</div>
+	<ul class="ul-form">
+		<!-- 订单支出信息合并 搜索 -->
+		<li><label style="width: 120px;">付款单业务状态：</label>
+			<form:select path="poBizStatus" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:options items="${fns:getDictList('biz_po_status')}" itemLabel="label" itemValue="value"
+							  htmlEscape="false"/></form:select>
+		</li>
+
+		<li><label style="width: 120px;">付款单审核状态：</label>
+			<form:select path="processTypeStr" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:options items="${processList}" htmlEscape="false"/>
+			</form:select>
+		</li>
+		<li><label style="width: 120px;">付款单排产状态：</label>
+			<form:select path="poSchType" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:options items="${fns:getDictList('poSchType')}" itemLabel="label" itemValue="value"
+							  htmlEscape="false"/>
+			</form:select>
+		</li>
+		<li><label style="width: 120px;">付款单待支付：</label>
+			<form:select path="poWaitPay" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:option value="1" label="是"/>
+			</form:select>
+		</li>
+		<li class="clearfix"></li>
+	</ul>
+	<li><label>测试数据</label>
+		<form:checkbox id="includeTest" path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
+	</li>
+
+	<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+	<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 </form:form>
 
 <!-- 订单支付合并 搜索 -->
-<form:form id="searchFormPO" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/listV2" method="post"
-		   class="breadcrumb form-search">
-	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-	<input id="previousPage" name="previousPage" type="hidden" value="${bizPoHeader.previousPage}"/>
-	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
-	<ul class="ul-form">
-			<%--<li><label>采购单号</label>--%>
-			<%--<form:input path="orderNum" htmlEscape="false" maxlength="25" class="input-medium"/>--%>
-			<%--</li>--%>
-		<div class="control-group">
-			<label class="control-label">付款单搜索：</label>
-		</div>
-		<li><span style="margin-left: 10px"><label>订单编号</label></span>
-			<input id="num" name="num" class="input-medium" type="text" value="" maxlength="25">
-		</li>
+<%--<form:form id="searchFormPO" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/listV2" method="post"--%>
+		   <%--class="breadcrumb form-search">--%>
+	<%--<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>--%>
+	<%--<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>--%>
+	<%--<input id="previousPage" name="previousPage" type="hidden" value="${bizPoHeader.previousPage}"/>--%>
+	<%--<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>--%>
+	<%--<ul class="ul-form">--%>
+			<%--&lt;%&ndash;<li><label>采购单号</label>&ndash;%&gt;--%>
+			<%--&lt;%&ndash;<form:input path="orderNum" htmlEscape="false" maxlength="25" class="input-medium"/>&ndash;%&gt;--%>
+			<%--&lt;%&ndash;</li>&ndash;%&gt;--%>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">付款单搜索：</label>--%>
+		<%--</div>--%>
+		<%--<li><span style="margin-left: 10px"><label>订单编号</label></span>--%>
+			<%--<input id="num" name="num" class="input-medium" type="text" value="" maxlength="25">--%>
+		<%--</li>--%>
 
-		<li><label>业务状态：</label>
-			<select id="bizStatus" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<c:forEach items="${fns:getDictList('biz_po_status')}" var="item" varStatus="vs">
-					<option value="${item.value}">${item.label}</option>
-				</c:forEach>
-			</select>
-		</li>
+		<%--<li><label>业务状态：</label>--%>
+			<%--<select id="bizStatus" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<c:forEach items="${fns:getDictList('biz_po_status')}" var="item" varStatus="vs">--%>
+					<%--<option value="${item.value}">${item.label}</option>--%>
+				<%--</c:forEach>--%>
+			<%--</select>--%>
+		<%--</li>--%>
 
-		<li><label>审核状态：</label>
-			<select id="processTypeStr" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<c:forEach items="${processList}" var="item" varStatus="vs">
-					<option value="${item}">${item}</option>
-				</c:forEach>
-			</select>
-		</li>
-		<li><label>排产状态：</label>
-			<select id="poSchType" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<c:forEach items="${fns:getDictList('poSchType')}" var="item" varStatus="vs">
-					<option value="${item.value}">${item.label}</option>
-				</c:forEach>
-			</select>
-		</li>
-		<li><label>待支付</label>
-			<select id="waitPay" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<option value="1">是</option>
-			</select>
-		</li>
-		<li><label>可申请付款</label>
-			<select id="applyPayment" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<option value="1">是</option>
-			</select>
-		</li>
-		<li><label>发票状态：</label>
-			<select id="invStatus" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<c:forEach items="${fns:getDictList('biz_order_invStatus')}" var="item" varStatus="vs">
-					<option value="${item.value}">${item.label}</option>
-				</c:forEach>
-			</select>
-		</li>
-		<li><label>测试数据</label>
-			<input id="page.includeTestData1" name="page.includeTestData" onclick="testData(this)" maxlength="100" class="input-medium" type="checkbox" value="true">
-		</li>
-		<li><label></label></li>
+		<%--<li><label>审核状态：</label>--%>
+			<%--<select id="processTypeStr" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<c:forEach items="${processList}" var="item" varStatus="vs">--%>
+					<%--<option value="${item}">${item}</option>--%>
+				<%--</c:forEach>--%>
+			<%--</select>--%>
+		<%--</li>--%>
+		<%--<li><label>排产状态：</label>--%>
+			<%--<select id="poSchType" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<c:forEach items="${fns:getDictList('poSchType')}" var="item" varStatus="vs">--%>
+					<%--<option value="${item.value}">${item.label}</option>--%>
+				<%--</c:forEach>--%>
+			<%--</select>--%>
+		<%--</li>--%>
+		<%--<li><label>待支付</label>--%>
+			<%--<select id="waitPay" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<option value="1">是</option>--%>
+			<%--</select>--%>
+		<%--</li>--%>
+		<%--<li><label>可申请付款</label>--%>
+			<%--<select id="applyPayment" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<option value="1">是</option>--%>
+			<%--</select>--%>
+		<%--</li>--%>
+		<%--<li><label>发票状态：</label>--%>
+			<%--<select id="invStatus" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<c:forEach items="${fns:getDictList('biz_order_invStatus')}" var="item" varStatus="vs">--%>
+					<%--<option value="${item.value}">${item.label}</option>--%>
+				<%--</c:forEach>--%>
+			<%--</select>--%>
+		<%--</li>--%>
+		<%--<li><label>测试数据</label>--%>
+			<%--<input id="page.includeTestData1" name="page.includeTestData" onclick="testData(this)" maxlength="100" class="input-medium" type="checkbox" value="true">--%>
+		<%--</li>--%>
+		<%--<li><label></label></li>--%>
 
-		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
-		<li class="clearfix"></li>
-	</ul>
-</form:form>
+		<%--<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>--%>
+		<%--<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>--%>
+		<%--<li class="clearfix"></li>--%>
+	<%--</ul>--%>
+<%--</form:form>--%>
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead>
