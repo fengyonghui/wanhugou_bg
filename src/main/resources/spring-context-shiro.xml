@@ -27,6 +27,7 @@
 				/act/rest/service/model/** = perms[act:model:edit]
 				/act/rest/service/** = user
 				/ReportServer/** = user
+				/** = authc
 			</value>
 		</constructor-arg>
 	</bean>
