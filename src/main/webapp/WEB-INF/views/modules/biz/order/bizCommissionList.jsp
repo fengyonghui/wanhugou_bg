@@ -99,7 +99,7 @@
 				<form:input path="orderNum"  htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
 
-			<li><label>业务状态：</label>
+			<li><label>结佣状态：</label>
 				<form:select path="bizStatus" class="input-medium">
 					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getDictList('biz_commission_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
@@ -203,6 +203,9 @@
 							支付完成
 						</c:if>
 					</shiro:hasPermission>
+
+					&nbsp;&nbsp;
+					<a href="${ctx}/biz/order/bizCommission/form?id=${bizCommission.id}&str=detail">详情</a>
 				</td>
 			</tr>
 		</c:forEach>

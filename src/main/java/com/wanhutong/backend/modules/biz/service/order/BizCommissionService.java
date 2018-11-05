@@ -108,6 +108,15 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		page.setList(dao.findPageForAllData(bizCommission));
 		return page;
 	}
+
+	/**
+	 * 通过佣金单获取该佣金单的支付凭证
+	 * @param bizCommission
+	 * @return
+	 */
+	public List<CommonImg> getImgList(BizCommission bizCommission) {
+		return dao.getImgList(bizCommission);
+	}
 	
 	@Transactional(readOnly = false)
 	public void save(BizCommission bizCommission) {

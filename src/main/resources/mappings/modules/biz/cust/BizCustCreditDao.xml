@@ -196,10 +196,10 @@
 		<if test="aliName!=null and aliName!=''">
 			ali_name = #{aliName},
 		</if>
-		<if test="commission!=null and commission!=''">
+		<if test="commission !=null">
 			commission = #{commission},
 		</if>
-		<if test="commissioned!=null and commissioned!=''">
+		<if test="commissioned !=null">
 			commissioned= #{commissioned},
 		</if>
 			u_version = #{uVersion},
