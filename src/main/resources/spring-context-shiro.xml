@@ -18,6 +18,7 @@
 				/static/mobile/html/** = user
 				/static/** = anon
 				/upload/** = anon
+				/app/** = anon
 				${adminPath}/cas = cas
 				${adminPath}/login = authc
 				${adminPath}/logout = logout
@@ -26,6 +27,7 @@
 				/act/rest/service/model/** = perms[act:model:edit]
 				/act/rest/service/** = user
 				/ReportServer/** = user
+				/** = authc
 			</value>
 		</constructor-arg>
 	</bean>
