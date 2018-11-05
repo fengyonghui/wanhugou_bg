@@ -74,7 +74,7 @@
 				<shiro:hasPermission name="biz:order:bizOrderHeaderUnline:view"><td>
 					<a href="${ctx}/biz/order/bizOrderHeaderUnline/form?id=${bizOrderHeaderUnline.id}&source=detail">详情</a>
 					<shiro:hasPermission name="biz:order:bizOrderHeaderUnline:edit">
-						<c:if test="${bizOrderHeaderUnline.bizStatus == 0}">
+						<c:if test="${bizOrderHeaderUnline.bizStatus == 0 && bizOrderHeaderUnline.orderHeader.receiveTotal < bizOrderHeaderUnline.orderHeader.totalDetail}">
 							<a href="${ctx}/biz/order/bizOrderHeaderUnline/form?id=${bizOrderHeaderUnline.id}&source=examine">审核</a>
 						</c:if>
 					</shiro:hasPermission>
