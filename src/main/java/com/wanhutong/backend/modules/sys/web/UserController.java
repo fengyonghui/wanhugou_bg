@@ -739,7 +739,8 @@ public class UserController extends BaseController {
 		if (user.getCompany() != null && user.getCompany().getName() != null && !"".equals(user.getCompany().getName())) {
 			company.setName(user.getCompany().getName());
 		}
-		company.setType(OfficeTypeEnum.CUSTOMER.getType());
+		company.setType(null);
+		company.setTypes(Lists.newArrayList(OfficeTypeEnum.CUSTOMER.getType(), OfficeTypeEnum.SHOPKEEPER.getType(), OfficeTypeEnum.COMMISSION_MERCHANT.getType()));
 		user.setCompany(company);
 		if (ordrHeaderStartTime != null) {
 			user.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));

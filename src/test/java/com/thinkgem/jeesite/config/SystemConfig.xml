@@ -5,8 +5,13 @@
     <putawayUnderCostAudit>CHANNEL_MANAGER</putawayUnderCostAudit>
 
 
-    <activityShelfId>100</activityShelfId>
-    <activityDate>2018-06-25 00:00:00</activityDate>
+    <activityShelfId>6</activityShelfId>
+    <activityDate>2018-07-08 00:00:00</activityDate>
+    <filteringDate>2018-08-30 18:10:00</filteringDate>
 
     <photoOrderRatio>0.1</photoOrderRatio>
+    <sendMessageSwitch>false</sendMessageSwitch>
+
+    <commissionMerchantUpgradeMessageId>21</commissionMerchantUpgradeMessageId>
+    <customerUpgradeMessageId>22</customerUpgradeMessageId>
 </SystemConfig>

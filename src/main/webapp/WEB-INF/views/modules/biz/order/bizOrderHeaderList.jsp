@@ -4,69 +4,77 @@
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderDrawBackStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderPayProportionStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
-<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
-	<title>订单信息管理</title>
-	<meta name="decorator" content="default"/>
-	<script type="text/javascript">
+    <title>订单信息管理</title>
+    <meta name="decorator" content="default"/>
+    <script type="text/javascript">
         <%--用于页面按下键盘Backspace键回退页面的问题--%>
         <%--处理键盘事件 禁止后退键（Backspace）密码或单行、多行文本框除外   --%>
-    function banBackSpace(e){
-        var ev = e || window.event;<%--获取event对象--%>
-        var obj = ev.target || ev.srcElement;<%--获取事件源--%>
-        var t = obj.type || obj.getAttribute('type');<%--获取事件源类型--%>
-        <%--获取作为判断条件的事件类型--%>
-        var vReadOnly = obj.getAttribute('readonly');
-        var vEnabled = obj.getAttribute('enabled');
-        <%--处理null值情况--%>
-        vReadOnly = (vReadOnly == null) ? false : vReadOnly;
-        vEnabled = (vEnabled == null) ? true : vEnabled;
-        <%--当敲Backspace键时，事件源类型为密码或单行、多行文本的--%>
-        <%--并且readonly属性为true或enabled属性为false的，则退格键失效--%>
-        var flag1=(ev.keyCode == 8 && (t=="password" || t=="text" || t=="textarea")
-        && (vReadOnly==true || vEnabled!=true))?true:false;
-        <%--当敲Backspace键时，事件源类型非密码或单行、多行文本的，则退格键失效--%>
-        var flag2=(ev.keyCode == 8 && t != "password" && t != "text" && t != "textarea")
-        ?true:false;
-        <%--判断--%>
-            if(flag2){
+
+        function banBackSpace(e) {
+            var ev = e || window.event;
+            <%--获取event对象--%>
+            var obj = ev.target || ev.srcElement;
+            <%--获取事件源--%>
+            var t = obj.type || obj.getAttribute('type');
+            <%--获取事件源类型--%>
+            <%--获取作为判断条件的事件类型--%>
+            var vReadOnly = obj.getAttribute('readonly');
+            var vEnabled = obj.getAttribute('enabled');
+            <%--处理null值情况--%>
+            vReadOnly = (vReadOnly == null) ? false : vReadOnly;
+            vEnabled = (vEnabled == null) ? true : vEnabled;
+            <%--当敲Backspace键时，事件源类型为密码或单行、多行文本的--%>
+            <%--并且readonly属性为true或enabled属性为false的，则退格键失效--%>
+            var flag1 = (ev.keyCode == 8 && (t == "password" || t == "text" || t == "textarea")
+                && (vReadOnly == true || vEnabled != true)) ? true : false;
+            <%--当敲Backspace键时，事件源类型非密码或单行、多行文本的，则退格键失效--%>
+            var flag2 = (ev.keyCode == 8 && t != "password" && t != "text" && t != "textarea")
+                ? true : false;
+            <%--判断--%>
+            if (flag2) {
                 return false;
             }
-            if(flag1){
+            if (flag1) {
                 return false;
             }
-    }
+        }
+
         <%--禁止后退键 作用于Firefox、Opera--%>
-        document.onkeypress=banBackSpace;
+        document.onkeypress = banBackSpace;
         <%--禁止后退键 作用于IE、Chrome--%>
-        document.onkeydown=banBackSpace;
-    </script><%--用于键盘Bcackspace回退BUG问题--%>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			$("#buttonExport").click(function(){
-				top.$.jBox.confirm("确认要导出订单数据吗？","系统提示",function(v,h,f){
-					if(v=="ok"){
-						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/orderHeaderExport?statu=${statu}");
-						$("#searchForm").submit();
-						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader?statu=${statu}");
-					}
-				},{buttonsFocus:1});
-				top.$('.jbox-body .jbox-icon').css('top','55px');
-			});
-		});
-        function page(n,s,t){
+        document.onkeydown = banBackSpace;
+    </script>
+    <%--用于键盘Bcackspace回退BUG问题--%>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#buttonExport").click(function () {
+                top.$.jBox.confirm("确认要导出订单数据吗？", "系统提示", function (v, h, f) {
+                    if (v == "ok") {
+                        $("#searchForm").attr("action", "${ctx}/biz/order/bizOrderHeader/orderHeaderExport?statu=${statu}");
+                        $("#searchForm").submit();
+                        $("#searchForm").attr("action", "${ctx}/biz/order/bizOrderHeader?statu=${statu}");
+                    }
+                }, {buttonsFocus: 1});
+                top.$('.jbox-body .jbox-icon').css('top', '55px');
+            });
+        });
+
+        function page(n, s, t) {
             $("#pageNo").val(n);
             $("#pageSize").val(s);
             $("#includeTestData").val(t);
             $("#searchForm").submit();
             return false;
         }
+
         function testData(checkbox) {
             $("#includeTestData").val(checkbox.checked);
         }
-	</script>
-	<script type="text/javascript">
+    </script>
+    <script type="text/javascript">
         function checkInfo(obj, val, hid) {
             if (confirm("您确认驳回该订单的退款申请吗？")) {
                 $.ajax({
@@ -111,94 +119,94 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<c:choose>
-		<c:when test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
-			<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?partNo=${bizOrderHeader.partNo}&skuChickCount=${bizOrderHeader.skuChickCount}&source=${source}">订单信息列表</a></li>
-		</c:when>
-		<c:otherwise>
-			<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-				<li class="active"><a href="${ctx}/biz/order/bizOrderHeader?statu=${statu}&source=${source}">订单信息列表</a></li>
-				<%--<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><li><a href="${ctx}/biz/order/bizOrderHeader/form">订单信息添加</a></li></shiro:hasPermission>--%>
-			</c:if>
-		</c:otherwise>
-	</c:choose>
+    <c:choose>
+        <c:when test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
+            <li class="active"><a
+                    href="${ctx}/biz/order/bizOrderHeader/list?partNo=${bizOrderHeader.partNo}&skuChickCount=${bizOrderHeader.skuChickCount}&source=${source}">订单信息列表</a>
+            </li>
+        </c:when>
+        <c:otherwise>
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <li class="active"><a href="${ctx}/biz/order/bizOrderHeader?statu=${statu}&source=${source}">订单信息列表</a>
+                </li>
+                <%--<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><li><a href="${ctx}/biz/order/bizOrderHeader/form">订单信息添加</a></li></shiro:hasPermission>--%>
+            </c:if>
+        </c:otherwise>
+    </c:choose>
 </ul>
-<%--<div class="form-horizontal">--%>
-	<%--<div class="control-group">--%>
-		<%--<label class="control-label">订单搜索</label>--%>
-	<%--</div>--%>
-<%--</div>--%>
-<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader?statu=${statu}" method="post" class="breadcrumb form-search">
-	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-	<input id="previousPage" name="previousPage" type="hidden" value="${bizOrderHeader.previousPage}"/>
-	<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
-	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
-	<input type="hidden" name="source" value="${source}"/>
-	<input type="hidden" name="str" value="${bizOrderHeader.str}"/>
-	<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
-		<input type="hidden" name="skuChickCount" value="${bizOrderHeader.skuChickCount}"/>
-		<input type="hidden" name="partNo" value="${bizOrderHeader.partNo}"/>
-	</c:if>
-	<form:hidden path="consultantId"/>
-	<div class="control-group">
-		<label class="control-label">订单搜索：</label>
-	</div>
-	<ul class="ul-form">
-		<li><label>订单编号：</label>
-			<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
-		</li>
-		<li><label>订单状态：</label>
-			<form:select path="bizStatus" class="input-medium">
-				<form:option value="" label="请选择"/>
-				<form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
-							  htmlEscape="false"/></form:select>
-		</li>
+<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader?statu=${statu}"
+           method="post" class="breadcrumb form-search">
+    <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+    <input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+    <input id="previousPage" name="previousPage" type="hidden" value="${bizOrderHeader.previousPage}"/>
+    <input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
+    <input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
+    <input type="hidden" name="source" value="${source}"/>
+    <input type="hidden" name="str" value="${bizOrderHeader.str}"/>
+    <c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
+        <input type="hidden" name="skuChickCount" value="${bizOrderHeader.skuChickCount}"/>
+        <input type="hidden" name="partNo" value="${bizOrderHeader.partNo}"/>
+    </c:if>
+    <form:hidden path="consultantId"/>
+    <div class="control-group">
+        <label class="control-label">订单搜索：</label>
+    </div>
+    <ul class="ul-form">
+        <li><label>订单编号：</label>
+            <form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
+        </li>
+        <li><label>订单状态：</label>
+            <form:select path="bizStatus" class="input-medium">
+                <form:option value="" label="请选择"/>
+                <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
+                              htmlEscape="false"/></form:select>
+        </li>
 
-		<li><label>审核状态：</label>
-			<form:select path="selectAuditStatus" class="input-medium">
-				<form:option value="" label="请选择"/>
-				<form:options items="${originConfigMap}"  htmlEscape="false"/>
-			</form:select>
-		</li>
+        <li><label>审核状态：</label>
+            <form:select path="selectAuditStatus" class="input-medium">
+                <form:option value="" label="请选择"/>
+                <form:options items="${originConfigMap}" htmlEscape="false"/>
+            </form:select>
+        </li>
 
-		<li><label>尾款：</label>
-			<form:select path="retainage" class="input-medium">
-				<form:option value="" label="请选择"/>
-				<form:option value="1" label="有尾款"/>
-			</form:select>
-		</li>
+        <li><label>尾款：</label>
+            <form:select path="retainage" class="input-medium">
+                <form:option value="" label="请选择"/>
+                <form:option value="1" label="有尾款"/>
+            </form:select>
+        </li>
 
-		<c:if test="${source ne 'vendor'}">
-			<li><label>经销店电话：</label>
-				<form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
-			</li>
-		</c:if>
-		<li>
-			<label>商品货号：</label>
-			<form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
-		</li>
-		<li><label>经销店名称：</label>
-			<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
-							labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
-							title="经销店"  url="/sys/office/queryTreeList?type=6"
-							cssClass="input-medium required"
-							allowClear="true"  dataMsgRequired="必填信息"/>
-			<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
-			<input type="hidden" name="flag" value="${bizOrderHeader.flag}">
-		</li>
-		<li><label>采购中心：</label>
-			<form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
-		</li>
-		<li><label>创建日期：</label>
-			<input name="orderCreatStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-				   value="<fmt:formatDate value="${bizOrderHeader.orderCreatStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-			至
-			<input name="orderCreatEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-				   value="<fmt:formatDate value="${bizOrderHeader.orderCreatEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-		</li>
+        <c:if test="${source ne 'vendor'}">
+            <li><label>经销店电话：</label>
+                <form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
+            </li>
+        </c:if>
+        <li>
+            <label>商品货号：</label>
+            <form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
+        </li>
+        <li><label>经销店名称：</label>
+            <sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"
+                            labelName="customer.name"
+                            labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
+                            title="经销店" url="/sys/office/queryTreeList?type=6"
+                            cssClass="input-medium required"
+                            allowClear="true" dataMsgRequired="必填信息"/>
+            <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
+            <input type="hidden" name="flag" value="${bizOrderHeader.flag}">
+        </li>
+        <li><label>采购中心：</label>
+            <form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
+        </li>
+        <li><label>创建日期：</label>
+            <input name="orderCreatStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+                   value="<fmt:formatDate value="${bizOrderHeader.orderCreatStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+            至
+            <input name="orderCreatEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+                   value="<fmt:formatDate value="${bizOrderHeader.orderCreatEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+        </li>
         <li><label>客户专员：</label>
             <form:input path="con.name" htmlEscape="false" maxlength="100" class="input-medium"/>
         </li>
@@ -211,258 +219,206 @@
                    value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
         </li>
-		<li><label>待同意发货:</label>
-			<form:select path="mobileAuditStatus" class="input-medium">
-				<form:option value="">请选择</form:option>
-				<form:option value="0">待审核</form:option>
-				<form:option value="1">审核失败</form:option>
-				<form:option value="2">其他</form:option>
-			</form:select>
-		</li>
-		<li><label>待发货</label>
-			<form:select path="waitShipments" class="input-medium">
-				<form:option value="" label="请选择"/>
-				<form:option value="1" label="是"/>
-			</form:select>
-		</li>
-		<li><label>待出库</label>
-			<form:select path="waitOutput" class="input-medium">
-				<form:option value="" label="请选择"/>
-				<form:option value="1" label="是"/>
-			</form:select>
-		</li>
-		<c:if test="${statu == 'unline'}">
-			<li><label>审核状态:</label>
-				<form:select path="examine" class="input-medium">
-					<form:option value="0">请选择</form:option>
-					<form:option value="1">审核完成</form:option>
-					<form:option value="2">未审核完成</form:option>
-				</form:select>
-			</li>
-		</c:if>
-		<li><label>测试数据</label>
-			<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
-		</li>
+        <li><label>待同意发货:</label>
+            <form:select path="mobileAuditStatus" class="input-medium">
+                <form:option value="">请选择</form:option>
+                <form:option value="0">待审核</form:option>
+                <form:option value="1">审核失败</form:option>
+                <form:option value="2">其他</form:option>
+            </form:select>
+        </li>
+        <li><label>待发货</label>
+            <form:select path="waitShipments" class="input-medium">
+                <form:option value="" label="请选择"/>
+                <form:option value="1" label="是"/>
+            </form:select>
+        </li>
+        <li><label>待出库</label>
+            <form:select path="waitOutput" class="input-medium">
+                <form:option value="" label="请选择"/>
+                <form:option value="1" label="是"/>
+            </form:select>
+        </li>
+        <%--<li><label>结佣状态：</label>--%>
+            <%--<form:select path="commissionStatus" class="input-medium">--%>
+                <%--<form:option value="" label="请选择"/>--%>
+                <%--<form:options items="${fns:getDictList('biz_commission_status')}" itemLabel="label" itemValue="value"--%>
+                              <%--htmlEscape="false"/></form:select>--%>
+        <%--</li>--%>
+        <c:if test="${statu == 'unline'}">
+            <li><label>审核状态:</label>
+                <form:select path="examine" class="input-medium">
+                    <form:option value="0">请选择</form:option>
+                    <form:option value="1">审核完成</form:option>
+                    <form:option value="2">未审核完成</form:option>
+                </form:select>
+            </li>
+        </c:if>
+        <li><label>测试数据</label>
+            <form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium"
+                           onclick="testData(this)"/>
+        </li>
 
-		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
-		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
-			<li class="btns"><input class="btn" type="button" value="返回商品信息管理" onclick="location.href='${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=1'"/></li>
-		</c:if>
-		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'prodCick_count'}">
-			<li class="btns"><input class="btn" type="button" value="返回产品信息管理" onclick="location.href='${ctx}/biz/product/bizProductInfoV2?prodType=1'"/></li>
-		</c:if>
-		<li class="clearfix"></li>
-	</ul>
-</form:form>
-
-<!-- 订单支付合并 搜索 -->
-<form:form id="searchFormPO" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/listV2" method="post"
-		   class="breadcrumb form-search">
-	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-	<input id="previousPage" name="previousPage" type="hidden" value="${bizPoHeader.previousPage}"/>
-	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
-	<ul class="ul-form">
-			<%--<li><label>采购单号</label>--%>
-			<%--<form:input path="orderNum" htmlEscape="false" maxlength="25" class="input-medium"/>--%>
-			<%--</li>--%>
-		<div class="control-group">
-			<label class="control-label">付款单搜索：</label>
-		</div>
-		<li><span style="margin-left: 10px"><label>订单编号</label></span>
-			<input id="num" name="num" class="input-medium" type="text" value="" maxlength="25">
-		</li>
-
-		<li><label>业务状态：</label>
-			<select id="bizStatus" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<c:forEach items="${fns:getDictList('biz_po_status')}" var="item" varStatus="vs">
-					<option value="${item.value}">${item.label}</option>
-				</c:forEach>
-			</select>
-		</li>
-
-		<li><label>审核状态：</label>
-			<select id="processTypeStr" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<c:forEach items="${processList}" var="item" varStatus="vs">
-					<option value="${item}">${item}</option>
-				</c:forEach>
-			</select>
-		</li>
-		<li><label>排产状态：</label>
-			<select id="poSchType" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<c:forEach items="${fns:getDictList('poSchType')}" var="item" varStatus="vs">
-					<option value="${item.value}">${item.label}</option>
-				</c:forEach>
-			</select>
-		</li>
-		<li><label>待支付</label>
-			<select id="waitPay" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<option value="1">是</option>
-			</select>
-		</li>
-		<li><label>可申请付款</label>
-			<select id="applyPayment" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<option value="1">是</option>
-			</select>
-		</li>
-
-		<li><label>发票状态：</label>
-			<select id="invStatus" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
-				<option value="">请选择</option>
-				<c:forEach items="${fns:getDictList('biz_order_invStatus')}" var="item" varStatus="vs">
-					<option value="${item.value}">${item.label}</option>
-				</c:forEach>
-			</select>
-		</li>
-		<li><label>测试数据</label>
-			<input id="page.includeTestData1" name="page.includeTestData" onclick="testData(this)" maxlength="100" class="input-medium" type="checkbox" value="true">
-		</li>
-
-		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
-		<li class="clearfix"></li>
-	</ul>
+        <li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+        <li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
+        <c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
+            <li class="btns"><input class="btn" type="button" value="返回商品信息管理"
+                                    onclick="location.href='${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=1'"/></li>
+        </c:if>
+        <c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'prodCick_count'}">
+            <li class="btns"><input class="btn" type="button" value="返回产品信息管理"
+                                    onclick="location.href='${ctx}/biz/product/bizProductInfoV2?prodType=1'"/></li>
+        </c:if>
+        <li class="clearfix"></li>
+    </ul>
 </form:form>
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
-	<thead>
-	<tr>
-		<td>序号</td>
-		<th>订单编号</th>
-		<th>订单类型</th>
-		<th>经销店名称</th>
-		<th>所属采购中心</th>
-		<c:if test="${source ne 'vendor'}">
-			<th>经销店电话</th>
-		</c:if>
-		<th>已收货款</th>
-		<th>商品总价</th>
-		<th>调整金额</th>
-		<th>运费</th>
-		<th>万户币抵扣</th>
-		<th>应付金额</th>
-		<c:if test="${source ne 'vendor'}">
-			<th>服务费</th>
-			<th>佣金</th>
-		</c:if>
-		<th>发票状态</th>
-		<th>业务状态</th>
-		<th>审核状态</th>
-		<th>创建人</th>
-		<th>创建时间</th>
-		<th>更新时间</th>
-		<shiro:hasPermission name="biz:order:bizOrderHeader:view"><th>操作</th></shiro:hasPermission>
-	</tr>
-	</thead>
-	<tbody>
-	<c:forEach items="${page.list}" var="orderHeader" varStatus="state">
-		<tr>
-			<td>${state.index+1}</td>
-			<td>
-				<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
-					<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">
-							${orderHeader.orderNum}</a>
-				</c:if>
-				<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
-					<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">
-							${orderHeader.orderNum}</a>
-				</c:if>
-				<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
-					<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=check_pending">
-							${orderHeader.orderNum}</a>
-				</c:if>
-				<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
-					<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}">
-							${orderHeader.orderNum}</a>
-				</c:if>
-			</td>
-			<td>
-					${fns:getDictLabel(orderHeader.orderType, 'biz_order_type', '未知状态')}
-			</td>
-			<td>
-					${orderHeader.customer.name}
-			</td>
-			<td>
-					${orderHeader.centersName}
-			</td>
-			<c:if test="${source ne 'vendor'}">
-				<td>
-						${orderHeader.customer.phone}
-				</td>
-			</c:if>
-			<td>
-				<fmt:formatNumber type="number" value="${orderHeader.receiveTotal==null?0.00:orderHeader.receiveTotal}" pattern="0.00"/>
-			</td>
-			<td><font color="#848484">
-				<fmt:formatNumber type="number" value="${orderHeader.totalDetail}" pattern="0.00"/>
-			</font></td>
-			<td><font color="#848484">
-				<fmt:formatNumber type="number" value="${orderHeader.totalExp}" pattern="0.00"/>
-			</font></td>
-			<td><font color="#848484">
-				<fmt:formatNumber type="number" value="${orderHeader.freight}" pattern="0.00"/>
-			</font></td>
-			<td><font color="#848484"><%--==null?0.00:orderHeader.scoreMoney--%>
-				<fmt:formatNumber type="number" value="${orderHeader.scoreMoney}" pattern="0.00"/>
-			</font></td>
-			<td><font color="#0A2A0A">
-				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.scoreMoney}" pattern="0.00"/>
-			</font></td>
-			<c:if test="${source ne 'vendor'}">
-				<td>
-						<fmt:formatNumber type="number" value="${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}" pattern="0.00"/>
-				</td>
-			</c:if>
-			<td>
-				<fmt:formatNumber type="number" value="${orderHeader.totalDetail-orderHeader.totalBuyPrice}" pattern="0.00"/>
-			</td>
-			<td>
-					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
-			</td>
-			<td>
-				<c:choose>
-					<c:when test="${orderHeader.drawBack != null}">
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUND.state}">
-							申请退款
-						</c:if>
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDING.state}">
-							退款中
-						</c:if>
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDREJECT.state}">
-							退款驳回
-						</c:if>
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDED.state}">
-							退款完成
-						</c:if>
-					</c:when>
-					<c:otherwise>
-						${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
-						<a style="display: none">
-							<fmt:formatNumber type="number" var="total" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee}" pattern="0.00"/>
-							<fmt:formatNumber type="number" var="receive" value="${orderHeader.receiveTotal + orderHeader.scoreMoney}" pattern="0.00"/>
-						</a>
-						<c:if test="${total > receive && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=35 && orderHeader.bizStatus!=40 && orderHeader.bizStatus!=45 && orderHeader.bizStatus!=60}">
-							<font color="#FF0000">(有尾款)</font>
-						</c:if>
-					</c:otherwise>
-				</c:choose>
-			</td>
+    <thead>
+    <tr>
+        <td>序号</td>
+        <th>订单编号</th>
+        <th>订单类型</th>
+        <th>经销店名称</th>
+        <th>所属采购中心</th>
+        <c:if test="${source ne 'vendor'}">
+            <th>经销店电话</th>
+        </c:if>
+        <th>已收货款</th>
+        <th>商品总价</th>
+        <th>调整金额</th>
+        <th>运费</th>
+        <th>万户币抵扣</th>
+        <th>应付金额</th>
+        <c:if test="${source ne 'vendor'}">
+            <th>服务费</th>
+            <th>佣金</th>
+        </c:if>
+        <th>发票状态</th>
+        <th>业务状态</th>
+        <th>审核状态</th>
+        <th>结佣状态</th>
+        <th>创建人</th>
+        <th>创建时间</th>
+        <th>更新时间</th>
+        <shiro:hasPermission name="biz:order:bizOrderHeader:view">
+            <th>操作</th>
+        </shiro:hasPermission>
+    </tr>
+    </thead>
+    <tbody>
+    <c:forEach items="${page.list}" var="orderHeader" varStatus="state">
+        <tr>
+            <td>${state.index+1}</td>
+            <td>
+                <c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+                    <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">
+                            ${orderHeader.orderNum}</a>
+                </c:if>
+                <c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+                    <a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&source=${source}">
+                            ${orderHeader.orderNum}</a>
+                </c:if>
+                <c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+                    <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=check_pending">
+                            ${orderHeader.orderNum}</a>
+                </c:if>
+                <c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+                    <a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}">
+                            ${orderHeader.orderNum}</a>
+                </c:if>
+            </td>
+            <td>
+                    ${fns:getDictLabel(orderHeader.orderType, 'biz_order_type', '未知状态')}
+            </td>
+            <td>
+                    ${orderHeader.customer.name}
+            </td>
+            <td>
+                    ${orderHeader.centersName}
+            </td>
+            <c:if test="${source ne 'vendor'}">
+                <td>
+                        ${orderHeader.customer.phone}
+                </td>
+            </c:if>
+            <td>
+                <fmt:formatNumber type="number" value="${orderHeader.receiveTotal==null?0.00:orderHeader.receiveTotal}"
+                                  pattern="0.00"/>
+            </td>
+            <td><font color="#848484">
+                <fmt:formatNumber type="number" value="${orderHeader.totalDetail}" pattern="0.00"/>
+            </font></td>
+            <td><font color="#848484">
+                <fmt:formatNumber type="number" value="${orderHeader.totalExp}" pattern="0.00"/>
+            </font></td>
+            <td><font color="#848484">
+                <fmt:formatNumber type="number" value="${orderHeader.freight}" pattern="0.00"/>
+            </font></td>
+            <td><font color="#848484"><%--==null?0.00:orderHeader.scoreMoney--%>
+                <fmt:formatNumber type="number" value="${orderHeader.scoreMoney}" pattern="0.00"/>
+            </font></td>
+            <td><font color="#0A2A0A">
+                <fmt:formatNumber type="number"
+                                  value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee-orderHeader.scoreMoney}"
+                                  pattern="0.00"/>
+            </font></td>
+            <c:if test="${source ne 'vendor'}">
+                <td>
+                    <fmt:formatNumber type="number"
+                                      value="${orderHeader.totalExp+orderHeader.serviceFee+orderHeader.freight}"
+                                      pattern="0.00"/>
+                </td>
+            </c:if>
+            <td>
+                <fmt:formatNumber type="number" value="${orderHeader.totalDetail-orderHeader.totalBuyPrice}"
+                                  pattern="0.00"/>
+            </td>
+            <td>
+                    ${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
+            </td>
+            <td>
+                <c:choose>
+                    <c:when test="${orderHeader.drawBack != null}">
+                        <c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUND.state}">
+                            申请退款
+                        </c:if>
+                        <c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDING.state}">
+                            退款中
+                        </c:if>
+                        <c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDREJECT.state}">
+                            退款驳回
+                        </c:if>
+                        <c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDED.state}">
+                            退款完成
+                        </c:if>
+                    </c:when>
+                    <c:otherwise>
+                        ${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
+                        <a style="display: none">
+                            <fmt:formatNumber type="number" var="total"
+                                              value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee}"
+                                              pattern="0.00"/>
+                            <fmt:formatNumber type="number" var="receive"
+                                              value="${orderHeader.receiveTotal + orderHeader.scoreMoney}"
+                                              pattern="0.00"/>
+                        </a>
+                        <c:if test="${total > receive && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=35 && orderHeader.bizStatus!=40 && orderHeader.bizStatus!=45 && orderHeader.bizStatus!=60}">
+                            <font color="#FF0000">(有尾款)</font>
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
+            </td>
 
-			<td>
-				<c:if test="${orderHeader.bizStatus == OrderHeaderBizStatusEnum.CANCLE.state || orderHeader.bizStatus == OrderHeaderBizStatusEnum.DELETE.state || orderHeader.bizStatus == OrderHeaderBizStatusEnum.UNAPPROVE.state}">
+            <td>
+                <c:if test="${orderHeader.bizStatus == OrderHeaderBizStatusEnum.CANCLE.state || orderHeader.bizStatus == OrderHeaderBizStatusEnum.DELETE.state || orderHeader.bizStatus == OrderHeaderBizStatusEnum.UNAPPROVE.state}">
 
-				</c:if>
-				<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.DELETE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.UNAPPROVE.state}">
-					<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state}">
-						待客户专员审核
-					</c:if>
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state
+                </c:if>
+                <c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.DELETE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.UNAPPROVE.state}">
+                    <c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SUPPLYING.state}">
+                        待客户专员审核
+                    </c:if>
+                    <c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state
 								&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state
 								}">
 						<c:if test="${orderHeader.commonProcess.objectName == 'biz_order_header'}">
@@ -474,8 +430,8 @@
 							</c:if>
 						</c:if>
 					</c:if>
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state &&
-				 orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+					<c:if test="${(orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state || orderHeader.orderType == BizOrderTypeEnum.COMMISSION_ORDER.state) &&
+				 			orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 						<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_LOCAL'}">
 							${orderHeader.commonProcess.jointOperationLocalProcess.name}
 						</c:if>
@@ -491,53 +447,114 @@
 				</c:if>
 			</td>
 
-			<td>
-					${orderHeader.createBy.name}
-			</td>
-			<td>
-				<fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-			</td>
-			<td>
-				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-			</td>
-			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
-				<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.UNAPPROVE.state
+            <td>
+                <c:if test="${orderHeader.orderType == BizOrderTypeEnum.COMMISSION_ORDER.state}">
+                    ${fns:getDictLabel(orderHeader.commissionStatus, 'biz_commission_status', '未结佣')}
+                </c:if>
+            </td>
+            <td>
+                    ${orderHeader.createBy.name}
+            </td>
+            <td>
+                <fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+            </td>
+            <td>
+                <fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+            </td>
+            <shiro:hasPermission name="biz:order:bizOrderHeader:view">
+                <td>
+                    <c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.UNAPPROVE.state
 								&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
-					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
-						<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-							<c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) || fns:getUser().isAdmin())
+                        <c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+                            <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
+                                <c:if test="${(fns:hasRole(roleSet, orderHeader.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum) || fns:getUser().isAdmin())
 									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '驳回'
 									&& orderHeader.commonProcess.doOrderHeaderProcessFifth.code != auditFithStatus
 									}">
-								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
-							</c:if>
+                                    <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>
+                                </c:if>
 
-							<c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOriginProcess.roleEnNameEnum) && orderHeader.commonProcess.jointOperationOriginProcess.name != '驳回' && orderHeader.commonProcess.jointOperationOriginProcess.code != auditStatus
+                                <c:if test="${fns:hasRole(roleSet, orderHeader.commonProcess.jointOperationOriginProcess.roleEnNameEnum) && orderHeader.commonProcess.jointOperationOriginProcess.name != '驳回' && orderHeader.commonProcess.jointOperationOriginProcess.code != auditStatus
 								 && orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state}">
-								<a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}">审核</a>
-							</c:if>
-						</shiro:hasPermission>
-					</c:if >
-					<shiro:hasPermission name="biz:order:bizOrderHeader:audit">
-						<c:if test="${orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
+                                    <a href="${ctx}/biz/order/bizORderHeader/form?id=${orderHeader.id}&str=audit&suplys=${orderHeader.suplys}">审核</a>
+                                </c:if>
+                            </shiro:hasPermission>
+                        </c:if>
+                        <shiro:hasPermission name="biz:order:bizOrderHeader:audit">
+                            <c:if test="${orderHeader.commonProcess != null && orderHeader.commonProcess.id != null
 							&& orderHeader.commonProcess.purchaseOrderProcess.name != '驳回'
 							&& orderHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
 							&& (fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationLocalProcess)
 							 	|| fns:hasRoleByProcess(roleSet, orderHeader.commonProcess.jointOperationOriginProcess)
 							 	 || fns:getUser().isAdmin())
 							}">
-							<c:if test="${orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+							<c:if test="${(orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state || orderHeader.orderType == BizOrderTypeEnum.COMMISSION_ORDER.state) && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+								<%--<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>
 								<c:if test="${orderHeader.suplys == 0 }">
 									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=0">审核</a>
 								</c:if>
 								<c:if test="${orderHeader.suplys != 0 }">
 									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit&type=1">审核</a>
 								</c:if>
+								<%--</c:if>--%>
 							</c:if>
 						</c:if>
 					</shiro:hasPermission>
+					<%--<shiro:hasPermission name="biz:order:bizOrderHeader:supplying">--%>
+					<%--<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus <= OrderHeaderBizStatusEnum.STOCKING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">--%>
+					<%--<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">--%>
+					<%--<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>--%>
+					<%--</c:if>--%>
+					<%--</c:if>--%>
+					<%--</shiro:hasPermission>--%>
 				</c:if >
+					<%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
+					<%--<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>
+					<%--<c:if test="${orderHeader.bizPoHeader.commonProcess.id != null--%>
+					<%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'--%>
+					<%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'--%>
+					<%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus--%>
+					<%--&& (fns:hasRole(roleSet, orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())--%>
+					<%--}">--%>
+					<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>--%>
+					<%--</c:if>--%>
+					<%--</c:if>--%>
+					<%--</shiro:hasPermission>--%>
+					<%--<shiro:hasPermission name="biz:po:bizPoPaymentOrder:view">--%>
+					<%--<c:if test="${orderHeader.bizPoHeader !=null}">--%>
+					<%--<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${orderHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${orderHeader.id}">支付申请列表</a>--%>
+					<%--</c:if>--%>
+					<%--</shiro:hasPermission>--%>
 
+                        <%--<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizPoHeader.id != null && orderHeader.bizPoHeader.id != 0 && orderHeader.payProportion !=null}">--%>
+                        <%--<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">--%>
+                        <%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>--%>
+                        <%--</shiro:hasPermission>--%>
+                        <%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
+                        <%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>--%>
+                        <%--</shiro:hasPermission>--%>
+                        <%--</c:if>--%>
+
+                        <%--<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PURCHASE_ORDER.state}">--%>
+                        <%--<c:if test="${orderHeader.bizPoHeader.id != null && orderHeader.bizPoHeader.id != 0--%>
+                        <%--}">--%>
+                        <%--<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">--%>
+                        <%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>--%>
+                        <%--</shiro:hasPermission>--%>
+                        <%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
+                        <%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>--%>
+                        <%--</shiro:hasPermission>--%>
+                        <%--</c:if>--%>
+                        <%--</c:if>--%>
+
+                        <%--<shiro:hasPermission name="biz:request:bizOrderHeader:createPayOrder">--%>
+                        <%--<c:if test="${orderHeader.bizPoHeader.currentPaymentId == null--%>
+                        <%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'--%>
+                        <%--&& (orderHeader.bizPoHeader.payTotal == null ? 0 : orderHeader.bizPoHeader.payTotal) < orderHeader.totalDetail--%>
+                        <%--}">--%>
+                        <%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=createPay">申请付款</a>--%>
+                        <%--</c:if>--%>
+                        <%--</shiro:hasPermission>--%>
 
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
 				<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state}">

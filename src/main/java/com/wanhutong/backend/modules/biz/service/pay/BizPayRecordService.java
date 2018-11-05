@@ -68,4 +68,13 @@ public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayReco
 	public List<BizOrderStatisticsDto> getSingleReceiveData(String startDate, String endDate, String officeId) {
 		return dao.getSingleReceiveData(startDate, endDate, officeId);
 	}
+
+	/**
+	 * 根据零售商id获取支付记录
+	 * @param custId
+	 * @return
+	 */
+	public List<BizPayRecord> findListByCustomerId(Integer custId, Integer tradeTypeCode) {
+		return bizPayRecordDao.findListByCustomerId(custId, tradeTypeCode);
+	}
 }

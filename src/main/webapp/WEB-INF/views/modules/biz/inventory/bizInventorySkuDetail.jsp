@@ -68,6 +68,24 @@
             </div>
         </div>
         <div class="control-group">
+            <label class="control-label">出库数量：</label>
+            <div class="controls">
+                    ${outWarehouse}
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">供货部发货数量：</label>
+            <div class="controls">
+                    ${sendGoodsNum}
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">入库数量：</label>
+            <div class="controls">
+                    ${inWarehouse}
+            </div>
+        </div>
+        <div class="control-group">
             <label class="control-label">入库信息：</label>
             <div class="controls">
             <table id="contentTable" class="table table-striped table-bordered table-condensed">

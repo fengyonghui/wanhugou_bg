@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<title>线下支付流水列表</title>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/app.css?time=20181023" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="app_header mui-bar mui-bar-nav">
+			<!--mui-action-back--> 
+		    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf" id="back"></a>
+		    <span id="orWaterSechBtn" class="mui-icon mui-icon-search mui-pull-right app_cf"></span>
+		    <p class="app_cf app_nav_text_center">支付流水列表</p>
+		</header>
+		<div class="app_content mui-content mui-scroll-wrapper" id="refreshContainer">			
+			<div class="mui-scroll">
+				<ul class="mui-table-view mui-table-view-chevron" id="ordWaterCourseList">
+                        
+                </ul>
+			</div>
+		</div>
+		<!--<input type="text" name="orderId" id="orderId" style="position: fixed;bottom:100px;z-index: 10;"/>-->
+		<!--<input type="hidden" name="source" id="source"/>
+		<input type="hidden" name="flag" id="flag"/>-->
+		<div class="clear"></div>
+		<script src="../../../js/component/zepto.min.js"></script>
+		<script src="../../../js/component/mui.min.js"></script>
+		<script src="../../../js/component/GHutils.js"></script>
+		<script src="../../../js/orderMgmtJs/OrdermgmtHtmljs/ordwaterCourseList.js?time=20181102"></script>
+	</body>
+</html>

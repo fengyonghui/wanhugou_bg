@@ -3,16 +3,16 @@
  */
 package com.wanhutong.backend.modules.sys.web;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.JsonUtil;
-import com.wanhutong.backend.modules.sys.dao.UserDao;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.sys.entity.Menu;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.sys.entity.Menu;
-import com.wanhutong.backend.modules.sys.service.SystemService;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 菜单Controller
@@ -102,11 +98,16 @@ public class MenuController extends BaseController {
 	@ResponseBody
 	public String permissionList1(HttpServletRequest request, @RequestParam(value = "marking") String marking) {
 		Boolean falg = false;
-		List<String> permissionAllList = UserUtils.getPermissionAllList();
-		for (String permission:permissionAllList) {
-			if (permission.equals(marking)){
-				falg = true;
-				break;
+		User user = UserUtils.getUser();
+		if (user.isAdmin()) {
+			falg = true;
+		} else {
+			List<String> permissionAllList = UserUtils.getPermissionAllList();
+			for (String permission:permissionAllList) {
+				if (permission.equals(marking)){
+					falg = true;
+					break;
+				}
 			}
 		}
 		return JsonUtil.generateData(falg, request.getParameter("callback"));

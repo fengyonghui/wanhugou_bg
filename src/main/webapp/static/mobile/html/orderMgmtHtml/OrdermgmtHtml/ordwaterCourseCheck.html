@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<title>流水审核</title>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/app.css?time=20181023" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">流水审核</p>
+		</header>
+		<div class="mui-content mui-input-group">
+			<div class="mui-input-row">
+				<label>订单号：</label>
+				<input type="text" class="mui-input-clear" id="orWaterCouNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>流水号：</label>
+				<input type="text" class="mui-input-clear" id="waterCouNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>单据凭证：</label>
+				<div id="orWaterPototal"></div>
+			</div>
+			<div class="mui-input-row">
+				<label>线下付款金额：</label>
+				<input type="text" class="mui-input-clear" id="unlineMoney" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>实收金额：</label>
+				<input type="text" class="mui-input-clear" id="realMoney" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>流水状态：</label>
+				<input type="text" class="app_cred3 mui-input-clear" id="orWaterStatus" disabled>
+			</div>
+			<div id="staOrdCheckBtn" class="app_p20 app_pl25 app_pr25 checkBtn">
+			    <button id="checkBtns" type="submit" class="mui-btn mui-btn-blue passBtn">审核通过</button>
+				<button id="rejectBtns" type="submit" class="mui-btn mui-btn-blue app_fr RejectBtn">
+					审核驳回
+				</button>
+			</div>
+		</div>
+		<input type="hidden" id="courseId"/>
+		<input type="hidden" name="orderId" id="orderId"/>
+		<div class="clear"></div>
+		<script src="../../../js/component/mui.min.js"></script>	
+		<script src="../../../js/component/zepto.min.js"></script>
+		<script src="../../../js/component/GHutils.js"></script>
+		<script src="../../../js/orderMgmtJs/OrdermgmtHtmljs/ordwaterCourseCheck.js?v=20181101"></script>
+	</body>
+</html>

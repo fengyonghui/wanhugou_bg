@@ -265,10 +265,10 @@
 	<!-- 根据OfficeId获取用户（树查询用户时用） -->
 	<select id="findUserByOfficeId" resultType="User" useCache="true">
 		SELECT
-			a.id, a.name, a.login_name
+		a.id, a.name, a.login_name
 		FROM sys_user a
 		WHERE a.status = #{DEL_FLAG_NORMAL}
-			AND a.office_id = #{office.id}
+		AND a.office_id = #{office.id}
 		ORDER BY a.name
 	</select>
 
@@ -282,14 +282,14 @@
 	<!--ORDER BY a.name-->
 	<!--</select>-->
 	<select id="selectUserByOfficeId" resultType="User" >
-        SELECT
-        a.id, a.name, a.login_name
-        FROM sys_user a left join sys_user_role ur on a.id=ur.user_id
-        WHERE a.status = #{DEL_FLAG_NORMAL}
-         AND ur.role_id = #{role.id}
-         AND a.office_id = #{office.id}
-        ORDER BY a.name
-    </select>
+		SELECT
+		a.id, a.name, a.login_name
+		FROM sys_user a left join sys_user_role ur on a.id=ur.user_id
+		WHERE a.status = #{DEL_FLAG_NORMAL}
+		AND ur.role_id = #{role.id}
+		AND a.office_id = #{office.id}
+		ORDER BY a.name
+	</select>
 
 	<!-- 查询全部用户 -->
 	<select id="findAllList" resultType="User">
@@ -304,7 +304,7 @@
 	<!-- 查询全部用户数目 -->
 	<select id="findAllCount" resultType="long">
 		SELECT
-			COUNT(1)
+		COUNT(1)
 		FROM sys_user a
 		WHERE a.status = #{DEL_FLAG_NORMAL}
 	</select>
@@ -335,7 +335,7 @@
 		LEFT JOIN sys_user pp ON pp.id = cust.primary_person and pp.status=1
 		<!-- end -->
 		WHERE u.status = #{DEL_FLAG_NORMAL}
-			AND cust.status = #{DEL_FLAG_NORMAL}
+		AND cust.status = #{DEL_FLAG_NORMAL}
 		<if test="company != null and company.type != null">
 			and cust.type = #{company.type}
 		</if>
@@ -398,66 +398,66 @@
 	<!-- 插入用户 -->
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO sys_user(
-			id, 
-			company_id, 
-			office_id, 
-			login_name, 
-			password, 
-			no, 
-			name, 
-			email, 
-			phone, 
-			mobile, 
-			user_type, 
-			create_id,
-			create_date, 
-			update_id,
-			update_date, 
-			remarks, 
-			login_flag, 
-			photo, 
-			status
+		id,
+		company_id,
+		office_id,
+		login_name,
+		password,
+		no,
+		name,
+		email,
+		phone,
+		mobile,
+		user_type,
+		create_id,
+		create_date,
+		update_id,
+		update_date,
+		remarks,
+		login_flag,
+		photo,
+		status
 		) VALUES (
-			#{id}, 
-			#{company.id}, 
-			#{office.id}, 
-			#{loginName}, 
-			#{password}, 
-			#{no}, 
-			#{name}, 
-			#{email}, 
-			#{phone}, 
-			#{mobile}, 
-			#{userType}, 
-			#{createBy.id}, 
-			#{createDate}, 
-			#{updateBy.id}, 
-			#{updateDate}, 
-			#{remarks}, 
-			#{loginFlag}, 
-			#{photo}, 
-			#{delFlag}
+		#{id},
+		#{company.id},
+		#{office.id},
+		#{loginName},
+		#{password},
+		#{no},
+		#{name},
+		#{email},
+		#{phone},
+		#{mobile},
+		#{userType},
+		#{createBy.id},
+		#{createDate},
+		#{updateBy.id},
+		#{updateDate},
+		#{remarks},
+		#{loginFlag},
+		#{photo},
+		#{delFlag}
 		)
 	</insert>
 
 	<!-- 更新用户 -->
 	<update id="update">
-		UPDATE sys_user SET 
-			company_id = #{company.id}, 
-			office_id = #{office.id}, 
-			login_name = #{loginName}, 
-			password = #{password}, 
-			no = #{no}, 
-			name = #{name}, 
-			email = #{email}, 
-			phone = #{phone}, 
-			mobile = #{mobile}, 
-			user_type = #{userType}, 
-			update_id = #{updateBy.id},
-			update_date = #{updateDate}, 
-			remarks = #{remarks},
-			login_flag = #{loginFlag},
-			photo = #{photo}
+		UPDATE sys_user SET
+		company_id = #{company.id},
+		office_id = #{office.id},
+		login_name = #{loginName},
+		password = #{password},
+		no = #{no},
+		name = #{name},
+		email = #{email},
+		phone = #{phone},
+		mobile = #{mobile},
+		user_type = #{userType},
+		update_id = #{updateBy.id},
+		update_date = #{updateDate},
+		remarks = #{remarks},
+		login_flag = #{loginFlag},
+		photo = #{photo}
 		WHERE id = #{id}
 	</update>
 
@@ -634,12 +634,12 @@
 		sr.name as "role.name",
 		sr.enname as "role.enname"
 		FROM sys_user a
-			left join sys_user_role sur on sur.user_id=a.id
-			left join sys_role sr on sr.id=sur.role_id
-			LEFT JOIN sys_office o ON o.id = a.office_id and o.status=1
+		left join sys_user_role sur on sur.user_id=a.id
+		left join sys_role sr on sr.id=sur.role_id
+		LEFT JOIN sys_office o ON o.id = a.office_id and o.status=1
 		WHERE
-			a.STATUS = #{DEL_FLAG_NORMAL}
-			and sr.status = #{DEL_FLAG_NORMAL}
+		a.STATUS = #{DEL_FLAG_NORMAL}
+		and sr.status = #{DEL_FLAG_NORMAL}
 		<if test="role!=null and role.name!=null and role.name!=''">
 			and sr.enname = #{role.name}
 		</if>
@@ -722,16 +722,16 @@
 		cu2.id AS "company.deputyPerson.id",
 		cu2.name AS "company.deputyPerson.name"
 		FROM sys_user a
-			LEFT JOIN sys_office c ON c.id = a.company_id
-			LEFT JOIN sys_area ca ON ca.id = c.area_id
-			LEFT JOIN sys_office o ON o.id = a.office_id
-			LEFT JOIN sys_area oa ON oa.id = o.area_id
-			LEFT JOIN sys_user cu ON cu.id = c.primary_person
-			LEFT JOIN sys_user cu2 ON cu2.id = c.deputy_person
+		LEFT JOIN sys_office c ON c.id = a.company_id
+		LEFT JOIN sys_area ca ON ca.id = c.area_id
+		LEFT JOIN sys_office o ON o.id = a.office_id
+		LEFT JOIN sys_area oa ON oa.id = o.area_id
+		LEFT JOIN sys_user cu ON cu.id = c.primary_person
+		LEFT JOIN sys_user cu2 ON cu2.id = c.deputy_person
 		left join sys_user_role sur on sur.user_id=a.id
 		LEFT JOIN sys_role sr on sr.id=sur.role_id and sr.status=1
 		WHERE
-		  	a.status = #{DEL_FLAG_NORMAL}
+		a.status = #{DEL_FLAG_NORMAL}
 		<if test="role != null and role.enname != null and role.enname != ''">
 			AND sr.enname = #{role.enname}
 		</if>

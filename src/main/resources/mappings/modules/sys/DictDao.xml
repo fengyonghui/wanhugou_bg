@@ -80,15 +80,27 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE sys_dict SET 
-			value = #{value}, 
-			label = #{label}, 
-			type = #{type}, 
-			description = #{description}, 
-			sort = #{sort}, 
+		UPDATE sys_dict SET
+			<if test="value != null and value != ''">
+				value = #{value},
+			</if>
+			<if test="label != null and label != ''">
+				label = #{label},
+			</if>
+			<if test="type != null and type != ''">
+				type = #{type},
+			</if>
+			<if test="description != null and description != ''">
+				description = #{description},
+			</if>
+			<if test="sort != null and sort != ''">
+				sort = #{sort},
+			</if>
 			update_id = #{updateBy.id},
-			update_date = #{updateDate}, 
-			remarks = #{remarks}
+			update_date = #{updateDate}
+			<if test="remarks != null and remarks != ''">
+				,remarks = #{remarks}
+			</if>
 		WHERE id = #{id}
 	</update>
 	

@@ -92,6 +92,10 @@ public class EmailConfig extends ConfigGeneral {
         /**
          * 生成供货记录异常
          */
-        SEND_GOODS_RECORD_EXCEPTION
+        SEND_GOODS_RECORD_EXCEPTION,
+        /**
+         * 佣金结算异常
+         */
+        SETTLEMENT_COMMISSION_EXCEPTION
     }
 }

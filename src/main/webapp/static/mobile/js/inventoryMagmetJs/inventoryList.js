@@ -34,6 +34,7 @@
 		},
 		pageInit:function(){
 			var _this = this;
+			_this.inInitHrefHtml();
 			if(_this.cancelAmendPayFlag == false) {
 				$('.inAddBtn').hide();
 			}
@@ -84,6 +85,7 @@
 						if(arrLen <20 ){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}else{
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						}
 						/*当前用户信息*/
@@ -94,7 +96,6 @@
 			                dataType: "json",
 			                async:false,
 			                success: function(user){                 
-//					            console.log(user)
 								userId = user.data.id
 			                }
 			            });	
@@ -153,7 +154,6 @@
 										DataRoleGener = requestOrderProcess.roleEnNameEnum;
 									}
 									var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
-//									console.log(fileRoleData)
 									if(item.commonProcess && fileRoleData.length>0 && requestOrderProcess.name != '驳回') {
 										inCheck = '审核'
 										inCheckBtn='inCheckBtn'
@@ -356,9 +356,9 @@
                 }
             });
         },
-		inHrefHtml: function() {
-			var _this = this;
-			/*备货单添加*/
+        inInitHrefHtml: function() {
+        	var _this = this;
+        	/*备货单添加*/
 			$('#nav').on('tap','.inAddBtn', function() {
 				if(_this.cancelAmendPayFlag == true) {
 					var url = $(this).attr('url');
@@ -370,7 +370,7 @@
 					})
 				}
 			})
-		/*查询*/
+			/*查询*/
 			$('.app_header').on('tap', '#searchBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
@@ -380,12 +380,10 @@
 						url: "../../html/inventoryMagmetHtml/inSearch.html",
 						extras:{
 						}
-						
 					})
 				}
-					
 			})
-		/*首页*/
+			/*首页*/
 			$('#nav').on('tap','.inHomePage', function() {
 				var url = $(this).attr('url');
 				GHUTILS.OPENPAGE({
@@ -395,6 +393,9 @@
 					}
 				})
 			})
+        },
+		inHrefHtml: function() {
+			var _this = this;
 		/*详情*/
 			$('#list').on('tap', '.inDetailBtn', function() {
 				var url = $(this).attr('url');

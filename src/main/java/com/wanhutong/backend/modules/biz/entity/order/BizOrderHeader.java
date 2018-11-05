@@ -56,6 +56,22 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * */
     private Office sellers;
     private Integer sellersId;
+
+    /**
+     * 零售商
+     */
+    private Office seller;
+
+    /**
+     * 零售商名称
+     */
+    private String serllerName;
+
+    /**
+     * 零售商电话
+     */
+    private String serllerPhone;
+
     /**
      * 订单备注
      * */
@@ -255,6 +271,45 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 需要出库筛选条件
      */
     private Integer needOut;
+
+    /**
+     * 跳转目标页面
+     */
+    private String targetPage;
+
+    /**
+     * 代销佣金
+     */
+    private BigDecimal commission;
+
+    /**
+     * 总代销佣金
+     */
+    private BigDecimal totalCommission;
+
+    /**
+     * 订单总价
+     */
+    private BigDecimal commissionTotalDetail;
+
+    /**
+     * 佣金订单关系entity
+     */
+    private BizCommissionOrder bizCommissionOrder;
+
+    /**
+     * 佣金entity
+     */
+    private BizCommission bizCommission;
+
+    /**
+     * 结佣状态0:未结佣， 1:已结佣
+     */
+    private Integer commissionStatus;
+
+    private String applyCommStatus;
+
+    private String commSign;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -1065,6 +1120,102 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setNeedOut(Integer needOut) {
         this.needOut = needOut;
+    }
+
+    public String getTargetPage() {
+        return targetPage;
+    }
+
+    public void setTargetPage(String targetPage) {
+        this.targetPage = targetPage;
+    }
+
+    public BigDecimal getCommission() {
+        return commission;
+    }
+
+    public void setCommission(BigDecimal commission) {
+        this.commission = commission;
+    }
+
+    public BigDecimal getTotalCommission() {
+        return totalCommission;
+    }
+
+    public void setTotalCommission(BigDecimal totalCommission) {
+        this.totalCommission = totalCommission;
+    }
+
+    public BigDecimal getCommissionTotalDetail() {
+        return commissionTotalDetail;
+    }
+
+    public void setCommissionTotalDetail(BigDecimal commissionTotalDetail) {
+        this.commissionTotalDetail = commissionTotalDetail;
+    }
+
+    public BizCommissionOrder getBizCommissionOrder() {
+        return bizCommissionOrder;
+    }
+
+    public void setBizCommissionOrder(BizCommissionOrder bizCommissionOrder) {
+        this.bizCommissionOrder = bizCommissionOrder;
+    }
+
+    public BizCommission getBizCommission() {
+        return bizCommission;
+    }
+
+    public void setBizCommission(BizCommission bizCommission) {
+        this.bizCommission = bizCommission;
+    }
+
+    public Integer getCommissionStatus() {
+        return commissionStatus;
+    }
+
+    public void setCommissionStatus(Integer commissionStatus) {
+        this.commissionStatus = commissionStatus;
+    }
+
+    public String getCommSign() {
+        return commSign;
+    }
+
+    public void setCommSign(String commSign) {
+        this.commSign = commSign;
+    }
+
+    public String getApplyCommStatus() {
+        return applyCommStatus;
+    }
+
+    public void setApplyCommStatus(String applyCommStatus) {
+        this.applyCommStatus = applyCommStatus;
+    }
+
+    public Office getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Office seller) {
+        this.seller = seller;
+    }
+
+    public String getSerllerName() {
+        return serllerName;
+    }
+
+    public void setSerllerName(String serllerName) {
+        this.serllerName = serllerName;
+    }
+
+    public String getSerllerPhone() {
+        return serllerPhone;
+    }
+
+    public void setSerllerPhone(String serllerPhone) {
+        this.serllerPhone = serllerPhone;
     }
 }
 

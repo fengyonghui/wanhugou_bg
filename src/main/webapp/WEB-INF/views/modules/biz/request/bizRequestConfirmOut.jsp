@@ -44,6 +44,8 @@
                     var i = 0;
                     var sumSentQty = 0;
                     var stockQty = 0;
+                    var map = {};
+                    var sendMap = {};
                     $("input[name='reqDetail'][checked='checked']").each(function () {
                         var orderDetailId = $(this).parent().parent().find("input[name='orderDetailId']").val();
                         var reqDetailId = $(this).parent().parent().find("input[name='reqDetailId']").val();
@@ -52,12 +54,44 @@
                         var uVersion = $(this).parent().parent().find("input[name='uVersion']").val();
                         var sendNo = $("#sendNo").val();
                         stockQty = $(this).parent().parent().find("input[name='stockQty']").val();
-                        sumSentQty = parseInt(sumSentQty) + parseInt(sentQty);
+                        var has = orderDetailId in map;
+                        if (has) {
+                            map[orderDetailId] = parseInt(map[orderDetailId]) + parseInt(sentQty);
+                        } else {
+                            map[orderDetailId] = parseInt(sentQty);
+                            sendMap[orderDetailId] = parseInt(stockQty);
+                        }
+                        // sumSentQty = parseInt(sumSentQty) + parseInt(sentQty);
                         treasuryList[i] = createTreasury(orderDetailId,reqDetailId,invSkuId,sentQty,uVersion,sendNo);
                         i = i + 1;
                     });
+                    var stockFlag = true;
+                    $.each(map,function (key, value) {
+						if (parseInt(value) > parseInt(sendMap[key])) {
+						    stockFlag = false;
+						}
+                    });
                     console.info(JSON.stringify(treasuryList));
-                    
+
+                    var trackingNumber = $("#trackingNumber").val();
+                    var inspectorId = $("#inspectorId").val();
+                    var inspectDate = $("#inspectDate").val();
+                    var inspectRemark = $("#inspectRemark").val();
+                    var collLocate = $("#collLocate").val();
+                    var sendDate = $("#sendDate").val();
+                    var settlementStatus = $("#settlementStatus").val();
+
+                    var bizInvoiceStr = {"trackingNumber":trackingNumber,
+						"inspectorId":inspectorId,
+						"inspectDate":inspectDate,
+						"inspectRemark":inspectRemark,
+						"collLocate":collLocate,
+						"sendDate":sendDate,
+						"settlementStatus":settlementStatus
+					};
+
+                    var requestData = {"treasuryList":treasuryList, "bizInvoiceStr": bizInvoiceStr};
+
                     if(window.confirm('你确定要出库吗？')){
                         if (!flag) {
                             alert("请勾选出库的备货单！");
@@ -71,7 +105,7 @@
 						} else if (!flag3){
                             alert("选中出库的备货单，本次出库数量不能大于订单的剩余需求数量");
                             return false;
-						} else if (parseInt(sumSentQty) > parseInt(stockQty)) {
+                        } else if (!stockFlag) {
                             alert("该商品库存不足");
                             return false;
 						}else {
@@ -79,7 +113,7 @@
 								type:"post",
 								contentType: 'application/json;charset=utf-8',
 								url:"${ctx}/biz/inventory/bizSendGoodsRecord/outTreasury",
-								data:JSON.stringify(treasuryList),
+								data:JSON.stringify(requestData),
 								success:function (data) {
 									if (data=='ok') {
 										alert("出库成功");
@@ -116,7 +150,7 @@
 			var reqQty = $("#reqQty").val();
 			var sendNum = $("#sendNum").val();
 			if (sendNum > reqQty){
-			    alert("供货数太大，已超过申报数，请重新调整供货数量！")
+			    alert("供货数太大，已超过申报数，请重新调整供货数量！");
 				return false;
 			}
 			$(".reqDetailList").find("td").find("input[title='sendNum']").each(function () {
@@ -152,6 +186,9 @@
             }
         }
 
+        function addTab($this, refresh){
+            parent.addTab($this, refresh);
+        }
 
         function checkReqDetail(obj) {
             if ($(obj).attr("checked")=='checked') {
@@ -160,7 +197,7 @@
                 $(obj).removeAttr("checked");
             }
         }
-        
+
         function createTreasury(orderDetailId, reqDetailId, invSkuId, outQty,uVersion,sendNo) {
             var treasury = new Object();
             treasury.orderDetailId = orderDetailId;
@@ -184,7 +221,7 @@
                     window.document.body.innerHTML=prnhtml;
                     window.print();
                     location.reload();
-                //    alert("打印出库单成功");
+                    //    alert("打印出库单成功");
                 }
             },{buttonsFocus:1});
             top.$('.jbox-body .jbox-icon').css('top','55px');
@@ -196,7 +233,7 @@
 	<li><a href="${ctx}/biz/request/bizRequestAll?source=${source}&bizStatu=${bizStatu}&ship=${ship}">出库清单列表</a></li>
 	<li class="active"><a href="${ctx}/biz/request/bizRequestAll/confirmOut?id=${orderHeader.id}">订单出库</a></li>
 </ul><br/>
-<form:form id="inputForm" modelAttribute="bizSendGoodsRecord" action="${ctx}/biz/inventory/bizSendGoodsRecord/save" method="post" class="form-horizontal">
+<form:form id="inputForm"  action="${ctx}/biz/inventory/bizSendGoodsRecord/save" method="post" class="form-horizontal">
 	<%--<form:hidden path="id"/>--%>
 	<sys:message content="${message}"/>
 	<input name="bizRequestHeader.id" value="${bizRequestHeader==null?0:bizRequestHeader.id}" type="hidden"/>
@@ -206,6 +243,9 @@
 		<label class="control-label">销售订单编号：</label>
 		<div class="controls">
 			<input type="text" class="input-xlarge" readonly="readonly" value="${bizOrderHeader.orderNum}"/>
+			<c:if test="${bizOrderHeader.orderType == 8 && source == 'detail'}">
+				<a onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/biz/inventory/bizInvoice/list?orderNum=${bizOrderHeader.orderNum}&bizStatus=0&ship=0">查看物流信息</a>
+			</c:if>
 		</div>
 	</div>
 	<div class="control-group">
@@ -215,6 +255,73 @@
 			<input type="hidden" name="customer.id" value="${bizOrderHeader.customer.id}">
 		</div>
 	</div>
+	<c:if test="${bizOrderHeader.orderType == 8 && source != 'detail'}">
+		<div class="control-group">
+			<label class="control-label">物流单号：</label>
+			<div class="controls">
+				<input id="trackingNumber" htmlEscape="false" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">验货员：</label>
+			<div class="controls">
+				<select about="choose" id="inspectorId" class="input-medium ">
+					<option value="" label="请选择">请选择</option>
+					<c:forEach var="v" items="${inspectorList}">
+						<option value="${v.id}" label="${v.name}">${v.name}</option>
+					</c:forEach>
+				</select>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">验货时间：</label>
+			<div class="controls">
+				<input name="inspectDate" id="inspectDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+					   value="<fmt:formatDate value="${bizInvoice.inspectDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">验货备注：</label>
+			<div class="controls">
+				<textarea id="inspectRemark" htmlEscape="false" maxlength="30" class="input-xlarge "></textarea>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">集货地点：</label>
+			<div class="controls">
+				<select id="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">
+					<option value="" label="请选择">请选择</option>
+					<c:forEach items="${fns:getDictList('coll_locate')}" var="v">
+						<option value="${v.value}" label="${v.label}">${v.label}</option>
+					</c:forEach>
+				</select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">发货时间：</label>
+			<div class="controls">
+				<input name="sendDate" id="sendDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+					   value="<fmt:formatDate value="${bizInvoice.sendDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">物流结算方式：</label>
+			<div class="controls">
+				<select id="settlementStatus" name="settlementStatus" onmouseout="" class="input-xlarge">
+					<c:forEach items="${fns:getDictList('biz_settlement_status')}" var="settlementStatus">
+						<option value="${settlementStatus.value}">${settlementStatus.label}</option>
+					</c:forEach>
+				</select>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+	</c:if>
 	<div class="control-group">
 		<label class="control-label">业务状态：</label>
 		<div class="controls">

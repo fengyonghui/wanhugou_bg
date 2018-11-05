@@ -33,6 +33,7 @@
 		},
 		getData: function() {
 			var _this = this;
+			console.log(_this.userInfo.stcheckIdTxt)
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
