@@ -11,6 +11,7 @@
 			//权限添加
 //			biz:order:bizOrderHeader:view		操作
 			this.getPermissionList('biz:order:bizOrderHeader:view','staOrdFlag')
+			this.staHrefHtml();
 			if(this.userInfo.isFunc){
 				this.seachFunc()
 			}else{
@@ -196,9 +197,41 @@
                 }
             });
         },
+        staHrefHtml: function() {
+        	var _this = this;
+			/*客户专员列表*/
+			$('#nav').on('tap','.staOrdStaBtn', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../../html/staffMgmtHtml/staffList.html",
+					extras: {
+						
+					}
+				})
+			})
+        },
 		stOrdHrefHtml: function() {
 			var _this = this;
-		/*查询*/
+//			/*订单列表*/
+//			$('#nav').on('tap','.staOrdListBtn', function() {
+//				var url = $(this).attr('url');
+//				var staListIds = $('#consultantId').val();
+//				var staListIdTxts = $('#staListIdTxt').val(); 
+//				var conId = '';
+//				if(staListIdTxts) {
+//					conId = $('#staListIdTxt').val();
+//				}
+//				if(staListIds) {
+//					conId = $('#consultantId').val();
+//				}
+//				GHUTILS.OPENPAGE({
+//					url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+//					extras: {
+//						staListId: conId,
+//					}
+//				})
+//			}),
+			/*查询*/
 			$('.app_header').on('tap', '#staOrdSechBtn', function() {
 				var url = $(this).attr('url');
 				var staListIds = $('#consultantId').val();
@@ -221,16 +254,6 @@
 					})
 				}
 			}),
-		/*客户专员列表*/
-			$('#nav').on('tap','.staOrdStaBtn', function() {
-				var url = $(this).attr('url');
-				GHUTILS.OPENPAGE({
-					url: "../../../html/staffMgmtHtml/staffList.html",
-					extras: {
-						
-					}
-				})
-			}),	
 		 /*待审核*/
 	       $('.content_part').on('tap', '.waitCheckBtn', function() {
 				var url = $(this).attr('url');

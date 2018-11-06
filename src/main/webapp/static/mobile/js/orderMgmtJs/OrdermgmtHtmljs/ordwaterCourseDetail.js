@@ -19,7 +19,8 @@
 		ordwaterHrefHtml: function() {
 			var _this = this;
 			var status = '';
-			if(_this.userInfo.statu=='undefined') {
+//			console.log(_this.userInfo.statu)
+			if(_this.userInfo.statu=='undefined' || _this.userInfo.statu == undefined) {
 				status = ''
 				$('#backCont').html('订单列表');
 			}else {
