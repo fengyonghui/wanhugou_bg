@@ -256,7 +256,7 @@
         </c:if>
         <li class="clearfix"></li>
     </ul>
-    <c:if test="${orderHeader.flag != check_pending}">
+    <c:if test="${orderHeader.flag != 'check_pending'}">
     <br>
     <div class="control-group">
         <label class="control-label">付款单搜索：</label>
@@ -566,7 +566,7 @@
             </td>
             <shiro:hasPermission name="biz:order:bizOrderHeader:view">
                 <td>
-                    <c:if test="${orderHeader.flag != check_pending}">
+                    <c:if test="${orderHeader.flag != 'check_pending'}">
                     <c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.UNAPPROVE.state
 								&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
                         <c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
@@ -662,7 +662,7 @@
                         <%--</shiro:hasPermission>--%>
 
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
-				<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.flag != check_pending}">
+				<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.flag != 'check_pending'}">
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
 				<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
 				<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=check_pending&consultantId=${bizOrderHeader.consultantId}&source=${source}">
@@ -719,7 +719,7 @@
 					</shiro:hasPermission>
 
 					<!-- 订单支出信息合并 -->
-                    <c:if test="${orderHeader.flag != check_pending}">
+                    <c:if test="${orderHeader.flag != 'check_pending'}">
 					<shiro:hasPermission name="biz:order:bizOrderHeader:view">
 						<%--<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成' || orderHeader.commonProcess.jointOperationOriginProcess.name == '审批完成'}">--%>
 						<c:if test="${orderHeader.bizPoHeader.id != null}">
