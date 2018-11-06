@@ -131,6 +131,9 @@
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 			</if>
+			<if test="page !=null and page.includeTestData != true">
+				AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE a.seller_id = ta.object_id AND ta.object_name = 'sys_office' )
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -168,6 +171,9 @@
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="page !=null and page.includeTestData != true">
+				AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE a.seller_id = ta.object_id AND ta.object_name = 'sys_office' )
 			</if>
 		</where>
 		<choose>
