@@ -44,7 +44,7 @@
                 },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	console.log(res)
                 	if(res.data.bizOrderHeader.flag=='check_pending') {
                 		if(res.data.orderType == 5) {
                 			$('#orderTypebox').hide();
@@ -135,14 +135,49 @@
 						$('#staFinal').val("(有尾款)");
 					}					
 					$('#staPoordNum').val(item.orderNum);
+					if(res.data.orderType==8){
+						$('#customerName').html('零售用户'+'：');
+					}
+					if(res.data.orderType!=8){
+						$('#customerName').html('经销店名称'+'：');
+					}					
 					$('#staRelNum').val(item.customer.name);
+					//结佣状态
+					if(res.data.orderType==res.data.COMMISSION_ORDER){
+						$('#commission').parent().show();
+					}else{
+						$('#commission').parent().hide();
+					}
+					var comStatusTxt = '';
+					$.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {
+		                	type:"biz_commission_status"
+		                },
+		                dataType: "json",
+		                success: function(res){
+		                	console.log(res)
+		                	$.each(res,function(i,itemss){
+		                		 if(itemss.value==item.commissionStatus){
+		                		 	  comStatusTxt = itemss.label 
+		                		 }
+		                	})
+		                	$('#commission').val(comStatusTxt);
+						}
+					});
+					if(res.data.orderType!=8){
+						$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
+					}else{
+						$('#staCoin').parent().hide();
+					}
 					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp);
 					$('#staFreight').val(item.freight.toFixed(2));
-					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staShouldPay').val(shouldPay.toFixed(2));
 					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');
-					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
+					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
 					$('#staPoLastDaPerent').val(poLastDa);
 					$('#staServerPrice').val((item.totalExp + item.serviceFee+item.freight).toFixed(2));
 					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));

@@ -912,7 +912,7 @@ public class BizOrderHeaderController extends BaseController {
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
 
         String type = "1";
-        if (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721) {
+        if (bizOrderHeaderTwo.getSuplys() != null && (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721)) {
             type = "0";
         }
 
@@ -1225,6 +1225,7 @@ public class BizOrderHeaderController extends BaseController {
         resultMap.put("REFUNDING", OrderHeaderDrawBackStatusEnum.REFUNDING.getState());
         resultMap.put("PURCHASE_ORDER", BizOrderTypeEnum.PURCHASE_ORDER.getState());
         resultMap.put("ORDINARY_ORDER", BizOrderTypeEnum.ORDINARY_ORDER.getState());
+        resultMap.put("COMMISSION_ORDER", BizOrderTypeEnum.COMMISSION_ORDER.getState());
 
         return JsonUtil.generateData(resultMap, null);
     }
