@@ -113,6 +113,11 @@
 				<%--</form:select>--%>
 			<%--</li>--%>
 
+			<li><label>测试数据</label>
+				<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium"
+							   onclick="testData(this)"/>
+			</li>
+
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
