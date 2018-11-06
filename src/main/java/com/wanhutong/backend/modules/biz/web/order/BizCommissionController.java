@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizCommissionOrder;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
@@ -111,6 +112,21 @@ public class BizCommissionController extends BaseController {
 	@RequiresPermissions("biz:order:bizCommission:view")
 	@RequestMapping(value = "form")
 	public String form(BizCommission bizCommission, Model model) {
+		String str = bizCommission.getStr();
+		if ("detail".equals(str)) {
+			List<CommonImg> imgList = bizCommissionService.getImgList(bizCommission);
+			bizCommission.setImgList(imgList);
+
+			//审核流程
+			CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+			commonProcessEntity.setObjectId(String.valueOf(bizCommission.getId()));
+			commonProcessEntity.setObjectName(BizCommissionService.DATABASE_TABLE_NAME);
+			List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+			model.addAttribute("auditList", list);
+
+			model.addAttribute("entity", bizCommission);
+			return "modules/biz/order/bizCommissionDetail";
+		}
 		model.addAttribute("entity", bizCommission);
 		return "modules/biz/order/bizCommissionForm";
 	}

@@ -19,6 +19,7 @@
 				/static/** = anon
 				/upload/** = anon
 				/app/** = anon
+				${adminPath}/file/** = anon
 				${adminPath}/cas = cas
 				${adminPath}/login = authc
 				${adminPath}/logout = logout

@@ -66,6 +66,7 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
     public void save(BizCustCredit bizCustCredit) {
         User user = UserUtils.getUser();
         BizCustCredit custCredit = this.get(bizCustCredit.getCustomer().getId());
+        custCredit.setCommissioned(bizCustCredit.getCommissioned());
         String a="0";
         if (custCredit != null && !custCredit.getDelFlag().equals(a)) {
             //原金额
