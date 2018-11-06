@@ -74,46 +74,32 @@
 					<label>测试数据：</label>
 					<input type="checkbox" name="" id="" value="" class="testCheckbox"/>
 				</div>
-				<!--<div class="mui-row searchRadioBody">
-			        <div class="mui-col-sm-4 mui-col-xs-4">
-			                        审核成功
-						<input type="radio" name="a" id="staOrdSucess" value="" class="searchRadio"/>
-			        </div>
-			        <div class="mui-col-sm-4 mui-col-xs-4">
-			                        审核失败
-						<input type="radio" name="a" id="staOrdFail" value="" class="searchRadio"/>
-			        </div>
-			        <div class="mui-col-sm-4 mui-col-xs-4">
-			                        待审核
-						<input type="radio" name="a" id="staOrdCheck" value="" class="searchRadio"/>
-			        </div>
-			    </div>-->
 			    <div id="box">
 						<div class="mui-input-row">
 							<label>审核失败：</label>
-							<input type="radio" name="a" id="staOrdFail" value="1" class="searchRadio"/>
+							<input type="checkbox" name="a" id="staOrdFail" value="1" class="searchRadio"/>
 						</div>
 						<div class="mui-input-row">
 							<label>成功及其他：</label>
-							<input type="radio" name="a" id="staOrdSucess" value="2" class="searchRadio"/>
+							<input type="checkbox" name="a" id="staOrdSucess" value="2" class="searchRadio"/>
 						</div>
 						<div class="mui-input-row">
 							<label>待审核：</label>
-							<input type="radio" name="a" id="staOrdCheck" value="0" class="searchRadio"/>
+							<input type="checkbox" name="a" id="staOrdCheck" value="0" class="searchRadio"/>
 						</div>
-			    </div>
-				
+			    </div>				
 			</form>
 		</div>
 		<div class="SearchBtnClass">
-			<button id="staOrdSechBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">查询</button>
-		</div>
-		
+			<button id="staOrdSechBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">
+				查询
+			</button>
+		</div>		
 		<input type="hidden" name="flag" id="flag" value="check_pending"/>
 		<input type="hidden" name="mobileAuditStatus" id="mobileAuditStatus"/>
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/mui.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>
-		<script src="../../../js/staffMgmtJs/orderJs/staOrdSech.js?v=20180920"></script>
+		<script src="../../../js/staffMgmtJs/orderJs/staOrdSech.js?v=20181106"></script>
 	</body>
 </html>

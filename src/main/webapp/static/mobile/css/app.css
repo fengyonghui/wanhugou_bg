@@ -746,8 +746,8 @@ input[type="radio"].inputRadio:checked {-webkit-appearance: none;background-colo
 input[type=radio].searchRadio {-webkit-appearance: none;position: relative;top: -1px;width: 17px;height: 17px;border: 1px solid #999;-webkit-border-radius: 50%;border-radius: 50%;background-color: #fff;vertical-align: middle;margin-left: 2px;}
 input[type="radio"].searchRadio:checked {-webkit-appearance: none;background-color: #40ABE9;}*/
 /*竖排*/
-input[type=radio].searchRadio {-webkit-appearance: none;position: relative;top: 12px;width: 17px;height: 17px;border: 1px solid #999;-webkit-border-radius: 50%;border-radius: 50%;background-color: #fff;vertical-align: middle;float: left;}
-input[type="radio"].searchRadio:checked {-webkit-appearance: none;background-color: #40ABE9;}
+input[type=checkbox].searchRadio {-webkit-appearance: none;position: relative;top: 12px;width: 17px;height: 17px;border: 1px solid #999;-webkit-border-radius: 50%;border-radius: 50%;background-color: #fff;vertical-align: middle;float: left;}
+input[type="checkbox"].searchRadio:checked {-webkit-appearance: none;background-color: #40ABE9;}
 
 /*查询---测试数据*/
 /*改变 ios 默认checkbox样式 */
