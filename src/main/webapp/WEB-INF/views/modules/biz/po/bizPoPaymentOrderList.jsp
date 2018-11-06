@@ -195,24 +195,11 @@
                         result = JSON.parse(result);
                         if(result.ret == true || result.ret == 'true') {
                             alert('操作成功!');
-                            if(${fromPage != null}) {
+                            if('${fromPage != null}') {
                                 window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
                             } else {
                                 window.location.href = "${ctx}/biz/po/bizPoHeader";
                             }
-                            <%--if(${fromPage != null && fromPage == 'requestHeader'}) {--%>
-                                <%--window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";--%>
-                            <%--} else if (${fromPage != null && fromPage == 'orderHeader'}) {--%>
-                                <%--window.location.href = "${ctx}/biz/order/bizOrderHeader";--%>
-                            <%--} else {--%>
-                                <%--window.location.href = "${ctx}/biz/po/bizPoHeader";--%>
-                            <%--}--%>
-                            <%--if (type == ${PoPayMentOrderTypeEnum.PO_TYPE.type}) {--%>
-                            <%--window.location.href = "${ctx}/biz/po/bizPoHeader";--%>
-                            <%--}--%>
-                            <%--if (type == ${PoPayMentOrderTypeEnum.REQ_TYPE.type}) {--%>
-                                <%--window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor"--%>
-                            <%--}--%>
                         }else {
                             alert(result.errmsg);
                         }
