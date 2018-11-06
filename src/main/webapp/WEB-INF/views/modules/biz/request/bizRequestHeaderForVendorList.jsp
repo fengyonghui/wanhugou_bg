@@ -404,7 +404,8 @@
 						${requestHeader.commonProcess.requestOrderProcess.name}
 					</c:if>
 					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">
-						订单支出信息审核
+						<%--订单支出信息审核--%>
+						${requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name}
 					</c:if>
 				</c:if>
 			</td>
