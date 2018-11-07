@@ -387,7 +387,7 @@
 										<%--<c:if test="${flag}">--%>
 											<%--<td name="requestNo" rowspan="${fn:length(requestHeader.requestDetailList)}"><a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">${requestHeader.reqNo}</a></td>--%>
 										<%--</c:if>--%>
-										<td>
+										<td name="requestNo">
 											<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">${requestHeader.reqNo}</a>
 										</td>
 										<td>${requestHeader.fromOffice.name}</td>
