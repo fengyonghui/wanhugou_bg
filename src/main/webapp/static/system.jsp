@@ -17,7 +17,7 @@
         request.setAttribute("address", address);
     %>
     os: ${os}<br/>
-    addr: ${addr}<br/>
+    <%--addr: ${addr}<br/>--%>
     address: ${address}<br/>
 
 </body>
