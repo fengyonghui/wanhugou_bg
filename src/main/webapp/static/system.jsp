@@ -9,12 +9,15 @@
 <body>
 
 <%
+    // 操作系统
     String os = System.getProperty("os.name");
     request.setAttribute("os", os);
 
+    // 主机地址
     InetAddress addr = InetAddress.getLocalHost();
     request.setAttribute("addr", addr);
 
+    // 主机名
     String hostName = addr.getHostName();
     request.setAttribute("hostName", hostName);
 
@@ -36,14 +39,17 @@
     long taskCount = tpe.getTaskCount();
     request.setAttribute("taskCount", taskCount);
 
-    // 剩余内存 
     Runtime r = Runtime.getRuntime();
+    // 剩余内存 
     long freeMemory = r.freeMemory();
     request.setAttribute("freeMemory", freeMemory / (1024 * 1024) + "M");
+    // 总内存
     long totalMemory = r.totalMemory();
     request.setAttribute("totalMemory", totalMemory / (1024 * 1024) + "M");
+    // 最大内存
     long maxMemory = r.maxMemory();
     request.setAttribute("maxMemory", maxMemory / (1024 * 1024) + "M");
+    // 使用内存
     request.setAttribute("usedMemory", (r.totalMemory() - r.freeMemory()) / (1024 * 1024) + "M");
 %>
 
