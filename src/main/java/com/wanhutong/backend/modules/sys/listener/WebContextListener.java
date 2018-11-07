@@ -46,7 +46,7 @@ public class WebContextListener extends org.springframework.web.context.ContextL
             String os = System.getProperty("os.name");
             InetAddress addr = InetAddress.getLocalHost();
             String address = addr.getHostName();
-            if(!os.toLowerCase().startsWith("win") && !address.contains("zhengzhou")){
+            if(!os.toLowerCase().startsWith("win") && !address.contains("iZ2zehbmmjvrem7lbzgemxZ")){
                 scheduledExecutorService.scheduleWithFixedDelay(OrderPayConsumer.getInstance(), 60, 60, TimeUnit.SECONDS);
             }
         } catch (Exception e) {
