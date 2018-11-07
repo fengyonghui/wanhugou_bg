@@ -101,6 +101,42 @@
 							if(_this.userInfo.includeTestData==undefined){
 								_this.userInfo.includeTestData="";
 							}
+							//客户专员查询
+							var nameTxtss = '';
+							if(_this.userInfo.Purchasing) {
+								nameTxtss = decodeURIComponent(_this.userInfo.Purchasing)
+							}else {
+								nameTxtss = ''
+							}
+							if(_this.userInfo.staOrder==undefined){
+								_this.userInfo.staOrder="";
+							}
+							if(_this.userInfo.OrdMobile==undefined){
+								_this.userInfo.OrdMobile="";
+							}
+							if(_this.userInfo.OrdNumbers==undefined){
+								_this.userInfo.OrdNumbers="";
+							}
+							if(_this.userInfo.orderStatus==undefined){
+								_this.userInfo.orderStatus="";
+							}
+							if(_this.userInfo.newinput==undefined){
+								_this.userInfo.newinput="";
+							}
+							if(_this.userInfo.staListSehId==undefined){
+								_this.userInfo.staListSehId="";
+							}
+							if(_this.userInfo.includeTestData==undefined){
+								_this.userInfo.includeTestData="";
+							}
+							if(_this.userInfo.mobileAuditStatus==undefined){
+								_this.userInfo.mobileAuditStatus="";
+							}
+							if(_this.userInfo.flagTxt==undefined){
+								_this.userInfo.flagTxt="";
+							}
+							
+							
 		            	    var statu = _this.userInfo.statu;	
 //		            	    console.log(statu)
 			                var f = document.getElementById("orderList");
@@ -128,10 +164,26 @@
 								pager['waitOutput'] = _this.userInfo.waitOutput,//待出库
 		                    	pager['includeTestData'] = _this.userInfo.includeTestData;//测试数据
 		                    	getData(pager);
-		                    }else{
+		                    }else if(_this.userInfo.isFind){
+		                    	alert(1)
+		                    	pager['size']= 20;
+			                    pager['pageNo'] = 1;
+								pager['orderNum'] = _this.userInfo.staOrder;
+								pager['centersName'] = nameTxtss;
+								pager['customer.phone'] = _this.userInfo.OrdMobile;
+								pager['itemNo'] = _this.userInfo.OrdNumbers;
+								pager['bizStatus'] = _this.userInfo.orderStatus;
+								pager['customer.id'] = _this.userInfo.newinput;
+								pager['consultantId'] = _this.userInfo.staListSehId;
+								pager['includeTestData'] = _this.userInfo.includeTestData;
+								pager['mobileAuditStatus'] = _this.userInfo.mobileAuditStatus;
+								pager['flag'] = _this.userInfo.flagTxt;
+								getData(pager);
+		                    }
+			                else{
 		                    	//直接进来的参数数据
 		                    	pager['size']= 20;
-			                    pager['pageNo'] = 1;			                    
+			                    pager['pageNo'] = 1;
 			                    if(statu != 'unline') {
 //			                    	console.log(1)
 			                    	pager['statu'] = '';
@@ -159,7 +211,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		            	console.log(res)
+		            	console.log(res)
 		            	var dataRow = res.data.roleSet;
 		            	//订单类型
 		          	    $.ajax({
@@ -179,10 +231,12 @@
 			                url: "/a/getUser",
 			                dataType: "json",
 			                async:false,
-			                success: function(user){                 
+			                success: function(user){  
 								userId = user.data.id
+								$('#userId').val(userId)
 			                }
-			           });
+			            });
+
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
@@ -210,7 +264,7 @@
 											}
 										}
 									}
-									if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING) {
+									if((item.orderType == res.data.ORDINARY_ORDER||item.orderType == 8) && item.bizStatus >= res.data.SUPPLYING) {
 										if(objectName == 'ORDER_HEADER_SO_LOCAL') {
 											ProcessName = commonProcess.jointOperationLocalProcess.name
 										}
@@ -238,7 +292,19 @@
 	                        	var staCheckBtnTxt = '';
 	                        	var ordSupplyBtn = '';
 	                        	var staSupplyBtnTxt = '';
-				                if(_this.staOrdFlag == true) {
+				                if(_this.staOrdFlag == true) {				                	                                    					                //客户专员审核
+                                    if(userId == item.consultantId||userId==1){
+                                    	if(item.bizStatus < 15) {
+					                		staCheckBtnTxt = "待审核"
+					                		ordCheckBtn = 'waitCheckBtn';
+					                	}
+					                	if(item.bizStatus==45) {
+					                		staCheckBtnTxt = "审核失败"
+					                	}
+					                	if(item.bizStatus==15) {
+					                		staCheckBtnTxt = "审核成功"
+					                	}
+                                    }				                	
 				                	//审核
                                     if(item.bizStatus != res.data.CANCLE){
                                         if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING){
@@ -333,6 +399,7 @@
                                     var ordDetailBtn = '';
                                     var staDetailBtnTxt ="";
                                     if(item.delFlag!=null && item.delFlag == '1'){
+
                                     	//支付流水
                                     	if(item.bizStatus != res.data.CANCLE){
                                     		if(res.data.statu == 'unline' || userId==1){
@@ -417,9 +484,9 @@
 											'<div class="'+ ordCheckBtn +'" staOrdId="'+ item.id +'">' +
 												 staCheckBtnTxt +
 											'</div>'+
-											'<div class="'+ordSupplyBtn+'"  staOrdId="'+ item.id +'">' +
-												staSupplyBtnTxt +
-											'</div>'+
+//											'<div class="'+ordSupplyBtn+'"  staOrdId="'+ item.id +'">' +
+//												staSupplyBtnTxt +
+//											'</div>'+
 											'<div class="'+ordwaterCourseBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'">' +
 												 ordwaterCourseBtnTxt +
 											'</div>'+
@@ -520,20 +587,39 @@
         ordHrefHtml: function() {
         	var _this = this;
         	/*查询*/
-        	var myStatu = $('#myStatu').val();
-			$('.app_header').on('tap', '#OrdSechBtn', function() {
-				var url = $(this).attr('url');
-				if(url) {
-					mui.toast('子菜单不存在')
-				} else {
-					GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderListSeach.html",
-						extras:{
-							statu: myStatu,
-						}
-					})
-				}
-			});
+        	if($('#userId').val() == $('#consultantIda').val()||$('#userId').val()==1){
+        		$('.app_header').on('tap', '#OrdSechBtn', function() {
+        			alert(1)
+					var url = $(this).attr('url');
+					if(url) {
+						mui.toast('子菜单不存在')
+					} else {
+						GHUTILS.OPENPAGE({
+							url: "../../../html/staffMgmtHtml/orderHtml/staOrdSech.html",
+							extras:{
+//								statu: myStatu,
+							}
+						})
+					}
+				});
+        	}else{
+        		var myStatu = $('#myStatu').val();
+				$('.app_header').on('tap', '#OrdSechBtn', function() {
+					alert(5)
+					var url = $(this).attr('url');
+					if(url) {
+						mui.toast('子菜单不存在')
+					} else {
+						GHUTILS.OPENPAGE({
+							url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderListSeach.html",
+							extras:{
+								statu: myStatu,
+							}
+						})
+					}
+				});
+        	}
+        	
 		/*首页*/
 			$('#nav').on('tap','.staHomePage', function() {
 				var url = $(this).attr('url');
@@ -556,6 +642,22 @@
 				} else if(staOrdId == staOrdId) {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderCheck.html",
+						extras: {
+							staOrdId: staOrdId,
+						}
+					})
+				}
+			}),
+			//客户专员审核
+			$('.content_part').on('tap', '.waitCheckBtn', function() {
+				var url = $(this).attr('url');
+				var staOrdId = $(this).attr('staOrdId');//订单 ID
+				console.log(staOrdId)
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(staOrdId == staOrdId) {
+					GHUTILS.OPENPAGE({
+						url: "../../../html/staffMgmtHtml/orderHtml/staOrdCheck.html",
 						extras: {
 							staOrdId: staOrdId,
 						}

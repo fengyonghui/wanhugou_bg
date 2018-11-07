@@ -68,6 +68,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
+		            	console.log(res)
 		          	    $.ajax({
 			                type: "GET",
 			                url: "/a/sys/dict/listData",

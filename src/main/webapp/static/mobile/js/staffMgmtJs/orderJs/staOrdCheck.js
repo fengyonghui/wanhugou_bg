@@ -34,13 +34,15 @@
 		getData: function() {
 			var _this = this;
 			console.log(_this.userInfo.stcheckIdTxt)
+			console.log(_this.userInfo.staOrdId)
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
                 data: {
                 	id: _this.userInfo.staOrdId,
                 	orderDetails: 'details',
-	                flag: _this.userInfo.flagTxt
+//	                flag: _this.userInfo.flagTxt                    
+                    flag: 'check_pending'
                 },
                 dataType: "json",
                 success: function(res){
@@ -475,14 +477,22 @@
 //					console.log(res)
 					if(res.data=='ok'){
 						mui.toast('发货成功!')
-						window.setTimeout(function(){
-			                GHUTILS.OPENPAGE({
-							url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+//						window.setTimeout(function(){
+//			                GHUTILS.OPENPAGE({
+//							url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+//							extras: {
+//								staListId:stcheckIdTxt,
+//								}
+//							})
+//			            },800);
+                        window.setTimeout(function(){
+ 			                GHUTILS.OPENPAGE({
+							url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 							extras: {
-								staListId:stcheckIdTxt,
+//								staListId:stcheckIdTxt,
 								}
 							})
-			            },800);						
+			            },800);	
 					}
 				},
 				error: function (e) {

@@ -82,7 +82,8 @@
 			var optionsClass = $("#input_div_orderStatus option").eq($("#input_div_orderStatus").attr("selectedIndex"));
 //			var optionsBusiness = $("#input_div_checkStatus option").eq($("#input_div_checkStatus").attr("selectedIndex"));
 			GHUTILS.OPENPAGE({
-				url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+//				url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+                url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 				extras: {
 					staListSehId: staListSehId,
 					staOrder: $('#staOrderNum').val(),
@@ -95,7 +96,8 @@
 					includeTestData: _this.includeTestData,
 					flagTxt:$('#flag').val(),
 					mobileAuditStatus: mobileAuditStatus,
-					isFunc: true
+//					isFunc: true
+                    isFind:true
 				}
 			})
 		},

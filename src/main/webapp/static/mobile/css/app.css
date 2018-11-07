@@ -716,7 +716,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .commodity div.lineStyle label {width:20%}
 .commodity div.lineStyle input {width:80%}
 #foot{display: flex;}
-#foot div{flex: 7;}
+#foot div{flex: 6;}
 /*订单管理--备注:*/
 .mui-input-row .staPoRemark{border: 1px solid #ccc;margin:5px 5px 5px -5px;border-radius: 5px;width:45%;float:left;overflow: auto;height:80px}
 .step_items {margin: 4px;margin-top: 0;font-size: 12px;border-bottom: 1px solid #ccc;color:#000;}
