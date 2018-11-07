@@ -58,7 +58,6 @@ freeMemory: ${freeMemory}<br/>
 totalMemory: ${totalMemory}<br/>
 usedMemory: ${usedMemory}<br/>
 maxMemory: ${maxMemory}<br/>
-cpu: ${cpuInfo}<br/>
 
 </body>
 </html>
