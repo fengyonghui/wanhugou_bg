@@ -256,7 +256,7 @@
         </c:if>
         <li class="clearfix"></li>
     </ul>
-    <c:if test="${orderHeader.flag != 'check_pending'}">
+    <c:if test="${bizOrderHeader.flag != 'check_pending'}">
     <br>
     <div class="control-group">
         <label class="control-label">付款单搜索：</label>
@@ -568,7 +568,7 @@
             </td>
             <shiro:hasPermission name="biz:order:bizOrderHeader:view">
                 <td>
-                    <c:if test="${orderHeader.flag != 'check_pending'}">
+                    <c:if test="${bizOrderHeader.flag != 'check_pending'}">
                     <c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.bizStatus != OrderHeaderBizStatusEnum.UNAPPROVE.state
 								&& orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
                         <c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
@@ -615,56 +615,9 @@
 					<%--</shiro:hasPermission>--%>
 				</c:if >
                 </c:if >
-					<%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
-					<%--<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.state}">--%>
-					<%--<c:if test="${orderHeader.bizPoHeader.commonProcess.id != null--%>
-					<%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'--%>
-					<%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'--%>
-					<%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus--%>
-					<%--&& (fns:hasRole(roleSet, orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())--%>
-					<%--}">--%>
-					<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=audit">审核</a>--%>
-					<%--</c:if>--%>
-					<%--</c:if>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--<shiro:hasPermission name="biz:po:bizPoPaymentOrder:view">--%>
-					<%--<c:if test="${orderHeader.bizPoHeader !=null}">--%>
-					<%--<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${orderHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${orderHeader.id}">支付申请列表</a>--%>
-					<%--</c:if>--%>
-					<%--</shiro:hasPermission>--%>
-
-                        <%--<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state && orderHeader.bizPoHeader.id != null && orderHeader.bizPoHeader.id != 0 && orderHeader.payProportion !=null}">--%>
-                        <%--<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">--%>
-                        <%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>--%>
-                        <%--</shiro:hasPermission>--%>
-                        <%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
-                        <%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>--%>
-                        <%--</shiro:hasPermission>--%>
-                        <%--</c:if>--%>
-
-                        <%--<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PURCHASE_ORDER.state}">--%>
-                        <%--<c:if test="${orderHeader.bizPoHeader.id != null && orderHeader.bizPoHeader.id != 0--%>
-                        <%--}">--%>
-                        <%--<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">--%>
-                        <%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}">排产</a>--%>
-                        <%--</shiro:hasPermission>--%>
-                        <%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
-                        <%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${orderHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>--%>
-                        <%--</shiro:hasPermission>--%>
-                        <%--</c:if>--%>
-                        <%--</c:if>--%>
-
-                        <%--<shiro:hasPermission name="biz:request:bizOrderHeader:createPayOrder">--%>
-                        <%--<c:if test="${orderHeader.bizPoHeader.currentPaymentId == null--%>
-                        <%--&& orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'--%>
-                        <%--&& (orderHeader.bizPoHeader.payTotal == null ? 0 : orderHeader.bizPoHeader.payTotal) < orderHeader.totalDetail--%>
-                        <%--}">--%>
-                        <%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=createPay">申请付款</a>--%>
-                        <%--</c:if>--%>
-                        <%--</shiro:hasPermission>--%>
 
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
-				<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && orderHeader.flag != 'check_pending'}">
+				<c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state && bizOrderHeader.flag != 'check_pending'}">
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
 				<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
 				<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=check_pending&consultantId=${bizOrderHeader.consultantId}&source=${source}">
@@ -690,9 +643,9 @@
 					<c:choose>
 					<c:when test="${fns:getUser().isAdmin()}">
 					<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">
-						发货成功</a>
+						已同意发货</a>
 					</c:when>
-					<c:otherwise>发货成功</c:otherwise>
+					<c:otherwise>已同意发货</c:otherwise>
 					</c:choose>
 					</c:if>
 					</shiro:hasPermission>
@@ -721,7 +674,7 @@
 					</shiro:hasPermission>
 
 					<!-- 订单支出信息合并 -->
-                    <c:if test="${orderHeader.flag != 'check_pending'}">
+                    <c:if test="${bizOrderHeader.flag != 'check_pending'}">
 					<shiro:hasPermission name="biz:order:bizOrderHeader:view">
 						<%--<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成' || orderHeader.commonProcess.jointOperationOriginProcess.name == '审批完成'}">--%>
 						<c:if test="${orderHeader.bizPoHeader.id != null}">

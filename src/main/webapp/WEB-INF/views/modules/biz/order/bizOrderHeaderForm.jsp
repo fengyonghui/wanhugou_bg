@@ -5,6 +5,7 @@
 <%@ page import="com.wanhutong.backend.modules.enums.BizOrderTypeEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderPayProportionStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 <html>
@@ -727,7 +728,9 @@
                 success: function (result) {
                     alert(result);
                     if (result == '操作成功!') {
-                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                        <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                        window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + id + "&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}"
+                            + "&fromPage=orderHeader" + "&orderId=" + $("#id").val();
                     }
                 },
                 error: function (error) {
@@ -1109,7 +1112,8 @@
                     result = JSON.parse(result);
                     if (result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                        <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                        window.location.href = "${ctx}/biz/order/bizOrderHeader/";
                     } else {
                         alert(result.errmsg);
                     }
