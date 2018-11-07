@@ -1,9 +1,5 @@
 <%@ page import="java.net.InetAddress" %>
 <%@ page import="java.util.concurrent.ThreadPoolExecutor" %>
-<%@ page import="java.util.concurrent.ExecutorService" %>
-<%@ page import="java.util.concurrent.TimeUnit" %>
-<%@ page import="java.util.concurrent.LinkedBlockingQueue" %>
-<%@ page import="java.util.concurrent.ThreadFactory" %>
 <%@ page import="com.wanhutong.backend.common.thread.ThreadPoolManager" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
