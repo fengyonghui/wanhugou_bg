@@ -15,8 +15,8 @@
     InetAddress addr = InetAddress.getLocalHost();
     request.setAttribute("addr", addr);
 
-    String address = addr.getHostName();
-    request.setAttribute("address", address);
+    String hostName = addr.getHostName();
+    request.setAttribute("hostName", hostName);
 
     ThreadPoolExecutor tpe = ThreadPoolManager.getDefaultThreadPool();
 
@@ -49,7 +49,7 @@
 
 os: ${os}<br/>
 <%--addr: ${addr}<br/>--%>
-address: ${address}<br/>
+hostName: ${hostName}<br/>
 queueSize: ${queueSize}<br/>
 activeCount: ${activeCount}<br/>
 completedTaskCount: ${completedTaskCount}<br/>
