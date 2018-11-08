@@ -527,6 +527,7 @@ public class BizOrderHeaderController extends BaseController {
         resultMap.put("REFUNDING", OrderHeaderDrawBackStatusEnum.REFUNDING.getState());
         resultMap.put("REFUNDREJECT", OrderHeaderDrawBackStatusEnum.REFUNDREJECT.getState());
         resultMap.put("REFUNDED", OrderHeaderDrawBackStatusEnum.REFUNDED.getState());
+        resultMap.put("COMMISSION_ORDER", BizOrderTypeEnum.COMMISSION_ORDER.getState());
 
 
         return JsonUtil.generateData(resultMap, request.getParameter("callback"));
