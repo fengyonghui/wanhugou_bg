@@ -7,6 +7,16 @@
 		this.staOrdauditFlag = "false";
 		this.staOrdsupplyFlag = "false";
 		this.staOrdeditFlag = "false";
+		this.OrdFlaginfo = "false";
+		this.OrdFlagaudit = "false";
+		this.ordCreatPayFlag = "false";
+		this.reCreatPayFlag = "false";
+		this.poCreatPayFlag = "false";
+		this.OrdFlagstartAudit = "false";
+		this.OrdFlagScheduling = "false";
+		this.orCancAmenFlag = "false";
+		this.affirmSchedulingFlag = "false";
+		this.OrdFlagpay = "false";
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -16,14 +26,24 @@
 			this.getPermissionList1('biz:order:bizOrderHeader:audit','staOrdauditFlag')//false审核
 			this.getPermissionList2('biz:order:bizOrderHeader:supplying','staOrdsupplyFlag')//false出库确认
 			this.getPermissionList3('biz:order:bizOrderHeader:edit','staOrdeditFlag')//修改、删除true
+			this.getPermissionList4('biz:po:bizPoHeader:view','OrdFlaginfo');//支出信息列表操作总权限
+			this.getPermissionList5('biz:po:bizPoHeader:audit','OrdFlagaudit');
+			this.getPermissionList6('biz:request:bizOrderHeader:createPayOrder','ordCreatPayFlag')//申请付款or
+			this.getPermissionList7('biz:request:bizRequestHeader:createPayOrder','reCreatPayFlag')//申请付款re
+			this.getPermissionList8('biz:po:bizPoHeader:createPayOrder','poCreatPayFlag')//申请付款po
+			this.getPermissionList9('biz:po:bizPoHeader:startAuditAfterReject','OrdFlagstartAudit');//开启审核
+			this.getPermissionList01('biz:po:bizPoHeader:addScheduling','OrdFlagScheduling');//排产
+			this.getPermissionList02('biz:po:bizPoHeader:edit','orCancAmenFlag')//修改、取消 false
+			this.getPermissionList03('biz:po:bizPoHeader:confirmScheduling','affirmSchedulingFlag')//确认排产
+			this.getPermissionList04('biz:po:pay:list','OrdFlagpay');//支付单列表
 			this.pageInit(); //页面初始化
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
-			
+
 		},
 		pageInit: function() {
 			var _this = this;
-			
+
 //			console.log(_this.staOrdFlag)
 //			console.log(_this.staOrdauditFlag)
 //			console.log(_this.staOrdsupplyFlag)
@@ -246,6 +266,8 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
+                            	console.log(item)
+                            	console.log(item.bizPoHeader)
                             	var ProcessName = '';
                             	var objectName = item.commonProcess.objectName; 
                             	var commonProcess = item.commonProcess;
@@ -259,7 +281,7 @@
 												ProcessName = commonProcess.doOrderHeaderProcessFifth.name
 											}
 											if(commonProcess.doOrderHeaderProcessFifth.name == '审批完成') {
-												ProcessName = '订单支出信息审核'
+												ProcessName = '待财务经理审批'
 											}
 										}
 									}
@@ -272,7 +294,7 @@
 												ProcessName = commonProcess.jointOperationOriginProcess.name
 											}
 											if(commonProcess.jointOperationOriginProcess.name == '审批完成') {
-												ProcessName = '订单支出信息审核'
+												ProcessName = '待财务经理审批'
 											}
 										}
 									}
@@ -295,7 +317,7 @@
                                     if(userId == item.consultantId||userId==1){
                                     	if(userId == item.consultantId){
                                     		$('#OrdSechBtn').attr('id','SearchBtn')
-                                    	}                                   	
+                                    	}
                                     	if(item.bizStatus < 15) {
 					                		staCheckBtnTxt = "待审核"
 					                		ordCheckBtn = 'waitCheckBtn';
@@ -405,7 +427,7 @@
                                     	//支付流水
                                     	if(item.bizStatus != res.data.CANCLE){
                                     		if(res.data.statu == 'unline' || userId==1){
-                                    			ordwaterCourseBtnTxt ="流水";
+                                    			ordwaterCourseBtnTxt ="支付流水";
                                     			ordwaterCourseBtn = 'ordwaterCourseBtn';
                                     		}
                                     	}
@@ -446,10 +468,210 @@
 	                                		staRecoveryBtnTxt ="恢复";
 	                                		ordRecoveryBtn = 'ordRecoveryBtn';
 	                                	}
-	                                }                                    
+	                                }
 				                }
-	                        	var staCheckSucBtn = '';
-	                        	var staCheckSuc = '';
+				                //订单支出审核状态
+	                            var paycheckTxt = '';
+	                            if(item.commonProcess){
+	                            	if(item.commonProcess.purchaseOrderProcess.name){
+	                            		paycheckTxt=item.commonProcess.purchaseOrderProcess.name;
+	                            	}
+	                            }else{
+	                            	paycheckTxt='当前无审批流程';
+	                            }
+//				                                待发货.发货成功/发货失败    和上面用同一个按钮
+
+								/*付款单列表*/
+								var applyListBtn = '';
+								var applyListBtnTxt = '';
+//								付款单审核   和上面用的是同一个按钮
+								var applyCheckBtn = '';
+								var applyCheckBtnTxt = '';
+								/*付款单取消*/
+								var applyCandelBtn = '';
+								var applyCandelBtnTxt = '';
+								/*付款单详情*/
+								var applyDetailBtn = '';
+								var applyDetailBtnTxt = '';
+								/*排产*/
+								var scheduBtn = '';
+								var scheduBtnTxt = '';
+								/*确认排产*/
+								var affirmScheduBtn = '';
+								var affirmScheduBtnTxt = '';
+								/*申请付款*/
+								var creatPay = '';
+								var	creatPayBt = '';
+								/*开启审核*/
+								var stastartCheckBtnTxt = '';
+                				var stastartCheckBtn = '';
+                				var bizPoHeader = '';
+                				//支出信息页面过来的按钮：
+								if(item.bizPoHeader) {
+									bizPoHeader = item.bizPoHeader;
+									if(_this.OrdFlaginfo == true) {
+						            	if(bizPoHeader.bizStatus != 10) {
+						            		//申请付款
+											if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != '' 
+											|| bizPoHeader.bizRequestHeader != null || bizPoHeader.bizRequestHeader != '') {
+												if(_this.ordCreatPayFlag == true) {
+													if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizRequestHeader != null
+													|| bizPoHeader.bizOrderHeader != '' || bizPoHeader.bizRequestHeader != ''){
+														if(_this.ordCreatPayFlag == true) {
+								                        	if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != '') {
+								                        		if((bizPoHeader.currentPaymentId == null || bizPoHeader.currentPaymentId == '') 
+								                        		&& paycheckTxt == '审批完成'
+								                        		&& ((bizPoHeader.payTotal == null || bizPoHeader.payTotal == '') ? 0 : bizPoHeader.payTotal) < bizPoHeader.bizOrderHeader.totalDetail) {
+	//							                        			console.log('订单申请付款')
+								                        			creatPay = '申请付款'
+																	creatPayBt = 'creatPayBtn'
+								                        		}
+								                        	}
+								                        }
+														if(_this.reCreatPayFlag == true) {
+															if(bizPoHeader.bizRequestHeader != null || bizPoHeader.bizRequestHeader != '') {
+																if((bizPoHeader.currentPaymentId == null || bizPoHeader.currentPaymentId == '') 
+																&& bizPoHeader.bizRequestHeader.bizStatus >= 5 
+																&& bizPoHeader.bizRequestHeader.bizStatus < 37 
+																&& ((bizPoHeader.bizRequestHeader.bizPoHeader.payTotal == null || bizPoHeader.bizRequestHeader.bizPoHeader.payTotal == '') ? 0 : bizPoHeader.payTotal) < bizPoHeader.bizRequestHeader.totalDetail) {
+	//																console.log('备货单申请付款')
+																	creatPay = '申请付款'
+																	creatPayBt = 'creatPayBtn'
+																}
+															}
+														}
+													}else {
+														if(_this.poCreatPayFlag == true) {
+															var values = bizPoHeader.bizStatus;
+															var dictLabel = '';
+															$.ajax({
+												                type: "GET",
+												                url: "/a/sys/dict/getDictLabel4Mobile",
+												                dataType: "json",
+												                data: {
+												                	value:values,
+												                	type: "biz_po_status",
+												                	defaultValue: '未知类型'
+											                	},
+												                async:false,
+												                success: function(res){
+	//												                console.log(res.data.dictLabel)
+													                dictLabel = res.data.dictLabel;
+												                }
+												            });
+															if((bizPoHeader.bizPoPaymentOrder.id == null || bizPoHeader.bizPoPaymentOrder.id == '')
+															&& paycheckTxt == '审批完成'
+															&& dictLabel != '全部支付'
+															&& bizPoHeader.payTotal < (bizPoHeader.totalDetail+bizPoHeader.totalExp)) {
+																creatPay = '申请付款'
+																creatPayBt = 'creatPayBtn'
+															}
+														}
+													}
+												}
+											}
+											//审核
+							                if(_this.OrdFlagaudit == true) {   
+												var DataRoleGener = '';
+												if(bizPoHeader.commonProcess) {
+													DataRoleGener = bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum;
+												}
+												var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
+						                        if((bizPoHeader.commonProcess.id != null || bizPoHeader.commonProcess.id != '')
+						                        	&& paycheckTxt != '驳回'
+						                        	&& paycheckTxt != '审批完成'
+						                        	&& (fileRoleData.length>0 || userId==1))             {
+						                        	if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != ''
+						                        		|| bizPoHeader.bizRequestHeader != null || bizPoHeader.bizRequestHeader != ''){
+						                        		//订单审核
+						                        	   	if(bizPoHeader.bizOrderHeader != ""){
+						                        	   		staCheckBtnTxt = '付款单审核';
+						                        	   		ordCheckBtn = 'ordCheckBtn';
+						                        	   		staCheckbtns = bizPoHeader.bizOrderHeader.id;
+						                        	   	}
+						                        	   	//备货单审核
+						                        	   	if(bizPoHeader.bizRequestHeader != ""){
+						                        	   		staCheckBtnTxt = '付款单审核';
+						                        	   		ordCheckBtn = 'ordCheckBtn';
+						                        	   		staCheckBtn = bizPoHeader.bizRequestHeader.id;
+						                        	   	}
+						                        	}else{
+						                        		//采购单审核
+						                        		staCheckBtnTxt = '付款单审核';
+						                        		ordCheckBtn = 'ordCheckBtn';
+						                        		staCheckBtn = bizPoHeader.id;
+						                        	}
+						                        }
+							                }
+						                	//支付申请列表
+						                	if(bizPoHeader.commonProcess.type != -1){
+						                		if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != ''){
+						                			//订单
+						                			if(_this.OrdFlagpay == true){
+						                				applyListBtn = 'applyListBtn';
+														applyListBtnTxt = '付款单列表';
+	//					                				staPayBtnTxt = '支付列表';
+	//					                				staPayBtnes = 'staPayBtnes';
+						                			}
+						                		}
+						                		if(bizPoHeader.bizRequestHeader != null || bizPoHeader.bizRequestHeader != ''){
+						                			//备货单
+						                			if(_this.OrdFlagpay == true){
+						                				applyListBtn = 'applyListBtn';
+														applyListBtnTxt = '付款单列表';
+	//					                				staPayBtnTxt = '支付列表';
+	//					                				staPayBtnes = 'staPayBtnes';
+						                			}
+						                		}
+						                	}
+											//开启审核
+						                	if(_this.OrdFlagstartAudit==true){
+						                		if(bizPoHeader.commonProcess.type == -1){
+						                			if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != '') {
+						                				stastartCheckBtnTxt = '开启审核';
+						                				stastartCheckBtn = 'stastartCheckBtn'
+						                			}
+						                			if(bizPoHeader.bizRequestHeader != null || bizPoHeader.bizRequestHeader != ''){
+						                				stastartCheckBtnTxt = '开启审核';
+						                				stastartCheckBtn = 'stastartCheckBtn'
+						                			}
+						                		}
+						                	}
+											//排产
+						                	if(_this.OrdFlagScheduling==true){
+						                		scheduBtn = 'scheduBtn';
+												scheduBtnTxt = '排产';
+	//					                		SchedulingBtnTxt = '排产';
+	//					                		SchedulingBtn = 'SchedulingBtn';
+						                	}
+						                	//修改
+						                	//取消
+						                	if(_this.orCancAmenFlag == true) {
+						                		if(paycheckTxt == null || paycheckTxt == ''
+					                			|| paycheckTxt == '驳回') {
+						                			orAmendBtn = 'orAmendBtn';
+						                			orAmendBtnTxt = '修改';
+						                		}
+					                			applyCandelBtn = 'applyCandelBtn';
+												applyCandelBtnTxt = '付款单取消';
+	//				                			orCancleBtn = 'orCancleBtn';
+	//											orCancleBtnTxt = '取消';
+						                	}
+						            		//详情
+						                	if(_this.OrdFlaginfo == true) {
+												applyDetailBtn = 'applyDetailBtn';
+												applyDetailBtnTxt = '付款单详情';
+						                	}
+						                	//确认排产
+						                	if(_this.affirmSchedulingFlag == true) {
+						                		affirmScheduBtn = 'affirmScheduBtn';
+												affirmScheduBtnTxt = '确认排产';
+	//					                		affirmSchedulingBtn = 'affirmSchedulingBtn';
+	//											affirmSchedulingBtnTxt = '确认排产';
+						                	}
+						            	}
+						            }
+								}
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group" id="rodiv_' + item.orderType + '">'+
 										'<div class="mui-input-row">' +
 											'<label>订单编号:</label>' +
@@ -475,29 +697,42 @@
 											'<label>更新时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 										'</div>' +
-										'<div class="app_color40 mui-row app_text_center content_part operation " id="foot">' +
-											'<div class="'+ ordCheckBtn +'" staOrdId="'+ item.id +'">' +
-												 staCheckBtnTxt +
-											'</div>'+
+										'<div class="mui-input-row app_color40 app_text_center content_part operation" id="foot">' +
 //											'<div class="'+ordSupplyBtn+'"  staOrdId="'+ item.id +'">' +
-//												staSupplyBtnTxt +
-//											'</div>'+
-											'<div class="'+ordwaterCourseBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'">' +
-												 ordwaterCourseBtnTxt +
-											'</div>'+
-											'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
-												staAmendTxt +
-											'</div>'+
-											'<div class="'+ordDeleteBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
-												staDeleteTxt +
-											'</div>'+
+///*出库*/				                        staSupplyBtnTxt +</div>'+											
 											'<div class="'+ordDetailBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
-												staDetailBtnTxt +
-											'</div>'+
-											'<div class="'+ordRecoveryBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
-												staRecoveryBtnTxt +
-											'</div>'+
+							/*详情*/				staDetailBtnTxt +'</div>'+
+											'<div class="'+ ordCheckBtn +'" staOrdId="'+ item.id +'">' +
+							/*审核*/				staCheckBtnTxt +'</div>'+										
+											'<div class="'+scheduBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
+							/*排产*/				scheduBtnTxt +'</div>'+
+											'<div class="'+creatPayBt+'"  staOrdId="'+ item.id +'">' +
+							/*申请付款*/			creatPay +'</div>'+	
+											'<div class="'+stastartCheckBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
+							/*开启审核*/			stastartCheckBtnTxt +'</div>'+								
 										'</div>' +
+										'<div class="mui-input-row app_color40 app_text_center content_part operation" id="foot">' +
+											'<div class="'+ordRecoveryBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
+							/*恢复*/				staRecoveryBtnTxt +'</div>'+										
+											'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
+							/*修改*/				staAmendTxt +'</div>'+
+											'<div class="'+ordDeleteBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
+							/*删除*/				staDeleteTxt +'</div>'+
+											'<div class="'+ordwaterCourseBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'">' +
+							/*支付流水*/			ordwaterCourseBtnTxt +'</div>'+	
+											'<div class="'+affirmScheduBtn+'" staOrdId="'+ bizPoHeader.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
+							/*确认排产*/			affirmScheduBtnTxt +'</div>'+
+										'</div>' +
+										'<div class="mui-row app_color40 app_text_center content_part operation" id="foot">' +
+											'<div class="'+applyListBtn+'"  staOrdId="'+ item.id +'">' +
+							/*付款单列表*/		applyListBtnTxt +'</div>'+
+											'<div class="'+applyCheckBtn+'"  staOrdId="'+ item.id +'">' +
+							/*付款单审核*/		applyCheckBtnTxt +'</div>'+	
+											'<div class="'+applyDetailBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
+							/*付款单详情*/		applyDetailBtnTxt +'</div>'+
+											'<div class="'+applyCandelBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'">' +
+							/*付款单取消*/		applyCandelBtnTxt +'</div>'+
+										'</div>' +										
 									'</div>'
 
 								});
@@ -579,8 +814,138 @@
                 }
             });
         },
+        getPermissionList4: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.OrdFlaginfo = res.data;
+                }
+            });
+        }, 
+        getPermissionList5: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.OrdFlagaudit = res.data;
+                }
+            });
+        },
+        getPermissionList6: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.ordCreatPayFlag = res.data;
+                }
+            });
+        },
+        getPermissionList7: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.reCreatPayFlag = res.data;
+                }
+            });
+        },
+        getPermissionList8: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.poCreatPayFlag = res.data;
+                }
+            });
+        },
+        getPermissionList9: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.OrdFlagstartAudit = res.data;
+                }
+            });
+        },
+        getPermissionList01: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.OrdFlagScheduling = res.data;
+                }
+            });
+        },
+        getPermissionList02: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.orCancAmenFlag = res.data;
+                }
+            });
+        },
+        getPermissionList03: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.affirmSchedulingFlag = res.data;
+                }
+            });
+        },
+        getPermissionList04: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.OrdFlagpay = res.data;
+                }
+            });
+        },
         ordHrefHtml: function() {
-        	var _this = this;       	
+        	var _this = this;
 			/*订单列表查询*/
     		var myStatu = $('#myStatu').val();
     		console.log(myStatu)
@@ -598,7 +963,7 @@
 								statu: myStatu,
 							}
 						})
-					}        			
+					}
 				});
 				/*线下支付查询*/
 				$('.app_header').on('tap', '#OrdSechBtn', function() {
@@ -613,7 +978,7 @@
 								statu: myStatu,
 							}
 						})
-					}				
+					}
 				});
     		}else{
     			/*客户专员订单查询*/
@@ -628,7 +993,7 @@
 							extras:{
 							}
 						})
-					}        			
+					}
 				});
 				/*订单查询*/
     			$('.app_header').on('tap', '#OrdSechBtn', function() {
@@ -643,10 +1008,10 @@
 								statu: myStatu,
 							}
 						})
-					}				
-				}); 
+					}
+				});
     		}
-			       	
+
 		/*首页*/
 			$('#nav').on('tap','.staHomePage', function() {
 				var url = $(this).attr('url');
@@ -832,6 +1197,21 @@
 						extras: {
 							staOrdId: staOrdId,
 							statu: statu,	
+						}
+					})
+				}
+			})
+			/*确认排产*/
+			$('.content_part').on('tap', '.affirmSchedulingBtn', function() {
+				var url = $(this).attr('url');
+				var staOrdId = $(this).attr('staordid');
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(staOrdId == staOrdId) {
+					GHUTILS.OPENPAGE({
+						url: "../../../html/orderMgmtHtml/affirmScheduling.html",
+						extras: {
+							staOrdId: staOrdId,
 						}
 					})
 				}

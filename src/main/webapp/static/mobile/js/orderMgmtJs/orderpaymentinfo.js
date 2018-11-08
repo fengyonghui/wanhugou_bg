@@ -292,6 +292,7 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
+                            	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";
