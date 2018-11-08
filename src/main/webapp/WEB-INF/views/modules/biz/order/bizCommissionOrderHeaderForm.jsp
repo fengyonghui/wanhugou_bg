@@ -77,6 +77,7 @@
                 return false;
             }
 
+            $Mask.AddLogo("正在加载");
             window.location.href="${ctx}/biz/order/bizCommissionOrder/saveCommission?totalCommission=" + payTotal + "&deadline=" + lastPayDate
                  + "&remark=" + remark + "&orderIds=" + orderIds + "&sellerId=" + sellerId;
         }
