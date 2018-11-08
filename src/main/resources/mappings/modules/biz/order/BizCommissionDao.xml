@@ -11,6 +11,7 @@
 		<result column="remark" property="remark"/>
 		<result column="bizStatus" property="bizStatus"/>
 		<result column="sellerId" property="sellerId"/>
+		<result column="orderIds" property="orderIds"/>
 		<result column="commonProcess.id" property="commonProcess.id"/>
 		<result column="commonProcess.objectName" property="commonProcess.objectName"/>
 		<result column="commonProcess.prevId" property="commonProcess.prevId"/>
@@ -49,6 +50,7 @@
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
 		a.status AS "delFlag",
+		a.order_ids AS "orderIds",
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
 		process.object_name AS "commonProcess.objectName",
@@ -104,6 +106,7 @@
 		FROM biz_commission a
 		<include refid="bizCommissionJoins"/>
 		WHERE a.id = #{id}
+		GROUP  BY a.id
 	</select>
 	
 	<select id="findList" resultMap="bizCommissionMaps">
@@ -140,6 +143,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				GROUP  BY a.id
 			</otherwise>
 		</choose>
 	</select>
@@ -181,6 +185,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				GROUP  BY a.id
 			</otherwise>
 		</choose>
 	</select>
@@ -198,6 +203,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				GROUP  BY a.id
 			</otherwise>
 		</choose>
 	</select>
@@ -214,6 +220,9 @@
 			pay_time,
 			<if test="remark != null and remark != ''">
 				remark,
+			</if>
+			<if test="orderIds != null and orderIds != ''">
+				order_ids,
 			</if>
 			biz_status,
 			seller_id,
@@ -234,6 +243,9 @@
 			#{payTime},
 			<if test="remark != null and remark != ''">
 				#{remark},
+			</if>
+			<if test="orderIds != null and orderIds != ''">
+				#{orderIds},
 			</if>
 			#{bizStatus},
 			#{sellerId},
@@ -257,6 +269,9 @@
 			biz_status = #{bizStatus},
 			<if test="sellerId != null and sellerId != ''">
 				seller_id = #{sellerId},
+			</if>
+			<if test="orderIds != null and orderIds != ''">
+				order_ids = #{orderIds},
 			</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},

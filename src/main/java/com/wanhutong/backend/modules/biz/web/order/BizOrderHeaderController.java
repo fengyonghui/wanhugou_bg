@@ -230,6 +230,8 @@ public class BizOrderHeaderController extends BaseController {
             bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.COMPLETE.getState());
             //未结佣
             //bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.NO_COMMISSSION.getComStatus());
+            //未取消
+            bizOrderHeader.setDelFlag("1");
         }
         if (bizOrderHeader.getSkuChickCount() != null) {
             //商品下单量标识

@@ -158,9 +158,6 @@ public class BizCommissionController extends BaseController {
 				BigDecimal detailCommission = BigDecimal.ZERO;
 				if (CollectionUtils.isNotEmpty(bizOrderDetails)) {
 					for (BizOrderDetail orderDetail : bizOrderDetails) {
-						BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
-						BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
-
 						BigDecimal unitPrice = new BigDecimal(orderDetail.getUnitPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
 						BigDecimal buyPrice = new BigDecimal(orderDetail.getBuyPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
 						Integer ordQty = orderDetail.getOrdQty();
@@ -171,21 +168,6 @@ public class BizCommissionController extends BaseController {
 						detailCommission = (unitPrice.subtract(buyPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
 						orderDetail.setDetailCommission(detailCommission);
 
-//						bizOpShelfSku.setSkuInfo(bizSkuInfo);
-//						List<BizOpShelfSku> opShelfSkuList = bizOpShelfSkuService.findList(bizOpShelfSku);
-//						if (CollectionUtils.isNotEmpty(opShelfSkuList)) {
-//							bizOpShelfSku = opShelfSkuList.get(0);
-//							BigDecimal orgPrice = new BigDecimal(bizOpShelfSku.getOrgPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
-//							BigDecimal salePrice = new BigDecimal(bizOpShelfSku.getSalePrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
-//							Integer ordQty = orderDetail.getOrdQty();
-//							BigDecimal commissionRatio = bizOpShelfSku.getCommissionRatio();
-//							if (commissionRatio == null || commissionRatio.compareTo(BigDecimal.ZERO) <= 0) {
-//								commissionRatio = BigDecimal.ZERO;
-//							}
-//							detailCommission = (salePrice.subtract(orgPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
-//							orderDetail.setSalePrice(salePrice);
-//							orderDetail.setDetailCommission(detailCommission);
-//						}
 						bizOrderDetailsNew.add(orderDetail);
 					}
 				}

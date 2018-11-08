@@ -391,14 +391,20 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		BizCommissionOrder commissionOrder = new BizCommissionOrder();
 		commissionOrder.setCommId(commId);
 		List<BizCommissionOrder> commissionOrderList = bizCommissionOrderService.findList(commissionOrder);
+		String orderIdStrs = "";
 		if (CollectionUtils.isNotEmpty(commissionOrderList)) {
 			for (BizCommissionOrder bizCommissionOrder : commissionOrderList) {
 				Integer orderId = bizCommissionOrder.getOrderId();
+				orderIdStrs += orderIdStrs + String.valueOf(orderId) + ",";
 				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderId);
 				bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.COMMISSION_COMPLETE.getComStatus());
 				bizOrderHeaderService.save(bizOrderHeader);
 			}
 		}
+		if (orderIdStrs.length() > 0) {
+			orderIdStrs = orderIdStrs.substring(0, orderIdStrs.length()-1);
+		}
+
 
 		//更新钱包中累积获得佣金
 		Office customer = officeService.get(bizCommission.getSellerId());
@@ -416,8 +422,8 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		BizPayRecord bizPayRecord = new BizPayRecord();
 		// 支付编号 *同订单号*
 		bizPayRecord.setPayNum("1");
-		// 订单编号
-		bizPayRecord.setOrderNum("1");
+		// 保存订单id拼接的字符串
+		bizPayRecord.setOrderNum(orderIdStrs);
 		// 支付人
 		bizPayRecord.setPayer(user.getId());
 		// 零售单佣金收款人
