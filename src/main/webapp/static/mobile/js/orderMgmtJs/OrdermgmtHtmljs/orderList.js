@@ -48,6 +48,7 @@
 			            contentover : "",
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
+			            	//订单查询页面传过来的值
 			            	var nameTxt = '';
 							if(_this.userInfo.selectAuditStatus) {
 								nameTxt = decodeURIComponent(_this.userInfo.selectAuditStatus)
@@ -59,8 +60,7 @@
 								nameTxts = decodeURIComponent(_this.userInfo.conName)
 							}else {
 								nameTxts = ''
-							}
-							//查询页面传过来的值
+							}							
 							if(_this.userInfo.orderNum==undefined){
 								_this.userInfo.orderNum="";
 							}
@@ -136,9 +136,7 @@
 							}
 							if(_this.userInfo.flagTxt==undefined){
 								_this.userInfo.flagTxt="";
-							}
-							
-							
+							}							
 		            	    var statu = _this.userInfo.statu;	
 		            	    console.log(statu)
 			                var f = document.getElementById("orderList");
@@ -169,15 +167,15 @@
 		                   }else if(_this.userInfo.isFind){
 		                    	pager['size']= 20;
 			                    pager['pageNo'] = 1;
-								pager['orderNum'] = _this.userInfo.staOrder;
-								pager['centersName'] = nameTxtss;
-								pager['customer.phone'] = _this.userInfo.OrdMobile;
-								pager['itemNo'] = _this.userInfo.OrdNumbers;
-								pager['bizStatus'] = _this.userInfo.orderStatus;
-								pager['customer.id'] = _this.userInfo.newinput;
-								pager['consultantId'] = _this.userInfo.staListSehId;
-								pager['includeTestData'] = _this.userInfo.includeTestData;
-								pager['mobileAuditStatus'] = _this.userInfo.mobileAuditStatus;
+								pager['orderNum'] = _this.userInfo.staOrder;//订单编号
+								pager['centersName'] = nameTxtss;//采购中心
+								pager['customer.phone'] = _this.userInfo.OrdMobile;//经销店电话
+								pager['itemNo'] = _this.userInfo.OrdNumbers;//商品货号
+								pager['bizStatus'] = _this.userInfo.orderStatus;//订单状态
+								pager['customer.id'] = _this.userInfo.newinput;//经销店名称
+								pager['consultantId'] = _this.userInfo.staListSehId;//客户专员id
+								pager['includeTestData'] = _this.userInfo.includeTestData;//测试数据
+								pager['mobileAuditStatus'] = _this.userInfo.mobileAuditStatus;//待审核、审核成功
 								pager['flag'] = _this.userInfo.flagTxt;
 								getData(pager);
 								$('#listName').html('订单列表');
@@ -238,7 +236,6 @@
 								$('#userId').val(userId)
 			                }
 			            });
-
 						var arrLen = res.data.page.list.length;
 						if(arrLen <20){
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
