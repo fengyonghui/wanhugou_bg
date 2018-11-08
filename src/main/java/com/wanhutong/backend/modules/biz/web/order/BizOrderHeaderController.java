@@ -1735,46 +1735,6 @@ public class BizOrderHeaderController extends BaseController {
                     } else {
                         genAuditProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE);
                     }
-
-                    //物流运单生成
-                    ThreadPoolManager.getDefaultThreadPool().execute(() -> {
-                        String postUrl = "http://wuliu.guojingec.com:8081/test/order/logistic/add_order_WHT";
-                        CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
-                        HttpPost httpPost = new HttpPost(postUrl);
-                        CloseableHttpResponse httpResponse = null;
-                        String result = null;
-                        try {
-                            HashMap<String, Object> map = Maps.newHashMap();
-                            map.put("orderCode", 1);
-                            map.put("linecode", 1);
-                            map.put("linepointcode", null);
-                            map.put("creator", 1);
-                            map.put("senderphone", 1);
-                            map.put("receiverphone", 1);
-
-                            httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
-                            httpPost.setHeader("Accept", "application/json");
-
-                            String jsonstr = JSONObject.fromObject(map).toString();
-                            httpPost.setEntity(new StringEntity(jsonstr, Charset.forName("UTF-8")));
-
-                            httpResponse = httpClient.execute(httpPost);
-
-                            result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                            LOGGER.info("返回结果result=================" + result);
-
-                        }catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            if (httpClient != null) {
-                                try {
-                                    httpClient.close();
-                                } catch (IOException e) {
-                                    LOGGER.error("关闭异常，710",e);
-                                }
-                            }
-                        }
-                    });
                 }
             }
         } catch (Exception e) {
