@@ -1607,7 +1607,8 @@
                                 result = JSON.parse(result);
                                 if (result.ret == true || result.ret == 'true') {
                                     alert('操作成功!');
-                                    window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                                    <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                                    window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=${entity.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=" + $("#id").val();
                                 } else {
                                     alert(result.errmsg);
                                 }
