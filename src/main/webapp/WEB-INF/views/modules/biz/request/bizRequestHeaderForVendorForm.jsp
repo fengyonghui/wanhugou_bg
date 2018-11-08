@@ -1767,7 +1767,7 @@
 			</shiro:hasPermission>
 
 			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
-				<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str != 'createPay' && entity.str != 'pay'}">
+				<c:if test="${entity.str!='detail' && entity.str!='audit' && entity.str != 'createPay' && entity.str != 'startAudit' && entity.str != 'pay'}">
 					<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
 				</c:if>
 			</shiro:hasPermission>

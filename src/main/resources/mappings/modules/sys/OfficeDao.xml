@@ -204,8 +204,11 @@
 		sys_office so
 		WHERE
 		so.status = #{DEL_FLAG_NORMAL}
-		<if test="type != null and type != ''">
+		<if test="type != null and type != '' and type != 6">
 			AND so.type = #{type}
+		</if>
+		<if test="type != null and type != '' and type == 6">
+			AND (so.type = #{type} OR so.type = 15 OR so.type = 16)
 		</if>
 		<if test="phone != null and phone != ''">
 			AND so.phone = #{phone}
