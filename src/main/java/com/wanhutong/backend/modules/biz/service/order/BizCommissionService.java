@@ -395,7 +395,7 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		if (CollectionUtils.isNotEmpty(commissionOrderList)) {
 			for (BizCommissionOrder bizCommissionOrder : commissionOrderList) {
 				Integer orderId = bizCommissionOrder.getOrderId();
-				orderIdStrs += orderIdStrs + String.valueOf(orderId) + ",";
+				orderIdStrs += String.valueOf(orderId) + ",";
 				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderId);
 				bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.COMMISSION_COMPLETE.getComStatus());
 				bizOrderHeaderService.save(bizOrderHeader);

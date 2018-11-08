@@ -90,19 +90,19 @@ public class BizCommissionController extends BaseController {
 		if (CollectionUtils.isNotEmpty(bizCommissionList)) {
 			for (BizCommission commission : bizCommissionList) {
 				String orderNums = "";
-				List<BizCommissionOrder> bizCommissionOrderList = commission.getBizCommissionOrderList();
-				if (CollectionUtils.isNotEmpty(bizCommissionOrderList)) {
-					for (BizCommissionOrder commissionOrder : bizCommissionOrderList) {
-						commissionOrder = bizCommissionOrderService.get(commissionOrder.getId());
-						BizOrderHeader bizOrderHeader = commissionOrder.getBizOrderHeader();
-						if (bizOrderHeader != null && bizOrderHeader.getOrderNum() != null) {
-							String orderNum = bizOrderHeader.getOrderNum();
-							orderNums = orderNums + "," + orderNum;
-						}
+				String orderIds = commission.getOrderIds();
+				if (orderIds != null && !orderIds.contains(",")) {
+					BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(Integer.valueOf(orderIds));
+					orderNums = bizOrderHeader.getOrderNum() + ",";
+                } else if (orderIds != null && orderIds.contains(",")) {
+					String[] orderIdArr = orderIds.split(",");
+					for (int i=0; i< orderIdArr.length; i++) {
+						BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(Integer.valueOf(orderIdArr[i]));
+						orderNums += bizOrderHeader.getOrderNum() + ",";
 					}
 				}
 				if (orderNums.length() > 0) {
-					commission.setOrderNumsStr(orderNums.substring(1, orderNums.length()));
+					commission.setOrderNumsStr(orderNums.substring(0, orderNums.length()-1));
 				}
 			}
 		}
