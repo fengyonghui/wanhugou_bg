@@ -67,7 +67,8 @@
 				<td>序号</td>
 				<th>商品名称</th>
 				<th>商品货号</th>
-				<th>结算价</th>
+				<!-- 隐藏结算价 -->
+				<%--<th>结算价</th>--%>
 				<th>(订单)销售价</th>
 				<th>订单数量</th>
 				<th>应付金额</th>
@@ -87,9 +88,10 @@
 				<td>
 						${bizSkuInfo.itemNo}
 				</td>
-				<td>
-						${bizSkuInfo.orderDetail.buyPrice}
-				</td>
+				<!-- 隐藏结算价 -->
+				<%--<td>--%>
+						<%--${bizSkuInfo.orderDetail.buyPrice}--%>
+				<%--</td>--%>
 				<td>
 						${bizSkuInfo.orderDetail.unitPrice}
 				</td>

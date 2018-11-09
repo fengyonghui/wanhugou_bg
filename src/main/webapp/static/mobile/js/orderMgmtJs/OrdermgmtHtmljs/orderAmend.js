@@ -177,7 +177,8 @@
 					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
 					$('#staPoLastDaPerent').val(poLastDa);//已付金额百分比
 					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));//服务费
-					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));//佣金
+                    <!-- 隐藏佣金 -->
+                    // $('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));//佣金
 					$('#staAddprice').val(item.serviceFee.toFixed(2));//增值服务费
 					$('#staConsignee').val(item.bizLocation.receiver);//收货人
 					$('#staMobile').val(item.bizLocation.phone);//联系电话
