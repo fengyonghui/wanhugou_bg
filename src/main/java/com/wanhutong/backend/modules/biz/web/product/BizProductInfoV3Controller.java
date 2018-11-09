@@ -30,6 +30,7 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.ProdTypeEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.enums.TagInfoEnum;
 import com.wanhutong.backend.modules.enums.VarietyAttrEnum;
@@ -708,6 +709,7 @@ public class BizProductInfoV3Controller extends BaseController {
 
         BizProductInfo b = new BizProductInfo();
         b.setItemNoComplete(itemNo);
+        b.setProdType(Byte.valueOf(ProdTypeEnum.PROD.getType()));
         List<BizProductInfo> list = bizProductInfoService.findList(b);
         List<BizProductInfo> listForVendor = bizProductInfoForVendorService.findList(b);
         if(id != null) {
