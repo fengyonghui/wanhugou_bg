@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.inventory.BizSkuTransferDetailDao">
+    
+	<sql id="bizSkuTransferDetailColumns">
+		a.id AS "id",
+		a.transfer_id AS "transfer.id",
+		a.sku_id AS "skuInfo.id",
+		a.trans_qty AS "transQty",
+		a.from_inv_op_id AS "fromInvOp.id",
+		a.from_inv_op_time AS "fromInvOpTime",
+		a.to_inv_op_id AS "toInvOp.id",
+		a.to_inv_op_time AS "toInvOpTime",
+		a.out_qty AS "outQty",
+		a.in_qty AS "inQty",
+		a.create_time AS "createDate",
+		a.create_id AS "createBy.id",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.status AS "delFalg"
+	</sql>
+	
+	<sql id="bizSkuTransferDetailJoins">
+		LEFT JOIN biz_sku_transfer bst ON bst.id = a.transfer_id
+	</sql>
+    
+	<select id="get" resultType="BizSkuTransferDetail">
+		SELECT 
+			<include refid="bizSkuTransferDetailColumns"/>
+		FROM biz_sku_transfer_detail a
+		<include refid="bizSkuTransferDetailJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizSkuTransferDetail">
+		SELECT 
+			<include refid="bizSkuTransferDetailColumns"/>
+		FROM biz_sku_transfer_detail a
+		<include refid="bizSkuTransferDetailJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="transfer != null and transfer.id != null and transfer.id != ''">
+				AND a.transfer_id = #{transfer.id}
+			</if>
+			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
+				AND a.sku_id = #{skuInfo.id}
+			</if>
+			<if test="fromInvOp != null and fromInvOp.id != null and fromInvOp.id != ''">
+				AND a.from_inv_op_id = #{fromInvOp.id}
+			</if>
+			<if test="fromInvOpTime != null and fromInvOpTime != ''">
+				AND a.from_inv_op_time = #{fromInvOpTime}
+			</if>
+			<if test="toInvOp != null and toInvOp.id != null and toInvOp.id != ''">
+				AND a.to_inv_op_id = #{toInvOp.id}
+			</if>
+			<if test="toInvOpTime != null and toInvOpTime != ''">
+				AND a.to_inv_op_time = #{toInvOpTime}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizSkuTransferDetail">
+		SELECT 
+			<include refid="bizSkuTransferDetailColumns"/>
+		FROM biz_sku_transfer_detail a
+		<include refid="bizSkuTransferDetailJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_sku_transfer_detail(
+			id,
+			transfer_id,
+			sku_id,
+			trans_qty,
+			from_inv_op_id,
+			from_inv_op_time,
+			to_inv_op_id,
+			to_inv_op_time,
+			out_qty,
+			in_qty,
+			create_time,
+			create_id,
+			u_version,
+			update_id,
+			update_time,
+			status
+		) VALUES (
+			#{id},
+			#{transfer.id},
+			#{skuInfo.id},
+			#{transQty},
+			#{fromInvOp.id},
+			#{fromInvOpTime},
+			#{toInvOp.id},
+			#{toInvOpTime},
+			#{outQty},
+			#{inQty},
+			#{createDate},
+			#{createBy.id},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFalg}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_sku_transfer_detail SET 	
+			transfer_id = #{transfer.id},
+			sku_id = #{skuInfo.id},
+			trans_qty = #{transQty},
+			from_inv_op_id = #{fromInvOp.id},
+			from_inv_op_time = #{fromInvOpTime},
+			to_inv_op_id = #{toInvOp.id},
+			to_inv_op_time = #{toInvOpTime},
+			out_qty = #{outQty},
+			in_qty = #{inQty},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_sku_transfer_detail SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.inventory.BizSkuTransferDao">
+    
+	<sql id="bizSkuTransferColumns">
+		a.id AS "id",
+		a.transfer_no AS "transferNo",
+		a.from_inv AS "fromInv.id",
+		fromInv.name AS "fromInv.name",
+		a.to_inv AS "toInv.id",
+		toInv.name AS "toInv.name",
+		a.apply_id AS "applyer.id",
+		apply.name AS "applyer.name",
+		a.biz_status AS "bizStatus",
+		a.recv_eta AS "recvEta",
+		a.remark AS "remark",
+		a.create_time AS "createDate",
+		a.create_id AS "createBy.id",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.status AS "delFlag"
+	</sql>
+	
+	<sql id="bizSkuTransferJoins">
+		LEFT JOIN biz_inventory_info fromInv ON fromInv.id = a.from_inv
+		LEFT JOIN sys_office outCent ON outCent.id = fromInv.cust_id
+		LEFT JOIN biz_inventory_info toInv ON toInv.id = a.to_inv
+		LEFT JOIN sys_office inCent ON inCent.id = toInv.cust_id
+		LEFT JOIN sys_user apply ON apply.id = a.apply_id
+		LEFT JOIN sys_user u ON u.id = a.create_id
+	</sql>
+    
+	<select id="get" resultType="BizSkuTransfer">
+		SELECT 
+			<include refid="bizSkuTransferColumns"/>
+		FROM biz_sku_transfer a
+		<include refid="bizSkuTransferJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizSkuTransfer">
+		SELECT 
+			<include refid="bizSkuTransferColumns"/>
+		FROM biz_sku_transfer a
+		<include refid="bizSkuTransferJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="transferNo != null and transferNo != ''">
+				AND a.transfer_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{transferNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{transferNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{transferNo},'%')</if>
+			</if>
+			<if test="fromInv != null and fromInv.id != null and fromInv.id != ''">
+				AND a.from_inv = #{fromInv.id}
+			</if>
+			<if test="toInv != null and toInv.id != null and toInv.id != ''">
+				AND a.to_inv = #{toInv.id}
+			</if>
+			<if test="bizStatus != null and bizStatus != ''">
+				AND a.biz_status = #{bizStatus}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizSkuTransfer">
+		SELECT 
+			<include refid="bizSkuTransferColumns"/>
+		FROM biz_sku_transfer a
+		<include refid="bizSkuTransferJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_sku_transfer(
+			id,
+			transfer_no,
+			from_inv,
+			to_inv,
+			apply_id,
+			biz_status,
+			recv_eta,
+			remark,
+			create_time,
+			create_id,
+			u_version,
+			update_id,
+			update_time,
+			status
+		) VALUES (
+			#{id},
+			#{transferNo},
+			#{fromInv.id},
+			#{toInv.id},
+			#{applyer.id},
+			#{bizStatus},
+			#{recvEta},
+			#{remark},
+			#{createDate},
+			#{createBy.id},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_sku_transfer SET
+			transfer_no = #{transferNo}
+			from_inv = #{fromInv.id},
+			to_inv = #{toInv.id},
+			apply_id = #{applyer.id},
+			biz_status = #{bizStatus},
+			recv_eta = #{recvEta},
+			remark = #{remark},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_sku_transfer SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<select id="findCountByToCent" resultType="Integer">
+		SELECT count(1) FROM biz_sku_transfer a
+		LEFT JOIN biz_inventory_info bii ON a.to_inv = bii.id
+		WHERE
+		bii.cust_id = (SELECT inv.cust_id FROM biz_inventory_info inv WHERE inv.id = #{invId})
+	</select>
+	
+</mapper>
