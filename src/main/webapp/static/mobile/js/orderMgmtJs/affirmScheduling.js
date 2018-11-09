@@ -397,7 +397,7 @@
 //	                    	console.log(result)
 	                      if(result.data.resultFlag == true) {
 	                      	GHUTILS.OPENPAGE({
-								url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+								url: "../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 								extras: {}
 							})
 	                      }

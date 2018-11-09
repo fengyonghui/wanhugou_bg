@@ -80,7 +80,7 @@
 	                    }
 	                    var orderTypes="";
 			            var purchaserId="";
-	                    if(res.data.bizOrderDetail.orderType==1){
+	                    if(res.data.bizOrderDetail.orderType==1||res.data.bizOrderDetail.orderType==8){
 	                    	$('.buttonCont .addSkuButton').attr('id',res.data.detail.shelfInfo.id);
 			            	var url= "/a/biz/shelf/bizOpShelfSku/findOpShelfSku4Mobile",
 			            	orderTypes=res.data.bizOrderDetail.orderType;
@@ -90,7 +90,7 @@
 			            	$('.addSkuButton').attr('id',res.data.skuInfo.id);
 			            	var url= "/a/biz/sku/bizSkuInfo/findPurseSkuList4Mobile",
 			            	purchaserId=res.data.customer.id;
-			            	orderTypes=res.data.bizOrderDetail.orderType;
+			            	orderTypes=res.data.bizOrderDetail.orderType; 
 			            	_this.searchSkuHtml(url,purchaserId,orderTypes);
 			            }
                 	}	                
@@ -120,7 +120,7 @@
                 	return;
                 }
                 var datas={};
-                if(orderTypes==1){
+                if(orderTypes==1||orderTypes==8){
                 	datas={
                 		'skuInfo.itemNo': itemNo,
                 	}

@@ -261,7 +261,7 @@
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
-	                    '<label>商品出厂价:</label>' +
+	                    '<label>商品结算价:</label>' +
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div></div>' +
 	                   
                     	 '<div class="mui-row">' +
@@ -486,7 +486,7 @@
 //							})
 //			            },800);
                         window.setTimeout(function(){
- 			                GHUTILS.OPENPAGE({
+   			                GHUTILS.OPENPAGE({
 							url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 							extras: {
 //								staListId:stcheckIdTxt,

@@ -672,7 +672,7 @@
 					if(res.ret == true) {
 						mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
-							url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
+							url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 							extras: {}
 						})
 					}
@@ -981,7 +981,7 @@
                     if(result.ret == true || result.ret == 'true') {
                         mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
-							url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
+							url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 							extras: {}
 						})
                     }else {

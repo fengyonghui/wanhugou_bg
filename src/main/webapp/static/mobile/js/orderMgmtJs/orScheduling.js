@@ -504,7 +504,7 @@
 //	                	console.log(result)
 	                    if(result == true) {
 	                       GHUTILS.OPENPAGE({
-								url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+								url: "../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 								extras: {
 
 								}

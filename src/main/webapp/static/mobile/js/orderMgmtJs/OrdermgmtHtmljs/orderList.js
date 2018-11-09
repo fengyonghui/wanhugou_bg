@@ -80,7 +80,13 @@
 								nameTxts = decodeURIComponent(_this.userInfo.conName)
 							}else {
 								nameTxts = ''
-							}							
+							}
+							var namePoTxt = '';
+							if(_this.userInfo.processTypeStr) {
+								namePoTxt = decodeURIComponent(_this.userInfo.processTypeStr)
+							}else {
+								namePoTxt = ''
+							}
 							if(_this.userInfo.orderNum==undefined){
 								_this.userInfo.orderNum="";
 							}
@@ -92,7 +98,10 @@
 							}
 							if(nameTxts==undefined){
 								nameTxts="";
-							}							
+							}	
+							if(namePoTxt==undefined){
+								namePoTxt="";
+							}
 							if(_this.userInfo.retainage==undefined){
 								_this.userInfo.retainage="";
 							}
@@ -122,6 +131,15 @@
 							}
 							if(_this.userInfo.includeTestData==undefined){
 								_this.userInfo.includeTestData="";
+							}
+							if(_this.userInfo.poBizStatus==undefined){
+								_this.userInfo.poBizStatus="";
+							}
+							if(_this.userInfo.poSchType==undefined){
+								_this.userInfo.poSchType="";
+							}
+							if(_this.userInfo.poWaitPay==undefined){
+								_this.userInfo.poWaitPay="";
 							}
 							//客户专员查询
 							var nameTxtss = '';
@@ -159,6 +177,9 @@
 							}							
 		            	    var statu = _this.userInfo.statu;	
 		            	    console.log(statu)
+//		            	    if(statu==undefined){
+//								statu="";
+//							}
 			                var f = document.getElementById("orderList");
 			                var childs = f.childNodes;
 			                for(var i = childs.length - 1; i >= 0; i--) {
@@ -182,9 +203,13 @@
 		                    	pager['mobileAuditStatus'] = _this.userInfo.mobileAuditStatus,//待同意发货
 		                    	pager['waitShipments'] = _this.userInfo.waitShipments,//待发货
 								pager['waitOutput'] = _this.userInfo.waitOutput,//待出库
+								pager['poBizStatus'] = _this.userInfo.poBizStatus,//付款单业务状态
+								pager['processTypeStr'] = namePoTxt,//付款单审核状态
+								pager['poSchType'] = _this.userInfo.poSchType,//付款单排产状态
+								pager['poWaitPay'] = _this.userInfo.poWaitPay,//付款单待支付
 		                    	pager['includeTestData'] = _this.userInfo.includeTestData;//测试数据
 		                    	getData(pager);
-		                   }else if(_this.userInfo.isFind){
+		                    }else if(_this.userInfo.isFind){
 		                    	pager['size']= 20;
 			                    pager['pageNo'] = 1;
 								pager['orderNum'] = _this.userInfo.staOrder;//订单编号
@@ -281,7 +306,7 @@
 												ProcessName = commonProcess.doOrderHeaderProcessFifth.name
 											}
 											if(commonProcess.doOrderHeaderProcessFifth.name == '审批完成') {
-												ProcessName = '待财务经理审批'
+												ProcessName = '订单支出信息审核'//待财务经理审批
 											}
 										}
 									}
@@ -294,7 +319,7 @@
 												ProcessName = commonProcess.jointOperationOriginProcess.name
 											}
 											if(commonProcess.jointOperationOriginProcess.name == '审批完成') {
-												ProcessName = '待财务经理审批'
+												ProcessName = '订单支出信息审核'//待财务经理审批
 											}
 										}
 									}
@@ -404,15 +429,6 @@
                                                 }
                                         	}
                                         }
-                                        //出库确认
-//                                      if(_this.staOrdsupplyFlag == true){
-//                                      	if(item.bizStatus >= res.data.SUPPLYING && item.bizStatus <= res.data.STOCKING && item.suplys != 0 && item.suplys != 721){
-//                                      		if(item.bizInvoiceList.length <= 0){
-//                                      			staSupplyBtnTxt="出库";
-//                                      			ordSupplyBtn = 'ordSupplyBtn';
-//                                      		}
-//                                      	}
-//                                      }
                                     }
                                     var ordwaterCourseBtn = '';
                                 	var ordwaterCourseBtnTxt ="";
@@ -509,13 +525,10 @@
                 				var bizPoHeader = '';
                 				//支出信息页面过来的按钮：
 								if(item.bizPoHeader) {
-									console.log(1)
 									bizPoHeader = item.bizPoHeader;
-									console.log(_this.OrdFlaginfo)
-//									if(_this.OrdFlaginfo == true) {
-										console.log(2)
+									console.log(bizPoHeader)
+									if(_this.OrdFlaginfo == true) {
 						            	if(bizPoHeader.bizStatus != 10) {
-						            		console.log(3)
 						            		//申请付款
 											if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != '' 
 											|| bizPoHeader.bizRequestHeader != null || bizPoHeader.bizRequestHeader != '') {
@@ -580,7 +593,7 @@
 												}
 											}
 											//审核
-							                if(_this.OrdFlagaudit == true) {   
+							                if(_this.OrdFlagaudit == true) {  
 												var DataRoleGener = '';
 												if(bizPoHeader.commonProcess) {
 													DataRoleGener = bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum;
@@ -589,25 +602,26 @@
 						                        if((bizPoHeader.commonProcess.id != null || bizPoHeader.commonProcess.id != '')
 						                        	&& paycheckTxt != '驳回'
 						                        	&& paycheckTxt != '审批完成'
-						                        	&& (fileRoleData.length>0 || userId==1))             {
-						                        	if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != ''
-						                        		|| bizPoHeader.bizRequestHeader != null || bizPoHeader.bizRequestHeader != ''){
+						                        	&& (fileRoleData || userId==1))             {
+						                        	if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != ''){
+						                        		 console.log(1)
+						                        		  console.log(item.id)
 						                        		//订单审核
 						                        	   	if(bizPoHeader.bizOrderHeader != ""){
-						                        	   		staCheckBtnTxt = '付款单审核';
-						                        	   		ordCheckBtn = 'ordCheckBtn';
-						                        	   		bizOrId = bizPoHeader.bizOrderHeader.id;
+						                        	   		applyCheckBtnTxt = '付款单审核';
+						                        	   		applyCheckBtn = 'applyCheckBtn';
+						                        	   		bizOrId = item.id;
 						                        	   	}
-						                        	   	//备货单审核
-						                        	   	if(bizPoHeader.bizRequestHeader != ""){
-						                        	   		staCheckBtnTxt = '付款单审核';
-						                        	   		ordCheckBtn = 'ordCheckBtn';
-						                        	   		bizReId = bizPoHeader.bizRequestHeader.id;
+						                        	   	if(bizPoHeader.bizOrderHeader == ""){
+						                        	   		applyCheckBtnTxt = '付款单审核';
+						                        	   		applyCheckBtn = 'applyCheckBtn';
+						                        	   		bizOrId = item.id;
 						                        	   	}
 						                        	}else{
+						                        		console.log(2)
 						                        		//采购单审核
-						                        		staCheckBtnTxt = '付款单审核';
-						                        		ordCheckBtn = 'ordCheckBtn';
+						                        		applyCheckBtnTxt = '付款单审核';
+						                        		applyCheckBtn = 'applyDetailBtn';
 						                        		bizReId = bizPoHeader.id;
 						                        	}
 						                        }
@@ -655,8 +669,7 @@
 						                	}
 						                	//修改
 						                	//付款单取消
-						                	console.log(_this.orCancAmenFlag)
-//						                	if(_this.orCancAmenFlag == true) {
+						                	if(_this.orCancAmenFlag == true) {
 						                		if(paycheckTxt == null || paycheckTxt == ''
 					                			|| paycheckTxt == '驳回') {
 						                			orAmendBtn = 'orAmendBtn';
@@ -664,19 +677,19 @@
 						                		}
 					                			applyCandelBtn = 'applyCandelBtn';
 												applyCandelBtnTxt = '付款单取消';
-//						                	}
+						                	}
 						            		//详情
-//						                	if(_this.OrdFlaginfo == true) {
+						                	if(_this.OrdFlaginfo == true) {
 												applyDetailBtn = 'applyDetailBtn';
 												applyDetailBtnTxt = '付款单详情';
-//						                	}
+						                	}
 						                	//确认排产
 						                	if(_this.affirmSchedulingFlag == true) {
 						                		affirmScheduBtn = 'affirmScheduBtn';
 												affirmScheduBtnTxt = '确认排产';
 						                	}
 						            	}
-//						            }
+						            }
 								}
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group" id="rodiv_' + item.orderType + '">'+
 										'<div class="mui-input-row">' +
@@ -703,9 +716,7 @@
 											'<label>更新时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 										'</div>' +
-										'<div class="mui-input-row app_color40 app_text_center content_part operation" id="foot">' +
-//											'<div class="'+ordSupplyBtn+'"  staOrdId="'+ item.id +'">' +
-///*出库*/				                        staSupplyBtnTxt +</div>'+											
+										'<div class="mui-input-row app_color40 app_text_center content_part operation" id="foot">' +										
 											'<div class="'+ordDetailBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 							/*详情*/				staDetailBtnTxt +'</div>'+
 											'<div class="'+ ordCheckBtn +'" staOrdId="'+ item.id +'">' +
@@ -732,7 +743,7 @@
 										'<div class="mui-row app_color40 app_text_center content_part operation" id="foot">' +
 											'<div class="'+applyListBtn+'" poheaderId="'+ bizPoHeader.id +'" bizOrIdTxt="'+ bizOrId +'" bizReIdTxt="'+ bizReId +'">' +
 							/*付款单列表*/		applyListBtnTxt +'</div>'+
-											'<div class="'+applyCheckBtn+'" poheaderId="'+ bizPoHeader.id +'" bizOrIdTxt="'+ bizOrId +'" bizReIdTxt="'+ bizReId +'">' +
+											'<div class="'+applyCheckBtn+'" poheaderId="'+ bizPoHeader.id +'" bizoridtxt="'+ item.id +'" bizReIdTxt="'+ bizReId +'">' +
 							/*付款单审核*/		applyCheckBtnTxt +'</div>'+	
 											'<div class="'+applyDetailBtn+'" poheaderId="'+ bizPoHeader.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 							/*付款单详情*/		applyDetailBtnTxt +'</div>'+
@@ -1175,21 +1186,6 @@
 					})
 				}
 			})
-			//出库 Stock- Out /
-			$('.content_part').on('tap', '.ordSupplyBtn', function() {
-				var url = $(this).attr('url');
-				var staOrdId = $(this).attr('staOrdId');			
-				if(url) {
-					mui.toast('子菜单不存在')
-				} else if(staOrdId == staOrdId) {
-                    GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderstockOut.html",
-						extras: {
-							staOrdId: staOrdId,
-						}
-					})
-				}
-			})
 			//支付流水
 			$('.content_part').on('tap', '.ordwaterCourseBtn', function() {
 				var url = $(this).attr('url');
@@ -1211,22 +1207,22 @@
 	        $('.content_part').on('tap', '.applyCheckBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('bizReIdTxt');//备货单 ID
-				var staOrdIdd = $(this).attr('bizOrIdTxt');//订单 ID
+				var staOrdIdd = $(this).attr('bizoridtxt');//订单 ID
 				var audit = 'audit', processPo = 'processPo';
 				if(url) {
 					mui.toast('子菜单不存在')
 				}
-				else if(staOrdId) {
-					//备货单
-					GHUTILS.OPENPAGE({
-						url: '../../html/inventoryMagmetHtml/inCheck.html',
-						extras: {
-							staOrdIds: staOrdId,
-							audits:audit,
-							processPos:processPo
-						}
-					})
-				}
+//				else if(staOrdId) {
+//					//备货单
+//					GHUTILS.OPENPAGE({
+//						url: '../../html/inventoryMagmetHtml/inCheck.html',
+//						extras: {
+//							staOrdIds: staOrdId,
+//							audits:audit,
+//							processPos:processPo
+//						}
+//					})
+//				}
 				else if(staOrdIdd){
 					GHUTILS.OPENPAGE({
 						url: '../../../html/orderMgmtHtml/OrdermgmtHtml/orderCheck.html',
