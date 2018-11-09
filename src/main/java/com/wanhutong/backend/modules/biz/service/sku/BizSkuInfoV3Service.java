@@ -423,4 +423,14 @@ public class BizSkuInfoV3Service extends CrudService<BizSkuInfoV3Dao, BizSkuInfo
 		attributeValueService.updateValue(sizeValue.getId(),size);
 		attributeValueService.updateValue(colorValue.getId(),color);
 	}
+
+	/**
+	 * 调拨时，查找原库存中有的商品
+	 * @param skuInfo
+	 * @param fromInv
+	 * @return
+	 */
+	public List<BizSkuInfo> findInvSkuList(BizSkuInfo skuInfo, Integer fromInv) {
+		return dao.findInvSkuList(skuInfo,fromInv);
+	}
 }

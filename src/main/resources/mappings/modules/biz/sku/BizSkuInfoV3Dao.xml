@@ -727,4 +727,47 @@
 		WHERE id = #{id}
 	</update>
 
+	<select id="findInvSkuList" resultType="BizSkuInfo">
+		SELECT
+			a.id AS "id",
+			a.name AS "name",
+			a.item_no AS "itemNo",
+			a.part_no AS "partNo",
+			a.product_id AS "productInfo.id",
+			prod.img_url AS "productInfo.imgUrl",
+			prod.vendor_id AS "productInfo.office.id",
+			prod.venor_name AS "productInfo.office.name"
+		FROM biz_sku_info a
+		JOIN biz_product_info prod ON a.prod_id = prod.id
+		JOIN biz_inventory_sku bis ON a.id = bis.sku_id
+		JOIN biz_inventory_info bii ON bis.inv_id = bii.id
+		WHERE
+			1 = 1
+			AND bii.cust_id = #{fromInv}
+			<if test="name != null and name != ''">
+				AND a.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			</if>
+			<if test="itemNo != null and itemNo != ''">
+				AND a.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{itemNo}, '%')</if>
+			</if>
+			<if test="partNo != null and partNo != ''">
+				AND a.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{partNo}, '%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.office != null and productInfo.office.name != null and productInfo.office.name != ''">
+				AND prod.venor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.office.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.office.name}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{productInfo.office.name}, '%')</if>
+			</if>
+	</select>
+
 </mapper>
