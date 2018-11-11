@@ -366,7 +366,7 @@
                 async: false,
                 success: function (result) {
                     result = JSON.parse(result);
-                    showUnitPriceFlag = reult.data;
+                    showUnitPriceFlag = result.data;
                 }
             });
             return showUnitPriceFlag;
