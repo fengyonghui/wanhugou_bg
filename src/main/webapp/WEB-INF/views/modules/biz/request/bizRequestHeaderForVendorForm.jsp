@@ -130,7 +130,7 @@
                                 //tr_tds+= "<td><a href="+ "'${ctx}/sys/office/supplierForm?id=" + skuInfo.productInfo.office.id + "&gysFlag=onlySelect'>"+ skuInfo.productInfo.office.name + "</a></td>";
                                 tr_tds+= "<td>"+ skuInfo.productInfo.office.name + "</td>";
                                 tr_tds+= "<td>" + skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td>";
-                                <!-- 隐藏结算价 -->
+                                //隐藏结算价
                                 // tr_tds+= "<td>"+skuInfo.buyPrice+"</td>";
                                 tr_tds+= "<td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>";
 
@@ -222,7 +222,7 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
-                            <!-- 隐藏结算价 -->
+                            //隐藏结算价
                             // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
@@ -270,7 +270,7 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
-                            <!-- 隐藏结算价 -->
+                            //隐藏结算价
                             // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";

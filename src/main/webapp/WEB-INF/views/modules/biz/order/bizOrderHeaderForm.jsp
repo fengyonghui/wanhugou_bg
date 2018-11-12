@@ -391,7 +391,7 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
-                            <!-- 隐藏结算价 -->
+                            //隐藏结算价
                             // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
@@ -439,7 +439,7 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
-                            <!-- 隐藏结算价 -->
+                            //隐藏结算价
                             // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
