@@ -236,10 +236,11 @@
 										'<label>采购数量：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty +'" reqQty disabled>'+
 									'</div>'+
-									'<div class="mui-input-row">'+
-										'<label>结算价：</label>'+
-										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
-									'</div>'+
+//									隐藏结算价
+//									'<div class="mui-input-row">'+
+//										'<label>结算价：</label>'+
+//										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
+//									'</div>'+
 									'<div class="mui-input-row">'+
 										'<label>总金额：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
@@ -301,10 +302,11 @@
 										'<label>采购数量：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty +'" reqQty disabled>'+
 									'</div>'+
-									'<div class="mui-input-row">'+
-										'<label>结算价：</label>'+
-										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
-									'</div>'+
+//									隐藏结算价
+//									'<div class="mui-input-row">'+
+//										'<label>结算价：</label>'+
+//										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
+//									'</div>'+
 									'<div class="mui-input-row">'+
 										'<label>总金额：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
@@ -572,10 +574,11 @@
 								'<label>商品货号：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled>'+
 							'</div>'+
-							'<div class="mui-input-row">'+
-								'<label>结算价：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice.toFixed(1) +'" disabled>'+
-							'</div>'+
+//							隐藏结算价
+//							'<div class="mui-input-row">'+
+//								'<label>结算价：</label>'+
+//								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice.toFixed(1) +'" disabled>'+
+//							'</div>'+
 							'<div class="mui-input-row">'+
 								'<label>申报数量：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" reqQty disabled>'+

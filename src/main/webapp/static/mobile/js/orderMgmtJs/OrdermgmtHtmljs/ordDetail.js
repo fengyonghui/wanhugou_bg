@@ -316,10 +316,11 @@
 										'<label>采购数量：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty +'" reqQty disabled>'+
 									'</div>'+
-									'<div class="mui-input-row">'+
-										'<label>结算价：</label>'+
-										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
-									'</div>'+
+//									隐藏结算价
+//									'<div class="mui-input-row">'+
+//										'<label>结算价：</label>'+
+//										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
+//									'</div>'+
 									'<div class="mui-input-row">'+
 										'<label>总金额：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
@@ -381,10 +382,11 @@
 										'<label>采购数量：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty +'" reqQty disabled>'+
 									'</div>'+
-									'<div class="mui-input-row">'+
-										'<label>结算价：</label>'+
-										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
-									'</div>'+
+//									隐藏结算价
+//									'<div class="mui-input-row">'+
+//										'<label>结算价：</label>'+
+//										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
+//									'</div>'+
 									'<div class="mui-input-row">'+
 										'<label>总金额：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
@@ -663,11 +665,13 @@
 	                    '<div class="mui-input-row ">' +
 	                    '<label>供应商:</label>' + 
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div>' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="buyPrice">' +
-	                    '<li class="mui-table-view-cell">' +
-	                    '<div class="mui-input-row ">' +
-	                    '<label>商品结算价:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div></div>' +
+//	                    隐藏结算价
+//	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="buyPrice">' +
+//	                    '<li class="mui-table-view-cell">' +
+//	                    '<div class="mui-input-row ">' +
+//	                    '<label>商品结算价:</label>' +
+//	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div>'+
+	                    '</div>' +
 	                   
                     	 '<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
@@ -738,18 +742,19 @@
 						$(p).hide();
 					});
 				}
-				if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){
-					var buyPriceArr=$('#commoditybox #buyPrice')			
-					$.each(buyPriceArr, function(o,p) {
-						$(p).show();
-					});
-					
-				}else{
-					var buyPriceArr=$('#commoditybox #buyPrice')			
-					$.each(buyPriceArr, function(o,p) {
-						$(p).hide();
-					});
-				}
+//				结算价隐藏
+//				if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){
+//					var buyPriceArr=$('#commoditybox #buyPrice')			
+//					$.each(buyPriceArr, function(o,p) {
+//						$(p).show();
+//					});
+//					
+//				}else{
+//					var buyPriceArr=$('#commoditybox #buyPrice')			
+//					$.each(buyPriceArr, function(o,p) {
+//						$(p).hide();
+//					});
+//				}
 			}
 		},
 		formatDateTime: function(unix) {
