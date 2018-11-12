@@ -400,6 +400,9 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
         model.addAttribute("auditFithStatus", doOrderHeaderProcessFifthConfig.getAutProcessId());
         model.addAttribute("auditStatus", originConfig.getPayProcessId());
+
+        //付款单审核用
+        model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
         //判断是否为代销订单
         if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
             return "modules/biz/order/bizCommissionOrderHeaderList";
@@ -555,6 +558,9 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("auditFithStatus", doOrderHeaderProcessFifthConfig.getAutProcessId());
         model.addAttribute("auditStatus", originConfig.getPayProcessId());
 
+        //付款单审核用
+        model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
+
         resultMap.put("originConfigMap", originConfigMap);
         resultMap.put("roleSet", roleSet);
         resultMap.put("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
@@ -575,7 +581,7 @@ public class BizOrderHeaderController extends BaseController {
         resultMap.put("REFUNDREJECT", OrderHeaderDrawBackStatusEnum.REFUNDREJECT.getState());
         resultMap.put("REFUNDED", OrderHeaderDrawBackStatusEnum.REFUNDED.getState());
         resultMap.put("COMMISSION_ORDER", BizOrderTypeEnum.COMMISSION_ORDER.getState());
-
+        resultMap.put("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
 
         return JsonUtil.generateData(resultMap, request.getParameter("callback"));
     }
