@@ -431,6 +431,7 @@ public class BizSkuInfoV3Service extends CrudService<BizSkuInfoV3Dao, BizSkuInfo
 	 * @return
 	 */
 	public List<BizSkuInfo> findInvSkuList(BizSkuInfo skuInfo, Integer fromInv) {
-		return dao.findInvSkuList(skuInfo,fromInv);
+		skuInfo.setFromInv(fromInv);
+		return dao.findInvSkuList(skuInfo);
 	}
 }

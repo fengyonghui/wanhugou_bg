@@ -9,8 +9,12 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-					loading('正在提交，请稍等...');
-					form.submit();
+				    var transferSku = $("#transferSku").find("tr").length;
+				    if (parseInt(transferSku) > parseInt(0)) {
+                        $("#btnSubmit").attr("disabled","disabled ");
+                        loading('正在提交，请稍等...');
+                        form.submit();
+					}
 				},
 				errorContainer: "#messageBox",
 				errorPlacement: function(error, element) {
@@ -24,6 +28,7 @@
 			});
 
 			$("#searchData").click(function () {
+			    $("#transferSku2").html("");
                 var skuName=$("#skuName").val();
                 $("#skuNameCopy").val(skuName);
                 var skuCode =$("#skuCode").val();
@@ -32,15 +37,21 @@
                 $("#itemNoCopy").val(itemNo);
                 var vendor=$("#vendor").val();
                 $("#vendorCopy").val(vendor);
-                var fromInv = $("#fromInv").val();
+                var fromInv = $("#fromInv option:selected").val();
+                if (fromInv == "") {
+                    alert("请先选择原仓库");
+                    return false;
+				}
                 $.ajax({
 					type:"post",
-					url:"${ctx}/biz/inventory/bizSkuTransfer/findInvSkuList?fromInv =" + fromInv,
+					url:"${ctx}/biz/inventory/bizSkuTransfer/findInvSkuList?fromInv=" + fromInv,
 					data:$('#searchForm').serialize(),
 					success:function (data) {
 						if (data == null) {
-						    var html = "<p><span style='height: 100px; width: 100%'>原库存没有您查询的商品</span></p>";
-						    $("#transferSku2").append(html);
+						    alert("请选择原仓库，并且输入查询条件");
+                        }
+                        if (data.length == 0) {
+                            alert("原库存没有您查询的商品");
                         }
                         if (data != null) {
 						    var html = "";
@@ -77,6 +88,21 @@
             $("#transferSku").find($("#skuId_"+obj)).removeAttr("name");
             $("#transferSku").find($("#transferNum_"+obj)).removeAttr("name");
         }
+		function delItem(obj) {
+			$.ajax({
+				type:"post",
+				url:"${ctx}/biz/inventory/bizSkuTransfer/deleteAjax?id=" + obj,
+				success:function (data) {
+					if (data == "ok") {
+					    alert("删除成功");
+					}
+					if (data == "error") {
+					    alert("删除失败");
+					}
+					window.location.reload();
+                }
+			});
+        }
 	</script>
 </head>
 <body>
@@ -91,7 +117,7 @@
 			<div class="control-group">
 				<label class="control-label">调拨单号：</label>
 				<div class="controls">
-					<form:input path="transferNo" cssClass="input-medium required"/>
+					<form:input path="transferNo" readonly="true" cssClass="input-medium required"/>
 					<span class="help-inline"><font color="red">*</font> </span>
 				</div>
 			</div>
@@ -99,7 +125,7 @@
 		<div class="control-group">
 			<label class="control-label">原仓库：</label>
 			<div class="controls">
-				<form:select path="fromInv" class="input-xlarge required">
+				<form:select id="fromInv" path="fromInv.id" class="input-medium required">
 					<form:option value="" label="请选择"/>
 					<c:forEach items="${fromInvList}" var="inv">
 						<form:option label="${inv.name}" value="${inv.id}" htmlEscape="false"/>
@@ -111,7 +137,7 @@
 		<div class="control-group">
 			<label class="control-label">目标仓库：</label>
 			<div class="controls">
-				<form:select path="toInv" class="input-xlarge required">
+				<form:select path="toInv.id" class="input-medium required">
 					<form:option value="" label="请选择"/>
 					<c:forEach items="${toInvList}" var="inv">
 						<form:option label="${inv.name}" value="${inv.id}" htmlEscape="false"/>
@@ -124,7 +150,7 @@
 		<div class="control-group">
 			<label class="control-label">业务状态：</label>
 			<div class="controls">
-				<form:select path="bizStatus" class="input-xlarge required">
+				<form:select path="bizStatus" class="input-medium required">
 					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getDictList('transfer_bizStatus')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
@@ -181,17 +207,19 @@
 					<tbody id="transferSku">
 						<c:if test="${transferDetailList != null}">
 							<c:forEach items="${transferDetailList}" var="transferDetail">
-								<td><img src="${transferDetail.skuInfo.productInfo.imgUrl}" width="100" height="100"/></td>
-								<td>${transferDetail.skuInfo.productInfo.brandName}</td>
-								<td>${transferDetail.skuInfo.productInfo.office.name}</td>
-								<td>${transferDetail.skuInfo.name}</td>
-								<td>${transferDetail.skuInfo.partNo}</td>
-								<td>${transferDetail.skuInfo.itemNo}</td>
-								<td><input name="transferNums" type="number" min="1" value=""/></td>
-								<input name="skuIds" type="hidden" value="${transferDetail.id}"/>
-								<c:if test="${bizSkuTransfer.str ne 'detail' && bizSkuTransfer.str ne 'audit'}">
-									<td><a href="#" onclick="delItem(transferDetail.id)"></a>删除</td>
-								</c:if>
+								<tr>
+									<td><img src="${transferDetail.skuInfo.productInfo.imgUrl}" width="100" height="100"/></td>
+									<td>${transferDetail.skuInfo.productInfo.brandName}</td>
+									<td>${transferDetail.skuInfo.productInfo.office.name}</td>
+									<td>${transferDetail.skuInfo.name}</td>
+									<td>${transferDetail.skuInfo.partNo}</td>
+									<td>${transferDetail.skuInfo.itemNo}</td>
+									<td><input name="transferNums" type="number" min="1" class="input-mini" value="${transferDetail.transQty}"/></td>
+									<input name="skuIds" type="hidden" value="${transferDetail.skuInfo.id}"/>
+									<c:if test="${bizSkuTransfer.str ne 'detail' && bizSkuTransfer.str ne 'audit'}">
+										<td><a href="#" onclick="delItem(${transferDetail.id})">删除</a></td>
+									</c:if>
+								</tr>
 							</c:forEach>
 						</c:if>
 					</tbody>
@@ -217,19 +245,21 @@
 		<div class="control-group">
 			<label class="control-label">备注：</label>
 			<div class="controls">
-				<form:input path="remark" htmlEscape="false" maxlength="200" class="input-xlarge "/>
+				<form:textarea path="remark" htmlEscape="false" rows="3" maxlength="200" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<c:if test="${bizSkuTransfer.str ne 'detail' && bizSkuTransfer.str ne 'audit'}">
+				<shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			</c:if>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
 	<form:form id="searchForm" modelAttribute="bizSkuInfo" >
-		<form:hidden id="skuNameCopy" path="name"/>
-		<form:hidden id="skuCodeCopy" path="partNo"/>
-		<form:hidden id="itemNoCopy" path="itemNo"/>
-		<form:hidden id="venderCopy" path="productInfo.office.id"/>
+		<input type="hidden" id="skuNameCopy" name="name" value=""/>
+		<input type="hidden" id="skuCodeCopy" name="partNo" value=""/>
+		<input type="hidden" id="itemNoCopy" name="itemNo" value=""/>
+		<input type="hidden" id="vendorCopy" name="vendorName" value=""/>
 	</form:form>
 </body>
 </html>

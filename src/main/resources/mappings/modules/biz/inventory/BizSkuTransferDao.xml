@@ -124,14 +124,12 @@
 	
 	<update id="update">
 		UPDATE biz_sku_transfer SET
-			transfer_no = #{transferNo}
 			from_inv = #{fromInv.id},
 			to_inv = #{toInv.id},
 			apply_id = #{applyer.id},
 			biz_status = #{bizStatus},
 			recv_eta = #{recvEta},
 			remark = #{remark},
-			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

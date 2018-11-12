@@ -6,11 +6,17 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransferDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSkuTransferDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV3Service;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,12 +43,16 @@ import java.util.List;
 @RequestMapping(value = "${adminPath}/biz/inventory/bizSkuTransfer")
 public class BizSkuTransferController extends BaseController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(BizSkuTransferController.class);
+
 	@Autowired
 	private BizSkuTransferService bizSkuTransferService;
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
 	@Autowired
 	private BizSkuInfoV3Service bizSkuInfoService;
+	@Autowired
+	private BizSkuTransferDetailService bizSkuTransferDetailService;
 	
 	@ModelAttribute
 	public BizSkuTransfer get(@RequestParam(required=false) Integer id) {
@@ -69,6 +79,14 @@ public class BizSkuTransferController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizSkuTransfer:view")
 	@RequestMapping(value = "form")
 	public String form(BizSkuTransfer bizSkuTransfer, Model model) {
+		BizSkuTransferDetail bizSkuTransferDetail = new BizSkuTransferDetail();
+		bizSkuTransferDetail.setTransfer(bizSkuTransfer);
+		List<BizSkuTransferDetail> skuTransferDetailList = bizSkuTransferDetailService.findList(bizSkuTransferDetail);
+		if (CollectionUtils.isNotEmpty(skuTransferDetailList)) {
+			model.addAttribute("transferDetailList",skuTransferDetailList);
+		}
+		model.addAttribute("fromInvList",bizInventoryInfoService.findAllList(new BizInventoryInfo()));
+		model.addAttribute("toInvList",bizInventoryInfoService.findList(new BizInventoryInfo()));
 		model.addAttribute("bizSkuTransfer", bizSkuTransfer);
 		return "modules/biz/inventory/bizSkuTransferForm";
 	}
@@ -95,7 +113,35 @@ public class BizSkuTransferController extends BaseController {
 	@ResponseBody
 	@RequestMapping("findInvSkuList")
 	public List<BizSkuInfo> findInvSkuList(BizSkuInfo skuInfo, Integer fromInv) {
+		if (skuInfo == null ||
+				(StringUtils.isBlank(skuInfo.getName()) &&
+				 StringUtils.isBlank(skuInfo.getItemNo()) &&
+				 StringUtils.isBlank(skuInfo.getPartNo()) &&
+				 StringUtils.isBlank(skuInfo.getVendorName())) || fromInv ==null) {
+			return null;
+
+		}
 		return bizSkuInfoService.findInvSkuList(skuInfo,fromInv);
+	}
+
+	/**
+	 * 异步删除调拨单详情
+	 * @param id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "deleteAjax")
+	public String deleteAjax(Integer id) {
+		if (id == null) {
+			return "error";
+		}
+		try {
+			bizSkuTransferDetailService.delete(new BizSkuTransferDetail(id));
+		} catch (Exception e) {
+			LOGGER.error("调拨单详情删除失败，调拨单详情ID【{}】",id);
+			return "error";
+		}
+		return "ok";
 	}
 
 }

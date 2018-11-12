@@ -6,6 +6,13 @@
 		a.id AS "id",
 		a.transfer_id AS "transfer.id",
 		a.sku_id AS "skuInfo.id",
+		sku.name AS "skuInfo.name",
+		sku.item_no AS "skuInfo.itemNo",
+		sku.part_no AS "skuInfo.partNo",
+		prod.img_url AS "skuInfo.productInfo.imgUrl",
+		prod.vendor_id AS "skuInfo.productInfo.vendorId",
+		prod.vendor_name AS "skuInfo.productInfo.vendorName",
+		prod.brand_name AS "skuInfo.productInfo.brandName",
 		a.trans_qty AS "transQty",
 		a.from_inv_op_id AS "fromInvOp.id",
 		a.from_inv_op_time AS "fromInvOpTime",
@@ -18,11 +25,13 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		a.status AS "delFalg"
+		a.status AS "delFlag"
 	</sql>
 	
 	<sql id="bizSkuTransferDetailJoins">
 		LEFT JOIN biz_sku_transfer bst ON bst.id = a.transfer_id
+		LEFT JOIN biz_sku_info sku ON sku.id = a.sku_id
+		LEFT JOIN biz_product_info prod ON prod.id = sku.prod_id
 	</sql>
     
 	<select id="get" resultType="BizSkuTransferDetail">
@@ -127,7 +136,7 @@
 			#{uVersion},
 			#{updateBy.id},
 			#{updateDate},
-			#{delFalg}
+			#{delFlag}
 		)
 	</insert>
 	
@@ -146,7 +155,6 @@
 			<if test="inQty != null and inQty != ''">
 				in_qty = #{inQty},
 			</if>
-			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

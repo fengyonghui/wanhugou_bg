@@ -71,8 +71,7 @@ public interface BizSkuInfoV3Dao extends CrudDao<BizSkuInfo> {
     /**
      * 调拨时，查找原库存中有的商品
      * @param skuInfo
-     * @param fromInv
      * @return
      */
-   List<BizSkuInfo> findInvSkuList(BizSkuInfo skuInfo,@Param("fromInv") Integer fromInv);
+   List<BizSkuInfo> findInvSkuList(BizSkuInfo skuInfo);
 }

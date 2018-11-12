@@ -4,7 +4,10 @@
 package com.wanhutong.backend.modules.biz.service.inventory;
 
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -15,6 +18,7 @@ import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.TransferStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,14 +83,29 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
 		skuTransfer.setBizStatus(bizSkuTransfer.getBizStatus() == null ? TransferStatusEnum.UNREVIEWED.getState() : bizSkuTransfer.getBizStatus());
 		skuTransfer.setRecvEta(bizSkuTransfer.getRecvEta());
 		skuTransfer.setRemark(bizSkuTransfer.getRemark());
-		super.save(bizSkuTransfer);
-		//调拨单详情
+		super.save(skuTransfer);
+		//调拨单detail
+		List<BizSkuTransferDetail> transferDetailList = Lists.newArrayList();
+		if (bizSkuTransfer.getId() != null) {
+			BizSkuTransferDetail bizSkuTransferDetail = new BizSkuTransferDetail();
+			bizSkuTransferDetail.setTransfer(bizSkuTransfer);
+			transferDetailList = bizSkuTransferDetailService.findList(bizSkuTransferDetail);
+		}
+		Map<Integer,Integer> map = Maps.newHashMap();
+		if (CollectionUtils.isNotEmpty(transferDetailList)) {
+			for (BizSkuTransferDetail transferDetail : transferDetailList) {
+				map.put(transferDetail.getSkuInfo().getId(),transferDetail.getId());
+			}
+		}
 		String skuIds = bizSkuTransfer.getSkuIds();
 		String transferNums = bizSkuTransfer.getTransferNums();
 		String[] skuIdAttr = StringUtils.split(skuIds, ",");
 		String[] transferAttr = StringUtils.split(transferNums, ",");
 		for (int i = 0; i < skuIdAttr.length; i++) {
 			BizSkuTransferDetail bizSkuTransferDetail = new BizSkuTransferDetail();
+			if (map.containsKey(Integer.valueOf(skuIdAttr[i]))) {
+				bizSkuTransferDetail.setId(map.get(Integer.valueOf(skuIdAttr[i])));
+			}
 			bizSkuTransferDetail.setTransfer(skuTransfer);
 			bizSkuTransferDetail.setSkuInfo(new BizSkuInfo(Integer.valueOf(skuIdAttr[i])));
 			bizSkuTransferDetail.setTransQty(Integer.valueOf(transferAttr[i]));

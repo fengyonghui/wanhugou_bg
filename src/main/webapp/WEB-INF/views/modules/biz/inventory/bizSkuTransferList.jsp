@@ -47,13 +47,13 @@
 			</li>
 			<li><label>业务状态：</label>
 				<form:select path="bizStatus" class="input-medium">
-					<form:option value="" label=""/>
+					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getDictList('transfer_bizStatus')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
 			<li><label>审核状态：</label>
 				<form:select path="bizStatus" class="input-medium">
-					<form:option value="" label=""/>
+					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getDictList('')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
@@ -85,10 +85,11 @@
 				<td>${bizSkuTransfer.remark}</td>
 				<td>${fns:getDictLabel(bizSkuTransfer.bizStatus,'transfer_bizStatus' ,'未知状态' )}</td>
 				<td><fmt:formatDate value="${bizSkuTransfer.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-				<shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit"><td>
+				<td><shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit">
+					<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=detail">详情</a>
     				<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}">修改</a>
 					<a href="${ctx}/biz/inventory/bizSkuTransfer/delete?id=${bizSkuTransfer.id}" onclick="return confirmx('确认要删除该库存调拨吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
+				</shiro:hasPermission></td>
 			</tr>
 		</c:forEach>
 		</tbody>
