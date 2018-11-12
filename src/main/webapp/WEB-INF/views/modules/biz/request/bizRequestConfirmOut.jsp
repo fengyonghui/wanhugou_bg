@@ -109,6 +109,7 @@
                             alert("该商品库存不足");
                             return false;
 						}else {
+                            $Mask.AddLogo("正在加载");
 							$.ajax({
 								type:"post",
 								contentType: 'application/json;charset=utf-8',
