@@ -286,9 +286,8 @@
         <th>应付金额</th>
         <c:if test="${source ne 'vendor'}">
             <th>服务费</th>
-            <shiro:hasPermission name="biz:order:buyPrice:view">
-                <th>佣金</th>
-            </shiro:hasPermission>
+            <!-- 隐藏佣金 -->
+            <%--<th>佣金</th>--%>
         </c:if>
         <th>发票状态</th>
         <th>业务状态</th>
@@ -377,12 +376,11 @@
                                       pattern="0.00"/>
                 </td>
             </c:if>
-            <shiro:hasPermission name="biz:order:buyPrice:view">
-                <td>
-                    <fmt:formatNumber type="number" value="${orderHeader.totalDetail-orderHeader.totalBuyPrice}"
-                                      pattern="0.00"/>
-                </td>
-            </shiro:hasPermission>
+            <!-- 隐藏佣金 -->
+            <%--<td>--%>
+                <%--<fmt:formatNumber type="number" value="${orderHeader.totalDetail-orderHeader.totalBuyPrice}"--%>
+                                  <%--pattern="0.00"/>--%>
+            <%--</td>--%>
             <td>
                     ${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
             </td>
