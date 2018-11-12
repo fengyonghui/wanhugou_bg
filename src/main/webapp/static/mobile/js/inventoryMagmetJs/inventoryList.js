@@ -390,21 +390,21 @@
 						                        	if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != ''
 						                        		|| bizPoHeader.bizRequestHeader != null || bizPoHeader.bizRequestHeader != ''){
 						                        		//订单审核
-						                        	   	if(bizPoHeader.bizOrderHeader != ""){
-						                        	   		staCheckBtnTxt = '付款单审核';
-						                        	   		ordCheckBtn = 'ordCheckBtn';
-						                        	   		bizOrId = bizPoHeader.bizOrderHeader.id;
-						                        	   	}
+//						                        	   	if(bizPoHeader.bizOrderHeader != ""){
+//						                        	   		applyCheckBtnTxt = '付款单审核';
+//						                        	   		applyCheckBtn = 'applyCheckBtn';
+//						                        	   		bizOrId = bizPoHeader.bizOrderHeader.id;
+//						                        	   	}
 						                        	   	//备货单审核
 						                        	   	if(bizPoHeader.bizRequestHeader != ""){
-						                        	   		staCheckBtnTxt = '付款单审核';
-						                        	   		ordCheckBtn = 'ordCheckBtn';
+						                        	   		applyCheckBtnTxt = '付款单审核';
+						                        	   		applyCheckBtn = 'applyCheckBtn';
 						                        	   		bizReId = bizPoHeader.bizRequestHeader.id;
 						                        	   	}
 						                        	}else{
 						                        		//采购单审核
-						                        		staCheckBtnTxt = '付款单审核';
-						                        		ordCheckBtn = 'ordCheckBtn';
+						                        		applyCheckBtnTxt = '付款单审核';
+						                        		applyCheckBtn = 'applyCheckBtn';
 						                        		bizReId = bizPoHeader.id;
 						                        	}
 						                        }
@@ -453,11 +453,11 @@
 						                	//修改
 						                	//付款单取消
 						                	if(_this.orCancAmenFlag == true) {
-						                		if(paycheckTxt == null || paycheckTxt == ''
-					                			|| paycheckTxt == '驳回') {
-						                			orAmendBtn = 'orAmendBtn';
-						                			orAmendBtnTxt = '修改';
-						                		}
+//						                		if(paycheckTxt == null || paycheckTxt == ''
+//					                			|| paycheckTxt == '驳回') {
+//						                			orAmendBtn = 'orAmendBtn';
+//						                			orAmendBtnTxt = '修改';
+//						                		}
 					                			applyCandelBtn = 'applyCandelBtn';
 												applyCandelBtnTxt = '付款单取消';
 						                	}

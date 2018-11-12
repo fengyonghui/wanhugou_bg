@@ -306,7 +306,7 @@
 												ProcessName = commonProcess.doOrderHeaderProcessFifth.name
 											}
 											if(commonProcess.doOrderHeaderProcessFifth.name == '审批完成') {
-												ProcessName = '订单支出信息审核'//待财务经理审批
+												ProcessName = '待财务经理审批'//订单支出信息审核
 											}
 										}
 									}
@@ -319,7 +319,7 @@
 												ProcessName = commonProcess.jointOperationOriginProcess.name
 											}
 											if(commonProcess.jointOperationOriginProcess.name == '审批完成') {
-												ProcessName = '订单支出信息审核'//待财务经理审批
+												ProcessName = '待财务经理审批'//订单支出信息审核
 											}
 										}
 									}
@@ -485,6 +485,7 @@
 	                                	}
 	                                }
 				                }
+//				---合并---
 				                //订单支出审核状态
 //	                            var paycheckTxt = '';
 //	                            if(item.commonProcess){
@@ -599,36 +600,28 @@
 													}
 												}
 											}
-											//审核
-											console.log(bizPoHeader)
-											console.log(bizPoHeader.bizOrderHeader)
+											//付款单审核
+											console.log(_this.OrdFlagaudit)
 							                if(_this.OrdFlagaudit == true) {
 												var DataRoleGener = '';
 												if(bizPoHeader.commonProcess) {
 													DataRoleGener = bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum;
 												}
 												var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
-						                        if((bizPoHeader.commonProcess.id != null || bizPoHeader.commonProcess.id != '')
+												console.log(paycheckTxt)
+						                        if((bizPoHeader.commonProcess.id)
 						                        	&& paycheckTxt != '驳回'
 						                        	&& paycheckTxt != '审批完成'
 						                        	&& (fileRoleData || userId==1)){
-						                        	if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != ''){
-						                        		console.log(1)
-						                        		console.log(item.id)
+						                        		console.log(bizPoHeader.bizOrderHeader)
+						                        	if(bizPoHeader.bizOrderHeader){
 						                        		//订单审核
-						                        	   	if(bizPoHeader.bizOrderHeader != ""){
-						                        	   		applyCheckBtnTxt = '付款单审核';
-						                        	   		applyCheckBtn = 'applyCheckBtn';
-						                        	   		bizOrId = item.id;
-						                        	   	}
-						                        	   	if(bizPoHeader.bizOrderHeader == ""){
-						                        	   		applyCheckBtnTxt = '付款单审核';
-						                        	   		applyCheckBtn = 'applyCheckBtn';
-						                        	   		bizOrId = item.id;
-						                        	   	}
-						                        	}
-						                        	else{
-						                        		console.log(2)
+					                        	   		console.log(1)
+					                        	   		applyCheckBtnTxt = '付款单审核';
+					                        	   		applyCheckBtn = 'applyCheckBtn';
+					                        	   		bizOrId = item.id;
+						                        	}else{
+						                        		console.log(3)
 						                        		//采购单审核
 						                        		applyCheckBtnTxt = '付款单审核';
 						                        		applyCheckBtn = 'applyDetailBtn';
@@ -638,7 +631,7 @@
 							                }
 						                	//支付申请列表
 						                	if(bizPoHeader.commonProcess.type != -1){
-						                		if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != ''){
+						                		if(bizPoHeader.bizOrderHeader != ''){
 						                			//订单
 						                			if(_this.OrdFlagpay == true){
 						                				applyListBtn = 'applyListBtn';
