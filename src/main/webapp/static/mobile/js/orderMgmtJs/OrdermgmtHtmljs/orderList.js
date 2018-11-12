@@ -439,7 +439,6 @@
                                     var ordDetailBtn = '';
                                     var staDetailBtnTxt ="";
                                     if(item.delFlag!=null && item.delFlag == '1'){
-
                                     	//支付流水
                                     	if(item.bizStatus != res.data.CANCLE){
                                     		if(res.data.statu == 'unline' || userId==1){
@@ -486,16 +485,15 @@
 	                                	}
 	                                }
 				                }
-//				---合并---
 				                //订单支出审核状态
-	                            var paycheckTxt = '';
-	                            if(item.commonProcess){
-	                            	if(item.commonProcess.purchaseOrderProcess.name){
-	                            		paycheckTxt=item.commonProcess.purchaseOrderProcess.name;
-	                            	}
-	                            }else{
-	                            	paycheckTxt='当前无审批流程';
-	                            }
+//	                            var paycheckTxt = '';
+//	                            if(item.commonProcess){
+//	                            	if(item.commonProcess.purchaseOrderProcess.name){
+//	                            		paycheckTxt=item.commonProcess.purchaseOrderProcess.name;
+//	                            	}
+//	                            }else{
+//	                            	paycheckTxt='当前无审批流程';
+//	                            }
 //				                                待发货.发货成功/发货失败    和上面用同一个按钮
 								var bizReId = '';
 								var bizOrId = '';
@@ -527,6 +525,15 @@
                 				//支出信息页面过来的按钮：
 								if(item.bizPoHeader) {
 									bizPoHeader = item.bizPoHeader;
+									console.log(bizPoHeader)
+	                                var paycheckTxt = '';
+		                            if(bizPoHeader.commonProcess){
+		                            	if(bizPoHeader.commonProcess.purchaseOrderProcess.name){
+		                            		paycheckTxt=bizPoHeader.commonProcess.purchaseOrderProcess.name;
+		                            	}
+		                            }else{
+		                            	paycheckTxt='当前无审批流程';
+		                            }
 									if(_this.OrdFlaginfo == true) {
 						            	if(bizPoHeader.bizStatus != 10) {
 						            		//申请付款
@@ -592,8 +599,10 @@
 													}
 												}
 											}
-											//付款单审核
-							                if(_this.OrdFlagaudit == true) {   
+											//审核
+											console.log(bizPoHeader)
+											console.log(bizPoHeader.bizOrderHeader)
+							                if(_this.OrdFlagaudit == true) {
 												var DataRoleGener = '';
 												if(bizPoHeader.commonProcess) {
 													DataRoleGener = bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum;
@@ -602,10 +611,10 @@
 						                        if((bizPoHeader.commonProcess.id != null || bizPoHeader.commonProcess.id != '')
 						                        	&& paycheckTxt != '驳回'
 						                        	&& paycheckTxt != '审批完成'
-						                        	&& (fileRoleData || userId==1))             {
+						                        	&& (fileRoleData || userId==1)){
 						                        	if(bizPoHeader.bizOrderHeader != null || bizPoHeader.bizOrderHeader != ''){
-						                        		 console.log(1)
-						                        		  console.log(item.id)
+						                        		console.log(1)
+						                        		console.log(item.id)
 						                        		//订单审核
 						                        	   	if(bizPoHeader.bizOrderHeader != ""){
 						                        	   		applyCheckBtnTxt = '付款单审核';
@@ -617,7 +626,8 @@
 						                        	   		applyCheckBtn = 'applyCheckBtn';
 						                        	   		bizOrId = item.id;
 						                        	   	}
-						                        	}else{
+						                        	}
+						                        	else{
 						                        		console.log(2)
 						                        		//采购单审核
 						                        		applyCheckBtnTxt = '付款单审核';
@@ -1208,8 +1218,6 @@
 				var staOrdId = $(this).attr('bizReIdTxt');//备货单 ID
 				var staOrdIdd = $(this).attr('bizoridtxt');//订单 ID
 				var audit = 'audit', processPo = 'processPo';
-				var staOrdIdd = $(this).attr('bizOrIdTxt');//订单 ID
-				var audit = 'audit';
 				if(url) {
 					mui.toast('子菜单不存在')
 				}else if(staOrdIdd){
