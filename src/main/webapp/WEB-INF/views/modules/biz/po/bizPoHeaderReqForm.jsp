@@ -563,7 +563,8 @@
                 <%--<c:if test="${bizPoHeader.id!=null}">--%>
                     <th>已供货数量</th>
                 <%--</c:if>--%>
-                <th>结算价</th>
+                <!-- 隐藏结算价 -->
+                <%--<th>结算价</th>--%>
             </tr>
             </thead>
             <tbody id="prodInfo">
@@ -578,7 +579,8 @@
                                 <%--<td>${poDetail.skuInfo.skuPropertyInfos}</td>--%>
                             <td>${poDetail.ordQty}</td>
                             <td>${poDetail.sendQty}</td>
-                            <td>${poDetail.unitPrice}</td>
+                            <!-- 隐藏结算价 -->
+                            <%--<td>${poDetail.unitPrice}</td>--%>
                         </tr>
                     </c:forEach>
                 </c:if>

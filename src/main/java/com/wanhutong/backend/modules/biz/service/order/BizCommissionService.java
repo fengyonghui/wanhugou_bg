@@ -79,6 +79,8 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 	private BizCustCreditService bizCustCreditService;
 	@Autowired
 	private BizOrderHeaderService bizOrderHeaderService;
+	@Autowired
+	private BizOrderStatusService bizOrderStatusService;
 
 	@Resource
 	private CommonImgService commonImgService;
@@ -399,6 +401,8 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderId);
 				bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.COMMISSION_COMPLETE.getComStatus());
 				bizOrderHeaderService.save(bizOrderHeader);
+
+				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getDesc(),BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getState(),orderId);
 			}
 		}
 		if (orderIdStrs.length() > 0) {

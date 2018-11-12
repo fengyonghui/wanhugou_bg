@@ -1279,7 +1279,8 @@
 	<select id="getValidOrderTotalAndCountByCreateTimeMonthOfficeId" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT
 		sum(total_detail + total_exp + freight) AS totalMoney,
-		sum(receive_total)                                   AS receiveTotal,
+		sum(receive_total) AS receiveTotal,
+		sum(total_exp + service_fee + freight) AS profitPrice,
 		count(1) AS orderCount,
 		office.id AS officeId,
 		office.name AS officeName,
