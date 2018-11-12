@@ -92,9 +92,10 @@
 							'<div class="mui-input-row">'+
 								'<label>采购数量：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.ordQty +'" disabled></div>'+
-							'<div class="mui-input-row">'+
-								'<label>结算价：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+//								隐藏结算价
+//							'<div class="mui-input-row">'+
+//								'<label>结算价：</label>'+
+//								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
 							'<div class="mui-input-row">'+
 								'<label>总金额：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.ordQty * item.unitPrice +'" disabled>'+
@@ -257,9 +258,10 @@
 				'<div class="mui-input-row">'+
 					'<label>采购数量：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.ordQty +'" disabled></div>'+
-				'<div class="mui-input-row">'+
-					'<label>结算价：</label>'+
-					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+//					隐藏结算价
+//				'<div class="mui-input-row">'+
+//					'<label>结算价：</label>'+
+//					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>总金额：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.ordQty * item.unitPrice +'" disabled>'+
@@ -307,9 +309,10 @@
 						'<div class="mui-input-row">'+
 							'<label>采购数量：</label>'+
 							'<input type="text" class="" value="'+ item.ordQty +'" disabled></div>'+
-						'<div class="mui-input-row">'+
-							'<label>结算价：</label>'+
-							'<input type="text" class="" value="'+ item.unitPrice +'" disabled></div>'+
+//							隐藏结算价
+//						'<div class="mui-input-row">'+
+//							'<label>结算价：</label>'+
+//							'<input type="text" class="" value="'+ item.unitPrice +'" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>总金额：</label>'+
 							'<input type="text" class="" value="'+ item.ordQty * item.unitPrice +'" disabled></div></div></div>'+
