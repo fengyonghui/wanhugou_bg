@@ -177,9 +177,6 @@
 							}							
 		            	    var statu = _this.userInfo.statu;	
 		            	    console.log(statu)
-//		            	    if(statu==undefined){
-//								statu="";
-//							}
 			                var f = document.getElementById("orderList");
 			                var childs = f.childNodes;
 			                for(var i = childs.length - 1; i >= 0; i--) {
@@ -208,6 +205,14 @@
 								pager['poSchType'] = _this.userInfo.poSchType,//付款单排产状态
 								pager['poWaitPay'] = _this.userInfo.poWaitPay,//付款单待支付
 		                    	pager['includeTestData'] = _this.userInfo.includeTestData;//测试数据
+		                    	if(statu == 'unline') {
+			                    	$('#myStatu').val(statu);
+			                    	$('#listName').html('线下支付订单列表');
+			                    }
+		                    	if(statu != 'unline') {
+			                    	$('#myStatu').val('');
+			                    	$('#listName').html('订单列表');
+			                    }
 		                    	getData(pager);
 		                    }else if(_this.userInfo.isFind){
 		                    	pager['size']= 20;
@@ -292,7 +297,7 @@
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
 //                          	console.log(item)
-//                          	console.log(item.bizPoHeader)
+                            	console.log(item.bizPoHeader)
                             	var ProcessName = '';
                             	var objectName = item.commonProcess.objectName; 
                             	var commonProcess = item.commonProcess;
@@ -306,7 +311,7 @@
 												ProcessName = commonProcess.doOrderHeaderProcessFifth.name
 											}
 											if(commonProcess.doOrderHeaderProcessFifth.name == '审批完成') {
-												ProcessName = '待财务经理审批'//订单支出信息审核
+                                                ProcessName = item.bizPoHeader.commonProcess.purchaseOrderProcess.name
 											}
 										}
 									}
@@ -319,7 +324,7 @@
 												ProcessName = commonProcess.jointOperationOriginProcess.name
 											}
 											if(commonProcess.jointOperationOriginProcess.name == '审批完成') {
-												ProcessName = '待财务经理审批'//订单支出信息审核
+												ProcessName = item.bizPoHeader.commonProcess.purchaseOrderProcess.name
 											}
 										}
 									}
@@ -624,7 +629,7 @@
 						                        		console.log(3)
 						                        		//采购单审核
 						                        		applyCheckBtnTxt = '付款单审核';
-						                        		applyCheckBtn = 'applyDetailBtn';
+						                        		applyCheckBtn = 'applyCheckBtn';
 						                        		bizReId = bizPoHeader.id;
 						                        	}
 						                        }
@@ -744,7 +749,7 @@
 							/*确认排产*/			affirmScheduBtnTxt +'</div>'+
 										'</div>' +
 										'<div class="mui-row app_color40 app_text_center content_part operation" id="foot">' +
-											'<div class="'+applyListBtn+'" poheaderId="'+ bizPoHeader.id +'" bizOrIdTxt="'+ bizOrId +'" bizReIdTxt="'+ bizReId +'">' +
+											'<div class="'+applyListBtn+'" poheaderId="'+ bizPoHeader.id +'" bizoridtxt="'+ item.id +'" bizReIdTxt="'+ bizReId +'">' +
 							/*付款单列表*/		applyListBtnTxt +'</div>'+
 											'<div class="'+applyCheckBtn+'" poheaderId="'+ bizPoHeader.id +'" bizoridtxt="'+ item.id +'" bizReIdTxt="'+ bizReId +'">' +
 							/*付款单审核*/		applyCheckBtnTxt +'</div>'+	
@@ -1227,8 +1232,8 @@
 			$('.content_part').on('tap', '.applyListBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('poheaderId');//采购单id
-                var staOrderId = $(this).attr('bizOrIdTxt');//订单id
-				if(staOrderId!=""&&staInvenId=='undefined') {
+                var staOrderId = $(this).attr('bizoridtxt');//订单id
+				if(staOrdId&&staOrderId) {
 					GHUTILS.OPENPAGE({
 						//订单						
 						url: "../../../html/orderMgmtHtml/payApplyList.html",
