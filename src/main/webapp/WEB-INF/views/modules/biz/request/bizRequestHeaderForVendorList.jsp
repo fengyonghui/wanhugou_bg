@@ -504,6 +504,7 @@
 				</shiro:hasPermission>
 
 			<!-- 订单支出信息合并 -->
+			<shiro:hasPermission name="biz:po:bizPoHeader:view">
 			<shiro:hasPermission name="biz:request:bizRequestHeader:view">
 				<%--<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">--%>
 				<c:if test="${requestHeader.bizPoHeader.id != null}">
@@ -556,6 +557,7 @@
 				<%--<c:if test="${bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">--%>
 				</c:if>
 				<%--</c:if>--%>
+			</shiro:hasPermission>
 			</shiro:hasPermission>
 
 			</td></shiro:hasPermission>
