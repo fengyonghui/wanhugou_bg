@@ -444,6 +444,23 @@ public class BizOrderHeaderController extends BaseController {
         originConfigMap.put("驳回", "驳回");
         originConfigMap.put("不需要审批", "不需要审批");
 
+        //支付申请单合并搜索条件审核状态
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
+
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(bizOrderHeader.getProcessTypeStr())) {
+            List<Process> processListTemp = purchaseOrderProcessConfig.getNameProcessMap().get(bizOrderHeader.getProcessTypeStr());
+            List<String> transform = processListTemp.stream().map(process -> String.valueOf(process.getCode())).collect(Collectors.toList());
+            bizOrderHeader.setProcessTypeList(transform);
+        }
+
+        Set<String> processSet = Sets.newHashSet();
+        for (com.wanhutong.backend.modules.config.parse.Process process : processList) {
+            processSet.add(process.getName());
+        }
+        model.addAttribute("processList", processSet);
+        resultMap.put("processList", processSet);
+
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
             List<BizOrderHeader> bizOrderHeaderList = page.getList();

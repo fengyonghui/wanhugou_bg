@@ -869,7 +869,7 @@
     		if(myStatu=='unline'){
     			/*客户专员线下支付查询*/
     			$('.app_header').on('tap', '#SearchBtn', function() {
-    				alert('客户专员线下支付查询')
+//  				alert('客户专员线下支付查询')
 					var url = $(this).attr('url');
 					if(url) {
 						mui.toast('子菜单不存在')
@@ -884,7 +884,7 @@
 				});
 				/*线下支付查询*/
 				$('.app_header').on('tap', '#OrdSechBtn', function() {
-    				alert('线下支付查询')
+//  				alert('线下支付查询')
 					var url = $(this).attr('url');
 					if(url) {
 						mui.toast('子菜单不存在')
@@ -900,7 +900,7 @@
     		}else{
     			/*客户专员订单查询*/
 	    		$('.app_header').on('tap', '#SearchBtn', function() {
-	    			alert('客户专员订单查询')
+//	    			alert('客户专员订单查询')
 					var url = $(this).attr('url');
 					if(url) {
 						mui.toast('子菜单不存在')
@@ -914,7 +914,7 @@
 				});
 				/*订单查询*/
     			$('.app_header').on('tap', '#OrdSechBtn', function() {
-    				alert('订单查询')
+//  				alert('订单查询')
 					var url = $(this).attr('url');
 					if(url) {
 						mui.toast('子菜单不存在')

@@ -14,6 +14,7 @@
 		</header>
 		<div class="mui-content menuMarg">
 			<form class="mui-input-group">
+				<div class="labelLf" style="font-weight: normal;">订单搜索</div>
 				<div class="mui-input-row">
 					<label>备货单号：</label>
 					<input type="text" class="mui-input-clear inOrdNum" placeholder="请输入备货单号">
@@ -72,6 +73,45 @@
 						<div style="clear:both"></div>
 					</div>
 				</div>
+				<div class="mui-input-row app_bline2">
+					<div class="labelLf" style="font-weight: normal;">付款单搜索</div>
+					<div class="mui-input-row">
+						<label>业务状态：</label>
+						<div class="pre">
+							<select class="secStyle" name="" id="input_div_poStatus">
+								<option value=""></option>
+							</select>
+							<input class="savedata" type="hidden" value=''>
+							<div style="clear:both"></div>
+						</div>
+					<div class="mui-input-row">
+						<label>审核状态：</label>
+						<div class="pre">
+							<select class="secStyle" name="" id="input_div_orderStatus">
+							</select>
+							<input class="savedata" type="hidden" value=''>
+							<div style="clear:both"></div>
+						</div>
+					</div>
+					<div class="mui-input-row">
+						<label>排产状态：</label>
+						<div class="pre">
+							<select class="secStyle" name="" id="input_div_poSchType">
+							</select>
+							<div style="clear:both"></div>
+						</div>
+					</div>
+					<div class="mui-input-row">
+						<label>待支付：</label>
+						<div class="pre">
+							<select class="secStyle" name="" id="wait_pay">
+								<option value="">请选择</option>
+								<option value="1">是</option>
+							</select>
+							<div style="clear:both"></div>
+						</div>
+					</div>
+				</div>
 				<div class="mui-input-row">
 					<label>测试数据：</label>
 					<input type="checkbox" name="" id="testCheckbox" value="" class="testCheckbox"/>
@@ -84,6 +124,6 @@
 		<script src="../../js/component/zepto.min.js"></script>
 		<script src="../../js/component/mui.min.js"></script>
 		<script src="../../js/component/GHutils.js"></script>
-		<script src="../../js/inventoryMagmetJs/inSearch.js?time=20181008"></script>
+		<script src="../../js/inventoryMagmetJs/inSearch.js?time=20181112"></script>
 	</body>
 </html>

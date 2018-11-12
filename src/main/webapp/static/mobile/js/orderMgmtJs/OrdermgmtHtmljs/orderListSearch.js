@@ -24,6 +24,7 @@
 			_this.ajaxcheckStatus();//审核状态
             _this.ajaxPoStatus();//付款单业务状态
             _this.ajaxPocheckStatus();//付款单审核状态
+            _this.ajaxpoSchTypeStatus();//付款单排产状态
 		},
 		getData: function() {
 			var _this = this;
@@ -220,14 +221,32 @@
 			var htmlClass = '';
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/po/bizPoHeader/listV2Data4Mobile',
+				url: '/a/biz/order/bizOrderHeader/listData4mobile',
 				dataType: 'json',
 				success: function(res) {
 					$.each(res.data.processList, function(i, item) {
 						console.log(item)
-						htmlClass += '<option class="soption" value="' + item.name + '">' + item.name + '</option>'
+						htmlClass += '<option class="soption" value="' + item + '">' + item + '</option>'
 					});
 					$('#input_div_orderStatus').html(optHtml+htmlClass)
+				}
+			});
+		},
+		//付款单排产状态
+		ajaxpoSchTypeStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlClass = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/dict/listData',
+				data: {type:'poSchType'},
+				dataType: 'json',
+				success: function(res) {
+					$.each(res, function(i, item) {
+						htmlClass += '<option class="soption" value="' + item.value + '">' + item.label + '</option>'
+					});
+					$('#input_div_poSchType').html(optHtml+htmlClass)
 				}
 			});
 		},

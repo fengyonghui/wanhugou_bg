@@ -15,6 +15,9 @@
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
 			this.ajaxGoodName();
+			this.ajaxPoStatus();//付款单业务状态
+			this.ajaxPocheckStatus();//付款单审核状态
+			this.ajaxpoSchTypeStatus();//付款单排产状态
 		},
 		pageInit: function() {
 			var _this = this;
@@ -23,45 +26,12 @@
 		getData: function() {
 			var _this = this;
 			$('#inSearchBtn').on('tap', function() {
-				var ordNumVal = $(".inOrdNum").val(); //备货单号
-                var reqNumVal = $(".inReqNum").val(); //供应商
-                var inputRadioVal = $("#inputRadio").val(); //备货方
-                var newInputVal = $('.newinput').val();//采购中心 
-                var div_businessVal = $('#input_div_business').val();//业务状态
-                var div_checkVal = $('#input_div_check').val();//审核状态
-                var cateGoryVal = $('#input_div_class').val();//品类名称
-                var testCheckVal = $('#testCheckbox').val();//测试数据
-               if(ordNumVal == null||ordNumVal == undefined){
-					ordNumVal == "";
-                }
-                if(reqNumVal == null||reqNumVal == undefined) {
-                	reqNumVal == "";
-                }
-                if(inputRadioVal == null||inputRadioVal == undefined) {
-                	inputRadioVal == "";
-                }
-                if(newInputVal == null||newInputVal == undefined) {
-                	newInputVal == "";
-                }
-				if(div_businessVal == null||div_businessVal == undefined) {
-                	div_businessVal == "";
-                }
-				if(div_checkVal == null||div_checkVal == undefined) {
-                	div_checkVal == "";
-                }
-                if(cateGoryVal == null||cateGoryVal == undefined) {
-                	cateGoryVal == "";
-                }
-                if(ordNumVal == ""&&reqNumVal == ""&inputRadioVal == ""&&newInputVal == ""&&div_businessVal == ""&&div_checkVal == ""&&cateGoryVal == ""&&_this.includeTestData==false){
-                	 mui.toast("请输入查询条件！");
-                	 return;
-                }
 				if(_this.selectOpen){
-						if($('.hasoid').attr('id')){
-							_this.sureSelect()
-						}else{
-							mui.toast('请选择匹配的选项')
-						}
+					if($('.hasoid').attr('id')){
+						_this.sureSelect()
+					}else{
+						mui.toast('请选择匹配的选项')
+					}
 				}else{
 					_this.sureSelect()
 				}
@@ -85,6 +55,10 @@
 					bizStatusid: optionsBusiness.val(),//业务状态
 					varietyInfoid: optionsClass.val(),//品类名称
 					process:optionscheck.val(),//审核状态
+					poBizStatus:$('#input_div_poStatus').val(),//付款单业务状态
+					processTypeStr:$('#input_div_orderStatus').val(),//付款单审核状态
+					poSchType:$('#input_div_poSchType').val(),//付款单排产状态
+					poWaitPay:$('#wait_pay').val(),//付款单待支付
 					includeTestData: _this.includeTestData,//测试数据
 					isFunc: true
 				}
@@ -117,8 +91,6 @@
 				}else{
 					_this.selectOpen = true
 				}
-				console.log($(this).val())
-				
 				_this.rendHtml(_this.datagood,$(this).val())
 			})
 			
@@ -146,7 +118,6 @@
 					}
 				})
 			$.each(reult, function(i, item) {
-//				console.log(item)
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
@@ -165,7 +136,6 @@
 				success: function(res) {
 					_this.datagood = res
 					$.each(res, function(i, item) {
-//						console.log(item)
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlList)
@@ -183,9 +153,7 @@
 				data: {consultantId: _this.userInfo.staListId},
 				dataType: 'json',
 				success: function(res) {
-					console.log(res)
 					$.each(res.data.requestMap, function(i, item) {
-//						console.log(i)
 						htmlCheckStatus += '<option class="soption"  value="' + i + '">' + item + '</option>'
 					});
 					$('#input_div_check').html(optHtml+htmlCheckStatus)
@@ -229,6 +197,60 @@
 					});
 					$('#input_div_class').html(optHtml+htmlClass)
 					_this.getData()
+				}
+			});
+		},
+		//付款单业务状态
+		ajaxPoStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlClass = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/dict/listData',
+				data: {type:'biz_po_status'},
+				dataType: 'json',
+				success: function(res) {
+					$.each(res, function(i, item) {
+						htmlClass += '<option class="soption" value="' + item.value + '">' + item.label + '</option>'
+					});
+					$('#input_div_poStatus').html(optHtml+htmlClass)
+				}
+			});
+		},
+		//付款单审核状态
+		ajaxPocheckStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlClass = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/biz/order/bizOrderHeader/listData4mobile',
+				dataType: 'json',
+				success: function(res) {
+					$.each(res.data.processList, function(i, item) {
+						console.log(item)
+						htmlClass += '<option class="soption" value="' + item + '">' + item + '</option>'
+					});
+					$('#input_div_orderStatus').html(optHtml+htmlClass)
+				}
+			});
+		},
+		//付款单排产状态
+		ajaxpoSchTypeStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlClass = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/dict/listData',
+				data: {type:'poSchType'},
+				dataType: 'json',
+				success: function(res) {
+					$.each(res, function(i, item) {
+						htmlClass += '<option class="soption" value="' + item.value + '">' + item.label + '</option>'
+					});
+					$('#input_div_poSchType').html(optHtml+htmlClass)
 				}
 			});
 		},
