@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.inventory;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.User;
 
 import java.util.Date;
@@ -25,7 +26,7 @@ public class BizSkuTransferDetail extends DataEntity<BizSkuTransferDetail> {
 	/**
 	 * 商品ID biz_sku_info.id
 	 */
-	private String skuInfo;
+	private BizSkuInfo skuInfo;
 
 	/**
 	 * 商品调拨数量
@@ -78,14 +79,14 @@ public class BizSkuTransferDetail extends DataEntity<BizSkuTransferDetail> {
 		super(id);
 	}
 
-	public String getSkuInfo() {
+	public BizSkuInfo getSkuInfo() {
 		return skuInfo;
 	}
 
-	public void setSkuInfo(String skuInfo) {
+	public void setSkuInfo(BizSkuInfo skuInfo) {
 		this.skuInfo = skuInfo;
 	}
-	
+
 	public Integer getTransQty() {
 		return transQty;
 	}

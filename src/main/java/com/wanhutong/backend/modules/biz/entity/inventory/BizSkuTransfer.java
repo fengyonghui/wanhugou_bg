@@ -68,6 +68,11 @@ public class BizSkuTransfer extends DataEntity<BizSkuTransfer> {
 	 */
 	private String transferNums;
 
+	/**
+	 * 区分详情("detail"),修改(""),审核("audit")
+	 */
+	private String str;
+
 	public BizSkuTransfer() {
 		super();
 	}
@@ -155,5 +160,13 @@ public class BizSkuTransfer extends DataEntity<BizSkuTransfer> {
 
 	public void setTransferNums(String transferNums) {
 		this.transferNums = transferNums;
+	}
+
+	public String getStr() {
+		return str;
+	}
+
+	public void setStr(String str) {
+		this.str = str;
 	}
 }

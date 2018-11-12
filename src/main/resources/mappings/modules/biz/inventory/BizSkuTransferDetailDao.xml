@@ -95,8 +95,12 @@
 			from_inv_op_time,
 			to_inv_op_id,
 			to_inv_op_time,
-			out_qty,
-			in_qty,
+			<if test="outQty != null and outQty != ''">
+				out_qty,
+			</if>
+			<if test="inQty != null and inQty != ''">
+				in_qty,
+			</if>
 			create_time,
 			create_id,
 			u_version,
@@ -112,8 +116,12 @@
 			#{fromInvOpTime},
 			#{toInvOp.id},
 			#{toInvOpTime},
-			#{outQty},
-			#{inQty},
+			<if test="outQty != null and outQty != ''">
+				#{outQty},
+			</if>
+			<if test="inQty != null and inQty != ''">
+				#{inQty},
+			</if>
 			#{createDate},
 			#{createBy.id},
 			#{uVersion},
@@ -132,8 +140,12 @@
 			from_inv_op_time = #{fromInvOpTime},
 			to_inv_op_id = #{toInvOp.id},
 			to_inv_op_time = #{toInvOpTime},
-			out_qty = #{outQty},
-			in_qty = #{inQty},
+			<if test="outQty != null and outQty != ''">
+				out_qty = #{outQty},
+			</if>
+			<if test="inQty != null and inQty != ''">
+				in_qty = #{inQty},
+			</if>
 			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
