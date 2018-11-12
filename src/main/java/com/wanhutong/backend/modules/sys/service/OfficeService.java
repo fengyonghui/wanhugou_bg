@@ -34,6 +34,7 @@ import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.dao.OfficeDao;
+import com.wanhutong.backend.modules.sys.dao.UserDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -93,6 +94,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     private BizCustomerInfoService bizCustomerInfoService;
     @Autowired
     private BizMessageUserService bizMessageUserService;
+    @Autowired
+    private UserDao userDao;
 
     public static final String PHOTO_SPLIT_CHAR = "\\|";
     public static final String CUSTOMER_APPLY_LEVEL_OBJECT_NAME = "CUSTOMER_APPLY_LEVEL_OBJECT_NAME";
@@ -1036,6 +1039,17 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
                 break;
             default:
                 break;
+        }
+
+        //审核成功时，清空申请用户的购物车
+        User applyUser = new User();
+        Office office = officeDao.get(id);
+        applyUser.setOffice(office);
+        List<User> userList = userDao.findList(applyUser);
+        if (CollectionUtils.isNotEmpty(userList)) {
+            applyUser = userList.get(0);
+
+
         }
         return Pair.of(Boolean.TRUE, "操作成功!");
 
