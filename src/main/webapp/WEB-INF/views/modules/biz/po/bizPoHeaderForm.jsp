@@ -321,6 +321,15 @@
         </div>
 
         <div class="control-group">
+            <label class="control-label">排产状态：</label>
+            <div class="controls">
+                <input type="text" disabled="disabled"
+                       value="${fns:getDictLabel(bizPoHeader.poSchType, 'poSchType', '未排产')}" htmlEscape="false"
+                       maxlength="30" class="input-xlarge "/>
+            </div>
+        </div>
+
+        <div class="control-group">
             <label class="control-label">供应商：</label>
             <div class="controls">
                 <a href="${ctx}/sys/office/supplierForm?id=${bizPoHeader.vendOffice.id}&gysFlag=gys_view">

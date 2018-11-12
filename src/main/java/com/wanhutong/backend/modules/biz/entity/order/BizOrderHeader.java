@@ -311,6 +311,45 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     private String commSign;
 
+    /**
+     * 订单支出信息合并 搜索 业务状态
+     * @return
+     */
+    private Integer poBizStatus;
+
+    /**
+     * 订单支出信息合并 搜索 审核状态
+     * @return
+     */
+    private String processTypeStr;
+
+    /**
+     * 订单支出信息合并 搜索 审核状态List
+     *
+     * @return
+     */
+    private List<String> processTypeList;
+
+    /**
+     * 订单支出信息合并 搜索 排产状态：
+     * 采购单排产状态 0,未排产  1,排产中  2,排产完成
+     */
+    private Integer poSchType;
+
+    /**
+     * 订单支出信息合并 搜索
+     * 待支付
+     * @return
+     */
+    private Integer poWaitPay;
+
+    /**
+     * 订单支出信息合并 搜索
+     * 可申请支付
+     * @return
+     */
+    private Integer applyPayment;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -1216,6 +1255,54 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSerllerPhone(String serllerPhone) {
         this.serllerPhone = serllerPhone;
+    }
+
+    public Integer getPoBizStatus() {
+        return poBizStatus;
+    }
+
+    public void setPoBizStatus(Integer poBizStatus) {
+        this.poBizStatus = poBizStatus;
+    }
+
+    public String getProcessTypeStr() {
+        return processTypeStr;
+    }
+
+    public void setProcessTypeStr(String processTypeStr) {
+        this.processTypeStr = processTypeStr;
+    }
+
+    public List<String> getProcessTypeList() {
+        return processTypeList;
+    }
+
+    public void setProcessTypeList(List<String> processTypeList) {
+        this.processTypeList = processTypeList;
+    }
+
+    public Integer getPoSchType() {
+        return poSchType;
+    }
+
+    public void setPoSchType(Integer poSchType) {
+        this.poSchType = poSchType;
+    }
+
+    public Integer getPoWaitPay() {
+        return poWaitPay;
+    }
+
+    public void setPoWaitPay(Integer poWaitPay) {
+        this.poWaitPay = poWaitPay;
+    }
+
+    public Integer getApplyPayment() {
+        return applyPayment;
+    }
+
+    public void setApplyPayment(Integer applyPayment) {
+        this.applyPayment = applyPayment;
     }
 }
 

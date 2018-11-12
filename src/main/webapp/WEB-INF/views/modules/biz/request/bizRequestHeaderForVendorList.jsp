@@ -121,6 +121,29 @@
 
 
 	</script>
+	<script type="text/javascript">
+        function cancel(id) {
+            top.$.jBox.confirm("确认要取消吗？", "系统提示", function (v, h, f) {
+                if (v == "ok") {
+                    $.ajax({
+                        url: "${ctx}/biz/po/bizPoHeader/cancel?id=" + id,
+                        type: "post",
+                        cache: false,
+                        success: function (data) {
+                            alert(data);
+                            if (data == "取消采购订单成功") {
+                                <%--使用setTimeout（）方法设定定时600毫秒--%>
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 600);
+                            }
+                        }
+                    });
+                }
+            }, {buttonsFocus: 1});
+            top.$('.jbox-body .jbox-icon').css('top', '55px');
+        }
+	</script>
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -133,6 +156,9 @@
 	<input id="previousPage" name="previousPage" type="hidden" value="${bizRequestHeader.previousPage}"/>
 	<input id="payNum" type="hidden" />
 	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
+	<div class="control-group">
+		<label class="control-label">备货单搜索：</label>
+	</div>
 	<ul class="ul-form">
 		<li><label>备货单号：</label>
 			<form:input path="reqNo" htmlEscape="false" maxlength="30" class="input-medium"/>
@@ -182,15 +208,124 @@
 				<form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 			</form:select>
 		</li>
-		<li><label>测试数据</label>
-			<form:checkbox id="includeTest" path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
-		</li>
-
-		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 		<li class="clearfix"></li>
 	</ul>
+
+	<br>
+	<div class="control-group">
+		<label class="control-label">付款单搜索：</label>
+	</div>
+	<ul class="ul-form">
+		<!-- 订单支出信息合并 搜索 -->
+		<li><label style="width: 120px;">付款单业务状态：</label>
+			<form:select path="poBizStatus" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:options items="${fns:getDictList('biz_po_status')}" itemLabel="label" itemValue="value"
+							  htmlEscape="false"/></form:select>
+		</li>
+
+		<li><label style="width: 120px;">付款单审核状态：</label>
+			<form:select path="processTypeStr" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:options items="${processList}" htmlEscape="false"/>
+			</form:select>
+		</li>
+		<li><label style="width: 120px;">付款单排产状态：</label>
+			<form:select path="poSchType" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:options items="${fns:getDictList('poSchType')}" itemLabel="label" itemValue="value"
+							  htmlEscape="false"/>
+			</form:select>
+		</li>
+		<li><label style="width: 120px;">付款单待支付：</label>
+			<form:select path="poWaitPay" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:option value="1" label="是"/>
+			</form:select>
+		</li>
+		<li class="clearfix"></li>
+	</ul>
+	<li><label>测试数据</label>
+		<form:checkbox id="includeTest" path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
+	</li>
+
+	<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+	<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 </form:form>
+
+<!-- 订单支付合并 搜索 -->
+<%--<form:form id="searchFormPO" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/listV2" method="post"--%>
+		   <%--class="breadcrumb form-search">--%>
+	<%--<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>--%>
+	<%--<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>--%>
+	<%--<input id="previousPage" name="previousPage" type="hidden" value="${bizPoHeader.previousPage}"/>--%>
+	<%--<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>--%>
+	<%--<ul class="ul-form">--%>
+			<%--&lt;%&ndash;<li><label>采购单号</label>&ndash;%&gt;--%>
+			<%--&lt;%&ndash;<form:input path="orderNum" htmlEscape="false" maxlength="25" class="input-medium"/>&ndash;%&gt;--%>
+			<%--&lt;%&ndash;</li>&ndash;%&gt;--%>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">付款单搜索：</label>--%>
+		<%--</div>--%>
+		<%--<li><span style="margin-left: 10px"><label>订单编号</label></span>--%>
+			<%--<input id="num" name="num" class="input-medium" type="text" value="" maxlength="25">--%>
+		<%--</li>--%>
+
+		<%--<li><label>业务状态：</label>--%>
+			<%--<select id="bizStatus" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<c:forEach items="${fns:getDictList('biz_po_status')}" var="item" varStatus="vs">--%>
+					<%--<option value="${item.value}">${item.label}</option>--%>
+				<%--</c:forEach>--%>
+			<%--</select>--%>
+		<%--</li>--%>
+
+		<%--<li><label>审核状态：</label>--%>
+			<%--<select id="processTypeStr" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<c:forEach items="${processList}" var="item" varStatus="vs">--%>
+					<%--<option value="${item}">${item}</option>--%>
+				<%--</c:forEach>--%>
+			<%--</select>--%>
+		<%--</li>--%>
+		<%--<li><label>排产状态：</label>--%>
+			<%--<select id="poSchType" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<c:forEach items="${fns:getDictList('poSchType')}" var="item" varStatus="vs">--%>
+					<%--<option value="${item.value}">${item.label}</option>--%>
+				<%--</c:forEach>--%>
+			<%--</select>--%>
+		<%--</li>--%>
+		<%--<li><label>待支付</label>--%>
+			<%--<select id="waitPay" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<option value="1">是</option>--%>
+			<%--</select>--%>
+		<%--</li>--%>
+		<%--<li><label>可申请付款</label>--%>
+			<%--<select id="applyPayment" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<option value="1">是</option>--%>
+			<%--</select>--%>
+		<%--</li>--%>
+		<%--<li><label>发票状态：</label>--%>
+			<%--<select id="invStatus" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">--%>
+				<%--<option value="">请选择</option>--%>
+				<%--<c:forEach items="${fns:getDictList('biz_order_invStatus')}" var="item" varStatus="vs">--%>
+					<%--<option value="${item.value}">${item.label}</option>--%>
+				<%--</c:forEach>--%>
+			<%--</select>--%>
+		<%--</li>--%>
+		<%--<li><label>测试数据</label>--%>
+			<%--<input id="page.includeTestData1" name="page.includeTestData" onclick="testData(this)" maxlength="100" class="input-medium" type="checkbox" value="true">--%>
+		<%--</li>--%>
+		<%--<li><label></label></li>--%>
+
+		<%--<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>--%>
+		<%--<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>--%>
+		<%--<li class="clearfix"></li>--%>
+	<%--</ul>--%>
+<%--</form:form>--%>
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead>
@@ -269,7 +404,8 @@
 						${requestHeader.commonProcess.requestOrderProcess.name}
 					</c:if>
 					<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">
-						订单支出信息审核
+						<%--订单支出信息审核--%>
+						${requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name}
 					</c:if>
 				</c:if>
 			</td>
@@ -367,49 +503,60 @@
 					<%--</c:if>--%>
 				</shiro:hasPermission>
 
-					<%--<shiro:hasPermission name="biz:po:bizPoHeader:audit">--%>
-					<%--<c:if test="${requestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state}">--%>
-					<%--<c:if test="${requestHeader.bizPoHeader.commonProcess.id != null--%>
-					<%--&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'--%>
-					<%--&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'--%>
-					<%--&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus--%>
-					<%--&& (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())--%>
-					<%--}">--%>
-					<%--&lt;%&ndash;<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&type=audit">审核</a>&ndash;%&gt;--%>
-					<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit">审核</a>--%>
-					<%--</c:if>--%>
-					<%--</c:if>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">--%>
-					<%--&lt;%&ndash;<c:if test="${requestHeader.bizPoHeader.totalOrdQty != null && requestHeader.bizPoHeader.totalOrdQty != 0}">&ndash;%&gt;--%>
-					<%--<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">--%>
-					<%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
-					<%--<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--&lt;%&ndash;</c:if>&ndash;%&gt;--%>
-					<%--</c:if>--%>
+			<!-- 订单支出信息合并 -->
+			<shiro:hasPermission name="biz:request:bizRequestHeader:view">
+				<%--<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">--%>
+				<c:if test="${requestHeader.bizPoHeader.id != null}">
+				<!-- 财务审核采购单按钮控制 -->
+				<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+					<c:if test="${requestHeader.bizPoHeader.commonProcess.id != null
+											&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
+											&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+											&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
+											&& (fns:hasRole(roleSet, requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+											}">
 
-					<%--<shiro:hasPermission name="biz:request:bizRequestHeader:startAudit">--%>
-					<%--<c:if test="${(fns:hasRole(roleSet, requestHeader.commonProcess.vendRequestOrderProcess.roleEnNameEnum)) && requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus < ReqHeaderStatusEnum.EXAMINE.state && requestHeader.commonProcess.vendRequestOrderProcess.name != '驳回'--%>
-					<%--&& requestHeader.commonProcess.vendRequestOrderProcess.code != vendAuditStatus--%>
-					<%--}">--%>
-					<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=startAudit">审核</a>--%>
-					<%--</c:if>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--<c:if test="${requestHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">--%>
-					<%--<c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type && requestHeader.bizStatus >= ReqHeaderStatusEnum.EXAMINE.state}">--%>
-					<%--<c:if test="${requestHeader.totalOrdQty != null && requestHeader.totalOrdQty != 0}">--%>
-					<%--<shiro:hasPermission name="biz:request:bizPoHeader:addScheduling">--%>
-					<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}">排产</a>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--<shiro:hasPermission name="biz:request:bizPoHeader:confirmScheduling">--%>
-					<%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}&forward=confirmScheduling">确认排产</a>--%>
-					<%--</shiro:hasPermission>--%>
-					<%--</c:if>--%>
-					<%--</c:if>--%>
-					<%--</c:if>--%>
+						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=audit&processPo=processPo">付款单审核</a>
+					</c:if>
+				</shiro:hasPermission>
+
+				<!-- 支付申请列表获取 -->
+				<c:if test="${bizPoHeader.commonProcess.type != -1}">
+					<shiro:hasPermission name="biz:po:pay:list">
+						<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${requestHeader.id}">付款单列表</a>
+					</shiro:hasPermission>
+				</c:if>
+
+				<!-- 驳回的单子再次开启审核 -->
+				<shiro:hasPermission name="biz:po:bizPoHeader:startAuditAfterReject">
+					<c:if test="${requestHeader.bizPoHeader.commonProcess.type == -1}">
+						<c:if test="${requestHeader.bizPoHeader.bizRequestHeader != null}">
+							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.bizPoHeader.bizRequestHeader.id}&str=startAudit">开启审核</a>
+						</c:if>
+					</c:if>
+				</shiro:hasPermission>
+
+				<shiro:hasPermission name="biz:po:bizPoHeader:edit">
+					<c:if test="${requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == null || requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name == '驳回'}">
+						<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}">付款单修改</a>
+					</c:if>
+					<a href="javascript:void(0);" onclick="cancel(${requestHeader.bizPoHeader.id});">付款单取消</a>
+				</shiro:hasPermission>
+				<shiro:hasPermission name="biz:po:bizPoHeader:view">
+					<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&str=detail&fromPage=orderHeader">付款单详情</a>
+
+					<!-- 排产，确认排产 -->
+					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
+					</shiro:hasPermission>
+				</shiro:hasPermission>
+				<%--<c:if test="${bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">--%>
+				</c:if>
+				<%--</c:if>--%>
+			</shiro:hasPermission>
 
 			</td></shiro:hasPermission>
 		</tr>

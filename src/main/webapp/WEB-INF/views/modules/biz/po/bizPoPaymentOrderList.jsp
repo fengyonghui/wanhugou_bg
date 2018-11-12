@@ -23,16 +23,24 @@
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/">支付申请列表</a></li>
 	</ul>
-	<sys:message content="${message}"/>
-	<div class="form-horizontal">
-		<div class="control-group">
-			<label class="control-label">订单/备货单号：</label>
-			<div class="controls">
-				<input type="text" disabled="disabled" value="${headerNum}" htmlEscape="false"
-					   maxlength="30" class="input-xlarge "/>
+	<form:form modelAttribute="bizPoPaymentOrder" action="${ctx}/biz/po/bizPoPaymentOrder/"
+			   method="post" class="breadcrumb form-search">
+		<input id="poHeaderId" name="poHeaderId" type="hidden" value="${bizPoPaymentOrder.poHeaderId}"/>
+		<input id="orderType" name="orderType" type="hidden" value="${bizPoPaymentOrder.orderType}"/>
+		<input id="fromPage" name="fromPage" type="hidden" value="${bizPoPaymentOrder.fromPage}"/>
+
+		<div class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label">订单/备货单号：</label>
+				<div class="controls">
+					<input type="text" disabled="disabled" value="${headerNum}" htmlEscape="false"
+						   maxlength="30" class="input-xlarge "/>
+				</div>
 			</div>
 		</div>
-	</div>
+	</form:form>
+	<sys:message content="${message}"/>
+
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
@@ -186,6 +194,9 @@
             }
 
             function audit(auditType, description, poPayId, currentType, money,type) {
+				var poHeaderId = $("#poHeaderId").val();
+				var orderType = $("#orderType").val();
+				var fromPage = $("#fromPage").val();
                 $.ajax({
                     url: '${ctx}/biz/po/bizPoHeader/auditPay',
                     contentType: 'application/json',
@@ -196,7 +207,14 @@
                         if(result.ret == true || result.ret == 'true') {
                             alert('操作成功!');
                             if('${fromPage != null}') {
-                                window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                                <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                                <%--window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + poHeaderId + "&orderType=" + orderType + "&fromPage=" + fromPage;--%>
+                                if (fromPage == "orderHeader") {
+                                    window.location.href = "${ctx}/biz/order/bizOrderHeader/";
+                                }
+                                if (fromPage == "requestHeader") {
+                                    window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
+                                }
                             } else {
                                 window.location.href = "${ctx}/biz/po/bizPoHeader";
                             }

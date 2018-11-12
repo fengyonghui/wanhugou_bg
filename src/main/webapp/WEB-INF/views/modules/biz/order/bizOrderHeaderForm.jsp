@@ -5,6 +5,7 @@
 <%@ page import="com.wanhutong.backend.modules.enums.BizOrderTypeEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderPayProportionStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 <html>
@@ -727,7 +728,9 @@
                 success: function (result) {
                     alert(result);
                     if (result == '操作成功!') {
-                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                        <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                        window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + id + "&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}"
+                            + "&fromPage=orderHeader" + "&orderId=" + $("#id").val();
                     }
                 },
                 error: function (error) {
@@ -1109,7 +1112,8 @@
                     result = JSON.parse(result);
                     if (result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                        <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                        window.location.href = "${ctx}/biz/order/bizOrderHeader/";
                     } else {
                         alert(result.errmsg);
                     }
@@ -1603,7 +1607,8 @@
                                 result = JSON.parse(result);
                                 if (result.ret == true || result.ret == 'true') {
                                     alert('操作成功!');
-                                    window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                                    <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                                    window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=${entity.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=" + $("#id").val();
                                 } else {
                                     alert(result.errmsg);
                                 }
@@ -2880,14 +2885,8 @@
                     ${bizOrderDetail.skuName}
                 </c:if>
                 <c:if test="${empty entity.orderNoEditable || empty entity.orderDetails || empty bizOrderHeader.flag}">
-                    <c:if test="${empty entity.orderNoEditable && empty entity.orderDetails && empty bizOrderHeader.flag && empty bizOrderHeader.clientModify}">
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
-                                ${bizOrderDetail.skuName}</a>
-                    </c:if>
-                    <c:if test="${not empty bizOrderHeader.clientModify && bizOrderHeader.clientModify eq 'client_modify'}">
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
-                                ${bizOrderDetail.skuName}</a>
-                    </c:if>
+                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
+                            ${bizOrderDetail.skuName}</a>
                 </c:if>
             </td>
             <td>

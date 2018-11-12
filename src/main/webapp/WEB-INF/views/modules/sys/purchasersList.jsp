@@ -55,6 +55,7 @@
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/sys/office/purchasersList">机构列表</a></li>
 		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/purchasersForm?parent.id=${office.id}&type=6&source=add_prim">机构添加</a></li></shiro:hasPermission>
+        <shiro:hasPermission name="sys:user:view"><li><a href="${ctx}/sys/user/contact">会员搜索</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="office" action="${ctx}/sys/office/purchasersList" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -134,6 +135,7 @@
 						<a href="${ctx}/sys/office/recovery?id=${off.id}&source=purchListDelete" onclick="return confirmx('要恢复该机构及所有子机构项吗？', this.href)">恢复</a>
 					</c:if>
 				</shiro:hasPermission>
+                    <a href="${ctx}/sys/office/sysOfficeAddress?office.type=6&office.id=${off.id}">地址信息</a>
 					<c:if test="${off.type==15 || off.type==16}">
 						<c:if test="${off.commonProcess.type==null}">
 							<shiro:hasPermission name="sys:office:upgrade">

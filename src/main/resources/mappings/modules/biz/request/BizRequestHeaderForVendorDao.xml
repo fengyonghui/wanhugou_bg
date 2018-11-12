@@ -173,6 +173,27 @@
             <if test="bizPoHeader !=null and bizPoHeader.id != null and bizPoHeader.id != ''">
                 AND  bph.id = ${bizPoHeader.id}
             </if>
+			<if test="poBizStatus !=null">
+				AND bph.is_prew = 0
+				AND bph.biz_status = #{poBizStatus}
+			</if>
+			<if test="processTypeList != null and processTypeList.size > 0">
+				AND bph.is_prew = 0
+				AND cp.type IN
+				<foreach collection="processTypeList" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="poSchType != null">
+				AND bph.is_prew = 0
+				AND bsp.po_sch_type = #{poSchType}
+			</if>
+			<if test="poWaitPay != null and poWaitPay == 1">
+				AND bph.is_prew = 0
+				AND (select bppo.biz_status from biz_po_payment_order bppo join common_process dcp  on bppo.process_id = dcp.id
+				WHERE bppo.id = bph.current_payment_id and dcp.type = 666) = 0
+				and cp.type = 7
+			</if>
 			GROUP BY a.id
 		</where>
 		<choose>

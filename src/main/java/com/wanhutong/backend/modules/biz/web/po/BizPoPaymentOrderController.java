@@ -104,6 +104,7 @@ public class BizPoPaymentOrderController extends BaseController {
         } else if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
             bizOrderHeaderService.get(poId);
         } else {
+            bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
             BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
             if (fromPage != null) {
                 switch (fromPage) {
@@ -118,6 +119,7 @@ public class BizPoPaymentOrderController extends BaseController {
                         List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
                         if (CollectionUtils.isNotEmpty(requestHeaderList)) {
                             model.addAttribute("requestHeader", requestHeaderList.get(0));
+                            model.addAttribute("headerNum", requestHeaderList.get(0).getReqNo());
                         }
                         break;
                     case "orderHeader":
@@ -131,6 +133,7 @@ public class BizPoPaymentOrderController extends BaseController {
                         List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
                         if (CollectionUtils.isNotEmpty(orderHeaderList)) {
                             model.addAttribute("orderHeader", orderHeaderList.get(0));
+                            model.addAttribute("headerNum", orderHeaderList.get(0).getOrderNum());
                         }
                         break;
                     default:
@@ -401,6 +404,7 @@ public class BizPoPaymentOrderController extends BaseController {
             }
         }
 
+        bizPoPaymentOrder.setFromPage(fromPage);
         model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
         return "modules/biz/po/bizPoPaymentOrderForm";
     }
@@ -441,7 +445,8 @@ public class BizPoPaymentOrderController extends BaseController {
         }
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
         addMessage(redirectAttributes, "保存付款单成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "&orderType=" + bizPoPaymentOrder.getOrderType();
+        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId()
+                + "&orderType=" + bizPoPaymentOrder.getOrderType() + "&fromPage=" + bizPoPaymentOrder.getFromPage();
     }
 
     @RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
