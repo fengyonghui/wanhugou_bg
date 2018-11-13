@@ -230,9 +230,6 @@
 									if(item.commonProcess && fileRoleData.length>0 && requestOrderProcess.name != '驳回') {
 										inCheck = '审核'
 										inCheckBtn='inCheckBtn'
-									}else {
-										inCheck = ''
-										inCheckBtn=''
 									}
 								}
 //                              付款
@@ -382,7 +379,7 @@
 												var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 						                        if((bizPoHeader.commonProcess.id) && paycheckTxt != '驳回'
 						                        	&& paycheckTxt != '审批完成' && purchCode != res.data.payStatus
-						                        	&& (fileRoleData || userId==1)){
+						                        	&& (fileRoleData.length != 0 || userId==1)){
 					                        	   		applyCheckBtnTxt = '付款单审核';
 					                        	   		applyCheckBtn = 'applyCheckBtn';
 					                        	   		bizReId = item.id;
@@ -407,7 +404,7 @@
 						                		}
 						                	}
 							                /*付款单修改、取消*/
-							               console.log(_this.orCancAmenFlag)
+//							               console.log(_this.orCancAmenFlag)
 	                						if(_this.orCancAmenFlag == true) {
 						                		if(paycheckTxt == null || paycheckTxt == ''
 					                			|| paycheckTxt == '驳回') {
@@ -851,6 +848,7 @@
 						url: "../../html/orderMgmtHtml/orScheduling.html",
 						extras: {
 							staOrdId: staOrdId,
+							source: 'inventoryList',
 						}
 					})
 				}

@@ -548,7 +548,7 @@
 													var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
 							                        if((bizPoHeader.commonProcess.id) && paycheckTxt != '驳回'
 							                        	&& paycheckTxt != '审批完成' && purchCode != res.data.payStatus
-							                        	&& (fileRoleData || userId==1)){
+							                        	&& (fileRoleData.length != 0 || userId==1)){
 						                        	   		applyCheckBtnTxt = '付款单审核';
 						                        	   		applyCheckBtn = 'applyCheckBtn';
 						                        	   		bizOrId = item.id;
@@ -628,14 +628,14 @@
 										'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 									'</div>' +
 									'<div class="mui-input-row app_color40 app_text_center content_part operation" id="foot">' +
-										'<div class="'+ ordCheckBtn +'" staOrdId="'+ item.id +'">' +
-						/*审核*/				staCheckBtnTxt +'</div>'+
 										'<div class="'+ordRecoveryBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
-						/*恢复*/				staRecoveryBtnTxt +'</div>'+										
+						/*恢复*/				staRecoveryBtnTxt +'</div>'+
+										'<div class="'+ ordCheckBtn +'" staOrdId="'+ item.id +'">' +
+						/*审核*/				staCheckBtnTxt +'</div>'+						
+										'<div class="'+ordDeleteBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
+						/*删除*/				staDeleteTxt +'</div>'+						
 										'<div class="'+ordAmendBtn+'"  staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 						/*修改*/				staAmendTxt +'</div>'+
-										'<div class="'+ordDeleteBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
-						/*删除*/				staDeleteTxt +'</div>'+
 										'<div class="'+scheduBtn+'" poheaderId="'+ bizPoHeader.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
 						/*排产*/				scheduBtnTxt +'</div>'+
 										'<div class="'+ordDetailBtn+'" staOrdId="'+ item.id +'" ordstatu="'+ res.data.statu +'" ordsource="'+ item.source +'">' +
@@ -1217,6 +1217,7 @@
 						url: "../../../html/orderMgmtHtml/orScheduling.html",
 						extras: {
 							staOrdId: staOrdId,
+							source: 'orderList',
 						}
 					})
 				}

@@ -91,7 +91,7 @@
 									'<label>批注:</label>'+
 							        '<textarea name="" rows="" cols="" disabled>'+ item.description +'</textarea>'+
 							    '</div>'+
-								'<br />'+
+//								'<br />'+
 								'<div class="mui-input-row">'+
 							        '<label>审批人:</label>'+
 							        '<input type="text" value="'+ item.user.name +'" disabled>'+
@@ -162,10 +162,11 @@
 							'<label>采购数量：</label>'+
 							'<input type="text" value="'+ item.ordQty +'" disabled>'+
 						'</div>'+
-						'<div class="mui-input-row">'+
-							'<label>结算价：</label>'+
-							'<input type="text" value="'+ item.unitPrice +'" disabled>'+
-						'</div>'+
+//						隐藏结算价
+//						'<div class="mui-input-row">'+
+//							'<label>结算价：</label>'+
+//							'<input type="text" value="'+ item.unitPrice +'" disabled>'+
+//						'</div>'+
 					'</div>'+
 				'</li>'
 				});

@@ -510,7 +510,7 @@
 				<c:if test="${requestHeader.bizPoHeader.id != null}">
 				<!-- 财务审核采购单按钮控制 -->
 				<shiro:hasPermission name="biz:po:bizPoHeader:audit">
-					<c:if test="${requestHeader.bizPoHeader.commonProcess.id != null
+                    <c:if test="${requestHeader.bizPoHeader.commonProcess.id != null
 											&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
 											&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
 											&& requestHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus

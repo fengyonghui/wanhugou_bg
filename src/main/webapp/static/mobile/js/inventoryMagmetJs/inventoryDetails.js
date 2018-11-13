@@ -112,10 +112,12 @@
                     if(res.data.bizRequestHeader.fromType==1){
 						$('#fromType1').attr('checked','checked');
 						$('#fromType2').removeAttr('checked');
+//						$('#fromType1').css('background-color','#ccc');
 					}
 					if(res.data.bizRequestHeader.fromType==2){
 						$('#fromType1').removeAttr('checked');
-						$('#fromType2').attr('checked','checked');						
+						$('#fromType2').attr('checked','checked');
+//						$('#fromType2').css('background-color','#ccc');
 					}	            	
 					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);//采购中心
 					$('#inPototal').val(res.data.bizRequestHeader.totalMoney.toFixed(2));//应付金额
@@ -236,10 +238,11 @@
 										'<label>采购数量：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty +'" reqQty disabled>'+
 									'</div>'+
-									'<div class="mui-input-row">'+
-										'<label>结算价：</label>'+
-										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
-									'</div>'+
+//									隐藏结算价
+//									'<div class="mui-input-row">'+
+//										'<label>结算价：</label>'+
+//										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
+//									'</div>'+
 									'<div class="mui-input-row">'+
 										'<label>总金额：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
@@ -301,10 +304,11 @@
 										'<label>采购数量：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty +'" reqQty disabled>'+
 									'</div>'+
-									'<div class="mui-input-row">'+
-										'<label>结算价：</label>'+
-										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
-									'</div>'+
+//									隐藏结算价
+//									'<div class="mui-input-row">'+
+//										'<label>结算价：</label>'+
+//										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
+//									'</div>'+
 									'<div class="mui-input-row">'+
 										'<label>总金额：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
@@ -572,10 +576,11 @@
 								'<label>商品货号：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled>'+
 							'</div>'+
-							'<div class="mui-input-row">'+
-								'<label>结算价：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice.toFixed(1) +'" disabled>'+
-							'</div>'+
+//							隐藏结算价
+//							'<div class="mui-input-row">'+
+//								'<label>结算价：</label>'+
+//								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice.toFixed(1) +'" disabled>'+
+//							'</div>'+
 							'<div class="mui-input-row">'+
 								'<label>申报数量：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" reqQty disabled>'+

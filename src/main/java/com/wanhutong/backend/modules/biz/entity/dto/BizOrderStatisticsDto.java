@@ -100,7 +100,9 @@ public class BizOrderStatisticsDto {
     }
 
     public BigDecimal getProfitPrice() {
-        return totalMoney.subtract(buyPrice);
+        //马强的计算方法
+        //return totalMoney.subtract(buyPrice);
+        return profitPrice;
     }
 
     public void setProfitPrice(BigDecimal profitPrice) {

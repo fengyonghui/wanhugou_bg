@@ -200,10 +200,12 @@
 					if(res.data.bizRequestHeader.fromType == 1) {
 						$('#fromType1').attr('checked', 'checked');
 						$('#fromType2').removeAttr('checked');
+//						$('#fromType1').css('background-color','#ccc');
 					}
 					if(res.data.bizRequestHeader.fromType == 2) {
 						$('#fromType1').removeAttr('checked');
 						$('#fromType2').attr('checked', 'checked');
+//						$('#fromType2').css('background-color','#ccc');
 					}
 					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name); //采购中心
 					if(res.data.bizRequestHeader.totalMoney){
@@ -566,11 +568,12 @@
 
 					'<div class="mui-row inAddFont">' +
 					'<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-					'<div class="mui-col-sm-5 mui-col-xs-5">' +
-					'<li class="mui-table-view-cell app_bline3">' +
-					'<div class="mui-input-row">' +
-					'<label>结算价:</label>' +
-					'<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div>' +
+//					隐藏结算价
+//					'<div class="mui-col-sm-5 mui-col-xs-5">' +
+//					'<li class="mui-table-view-cell app_bline3">' +
+//					'<div class="mui-input-row">' +
+//					'<label>结算价:</label>' +
+//					'<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div>' +
 					'<div class="mui-col-sm-5 mui-col-xs-5">' +
 					'<li class="mui-table-view-cell app_bline3">' +
 					'<div class="mui-input-row">' +
@@ -1053,9 +1056,10 @@
 				'<div class="mui-input-row">'+
 					'<label>采购数量：</label>'+
 					'<input type="text" class="mui-input-clear" name="reqQtyNum" value="'+ item.reqQty +'" disabled></div>'+
-				'<div class="mui-input-row">'+
-					'<label>结算价：</label>'+
-					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+//					隐藏结算价
+//				'<div class="mui-input-row">'+
+//					'<label>结算价：</label>'+
+//					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>总金额：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.reqQty * item.unitPrice +'" disabled>'+
@@ -1105,9 +1109,10 @@
 				'<div class="mui-input-row">'+
 					'<label>采购数量：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" disabled></div>'+
-				'<div class="mui-input-row">'+
-					'<label>结算价：</label>'+
-					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+//					隐藏结算价
+//				'<div class="mui-input-row">'+
+//					'<label>结算价：</label>'+
+//					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>总金额：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.reqQty * item.unitPrice +'" disabled>'+
@@ -1140,9 +1145,10 @@
 						'<div class="mui-input-row">'+
 							'<label>采购数量：</label>'+
 							'<input type="text" class="" value="'+ item.reqQty +'" disabled></div>'+
-						'<div class="mui-input-row">'+
-							'<label>结算价：</label>'+
-							'<input type="text" class="" value="'+ item.unitPrice +'" disabled></div>'+
+//							隐藏结算价
+//						'<div class="mui-input-row">'+
+//							'<label>结算价：</label>'+
+//							'<input type="text" class="" value="'+ item.unitPrice +'" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>总金额：</label>'+
 							'<input type="text" class="" value="'+ item.reqQty * item.unitPrice +'" disabled></div></div></div>'+
@@ -1316,8 +1322,8 @@
 		},
 		batchSave: function(schedulingType,poId,vndm) {
 			var _this = this;
-//			console.log(vn)
-			var skuInfoIdListList = vn.data.skuInfoIdListListJson;
+//			console.log(vndm)
+			var skuInfoIdListList = vndm.data.skuInfoIdListListJson;
             var params = new Array();
             var totalSchedulingNum = 0;
             var totalOriginalNum = 0;

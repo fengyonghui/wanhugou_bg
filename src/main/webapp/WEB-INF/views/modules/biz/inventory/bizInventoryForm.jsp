@@ -111,7 +111,8 @@
 						<th>颜色</th>
 						<th>尺寸</th>
 						<th>库存类型</th>
-						<th>结算价</th>
+						<!-- 隐藏结算价 -->
+						<%--<th>结算价</th>--%>
 						<th>图片</th>
 						<th>现有库存数</th>
                         <c:if test="${source eq 'pChange'}">
@@ -129,7 +130,8 @@
 								<td>${requestDetail.skuInfo.color}</td>
 								<td>${requestDetail.skuInfo.size}</td>
 								<td>${fns:getDictLabel(requestHeader.headerType,'req_header_type','未知')}</td>
-								<td>${requestDetail.skuInfo.buyPrice}</td>
+								<!-- 隐藏结算价 -->
+								<%--<td>${requestDetail.skuInfo.buyPrice}</td>--%>
 								<td style='width: 200px'><img style='width: 200px' src="${requestDetail.skuInfo.skuImgUrl}"></td>
 								<td>${requestDetail.recvQty - requestDetail.outQty}</td>
                                 <c:if test="${source eq 'pChange'}">

@@ -2071,7 +2071,8 @@ public class BizOrderHeaderController extends BaseController {
                                 detailListData.add(StringUtils.EMPTY);
                             }
                             detailListData.add(detail.getUnitPrice() == null ? StringUtils.EMPTY : String.valueOf(detail.getUnitPrice()));
-                            detailListData.add(detail.getBuyPrice() == null ? StringUtils.EMPTY : String.valueOf(detail.getBuyPrice()));
+                            //隐藏结算价
+                            //detailListData.add(detail.getBuyPrice() == null ? StringUtils.EMPTY : String.valueOf(detail.getBuyPrice()));
                             detailListData.add(detail.getOrdQty() == null ? StringUtils.EMPTY : String.valueOf(detail.getOrdQty()));
                             //商品总价
                             double unitPrice = 0.0;
@@ -2162,7 +2163,8 @@ public class BizOrderHeaderController extends BaseController {
                     rowData.add(df.format(exp + (order.getServiceFee() == null ? 0 : order.getServiceFee()) + fre));
                     // 佣金
                     //                        orderHeader.totalDetail-orderHeader.totalBuyPrice
-                    rowData.add(df.format(total - buy));
+                    //隐藏佣金
+                    //rowData.add(df.format(total - buy));
                     Dict dictInv = new Dict();
                     dictInv.setDescription("发票状态");
                     dictInv.setType("biz_order_invStatus");
@@ -2215,7 +2217,8 @@ public class BizOrderHeaderController extends BaseController {
                                     detailListData.add(StringUtils.EMPTY);
                                 }
                                 detailListData.add(d.getUnitPrice() == null ? StringUtils.EMPTY : String.valueOf(d.getUnitPrice()));
-                                detailListData.add(d.getBuyPrice() == null ? StringUtils.EMPTY : String.valueOf(d.getBuyPrice()));
+                                //隐藏结算价
+                                //detailListData.add(d.getBuyPrice() == null ? StringUtils.EMPTY : String.valueOf(d.getBuyPrice()));
                                 detailListData.add(d.getOrdQty() == null ? StringUtils.EMPTY : String.valueOf(d.getOrdQty()));
                                 //商品总价
                                 double unPri = 0.0;
@@ -2306,7 +2309,8 @@ public class BizOrderHeaderController extends BaseController {
                         rowData.add(df.format(exp + (order.getServiceFee() == null ? 0 : order.getServiceFee()) + fre));
                         // 佣金
 //                        orderHeader.totalDetail-orderHeader.totalBuyPrice
-                        rowData.add(df.format(total - buy));
+                        //隐藏佣金
+                        //rowData.add(df.format(total - buy));
                         Dict dictInv = new Dict();
                         dictInv.setDescription("发票状态");
                         dictInv.setType("biz_order_invStatus");
@@ -2349,9 +2353,14 @@ public class BizOrderHeaderController extends BaseController {
                     }
                 }
             }
+            //隐藏佣金
+//            String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
+//                    "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "佣金", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
             String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
-                    "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "佣金", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
-            String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "商品结算价", "采购数量", "商品总价"};
+                    "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
+            //隐藏结算价
+            //String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "商品结算价", "采购数量", "商品总价"};
+            String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "采购数量", "商品总价"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             eeu.exportExcel(workbook, 0, "订单数据", headers, data, fileName);

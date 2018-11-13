@@ -63,7 +63,7 @@
                 data:{id: _this.userInfo.staOrdId},
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	console.log(res)
                 	var remarkTxt = '';
                 	if(res.data.bizPoHeader.bizSchedulingPlan.remark) {
                 		remarkTxt = res.data.bizPoHeader.bizSchedulingPlan.remark
@@ -82,7 +82,6 @@
 		            } else {
 		                _this.ajaxNum();
 		            }
-//		            console.log(res.data.bizPoHeader.poSchType)
 		            if(res.data.bizPoHeader.poSchType != 0) {
 		            	$('.schedPurch').hide();
 		            }else {
@@ -108,9 +107,10 @@
 							'<div class="mui-input-row">'+
 								'<label>采购数量：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.ordQty +'" disabled></div>'+
-							'<div class="mui-input-row">'+
-								'<label>结算价：</label>'+
-								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+//								隐藏结算价
+//							'<div class="mui-input-row">'+
+//								'<label>结算价：</label>'+
+//								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
 							'<div class="mui-input-row">'+
 								'<label>总金额：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.ordQty * item.unitPrice +'" disabled>'+
@@ -143,9 +143,18 @@
 				$(".inputRadio").attr("disabled", true);
 			}
 			if(data.data.detailHeaderFlg == false && data.data.detailSchedulingFlg == false) {
-				$('#chedulingStatus').val('未排产');
+				if($('#purchOrdQty').val() == 0) {
+					$('#chedulingStatus').val('采购商品无申报数量！');
+					$(".inputRadio").attr("disabled", true);
+					$('#purchAddBtn').hide();
+					$('.saveBtnPt').hide();
+					$('#purchSchedRecord').parent().hide();
+					$('#purchAddCont').parent().hide();
+				}else {
+					$('#chedulingStatus').val('未排产');
+					_this.btnshow(data);
+				}
 				$('.schedCommd').hide();
-				_this.btnshow(data);
 			}
 			_this.saveSchedul(data);
 		},
@@ -169,7 +178,6 @@
 				})
 				$('#purchSchedRecord').html(htmlPurchPlans);
 			}
-			console.log(a.data.bizPoHeader)
 			if(a.data.bizPoHeader.poSchType == 2) {
 				$('#purchAddCont').parent().remove();
 				$('#chedulingStatus').val('排产完成');
@@ -198,9 +206,10 @@
 				'<div class="mui-input-row">'+
 					'<label>采购数量：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.ordQty +'" disabled></div>'+
-				'<div class="mui-input-row">'+
-					'<label>结算价：</label>'+
-					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+//					隐藏结算价
+//				'<div class="mui-input-row">'+
+//					'<label>结算价：</label>'+
+//					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>总金额：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.ordQty * item.unitPrice +'" disabled>'+
@@ -246,6 +255,7 @@
 					chedulingStatus = '排产完成'
 					comdAddBtns = ''
 					comdPlans = ''
+					$('.saveBtnPt').hide();
 				}else {
 					comdAddBtns = '<button type="submit" class="commdAddBtn schedull app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
 					'<button type="submit" commdPurchId="'+item.id+'" id="singleAddBtn_'+ item.id+'" class="singleAddBtn schedulr app_btn_search mui-btn-blue mui-btn-block">保存</button>'
@@ -292,9 +302,10 @@
 						'<div class="mui-input-row">'+
 							'<label>采购数量：</label>'+
 							'<input type="text" class="" value="'+ item.ordQty +'" disabled></div>'+
-						'<div class="mui-input-row">'+
-							'<label>结算价：</label>'+
-							'<input type="text" class="" value="'+ item.unitPrice +'" disabled></div>'+
+//							隐藏结算价
+//						'<div class="mui-input-row">'+
+//							'<label>结算价：</label>'+
+//							'<input type="text" class="" value="'+ item.unitPrice +'" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>总金额：</label>'+
 							'<input type="text" class="" value="'+ item.ordQty * item.unitPrice +'" disabled></div></div></div>'+
@@ -405,6 +416,7 @@
 		},
 		saveSchedul: function(m) {
 			var _this = this;
+			console.log(_this.userInfo.source)
 			$('.inSaveBtn').on('tap', '#saveBtn', function() {
 				var schedulOneId = _this.userInfo.staOrdId;
 				_this.saveComplete(0, schedulOneId)
@@ -501,12 +513,23 @@
 	                datatype:"json",
 	                type: 'post',
 	                success: function (result) {
-//	                	console.log(result)
 	                    if(result == true) {
-	                       GHUTILS.OPENPAGE({
-								url: "../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+//	                    	GHUTILS.OPENPAGE({
+//								url: "../../html/orderMgmtHtml/orScheduling.html",
+//								extras: {
+//
+//								}
+//							})
+	                    	var urlTxt = '';
+	                    	if(_this.userInfo.source == 'orderList') {
+	                    		urlTxt = "../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html";
+	                    	}
+	                    	if(_this.userInfo.source == 'inventoryList') {
+	                    		urlTxt = "../../html/inventoryMagmetHtml/inventoryList.html";
+	                    	}
+	                        GHUTILS.OPENPAGE({
+								url: urlTxt,
 								extras: {
-
 								}
 							})
 	                    }
@@ -605,10 +628,17 @@
                     type: 'post',
                     success: function (result) {
                         if(result == true) {
-                            GHUTILS.OPENPAGE({
-								url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+                            var urlTxt = '';
+	                    	if(_this.userInfo.source == 'orderList') {
+	                    		urlTxt = "../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html";
+	                    	}
+	                    	if(_this.userInfo.source == 'inventoryList') {
+	                    		urlTxt = "../../html/inventoryMagmetHtml/inventoryList.html";
+	                    	}
+	                        GHUTILS.OPENPAGE({
+								url: urlTxt,
 								extras: {
-									
+
 								}
 							})
                         }
