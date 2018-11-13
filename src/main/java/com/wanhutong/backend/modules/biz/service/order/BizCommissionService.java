@@ -90,14 +90,18 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 
 	public static final String DATABASE_TABLE_NAME = "biz_commission";
 
+	//订单已结佣时，订单记录表中记录业务状态
+	public static final Integer COMMISSIONED_BIZ_STATUS = 50;
+
+
 	public BizCommission get(Integer id) {
 		return super.get(id);
 	}
-	
+
 	public List<BizCommission> findList(BizCommission bizCommission) {
 		return super.findList(bizCommission);
 	}
-	
+
 	public Page<BizCommission> findPage(Page<BizCommission> page, BizCommission bizCommission) {
 		return super.findPage(page, bizCommission);
 	}
@@ -402,7 +406,8 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 				bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.COMMISSION_COMPLETE.getComStatus());
 				bizOrderHeaderService.save(bizOrderHeader);
 
-				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getDesc(),BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getState(),orderId);
+				//bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getDesc(),BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getState(),orderId);
+				bizOrderStatusService.insertAfterBizStatusChangedNew(COMMISSIONED_BIZ_STATUS,BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getDesc(),BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getState(),orderId);
 			}
 		}
 		if (orderIdStrs.length() > 0) {
