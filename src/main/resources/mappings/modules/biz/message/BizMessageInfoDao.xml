@@ -7,6 +7,8 @@
 		a.title AS "title",
 		a.content AS "content",
 		a.url AS "url",
+		a.biz_status AS "bizStatus",
+		a.release_time AS "releaseTime",
 		a.create_time AS "createTime",
 		a.create_id AS "createId.id",
 		a.create_name AS "createName",
@@ -38,6 +40,21 @@
 					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			</if>
+			<if test="createName != null and createName != ''">
+				AND a.create_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{createName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{createName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{createName},'%')</if>
+			</if>
+			<if test="bizStatus !=null">
+				AND a.biz_status=#{bizStatus}
+			</if>
+			<if test="releaseStartTime !=null and releaseStartTime !=''">
+				AND a.release_time &gt;= #{releaseStartTime}
+			</if>
+			<if test="releaseEndTime !=null and releaseEndTime!=''">
+				AND a.release_time &lt;= #{releaseEndTime}
 			</if>
 		</where>
 		<choose>
@@ -71,6 +88,12 @@
 			title,
 			content,
 			url,
+		<if test="bizStatus != null">
+			biz_status,
+		</if>
+		<if test="releaseTime != null">
+			release_time,
+		</if>
 			create_time,
 			create_id,
 			create_name,
@@ -82,6 +105,12 @@
 			#{title},
 			#{content},
 			#{url},
+		<if test="bizStatus != null">
+			#{bizStatus},
+		</if>
+		<if test="releaseTime != null">
+			#{releaseTime},
+		</if>
 			NOW(),
 			#{createBy.id},
 			#{createBy.name},
@@ -97,6 +126,12 @@
 			title = #{title},
 			content = #{content},
 			url = #{url},
+		<if test="bizStatus != null">
+			biz_status = #{bizStatus},
+		</if>
+		<if test="releaseTime != null">
+			release_time = #{releaseTime},
+		</if>
 			update_id = #{updateBy.id},
 			update_time = #{updateTime},
 			type = #{type}

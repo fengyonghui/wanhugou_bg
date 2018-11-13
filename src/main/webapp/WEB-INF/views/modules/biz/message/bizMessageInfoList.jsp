@@ -28,6 +28,27 @@
 			<li><label>标题：</label>
 				<form:input path="title" htmlEscape="false" maxlength="128" class="input-medium"/>
 			</li>
+
+			<li><label>创建人：</label>
+				<form:input path="createName" htmlEscape="false" maxlength="128" class="input-medium"/>
+			</li>
+
+			<li><label>状态：</label>
+				<form:select path="bizStatus" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('biz_message_info_status')}" itemLabel="label" itemValue="value"
+								  htmlEscape="false"/></form:select>
+			</li>
+
+			<li><label>发布时间：</label>
+				<input name="releaseStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizMessageInfo.releaseStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				至
+				<input name="releaseEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizMessageInfo.releaseEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>

@@ -31,9 +31,25 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 
 	private Integer companyId;
 
+	/**
+	 * 业务状态 0未发送；1已发送
+	 */
+	private Integer bizStatus;
 
+	/**
+	 * 发布时间
+	 */
+	private Date releaseTime;
 
+	/**
+	 * 按发布时间搜索，选择的起始时间
+	 */
+	private Date releaseStartTime;
 
+	/**
+	 * 按发布时间搜索，选择的终止时间
+	 */
+	private Date releaseEndTime;
 
 	public BizMessageInfo() {
 		super();
@@ -128,5 +144,37 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 
 	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
+	}
+
+	public Integer getBizStatus() {
+		return bizStatus;
+	}
+
+	public void setBizStatus(Integer bizStatus) {
+		this.bizStatus = bizStatus;
+	}
+
+	public Date getReleaseTime() {
+		return releaseTime;
+	}
+
+	public void setReleaseTime(Date releaseTime) {
+		this.releaseTime = releaseTime;
+	}
+
+	public Date getReleaseStartTime() {
+		return releaseStartTime;
+	}
+
+	public void setReleaseStartTime(Date releaseStartTime) {
+		this.releaseStartTime = releaseStartTime;
+	}
+
+	public Date getReleaseEndTime() {
+		return releaseEndTime;
+	}
+
+	public void setReleaseEndTime(Date releaseEndTime) {
+		this.releaseEndTime = releaseEndTime;
 	}
 }

@@ -41,8 +41,24 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">所属公司：</label>
+			<label class="control-label">选择发送用户：</label>
 			<div class="controls">
+				<input title="num" name="${orderDetail.orderHeader.orderNum}" type="checkbox"
+					   onclick="selectOrder('${orderDetail.orderHeader.orderNum}')"/>全部零售商
+				&nbsp;&nbsp;
+				<input title="num" name="${orderDetail.orderHeader.orderNum}" type="checkbox"
+					   onclick="selectOrder('${orderDetail.orderHeader.orderNum}')"/>全部代销商
+				&nbsp;&nbsp;
+				<input title="num" name="${orderDetail.orderHeader.orderNum}" type="checkbox"
+					   onclick="selectOrder('${orderDetail.orderHeader.orderNum}')"/>全部经销商
+				&nbsp;&nbsp;
+				<input title="num" name="${orderDetail.orderHeader.orderNum}" type="checkbox"
+					   onclick="selectOrder('${orderDetail.orderHeader.orderNum}')"/>全部供应商
+				&nbsp;&nbsp;
+				<input title="num" name="${orderDetail.orderHeader.orderNum}" type="checkbox"
+					   onclick="selectOrder('${orderDetail.orderHeader.orderNum}')"/>部分用户
+				&nbsp;&nbsp;
+
 				<sys:treeselect id="company" name="companyId" value="${companyId}" labelName="company.name" labelValue="${company.id}"
 								title="公司" url="/sys/office/treeData?isAll=true" cssClass="input-small" allowClear="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -61,8 +77,22 @@
 				<form:input path="url" htmlEscape="false" maxlength="128" class="input-xlarge "/>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">发布时间：</label>
+			<div class="controls">
+				<input name="releaseTime" id="releaseTime" type="text" readonly="readonly"
+					   maxlength="20"
+					   class="input-medium Wdate required"
+					   value="<fmt:formatDate value="${bizMessageInfo.releaseTime}"  pattern="yyyy-MM-dd"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
+					   placeholder="必填！"/>
+				<span class="help-inline"><font color="red">*</font></span>
+			</div>
+		</div>
+
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保存暂不发送"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保存并发送"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
