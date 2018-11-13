@@ -23,6 +23,11 @@
 				}
 			});
 		});
+		
+		function btnSaveType(saveType) {
+            $("#inputForm").attr("action", "${ctx}/biz/message/bizMessageInfo/save?saveType=" + saveType);
+            $("#inputForm").submit();
+        }
 	</script>
 </head>
 <body>
@@ -91,8 +96,8 @@
 		</div>
 
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保存暂不发送"/>&nbsp;</shiro:hasPermission>
-			<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保存并发送"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><input id="btnSave" class="btn btn-primary" type="button" value="保存暂不发送" onclick="btnSaveType('save')"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><input id="btnSaveAndSend" class="btn btn-primary" type="button" value="保存并发送" onclick="btnSaveType('saveAndSend')"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>

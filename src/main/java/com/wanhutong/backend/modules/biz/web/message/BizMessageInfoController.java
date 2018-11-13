@@ -69,6 +69,13 @@ public class BizMessageInfoController extends BaseController {
 			return form(bizMessageInfo, model);
 		}
 		try {
+			String saveType = bizMessageInfo.getSaveType();
+			if ("save".equals(saveType)) {
+				bizMessageInfo.setBizStatus(BizMessageInfo.BizStatus.NO_SEND.getStatus());
+			} else if ("saveAndSend".equals(saveType)) {
+				bizMessageInfo.setBizStatus(BizMessageInfo.BizStatus.SEND_COMPLETE.getStatus());
+			}
+
 			Pair<Boolean, String> booleanStringPair = bizMessageInfoService.saveMessage(bizMessageInfo);
 			addMessage(redirectAttributes, booleanStringPair.getRight());
 			return "redirect:"+Global.getAdminPath()+"/biz/message/bizMessageInfo/?repage";

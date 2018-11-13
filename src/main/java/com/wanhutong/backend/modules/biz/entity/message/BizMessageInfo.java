@@ -51,6 +51,11 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 	 */
 	private Date releaseEndTime;
 
+    /**
+     * 保存模式 保存暂不发送，保存并发送
+     */
+	private String saveType;
+
 	public BizMessageInfo() {
 		super();
 	}
@@ -177,4 +182,33 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 	public void setReleaseEndTime(Date releaseEndTime) {
 		this.releaseEndTime = releaseEndTime;
 	}
+
+    public String getSaveType() {
+        return saveType;
+    }
+
+    public void setSaveType(String saveType) {
+        this.saveType = saveType;
+    }
+
+    public enum BizStatus {
+	    NO_SEND(0, "未发送"),
+        SEND_COMPLETE(1, "已发送");
+
+	    private int status;
+	    private String desc;
+
+	    BizStatus(int status, String desc) {
+	        this.status = status;
+	        this.desc = desc;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
 }
