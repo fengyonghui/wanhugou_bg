@@ -66,8 +66,8 @@ public class BizShopCartService extends CrudService<BizShopCartDao, BizShopCart>
 	 * @param userId
 	 */
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public void updateShopCartByUserId(Integer status, Integer userId) {
-		bizShopCartDao.updateShopCartByUserId(status, userId);
+	public void updateShopCartByUserId(Integer status, Integer updateId, Integer userId) {
+		bizShopCartDao.updateShopCartByUserId(status, updateId, userId);
 	}
 
 	/**
@@ -76,8 +76,8 @@ public class BizShopCartService extends CrudService<BizShopCartDao, BizShopCart>
 	 * @param userId
 	 */
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public void updateCartSkuByUserId(Integer status, Integer userId) {
-		bizShopCartDao.updateCartSkuByUserId(status, userId);
+	public void updateCartSkuByUserId(Integer status, Integer updateId, Integer userId) {
+		bizShopCartDao.updateCartSkuByUserId(status, updateId, userId);
 	}
 	
 }

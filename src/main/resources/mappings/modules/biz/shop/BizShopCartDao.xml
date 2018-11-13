@@ -176,14 +176,18 @@
 
 	<update id="updateShopCartByUserId">
 		UPDATE biz_shop_cart SET
-			status = #{status}
+			status = #{status},
+			update_id = #{updateId},
+			update_time = NOW()
 		WHERE
 			user_id = #{userId}
 	</update>
 
 	<update id="updateCartSkuByUserId">
 		UPDATE biz_cart_sku SET
-			status = #{status}
+			status = #{status},
+			update_id = #{updateId},
+			update_time = NOW()
 		WHERE
 			user_id = #{userId}
 	</update>

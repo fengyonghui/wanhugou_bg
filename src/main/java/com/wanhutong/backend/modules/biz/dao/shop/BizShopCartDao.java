@@ -21,12 +21,12 @@ public interface BizShopCartDao extends CrudDao<BizShopCart> {
      * @param status
      * @param userId
      */
-    void updateShopCartByUserId(@Param("status") Integer status, @Param("userId") Integer userId);
+    void updateShopCartByUserId(@Param("status") Integer status, @Param("updateId") Integer updateId, @Param("userId") Integer userId);
 
     /**
      * 删除购物车中间表数据
      * @param status
      * @param userId
      */
-    void updateCartSkuByUserId(@Param("status") Integer status, @Param("userId") Integer userId);
+    void updateCartSkuByUserId(@Param("status") Integer status, @Param("updateId") Integer updateId, @Param("userId") Integer userId);
 }

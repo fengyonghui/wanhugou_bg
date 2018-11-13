@@ -1051,10 +1051,11 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         List<User> userList = userDao.findList(applyUser);
         if (CollectionUtils.isNotEmpty(userList)) {
             Integer userId = userList.get(0).getId();
+            User currentUser = UserUtils.getUser();
             //删除购物车数据
-            bizShopCartService.updateShopCartByUserId(Integer.valueOf(0), userId);
+            bizShopCartService.updateShopCartByUserId(Integer.valueOf(0), currentUser.getId(), userId);
             //删除购物车中间表数据
-            bizShopCartService.updateCartSkuByUserId(Integer.valueOf(0), userId);
+            bizShopCartService.updateCartSkuByUserId(Integer.valueOf(0), currentUser.getId(), userId);
         }
         return Pair.of(Boolean.TRUE, "操作成功!");
 
