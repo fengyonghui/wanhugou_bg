@@ -12,6 +12,7 @@ import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.TransferProcessConfig;
 import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.validation.constraints.NotNull;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import sun.security.krb5.Config;
 
 /**
  * 通用流程Entity
@@ -53,6 +55,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	private com.wanhutong.backend.modules.config.parse.Process jointOperationLocalProcess;
 	private com.wanhutong.backend.modules.config.parse.Process jointOperationOriginProcess;
 	private com.wanhutong.backend.modules.config.parse.Process invRequestProcess;
+	private com.wanhutong.backend.modules.config.parse.Process transferProcess;
 
 	/**
 	 * 前一个流程
@@ -236,6 +239,13 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 			return new InventorySkuRequestProcessConfig.InvRequestProcess();
 		}
 		return ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
+
+	public TransferProcessConfig.TransferProcess getTransferProcess() {
+		if (StringUtils.isBlank(type)) {
+			return new TransferProcessConfig.TransferProcess();
+		}
+		return ConfigGeneral.SKU_TRANSFER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 
 	public enum AuditType {

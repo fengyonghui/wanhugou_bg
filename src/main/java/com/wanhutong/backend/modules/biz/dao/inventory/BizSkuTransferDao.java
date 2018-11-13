@@ -22,5 +22,13 @@ public interface BizSkuTransferDao extends CrudDao<BizSkuTransfer> {
      * @return
      */
     int findCountByToCent(@Param("invId")Integer invId);
+
+    /**
+     * 更新状态
+     * @param id
+     * @param bizStatus
+     * @return
+     */
+    int updateBizStatus(@Param("id")Integer id, @Param("bizStatus")Integer bizStatus);
 	
 }

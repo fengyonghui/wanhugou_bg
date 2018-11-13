@@ -183,6 +183,9 @@
 		<if test='orderTypeDesc == "biz_po_header"'>
 			FROM biz_po_header br
 		</if>
+		<if test="orderTypeDesc == 'biz_sku_transfer'">
+			FROM biz_sku_transfer br
+		</if>
 		WHERE br.id = #{id}
 	</insert>
 
@@ -191,6 +194,33 @@
 		FROM biz_order_status
 		WHERE order_id = #{orderId}
 		AND order_type = #{orderType}
+	</select>
+
+	<select id="findStatusList" resultType="BizOrderStatus">
+		SELECT
+		a.id AS "id",
+		a.order_id AS "orderHeader.id",
+		a.biz_status AS "bizStatus",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		u.name AS "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+		FROM biz_order_status a
+		LEFT JOIN sys_user u ON u.id = a.create_id
+		WHERE
+			a.status = 1
+		<if test="orderType != null and orderType != ''">
+			AND a.order_type = #{orderType}
+		</if>
+		<if test="bizStatus != null and bizStatus != ''">
+			AND a.biz_status = #{bizStatus}
+		</if>
+		<if test="orderHeader != null and orderHeader.id != '' and orderHeader.id != null">
+			AND a.order_id = #{orderHeader.id}
+		</if>
 	</select>
 	
 </mapper>

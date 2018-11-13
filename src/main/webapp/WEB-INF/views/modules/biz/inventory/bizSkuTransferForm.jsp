@@ -4,6 +4,14 @@
 <head>
 	<title>库存调拨管理</title>
 	<meta name="decorator" content="default"/>
+	<style type="text/css">
+		.help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;border-top:1px solid #FFF;width: 100%}
+		.help_step_item{margin-right: 30px;width:200px;border:1px #3daae9 solid;float:left;height:150px;padding:0 25px 0 45px;cursor:pointer;position:relative;font-size:14px;font-weight:bold;}
+		.help_step_num{width:19px;height:120px;line-height:100px;position:absolute;text-align:center;top:18px;left:10px;font-size:16px;font-weight:bold;color: #239df5;}
+		.help_step_set{background: #FFF;color: #3daae9;}
+		.help_step_set .help_step_left{width:8px;height:100px;position:absolute;left:0;top:0;}
+		.help_step_set .help_step_right{width:8px;height:100px; position:absolute;right:-8px;top:0;}
+	</style>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
@@ -42,14 +50,15 @@
                     alert("请先选择原仓库");
                     return false;
 				}
+				if (skuName == "" && skuCode == "" && itemNo == "" && vendor == "") {
+                    alert("请输入查询条件");
+                    return false;
+				}
                 $.ajax({
 					type:"post",
 					url:"${ctx}/biz/inventory/bizSkuTransfer/findInvSkuList?fromInv=" + fromInv,
 					data:$('#searchForm').serialize(),
 					success:function (data) {
-						if (data == null) {
-						    alert("请选择原仓库，并且输入查询条件");
-                        }
                         if (data.length == 0) {
                             alert("原库存没有您查询的商品");
                         }
@@ -180,7 +189,7 @@
 						<input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
 					</li>
 					<li><label>供应商：</label>
-						<input id="vender" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
+						<input id="vendor" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
 					</li>
 					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
 					<li class="clearfix"></li>
@@ -242,6 +251,80 @@
 				</table>
 			</div>
 		</div>
+        <c:if test="${bizSkuTransfer.str eq 'audit' && bizSkuTransfer.commonProcess.id != null}">
+            <div class="control-group">
+                <label class="control-label">审核状态：</label>
+                <div class="controls">
+                    <input type="text" disabled="disabled"
+                           value="${transferProcess.name}" htmlEscape="false"
+                           maxlength="30" class="input-xlarge "/>
+                    <input id="currentType" type="hidden" disabled="disabled"
+                           value="${transferProcess.code}" htmlEscape="false"
+                           maxlength="30" class="input-xlarge "/>
+                </div>
+            </div>
+        </c:if>
+		<c:if test="${fn:length(statusList) > 0}">
+			<div class="control-group">
+				<label class="control-label">状态流程：</label>
+				<div class="controls help_wrap">
+					<div class="help_step_box fa">
+						<c:forEach items="${statusList}" var="v" varStatus="stat">
+							<c:if test="${!stat.last}" >
+								<div class="help_step_item">
+									<div class="help_step_left"></div>
+									<div class="help_step_num">${stat.index + 1}</div>
+									处理人:${v.createBy.name}<br/><br/>
+									状态:${statusMap[v.bizStatus].desc}<br/>
+									<fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+									<div class="help_step_right"></div>
+								</div>
+							</c:if>
+							<c:if test="${stat.last}">
+								<div class="help_step_item help_step_set">
+									<div class="help_step_left"></div>
+									<div class="help_step_num">${stat.index + 1}</div>
+									处理人:${v.createBy.name}<br/><br/>
+									状态:${statusMap[v.bizStatus].desc}<br/>
+									<fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+									<div class="help_step_right"></div>
+								</div>
+							</c:if>
+						</c:forEach>
+					</div>
+				</div>
+			</div>
+		</c:if>
+        <c:if test="${fn:length(bizSkuTransfer.commonProcessList) > 0}">
+            <div class="control-group">
+                <label class="control-label">审批流程：</label>
+                <div class="controls help_wrap">
+                    <div class="help_step_box fa">
+                        <c:forEach items="${bizSkuTransfer.commonProcessList}" var="v" varStatus="stat">
+                            <c:if test="${!stat.last}" >
+                                <div class="help_step_item">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
+                                    批注:${v.description}<br/><br/>
+                                    审批人:${v.user.name}<br/>
+                                    <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <div class="help_step_right"></div>
+                                </div>
+                            </c:if>
+                            <c:if test="${stat.last}">
+                                <div class="help_step_item help_step_set">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
+                                    当前状态:${v.transferProcess.name}<br/><br/>
+                                        ${v.user.name}<br/>
+                                    <div class="help_step_right"></div>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+                    </div>
+                </div>
+            </div>
+        </c:if>
 		<div class="control-group">
 			<label class="control-label">备注：</label>
 			<div class="controls">
@@ -252,6 +335,12 @@
 			<c:if test="${bizSkuTransfer.str ne 'detail' && bizSkuTransfer.str ne 'audit'}">
 				<shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			</c:if>
+            <c:if test="${bizSkuTransfer.str eq 'audit'}">
+                <shiro:hasPermission name="biz:inventory:bizSkuTransfer:audit">
+                    <input class="btn btn-primary" type="button" onclick="checkPass()" value="审核通过"/>
+                    <input class="btn btn-primary" type="button" onclick="checkReject()" value="审核驳回"/>
+                </shiro:hasPermission>
+            </c:if>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
@@ -261,5 +350,69 @@
 		<input type="hidden" id="itemNoCopy" name="itemNo" value=""/>
 		<input type="hidden" id="vendorCopy" name="vendorName" value=""/>
 	</form:form>
+<script type="text/javascript">
+    function checkPass() {
+        var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+        var submit = function (v, h, f) {
+            if ($String.isNullOrBlank(f.description)) {
+                jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                return false;
+            }
+            top.$.jBox.confirm("确认审核通过吗？", "系统提示", function (v1, h1, f1) {
+                if (v1 == "ok") {
+                    audit(1, f.description);
+                }
+            }, {buttonsFocus: 1});
+            return true;
+        };
+
+        jBox(html, {
+            title: "请输入通过理由:", submit: submit, loaded: function (h) {
+            }
+        });
+    }
+    function checkReject() {
+        var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
+        var submit = function (v, h, f) {
+            if ($String.isNullOrBlank(f.description)) {
+                jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                return false;
+            }
+            top.$.jBox.confirm("确认驳回该流程吗？", "系统提示", function (v1, h1, f1) {
+                if (v1 == "ok") {
+                    audit(2, f.description);
+                }
+            }, {buttonsFocus: 1});
+            return true;
+        };
+
+        jBox(html, {
+            title: "请输入驳回理由:", submit: submit, loaded: function (h) {
+            }
+        });
+    }
+    function audit(auditType, description) {
+        var id = $("#id").val();
+        var currentType = $("#currentType").val();
+        $.ajax({
+            url: '${ctx}/biz/inventory/bizSkuTransfer/audit',
+            contentType: 'application/json',
+            data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+            type: 'get',
+            success: function (result) {
+                result = JSON.parse(result);
+                if(result.ret == true || result.ret == 'true') {
+                    alert('操作成功!');
+                    window.location.href = "${ctx}/biz/inventory/bizSkuTransfer";
+                }else {
+                    alert(result.errmsg);
+                }
+            },
+            error: function (error) {
+                console.info(error);
+            }
+        });
+    }
+</script>
 </body>
 </html>

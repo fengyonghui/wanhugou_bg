@@ -52,9 +52,9 @@
 				</form:select>
 			</li>
 			<li><label>审核状态：</label>
-				<form:select path="bizStatus" class="input-medium">
+				<form:select class="input-medium" path="commonProcess.type">
 					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+					<form:options items="${transferMap}" htmlEscape="false"/>
 				</form:select>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -71,6 +71,7 @@
 				<th>期望收货时间</th>
 				<th>备注</th>
 				<th>业务状态</th>
+				<th>审核状态</th>
 				<th>申请时间</th>
 				<shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -84,12 +85,25 @@
 				<td><fmt:formatDate value="${bizSkuTransfer.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<td>${bizSkuTransfer.remark}</td>
 				<td>${fns:getDictLabel(bizSkuTransfer.bizStatus,'transfer_bizStatus' ,'未知状态' )}</td>
+				<td>${bizSkuTransfer.commonProcess.transferProcess.name}</td>
 				<td><fmt:formatDate value="${bizSkuTransfer.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-				<td><shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit">
-					<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=detail">详情</a>
-    				<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}">修改</a>
-					<a href="${ctx}/biz/inventory/bizSkuTransfer/delete?id=${bizSkuTransfer.id}" onclick="return confirmx('确认要删除该库存调拨吗？', this.href)">删除</a>
-				</shiro:hasPermission></td>
+                <td>
+                    <a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=detail">详情</a>
+                    <shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit">
+						<c:if test="${bizSkuTransfer.commonProcess.id == null || bizSkuTransfer.commonProcess.transferProcess.name == '驳回'}">
+							<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}">修改</a>
+							<a href="${ctx}/biz/inventory/bizSkuTransfer/delete?id=${bizSkuTransfer.id}" onclick="return confirmx('确认要删除该库存调拨吗？', this.href)">删除</a>
+						</c:if>
+				    </shiro:hasPermission>
+					<c:if test="${bizSkuTransfer.commonProcess.id != null
+									&& bizSkuTransfer.commonProcess.transferProcess.name != '审批完成'
+									&& bizSkuTransfer.commonProcess.transferProcess.name != '驳回'
+									&& (fns:hasRole(roleSet, bizSkuTransfer.commonProcess.transferProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
+						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:audit">
+							<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=audit">审核</a>
+						</shiro:hasPermission>
+					</c:if>
+                </td>
 			</tr>
 		</c:forEach>
 		</tbody>

@@ -4,10 +4,12 @@
 package com.wanhutong.backend.modules.biz.entity.inventory;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 库存调拨Entity
@@ -17,6 +19,8 @@ import java.util.Date;
 public class BizSkuTransfer extends DataEntity<BizSkuTransfer> {
 	
 	private static final long serialVersionUID = 1L;
+
+	public static final String DATABASE_TABLE_NAME = "biz_sku_transfer";
 
 	/**
 	 * 调拨单号
@@ -41,7 +45,7 @@ public class BizSkuTransfer extends DataEntity<BizSkuTransfer> {
 	/**
 	 * 0: 未审核；10:审核完成; 20:出库中; 30:已出库; 40:入库中；50:已入库 60:取消
 	 */
-	private Integer bizStatus;
+	private Byte bizStatus;
 
 	/**
 	 * 期望收货时间
@@ -72,6 +76,16 @@ public class BizSkuTransfer extends DataEntity<BizSkuTransfer> {
 	 * 区分详情("detail"),修改(""),审核("audit")
 	 */
 	private String str;
+
+    /**
+     * 审核
+     */
+	private CommonProcessEntity commonProcess;
+
+    /**
+     * 审核流程
+     */
+	private List<CommonProcessEntity> commonProcessList;
 
 	public BizSkuTransfer() {
 		super();
@@ -113,11 +127,11 @@ public class BizSkuTransfer extends DataEntity<BizSkuTransfer> {
 		this.applyer = applyer;
 	}
 	
-	public Integer getBizStatus() {
+	public Byte getBizStatus() {
 		return bizStatus;
 	}
 
-	public void setBizStatus(Integer bizStatus) {
+	public void setBizStatus(Byte bizStatus) {
 		this.bizStatus = bizStatus;
 	}
 	
@@ -169,4 +183,20 @@ public class BizSkuTransfer extends DataEntity<BizSkuTransfer> {
 	public void setStr(String str) {
 		this.str = str;
 	}
+
+    public CommonProcessEntity getCommonProcess() {
+        return commonProcess;
+    }
+
+    public void setCommonProcess(CommonProcessEntity commonProcess) {
+        this.commonProcess = commonProcess;
+    }
+
+    public List<CommonProcessEntity> getCommonProcessList() {
+        return commonProcessList;
+    }
+
+    public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
+        this.commonProcessList = commonProcessList;
+    }
 }

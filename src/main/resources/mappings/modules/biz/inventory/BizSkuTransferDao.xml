@@ -19,7 +19,13 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		a.status AS "delFlag"
+		a.status AS "delFlag",
+		cp.id AS "commonProcess.id",
+		cp.biz_status AS "commonProcess.bizStatus",
+		cp.processor AS "commonProcess.processor",
+		cp.description AS "commonProcess.description",
+		cp.type AS "commonProcess.type",
+		cp.current AS "commonProcess.current"
 	</sql>
 	
 	<sql id="bizSkuTransferJoins">
@@ -29,6 +35,7 @@
 		LEFT JOIN sys_office inCent ON inCent.id = toInv.cust_id
 		LEFT JOIN sys_user apply ON apply.id = a.apply_id
 		LEFT JOIN sys_user u ON u.id = a.create_id
+		LEFT JOIN common_process cp ON cp.object_id = a.id AND cp.object_name = 'biz_sku_transfer' AND cp.current = 1
 	</sql>
     
 	<select id="get" resultType="BizSkuTransfer">
@@ -61,12 +68,16 @@
 			<if test="bizStatus != null and bizStatus != ''">
 				AND a.biz_status = #{bizStatus}
 			</if>
+			<if test="commonProcess != null and commonProcess.type != null and commonProcess.type != ''">
+				AND cp.type = #{commonProcess.type}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY a.update_time DESC
 			</otherwise>
 		</choose>
 	</select>
@@ -148,5 +159,11 @@
 		WHERE
 		bii.cust_id = (SELECT inv.cust_id FROM biz_inventory_info inv WHERE inv.id = #{invId})
 	</select>
+
+	<update id="updateBizStatus">
+		UPDATE biz_sku_transfer SET
+		biz_status = #{bizStatus}
+		WHERE id = #{id}
+	</update>
 	
 </mapper>

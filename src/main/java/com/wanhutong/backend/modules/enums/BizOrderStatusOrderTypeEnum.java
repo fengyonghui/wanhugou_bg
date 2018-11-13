@@ -16,7 +16,8 @@ import java.util.Map;
 public enum BizOrderStatusOrderTypeEnum {
     SELLORDER(0, "biz_order_header"),
     REPERTOIRE(1, "biz_request_header"),
-    PURCHASEORDER(2, "biz_po_header");
+    PURCHASEORDER(2, "biz_po_header"),
+    SKUTRANSFER(5,"biz_sku_transfer");
 
     private Integer state;
     private String desc;

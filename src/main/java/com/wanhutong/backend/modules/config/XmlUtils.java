@@ -14,6 +14,7 @@ import com.wanhutong.backend.modules.config.parse.PhoneConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.SystemConfig;
+import com.wanhutong.backend.modules.config.parse.TransferProcessConfig;
 import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,7 @@ public class XmlUtils {
 		X_STREAM.processAnnotations(JointOperationOrderProcessLocalConfig.class);
 		X_STREAM.processAnnotations(JointOperationOrderProcessOriginConfig.class);
 		X_STREAM.processAnnotations(InventorySkuRequestProcessConfig.class);
+		X_STREAM.processAnnotations(TransferProcessConfig.class);
 	}
 
 	@SuppressWarnings("unchecked")
