@@ -258,11 +258,13 @@
 	                    '<div class="mui-input-row ">' +
 	                    '<label>供应商:</label>' + 
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div>' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
-	                    '<li class="mui-table-view-cell">' +
-	                    '<div class="mui-input-row ">' +
-	                    '<label>商品结算价:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div></div>' +
+//	                    隐藏结算价
+//	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+//	                    '<li class="mui-table-view-cell">' +
+//	                    '<div class="mui-input-row ">' +
+//	                    '<label>商品结算价:</label>' +
+//	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div>'+
+//	                    '</div>' +
 	                   
                     	 '<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
