@@ -220,8 +220,6 @@
 								var purchaseOrderProcess = '';
 								if(item.bizPoHeader.commonProcess) {
 									purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
-								}else{
-									purchaseOrderProcess = '';
 								}
 								if(_this.checkFlag == true) {
 									var DataRoleGener = '';
