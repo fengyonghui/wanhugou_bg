@@ -366,7 +366,8 @@
                             <th style="display: none">所属单号</th>
                         </c:if>
                         <th>采购数量</th>
-                        <th>结算价</th>
+                        <!-- 隐藏结算价 -->
+                        <%--<th>结算价</th>--%>
                         <th>总金额</th>
                         <%--<th>已排产量</th>--%>
                         <%--<th>待排产数量</th>--%>
@@ -402,7 +403,8 @@
                                     </td>
                                 </c:if>
                                 <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
-                                <td>${poDetail.unitPrice}</td>
+                                <!-- 隐藏结算价 -->
+                                <%--<td>${poDetail.unitPrice}</td>--%>
                                 <td>${poDetail.ordQty * poDetail.unitPrice}</td>
                             </tr>
                         </c:forEach>
@@ -477,7 +479,8 @@
                             <th style="display: none">所属单号</th>
                         </c:if>
                         <th>采购数量</th>
-                        <th>结算价</th>
+                        <!-- 隐藏结算价 -->
+                        <%--<th>结算价</th>--%>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -509,7 +512,8 @@
                                     </td>
                                 </c:if>
                                 <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
-                                <td>${poDetail.unitPrice}</td>
+                                <!-- 隐藏结算价 -->
+                                <%--<td>${poDetail.unitPrice}</td>--%>
                                 <td>${poDetail.ordQty * poDetail.unitPrice}</td>
                             </tr>
                             <c:if test="${state.last}">
