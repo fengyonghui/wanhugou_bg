@@ -434,16 +434,10 @@
 						mui.toast(res.data.right);
 						$('app_color40 .inCheckBtn').find('div').css('display','none');
 						$('app_color40 .inCheckBtns').find('div').css('display','none');
-//						window.setTimeout(function(){
-//			                GHUTILS.OPENPAGE({
-//								url: "../orderMgmtHtml/orderpaymentinfo.html",
-//								extras: {}
-//							})
-//			            },300);
 			            if(fromPage=="requestHeader"){
 							window.setTimeout(function(){
 				                GHUTILS.OPENPAGE({
-									url: "../../inventoryMagmetHtml/inventoryList.html",
+									url: "../inventoryMagmetHtml/inventoryList.html",
 									extras: {}
 								})
 				            },300);
@@ -451,7 +445,7 @@
 						if(fromPage=="orderHeader"){
 							window.setTimeout(function(){
 				                GHUTILS.OPENPAGE({
-									url: "../../orderMgmtHtml/OrdermgmtHtml/orderList.html",
+									url: "../orderMgmtHtml/OrdermgmtHtml/orderList.html",
 									extras: {}
 								})
 				            },300);
