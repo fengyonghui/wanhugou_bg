@@ -23,6 +23,7 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomerInfoService;
 import com.wanhutong.backend.modules.biz.service.message.BizMessageUserService;
+import com.wanhutong.backend.modules.biz.service.shop.BizShopCartService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
@@ -96,6 +97,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     private BizMessageUserService bizMessageUserService;
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private BizShopCartService bizShopCartService;
 
     public static final String PHOTO_SPLIT_CHAR = "\\|";
     public static final String CUSTOMER_APPLY_LEVEL_OBJECT_NAME = "CUSTOMER_APPLY_LEVEL_OBJECT_NAME";
@@ -1047,9 +1050,11 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         applyUser.setOffice(office);
         List<User> userList = userDao.findList(applyUser);
         if (CollectionUtils.isNotEmpty(userList)) {
-            applyUser = userList.get(0);
-
-
+            Integer userId = userList.get(0).getId();
+            //删除购物车数据
+            bizShopCartService.updateShopCartByUserId(Integer.valueOf(0), userId);
+            //删除购物车中间表数据
+            bizShopCartService.updateCartSkuByUserId(Integer.valueOf(0), userId);
         }
         return Pair.of(Boolean.TRUE, "操作成功!");
 
