@@ -656,6 +656,10 @@ public class BizPoHeaderController extends BaseController {
         resultMap.put("bizOrderHeader", bizOrderHeaderMap);
         resultMap.put("type", type);
         resultMap.put("prewStatus", prewStatus);
+
+        Map<String,Integer> orderSourceMap = bizPoHeader.getOrderSourceMap();
+        resultMap.put("orderSourceMap", orderSourceMap);
+
         return JsonUtil.generateData(resultMap, request.getParameter("callback"));
     }
 

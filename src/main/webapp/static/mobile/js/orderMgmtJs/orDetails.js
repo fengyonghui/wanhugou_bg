@@ -28,6 +28,7 @@
                 },
                 dataType: "json",
                 success: function(res){
+                	console.log(res)
 					/*业务状态*/
 					var bizPoHeader = res.data.bizPoHeader;
 					//申请金额，最后付款时间显示
@@ -39,15 +40,20 @@
 						$('#orNumDate').show();
 						var orApplyNum = bizPoPaymentOrderId != '' ? bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal);
 						$('#orApplyNum').val(orApplyNum)//申请金额
-						$('#orNowDate').val(_this.formatDateTime(bizPoHeader.bizPoPaymentOrder.deadline))//本次申请付款时间
+						$('#orNowDate').val(_this.formatDateTime(bizPoHeader.bizPoPaymentOrder.deadline));//本次申请付款时间
 					}else {
 						$('#orNumDate').hide();
 					}  
-					var orshouldPay = bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight
-					$('#orpoNum').val(res.data.bizOrderHeader.orderNumber)//单号
-					$('#ordtotal').val(bizPoHeader.totalDetail)//总价
-					$('#orshouldPay').val(orshouldPay)//应付金额
-					$('#orLastDa').val(_this.formatDateTime(bizPoHeader.lastPayDate))//最后付款时间
+					var orshouldPay = bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight;
+					//单号
+					var temp = "";
+					for(var i in res.data.orderSourceMap){
+					    temp = i;
+					}
+					$('#orpoNum').val(temp);
+					$('#ordtotal').val(bizPoHeader.totalDetail);//总价
+					$('#orshouldPay').val(orshouldPay);//应付金额
+					$('#orLastDa').val(_this.formatDateTime(bizPoHeader.lastPayDate));//最后付款时间
 					//交货地点
 					if(bizPoHeader.deliveryStatus==0 || bizPoHeader.deliveryStatus == ''){
 						$('#fromType1').attr('checked','checked');
@@ -119,13 +125,18 @@
 		commodityHtml: function(data) {
 			var _this = this;
 			var htmlCommodity = '';
+			//所属单号
+			var temps = "";
+			for(var n in data.orderSourceMap){
+			    temps = n;
+			}
 			if(data.bizPoHeader.poDetailList) {
 				$.each(data.bizPoHeader.poDetailList, function(i, item) {
 				var outHtml = '';
 				if(data.bizPoHeader.id!=null) {
 					outHtml = '<div class="mui-input-row">'+
 								'<label>所属单号：</label>'+
-								'<input type="text" value="'+ data.bizOrderHeader.orderNumber +'" disabled>'+
+								'<input type="text" value="'+ temps +'" disabled>'+
 							'</div>'+
 							'<div class="mui-input-row">'+
 								'<label>已供货数量：</label>'+

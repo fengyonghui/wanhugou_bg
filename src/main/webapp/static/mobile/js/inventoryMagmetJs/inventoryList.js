@@ -916,7 +916,7 @@
 						extras: {
 							staOrdId: staOrdId,
 							str: 'detail',
-							fromPage: 'orderHeader',
+							fromPage: 'requestHeader',
 						}
 					})
 				}
@@ -933,7 +933,7 @@
 						extras: {
 							staOrdId: staOrdId,
 							str: 'detail',
-							fromPage: 'orderHeader',
+							fromPage: 'requestHeader',
 						}
 					})
 				}
