@@ -123,7 +123,7 @@
 		                    	pager['name'] = nameTxt;//供应商
 		                    	pager['fromType'] = _this.userInfo.fromType;//备货方
 		                    	pager['fromOffice.id'] = _this.userInfo.fromOffice;//采购中心
-		                    	pager['bizStatus'] = _this.userInfo.fromOffice;//业务状态
+		                    	pager['bizStatus'] = _this.userInfo.bizStatusid;//业务状态
 		                    	pager['varietyInfo.id'] = _this.userInfo.varietyInfoid;//品类名称
 		                    	pager['process'] = _this.userInfo.process;//审核状态
 		                    	pager['poBizStatus'] = _this.userInfo.poBizStatus,//付款单业务状态
@@ -220,6 +220,8 @@
 								var purchaseOrderProcess = '';
 								if(item.bizPoHeader.commonProcess) {
 									purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
+								}else{
+									purchaseOrderProcess = '';
 								}
 								if(_this.checkFlag == true) {
 									var DataRoleGener = '';
@@ -261,7 +263,6 @@
 											reDeleteBtnTxt = '删除'
 											/*恢复*/
 											if(item.delFlag!=null && item.delFlag==0) {
-//<a href="${ctx}/biz/request/bizRequestHeaderForVendor/recovery?id=${requestHeader.id}" onclick="return confirmx('确认要恢复该备货清单吗？', this.href)">恢复</a>
 												recoverBtn = 'recoverBtn';
 												recoverBtnTxt = '恢复';
 											}
@@ -320,12 +321,16 @@
 								}
 							/*审核状态*/		
 								var checkStatus = '';
-								if(requestOrderProcess) {
+								if(item.bizStatus != res.data.closeState) {
 									if(requestOrderProcess.name != '审核完成') {
 										checkStatus = requestOrderProcess.name
 									}
 									if(requestOrderProcess.name == '审核完成') {
-										checkStatus = '订单支出信息审核'
+										if(purchaseOrderProcess==""){
+											checkStatus=""
+										}else{
+											checkStatus = purchaseOrderProcess.name
+										}										
 									}
 								}
 					/*----------订单支出信息合并----------*/

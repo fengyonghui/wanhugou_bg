@@ -225,7 +225,7 @@
 			var htmlClass = '';
 			$.ajax({
 				type: 'GET',
-				url: '/a/biz/order/bizOrderHeader/listData4mobile',
+				url: '/a/biz/request/bizRequestHeaderForVendor/list4MobileNew',
 				dataType: 'json',
 				success: function(res) {
 					$.each(res.data.processList, function(i, item) {
