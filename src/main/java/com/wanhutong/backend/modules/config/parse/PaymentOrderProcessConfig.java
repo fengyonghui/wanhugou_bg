@@ -64,12 +64,8 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
      */
     public Process getPassProcess(BigDecimal money, Process currentProcess) {
         for (MoneyRole moneyRole : currentProcess.getMoneyRole()) {
-            if ("PROVIDER_MANAGER".equals(moneyRole.getRoleEnNameEnum().get(0))) {
+            if (moneyRole.endMoney.compareTo(money) > 0 && moneyRole.startMoney.compareTo(money) <= 0) {
                 return processMap.get(moneyRole.getPassCode());
-            } else {
-                if (moneyRole.endMoney.compareTo(money) > 0 && moneyRole.startMoney.compareTo(money) <= 0) {
-                    return processMap.get(moneyRole.getPassCode());
-                }
             }
         }
         return null;
@@ -83,12 +79,8 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
      */
     public Process getRejectProcess(BigDecimal money, Process currentProcess) {
         for (MoneyRole moneyRole : currentProcess.getMoneyRole()) {
-            if ("PROVIDER_MANAGER".equals(moneyRole.getRoleEnNameEnum().get(0))) {
+            if (moneyRole.endMoney.compareTo(money) > 0 && moneyRole.startMoney.compareTo(money) <= 0) {
                 return processMap.get(moneyRole.getRejectCode());
-            } else {
-                if (moneyRole.endMoney.compareTo(money) > 0 && moneyRole.startMoney.compareTo(money) <= 0) {
-                    return processMap.get(moneyRole.getRejectCode());
-                }
             }
         }
         return null;
