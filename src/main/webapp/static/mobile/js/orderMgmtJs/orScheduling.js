@@ -75,7 +75,6 @@
                 data:{id: _this.userInfo.staOrdId},
                 dataType: "json",
                 success: function(res){
-                	console.log(res)
                 	var remarkTxt = '';
                 	if(res.data.bizPoHeader.bizSchedulingPlan.remark) {
                 		remarkTxt = res.data.bizPoHeader.bizSchedulingPlan.remark
@@ -90,7 +89,6 @@
 	              	})
                 	var poDetailList = res.data.bizPoHeader.poDetailList;
                 	if(poDetailList.length == 0) {
-                		console.log(1)
 		                $('.saveBtnPt').hide();
 		            } else {
 		                _this.ajaxNum();
@@ -135,7 +133,13 @@
 	            		if(_this.outSaveFlag == true) {
 							if(_this.inSsaveFlag == true) {
 								$(".saveBtnPt").html(htmlSave);
+							}else {
+								$('#purchAddBtn').hide();
+								$('#purchAddCont').parent().hide();
 							}
+						}else {
+							$('#purchAddBtn').hide();
+							$('#purchAddCont').parent().hide();
 						}
 		            }
                 	_this.showContent(res);
@@ -239,7 +243,13 @@
     		if(_this.outSaveFlag == true) {
 				if(_this.inSsaveFlag == true) {
 					$(".saveBtnPt").html(htmlSave);
+				}else {
+					$('#purchAddBtn').hide();
+					$('#purchAddCont').parent().hide();
 				}
+			}else {
+				$('#purchAddBtn').hide();
+				$('#purchAddCont').parent().hide();
 			}
 		},
 		commdContent: function(b) {
@@ -280,20 +290,24 @@
 					comdPlans = ''
 					$('.saveBtnPt').hide();
 				}else {
-					comdAddBtns = '<button type="submit" class="commdAddBtn schedull app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
-					'<button type="submit" commdPurchId="'+item.id+'" id="singleAddBtn_'+ item.id+'" class="singleAddBtn schedulr app_btn_search mui-btn-blue mui-btn-block">保存</button>'
-
-					comdPlans = '<div class="mui-row plan">'+
-					'<div class="labelLf">排产计划：</div>'+
-					'<div class="mui-row app_f13 commdAddPlan" id="'+ item.id+'">'+
-						'<div class="mui-row app_bline commdPlan" name="'+ item.id +'">'+
-							'<div class="mui-input-row">'+
-								'<label>完成日期：</label>'+
-								'<input type="date" name="'+ item.id +'_date" class="commdDate"></div>'+
-							'<div class="mui-input-row">'+
-								'<label>排产数量：</label>'+
-								'<input type="text" name="'+ item.id +'_value" class="commdNum mui-input-clear"></div></div>'+
-				'</div></div>'
+					if(_this.outSaveFlag == true) {
+						if(_this.inSsaveFlag == true) {
+							comdAddBtns = '<button type="submit" class="commdAddBtn schedull app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
+							'<button type="submit" commdPurchId="'+item.id+'" id="singleAddBtn_'+ item.id+'" class="singleAddBtn schedulr app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+							
+							comdPlans = '<div class="mui-row plan">'+
+								'<div class="labelLf">排产计划：</div>'+
+								'<div class="mui-row app_f13 commdAddPlan" id="'+ item.id+'">'+
+									'<div class="mui-row app_bline commdPlan" name="'+ item.id +'">'+
+										'<div class="mui-input-row">'+
+											'<label>完成日期：</label>'+
+											'<input type="date" name="'+ item.id +'_date" class="commdDate"></div>'+
+										'<div class="mui-input-row">'+
+											'<label>排产数量：</label>'+
+											'<input type="text" name="'+ item.id +'_value" class="commdNum mui-input-clear"></div></div>'+
+							'</div></div>'
+						}
+					}
 				}
 				if(waiteNum == item.ordQty) {
 					chedulingStatus = '未排产'
