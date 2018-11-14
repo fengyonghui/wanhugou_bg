@@ -52,6 +52,11 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
     private String remark;
 
     /**
+     * 订单id,备货单id
+     */
+    private Integer orderId;
+    private Integer requestId;
+    /**
      * 订单号
      */
     private String orderNum;
@@ -66,6 +71,11 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
     private Integer auditStatusCode;
 
     private Integer poHeaderBizStatus;
+
+    /**
+     * 支付申请列表页面跳转标识
+     */
+    private String option;
 
     public BizPoPaymentOrder() {
         super();
@@ -242,5 +252,29 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     public void setPoHeaderBizStatus(Integer poHeaderBizStatus) {
         this.poHeaderBizStatus = poHeaderBizStatus;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public Integer getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(Integer requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getOption() {
+        return option;
+    }
+
+    public void setOption(String option) {
+        this.option = option;
     }
 }

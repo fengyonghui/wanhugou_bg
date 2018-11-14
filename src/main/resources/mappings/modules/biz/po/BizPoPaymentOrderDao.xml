@@ -78,7 +78,9 @@
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
 		process.create_time AS "commonProcess.createTime",
+		boh.id as orderId,
 		boh.order_num as orderNum,
+		brh.id as requestId,
 		brh.req_no as reqNo
 	</sql>
 	
@@ -127,6 +129,11 @@
 				AND process.type = #{auditStatusCode}
 				and poprocess.type = 7
 				and a.total > 0
+			</if>
+			<if test="option !=null and option != '' and option == 'poPayListV2'">
+				<if test="page !=null and page.includeTestData != true">
+					AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE po.create_id = ta.object_id AND ta.object_name = 'sys_user' )
+				</if>
 			</if>
 		</where>
 		group by a.id

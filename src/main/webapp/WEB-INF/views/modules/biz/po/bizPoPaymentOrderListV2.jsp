@@ -8,11 +8,15 @@
 		$(document).ready(function() {
 			
 		});
-		function page(n,s){
+		function page(n,s,t){
 			$("#pageNo").val(n);
 			$("#pageSize").val(s);
+            $("#includeTestData").val(t);
 			$("#searchForm").submit();
         	return false;
+        }
+        function testData(checkbox) {
+            $("#includeTestData").val(checkbox.checked);
         }
 	</script>
 </head>
@@ -20,7 +24,7 @@
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/po/bizPoPaymentOrder/bizPoPaymentOrder/listV2">支付申请列表</a></li>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizPoPaymentOrder" action="${ctx}/biz/po/bizPoPaymentOrder/listV2" method="post"
+	<form:form id="searchForm" modelAttribute="bizPoPaymentOrder" action="${ctx}/biz/po/bizPoPaymentOrder/listV2?option=poPayListV2" method="post"
 			   class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
@@ -30,12 +34,16 @@
 			<li><span style="margin-left: 10px"><label>订单/备货清单编号</label></span>
 				<form:input path="orderNum" htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
-					<li><label>审核状态：</label>
-						<form:select path="selectAuditStatus" class="input-medium">
-							<form:option value="" label="请选择"/>
-							<form:options items="${configMap}"  htmlEscape="false"/>
-						</form:select>
-					</li>
+			<li><label>审核状态：</label>
+				<form:select path="selectAuditStatus" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${configMap}"  htmlEscape="false"/>
+				</form:select>
+			</li>
+			<li><label>测试数据</label>
+				<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium"
+							   onclick="testData(this)"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -60,8 +68,18 @@
 		<c:forEach items="${page.list}" var="bizPoPaymentOrder">
 			<tr>
 				<td>
-					${bizPoPaymentOrder.orderNum}
-					${bizPoPaymentOrder.reqNo}
+					<%--${bizPoPaymentOrder.orderNum}--%>
+					<%--${bizPoPaymentOrder.reqNo}--%>
+					<c:if test="${bizPoPaymentOrder.orderNum != ''}">
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoPaymentOrder.orderId}&orderDetails=details&statu=&source=">
+							${bizPoPaymentOrder.orderNum}
+						</a>
+					</c:if>
+					<c:if test="${bizPoPaymentOrder.reqNo != ''}">
+						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoPaymentOrder.requestId}&str=detail">
+							${bizPoPaymentOrder.reqNo}
+						</a>
+					</c:if>
 				</td>
 				<td>
 					${bizPoPaymentOrder.total}
@@ -98,7 +116,7 @@
 				<c:if test="${bizPoPaymentOrder.poHeader.bizStatus != 10}">
 					<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:audit">
 						<c:if test="${bizPoPaymentOrder.total != '0.00'}">
-							<c:if test="${bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成' && bizPoPaymentOrder.total != 0}">
+							<c:if test="${bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '驳回' && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成' && bizPoPaymentOrder.total != 0}">
 													<%--&& (fns:hasRole(roleSet, bizPoPaymentOrder.commonProcess.paymentOrderProcess.moneyRole.roleEnNameEnum))--%>
 								<a href="#" onclick="checkPass(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核通过</a>
 								<a href="#" onclick="checkReject(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核驳回</a>
