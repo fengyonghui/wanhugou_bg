@@ -2626,13 +2626,13 @@
             </div>
             <c:if test="${bizOrderHeader.flag=='check_pending'}">
                 <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-                    <div class="control-group">
-                        <label class="control-label">供货方式:</label>
-                        <div class="controls">
-                            本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>
-                            产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>
-                        </div>
-                    </div>
+                    <%--<div class="control-group">--%>
+                        <%--<label class="control-label">供货方式:</label>--%>
+                        <%--<div class="controls">--%>
+                            <%--本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>--%>
+                            <%--产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
                 </c:if>
                 <c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">
                     <div class="control-group" style="display: none">
@@ -2857,6 +2857,9 @@
         <th>采购数量</th>
         <th>总 额</th>
         <th>已发货数量</th>
+        <c:if test="${bizOrderHeader.flag eq 'check_pending'}">
+            <th>库存数量</th>
+        </c:if>
         <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
             <th>发货方</th>
         </c:if>
@@ -2932,6 +2935,9 @@
             <td>
                     ${bizOrderDetail.sentQty}
             </td>
+            <c:if test="${bizOrderHeader.flag eq 'check_pending'}">
+                <td>${invSkuNumMap[bizOrderDetail.id]}</td>
+            </c:if>
             <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
                 <td>
                         ${bizOrderDetail.suplyis.name}
@@ -3277,12 +3283,38 @@
 <c:if test="${bizOrderHeader.flag=='check_pending'}">
     <div class="form-actions">
         <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-            <input class="btn btn-primary" type="button"
-                   onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" value="同意发货"/>&nbsp;
+            <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                <input class="btn btn-primary" type="button"
+                        value="同意发货" data-toggle="modal" data-target="#myModal"/>&nbsp;
+            </c:if>
+            <c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+                <input class="btn btn-primary" type="button"
+                       onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" value="同意发货"/>&nbsp;
+            </c:if>
             <input class="btn btn-warning" type="button"
                    onclick="checkPending(${OrderHeaderBizStatusEnum.UNAPPROVE.state})" value="不同意发货"/>&nbsp;
         </shiro:hasPermission>
     </div>
 </c:if>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">发货方式</h4>
+            </div>
+            <div class="modal-body">
+                本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>
+                产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" class="btn btn-primary">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

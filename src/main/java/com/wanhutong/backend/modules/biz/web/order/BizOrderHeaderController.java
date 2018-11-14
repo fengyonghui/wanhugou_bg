@@ -852,6 +852,9 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
         model.addAttribute("createPo",createPo);
+        //展示库存数量
+        Map<Integer,Integer> invSkuNumMap = bizOrderHeaderService.getInvSkuNum(bizOrderHeader);
+        model.addAttribute("invSkuNumMap",invSkuNumMap);
 
         return "modules/biz/order/bizOrderHeaderForm";
     }
@@ -1216,6 +1219,9 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("createPo",createPo);
         resultMap.put("createPo", createPo);
         resultMap.put("PURCHASE_ORDER", BizOrderTypeEnum.PURCHASE_ORDER.getState());
+        //展示库存数量
+        Map<Integer,Integer> invSkuNumMap = bizOrderHeaderService.getInvSkuNum(bizOrderHeader);
+        resultMap.put("invSkuNumMap",invSkuNumMap);
 
         //页面常量值获取
         resultMap.put("SUPPLYING", OrderHeaderBizStatusEnum.SUPPLYING.getState());
