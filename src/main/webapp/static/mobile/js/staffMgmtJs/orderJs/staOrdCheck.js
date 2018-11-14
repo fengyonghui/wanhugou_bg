@@ -44,7 +44,6 @@
                 },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
                 	if(res.data.bizOrderHeader.flag=='check_pending') {
                 		if(res.data.orderType == 5) {
                 			$('#orderTypebox').hide();
@@ -195,7 +194,6 @@
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-//					console.log(item)
 					var opShelfInfo = '';
 					if(item.shelfInfo.opShelfInfo) {
 						opShelfInfo = item.shelfInfo.opShelfInfo.name
@@ -208,13 +206,28 @@
 					}else {
 						primaryMobile = ''
 					}
-					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
-						'<div class="mui-row lineStyle">' +
+					var repertory = '';
+					if(data.bizOrderHeader.flag=='check_pending') {
+						repertory = '<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>详情行号:</label>' + 
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>库存数量:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + data.invSkuNumMap[item.id] + '" disabled></div></li></div></div>' 
+					}else {
+						repertory = '<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label class="commodityName">详情行号:</label>' +
-	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
-	                   
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.lineNo + '" disabled></div></li></div>' 
+					}
+					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
+						repertory +
                     	'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
@@ -226,7 +239,7 @@
 	                    '<div class="mui-input-row ">' +
 	                    '<label>商品出厂价:</label>' +
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div></div>' +
-	                   
+	                    
                     	 '<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
