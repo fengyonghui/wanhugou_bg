@@ -65,6 +65,8 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
      */
     private Integer auditStatusCode;
 
+    private Integer poHeaderBizStatus;
+
     public BizPoPaymentOrder() {
         super();
     }
@@ -232,5 +234,13 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     public void setReqNo(String reqNo) {
         this.reqNo = reqNo;
+    }
+
+    public Integer getPoHeaderBizStatus() {
+        return poHeaderBizStatus;
+    }
+
+    public void setPoHeaderBizStatus(Integer poHeaderBizStatus) {
+        this.poHeaderBizStatus = poHeaderBizStatus;
     }
 }

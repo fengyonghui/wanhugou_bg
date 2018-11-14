@@ -23,11 +23,11 @@
 		<result column="commonProcess.type" property="commonProcess.type"/>
 		<result column="commonProcess.createTime" property="commonProcess.createTime"/>
 
-		<association property="poHeader" javaType="BizPoHeader" column="poHeader.id">
-			<id property="id" column="poHeader.id"/>
-			<result property="orderNum" column="poHeader.orderNum"/>
-			<result property="bizStatus" column="poHeader.bizStatus"/>
-		</association>
+		<!--<association property="poHeader" javaType="BizPoHeader" column="poHeader.id">-->
+			<!--<id property="id" column="poHeader.id"/>-->
+			<!--<result property="orderNum" column="poHeader.orderNum"/>-->
+			<!--<result property="bizStatus" column="poHeader.bizStatus"/>-->
+		<!--</association>-->
 
 		<collection property="imgList" ofType="CommonImg" select="getImgList" column="id">
 		</collection>
@@ -67,8 +67,8 @@
 		a.pay_time AS payTime,
 		a.remark AS remark,
 		po.id AS "poHeader.id",
-		po.order_num AS "poHeader.orderNum",
 		po.biz_status AS "poHeader.bizStatus",
+		po.biz_status AS "poHeaderBizStatus",
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
 		process.object_name AS "commonProcess.objectName",
