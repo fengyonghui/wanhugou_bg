@@ -28,7 +28,6 @@
 			this.getPermissionList4('biz:po:bizPoHeader:view','OrdFlaginfo');//支出信息列表操作总权限
 			this.getPermissionList5('biz:po:bizPoHeader:audit','OrdFlagaudit');//付款单审核
 			this.getPermissionList6('biz:request:bizOrderHeader:createPayOrder','ordCreatPayFlag')//申请付款or
-
 			this.getPermissionList8('biz:po:bizPoHeader:createPayOrder','poCreatPayFlag')//申请付款po
 			this.getPermissionList9('biz:po:bizPoHeader:startAuditAfterReject','OrdFlagstartAudit');//开启审核
 			this.getPermissionList01('biz:po:bizPoHeader:addScheduling','OrdFlagScheduling');//排产
@@ -38,7 +37,6 @@
 			this.pageInit(); //页面初始化
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
-
 		},
 		pageInit: function() {
 			var _this = this;
@@ -229,13 +227,11 @@
 		                    	pager['size']= 20;
 			                    pager['pageNo'] = 1;
 			                    if(statu != 'unline') {
-//			                    	console.log(1)
 			                    	pager['statu'] = '';
 			                    	$('#myStatu').val('');
 			                    	$('#listName').html('订单列表');
 			                    }
 			                    if(statu == 'unline') {
-//			                    	console.log(2)
 			                    	pager['statu'] = statu;
 			                    	$('#myStatu').val(statu);
 			                    	$('#listName').html('线下支付订单列表');
@@ -255,7 +251,6 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		            	console.log(res)
 		            	var dataRow = res.data.roleSet;
 		            	//订单类型
 		          	    $.ajax({
@@ -264,7 +259,7 @@
 			                dataType: "json",
 			                data: {type: "biz_order_type"},
 			                async:false,
-			                success: function(res){                 
+			                success: function(res){  
 				                ass=res;
 			                }
 			            });	
@@ -275,7 +270,7 @@
 			                url: "/a/getUser",
 			                dataType: "json",
 			                async:false,
-			                success: function(user){  
+			                success: function(user){ 
 								userId = user.data.id
 								$('#userId').val(userId)
 			                }
@@ -290,8 +285,6 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-//                          	console.log(item)
-//                          	console.log(item.bizPoHeader)
                             	var ProcessName = '';
                             	var objectName = item.commonProcess.objectName; 
                             	var commonProcess = item.commonProcess;
@@ -521,9 +514,7 @@
 								/*开启审核*/
 								var stastartCheckBtnTxt = '';
                 				var stastartCheckBtn = '';
-                				var bizPoHeader = item.bizPoHeader;;
-//              				console.log(_this.userInfo.flagTxt)
-//								console.log(_this.OrdFlaginfo)
+                				var bizPoHeader = item.bizPoHeader;
 								if(_this.OrdFlaginfo == true) {
 									if(_this.userInfo.flagTxt != 'check_pending') {
 										if(_this.staOrdFlag == true) {
@@ -565,8 +556,6 @@
 							                		}
 							                	}
 								                /*支付申请列表获取*/
-	//							               console.log(bizPoHeader.commonProcess.type)
-	//							               console.log(_this.OrdFlagpay)
 								                if(bizPoHeader.commonProcess.type != -1){
 						                			if(_this.OrdFlagpay == true){
 						                				applyListBtn = 'applyListBtn';
@@ -667,23 +656,19 @@
 
 								});
 								$('#orderList').append(staffHtmlList);
-								_this.stOrdHrefHtml();
-								//先隐藏Ro订单
-//								var RoList=$('#refreshContainer div[id^=rodiv_8]');
-//								$(RoList).hide();
-								
+								_this.stOrdHrefHtml();								
 					}else{
-						$('.mui-pull-bottom-pocket').html('');
-						$('#orderList').append('<p class="noneTxt">暂无数据</p>');
-						$('#OrdSechBtn').hide();
-						mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
-					}
-	                if(res.data.page.totalPage==pager.pageNo){		                	
-		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
-		            }else{
-		                pager.pageNo++;
-		                mui('#refreshContainer').pullRefresh().refresh(true);
-		            } 			           
+							$('.mui-pull-bottom-pocket').html('');
+							$('#orderList').append('<p class="noneTxt">暂无数据</p>');
+							$('#OrdSechBtn').hide();
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+					    }
+		                if(res.data.page.totalPage==pager.pageNo){		                	
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
+			            }else{
+			                pager.pageNo++;
+			                mui('#refreshContainer').pullRefresh().refresh(true);
+			            } 			           
 			        },
 		            error:function(xhr,type,errorThrown){
 			            console.log(type);
@@ -865,11 +850,9 @@
         	var _this = this;
 			/*订单列表查询*/
     		var myStatu = $('#myStatu').val();
-//  		console.log(myStatu)
     		if(myStatu=='unline'){
     			/*客户专员线下支付查询*/
     			$('.app_header').on('tap', '#SearchBtn', function() {
-//  				alert('客户专员线下支付查询')
 					var url = $(this).attr('url');
 					if(url) {
 						mui.toast('子菜单不存在')
@@ -884,7 +867,6 @@
 				});
 				/*线下支付查询*/
 				$('.app_header').on('tap', '#OrdSechBtn', function() {
-//  				alert('线下支付查询')
 					var url = $(this).attr('url');
 					if(url) {
 						mui.toast('子菜单不存在')
@@ -900,7 +882,6 @@
     		}else{
     			/*客户专员订单查询*/
 	    		$('.app_header').on('tap', '#SearchBtn', function() {
-//	    			alert('客户专员订单查询')
 					var url = $(this).attr('url');
 					if(url) {
 						mui.toast('子菜单不存在')
@@ -914,7 +895,6 @@
 				});
 				/*订单查询*/
     			$('.app_header').on('tap', '#OrdSechBtn', function() {
-//  				alert('订单查询')
 					var url = $(this).attr('url');
 					if(url) {
 						mui.toast('子菜单不存在')
@@ -961,7 +941,6 @@
 			$('.content_part').on('tap', '.waitCheckBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');//订单 ID
-//				console.log(staOrdId)
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
@@ -1017,7 +996,6 @@
 			$('.content_part').on('tap', '.ordDeleteBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
-//				console.log(staOrdId)
 				var statu=$(this).attr('ordstatu');
 				var source=$(this).attr('ordsource');
 				
@@ -1041,7 +1019,7 @@
 	//												inListId:inListId,
 											}
 										})
-					                },300);
+					                },100);
 				                	
 			                	}
 			            	})
@@ -1076,7 +1054,7 @@
 	//												inListId:inListId,
 											}
 										})
-					                },300);
+					                },100);
 			                	}
 			            	})
 						}else {

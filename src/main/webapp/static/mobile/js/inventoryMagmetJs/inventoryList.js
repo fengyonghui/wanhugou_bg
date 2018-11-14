@@ -151,7 +151,6 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-		            	console.log(res)
 			            var returnData = res.data.page.list;
 			            var dataRow = res.data.roleSet;
 						var arrLen = res.data.page.list.length; 
@@ -360,7 +359,6 @@
                 				var bizPoHeader = item.bizPoHeader;
                 				if(_this.OrdFlaginfo == true) {
 	                				if(_this.detileFlag == true) {
-	//              					console.log(bizPoHeader)
 	                					if(bizPoHeader.id) {
 	                						var paycheckTxt = '';
 			                                var purchCode = '';
@@ -404,7 +402,6 @@
 						                		}
 						                	}
 							                /*付款单修改、取消*/
-//							               console.log(_this.orCancAmenFlag)
 	                						if(_this.orCancAmenFlag == true) {
 						                		if(paycheckTxt == null || paycheckTxt == ''
 					                			|| paycheckTxt == '驳回') {
@@ -508,7 +505,7 @@
 								'</div>'
 							});
 							$('#list').append(inPHtmlList);
-							_this.inHrefHtml()
+							_this.inHrefHtml();
 						} else {
 							$('.mui-pull-caption').html('');
 							$('#list').append('<p class="noneTxt">暂无数据</p>');
