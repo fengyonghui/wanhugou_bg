@@ -131,7 +131,7 @@
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label">新用户：</label>
+		<label class="control-label">开单会员量：</label>
 		<div class="controls">
 			<form:input path="newUser" htmlEscape="false" class="input-xlarge required"/>
 			<span class="help-inline"><font color="red">*</font> </span>
