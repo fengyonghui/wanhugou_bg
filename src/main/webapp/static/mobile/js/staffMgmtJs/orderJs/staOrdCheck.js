@@ -386,7 +386,7 @@
 		comfirDialig: function(data) {
 			var _this = this;
 			document.getElementById("rejectBtns").addEventListener('tap', function() {
-				var btnArray = ['否', '是'];
+				var btnArray = ['取消', '确定'];
 				mui.confirm('确定不同意发货吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
 						_this.rejectData(45)
@@ -400,8 +400,19 @@
 	                mui.toast("代采订单需至少付款20%，请付款后刷新页面再审核");
 	                return;
 	            }
-				var btnArray = ['否', '是'];
-				mui.confirm('确定同意发货吗？', '系统提示！', btnArray, function(choice) {
+				var btnArray = ['取消', '确定'];
+				var choiceTxt = '';
+				var hint = '';
+				if(data.orderType != data.PURSEHANGER) {
+					choiceTxt = '<div id="changeTxt">'+
+				    '本地备货<input style="margin: 10px 15px 10px 5px;" checked="checked" type="radio" name="localOriginType" value="1" class="inputRadio" id="nochecked"/>'+
+		        	'产地直发<input style="margin: 10px 15px 10px 5px;" id="yes" type="radio" name="localOriginType" value="0"  class="inputRadio"/></div>'
+					hint = '请选择供货方式：'
+				}else {
+					choiceTxt = '确定同意发货吗?'
+					hint = '系统提示!'
+				}
+				mui.confirm(choiceTxt, hint, btnArray, function(choice) {
 					if(choice.index == 1) {
 						_this.ajaxData(15)
 					} else {						
