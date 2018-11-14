@@ -348,7 +348,7 @@
 				                        if (resule.ret== true || resule.ret == 'true') {
 				                            mui.toast("本次申请付款成功！");
 				                          	GHUTILS.OPENPAGE({
-				                                url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
+				                                url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 				                                extras: {
 				                                }
 				                            })
@@ -399,7 +399,7 @@
 					                        if (result.ret == true || result.ret == 'true') {
 					                            mui.toast("开启审核成功！");
 					                          	GHUTILS.OPENPAGE({
-					                                url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
+					                                url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 					                                extras: {
 					                                }
 					                            })

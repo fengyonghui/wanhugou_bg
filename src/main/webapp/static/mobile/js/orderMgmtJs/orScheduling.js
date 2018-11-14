@@ -12,8 +12,8 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			//biz:po:bizPoHeader:addScheduling		biz:po:bizPoHeader:saveScheduling	保存、批量保存	
-			this.getPermissionList('biz:po:bizPoHeader:addScheduling','outSaveFlag')	
-			this.getPermissionList('biz:po:bizPoHeader:saveScheduling','inSsaveFlag')	
+			this.getPermissionList1('biz:po:bizPoHeader:addScheduling','outSaveFlag')	
+			this.getPermissionList2('biz:po:bizPoHeader:saveScheduling','inSsaveFlag')	
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			this.pageInit(); //页面初始化
 		},
@@ -21,7 +21,7 @@
 			var _this = this;
 			_this.getData();
 		},
-		getPermissionList: function (markVal,flag) {
+		getPermissionList1: function (markVal,flag) {
             var _this = this;
             $.ajax({
                 type: "GET",
@@ -31,9 +31,21 @@
                 async:false,
                 success: function(res){
                     _this.outSaveFlag = res.data;
-					_this.inSsaveFlag = res.data;
                 }
-            });
+            })
+        },
+        getPermissionList2: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.inSsaveFlag = res.data;
+                }
+            })
         },
         ajaxNum: function() {
         	var _this = this;
@@ -78,6 +90,7 @@
 	              	})
                 	var poDetailList = res.data.bizPoHeader.poDetailList;
                 	if(poDetailList.length == 0) {
+                		console.log(1)
 		                $('.saveBtnPt').hide();
 		            } else {
 		                _this.ajaxNum();
@@ -115,10 +128,15 @@
 								'<label>总金额：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.ordQty * item.unitPrice +'" disabled>'+
 							'</div></div></li>'
-						htmlSave = '<button id="saveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+						
 						});
 						$("#orSchedPurch").html(htmlPurch)
-	            		$(".saveBtnPt").html(htmlSave)
+						htmlSave = '<button id="saveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+	            		if(_this.outSaveFlag == true) {
+							if(_this.inSsaveFlag == true) {
+								$(".saveBtnPt").html(htmlSave);
+							}
+						}
 		            }
                 	_this.showContent(res);
                 }
@@ -214,10 +232,15 @@
 					'<label>总金额：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.ordQty * item.unitPrice +'" disabled>'+
 				'</div></div></li>'
-			htmlSave = '<button id="saveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+			
 			});
     		$("#orSchedPurch").html(htmlPurch)
-    		$(".saveBtnPt").html(htmlSave)
+    		htmlSave = '<button id="saveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+    		if(_this.outSaveFlag == true) {
+				if(_this.inSsaveFlag == true) {
+					$(".saveBtnPt").html(htmlSave);
+				}
+			}
 		},
 		commdContent: function(b) {
 			var _this = this;
@@ -328,12 +351,18 @@
 						'<div class="mui-row app_f13">'+comPlanTx+'</div></div>'+
 					comdPlans +
 					'</div></li>'
-				htmlAllSave = '<button id="allSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">批量保存</button>'
+				
 				var commdItemId = item.id;
+//				console.log(commdItemId)
 				_this.commdEverySave(commdItemId)
 			});
     		$("#orSchedCommd").html(htmlCommodity)
-    		$(".saveBtnPt").html(htmlAllSave)
+    		htmlAllSave = '<button id="allSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">批量保存</button>'
+    		if(_this.outSaveFlag == true) {
+				if(_this.inSsaveFlag == true) {
+					$(".saveBtnPt").html(htmlAllSave)
+				}
+			}
 		},
 		htmlcommdPlanTxt: function(tt) {
 			var _this = this;
@@ -355,6 +384,7 @@
 			$('#chedulingStatus').val('未排产');
 			$('input[type=radio]').on('change', function() {
 				if(this.checked && this.value == 0) {
+					
 					$('.schedPurch').show();
 					$('.schedCommd').hide();
 					_this.purchContent(data);
@@ -416,7 +446,6 @@
 		},
 		saveSchedul: function(m) {
 			var _this = this;
-			console.log(_this.userInfo.source)
 			$('.inSaveBtn').on('tap', '#saveBtn', function() {
 				var schedulOneId = _this.userInfo.staOrdId;
 				_this.saveComplete(0, schedulOneId)
@@ -514,12 +543,6 @@
 	                type: 'post',
 	                success: function (result) {
 	                    if(result == true) {
-//	                    	GHUTILS.OPENPAGE({
-//								url: "../../html/orderMgmtHtml/orScheduling.html",
-//								extras: {
-//
-//								}
-//							})
 	                    	var urlTxt = '';
 	                    	if(_this.userInfo.source == 'orderList') {
 	                    		urlTxt = "../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html";
@@ -551,7 +574,6 @@
             var ind = 0;
             var schRemark = "";
             schRemark = $("#orRemark").val();
-
             var totalSchedulingHeaderNum = 0;
             var totalSchedulingDetailNum = 0;
             var poSchType = 0;

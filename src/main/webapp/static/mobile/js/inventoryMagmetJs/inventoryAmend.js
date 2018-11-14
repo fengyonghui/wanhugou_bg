@@ -368,6 +368,7 @@
                 })
            })
         },
+        /*申请付款*/
         apply: function(type, id) {
         	$('#payMentBtn').on('tap',function(){
 	            if (type == 'createPay') {
@@ -399,7 +400,7 @@
 				                        if (resule == true) {
 				                            mui.toast("本次申请付款成功！");
 				                          	GHUTILS.OPENPAGE({
-				                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+				                                url: "../../html/inventoryMagmetHtml/inventoryList.html",
 				                                extras: {
 				                                }
 				                            })
@@ -420,6 +421,7 @@
 	            }
 	        })
         },
+        /*开启审核*/
         startCheck: function(id) {
         	var _this = this;
         	var prew = false;
@@ -449,7 +451,7 @@
 					                        if (result.ret == true || result.ret == 'true') {
 					                            mui.toast("开启审核成功！");
 					                          	GHUTILS.OPENPAGE({
-					                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+					                                url: "../../html/inventoryMagmetHtml/inventoryList.html",
 					                                extras: {
 					                                }
 					                            })
