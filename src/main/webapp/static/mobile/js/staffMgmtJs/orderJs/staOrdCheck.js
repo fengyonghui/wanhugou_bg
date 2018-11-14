@@ -4,18 +4,23 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.prew = false;
+		this.buyPriceFlag = false;
+		this.unitPriceFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
+			this.getPermissionList('biz:order:buyPrice:view','buyPriceFlag')//佣金权限
+			this.getPermissionList1('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
+			this.buyPrice(); //佣金显示
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 					//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
-			_this.btnshow()
-			_this.getData()
+			_this.btnshow();
+			_this.getData();
 			_this.changePrice();
 		},
 		btnshow: function() {
@@ -30,6 +35,40 @@
 					_this.prew = false
 				}
 			})
+		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.buyPriceFlag = res.data;
+                }
+            });
+        },
+        getPermissionList1: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.unitPriceFlag = res.data;
+                }
+            });
+        },
+        buyPrice:function(){
+        	var _this = this;
+			if(_this.buyPriceFlag==true){
+				$('#staCommission').parent().show();
+			}else{
+				$('#staCommission').parent().hide();
+			}
 		},
 		getData: function() {
 			var _this = this;
@@ -221,7 +260,7 @@
 	                    '<div class="mui-input-row ">' +
 	                    '<label>供应商:</label>' + 
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div>' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="unitprice">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>商品出厂价:</label>' +
@@ -289,7 +328,16 @@
 	                    
                     '</div>'
 				});
-				$("#staCheckCommodity").html(htmlCommodity)
+				$("#staCheckCommodity").html(htmlCommodity);
+				//结算价判断
+				var unitPriceList=$('.commodity #unitprice');
+				$.each(unitPriceList,function(z,x){
+					if(_this.unitPriceFlag==true){
+						$(x).show();
+					}else{
+						$(x).hide();
+					}
+				})				
 			}
 		},
 		changePrice: function() {
