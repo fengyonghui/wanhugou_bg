@@ -7,6 +7,8 @@
 		this.OrdeditFlag = false;
 		this.OrdDetailFlag = false;
 		this.OrdviewFlag = false;
+		this.buyPriceFlag = false;
+		this.unitPriceFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -17,6 +19,9 @@
 			this.getPermissionList('biz:order:bizOrderHeader:edit','OrdeditFlag');//true 订单信息操作
 			this.getPermissionList1('biz:order:bizOrderDetail:edit','OrdDetailFlag');//false订单信息操作中的修改、删除
 			this.getPermissionList2('biz:order:bizOrderDetail:view','OrdviewFlag');//true订单信息操作中的修改、删除
+			this.getPermissionList3('biz:order:buyPrice:view','buyPriceFlag')//佣金权限
+			this.getPermissionList4('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
+			this.buyPrice(); //
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
@@ -40,6 +45,40 @@
 				})
 			})
         },
+        getPermissionList3: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.buyPriceFlag = res.data;
+                }
+            });
+        },
+        getPermissionList4: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.unitPriceFlag = res.data;
+                }
+            });
+        },
+        buyPrice:function(){
+        	var _this = this;
+			if(_this.buyPriceFlag==true){
+				$('#staCommission').parent().show();
+			}else{
+				$('#staCommission').parent().hide();
+			}
+		},
 		getData: function() {
 			var _this = this;
 			var datas={};
@@ -177,8 +216,7 @@
 					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
 					$('#staPoLastDaPerent').val(poLastDa);//已付金额百分比
 					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));//服务费
-                    <!-- 隐藏佣金 -->
-                    // $('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));//佣金
+                    $('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));//佣金
 					$('#staAddprice').val(item.serviceFee.toFixed(2));//增值服务费
 					$('#staConsignee').val(item.bizLocation.receiver);//收货人
 					$('#staMobile').val(item.bizLocation.phone);//联系电话
@@ -772,11 +810,11 @@
 	                    '<label>供应商:</label>' + 
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div>' +
 //	                    隐藏商品结算价
-//	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="buyPrice">' +
-//	                    '<li class="mui-table-view-cell">' +
-//	                    '<div class="mui-input-row ">' +
-//	                    '<label>商品结算价:</label>' +
-//	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div>'+
+	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="buyPrice">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>商品结算价:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div>'+
 	                    '</div>' +
 	                   
                     	 '<div class="mui-row">' +
@@ -860,17 +898,24 @@
 					});
 				}
 //				商品结算价隐藏
-//				if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){	
-//                  var buyPriceArr=$('.commodity #buyPrice');
-//					$.each(buyPriceArr, function(o,p) {
-//						$(p).show();
-//					});
-//				}else{
-//					var buyPriceArr=$('.commodity #buyPrice');
-//					$.each(buyPriceArr, function(o,p) {
-//						$(p).hide();
-//					});
-//				}
+                if(_this.unitPriceFlag==true){
+                	if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){	
+	                    var buyPriceArr=$('.commodity #buyPrice');
+						$.each(buyPriceArr, function(o,p) {
+							$(p).show();
+						});
+					}else{
+						var buyPriceArr=$('.commodity #buyPrice');
+						$.each(buyPriceArr, function(o,p) {
+							$(p).hide();
+						});
+					}
+                }else{
+					var buyPriceArr=$('.commodity #buyPrice');					
+					$.each(buyPriceArr, function(o,p) {
+						$(p).hide();
+					});
+				}				
 				_this.ordHrefHtml();
 				//操作权限
 				if(_this.OrdFlag == true){

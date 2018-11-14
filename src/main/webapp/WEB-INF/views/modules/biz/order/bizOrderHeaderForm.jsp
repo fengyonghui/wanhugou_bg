@@ -358,6 +358,7 @@
         })
 
         function getScheduling(poheaderId) {
+            var showUnitPriceFlag = getShowUnitPriceFlag();
             $.ajax({
                 type: "post",
                 url: "${ctx}/biz/po/bizPoHeader/scheduling4Mobile",
@@ -392,7 +393,9 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
                             //隐藏结算价
-                            // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            if (showUnitPriceFlag == true || showUnitPriceFlag == "true") {
+                                poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            }
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
                         }
@@ -440,7 +443,9 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
                             //隐藏结算价
-                            // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            if (showUnitPriceFlag == true || showUnitPriceFlag == "true") {
+                                poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            }
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
 
@@ -471,6 +476,20 @@
             });
         }
 
+        function getShowUnitPriceFlag() {
+            var showUnitPriceFlag = false;
+            $.ajax({
+                type: "post",
+                url: "${ctx}/sys/menu/permissionList",
+                data: {"marking": "biz:order:unitPrice:view"},
+                async: false,
+                success: function (result) {
+                    var result = JSON.parse(result);
+                    showUnitPriceFlag = result.data;
+                }
+            });
+            return showUnitPriceFlag;
+        }
 
         function formatDate(jsonDate) {
             //json日期格式转换为正常格式
@@ -1909,16 +1928,18 @@
     </c:if>
 
     <!-- 隐藏佣金 -->
-    <%--<c:if test="${source ne 'vendor'}">--%>
-        <%--<div class="control-group">--%>
-            <%--<label class="control-label">佣金：</label>--%>
-            <%--<div class="controls">--%>
-                <%--<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail-bizOrderHeader.totalBuyPrice}"--%>
-                                  <%--pattern="0.00"/>--%>
-                    <%--&lt;%&ndash;<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">&ndash;%&gt;--%>
-            <%--</div>--%>
-        <%--</div>--%>
-    <%--</c:if>--%>
+    <shiro:hasPermission name="biz:order:buyPrice:view">
+        <c:if test="${source ne 'vendor'}">
+            <div class="control-group">
+                <label class="control-label">佣金：</label>
+                <div class="controls">
+                    <fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail-bizOrderHeader.totalBuyPrice}"
+                                      pattern="0.00"/>
+                        <%--<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">--%>
+                </div>
+            </div>
+        </c:if>
+    </shiro:hasPermission>
     <div class="control-group">
         <label class="control-label">发票状态：</label>
         <div class="controls">
@@ -2761,7 +2782,9 @@
                         <th>商品货号</th>
                         <th>采购数量</th>
                         <!-- 隐藏结算价 -->
-                        <%--<th>结算价</th>--%>
+                        <shiro:hasPermission name="biz:order:unitPrice:view">
+                            <th>结算价</th>
+                        </shiro:hasPermission>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -2809,7 +2832,9 @@
                         <th>商品货号</th>
                         <th>采购数量</th>
                         <!-- 隐藏结算价 -->
-                        <%--<th>结算价</th>--%>
+                        <shiro:hasPermission name="biz:order:unitPrice:view">
+                            <th>结算价</th>
+                        </shiro:hasPermission>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -2848,9 +2873,11 @@
         <th>商品货号</th>
         <%--<th>已生成的采购单</th>--%>
         <!-- 隐藏结算价 -->
-        <%--<c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">--%>
-            <%--<th>商品结算价</th>--%>
-        <%--</c:if>--%>
+        <shiro:hasPermission name="biz:order:unitPrice:view">
+            <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+                <th>商品结算价</th>
+            </c:if>
+        </shiro:hasPermission>
         <th>供应商</th>
         <th>供应商电话</th>
         <th>商品单价</th>
@@ -2909,11 +2936,13 @@
                 <%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>--%>
                 <%--</td>--%>
             <!-- 隐藏结算价 -->
-            <%--<c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">--%>
-                <%--<td>--%>
-                        <%--${bizOrderDetail.buyPrice}--%>
-                <%--</td>--%>
-            <%--</c:if>--%>
+            <shiro:hasPermission name="biz:order:unitPrice:view">
+                <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+                    <td>
+                            ${bizOrderDetail.buyPrice}
+                    </td>
+                </c:if>
+            </shiro:hasPermission>
             <td>
                     ${bizOrderDetail.vendor.name}
             </td>
