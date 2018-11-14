@@ -259,4 +259,13 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
             }
         }
     }
+
+    /**
+     * 查询该商品详情的商品库存
+     * @param orderDetailId
+     * @return
+     */
+    public Integer getInvSkuNum(Integer orderDetailId,Integer centId) {
+        return bizOrderDetailDao.getInvSkuNum(orderDetailId,centId);
+    }
 }

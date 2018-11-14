@@ -136,7 +136,7 @@ public class BizProductInfoV3Controller extends BaseController {
     public String list(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
         Page<BizProductInfo> page = bizProductInfoService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo);
         model.addAttribute("page", page);
-        model.addAttribute("prodType",bizProductInfo.getProdType());
+//        model.addAttribute("prodType",bizProductInfo.getProdType());
         return "modules/biz/product/bizProductInfoListV3";
     }
 
