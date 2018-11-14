@@ -63,7 +63,6 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                	console.log(res.data)
                     _this.unitPriceFlag = res.data;
                 }
             });
@@ -1139,7 +1138,6 @@
 				'<div class="mui-input-row">'+
 					'<label>采购数量：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" disabled></div>'+
-//					隐藏结算价
 				'<div class="mui-input-row" id="unitprice">'+
 					'<label>结算价：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
@@ -1183,7 +1181,6 @@
 						'<div class="mui-input-row">'+
 							'<label>采购数量：</label>'+
 							'<input type="text" class="" value="'+ item.reqQty +'" disabled></div>'+
-//							隐藏结算价
 						'<div class="mui-input-row" id="unitprice">'+
 							'<label>结算价：</label>'+
 							'<input type="text" class="" value="'+ item.unitPrice +'" disabled></div>'+
