@@ -253,7 +253,7 @@ public class BizPoPaymentOrderController extends BaseController {
         PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
         Map<String, String> configMap = Maps.newLinkedHashMap();
 
-        configMap.put("供货部", "供货部");
+        configMap.put("待总经理", "待总经理");
         configMap.put("财务总监", "财务总监");
         configMap.put("财务总经理", "财务总经理");
         configMap.put("完成", "完成");
