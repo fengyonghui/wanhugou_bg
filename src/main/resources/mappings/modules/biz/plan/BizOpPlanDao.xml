@@ -167,7 +167,7 @@
 			joint_order_amount = #{jointOrderAmount},
 		</if>
 		<if test="purchaseOrderAmount != null and purchaseOrderAmount != ''">
-			purchase_order_amount = #{purchaseOrderAmount}
+			purchase_order_amount = #{purchaseOrderAmount},
 		</if>
 		new_user = #{newUser},
 		service_charge = #{serviceCharge},
