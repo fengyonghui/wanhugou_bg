@@ -143,7 +143,10 @@
 					$('#staFreight').val(item.freight.toFixed(2));//运费
 					$('#staShouldPay').val(shouldPay.toFixed(2));//应付金额
 					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');//已付金额
-					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
+					var poLastDa = 0;
+					if(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney != 0) {
+						poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
+					}
 					$('#staPoLastDaPerent').val(poLastDa);//已付金额百分比
 					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));//服务费
 				    $('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));//佣金

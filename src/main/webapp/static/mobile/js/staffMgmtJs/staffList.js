@@ -117,12 +117,12 @@
 											'<input type="text" class="mui-input-clear" disabled="disabled" value="'+item.userOrder.officeCount+'">' +
 										'</div>' +
 										'<div class="app_color40 content_part mui-row app_text_center operation">' +
-											'<div class="mui-col-xs-6 staRelevanBtn" staListId="'+ item.id +'" dptmtId="'+ item.office.id +'">' +
+											'<div class="mui-col-xs-12 staRelevanBtn" staListId="'+ item.id +'" dptmtId="'+ item.office.id +'">' +
 												'<li class="mui-table-view-cell">关联经销店</li>' +
 											'</div>' +
-											'<div class="mui-col-xs-6 staOrdBtn" staListId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">订单管理</li>' +
-											'</div>'+
+//											'<div class="mui-col-xs-6 staOrdBtn" staListId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">订单管理</li>' +
+//											'</div>'+
 //											'<div class="mui-col-xs-3 staAmendBtn" staListId="'+ item.id +'">' +
 //												'<li class="mui-table-view-cell">修改</li>' +
 //											'</div>'+
@@ -221,16 +221,16 @@
 				}
 			}),
 		/*订单管理*/
-            $('.app_content').on('tap','.staOrdBtn', function() {
-				var url = $(this).attr('url');
-                var staListId = $(this).attr('staListId');
-				GHUTILS.OPENPAGE({
-					url: "../../html/staffMgmtHtml/orderHtml/staOrderList.html",
-					extras: {
-                        staListId: staListId,
-					}
-				})
-			})
+//          $('.app_content').on('tap','.staOrdBtn', function() {
+//				var url = $(this).attr('url');
+//              var staListId = $(this).attr('staListId');
+//				GHUTILS.OPENPAGE({
+//					url: "../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+//					extras: {
+//                      staListId: staListId,
+//					}
+//				})
+//			})
         /*修改*/
 //	       $('.app_content').on('tap', '.staAmendBtn', function() {
 //					var url = $(this).attr('url');
