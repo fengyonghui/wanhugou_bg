@@ -348,18 +348,14 @@
         	$('#payMentBtn').on('tap',function(){
 	            if (type == 'createPay') {
 	            	var ss = $('#payMentNum').val();
+	            	console.log(ss)
 					IsNum(ss)
 					function IsNum(num) {						
 						if(num) {
 							var Float = Number(num);
 							var reNum = /^\d+(\.\d+)?$/;
 							var re = new RegExp(reNum);
-//							if(reNum.test(num)) {
-//								alert(1)
-                                if ($('#payMentNum').val() == '') {
-				                    mui.toast("申请金额不能为空!");
-				                    return;
-				                }
+							if(re.test(Float)) {
 				                var payDeadline = $("#payMentDate").val() + ' 00:00:00';
 				                if ($("#payMentDate").val() == '') {
 				                    mui.toast("请选择本次申请付款时间!");
@@ -389,15 +385,14 @@
 				                        }
 				                    }
 				                })
-//							}else {
-//								alert(2)
-//								if(num < 0) {
-//									mui.toast("申请金额不能为负数！");
-//								}
-//								else {
-//									mui.toast("申请金额必须为数字！");
-//								}
-//							}
+							}else {
+								if(num < 0) {
+									mui.toast("申请金额不能为负数！");
+								}
+								else {
+									mui.toast("申请金额必须为数字！");
+								}
+							}
 						}else {
 							mui.toast("申请金额不能为空！");
 						}
