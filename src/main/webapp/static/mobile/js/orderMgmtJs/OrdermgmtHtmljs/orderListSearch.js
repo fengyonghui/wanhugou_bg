@@ -43,7 +43,7 @@
 			var statuTxt = '';
 			var status = _this.userInfo.statu;
 			console.log(status)
-			if(status == 'undefined' || status == '') {
+			if(status == 'undefined' || status == ''||status == undefined) {
 //				console.log(1)
 				statuTxt = '';
 			}else {

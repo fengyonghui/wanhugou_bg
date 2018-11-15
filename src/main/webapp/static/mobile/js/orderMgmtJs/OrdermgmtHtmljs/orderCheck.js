@@ -7,6 +7,8 @@
 		this.checkResult = false;
 		this.DOPOFlag = false;
 		this.POFlag = false;
+		this.buyPriceFlag = false;
+		this.unitPriceFlag = false;
 		this.poId = '';
 		return this;
 	}
@@ -17,6 +19,9 @@
 //			biz:po:bizPoHeader:audit     PO
 			this.getPermissionList1('biz:order:bizOrderHeader:audit', 'DOPOFlag');
 			this.getPermissionList2('biz:po:bizPoHeader:audit', 'POFlag');
+			this.getPermissionList3('biz:order:buyPrice:view','buyPriceFlag')//佣金权限
+			this.getPermissionList4('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
+			this.buyPrice(); //
 			this.pageInit(); //页面初始化
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 					//GHUTILS.nativeUI.showWaiting()//开启
@@ -52,6 +57,40 @@
                 }
             });
         },
+        getPermissionList3: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.buyPriceFlag = res.data;
+                }
+            });
+        },
+        getPermissionList4: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.unitPriceFlag = res.data;
+                }
+            });
+        },
+        buyPrice:function(){
+        	var _this = this;
+			if(_this.buyPriceFlag==true){
+				$('#staCommission').parent().show();
+			}else{
+				$('#staCommission').parent().hide();
+			}
+		},
 		getData: function() {
 			var _this = this;
 			$('#schedulingTxt').hide();
@@ -453,11 +492,11 @@
 	                    '<label>供应商:</label>' + 
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div>' +
 //	                    商品结算价隐藏
-//	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="buyPrice">' +
-//	                    '<li class="mui-table-view-cell">' +
-//	                    '<div class="mui-input-row ">' +
-//	                    '<label>商品结算价:</label>' +
-//	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div>'+
+	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="buyPrice">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>商品结算价:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div>'+
 	                    '</div>' +
 	                   
                     	 '<div class="mui-row">' +
@@ -530,17 +569,24 @@
 					});
 				}
 //				商品结算价隐藏
-//				if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){
-//					var buyPriceArr=$('.commodity #buyPrice')			
-//					$.each(buyPriceArr, function(o,p) {
-//						$(p).show();
-//					});
-//				}else{
-//					var buyPriceArr=$('.commodity #buyPrice')			
-//					$.each(buyPriceArr, function(o,p) {
-//						$(p).hide();
-//					});
-//				}
+				if(_this.unitPriceFlag==true){
+					if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){
+						var buyPriceArr=$('.commodity #buyPrice');			
+						$.each(buyPriceArr, function(o,p) {
+							$(p).show();								
+						});
+					}else{
+						var buyPriceArr=$('.commodity #buyPrice');			
+						$.each(buyPriceArr, function(o,p) {
+							$(p).hide();
+						});
+					}
+				}else{
+					var buyPriceArr=$('.commodity #buyPrice');					
+					$.each(buyPriceArr, function(o,p) {
+						$(p).hide();
+					});
+				}				
 			}
 		},
 		addRemark:function(){

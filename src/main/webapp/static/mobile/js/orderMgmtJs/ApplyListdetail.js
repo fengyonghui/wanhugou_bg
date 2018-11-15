@@ -3,87 +3,130 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+		this.buyPriceFlag = false;
+		this.unitPriceFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
-			this.getData();//获取数据			
+			this.getData();//获取数据		
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
-			_this.ordwaterHrefHtml();
-		},
-		ordwaterHrefHtml: function() {
-			var _this = this;
-			var status = '';
-			if(_this.userInfo.statu=='undefined' || _this.userInfo.statu==undefined) {
-				status = ''
-				$('#backCont').html('订单列表');
-			}else {
-				status = _this.userInfo.statu;
-				$('#backCont').html('线下支付订单列表');
-			}
-			/*返回订单列表*/
-			$('#nav').on('tap','.orderList', function() {
-				var url = $(this).attr('url');
-				GHUTILS.OPENPAGE({
-                    url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
-					extras: {
-						statu:status,
-					}
-				})
-			})
 		},
 		getData: function() {
 			var _this = this;
-			var datas={};
-			var idd=_this.userInfo.waterCourseId;
-			var source=_this.userInfo.source;
-//			console.log(idd)
-//			console.log(source)
-			datas={
-				id:idd,
-                source:source
-			}
 			$.ajax({
                 type: "GET",
-                url: "/a/biz/order/bizOrderHeaderUnline/form4Mobile",
-                data:datas,
+                url: "/a/biz/po/bizPoPaymentOrder/formV2ForMobile",
+                data:{id:_this.userInfo.staOrdId},
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
-                	var bizOrderHeaderUnline = res.data.bizOrderHeaderUnline;
-                	var imgUrlList = res.data.imgUrlList;
-                	$('#orWaterCouNum').val(bizOrderHeaderUnline.orderHeader.orderNum);//订单号
-                	$('#waterCouNum').val(bizOrderHeaderUnline.serialNum);//流水号
-                	$('#unlineMoney').val(bizOrderHeaderUnline.unlinePayMoney);//线下付款金额
-                	$('#realMoney').val($('#unlineMoney').val());
-                	//单据凭证
-                	if(imgUrlList) {
-                		$.each(imgUrlList, function(i,item) {
-	                		$("#orWaterPototal").append("<a><img width=\"100px\" src=\"" + item+ "\"></a>");
-	                	});
-                	}
-                	$.ajax({
-                		type: "GET",
-		                url: "/a/sys/dict/listData",
-		                data:{type:'biz_order_unline_bizStatus'},
-		                dataType: "json",
-		                success: function(zl){
-//		                	console.log(zl)
-		                	$.each(zl, function(z,l) {
-		                		if(l.value == bizOrderHeaderUnline.bizStatus) {
-		                			$('#orWaterStatus').val(l.label);//流水状态
-		                		}
-		                	});
-                		}
-                	});
+                	console.log(res)
+					$('#ordId').val(_this.userInfo.staOrdId);	
+					var item = res.data;
+					$('#staPoordNum').val(item.totalDetailResult);
+					$('#staRelNum').val(item.bizPoPaymentOrder.total.toFixed(2));
+					$('#staAdjustmentMoney').val(item.bizPoPaymentOrder.remark);
+					_this.checkProcessHtml(item);					
                 }
             });
+		},		
+		checkProcessHtml:function(data){
+			console.log(data)
+			var _this = this;
+			var auditLen = data.auditList.length;
+			if(auditLen > 0) {
+				var CheckHtmlList ='';
+				$.each(data.auditList, function(i, item) {
+					console.log(item)
+					
+					var step = i + 1;
+					var current = item.id;
+					if(current != data.processId) {
+						//处理人
+						var userName ="";
+						if(item.user){
+							userName = item.user.name;
+						}else{
+							userName = "";
+						}
+						//批注
+						var Description ="";
+						if(item.description){
+							Description = item.description;
+						}else{
+							Description = "";
+						}
+						//状态
+					    var ProcessName = '';
+					    if(item.paymentOrderProcess){
+							ProcessName = item.paymentOrderProcess.name;
+						}else{
+							ProcessName = "";
+						}
+						//时间
+					    var ProcessTime = '';
+					    if(item.updateTime){
+							ProcessTime = _this.formatDateTime(item.updateTime);
+						}else{
+							ProcessTime = "";
+						}
+						CheckHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ step +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+								'<label>处理人:</label>'+
+								'<input type="text" value="'+ userName +'" class="mui-input-clear" disabled>'+
+						    '</div>'+
+							'<div class="mui-input-row">'+
+						        '<label>批注:</label>'+
+						        '<input type="text" value="'+ Description +'" class="mui-input-clear" disabled>'+
+						    	'<label>状态:</label>'+
+						        '<input type="text" value=" '+ ProcessName +' " class="mui-input-clear" disabled>'+
+						        '<input type="text" value=" '+ ProcessTime +' " class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+					}
+					if(current == data.processId) {
+						//状态
+					    var ProcessName = '';
+					    if(item.paymentOrderProcess){
+							ProcessName = item.paymentOrderProcess.name;
+						}else{
+							ProcessName = "";
+						}
+						//时间
+					    var ProcessTime = '';
+					    if(item.updateTime){
+							ProcessTime = _this.formatDateTime(item.updateTime);
+						}else{
+							ProcessTime = "";
+						}
+						CheckHtmlList +='<li class="step_item">'+
+						'<div class="step_num">'+ step +' </div>'+
+						'<div class="step_num_txt">'+
+							'<div class="mui-input-row">'+
+								'<label>当前状态:</label>'+
+								'<input type="text" value="'+ ProcessName +'" class="mui-input-clear" disabled>'+
+						   		'<label>时间:</label>'+
+						        '<input type="text" value=" '+ ProcessTime +' " class="mui-input-clear" disabled>'+
+						    '</div>'+
+						'</div>'+
+					'</li>'
+					}
+				});
+				$("#staCheckMenu").html(CheckHtmlList);
+			}else{
+				$("#staCheckMenu").parent().hide();
+			}
 		},
+		
+		
 		formatDateTime: function(unix) {
         	var _this = this;
 

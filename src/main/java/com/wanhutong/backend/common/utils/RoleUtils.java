@@ -3,6 +3,7 @@ package com.wanhutong.backend.common.utils;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
@@ -60,5 +61,22 @@ public class RoleUtils {
             }
         }
         return Boolean.FALSE;
+    }
+
+    public static Boolean hasPermission(String marking) {
+        Boolean flag = false;
+        User user = UserUtils.getUser();
+        if (user.isAdmin()) {
+            flag = true;
+        } else {
+            List<String> permissionAllList = UserUtils.getPermissionAllList();
+            for (String permission:permissionAllList) {
+                if (permission.equals(marking)){
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        return flag;
     }
 }

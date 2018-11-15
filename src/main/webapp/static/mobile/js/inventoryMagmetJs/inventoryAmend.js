@@ -15,6 +15,7 @@
         this.bizOfficeId="";
         this.deleteBtnFlag = "false"
         this.inAddSaveFlag = "false"
+        this.unitPriceFlag = false;
         return this;
     }
     var bizStatusDesc = (function() {
@@ -39,7 +40,7 @@
 //			biz:request:bizRequestHeader:createPayOrder   申请付款
 			this.getPermissionList('biz:request:bizRequestDetail:edit','deleteBtnFlag')
 			this.getPermissionList('biz:request:bizRequestHeader:edit','inAddSaveFlag')
-			
+			this.getPermissionList1('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
             this.hrefHtml('.newinput01', '.input_div01','#hideSpanAmend01');
 			this.hrefHtmls('.newinput02', '.input_div02','#hideSpanAmend02');
             this.pageInit(); //页面初始化
@@ -67,6 +68,19 @@
             _this.ajaxCheckStatus();//业务状态
             _this.ajaxTypeStatus();//备货单类型
 		},
+		getPermissionList1: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.unitPriceFlag = res.data;
+                }
+            });
+        },
 		getPermissionList: function (markVal,flag) {
             var _this = this;
             $.ajax({
@@ -113,13 +127,22 @@
                 data: {id:ids,str:strs},
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	console.log(res)
                 	//支付申请
                 	var strTxt = res.data.bizRequestHeader.str;
+                	var entitys=res.data.bizRequestHeader;
                 	var payMentCont = '';
+                	var applyMoney="";
+                	if(entitys.bizPoPaymentOrder.id != null || entitys.str == 'createPay'){
+                		if(entitys.bizPoPaymentOrder.str == 'audit' || entitys.bizPoPaymentOrder.str == 'pay'){
+                			$('#payMentNum').attr('readonly');
+                		}
+                		applyMoney=entitys.bizPoPaymentOrder.id != null ?
+                           entitys.bizPoPaymentOrder.total : (entitys.totalDetail-(entitys.bizPoHeader.payTotal == null ? 0 : entitys.bizPoHeader.payTotal));                		
+                	}
                 	if(res.data.bizRequestHeader.bizPoPaymentOrder.id != null || strTxt == 'createPay') {
 	        			payMentCont = '<div class="mui-input-row"><label>申请金额：</label>'+
-							'<input type="text" id="payMentNum" class="mui-input-clear"><font>*</font></div>'+
+							'<input type="text" id="payMentNum" class="mui-input-clear" value=" '+ applyMoney +' "><font>*</font></div>'+
 						'<div class="mui-input-row"><label>付款时间：</label>'+
 							'<input type="date" id="payMentDate" class="mui-input-clear"><font>*</font></div>'+
 						'<div class="mui-input-row remark"><label>支付备注：</label>'+
@@ -372,11 +395,14 @@
         	$('#payMentBtn').on('tap',function(){
 	            if (type == 'createPay') {
 	            	var ss = $('#payMentNum').val();
+	            	console.log(ss)	            	
 					IsNum(ss)
 					function IsNum(num) {
 						if(num) {
+							var Float = Number(num);
 							var reNum = /^\d+(\.\d+)?$/;
-							if(reNum.test(num)) {
+							var re = new RegExp(reNum);
+							if(re.test(Float)) {
 				                var payDeadline = $("#payMentDate").val() + ' 00:00:00';
 				                if ($("#payMentDate").val() == '') {
 				                    mui.toast("请选择本次申请付款时间!");
@@ -396,7 +422,7 @@
 				                    },
 				                    dataType: 'json',
 				                    success: function (resule) {
-				                        if (resule == true) {
+				                        if (resule.ret== true || resule.ret == 'true') {
 				                            mui.toast("本次申请付款成功！");
 				                          	GHUTILS.OPENPAGE({
 				                                url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
@@ -406,7 +432,7 @@
 				                        }
 				                    }
 				                })
-							} else {
+						} else {
 								if(num < 0) {
 									mui.toast("申请金额不能为负数！");
 								}else {
@@ -982,11 +1008,11 @@
                     '<div class="mui-row inAddFont">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
 //                  隐藏结算价
-//                  '<div class="mui-col-sm-5 mui-col-xs-5">' +
-//                  '<li class="mui-table-view-cell app_bline3">' +
-//                  '<div class="mui-input-row">' +
-//                  '<label>结算价:</label>' +  
-//                  '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div>' +
+                    '<div class="mui-col-sm-5 mui-col-xs-5" id="unitprice">' +
+                    '<li class="mui-table-view-cell app_bline3">' +
+                    '<div class="mui-input-row">' +
+                    '<label>结算价:</label>' +  
+                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
                     '<li class="mui-table-view-cell app_bline3">' +
                     '<div class="mui-input-row">' +
@@ -1006,6 +1032,14 @@
                 htmlCommodity += '</div>';
             });
             $("#commodityMenu").html(htmlCommodity);
+            var unitPriceLists=$('#commodityMenu #unitprice');
+			$.each(unitPriceLists,function(z,x){
+				if(_this.unitPriceFlag==true){
+					$(x).show();
+				}else{
+					$(x).hide();
+				}
+			})
             _this.delItem();
             _this.removeItem();
         },
@@ -1132,12 +1166,11 @@
 	                                       
 	                                        '<div class="mui-row inAddFont">' +
 	                                        '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-//	                                        隐藏结算价
-//	                                        '<div class="mui-col-sm-5 mui-col-xs-5">' +
-//	                                        '<li class="mui-table-view-cell app_bline3">' +
-//	                                        '<div class="mui-input-row">' +
-//	                                        '<label>结算价:</label>' +
-//	                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled></div></li></div>' +
+	                                        '<div class="mui-col-sm-5 mui-col-xs-5" id="unitprice">' +
+	                                        '<li class="mui-table-view-cell app_bline3">' +
+	                                        '<div class="mui-input-row">' +
+	                                        '<label>结算价:</label>' +
+	                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled></div></li></div>' +
 	                                        '<div class="mui-col-sm-5 mui-col-xs-5">' +
 	                                        '<li class="mui-table-view-cell app_bline3">' +
 	                                        '<div class="mui-input-row">' +
@@ -1154,6 +1187,14 @@
 	                                '<button id="batchAdd" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加' +
 	                                '</button></div>';
 	                        $("#searchInfo").append(addButtonHtml);
+	                        var unitPriceList=$('#searchInfo #unitprice');
+							$.each(unitPriceList,function(z,x){
+								if(_this.unitPriceFlag==true){
+									$(x).show();
+								}else{
+									$(x).hide();
+								}
+							})
 	                        //判断是否有相同的商品 
                             var dis=$("#searchInfo .skuinfo_check");
                             var dos=$("#commodityMenu .skuinfo_check");
