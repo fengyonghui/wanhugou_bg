@@ -83,9 +83,9 @@
                 },
                 dataType: "json",
                 success: function(res){
+                	$('#orderTypebox').hide();
                 	if(res.data.bizOrderHeader.flag=='check_pending') {
                 		if(res.data.orderType == 5) {
-                			$('#orderTypebox').hide();
                 			$('#nochecked').attr("checked","false" );
                 			$('#yes').attr("checked","checked" );
                 		}
@@ -464,14 +464,14 @@
 				var btnArray = ['取消', '确定'];
 				var choiceTxt = '';
 				var hint = '';
-				if(data.orderType != data.PURSEHANGER) {
+				if(data.orderType == data.PURSEHANGER) {
+					choiceTxt = '确定同意发货吗?'
+					hint = '系统提示!'
+				}else {
 					choiceTxt = '<div id="changeTxt">'+
 				    '本地备货<input style="margin: 10px 15px 10px 5px;" checked="checked" type="radio" name="localOriginType" value="1" class="inputRadio" id="nochecked"/>'+
 		        	'产地直发<input style="margin: 10px 15px 10px 5px;" id="yes" type="radio" name="localOriginType" value="0"  class="inputRadio"/></div>'
 					hint = '请选择供货方式：'
-				}else {
-					choiceTxt = '确定同意发货吗?'
-					hint = '系统提示!'
 				}
 				mui.confirm(choiceTxt, hint, btnArray, function(choice) {
 					if(choice.index == 1) {
@@ -490,6 +490,8 @@
                     localOriginType = r2[i].value;
                 }
             }
+//          console.log(_this.prew)
+//          console.log(localOriginType)
 			$.ajax({
 				type: "POST",
 				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",
