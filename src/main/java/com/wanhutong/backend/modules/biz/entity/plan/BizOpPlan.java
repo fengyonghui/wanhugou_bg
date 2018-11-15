@@ -9,6 +9,8 @@ import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.math.BigDecimal;
+
 /**
  * 运营计划Entity
  * @author 张腾飞
@@ -36,7 +38,16 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	private String objectName2;  //user 中的id对应名称
 	private Office centerOffice;   //采购中心id
 	private User user; //采购专员
-	
+
+	/**
+	 * 联营订单总额
+	 */
+	private BigDecimal jointOrderAmount;
+	/**
+	 * 代采订单总额
+	 */
+	private BigDecimal purchaseOrderAmount;
+
 	public BizOpPlan() {
 		super();
 	}
@@ -144,5 +155,21 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 
 	public void setServiceCharge(Double serviceCharge) {
 		this.serviceCharge = serviceCharge;
+	}
+
+	public BigDecimal getJointOrderAmount() {
+		return jointOrderAmount;
+	}
+
+	public void setJointOrderAmount(BigDecimal jointOrderAmount) {
+		this.jointOrderAmount = jointOrderAmount;
+	}
+
+	public BigDecimal getPurchaseOrderAmount() {
+		return purchaseOrderAmount;
+	}
+
+	public void setPurchaseOrderAmount(BigDecimal purchaseOrderAmount) {
+		this.purchaseOrderAmount = purchaseOrderAmount;
 	}
 }
