@@ -125,10 +125,19 @@
                 dataType: "json",
                 success: function(res){
                 	var strTxt = res.data.bizOrderHeader.str;
+                	var entitys=res.data.bizOrderHeader;
                 	var payMentCont = '';
+                	var applyMoney="";
+                	if(entitys.bizPoPaymentOrder.id != null || entitys.str == 'createPay'){
+                		if(entitys.bizPoPaymentOrder.str == 'audit' || entitys.bizPoPaymentOrder.str == 'pay'){
+                			$('#payMentNum').attr('readonly');
+                		}
+                		applyMoney=entitys.bizPoPaymentOrder.id != null ?
+                           entitys.bizPoPaymentOrder.total : (entitys.totalDetail-(entitys.bizPoHeader.payTotal == null ? 0 : entitys.bizPoHeader.payTotal));                		
+                	}
                 	if(res.data.bizOrderHeader.bizPoPaymentOrder.id != null || strTxt == 'createPay'){
                 		payMentCont = '<div class="mui-input-row"><label>申请金额：</label>'+
-							'<input type="text" id="payMentNum" class="mui-input-clear"><font>*</font></div>'+
+							'<input type="text" id="payMentNum" class="mui-input-clear" value=" '+ applyMoney +' "><font>*</font></div>'+
 						'<div class="mui-input-row"><label>付款时间：</label>'+
 							'<input type="date" id="payMentDate" class="mui-input-clear"><font>*</font></div>'+
 						'<div class="mui-input-row remark"><label>支付备注：</label>'+
@@ -339,11 +348,14 @@
         	$('#payMentBtn').on('tap',function(){
 	            if (type == 'createPay') {
 	            	var ss = $('#payMentNum').val();
+	            	console.log(ss)
 					IsNum(ss)
-					function IsNum(num) {
+					function IsNum(num) {						
 						if(num) {
+							var Float = Number(num);
 							var reNum = /^\d+(\.\d+)?$/;
-							if(reNum.test(num)) {
+							var re = new RegExp(reNum);
+							if(re.test(Float)) {
 				                var payDeadline = $("#payMentDate").val() + ' 00:00:00';
 				                if ($("#payMentDate").val() == '') {
 				                    mui.toast("请选择本次申请付款时间!");
@@ -373,10 +385,11 @@
 				                        }
 				                    }
 				                })
-							} else {
+							}else {
 								if(num < 0) {
 									mui.toast("申请金额不能为负数！");
-								}else {
+								}
+								else {
 									mui.toast("申请金额必须为数字！");
 								}
 							}

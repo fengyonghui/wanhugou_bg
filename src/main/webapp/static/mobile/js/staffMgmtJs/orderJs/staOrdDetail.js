@@ -65,7 +65,6 @@
                 },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
 					$('#firstPart').val(res.data.entity2.customer.name);
 					$('#firstPrincipal').val(res.data.custUser.name);
 					$('#firstMobile').val(res.data.custUser.mobile);
