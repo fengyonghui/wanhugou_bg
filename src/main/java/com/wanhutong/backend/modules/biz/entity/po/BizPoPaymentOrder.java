@@ -77,6 +77,8 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
      */
     private String option;
 
+    private Integer poProcessType;
+
     public BizPoPaymentOrder() {
         super();
     }
@@ -276,5 +278,13 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     public void setOption(String option) {
         this.option = option;
+    }
+
+    public Integer getPoProcessType() {
+        return poProcessType;
+    }
+
+    public void setPoProcessType(Integer poProcessType) {
+        this.poProcessType = poProcessType;
     }
 }

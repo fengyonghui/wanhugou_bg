@@ -115,7 +115,7 @@
 				<td>
 				<c:if test="${bizPoPaymentOrder.poHeader.bizStatus != 10}">
 					<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:audit">
-						<c:if test="${bizPoPaymentOrder.total != '0.00'}">
+						<c:if test="${bizPoPaymentOrder.total != '0.00' && bizPoPaymentOrder.poProcessType == 7}">
 							<c:if test="${bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '驳回' && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成' && bizPoPaymentOrder.total != 0}">
 													<%--&& (fns:hasRole(roleSet, bizPoPaymentOrder.commonProcess.paymentOrderProcess.moneyRole.roleEnNameEnum))--%>
 								<a href="#" onclick="checkPass(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核通过</a>

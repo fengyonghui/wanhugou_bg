@@ -104,11 +104,13 @@
 	<select id="findList" resultMap="bizPoPaymentOrderMaps">
 		SELECT 
 			<include refid="bizPoPaymentOrderColumns"/>
+            ,poprocess.type as poProcessType
 		FROM biz_po_payment_order a
 		<include refid="bizPoPaymentOrderJoins"/>
-		<if test="auditStatusCode != null and auditStatusCode != 0">
-			LEFT JOIN common_process poprocess ON poprocess.id = po.process_id
-		</if>
+        LEFT JOIN common_process poprocess ON poprocess.id = po.process_id
+		<!--<if test="auditStatusCode != null and auditStatusCode != 0">-->
+			<!---->
+		<!--</if>-->
 		<where>
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
@@ -127,7 +129,7 @@
 			</if>
 			<if test="auditStatusCode != null and auditStatusCode != 0">
 				AND process.type = #{auditStatusCode}
-				and poprocess.type = 7
+                <!-- and poprocess.type = 7 -->
 				and a.total > 0
 			</if>
 			<if test="option !=null and option != '' and option == 'poPayListV2'">
