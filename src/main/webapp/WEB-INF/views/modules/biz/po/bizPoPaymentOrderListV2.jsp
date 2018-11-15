@@ -217,7 +217,8 @@
                         result = JSON.parse(result);
                         if(result.ret == true || result.ret == 'true') {
                             alert('操作成功!');
-                            window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                            <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                            window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/listV2?option=poPayListV2";
 
                             <%--if(${fromPage != null && fromPage == 'requestHeader'}) {--%>
                                 <%--window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";--%>
