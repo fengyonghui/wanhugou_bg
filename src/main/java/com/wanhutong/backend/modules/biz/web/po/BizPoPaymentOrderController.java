@@ -269,7 +269,7 @@ public class BizPoPaymentOrderController extends BaseController {
         if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum())) {
             if (bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("SO") || bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("DO")) {
                 BizOrderHeader orderHeader = bizOrderHeaderService.getByOrderNum(bizPoPaymentOrder.getOrderNum());
-                if (orderHeader != null) {
+                if (orderHeader != null && orderHeader.getBizPoHeader() != null) {
                     bizPoPaymentOrder.setPoHeaderId(orderHeader.getBizPoHeader().getId());
                 }
             }
@@ -277,13 +277,19 @@ public class BizPoPaymentOrderController extends BaseController {
                 BizRequestHeader requestHeader = new BizRequestHeader();
                 requestHeader.setReqNo(bizPoPaymentOrder.getOrderNum());
                 List<BizRequestHeader> list = bizRequestHeaderForVendorService.findList(requestHeader);
-                if (CollectionUtils.isNotEmpty(list)) {
+                if (CollectionUtils.isNotEmpty(list) && list.get(0).getBizPoHeader() != null) {
                     bizPoPaymentOrder.setPoHeaderId(list.get(0).getBizPoHeader().getId());
                 }
             }
         }
 
-        Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+        Page<BizPoPaymentOrder> page = new Page<BizPoPaymentOrder>(request, response);
+        if (StringUtils.isBlank(bizPoPaymentOrder.getOrderNum())) {
+            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+        } else if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum()) && bizPoPaymentOrder.getPoHeaderId() != null) {
+            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+        }
+
         model.addAttribute("page", page);
         String orderId = request.getParameter("orderId");
         model.addAttribute("orderId", orderId);
