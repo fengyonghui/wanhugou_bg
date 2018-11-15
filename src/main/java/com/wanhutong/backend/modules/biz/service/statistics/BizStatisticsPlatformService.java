@@ -28,11 +28,8 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -114,9 +111,15 @@ public class BizStatisticsPlatformService {
         return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, id, null);
     }
 
+    public List<BizOrderStatisticsDto> getJoinPurchaseData(Integer centerId, String formatDate) {
+        return bizOrderHeaderDao.getJoinPurchaseData(centerId, formatDate);
+    }
+
     public List<BizOrderStatisticsDto> orderStatisticDataByUser(String startDate, String endDate, String type, String centerType, String orderType, Integer userId) {
         return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, null, userId);
     }
+
+
 
 
     /**
@@ -217,6 +220,24 @@ public class BizStatisticsPlatformService {
             }
         });
 
+        //合计值
+        BigDecimal totalProcurement = BigDecimal.ZERO;
+        BigDecimal totalJointOrderPlanAmountTotal = BigDecimal.ZERO;
+        BigDecimal totalJointOrderAmountTotal = BigDecimal.ZERO;
+        BigDecimal totalPurchaseOrderPlanAmountTotal = BigDecimal.ZERO;
+        BigDecimal totalPurchaseOrderAmountTotal = BigDecimal.ZERO;
+        BigDecimal totalReceiveTotal = BigDecimal.ZERO;
+        String totalYieldRate = "---";
+        BigDecimal totalAccumulatedSalesMonth = BigDecimal.ZERO;
+        BigDecimal totalProcurementDay = BigDecimal.ZERO;
+        BigDecimal totalDifferenceTotalMonth = BigDecimal.ZERO;
+        AtomicReference<Integer> totalRemainingDays = new AtomicReference<>(new Integer(0));
+        BigDecimal totalDayMinReturned = BigDecimal.ZERO;
+        BigDecimal totalServiceChargePlan = BigDecimal.ZERO;
+        BigDecimal totalServiceCharge = BigDecimal.ZERO;
+        String totalServiceChargeRate = "--";
+        BigDecimal totalStockAmount = BigDecimal.ZERO;
+
         Map<String, List<BizPlatformDataOverviewDto>> resultMap = Maps.newHashMap();
         bizPlatformDataOverviewDtos.forEach(o -> {
             List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList =
@@ -233,6 +254,12 @@ public class BizStatisticsPlatformService {
                 bizOpPlan = planList.get(0);
             }
 
+            List<BizOrderStatisticsDto> joinPurchaseData = getJoinPurchaseData(o.getOfficeId(), dateStrArr[0] + dateStrArr[1]);
+            BizOrderStatisticsDto joinPurchaseOrderData = new BizOrderStatisticsDto();
+            if (CollectionUtils.isNotEmpty(joinPurchaseData)) {
+                joinPurchaseOrderData = joinPurchaseData.get(0);
+            }
+
             BizUserStatisticsDto userStatisticDataByOfficeId = bizOrderHeaderDao.getValidUserStatisticDataByOfficeId(sdfMonth.format(sDate), o.getOfficeId());
             o.setNewUser(userStatisticDataByOfficeId == null ? BigDecimal.ZERO : BigDecimal.valueOf(userStatisticDataByOfficeId.getCount()));
             o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
@@ -240,7 +267,18 @@ public class BizStatisticsPlatformService {
             o.setServiceCharge(serviceChargeDto == null ? BigDecimal.ZERO : serviceChargeDto.getProfitPrice());
             o.setServiceChargePlan(bizOpPlan.getServiceCharge() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getServiceCharge()));
 
-            o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
+            //月计划联营订单总额
+            o.setJointOrderPlanAmountTotal(bizOpPlan.getJointOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getJointOrderAmount());
+            //月联营订单总额
+            o.setJointOrderAmountTotal(joinPurchaseOrderData.getJoinSaleAmount() == null ? BigDecimal.ZERO : joinPurchaseOrderData.getJoinSaleAmount());
+
+            //月计划代采订单总额
+            o.setPurchaseOrderPlanAmountTotal(bizOpPlan.getPurchaseOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getPurchaseOrderAmount());
+            //月代采订单总额
+            o.setPurchaseOrderAmountTotal(joinPurchaseOrderData.getPurchaseSaleAmount() == null ? BigDecimal.ZERO : joinPurchaseOrderData.getPurchaseSaleAmount());
+
+            //o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
+            o.setProcurement(o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()));
             o.setProcurementDay(
                     CollectionUtils.isEmpty(currentBizOrderStatisticsDtoList) ?
                             BigDecimal.ZERO
@@ -248,15 +286,46 @@ public class BizStatisticsPlatformService {
             // 库存金额
             o.setCurrentDate(endDate);
 
-            //月计划联营订单总额
-            o.setJointOrderAmountTotal(bizOpPlan.getJointOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getJointOrderAmount());
-            //月计划代采订单总额
-            o.setPurchaseOrderAmountTotal(bizOpPlan.getPurchaseOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getPurchaseOrderAmount());
+
+
             List<BizPlatformDataOverviewDto> tempDtoList = resultMap.putIfAbsent(o.getProvince(), Lists.newArrayList(o));
             if (tempDtoList != null) {
                 tempDtoList.add(o);
             }
+            totalProcurement.add(o.getProcurement());
+            totalJointOrderPlanAmountTotal.add(o.getJointOrderPlanAmountTotal());
+            totalJointOrderAmountTotal.add(o.getJointOrderAmountTotal());
+            totalPurchaseOrderPlanAmountTotal.add(o.getPurchaseOrderPlanAmountTotal());
+            totalPurchaseOrderAmountTotal.add(o.getPurchaseOrderAmountTotal());
+            totalReceiveTotal.add(o.getReceiveTotal());
+            //totalYieldRate = "---"
+            totalAccumulatedSalesMonth.add(o.getAccumulatedSalesMonth());
+            totalProcurementDay.add(o.getProcurementDay());
+            //totalDifferenceTotalMonth.add(o.getDifferenceTotalMonth());
+            //totalRemainingDays.set(o.getRemainingDays());
+            //totalDayMinReturned.add(o.getDayMinReturned());
+            totalServiceChargePlan.add(o.getServiceChargePlan());
+            totalServiceCharge.add(o.getServiceCharge());
+            //totalServiceChargeRate = "---";
+            totalStockAmount.add(o.getStockAmount());
+
         });
+        BizPlatformDataOverviewDto statisticsTotal = new BizPlatformDataOverviewDto();
+        statisticsTotal.setProcurement(totalProcurement);
+        statisticsTotal.setJointOrderPlanAmountTotal(totalJointOrderPlanAmountTotal);
+        statisticsTotal.setJointOrderAmountTotal(totalJointOrderAmountTotal);
+        statisticsTotal.setPurchaseOrderPlanAmountTotal(totalPurchaseOrderPlanAmountTotal);
+        statisticsTotal.setPurchaseOrderAmountTotal(totalPurchaseOrderAmountTotal);
+        statisticsTotal.setReceiveTotal(totalReceiveTotal);
+        statisticsTotal.setAccumulatedSalesMonth(totalAccumulatedSalesMonth);
+        statisticsTotal.setProcurementDay(totalProcurementDay);
+        statisticsTotal.setServiceChargePlan(totalServiceChargePlan);
+        statisticsTotal.setServiceCharge(totalServiceCharge);
+        statisticsTotal.setStockAmount(totalStockAmount);
+        List<BizPlatformDataOverviewDto> statisticsTotalList = new ArrayList<BizPlatformDataOverviewDto>();
+        statisticsTotalList.add(statisticsTotal);
+        resultMap.put("statisticsTotal", statisticsTotalList);
+
         return resultMap;
     }
 

@@ -132,10 +132,20 @@ public class BizPlatformDataOverviewDto {
     /**
      * 月计划联营订单总额
      */
+    private BigDecimal jointOrderPlanAmountTotal;
+
+    /**
+     * 月联营订单总额
+     */
     private BigDecimal jointOrderAmountTotal;
 
     /**
      * 月计划代采订单总额
+     */
+    private BigDecimal purchaseOrderPlanAmountTotal;
+
+    /**
+     * 月代采订单总额
      */
     private BigDecimal purchaseOrderAmountTotal;
 
@@ -357,5 +367,21 @@ public class BizPlatformDataOverviewDto {
 
     public void setPurchaseOrderAmountTotal(BigDecimal purchaseOrderAmountTotal) {
         this.purchaseOrderAmountTotal = purchaseOrderAmountTotal;
+    }
+
+    public BigDecimal getJointOrderPlanAmountTotal() {
+        return jointOrderPlanAmountTotal;
+    }
+
+    public void setJointOrderPlanAmountTotal(BigDecimal jointOrderPlanAmountTotal) {
+        this.jointOrderPlanAmountTotal = jointOrderPlanAmountTotal;
+    }
+
+    public BigDecimal getPurchaseOrderPlanAmountTotal() {
+        return purchaseOrderPlanAmountTotal;
+    }
+
+    public void setPurchaseOrderPlanAmountTotal(BigDecimal purchaseOrderPlanAmountTotal) {
+        this.purchaseOrderPlanAmountTotal = purchaseOrderPlanAmountTotal;
     }
 }

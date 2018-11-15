@@ -71,6 +71,46 @@ public class BizOrderStatisticsDto {
      */
     private String skuItemNo;
 
+    /**
+     * 年月时间 例201801
+     */
+    private String ym;
+
+    /**
+     * 订单数
+     */
+    private Integer orderHeaderCount;
+
+    /**
+     * 月销售额
+     */
+    private BigDecimal accumulatedSalesMonth;
+
+    /**
+     * 联营销售额
+     */
+    private BigDecimal joinSaleAmount;
+
+    /**
+     * 联营回款额
+     */
+    private BigDecimal joinRemitAmount;
+
+    /**
+     * 代采销售额
+     */
+    private BigDecimal purchaseSaleAmount;
+
+    /**
+     * 代采回款额
+     */
+    private BigDecimal purchaseRemitAmount;
+
+    /**
+     * 有效开单用户数
+     */
+    private Integer validCustomerNum;
+
 
     public BigDecimal getUnivalence() {
         if (orderCount <= 0) {
@@ -195,5 +235,69 @@ public class BizOrderStatisticsDto {
 
     public void setSkuItemNo(String skuItemNo) {
         this.skuItemNo = skuItemNo;
+    }
+
+    public String getYm() {
+        return ym;
+    }
+
+    public void setYm(String ym) {
+        this.ym = ym;
+    }
+
+    public Integer getOrderHeaderCount() {
+        return orderHeaderCount;
+    }
+
+    public void setOrderHeaderCount(Integer orderHeaderCount) {
+        this.orderHeaderCount = orderHeaderCount;
+    }
+
+    public BigDecimal getAccumulatedSalesMonth() {
+        return accumulatedSalesMonth;
+    }
+
+    public void setAccumulatedSalesMonth(BigDecimal accumulatedSalesMonth) {
+        this.accumulatedSalesMonth = accumulatedSalesMonth;
+    }
+
+    public BigDecimal getJoinSaleAmount() {
+        return joinSaleAmount;
+    }
+
+    public void setJoinSaleAmount(BigDecimal joinSaleAmount) {
+        this.joinSaleAmount = joinSaleAmount;
+    }
+
+    public BigDecimal getJoinRemitAmount() {
+        return joinRemitAmount;
+    }
+
+    public void setJoinRemitAmount(BigDecimal joinRemitAmount) {
+        this.joinRemitAmount = joinRemitAmount;
+    }
+
+    public BigDecimal getPurchaseSaleAmount() {
+        return purchaseSaleAmount;
+    }
+
+    public void setPurchaseSaleAmount(BigDecimal purchaseSaleAmount) {
+        this.purchaseSaleAmount = purchaseSaleAmount;
+    }
+
+    public BigDecimal getPurchaseRemitAmount() {
+        return purchaseRemitAmount;
+    }
+
+    public void setPurchaseRemitAmount(BigDecimal purchaseRemitAmount) {
+        this.purchaseRemitAmount = purchaseRemitAmount;
+    }
+
+    public Integer getValidCustomerNum() {
+        return validCustomerNum;
+    }
+
+    public void setValidCustomerNum(Integer validCustomerNum) {
+        this.validCustomerNum = validCustomerNum;
     }
 }

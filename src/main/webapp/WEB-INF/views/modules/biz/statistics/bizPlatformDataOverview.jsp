@@ -34,7 +34,9 @@
     <tr>
         <th>月计划回款额(元)</th>
         <th>月计划联营订单总额</th>
+        <th>月联营订单总额</th>
         <th>月计划代采订单总额</th>
+        <th>月代采订单总额</th>
         <th>月销售量统计</th>
         <th>销售额任务完成比例</th>
         <th>月累计销量</th>
@@ -42,7 +44,7 @@
         <th>月累计差异</th>
         <th>剩余天数</th>
         <th>每日最低回款额</th>
-        <th>有效会员开单量</th>
+        <%--<th>有效会员开单量</th>--%>
         <%--<th>新用户</th>--%>
         <%--<th>新用户达成率</th>--%>
         <th>计划服务费</th>
@@ -62,23 +64,29 @@
             <td>
                     ${item.name}
             </td>
-                <td>
-                        ${item.procurement}
-                </td>
+            <td>
+                    ${item.procurement}
+            </td>
 
-                <td>
-                        ${item.jointOrderAmountTotal}
-                </td>
-                <td>
-                        ${item.purchaseOrderAmountTotal}
-                </td>
+            <td>
+                    ${item.jointOrderPlanAmountTotal}
+            </td>
+            <td>
+                    ${item.jointOrderAmountTotal}
+            </td>
+            <td>
+                    ${item.purchaseOrderPlanAmountTotal}
+            </td>
+            <td>
+                    ${item.purchaseOrderAmountTotal}
+            </td>
 
-                <td>
-                        ${item.receiveTotal}
-                </td>
-                <td>
-                        ${item.yieldRate}
-                </td>
+            <td>
+                    ${item.receiveTotal}
+            </td>
+            <td>
+                    ${item.yieldRate}
+            </td>
             <td>
                     ${item.accumulatedSalesMonth}
             </td>
@@ -96,9 +104,9 @@
             <td>
                     ${item.dayMinReturned}
             </td>
-            <td>
-                    ${item.newUserPlan}
-            </td>
+            <%--<td>--%>
+                    <%--${item.newUserPlan}--%>
+            <%--</td>--%>
             <%--<td>--%>
                     <%--${item.newUser}--%>
             <%--</td>--%>
@@ -121,6 +129,61 @@
         </c:forEach>
     </tr>
     </c:forEach>
+    <tr>
+        <td colspan="2" style="text-align: center">合计</td>
+        <td>
+            ${statisticsTotal.procurement}
+        </td>
+
+        <td>
+            ${statisticsTotal.jointOrderPlanAmountTotal}
+        </td>
+        <td>
+            ${statisticsTotal.jointOrderAmountTotal}
+        </td>
+        <td>
+            ${statisticsTotal.purchaseOrderPlanAmountTotal}
+        </td>
+        <td>
+            ${statisticsTotal.purchaseOrderAmountTotal}
+        </td>
+
+        <td>
+            ${statisticsTotal.receiveTotal}
+        </td>
+        <td>
+            ${statisticsTotal.yieldRate}
+        </td>
+        <td>
+            ${statisticsTotal.accumulatedSalesMonth}
+        </td>
+
+        <td>
+            ${statisticsTotal.procurementDay}
+        </td>
+
+        <td>
+            ${statisticsTotal.differenceTotalMonth}
+        </td>
+        <td>
+            ---
+        </td>
+        <td>
+            ${statisticsTotal.dayMinReturned}
+        </td>
+        <td>
+            ${statisticsTotal.serviceChargePlan}
+        </td>
+        <td>
+            ${statisticsTotal.serviceCharge}
+        </td>
+        <td>
+            ${statisticsTotal.serviceChargeRate}
+        </td>
+        <td>
+            ${statisticsTotal.stockAmount}
+        </td>
+    </tr>
     </tbody>
 </table>
 <script type="application/javascript">
