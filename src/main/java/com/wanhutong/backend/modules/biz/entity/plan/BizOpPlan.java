@@ -56,7 +56,6 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 		super(id);
 	}
 
-	@Length(min=1, max=11, message="id in table name长度必须介于 1 和 11 之间")
 	public String getObjectId() {
 		return objectId;
 	}
@@ -64,8 +63,7 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
 	}
-	
-	@Length(min=1, max=255, message="table name长度必须介于 1 和 255 之间")
+
 	public String getObjectName() {
 		return objectName;
 	}
@@ -73,8 +71,7 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	public void setObjectName(String objectName) {
 		this.objectName = objectName;
 	}
-	
-	@Length(min=1, max=11, message="计划所在年份;在选择年计划时， 一定加入条件：and month=0 and day=0长度必须介于 1 和 11 之间")
+
 	public String getYear() {
 		return year;
 	}
@@ -82,8 +79,7 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	public void setYear(String year) {
 		this.year = year;
 	}
-	
-	@Length(min=1, max=11, message="计划所在月份; 选择月计划时，一定加入条件：and day=0长度必须介于 1 和 11 之间")
+
 	public String getMonth() {
 		return month;
 	}
@@ -91,8 +87,7 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	public void setMonth(String month) {
 		this.month = month;
 	}
-	
-	@Length(min=1, max=11, message="日计划;长度必须介于 1 和 11 之间")
+
 	public String getDay() {
 		return day;
 	}

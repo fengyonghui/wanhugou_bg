@@ -115,7 +115,9 @@
 		year,
 		month,
 		day,
-		amount,
+		<if test="amount != null and amount != ''">
+			amount,
+		</if>
 		<if test="jointOrderAmount != null and jointOrderAmount != ''">
 			joint_order_amount,
 		</if>
@@ -137,7 +139,9 @@
 		#{year},
 		#{month},
 		#{day},
-		#{amount},
+		<if test="amount != null and amount != ''">
+			#{amount},
+		</if>
 		<if test="jointOrderAmount != null and jointOrderAmount != ''">
 			#{jointOrderAmount},
 		</if>
@@ -162,7 +166,9 @@
 		`year` = #{year},
 		`month` = #{month},
 		`day` = #{day},
-		amount = #{amount},
+		<if test="amount != null and amount != ''">
+			amount = #{amount},
+		</if>
 		<if test="jointOrderAmount != null and jointOrderAmount != ''">
 			joint_order_amount = #{jointOrderAmount},
 		</if>
