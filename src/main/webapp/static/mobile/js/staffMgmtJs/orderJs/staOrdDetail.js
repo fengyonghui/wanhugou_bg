@@ -3,18 +3,56 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+		this.buyPriceFlag = false;
+		this.unitPriceFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			this.pageInit(); //页面初始化
-			this.getData();//获取数据
-			
+			this.pageInit(); //页面初始化			
+			this.getPermissionList('biz:order:buyPrice:view','buyPriceFlag')//佣金权限
+			this.getPermissionList1('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
+			this.buyPrice(); //佣金
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
+			_this.getData();//获取数据
+		},		
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.buyPriceFlag = res.data;
+                }
+            });
+        },
+        getPermissionList1: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.unitPriceFlag = res.data;
+                }
+            });
+        },
+        buyPrice:function(){
+        	var _this = this;
+			if(_this.buyPriceFlag==true){
+				$('#staCommission').parent().show();
+			}else{
+				$('#staCommission').parent().hide();
+			}
 		},
 		getData: function() {
 			var _this = this;
@@ -27,7 +65,6 @@
                 },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
 					$('#firstPart').val(res.data.entity2.customer.name);
 					$('#firstPrincipal').val(res.data.custUser.name);
 					$('#firstMobile').val(res.data.custUser.mobile);
@@ -264,7 +301,7 @@
 	                    '<div class="mui-input-row ">' +
 	                    '<label>供应商:</label>' + 
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div>' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="unitprice">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>商品出厂价:</label>' +
@@ -332,7 +369,15 @@
 	                    
                     '</div>'
 				});
-				$("#staCommodity").html(htmlCommodity)
+				$("#staCommodity").html(htmlCommodity);
+				var unitPriceList=$('.commodity #unitprice');
+				$.each(unitPriceList,function(z,x){
+					if(_this.unitPriceFlag==true){
+						$(x).show();
+					}else{
+						$(x).hide();
+					}
+				})	
 			}
 		},
 		formatDateTime: function(unix) {

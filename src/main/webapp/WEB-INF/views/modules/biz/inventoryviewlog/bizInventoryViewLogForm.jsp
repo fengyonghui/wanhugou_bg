@@ -80,7 +80,10 @@
 						<th>颜色</th>
 						<th>尺寸</th>
 						<th>库存类型</th>
-						<%--<th>结算价</th>--%>
+						<!-- 隐藏结算价 -->
+						<shiro:hasPermission name="biz:order:unitPrice:view">
+							<th>结算价</th>
+						</shiro:hasPermission>
 						<th>图片</th>
 						<th>现有库存数</th>
 						<th>实际库存数</th>
@@ -95,7 +98,10 @@
 							<td>${requestDetail.skuInfo.color}</td>
 							<td>${requestDetail.skuInfo.size}</td>
 							<td>${fns:getDictLabel(requestHeader.headerType,'req_header_type','未知')}</td>
-							<%--<td>${requestDetail.skuInfo.buyPrice}</td>--%>
+							<!-- 隐藏结算价 -->
+							<shiro:hasPermission name="biz:order:unitPrice:view">
+								<td>${requestDetail.skuInfo.buyPrice}</td>
+							</shiro:hasPermission>
 							<td style='width: 200px'><img style='width: 200px' src="${requestDetail.skuInfo.skuImgUrl}"></td>
 							<td>${requestDetail.recvQty - requestDetail.outQty}</td>
 
