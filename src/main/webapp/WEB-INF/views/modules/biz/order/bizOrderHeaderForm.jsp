@@ -617,7 +617,7 @@
         }
     </script>
     <script type="text/javascript">
-        function checkPending(obj) {
+        function checkPending(obj,prop) {
             if (obj == '${OrderHeaderBizStatusEnum.SUPPLYING.state}' && '${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}' == 'true' && '${statusEnumState}' == 0) {
                 alert("代采订单需至少付款20%，请付款后刷新页面再审核");
                 return;
@@ -637,7 +637,7 @@
             if (obj ==${OrderHeaderBizStatusEnum.SUPPLYING.state}) { <%--15同意发货--%>
                 $("#id").val();
 
-                var r2 = document.getElementsByName("localOriginType");
+                var r2 = $("#"+prop).find("input[name='localOriginType']");
                 var localOriginType = "";
                 for (var i = 0; i < r2.length; i++) {
                     if (r2[i].checked == true) {
@@ -2656,7 +2656,7 @@
                     <%--</div>--%>
                 </c:if>
                 <c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">
-                    <div class="control-group" style="display: none">
+                    <div id="daiCai" class="control-group" style="display: none">
                         <label class="control-label">供货方式:</label>
                         <div class="controls">
                             产地直发:<input name="localOriginType" value="0" checked type="radio" readonly="readonly"/>
@@ -3318,7 +3318,7 @@
             </c:if>
             <c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">
                 <input class="btn btn-primary" type="button"
-                       onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" value="同意发货"/>&nbsp;
+                       onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state},'daiCai')" value="同意发货"/>&nbsp;
             </c:if>
             <input class="btn btn-warning" type="button"
                    onclick="checkPending(${OrderHeaderBizStatusEnum.UNAPPROVE.state})" value="不同意发货"/>&nbsp;
@@ -3333,13 +3333,13 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" id="myModalLabel">发货方式</h4>
             </div>
-            <div class="modal-body">
+            <div id="lianYing" class="modal-body">
                 本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>
                 产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" class="btn btn-primary">确认</button>
+                <button type="button" onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state},'lianYing')" class="btn btn-primary">确认</button>
             </div>
         </div>
     </div>
