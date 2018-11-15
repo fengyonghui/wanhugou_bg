@@ -34,6 +34,8 @@
     <tr>
         <th>月计划回款额(元)</th>
         <th>月销售量统计</th>
+        <th>月计划联营订单总额</th>
+        <th>月计划代采订单总额</th>
         <th>销售额任务完成比例</th>
         <th>月累计销量</th>
         <th>日销售额(元)</th>
@@ -41,8 +43,8 @@
         <th>剩余天数</th>
         <th>每日最低回款额</th>
         <th>有效会员开单量</th>
-        <th>新用户</th>
-        <th>新用户达成率</th>
+        <%--<th>新用户</th>--%>
+        <%--<th>新用户达成率</th>--%>
         <th>计划服务费</th>
         <th>服务费</th>
         <th>服务费收入任务比例</th>
@@ -63,6 +65,14 @@
                 <td>
                         ${item.procurement}
                 </td>
+
+                <td>
+                        ${item.jointOrderAmountTotal}
+                </td>
+                <td>
+                        ${item.purchaseOrderAmountTotal}
+                </td>
+
                 <td>
                         ${item.receiveTotal}
                 </td>
@@ -89,12 +99,12 @@
             <td>
                     ${item.newUserPlan}
             </td>
-            <td>
-                    ${item.newUser}
-            </td>
-            <td>
-                    ${item.newUserRate}
-            </td>
+            <%--<td>--%>
+                    <%--${item.newUser}--%>
+            <%--</td>--%>
+            <%--<td>--%>
+                    <%--${item.newUserRate}--%>
+            <%--</td>--%>
                 <td>
                     ${item.serviceChargePlan}
             </td>

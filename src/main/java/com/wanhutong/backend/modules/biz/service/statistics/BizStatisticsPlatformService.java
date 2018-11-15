@@ -247,6 +247,11 @@ public class BizStatisticsPlatformService {
                             : currentBizOrderStatisticsDtoList.get(0).getTotalMoney());
             // 库存金额
             o.setCurrentDate(endDate);
+
+            //月计划联营订单总额
+            o.setJointOrderAmountTotal(bizOpPlan.getJointOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getJointOrderAmount());
+            //月计划代采订单总额
+            o.setJointOrderAmountTotal(bizOpPlan.getPurchaseOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getPurchaseOrderAmount());
             List<BizPlatformDataOverviewDto> tempDtoList = resultMap.putIfAbsent(o.getProvince(), Lists.newArrayList(o));
             if (tempDtoList != null) {
                 tempDtoList.add(o);

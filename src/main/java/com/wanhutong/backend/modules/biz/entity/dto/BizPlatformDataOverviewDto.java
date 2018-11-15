@@ -129,6 +129,16 @@ public class BizPlatformDataOverviewDto {
      */
     private Integer userId;
 
+    /**
+     * 月计划联营订单总额
+     */
+    private BigDecimal jointOrderAmountTotal;
+
+    /**
+     * 月计划代采订单总额
+     */
+    private BigDecimal purchaseOrderAmountTotal;
+
     public Integer getUserId() {
         return userId;
     }
@@ -331,5 +341,21 @@ public class BizPlatformDataOverviewDto {
 
     public void setServiceCharge(BigDecimal serviceCharge) {
         this.serviceCharge = serviceCharge;
+    }
+
+    public BigDecimal getJointOrderAmountTotal() {
+        return jointOrderAmountTotal;
+    }
+
+    public void setJointOrderAmountTotal(BigDecimal jointOrderAmountTotal) {
+        this.jointOrderAmountTotal = jointOrderAmountTotal;
+    }
+
+    public BigDecimal getPurchaseOrderAmountTotal() {
+        return purchaseOrderAmountTotal;
+    }
+
+    public void setPurchaseOrderAmountTotal(BigDecimal purchaseOrderAmountTotal) {
+        this.purchaseOrderAmountTotal = purchaseOrderAmountTotal;
     }
 }
