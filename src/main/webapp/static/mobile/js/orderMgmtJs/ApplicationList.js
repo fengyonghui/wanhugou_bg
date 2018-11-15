@@ -310,7 +310,7 @@
 			var imgs = '';
 			 if(item.imgList){
 				$.each(item.imgList,function (i, card) {
-                imgs = "<a href=\"" + card.imgServer + card.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + card.imgServer + card.imgPath + "\"></a>"
+                imgs = "<a href=\"" + card.imgServer + card.imgPath + '\" target=\"_blank\"><img width=\"100px\" src=\"' + card.imgServer + card.imgPath + "\"></a>"
                });
                return imgs;
             }else{
