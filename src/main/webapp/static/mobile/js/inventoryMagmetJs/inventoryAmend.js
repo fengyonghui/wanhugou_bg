@@ -981,11 +981,12 @@
                    
                     '<div class="mui-row inAddFont">' +
                     '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-                    '<li class="mui-table-view-cell app_bline3">' +
-                    '<div class="mui-input-row">' +
-                    '<label>结算价:</label>' +  
-                    '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div>' +
+//                  隐藏结算价
+//                  '<div class="mui-col-sm-5 mui-col-xs-5">' +
+//                  '<li class="mui-table-view-cell app_bline3">' +
+//                  '<div class="mui-input-row">' +
+//                  '<label>结算价:</label>' +  
+//                  '<input type="text" class="mui-input-clear" id="" value="' + item.unitPrice + '" disabled></div></li></div>' +
                     '<div class="mui-col-sm-5 mui-col-xs-5">' +
                     '<li class="mui-table-view-cell app_bline3">' +
                     '<div class="mui-input-row">' +
@@ -1131,11 +1132,12 @@
 	                                       
 	                                        '<div class="mui-row inAddFont">' +
 	                                        '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
-	                                        '<div class="mui-col-sm-5 mui-col-xs-5">' +
-	                                        '<li class="mui-table-view-cell app_bline3">' +
-	                                        '<div class="mui-input-row">' +
-	                                        '<label>结算价:</label>' +
-	                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled></div></li></div>' +
+//	                                        隐藏结算价
+//	                                        '<div class="mui-col-sm-5 mui-col-xs-5">' +
+//	                                        '<li class="mui-table-view-cell app_bline3">' +
+//	                                        '<div class="mui-input-row">' +
+//	                                        '<label>结算价:</label>' +
+//	                                        '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled></div></li></div>' +
 	                                        '<div class="mui-col-sm-5 mui-col-xs-5">' +
 	                                        '<li class="mui-table-view-cell app_bline3">' +
 	                                        '<div class="mui-input-row">' +

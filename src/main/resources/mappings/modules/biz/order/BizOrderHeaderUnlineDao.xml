@@ -6,6 +6,8 @@
 		a.id AS "id",
 		a.order_id AS "orderHeader.id",
 		oh.order_num AS "orderHeader.orderNum",
+		oh.total_detail AS "orderHeader.totalDetail",
+		oh.receive_total AS "orderHeader.receiveTotal",
 		a.serial_num AS "serialNum",
 		a.img_url AS "imgUrl",
 		a.unline_pay_money AS "unlinePayMoney",

@@ -502,7 +502,8 @@ public class BizSkuInfoController extends BaseController {
 					List<String> skuList = Lists.newArrayList();
 					skuList.add(skuInfo.getName() == null ? "未知" : skuInfo.getName());
                     skuList.add(skuInfo.getItemNo() == null ? "" : skuInfo.getItemNo());
-                    skuList.add(skuInfo.getOrderDetail().getBuyPrice() == null ? "" : skuInfo.getOrderDetail().getBuyPrice().toString());
+					//隐藏结算价
+                    //skuList.add(skuInfo.getOrderDetail().getBuyPrice() == null ? "" : skuInfo.getOrderDetail().getBuyPrice().toString());
                     skuList.add(skuInfo.getOrderDetail().getUnitPrice() == null ? "" : skuInfo.getOrderDetail().getUnitPrice().toString());
                     skuList.add(skuInfo.getOrderDetail().getOrdQty() == null ? "" : skuInfo.getOrderDetail().getOrdQty().toString());
                     skuList.add((skuInfo.getOrderDetail().getUnitPrice() == null || skuInfo.getOrderDetail().getOrdQty() == null) ? "" : String.valueOf(skuInfo.getOrderDetail().getUnitPrice() * skuInfo.getOrderDetail().getOrdQty()));
@@ -513,7 +514,9 @@ public class BizSkuInfoController extends BaseController {
                     data.add(skuList);
                 }
             }
-			String headers[] = {"商品名称","商品货号","结算价","结算价","订单数量","应付金额","客户专员","订单号","采购中心","现有库存"};
+			//隐藏结算价
+			//String headers[] = {"商品名称","商品货号","结算价","结算价","订单数量","应付金额","客户专员","订单号","采购中心","现有库存"};
+			String headers[] = {"商品名称","商品货号","(订单)销售价","订单数量","应付金额","客户专员","订单号","采购中心","现有库存"};
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
 			String fileName = "商品订单" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";

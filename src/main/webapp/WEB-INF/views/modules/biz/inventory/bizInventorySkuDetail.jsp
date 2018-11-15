@@ -43,12 +43,13 @@
                     ${bcgrList[0].skuInfo.size}
             </div>
         </div>
-        <div class="control-group">
-            <label class="control-label">结算价：</label>
-            <div class="controls">
-                    ${bcgrList[0].skuInfo.buyPrice}
-            </div>
-        </div>
+        <!-- 隐藏结算价 -->
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">结算价：</label>--%>
+            <%--<div class="controls">--%>
+                    <%--${bcgrList[0].skuInfo.buyPrice}--%>
+            <%--</div>--%>
+        <%--</div>--%>
         <div class="control-group">
             <label class="control-label">图片：</label>
             <div class="controls">

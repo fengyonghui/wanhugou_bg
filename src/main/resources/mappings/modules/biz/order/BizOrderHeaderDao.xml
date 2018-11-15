@@ -483,7 +483,6 @@
 			</if>
 			<if test="commissionStatus !=null">
 				AND a.commission_status = #{commissionStatus}
-				AND a.order_type = 8
 			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num
@@ -655,9 +654,6 @@
 			</if>
 			<if test="vendorId !=null and vendorId != ''">
 				AND  sv.id = ${vendorId}
-			</if>
-			<if test="commissionStatus !=null">
-				AND  a.commission_status = ${commissionStatus}
 			</if>
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
@@ -1283,7 +1279,8 @@
 	<select id="getValidOrderTotalAndCountByCreateTimeMonthOfficeId" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT
 		sum(total_detail + total_exp + freight) AS totalMoney,
-		sum(receive_total)                                   AS receiveTotal,
+		sum(receive_total) AS receiveTotal,
+		sum(total_exp + service_fee + freight) AS profitPrice,
 		count(1) AS orderCount,
 		office.id AS officeId,
 		office.name AS officeName,

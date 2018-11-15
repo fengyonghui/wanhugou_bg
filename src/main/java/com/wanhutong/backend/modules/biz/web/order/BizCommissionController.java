@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizCommissionOrder;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
@@ -82,26 +83,26 @@ public class BizCommissionController extends BaseController {
 	@RequiresPermissions("biz:order:bizCommission:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizCommission bizCommission, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizCommission> page = bizCommissionService.findPageForAllData(new Page<BizCommission>(request, response), bizCommission);
+		Page<BizCommission> page = bizCommissionService.findPageForAllData(bizCommission.getPage(), bizCommission);
 		model.addAttribute("page", page);
 
 		List<BizCommission> bizCommissionList = page.getList();
 		if (CollectionUtils.isNotEmpty(bizCommissionList)) {
 			for (BizCommission commission : bizCommissionList) {
 				String orderNums = "";
-				List<BizCommissionOrder> bizCommissionOrderList = commission.getBizCommissionOrderList();
-				if (CollectionUtils.isNotEmpty(bizCommissionOrderList)) {
-					for (BizCommissionOrder commissionOrder : bizCommissionOrderList) {
-						commissionOrder = bizCommissionOrderService.get(commissionOrder.getId());
-						BizOrderHeader bizOrderHeader = commissionOrder.getBizOrderHeader();
-						if (bizOrderHeader != null && bizOrderHeader.getOrderNum() != null) {
-							String orderNum = bizOrderHeader.getOrderNum();
-							orderNums = orderNums + "," + orderNum;
-						}
+				String orderIds = commission.getOrderIds();
+				if (orderIds != null && !orderIds.contains(",")) {
+					BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(Integer.valueOf(orderIds));
+					orderNums = bizOrderHeader.getOrderNum() + ",";
+                } else if (orderIds != null && orderIds.contains(",")) {
+					String[] orderIdArr = orderIds.split(",");
+					for (int i=0; i< orderIdArr.length; i++) {
+						BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(Integer.valueOf(orderIdArr[i]));
+						orderNums += bizOrderHeader.getOrderNum() + ",";
 					}
 				}
 				if (orderNums.length() > 0) {
-					commission.setOrderNumsStr(orderNums.substring(1, orderNums.length()));
+					commission.setOrderNumsStr(orderNums.substring(0, orderNums.length()-1));
 				}
 			}
 		}
@@ -111,6 +112,21 @@ public class BizCommissionController extends BaseController {
 	@RequiresPermissions("biz:order:bizCommission:view")
 	@RequestMapping(value = "form")
 	public String form(BizCommission bizCommission, Model model) {
+		String str = bizCommission.getStr();
+		if ("detail".equals(str)) {
+			List<CommonImg> imgList = bizCommissionService.getImgList(bizCommission);
+			bizCommission.setImgList(imgList);
+
+			//审核流程
+			CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+			commonProcessEntity.setObjectId(String.valueOf(bizCommission.getId()));
+			commonProcessEntity.setObjectName(BizCommissionService.DATABASE_TABLE_NAME);
+			List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+			model.addAttribute("auditList", list);
+
+			model.addAttribute("entity", bizCommission);
+			return "modules/biz/order/bizCommissionDetail";
+		}
 		model.addAttribute("entity", bizCommission);
 		return "modules/biz/order/bizCommissionForm";
 	}
@@ -142,9 +158,6 @@ public class BizCommissionController extends BaseController {
 				BigDecimal detailCommission = BigDecimal.ZERO;
 				if (CollectionUtils.isNotEmpty(bizOrderDetails)) {
 					for (BizOrderDetail orderDetail : bizOrderDetails) {
-						BizSkuInfo bizSkuInfo = orderDetail.getSkuInfo();
-						BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
-
 						BigDecimal unitPrice = new BigDecimal(orderDetail.getUnitPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
 						BigDecimal buyPrice = new BigDecimal(orderDetail.getBuyPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
 						Integer ordQty = orderDetail.getOrdQty();
@@ -155,21 +168,6 @@ public class BizCommissionController extends BaseController {
 						detailCommission = (unitPrice.subtract(buyPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
 						orderDetail.setDetailCommission(detailCommission);
 
-//						bizOpShelfSku.setSkuInfo(bizSkuInfo);
-//						List<BizOpShelfSku> opShelfSkuList = bizOpShelfSkuService.findList(bizOpShelfSku);
-//						if (CollectionUtils.isNotEmpty(opShelfSkuList)) {
-//							bizOpShelfSku = opShelfSkuList.get(0);
-//							BigDecimal orgPrice = new BigDecimal(bizOpShelfSku.getOrgPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
-//							BigDecimal salePrice = new BigDecimal(bizOpShelfSku.getSalePrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
-//							Integer ordQty = orderDetail.getOrdQty();
-//							BigDecimal commissionRatio = bizOpShelfSku.getCommissionRatio();
-//							if (commissionRatio == null || commissionRatio.compareTo(BigDecimal.ZERO) <= 0) {
-//								commissionRatio = BigDecimal.ZERO;
-//							}
-//							detailCommission = (salePrice.subtract(orgPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
-//							orderDetail.setSalePrice(salePrice);
-//							orderDetail.setDetailCommission(detailCommission);
-//						}
 						bizOrderDetailsNew.add(orderDetail);
 					}
 				}

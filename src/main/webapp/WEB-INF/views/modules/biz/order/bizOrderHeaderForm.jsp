@@ -391,7 +391,8 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
-                            poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            //隐藏结算价
+                            // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
                         }
@@ -438,7 +439,8 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.name + "</td>";
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
-                            poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            //隐藏结算价
+                            // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
 
@@ -1906,16 +1908,17 @@
         </div>
     </c:if>
 
-    <c:if test="${source ne 'vendor'}">
-        <div class="control-group">
-            <label class="control-label">佣金：</label>
-            <div class="controls">
-                <fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail-bizOrderHeader.totalBuyPrice}"
-                                  pattern="0.00"/>
-                    <%--<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">--%>
-            </div>
-        </div>
-    </c:if>
+    <!-- 隐藏佣金 -->
+    <%--<c:if test="${source ne 'vendor'}">--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">佣金：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail-bizOrderHeader.totalBuyPrice}"--%>
+                                  <%--pattern="0.00"/>--%>
+                    <%--&lt;%&ndash;<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">&ndash;%&gt;--%>
+            <%--</div>--%>
+        <%--</div>--%>
+    <%--</c:if>--%>
     <div class="control-group">
         <label class="control-label">发票状态：</label>
         <div class="controls">
@@ -2716,7 +2719,7 @@
                     </c:if>
                 </shiro:hasPermission>
 
-                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails && entity.str!='audit' && entity.str!='startAudit'}">
+                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails && entity.str!='audit' && entity.str!='startAudit' && entity.str!='pay'}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
                         <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
                     </shiro:hasPermission>
@@ -2757,7 +2760,8 @@
                         <th>商品名称</th>
                         <th>商品货号</th>
                         <th>采购数量</th>
-                        <th>结算价</th>
+                        <!-- 隐藏结算价 -->
+                        <%--<th>结算价</th>--%>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -2804,7 +2808,8 @@
                         <th>商品名称</th>
                         <th>商品货号</th>
                         <th>采购数量</th>
-                        <th>结算价</th>
+                        <!-- 隐藏结算价 -->
+                        <%--<th>结算价</th>--%>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -2842,9 +2847,10 @@
         <th>商品编号</th>
         <th>商品货号</th>
         <%--<th>已生成的采购单</th>--%>
-        <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
-            <th>商品结算价</th>
-        </c:if>
+        <!-- 隐藏结算价 -->
+        <%--<c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">--%>
+            <%--<th>商品结算价</th>--%>
+        <%--</c:if>--%>
         <th>供应商</th>
         <th>供应商电话</th>
         <th>商品单价</th>
@@ -2899,11 +2905,12 @@
                 <%--<td>--%>
                 <%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>--%>
                 <%--</td>--%>
-            <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
-                <td>
-                        ${bizOrderDetail.buyPrice}
-                </td>
-            </c:if>
+            <!-- 隐藏结算价 -->
+            <%--<c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">--%>
+                <%--<td>--%>
+                        <%--${bizOrderDetail.buyPrice}--%>
+                <%--</td>--%>
+            <%--</c:if>--%>
             <td>
                     ${bizOrderDetail.vendor.name}
             </td>
