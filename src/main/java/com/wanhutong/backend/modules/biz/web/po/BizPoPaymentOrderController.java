@@ -496,6 +496,41 @@ public class BizPoPaymentOrderController extends BaseController {
         return "modules/biz/po/bizPoPaymentOrderFormV2";
     }
 
+    @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
+    @RequestMapping(value = "formV2ForMobile")
+    @ResponseBody
+    public String formV2ForMobile(BizPoPaymentOrder bizPoPaymentOrder, Model model) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        bizPoPaymentOrder = bizPoPaymentOrderService.get(bizPoPaymentOrder.getId());
+        if (bizPoPaymentOrder.getPoHeaderId() != null) {
+            BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoPaymentOrder.getPoHeaderId());
+            if (bizPoHeader != null) {
+                BigDecimal totalDetail = bizPoHeader.getTotalDetail() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalDetail());
+                BigDecimal totalExp = bizPoHeader.getTotalExp() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalExp());
+                BigDecimal totalDetailResult = totalDetail.add(totalExp);
+                DecimalFormat df = new DecimalFormat("#0.00");
+                model.addAttribute("totalDetailResult", df.format(totalDetailResult));
+                resultMap.put("totalDetailResult", df.format(totalDetailResult));
+            }
+        }
+
+        if (bizPoPaymentOrder.getId() != null) {
+            Integer processId = bizPoPaymentOrder.getProcessId();
+            CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+            commonProcessEntity.setObjectId(String.valueOf(bizPoPaymentOrder.getId()));
+            commonProcessEntity.setObjectName("biz_po_payment_order");
+            List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+            model.addAttribute("auditList", list);
+            model.addAttribute("processId", processId);
+
+            resultMap.put("auditList", list);
+            resultMap.put("processId", processId);
+        }
+        model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
+        resultMap.put("bizPoPaymentOrder", bizPoPaymentOrder);
+        return JsonUtil.generateData(resultMap, null);
+    }
+
     @RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
     @RequestMapping(value = "save")
     public String save(HttpServletRequest request, HttpServletResponse response, BizPoPaymentOrder bizPoPaymentOrder, Model model, RedirectAttributes redirectAttributes) {
