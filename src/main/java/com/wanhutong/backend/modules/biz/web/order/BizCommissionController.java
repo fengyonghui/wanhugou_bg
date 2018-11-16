@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
@@ -43,6 +44,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizCommissionService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 佣金付款表Controller
@@ -107,6 +109,41 @@ public class BizCommissionController extends BaseController {
 			}
 		}
 		return "modules/biz/order/bizCommissionList";
+	}
+
+	@RequiresPermissions("biz:order:bizCommission:view")
+	@RequestMapping(value = "list4Mobile")
+	@ResponseBody
+	public String list4Mobile(BizCommission bizCommission, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		Page<BizCommission> page = bizCommissionService.findPageForAllData(bizCommission.getPage(), bizCommission);
+
+
+		List<BizCommission> bizCommissionList = page.getList();
+		if (CollectionUtils.isNotEmpty(bizCommissionList)) {
+			for (BizCommission commission : bizCommissionList) {
+				String orderNums = "";
+				String orderIds = commission.getOrderIds();
+				if (orderIds != null && !orderIds.contains(",")) {
+					BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(Integer.valueOf(orderIds));
+					orderNums = bizOrderHeader.getOrderNum() + ",";
+				} else if (orderIds != null && orderIds.contains(",")) {
+					String[] orderIdArr = orderIds.split(",");
+					for (int i=0; i< orderIdArr.length; i++) {
+						BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(Integer.valueOf(orderIdArr[i]));
+						orderNums += bizOrderHeader.getOrderNum() + ",";
+					}
+				}
+				if (orderNums.length() > 0) {
+					commission.setOrderNumsStr(orderNums.substring(0, orderNums.length()-1));
+				}
+			}
+		}
+
+		model.addAttribute("page", page);
+		resultMap.put("page", page);
+
+		return JsonUtil.generateData(resultMap, null);
 	}
 
 	@RequiresPermissions("biz:order:bizCommission:view")
@@ -205,6 +242,7 @@ public class BizCommissionController extends BaseController {
 	@RequestMapping(value = "applyCommissionForm4Mobile")
 	@ResponseBody
 	public String applyCommissionForm4Mobile(BizCommission bizCommission, Model model, String option) {
+		Map<String, Object> resultMap = Maps.newHashMap();
 		String orderIds = bizCommission.getOrderIds();
 		List<Integer> orderIdList = new ArrayList<Integer>();
 		if (orderIds != null && orderIds.length() > 0 && !orderIds.contains(",")) {
@@ -260,16 +298,21 @@ public class BizCommissionController extends BaseController {
 					commonProcessEntity.setObjectName(BizCommissionService.DATABASE_TABLE_NAME);
 					List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
 					model.addAttribute("auditList", list);
+					resultMap.put("auditList", list);
 				}
 			}
 		}
 
 		model.addAttribute("option", option);
 		model.addAttribute("orderHeaderList", orderHeaderList);
+		resultMap.put("option", option);
+		resultMap.put("orderHeaderList", orderHeaderList);
+
 		BizCustomerInfo bizCustomerInfo = bizCustomerInfoService.getByOfficeId(bizCommission.getSellerId());
 		bizCommission.setCustomerInfo(bizCustomerInfo);
 		model.addAttribute("entity", bizCommission);
-		return "modules/biz/order/bizCommissionOrderHeaderForm";
+		resultMap.put("entity", bizCommission);
+		return JsonUtil.generateData(resultMap, null);
 	}
 
 	@RequiresPermissions("biz:order:bizCommission:edit")
