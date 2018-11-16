@@ -115,6 +115,10 @@ public class BizStatisticsPlatformService {
         return bizOrderHeaderDao.getJoinPurchaseData(centerId, formatDate);
     }
 
+    public List<BizOrderStatisticsDto> getJoinPurchaseDataSingle(Integer consultantId, String formatDate) {
+        return bizOrderHeaderDao.getJoinPurchaseDataSingle(consultantId, formatDate);
+    }
+
     public List<BizOrderStatisticsDto> orderStatisticDataByUser(String startDate, String endDate, String type, String centerType, String orderType, Integer userId) {
         return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, null, userId);
     }
@@ -167,10 +171,20 @@ public class BizStatisticsPlatformService {
                 bizOpPlan = planList.get(0);
             }
 
+            List<BizOrderStatisticsDto> joinPurchaseData = getJoinPurchaseDataSingle(o.getUserId(), dateStrArr[0] + dateStrArr[1]);
+            BizOrderStatisticsDto joinPurchaseOrderData = new BizOrderStatisticsDto();
+            if (CollectionUtils.isNotEmpty(joinPurchaseData)) {
+                joinPurchaseOrderData = joinPurchaseData.get(0);
+            }
+
             //月计划联营订单总额
             o.setJointOrderPlanAmountTotal(bizOpPlan.getJointOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getJointOrderAmount());
+            //月联营订单总额
+            o.setJointOrderAmountTotal(joinPurchaseOrderData.getJoinRemitAmount());
             //月计划代采订单总额
             o.setPurchaseOrderPlanAmountTotal(bizOpPlan.getPurchaseOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getPurchaseOrderAmount());
+            //月采订单总额
+            o.setPurchaseOrderAmountTotal(joinPurchaseOrderData.getPurchaseRemitAmount());
 
             //月计划订单总额
             //o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
