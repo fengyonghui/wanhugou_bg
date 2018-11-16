@@ -234,18 +234,13 @@ public class BizStatisticsPlatformService {
         BigDecimal totalPurchaseOrderPlanAmountTotal = BigDecimal.ZERO;
         BigDecimal totalPurchaseOrderAmountTotal = BigDecimal.ZERO;
         BigDecimal totalReceiveTotal = BigDecimal.ZERO;
-        String totalYieldRate = "---";
         BigDecimal totalAccumulatedSalesMonth = BigDecimal.ZERO;
         BigDecimal totalProcurementDay = BigDecimal.ZERO;
-        BigDecimal totalDifferenceTotalMonth = BigDecimal.ZERO;
-        AtomicReference<Integer> totalRemainingDays = new AtomicReference<>(new Integer(0));
-        BigDecimal totalDayMinReturned = BigDecimal.ZERO;
         BigDecimal totalNewUser = BigDecimal.ZERO;
-        String totalNewUserRate = "---";
         BigDecimal totalServiceChargePlan = BigDecimal.ZERO;
         BigDecimal totalServiceCharge = BigDecimal.ZERO;
-        String totalServiceChargeRate = "--";
         BigDecimal totalStockAmount = BigDecimal.ZERO;
+        String totalCurrentDate = "";
 
         Map<String, List<BizPlatformDataOverviewDto>> resultMap = Maps.newHashMap();
         for (int i = 0; i < bizPlatformDataOverviewDtos.size(); i++) {
@@ -313,18 +308,13 @@ public class BizStatisticsPlatformService {
             totalPurchaseOrderPlanAmountTotal = totalPurchaseOrderPlanAmountTotal.add(o.getPurchaseOrderPlanAmountTotal());
             totalPurchaseOrderAmountTotal = totalPurchaseOrderAmountTotal.add(o.getPurchaseOrderAmountTotal());
             totalReceiveTotal = totalReceiveTotal.add(o.getReceiveTotal());
-            //totalYieldRate = "---"
             totalAccumulatedSalesMonth = totalAccumulatedSalesMonth.add(o.getAccumulatedSalesMonth());
             totalProcurementDay = totalProcurementDay.add(o.getProcurementDay());
-            //totalDifferenceTotalMonth.add(o.getDifferenceTotalMonth());
-            //totalRemainingDays.set(o.getRemainingDays());
-            //totalDayMinReturned.add(o.getDayMinReturned());
             totalNewUser = totalNewUser.add(o.getNewUser());
-            //totalNewUserRate = "---";
             totalServiceChargePlan = totalServiceChargePlan.add(o.getServiceChargePlan());
             totalServiceCharge = totalServiceCharge.add(o.getServiceCharge());
-            //totalServiceChargeRate = "---";
             totalStockAmount = totalStockAmount.add(o.getStockAmount());
+            totalCurrentDate = endDate;
 
         }
 
@@ -418,6 +408,7 @@ public class BizStatisticsPlatformService {
         statisticsTotal.setServiceChargePlan(totalServiceChargePlan);
         statisticsTotal.setServiceCharge(totalServiceCharge);
         statisticsTotal.setStockAmount(totalStockAmount);
+        statisticsTotal.setCurrentDate(totalCurrentDate);
         List<BizPlatformDataOverviewDto> statisticsTotalList = new ArrayList<BizPlatformDataOverviewDto>();
         statisticsTotalList.add(statisticsTotal);
         resultMap.put("statisticsTotal", statisticsTotalList);

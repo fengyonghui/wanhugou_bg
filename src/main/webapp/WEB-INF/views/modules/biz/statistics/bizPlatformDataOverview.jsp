@@ -170,7 +170,7 @@
             ${statisticsTotal.differenceTotalMonth}
         </td>
         <td>
-            ---
+            ${statisticsTotal.remainingDays}
         </td>
         <td>
             ${statisticsTotal.dayMinReturned}
