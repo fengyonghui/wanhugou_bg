@@ -45,12 +45,12 @@ public class BizPlatformDataOverviewDto {
     private BigDecimal receiveTotal = BigDecimal.ZERO;
 
     /**
-     * 新增用户计划
+     * 新增用户计划,计划开单会员量
      */
     private BigDecimal newUserPlan = BigDecimal.ZERO;
 
     /**
-     * 新增用户
+     * 新增用户，开单会员量
      */
     private BigDecimal newUser = BigDecimal.ZERO;
 
@@ -384,4 +384,5 @@ public class BizPlatformDataOverviewDto {
     public void setPurchaseOrderPlanAmountTotal(BigDecimal purchaseOrderPlanAmountTotal) {
         this.purchaseOrderPlanAmountTotal = purchaseOrderPlanAmountTotal;
     }
+
 }

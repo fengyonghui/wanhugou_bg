@@ -109,7 +109,7 @@ public class BizOrderStatisticsDto {
     /**
      * 有效开单用户数
      */
-    private Integer validCustomerNum;
+    private BigDecimal validCustomerNum = BigDecimal.ZERO;
 
 
     public BigDecimal getUnivalence() {
@@ -293,11 +293,11 @@ public class BizOrderStatisticsDto {
         this.purchaseRemitAmount = purchaseRemitAmount;
     }
 
-    public Integer getValidCustomerNum() {
+    public BigDecimal getValidCustomerNum() {
         return validCustomerNum;
     }
 
-    public void setValidCustomerNum(Integer validCustomerNum) {
+    public void setValidCustomerNum(BigDecimal validCustomerNum) {
         this.validCustomerNum = validCustomerNum;
     }
 }

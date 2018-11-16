@@ -44,7 +44,8 @@
         <th>月累计差异</th>
         <th>剩余天数</th>
         <th>每日最低回款额</th>
-        <%--<th>有效会员开单量</th>--%>
+        <th>有效会员开单量</th>
+        <th>有效会员量完成比例</th>
         <%--<th>新用户</th>--%>
         <%--<th>新用户达成率</th>--%>
         <th>计划服务费</th>
@@ -104,9 +105,12 @@
             <td>
                     ${item.dayMinReturned}
             </td>
-            <%--<td>--%>
-                    <%--${item.newUserPlan}--%>
-            <%--</td>--%>
+            <td>
+                    ${item.newUser}
+            </td>
+            <td>
+                    ${item.newUserRate}
+            </td>
             <%--<td>--%>
                     <%--${item.newUser}--%>
             <%--</td>--%>
@@ -171,6 +175,14 @@
         <td>
             ${statisticsTotal.dayMinReturned}
         </td>
+
+        <td>
+            ${statisticsTotal.newUser}
+        </td>
+        <td>
+            ${statisticsTotal.newUserRate}
+        </td>
+
         <td>
             ${statisticsTotal.serviceChargePlan}
         </td>
