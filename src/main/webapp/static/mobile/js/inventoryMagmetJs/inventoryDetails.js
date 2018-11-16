@@ -3,6 +3,7 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
+		this.unitPriceFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -10,11 +11,25 @@
 			this.pageInit(); //页面初始化
 			this.getData();//获取数据			
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
+			this.getPermissionList('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.unitPriceFlag = res.data;
+                }
+            });
+        },
 		getData: function() {
 			var _this = this;
 			$.ajax({
@@ -238,11 +253,10 @@
 										'<label>采购数量：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty +'" reqQty disabled>'+
 									'</div>'+
-//									隐藏结算价
-//									'<div class="mui-input-row">'+
-//										'<label>结算价：</label>'+
-//										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
-//									'</div>'+
+									'<div class="mui-input-row" id="unitprice">'+
+										'<label>结算价：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
+									'</div>'+
 									'<div class="mui-input-row">'+
 										'<label>总金额：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
@@ -251,6 +265,14 @@
 							'</li>'
                         })
                         $("#purchaseMenu").append(poDetailHtml);
+                        var unitPriceList=$('#purchaseMenu #unitprice');
+						$.each(unitPriceList,function(z,x){
+							if(_this.unitPriceFlag==true){
+								$(x).show();
+							}else{
+								$(x).hide();
+							}
+						})
                         //按订单排产中的排产记录
                         var bizCompletePalns = res.data.bizCompletePalns;
                         var schedulingHeaderHtml = "";
@@ -304,11 +326,10 @@
 										'<label>采购数量：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty +'" reqQty disabled>'+
 									'</div>'+
-//									隐藏结算价
-//									'<div class="mui-input-row">'+
-//										'<label>结算价：</label>'+
-//										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
-//									'</div>'+
+									'<div class="mui-input-row" id="unitprice">'+
+										'<label>结算价：</label>'+
+										'<input type="text" class="mui-input-clear" value="'+ v.unitPrice +'" disabled>'+
+									'</div>'+
 									'<div class="mui-input-row">'+
 										'<label>总金额：</label>'+
 										'<input type="text" class="mui-input-clear" value="'+ v.ordQty * v.unitPrice +'" disabled>'+
@@ -321,6 +342,14 @@
 							'</div>'
                         });
                         $("#purchaseMenus").append(poDetailHtmls);
+                        var unitPriceLists=$('#purchaseMenus #unitprice');
+						$.each(unitPriceLists,function(z,x){
+							if(_this.unitPriceFlag==true){
+								$(x).show();
+							}else{
+								$(x).hide();
+							}
+						})
                         //按商品排产中的排产备注
                         var remarkHtmls = "<textarea id='schRemarkOrder' readonly>" + res.data.bizPoHeader.bizSchedulingPlan.remark + "</textarea>";
                         $(".schedulingHeaderRemarks").append(remarkHtmls);
@@ -576,11 +605,10 @@
 								'<label>商品货号：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.skuInfo.itemNo +'" disabled>'+
 							'</div>'+
-//							隐藏结算价
-//							'<div class="mui-input-row">'+
-//								'<label>结算价：</label>'+
-//								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice.toFixed(1) +'" disabled>'+
-//							'</div>'+
+							'<div class="mui-input-row" id="unitprice">'+
+								'<label>结算价：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice.toFixed(1) +'" disabled>'+
+							'</div>'+
 							'<div class="mui-input-row">'+
 								'<label>申报数量：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.reqQty +'" reqQty disabled>'+
@@ -608,7 +636,15 @@
 						'</div>'+
 					'</li>'
 				});
-				$("#commodityMenu").html(htmlCommodity)
+				$("#commodityMenu").html(htmlCommodity);
+				var unitPriceListss=$('#commodityMenu #unitprice');
+				$.each(unitPriceListss,function(z,x){
+					if(_this.unitPriceFlag==true){
+						$(x).show();
+					}else{
+						$(x).hide();
+					}
+				})
 			}			
 		},
 		newData:function(da){

@@ -69,6 +69,7 @@
                 $("#skuCodeCopy").val(skuCode);
                 var itemNo = $("#itemNo").val();
                 $("#itemNoCopy").val(itemNo);
+                var showUnitPriceFlag = getShowUnitPriceFlag();
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuList",
@@ -105,7 +106,12 @@
 								}
                                 //tr_tds+= "<td><a href="+ "'${ctx}/sys/office/supplierForm?id=" + skuInfo.productInfo.office.id + "&gysFlag=onlySelect'>"+ skuInfo.productInfo.office.name + "</a></td>";
                                 tr_tds+= "<td>"+ skuInfo.productInfo.office.name + "</td>";
-                                tr_tds+= "<td>" + skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
+                                tr_tds+= "<td>" + skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td>"
+                                //隐藏结算价
+                                if (showUnitPriceFlag == true || showUnitPriceFlag == "true") {
+                                    tr_tds+= "<td>"+skuInfo.buyPrice+"</td>"
+                                }
+                                tr_tds+= "<td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
 								if(flag){
 
                                     tr_tds+= "<td id='td_"+prodId+"' rowspan='"+skuInfoList.length+"'>" +
@@ -135,6 +141,22 @@
             });
 
         });
+
+        function getShowUnitPriceFlag() {
+            var showUnitPriceFlag = false;
+            $.ajax({
+                type: "post",
+                url: "${ctx}/sys/menu/permissionList",
+                data: {"marking": "biz:order:unitPrice:view"},
+                async: false,
+                success: function (result) {
+                    var result = JSON.parse(result);
+                    showUnitPriceFlag = result.data;
+                }
+            });
+            return showUnitPriceFlag;
+        }
+		
 		function removeItem(obj) {
             $("#td_"+obj).html("<a href='#' onclick=\"addItem('"+obj+"')\">增加</a>");
 
@@ -518,7 +540,10 @@
 						<th>商品编码</th>
 						<th>商品货号</th>
 						<%--<th>商品属性</th>--%>
-						<th>结算价</th>
+						<!-- 隐藏结算价 -->
+						<shiro:hasPermission name="biz:order:unitPrice:view">
+							<th>结算价</th>
+						</shiro:hasPermission>
 							<%--<th>商品类型</th>--%>
 						<th>申报数量</th>
 							<%--<th>已收货数量</th>--%>

@@ -7,6 +7,8 @@
 		this.OrdeditFlag = false;
 		this.OrdDetailFlag = false;
 		this.OrdviewFlag = false;
+		this.buyPriceFlag = false;
+		this.unitPriceFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -17,6 +19,9 @@
 			this.getPermissionList('biz:order:bizOrderHeader:edit','OrdeditFlag');//true 订单信息操作
 			this.getPermissionList1('biz:order:bizOrderDetail:edit','OrdDetailFlag');//false订单信息操作中的修改、删除
 			this.getPermissionList2('biz:order:bizOrderDetail:view','OrdviewFlag');//true订单信息操作中的修改、删除
+			this.getPermissionList3('biz:order:buyPrice:view','buyPriceFlag')//佣金权限
+			this.getPermissionList4('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
+			this.buyPrice(); //
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
@@ -40,6 +45,40 @@
 				})
 			})
         },
+        getPermissionList3: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.buyPriceFlag = res.data;
+                }
+            });
+        },
+        getPermissionList4: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.unitPriceFlag = res.data;
+                }
+            });
+        },
+        buyPrice:function(){
+        	var _this = this;
+			if(_this.buyPriceFlag==true){
+				$('#staCommission').parent().show();
+			}else{
+				$('#staCommission').parent().hide();
+			}
+		},
 		getData: function() {
 			var _this = this;
 			var datas={};
@@ -106,10 +145,19 @@
 		            	$('#staDateilAddress').siblings('font').hide();
 		            }
                 	var strTxt = res.data.bizOrderHeader.str;
+                	var entitys=res.data.bizOrderHeader;
                 	var payMentCont = '';
+                	var applyMoney="";
+                	if(entitys.bizPoPaymentOrder.id != null || entitys.str == 'createPay'){
+                		if(entitys.bizPoPaymentOrder.str == 'audit' || entitys.bizPoPaymentOrder.str == 'pay'){
+                			$('#payMentNum').attr('readonly');
+                		}
+                		applyMoney=entitys.bizPoPaymentOrder.id != null ?
+                           entitys.bizPoPaymentOrder.total : (entitys.totalDetail-(entitys.bizPoHeader.payTotal == null ? 0 : entitys.bizPoHeader.payTotal));                		
+                	}
                 	if(res.data.bizOrderHeader.bizPoPaymentOrder.id != null || strTxt == 'createPay'){
                 		payMentCont = '<div class="mui-input-row"><label>申请金额：</label>'+
-							'<input type="text" id="payMentNum" class="mui-input-clear"><font>*</font></div>'+
+							'<input type="text" id="payMentNum" class="mui-input-clear" value=" '+ applyMoney +' "><font>*</font></div>'+
 						'<div class="mui-input-row"><label>付款时间：</label>'+
 							'<input type="date" id="payMentDate" class="mui-input-clear"><font>*</font></div>'+
 						'<div class="mui-input-row remark"><label>支付备注：</label>'+
@@ -197,8 +245,7 @@
 					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
 					$('#staPoLastDaPerent').val(poLastDa);//已付金额百分比
 					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));//服务费
-                    <!-- 隐藏佣金 -->
-                    // $('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));//佣金
+                    $('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));//佣金
 					$('#staAddprice').val(item.serviceFee.toFixed(2));//增值服务费
 					$('#staConsignee').val(item.bizLocation.receiver);//收货人
 					$('#staMobile').val(item.bizLocation.phone);//联系电话
@@ -321,11 +368,14 @@
         	$('#payMentBtn').on('tap',function(){
 	            if (type == 'createPay') {
 	            	var ss = $('#payMentNum').val();
+	            	console.log(ss)
 					IsNum(ss)
-					function IsNum(num) {
+					function IsNum(num) {						
 						if(num) {
+							var Float = Number(num);
 							var reNum = /^\d+(\.\d+)?$/;
-							if(reNum.test(num)) {
+							var re = new RegExp(reNum);
+							if(re.test(Float)) {
 				                var payDeadline = $("#payMentDate").val() + ' 00:00:00';
 				                if ($("#payMentDate").val() == '') {
 				                    mui.toast("请选择本次申请付款时间!");
@@ -355,10 +405,11 @@
 				                        }
 				                    }
 				                })
-							} else {
+							}else {
 								if(num < 0) {
 									mui.toast("申请金额不能为负数！");
-								}else {
+								}
+								else {
 									mui.toast("申请金额必须为数字！");
 								}
 							}
@@ -792,11 +843,11 @@
 	                    '<label>供应商:</label>' + 
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div>' +
 //	                    隐藏商品结算价
-//	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="buyPrice">' +
-//	                    '<li class="mui-table-view-cell">' +
-//	                    '<div class="mui-input-row ">' +
-//	                    '<label>商品结算价:</label>' +
-//	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div>'+
+	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="buyPrice">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>商品结算价:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div>'+
 	                    '</div>' +
 	                   
                     	 '<div class="mui-row">' +
@@ -880,17 +931,24 @@
 					});
 				}
 //				商品结算价隐藏
-//				if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){	
-//                  var buyPriceArr=$('.commodity #buyPrice');
-//					$.each(buyPriceArr, function(o,p) {
-//						$(p).show();
-//					});
-//				}else{
-//					var buyPriceArr=$('.commodity #buyPrice');
-//					$.each(buyPriceArr, function(o,p) {
-//						$(p).hide();
-//					});
-//				}
+                if(_this.unitPriceFlag==true){
+                	if(data.bizOrderHeader.orderDetails == 'details' || data.bizOrderHeader.orderNoEditable == 'editable' || data.bizOrderHeader.flag == 'check_pending'){	
+	                    var buyPriceArr=$('.commodity #buyPrice');
+						$.each(buyPriceArr, function(o,p) {
+							$(p).show();
+						});
+					}else{
+						var buyPriceArr=$('.commodity #buyPrice');
+						$.each(buyPriceArr, function(o,p) {
+							$(p).hide();
+						});
+					}
+                }else{
+					var buyPriceArr=$('.commodity #buyPrice');					
+					$.each(buyPriceArr, function(o,p) {
+						$(p).hide();
+					});
+				}				
 				_this.ordHrefHtml();
 				//操作权限
 				if(_this.OrdFlag == true){

@@ -250,7 +250,7 @@
 				}
 			});
 		},
-},	
+},
 	$(function() {
 		var ac = new ACCOUNT();
 		ac.init();

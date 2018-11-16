@@ -117,15 +117,15 @@
 					mui.toast("请输入登录名！")
 					return false;
 				}
-				if(!(/^1[345678]\d{9}$/.test(phoneVal))){
-					mui.toast("请输入正确的手机号码！")
-					return false;
-				}
+			    if(!(/^1[345678]\d{9}$/.test(phoneVal))){
+			        mui.toast("手机号码有误，请重新输入！");
+			        return false;
+			    }
 				$.ajax({
 					type: "GET",
 					url: "/a/biz/custom/bizCustomCenterConsultant/save4mobile",
 					data: {
-						 phone:phoneVal,
+						phone:phoneVal,
 						'centers.id':$('#centersId').val(),
 						'consultants.id':$('#consultantsId').val()
 					},
@@ -147,6 +147,10 @@
 						}else{							
 							mui.toast('关联失败，请输入正确内容！')
 						}
+					},
+					error: function(res) {
+//						console.log(res)
+						mui.toast("关联失败，请输入正确内容！");
 					}
 				});
 			})

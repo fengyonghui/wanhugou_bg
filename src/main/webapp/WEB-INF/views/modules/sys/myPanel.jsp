@@ -102,7 +102,7 @@
             </li>
         </shiro:hasAnyRoles>
         <shiro:hasAnyRoles
-                name="dept,provider_manager,finance_director,financial_general_manager">
+                name="dept,finance_director,financial_general_manager,General manager">
             <li>
                 <a  onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/paymentOrderAudit">付款单审核</a>
                 <c:if test="${paymentOrderAuditCount > 0}">

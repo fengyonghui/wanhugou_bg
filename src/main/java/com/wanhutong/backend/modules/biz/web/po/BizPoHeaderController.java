@@ -9,10 +9,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.DateUtils;
-import com.wanhutong.backend.common.utils.Encodes;
-import com.wanhutong.backend.common.utils.GenerateOrderUtils;
-import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.utils.*;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -885,6 +882,9 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = "poHeaderExport")
     public String poHeaderExport(BizPoHeader bizPoHeader,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        //判断当前用户是否拥有查看结算价的权限
+        Boolean showUnitPriceFlag = RoleUtils.hasPermission("biz:order:unitPrice:view");
+
         String fromPage = bizPoHeader.getFromPage();
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -985,7 +985,9 @@ public class BizPoHeaderController extends BaseController {
                         headerListData.add("");
                         //结算价
                         //隐藏结算价
-                        //headerListData.add("");
+                        if (showUnitPriceFlag) {
+                            headerListData.add("");
+                        }
                         data.add(headerListData);
                     } else {
                         for (BizPoDetail poDetail:poDetailList) {
@@ -1095,7 +1097,9 @@ public class BizPoHeaderController extends BaseController {
                             headerListData.add(String.valueOf(poDetail.getSendQty()));
                             //结算价
                             //隐藏结算价
-                            //headerListData.add(String.valueOf(poDetail.getSkuInfo().getBuyPrice()));
+                            if (showUnitPriceFlag) {
+                                headerListData.add(String.valueOf(poDetail.getSkuInfo().getBuyPrice()));
+                            }
                             data.add(headerListData);
                         }
                     }
@@ -1108,8 +1112,12 @@ public class BizPoHeaderController extends BaseController {
                 sheetName = "订单支出信息数据";
             }
             //隐藏结算价
-            //String[] headers = {orderTitle, "供应商", "采购总价", "交易费用","应付金额", "累计支付金额", "支付比例","订单状态","审核状态","创建时间","所属单号","商品名称","商品货号","采购数量","已供货数量","结算价"};
-            String[] headers = {orderTitle, "供应商", "采购总价", "交易费用","应付金额", "累计支付金额", "支付比例","订单状态","审核状态","创建时间","所属单号","商品名称","商品货号","采购数量","已供货数量"};
+            String[] headers = null;
+            if (showUnitPriceFlag) {
+                headers = new String[]{orderTitle, "供应商", "采购总价", "交易费用", "应付金额", "累计支付金额", "支付比例", "订单状态", "审核状态", "创建时间", "所属单号", "商品名称", "商品货号", "采购数量", "已供货数量", "结算价"};
+            } else {
+                headers = new String[]{orderTitle, "供应商", "采购总价", "交易费用", "应付金额", "累计支付金额", "支付比例", "订单状态", "审核状态", "创建时间", "所属单号", "商品名称", "商品货号", "采购数量", "已供货数量"};
+            }
             ExportExcelUtils eeu = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             eeu.exportExcel(workbook, 0, sheetName, headers, data, fileName);

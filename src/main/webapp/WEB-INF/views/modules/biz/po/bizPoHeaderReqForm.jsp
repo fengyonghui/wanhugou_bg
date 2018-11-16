@@ -564,7 +564,9 @@
                     <th>已供货数量</th>
                 <%--</c:if>--%>
                 <!-- 隐藏结算价 -->
-                <%--<th>结算价</th>--%>
+                <shiro:hasPermission name="biz:order:unitPrice:view">
+                    <th>结算价</th>
+                </shiro:hasPermission>
             </tr>
             </thead>
             <tbody id="prodInfo">
@@ -580,7 +582,9 @@
                             <td>${poDetail.ordQty}</td>
                             <td>${poDetail.sendQty}</td>
                             <!-- 隐藏结算价 -->
-                            <%--<td>${poDetail.unitPrice}</td>--%>
+                            <shiro:hasPermission name="biz:order:unitPrice:view">
+                                <td>${poDetail.unitPrice}</td>
+                            </shiro:hasPermission>
                         </tr>
                     </c:forEach>
                 </c:if>

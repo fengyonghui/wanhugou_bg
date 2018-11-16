@@ -6,14 +6,16 @@
 		this.fs == false;
 		this.outSaveFlag = "false"
 		this.inSsaveFlag = "false"
+		this.unitPriceFlag = false;
 		this.htmlcommdPlans = '';
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			//biz:po:bizPoHeader:addScheduling		biz:po:bizPoHeader:saveScheduling	保存、批量保存	
-			this.getPermissionList1('biz:po:bizPoHeader:addScheduling','outSaveFlag')	
-			this.getPermissionList2('biz:po:bizPoHeader:saveScheduling','inSsaveFlag')	
+			//biz:po:bizPoHeader:addScheduling		biz:po:bizPoHeader:saveScheduling	保存、批量保存
+			this.getPermissionList('biz:po:bizPoHeader:addScheduling','outSaveFlag')
+			this.getPermissionList('biz:po:bizPoHeader:saveScheduling','inSsaveFlag')
+			this.getPermissionList1('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			this.pageInit(); //页面初始化
 		},
@@ -21,7 +23,7 @@
 			var _this = this;
 			_this.getData();
 		},
-		getPermissionList1: function (markVal,flag) {
+		getPermissionList: function (markVal,flag) {
             var _this = this;
             $.ajax({
                 type: "GET",
@@ -31,10 +33,11 @@
                 async:false,
                 success: function(res){
                     _this.outSaveFlag = res.data;
+					_this.inSsaveFlag = res.data;
                 }
-            })
+            });
         },
-        getPermissionList2: function (markVal,flag) {
+        getPermissionList1: function (markVal,flag) {
             var _this = this;
             $.ajax({
                 type: "GET",
@@ -43,9 +46,9 @@
                 data: {"marking": markVal},
                 async:false,
                 success: function(res){
-                    _this.inSsaveFlag = res.data;
+                    _this.unitPriceFlag = res.data;
                 }
-            })
+            });
         },
         ajaxNum: function() {
         	var _this = this;
@@ -75,6 +78,7 @@
                 data:{id: _this.userInfo.staOrdId},
                 dataType: "json",
                 success: function(res){
+//              	console.log(res)
                 	var remarkTxt = '';
                 	if(res.data.bizPoHeader.bizSchedulingPlan.remark) {
                 		remarkTxt = res.data.bizPoHeader.bizSchedulingPlan.remark
@@ -93,6 +97,7 @@
 		            } else {
 		                _this.ajaxNum();
 		            }
+//		            console.log(res.data.bizPoHeader.poSchType)
 		            if(res.data.bizPoHeader.poSchType != 0) {
 		            	$('.schedPurch').hide();
 		            }else {
@@ -118,18 +123,25 @@
 							'<div class="mui-input-row">'+
 								'<label>采购数量：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.ordQty +'" disabled></div>'+
-//								隐藏结算价
-//							'<div class="mui-input-row">'+
-//								'<label>结算价：</label>'+
-//								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+							'<div class="mui-input-row" id="unitprice">'+
+								'<label>结算价：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
 							'<div class="mui-input-row">'+
 								'<label>总金额：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.ordQty * item.unitPrice +'" disabled>'+
 							'</div></div></li>'
-						
-						});
-						$("#orSchedPurch").html(htmlPurch)
 						htmlSave = '<button id="saveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+						});
+						$("#orSchedPurch").html(htmlPurch);
+						var unitPriceList=$('#orSchedPurch #unitprice');
+						$.each(unitPriceList,function(z,x){
+							if(_this.unitPriceFlag==true){
+								$(x).show();
+							}else{
+								$(x).hide();
+							}
+						})
+	            		$(".saveBtnPt").html(htmlSave)
 	            		if(_this.outSaveFlag == true) {
 							if(_this.inSsaveFlag == true) {
 								$(".saveBtnPt").html(htmlSave);
@@ -228,18 +240,17 @@
 				'<div class="mui-input-row">'+
 					'<label>采购数量：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.ordQty +'" disabled></div>'+
-//					隐藏结算价
-//				'<div class="mui-input-row">'+
-//					'<label>结算价：</label>'+
-//					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+				'<div class="mui-input-row" id="unitprice">'+
+					'<label>结算价：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>总金额：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.ordQty * item.unitPrice +'" disabled>'+
 				'</div></div></li>'
-			
+                htmlSave = '<button id="saveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
 			});
     		$("#orSchedPurch").html(htmlPurch)
-    		htmlSave = '<button id="saveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+
     		if(_this.outSaveFlag == true) {
 				if(_this.inSsaveFlag == true) {
 					$(".saveBtnPt").html(htmlSave);
@@ -251,6 +262,16 @@
 				$('#purchAddBtn').hide();
 				$('#purchAddCont').parent().hide();
 			}
+    		$("#orSchedPurch").html(htmlPurch);
+    		var unitPriceList=$('#orSchedPurch #unitprice');
+			$.each(unitPriceList,function(z,x){
+				if(_this.unitPriceFlag==true){
+					$(x).show();
+				}else{
+					$(x).hide();
+				}
+			})
+    		$(".saveBtnPt").html(htmlSave)
 		},
 		commdContent: function(b) {
 			var _this = this;
@@ -294,7 +315,7 @@
 						if(_this.inSsaveFlag == true) {
 							comdAddBtns = '<button type="submit" class="commdAddBtn schedull app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
 							'<button type="submit" commdPurchId="'+item.id+'" id="singleAddBtn_'+ item.id+'" class="singleAddBtn schedulr app_btn_search mui-btn-blue mui-btn-block">保存</button>'
-							
+
 							comdPlans = '<div class="mui-row plan">'+
 								'<div class="labelLf">排产计划：</div>'+
 								'<div class="mui-row app_f13 commdAddPlan" id="'+ item.id+'">'+
@@ -339,10 +360,9 @@
 						'<div class="mui-input-row">'+
 							'<label>采购数量：</label>'+
 							'<input type="text" class="" value="'+ item.ordQty +'" disabled></div>'+
-//							隐藏结算价
-//						'<div class="mui-input-row">'+
-//							'<label>结算价：</label>'+
-//							'<input type="text" class="" value="'+ item.unitPrice +'" disabled></div>'+
+						'<div class="mui-input-row" id="unitprice">'+
+							'<label>结算价：</label>'+
+							'<input type="text" class="" value="'+ item.unitPrice +'" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>总金额：</label>'+
 							'<input type="text" class="" value="'+ item.ordQty * item.unitPrice +'" disabled></div></div></div>'+
@@ -365,9 +385,8 @@
 						'<div class="mui-row app_f13">'+comPlanTx+'</div></div>'+
 					comdPlans +
 					'</div></li>'
-				
+				htmlAllSave = '<button id="allSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">批量保存</button>'
 				var commdItemId = item.id;
-//				console.log(commdItemId)
 				_this.commdEverySave(commdItemId)
 			});
     		$("#orSchedCommd").html(htmlCommodity)
@@ -377,6 +396,16 @@
 					$(".saveBtnPt").html(htmlAllSave)
 				}
 			}
+    		$("#orSchedCommd").html(htmlCommodity);
+    		var unitPriceLists=$('#orSchedCommd #unitprice');
+			$.each(unitPriceLists,function(z,x){
+				if(_this.unitPriceFlag==true){
+					$(x).show();
+				}else{
+					$(x).hide();
+				}
+			})
+    		$(".saveBtnPt").html(htmlAllSave)
 		},
 		htmlcommdPlanTxt: function(tt) {
 			var _this = this;
@@ -398,7 +427,7 @@
 			$('#chedulingStatus').val('未排产');
 			$('input[type=radio]').on('change', function() {
 				if(this.checked && this.value == 0) {
-					
+
 					$('.schedPurch').show();
 					$('.schedCommd').hide();
 					_this.purchContent(data);
@@ -567,6 +596,7 @@
 	                        GHUTILS.OPENPAGE({
 								url: urlTxt,
 								extras: {
+
 								}
 							})
 	                    }
@@ -588,6 +618,7 @@
             var ind = 0;
             var schRemark = "";
             schRemark = $("#orRemark").val();
+
             var totalSchedulingHeaderNum = 0;
             var totalSchedulingDetailNum = 0;
             var poSchType = 0;

@@ -359,6 +359,7 @@
         })
 
         function getScheduling(poheaderId) {
+            var showUnitPriceFlag = getShowUnitPriceFlag();
             $.ajax({
                 type: "post",
                 url: "${ctx}/biz/po/bizPoHeader/scheduling4Mobile",
@@ -393,7 +394,9 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
                             //隐藏结算价
-                            // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            if (showUnitPriceFlag == true || showUnitPriceFlag == "true") {
+                                poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            }
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
                         }
@@ -441,7 +444,9 @@
                             poDetailHtml += "<td>" + poDetail.skuInfo.itemNo + "</td>";
                             poDetailHtml += "<td>" + poDetail.ordQty + "</td>";
                             //隐藏结算价
-                            // poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            if (showUnitPriceFlag == true || showUnitPriceFlag == "true") {
+                                poDetailHtml += "<td>" + poDetail.unitPrice + "</td>";
+                            }
                             poDetailHtml += "<td>" + poDetail.ordQty * poDetail.unitPrice + "</td>";
                             poDetailHtml += "</tr>";
 
@@ -472,6 +477,20 @@
             });
         }
 
+        function getShowUnitPriceFlag() {
+            var showUnitPriceFlag = false;
+            $.ajax({
+                type: "post",
+                url: "${ctx}/sys/menu/permissionList",
+                data: {"marking": "biz:order:unitPrice:view"},
+                async: false,
+                success: function (result) {
+                    var result = JSON.parse(result);
+                    showUnitPriceFlag = result.data;
+                }
+            });
+            return showUnitPriceFlag;
+        }
 
         function formatDate(jsonDate) {
             //json日期格式转换为正常格式
@@ -599,7 +618,7 @@
         }
     </script>
     <script type="text/javascript">
-        function checkPending(obj) {
+        function checkPending(obj,prop) {
             if (obj == '${OrderHeaderBizStatusEnum.SUPPLYING.state}' && '${entity.orderType == BizOrderTypeEnum.PURCHASE_ORDER.state}' == 'true' && '${statusEnumState}' == 0) {
                 alert("代采订单需至少付款20%，请付款后刷新页面再审核");
                 return;
@@ -619,7 +638,7 @@
             if (obj ==${OrderHeaderBizStatusEnum.SUPPLYING.state}) { <%--15同意发货--%>
                 $("#id").val();
 
-                var r2 = document.getElementsByName("localOriginType");
+                var r2 = $("#"+prop).find("input[name='localOriginType']");
                 var localOriginType = "";
                 for (var i = 0; i < r2.length; i++) {
                     if (r2[i].checked == true) {
@@ -1914,16 +1933,18 @@
     </c:if>
 
     <!-- 隐藏佣金 -->
-    <%--<c:if test="${source ne 'vendor'}">--%>
-        <%--<div class="control-group">--%>
-            <%--<label class="control-label">佣金：</label>--%>
-            <%--<div class="controls">--%>
-                <%--<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail-bizOrderHeader.totalBuyPrice}"--%>
-                                  <%--pattern="0.00"/>--%>
-                    <%--&lt;%&ndash;<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">&ndash;%&gt;--%>
-            <%--</div>--%>
-        <%--</div>--%>
-    <%--</c:if>--%>
+    <shiro:hasPermission name="biz:order:buyPrice:view">
+        <c:if test="${source ne 'vendor'}">
+            <div class="control-group">
+                <label class="control-label">佣金：</label>
+                <div class="controls">
+                    <fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail-bizOrderHeader.totalBuyPrice}"
+                                      pattern="0.00"/>
+                        <%--<input type="text" value="${(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">--%>
+                </div>
+            </div>
+        </c:if>
+    </shiro:hasPermission>
     <div class="control-group">
         <label class="control-label">发票状态：</label>
         <div class="controls">
@@ -2631,16 +2652,16 @@
             </div>
             <c:if test="${bizOrderHeader.flag=='check_pending'}">
                 <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
-                    <div class="control-group">
-                        <label class="control-label">供货方式:</label>
-                        <div class="controls">
-                            本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>
-                            产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>
-                        </div>
-                    </div>
+                    <%--<div class="control-group">--%>
+                        <%--<label class="control-label">供货方式:</label>--%>
+                        <%--<div class="controls">--%>
+                            <%--本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>--%>
+                            <%--产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
                 </c:if>
                 <c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">
-                    <div class="control-group" style="display: none">
+                    <div id="daiCai" class="control-group" style="display: none">
                         <label class="control-label">供货方式:</label>
                         <div class="controls">
                             产地直发:<input name="localOriginType" value="0" checked type="radio" readonly="readonly"/>
@@ -2766,7 +2787,9 @@
                         <th>商品货号</th>
                         <th>采购数量</th>
                         <!-- 隐藏结算价 -->
-                        <%--<th>结算价</th>--%>
+                        <shiro:hasPermission name="biz:order:unitPrice:view">
+                            <th>结算价</th>
+                        </shiro:hasPermission>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -2814,7 +2837,9 @@
                         <th>商品货号</th>
                         <th>采购数量</th>
                         <!-- 隐藏结算价 -->
-                        <%--<th>结算价</th>--%>
+                        <shiro:hasPermission name="biz:order:unitPrice:view">
+                            <th>结算价</th>
+                        </shiro:hasPermission>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -2853,15 +2878,20 @@
         <th>商品货号</th>
         <%--<th>已生成的采购单</th>--%>
         <!-- 隐藏结算价 -->
-        <%--<c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">--%>
-            <%--<th>商品结算价</th>--%>
-        <%--</c:if>--%>
+        <shiro:hasPermission name="biz:order:unitPrice:view">
+            <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+                <th>商品结算价</th>
+            </c:if>
+        </shiro:hasPermission>
         <th>供应商</th>
         <th>供应商电话</th>
         <th>商品单价</th>
         <th>采购数量</th>
         <th>总 额</th>
         <th>已发货数量</th>
+        <c:if test="${bizOrderHeader.flag eq 'check_pending'}">
+            <th>库存数量</th>
+        </c:if>
         <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
             <th>发货方</th>
         </c:if>
@@ -2905,11 +2935,13 @@
                 <%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>--%>
                 <%--</td>--%>
             <!-- 隐藏结算价 -->
-            <%--<c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">--%>
-                <%--<td>--%>
-                        <%--${bizOrderDetail.buyPrice}--%>
-                <%--</td>--%>
-            <%--</c:if>--%>
+            <shiro:hasPermission name="biz:order:unitPrice:view">
+                <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+                    <td>
+                            ${bizOrderDetail.buyPrice}
+                    </td>
+                </c:if>
+            </shiro:hasPermission>
             <td>
                     ${bizOrderDetail.vendor.name}
             </td>
@@ -2931,6 +2963,9 @@
             <td>
                     ${bizOrderDetail.sentQty}
             </td>
+            <c:if test="${bizOrderHeader.flag eq 'check_pending'}">
+                <td>${invSkuNumMap[bizOrderDetail.id]}</td>
+            </c:if>
             <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
                 <td>
                         ${bizOrderDetail.suplyis.name}
@@ -3276,12 +3311,38 @@
 <c:if test="${bizOrderHeader.flag=='check_pending'}">
     <div class="form-actions">
         <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-            <input class="btn btn-primary" type="button"
-                   onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" value="同意发货"/>&nbsp;
+            <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                <input class="btn btn-primary" type="button"
+                        value="同意发货" data-toggle="modal" data-target="#myModal"/>&nbsp;
+            </c:if>
+            <c:if test="${orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+                <input class="btn btn-primary" type="button"
+                       onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state},'daiCai')" value="同意发货"/>&nbsp;
+            </c:if>
             <input class="btn btn-warning" type="button"
                    onclick="checkPending(${OrderHeaderBizStatusEnum.UNAPPROVE.state})" value="不同意发货"/>&nbsp;
         </shiro:hasPermission>
     </div>
 </c:if>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">发货方式</h4>
+            </div>
+            <div id="lianYing" class="modal-body">
+                本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>
+                产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state},'lianYing')" class="btn btn-primary">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

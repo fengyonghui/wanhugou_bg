@@ -559,7 +559,9 @@
                 <th>已供货数量</th>
             </c:if>
             <!-- 隐藏结算价 -->
-            <%--<th>结算价</th>--%>
+            <shiro:hasPermission name="biz:order:unitPrice:view">
+                <th>结算价</th>
+            </shiro:hasPermission>
         </tr>
         </thead>
         <tbody id="prodInfo">
@@ -591,7 +593,9 @@
                     <td>${poDetail.ordQty}</td>
                     <td>${poDetail.sendQty}</td>
                     <!-- 隐藏结算价 -->
-                    <%--<td>${poDetail.unitPrice}</td>--%>
+                    <shiro:hasPermission name="biz:order:unitPrice:view">
+                        <td>${poDetail.unitPrice}</td>
+                    </shiro:hasPermission>
                 </tr>
             </c:forEach>
         </c:if>
@@ -621,10 +625,12 @@
                             <td><input name="ordQtys" readonly="readonly" value="${reqDetail.reqQty-reqDetail.recvQty}"
                                        class="input-mini" type='text'/></td>
                             <!-- 隐藏结算价 -->
-                            <%--<td>--%>
-                                <%--<input readonly="readonly" type="text" name="unitPrices"--%>
-                                       <%--value="${reqDetail.unitPrice}" class="input-mini">--%>
-                            <%--</td>--%>
+                            <shiro:hasPermission name="biz:order:unitPrice:view">
+                                <td>
+                                    <input readonly="readonly" type="text" name="unitPrices"
+                                           value="${reqDetail.unitPrice}" class="input-mini">
+                                </td>
+                            </shiro:hasPermission>
                         </tr>
                     </c:forEach>
                 </c:forEach>
@@ -654,10 +660,12 @@
                                        value="${orderDetail.ordQty-orderDetail.sentQty}" class="input-mini"
                                        type='text'/></td>
                             <!-- 隐藏结算价 -->
-                            <%--<td>--%>
-                                <%--<input readonly="readonly" type="text" name="unitPrices"--%>
-                                       <%--value="${orderDetail.buyPrice}" class="input-mini">--%>
-                            <%--</td>--%>
+                            <shiro:hasPermission name="biz:order:unitPrice:view">
+                                <td>
+                                    <input readonly="readonly" type="text" name="unitPrices"
+                                           value="${orderDetail.buyPrice}" class="input-mini">
+                                </td>
+                            </shiro:hasPermission>
                         </tr>
                     </c:forEach>
                 </c:forEach>
