@@ -6,41 +6,53 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransferDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSkuTransferDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV3Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.TransferProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
-import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.enums.TransferStatusEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,6 +64,10 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransfer;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSkuTransferService;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +96,13 @@ public class BizSkuTransferController extends BaseController {
 	private BizPoHeaderService bizPoHeaderService;
 	@Autowired
 	private BizOrderStatusService bizOrderStatusService;
-	
+	@Autowired
+	private BizRequestDetailService bizRequestDetailService;
+	@Autowired
+	private SystemService systemService;
+	@Autowired
+	private BizSendGoodsRecordService bizSendGoodsRecordService;
+
 	@ModelAttribute
 	public BizSkuTransfer get(@RequestParam(required=false) Integer id) {
 		BizSkuTransfer entity = null;
@@ -218,6 +240,111 @@ public class BizSkuTransferController extends BaseController {
 			return JsonUtil.generateData(result, request.getParameter("callback"));
 		}
 		return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
+	}
+
+	@RequiresPermissions("biz:inventory:bizSkuTransfer:outTreasury")
+	@RequestMapping(value = "outTreasuryForm")
+	public String outTreasuryForm(BizSkuTransfer bizSkuTransfer, Model model) {
+		BizSkuTransferDetail transferDetail = new BizSkuTransferDetail();
+		transferDetail.setTransfer(new BizSkuTransfer(bizSkuTransfer.getId()));
+		List<BizSkuTransferDetail> transferDetailList = bizSkuTransferDetailService.findList(transferDetail);
+		if (CollectionUtils.isNotEmpty(transferDetailList)) {
+			for (BizSkuTransferDetail bizSkuTransferDetail : transferDetailList) {
+				//颜色
+				List<AttributeValueV2> colorList = bizSkuInfoService.getSkuProperty(bizSkuTransferDetail.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "颜色");
+				if (CollectionUtils.isNotEmpty(colorList)) {
+					bizSkuTransferDetail.setColor(colorList.get(0).getValue());
+				}
+				//尺寸
+				List<AttributeValueV2> sizeList = bizSkuInfoService.getSkuProperty(bizSkuTransferDetail.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "尺寸");
+				if (CollectionUtils.isNotEmpty(sizeList)) {
+					bizSkuTransferDetail.setSize(sizeList.get(0).getValue());
+				}
+				List<BizRequestDetail> requestDetailList = bizRequestDetailService.findListByinvAndSku(bizSkuTransfer.getFromInv().getId(), bizSkuTransferDetail.getSkuInfo().getId());
+				if (CollectionUtils.isNotEmpty(requestDetailList)) {
+					bizSkuTransferDetail.setRequestDetailList(requestDetailList);
+				}
+			}
+		}
+		//出库单
+		if (StringUtils.isNotBlank(bizSkuTransfer.getStr()) && "detail".equals(bizSkuTransfer.getStr())) {
+			BizSendGoodsRecord bizSendGoodsRecord = new BizSendGoodsRecord();
+			bizSendGoodsRecord.setBizSkuTransfer(bizSkuTransfer);
+			List<BizSendGoodsRecord> sendGoodsRecords = bizSendGoodsRecordService.findList(bizSendGoodsRecord);
+			if (CollectionUtils.isNotEmpty(sendGoodsRecords)) {
+				String sendNo = sendGoodsRecords.get(sendGoodsRecords.size() - 1).getSendNo();
+				model.addAttribute("sendNo",sendNo);
+			}
+		}
+		String transferNo = bizSkuTransfer.getTransferNo();
+		transferNo = transferNo.replaceAll(OrderTypeEnum.TR.name(),"");
+		int s = bizSendGoodsRecordService.findCountByNo(transferNo);
+		String sendNo = OrderTypeEnum.ODO.name().concat(transferNo).concat("_").concat(String.valueOf(s + 1));
+		model.addAttribute("sendNo",sendNo);
+		//验货员
+		List<User> inspectorList = systemService.findUserByRoleEnName(RoleEnNameEnum.INSPECTOR.getState());
+		model.addAttribute("inspectorList",inspectorList);
+		model.addAttribute("bizSkuTransfer",bizSkuTransfer);
+		model.addAttribute("transferDetailList",transferDetailList);
+		return "modules/biz/inventory/transferOutTreasuryForm";
+	}
+
+	@RequiresPermissions("biz:inventory:bizSkuTransfer:inTreasury")
+	@RequestMapping(value = "inTreasuryForm")
+	public String inTreasuryForm(BizSkuTransfer bizSkuTransfer, Model model) {
+		model.addAttribute("bizSkuTransfer",bizSkuTransfer);
+		return "modules/biz/inventory/transferInTreasuryForm";
+	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:inventory:bizSkuTransfer:outTreasury")
+	@RequestMapping(value = "outTreasury")
+	public String outTreasury(HttpServletRequest request, @RequestBody String data) throws ParseException {
+		try {
+			data = URLDecoder.decode(data, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = JsonUtil.parseJson(data);
+		String treasuryList = jsonObject.getString("treasuryList");
+		String bizInvoiceStr = jsonObject.getString("bizInvoiceStr");
+		JSONObject bizInvoiceJson = JsonUtil.parseJson(bizInvoiceStr);
+
+		List<BizOutTreasuryEntity> outTreasuryList = JsonUtil.parseArray(treasuryList, new TypeReference<List<BizOutTreasuryEntity>>() {});
+		if (CollectionUtils.isEmpty(outTreasuryList)) {
+			return "error";
+		}
+		BizInvoice bizInvoice = new BizInvoice();
+		bizInvoice.setBizStatus(0);
+		bizInvoice.setShip(0);
+		bizInvoice.setIsConfirm(1);
+		if (bizInvoiceJson != null && org.apache.commons.lang3.StringUtils.isNotBlank(bizInvoiceJson.getString("trackingNumber"))) {
+//		"trackingNumber":trackingNumber,
+			bizInvoice.setTrackingNumber(bizInvoiceJson.getString("trackingNumber"));
+//				"inspectorId":inspectorId,
+			bizInvoice.setInspector(new User(bizInvoiceJson.getInteger("inspectorId")));
+//				"inspectDate":inspectDate,
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			bizInvoice.setInspectDate(simpleDateFormat.parse(bizInvoiceJson.getString("inspectDate")));
+//				"inspectRemark":inspectRemark,
+			bizInvoice.setRemarks(bizInvoiceJson.getString("inspectRemark"));
+//				"collLocate":collLocate,
+			bizInvoice.setCollLocate(bizInvoiceJson.getByte("collLocate"));
+//				"sendDate":sendDate,
+			bizInvoice.setSendDate(simpleDateFormat.parse(bizInvoiceJson.getString("sendDate")));
+//				"settlementStatus":settlementStatus
+			bizInvoice.setSettlementStatus(bizInvoiceJson.getInteger("settlementStatus"));
+			bizInvoice.setSource("new");
+			return bizSkuTransferService.outTreasury(bizInvoice,outTreasuryList);
+		}
+		return bizSkuTransferService.outTreasury(null,outTreasuryList);
+	}
+
+	@RequiresPermissions("biz:inventory:bizSkuTransfer:inTreasury")
+	@RequestMapping(value = "inTreasury")
+	public String inTreasury(BizSkuTransfer bizSkuTransfer) {
+
+		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizSkuTransfer/?repage";
 	}
 
 }

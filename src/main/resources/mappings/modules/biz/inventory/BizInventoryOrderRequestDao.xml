@@ -7,6 +7,7 @@
 		a.inv_sku_id AS "invSku.id",
 		a.order_detail_id AS "orderDetail.id",
 		a.request_detail_id AS "requestDetail.id",
+		a.transfer_detail_id AS "transferDetail.id",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -41,6 +42,9 @@
 			<if test="requestDetail != null and requestDetail.id != null and requestDetail.id != ''">
 				AND a.request_detail_id = #{requestDetail.id}
 			</if>
+			<if test="transferDetail != null and transferDetail.id != null and transferDetail.id != ''">
+				AND a.transfer_detail_id = #{transferDetail.id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -72,8 +76,15 @@
 		INSERT INTO biz_inventory_order_request(
 			id,
 			inv_sku_id,
-			order_detail_id,
-			request_detail_id,
+			<if test="orderDetail != null and orderDetail.id != null and orderDetail.id != ''">
+				order_detail_id,
+			</if>
+			<if test="requestDetail != null and requestDetail.id != null and requestDetail.id != ''">
+				request_detail_id,
+			</if>
+			<if test="transferDetail != null and transferDetail.id != null and transferDetail.id != ''">
+				transfer_detail_id,
+			</if>
 			status,
 			create_id,
 			create_time,
@@ -83,8 +94,15 @@
 		) VALUES (
 			#{id},
 			#{invSku.id},
+		<if test="orderDetail != null and orderDetail.id != null and orderDetail.id != ''">
 			#{orderDetail.id},
+		</if>
+		<if test="requestDetail != null and requestDetail.id != null and requestDetail.id != ''">
 			#{requestDetail.id},
+		</if>
+		<if test="transferDetail != null and transferDetail.id != null and transferDetail.id != ''">
+			#{transferDetail.id},
+		</if>
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -97,8 +115,15 @@
 	<update id="update">
 		UPDATE biz_inventory_order_request SET
 			inv_sku_id = #{invSku.id},
+		<if test="orderDetail != null and orderDetail.id != null and orderDetail.id != ''">
 			order_detail_id = #{orderDetail.id},
+		</if>
+		<if test="requestDetail != null and requestDetail.id != null and requestDetail.id != ''">
 			request_detail_id = #{requestDetail.id},
+		</if>
+		<if test="transferDetail != null and transferDetail.id != null and transferDetail.id != ''">
+			transfer_detail_id = #{transferDetail.id},
+		</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

@@ -56,6 +56,11 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	 */
 	private String sendNo;
 
+	/**
+	 * 调拨单
+	 */
+	private BizSkuTransfer bizSkuTransfer;
+
 	public BizSendGoodsRecord() {
 		super();
 	}
@@ -241,5 +246,13 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 
 	public void setSendNo(String sendNo) {
 		this.sendNo = sendNo;
+	}
+
+	public BizSkuTransfer getBizSkuTransfer() {
+		return bizSkuTransfer;
+	}
+
+	public void setBizSkuTransfer(BizSkuTransfer bizSkuTransfer) {
+		this.bizSkuTransfer = bizSkuTransfer;
 	}
 }

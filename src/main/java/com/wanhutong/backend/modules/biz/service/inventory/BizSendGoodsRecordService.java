@@ -221,4 +221,13 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			}
 		}
 	}
+
+	/**
+	 * 根据单号查询出库记录数量
+	 * @param sendNo
+	 * @return
+	 */
+	public int findCountByNo(String sendNo) {
+		return bizSendGoodsRecordDao.findCountByNo(sendNo);
+	}
 }

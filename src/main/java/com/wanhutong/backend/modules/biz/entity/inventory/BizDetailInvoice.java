@@ -22,6 +22,11 @@ public class BizDetailInvoice extends DataEntity<BizDetailInvoice> {
 	private BizInvoice invoice;		// 发货单ID，biz_invoice.id
 	private BizOrderHeader orderHeader;		// 销售单ID，biz_order_header.id
 	private BizRequestHeader requestHeader;		// 备货单详情ID，biz_request_header.id
+
+	/**
+	 * 调拨单
+	 */
+	private BizSkuTransfer bizSkuTransfer;
 	
 	public BizDetailInvoice() {
 		super();
@@ -54,5 +59,13 @@ public class BizDetailInvoice extends DataEntity<BizDetailInvoice> {
 
 	public void setRequestHeader(BizRequestHeader requestHeader) {
 		this.requestHeader = requestHeader;
+	}
+
+	public BizSkuTransfer getBizSkuTransfer() {
+		return bizSkuTransfer;
+	}
+
+	public void setBizSkuTransfer(BizSkuTransfer bizSkuTransfer) {
+		this.bizSkuTransfer = bizSkuTransfer;
 	}
 }

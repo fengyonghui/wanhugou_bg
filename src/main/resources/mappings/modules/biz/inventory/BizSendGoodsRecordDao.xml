@@ -14,6 +14,7 @@
 		sku.item_no as "skuInfo.itemNo",
 		a.order_id AS "bizOrderHeader.id",
 		a.request_id AS "bizRequestHeader.id",
+		a.transfer_id AS "bizSkuTransfer.id",
 		a.order_num AS "orderNum",
 		a.send_num AS "sendNum",
 		a.biz_status AS "bizStatus",
@@ -47,6 +48,7 @@
 		LEFT JOIN biz_inventory_info inv ON inv.id = a.inv_id
 		LEFT JOIN sys_office cent ON cent.id = inv.cust_id
 		LEFT JOIN biz_logistics logs ON logs.id = a.logistics_id
+		LEFT JOIN biz_sku_transfer bst ON a.transfer_id = bst.id
 	</sql>
     
 	<select id="get" resultType="BizSendGoodsRecord">
@@ -170,6 +172,9 @@
 			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
 				request_id,
 			</if>
+			<if test="bizSkuTransfer != null and bizSkuTransfer.id != null and bizSkuTransfer.id != ''">
+				transfer_id,
+			</if>
 			order_num,
 			<if test="sendNum != null">
 				send_num,
@@ -222,6 +227,9 @@
 			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
 				#{bizRequestHeader.id},
 			</if>
+			<if test="bizSkuTransfer != null and bizSkuTransfer.id != null and bizSkuTransfer.id != ''">
+				#{bizSkuTransfer.id},
+			</if>
 			#{orderNum},
 			<if test="sendNum != null">
 				#{sendNum},
@@ -273,6 +281,9 @@
 			</if>
 			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
 				request_id = #{bizRequestHeader.id},
+			</if>
+			<if test="bizSkuTransfer != null and bizSkuTransfer.id != null and bizSkuTransfer.id != ''">
+				transfer_id = #{bizSkuTransfer.id},
 			</if>
 			order_num = #{orderNum},
 			send_num = #{sendNum},
@@ -329,5 +340,11 @@
 		sku_id = #{needSkuId}
 		WHERE id = #{id}
 	</update>
+
+	<select id="findCountByNo" resultType="Integer">
+		SELECT count(1)
+		FROM biz_send_goods_record
+		WHERE send_no LIKE CONCAT('%', #{sendNo}, '%')
+	</select>
 
 </mapper>

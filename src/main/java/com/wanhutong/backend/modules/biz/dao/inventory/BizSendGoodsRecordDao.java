@@ -23,4 +23,11 @@ public interface BizSendGoodsRecordDao extends CrudDao<BizSendGoodsRecord> {
     Integer getSumSendNumByReqDetailId(@Param("reqDetailId") Integer reqDetailId, @Param("oneDayBefore")Date oneDayBefore, @Param("yesterdayEnd")Date yesterdayEnd);
 
     void updateSkuId(@Param("needSkuId") Integer needSkuId, @Param("id") Integer id);
+
+    /**
+     * 根据单号查询出库记录数量
+     * @param sendNo
+     * @return
+     */
+    int findCountByNo(String sendNo);
 }

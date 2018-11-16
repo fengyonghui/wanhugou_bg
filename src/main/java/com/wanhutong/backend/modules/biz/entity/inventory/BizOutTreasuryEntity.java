@@ -18,6 +18,11 @@ public class BizOutTreasuryEntity implements Serializable {
 	private Integer orderDetailId;
 
 	/**
+	 * 调拨单详情ID
+	 */
+	private Integer transferDetailId;
+
+	/**
 	 * 备货单详情ID
 	 */
 	private Integer reqDetailId;
@@ -88,5 +93,13 @@ public class BizOutTreasuryEntity implements Serializable {
 
 	public void setuVersion(Integer uVersion) {
 		this.uVersion = uVersion;
+	}
+
+	public Integer getTransferDetailId() {
+		return transferDetailId;
+	}
+
+	public void setTransferDetailId(Integer transferDetailId) {
+		this.transferDetailId = transferDetailId;
 	}
 }

@@ -6,7 +6,8 @@
 		a.id AS "id",
 		a.invoice_id AS "invoice.id",
 		a.order_header_id AS "orderHeader.id",
-		a.request_header_id AS "requestHeader.id"
+		a.request_header_id AS "requestHeader.id",
+		a.transfer_header_id AS "bizSkuTransfer.id"
 	</sql>
 	
 	<sql id="bizDetailInvoiceJoins">
@@ -31,6 +32,9 @@
 		<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
 			LEFT JOIN biz_request_header rh ON rh.id = a.request_header_id AND rh.status = 1
 		</if>
+		<if test="bizSkuTransfer != null and bizSkuTransfer.id != null and bizSkuTransfer.id != ''">
+			LEFT JOIN biz_sku_transfer bst ON bst.id = a.transfer_header_id AND bst.status = 1
+		</if>
 		<where>
 			
 			<if test="invoice != null and invoice.id != null and invoice.id != ''">
@@ -41,6 +45,9 @@
 			</if>
 			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
 				AND a.request_header_id = #{requestHeader.id}
+			</if>
+			<if test="bizSkuTransfer != null and bizSkuTransfer.id != null and bizSkuTransfer.id != ''">
+				AND a.transfer_header_id = #{bizSkuTransfer.id}
 			</if>
 		</where>
 		<choose>
@@ -79,6 +86,9 @@
 			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
 				request_header_id
 			</if>
+			<if test="bizSkuTransfer != null and bizSkuTransfer.id != null and bizSkuTransfer.id != ''">
+				transfer_header_id
+			</if>
 		) VALUES (
 			#{id},
 			#{invoice.id},
@@ -87,6 +97,9 @@
 			</if>
 			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
 				#{requestHeader.id}
+			</if>
+			<if test="bizSkuTransfer != null and bizSkuTransfer.id != null and bizSkuTransfer.id != ''">
+				#{bizSkuTransfer.id}
 			</if>
 		)
 	</insert>
@@ -99,6 +112,9 @@
 			</if>
 			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
 				request_header_id = #{requestHeader.id}
+			</if>
+			<if test="bizSkuTransfer != null and bizSkuTransfer.id != null and bizSkuTransfer.id != ''">
+				transfer_header_id = #{bizSkuTransfer.id}
 			</if>
 		WHERE id = #{id}
 	</update>

@@ -11,7 +11,7 @@
 		a.sku_id AS "skuInfo.id",
 		sku.part_no AS "skuInfo.partNo",
 		sku.name AS "skuInfo.name",
-		a.order_id AS "bizOrderHeader.id",
+		a.order_type AS "orderType",
 		a.request_id AS "bizRequestHeader.id",
 		a.order_num AS "orderNum",
 		a.receive_num AS "receiveNum",
@@ -29,7 +29,6 @@
 	
 	<sql id="bizCollectGoodsRecordJoins">
 		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
-		LEFT JOIN biz_order_header orheader ON a.order_id = orheader.id
 		LEFT JOIN sys_office s ON a.vend_id = s.id
 		LEFT JOIN sys_user su ON su.id= a.create_id
 		LEFT JOIN biz_request_header reheader ON a.request_id = reheader.id
@@ -85,6 +84,9 @@
             <if test="bizRequestHeader != null and bizRequestHeader.id != null">
                 AND a.request_id =#{bizRequestHeader.id}
             </if>
+			<if test="orderType != null and orderType != ''">
+				AND a.order_type = #{orderType}
+			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num LIKE
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
@@ -132,8 +134,8 @@
 				inv_old_num,
 			</if>
 			sku_id,
-			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
-				order_id,
+			<if test="orderType != null and orderType != ''">
+				order_type,
 			</if>
 			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
 				request_id,
@@ -158,8 +160,8 @@
 				#{invOldNum},
 			</if>
 			#{skuInfo.id},
-			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
-				#{bizOrderHeader.id},
+			<if test="orderType != null and orderType != ''">
+				#{orderType},
 			</if>
 			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
 				#{bizRequestHeader.id},
@@ -186,8 +188,8 @@
 				a.inv_old_num = #{invOldNum},
 			</if>
 			sku_id = #{skuInfo.id},
-			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
-				order_id = #{bizOrderHeader.id},
+			<if test="orderType != null and orderType != ''">
+				order_type = #{orderType},
 			</if>
 			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
 				request_id = #{bizRequestHeader.id},
@@ -228,6 +230,7 @@
 		sku. NAME AS "skuInfoName",
 		a.order_id AS "bizOrderHeader.id",
 		a.request_id AS "bizRequestHeader.id",
+		a.transfer_id AS "bizSkuTransfer.id",
 		a.order_num as "orderNum",
 		a.inv_old_num as "invOldNum",
 		a.send_num as "sendNum",
@@ -262,7 +265,7 @@
 		sku.item_no AS "skuInfoItemNo",
 		sku.name AS "skuInfo.name",
 		sku. NAME AS "skuInfoName",
-		b.order_id AS "bizOrderHeader.id",
+		b.order_type AS "orderType",
 		b.request_id AS "bizRequestHeader.id",
 		b.order_num as "orderNum",
 		b.inv_old_num as "invOldNum",
@@ -345,7 +348,7 @@
 		sku.part_no AS "skuInfo.partNo",
 		sku.name AS "skuInfo.name",
 		sku.item_no AS "skuInfo.itemNo",
-		a.order_id AS "bizOrderHeader.id",
+		a.order_type AS "orderType",
 		a.request_id AS "bizRequestHeader.id",
 		a.order_num AS "orderNum",
 		a.receive_num AS "receiveNum",
@@ -372,7 +375,7 @@
 		sku.part_no AS "skuInfo.partNo",
 		sku.name AS "skuInfo.name",
 		sku.item_no AS "skuInfo.itemNo",
-		a.order_id AS "bizOrderHeader.id",
+		a.order_type AS "orderType",
 		a.request_id AS "bizRequestHeader.id",
 		a.order_num AS "orderNum",
 		a.receive_num AS "receiveNum",
@@ -460,7 +463,7 @@
 		LEFT JOIN biz_sku_info sku ON sku.id = bcgr.sku_id
 		LEFT JOIN biz_product_info bpi ON bpi.id = sku.prod_id
 		LEFT JOIN biz_request_detail rd ON rd.sku_id = bcgr.sku_id AND rd.header_id = bcgr.request_id
-		LEFT JOIN biz_request_header rh ON rh.id = bcgr.request_id
+		LEFT JOIN biz_request_header rh ON rh.id = bcgr.request_id and bcgr.order_type = 0
 		LEFT JOIN sys_office cent ON cent.id = rh.from_id
 		LEFT JOIN biz_inventory_info bii ON bii.id = bcgr.inv_id
 		WHERE bis.id = #{invSkuId}

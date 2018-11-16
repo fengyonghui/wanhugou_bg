@@ -1,6 +1,7 @@
 <%@ taglib prefix="from" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.TransferStatusEnum" %>
 <html>
 <head>
 	<title>库存调拨管理</title>
@@ -101,6 +102,16 @@
 									&& (fns:hasRole(roleSet, bizSkuTransfer.commonProcess.transferProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
 						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:audit">
 							<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=audit">审核</a>
+						</shiro:hasPermission>
+					</c:if>
+					<c:if test="${bizSkuTransfer.bizStatus >= TransferStatusEnum.APPROVE.state && bizSkuTransfer.bizStatus <= TransferStatusEnum.OUTING_WAREHOUSE.state}">
+						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:outTreasury">
+							<a href="${ctx}/biz/inventory/bizSkuTransfer/outTreasuryForm?id=${bizSkuTransfer.id}">出库</a>
+						</shiro:hasPermission>
+					</c:if>
+					<c:if test="${bizSkuTransfer.bizStatus >= TransferStatusEnum.ALREADY_OUT_WAREHOUSE.state && bizSkuTransfer.bizStatus <= TransferStatusEnum.INING_WAREHOUSE.state}">
+						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:outTreasury">
+							<a href="${ctx}/biz/inventory/bizSkuTransfer/inTreasuryForm?id=${bizSkuTransfer.id}">入库</a>
 						</shiro:hasPermission>
 					</c:if>
                 </td>

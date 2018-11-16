@@ -48,4 +48,12 @@ public interface BizRequestDetailDao extends CrudDao<BizRequestDetail> {
 
     void updateSkuId(@Param("needSkuId") Integer needSkuId, @Param("id") Integer id);
 
+    /**
+     * 根据仓库ID和商品ID查询可出库的备货单详情
+     * @param invInfoId
+     * @param skuId
+     * @return
+     */
+    List<BizRequestDetail> findListByinvAndSku(@Param("invInfoId")Integer invInfoId, @Param("skuId")Integer skuId);
+
 }

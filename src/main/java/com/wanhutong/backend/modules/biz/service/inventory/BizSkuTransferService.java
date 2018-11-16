@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.inventory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -17,17 +18,25 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryOrderRequest;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransferDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
-import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.TransferProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.SendGoodsRecordBizStatusEnum;
 import com.wanhutong.backend.modules.enums.TransferStatusEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
@@ -69,6 +78,18 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
     private BizOrderStatusService bizOrderStatusService;
 	@Autowired
     private SystemService systemService;
+    @Autowired
+    private BizInvoiceService bizInvoiceService;
+    @Autowired
+    private BizDetailInvoiceService bizDetailInvoiceService;
+    @Autowired
+    private BizInventorySkuService bizInventorySkuService;
+    @Autowired
+    private BizRequestDetailService bizRequestDetailService;
+    @Autowired
+    private BizSendGoodsRecordService bizSendGoodsRecordService;
+    @Autowired
+    private BizInventoryOrderRequestService bizInventoryOrderRequestService;
 
 	public BizSkuTransfer get(Integer id) {
 		return super.get(id);
@@ -294,6 +315,116 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public int updateBizStatus(Integer id, TransferStatusEnum status) {
         return dao.updateBizStatus(id, status.getState());
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public String outTreasury(BizInvoice bizInvoice, List<BizOutTreasuryEntity> outTreasuryList) {
+        if (bizInvoice == null) {
+            return "error";
+        }
+        bizInvoiceService.save(bizInvoice);
+        for (BizOutTreasuryEntity outTreasuryEntity : outTreasuryList) {
+            Integer transferDetailId = outTreasuryEntity.getTransferDetailId();
+            BizSkuTransferDetail transferDetail = bizSkuTransferDetailService.get(transferDetailId);
+            BizSkuTransfer skuTransfer = this.get(transferDetail.getTransfer().getId());
+            if (StringUtils.isNotBlank(skuTransfer.getTransferNo())) {
+                BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
+                bizDetailInvoice.setInvoice(bizInvoice);
+                bizDetailInvoice.setBizSkuTransfer(skuTransfer);
+                bizDetailInvoiceService.save(bizDetailInvoice);
+                break;
+            }
+        }
+        boolean orderFlag = true; //用于判断调拨单是否已全部出库
+        BizSkuTransfer skuTransfer = new BizSkuTransfer();
+        Map<Integer, Integer> transferDetailMap = Maps.newHashMap();
+        for (BizOutTreasuryEntity outTreasuryEntity : outTreasuryList) {
+            Integer transferDetailId = outTreasuryEntity.getTransferDetailId();
+            Integer reqDetailId = outTreasuryEntity.getReqDetailId();
+            Integer invId = outTreasuryEntity.getInvSkuId();
+            Integer outQty = outTreasuryEntity.getOutQty();
+            Integer version = outTreasuryEntity.getuVersion();
+            BizSkuTransferDetail transferDetail = bizSkuTransferDetailService.get(transferDetailId);
+            BizInventorySku inventorySku = bizInventorySkuService.get(invId);
+            BizRequestDetail bizRequestDetail = bizRequestDetailService.get(reqDetailId);
+            skuTransfer = this.get(transferDetail.getTransfer().getId());
+            if (!version.equals(inventorySku.getuVersion())) {
+                return "其他人正在出库，请刷新页面重新操作";
+            }
+            //生成发货单
+            BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
+            bsgr.setSendNo(outTreasuryEntity.getSendNo());
+            bsgr.setSkuInfo(transferDetail.getSkuInfo());
+            bsgr.setInvOldNum(inventorySku.getStockQty());
+            bsgr.setInvInfo(inventorySku.getInvInfo());
+            bsgr.setBizSkuTransfer(transferDetail.getTransfer());
+            bsgr.setOrderNum(skuTransfer.getTransferNo());
+            bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());
+            bsgr.setSendNum(outQty);
+            BizInventoryInfo inventoryInfo = bizInventoryInfoService.get(skuTransfer.getToInv());
+            bsgr.setCustomer(inventoryInfo.getCustomer());
+            bsgr.setSendDate(new Date());
+            bizSendGoodsRecordService.save(bsgr);
+            //修改库存数量
+            bizInventorySkuService.updateStockQty(inventorySku,inventorySku.getStockQty() - outQty);
+            //修改备货单详情已出库数量
+            bizRequestDetail.setOutQty((bizRequestDetail.getOutQty() == null ? 0 : bizRequestDetail.getOutQty()) + outQty);
+            bizRequestDetailService.save(bizRequestDetail);
+            //修改订单详情已发货数量,出库人和出库时间
+            transferDetail.setOutQty((transferDetail.getOutQty() == null ? 0 : transferDetail.getOutQty()) + outQty);
+            transferDetail.setFromInvOp(UserUtils.getUser());
+            transferDetail.setFromInvOpTime(new Date());
+            bizSkuTransferDetailService.save(transferDetail);
+            if (transferDetailMap.containsKey(transferDetail.getId())) {
+                transferDetailMap.put(transferDetail.getId(),transferDetailMap.get(transferDetail.getId()) + outQty);
+            } else {
+                transferDetailMap.put(transferDetail.getId(), transferDetail.getOutQty());
+            }
+            //修改订单状态
+            int status = skuTransfer.getBizStatus();
+            skuTransfer.setBizStatus(TransferStatusEnum.OUTING_WAREHOUSE.getState().byteValue());
+            super.save(skuTransfer);
+            if (status != TransferStatusEnum.OUTING_WAREHOUSE.getState()) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SKUTRANSFER.getDesc(),BizOrderStatusOrderTypeEnum.SKUTRANSFER.getState(),skuTransfer.getId());
+            }
+            //订单关联出库备货单
+            BizInventoryOrderRequest ior = new BizInventoryOrderRequest();
+            ior.setInvSku(inventorySku);
+            ior.setTransferDetail(transferDetail);
+            ior.setRequestDetail(bizRequestDetail);
+            List<BizInventoryOrderRequest> iorList = bizInventoryOrderRequestService.findList(ior);
+            if (CollectionUtils.isEmpty(iorList)) {
+                bizInventoryOrderRequestService.save(ior);
+            }
+        }
+        //是否出库完成
+        BizSkuTransferDetail transferDetail = new BizSkuTransferDetail();
+        transferDetail.setTransfer(new BizSkuTransfer(skuTransfer.getId()));
+        List<BizSkuTransferDetail> detailList = bizSkuTransferDetailService.findList(transferDetail);
+        if (CollectionUtils.isNotEmpty(detailList)) {
+            for (BizSkuTransferDetail bizSkuTransferDetail : detailList) {
+                Integer transQty = bizSkuTransferDetail.getTransQty();
+                Integer outQty = bizSkuTransferDetail.getOutQty();
+                Integer id = bizSkuTransferDetail.getId();
+                if (transferDetailMap.containsKey(id) && !transferDetailMap.get(id).equals(transQty)) {
+                    orderFlag = false;
+                    break;
+                }
+                if (!transferDetailMap.containsKey(id) && !transQty.equals(outQty)) {
+                    orderFlag = false;
+                    break;
+                }
+            }
+        }
+        if (orderFlag) {
+            int status = skuTransfer.getBizStatus();
+            skuTransfer.setBizStatus(TransferStatusEnum.ALREADY_OUT_WAREHOUSE.getState().byteValue());
+            super.save(skuTransfer);
+            if (status != TransferStatusEnum.ALREADY_OUT_WAREHOUSE.getState()) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SKUTRANSFER.getDesc(),BizOrderStatusOrderTypeEnum.SKUTRANSFER.getState(),skuTransfer.getId());
+            }
+        }
+        return "ok";
     }
 	
 }

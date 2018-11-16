@@ -441,4 +441,38 @@
 		WHERE id = #{id}
 	</update>
 
+	<select id="findListByinvAndSku" resultType="BizRequestDetail">
+		SELECT
+			a.id AS "id",
+			a.recv_qty AS "recvQty",
+			a.out_qty AS "outQty",
+			(a.recv_qty-a.out_qty) AS "nowQty",
+			rh.req_no AS "requestHeader.reqNo",
+			bis.id AS "inventorySku.id",
+			bis.inv_type AS "inventorySku.invType",
+			bis.sku_type AS "inventorySku.skuType",
+			prod.vendor_name AS "skuInfo.vendorName",
+			bii.id AS "inventorySku.invInfo.id",
+			bii.name AS "inventorySku.invInfo.name",
+			bis.stock_qty AS "inventorySku.stockQty",
+			bis.u_version AS "inventorySku.uVersion",
+			sku.id AS "skuInfo.id",
+			sku.name AS "skuInfo.name",
+			sku.item_no AS "skuInfo.itemNo"
+		FROM biz_request_detail a
+		LEFT JOIN biz_request_header rh ON rh.id = a.header_id
+		LEFT JOIN biz_sku_info sku ON sku.id = a.sku_id
+		LEFT JOIN biz_product_info prod ON prod.id = sku.prod_id
+		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = sku.id
+		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		WHERE
+			a.status = 1
+		AND rh.status = 1
+		AND bis.status = 1
+		AND bii.status = 1
+		AND (rh.biz_status BETWEEN 27 AND 37)
+		AND bii.id = #{invInfoId}
+		AND sku.id = #{skuId}
+	</select>
+
 </mapper>

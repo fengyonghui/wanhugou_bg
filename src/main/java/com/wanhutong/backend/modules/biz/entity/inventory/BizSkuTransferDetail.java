@@ -4,10 +4,12 @@
 package com.wanhutong.backend.modules.biz.entity.inventory;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.User;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 库存调拨详情Entity
@@ -62,6 +64,21 @@ public class BizSkuTransferDetail extends DataEntity<BizSkuTransferDetail> {
 	 * 已入库数量
 	 */
 	private Integer inQty;
+
+	/**
+	 * 详情商品颜色
+	 */
+	private String color;
+
+	/**
+	 * 详情商品尺寸
+	 */
+	private String size;
+
+	/**
+	 * 出库的备货单详情
+	 */
+	private List<BizRequestDetail> requestDetailList;
 
 	public BizSkuTransfer getTransfer() {
 		return transfer;
@@ -143,4 +160,27 @@ public class BizSkuTransferDetail extends DataEntity<BizSkuTransferDetail> {
 		this.inQty = inQty;
 	}
 
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
+	}
+
+	public List<BizRequestDetail> getRequestDetailList() {
+		return requestDetailList;
+	}
+
+	public void setRequestDetailList(List<BizRequestDetail> requestDetailList) {
+		this.requestDetailList = requestDetailList;
+	}
 }
