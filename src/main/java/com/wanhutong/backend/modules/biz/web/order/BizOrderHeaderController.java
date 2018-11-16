@@ -397,6 +397,15 @@ public class BizOrderHeaderController extends BaseController {
     @ResponseBody
     public String listData4mobile(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         Map<String, Object> resultMap = Maps.newHashMap();
+        //判断是否为代销订单
+        if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
+            //零售订单
+            bizOrderHeader.setOrderType(8);
+            //收货完成
+            bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.COMPLETE.getState());
+            //未结佣
+            //bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.NO_COMMISSSION.getComStatus());
+        }
         if (bizOrderHeader.getSkuChickCount() != null) {
             //商品下单量标识
             bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
@@ -417,6 +426,46 @@ public class BizOrderHeaderController extends BaseController {
         originConfigMap.put("不需要审批", "不需要审批");
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+        if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
+            List<BizOrderHeader> bizOrderHeaderList = page.getList();
+            List<BizOrderHeader> bizOrderHeaderListNew = new ArrayList<BizOrderHeader>();
+            if (CollectionUtils.isNotEmpty(bizOrderHeaderList)) {
+                for (BizOrderHeader orderHeader :bizOrderHeaderList) {
+                    BizCommissionOrder bizCommissionOrder = new BizCommissionOrder();
+                    String applyCommStatus = "no";
+                    bizCommissionOrder.setOrderId(orderHeader.getId());
+                    List<BizCommissionOrder> commissionOrderList = bizCommissionOrderService.findList(bizCommissionOrder);
+                    if (CollectionUtils.isNotEmpty(commissionOrderList)) {
+                        applyCommStatus = "yes";
+                        bizCommissionOrder = commissionOrderList.get(0);
+                        Integer commId = bizCommissionOrder.getCommId();
+                        BizCommission bizCommission = bizCommissionService.get(commId);
+                        orderHeader.setBizCommission(bizCommission);
+                    }
+                    orderHeader.setApplyCommStatus(applyCommStatus);
+//                    BigDecimal commission = BigDecimal.ZERO;
+//                    List<BizOrderDetail> orderDetails = orderHeader.getOrderDetailList();
+//                    if (CollectionUtils.isNotEmpty(orderDetails)) {
+//                        BigDecimal detailCommission = BigDecimal.ZERO;
+//                        for (BizOrderDetail orderDetail : orderDetails) {
+//                            BizOpShelfSku bizOpShelfSku = orderDetail.getSkuInfo().getBizOpShelfSku();
+//                            BigDecimal orgPrice = new BigDecimal(bizOpShelfSku.getOrgPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+//                            BigDecimal salePrice = new BigDecimal(bizOpShelfSku.getSalePrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+//                            Integer ordQty = orderDetail.getOrdQty();
+//                            BigDecimal commissionRatio = bizOpShelfSku.getCommissionRatio();
+//                            if (commissionRatio == null || commissionRatio.compareTo(BigDecimal.ZERO) <= 0) {
+//                                commissionRatio = BigDecimal.ZERO;
+//                            }
+//                            detailCommission = (salePrice.subtract(orgPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
+//                            commission = commission.add(detailCommission);
+//                        }
+//                    }
+//                    orderHeader.setCommission(commission);
+                    bizOrderHeaderListNew.add(orderHeader);
+                }
+            }
+            page.setList(bizOrderHeaderListNew);
+        }
         model.addAttribute("page", page);
         resultMap.put("page", page);
         if (bizOrderHeader.getSource() != null) {
