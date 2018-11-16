@@ -165,7 +165,12 @@
 									paymentOrderProcess="待确认支付金额";
 								}
 								if(item.total != '0.00'){
-									paymentOrderProcess=item.commonProcess.paymentOrderProcess.name
+									if(item.commonProcess.paymentOrderProcess){
+										paymentOrderProcess=item.commonProcess.paymentOrderProcess.name
+									}else{
+										paymentOrderProcess="";
+									}
+									
 								}
 								var mt = item;
 								inPayHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+

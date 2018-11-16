@@ -645,7 +645,7 @@
 									'<div class="mui-row app_color40 app_text_center content_part operation" id="foot">' +
 										'<div class="'+applyCheckBtn+'" poheaderId="'+ bizPoHeader.id +'" bizoridtxt="'+ item.id +'">' +
 						/*付款单审核*/		applyCheckBtnTxt +'</div>'+
-										'<div class="'+applyListBtn+'" poheaderId="'+ bizPoHeader.id +'" bizOrIdTxt="'+ bizOrId +'">' +
+										'<div class="'+applyListBtn+'" poheaderId="'+ bizPoHeader.id +'" bizoridtxt="'+ item.id +'">' +
 						/*付款单列表*/		applyListBtnTxt +'</div>'+
 										'<div class="'+applyCandelBtn+'" poheaderId="'+ bizPoHeader.id +'">' +
 						/*付款单取消*/		applyCandelBtnTxt +'</div>'+

@@ -99,23 +99,23 @@
 	                        	}
                            })
                         	//审核
-                        	var staCheckBtn = '';
-                        	var staCheckBtnTxt = '';
-			                if(_this.staOrdFlag == true) {
-			                	if(item.bizStatus < 15) {
-			                		staCheckBtn = 'waitCheckBtn'
-			                		staCheckBtnTxt = "待审核"
-			                	}
-			                	if(item.bizStatus==45) {
-			                		staCheckBtnTxt = "审核失败"
-			                	}
-			                	if(item.bizStatus==15) {
-			                		staCheckBtnTxt = "审核成功"
-			                	}
-			                }
-			                else {
-			                	staCheckBtnTxt = ''
-			                }
+//                      	var staCheckBtn = '';
+//                      	var staCheckBtnTxt = '';
+//			                if(_this.staOrdFlag == true) {
+//			                	if(item.bizStatus < 15) {
+//			                		staCheckBtn = 'waitCheckBtn'
+//			                		staCheckBtnTxt = "待审核"
+//			                	}
+//			                	if(item.bizStatus==45) {
+//			                		staCheckBtnTxt = "审核失败"
+//			                	}
+//			                	if(item.bizStatus==15) {
+//			                		staCheckBtnTxt = "审核成功"
+//			                	}
+//			                }
+//			                else {
+//			                	staCheckBtnTxt = ''
+//			                }
                         	var staCheckSucBtn = '';
                         	var staCheckSuc = '';
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
@@ -145,16 +145,16 @@
 //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 //										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
-												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
-											'</div>'+
+//											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
+//												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
+//											'</div>'+
 //											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
 //												'<li class="mui-table-view-cell">出库确认</li>' +
 //											'</div>'+
 //											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
 //												'<li class="mui-table-view-cell">审核成功</li>' +
 //											'</div>'+
-											'<div class="mui-col-xs-6 staOrDetailBtn" staOrdId="'+ item.id +'">' +
+											'<div class="mui-col-xs-12 staOrDetailBtn" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">详情</li>' +
 											'</div>'+
 										'</div>' +
