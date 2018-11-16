@@ -806,7 +806,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					_this.checkResult = res.ret
                     if(_this.checkResult == true || _this.checkResult == 'true') {
 						if($('#createPo').val() == 'yes') {
@@ -863,7 +863,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret == true) {
 						mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
@@ -1449,6 +1449,7 @@
                 alert("排产量总和太大，请重新输入!")
                 return false
             }
+            console.log(params)
             $.ajax({
                 url: '/a/biz/po/bizPoHeader/batchSaveSchedulingPlan',
                 contentType: 'application/json',
@@ -1456,6 +1457,7 @@
                 datatype:"json",
                 type: 'post',
                 success: function (result) {
+                	console.log(result)
                 	if(result == true || result == 'true') {
                 		mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
