@@ -201,6 +201,77 @@ public class BizCommissionController extends BaseController {
 		return "modules/biz/order/bizCommissionOrderHeaderForm";
 	}
 
+	@RequiresPermissions("biz:order:bizCommission:view")
+	@RequestMapping(value = "applyCommissionForm4Mobile")
+	@ResponseBody
+	public String applyCommissionForm4Mobile(BizCommission bizCommission, Model model, String option) {
+		String orderIds = bizCommission.getOrderIds();
+		List<Integer> orderIdList = new ArrayList<Integer>();
+		if (orderIds != null && orderIds.length() > 0 && !orderIds.contains(",")) {
+			Integer orderId = Integer.valueOf(orderIds);
+			orderIdList.add(orderId);
+		} else if (orderIds != null && orderIds.length() > 0 && orderIds.contains(",")) {
+			String[] orderIdArr = orderIds.split(",");
+			for (int i=0; i<(orderIdArr.length); i++) {
+				orderIdList.add(Integer.valueOf(orderIdArr[i]));
+			}
+		}
+
+		List<BizOrderHeader> orderHeaderList = new ArrayList<BizOrderHeader>();
+		if (CollectionUtils.isNotEmpty(orderIdList)) {
+			for (Integer id : orderIdList) {
+				BizOrderHeader entity = bizOrderHeaderService.get(id);
+
+				BizOrderDetail bizOrderDetail = new BizOrderDetail();
+				bizOrderDetail.setOrderHeader(entity);
+				List<BizOrderDetail> bizOrderDetails = bizOrderDetailService.findList(bizOrderDetail);
+				List<BizOrderDetail> bizOrderDetailsNew = new ArrayList<BizOrderDetail>();
+				BigDecimal detailCommission = BigDecimal.ZERO;
+				if (CollectionUtils.isNotEmpty(bizOrderDetails)) {
+					for (BizOrderDetail orderDetail : bizOrderDetails) {
+						BigDecimal unitPrice = new BigDecimal(orderDetail.getUnitPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+						BigDecimal buyPrice = new BigDecimal(orderDetail.getBuyPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+						Integer ordQty = orderDetail.getOrdQty();
+						BigDecimal commissionRatio = orderDetail.getCommissionRatio();
+						if (commissionRatio == null || commissionRatio.compareTo(BigDecimal.ZERO) <= 0) {
+							commissionRatio = BigDecimal.ZERO;
+						}
+						detailCommission = (unitPrice.subtract(buyPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
+						orderDetail.setDetailCommission(detailCommission);
+
+						bizOrderDetailsNew.add(orderDetail);
+					}
+				}
+				entity.setOrderDetailList(bizOrderDetailsNew);
+				orderHeaderList.add(entity);
+			}
+
+			BizCommissionOrder bizCommissionOrder = new BizCommissionOrder();
+			bizCommissionOrder.setOrderId(orderIdList.get(0));
+			List<BizCommissionOrder> bizCommissionOrderList = bizCommissionOrderService.findListForCommonProcess(bizCommissionOrder);
+			if (CollectionUtils.isNotEmpty(bizCommissionOrderList)) {
+				BizCommission bizCommission1 = bizCommissionOrderList.get(0).getBizCommission();
+				if (bizCommission1 != null && bizCommission1.getId() != null) {
+					Integer commId = bizCommission1.getId();
+
+					//审核流程
+					CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+					commonProcessEntity.setObjectId(String.valueOf(commId));
+					commonProcessEntity.setObjectName(BizCommissionService.DATABASE_TABLE_NAME);
+					List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+					model.addAttribute("auditList", list);
+				}
+			}
+		}
+
+		model.addAttribute("option", option);
+		model.addAttribute("orderHeaderList", orderHeaderList);
+		BizCustomerInfo bizCustomerInfo = bizCustomerInfoService.getByOfficeId(bizCommission.getSellerId());
+		bizCommission.setCustomerInfo(bizCustomerInfo);
+		model.addAttribute("entity", bizCommission);
+		return "modules/biz/order/bizCommissionOrderHeaderForm";
+	}
+
 	@RequiresPermissions("biz:order:bizCommission:edit")
 	@RequestMapping(value = "save")
 	public String save(BizCommission bizCommission, Model model, RedirectAttributes redirectAttributes) {
