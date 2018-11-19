@@ -140,11 +140,11 @@
 			                url: "/a/getUser",
 			                dataType: "json",
 			                async:false,
-			                success: function(user){                 
+			                success: function(user){
 								userId = user.data.id
 			                }
 			            });
-			            
+
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
 								console.log(item)
@@ -160,12 +160,12 @@
 				                	defaultValue:'未知状态'
 				                },
 				                async:false,
-				                success: function(hz){ 
+				                success: function(hz){
 				                	orderTypeTxt=hz.data.dictLabel;
 				                }
 				            });
 								/*已结佣*/
-//								
+//
 //								var alreadyKnotBtnTxt = '';
 								/*申请结佣*/
 								var applyKnotBtn = '';
@@ -183,7 +183,7 @@
 								/*恢复*/
 								var commRecoverBtn = '';
 								var commRecoverBtnTxt = '';
-								
+
 								if(_this.commOrdFlag == true) {
 									if(item.applyCommStatus == 'no'){
 										applyKnotBtnTxt="申请结佣";
@@ -208,7 +208,7 @@
 								            commDeleteBtnTxt = '恢复';
 										}
 									}
-									
+
 
 								}
 							commHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group" id="rodiv_' + item.orderType + '">'+
@@ -335,12 +335,12 @@
 				} else if(orderIds == orderIds) {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/orderMgmtHtml/commissionMgmtHtml/alreadlycomList.html",
-						extras: {							
+						extras: {
 							orderNum: orderNum,
 						}
 					})
 				}
-			}),	
+			}),
 		    /*申请结佣*/
 	        $('.applyKnotBtn').on('tap', function() {
 				var url = $(this).attr('url');
@@ -353,7 +353,7 @@
 				} else if(orderIds == orderIds) {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commDetil.html",
-						extras: {							
+						extras: {
 							orderIds: orderIds,
 							totalDetail:totalDetail,
 							totalCommission:totalCommission,
@@ -410,11 +410,11 @@
 	//												inListId:inListId,
 											}
 										})
-					                },300);				                	
+					                },300);
 			                	}
 			            	})
 						}else {
-							
+
 						}
 					})
 				}
@@ -423,7 +423,7 @@
 			$('.commRecoverBtn').on('tap', function() {
 				var url = $(this).attr('url');
 				var orderIds = $(this).attr('orderIds');
-				var statu=$(this).attr('statu');		
+				var statu=$(this).attr('statu');
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(orderIds == orderIds) {

@@ -11,13 +11,12 @@
 			this.pageInit(); //页面初始化
 			this.getData();//获取数据		
 			this.getPermissionList('biz:order:buyPrice:view','buyPriceFlag')//佣金权限
-			this.buyPrice(); //
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
-			_this.addRemark();
+//			_this.addRemark();
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
@@ -32,133 +31,265 @@
                 }
             });
         },
-        buyPrice:function(){
-        	var _this = this;
-			if(_this.buyPriceFlag==true){
-				$('#staCommission').parent().show();
-			}else{
-				$('#staCommission').parent().hide();
-			}
-		},
 		getData: function() {
 			var _this = this;
-			var datas={};
-			var idd=_this.userInfo.staOrdId;
-			var orderDetails=_this.userInfo.orderDetails;
-			var statu=_this.userInfo.statu;
-			var source=_this.userInfo.source;
-			console.log(idd)
-			console.log(orderDetails)
-			console.log(statu)
-			console.log(source)
-			datas={
-				id:idd,
-                orderDetails: orderDetails,
-                statu:statu,
-                source:source
-			}
+			console.log(_this.userInfo.orderIds)
+			console.log(_this.userInfo.totalDetail)
+			console.log(_this.userInfo.totalCommission)
+			console.log(_this.userInfo.sellerId)
+			console.log(_this.userInfo.option)
 			$.ajax({
                 type: "GET",
-                url: "/a/biz/order/bizOrderHeader/form4Mobile",
-                data:datas,
+                url: "/a/biz/order/bizCommission/applyCommissionForm4Mobile",
+                data:{
+                	orderIds: _this.userInfo.orderIds,
+					totalDetail:_this.userInfo.totalDetail,
+					totalCommission:_this.userInfo.totalCommission,
+					sellerId : _this.userInfo.sellerId,
+					option : _this.userInfo.option
+                },
                 dataType: "json",
                 success: function(res){
                 	console.log(res)
-                	//调取供应商信息
-                	if(res.data.entity2){
-                		var officeId = res.data.entity2.sellersId;
-                	    $('#supplierId').val(officeId);
-                	    _this.supplier($('#supplierId').val());
-                	}else{
-                		$('#insupplier').parent().hide();//供应商
-						$('#insupplierNum').parent().hide();//供应商卡号
-						$('#insupplierMoney').parent().hide();//供应商收款人
-						$('#insupplierBank').parent().hide();//供应商开户行
-						$('#insuppliercontract').parent().hide();//供应商合同
-					    $('#insuppliercardID').parent().hide();//供应商身份证
-                	} 
-					//备注
-					var RemarkHtml="";
-					$.each(res.data.commentList, function(q, w) {					
-						RemarkHtml +='<li class="step_items">'+
-							'<div class="step_num_txt">'+
-								'<div class="">'+
-									w.comments +
-							    '</div>'+
-								'<div class="">'+
-                                    w.createBy.name +
-							    '</div>'+
-							    '<div class="">'+
-                                    _this.formatDateTime(w.createDate) +
-							    '</div>'+
-							'</div>'+
-						'</li>'
-						$('#Remarks').html(RemarkHtml);
-					})
-					//订单id
-					$('#ordId').val(_this.userInfo.staOrdId);	
-					var item = res.data.bizOrderHeader;
-					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
-					$('#staPoordNum').val(item.orderNum);//订单编号
-					$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
-					$('#staRelNum').val(item.customer.name);//经销店名称
-					$('#staPototal').val(item.totalDetail.toFixed(2));//商品总价
-					$('#staAdjustmentMoney').val(item.totalExp);//调整金额
-					$('#staFreight').val(item.freight.toFixed(2));//运费
-					$('#staShouldPay').val(shouldPay.toFixed(2));//应付金额
-					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');//已付金额
-					var poLastDa = 0;
-					if(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney != 0) {
-						poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
+					var entity = res.data.entity;
+					var deadline = '';
+					if(entity.deadline) {
+						deadline = _this.formatDateTime(entity.deadline);
 					}
-					$('#staPoLastDaPerent').val(poLastDa);//已付金额百分比
-					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));//服务费
-				    $('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));//佣金
-					$('#staAddprice').val(item.serviceFee.toFixed(2));//增值服务费
-					$('#staConsignee').val(item.bizLocation.receiver);//收货人
-					$('#staMobile').val(item.bizLocation.phone);//联系电话
-					$('#staShippAddress').val(item.bizLocation.pcrName);//收货地址
-					$('#staDateilAddress').val(item.bizLocation.address);//详细地址
-					//发票状态
-					var invStatusTxt = '';
-					$.ajax({
-		                type: "GET",
-		                url: "/a/sys/dict/listData",
-		                data: {
-		                	type:"biz_order_invStatus"
-		                },
-		                dataType: "json",
-		                success: function(res){
-		                	$.each(res,function(i,itemss){
-		                		 if(itemss.value==item.invStatus){
-		                		 	  invStatusTxt = itemss.label 
-		                		 }
-		                	})
-		                	$('#staInvoice').val(invStatusTxt);
+//					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
+					$('#commOrdTotal').val(entity.totalDetail);//订单总价
+					$('#commCardNum').val(entity.customerInfo.cardNumber);//零售商卡号
+					$('#commName').val(entity.customerInfo.payee);//零售商收款人
+					$('#commOpenBank').val(entity.customerInfo.bankName);//零售商开户行
+					$('#commApplyNum').val(entity.totalCommission);//申请金额
+					$('#commLastDate').val(deadline);//最后付款时间
+					$('#commRemark').val(entity.remark);//备注
+					
+					$.each(res.data.orderHeaderList, function(jj,ss) {
+						console.log(ss)
+						$('#commOrdNum').val(ss.orderNum);//订单编号
+						$('#commMerchantName').val(ss.seller.name);//代销商名称
+						$('#commOutletName').val(ss.customer.name);//经销店名称
+						$('#commPurchase').val(ss.centersName);//采购中心
+						$('#commOutletPhone').val(ss.customer.phone);//经销店电话
+						$('#commReceived').val(ss.receiveTotal==null?0.00:ss.receiveTotal);//已收货款
+						$('#commTotal').val(ss.totalDetail);//商品总价
+						$('#commAdjustment').val(ss.totalExp);//调整金额
+						$('#commFreight').val(ss.freight);//运费
+						$('#commDeduction').val(ss.scoreMoney);//万户币抵扣
+						$('#commAmount').val(ss.totalDetail+ss.totalExp+ss.freight+ss.serviceFee-ss.scoreMoney);//应付金额
+						$('#commService').val(ss.totalExp+ss.serviceFee+ss.freight);//服务费
+						$('#commissionNum').val(ss.commission);//佣金
+						$('#commCreator').val(ss.createBy.name);//创建人
+						//订单类型
+		          	    $.ajax({
+			                type: "GET",
+			                url: "/a/sys/dict/getDictLabel4Mobile",
+			                dataType: "json",
+			                data: {
+			                	value:ss.orderType,
+			                	type: "biz_order_type",
+			                	defaultValue:'未知状态'
+			                },
+			                async:false,
+			                success: function(hz){ 
+			                	$('#commOrdType').val(hz.data.dictLabel);//订单类型
+			                }
+			            });
+			            //发票状态
+		          	    $.ajax({
+			                type: "GET",
+			                url: "/a/sys/dict/getDictLabel4Mobile",
+			                dataType: "json",
+			                data: {
+			                	value:ss.invStatus,
+			                	type: "biz_order_invStatus",
+			                	defaultValue:'未知状态'
+			                },
+			                async:false,
+			                success: function(dj){ 
+			                	$('#commInvoiceStatus').val(dj.data.dictLabel);//发票状态
+			                }
+			            });
+//			            REFUND(0, "退款申请"),
+//					    REFUNDING(1, "退款中"),
+//					    REFUNDREJECT(2, "驳回"),
+//					    REFUNDED(3, "退款完成");
+			            if(ss.drawBack != null) {
+			            	if(ss.drawBack.drawbackStatus == 0) {
+								$('#commBusinessStatus').val('申请退款');//业务状态
+							}
+			            	if(ss.drawBack.drawbackStatus == 1) {
+			            		$('#commBusinessStatus').val('退款中');//业务状态
+							}
+			            	if(ss.drawBack.drawbackStatus == 2) {
+			            		$('#commBusinessStatus').val('退款驳回');//业务状态
+							}
+			            	if(ss.drawBack.drawbackStatus == 3) {
+			            		$('#commBusinessStatus').val('退款完成');//业务状态
+							}
+						}else {
+							$.ajax({
+				                type: "GET",
+				                url: "/a/sys/dict/getDictLabel4Mobile",
+				                dataType: "json",
+				                data: {
+				                	value:ss.bizStatus,
+				                	type: "biz_order_status",
+				                	defaultValue:'未知状态'
+				                },
+				                async:false,
+				                success: function(zj){ 
+				                	$('#commBusinessStatus').val(zj.data.dictLabel);//发票状态
+				                }
+				            });
+							var total = ss.totalDetail+ss.totalExp+ss.freight+ss.serviceFee;
+							var receive = ss.receiveTotal + ss.scoreMoney;
+							if(total > receive && ss.bizStatus!=10 && ss.bizStatus!=35 && ss.bizStatus!=40 && ss.bizStatus!=45 && ss.bizStatus!=60) {
+								$('#commFinal').val("(有尾款)");
+							}
 						}
-					})
-					//业务状态
-					var statusTxt = '';
-					$.ajax({
-		                type: "GET",
-		                url: "/a/sys/dict/listData",
-		                data: {
-		                	type:"biz_order_status"
-		                },
-		                dataType: "json",
-		                success: function(res){
-		                	$.each(res,function(i,itemaa){
-		                		 if(itemaa.value==item.bizStatus){
-		                		 	  statusTxt = itemaa.label 
-		                		 }
-		                	})
-		                	$('#staStatus').val(statusTxt);
-						}
-					})      
-					var total = item.totalDetail+item.totalExp+item.freight;
-					if(total > (item.receiveTotal+item.scoreMoney) && item.bizStatus!=10 && item.bizStatus!=35 && item.bizStatus!=40 && item.bizStatus!=45 && item.bizStatus!=60) {
-						$('#staFinal').val("(有尾款)");
+						if(ss.applyCommStatus == 'no') {
+							$('#commCheckStatus').val('待申请');//审核状态
+		                }
+						if(ss.applyCommStatus == 'yes' && ss.bizCommission.bizStatus == '0') {
+							if(ss.bizCommission.totalCommission == '0.00' && ss.bizCommission.paymentOrderProcess.name != '审批完成') {
+								$('#commCheckStatus').val('待确认支付金额');//审核状态
+		                    }
+							if(ss.bizCommission.totalCommission != '0.00') {
+								$('#commCheckStatus').val(ss.bizCommission.commonProcess.paymentOrderProcess.name);//审核状态
+		                    }
+		                }
+						if(ss.applyCommStatus == 'yes' && ss.bizCommission.bizStatus == '1') {
+							$('#commCheckStatus').val('已结佣');//审核状态
+		                }
+					});
+					/*审核流程*/
+					if(res.data.auditList.length > 0) {
+						var CheckHtmlList = '';
+						$.each(res.data.auditList, function(dd,mm) {
+//							console.log(mm)
+							var step = dd + 1;
+							if(mm.current != 1) {
+	                            CheckHtmlList +='<li class="step_item">'+
+									'<div class="step_num">'+ step +' </div>'+
+									'<div class="step_num_txt">'+
+										'<div class="mui-input-row">'+
+											'<label>处理人:</label>'+
+											'<input type="text" value="'+ mm.user.name +'" class="mui-input-clear" disabled>'+
+									    '</div>'+
+										'<div class="mui-input-row">'+
+									        '<label>批注:</label>'+
+									        '<input type="text" value="'+ mm.description +'" class="mui-input-clear" disabled>'+
+									    	'<label>状态:</label>'+
+									        '<input type="text" value=" '+ mm.paymentOrderProcess.name +' " class="mui-input-clear" disabled>'+
+									    	'<label>时间:</label>'+
+									        '<input type="text" value="'+ _this.formatDateTime(mm.updateTime) +'" class="mui-input-clear" disabled>'+
+									    '</div>'+
+									'</div>'+
+								'</li>'
+	                        }
+							if(mm.current == 1) {
+	                            CheckHtmlList +='<li class="step_item">'+
+									'<div class="step_num">'+ step +' </div>'+
+									'<div class="step_num_txt">'+
+										'<div class="mui-input-row">'+
+											'<label>当前状态:</label>'+
+											'<input type="text" value="'+ mm.paymentOrderProcess.name +'" class="mui-input-clear" disabled>'+
+									   		'<label>时间:</label>'+
+									        '<input type="text" value=" '+ _this.formatDateTime(mm.updateTime) +' " class="mui-input-clear" disabled>'+
+									    '</div>'+
+									'</div>'+
+								'</li>'
+	                        }
+						});
+						$('#commCheckMenu').html(CheckHtmlList);
 					}
+					/*商品详情*/
+					if(res.data.orderHeaderList.length > 0) {
+						var htmlCommodity = '';
+						$.each(res.data.orderHeaderList, function(zz,ll) {
+							console.log(ll)
+							if(ll.orderDetailList.length > 0) {
+								$.each(ll.orderDetailList, function(hh,zz) {
+									console.log(zz)
+									var totalMoney = zz.unitPrice * zz.ordQty;
+									var consigner = '';
+									if(zz.suplyis.name) {
+										consigner = zz.suplyis.name;
+									}
+		
+									htmlCommodity += '<div class="mui-row app_bline commodity" id="commoditybox">' +
+			                    
+				                    '<div class="mui-row lineStyle">' +
+				                    '<li class="mui-table-view-cell">' +
+				                    '<div class="mui-input-row ">' +
+				                    '<label>订单号:</label>' +
+				                    '<input type="text" class="mui-input-clear" id="" value="' + ll.orderNum + '" disabled></div></li></div>'+
+				                   
+			                    	'<div class="mui-row">' +
+				                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+				                    '<li class="mui-table-view-cell">' +
+				                    '<div class="mui-input-row ">' +
+				                    '<label>商品零售价:</label>' +
+				                    '<input type="text" class="mui-input-clear" id="" value="' + zz.unitPrice + '" disabled></div></li></div>' +
+				                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+				                    '<li class="mui-table-view-cell">' +
+				                    '<div class="mui-input-row ">' +
+				                    '<label>佣金:</label>' +
+				                    '<input type="text" class="mui-input-clear" id="" value="' + zz.detailCommission + '" disabled></div></li></div></div>'+
+								
+									'<div class="mui-row">' +
+				                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+				                    '<li class="mui-table-view-cell">' +
+				                    '<div class="mui-input-row ">' +
+				                    '<label>采购数量:</label>' +
+				                    '<input type="text" class="mui-input-clear" id="" value="' + zz.ordQty + '" disabled></div></li></div>' +
+				                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+				                    '<li class="mui-table-view-cell">' +
+				                    '<div class="mui-input-row ">' +
+				                    '<label>总 额:</label>' +
+				                    '<input type="text" class="mui-input-clear" id="" value="' + totalMoney + '" disabled></div></li></div></div>'+
+								
+									'<div class="mui-row">' +
+				                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+				                    '<li class="mui-table-view-cell">' +
+				                    '<div class="mui-input-row ">' +
+				                    '<label>已发货数量:</label>' +
+				                    '<input type="text" class="mui-input-clear" id="" value="' + zz.sentQty + '" disabled></div></li></div>' +
+				                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+				                    '<li class="mui-table-view-cell">' +
+				                    '<div class="mui-input-row ">' +
+				                    '<label>发货方:</label>' +
+				                    '<input type="text" class="mui-input-clear" id="" value="' + consigner + '" disabled></div></li></div></div>'+
+									
+									'<div class="mui-row lineStyle">' +
+				                    '<li class="mui-table-view-cell">' +   
+				                    '<div class="mui-input-row ">' +
+				                    '<label class="commodityName">商品名称:</label>' +
+				                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + zz.skuName + '" disabled></div></li></div>'+
+									
+			                    	'<div class="mui-row lineStyle">' +
+				                    '<li class="mui-table-view-cell">' +
+				                    '<div class="mui-input-row ">' +
+				                    '<label class="commodityName">商品货号:</label>' +
+				                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + zz.skuInfo.itemNo + '" disabled></div></li></div>' +
+				                    
+				                    '<div class="mui-row lineStyle">' +
+				                    '<li class="mui-table-view-cell">' +
+				                    '<div class="mui-input-row ">' +
+				                    '<label class="commodityName">商品编号:</label>' +
+				                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + zz.partNo + '" disabled></div></li></div>' +
+				                   
+			                    '</div>'
+								});
+							}
+						});
+					}
+					$('#ommodity').html(htmlCommodity);
+					
+					return;
+					
 					//注意事项
 					if(item.orderType==5){
 						$('#notes').html('<ul><li>注：</li><li>一、甲方是万户通平台的运营商，乙方是箱包厂商，丙方是采购商。丙方委托甲方进行商品采购，并通过甲方向乙方支付货款。三方在友好协商、平等互利的基础上，就甲方提供商品采购服务事宜形成本订单。</li><li>二、自丙方下单完成起，至丙方支付完毕本订单所有费用时止。</li><li>三、乙、丙双方确定商品质量标准。丙方负责收货、验货，乙方负责提供质量达标的商品，如果商品达不到丙方要求，丙方有权要求乙方退换货。甲方不承担任何商品质量责任。</li><li>四、商品交付丙方前，丙方须支付全部货款。如果丙方不能及时付款，甲方有权利拒绝交付商品。</li><li>五、本订单商品价格为未含税价，如果丙方需要发票，乙方有义务提供正规发票，税点由丙方承担。</li><li>六、乙方保证其提供的商品具有完整的所有权，并达到国家相关质量标准要求。因乙方商品问题（包括但不限于质量问题、版权问题、款式不符、数量不符等）给甲方及（或）丙方或其他方造成损失的，须由乙方赔偿全部损失。</li><li>七、本订单在万户通平台经甲、乙、丙三方线上确认后生效，与纸质盖章订单具有同等的法律效力。在系统出现故障时，甲、乙、丙三方也可采用纸质订单并签字或盖章后生效。</li></ul>')
@@ -169,20 +300,6 @@
 					_this.checkProcessHtml(res.data);
 					_this.commodityHtml(res.data);
 					_this.paylistHtml(res.data);//支付信息					
-					//排产信息
-					if(res.data.bizOrderHeader.orderDetails=='details'){
-						var poheaderId = res.data.bizOrderHeader.bizPoHeader.id;
-						console.log(poheaderId)
-		                if (poheaderId == null || poheaderId == "") {
-		                    $("#inSchedultype").val("未排产")
-		                    $("#stockGoods").hide();
-		                    $("#schedulingPlan_forHeader").hide();
-		                    $("#schedulingPlan_forSku").hide();
-		                }
-		                if (poheaderId != null && poheaderId != "") {
-		                	_this.scheduling(poheaderId);
-		                }
-					}	
                 }
             });
 		},
