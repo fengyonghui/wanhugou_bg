@@ -12,7 +12,7 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			//权限添加
+			//权限添加biz:order:bizOrderHeader:view
 			this.getPermissionList1('biz:order:bizOrderHeader:view','commOrdFlag')//true 操作
 			this.getPermissionList2('biz:order:bizOrderHeader:audit','commAuditFlag')//true 审核
 			this.getPermissionList3('biz:order:bizOrderHeader:edit','commEditFlag')//true  待审核、修改、删除
@@ -47,6 +47,12 @@
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
 							//查询页面传过来的值
+							var nameTxts = '';
+							if(_this.userInfo.conName) {
+								nameTxts = decodeURIComponent(_this.userInfo.conName)
+							}else {
+								nameTxts = ''
+							}
 							if(_this.userInfo.orderNum==undefined){
 								_this.userInfo.orderNum="";
 							}
@@ -70,6 +76,9 @@
 							}
 							if(_this.userInfo.centersName==undefined){
 								_this.userInfo.centersName="";
+							}
+							if(nameTxts==undefined){
+								nameTxts="";
 							}
 							if(_this.userInfo.includeTestData==undefined){
 								_this.userInfo.includeTestData="";
@@ -127,265 +136,254 @@
 							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 						}
                         var that=this;
+                        /*当前用户信息*/
+						var userId = '';
+						$.ajax({
+			                type: "GET",
+			                url: "/a/getUser",
+			                dataType: "json",
+			                async:false,
+			                success: function(user){                 
+								userId = user.data.id
+			                }
+			            });
+			            
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
 //								console.log(item)
-								//订单类型
-								var orderTypeTxt = '';
-				          	    $.ajax({
-					                type: "GET",
-					                url: "/a/sys/dict/getDictLabel4Mobile",
-					                dataType: "json",
-					                data: {
-					                	value:item.orderType,
-					                	type: "biz_order_type",
-					                	defaultValue:'未知状态'
-					                },
-					                async:false,
-					                success: function(hz){ 
-					                	orderTypeTxt = hz.data.dictLabel;
-					                }
-					            });	
-					            /*当前用户信息*/
-								var userId = '';
-								$.ajax({
-					                type: "GET",
-					                url: "/a/getUser",
-					                dataType: "json",
-					                async:false,
-					                success: function(user){                 
-										userId = user.data.id
-					                }
-					            });
-//								if(bizOrderHeader.flag=='check_pending) {
-//									if(item.bizStatus >= res.data.SUPPLYING && item.orderType != res.data.PHOTO_ORDER) {
-//										
-//									}
-//									if(item.bizStatus >= res.data.SUPPLYING && item.orderType == res.data.PHOTO_ORDER) {
-//									
-//									}
-//									if(item.bizStatus < res.data.SUPPLYING && item.orderType != res.data.PHOTO_ORDER) {
-//									
-//									}
-//									if(item.bizStatus < res.data.SUPPLYING && item.orderType == res.data.PHOTO_ORDER) {
-//									
-//									}
-//								}
-								/*审核*/
-								var commCheckBtn = '';
-								var commCheckBtnTxt = '';
+	                        //订单类型
+							var orderTypeTxt = '';
+			          	    $.ajax({
+				                type: "GET",
+				                url: "/a/sys/dict/getDictLabel4Mobile",
+				                dataType: "json",
+				                data: {
+				                	value:item.orderType,
+				                	type: "biz_order_type",
+				                	defaultValue:'未知状态'
+				                },
+				                async:false,
+				                success: function(hz){ 
+				                	orderTypeTxt=hz.data.dictLabel;
+				                }
+				            });
 								/*已结佣*/
-//								var alreadyKnotBtn = '';
+//								
 //								var alreadyKnotBtnTxt = '';
 								/*申请结佣*/
 								var applyKnotBtn = '';
+								var noKnotBtn = '';
+								var alreadyKnotBtn = '';
 								var applyKnotBtnTxt = '';
 								/*结佣详情*/
 								var commDetailBtn = '';
-								var commDetailBtnTxt = '';
+								var commDetailBtnTxt = '详情';
 								/*删除*/
 								var commDeleteBtn = '';
 								var commDeleteBtnTxt = '';
 								/*修改*/
 								var commAmendBtn = '';
 								var commAmendBtnTxt = '';
-								/*待审核、审核成功*/
-								var commWaCheckBtn = '';
-								var commWaCheckBtnTxt = '';
-								/*支付流水*/
-								var waterCouBtn = '';
-								var waterCouBtnTxt = '';
 								/*恢复*/
 								var commRecoverBtn = '';
 								var commRecoverBtnTxt = '';
 								
-								/*同意退款*/
-								/*驳回*/
-								/*线下退款*/
-								/*退款状态*/
-								
 								if(_this.commOrdFlag == true) {
-									if(item.bizStatus != res.data.CANCLE) {
-										var DataRoleGener = '';
-										var fileRoleData = '';
-										var commName = '';
-										var commCode = '';
-										if(item.commonProcess.doOrderHeaderProcessFifth) {
-											DataRoleGener = item.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
-											fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
-											commName = item.commonProcess.doOrderHeaderProcessFifth.name;
-											commCode = item.commonProcess.doOrderHeaderProcessFifth.code;
-										}
-										var OriginDataRole = '';
-										var OriginRoleData = '';
-										var commOriginName = '';
-										var commOriginCode = '';
-		                            	if(item.commonProcess.jointOperationOriginProcess) {
-		                            		OriginDataRole = item.commonProcess.jointOperationOriginProcess.roleEnNameEnum;
-											OriginRoleData = dataRow.filter(v => DataRoleGener.includes(v));
-											commOriginName = item.commonProcess.jointOperationOriginProcess.name;
-											commOriginCode = item.commonProcess.jointOperationOriginProcess.code;
-		                            	}
-		                            	var LocalDataRole = '';
-										var LocalRoleData = '';
-										var commLocalName = '';
-										var commLocalCode = '';
-			                        	if(item.commonProcess) {
-			                        		var purchName ='';
-			                        		if(item.commonProcess.purchaseOrderProcess) {
-			                        			purchName = item.commonProcess.purchaseOrderProcess.name;
-			                        		}
-			                        		if(item.commonProcess.jointOperationLocalProcess) {
-			                        			LocalDataRole = item.commonProcess.jointOperationLocalProcess.roleEnNameEnum;
-												LocalRoleData = dataRow.filter(v => DataRoleGener.includes(v));
-			                        		}
-			                        	}
-				                        if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING) {
-				                            if(_this.commAuditFlag == true) {
-				                            	if(fileRoleData.length != 0 || userId==1 && commName != '驳回'&& commCode != 'auditFithStatus') {
-				                                    commCheckBtn = 'commCheckBtn';
-													commCheckBtnTxt = '审核';
-				                                }
-				                            	if(OriginRoleData.length != 0 && commOriginName != '驳回' && commOriginCode != 'auditStatus'
-												&& item.orderType == res.data.ORDINARY_ORDER) {
-				                                    commCheckBtn = 'commCheckBtn';
-													commCheckBtnTxt = '审核';
-				                                }
-				                            }
-				                        }
-				                        if(_this.commAuditFlag == true) {
-				                        	if(item.commonProcess && item.commonProcess.id && purchName != '驳回'&& purchName != '审批完成'
-											&& (LocalRoleData.length != 0 || OriginRoleData.length != 0 || userId==1)) {
-												if((item.orderType == res.data.ORDINARY_ORDER || item.orderType == res.data.COMMISSION_ORDER)
-												&& item.bizStatus >= res.data.SUPPLYING) {
-													if(item.suplys == 0) {
-														commCheckBtn = 'commCheckBtn';
-														commCheckBtnTxt = '审核';
-													}
-													if(item.suplys != 0) {
-														commCheckBtn = 'commCheckBtn';
-														commCheckBtnTxt = '审核';
-													}
-												}
-											}
-										}
-										if(item.delFlag!=null && item.delFlag == '1') {
-//											需要加个参数res.data.bizOrderHeader.flag
-//									    	if(bizOrderHeader.flag=='check_pending') {
-									    		if(_this.commEditFlag == true) {
-									    			if(item.bizStatus != res.data.CANCLE) {
-									    				if(item.orderType != res.data.PHOTO_ORDER) {
-//									                    	<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">
-									                    }
-									    				if(item.orderType == res.data.PHOTO_ORDER) {
-//									                    	<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">
-									                    }
-									                    if(item.bizStatus==0 || item.bizStatus==5 || item.bizStatus==10) {
-									                        commWaCheckBtn = 'commWaCheckBtn';
-															commWaCheckBtnTxt = '待审核';
-									                    	if(item.orderType != res.data.PHOTO_ORDER) {
-									                    		commAmendBtn = 'commAmendBtn';
-									                    		commAmendBtnTxt = '修改';
-									                        }
-									                    }
-									                    if(item.bizStatus==res.data.UNAPPROVE) {
-									                        commWaCheckBtnTxt = '审核失败';
-									                        if(item.orderType != res.data.PHOTO_ORDER && userId==1) {
-									                            commAmendBtn = 'commAmendBtn';
-									                    		commAmendBtnTxt = '修改';
-									                        }
-									                    }
-//									                </a>
-									                	if(item.bizStatus==res.data.SUPPLYING) {
-									//                      <c:choose>
-									//							if(userId==1) {
-									//	                        <a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">
-									//	                            审核成功</a>
-									//	                        </c:when>
-									//	                        <c:otherwise>审核成功</c:otherwise>
-									//                      </c:choose>
-																if(userId==1) {
-										                        	commWaCheckBtnTxt = '审核成功';
-										                        }else {
-										                        	commWaCheckBtnTxt = '审核成功';
-										                        }
-									                    }
-									                }
-									    			if(item.orderType != res.data.PHOTO_ORDER) {
-									    				commDetailBtn = 'commDetailBtn';
-									    				commDetailBtnTxt = '详情';
-									                }
-									    			if(item.orderType == res.data.PHOTO_ORDER) {
-									                	commDetailBtn = 'commDetailBtn';
-									    				commDetailBtnTxt = '详情';
-									                }
-									            }
-//									 		}else {
-												if(item.bizStatus != res.data.CANCLE) {
-													if(res.data.statu == 'unline' || userId==1) {
-														waterCouBtn = 'waterCouBtn';
-														waterCouBtnTxt = '支付流水';
-									                }
-									            }
-												if(item.orderType != res.data.PHOTO_ORDER) {
-									//				pc端这里写的是查看详情,但是路径和参数都一样
-													commDetailBtn = 'commDetailBtn';
-													commDetailBtnTxt = '详情';
-									            }
-												if(item.orderType == res.data.PHOTO_ORDER) {
-									            	commDetailBtn = 'commDetailBtn';
-													commDetailBtnTxt = '详情';
-									            }
-												if(item.bizStatus != res.data.CANCLE) {
-													if(_this.commEditFlag == true) {
-														if(item.orderType != res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)) {
-									                    	commAmendBtn = 'commAmendBtn';
-									                		commAmendBtnTxt = '修改';
-									                    }
-														if(item.orderType == res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)) {
-									                    	commAmendBtn = 'commAmendBtn';
-									                		commAmendBtnTxt = '修改';
-									                    }
-														if(userId==1) {
-										                    commDeleteBtn = 'commDeleteBtn';
-															commDeleteBtnTxt = '删除';
-									                    }
-									                }
-													if(_this.commRefundFlag == true) {
-									                    /*退款增加*/
-									                    if(item.drawBack.drawbackStatus==res.data.REFUND) {
-//										                    <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&drawbackStatus=${OrderHeaderDrawBackStatusEnum.REFUND.state}&refundSkip=refundSkip">同意退款</a>
-//										                    <a href="javascript:checkInfo('${OrderHeaderDrawBackStatusEnum.REFUNDREJECT.state}','退款驳回','${orderHeader.id}')">驳回</a>
-									                    }
-									                    if(item.drawBack.drawbackStatus==res.data.REFUNDING) {
-									                    	/*退款中*/
-									                    }
-									                    if(item.drawBack.drawbackStatus==res.data.REFUNDREJECT) {
-									                    	/*退款驳回*/
-									                    }
-									                }
-													if(_this.commDoRefundFlag == true) {
-														if(item.drawBack.drawbackStatus==res.data.REFUNDING) {
-//									                    	<a href="${ctx}/biz/order/bizOrderHeader/refund?id=${orderHeader.id}&drawbackStatus=${OrderHeaderDrawBackStatusEnum.REFUNDED.state}">线下退款</a>
-									                    }
-									                }
-													if(_this.commOrdFlag == true) {
-														if(item.drawBack.drawbackStatus==res.data.REFUNDED) {
-									                   		 /*退款完成*/
-									                    }
-									                }
-									            }
-//											}
-											if(_this.commEditFlag == true) {
-												if(item.delFlag!=null && item.delFlag == '0') {
-												commDetailBtn = 'commDetailBtn';
-												commDetailBtnTxt = '详情';
-												commRecoverBtn = 'commRecoverBtn';
-												commRecoverBtnTxt = '恢复';
-												}
-											}
-										}
+//									var applyCommStatusTxt="";
+//									var noapplyCommStatus="";
+									if(item.applyCommStatus == 'no'){
+										applyKnotBtnTxt="申请结佣";
+										applyKnotBtn="applyKnotBtn"
 									}
+									if(item.applyCommStatus == 'yes' && item.bizCommission.bizStatus == '0'){
+										applyKnotBtnTxt="未结佣";
+										applyKnotBtn="noKnotBtn"
+									}
+									if(item.applyCommStatus == 'yes' && item.bizCommission.bizStatus == '1'){
+										applyKnotBtnTxt="已结佣";
+										applyKnotBtn="alreadyKnotBtn"
+									}
+//									if(item.bizStatus != res.data.CANCLE) {
+//										var DataRoleGener = '';
+//										var fileRoleData = '';
+//										var commName = '';
+//										var commCode = '';
+//										if(item.commonProcess.doOrderHeaderProcessFifth) {
+//											DataRoleGener = item.commonProcess.doOrderHeaderProcessFifth.roleEnNameEnum;
+//											fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
+//											commName = item.commonProcess.doOrderHeaderProcessFifth.name;
+//											commCode = item.commonProcess.doOrderHeaderProcessFifth.code;
+//										}
+//										var OriginDataRole = '';
+//										var OriginRoleData = '';
+//										var commOriginName = '';
+//										var commOriginCode = '';
+//		                            	if(item.commonProcess.jointOperationOriginProcess) {
+//		                            		OriginDataRole = item.commonProcess.jointOperationOriginProcess.roleEnNameEnum;
+//											OriginRoleData = dataRow.filter(v => DataRoleGener.includes(v));
+//											commOriginName = item.commonProcess.jointOperationOriginProcess.name;
+//											commOriginCode = item.commonProcess.jointOperationOriginProcess.code;
+//		                            	}
+//		                            	var LocalDataRole = '';
+//										var LocalRoleData = '';
+//										var commLocalName = '';
+//										var commLocalCode = '';
+//			                        	if(item.commonProcess) {
+//			                        		var purchName ='';
+//			                        		if(item.commonProcess.purchaseOrderProcess) {
+//			                        			purchName = item.commonProcess.purchaseOrderProcess.name;
+//			                        		}
+//			                        		if(item.commonProcess.jointOperationLocalProcess) {
+//			                        			LocalDataRole = item.commonProcess.jointOperationLocalProcess.roleEnNameEnum;
+//												LocalRoleData = dataRow.filter(v => DataRoleGener.includes(v));
+//			                        		}
+//			                        	}
+//				                        if(item.orderType == res.data.PURCHASE_ORDER && item.bizStatus >= res.data.SUPPLYING) {
+//				                            if(_this.commAuditFlag == true) {
+//				                            	if(fileRoleData.length != 0 || userId==1 && commName != '驳回'&& commCode != 'auditFithStatus') {
+//				                                    commCheckBtn = 'commCheckBtn';
+//													commCheckBtnTxt = '审核';
+//				                                }
+//				                            	if(OriginRoleData.length != 0 && commOriginName != '驳回' && commOriginCode != 'auditStatus'
+//												&& item.orderType == res.data.ORDINARY_ORDER) {
+//				                                    commCheckBtn = 'commCheckBtn';
+//													commCheckBtnTxt = '审核';
+//				                                }
+//				                            }
+//				                        }
+//				                        if(_this.commAuditFlag == true) {
+//				                        	if(item.commonProcess && item.commonProcess.id && purchName != '驳回'&& purchName != '审批完成'
+//											&& (LocalRoleData.length != 0 || OriginRoleData.length != 0 || userId==1)) {
+//												if((item.orderType == res.data.ORDINARY_ORDER || item.orderType == res.data.COMMISSION_ORDER)
+//												&& item.bizStatus >= res.data.SUPPLYING) {
+//													if(item.suplys == 0) {
+//														commCheckBtn = 'commCheckBtn';
+//														commCheckBtnTxt = '审核';
+//													}
+//													if(item.suplys != 0) {
+//														commCheckBtn = 'commCheckBtn';
+//														commCheckBtnTxt = '审核';
+//													}
+//												}
+//											}
+//										}
+//										if(item.delFlag!=null && item.delFlag == '1') {
+////											需要加个参数res.data.bizOrderHeader.flag
+////									    	if(bizOrderHeader.flag=='check_pending') {
+//									    		if(_this.commEditFlag == true) {
+//									    			if(item.bizStatus != res.data.CANCLE) {
+//									    				if(item.orderType != res.data.PHOTO_ORDER) {
+////									                    	<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">
+//									                    }
+//									    				if(item.orderType == res.data.PHOTO_ORDER) {
+////									                    	<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">
+//									                    }
+//									                    if(item.bizStatus==0 || item.bizStatus==5 || item.bizStatus==10) {
+//									                        commWaCheckBtn = 'commWaCheckBtn';
+//															commWaCheckBtnTxt = '待审核';
+//									                    	if(item.orderType != res.data.PHOTO_ORDER) {
+//									                    		commAmendBtn = 'commAmendBtn';
+//									                    		commAmendBtnTxt = '修改';
+//									                        }
+//									                    }
+//									                    if(item.bizStatus==res.data.UNAPPROVE) {
+//									                        commWaCheckBtnTxt = '审核失败';
+//									                        if(item.orderType != res.data.PHOTO_ORDER && userId==1) {
+//									                            commAmendBtn = 'commAmendBtn';
+//									                    		commAmendBtnTxt = '修改';
+//									                        }
+//									                    }
+////									                </a>
+//									                	if(item.bizStatus==res.data.SUPPLYING) {
+//									//                      <c:choose>
+//									//							if(userId==1) {
+//									//	                        <a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">
+//									//	                            审核成功</a>
+//									//	                        </c:when>
+//									//	                        <c:otherwise>审核成功</c:otherwise>
+//									//                      </c:choose>
+//																if(userId==1) {
+//										                        	commWaCheckBtnTxt = '审核成功';
+//										                        }else {
+//										                        	commWaCheckBtnTxt = '审核成功';
+//										                        }
+//									                    }
+//									                }
+//									    			if(item.orderType != res.data.PHOTO_ORDER) {
+//									    				commDetailBtn = 'commDetailBtn';
+//									    				commDetailBtnTxt = '详情';
+//									                }
+//									    			if(item.orderType == res.data.PHOTO_ORDER) {
+//									                	commDetailBtn = 'commDetailBtn';
+//									    				commDetailBtnTxt = '详情';
+//									                }
+//									            }
+////									 		}else {
+//												if(item.bizStatus != res.data.CANCLE) {
+//													if(res.data.statu == 'unline' || userId==1) {
+//														waterCouBtn = 'waterCouBtn';
+//														waterCouBtnTxt = '支付流水';
+//									                }
+//									            }
+//												if(item.orderType != res.data.PHOTO_ORDER) {
+//									//				pc端这里写的是查看详情,但是路径和参数都一样
+//													commDetailBtn = 'commDetailBtn';
+//													commDetailBtnTxt = '详情';
+//									            }
+//												if(item.orderType == res.data.PHOTO_ORDER) {
+//									            	commDetailBtn = 'commDetailBtn';
+//													commDetailBtnTxt = '详情';
+//									            }
+//												if(item.bizStatus != res.data.CANCLE) {
+//													if(_this.commEditFlag == true) {
+//														if(item.orderType != res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)) {
+//									                    	commAmendBtn = 'commAmendBtn';
+//									                		commAmendBtnTxt = '修改';
+//									                    }
+//														if(item.orderType == res.data.PHOTO_ORDER && (item.bizStatus < res.data.SUPPLYING || userId==1)) {
+//									                    	commAmendBtn = 'commAmendBtn';
+//									                		commAmendBtnTxt = '修改';
+//									                    }
+//														if(userId==1) {
+//										                    commDeleteBtn = 'commDeleteBtn';
+//															commDeleteBtnTxt = '删除';
+//									                    }
+//									                }
+//													if(_this.commRefundFlag == true) {
+//									                    /*退款增加*/
+//									                    if(item.drawBack.drawbackStatus==res.data.REFUND) {
+////										                    <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&drawbackStatus=${OrderHeaderDrawBackStatusEnum.REFUND.state}&refundSkip=refundSkip">同意退款</a>
+////										                    <a href="javascript:checkInfo('${OrderHeaderDrawBackStatusEnum.REFUNDREJECT.state}','退款驳回','${orderHeader.id}')">驳回</a>
+//									                    }
+//									                    if(item.drawBack.drawbackStatus==res.data.REFUNDING) {
+//									                    	/*退款中*/
+//									                    }
+//									                    if(item.drawBack.drawbackStatus==res.data.REFUNDREJECT) {
+//									                    	/*退款驳回*/
+//									                    }
+//									                }
+//													if(_this.commDoRefundFlag == true) {
+//														if(item.drawBack.drawbackStatus==res.data.REFUNDING) {
+////									                    	<a href="${ctx}/biz/order/bizOrderHeader/refund?id=${orderHeader.id}&drawbackStatus=${OrderHeaderDrawBackStatusEnum.REFUNDED.state}">线下退款</a>
+//									                    }
+//									                }
+//													if(_this.commOrdFlag == true) {
+//														if(item.drawBack.drawbackStatus==res.data.REFUNDED) {
+//									                   		 /*退款完成*/
+//									                    }
+//									                }
+//									            }
+////											}
+//											if(_this.commEditFlag == true) {
+//												if(item.delFlag!=null && item.delFlag == '0') {
+//												commDetailBtn = 'commDetailBtn';
+//												commDetailBtnTxt = '详情';
+//												commRecoverBtn = 'commRecoverBtn';
+//												commRecoverBtnTxt = '恢复';
+//												}
+//											}
+//										}
+//									}
 								}
 							commHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group" id="rodiv_' + item.orderType + '">'+
 								'<div class="mui-input-row">' +
@@ -412,45 +410,21 @@
 									'<label>更新时间:</label>' +
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 								'</div>' +
-								'<div class="app_color40 mui-input-row app_text_center content_part operation " id="foot">' +
-//					/*已结佣*/		'<div class="'+ alreadyKnotBtn +'" staOrdId="'+ item.id +'">' +
-//										alreadyKnotBtnTxt +
-//									'</div>'+
-					/*审核*/			'<div class="'+commCheckBtn+'" staOrdId="'+ item.id +'">' +
-										commCheckBtnTxt +
-									'</div>'+
-					/*详情*/			'<div class="'+commDetailBtn+'" staOrdId="'+ item.id +'">' +
-										commDetailBtnTxt +
-									'</div>'+
-			/*待审核、审核成功*/		'<div class="'+commWaCheckBtn+'" staOrdId="'+ item.id +'">' +
-										commWaCheckBtnTxt +
-									'</div>'+									
-					/*申请结佣*/		'<div class="'+applyKnotBtn+'" staOrdId="'+ item.id +'">' +
-										applyKnotBtnTxt +
-									'</div>'+
-								'</div>'+	
-								'<div class="app_color40 mui-row app_text_center content_part operation " id="foot">' +
-					/*删除*/			'<div class="'+commDeleteBtn+'" staOrdId="'+ item.id +'">' +
-										commDeleteBtnTxt +
-									'</div>'+
-					/*恢复*/			'<div class="'+commRecoverBtn+'" staOrdId="'+ item.id +'">' +
-										commRecoverBtnTxt +
-									'</div>'+
-					/*修改*/			'<div class="'+commAmendBtn+'" staOrdId="'+ item.id +'">' +
-										commAmendBtnTxt +
-									'</div>'+	
-					/*支付流水*/		'<div class="'+waterCouBtn+'" staOrdId="'+ item.id +'">' +
-										waterCouBtnTxt +
-									'</div>'+									
-								'</div>' +
+								'<div class="app_color40 mui-row app_text_center operation">' +
+										'<div class="mui-col-xs-4 applyKnotBtn" orderIds="'+ item.id +'" totalDetail="'+ item.totalDetail +'" totalCommission="'+ item.commission +'" sellerId="'+ item.sellersId +'">' +
+											'<div class="">'+applyKnotBtnTxt+'</div>' +
+										'</div>' +
+										'<div class="mui-col-xs-4 commDetailBtn" orderIds="'+ item.id +'" totalDetail="'+ item.totalDetail +'" totalCommission="'+ item.commission +'" sellerId="'+ item.sellersId +'" option=detail">' +
+											'<div class="">'+commDetailBtnTxt+'</div>' +
+										'</div>' +
+//										'<div class="mui-col-xs-4 orDetailBtn" orderIds="'+ item.id +'">' +
+//											'<div class="">'+detail+'</div>' +
+//										'</div>' +
+									'</div>' +
 							'</div>'
 
 								});
 								$('#commList').append(commHtmlList);
-//								_this.stOrdHrefHtml();
-								//先隐藏Ro订单
-//								var RoList=$('#refreshContainer div[id^=rodiv_8]');
-//								$(RoList).hide();
 								
 					}else{
 						$('.mui-pull-bottom-pocket').html('');
@@ -540,16 +514,15 @@
         ordHrefHtml: function() {
         	var _this = this;
         	/*查询*/
-        	var myStatu = $('#myStatu').val();
 			$('.app_header').on('tap', '#OrdSechBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderListSeach.html",
+						url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commListsearch.html",
 						extras:{
-							statu: myStatu,
+//							statu: myStatu,
 						}
 					})
 				}

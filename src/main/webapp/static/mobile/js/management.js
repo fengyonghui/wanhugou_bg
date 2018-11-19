@@ -47,7 +47,7 @@
 		},
 		getData: function() {
 			var _this = this;
-            $('#menuMaget').on('tap','.menuBtn',function(){
+            $('#menuMaget').on('tap','.menuBtn',function(){            	
                 var dataId = $(this).attr('dataId');
                 var indexNum = $(this).attr('indexNum');               
                 if(dataId){
@@ -65,24 +65,26 @@
                                 } 
                             });
                             $(".childData"+indexNum).html(pHtmlList);
-                            var sArr=$('.childMenu');
-                            console.log(sArr)
-                            $.each(sArr, function(i, items) {
-                            	var mobileUrls = $(this).attr('mobileurl');
-                            	console.log(mobileUrls)
-                            	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
-	                            	console.log('777')	
-	                            	$(this).attr('id','commission');
-	                            	var divHtmlList = '<ul type="submit" class="cMenu"></ul>';
-	                            	$('#commission').append(divHtmlList);
+                            var sArr=$('.childData1 .childMenu');
+		                    console.log(sArr)
+		                    $.each(sArr, function(i, items) {
+		                    	var mobileUrls = $(this).attr('mobileurl');
+		                    	console.log(mobileUrls)
+		                    	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
+		                        	console.log('777')	
+		                        	$(this).attr('id','commission');
+		                        	var divHtmlList = '<ul class="mui-table-view cMenu" id=""></ul>';
+		                        	$('#commission').append(divHtmlList);
+		                        	
+		                        }
+		                    });
 
-	                            }
-                            });
                         }
-                    });
+                   });
 				}/*else {
                 	mui.toast('没有子菜单')
 				}*/
+				
 			})
         _this.hrefHtml()
         },
@@ -203,13 +205,15 @@
                 }
 			})
             //佣金管理
-            $('#menuMaget').on('click','#commission',function(){
+            $('#menuMaget').on('click','#commission',function(){//menuBtn 
+            	//
             	var url = $(this).attr('url');
 				var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');
                 if(url) {
                 	mui.toast('子菜单不存在')             	
                 }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml') {
+                	
                 	$.ajax({
                         type: "GET",
                         url: "/a/sys/menu/listData",
@@ -220,7 +224,7 @@
                             var pHtmlLists = '';
                             $.each(res.data, function(i, ite) {
                                 if(ite.mobileUrl){
-                                	pHtmlLists+= '<li style="margin:10px 0;" class="comMenu" purchId="'+ite.id+'" mobileUrl="'+ite.mobileUrl+'">'+ ite.name+'</li>'
+                                	pHtmlLists+= '<li class="mui-table-view-cell mui-collapse comMenu" purchId="'+ite.id+'" mobileUrl="'+ite.mobileUrl+'">'+ ite.name+'</li>'
                                 }
                             });
                             $('#commission .cMenu').html(pHtmlLists);
