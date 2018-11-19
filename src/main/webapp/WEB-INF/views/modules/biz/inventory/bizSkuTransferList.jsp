@@ -20,10 +20,12 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/inventory/bizSkuTransfer/">库存调拨列表</a></li>
-		<shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit"><li><a href="${ctx}/biz/inventory/bizSkuTransfer/form">库存调拨添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/biz/inventory/bizSkuTransfer?source=${source}">库存调拨列表</a></li>
+		<c:if test="${source ne 'out' && source ne 'in'}">
+			<shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit"><li><a href="${ctx}/biz/inventory/bizSkuTransfer/form">库存调拨添加</a></li></shiro:hasPermission>
+		</c:if>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizSkuTransfer" action="${ctx}/biz/inventory/bizSkuTransfer/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="bizSkuTransfer" action="${ctx}/biz/inventory/bizSkuTransfer?source=${source}" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
@@ -104,14 +106,14 @@
 							<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=audit">审核</a>
 						</shiro:hasPermission>
 					</c:if>
-					<c:if test="${bizSkuTransfer.bizStatus >= TransferStatusEnum.APPROVE.state && bizSkuTransfer.bizStatus <= TransferStatusEnum.OUTING_WAREHOUSE.state}">
+					<c:if test="${source eq 'out' && bizSkuTransfer.bizStatus >= TransferStatusEnum.APPROVE.state && bizSkuTransfer.bizStatus <= TransferStatusEnum.OUTING_WAREHOUSE.state}">
 						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:outTreasury">
-							<a href="${ctx}/biz/inventory/bizSkuTransfer/outTreasuryForm?id=${bizSkuTransfer.id}">出库</a>
+							<a href="${ctx}/biz/inventory/bizSkuTransfer/outTreasuryForm?id=${bizSkuTransfer.id}&source=${source}">出库</a>
 						</shiro:hasPermission>
 					</c:if>
-					<c:if test="${bizSkuTransfer.bizStatus >= TransferStatusEnum.ALREADY_OUT_WAREHOUSE.state && bizSkuTransfer.bizStatus <= TransferStatusEnum.INING_WAREHOUSE.state}">
+					<c:if test="${source eq 'in' && bizSkuTransfer.bizStatus >= TransferStatusEnum.ALREADY_OUT_WAREHOUSE.state && bizSkuTransfer.bizStatus <= TransferStatusEnum.INING_WAREHOUSE.state}">
 						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:outTreasury">
-							<a href="${ctx}/biz/inventory/bizSkuTransfer/inTreasuryForm?id=${bizSkuTransfer.id}">入库</a>
+							<a href="${ctx}/biz/inventory/bizSkuTransfer/inTreasuryForm?id=${bizSkuTransfer.id}&source=${source}">入库</a>
 						</shiro:hasPermission>
 					</c:if>
                 </td>

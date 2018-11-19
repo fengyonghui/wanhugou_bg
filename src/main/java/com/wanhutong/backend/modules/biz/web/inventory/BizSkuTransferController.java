@@ -139,6 +139,7 @@ public class BizSkuTransferController extends BaseController {
 				roleSet.add(parse.name());
 			}
 		}
+		model.addAttribute("source",bizSkuTransfer.getSource());
 		model.addAttribute("roleSet", roleSet);
 		model.addAttribute("transferMap",transferMap);
 		model.addAttribute("fromInvList",bizInventoryInfoService.findAllList(new BizInventoryInfo()));
@@ -292,6 +293,7 @@ public class BizSkuTransferController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizSkuTransfer:inTreasury")
 	@RequestMapping(value = "inTreasuryForm")
 	public String inTreasuryForm(BizSkuTransfer bizSkuTransfer, Model model) {
+
 		model.addAttribute("bizSkuTransfer",bizSkuTransfer);
 		return "modules/biz/inventory/transferInTreasuryForm";
 	}

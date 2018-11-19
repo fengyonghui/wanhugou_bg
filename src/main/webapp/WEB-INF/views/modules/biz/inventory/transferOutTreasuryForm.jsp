@@ -80,6 +80,7 @@
                     var collLocate = $("#collLocate").val();
                     var sendDate = $("#sendDate").val();
                     var settlementStatus = $("#settlementStatus").val();
+                    var source = $("#source").val();
 
                     var bizInvoiceStr = {"trackingNumber":trackingNumber,
 						"inspectorId":inspectorId,
@@ -103,7 +104,7 @@
                             alert("选中出库的备货单，本次出库数量不能大于可出库数量");
                             return false;
 						} else if (!flag3){
-                            alert("选中出库的备货单，本次出库数量不能大于订单的剩余需求数量");
+                            alert("选中出库的备货单，本次出库数量不能大于调拨单的剩余需求数量");
                             return false;
                         } else if (!stockFlag) {
                             alert("该商品库存不足");
@@ -118,7 +119,7 @@
 								success:function (data) {
 									if (data=='ok') {
 										alert("出库成功");
-										window.location.href = "${ctx}/biz/inventory/bizSkuTransfer";
+										window.location.href = "${ctx}/biz/inventory/bizSkuTransfer?source=" + source;
 									} else if (data=='error') {
 									    alert("出库失败，没有选择出库数据");
                                     } else {
@@ -130,7 +131,6 @@
                         // form.submit();
                         // return true;
                         // loading('正在提交，请稍等...');
-
                     }else{
                         return false;
                     }
@@ -184,7 +184,7 @@
             return treasury;
         }
 	</script>
-	<script type="text/javascript">
+	<%--<script type="text/javascript">
         function doPrint() {
             top.$.jBox.confirm("确认要打印当前出库单吗？","系统提示",function(v,h,f){
                 if(v=="ok"){
@@ -201,18 +201,18 @@
             },{buttonsFocus:1});
             top.$('.jbox-body .jbox-icon').css('top','55px');
         }
-	</script>
+	</script>--%>
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<li><a href="${ctx}/biz/inventory/bizSkuTransfer/">调拨单列表</a></li>
-	<li class="active"><a href="${ctx}/biz/inventory/bizSkuTransfer/outTreasuryForm">调拨单出库</a></li>
+	<li><a href="${ctx}/biz/inventory/bizSkuTransfer?source=${bizSkuTransfer.source}">调拨单列表</a></li>
 </ul><br/>
 <form:form id="inputForm" modelAttribute="bizSkuTransfer"  action="${ctx}/biz/inventory/bizSkuTransfer/outTreasury" method="post" class="form-horizontal">
 	<%--<form:hidden path="id"/>--%>
 	<sys:message content="${message}"/>
 	<input name="bizRequestHeader.id" value="${bizRequestHeader==null?0:bizRequestHeader.id}" type="hidden"/>
 	<input name="bizSkuTransfer.id" value="${bizSkuTransfer==null?0:bizSkuTransfer.id}" type="hidden"/>
+    <input id="source" value="${bizSkuTransfer.source}" type="hidden"/>
 	<input type="hidden" name="bizStatu" value="${bizStatu}"/>
 	<div class="control-group">
 		<label class="control-label">调拨单号：</label>
@@ -227,14 +227,12 @@
 		<label class="control-label">起始采购中心仓库：</label>
 		<div class="controls">
 			<input type="text" class="input-xlarge" readonly="readonly" value="${bizSkuTransfer.fromInv.name}"/>
-			<%--<input type="hidden" name="customer.id" value="${bizOrderHeader.customer.id}">--%>
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label">目标采购中心仓库：</label>
 		<div class="controls">
 			<input type="text" class="input-xlarge" readonly="readonly" value="${bizSkuTransfer.toInv.name}"/>
-				<%--<input type="hidden" name="customer.id" value="${bizOrderHeader.customer.id}">--%>
 		</div>
 	</div>
 	<c:if test="${bizSkuTransfer.source != 'detail'}">
