@@ -236,7 +236,7 @@
 										'<div class="mui-col-xs-4 '+ applyKnotBtn +'" orderIds="'+ item.id +'" totalDetail="'+ item.totalDetail +'" totalCommission="'+ item.commission +'" sellerId="'+ item.sellersId +'" orderNum="'+ item.orderNum +'">' +
 											'<div class="">'+applyKnotBtnTxt+'</div>' +
 										'</div>' +
-										'<div class="mui-col-xs-4 commDetailBtn" id="'+ commDetailBtn +'" orderIds="'+ item.id +'" totalDetail="'+ item.totalDetail +'" totalCommission="'+ item.commission +'" sellerId="'+ item.sellersId +'" option="detail">' +
+										'<div class="mui-col-xs-4 commDetailBtn" id="'+ commDetailBtn +'" staOrdId="'+ item.id +'" totalDetail="'+ item.totalDetail +'" totalCommission="'+ item.commission +'" sellerId="'+ item.sellersId +'">' +
 											'<div class="">'+commDetailBtnTxt+'</div>' +
 										'</div>' +
 										'<div class="mui-col-xs-4 '+ commDeleteBtn +'" orderIds="'+ item.id +'" statu="'+ item.statu +'" source="'+ item.source +'">' +
@@ -363,22 +363,24 @@
 				}
 			}),	
 		/*详情*/
-			$('.content_part').on('tap', '.ordDetailBtn', function() {
+			$('.content_part').on('tap', '.commDetailBtn', function() {
 				var url = $(this).attr('url');
-				var staOrdId = $(this).attr('staOrdId');
-				var orderDetail="details";
-				var statu=$(this).attr('ordstatu');
-				var source=$(this).attr('ordsource');
+				var orderIds = $(this).attr('staOrdId');
+				var totalDetail = $(this).attr('totalDetail');
+				var totalCommission = $(this).attr('totalCommission');
+				var sellerId = $(this).attr('sellerId');
+				
 				if(url) {
 					mui.toast('子菜单不存在')
-				} else if(staOrdId == staOrdId) {
+				} else if(orderIds == orderIds) {
 					GHUTILS.OPENPAGE({
 						url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commDetil.html",
 						extras: {
-							staOrdId: staOrdId,
-							orderDetails:orderDetail,
-							statu:statu,
-							source:source,
+							orderIds: orderIds,
+							totalDetail:totalDetail,
+							totalCommission:totalCommission,
+							sellerId:sellerId,
+							option: 'detail'
 						}
 					})
 				}
