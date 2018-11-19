@@ -71,7 +71,7 @@
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
 			<if test="sendNo != null and sendNo != ''">
-				AND a.send_no LIKE #{sendNo}
+				AND a.send_no LIKE
 				<if test="dbName == 'oracle'">'%'||#{sendNo}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{sendNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{sendNo},'%')</if>

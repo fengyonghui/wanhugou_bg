@@ -475,4 +475,37 @@
 		AND sku.id = #{skuId}
 	</select>
 
+	<select id="findInvReqByTransferDetailId" resultType="BizRequestDetail">
+		SELECT
+			a.id,
+			rh.req_no AS "requestHeader.reqNo",
+			bsi.name AS "skuInfo.name",
+			bpi.vendor_id AS "vendorId",
+			bpi.vendor_name AS "vendorName",
+			bsi.item_no AS "skuInfo.itemNo",
+			bii.id AS "inventorySku.invInfo.id",
+			bii.name AS "inventorySku.invInfo.name",
+			bis.inv_type AS "inventorySku.invType",
+			bis.sku_type AS "inventorySku.skuType",
+			bis.id AS "inventorySku.id",
+			bis.u_version AS "uVersion",
+			a.recv_qty AS "recvQty",
+			a.out_qty AS "outQty",
+			bis.stock_qty AS "inventorySku.stockQty"
+			FROM biz_request_detail a
+			LEFT JOIN biz_request_header rh ON rh.id = a.header_id
+			LEFT JOIN biz_sku_info bsi ON bsi.id = a.sku_id
+			LEFT JOIN biz_product_info bpi ON bpi.id = bsi.prod_id
+			LEFT JOIN biz_inventory_order_request bior ON bior.request_detail_id = a.id
+			LEFT JOIN biz_inventory_sku bis ON bis.id = bior.inv_sku_id
+			LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+			LEFT JOIN biz_sku_transfer_detail bstd ON bstd.id = bior.transfer_detail_id
+			WHERE
+			a.status = 1
+			AND bstd.status = 1
+			AND bis.status = 1
+			AND rh.biz_status != 40
+			AND bstd.id = #{transferDetailId}
+	</select>
+
 </mapper>

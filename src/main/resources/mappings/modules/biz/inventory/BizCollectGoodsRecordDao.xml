@@ -476,4 +476,10 @@
 		WHERE id = #{id}
 	</update>
 
+	<select id="findCountByNo" resultType="Integer">
+		SELECT count(1)
+		FROM biz_collect_goods_record
+		WHERE collect_no LIKE concat('%',#{collectNo},'%')
+	</select>
+
 </mapper>

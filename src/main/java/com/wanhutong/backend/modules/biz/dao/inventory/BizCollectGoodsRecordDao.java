@@ -36,4 +36,6 @@ public interface BizCollectGoodsRecordDao extends CrudDao<BizCollectGoodsRecord>
     List<BizCollectGoodsRecord> getInventoryDetail(@Param("invSkuId") Integer invSkuId, @Param("skuId") Integer skuId);
 
     void updateSkuId(@Param("needSkuId") Integer needSkuId, @Param("id") Integer id);
+
+    Integer findCountByNo(@Param("collectNo")String collectNo);
 }

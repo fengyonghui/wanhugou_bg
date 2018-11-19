@@ -43,5 +43,13 @@ public class BizSkuTransferDetailService extends CrudService<BizSkuTransferDetai
 	public void delete(BizSkuTransferDetail bizSkuTransferDetail) {
 		super.delete(bizSkuTransferDetail);
 	}
+
+	/**
+	 * 修改入库数量
+	 * @param id
+	 * @param inQty
+	 */
+	@Transactional(readOnly = false)
+	public void updateInQty(Integer id, Integer inQty) {dao.updateInQty(id,inQty);}
 	
 }

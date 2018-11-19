@@ -97,6 +97,11 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	 */
 	private BizSkuTransfer bizSkuTransfer;
 
+	/**
+	 * 调拨单详情
+	 */
+	private BizSkuTransferDetail transferDetail;
+
 	public BizCollectGoodsRecord() {
 		super();
 	}
@@ -343,5 +348,25 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 
 	public void setBizSkuTransfer(BizSkuTransfer bizSkuTransfer) {
 		this.bizSkuTransfer = bizSkuTransfer;
+	}
+
+	public BizSkuTransferDetail getTransferDetail() {
+		return transferDetail;
+	}
+
+	public void setTransferDetail(BizSkuTransferDetail transferDetail) {
+		this.transferDetail = transferDetail;
+	}
+	public enum OrderType {
+		RE(0),
+		TR(1),
+		;
+		private Integer type;
+
+		OrderType(Integer type){this.type = type;}
+
+		public Integer getType() {
+			return type;
+		}
 	}
 }

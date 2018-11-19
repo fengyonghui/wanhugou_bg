@@ -59,6 +59,9 @@
 			<if test="ship != null and ship == 1">
 				LEFT JOIN biz_request_header br ON br.id = bi.request_header_id
 			</if>
+			<if test="ship != null and ship == 2">
+				LEFT JOIN biz_sku_transfer bst ON bst.id = bi.transfer_header_id
+			</if>
 		</if>
 		<if test="targetPage != null and targetPage =='logistics'">
 			<if test="orderNum != null and orderNum != ''">

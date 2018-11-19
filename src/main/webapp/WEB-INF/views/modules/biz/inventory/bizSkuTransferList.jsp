@@ -91,30 +91,39 @@
 				<td>${bizSkuTransfer.commonProcess.transferProcess.name}</td>
 				<td><fmt:formatDate value="${bizSkuTransfer.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                 <td>
-                    <a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=detail">详情</a>
-                    <shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit">
-						<c:if test="${bizSkuTransfer.commonProcess.id == null || bizSkuTransfer.commonProcess.transferProcess.name == '驳回'}">
-							<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}">修改</a>
-							<a href="${ctx}/biz/inventory/bizSkuTransfer/delete?id=${bizSkuTransfer.id}" onclick="return confirmx('确认要删除该库存调拨吗？', this.href)">删除</a>
-						</c:if>
-				    </shiro:hasPermission>
-					<c:if test="${bizSkuTransfer.commonProcess.id != null
-									&& bizSkuTransfer.commonProcess.transferProcess.name != '审批完成'
-									&& bizSkuTransfer.commonProcess.transferProcess.name != '驳回'
-									&& (fns:hasRole(roleSet, bizSkuTransfer.commonProcess.transferProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
-						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:audit">
-							<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=audit">审核</a>
+					<c:if test="${source ne 'in' && source ne 'out'}">
+						<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=detail">详情</a>
+
+						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:edit">
+							<c:if test="${bizSkuTransfer.commonProcess.id == null || bizSkuTransfer.commonProcess.transferProcess.name == '驳回'}">
+								<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}">修改</a>
+								<a href="${ctx}/biz/inventory/bizSkuTransfer/delete?id=${bizSkuTransfer.id}" onclick="return confirmx('确认要删除该库存调拨吗？', this.href)">删除</a>
+							</c:if>
 						</shiro:hasPermission>
+						<c:if test="${bizSkuTransfer.commonProcess.id != null
+										&& bizSkuTransfer.commonProcess.transferProcess.name != '审批完成'
+										&& bizSkuTransfer.commonProcess.transferProcess.name != '驳回'
+										&& (fns:hasRole(roleSet, bizSkuTransfer.commonProcess.transferProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
+							<shiro:hasPermission name="biz:inventory:bizSkuTransfer:audit">
+								<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=audit">审核</a>
+							</shiro:hasPermission>
+						</c:if>
 					</c:if>
 					<c:if test="${source eq 'out' && bizSkuTransfer.bizStatus >= TransferStatusEnum.APPROVE.state && bizSkuTransfer.bizStatus <= TransferStatusEnum.OUTING_WAREHOUSE.state}">
 						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:outTreasury">
 							<a href="${ctx}/biz/inventory/bizSkuTransfer/outTreasuryForm?id=${bizSkuTransfer.id}&source=${source}">出库</a>
 						</shiro:hasPermission>
 					</c:if>
+					<c:if test="${source eq 'out'}">
+						<a href="${ctx}/biz/inventory/bizSkuTransfer/outTreasuryForm?id=${bizSkuTransfer.id}&source=${source}&str=detail">出库详情</a>
+					</c:if>
 					<c:if test="${source eq 'in' && bizSkuTransfer.bizStatus >= TransferStatusEnum.ALREADY_OUT_WAREHOUSE.state && bizSkuTransfer.bizStatus <= TransferStatusEnum.INING_WAREHOUSE.state}">
 						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:outTreasury">
 							<a href="${ctx}/biz/inventory/bizSkuTransfer/inTreasuryForm?id=${bizSkuTransfer.id}&source=${source}">入库</a>
 						</shiro:hasPermission>
+					</c:if>
+					<c:if test="${source eq 'in'}">
+						<a href="${ctx}/biz/inventory/bizSkuTransfer/inTreasuryForm?id=${bizSkuTransfer.id}&source=${source}&str=detail">入库详情</a>
 					</c:if>
                 </td>
 			</tr>

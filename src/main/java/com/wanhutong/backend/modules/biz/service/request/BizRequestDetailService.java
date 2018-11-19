@@ -100,4 +100,12 @@ public class BizRequestDetailService extends CrudService<BizRequestDetailDao, Bi
 		return bizRequestDetailDao.findListByinvAndSku(invInfoId,skuId);
 	}
 
+	/**
+	 * 根据调拨单详情ID查询已出库的备货单详情
+	 * @param transferDetailId
+	 * @return
+	 */
+	public List<BizRequestDetail> findInvReqByTransferDetailId(Integer transferDetailId) {
+		return dao.findInvReqByTransferDetailId(transferDetailId);
+	}
 }

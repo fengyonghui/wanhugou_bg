@@ -87,6 +87,16 @@ public class BizSkuTransfer extends DataEntity<BizSkuTransfer> {
      */
 	private List<CommonProcessEntity> commonProcessList;
 
+	/**
+	 * 调拨单收货，页面传值
+	 */
+	private List<BizCollectGoodsRecord> bizCollectGoodsRecordList;
+
+	/**
+	 * 入库单
+	 */
+	private String collectNo;
+
 	public BizSkuTransfer() {
 		super();
 	}
@@ -199,4 +209,20 @@ public class BizSkuTransfer extends DataEntity<BizSkuTransfer> {
     public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
         this.commonProcessList = commonProcessList;
     }
+
+	public List<BizCollectGoodsRecord> getBizCollectGoodsRecordList() {
+		return bizCollectGoodsRecordList;
+	}
+
+	public void setBizCollectGoodsRecordList(List<BizCollectGoodsRecord> bizCollectGoodsRecordList) {
+		this.bizCollectGoodsRecordList = bizCollectGoodsRecordList;
+	}
+
+	public String getCollectNo() {
+		return collectNo;
+	}
+
+	public void setCollectNo(String collectNo) {
+		this.collectNo = collectNo;
+	}
 }

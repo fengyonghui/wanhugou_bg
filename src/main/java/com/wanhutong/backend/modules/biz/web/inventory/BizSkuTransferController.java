@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
@@ -20,8 +21,11 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransferDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventory.BizCollectGoodsRecordService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSkuTransferDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
@@ -102,6 +106,10 @@ public class BizSkuTransferController extends BaseController {
 	private SystemService systemService;
 	@Autowired
 	private BizSendGoodsRecordService bizSendGoodsRecordService;
+	@Autowired
+	private BizInvoiceService bizInvoiceService;
+	@Autowired
+	private BizCollectGoodsRecordService bizCollectGoodsRecordService;
 
 	@ModelAttribute
 	public BizSkuTransfer get(@RequestParam(required=false) Integer id) {
@@ -261,27 +269,31 @@ public class BizSkuTransferController extends BaseController {
 				if (CollectionUtils.isNotEmpty(sizeList)) {
 					bizSkuTransferDetail.setSize(sizeList.get(0).getValue());
 				}
-				List<BizRequestDetail> requestDetailList = bizRequestDetailService.findListByinvAndSku(bizSkuTransfer.getFromInv().getId(), bizSkuTransferDetail.getSkuInfo().getId());
-				if (CollectionUtils.isNotEmpty(requestDetailList)) {
+				if ("detail".equals(bizSkuTransfer.getStr())) {
+					List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInvReqByTransferDetailId(bizSkuTransferDetail.getId());
+					bizSkuTransferDetail.setRequestDetailList(requestDetailList);
+				} else {
+					List<BizRequestDetail> requestDetailList = bizRequestDetailService.findListByinvAndSku(bizSkuTransfer.getFromInv().getId(), bizSkuTransferDetail.getSkuInfo().getId());
 					bizSkuTransferDetail.setRequestDetailList(requestDetailList);
 				}
 			}
 		}
 		//出库单
+		String transferNo = bizSkuTransfer.getTransferNo();
+		transferNo = transferNo.replaceAll(OrderTypeEnum.TR.name(), "");
 		if (StringUtils.isNotBlank(bizSkuTransfer.getStr()) && "detail".equals(bizSkuTransfer.getStr())) {
 			BizSendGoodsRecord bizSendGoodsRecord = new BizSendGoodsRecord();
-			bizSendGoodsRecord.setBizSkuTransfer(bizSkuTransfer);
+			bizSendGoodsRecord.setSendNo(transferNo);
 			List<BizSendGoodsRecord> sendGoodsRecords = bizSendGoodsRecordService.findList(bizSendGoodsRecord);
 			if (CollectionUtils.isNotEmpty(sendGoodsRecords)) {
 				String sendNo = sendGoodsRecords.get(sendGoodsRecords.size() - 1).getSendNo();
 				model.addAttribute("sendNo",sendNo);
 			}
+		} else {
+			int s = bizSendGoodsRecordService.findCountByNo(transferNo);
+			String sendNo = OrderTypeEnum.ODO.name().concat(transferNo).concat("_").concat(String.valueOf(s + 1));
+			model.addAttribute("sendNo", sendNo);
 		}
-		String transferNo = bizSkuTransfer.getTransferNo();
-		transferNo = transferNo.replaceAll(OrderTypeEnum.TR.name(),"");
-		int s = bizSendGoodsRecordService.findCountByNo(transferNo);
-		String sendNo = OrderTypeEnum.ODO.name().concat(transferNo).concat("_").concat(String.valueOf(s + 1));
-		model.addAttribute("sendNo",sendNo);
 		//验货员
 		List<User> inspectorList = systemService.findUserByRoleEnName(RoleEnNameEnum.INSPECTOR.getState());
 		model.addAttribute("inspectorList",inspectorList);
@@ -294,6 +306,55 @@ public class BizSkuTransferController extends BaseController {
 	@RequestMapping(value = "inTreasuryForm")
 	public String inTreasuryForm(BizSkuTransfer bizSkuTransfer, Model model) {
 
+		//入库单
+		String tansferNo = bizSkuTransfer.getTransferNo();
+		tansferNo = tansferNo.replace("TR", "");
+		if ("detail".equals(bizSkuTransfer.getStr())) {
+			BizCollectGoodsRecord collectGoodsRecord = new BizCollectGoodsRecord();
+			collectGoodsRecord.setCollectNo(tansferNo);
+			List<BizCollectGoodsRecord> collectGoodsRecords = bizCollectGoodsRecordService.findList(collectGoodsRecord);
+			if (CollectionUtils.isNotEmpty(collectGoodsRecords)) {
+				model.addAttribute("collectNo",collectGoodsRecords.get(collectGoodsRecords.size() - 1).getCollectNo());
+			}
+		} else {
+			int s = bizCollectGoodsRecordService.findCountByNo(tansferNo);
+			String collectNo = OrderTypeEnum.RIO.name().concat(tansferNo).concat("_").concat(String.valueOf(s + 1));
+			model.addAttribute("collectNo", collectNo);
+		}
+		//发货单
+		BizInvoice invoice = new BizInvoice();
+		invoice.setShip(BizInvoice.Ship.TR.getShip());
+		invoice.setTransferNo(bizSkuTransfer.getTransferNo());
+		invoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
+		List<BizInvoice> invoiceList = bizInvoiceService.findList(invoice);
+		if (CollectionUtils.isNotEmpty(invoiceList)) {
+			model.addAttribute("invoiceList",invoiceList);
+		}
+		//收货仓库
+		BizInventoryInfo toInvInfo = bizInventoryInfoService.get(bizSkuTransfer.getToInv());
+		BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+		bizInventoryInfo.setReqHeader(new BizRequestHeader(toInvInfo.getCustomer().getId()));
+		List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+		model.addAttribute("invInfoList", invInfoList);
+		//调拨单detail
+		BizSkuTransferDetail bizSkuTransferDetail = new BizSkuTransferDetail();
+		bizSkuTransferDetail.setTransfer(new BizSkuTransfer(bizSkuTransfer.getId()));
+		List<BizSkuTransferDetail> skuTransferDetails = bizSkuTransferDetailService.findList(bizSkuTransferDetail);
+		if (CollectionUtils.isNotEmpty(skuTransferDetails)) {
+			for (BizSkuTransferDetail skuTransferDetail : skuTransferDetails) {
+				//颜色
+				List<AttributeValueV2> colorList = bizSkuInfoService.getSkuProperty(skuTransferDetail.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "颜色");
+				if (CollectionUtils.isNotEmpty(colorList)) {
+					skuTransferDetail.setColor(colorList.get(0).getValue());
+				}
+				//尺寸
+				List<AttributeValueV2> sizeList = bizSkuInfoService.getSkuProperty(skuTransferDetail.getSkuInfo().getId(), BizProductInfoV3Service.SKU_TABLE, "尺寸");
+				if (CollectionUtils.isNotEmpty(sizeList)) {
+					skuTransferDetail.setSize(sizeList.get(0).getValue());
+				}
+			}
+		}
+		model.addAttribute("transferDetailList",skuTransferDetails);
 		model.addAttribute("bizSkuTransfer",bizSkuTransfer);
 		return "modules/biz/inventory/transferInTreasuryForm";
 	}
@@ -318,7 +379,7 @@ public class BizSkuTransferController extends BaseController {
 		}
 		BizInvoice bizInvoice = new BizInvoice();
 		bizInvoice.setBizStatus(0);
-		bizInvoice.setShip(0);
+		bizInvoice.setShip(2);
 		bizInvoice.setIsConfirm(1);
 		if (bizInvoiceJson != null && org.apache.commons.lang3.StringUtils.isNotBlank(bizInvoiceJson.getString("trackingNumber"))) {
 //		"trackingNumber":trackingNumber,
@@ -344,9 +405,10 @@ public class BizSkuTransferController extends BaseController {
 
 	@RequiresPermissions("biz:inventory:bizSkuTransfer:inTreasury")
 	@RequestMapping(value = "inTreasury")
-	public String inTreasury(BizSkuTransfer bizSkuTransfer) {
-
-		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizSkuTransfer/?repage";
+	public String inTreasury(BizSkuTransfer bizSkuTransfer,RedirectAttributes redirectAttributes) {
+		String s = bizSkuTransferService.inTreasury(bizSkuTransfer);
+		addMessage(redirectAttributes,s);
+		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizSkuTransfer/?repage&source=" + bizSkuTransfer.getSource();
 	}
 
 }

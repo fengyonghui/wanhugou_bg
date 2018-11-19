@@ -18,6 +18,7 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryOrderRequest;
@@ -27,6 +28,7 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransferDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
@@ -34,6 +36,7 @@ import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.TransferProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.InvSkuTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.enums.SendGoodsRecordBizStatusEnum;
@@ -90,6 +93,8 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
     private BizSendGoodsRecordService bizSendGoodsRecordService;
     @Autowired
     private BizInventoryOrderRequestService bizInventoryOrderRequestService;
+    @Autowired
+    private BizCollectGoodsRecordService bizCollectGoodsRecordService;
 
 	public BizSkuTransfer get(Integer id) {
 		return super.get(id);
@@ -425,6 +430,81 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
             }
         }
         return "ok";
+    }
+
+    @Transactional(readOnly = false,rollbackFor = Exception.class)
+    public String inTreasury(BizSkuTransfer bizSkuTransfer) {
+        boolean flag = true;		//调拨单完成状态
+        if (CollectionUtils.isEmpty(bizSkuTransfer.getBizCollectGoodsRecordList())) {
+            return "入库失败";
+        }
+        for (BizCollectGoodsRecord bcgr : bizSkuTransfer.getBizCollectGoodsRecordList()) {
+            int receiveNum = bcgr.getReceiveNum();    //收货数
+            int inQty = bcgr.getTransferDetail().getInQty();		//已收货数量
+            BizSkuTransfer skuTransfer = this.get(bizSkuTransfer.getId());
+            if (receiveNum == 0) {
+                continue;
+            }
+            //累计调拨单收货数量
+            if (bcgr.getTransferDetail() != null && bcgr.getTransferDetail().getId() != 0) {
+                //当收货数量和调拨数量不相等时，调拨单未完成，flag == false;
+                if (bcgr.getTransferDetail().getTransQty() != (inQty + receiveNum)) {
+                    flag = false;
+                    Byte bizStatus = skuTransfer.getBizStatus();
+                    //改状态为入库中
+                    this.updateBizStatus(bizSkuTransfer.getId(),TransferStatusEnum.INING_WAREHOUSE);
+                    if (bizStatus == null || !TransferStatusEnum.INING_WAREHOUSE.getState().equals(bizStatus.intValue())) {
+                        bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SKUTRANSFER.getDesc(), BizOrderStatusOrderTypeEnum.SKUTRANSFER.getState(), bizSkuTransfer.getId());
+                    }
+                }
+                //更改调拨单Detail的入库数
+                bizSkuTransferDetailService.updateInQty(bcgr.getTransferDetail().getId(),inQty + receiveNum);
+                int invOldNum = 0;  //原库存数
+                BizInventorySku bizInventorySku = new BizInventorySku();
+                bizInventorySku.setSkuInfo(bcgr.getSkuInfo());
+                bizInventorySku.setInvInfo(bcgr.getInvInfo());
+                bizInventorySku.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
+                bizInventorySku.setSkuType(BizRequestHeader.HeaderType.ROUTINE.getHeaderType());
+                //库存有该商品,增加相应数量
+                List<BizInventorySku> bizInventorySkuList = bizInventorySkuService.findList(bizInventorySku);
+                if(CollectionUtils.isNotEmpty(bizInventorySkuList)){
+                    BizInventorySku bizInventorySku1 = bizInventorySkuList.get(0);
+                    invOldNum = bizInventorySku1.getStockQty();
+                    bizInventorySkuService.updateStockQty(bizInventorySku1,bizInventorySku1.getStockQty() + receiveNum);
+                }
+                //库存没有该商品，增加该商品相应库存
+                if(CollectionUtils.isNotEmpty(bizInventorySkuList)){
+                    BizInventorySku bizInventorySku1 = new BizInventorySku();
+                    bizInventorySku1.setInvInfo(bcgr.getInvInfo());
+                    bizInventorySku1.setSkuInfo(bcgr.getSkuInfo());
+                    bizInventorySku1.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
+                    bizInventorySku1.setStockQty(receiveNum);
+                    bizInventorySku1.setSkuType(BizRequestHeader.HeaderType.ROUTINE.getHeaderType());
+                    bizInventorySku1.setVendor(bizInventorySku.getVendor());
+                    bizInventorySkuService.save(bizInventorySku1);
+                }
+                //生成收货记录表
+                bcgr.setCollectNo(bizSkuTransfer.getCollectNo());
+                bcgr.setInvInfo(bcgr.getInvInfo());
+                bcgr.setInvOldNum(invOldNum);
+                bcgr.setSkuInfo(new BizSkuInfo(bcgr.getSkuInfo().getId()));
+                bcgr.setBizRequestHeader(new BizRequestHeader(bizSkuTransfer.getId()));
+                bcgr.setOrderNum(bcgr.getOrderNum());
+                bcgr.setOrderType(BizCollectGoodsRecord.OrderType.TR.getType().byteValue());
+                bcgr.setReceiveDate(new Date());
+                bcgr.setReceiveNum(bcgr.getReceiveNum());
+                bizCollectGoodsRecordService.saveOnly(bcgr);
+            }
+            //更改调拨单状态:已入库
+            if (flag) {
+                Byte bizStatus = skuTransfer.getBizStatus();
+                this.updateBizStatus(skuTransfer.getId(),TransferStatusEnum.ALREADY_IN_WAREHOUSE);
+                if (bizStatus == null || !TransferStatusEnum.ALREADY_IN_WAREHOUSE.getState().equals(bizStatus.intValue())) {
+                    bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SKUTRANSFER.getDesc(), BizOrderStatusOrderTypeEnum.SKUTRANSFER.getState(), skuTransfer.getId());
+                }
+            }
+        }
+        return "入库成功";
     }
 	
 }

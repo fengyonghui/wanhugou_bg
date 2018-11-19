@@ -5,6 +5,7 @@
 	<sql id="bizSkuTransferDetailColumns">
 		a.id AS "id",
 		a.transfer_id AS "transfer.id",
+		bst.transfer_no AS "transfer.transferNo",
 		a.sku_id AS "skuInfo.id",
 		sku.name AS "skuInfo.name",
 		sku.item_no AS "skuInfo.itemNo",
@@ -164,6 +165,12 @@
 	<update id="delete">
 		UPDATE biz_sku_transfer_detail SET 
 			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateInQty">
+		UPDATE biz_sku_transfer_detail SET
+		in_qty = #{inQty}
 		WHERE id = #{id}
 	</update>
 	

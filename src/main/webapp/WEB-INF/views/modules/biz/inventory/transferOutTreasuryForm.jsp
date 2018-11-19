@@ -205,14 +205,15 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<li><a href="${ctx}/biz/inventory/bizSkuTransfer?source=${bizSkuTransfer.source}">调拨单列表</a></li>
+	<li><a href="${ctx}/biz/inventory/bizSkuTransfer?source=${bizSkuTransfer.source}&str=${bizSkuTransfer.str}">调拨单列表</a></li>
 </ul><br/>
 <form:form id="inputForm" modelAttribute="bizSkuTransfer"  action="${ctx}/biz/inventory/bizSkuTransfer/outTreasury" method="post" class="form-horizontal">
 	<%--<form:hidden path="id"/>--%>
 	<sys:message content="${message}"/>
 	<input name="bizRequestHeader.id" value="${bizRequestHeader==null?0:bizRequestHeader.id}" type="hidden"/>
 	<input name="bizSkuTransfer.id" value="${bizSkuTransfer==null?0:bizSkuTransfer.id}" type="hidden"/>
-    <input id="source" value="${bizSkuTransfer.source}" type="hidden"/>
+    <input id="source" name="source" value="${bizSkuTransfer.source}" type="hidden"/>
+	<input id="str" name="str" type="hidden" value="${bizSkuTransfer.str}"/>
 	<input type="hidden" name="bizStatu" value="${bizStatu}"/>
 	<div class="control-group">
 		<label class="control-label">调拨单号：</label>
@@ -235,7 +236,7 @@
 			<input type="text" class="input-xlarge" readonly="readonly" value="${bizSkuTransfer.toInv.name}"/>
 		</div>
 	</div>
-	<c:if test="${bizSkuTransfer.source != 'detail'}">
+	<c:if test="${bizSkuTransfer.str != 'detail'}">
 		<div class="control-group">
 			<label class="control-label">物流单号：</label>
 			<div class="controls">
@@ -353,13 +354,13 @@
 	</div>
 	<div class="control-group">
         <c:forEach items="${transferDetailList}" var="transferDetail">
-			<c:if test="${transferDetail.transQty != transferDetail.outQty || bizSkuTransfer.source eq 'detail'}">
+			<c:if test="${transferDetail.transQty != transferDetail.outQty || bizSkuTransfer.str eq 'detail'}">
             	<label class="control-label">起始库存信息：</label>
 				<div class="controls">
 					<table id="inventorySkuTable" class="table table-striped table-bordered table-condensed">
 						<thead>
 						<tr>
-							<c:if test="${bizSkuTransfer.source ne 'detail'}">
+							<c:if test="${bizSkuTransfer.str ne 'detail'}">
 								<th><input name="transferDetail" type="checkbox" onclick="checkTransferDetail(this)"/></th>
 							</c:if>
 							<th>备货单号</th>
@@ -374,7 +375,7 @@
 							<th>已出库数量</th>
 							<th>可出库数量</th>
 							<th>库存总数</th>
-							<c:if test="${bizSkuTransfer.source ne 'detail'}">
+							<c:if test="${bizSkuTransfer.str ne 'detail'}">
 								<th>本次出库数量</th>
 							</c:if>
 							<th>出库仓库</th>
@@ -382,9 +383,9 @@
 						</thead>
 						<tbody>
 							<c:forEach items="${transferDetail.requestDetailList}" var="requestDetail">
-								<c:if test="${requestDetail.recvQty - requestDetail.outQty != 0 || bizSkuTransfer.source eq 'detail'}">
+								<c:if test="${requestDetail.recvQty - requestDetail.outQty != 0 || bizSkuTransfer.str eq 'detail'}">
 									<tr>
-										<c:if test="${bizSkuTransfer.source ne 'detail'}">
+										<c:if test="${bizSkuTransfer.str ne 'detail'}">
 											<td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
 										</c:if>
 										<td>${requestDetail.requestHeader.reqNo}</td>
@@ -407,7 +408,7 @@
 										<input name="uVersion" value="${requestDetail.inventorySku.uVersion}" type="hidden"/>
 										<input name="stockQty" value="${requestDetail.inventorySku.stockQty}" type="hidden"/>
 										<td>${requestDetail.inventorySku.stockQty}</td>
-										<c:if test="${bizSkuTransfer.source ne 'detail'}">
+										<c:if test="${bizSkuTransfer.str ne 'detail'}">
 											<td><input type="text" name="sentQty" value="0"/></td>
 										</c:if>
 										<td>
@@ -425,7 +426,7 @@
 	</div>
 
 	<div class="form-actions">
-		<c:if test="${bizSkuTransfer.source ne 'detail'}">
+		<c:if test="${bizSkuTransfer.str ne 'detail'}">
 			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="确认出库"/>&nbsp;</shiro:hasPermission>
 		</c:if>
 		<%--<input id="yulan" class="btn btn-primary" type="button" value="打印预览"/>--%>
@@ -434,100 +435,5 @@
 	</div>
 
 </form:form>
-
-	<%--<div>--%>
-		<%--<head>--%>
-			<%--<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />--%>
-			<%--<title>局部打印</title>--%>
-		<%--</head>--%>
-		<%--<br/>--%>
-		<%--<div style="margin-left: 100px;display: none">--%>
-			<%--<!--startprint--><!--注意要加上html里star和end的这两个标记-->--%>
-			<%--<p>--%>
-			<%--<table border="1" border-collapse:collapse style="width: 1000px;height: 1000px">--%>
-				<%--<tr align="center" style="height: 60px">--%>
-					<%--<td colspan="6" valign="middle">--%>
-						<%--<img src="${ctxStatic}/jingle/image/logo.png" style="float: left">--%>
-						<%--<b style="font-size: 20px">云仓出库单</b>--%>
-						<%--<div style="font-size: 15px;font-weight: bold;float: right;margin-bottom: 0px">www.wanhutong.com</div>--%>
-					<%--</td>--%>
-				<%--</tr>--%>
-				<%--<tr align="center">--%>
-					<%--<td rowspan="2">单号</td>--%>
-					<%--<td rowspan="2">${bizSkuTransfer.orderNum}</td>--%>
-					<%--<td >订单类型</td>--%>
-					<%--<td colspan="3">--%>
-						<%--<input type="checkbox">订单--%>
-						<%--<input type="checkbox">调拨--%>
-						<%--<input type="checkbox">样品--%>
-						<%--<input type="checkbox">退货--%>
-					<%--</td>--%>
-				<%--</tr>--%>
-				<%--<tr align="center">--%>
-					<%--<td>出库日期</td>--%>
-					<%--<td colspan="3">--%>
-						<%--<fmt:formatDate value="${bizSendGoodsRecord.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
-					<%--</td>--%>
-				<%--</tr>--%>
-				<%--<tr align="center">--%>
-					<%--<td>发货人</td>--%>
-					<%--<td>${bizSkuTransfer.bizLocation.receiver}</td>--%>
-					<%--<td>联系电话</td>--%>
-					<%--<td colspan="3">${bizSkuTransfer.bizLocation.phone}</td>--%>
-				<%--</tr>--%>
-				<%--<tr align="center">--%>
-					<%--<td>收货地址</td>--%>
-					<%--<td colspan="5">${bizSkuTransfer.bizLocation.fullAddress}</td>--%>
-
-				<%--</tr>--%>
-				<%--<tr align="center">--%>
-					<%--<td>货号</td>--%>
-					<%--<td width="200px">商品名称</td>--%>
-					<%--<td width="200px">供应商名称</td>--%>
-					<%--<td width="120px">颜色</td>--%>
-					<%--<td width="120px">规格</td>--%>
-					<%--<td width="120px">已出库数量</td>--%>
-				<%--</tr>--%>
-				<%--<c:forEach items="${transferDetailList}" var="transferDetail">--%>
-					<%--<tr align="center">--%>
-						<%--<td>${transferDetail.skuInfo.itemNo}</td>--%>
-						<%--<td>${transferDetail.skuInfo.name}</td>--%>
-						<%--<td>${transferDetail.skuInfo.productInfo.name}</td>--%>
-						<%--<td>${transferDetail.color}</td>--%>
-						<%--<td>${transferDetail.standard}</td>--%>
-						<%--<td>${transferDetail.outQty}</td>--%>
-					<%--</tr>--%>
-				<%--</c:forEach>--%>
-				<%--<tr align="center">--%>
-					<%--<td>库管签字</td>--%>
-					<%--<td></td>--%>
-					<%--<td>财务签字</td>--%>
-					<%--<td></td>--%>
-					<%--<td>司机签字</td>--%>
-					<%--<td></td>--%>
-				<%--</tr>--%>
-				<%--<tr align="center">--%>
-					<%--<td>到货状况</td>--%>
-					<%--<td><input type="checkbox">完好--%>
-						<%--<input type="checkbox">损坏--%>
-						<%--<input type="checkbox">缺少--%>
-						<%--<input type="checkbox">其他</td>--%>
-					<%--<td>状况说明</td>--%>
-					<%--<td></td>--%>
-					<%--<td>收货日期</td>--%>
-					<%--<td></td>--%>
-				<%--</tr>--%>
-				<%--<tr align="center">--%>
-					<%--<td  colspan="6">1.说明：此出库清单三联，第一联云仓库管发货存档，第二联账务或采购中心签字留存，第三联云仓司机签收存档</td>--%>
-				<%--</tr>--%>
-				<%--<tr align="center">--%>
-					<%--<td  colspan="6">2.说明：此出库清单经云仓库管签字生效，云仓货品出库需携带此单，认真检查货品状况并填写签收</td>--%>
-				<%--</tr>--%>
-			<%--</table>--%>
-			<%--</p>--%>
-			<%--<!--endprint-->--%>
-
-		<%--</div>--%>
-	<%--</div>--%>
 </body>
 </html>
