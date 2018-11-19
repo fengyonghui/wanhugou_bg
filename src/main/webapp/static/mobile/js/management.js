@@ -14,14 +14,13 @@
 			    $(".mui-scroll-wrapper").scroll({
 			          bounce: false,//滚动条是否有弹力默认是true
 			          indicators: true, //是否显示滚动条,默认是true
-			    }); 
+			    });
             })(mui);
 		},
 		pageInit: function() {
 			var _this = this;
 			_this.ajaxData();
 			_this.getData();
-//			_this.getDataTwo();
 		},
 		ajaxData: function() {
 			var _this = this;
@@ -74,9 +73,9 @@
                             	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
 	                            	console.log('777')	
 	                            	$(this).attr('id','commission');
-	                            	var divHtmlList = '<ul type="submit" class="cMenu"></ul>'; 
+	                            	var divHtmlList = '<ul type="submit" class="cMenu"></ul>';
 	                            	$('#commission').append(divHtmlList);
-	                            	
+
 	                            }
                             });
                         }
@@ -210,7 +209,7 @@
 				var purchId = $(this).attr('purchId');
                 if(url) {
                 	mui.toast('子菜单不存在')             	
-                }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml') { 
+                }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml') {
                 	$.ajax({
                         type: "GET",
                         url: "/a/sys/menu/listData",
@@ -221,7 +220,7 @@
                             var pHtmlLists = '';
                             $.each(res.data, function(i, ite) {
                                 if(ite.mobileUrl){
-                                	pHtmlLists+= '<li style="margin:10px 0;" class="comMenu" purchId="'+ite.id+'" mobileUrl="'+ite.mobileUrl+'">'+ ite.name+'</li>'             
+                                	pHtmlLists+= '<li style="margin:10px 0;" class="comMenu" purchId="'+ite.id+'" mobileUrl="'+ite.mobileUrl+'">'+ ite.name+'</li>'
                                 }
                             });
                             $('#commission .cMenu').html(pHtmlLists);
@@ -230,7 +229,7 @@
                    });
                 }
 			})
-            
+
         /*会员管理*/
 //          $('#menuMaget').on('click','.childMenu',function(){
 //          	var url = $(this).attr('url');
