@@ -269,9 +269,10 @@
 					})
                 }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml/applyKnotList.html'){
                 	GHUTILS.OPENPAGE({
-						url: "../html/orderMgmtHtml/commissionMgmtHtml/applyKnotList.html",
+						url: "../html/orderMgmtHtml/commissionMgmtHtml/alreadlycomList.html",
 						extras: {
 							purchId:purchId,
+							isFin:true
 						}
 					})
                 }
