@@ -349,7 +349,7 @@
 		//查询过来渲染页面:
 		seachFunc:function(){
 			var _this = this;
-			var staffHtmlList = '';
+			var staffHtmlList = '';					
 //			var nameTxt = '';
 //			if(_this.userInfo.checkStatus) {
 //				nameTxt = decodeURIComponent(_this.userInfo.checkStatus)
@@ -477,8 +477,8 @@
 						$('#staOrdSechBtn').hide();
 					}
 				}
-			});
-		}
+			});		
+		}						
 	}
 	$(function() {
 

@@ -4,18 +4,23 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.prew = false;
+		this.buyPriceFlag = false;
+		this.unitPriceFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
+			this.getPermissionList('biz:order:buyPrice:view','buyPriceFlag')//佣金权限
+			this.getPermissionList1('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
+			this.buyPrice(); //佣金显示
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 					//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
-			_this.btnshow()
-			_this.getData()
+			_this.btnshow();
+			_this.getData();
 			_this.changePrice();
 		},
 		btnshow: function() {
@@ -31,6 +36,40 @@
 				}
 			})
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.buyPriceFlag = res.data;
+                }
+            });
+        },
+        getPermissionList1: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.unitPriceFlag = res.data;
+                }
+            });
+        },
+        buyPrice:function(){
+        	var _this = this;
+			if(_this.buyPriceFlag==true){
+				$('#staCommission').parent().show();
+			}else{
+				$('#staCommission').parent().hide();
+			}
+		},
 		getData: function() {
 			var _this = this;
 			console.log(_this.userInfo.stcheckIdTxt)
@@ -44,10 +83,9 @@
                 },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	$('#orderTypebox').hide();
                 	if(res.data.bizOrderHeader.flag=='check_pending') {
                 		if(res.data.orderType == 5) {
-                			$('#orderTypebox').hide();
                 			$('#nochecked').attr("checked","false" );
                 			$('#yes').attr("checked","checked" );
                 		}
@@ -195,7 +233,6 @@
 			if(orderDetailLen > 0) {
 				var htmlCommodity = '';
 				$.each(data.bizOrderHeader.orderDetailList, function(i, item) {
-//					console.log(item)
 					var opShelfInfo = '';
 					if(item.shelfInfo.opShelfInfo) {
 						opShelfInfo = item.shelfInfo.opShelfInfo.name
@@ -208,25 +245,40 @@
 					}else {
 						primaryMobile = ''
 					}
-					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
-						'<div class="mui-row lineStyle">' +
+					var repertory = '';
+					if(data.bizOrderHeader.flag=='check_pending') {
+						repertory = '<div class="mui-row">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>详情行号:</label>' + 
+	                    '<input type="text" class="mui-input-clear" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<li class="mui-table-view-cell">' +
+	                    '<div class="mui-input-row ">' +
+	                    '<label>库存数量:</label>' +
+	                    '<input type="text" class="mui-input-clear" id="" value="' + data.invSkuNumMap[item.id] + '" disabled></div></li></div></div>' 
+					}else {
+						repertory = '<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label class="commodityName">详情行号:</label>' +
-	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
-	                   
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.lineNo + '" disabled></div></li></div>' 
+					}
+					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
+						repertory +
                     	'<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>供应商:</label>' + 
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.vendor.name + '" disabled></div></li></div>' +
-	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
+	                    '<div class="mui-col-sm-6 mui-col-xs-6" id="unitprice">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>商品出厂价:</label>' +
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div></div>' +
-	                   
+	                    
                     	 '<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
@@ -289,7 +341,16 @@
 	                    
                     '</div>'
 				});
-				$("#staCheckCommodity").html(htmlCommodity)
+				$("#staCheckCommodity").html(htmlCommodity);
+				//结算价判断
+				var unitPriceList=$('.commodity #unitprice');
+				$.each(unitPriceList,function(z,x){
+					if(_this.unitPriceFlag==true){
+						$(x).show();
+					}else{
+						$(x).hide();
+					}
+				})				
 			}
 		},
 		changePrice: function() {
@@ -386,7 +447,7 @@
 		comfirDialig: function(data) {
 			var _this = this;
 			document.getElementById("rejectBtns").addEventListener('tap', function() {
-				var btnArray = ['否', '是'];
+				var btnArray = ['取消', '确定'];
 				mui.confirm('确定不同意发货吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
 						_this.rejectData(45)
@@ -400,8 +461,19 @@
 	                mui.toast("代采订单需至少付款20%，请付款后刷新页面再审核");
 	                return;
 	            }
-				var btnArray = ['否', '是'];
-				mui.confirm('确定同意发货吗？', '系统提示！', btnArray, function(choice) {
+				var btnArray = ['取消', '确定'];
+				var choiceTxt = '';
+				var hint = '';
+				if(data.orderType == data.PURSEHANGER) {
+					choiceTxt = '确定同意发货吗?'
+					hint = '系统提示!'
+				}else {
+					choiceTxt = '<div id="changeTxt">'+
+				    '本地备货<input style="margin: 10px 15px 10px 5px;" checked="checked" type="radio" name="localOriginType" value="1" class="inputRadio" id="nochecked"/>'+
+		        	'产地直发<input style="margin: 10px 15px 10px 5px;" id="yes" type="radio" name="localOriginType" value="0"  class="inputRadio"/></div>'
+					hint = '请选择供货方式：'
+				}
+				mui.confirm(choiceTxt, hint, btnArray, function(choice) {
 					if(choice.index == 1) {
 						_this.ajaxData(15)
 					} else {						
@@ -418,6 +490,8 @@
                     localOriginType = r2[i].value;
                 }
             }
+//          console.log(_this.prew)
+//          console.log(localOriginType)
 			$.ajax({
 				type: "POST",
 				url: "/a/biz/order/bizOrderHeader/Commissioner4mobile",

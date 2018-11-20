@@ -367,7 +367,9 @@
                         </c:if>
                         <th>采购数量</th>
                         <!-- 隐藏结算价 -->
-                        <%--<th>结算价</th>--%>
+                        <shiro:hasPermission name="biz:order:unitPrice:view">
+                            <th>结算价</th>
+                        </shiro:hasPermission>
                         <th>总金额</th>
                         <%--<th>已排产量</th>--%>
                         <%--<th>待排产数量</th>--%>
@@ -404,7 +406,9 @@
                                 </c:if>
                                 <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
                                 <!-- 隐藏结算价 -->
-                                <%--<td>${poDetail.unitPrice}</td>--%>
+                                <shiro:hasPermission name="biz:order:unitPrice:view">
+                                    <td>${poDetail.unitPrice}</td>
+                                </shiro:hasPermission>
                                 <td>${poDetail.ordQty * poDetail.unitPrice}</td>
                             </tr>
                         </c:forEach>
@@ -480,7 +484,9 @@
                         </c:if>
                         <th>采购数量</th>
                         <!-- 隐藏结算价 -->
-                        <%--<th>结算价</th>--%>
+                        <shiro:hasPermission name="biz:order:unitPrice:view">
+                            <th>结算价</th>
+                        </shiro:hasPermission>
                         <th>总金额</th>
                     </tr>
                     </thead>
@@ -513,7 +519,9 @@
                                 </c:if>
                                 <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
                                 <!-- 隐藏结算价 -->
-                                <%--<td>${poDetail.unitPrice}</td>--%>
+                                <shiro:hasPermission name="biz:order:unitPrice:view">
+                                    <td>${poDetail.unitPrice}</td>
+                                </shiro:hasPermission>
                                 <td>${poDetail.ordQty * poDetail.unitPrice}</td>
                             </tr>
                             <c:if test="${state.last}">

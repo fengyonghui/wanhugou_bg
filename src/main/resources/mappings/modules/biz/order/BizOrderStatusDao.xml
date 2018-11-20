@@ -186,6 +186,8 @@
 		WHERE br.id = #{id}
 	</insert>
 
+
+
 	<select id="findCurrentStatus" resultType="Integer">
 		SELECT max(id)
 		FROM biz_order_status

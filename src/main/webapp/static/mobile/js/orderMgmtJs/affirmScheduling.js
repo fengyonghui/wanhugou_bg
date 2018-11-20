@@ -6,6 +6,7 @@
 		this.fs == false;
 //		this.outSaveFlag = "false"
 //		this.inSsaveFlag = "false"
+        this.unitPriceFlag = false;
 		this.htmlcommdPlans = '';
 		return this;
 	}
@@ -13,7 +14,8 @@
 		init: function() {
 			//biz:po:bizPoHeader:addScheduling		biz:po:bizPoHeader:saveScheduling	保存、批量保存	
 //			this.getPermissionList1('biz:po:bizPoHeader:addScheduling','outSaveFlag')	
-//			this.getPermissionList2('biz:po:bizPoHeader:saveScheduling','inSsaveFlag')	
+//			this.getPermissionList2('biz:po:bizPoHeader:saveScheduling','inSsaveFlag')
+            this.getPermissionList('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			this.pageInit(); //页面初始化
 		},
@@ -34,6 +36,19 @@
 //              }
 //          });
 //      },
+        getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.unitPriceFlag = res.data;
+                }
+            });
+        },
 		getData: function() {
 			var _this = this;
 			$.ajax({
@@ -92,16 +107,23 @@
 							'<div class="mui-input-row">'+
 								'<label>采购数量：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.ordQty +'" disabled></div>'+
-//								隐藏结算价
-//							'<div class="mui-input-row">'+
-//								'<label>结算价：</label>'+
-//								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+							'<div class="mui-input-row" id="unitprice">'+
+								'<label>结算价：</label>'+
+								'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
 							'<div class="mui-input-row">'+
 								'<label>总金额：</label>'+
 								'<input type="text" class="mui-input-clear" value="'+ item.ordQty * item.unitPrice +'" disabled>'+
 							'</div></div></li>'
 						});
-						$("#orSchedPurch").html(htmlPurch)
+						$("#orSchedPurch").html(htmlPurch);
+						var unitPriceList=$('#orSchedPurch #unitprice');
+						$.each(unitPriceList,function(z,x){
+							if(_this.unitPriceFlag==true){
+								$(x).show();
+							}else{
+								$(x).hide();
+							}
+						})
 		            }
                 	_this.showContent(res);
                 }
@@ -258,16 +280,23 @@
 				'<div class="mui-input-row">'+
 					'<label>采购数量：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.ordQty +'" disabled></div>'+
-//					隐藏结算价
-//				'<div class="mui-input-row">'+
-//					'<label>结算价：</label>'+
-//					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
+				'<div class="mui-input-row" id="unitprice">'+
+					'<label>结算价：</label>'+
+					'<input type="text" class="mui-input-clear" value="'+ item.unitPrice +'" disabled></div>'+
 				'<div class="mui-input-row">'+
 					'<label>总金额：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.ordQty * item.unitPrice +'" disabled>'+
 				'</div></div></li>'
 			});
-    		$("#orSchedPurch").html(htmlPurch)
+    		$("#orSchedPurch").html(htmlPurch);
+    		var unitPriceLists=$('#orSchedPurch #unitprice');
+			$.each(unitPriceLists,function(z,x){
+				if(_this.unitPriceFlag==true){
+					$(x).show();
+				}else{
+					$(x).hide();
+				}
+			})
 		},
 		commdContent: function(b,choice) {
 			var _this = this;
@@ -309,10 +338,9 @@
 						'<div class="mui-input-row">'+
 							'<label>采购数量：</label>'+
 							'<input type="text" class="" value="'+ item.ordQty +'" disabled></div>'+
-//							隐藏结算价
-//						'<div class="mui-input-row">'+
-//							'<label>结算价：</label>'+
-//							'<input type="text" class="" value="'+ item.unitPrice +'" disabled></div>'+
+						'<div class="mui-input-row" id="unitprice">'+
+							'<label>结算价：</label>'+
+							'<input type="text" class="" value="'+ item.unitPrice +'" disabled></div>'+
 						'<div class="mui-input-row">'+
 							'<label>总金额：</label>'+
 							'<input type="text" class="" value="'+ item.ordQty * item.unitPrice +'" disabled></div></div></div>'+
@@ -333,7 +361,15 @@
 					'</div></li>'
 				var commdItemId = item.id;
 			});
-    		$("#orSchedCommd").html(htmlCommodity)
+    		$("#orSchedCommd").html(htmlCommodity);
+    		var unitPriceListss=$('#orSchedCommd #unitprice');
+			$.each(unitPriceListss,function(z,x){
+				if(_this.unitPriceFlag==true){
+					$(x).show();
+				}else{
+					$(x).hide();
+				}
+			})
 		},
 		htmlcommdPlanTxt: function(tt) {
 			var _this = this;

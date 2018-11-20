@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.order;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
@@ -60,6 +61,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -988,5 +990,25 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     public Integer findCountByCentId(Integer centId) {
         return bizOrderHeaderDao.findCountByCentId(centId);
+    }
+
+    /**
+     * 查询该订单所有商品的库存数量
+     * @param bizOrderHeader
+     * @return
+     */
+    public Map<Integer,Integer> getInvSkuNum(BizOrderHeader bizOrderHeader) {
+        Map<Integer,Integer> invSkuNumMap = Maps.newHashMap();
+        BizOrderDetail bizOrderDetail = new BizOrderDetail();
+        bizOrderDetail.setOrderHeader(new BizOrderHeader(bizOrderHeader.getId()));
+        List<BizOrderDetail> orderDetails = bizOrderDetailService.findList(bizOrderDetail);
+        if (CollectionUtils.isNotEmpty(orderDetails)) {
+            for (BizOrderDetail orderDetail : orderDetails) {
+                Integer centId = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId()).getCenters().getId();
+                Integer invSkuNum = bizOrderDetailService.getInvSkuNum(orderDetail.getId(),centId);
+                invSkuNumMap.put(orderDetail.getId(),invSkuNum == null ? 0 : invSkuNum);
+            }
+        }
+        return invSkuNumMap;
     }
 }

@@ -381,15 +381,15 @@
                     <tbody id="prodInfo3">
                     <c:if test="${requestHeaderList!=null && requestHeaderList.size()>0}">
                         <c:forEach items="${requestHeaderList}" var="requestHeader">
-                            <%--<c:set var="flag" value="true"></c:set>--%>
+                            <c:set var="flag" value="true"></c:set>
                                 <c:forEach items="${requestHeader.requestDetailList}" var="requestDetail" varStatus="index">
 									<tr id="${requestHeader.id}">
-										<%--<c:if test="${flag}">--%>
-											<%--<td name="requestNo" rowspan="${fn:length(requestHeader.requestDetailList)}"><a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">${requestHeader.reqNo}</a></td>--%>
-										<%--</c:if>--%>
-										<td name="requestNo">
-											<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">${requestHeader.reqNo}</a>
-										</td>
+										<c:if test="${flag}">
+											<td name="requestNo" rowspan="${fn:length(requestHeader.requestDetailList)}"><a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">${requestHeader.reqNo}</a></td>
+										</c:if>
+										<%--<td name="requestNo">--%>
+											<%--<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">${requestHeader.reqNo}</a>--%>
+										<%--</td>--%>
 										<td>${requestHeader.fromOffice.name}</td>
 										<td>${fns:getDictLabel(requestHeader.bizStatus,"biz_req_status",'' )}</td>
 										<td>${requestDetail.skuInfo.name}</td>
@@ -402,9 +402,9 @@
 											<td><input type='text' title='sent_${requestHeader.id}' name='' required="required" onchange='checkNum(${requestDetail.reqQty},${requestDetail.sendQty},this)' value='0'></td>
 										</c:if>
 									</tr>
-									<%--<c:if test="${fn:length(requestHeader.requestDetailList)>1}">--%>
-										<%--<c:set var="flag" value="false"></c:set>--%>
-									<%--</c:if>--%>
+									<c:if test="${fn:length(requestHeader.requestDetailList)>1}">
+										<c:set var="flag" value="false"></c:set>
+									</c:if>
                                 </c:forEach>
 
                         </c:forEach>

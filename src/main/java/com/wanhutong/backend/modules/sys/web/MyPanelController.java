@@ -84,11 +84,11 @@ public class MyPanelController extends BaseController {
             reAuditCount = myPanelService.getReAuditCount("1");
         }
 
-//        总经理   ：订单审核
+//        总经理   ：订单审核；付款单审核
         tempRole.setEnname(RoleEnNameEnum.GENERAL_MANAGER.getState());
         if (userRoleList.contains(tempRole)) {
             waitAuditCount = myPanelService.getOrderWaitAuditCount("总经理");
-
+            paymentOrderAuditCount = myPanelService.getPaymentOrderAuditCount("供货部");
         }
 
 //        品类主管：订单审核；申请付款；付款单审核；备货单审核；待排产；需上架商品
@@ -121,9 +121,9 @@ public class MyPanelController extends BaseController {
 
 //        供货中心经理
         tempRole.setEnname(RoleEnNameEnum.PROVIDER_MANAGER.getState());
-        if (userRoleList.contains(tempRole)) {
-            paymentOrderAuditCount = myPanelService.getPaymentOrderAuditCount("供货部");
-        }
+//        if (userRoleList.contains(tempRole)) {
+//            paymentOrderAuditCount = myPanelService.getPaymentOrderAuditCount("供货部");
+//        }
 
 //        运营总监：备货审核
         tempRole.setEnname(RoleEnNameEnum.OP_DIRECTOR.getState());

@@ -494,17 +494,17 @@
                     <%--</c:forEach>--%>
                     <%--</c:forEach>--%>
                     <%--</c:if>--%>
-                <%--<c:set var="flag" value="true"></c:set>--%>
+                <c:set var="flag" value="true"></c:set>
                 <c:forEach items="${orderDetailList}" var="orderDetail">
                     <tr id="${orderDetail.orderHeader.id}">
-                        <%--<c:if test="${flag}">--%>
-                            <%--<td name="orderNo" rowspan="${fn:length(orderDetailList)}"><a--%>
-                                    <%--href="${ctx}/biz/order/bizOrderHeader/form?id=${orderDetail.orderHeader.id}&orderDetails=details">${orderDetail.orderHeader.orderNum}</a>--%>
-                            <%--</td>--%>
-                        <%--</c:if>--%>
-                        <td name="orderNo">
-                            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderDetail.orderHeader.id}&orderDetails=details">${orderDetail.orderHeader.orderNum}</a>
-                        </td>
+                        <c:if test="${flag}">
+                            <td name="orderNo" rowspan="${fn:length(orderDetailList)}"><a
+                                    href="${ctx}/biz/order/bizOrderHeader/form?id=${orderDetail.orderHeader.id}&orderDetails=details">${orderDetail.orderHeader.orderNum}</a>
+                            </td>
+                        </c:if>
+                        <%--<td name="orderNo">--%>
+                            <%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderDetail.orderHeader.id}&orderDetails=details">${orderDetail.orderHeader.orderNum}</a>--%>
+                        <%--</td>--%>
                         <td>${orderDetail.cust.name}</td>
                         <td>${fns:getDictLabel(orderDetail.orderHeader.bizStatus,"biz_order_status",'' )}</td>
                         <td>${orderDetail.skuInfo.name}</td>
@@ -516,9 +516,9 @@
                             <td><input type='text' title='sent_${orderDetail.orderHeader.id}' name='' required="required" onchange='checkNum(${orderDetail.ordQty},${orderDetail.sentQty},this)' value='0'></td>
                         </c:if>
                     </tr>
-                    <%--<c:if test="${fn:length(orderDetailList)>1}">--%>
-                        <%--<c:set var="flag" value="false"></c:set>--%>
-                    <%--</c:if>--%>
+                    <c:if test="${fn:length(orderDetailList)>1}">
+                        <c:set var="flag" value="false"></c:set>
+                    </c:if>
                 </c:forEach>
                 </tbody>
             </table>
