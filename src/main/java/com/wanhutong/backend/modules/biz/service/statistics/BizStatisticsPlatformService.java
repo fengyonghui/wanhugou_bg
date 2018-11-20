@@ -28,11 +28,8 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -114,9 +111,19 @@ public class BizStatisticsPlatformService {
         return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, id, null);
     }
 
+    public List<BizOrderStatisticsDto> getJoinPurchaseData(Integer centerId, String formatDate) {
+        return bizOrderHeaderDao.getJoinPurchaseData(centerId, formatDate);
+    }
+
+    public List<BizOrderStatisticsDto> getJoinPurchaseDataSingle(Integer consultantId, String formatDate) {
+        return bizOrderHeaderDao.getJoinPurchaseDataSingle(consultantId, formatDate);
+    }
+
     public List<BizOrderStatisticsDto> orderStatisticDataByUser(String startDate, String endDate, String type, String centerType, String orderType, Integer userId) {
         return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, null, userId);
     }
+
+
 
 
     /**
@@ -164,7 +171,24 @@ public class BizStatisticsPlatformService {
                 bizOpPlan = planList.get(0);
             }
 
-            o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
+            List<BizOrderStatisticsDto> joinPurchaseData = getJoinPurchaseDataSingle(o.getUserId(), dateStrArr[0] + dateStrArr[1]);
+            BizOrderStatisticsDto joinPurchaseOrderData = new BizOrderStatisticsDto();
+            if (CollectionUtils.isNotEmpty(joinPurchaseData)) {
+                joinPurchaseOrderData = joinPurchaseData.get(0);
+            }
+
+            //月计划联营订单总额
+            o.setJointOrderPlanAmountTotal(bizOpPlan.getJointOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getJointOrderAmount());
+            //月联营订单总额
+            o.setJointOrderAmountTotal(joinPurchaseOrderData.getJoinRemitAmount());
+            //月计划代采订单总额
+            o.setPurchaseOrderPlanAmountTotal(bizOpPlan.getPurchaseOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getPurchaseOrderAmount());
+            //月采订单总额
+            o.setPurchaseOrderAmountTotal(joinPurchaseOrderData.getPurchaseRemitAmount());
+
+            //月计划订单总额
+            //o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
+            o.setProcurement(o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()));
             o.setProcurementDay(
                     CollectionUtils.isEmpty(currentBizOrderStatisticsDtoList) ?
                             BigDecimal.ZERO
@@ -217,8 +241,24 @@ public class BizStatisticsPlatformService {
             }
         });
 
+        //合计值
+        BigDecimal totalProcurement = BigDecimal.ZERO;
+        BigDecimal totalJointOrderPlanAmountTotal = BigDecimal.ZERO;
+        BigDecimal totalJointOrderAmountTotal = BigDecimal.ZERO;
+        BigDecimal totalPurchaseOrderPlanAmountTotal = BigDecimal.ZERO;
+        BigDecimal totalPurchaseOrderAmountTotal = BigDecimal.ZERO;
+        BigDecimal totalReceiveTotal = BigDecimal.ZERO;
+        BigDecimal totalAccumulatedSalesMonth = BigDecimal.ZERO;
+        BigDecimal totalProcurementDay = BigDecimal.ZERO;
+        BigDecimal totalNewUser = BigDecimal.ZERO;
+        BigDecimal totalServiceChargePlan = BigDecimal.ZERO;
+        BigDecimal totalServiceCharge = BigDecimal.ZERO;
+        BigDecimal totalStockAmount = BigDecimal.ZERO;
+        String totalCurrentDate = "";
+
         Map<String, List<BizPlatformDataOverviewDto>> resultMap = Maps.newHashMap();
-        bizPlatformDataOverviewDtos.forEach(o -> {
+        for (int i = 0; i < bizPlatformDataOverviewDtos.size(); i++) {
+            BizPlatformDataOverviewDto o = bizPlatformDataOverviewDtos.get(i);
             List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList =
                     orderStatisticDataByOffice(currentDate, currentDate + " 23:59:59", null, null, null, o.getOfficeId());
             // 采购额
@@ -233,25 +273,160 @@ public class BizStatisticsPlatformService {
                 bizOpPlan = planList.get(0);
             }
 
+            List<BizOrderStatisticsDto> joinPurchaseData = getJoinPurchaseData(o.getOfficeId(), dateStrArr[0] + dateStrArr[1]);
+            BizOrderStatisticsDto joinPurchaseOrderData = new BizOrderStatisticsDto();
+            if (CollectionUtils.isNotEmpty(joinPurchaseData)) {
+                joinPurchaseOrderData = joinPurchaseData.get(0);
+            }
+
             BizUserStatisticsDto userStatisticDataByOfficeId = bizOrderHeaderDao.getValidUserStatisticDataByOfficeId(sdfMonth.format(sDate), o.getOfficeId());
-            o.setNewUser(userStatisticDataByOfficeId == null ? BigDecimal.ZERO : BigDecimal.valueOf(userStatisticDataByOfficeId.getCount()));
-            o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
+            //o.setNewUser(userStatisticDataByOfficeId == null ? BigDecimal.ZERO : BigDecimal.valueOf(userStatisticDataByOfficeId.getCount()));
+            //o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
             BizOrderStatisticsDto serviceChargeDto = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonthOfficeId(sdfMonth.format(sDate) + "%", o.getOfficeId());
             o.setServiceCharge(serviceChargeDto == null ? BigDecimal.ZERO : serviceChargeDto.getProfitPrice());
             o.setServiceChargePlan(bizOpPlan.getServiceCharge() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getServiceCharge()));
 
-            o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
+            //月计划联营订单总额
+            o.setJointOrderPlanAmountTotal(bizOpPlan.getJointOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getJointOrderAmount());
+            //月联营订单总额
+            o.setJointOrderAmountTotal(joinPurchaseOrderData.getJoinRemitAmount() == null ? BigDecimal.ZERO : joinPurchaseOrderData.getJoinRemitAmount());
+
+            //月计划代采订单总额
+            o.setPurchaseOrderPlanAmountTotal(bizOpPlan.getPurchaseOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getPurchaseOrderAmount());
+            //月代采订单总额
+            o.setPurchaseOrderAmountTotal(joinPurchaseOrderData.getPurchaseRemitAmount() == null ? BigDecimal.ZERO : joinPurchaseOrderData.getPurchaseRemitAmount());
+
+            //有效会员开单量
+            o.setNewUser(joinPurchaseOrderData.getValidCustomerNum() == null ? BigDecimal.ZERO : joinPurchaseOrderData.getValidCustomerNum());
+            o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
+
+            //o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
+            o.setProcurement(o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()));
             o.setProcurementDay(
                     CollectionUtils.isEmpty(currentBizOrderStatisticsDtoList) ?
                             BigDecimal.ZERO
                             : currentBizOrderStatisticsDtoList.get(0).getTotalMoney());
             // 库存金额
             o.setCurrentDate(endDate);
+
+
+
             List<BizPlatformDataOverviewDto> tempDtoList = resultMap.putIfAbsent(o.getProvince(), Lists.newArrayList(o));
             if (tempDtoList != null) {
                 tempDtoList.add(o);
             }
-        });
+
+            totalProcurement = totalProcurement.add(o.getProcurement());
+            totalJointOrderPlanAmountTotal = totalJointOrderPlanAmountTotal.add(o.getJointOrderPlanAmountTotal());
+            totalJointOrderAmountTotal = totalJointOrderAmountTotal.add(o.getJointOrderAmountTotal());
+            totalPurchaseOrderPlanAmountTotal = totalPurchaseOrderPlanAmountTotal.add(o.getPurchaseOrderPlanAmountTotal());
+            totalPurchaseOrderAmountTotal = totalPurchaseOrderAmountTotal.add(o.getPurchaseOrderAmountTotal());
+            totalReceiveTotal = totalReceiveTotal.add(o.getReceiveTotal());
+            totalAccumulatedSalesMonth = totalAccumulatedSalesMonth.add(o.getAccumulatedSalesMonth());
+            totalProcurementDay = totalProcurementDay.add(o.getProcurementDay());
+            totalNewUser = totalNewUser.add(o.getNewUser());
+            totalServiceChargePlan = totalServiceChargePlan.add(o.getServiceChargePlan());
+            totalServiceCharge = totalServiceCharge.add(o.getServiceCharge());
+            totalStockAmount = totalStockAmount.add(o.getStockAmount());
+            totalCurrentDate = endDate;
+
+        }
+
+//        bizPlatformDataOverviewDtos.forEach(o -> {
+//            List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList =
+//                    orderStatisticDataByOffice(currentDate, currentDate + " 23:59:59", null, null, null, o.getOfficeId());
+//            // 采购额
+//            BizOpPlan bizOpPlan = new BizOpPlan();
+//            bizOpPlan.setObjectName("sys_office");
+//            bizOpPlan.setObjectId(String.valueOf(o.getOfficeId()));
+//            bizOpPlan.setYear(dateStrArr[0]);
+//            bizOpPlan.setMonth(dateStrArr[1]);
+//            bizOpPlan.setDay("0");
+//            List<BizOpPlan> planList = bizOpPlanDao.findList(bizOpPlan);
+//            if (CollectionUtils.isNotEmpty(planList)) {
+//                bizOpPlan = planList.get(0);
+//            }
+//
+//            List<BizOrderStatisticsDto> joinPurchaseData = getJoinPurchaseData(o.getOfficeId(), dateStrArr[0] + dateStrArr[1]);
+//            BizOrderStatisticsDto joinPurchaseOrderData = new BizOrderStatisticsDto();
+//            if (CollectionUtils.isNotEmpty(joinPurchaseData)) {
+//                joinPurchaseOrderData = joinPurchaseData.get(0);
+//            }
+//
+//            BizUserStatisticsDto userStatisticDataByOfficeId = bizOrderHeaderDao.getValidUserStatisticDataByOfficeId(sdfMonth.format(sDate), o.getOfficeId());
+//            o.setNewUser(userStatisticDataByOfficeId == null ? BigDecimal.ZERO : BigDecimal.valueOf(userStatisticDataByOfficeId.getCount()));
+//            o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
+//            BizOrderStatisticsDto serviceChargeDto = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonthOfficeId(sdfMonth.format(sDate) + "%", o.getOfficeId());
+//            o.setServiceCharge(serviceChargeDto == null ? BigDecimal.ZERO : serviceChargeDto.getProfitPrice());
+//            o.setServiceChargePlan(bizOpPlan.getServiceCharge() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getServiceCharge()));
+//
+//            //月计划联营订单总额
+//            o.setJointOrderPlanAmountTotal(bizOpPlan.getJointOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getJointOrderAmount());
+//            //月联营订单总额
+//            o.setJointOrderAmountTotal(joinPurchaseOrderData.getJoinSaleAmount() == null ? BigDecimal.ZERO : joinPurchaseOrderData.getJoinSaleAmount());
+//
+//            //月计划代采订单总额
+//            o.setPurchaseOrderPlanAmountTotal(bizOpPlan.getPurchaseOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getPurchaseOrderAmount());
+//            //月代采订单总额
+//            o.setPurchaseOrderAmountTotal(joinPurchaseOrderData.getPurchaseSaleAmount() == null ? BigDecimal.ZERO : joinPurchaseOrderData.getPurchaseSaleAmount());
+//
+//            //o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
+//            o.setProcurement(o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()));
+//            o.setProcurementDay(
+//                    CollectionUtils.isEmpty(currentBizOrderStatisticsDtoList) ?
+//                            BigDecimal.ZERO
+//                            : currentBizOrderStatisticsDtoList.get(0).getTotalMoney());
+//            // 库存金额
+//            o.setCurrentDate(endDate);
+//
+//
+//
+//            List<BizPlatformDataOverviewDto> tempDtoList = resultMap.putIfAbsent(o.getProvince(), Lists.newArrayList(o));
+//            if (tempDtoList != null) {
+//                tempDtoList.add(o);
+//            }
+//
+//            //月代采订单总额
+//            //totalPurchaseOrderAmountTotal.add(o.getPurchaseOrderAmountTotal());
+//            totalPurchaseOrderAmountTotal = totalPurchaseOrderAmountTotal.add(o.getPurchaseOrderAmountTotal());
+//
+//
+//            totalProcurement.add(o.getProcurement());
+//            totalJointOrderPlanAmountTotal.add(o.getJointOrderPlanAmountTotal());
+//            totalJointOrderAmountTotal.add(o.getJointOrderAmountTotal());
+//            totalPurchaseOrderPlanAmountTotal.add(o.getPurchaseOrderPlanAmountTotal());
+//            //totalPurchaseOrderAmountTotal.add(o.getPurchaseOrderAmountTotal());
+//            totalReceiveTotal.add(o.getReceiveTotal());
+//            //totalYieldRate = "---"
+//            totalAccumulatedSalesMonth.add(o.getAccumulatedSalesMonth());
+//            totalProcurementDay.add(o.getProcurementDay());
+//            //totalDifferenceTotalMonth.add(o.getDifferenceTotalMonth());
+//            //totalRemainingDays.set(o.getRemainingDays());
+//            //totalDayMinReturned.add(o.getDayMinReturned());
+//            totalServiceChargePlan.add(o.getServiceChargePlan());
+//            totalServiceCharge.add(o.getServiceCharge());
+//            //totalServiceChargeRate = "---";
+//            totalStockAmount.add(o.getStockAmount());
+//
+//        });
+        BizPlatformDataOverviewDto statisticsTotal = new BizPlatformDataOverviewDto();
+        statisticsTotal.setProcurement(totalProcurement);
+        statisticsTotal.setJointOrderPlanAmountTotal(totalJointOrderPlanAmountTotal);
+        statisticsTotal.setJointOrderAmountTotal(totalJointOrderAmountTotal);
+        statisticsTotal.setPurchaseOrderPlanAmountTotal(totalPurchaseOrderPlanAmountTotal);
+        statisticsTotal.setPurchaseOrderAmountTotal(totalPurchaseOrderAmountTotal);
+        statisticsTotal.setReceiveTotal(totalReceiveTotal);
+        statisticsTotal.setAccumulatedSalesMonth(totalAccumulatedSalesMonth);
+        statisticsTotal.setProcurementDay(totalProcurementDay);
+        statisticsTotal.setNewUser(totalNewUser);
+        statisticsTotal.setServiceChargePlan(totalServiceChargePlan);
+        statisticsTotal.setServiceCharge(totalServiceCharge);
+        statisticsTotal.setStockAmount(totalStockAmount);
+        statisticsTotal.setCurrentDate(totalCurrentDate);
+        List<BizPlatformDataOverviewDto> statisticsTotalList = new ArrayList<BizPlatformDataOverviewDto>();
+        statisticsTotalList.add(statisticsTotal);
+        resultMap.put("statisticsTotal", statisticsTotalList);
+
         return resultMap;
     }
 

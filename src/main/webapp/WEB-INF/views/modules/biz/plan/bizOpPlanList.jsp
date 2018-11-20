@@ -63,7 +63,9 @@
 		<th>年</th>
 		<th>月</th>
 		<th>日</th>
-		<th>总额</th>
+		<%--<th>总额</th>--%>
+		<th>联营订单总额</th>
+		<th>代采订单总额</th>
 		<th>新用户</th>
 		<th>服务费</th>
 		<th>创建时间</th>
@@ -95,8 +97,14 @@
 			<td>
 					${bizOpPlan.day}
 			</td>
+			<%--<td>--%>
+					<%--${bizOpPlan.amount}--%>
+			<%--</td>--%>
 			<td>
-					${bizOpPlan.amount}
+					${bizOpPlan.jointOrderAmount}
+			</td>
+			<td>
+					${bizOpPlan.purchaseOrderAmount}
 			</td>
 			<td>
 					${bizOpPlan.newUser}
