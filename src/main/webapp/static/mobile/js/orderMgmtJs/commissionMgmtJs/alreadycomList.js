@@ -203,8 +203,7 @@
 										surePayMoneyBtn = 'sureApplyMoneyBtn';
 									}
 								}
-								//确认付款
-								
+								//确认付款								
 								if(_this.commAuditFlag == true) {
 									if(item.commonProcess.paymentOrderProcess.name == '审批完成' && item.bizStatus == '0'){
 										surePayMoneyTxt = '确认付款';
@@ -284,20 +283,15 @@
 									'<div class="imgLists">' +_this.photoShow(item)+
 									'</div>' +
 								'</div>' +
-//								'<div class="app_color40 mui-row app_text_center content_part operation">' +
-//										'<div class="mui-col-xs-4 '+ sureApplyMoneyBtn +'" orderIds="'+ item.id +'" >' +
-//											'<div class="">'+sureApplyMoneyTxt+'</div>' +
-//										'</div>' +
-//								'</div>' +
-								'<div class="app_color40 mui-row app_text_center content_part operation">' +
-									'<div class="mui-col-xs-6 '+ sureCheckBtn +'" orderIds="'+ item.id +'" code="'+ item.commonProcess.paymentOrderProcess.code +'" totalCommission="'+ item.totalCommission +'">' +
+								'<div class="app_color40 mui-row app_text_center content_part operation" id="check">' +
+									'<div class="mui-col-xs-6 '+ sureCheckBtn +'" commId="'+ item.id +'" code="'+ item.commonProcess.paymentOrderProcess.code +'" money="'+ item.totalCommission +'">' +
 										'<div class="">'+sureCheckBtnTxt +'</div>' +
 									'</div>' +
-									'<div class="mui-col-xs-6 '+ noCheckBtn  +'" orderIds="'+ item.id +'" code="'+ item.commonProcess.paymentOrderProcess.code +'" totalCommission="'+ item.totalCommission +'">' +
+									'<div class="mui-col-xs-6 '+ noCheckBtn  +'" commId="'+ item.id +'" code="'+ item.commonProcess.paymentOrderProcess.code +'" money="'+ item.totalCommission +'">' +
 										'<div class="">'+ noCheckBtnTxt+'</div>' +
 									'</div>' +
 								'</div>' +
-								'<div class="app_color40 mui-row app_text_center content_part operation">' +
+								'<div class="app_color40 mui-row app_text_center content_part operation" id="detail">' +
 									'<div class="mui-col-xs-6 '+ surePayMoneyBtn +'" orderIds="'+ item.id +'" str="pay">' +
 										'<div class="">'+surePayMoneyTxt +'</div>' +
 									'</div>' +
@@ -310,7 +304,7 @@
 							});
 							$('#commList').append(commHtmlList);
 							_this.stOrdHrefHtml();	
-							_this.payMoneyHtml(res.data.page.list);
+							_this.payMoneyHtml(res.data.page.list);//字体变颜色
 							_this.inHrefHtml();//确认支付金额
 						}else{
 							$('.mui-pull-bottom-pocket').html('');
@@ -323,8 +317,7 @@
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
-			            } 	
-//			            
+			            } 	 
 			        },
 		            error:function(xhr,type,errorThrown){
 			            console.log(type);
@@ -391,7 +384,7 @@
 					if(n.commonProcess.paymentOrderProcess.name == '审批完成' && n.bizStatus == '1'){
 						$('.downPayMoneyBtn').css('color','#000');						
 					}					
-				}       		
+				} 
         	})
         },
         removeBtn:function(){
@@ -402,11 +395,10 @@
         comfirDialig: function() {
 			var _this = this;
 //			document.getElementById("inCheckBtns").addEventListener('tap', function() {
-			$('.sureCheckBtn').on('tap', function() {
-				var inListId = $(this).attr('inlistid');
-				var auditType= $(this).attr('ordertype');
-				var money= $(this).attr('total');
-				var currentType= $(this).attr('curtype');
+			$('.noCheckBtn').on('tap', function(e) {
+				var commId = $(this).attr('commId');
+				var currentType= $(this).attr('code');
+				var money= $(this).attr('money');				
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
@@ -417,7 +409,7 @@
 								if(a.value == '') {
 									mui.toast('驳货理由不能为空！')
 								} else {
-									_this.rejectData(rejectTxt,2,inListId,money,currentType)
+									_this.rejectData(rejectTxt,2,commId,money,currentType)
 								}
 							} else {}
 						})
@@ -425,12 +417,14 @@
 				})
 			});
 //			document.getElementById("inCheckBtn").addEventListener('tap', function(e) {
-			$('.noCheckBtn').on('tap', function() {
+			$('.sureCheckBtn').on('tap', function(e) {
 				e.detail.gesture.preventDefault(); 
-				var inListId = $(this).attr('inlistid');
-				var auditType= $(this).attr('ordertype');
-				var money= $(this).attr('total');
-				var currentType= $(this).attr('curtype');
+				var commId = $(this).attr('commId');
+				var currentType= $(this).attr('code');
+				var money= $(this).attr('money');
+				console.log(commId)
+				console.log(currentType)
+				console.log(money)
 				var btnArray = ['取消', '确定'];
 				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
 					if(e.index == 1) {
@@ -442,7 +436,7 @@
 							var btnArray = ['否', '是'];
 							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
 								if(choice.index == 1) {
-									_this.ajaxData(inText,1,inListId,money,currentType)
+									_this.ajaxData(inText,1,commId,money,currentType)
 								} else {}
 							})
 						}
@@ -455,9 +449,9 @@
 			var _this = this;
 			$.ajax({
 				type: "GET",
-				url: "/a/biz/po/bizPoHeader/auditPay",
+				url: "/a/biz/order/bizCommission/auditPay",
 				data: {
-					poPayId: inListId,
+					commId: inListId,
 					currentType: currentType,
 					money: money,
 					auditType: num,
@@ -470,7 +464,7 @@
 						mui.toast(res.data.right);
 						window.setTimeout(function(){
 			                GHUTILS.OPENPAGE({
-								url: "../orderMgmtHtml/orderpaymentinfo.html",
+								url: "../../../html/orderMgmtHtml/commissionMgmtHtml/alreadlycomList.html",
 								extras: {}
 							})
 			            },300);						
@@ -489,9 +483,9 @@
 			var _this = this;
 			$.ajax({
 				type: "GET",
-				url: "/a/biz/po/bizPoHeader/auditPay",
+				url: "/a/biz/order/bizCommission/auditPay",
 				data: {
-					poPayId: inListId,
+					commId: inListId,
 					currentType: currentType,
 					money: money,
 					auditType: num,
@@ -501,11 +495,9 @@
 				success: function(res) {
 					if(res.ret == true) {
 						mui.toast(res.data.right);
-						$('app_color40 .inCheckBtn').find('div').css('display','none');
-						$('app_color40 .inCheckBtns').find('div').css('display','none');
 						window.setTimeout(function(){
 			                GHUTILS.OPENPAGE({
-								url: "../orderMgmtHtml/orderpaymentinfo.html",
+								url: "../../../html/orderMgmtHtml/commissionMgmtHtml/alreadlycomList.html",
 								extras: {}
 							})
 			            },300);
@@ -533,8 +525,6 @@
 	                success: function(res){
 	                    console.log(res);
 	                    var resid=res.data.entity.id;
-//	                    var poHeaderIds=res.data.bizPoPaymentOrder.poHeaderId;
-//	                     var orderTypes=res.data.bizPoPaymentOrder.orderType;
 	                    $('#totalMoney').val(res.data.entity.totalCommission);
 	                    $('#paymoney').val(res.data.entity.totalCommission);
 	                    if(res.data.entity.str != 'pay'){
@@ -553,12 +543,12 @@
 				                data: {id:resid},
 				                async:false,
 				                success: function(res){				                   
-				                    if(res.data.result==true||res.data.result=='true'){
+				                    if(res.ret==true||res.ret=='true'){
 				                    	mui.toast('保存成功！！');
 				                    	$('#tanchuang_pay').hide();
 				                    	window.setTimeout(function(){
 						                    _this.pageInit();
-						                },800);
+						                },500);
 				                    }else{
 				                    	mui.toast('保存失败！！');
 				                    }
