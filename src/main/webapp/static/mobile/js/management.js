@@ -36,8 +36,10 @@
                     	if(item.mobileUrl == -1) {
                     		htmlList += '<li class="mui-table-view-cell mui-collapse menuBtn" indexNum = "'+ i+'" dataId="'+item.id+'">'+
 							'<a class="mui-navigate-right">'+ item.name + '</a>'+
-							'<div  class = "mui-collapse-content childData'+ i+'">'
-							'</div>'+
+//							'<div class = "mui-collapse-content childData'+ i+'" id="saleQty_' +item.id+ '">'+
+//							'</div>'+    
+                            '<ul class = "mui-table-view app_color40 childData'+ i+'">'+
+                            '</ul>'+
 							'</li>'
                     	}
                     });
@@ -47,7 +49,7 @@
 		},
 		getData: function() {
 			var _this = this;
-            $('#menuMaget').on('tap','.menuBtn',function(){            	
+            $('#menuMaget').on('tap','.menuBtn',function(){ 			        
                 var dataId = $(this).attr('dataId');
                 var indexNum = $(this).attr('indexNum');               
                 if(dataId){
@@ -60,7 +62,8 @@
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
                                 if(item.mobileUrl){
-                                	pHtmlList += '<p class="childMenu" purchid="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</p>'
+//                              	pHtmlList += '<p class="childMenu" purchid="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</p>'
+                                	pHtmlList += '<li class="mui-table-view-cell childMenu" purchid="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</li>'
                                 	                             
                                 } 
                             });
@@ -73,6 +76,7 @@
 		                    	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
 		                        	console.log('777')	
 		                        	$(this).attr('id','commission');
+		                        	
 		                        	var divHtmlList = '<ul class="mui-table-view cMenu" id=""></ul>';
 		                        	$('#commission').append(divHtmlList);
 		                        	
@@ -205,8 +209,9 @@
                 }
 			})
             //佣金管理
-            $('#menuMaget').on('click','#commission',function(){//menuBtn 
-            	//
+            $('#menuMaget').on('click','#commission',function(event){//menuBtn 
+            	console.log(event)
+              	event.stopPropagation();
             	var url = $(this).attr('url');
 				var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');
@@ -251,8 +256,8 @@
 //			})
 	},
 	getDataTwo:function(){
-		//佣金管理菜单
-            $('#menuMaget .menuBtn .childMenu .cMenu').on('tap','.comMenu',function(){
+		//佣金管理菜单#menuMaget .menuBtn .childMenu 
+            $('.cMenu').on('tap','.comMenu',function(){
 //          	alert(1)
             	var url = $(this).attr('url');
 				var mobileUrl = $(this).attr('mobileUrl');
@@ -276,6 +281,7 @@
 						}
 					})
                 }
+                return false;
 			})
 	}
 		

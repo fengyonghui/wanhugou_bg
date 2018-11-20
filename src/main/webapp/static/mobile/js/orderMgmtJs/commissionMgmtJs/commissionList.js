@@ -12,17 +12,14 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			//权限添加biz:order:bizOrderHeader:view biz:order:bizOrderHeader:edit
 			this.getPermissionList1('biz:order:bizOrderHeader:view','commOrdFlag')//true 操作
-			this.getPermissionList3('biz:order:bizOrderHeader:edit','commEditFlag')//true 删除
-			
+			this.getPermissionList3('biz:order:bizOrderHeader:edit','commEditFlag')//true 删除		
 			this.pageInit(); //页面初始化
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
-//			console.log(_this.commOrdFlag)
 			var pager = {};//分页 
 		    var totalPage;//总页码
 		    pullRefresh(pager);//启用上拉下拉 
@@ -144,29 +141,29 @@
 								userId = user.data.id
 			                }
 			            });
-
+			            //订单类型
+                        $.ajax({
+			                type: "GET",
+			                url: "/a/sys/dict/listData",
+			                dataType: "json",
+			                data: {type: "biz_order_type"},
+			                async:false,
+			                success: function(res){   
+				                ass=res;
+			                }
+			            });
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
 								console.log(item)
-	                        //订单类型
-							var orderTypeTxt = '';
-			          	    $.ajax({
-				                type: "GET",
-				                url: "/a/sys/dict/getDictLabel4Mobile",
-				                dataType: "json",
-				                data: {
-				                	value:item.orderType,
-				                	type: "biz_order_type",
-				                	defaultValue:'未知状态'
-				                },
-				                async:false,
-				                success: function(hz){
-				                	orderTypeTxt=hz.data.dictLabel;
-				                }
-				            });
+								 //订单类型
+								var orderTypeTxt = '';
+	                            $.each(ass,function(i,items){
+		                        	if(item.orderType==items.value) {
+		                        		orderTypeTxt = items.label
+		                        	}
+	                            })
+
 								/*已结佣*/
-//
-//								var alreadyKnotBtnTxt = '';
 								/*申请结佣*/
 								var applyKnotBtn = '';
 								var applyKnotBtnTxt = '';
@@ -208,8 +205,6 @@
 								            commDeleteBtnTxt = '恢复';
 										}
 									}
-
-
 								}
 							commHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group" id="rodiv_' + item.orderType + '">'+
 								'<div class="mui-input-row">' +
@@ -252,7 +247,6 @@
 					}else{
 						$('.mui-pull-bottom-pocket').html('');
 						$('#orderList').append('<p class="noneTxt">暂无数据</p>');
-						$('#OrdSechBtn').hide();
 						mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 					}
 	                if(res.data.page.totalPage==pager.pageNo){		                	
@@ -324,6 +318,23 @@
         },
 		stOrdHrefHtml: function() {
 			var _this = this;
+			//未结佣
+			$('.noKnotBtn').on('tap', function() {
+				var url = $(this).attr('url');
+				var orderIds = $(this).attr('orderIds');
+				var orderNum = $(this).attr('orderNum');
+				console.log(orderNum)
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(orderIds == orderIds) {
+					GHUTILS.OPENPAGE({
+						url: "../../../html/orderMgmtHtml/commissionMgmtHtml/alreadlycomList.html",
+						extras: {
+							orderNum: orderNum,
+						}
+					})
+				}
+			});
 			//已结佣
 			$('.alreadyKnotBtn').on('tap', function() {
 				var url = $(this).attr('url');
@@ -340,7 +351,7 @@
 						}
 					})
 				}
-			}),
+			});
 		    /*申请结佣*/
 	        $('.applyKnotBtn').on('tap', function() {
 				var url = $(this).attr('url');
@@ -361,8 +372,8 @@
 						}
 					})
 				}
-			}),	
-		/*详情*/
+			});
+		    /*详情*/
 			$('.content_part').on('tap', '.commDetailBtn', function() {
 				var url = $(this).attr('url');
 				var orderIds = $(this).attr('staOrdId');
