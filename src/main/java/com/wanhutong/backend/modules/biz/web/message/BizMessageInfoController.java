@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -91,6 +92,18 @@ public class BizMessageInfoController extends BaseController {
 	public String delete(BizMessageInfo bizMessageInfo, RedirectAttributes redirectAttributes) {
 		bizMessageInfoService.delete(bizMessageInfo);
 		addMessage(redirectAttributes, "删除站内信成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/message/bizMessageInfo/?repage";
+	}
+
+	@RequiresPermissions("biz:message:bizMessageInfo:edit")
+	@RequestMapping(value = "copy")
+	public String copy(BizMessageInfo bizMessageInfo, RedirectAttributes redirectAttributes) {
+		BizMessageInfo messageInfo = bizMessageInfoService.get(bizMessageInfo.getId());
+		messageInfo.setId(null);
+		messageInfo.setBizStatus(BizMessageInfo.BizStatus.NO_SEND.getStatus());
+		bizMessageInfoService.save(messageInfo);
+		addMessage(redirectAttributes, "复制站内信成功");
+
 		return "redirect:"+Global.getAdminPath()+"/biz/message/bizMessageInfo/?repage";
 	}
 

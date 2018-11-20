@@ -90,7 +90,13 @@
 					<fmt:formatDate value="${bizMessageInfo.releaseTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><td>
-					<a href="${ctx}/biz/message/bizMessageInfo/delete?id=${bizMessageInfo.id}" onclick="return confirmx('确认要删除该发送站内信吗？', this.href)">删除</a>
+					<a href="${ctx}/biz/message/bizMessageInfo/delete?id=${bizMessageInfo.id}" onclick="return confirmx('确认要删除该站内信吗？', this.href)">删除</a>
+					<c:if test="${bizMessageInfo.bizStatus == '0'}">
+						<a href="${ctx}/biz/message/bizMessageInfo/form?id=${bizMessageInfo.id}">编辑</a>
+					</c:if>
+					<c:if test="${bizMessageInfo.bizStatus == '1'}">
+						<a href="${ctx}/biz/message/bizMessageInfo/copy?id=${bizMessageInfo.id}" onclick="return confirmx('确认要复制该站内信吗？', this.href)">复制</a>
+					</c:if>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.wanhutong.backend.modules.enums.BizMessageCompanyTypeEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
@@ -25,6 +26,21 @@
 		});
 		
 		function btnSaveType(saveType) {
+            var params = new Array();
+            $(".companyIdType").each(function () {
+                if(this.checked){
+                    var companyIdType = $(this).attr("value")
+                    params.push(completeId);
+                }
+            })
+
+            if(params.length == 0) {
+                alert("未勾选待发送的用户！")
+                return false;
+            }
+
+
+
             $("#inputForm").attr("action", "${ctx}/biz/message/bizMessageInfo/save?saveType=" + saveType);
             $("#inputForm").submit();
         }
@@ -48,22 +64,17 @@
 		<div class="control-group">
 			<label class="control-label">选择发送用户：</label>
 			<div class="controls">
-				<input title="num" name="${orderDetail.orderHeader.orderNum}" type="checkbox"
-					   onclick="selectOrder('${orderDetail.orderHeader.orderNum}')"/>全部零售商
+				<input title="num" class="companyIdType" name="companyIdType" type="checkbox" value="${BizMessageCompanyTypeEnum.CONSUMER.type}" />全部零售商
 				&nbsp;&nbsp;
-				<input title="num" name="${orderDetail.orderHeader.orderNum}" type="checkbox"
-					   onclick="selectOrder('${orderDetail.orderHeader.orderNum}')"/>全部代销商
+				<input title="num" class="companyIdType" name="companyIdType" type="checkbox" value="${BizMessageCompanyTypeEnum.CONSIGNEE.type}" />全部代销商
 				&nbsp;&nbsp;
-				<input title="num" name="${orderDetail.orderHeader.orderNum}" type="checkbox"
-					   onclick="selectOrder('${orderDetail.orderHeader.orderNum}')"/>全部经销商
+				<input title="num" class="companyIdType" name="companyIdType" type="checkbox" value="${BizMessageCompanyTypeEnum.PURCHASERS.type}" />全部经销商
 				&nbsp;&nbsp;
-				<input title="num" name="${orderDetail.orderHeader.orderNum}" type="checkbox"
-					   onclick="selectOrder('${orderDetail.orderHeader.orderNum}')"/>全部供应商
-				&nbsp;&nbsp;
-				<input title="num" name="${orderDetail.orderHeader.orderNum}" type="checkbox"
-					   onclick="selectOrder('${orderDetail.orderHeader.orderNum}')"/>部分用户
+				<input title="num" class="companyIdType" name="companyIdType" type="checkbox" value="${BizMessageCompanyTypeEnum.SUPPLY_CHAIN.type}" />全部供应商
 				&nbsp;&nbsp;
 
+				<input title="num" class="companyIdType" name="companyIdType" type="checkbox" value="${BizMessageCompanyTypeEnum.OTHER_TYPE.type}" />部分用户
+				&nbsp;&nbsp;
 				<sys:treeselect id="company" name="companyId" value="${companyId}" labelName="company.name" labelValue="${company.id}"
 								title="公司" url="/sys/office/treeData?isAll=true" cssClass="input-small" allowClear="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
