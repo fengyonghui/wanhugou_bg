@@ -221,7 +221,10 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 page.setList(bizOrderHeaderDao.findListNotCompleteAudit(bizOrderHeader));
                 return page;
             }else {
-                return super.findPage(page, bizOrderHeader);
+                bizOrderHeader.setPage(page);
+                page.setList(bizOrderHeaderDao.findListNew(bizOrderHeader));
+                return  page;
+             //   return super.findPage(page, bizOrderHeader);
             }
 
         } else {
@@ -249,7 +252,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             } else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
-            return super.findPage(page, bizOrderHeader);
+            bizOrderHeader.setPage(page);
+            page.setList(bizOrderHeaderDao.findListNew(bizOrderHeader));
+            return  page;
+
+         //   return super.findPage(page, bizOrderHeader);
         }
     }
 

@@ -258,9 +258,9 @@
     </ul>
     <c:if test="${bizOrderHeader.flag != 'check_pending'}">
     <br>
-    <div class="control-group">
-        <label class="control-label">付款单搜索：</label>
-    </div>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">付款单搜索：</label>--%>
+    <%--</div>--%>
     <ul class="ul-form">
         <!-- 订单支出信息合并 搜索 -->
         <li><label style="width: 120px;">付款单业务状态：</label>
@@ -276,13 +276,13 @@
                 <form:options items="${processList}" htmlEscape="false"/>
             </form:select>
         </li>
-        <li><label style="width: 120px;">付款单排产状态：</label>
-            <form:select path="poSchType" class="input-medium">
-                <form:option value="" label="请选择"/>
-                <form:options items="${fns:getDictList('poSchType')}" itemLabel="label" itemValue="value"
-                              htmlEscape="false"/>
-            </form:select>
-        </li>
+        <%--<li><label style="width: 120px;">付款单排产状态：</label>--%>
+            <%--<form:select path="poSchType" class="input-medium">--%>
+                <%--<form:option value="" label="请选择"/>--%>
+                <%--<form:options items="${fns:getDictList('poSchType')}" itemLabel="label" itemValue="value"--%>
+                              <%--htmlEscape="false"/>--%>
+            <%--</form:select>--%>
+        <%--</li>--%>
         <li><label style="width: 120px;">付款单待支付：</label>
             <form:select path="poWaitPay" class="input-medium">
                 <form:option value="" label="请选择"/>
@@ -401,8 +401,8 @@
             </shiro:hasPermission>
 
         </c:if>
-        <th>发票状态</th>
         <th>业务状态</th>
+        <th>付款单状态</th>
         <th>审核状态</th>
         <th>结佣状态</th>
         <th>创建人</th>
@@ -485,9 +485,7 @@
                 </td>
             </shiro:hasPermission>
 
-            <td>
-                    ${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
-            </td>
+
             <td>
                 <c:choose>
                     <c:when test="${orderHeader.drawBack != null}">
@@ -506,6 +504,9 @@
                     </c:when>
                     <c:otherwise>
                         ${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
+
+
+
                         <a style="display: none">
                             <fmt:formatNumber type="number" var="total"
                                               value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee}"
@@ -520,7 +521,9 @@
                     </c:otherwise>
                 </c:choose>
             </td>
-
+            <td>
+                    ${fns:getDictLabel(orderHeader.bizPoHeader.bizStatus, 'biz_po_status', '未知状态')}
+            </td>
             <td>
                 <c:if test="${orderHeader.bizStatus == OrderHeaderBizStatusEnum.CANCLE.state || orderHeader.bizStatus == OrderHeaderBizStatusEnum.DELETE.state || orderHeader.bizStatus == OrderHeaderBizStatusEnum.UNAPPROVE.state}">
 
@@ -614,13 +617,6 @@
 							</c:if>
 						</c:if>
 					</shiro:hasPermission>
-					<%--<shiro:hasPermission name="biz:order:bizOrderHeader:supplying">--%>
-					<%--<c:if test="${orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus <= OrderHeaderBizStatusEnum.STOCKING.state && orderHeader.suplys != 0 && orderHeader.suplys != 721}">--%>
-					<%--<c:if test="${fn:length(orderHeader.bizInvoiceList) <= 0}">--%>
-					<%--<a href="${ctx}/biz/inventory/bizInvoice/formV2?id=${orderHeader.id}&type=1">出库确认</a>--%>
-					<%--</c:if>--%>
-					<%--</c:if>--%>
-					<%--</shiro:hasPermission>--%>
 				</c:if >
                 </c:if >
 
