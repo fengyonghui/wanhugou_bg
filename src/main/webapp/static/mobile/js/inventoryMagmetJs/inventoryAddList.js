@@ -11,6 +11,7 @@
         this.reqQtys="";
         this.fromOfficeId="";
         this.bizOfficeId="";
+        this.unitPriceFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -18,11 +19,25 @@
 			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAdd01');
 			this.hrefHtmls('.newinput02', '.input_div02','#hideSpanAdd02');
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
+			this.getPermissionList('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.pageInit(); //页面初始化
 			this.ajaxTypeStatus();
 			
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.unitPriceFlag = res.data;
+                }
+            });
+        },
 		pageInit: function() {
 			var _this = this;
 			/*当前用户信息*/
@@ -267,11 +282,11 @@
 	                                    '<div class="mui-row  inAddFont">' +
 	                                    '<div class="mui-col-sm-2 mui-col-xs-2"></div>' +
 //	                                    隐藏结算价
-//	                                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
-//	                                    '<li class="mui-table-view-cell app_bline3">' +
-//	                                    '<div class="mui-input-row">' +
-//	                                    '<label>结算价:</label>' +
-//	                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled></div></li></div>' +
+	                                    '<div class="mui-col-sm-5 mui-col-xs-5" id="unitprice">' +
+	                                    '<li class="mui-table-view-cell app_bline3">' +
+	                                    '<div class="mui-input-row">' +
+	                                    '<label>结算价:</label>' +
+	                                    '<input type="text" class="mui-input-clear" id="" value="' + skuInfo.buyPrice + '" disabled></div></li></div>' +
 	                                    '<div class="mui-col-sm-5 mui-col-xs-5">' +
 	                                    '<li class="mui-table-view-cell app_bline3">' +
 	                                    '<div class="mui-input-row">' +
@@ -283,6 +298,22 @@
 	                            });
 	                            t++;
 	                            $("#searchInfo").append(resultListHtml);
+	                            var unitPriceList=$('#searchInfo #unitprice');
+	                            var unitPriceLists=$('#commodityMenu #unitprice');
+								$.each(unitPriceList,function(z,x){
+									if(_this.unitPriceFlag==true){
+										$(x).show();
+									}else{
+										$(x).hide();
+									}
+								})
+								$.each(unitPriceLists,function(z,x){
+									if(_this.unitPriceFlag==true){
+										$(x).show();
+									}else{
+										$(x).hide();
+									}
+								})
 	                        })
 	                        var addButtonHtml = '<div id="batchAddDiv">' +
                             '<button id="batchAdd" type="submit" class="addSkuButton inAddBtn app_btn_search mui-btn-blue mui-btn-block">添加' +

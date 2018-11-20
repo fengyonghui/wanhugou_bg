@@ -7,11 +7,11 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#toryExport").click(function(){
-                top.$.jBox.confirm("确认要导出库存盘点数据吗？","系统提示",function(v,h,f){
+                top.$.jBox.confirm("确认要导出备货单盘点数据吗？","系统提示",function(v,h,f){
                     if(v=="ok"){
-                        $("#searchForm").attr("action","${ctx}/biz/inventory/bizInventorySku/torySkuExport");
+                        $("#searchForm").attr("action","${ctx}/biz/inventory/bizInventorySku/requestInventoryExport");
                         $("#searchForm").submit();
-                        $("#searchForm").attr("action","${ctx}/biz/inventory/bizInventorySku/");
+                        $("#searchForm").attr("action","${ctx}/biz/inventory/bizInventorySku/inventory");
                     }
                 },{buttonsFocus:1});
                 top.$('.jbox-body .jbox-icon').css('top','55px');
@@ -88,7 +88,7 @@
 				<%--<form:input path="inventoryAgeDay" htmlEscape="false"  class="input-medium"/>--%>
 			<%--</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-            <%--<li class="btns"><input id="toryExport" class="btn btn-primary" type="button" value="导出"/></li>--%>
+            <li class="btns"><input id="toryExport" class="btn btn-primary" type="button" value="导出"/></li>
 		</ul>
 
 	</form:form>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true">
+		<title>支付申请列表查询</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/app.css?time=20181024" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="header mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">支付申请列表查询</p>
+		</header>
+		<div class="mui-content">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>清单编号：</label>
+					<input type="text" class="inOrdNum" placeholder="请输入清单编号">
+				</div>
+				
+				<div class="mui-input-row">
+					<label>审核状态：</label>
+					<div class="pre">
+						<select class="secStyle" name="" id="input_div_orderStatus">
+							<option value=""></option>
+						</select>
+						<input class="savedata" type="hidden" value=''>
+						<div style="clear:both"></div>
+					</div>
+				</div>				
+				<div class="mui-input-row">
+					<label>测试数据：</label>
+					<input type="checkbox" name="" id="testCheckbox" value="" class="testCheckbox"/>
+				</div>
+			</form>
+		</div>
+		<div class="SearchBtnClass">
+			<button id="inSearchBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">
+				查询 
+			</button>
+		</div>
+		<script src="../../js/component/zepto.min.js"></script>
+		<script src="../../js/component/mui.min.js"></script>
+		<script src="../../js/component/GHutils.js"></script>
+		<script src="../../js/orderMgmtJs/Applydetailseach.js?time=20181115"></script>
+	</body>
+</html>

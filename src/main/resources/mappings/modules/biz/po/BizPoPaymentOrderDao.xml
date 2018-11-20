@@ -22,6 +22,13 @@
 		<result column="commonProcess.description" property="commonProcess.description"/>
 		<result column="commonProcess.type" property="commonProcess.type"/>
 		<result column="commonProcess.createTime" property="commonProcess.createTime"/>
+
+		<!--<association property="poHeader" javaType="BizPoHeader" column="poHeader.id">-->
+			<!--<id property="id" column="poHeader.id"/>-->
+			<!--<result property="orderNum" column="poHeader.orderNum"/>-->
+			<!--<result property="bizStatus" column="poHeader.bizStatus"/>-->
+		<!--</association>-->
+
 		<collection property="imgList" ofType="CommonImg" select="getImgList" column="id">
 		</collection>
 	</resultMap>
@@ -59,6 +66,9 @@
 		a.process_id AS processId,
 		a.pay_time AS payTime,
 		a.remark AS remark,
+		po.id AS "poHeader.id",
+		po.biz_status AS "poHeader.bizStatus",
+		po.biz_status AS "poHeaderBizStatus",
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
 		process.object_name AS "commonProcess.objectName",
@@ -68,7 +78,9 @@
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
 		process.create_time AS "commonProcess.createTime",
+		boh.id as orderId,
 		boh.order_num as orderNum,
+		brh.id as requestId,
 		brh.req_no as reqNo
 	</sql>
 	
@@ -115,8 +127,13 @@
 			</if>
 			<if test="auditStatusCode != null and auditStatusCode != 0">
 				AND process.type = #{auditStatusCode}
-				and poprocess.type = 7
+                <!-- and poprocess.type = 7 -->
 				and a.total > 0
+			</if>
+			<if test="option !=null and option != '' and option == 'poPayListV2'">
+				<if test="page !=null and page.includeTestData != true">
+					AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE po.create_id = ta.object_id AND ta.object_name = 'sys_user' )
+				</if>
 			</if>
 		</where>
 		group by a.id
