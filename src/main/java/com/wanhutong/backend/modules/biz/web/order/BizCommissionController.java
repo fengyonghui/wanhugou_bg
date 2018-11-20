@@ -169,6 +169,33 @@ public class BizCommissionController extends BaseController {
 	}
 
 	@RequiresPermissions("biz:order:bizCommission:view")
+	@RequestMapping(value = "form4Mobile")
+	@ResponseBody
+	public String form4Mobile(BizCommission bizCommission, Model model) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		String str = bizCommission.getStr();
+		if ("detail".equals(str)) {
+			List<CommonImg> imgList = bizCommissionService.getImgList(bizCommission);
+			bizCommission.setImgList(imgList);
+
+			//审核流程
+			CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+			commonProcessEntity.setObjectId(String.valueOf(bizCommission.getId()));
+			commonProcessEntity.setObjectName(BizCommissionService.DATABASE_TABLE_NAME);
+			List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+			model.addAttribute("auditList", list);
+			resultMap.put("auditList", list);
+
+			model.addAttribute("entity", bizCommission);
+			resultMap.put("entity", bizCommission);
+			return "modules/biz/order/bizCommissionDetail";
+		}
+		model.addAttribute("entity", bizCommission);
+		resultMap.put("entity", bizCommission);
+		return JsonUtil.generateData(resultMap, null);
+	}
+
+	@RequiresPermissions("biz:order:bizCommission:view")
 	@RequestMapping(value = "applyCommissionForm")
 	public String applyCommissionForm(BizCommission bizCommission, Model model, String option) {
 		String orderIds = bizCommission.getOrderIds();
