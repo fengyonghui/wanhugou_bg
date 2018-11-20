@@ -9,6 +9,8 @@ import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.math.BigDecimal;
+
 /**
  * 运营计划Entity
  * @author 张腾飞
@@ -36,7 +38,16 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	private String objectName2;  //user 中的id对应名称
 	private Office centerOffice;   //采购中心id
 	private User user; //采购专员
-	
+
+	/**
+	 * 联营订单总额
+	 */
+	private BigDecimal jointOrderAmount;
+	/**
+	 * 代采订单总额
+	 */
+	private BigDecimal purchaseOrderAmount;
+
 	public BizOpPlan() {
 		super();
 	}
@@ -45,7 +56,6 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 		super(id);
 	}
 
-	@Length(min=1, max=11, message="id in table name长度必须介于 1 和 11 之间")
 	public String getObjectId() {
 		return objectId;
 	}
@@ -53,8 +63,7 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
 	}
-	
-	@Length(min=1, max=255, message="table name长度必须介于 1 和 255 之间")
+
 	public String getObjectName() {
 		return objectName;
 	}
@@ -62,8 +71,7 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	public void setObjectName(String objectName) {
 		this.objectName = objectName;
 	}
-	
-	@Length(min=1, max=11, message="计划所在年份;在选择年计划时， 一定加入条件：and month=0 and day=0长度必须介于 1 和 11 之间")
+
 	public String getYear() {
 		return year;
 	}
@@ -71,8 +79,7 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	public void setYear(String year) {
 		this.year = year;
 	}
-	
-	@Length(min=1, max=11, message="计划所在月份; 选择月计划时，一定加入条件：and day=0长度必须介于 1 和 11 之间")
+
 	public String getMonth() {
 		return month;
 	}
@@ -80,8 +87,7 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	public void setMonth(String month) {
 		this.month = month;
 	}
-	
-	@Length(min=1, max=11, message="日计划;长度必须介于 1 和 11 之间")
+
 	public String getDay() {
 		return day;
 	}
@@ -144,5 +150,21 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 
 	public void setServiceCharge(Double serviceCharge) {
 		this.serviceCharge = serviceCharge;
+	}
+
+	public BigDecimal getJointOrderAmount() {
+		return jointOrderAmount;
+	}
+
+	public void setJointOrderAmount(BigDecimal jointOrderAmount) {
+		this.jointOrderAmount = jointOrderAmount;
+	}
+
+	public BigDecimal getPurchaseOrderAmount() {
+		return purchaseOrderAmount;
+	}
+
+	public void setPurchaseOrderAmount(BigDecimal purchaseOrderAmount) {
+		this.purchaseOrderAmount = purchaseOrderAmount;
 	}
 }
