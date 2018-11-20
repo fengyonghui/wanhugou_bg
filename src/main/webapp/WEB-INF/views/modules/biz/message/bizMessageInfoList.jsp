@@ -57,15 +57,21 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>创建人</th>
 				<th>标题</th>
 				<th>内容</th>
 				<th>url</th>
+				<th>状态</th>
+				<th>发布时间</th>
 				<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizMessageInfo">
 			<tr>
+				<td>
+					${bizMessageInfo.createName}
+				</td>
 				<td>
 					<%--<a href="${ctx}/biz/message/bizMessageInfo/form?id=${bizMessageInfo.id}">--%>
 					${bizMessageInfo.title}
@@ -76,6 +82,12 @@
 				</td>
 				<td>
 					${bizMessageInfo.url}
+				</td>
+				<td>
+					${fns:getDictLabel(bizMessageInfo.bizStatus, 'biz_message_info_status', '未知类型')}
+				</td>
+				<td>
+					<fmt:formatDate value="${bizMessageInfo.releaseTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><td>
 					<a href="${ctx}/biz/message/bizMessageInfo/delete?id=${bizMessageInfo.id}" onclick="return confirmx('确认要删除该发送站内信吗？', this.href)">删除</a>
