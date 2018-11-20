@@ -188,7 +188,7 @@ public class BizCommissionController extends BaseController {
 
 			model.addAttribute("entity", bizCommission);
 			resultMap.put("entity", bizCommission);
-			return "modules/biz/order/bizCommissionDetail";
+			return JsonUtil.generateData(resultMap, null);
 		}
 		model.addAttribute("entity", bizCommission);
 		resultMap.put("entity", bizCommission);
@@ -351,6 +351,27 @@ public class BizCommissionController extends BaseController {
 		bizCommissionService.save(bizCommission);
 		addMessage(redirectAttributes, "保存佣金付款表成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizCommission/?repage";
+	}
+
+	@RequiresPermissions("biz:order:bizCommission:edit")
+	@RequestMapping(value = "save4Mobile")
+	@ResponseBody
+	public String save4Mobile(BizCommission bizCommission, Model model, RedirectAttributes redirectAttributes) {
+
+		if (!beanValidator(model, bizCommission)){
+			return form(bizCommission, model);
+		}
+		Map<String, Object> resultMap = Maps.newHashMap();
+		Boolean resultFlag = false;
+		try {
+			bizCommissionService.save(bizCommission);
+			addMessage(redirectAttributes, "保存佣金付款表成功");
+			resultFlag = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		resultMap.put("resultFlag", resultFlag);
+		return JsonUtil.generateData(resultMap, null);
 	}
 	
 	@RequiresPermissions("biz:order:bizCommission:edit")
