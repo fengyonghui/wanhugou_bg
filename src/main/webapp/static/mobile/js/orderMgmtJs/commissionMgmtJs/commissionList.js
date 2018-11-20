@@ -172,7 +172,7 @@
 								var alreadyKnotBtn = '';
 								var alreadyKnotBtnTxt = '';
 								/*结佣详情*/
-								var commDetailBtn = '';
+//								var commDetailBtn = '';
 								var commDetailBtnTxt = '详情';
 								/*删除*/
 								var commDeleteBtn = '';
@@ -200,6 +200,7 @@
 								            commDeleteBtnTxt = '删除';
 										}
 										if(item.delFlag!=null && item.delFlag =='0'){
+//											commDetailBtn = 'commDetailBtn'
 											commDetailBtnTxt="详情";
 											commDeleteBtn = 'commRecoverBtn';
 								            commDeleteBtnTxt = '恢复';
@@ -231,7 +232,7 @@
 										'<div class="mui-col-xs-4 '+ applyKnotBtn +'" orderIds="'+ item.id +'" totalDetail="'+ item.totalDetail +'" totalCommission="'+ item.commission +'" sellerId="'+ item.sellersId +'" orderNum="'+ item.orderNum +'">' +
 											'<div class="">'+applyKnotBtnTxt+'</div>' +
 										'</div>' +
-										'<div class="mui-col-xs-4 commDetailBtn" id="'+ commDetailBtn +'" staOrdId="'+ item.id +'" totalDetail="'+ item.totalDetail +'" totalCommission="'+ item.commission +'" sellerId="'+ item.sellersId +'">' +
+										'<div class="mui-col-xs-4 commDetailBtn" orderIds="'+ item.id +'" totalDetail="'+ item.totalDetail +'" totalCommission="'+ item.commission +'" sellerId="'+ item.sellersId +'">' +
 											'<div class="">'+commDetailBtnTxt+'</div>' +
 										'</div>' +
 										'<div class="mui-col-xs-4 '+ commDeleteBtn +'" orderIds="'+ item.id +'" statu="'+ item.statu +'" source="'+ item.source +'">' +
@@ -368,7 +369,8 @@
 							orderIds: orderIds,
 							totalDetail:totalDetail,
 							totalCommission:totalCommission,
-							sellerId:sellerId
+							sellerId:sellerId,
+							option: 'applyKnot'
 						}
 					})
 				}
@@ -376,7 +378,7 @@
 		    /*详情*/
 			$('.content_part').on('tap', '.commDetailBtn', function() {
 				var url = $(this).attr('url');
-				var orderIds = $(this).attr('staOrdId');
+				var orderIds = $(this).attr('orderIds');
 				var totalDetail = $(this).attr('totalDetail');
 				var totalCommission = $(this).attr('totalCommission');
 				var sellerId = $(this).attr('sellerId');

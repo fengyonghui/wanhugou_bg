@@ -112,11 +112,11 @@
 			</div>
 			<div class="mui-input-row">
 				<label>最后付款时间：</label>
-				<input type="text" class="mui-input-clear" id="commLastDate" disabled>
+				<input type="date" id="commLastDate">
 			</div>
 			<div class="mui-input-row remark">
 				<label>备注：</label>
-				<textarea name="" rows="" cols="" id="commRemark" readonly></textarea>
+				<textarea name="" rows="" cols="" id="commRemark"></textarea>
 			</div>
 			<div class="mui-input-row">
 				<div class="labelLf">审核流程：</div>
@@ -128,6 +128,9 @@
 				<div class="labelLf">商品信息：</div>
 				<ul id="ommodity" class="mui-table-view app_pl10"></ul>									
 			</div>
+		</div>
+		<div class="inSaveBtn">
+			<button id="comPayMentBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">申请付款</button>
 		</div>
 		<div class="clear"></div>
 		<input type="hidden" id="supplierId"/>
