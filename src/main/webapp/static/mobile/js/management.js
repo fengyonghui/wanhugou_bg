@@ -14,14 +14,13 @@
 			    $(".mui-scroll-wrapper").scroll({
 			          bounce: false,//滚动条是否有弹力默认是true
 			          indicators: true, //是否显示滚动条,默认是true
-			    }); 
+			    });
             })(mui);
 		},
 		pageInit: function() {
 			var _this = this;
 			_this.ajaxData();
 			_this.getData();
-//			_this.getDataTwo();
 		},
 		ajaxData: function() {
 			var _this = this;
@@ -48,7 +47,7 @@
 		},
 		getData: function() {
 			var _this = this;
-            $('#menuMaget').on('tap','.menuBtn',function(){
+            $('#menuMaget').on('tap','.menuBtn',function(){            	
                 var dataId = $(this).attr('dataId');
                 var indexNum = $(this).attr('indexNum');               
                 if(dataId){
@@ -60,63 +59,32 @@
                         success: function(res){
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
-                            	console.log(item)
                                 if(item.mobileUrl){
-                                	pHtmlList += '<p class="childMenu" purchId="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</p>'
+                                	pHtmlList += '<p class="childMenu" purchid="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</p>'
                                 	                             
                                 } 
                             });
                             $(".childData"+indexNum).html(pHtmlList);
-//                          var pArr=$('.childData'+indexNum );
-                            var sArr=$('.childMenu')
-//                          console.log(sArr)
-                            $.each(sArr, function(i, items) {
-                            	console.log(items)
-                            	var mobileUrls = $(this).attr('mobileurl')
-                            	console.log(mobileUrls)
-                            	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
-	                            	console.log('777')	
-	                            	$(this).attr('id','commission');
-	                            	_this.getDataTwo();
-	                            }
-                            });
+                            var sArr=$('.childData1 .childMenu');
+		                    console.log(sArr)
+		                    $.each(sArr, function(i, items) {
+		                    	var mobileUrls = $(this).attr('mobileurl');
+		                    	console.log(mobileUrls)
+		                    	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
+		                        	console.log('777')	
+		                        	$(this).attr('id','commission');
+		                        	var divHtmlList = '<ul class="mui-table-view cMenu" id=""></ul>';
+		                        	$('#commission').append(divHtmlList);
+		                        	
+		                        }
+		                    });
+
                         }
-                    });
+                   });
 				}/*else {
                 	mui.toast('没有子菜单')
 				}*/
-			})
-        _this.hrefHtml()
-        },
-        getDataTwo: function() {
-        	console.log('888')
-			var _this = this;
-            $('#menuMaget').on('tap','#commission',function(){
-                var dataId = $(this).attr('purchId');
-                var indexNum = $(this).attr('indexNum'); 
-                console.log(dataId)
-                if(dataId){
-                    $.ajax({
-                        type: "GET",
-                        url: "/a/sys/menu/listData",
-                        data: {parentId:dataId},
-                        dataType: "json",
-                        success: function(res){
-                        	console.log(res)
-                            var pHtmlLists = '';
-                            $.each(res.data, function(i, ite) {
-                            	console.log(ite)
-                                if(ite.mobileUrl){
-                                	pHtmlLists+= '<p class="childMenu" purchId="'+ite.id+'" mobileUrl="'+ite.mobileUrl+'">'+ ite.name+'</p>'             
-                                }
-                            });
-//                          $(".childDatas"+indexNum).html(pHtmlLists);
-                            $('#commission').html(pHtmlLists);
-                        }
-                    });
-				}/*else {
-                	mui.toast('没有子菜单')
-				}*/
+				
 			})
         _this.hrefHtml()
         },
@@ -237,7 +205,8 @@
                 }
 			})
             //佣金管理
-            $('#menuMaget').on('click','.childMenu',function(){
+            $('#menuMaget').on('click','#commission',function(){//menuBtn 
+            	//
             	var url = $(this).attr('url');
 				var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');
@@ -245,39 +214,26 @@
                 	mui.toast('子菜单不存在')             	
                 }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml') {
                 	
-//              	GHUTILS.OPENPAGE({
-//						url: "../html/orderMgmtHtml/ApplicationList.html",
-//						extras: {
-//							purchId:purchId,
-//						}
-//					})
+                	$.ajax({
+                        type: "GET",
+                        url: "/a/sys/menu/listData",
+                        data: {parentId:purchId},
+                        dataType: "json",
+                        success: function(res){
+                        	console.log(res)
+                            var pHtmlLists = '';
+                            $.each(res.data, function(i, ite) {
+                                if(ite.mobileUrl){
+                                	pHtmlLists+= '<li class="mui-table-view-cell mui-collapse comMenu" purchId="'+ite.id+'" mobileUrl="'+ite.mobileUrl+'">'+ ite.name+'</li>'
+                                }
+                            });
+                            $('#commission .cMenu').html(pHtmlLists);
+                            _this.getDataTwo();
+                        }
+                   });
                 }
 			})
-            //佣金管理菜单
-            $('#commission').on('tap','.childMenu',function(){
-            	alert(1)
-            	var url = $(this).attr('url');
-				var mobileUrl = $(this).attr('mobileUrl');
-				var purchId = $(this).attr('purchId');
-                if(url) {
-                	mui.toast('子菜单不存在')             	
-                }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml/commissionList.html') {
-                	
-                	GHUTILS.OPENPAGE({
-						url: "../html/orderMgmtHtml/commissionMgmtHtml/commissionList.html",
-						extras: {
-							purchId:purchId,
-						}
-					})
-                }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml/applyKnotList.html'){
-                	GHUTILS.OPENPAGE({
-						url: "../html/orderMgmtHtml/commissionMgmtHtml/applyKnotList.html",
-						extras: {
-							purchId:purchId,
-						}
-					})
-                }
-			})
+
         /*会员管理*/
 //          $('#menuMaget').on('click','.childMenu',function(){
 //          	var url = $(this).attr('url');
@@ -293,7 +249,35 @@
 //					})
 //              }
 //			})
-		}
+	},
+	getDataTwo:function(){
+		//佣金管理菜单
+            $('#menuMaget .menuBtn .childMenu .cMenu').on('tap','.comMenu',function(){
+//          	alert(1)
+            	var url = $(this).attr('url');
+				var mobileUrl = $(this).attr('mobileUrl');
+				var purchId = $(this).attr('purchId');
+                if(url) {
+                	mui.toast('子菜单不存在')             	
+                }else if(mobileUrl == 'mobile/html/orderMgmtHtml/commissionMgmtHtml/commissionList.html') {
+                	
+                	GHUTILS.OPENPAGE({
+						url: "../html/orderMgmtHtml/commissionMgmtHtml/commissionList.html",
+						extras: {
+							purchId:purchId,
+						}
+					})
+                }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml/applyKnotList.html'){
+                	GHUTILS.OPENPAGE({
+						url: "../html/orderMgmtHtml/commissionMgmtHtml/alreadlycomList.html",
+						extras: {
+							purchId:purchId,
+							isFin:true
+						}
+					})
+                }
+			})
+	}
 		
 	}
 	$(function() {

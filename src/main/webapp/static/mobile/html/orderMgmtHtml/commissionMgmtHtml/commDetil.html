@@ -1,13 +1,140 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
 		<title></title>
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/app.css?time=20181116" rel="stylesheet" />
 	</head>
 	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center" id="changeTitle"></p><!--佣金详情/申请结佣-->
+		</header>
+		<div class="mui-content mui-input-group">
+			<div class="mui-input-row">
+				<label>订单编号：</label>
+				<input type="text" class="mui-input-clear" id="commOrdNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>代销商名称：</label>
+				<input type="text" class="mui-input-clear" id="commMerchantName" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>订单类型：</label>
+				<input type="text" class="mui-input-clear" id="commOrdType" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>经销店名称：</label>
+				<input type="text" class="mui-input-clear" id="commOutletName" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>采购中心：</label>
+				<input type="text" class="mui-input-clear" id="commPurchase" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>经销店电话：</label>
+				<input type="text" class="mui-input-clear" id="commOutletPhone" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>已收货款：</label>
+				<input type="text" class="mui-input-clear" id="commReceived" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>商品总价：</label>
+				<input type="text" class="mui-input-clear" id="commTotal" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>调整金额：</label>
+				<input type="text" class="mui-input-clear" id="commAdjustment" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>运费：</label>
+				<input type="text" class="mui-input-clear" id="commFreight" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>万户币抵扣：</label>
+				<input type="text" class="mui-input-clear" id="commDeduction" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>应付金额：</label>
+				<input type="text" class="mui-input-clear" id="commAmount" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>服务费：</label>
+				<input type="text" class="mui-input-clear" id="commService" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>佣金：</label>
+				<input type="text" class="mui-input-clear" id="commissionNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>发票状态：</label>
+				<input type="text" class="mui-input-clear" id="commInvoiceStatus" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>业务状态：</label>
+				<input type="text" class="mui-input-clear doubleInput app_cred3" id="commFinal" disabled>
+				<input type="text" class="mui-input-clear doubleInput" id="commBusinessStatus" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>审核状态：</label>
+				<input type="text" class="mui-input-clear" id="commCheckStatus" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>创建人：</label>
+				<input type="text" class="mui-input-clear" id="commCreator" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>订单总价：</label>
+				<input type="text" class="mui-input-clear" id="commOrdTotal" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>零售商卡号：</label>
+				<input type="text" class="mui-input-clear" id="commCardNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>零售商收款人：</label>
+				<input type="text" class="mui-input-clear" id="commName" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>零售商开户行：</label>
+				<input type="text" class="mui-input-clear" id="commOpenBank" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>申请金额：</label>
+				<input type="text" class="mui-input-clear" id="commApplyNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>最后付款时间：</label>
+				<input type="text" class="mui-input-clear" id="commLastDate" disabled>
+			</div>
+			<div class="mui-input-row remark">
+				<label>备注：</label>
+				<textarea name="" rows="" cols="" id="commRemark" readonly></textarea>
+			</div>
+			<div class="mui-input-row">
+				<div class="labelLf">审核流程：</div>
+				<ul class="" id="commCheckMenu">
+					
+				</ul>
+			</div>
+			<div class="mui-input-row staCommodity app_bline2">
+				<div class="labelLf">商品信息：</div>
+				<ul id="ommodity" class="mui-table-view app_pl10"></ul>									
+			</div>
+		</div>
+		<div class="clear"></div>
+		<input type="hidden" id="supplierId"/>
+		<input type="hidden" name="ordId" id="ordId"/>
+		<script src="../../../js/component/mui.min.js"></script>	
+		<script src="../../../js/component/zepto.min.js"></script>
+		<script src="../../../js/component/GHutils.js"></script>
+		<script src="../../../js/orderMgmtJs/commissionMgmtJs/commDetil.js?v=20181116"></script>
 	</body>
 </html>
-
-
-
-<!--佣金查看详情  和申请结佣  可以用同一个页面-->
