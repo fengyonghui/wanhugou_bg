@@ -21,6 +21,7 @@
 		a.to_inv_op_time AS "toInvOpTime",
 		a.out_qty AS "outQty",
 		a.in_qty AS "inQty",
+		a.sent_qty AS "sentQty",
 		a.create_time AS "createDate",
 		a.create_id AS "createBy.id",
 		a.u_version AS "uVersion",
@@ -111,6 +112,9 @@
 			<if test="inQty != null and inQty != ''">
 				in_qty,
 			</if>
+			<if test="sentQty != null and sentQty != ''">
+				sent_qty,
+			</if>
 			create_time,
 			create_id,
 			u_version,
@@ -131,6 +135,9 @@
 			</if>
 			<if test="inQty != null and inQty != ''">
 				#{inQty},
+			</if>
+			<if test="sentQty != null and sentQty != ''">
+				#{sentQty},
 			</if>
 			#{createDate},
 			#{createBy.id},
@@ -156,6 +163,9 @@
 			<if test="inQty != null and inQty != ''">
 				in_qty = #{inQty},
 			</if>
+			<if test="sentQty != null and sentQty != ''">
+				sent_qty = #{sentQty},
+			</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}
@@ -173,5 +183,78 @@
 		in_qty = #{inQty}
 		WHERE id = #{id}
 	</update>
+
+	<update id="updateSentQty">
+		UPDATE biz_sku_transfer_detail SET
+		sent_qty = #{sentQty}
+		WHERE id = #{id}
+	</update>
+
+	<select id="findInventorySkuByskuIdAndcentId" resultType="BizSkuTransferDetail">
+		SELECT
+			a.id AS "id",
+			bst.transfer_no AS "transfer.transferNo",
+			bsi.name AS "skuInfo.name",
+			bpi.vendor_id AS "skuInfo.vendorId",
+			bpi.vendor_name AS "skuInfo.vendorName",
+			bsi.item_no AS "skuInfo.itemNo",
+			bii.id AS "inventorySku.invInfo.id",
+			bii.name AS "inventorySku.invInfo.name",
+			bis.inv_type AS "inventorySku.invType",
+			bis.sku_type AS "inventorySku.skuType",
+			bis.id AS "inventorySku.id",
+			bis.u_version AS "inventorySku.uVersion",
+			a.in_qty AS "inQty",
+			a.out_qty AS "outQty",
+			a.sent_qty AS "sentQty",
+			bis.stock_qty AS "inventorySku.stockQty"
+		FROM biz_sku_transfer_detail a
+		LEFT JOIN biz_sku_transfer bst ON bst.id = a.transfer_id
+		LEFT JOIN biz_sku_info bsi ON bsi.id = a.sku_id
+		LEFT JOIN biz_product_info bpi ON bpi.id = bsi.prod_id
+		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsi.id
+		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		WHERE a.status = 1
+		AND bst.status = 1
+		AND (bst.biz_status = 40 or bst.biz_status = 50)
+		AND bis.status = 1
+		AND bii.cust_id = #{centId}
+		AND bsi.id = #{skuId}
+		ORDER BY a.create_time ASC
+	</select>
+
+	<select id="findInvTransferByOrderDetailId" resultType="BizSkuTransferDetail">
+		SELECT
+			a.id,
+			bst.transfer_no AS "transfer.transfer_no",
+			bsi.name AS "skuInfo.name",
+			bpi.vendor_id AS "skuInfo.vendorId",
+			bpi.vendor_name AS "skuInfo.vendorName",
+			bsi.item_no AS "skuInfo.itemNo",
+			bii.id AS "inventorySku.invInfo.id",
+			bii.name AS "inventorySku.invInfo.name",
+			bis.inv_type AS "inventorySku.invType",
+			bis.sku_type AS "inventorySku.skuType",
+			bis.id AS "inventorySku.id",
+			bis.u_version AS "uVersion",
+			a.in_qty AS "inQty",
+			a.out_qty AS "outQty",
+			a.sent_qty AS "sentQty",
+			bis.stock_qty AS "inventorySku.stockQty"
+		FROM biz_sku_transfer_detail a
+		LEFT JOIN biz_sku_transfer bst ON bst.id = a.transfer_id
+		LEFT JOIN biz_sku_info bsi ON bsi.id = a.sku_id
+		LEFT JOIN biz_product_info bpi ON bpi.id = bsi.prod_id
+		LEFT JOIN biz_inventory_order_request bior ON bior.transfer_detail_id = a.id
+		LEFT JOIN biz_inventory_sku bis ON bis.id = bior.inv_sku_id
+		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		LEFT JOIN biz_order_detail od ON od.id = bior.order_detail_id
+		WHERE
+		a.status = 1
+		AND od.status = 1
+		AND bis.status = 1
+		AND (bst.biz_status = 40 or bst.biz_status = 50)
+		AND od.id = #{orderDetailId}
+	</select>
 	
 </mapper>

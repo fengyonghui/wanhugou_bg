@@ -326,6 +326,7 @@ public class BizSkuTransferController extends BaseController {
 		invoice.setShip(BizInvoice.Ship.TR.getShip());
 		invoice.setTransferNo(bizSkuTransfer.getTransferNo());
 		invoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
+		invoice.setTransferNo(bizSkuTransfer.getTransferNo());
 		List<BizInvoice> invoiceList = bizInvoiceService.findList(invoice);
 		if (CollectionUtils.isNotEmpty(invoiceList)) {
 			model.addAttribute("invoiceList",invoiceList);

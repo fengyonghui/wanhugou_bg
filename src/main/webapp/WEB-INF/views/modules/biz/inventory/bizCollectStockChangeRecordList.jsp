@@ -102,8 +102,16 @@
 						<a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizRequestHeader.id}&source=gh&bizStatu=0">
 								${collectGoods.orderNum}</a>
 					</c:if>
-					<c:if test="${!fn:contains(collectGoods.orderNum,'RE')}">
+					<c:if test="${fn:contains(collectGoods.orderNum,'SO')}">
 						<a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizOrderHeader.id}&source=ghs&bizStatu=0">
+								${collectGoods.orderNum}</a>
+					</c:if>
+					<c:if test="${fn:contains(collectGoods.orderNum,'TR') && collectGoods.changeState !=null && collectGoods.changeState eq '出库记录'}">
+						<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${collectGoods.bizSkuTransfer.id}&str=detail">
+								${collectGoods.orderNum}</a>
+					</c:if>
+					<c:if test="${fn:contains(collectGoods.orderNum,'TR') && collectGoods.changeState !=null && collectGoods.changeState eq '入库记录'}">
+						<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${collectGoods.bizRequestHeader.id}&str=detail">
 								${collectGoods.orderNum}</a>
 					</c:if>
 				</td>

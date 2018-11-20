@@ -13,6 +13,7 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryOrderReque
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransferDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
@@ -69,6 +70,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
     private BizOrderHeaderService bizOrderHeaderService;
 	@Autowired
     private BizOrderStatusService bizOrderStatusService;
+	@Autowired
+	private BizSkuTransferDetailService bizSkuTransferDetailService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BizSendGoodsRecordService.class);
 
@@ -122,14 +125,16 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 		Map<Integer, Integer> orderDetailMap = Maps.newHashMap();
 		for (BizOutTreasuryEntity outTreasuryEntity : outTreasuryList) {
 			Integer orderDetailId = outTreasuryEntity.getOrderDetailId();
-			Integer reqDetailId = outTreasuryEntity.getReqDetailId();
+			Integer reqDetailId = outTreasuryEntity.getReqDetailId() == null ? 0 : outTreasuryEntity.getReqDetailId();
+			Integer transferDetailId = outTreasuryEntity.getTransferDetailId()==null ? 0 : outTreasuryEntity.getTransferDetailId();
 			Integer invId = outTreasuryEntity.getInvSkuId();
 			Integer outQty = outTreasuryEntity.getOutQty();
 			Integer version = outTreasuryEntity.getuVersion();
 			BizOrderDetail bizOrderDetail = bizOrderDetailService.get(orderDetailId);
 			BizInventorySku inventorySku = bizInventorySkuService.get(invId);
 			BizRequestDetail bizRequestDetail = bizRequestDetailService.get(reqDetailId);
-            orderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
+			BizSkuTransferDetail bizSkuTransferDetail = bizSkuTransferDetailService.get(transferDetailId);
+			orderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
             if (!version.equals(inventorySku.getuVersion())) {
 				return "其他人正在出库，请刷新页面重新操作";
 			}
@@ -148,9 +153,14 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			save(bsgr);
 			//修改库存数量
 			bizInventorySkuService.updateStockQty(inventorySku,inventorySku.getStockQty() - outQty);
-			//修改备货单详情已出库数量
-			bizRequestDetail.setOutQty((bizRequestDetail.getOutQty() == null ? 0 : bizRequestDetail.getOutQty()) + outQty);
-			bizRequestDetailService.save(bizRequestDetail);
+			//修改备货单详情的已出库数量或调拨单的已发货数量
+			if (bizRequestDetail != null) {
+				bizRequestDetail.setOutQty((bizRequestDetail.getOutQty() == null ? 0 : bizRequestDetail.getOutQty()) + outQty);
+				bizRequestDetailService.save(bizRequestDetail);
+			}
+			if (bizSkuTransferDetail != null) {
+				bizSkuTransferDetailService.updateSentQty(transferDetailId,(bizSkuTransferDetail.getSentQty() == null ? 0 : bizSkuTransferDetail.getSentQty()) + outQty);
+			}
 			//修改订单详情已发货数量
 			bizOrderDetail.setSentQty((bizOrderDetail.getSentQty() == null ? 0 : bizOrderDetail.getSentQty()) + outQty);
 			bizOrderDetailService.saveStatus(bizOrderDetail);
@@ -170,7 +180,12 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			BizInventoryOrderRequest ior = new BizInventoryOrderRequest();
             ior.setInvSku(inventorySku);
 			ior.setOrderDetail(bizOrderDetail);
-			ior.setRequestDetail(bizRequestDetail);
+			if (bizRequestDetail != null) {
+				ior.setRequestDetail(bizRequestDetail);
+			}
+			if (bizSkuTransferDetail != null) {
+				ior.setTransferDetail(bizSkuTransferDetail);
+			}
 			List<BizInventoryOrderRequest> iorList = bizInventoryOrderRequestService.findList(ior);
 			if (CollectionUtils.isEmpty(iorList)) {
 				bizInventoryOrderRequestService.save(ior);

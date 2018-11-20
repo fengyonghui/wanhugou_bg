@@ -66,6 +66,11 @@ public class BizSkuTransferDetail extends DataEntity<BizSkuTransferDetail> {
 	private Integer inQty;
 
 	/**
+	 * 已卖出的数量
+	 */
+	private Integer sentQty;
+
+	/**
 	 * 详情商品颜色
 	 */
 	private String color;
@@ -79,6 +84,11 @@ public class BizSkuTransferDetail extends DataEntity<BizSkuTransferDetail> {
 	 * 出库的备货单详情
 	 */
 	private List<BizRequestDetail> requestDetailList;
+
+	/**
+	 * 库存
+	 */
+	private BizInventorySku inventorySku;
 
 	public BizSkuTransfer getTransfer() {
 		return transfer;
@@ -182,5 +192,21 @@ public class BizSkuTransferDetail extends DataEntity<BizSkuTransferDetail> {
 
 	public void setRequestDetailList(List<BizRequestDetail> requestDetailList) {
 		this.requestDetailList = requestDetailList;
+	}
+
+	public Integer getSentQty() {
+		return sentQty;
+	}
+
+	public void setSentQty(Integer sentQty) {
+		this.sentQty = sentQty;
+	}
+
+	public BizInventorySku getInventorySku() {
+		return inventorySku;
+	}
+
+	public void setInventorySku(BizInventorySku inventorySku) {
+		this.inventorySku = inventorySku;
 	}
 }

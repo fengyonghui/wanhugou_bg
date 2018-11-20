@@ -133,6 +133,11 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	}
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void saveOnly(BizInventorySku bizInventorySku) {
+		super.save(bizInventorySku);
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void saveBizInventorySku(BizInventorySkus bizInventorySkus) {
 		if (bizInventorySkus != null && bizInventorySkus.getSkuInfoIds() != null) {
 			String[] invInfoIdArr = bizInventorySkus.getInvInfoIds().split(",");

@@ -102,6 +102,14 @@
 					<if test="dbName == 'mysql'">concat('%',#{reqNo},'%')</if>
 				</if>
 			</if>
+			<if test="ship != null and ship == 2">
+				<if test="transferNo != null and transferNo != ''">
+					AND bst.transfer_no LIKE
+					<if test="dbName == 'oracle'">'%'||#{transferNo}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{transferNo}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{transferNo},'%')</if>
+				</if>
+			</if>
 			<if test="bizStatus != null">
 				AND a.biz_status = #{bizStatus}
 			</if>

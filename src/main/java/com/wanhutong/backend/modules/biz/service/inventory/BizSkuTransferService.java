@@ -473,7 +473,7 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
                     bizInventorySkuService.updateStockQty(bizInventorySku1,bizInventorySku1.getStockQty() + receiveNum);
                 }
                 //库存没有该商品，增加该商品相应库存
-                if(CollectionUtils.isNotEmpty(bizInventorySkuList)){
+                if(CollectionUtils.isEmpty(bizInventorySkuList)){
                     BizInventorySku bizInventorySku1 = new BizInventorySku();
                     bizInventorySku1.setInvInfo(bcgr.getInvInfo());
                     bizInventorySku1.setSkuInfo(bcgr.getSkuInfo());
@@ -481,7 +481,7 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
                     bizInventorySku1.setStockQty(receiveNum);
                     bizInventorySku1.setSkuType(BizRequestHeader.HeaderType.ROUTINE.getHeaderType());
                     bizInventorySku1.setVendor(bizInventorySku.getVendor());
-                    bizInventorySkuService.save(bizInventorySku1);
+                    bizInventorySkuService.saveOnly(bizInventorySku1);
                 }
                 //生成收货记录表
                 bcgr.setCollectNo(bizSkuTransfer.getCollectNo());

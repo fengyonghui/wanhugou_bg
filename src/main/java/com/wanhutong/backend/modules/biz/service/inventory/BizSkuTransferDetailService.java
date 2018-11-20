@@ -51,5 +51,33 @@ public class BizSkuTransferDetailService extends CrudService<BizSkuTransferDetai
 	 */
 	@Transactional(readOnly = false)
 	public void updateInQty(Integer id, Integer inQty) {dao.updateInQty(id,inQty);}
+
+	/**
+	 * 根据采购中心ID和商品ID查询可出库的调拨单详情
+	 * @param centId
+	 * @param skuId
+	 * @return
+	 */
+	public List<BizSkuTransferDetail> findInventorySkuByskuIdAndcentId(Integer centId,Integer skuId) {
+		return dao.findInventorySkuByskuIdAndcentId(centId,skuId);
+	}
+
+	/**
+	 * 根据订单详情ID查询已出库的调拨单信息
+	 * @param orderDetailId
+	 * @return
+	 */
+	public List<BizSkuTransferDetail> findInvTransferByOrderDetailId(Integer orderDetailId) {
+		return dao.findInvTransferByOrderDetailId(orderDetailId);
+	}
+
+	/**
+	 * 修改已卖出数量
+	 * @param id
+	 * @param sentQty
+	 */
+	public void updateSentQty(Integer id, Integer sentQty) {
+		dao.updateSentQty(id,sentQty);
+	}
 	
 }

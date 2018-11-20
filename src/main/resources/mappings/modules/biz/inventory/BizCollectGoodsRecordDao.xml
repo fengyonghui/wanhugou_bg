@@ -267,6 +267,7 @@
 		sku. NAME AS "skuInfoName",
 		b.order_type AS "orderType",
 		b.request_id AS "bizRequestHeader.id",
+		null,
 		b.order_num as "orderNum",
 		b.inv_old_num as "invOldNum",
 		b.receive_num as "receiveNum",
