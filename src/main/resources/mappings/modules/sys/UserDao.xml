@@ -250,6 +250,9 @@
 			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
 		</if>
+		<if test="id != null and id != ''">
+			AND a.id = #{id}
+		</if>
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
 		<choose>
@@ -798,6 +801,7 @@
 		FROM sys_user a
 			, sys_office so
 		WHERE 1 = 1
+			AND a.status = 1
 			AND so.id = a.office_id
 			AND
 		<foreach collection="companyIdTypeList" index="index" item="item" open="(" separator=" OR " close=")">

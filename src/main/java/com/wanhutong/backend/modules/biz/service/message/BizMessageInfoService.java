@@ -83,7 +83,9 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
                 companyIdTypeList.add(companyIdType);
             }
 
-            resultUserList = userDao.findListByOfficeType(companyIdTypeList);
+            if (CollectionUtils.isNotEmpty(companyIdTypeList)) {
+                resultUserList = userDao.findListByOfficeType(companyIdTypeList);
+            }
 
             User user = new User();
             user.setCompany(new Office(bizMessageInfo.getCompanyId()));
@@ -112,6 +114,36 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
     @Transactional(readOnly = false)
     public void delete(BizMessageInfo bizMessageInfo) {
         super.delete(bizMessageInfo);
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void autoSendMessageInfo(String title, String content, Integer userId, String option) {
+        BizMessageInfo bizMessageInfo = new BizMessageInfo();
+        bizMessageInfo.setTitle(title);
+        bizMessageInfo.setContent(content);
+        bizMessageInfo.setBizStatus(BizMessageInfo.BizStatus.SEND_COMPLETE.getStatus());
+
+        User user = new User();
+        if ("orderHeader".equals(option)) {
+            user.setId(userId);
+        } else {
+            user.setCompany(new Office(userId));
+        }
+
+        List<User> list = userDao.findList(user);
+
+        if (CollectionUtils.isNotEmpty(list) && list.get(0) != null) {
+            if (list.get(0).getCompany() != null) {
+                bizMessageInfo.setCompanyId(list.get(0).getCompany().getId());
+            }
+            User currentUser = UserUtils.getUser();
+            bizMessageInfo.setCreateBy(currentUser);
+            bizMessageInfo.setUpdateBy(currentUser);
+            super.save(bizMessageInfo);
+
+            int i = bizMessageUserDao.insertBatch(list, bizMessageInfo.getId(), DEFAULT_BIZ_STATUS);
+            LOGGER.info("save message userCount:[{}], companyId:[{}], messageId[{}]", i, bizMessageInfo.getCompanyId(), bizMessageInfo.getId());
+        }
     }
 
 }

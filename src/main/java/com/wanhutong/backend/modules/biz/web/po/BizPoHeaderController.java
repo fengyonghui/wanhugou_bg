@@ -27,6 +27,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
+import com.wanhutong.backend.modules.biz.service.message.BizMessageInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
@@ -142,6 +143,8 @@ public class BizPoHeaderController extends BaseController {
     private BizCompletePalnService bizCompletePalnService;
     @Autowired
     private BizInvoiceService bizInvoiceService;
+    @Autowired
+    private BizMessageInfoService bizMessageInfoService;
 
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
     public static final String PO_HEADER_TABLE_NAME = "biz_po_header";
@@ -662,6 +665,36 @@ public class BizPoHeaderController extends BaseController {
     public String audit(HttpServletRequest request, int id, String currentType, int auditType, String description) {
         Pair<Boolean, String> result = bizPoHeaderService.auditPo(id, currentType, auditType, description);
         if (result.getLeft()) {
+            //自动发送站内信
+            BizPoHeader bizPoHeader = new BizPoHeader();
+            bizPoHeader.setId(id);
+            List<BizPoHeader> bizPoHeaderList = bizPoHeaderService.findList(bizPoHeader);
+            if (CollectionUtils.isNotEmpty(bizPoHeaderList)) {
+                bizPoHeader = bizPoHeaderList.get(0);
+                String orderNum = "";
+                Integer custId = 0;
+                String option = "orderHeader";
+                if (bizPoHeader.getBizOrderHeader() != null) {
+                    orderNum = bizPoHeader.getBizOrderHeader().getOrderNum();
+                    custId = bizPoHeader.getBizOrderHeader().getCustomer().getId();
+                } else {
+                    orderNum = bizPoHeader.getBizRequestHeader().getReqNo();
+                    custId = bizPoHeader.getBizRequestHeader().getFromOffice().getId();
+                    option = "requetHeader";
+                }
+                String title = "";
+                String content = "";
+                if (auditType == 1) {
+                    title = "订单" + orderNum + "审核通过";
+                    content = "您好，您的订单" + orderNum + "审核通过";
+                } else {
+                    title = "订单" + orderNum + "审核不通过";
+                    content = "您好，很抱歉，您的订单" + orderNum + "审核不通过，原因是：" + description;
+                }
+                bizMessageInfoService.autoSendMessageInfo(title, content, custId, option);
+            }
+
+
             return JsonUtil.generateData(result, request.getParameter("callback"));
         }
         return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
