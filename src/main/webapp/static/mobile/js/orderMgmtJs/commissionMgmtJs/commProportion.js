@@ -41,10 +41,10 @@
 //              	console.log(res)
                 	$('#commNum').val(res.data.dict.value);
                 	$("#commNum").focus(function(){
-					  	$("#commNum").css("border","1px solid #5CC6DD");
+					  	$("#commNum").css({"border":"1px solid #5CC6DD","box-shadow": "rgb(92, 198, 221) 0px 0px 5px"});
 					});
 					$("#commNum").blur(function(){
-					  	$("#commNum").css("border","1px solid #ccc");
+					  	$("#commNum").css({"border":"1px solid #ccc","box-shadow": "rgb(92, 198, 221) 0px 0px 0px"});
 					});
 //              	console.log(_this.editFlag)
                 	if(_this.editFlag == true) {
