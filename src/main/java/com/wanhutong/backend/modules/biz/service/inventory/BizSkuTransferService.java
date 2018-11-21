@@ -8,10 +8,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -101,11 +103,19 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
 	}
 	
 	public List<BizSkuTransfer> findList(BizSkuTransfer bizSkuTransfer) {
-		return super.findList(bizSkuTransfer);
+        return super.findList(bizSkuTransfer);
 	}
 	
 	public Page<BizSkuTransfer> findPage(Page<BizSkuTransfer> page, BizSkuTransfer bizSkuTransfer) {
-		User user = UserUtils.getUser();
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        for (Role role : roleList) {
+            roleSet.add(role.getEnname());
+        }
+        if (roleSet.contains(RoleEnNameEnum.WAREHOUSESPECIALIST.getState()) && !roleSet.contains(RoleEnNameEnum.DEPT.getState())) {
+            bizSkuTransfer.setCentId(user.getCompany().getId());
+        }
 		if (StringUtils.isNotBlank(bizSkuTransfer.getSource()) && "out".equals(bizSkuTransfer.getSource())) {
 			bizSkuTransfer.getSqlMap().put("transfer", BaseService.dataScopeFilter(user,"outCent","u"));
 		}

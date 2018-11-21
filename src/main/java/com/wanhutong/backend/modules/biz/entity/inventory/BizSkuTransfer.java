@@ -97,6 +97,11 @@ public class BizSkuTransfer extends DataEntity<BizSkuTransfer> {
 	 */
 	private String collectNo;
 
+	/**
+	 * 采购中心ID，用于权限判断
+	 */
+	private Integer centId;
+
 	public BizSkuTransfer() {
 		super();
 	}
@@ -224,5 +229,13 @@ public class BizSkuTransfer extends DataEntity<BizSkuTransfer> {
 
 	public void setCollectNo(String collectNo) {
 		this.collectNo = collectNo;
+	}
+
+	public Integer getCentId() {
+		return centId;
+	}
+
+	public void setCentId(Integer centId) {
+		this.centId = centId;
 	}
 }

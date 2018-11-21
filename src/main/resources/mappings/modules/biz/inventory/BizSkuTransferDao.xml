@@ -7,6 +7,7 @@
 		a.transfer_no AS "transferNo",
 		a.from_inv AS "fromInv.id",
 		fromInv.name AS "fromInv.name",
+		outCent.id AS "fromInv.customer.id",
 		a.to_inv AS "toInv.id",
 		toInv.name AS "toInv.name",
 		a.apply_id AS "applyer.id",
@@ -61,6 +62,9 @@
 			</if>
 			<if test="fromInv != null and fromInv.id != null and fromInv.id != ''">
 				AND a.from_inv = #{fromInv.id}
+			</if>
+			<if test="centId != null and centId != ''">
+				AND (outCent.id = #{centId} or inCent.id = #{centId})
 			</if>
 			<if test="toInv != null and toInv.id != null and toInv.id != ''">
 				AND a.to_inv = #{toInv.id}

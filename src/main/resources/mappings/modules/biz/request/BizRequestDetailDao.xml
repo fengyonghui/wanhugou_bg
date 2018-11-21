@@ -363,10 +363,13 @@
 		LEFT JOIN biz_sku_info bsi ON bsi.id = a.sku_id
 		LEFT JOIN biz_product_info bpi ON bpi.id = bsi.prod_id
 		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsi.id
-		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id AND bii.cust_id = rh.from_id
 		WHERE a.status = 1
 		AND rh.status = 1
-		AND rh.biz_status != 40
+		AND(rh.biz_status = 27
+			or rh.biz_status = 30
+			or rh.biz_status = 35
+			or rh.biz_status = 37)
 		AND bis.status = 1
 		AND bii.cust_id = #{centerId}
 		AND bsi.id = #{skuId}
@@ -446,7 +449,6 @@
 			a.id AS "id",
 			a.recv_qty AS "recvQty",
 			a.out_qty AS "outQty",
-			(a.recv_qty-a.out_qty) AS "nowQty",
 			rh.req_no AS "requestHeader.reqNo",
 			bis.id AS "inventorySku.id",
 			bis.inv_type AS "inventorySku.invType",
@@ -464,7 +466,7 @@
 		LEFT JOIN biz_sku_info sku ON sku.id = a.sku_id
 		LEFT JOIN biz_product_info prod ON prod.id = sku.prod_id
 		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = sku.id
-		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id AND bii.cust_id = rh.from_id
 		WHERE
 			a.status = 1
 		AND rh.status = 1
@@ -504,7 +506,6 @@
 			a.status = 1
 			AND bstd.status = 1
 			AND bis.status = 1
-			AND rh.biz_status != 40
 			AND bstd.id = #{transferDetailId}
 	</select>
 

@@ -131,41 +131,73 @@
 				</div>
 			</div>
 		</c:if>
-		<div class="control-group">
-			<label class="control-label">原仓库：</label>
-			<div class="controls">
-				<form:select id="fromInv" path="fromInv.id" class="input-medium required">
-					<form:option value="" label="请选择"/>
-					<c:forEach items="${fromInvList}" var="inv">
-						<form:option label="${inv.name}" value="${inv.id}" htmlEscape="false"/>
-					</c:forEach>
-				</form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
+		<c:if test="${bizSkuTransfer.str eq 'detail' || bizSkuTransfer.str eq 'audit'}">
+			<div class="control-group">
+				<label class="control-label">原仓库：</label>
+				<div class="controls">
+					<form:input path="fromInv.name" type="text" readonly="true" class="input-medium"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">目标仓库：</label>
-			<div class="controls">
-				<form:select path="toInv.id" class="input-medium required">
-					<form:option value="" label="请选择"/>
-					<c:forEach items="${toInvList}" var="inv">
-						<form:option label="${inv.name}" value="${inv.id}" htmlEscape="false"/>
-					</c:forEach>
-				</form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
+		</c:if>
+		<c:if test="${bizSkuTransfer.str == null}">
+			<div class="control-group">
+				<label class="control-label">原仓库：</label>
+				<div class="controls">
+					<form:select id="fromInv" path="fromInv.id" class="input-medium required">
+						<form:option value="" label="请选择"/>
+						<c:forEach items="${fromInvList}" var="inv">
+							<form:option label="${inv.name}" value="${inv.id}" htmlEscape="false"/>
+						</c:forEach>
+					</form:select>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
 			</div>
-		</div>
-
-		<div class="control-group">
-			<label class="control-label">业务状态：</label>
-			<div class="controls">
-				<form:select path="bizStatus" class="input-medium required">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('transfer_bizStatus')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-				</form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
+		</c:if>
+		<c:if test="${bizSkuTransfer.str eq 'detail' || bizSkuTransfer.str eq 'audit'}">
+			<div class="control-group">
+				<label class="control-label">目标仓库：</label>
+				<div class="controls">
+					<form:input path="toInv.name" type="text" readonly="true" class="input-medium"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
 			</div>
-		</div>
+		</c:if>
+		<c:if test="${bizSkuTransfer.str == null}">
+			<div class="control-group">
+				<label class="control-label">目标仓库：</label>
+				<div class="controls">
+					<form:select path="toInv.id" class="input-medium required">
+						<form:option value="" label="请选择"/>
+						<c:forEach items="${toInvList}" var="inv">
+							<form:option label="${inv.name}" value="${inv.id}" htmlEscape="false"/>
+						</c:forEach>
+					</form:select>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+		</c:if>
+		<c:if test="${bizSkuTransfer.str eq 'detail' || bizSkuTransfer.str eq 'audit'}">
+			<div class="control-group">
+				<label class="control-label">业务状态：</label>
+				<div class="controls">
+					<input type="text" class="input-medium" readonly="readonly" value="${fns:getDictLabel(bizSkuTransfer.bizStatus, 'transfer_bizStatus', '')}"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+		</c:if>
+		<c:if test="${fns:getUser().isAdmin() && bizSkuTransfer.str == null}">
+			<div class="control-group">
+				<label class="control-label">业务状态：</label>
+				<div class="controls">
+					<form:select path="bizStatus" class="input-medium required">
+						<form:option value="" label="请选择"/>
+						<form:options items="${fns:getDictList('transfer_bizStatus')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+					</form:select>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+		</c:if>
 		<div class="control-group">
 			<label class="control-label">期望收货时间：</label>
 			<div class="controls">

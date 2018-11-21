@@ -43,7 +43,7 @@
 			<li><label>目标仓库：</label>
 				<form:select path="toInv.id" class="input-medium">
 					<form:option value="" label="请选择"/>
-					<c:forEach items="${toInvList}" var="inv">
+					<c:forEach items="${fromInvList}" var="inv">
 						<form:option label="${inv.name}" value="${inv.id}" htmlEscape="false"/>
 					</c:forEach>
 				</form:select>
@@ -103,7 +103,8 @@
 						<c:if test="${bizSkuTransfer.commonProcess.id != null
 										&& bizSkuTransfer.commonProcess.transferProcess.name != '审批完成'
 										&& bizSkuTransfer.commonProcess.transferProcess.name != '驳回'
-										&& (fns:hasRole(roleSet, bizSkuTransfer.commonProcess.transferProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
+										&& (fns:hasRole(roleSet, bizSkuTransfer.commonProcess.transferProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+										&& fns:getUser().getCompany().id == bizSkuTransfer.fromInv.customer.id}">
 							<shiro:hasPermission name="biz:inventory:bizSkuTransfer:audit">
 								<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=audit">审核</a>
 							</shiro:hasPermission>
