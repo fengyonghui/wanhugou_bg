@@ -33,24 +33,25 @@
     </tr>
     <tr>
         <th>月计划回款额(元)</th>
-        <th>月计划联营<br/>订单总额</th>
-        <th>月联营订单<br/>总额</th>
-        <th>月计划代采<br/>订单总额</th>
-        <th>月代采订单<br/>总额</th>
-        <th>月销售量统计</th>
-        <th>销售额任务<br/>完成比例</th>
+        <th>月实际回款</th>
+        <th>月回款额任务<br/>完成比例</th>
+        <th>月计划联营回款</th>
+        <th>月实际联营回款</th>
+        <th>月计划代采回款</th>
+        <th>月实际代采回款</th>
+
         <th>月累计销量</th>
         <th>日销售额(元)</th>
         <th>月累计差异</th>
         <th>剩余天数</th>
         <th>每日最低<br/>回款额</th>
-        <th>有效会员<br/>开单量</th>
-        <th>有效会员量<br/>完成比例</th>
+        <th>开单会员数</th>
+        <th>开单会员<br/>完成比例</th>
         <%--<th>新用户</th>--%>
         <%--<th>新用户达成率</th>--%>
-        <th>计划服务费</th>
-        <th>服务费</th>
-        <th>服务费收入<br/>任务比例</th>
+        <th>计划服务费<br/>收入</th>
+        <th>实际服务费<br/>收入</th>
+        <th>服务费收入<br/>完成比例</th>
         <th>库存金额</th>
     </tr>
     </thead>
@@ -68,7 +69,12 @@
             <td>
                     ${item.procurement}
             </td>
-
+            <td>
+                    ${item.receiveTotal}
+            </td>
+            <td>
+                    ${item.yieldRate}
+            </td>
             <td>
                     ${item.jointOrderPlanAmountTotal}
             </td>
@@ -82,12 +88,8 @@
                     ${item.purchaseOrderAmountTotal}
             </td>
 
-            <td>
-                    ${item.receiveTotal}
-            </td>
-            <td>
-                    ${item.yieldRate}
-            </td>
+
+
             <td>
                     ${item.accumulatedSalesMonth}
             </td>
