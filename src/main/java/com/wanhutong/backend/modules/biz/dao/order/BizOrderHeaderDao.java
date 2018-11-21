@@ -36,6 +36,7 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     Integer findCount(BizOrderHeader bizOrderHeader);
 
     List<BizOrderHeader> findListNew(BizOrderHeader bizOrderHeader);
+    List<BizOrderHeader> findListNew2(BizOrderHeader bizOrderHeader);
 
     /**
      * 按月获取订单的总金额和订单数量

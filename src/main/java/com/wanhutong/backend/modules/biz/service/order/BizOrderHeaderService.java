@@ -200,6 +200,12 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                     localConfigValue.add(String.valueOf(process.getCode()));
                 }
             }
+//////////////////////////////////////////////////////////////////
+            for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
+                if (process.getName().contains(selectAuditStatus)) {
+                    doFifthConfigValue.add(String.valueOf(process.getCode()));
+                }
+            }
 
             for (Process process : purchaseOrderProcessConfig.getProcessList()) {
                 if (process.getName().contains(selectAuditStatus)) {
@@ -209,12 +215,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             }
 
 
-//////////////////////////////////////////////////////////////////
-            for (DoOrderHeaderProcessFifthConfig.OrderHeaderProcess process : doOrderHeaderProcessFifthConfig.getProcessList()) {
-                if (process.getName().contains(selectAuditStatus)) {
-                    doFifthConfigValue.add(String.valueOf(process.getCode()));
-                }
-            }
+
 
             bizOrderHeader.setOriginCode(CollectionUtils.isEmpty(originConfigValue) ? null : originConfigValue);
             bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
@@ -234,7 +235,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 bizOrderHeader.setPage(page);
                 page.setList(bizOrderHeaderDao.findListNew(bizOrderHeader));
                 return  page;
-             //   return super.findPage(page, bizOrderHeader);
+               // return super.findPage(page, bizOrderHeader);
             }
 
         } else {
@@ -262,11 +263,12 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             } else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
+
             bizOrderHeader.setPage(page);
             page.setList(bizOrderHeaderDao.findListNew(bizOrderHeader));
             return  page;
 
-         //   return super.findPage(page, bizOrderHeader);
+          //  return super.findPage(page, bizOrderHeader);
         }
     }
 
