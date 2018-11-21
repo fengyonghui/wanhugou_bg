@@ -146,7 +146,7 @@
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
                             	console.log(item);
-                            	if(item.orderNum != null || item.reqNo != null){
+                            	if(item.orderNum != '' || item.reqNo != ''){
                             		//订单号
 	                            	var num="";
 	                            	var href="";
