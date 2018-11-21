@@ -491,7 +491,7 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
                     bizInventorySku1.setStockQty(receiveNum);
                     bizInventorySku1.setSkuType(BizRequestHeader.HeaderType.ROUTINE.getHeaderType());
                     bizInventorySku1.setVendor(bizInventorySku.getVendor());
-                    bizInventorySkuService.saveOnly(bizInventorySku1);
+                    bizInventorySkuService.save(bizInventorySku1);
                 }
                 //生成收货记录表
                 bcgr.setCollectNo(bizSkuTransfer.getCollectNo());
