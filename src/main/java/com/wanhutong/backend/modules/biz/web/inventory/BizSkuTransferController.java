@@ -331,12 +331,6 @@ public class BizSkuTransferController extends BaseController {
 		if (CollectionUtils.isNotEmpty(invoiceList)) {
 			model.addAttribute("invoiceList",invoiceList);
 		}
-		//收货仓库
-		BizInventoryInfo toInvInfo = bizInventoryInfoService.get(bizSkuTransfer.getToInv());
-		BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
-		bizInventoryInfo.setReqHeader(new BizRequestHeader(toInvInfo.getCustomer().getId()));
-		List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-		model.addAttribute("invInfoList", invInfoList);
 		//调拨单detail
 		BizSkuTransferDetail bizSkuTransferDetail = new BizSkuTransferDetail();
 		bizSkuTransferDetail.setTransfer(new BizSkuTransfer(bizSkuTransfer.getId()));

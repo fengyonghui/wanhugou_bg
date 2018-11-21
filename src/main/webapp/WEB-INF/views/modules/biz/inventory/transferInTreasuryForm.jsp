@@ -176,12 +176,8 @@
 							</c:if>
 							<shiro:hasPermission name="biz:inventory:bizSkuTransfer:inTreasury">
 								<td>
-									<select id="invInfo" name="bizCollectGoodsRecordList[${transferStatus.index}].invInfo.id" class="input-medium required">
-										<c:forEach items="${invInfoList}" var="invInfo">
-											<option value="${invInfo.id}"/>${invInfo.name}
-										</c:forEach>
-									</select>
-										<%--<input id="invInfo.id${transferStatus.index}" name="bizCollectGoodsRecordList[${transferStatus.index}].invInfo.id" <c:if test="${transferDetail.inQty==transferDetail.transQty}">readonly="readonly"</c:if> value="" type="text"/>--%>
+									<input value="${bizSkuTransfer.toInv.name}" readonly="readonly" type="text" class="input-medium"/>
+									<input id="invInfo" name="bizCollectGoodsRecordList[${transferStatus.index}].invInfo.id" value="${bizSkuTransfer.toInv.id}"  class="input-medium" type="hidden"/>
 								</td>
 							</shiro:hasPermission>
 						</tr>
