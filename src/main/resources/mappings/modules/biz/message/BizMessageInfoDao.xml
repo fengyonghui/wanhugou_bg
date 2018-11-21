@@ -89,7 +89,7 @@
 			title,
 			content,
 			url,
-		<if test="bizStatus != null">
+		<if test="urlStatus != null">
 			url_status,
 		</if>
 		<if test="bizStatus != null">

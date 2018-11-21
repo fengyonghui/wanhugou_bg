@@ -62,10 +62,10 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public Pair<Boolean, String> saveMessage(BizMessageInfo bizMessageInfo) {
-        if (bizMessageInfo.getCompanyId() == null) {
-            LOGGER.error("save message has no companyId");
-            return Pair.of(Boolean.FALSE, "参数错误!");
-        }
+//        if (bizMessageInfo.getCompanyId() == null) {
+//            LOGGER.error("save message has no companyId");
+//            return Pair.of(Boolean.FALSE, "参数错误!");
+//        }
         User currentUser = UserUtils.getUser();
         bizMessageInfo.setCreateBy(currentUser);
         bizMessageInfo.setUpdateBy(currentUser);
@@ -90,19 +90,20 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
             List<User> list = userDao.findList(user);
             resultUserList.addAll(list);
             if(CollectionUtils.isEmpty(resultUserList)) {
-                return Pair.of(Boolean.FALSE, "当选择的发送!");
+                return Pair.of(Boolean.FALSE, "当前选择的发送用户无有效人员!");
             }
+        } else {
+            resultUserList = userDao.findListByOfficeType(companyIdTypeListOriginal);
         }
 
-
-
-        User user = new User();
-        user.setCompany(new Office(bizMessageInfo.getCompanyId()));
-        List<User> list = userDao.findList(user);
-        if(CollectionUtils.isEmpty(list)) {
-            return Pair.of(Boolean.FALSE, "当前公司下无用户!");
-        }
-        int i = bizMessageUserDao.insertBatch(list, bizMessageInfo.getId(), DEFAULT_BIZ_STATUS);
+//        User user = new User();
+//        user.setCompany(new Office(bizMessageInfo.getCompanyId()));
+//        List<User> list = userDao.findList(user);
+//        if(CollectionUtils.isEmpty(list)) {
+//            return Pair.of(Boolean.FALSE, "当前公司下无用户!");
+//        }
+//        int i = bizMessageUserDao.insertBatch(list, bizMessageInfo.getId(), DEFAULT_BIZ_STATUS);
+        int i = bizMessageUserDao.insertBatch(resultUserList, bizMessageInfo.getId(), DEFAULT_BIZ_STATUS);
         LOGGER.info("save message userCount:[{}], companyId:[{}], messageId[{}]", i, bizMessageInfo.getCompanyId(), bizMessageInfo.getId());
         return Pair.of(Boolean.TRUE, "保存成功");
     }

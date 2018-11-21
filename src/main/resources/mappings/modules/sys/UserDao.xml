@@ -774,7 +774,27 @@
 
 	<select id="findListByOfficeType" resultType="User">
 		SELECT
-			<include refid="userColumns"/>
+			a.id,
+			a.company_id AS "company.id",
+			a.office_id AS "office.id",
+			a.login_name,
+			a.password,
+			a.no,
+			a.name,
+			a.email,
+			a.phone,
+			a.mobile,
+			a.user_type,
+			a.login_ip,
+			a.login_date,
+			a.remarks,
+			a.login_flag,
+			a.photo,
+			a.create_id AS "createBy.id",
+			a.create_date,
+			a.update_id AS "updateBy.id",
+			a.update_date,
+			a.status AS "delFlag"
 		FROM sys_user a
 			, sys_office so
 		WHERE 1 = 1

@@ -2,11 +2,11 @@ package com.wanhutong.backend.modules.enums;
 
 public enum BizMessageCompanyTypeEnum {
 
-    CONSUMER(1, "全部零售商"),
-    CONSIGNEE(2, "全部代销商"),
-    PURCHASERS(3, "全部经销商"),
-    SUPPLY_CHAIN(4, "全部供应商"),
-    OTHER_TYPE(15, "部分用户");
+    CONSUMER(15, "全部零售商"),
+    CONSIGNEE(16, "全部代销商"),
+    PURCHASERS(6, "全部经销商"),
+    SUPPLY_CHAIN(7, "全部供应商"),
+    OTHER_TYPE(20, "部分用户");
 
     private int type;
     private String desc;
