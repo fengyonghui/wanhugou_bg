@@ -16,11 +16,6 @@ public class BizServiceLine extends DataEntity<BizServiceLine> {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 服务费用ID
-	 */
-	private BizServiceCharge serviceCharge;
-
-	/**
 	 * 订单类型
 	 */
 	private Byte orderType;
@@ -66,14 +61,6 @@ public class BizServiceLine extends DataEntity<BizServiceLine> {
 
 	public BizServiceLine(Integer id){
 		super(id);
-	}
-
-	public BizServiceCharge getServiceCharge() {
-		return serviceCharge;
-	}
-
-	public void setServiceCharge(BizServiceCharge serviceCharge) {
-		this.serviceCharge = serviceCharge;
 	}
 
 	public Byte getOrderType() {

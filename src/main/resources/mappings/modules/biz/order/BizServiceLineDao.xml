@@ -4,9 +4,6 @@
     
 	<sql id="bizServiceLineColumns">
 		a.id AS "id",
-		a.sc_id AS "serviceCharge.id",
-		bsc.vari_id AS "serviceCharge.varietyInfo.id",
-		bvi.name AS "serviceCharge.varietyInfo.name",
 		a.order_type AS "orderType",
 		a.province_id AS "province.id",
 		prov.name AS "province.name",
@@ -31,8 +28,6 @@
 	</sql>
 	
 	<sql id="bizServiceLineJoins">
-		LEFT JOIN biz_service_charge bsc ON bsc.id = a.sc_id
-		LEFT JOIN biz_variety_info bvi ON bvi.id = bsc.vari_id
 		LEFT JOIN sys_region prov ON prov.id = a.province_id
 		LEFT JOIN sys_region city ON city.id = a.city_id
 		LEFT JOIN sys_region region ON region.id = a.region_id
@@ -80,15 +75,6 @@
 			</if>
 			<if test="usable != null and usable != ''">
 				AND a.usable = #{usable}
-			</if>
-			<if test="serviceCharge != null and serviceCharge.varietyInfo != null and serviceCharge.varietyInfo.name != null and serviceCharge.varietyInfo.name != ''">
-				AND bvi.name LIKE
-				<if test="dbName == 'oracle'">'%'||#{serviceCharge.varietyInfo.name}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{serviceCharge.varietyInfo.name}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{serviceCharge.varietyInfo.name},'%')</if>
-			</if>
-			<if test="serviceCharge != null and serviceCharge.id != null and serviceCharge.id != ''">
-				AND a.sc_id = #{serviceCharge.id}
 			</if>
 		</where>
 		<choose>

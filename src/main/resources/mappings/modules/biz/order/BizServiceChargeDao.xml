@@ -4,26 +4,48 @@
     
 	<sql id="bizServiceChargeColumns">
 		a.id AS "id",
+		a.line_id AS "serviceLine.id",
 		a.service_mode AS "serviceMode",
 		a.vari_id AS "varietyInfo.id",
-		vari.name AS "varietyInfo.name",
+		bvi.name AS "varietyInfo.name",
 		a.service_price AS "servicePrice",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		bsl.order_type AS "serviceLine.orderType",
+		bsl.usable AS "serviceLine.usable",
+		bsl.province_id AS "serviceLine.province.id",
+		prov.name AS "serviceLine.province.name",
+		bsl.city_id AS "serviceLine.city.id",
+		city.name AS "serviceLine.city.name",
+		bsl.region_id AS "serviceLine.region.id",
+		region.name AS "serviceLine.region.name",
+		bsl.to_province_id AS "serviceLine.toProvince.id",
+		tprov.name AS "serviceLine.toProvince.name",
+		bsl.to_city_id AS "serviceLine.toCity.id",
+		tcity.name AS "serviceLine.toCity.name",
+		bsl.to_region_id AS "serviceLine.toRegion.id",
+		tregion.name AS "serviceLine.toRegion.name"
 	</sql>
 	
 	<sql id="bizServiceChargeJoins">
 		LEFT JOIN biz_variety_info bvi ON bvi.id = a.vari_id
+		LEFT JOIN biz_service_line bsl ON bsl.id = a.line_id
+		LEFT JOIN sys_region prov ON prov.id = bsl.province_id
+		LEFT JOIN sys_region city ON city.id = bsl.city_id
+		LEFT JOIN sys_region region ON region.id = bsl.region_id
+		LEFT JOIN sys_region tprov ON tprov.id = bsl.to_province_id
+		LEFT JOIN sys_region tcity ON tcity.id = bsl.to_city_id
+		LEFT JOIN sys_region tregion ON tregion.id = bsl.to_region_id
 	</sql>
     
 	<select id="get" resultType="BizServiceCharge">
 		SELECT 
 			<include refid="bizServiceChargeColumns"/>
-		FROM biz_service_ charge a
+		FROM biz_service_charge a
 		<include refid="bizServiceChargeJoins"/>
 		WHERE a.id = #{id}
 	</select>
@@ -31,12 +53,50 @@
 	<select id="findList" resultType="BizServiceCharge">
 		SELECT 
 			<include refid="bizServiceChargeColumns"/>
-		FROM biz_service_ charge a
+		FROM biz_service_charge a
 		<include refid="bizServiceChargeJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="varietyInfo != null and varietyInfo.id ！= null and varietyInfo.id != ''">
+			<if test="varietyInfo != null and varietyInfo.id != null and varietyInfo.id != ''">
 				AND a.vari_id = #{varietyInfo.id}
+			</if>
+			<if test="serviceLine != null and serviceLine.id != null and service.id != ''">
+				AND a.line_id = #{serviceLine.id}
+			</if>
+			<if test="varietyInfo != null and varietyInfo.name != null and varietyInfo.name != ''">
+				AND bvi.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{varietyInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{varietyInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{varietyInfo.name},'%')</if>
+			</if>
+			<if test="serviceLine != null and serviceLine.id != null and serviceLine.id != ''">
+				AND a.line_id = #{serviceLine.id}
+			</if>
+			<if test="serviceLine != null">
+				<if test="serviceLine.orderType != null and serviceLine.orderType != ''">
+					AND bsl.order_type = #{serviceLine.orderType}
+				</if>
+				<if test="serviceLine.province != null and serviceLine.province.id != null and serviceLine.province.id != ''">
+					AND bsl.province_id = #{serviceLine.province.id}
+				</if>
+				<if test="serviceLine.city != null and serviceLine.city.id != null and serviceLine.city.id != ''">
+					AND bsl.city_id = #{serviceLine.city.id}
+				</if>
+				<if test="serviceLine.region != null and serviceLine.region.id != null and serviceLine.region.id != ''">
+					AND bsl.region_id = #{serviceLine.region.id}
+				</if>
+				<if test="serviceLine.toProvince != null and serviceLine.toProvince.id != null and serviceLine.toProvince.id != ''">
+					AND bsl.to_province_id = #{serviceLine.toProvince.id}
+				</if>
+				<if test="serviceLine.toCity != null and serviceLine.toCity.id != null and serviceLine.toCity.id != ''">
+					AND bsl.to_city_id = #{serviceLine.toCity.id}
+				</if>
+				<if test="serviceLine.toRegion != null and serviceLine.toRegion.id != null and serviceLine.toRegion.id != ''">
+					AND bsl.to_region_id = #{serviceLine.toRegion.id}
+				</if>
+				<if test="serviceLine.usable != null and serviceLine.usable != ''">
+					AND bsl.usable = #{serviceLine.usable}
+				</if>
 			</if>
 		</where>
 		<choose>
@@ -51,7 +111,7 @@
 	<select id="findAllList" resultType="BizServiceCharge">
 		SELECT 
 			<include refid="bizServiceChargeColumns"/>
-		FROM biz_service_ charge a
+		FROM biz_service_charge a
 		<include refid="bizServiceChargeJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
@@ -66,8 +126,9 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO biz_service_ charge(
+		INSERT INTO biz_service_charge(
 			id,
+			line_id,
 			service_mode,
 			vari_id,
 			service_price,
@@ -79,6 +140,7 @@
 			update_time
 		) VALUES (
 			#{id},
+			#{serviceLine.id},
 			#{serviceMode},
 			#{varietyInfo.id},
 			#{servicePrice},
@@ -92,7 +154,8 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_service_ charge SET 	
+		UPDATE biz_service_charge SET
+			a.line_id = #{serviceLine.id},
 			service_mode = #{serviceMode},
 			vari_id = #{varietyInfo.id},
 			service_price = #{servicePrice},
@@ -104,7 +167,7 @@
 	</update>
 	
 	<update id="delete">
-		UPDATE biz_service_ charge SET 
+		UPDATE biz_service_charge SET 
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

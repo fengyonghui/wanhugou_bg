@@ -34,12 +34,6 @@
 			<li><label>分类：</label>
 				<form:input path="serviceCharge.varietyInfo.name" htmlEscape="false" class="input-medium"/>
 			</li>
-			<li><lable>服务方式</lable>
-				<form:select path="serviceCharge.serviceMode" htmlEscape="false" class="input-mini">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('service_cha')}" itemLabel="label" itemValue="value"/>
-				</form:select>
-			</li>
 			<li><label>是否启用：</label>
 				<form:select path="usable" htmlEscape="false" class="input-mini">
 					<form:option value="" label="请选择"/>

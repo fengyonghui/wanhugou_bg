@@ -19,6 +19,10 @@ public class BizServiceCharge extends DataEntity<BizServiceCharge> {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * 服务费路线
+	 */
+	private BizServiceLine serviceLine;
+	/**
 	 * 服务方式（字典表 service_cha）0 客户自提；1送货到家；2厂家直发
 	 */
 	private Byte serviceMode;
@@ -63,5 +67,13 @@ public class BizServiceCharge extends DataEntity<BizServiceCharge> {
 
 	public void setServicePrice(BigDecimal servicePrice) {
 		this.servicePrice = servicePrice;
+	}
+
+	public BizServiceLine getServiceLine() {
+		return serviceLine;
+	}
+
+	public void setServiceLine(BizServiceLine serviceLine) {
+		this.serviceLine = serviceLine;
 	}
 }
