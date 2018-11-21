@@ -22,6 +22,11 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 	private String title;		// 标题
 	private String content;		// 内容
 	private String url;		// url
+	/**
+	 * url状态
+	 * 0：不是产品链接，1：是产品链接
+	 */
+	private Integer urlStatus;
 	private String createName;		// create_name
 	private Date createTime;		// create_time
 	private User createId;		// create_id
@@ -211,4 +216,12 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
             return desc;
         }
     }
+
+	public Integer getUrlStatus() {
+		return urlStatus;
+	}
+
+	public void setUrlStatus(Integer urlStatus) {
+		this.urlStatus = urlStatus;
+	}
 }

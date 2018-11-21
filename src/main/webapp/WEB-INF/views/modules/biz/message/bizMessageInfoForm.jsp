@@ -103,8 +103,12 @@
 					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
 					   placeholder="必填！"/>
 				<span class="help-inline"><font color="red">*</font></span>
+				&nbsp;&nbsp;
+				<input type="checkbox" value="0" name="a" onclick="this.value=(this.value==0)?1:0">
 			</div>
 		</div>
+
+
 
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><input id="btnSave" class="btn btn-primary" type="button" value="保存暂不发送" onclick="btnSaveType('save')"/>&nbsp;</shiro:hasPermission>

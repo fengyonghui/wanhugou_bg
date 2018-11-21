@@ -7,6 +7,7 @@
 		a.title AS "title",
 		a.content AS "content",
 		a.url AS "url",
+		a.url_status AS "urlStatus",
 		a.biz_status AS "bizStatus",
 		a.release_time AS "releaseTime",
 		a.create_time AS "createTime",
@@ -89,6 +90,9 @@
 			content,
 			url,
 		<if test="bizStatus != null">
+			url_status,
+		</if>
+		<if test="bizStatus != null">
 			biz_status,
 		</if>
 		<if test="releaseTime != null">
@@ -105,6 +109,9 @@
 			#{title},
 			#{content},
 			#{url},
+		<if test="urlStatus != null">
+			#{urlStatus},
+		</if>
 		<if test="bizStatus != null">
 			#{bizStatus},
 		</if>
@@ -126,6 +133,9 @@
 			title = #{title},
 			content = #{content},
 			url = #{url},
+		<if test="urlStatus != null">
+			url_status = #{urlStatus},
+		</if>
 		<if test="bizStatus != null">
 			biz_status = #{bizStatus},
 		</if>
