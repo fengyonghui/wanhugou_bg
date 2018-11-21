@@ -868,6 +868,16 @@
 				<if test="doFifthCode == null or doFifthCode == '' ">
 					1 = 2
 				</if>
+				OR
+				<if test="poAuditCode != null and poAuditCode != '' ">
+					(cp.type in
+					<foreach collection="poAuditCode" index="index" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>)
+				</if>
+				<if test="poAuditCode == null or poAuditCode == '' ">
+					1 = 2
+				</if>
 				)
 				AND a.biz_status != 45
 				AND a.biz_status != 40

@@ -3,7 +3,6 @@
  */
 package com.wanhutong.backend.modules.biz.web.po;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -43,16 +42,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.BizOrderSchedulingEnum;
-import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
-import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
-import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
-import com.wanhutong.backend.modules.enums.OrderTypeEnum;
-import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
-import com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum;
-import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -77,11 +67,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -327,22 +313,6 @@ public class BizPoHeaderController extends BaseController {
         if (roleList.contains(role)) {
             bizPoHeader.setVendOffice(user.getCompany());
         }
-//        try {
-//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//            String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
-//            Date date = df.parse(filteringDate);
-//            bizPoHeader.setFilteringDate(date);
-//        } catch (ParseException e) {
-//            LOGGER.error("日期解析失败",e);
-//        }
-//
-//        String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
-//        try {
-//            Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(filteringDate);
-//            bizPoHeader.setFilteringDate(parse);
-//        } catch (ParseException e) {
-//            LOGGER.error("po list parse data error", e);
-//        }
 
         PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
 
