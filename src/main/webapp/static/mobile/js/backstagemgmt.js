@@ -30,14 +30,29 @@
                     url: "/a/getUser",
                     dataType: "json",
                     success: function(res){
-						$('#userName').html('您好 ! '+ res.data.name)
+						$('#userName').html('您好 ! '+ res.data.name);
+						_this.qrCode(res.data.loginName);
                     }
                 });
-                _this.userComfirDialig()
-			},			
+                _this.userComfirDialig();
+			},
+			qrCode:function(loginName){
+				$.ajax({
+                    type: "GET",
+                    url: "http://hh.ngrok.xiaomiqiu.cn/v2/wht/qrCode/"+loginName,
+                    dataType: "json",
+                    success: function(res){
+                    	if(res.status==1||res.status=='1'){
+                    		var imgs = "<img src='" + res.data +"'>"
+                    	    $('.codeBox').html(imgs);
+                    	}else{
+                    		$('.codeBox').html('');
+                    	}                   	
+                    }
+                });
+			},
 			getData: function() {
 				var _this = this;
-
                 $.ajax({
                     type: "GET",
                     url: "/a/sys/menu/listData",
