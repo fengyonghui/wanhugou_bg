@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizServiceLineDao">
+    
+	<sql id="bizServiceLineColumns">
+		a.id AS "id",
+		a.sc_id AS "serviceCharge.id",
+		bsc.vari_id AS "serviceCharge.varietyInfo.id",
+		bvi.name AS "serviceCharge.varietyInfo.name",
+		a.order_type AS "orderType",
+		a.province_id AS "province.id",
+		prov.name AS "province.name",
+		a.city_id AS "city.id",
+		city.name AS "city.name",
+		a.region_id AS "region.id",
+		region.name AS "region.name",
+		a.to_province_id AS "toProvince.id",
+		tprov.name AS "toProvince.name",
+		a.to_city_id AS "toCity.id",
+		tcity.name AS "toCity.name",
+		a.to_region_id AS "toRegion.id",
+		tregion.name AS "toRegion.name",
+		a.usable AS "usable",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		u.name AS "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizServiceLineJoins">
+		LEFT JOIN biz_service_charge bsc ON bsc.id = a.sc_id
+		LEFT JOIN biz_variety_info bvi ON bvi.id = bsc.vari_id
+		LEFT JOIN sys_region prov ON prov.id = a.province_id
+		LEFT JOIN sys_region city ON city.id = a.city_id
+		LEFT JOIN sys_region region ON region.id = a.region_id
+		LEFT JOIN sys_region tprov ON tprov.id = a.to_province_id
+		LEFT JOIN sys_region tcity ON tcity.id = a.to_city_id
+		LEFT JOIN sys_region tregion ON tregion.id = a.to_region_id
+		LEFT JOIN sys_user u ON u.id = a.create_id
+	</sql>
+    
+	<select id="get" resultType="BizServiceLine">
+		SELECT 
+			<include refid="bizServiceLineColumns"/>
+		FROM biz_service_line a
+		<include refid="bizServiceLineJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizServiceLine">
+		SELECT 
+			<include refid="bizServiceLineColumns"/>
+		FROM biz_service_line a
+		<include refid="bizServiceLineJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="orderType != null and orderType != ''">
+				AND a.order_type = #{orderType}
+			</if>
+			<if test="province != null and province.id != null and province.id != ''">
+				AND a.province_id = #{province.id}
+			</if>
+			<if test="city != null and city.id != null and city.id != ''">
+				AND a.city_id = #{city.id}
+			</if>
+			<if test="region != null and region.id != null and region.id != ''">
+				AND a.region_id = #{region.id}
+			</if>
+			<if test="toProvince != null and toProvince.id != null and toProvince.id != ''">
+				AND a.to_province_id = #{toProvince.id}
+			</if>
+			<if test="toCity != null and toCity.id != null and toCity.id != ''">
+				AND a.to_city_id = #{toCity.id}
+			</if>
+			<if test="toRegion != null and toRegion.id != null and toRegion.id != ''">
+				AND a.to_region_id = #{toRegion.id}
+			</if>
+			<if test="usable != null and usable != ''">
+				AND a.usable = #{usable}
+			</if>
+			<if test="serviceCharge != null and serviceCharge.varietyInfo != null and serviceCharge.varietyInfo.name != null and serviceCharge.varietyInfo.name != ''">
+				AND bvi.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{serviceCharge.varietyInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{serviceCharge.varietyInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{serviceCharge.varietyInfo.name},'%')</if>
+			</if>
+			<if test="serviceCharge != null and serviceCharge.id != null and serviceCharge.id != ''">
+				AND a.sc_id = #{serviceCharge.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizServiceLine">
+		SELECT 
+			<include refid="bizServiceLineColumns"/>
+		FROM biz_service_line a
+		<include refid="bizServiceLineJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_service_line(
+			id,
+			sc_id,
+			order_type,
+			province_id,
+			city_id,
+			region_id,
+			to_province_id,
+			to_city_id,
+			to_region_id,
+			usable,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{serviceCharge.id},
+			#{orderType},
+			#{province.id},
+			#{city.id},
+			#{region.id},
+			#{toProvince.id},
+			#{toCity.id},
+			#{toRegion.id},
+			#{usable},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_service_line SET 	
+			sc_id = #{serviceCharge.id},
+			order_type = #{orderType},
+			province_id = #{province.id},
+			city_id = #{city.id},
+			region_id = #{region.id},
+			to_province_id = #{toProvince.id},
+			to_city_id = #{toCity.id},
+			to_region_id = #{toRegion.id},
+			usable = #{usable},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_service_line SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

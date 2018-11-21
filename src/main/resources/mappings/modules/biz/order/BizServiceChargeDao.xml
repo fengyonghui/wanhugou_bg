@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizServiceChargeDao">
+    
+	<sql id="bizServiceChargeColumns">
+		a.id AS "id",
+		a.service_mode AS "serviceMode",
+		a.vari_id AS "varietyInfo.id",
+		vari.name AS "varietyInfo.name",
+		a.service_price AS "servicePrice",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizServiceChargeJoins">
+		LEFT JOIN biz_variety_info bvi ON bvi.id = a.vari_id
+	</sql>
+    
+	<select id="get" resultType="BizServiceCharge">
+		SELECT 
+			<include refid="bizServiceChargeColumns"/>
+		FROM biz_service_ charge a
+		<include refid="bizServiceChargeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizServiceCharge">
+		SELECT 
+			<include refid="bizServiceChargeColumns"/>
+		FROM biz_service_ charge a
+		<include refid="bizServiceChargeJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="varietyInfo != null and varietyInfo.id ！= null and varietyInfo.id != ''">
+				AND a.vari_id = #{varietyInfo.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizServiceCharge">
+		SELECT 
+			<include refid="bizServiceChargeColumns"/>
+		FROM biz_service_ charge a
+		<include refid="bizServiceChargeJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_service_ charge(
+			id,
+			service_mode,
+			vari_id,
+			service_price,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{serviceMode},
+			#{varietyInfo.id},
+			#{servicePrice},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_service_ charge SET 	
+			service_mode = #{serviceMode},
+			vari_id = #{varietyInfo.id},
+			service_price = #{servicePrice},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_service_ charge SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
