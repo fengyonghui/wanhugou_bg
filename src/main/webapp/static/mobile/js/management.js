@@ -280,6 +280,14 @@
 							isFin:true
 						}
 					})
+                }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml/commProportion.html'){
+                	GHUTILS.OPENPAGE({
+						url: "../html/orderMgmtHtml/commissionMgmtHtml/commProportion.html",
+						extras: {
+							purchId:purchId,
+							isFin:true
+						}
+					})
                 }
                 return false;
 			})

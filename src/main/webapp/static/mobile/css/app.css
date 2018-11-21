@@ -642,6 +642,13 @@ body{font-size: 15px;color:#3b3b3b;}
 /*订单支出列表---排产*/
 #orSchedCommd li.mui-table-view-cell {padding: 0;}
 
+/*佣金比例设置*/
+.commProportion div label {width: 55%;}
+.commProportion div input {width: 45%;}
+/*佣金*/
+.commProportion div input.commNum {padding-left: 5px;border: 1px solid #ccc;width: 50px;height: 30px;border-radius: 5px;margin-top: 5px;margin-right: 94px;}
+.exampleTxt {padding: 15px;}
+.exampleTxt li {padding-top: 5px;}
 /*======备货单======*/
 /*备货单审核、详情---商品信息图片*/
 .photoParent {position: absolute;top: 50%;margin-top: -13%;}
