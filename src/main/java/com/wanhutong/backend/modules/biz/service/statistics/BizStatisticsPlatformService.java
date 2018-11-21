@@ -283,28 +283,33 @@ public class BizStatisticsPlatformService {
             //o.setNewUser(userStatisticDataByOfficeId == null ? BigDecimal.ZERO : BigDecimal.valueOf(userStatisticDataByOfficeId.getCount()));
             //o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
             BizOrderStatisticsDto serviceChargeDto = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonthOfficeId(sdfMonth.format(sDate) + "%", o.getOfficeId());
-            o.setServiceCharge(serviceChargeDto == null ? BigDecimal.ZERO : serviceChargeDto.getProfitPrice());
-            o.setServiceChargePlan(bizOpPlan.getServiceCharge() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getServiceCharge()));
+            o.setServiceCharge(serviceChargeDto == null ? new BigDecimal("0.00") : serviceChargeDto.getProfitPrice());
+            o.setServiceChargePlan(bizOpPlan.getServiceCharge() == null ? new BigDecimal("0.00") : BigDecimal.valueOf(bizOpPlan.getServiceCharge()));
 
             //月计划联营订单总额
-            o.setJointOrderPlanAmountTotal(bizOpPlan.getJointOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getJointOrderAmount());
+            o.setJointOrderPlanAmountTotal(bizOpPlan.getJointOrderAmount() == null ? new BigDecimal("0.00") : bizOpPlan.getJointOrderAmount());
             //月联营订单总额
-            o.setJointOrderAmountTotal(joinPurchaseOrderData.getJoinRemitAmount() == null ? BigDecimal.ZERO : joinPurchaseOrderData.getJoinRemitAmount());
+            o.setJointOrderAmountTotal(joinPurchaseOrderData.getJoinRemitAmount() == null ? new BigDecimal("0.00") : joinPurchaseOrderData.getJoinRemitAmount());
 
             //月计划代采订单总额
-            o.setPurchaseOrderPlanAmountTotal(bizOpPlan.getPurchaseOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getPurchaseOrderAmount());
+            o.setPurchaseOrderPlanAmountTotal(bizOpPlan.getPurchaseOrderAmount() == null ? new BigDecimal("0.00") : bizOpPlan.getPurchaseOrderAmount());
             //月代采订单总额
-            o.setPurchaseOrderAmountTotal(joinPurchaseOrderData.getPurchaseRemitAmount() == null ? BigDecimal.ZERO : joinPurchaseOrderData.getPurchaseRemitAmount());
+            o.setPurchaseOrderAmountTotal(joinPurchaseOrderData.getPurchaseRemitAmount() == null ? new BigDecimal("0.00") : joinPurchaseOrderData.getPurchaseRemitAmount());
 
             //有效会员开单量
-            o.setNewUser(joinPurchaseOrderData.getValidCustomerNum() == null ? BigDecimal.ZERO : joinPurchaseOrderData.getValidCustomerNum());
-            o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
+            o.setNewUser(joinPurchaseOrderData.getValidCustomerNum() == null ? new BigDecimal("0.00") : joinPurchaseOrderData.getValidCustomerNum());
+            o.setNewUserPlan(bizOpPlan.getNewUser() == null ? new BigDecimal("0.00") : BigDecimal.valueOf(bizOpPlan.getNewUser()));
 
             //o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
-            o.setProcurement(o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()));
+            //o.setProcurement(o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()));
+            if (o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()).compareTo(BigDecimal.ZERO) == 0) {
+                o.setProcurement(bizOpPlan.getAmount() == null ? new BigDecimal("0.00") : bizOpPlan.getAmount());
+            } else {
+                o.setProcurement(o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()));
+            }
             o.setProcurementDay(
                     CollectionUtils.isEmpty(currentBizOrderStatisticsDtoList) ?
-                            BigDecimal.ZERO
+                            new BigDecimal("0.00")
                             : currentBizOrderStatisticsDtoList.get(0).getTotalMoney());
             // 库存金额
             o.setCurrentDate(endDate);

@@ -24,7 +24,7 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	private String year;		// 计划所在年份;在选择年计划时， 一定加入条件：and month=0 and day=0
 	private String month;		// 计划所在月份; 选择月计划时，一定加入条件：and day=0
 	private String day;		// 日计划;
-	private String amount;		// amount
+	private BigDecimal amount;		// amount
 	/**
 	 * 新用户
 	 */
@@ -96,11 +96,11 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 		this.day = day;
 	}
 	
-	public String getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 

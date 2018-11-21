@@ -37,12 +37,12 @@ public class BizPlatformDataOverviewDto {
     /**
      * 月累计销量
      */
-    private BigDecimal accumulatedSalesMonth = BigDecimal.ZERO;
+    private BigDecimal accumulatedSalesMonth = new BigDecimal("0.00");
 
     /**
      * 月回款额
      */
-    private BigDecimal receiveTotal = BigDecimal.ZERO;
+    private BigDecimal receiveTotal = new BigDecimal("0.00");
 
     /**
      * 新增用户计划,计划开单会员量
