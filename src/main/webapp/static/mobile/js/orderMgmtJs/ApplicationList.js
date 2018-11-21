@@ -111,9 +111,7 @@
 		            dataType:'json',
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
-		            success:function(res){
-		            	console.log(res)
-		            	
+		            success:function(res){		            	
 		            	var dataRow = res.data.roleSet;
 		            	/*当前用户信息*/
 						var userId = '';
