@@ -772,5 +772,19 @@
 		</if>
 	</select>
 
+	<select id="findListByOfficeType" resultType="User">
+		SELECT
+			<include refid="userColumns"/>
+		FROM sys_user a
+			, sys_office so
+		WHERE 1 = 1
+			AND so.id = a.office_id
+			AND
+		<foreach collection="companyIdTypeList" index="index" item="item" open="(" separator=" OR " close=")">
+			so.type = #{item}
+		</foreach>
+		GROUP BY a.id
+	</select>
+
 
 </mapper>

@@ -147,4 +147,11 @@ public interface UserDao extends CrudDao<User> {
 	 * */
 	List<User> findSeleList(User user);
 
+	/**
+	 * 根据user的officeType获取用户列表
+	 * @param companyIdTypeList
+	 * @return
+	 */
+	List<User> findListByOfficeType(@Param("companyIdTypeList") List<Integer> companyIdTypeList);
+
 }

@@ -26,22 +26,30 @@
 		});
 		
 		function btnSaveType(saveType) {
+		    var companyId = $("#companyId").val();
+		    var orherTypeFlag = true;
             var params = new Array();
             $(".companyIdType").each(function () {
                 if(this.checked){
                     var companyIdType = $(this).attr("value")
-                    params.push(completeId);
+					if(companyIdType == '${BizMessageCompanyTypeEnum.OTHER_TYPE.type}' && (companyId == null || companyId == '')) {
+                        orherTypeFlag = false;
+                    }
+                    params.push(companyIdType);
                 }
             })
 
             if(params.length == 0) {
-                alert("未勾选待发送的用户！")
+                alert("未勾选待发送的用户！");
                 return false;
             }
 
+            if (orherTypeFlag == false) {
+                alert("请选择部分用户！");
+                return false;
+            }
 
-
-            $("#inputForm").attr("action", "${ctx}/biz/message/bizMessageInfo/save?saveType=" + saveType);
+            $("#inputForm").attr("action", "${ctx}/biz/message/bizMessageInfo/save?saveType=" + saveType + "&companyIdTypeList=" + params);
             $("#inputForm").submit();
         }
 	</script>
@@ -77,7 +85,6 @@
 				&nbsp;&nbsp;
 				<sys:treeselect id="company" name="companyId" value="${companyId}" labelName="company.name" labelValue="${company.id}"
 								title="公司" url="/sys/office/treeData?isAll=true" cssClass="input-small" allowClear="true"/>
-				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -104,7 +111,7 @@
 					   placeholder="必填！"/>
 				<span class="help-inline"><font color="red">*</font></span>
 				&nbsp;&nbsp;
-				<input type="checkbox" value="0" name="a" onclick="this.value=(this.value==0)?1:0">
+				<input type="checkbox" value="0" id="urlStatus" name="urlStatus" onclick="this.value=(this.value==0)?1:0">产品链接
 			</div>
 		</div>
 

@@ -5,6 +5,8 @@ package com.wanhutong.backend.modules.biz.entity.message;
 
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
@@ -60,6 +62,11 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
      * 保存模式 保存暂不发送，保存并发送
      */
 	private String saveType;
+
+	/**
+	 * 发送用户类型
+	 */
+	private List<Integer> companyIdTypeList;
 
 	public BizMessageInfo() {
 		super();
@@ -137,8 +144,7 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
-	
-	@Length(min=0, max=4, message="type长度必须介于 0 和 4 之间")
+
 	public String getType() {
 		return type;
 	}
@@ -147,7 +153,6 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 		this.type = type;
 	}
 
-	@NotNull(message="所属公司不能为空")
 	public Integer getCompanyId() {
 		return companyId;
 	}
@@ -223,5 +228,13 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 
 	public void setUrlStatus(Integer urlStatus) {
 		this.urlStatus = urlStatus;
+	}
+
+	public List<Integer> getCompanyIdTypeList() {
+		return companyIdTypeList;
+	}
+
+	public void setCompanyIdTypeList(List<Integer> companyIdTypeList) {
+		this.companyIdTypeList = companyIdTypeList;
 	}
 }

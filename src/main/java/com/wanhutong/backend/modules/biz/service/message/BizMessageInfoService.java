@@ -3,9 +3,11 @@
  */
 package com.wanhutong.backend.modules.biz.service.message;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.wanhutong.backend.modules.biz.dao.message.BizMessageUserDao;
+import com.wanhutong.backend.modules.enums.BizMessageCompanyTypeEnum;
 import com.wanhutong.backend.modules.sys.dao.UserDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -68,6 +70,32 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
         bizMessageInfo.setCreateBy(currentUser);
         bizMessageInfo.setUpdateBy(currentUser);
         super.save(bizMessageInfo);
+
+        List<Integer> companyIdTypeListOriginal = bizMessageInfo.getCompanyIdTypeList();
+        List<Integer> companyIdTypeList = new ArrayList<Integer>();
+        Integer companyId = bizMessageInfo.getCompanyId();
+        List<User> resultUserList = new ArrayList<User>();
+        if (companyId != null) {
+            for (Integer companyIdType : companyIdTypeListOriginal) {
+                if (companyIdType == BizMessageCompanyTypeEnum.OTHER_TYPE.getType()) {
+                    continue;
+                }
+                companyIdTypeList.add(companyIdType);
+            }
+
+            resultUserList = userDao.findListByOfficeType(companyIdTypeList);
+
+            User user = new User();
+            user.setCompany(new Office(bizMessageInfo.getCompanyId()));
+            List<User> list = userDao.findList(user);
+            resultUserList.addAll(list);
+            if(CollectionUtils.isEmpty(resultUserList)) {
+                return Pair.of(Boolean.FALSE, "当选择的发送!");
+            }
+        }
+
+
+
         User user = new User();
         user.setCompany(new Office(bizMessageInfo.getCompanyId()));
         List<User> list = userDao.findList(user);
