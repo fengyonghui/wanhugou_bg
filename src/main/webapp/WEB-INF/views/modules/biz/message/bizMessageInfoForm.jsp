@@ -85,6 +85,8 @@
 				&nbsp;&nbsp;
 				<sys:treeselect id="company" name="companyId" value="${companyId}" labelName="company.name" labelValue="${company.id}"
 								title="公司" url="/sys/office/treeData?isAll=true" cssClass="input-small" allowClear="true"/>
+				&nbsp;&nbsp;
+				<span style="color: red">※：勾选部分用户时，需在下拉菜单中选择对应公司</span>
 			</div>
 		</div>
 		<div class="control-group">
