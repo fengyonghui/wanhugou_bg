@@ -66,7 +66,7 @@
 					$('#commRemark').val(entity.remark);//备注
 					
 					$.each(res.data.orderHeaderList, function(jj,ss) {
-//						console.log(ss)
+						console.log(ss)
 						$('#commOrdNum').val(ss.orderNum);//订单编号
 						$('#commMerchantName').val(ss.seller.name);//代销商名称
 						$('#commOutletName').val(ss.customer.name);//经销店名称

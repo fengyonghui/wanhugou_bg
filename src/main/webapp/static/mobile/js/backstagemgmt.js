@@ -32,27 +32,10 @@
                     success: function(res){                   	
                     	console.log(res)
 						$('#userName').html('您好 ! '+ res.data.name);
-						_this.QrCodeData(res.data.id);
                     }
                 });
                 _this.userComfirDialig();
 			},	
-			QrCodeData:function(id){
-				console.log(id)
-				var _this = this;
-				$.ajax({
-                    type: "post",
-//                  url: " http://api-test.service.wanhutong.com/v1/wht/members/consultant/QrCode",
-                    url: " http://api.service.wanhutong.com/v1/wht/members/consultant/QrCode",
-//			        headers: {
-//			            'Content-Type':'application/json','Authorization':BEARER+token,'IDCode':123456
-//			        },
-                    dataType: "json",
-                    success: function(res){
-						console.log(res)
-                    }
-                });
-			},
 			getData: function() {
 				var _this = this;
                 $.ajax({
