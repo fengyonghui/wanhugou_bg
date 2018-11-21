@@ -27,9 +27,9 @@
         <th colspan="19">万户通平台业务数据 ${date}</th>
     </tr>
     <tr>
-        <th rowspan="2" style="width: 3%;">省份</th>
-        <th rowspan="2" style="width: 7%;">所属采购中心</th>
-        <th colspan="18" style="width: 90%;">目标分析</th>
+        <th rowspan="2">省份</th>
+        <th rowspan="2">所属采购中心</th>
+        <th colspan="18">目标分析</th>
     </tr>
     <tr>
         <th>月计划回款额(元)</th>
