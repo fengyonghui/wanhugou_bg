@@ -40,55 +40,69 @@
                 success: function(res){
 //              	console.log(res)
                 	$('#commNum').val(res.data.dict.value);
+                	$("#commNum").focus(function(){
+					  	$("#commNum").css("border","1px solid #5CC6DD");
+					});
+					$("#commNum").blur(function(){
+					  	$("#commNum").css("border","1px solid #ccc");
+					});
 //              	console.log(_this.editFlag)
                 	if(_this.editFlag == true) {
-                		_this.saveDetail(res.data);
+                		_this.comfirDialig(res.data)
                 	}else {
                 		$('#proSaveBtn').parent().hide();
                 	}
                 }
             })
         },
+        comfirDialig: function(param) {
+        	var _this = this;
+        	document.getElementById("proSaveBtn").addEventListener('tap', function(e) {
+				var btnArray = ['取消', '确定'];
+				mui.confirm('确定修改佣金比例吗？', '系统提示！', btnArray, function(choice) {
+					if(choice.index == 1) {
+						_this.saveDetail(param)
+					} else {}
+				})
+			});
+        },
         saveDetail: function(param) {
         	var _this = this;
         	var dict = param.dict;
 //      	console.log(dict)
         	var value = $('#commNum').val();
-        	$('#proSaveBtn').on('tap', function() {
-        		$.ajax({
-	                type: "GET",
-	                url: "/a/sys/dict/commissionRatioSave",
-	                data:{
-	                	dictId: dict.id,/*字典id*/
-						type: dict.type,/*字典类型*/
-						value: value/*佣金比例值*/
-	                },
-	                dataType: "json",
-	                success: function(result){
-//	                	console.log(result)
-	                	if(result.data.left == true || result.data.left == 'true') {
-	                		alert(123)
-	                		mui.toast('修改完成！')
-	                		window.setTimeout(function(){
-                            	GHUTILS.OPENPAGE({
-	                                url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commProportion.html",
-	                                extras: {
-	                                }
-	                            })
-                            },500)
-	                	}else{
-	                		mui.toast('修改佣金比例失败！')
-	                		window.setTimeout(function(){
-                            	GHUTILS.OPENPAGE({
-	                                url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commProportion.html",
-	                                extras: {
-	                                }
-	                            })
-                            },500)
-	                	}
-	                }
-	            })
-        	});
+        	
+    		$.ajax({
+                type: "GET",
+                url: "/a/sys/dict/commissionRatioSave",
+                data:{
+                	id: dict.id,/*字典id*/
+					type: dict.type,/*字典类型*/
+					value: value/*佣金比例值*/
+                },
+                dataType: "json",
+                success: function(result){
+                	if(result.data.left == true || result.data.left == 'true') {
+                		mui.toast('修改完成！')
+                		window.setTimeout(function(){
+                        	GHUTILS.OPENPAGE({
+                                url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commProportion.html",
+                                extras: {
+                                }
+                            })
+                        },500)
+                	}else{
+                		mui.toast('修改佣金比例失败！')
+                		window.setTimeout(function(){
+                        	GHUTILS.OPENPAGE({
+                                url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commProportion.html",
+                                extras: {
+                                }
+                            })
+                        },500)
+                	}
+                }
+            })
         }
 	}
 	$(function() {

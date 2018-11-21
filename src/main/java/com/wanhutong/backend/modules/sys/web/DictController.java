@@ -167,9 +167,6 @@ public class DictController extends BaseController {
 	@RequestMapping(value = "commissionRatioSave")
 	@ResponseBody
 	public String commissionRatioSave(Dict dict, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, dict)){
-			return JsonUtil.generateData(Pair.of(false, "数据检查失败!"), null);
-		}
 		dictService.save(dict);
 		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
 	}
