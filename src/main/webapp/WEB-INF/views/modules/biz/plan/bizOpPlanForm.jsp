@@ -123,10 +123,24 @@
 			<span class="help-inline"><font color="red"> *</font> </span>
 		</div>
 	</div>
+	<%--<div class="control-group">--%>
+		<%--<label class="control-label">总额：</label>--%>
+		<%--<div class="controls">--%>
+			<%--<form:input path="amount" htmlEscape="false" class="input-xlarge required"/>--%>
+			<%--<span class="help-inline"><font color="red">*</font> </span>--%>
+		<%--</div>--%>
+	<%--</div>--%>
 	<div class="control-group">
-		<label class="control-label">总额：</label>
+		<label class="control-label">联营订单总额：</label>
 		<div class="controls">
-			<form:input path="amount" htmlEscape="false" class="input-xlarge required"/>
+			<form:input path="jointOrderAmount" htmlEscape="false" class="input-xlarge required"/>
+			<span class="help-inline"><font color="red">*</font> </span>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">代采订单总额：</label>
+		<div class="controls">
+			<form:input path="purchaseOrderAmount" htmlEscape="false" class="input-xlarge required"/>
 			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>
