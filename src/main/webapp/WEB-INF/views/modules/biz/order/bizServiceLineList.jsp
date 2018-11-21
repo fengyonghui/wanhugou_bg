@@ -26,19 +26,18 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>订单类型：</label>
-				<form:input path="orderType" htmlEscape="false" maxlength="2" class="input-medium"/>
 				<form:select path="orderType" htmlEscape="false" class="input-medium">
 					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('biz_order_type')}" itemValue="value" itemLabel="label"/>
+					<form:options items="${fns:getDictList('service_order_type')}" itemValue="value" itemLabel="label"/>
 				</form:select>
 			</li>
 			<li><label>分类：</label>
 				<form:input path="serviceCharge.varietyInfo.name" htmlEscape="false" class="input-medium"/>
 			</li>
 			<li><lable>服务方式</lable>
-				<form:select path="serviceCharge.serviceMode" class="input-mini required">
+				<form:select path="serviceCharge.serviceMode" htmlEscape="false" class="input-mini">
 					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('service_cha')}" itemValue="value" itemLabel="label"/>
+					<form:options items="${fns:getDictList('service_cha')}" itemLabel="label" itemValue="value"/>
 				</form:select>
 			</li>
 			<li><label>是否启用：</label>
@@ -73,7 +72,7 @@
 		<c:forEach items="${page.list}" var="bizServiceLine" varStatus="index">
 			<tr>
 				<td>${index + 1}</td>
-				<td>${fns:getDictLabel(bizServiceLine.orderType,'','')}</td>
+				<td>${fns:getDictLabel(bizServiceLine.orderType,'service_order_type','')}</td>
 				<td>${bizServiceLine.region.name}</td>
 				<td>${bizServiceLine.toRegion.name}</td>
 				<td>${bizServiceLine.serviceCharge.varietyInfo.name}</td>
