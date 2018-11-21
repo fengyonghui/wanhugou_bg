@@ -20,7 +20,7 @@
 		pageInit: function() {
 			var _this = this;
 			_this.ajaxData();
-			_this.getData();
+			
 		},
 		ajaxData: function() {
 			var _this = this;
@@ -30,7 +30,7 @@
                 data: {parentId:_this.userInfo.idData},
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	console.log(res)
                     var htmlList = '';
                     $.each(res.data, function(i, item) {
                     	if(item.mobileUrl == -1) {
@@ -43,7 +43,8 @@
 							'</li>'
                     	}
                     });
-                	$('#menuMaget').html(htmlList)
+                	$('#menuMaget').html(htmlList);
+                	_this.getData();
                 }
             });
 		},
@@ -211,7 +212,8 @@
             //佣金管理
             $('#menuMaget').on('click','#commission',function(event){//menuBtn 
             	console.log(event)
-              	event.stopPropagation();
+//            	event.stopPropagation();
+              	event.preventDefault();
             	var url = $(this).attr('url');
 				var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');

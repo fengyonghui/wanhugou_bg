@@ -207,7 +207,7 @@
 										}
 									}
 								}
-							commHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group" id="rodiv_' + item.orderType + '">'+
+							commHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 								'<div class="mui-input-row">' +
 									'<label>订单编号:</label>' +
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.orderNum+' ">' +

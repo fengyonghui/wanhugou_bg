@@ -23,7 +23,7 @@
 			_this.ajaxinvoiceStatus();//发票状态
 			_this.ajaxPoStatus();//业务状态
 			_this.ajaxcheckStatus();//审核状态
-			console.log(_this.userInfo.statu)
+//			console.log(_this.userInfo.statu)
 		},
 		getData: function() {
 			var _this = this;

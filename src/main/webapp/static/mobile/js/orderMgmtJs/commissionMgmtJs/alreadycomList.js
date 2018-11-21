@@ -205,10 +205,10 @@
 								}
 								//确认付款								
 								if(_this.commAuditFlag == true) {
-									if(item.commonProcess.paymentOrderProcess.name == '审批完成' && item.bizStatus == '0'){
-										surePayMoneyTxt = '确认付款';
-								        surePayMoneyBtn = 'surePayMoneyBtn';
-									}
+//									if(item.commonProcess.paymentOrderProcess.name == '审批完成' && item.bizStatus == '0'){
+//										surePayMoneyTxt = '确认付款';
+//								        surePayMoneyBtn = 'surePayMoneyBtn';
+//									}
 									if(item.commonProcess.paymentOrderProcess.name == '审批完成' && item.bizStatus == '1'){
 										surePayMoneyTxt = '支付完成';
 										surePayMoneyBtn = 'downPayMoneyBtn';
@@ -445,13 +445,13 @@
 			});
 		},
 		//审核通过
-		ajaxData: function(inText,num,inListId,money,currentType) {
+		ajaxData: function(inText,num,commId,money,currentType) {
 			var _this = this;
 			$.ajax({
 				type: "GET",
 				url: "/a/biz/order/bizCommission/auditPay",
 				data: {
-					commId: inListId,
+					commId: commId,
 					currentType: currentType,
 					money: money,
 					auditType: num,
@@ -479,13 +479,13 @@
 			});
 
 		},
-		rejectData: function(rejectTxt,num,inListId,money,currentType) {
+		rejectData: function(rejectTxt,num,commId,money,currentType) {
 			var _this = this;
 			$.ajax({
 				type: "GET",
 				url: "/a/biz/order/bizCommission/auditPay",
 				data: {
-					commId: inListId,
+					commId: commId,
 					currentType: currentType,
 					money: money,
 					auditType: num,
@@ -563,7 +563,6 @@
         	var _this = this;
         	/*查询*/
     		$('.app_header').on('tap', '#OrdSechBtn', function() {
-    			alert(1)
 				var url = $(this).attr('url');
 				if(url) {
 					mui.toast('子菜单不存在')
