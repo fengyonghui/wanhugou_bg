@@ -748,7 +748,7 @@
 			AND a.status = 1
 			AND prod.status = 1
 			AND bis.status = 1
-			AND bii.satatus = 1
+			AND bii.status = 1
 			AND bii.id = #{fromInv}
 			<if test="name != null and name != ''">
 				AND a.name LIKE
