@@ -38,6 +38,8 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 
 	private Integer companyId;
 
+	private String companyName;
+
 	/**
 	 * 业务状态 0未发送；1已发送
 	 */
@@ -72,6 +74,8 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 	 * 编辑页面标识符
 	 */
 	private String str;
+
+	private List<BizMessageOfficeType> bizMessageOfficeTypeList;
 
 	public BizMessageInfo() {
 		super();
@@ -249,5 +253,21 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 
 	public void setStr(String str) {
 		this.str = str;
+	}
+
+	public List<BizMessageOfficeType> getBizMessageOfficeTypeList() {
+		return bizMessageOfficeTypeList;
+	}
+
+	public void setBizMessageOfficeTypeList(List<BizMessageOfficeType> bizMessageOfficeTypeList) {
+		this.bizMessageOfficeTypeList = bizMessageOfficeTypeList;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 }

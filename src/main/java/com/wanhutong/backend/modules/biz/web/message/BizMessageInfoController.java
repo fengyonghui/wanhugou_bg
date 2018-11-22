@@ -6,6 +6,10 @@ package com.wanhutong.backend.modules.biz.web.message;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.dao.message.BizMessageOfficeTypeDao;
+import com.wanhutong.backend.modules.biz.entity.message.BizMessageOfficeType;
+import com.wanhutong.backend.modules.biz.service.message.BizMessageOfficeTypeService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,9 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.message.BizMessageInfo;
 import com.wanhutong.backend.modules.biz.service.message.BizMessageInfoService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 站内信Controller
  * @author Ma.Qiang
@@ -35,12 +42,19 @@ public class BizMessageInfoController extends BaseController {
 
 	@Autowired
 	private BizMessageInfoService bizMessageInfoService;
+	@Autowired
+	private BizMessageOfficeTypeService bizMessageOfficeTypeService;
 	
 	@ModelAttribute
 	public BizMessageInfo get(@RequestParam(required=false) Integer id) {
 		BizMessageInfo entity = null;
 		if (id!=null){
 			entity = bizMessageInfoService.get(id);
+
+			BizMessageOfficeType bizMessageOfficeType = new BizMessageOfficeType();
+			bizMessageOfficeType.setBizMessageInfo(entity);
+			List<BizMessageOfficeType> messageOfficeTypeList = bizMessageOfficeTypeService.findList(bizMessageOfficeType);
+			entity.setBizMessageOfficeTypeList(messageOfficeTypeList);
 		}
 		if (entity == null){
 			entity = new BizMessageInfo();
@@ -59,6 +73,15 @@ public class BizMessageInfoController extends BaseController {
 	@RequiresPermissions("biz:message:bizMessageInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizMessageInfo bizMessageInfo, Model model) {
+		List<BizMessageOfficeType> list = bizMessageInfo.getBizMessageOfficeTypeList();
+		if (CollectionUtils.isNotEmpty(list)) {
+			List<String> companyIdTypeList = new ArrayList<String>();
+			for (BizMessageOfficeType bizMessageOfficeType : list) {
+				companyIdTypeList.add(bizMessageOfficeType.getOfficeType());
+			}
+			model.addAttribute("companyIdTypeList", companyIdTypeList);
+		}
+
 		model.addAttribute("entity", bizMessageInfo);
 		return "modules/biz/message/bizMessageInfoForm";
 	}

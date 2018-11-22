@@ -10,6 +10,7 @@
 		a.url_status AS "urlStatus",
 		a.biz_status AS "bizStatus",
 		a.release_time AS "releaseTime",
+		a.company_id AS "companyId",
 		a.create_time AS "createTime",
 		a.create_id AS "createId.id",
 		a.create_name AS "createName",
@@ -96,6 +97,9 @@
 			biz_status,
 		</if>
 			release_time,
+		<if test="companyId != null">
+			company_id,
+		</if>
 			create_time,
 			create_id,
 			create_name,
@@ -121,6 +125,9 @@
 				NOW(),
 			</otherwise>
 		</choose>
+		<if test="companyId != null">
+			#{companyId},
+		</if>
 			NOW(),
 			#{createBy.id},
 			#{createBy.name},
@@ -144,6 +151,9 @@
 		</if>
 		<if test="releaseTime != null">
 			release_time = #{releaseTime},
+		</if>
+		<if test="companyId != null">
+			company_id = #{companyId},
 		</if>
 			update_id = #{updateBy.id},
 			update_time = #{updateTime},

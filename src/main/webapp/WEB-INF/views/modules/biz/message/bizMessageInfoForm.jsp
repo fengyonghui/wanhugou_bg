@@ -28,6 +28,33 @@
 			if (urlStatusVal == 1) {
 			    $("#urlStatus").attr('checked', true);
             }
+
+            if ('${companyIdTypeList}' != null && '${companyIdTypeList}' != '') {
+                var companyIdTypeList = JSON.parse('${companyIdTypeList}');
+                $.each(companyIdTypeList, function (index, companyIdType) {
+                    switch (companyIdType)
+                    {
+                        case ${BizMessageCompanyTypeEnum.CONSUMER.type}:
+                            $("#consumerType").attr('checked', true);
+                            break;
+                        case ${BizMessageCompanyTypeEnum.CONSIGNEE.type}:
+                            $("#consigneeType").attr('checked', true);
+                            break;
+                        case ${BizMessageCompanyTypeEnum.PURCHASERS.type}:
+                            $("#purchasersType").attr('checked', true);
+                            break;
+                        case ${BizMessageCompanyTypeEnum.SUPPLY_CHAIN.type}:
+                            $("#supplyChainType").attr('checked', true);
+                            break;
+                        case ${BizMessageCompanyTypeEnum.OTHER_TYPE.type}:
+                            $("#otherType").attr('checked', true);
+
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            }
 		});
 		
 		function btnSaveType(saveType) {
@@ -88,7 +115,7 @@
 
 				<input title="num" class="companyIdType" name="companyIdType" id="otherType" type="checkbox" value="${BizMessageCompanyTypeEnum.OTHER_TYPE.type}" />部分用户
 				&nbsp;&nbsp;
-				<sys:treeselect id="company" name="companyId" value="${companyId}" labelName="company.name" labelValue="${company.id}"
+				<sys:treeselect id="company" name="companyId" value="${entity.companyId}" labelName="company.name" labelValue="${entity.companyId}"
 								title="公司" url="/sys/office/treeData?isAll=true" cssClass="input-small" allowClear="true"/>
 				&nbsp;&nbsp;
 				<span style="color: red">※：勾选部分用户时，需在下拉菜单中选择对应公司</span>

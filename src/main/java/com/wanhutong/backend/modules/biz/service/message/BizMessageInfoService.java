@@ -4,9 +4,12 @@
 package com.wanhutong.backend.modules.biz.service.message;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.dao.message.BizMessageOfficeTypeDao;
 import com.wanhutong.backend.modules.biz.dao.message.BizMessageUserDao;
+import com.wanhutong.backend.modules.biz.entity.message.BizMessageOfficeType;
 import com.wanhutong.backend.modules.enums.BizMessageCompanyTypeEnum;
 import com.wanhutong.backend.modules.sys.dao.UserDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -16,6 +19,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +47,8 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
     private BizMessageUserDao bizMessageUserDao;
     @Resource
     private UserDao userDao;
+    @Autowired
+    private BizMessageOfficeTypeDao bizMessageOfficeTypeDao;
 
 
     @Override
@@ -72,10 +78,13 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
         super.save(bizMessageInfo);
 
         List<Integer> companyIdTypeListOriginal = bizMessageInfo.getCompanyIdTypeList();
+
+
+
         List<Integer> companyIdTypeList = new ArrayList<Integer>();
-        Integer companyId = bizMessageInfo.getCompanyId();
         List<User> resultUserList = new ArrayList<User>();
-        if (companyId != null) {
+
+        if (companyIdTypeListOriginal.contains(BizMessageCompanyTypeEnum.OTHER_TYPE.getType())) {
             for (Integer companyIdType : companyIdTypeListOriginal) {
                 if (companyIdType == BizMessageCompanyTypeEnum.OTHER_TYPE.getType()) {
                     continue;
@@ -105,6 +114,7 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
 //            return Pair.of(Boolean.FALSE, "当前公司下无用户!");
 //        }
 //        int i = bizMessageUserDao.insertBatch(list, bizMessageInfo.getId(), DEFAULT_BIZ_STATUS);
+        bizMessageOfficeTypeDao.insertBatch(companyIdTypeListOriginal, bizMessageInfo.getId(), UserUtils.getUser().getId());
         int i = bizMessageUserDao.insertBatch(resultUserList, bizMessageInfo.getId(), DEFAULT_BIZ_STATUS);
         LOGGER.info("save message userCount:[{}], companyId:[{}], messageId[{}]", i, bizMessageInfo.getCompanyId(), bizMessageInfo.getId());
         return Pair.of(Boolean.TRUE, "保存成功");
