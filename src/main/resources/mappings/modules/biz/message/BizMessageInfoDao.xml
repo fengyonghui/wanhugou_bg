@@ -16,10 +16,12 @@
 		a.create_name AS "createName",
 		a.update_id AS "updateId.id",
 		a.update_time AS "updateTime",
-		a.type AS "type"
+		a.type AS "type",
+		so.name as "companyName"
 	</sql>
 	
 	<sql id="bizMessageInfoJoins">
+		left join sys_office so on so.id = a.company_id
 	</sql>
     
 	<select id="get" resultType="BizMessageInfo">

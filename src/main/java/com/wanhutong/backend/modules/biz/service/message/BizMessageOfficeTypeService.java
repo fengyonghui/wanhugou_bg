@@ -56,4 +56,12 @@ public class BizMessageOfficeTypeService extends CrudService<BizMessageOfficeTyp
 		User user = UserUtils.getUser();
 		return bizMessageOfficeTypeDao.insertBatch(officeTypeList, messageId, user.getId());
 	}
+
+	/**
+	 * 根据messageId将所有数据逻辑删除
+	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void updateByMessageId(Integer messageId) {
+		bizMessageOfficeTypeDao.updateByMessageId(messageId);
+	}
 }

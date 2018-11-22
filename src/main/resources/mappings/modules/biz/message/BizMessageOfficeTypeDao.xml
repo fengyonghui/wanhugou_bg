@@ -97,6 +97,12 @@
 			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
+
+	<update id="updateByMessageId">
+		UPDATE biz_message_office_type SET
+			status = 0
+		WHERE message_id = #{messageId}
+	</update>
 	
 	<update id="delete">
 		UPDATE biz_message_office_type SET 

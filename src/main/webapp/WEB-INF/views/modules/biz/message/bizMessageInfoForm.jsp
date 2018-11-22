@@ -27,6 +27,7 @@
 			var urlStatusVal = '${entity.urlStatus}';
 			if (urlStatusVal == 1) {
 			    $("#urlStatus").attr('checked', true);
+                $("#urlStatus").attr('value', "1");
             }
 
             if ('${companyIdTypeList}' != null && '${companyIdTypeList}' != '') {
@@ -60,6 +61,7 @@
 		function btnSaveType(saveType) {
 		    var companyId = $("#companyId").val();
 		    var orherTypeFlag = true;
+		    var orherTypeCheckedFlag = true;
             var params = new Array();
             $(".companyIdType").each(function () {
                 if(this.checked){
@@ -67,17 +69,27 @@
 					if(companyIdType == '${BizMessageCompanyTypeEnum.OTHER_TYPE.type}' && (companyId == null || companyId == '')) {
                         orherTypeFlag = false;
                     }
+
+                    if(companyIdType == '${BizMessageCompanyTypeEnum.OTHER_TYPE.type}') {
+                        orherTypeCheckedFlag = false;
+                    }
+
                     params.push(companyIdType);
                 }
             })
+
+			var orherTypeCheckedAndCompanyId = true;
+			if (orherTypeCheckedFlag == true && companyId != null && companyId != '') {
+                orherTypeCheckedAndCompanyId = false;
+            }
 
             if(params.length == 0) {
                 alert("未勾选待发送的用户！");
                 return false;
             }
 
-            if (orherTypeFlag == false) {
-                alert("请选择部分用户！");
+            if (orherTypeFlag == false || orherTypeCheckedAndCompanyId == false) {
+                alert("部分用户复选框和对应公司必须同时选中！");
                 return false;
             }
 
@@ -93,6 +105,7 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizMessageInfo" action="${ctx}/biz/message/bizMessageInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input type="hidden" name="str" value="${bizMessageInfo.str}"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">标题：</label>
@@ -115,7 +128,7 @@
 
 				<input title="num" class="companyIdType" name="companyIdType" id="otherType" type="checkbox" value="${BizMessageCompanyTypeEnum.OTHER_TYPE.type}" />部分用户
 				&nbsp;&nbsp;
-				<sys:treeselect id="company" name="companyId" value="${entity.companyId}" labelName="company.name" labelValue="${entity.companyId}"
+				<sys:treeselect id="company" name="companyId" value="${entity.companyId}" labelName="company.name" labelValue="${entity.companyName}"
 								title="公司" url="/sys/office/treeData?isAll=true" cssClass="input-small" allowClear="true"/>
 				&nbsp;&nbsp;
 				<span style="color: red">※：勾选部分用户时，需在下拉菜单中选择对应公司</span>

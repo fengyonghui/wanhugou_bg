@@ -85,7 +85,6 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 		super(id);
 	}
 
-	@Length(min=1, max=128, message="标题长度必须介于 1 和 128 之间")
 	public String getTitle() {
 		return title;
 	}
@@ -101,8 +100,7 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	
-	@Length(min=0, max=128, message="url长度必须介于 0 和 128 之间")
+
 	public String getUrl() {
 		return url;
 	}
@@ -127,8 +125,7 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 	public void setCreateId(User createId) {
 		this.createId = createId;
 	}
-	
-	@Length(min=0, max=11, message="create_name长度必须介于 0 和 11 之间")
+
 	public String getCreateName() {
 		return createName;
 	}

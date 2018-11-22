@@ -19,4 +19,9 @@ import java.util.List;
 @MyBatisDao
 public interface BizMessageOfficeTypeDao extends CrudDao<BizMessageOfficeType> {
     int insertBatch(@Param("officeTypeList")List<Integer> officeTypeList, @Param("messageId") Integer messageId, @Param("userId") Integer userId);
+
+    /**
+     * 根据messageId将所有数据逻辑删除
+     */
+    void updateByMessageId(@Param("messageId") Integer messageId);
 }

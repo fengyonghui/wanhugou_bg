@@ -75,7 +75,7 @@ public class BizMessageInfoController extends BaseController {
 	public String form(BizMessageInfo bizMessageInfo, Model model) {
 		List<BizMessageOfficeType> list = bizMessageInfo.getBizMessageOfficeTypeList();
 		if (CollectionUtils.isNotEmpty(list)) {
-			List<String> companyIdTypeList = new ArrayList<String>();
+			List<Integer> companyIdTypeList = new ArrayList<Integer>();
 			for (BizMessageOfficeType bizMessageOfficeType : list) {
 				companyIdTypeList.add(bizMessageOfficeType.getOfficeType());
 			}
@@ -137,7 +137,17 @@ public class BizMessageInfoController extends BaseController {
 		BizMessageInfo messageInfo = bizMessageInfoService.get(bizMessageInfo.getId());
 		messageInfo.setId(null);
 		messageInfo.setBizStatus(BizMessageInfo.BizStatus.NO_SEND.getStatus());
-		bizMessageInfoService.save(messageInfo);
+		BizMessageOfficeType bizMessageOfficeType = new BizMessageOfficeType();
+		bizMessageOfficeType.setBizMessageInfo(bizMessageInfo);
+		List<BizMessageOfficeType> list = bizMessageOfficeTypeService.findList(bizMessageOfficeType);
+		List<Integer> companyIdTypeList = new ArrayList<Integer>();
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (BizMessageOfficeType messageOfficeType : list) {
+				companyIdTypeList.add(messageOfficeType.getOfficeType());
+			}
+		}
+		messageInfo.setCompanyIdTypeList(companyIdTypeList);
+		bizMessageInfoService.saveMessage(messageInfo);
 		addMessage(redirectAttributes, "复制站内信成功");
 
 		return "redirect:"+Global.getAdminPath()+"/biz/message/bizMessageInfo/?repage";

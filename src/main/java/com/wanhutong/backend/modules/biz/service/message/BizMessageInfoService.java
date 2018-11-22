@@ -49,7 +49,10 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
     private UserDao userDao;
     @Autowired
     private BizMessageOfficeTypeDao bizMessageOfficeTypeDao;
-
+    @Autowired
+    private BizMessageOfficeTypeService bizMessageOfficeTypeService;
+    @Autowired
+    private BizMessageUserService bizMessageUserService;
 
     @Override
     public BizMessageInfo get(Integer id) {
@@ -72,6 +75,12 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
 //            LOGGER.error("save message has no companyId");
 //            return Pair.of(Boolean.FALSE, "参数错误!");
 //        }
+        if ("edit".equals(bizMessageInfo.getStr())) {
+            bizMessageOfficeTypeService.updateByMessageId(bizMessageInfo.getId());
+            bizMessageUserService.updateByMessageId(bizMessageInfo.getId());
+        }
+
+
         User currentUser = UserUtils.getUser();
         bizMessageInfo.setCreateBy(currentUser);
         bizMessageInfo.setUpdateBy(currentUser);

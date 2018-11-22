@@ -17,7 +17,7 @@ public class BizMessageOfficeType extends DataEntity<BizMessageOfficeType> {
 	
 	private static final long serialVersionUID = 1L;
 	private Integer messageId;		// message_id
-	private String officeType;		// 发送用户类型
+	private Integer officeType;		// 发送用户类型
 	private Integer uVersion;		// u_version
 
 	private BizMessageInfo bizMessageInfo;
@@ -38,11 +38,11 @@ public class BizMessageOfficeType extends DataEntity<BizMessageOfficeType> {
 		this.messageId = messageId;
 	}
 
-	public String getOfficeType() {
+	public Integer getOfficeType() {
 		return officeType;
 	}
 
-	public void setOfficeType(String officeType) {
+	public void setOfficeType(Integer officeType) {
 		this.officeType = officeType;
 	}
 
