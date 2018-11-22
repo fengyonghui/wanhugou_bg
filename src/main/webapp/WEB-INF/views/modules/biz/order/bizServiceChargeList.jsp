@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>服务费--配送方式管理</title>
+	<title>服务费设置管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -26,7 +26,7 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>订单类型：</label>
-				<form:select path="serviceLine.orderType" htmlEscape="false" class="input-medium">
+				<form:select path="serviceLine.orderType" class="input-medium" htmlEscape="false">
 					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getDictList('service_order_type')}" itemValue="value" itemLabel="label"/>
 				</form:select>
@@ -34,11 +34,11 @@
 			<li><label>分类：</label>
 				<form:input path="varietyInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li><lable>服务方式</lable>
-				<from:select path="serviceMode" class="input-mini required">
-					<from:option value="" label="请选择"/>
-					<from:options items="${fns:getDictList('service_cha')}" itemValue="value" itemLabel="label"/>
-				</from:select>
+			<li><lable>服务方式：</lable>
+				<form:select path="serviceMode" class="input-mini" htmlEscape="false">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('service_cha')}" itemValue="value" itemLabel="label"/>
+				</form:select>
 			</li>
 			<li><label>是否启用：</label>
 				<form:select path="serviceLine.usable" htmlEscape="false" class="input-mini">

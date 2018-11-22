@@ -25,6 +25,110 @@
 			});
 		});
 	</script>
+	<script type="text/javascript">
+        $(function () {
+
+            //默认绑定省
+            ProviceBind();
+            //绑定事件
+            $("#province").change( function () {
+                CityBind();
+            })
+
+            $("#city").change(function () {
+                VillageBind();
+            })
+
+
+
+
+        })
+        function Bind(str) {
+            alert($("#Province").html());
+            $("#Province").val(str);
+
+
+        }
+        function ProviceBind() {
+            //清空下拉数据
+            $("#province").html("");
+
+            var str = "<option>==省===</option>";
+            $.ajax({
+                type: "post",
+                url: "/sys/sysRegion/selectRegion",
+				data:{"level":"prov"},
+                dataType: "JSON",
+                async: false,
+                success: function (data) {
+                    //从服务器获取数据进行绑定
+                    $.each(data.data, function (i, item) {
+                        str += "<option value=" + item.code + ">" + item.name + "</option>";
+                    });
+                    //将数据添加到省份这个下拉框里面
+                    $("#province").append(str);
+                },
+                error: function () { alert("Error"); }
+            });
+
+
+
+
+        }
+        function CityBind() {
+
+            var provice = $("#province").attr("value");
+            //判断省份这个下拉框选中的值是否为空
+            if (provice == "") {
+                return;
+            }
+            $("#city").html("");
+            var str = "<option>==市===</option>";
+
+            $.ajax({
+                type: "post",
+                url: "/sys/sysRegion/selectRegion",
+                data: { "code":provice,"level":"city"},
+                dataType: "JSON",
+                async: false,
+                success: function (data) {
+                    //从服务器获取数据进行绑定
+                    $.each(data.data, function (i, item) {
+                        str += "<option value=" + item.code + ">" + item.name + "</option>";
+                    });
+                    //将数据添加到省份这个下拉框里面
+                    $("#city").append(str);
+                },
+                error: function () { alert("Error"); }
+            });
+        }
+        function VillageBind() {
+            var provice = $("#city").attr("value");
+            //判断市这个下拉框选中的值是否为空
+            if (provice == "") {
+                return;
+            }
+            $("#region").html("");
+            var str = "<option>==请选择===</option>";
+            //将市的ID拿到数据库进行查询，查询出他的下级进行绑定
+            $.ajax({
+                type: "post",
+                url: "/sys/sysRegion/selectRegion",
+                data: { "code":provice, "level":"dist" },
+                dataType: "JSON",
+                async: false,
+                success: function (data) {
+                    //从服务器获取数据进行绑定
+                    $.each(data.data, function (i, item) {
+                        str += "<option value=" + item.id + ">" + item.name + "</option>";
+                    });
+                    //将数据添加到省份这个下拉框里面
+                    $("#region").append(str);
+                },
+                error: function () { alert("Error"); }
+            });
+        }
+	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -33,38 +137,40 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizServiceCharge" action="${ctx}/biz/order/bizServiceCharge/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">服务方式：</label>
+			<label class="control-label">发货路线：</label>
 			<div class="controls">
-				<from:select path="serviceMode" class="input-mini required">
-					<from:option value="" label="请选择"/>
-					<from:options items="${fns:getDictList('service_cha')}" itemValue="value" itemLabel="label"/>
-				</from:select>
+				从
+				<select id="province" name="provinces">
+					<option>----省----</option>
+				</select>
+				<select id="city" name="citys">
+					<option>----市----</option>
+				</select>
+				<select id="region" name="regions">
+					<option>----区----</option>
+				</select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">分类：</label>
-			<div class="controls">
-				<form:input path="variId" htmlEscape="false" maxlength="11" class="input-xlarge required digits"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">服务费：</label>
-			<div class="controls">
-				<form:input path="servicePrice" htmlEscape="false" class="input-xlarge required number"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">版本控制：</label>
-			<div class="controls">
-				<form:input path="uVersion" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+		<%--<div class="form-group">--%>
+<%--                <div class="col-sm-2">--%>
+<%--                    <select class="form-control" name="Province" id="Province">--%>
+<%--                        <option>==省===</option>--%>
+<%--                    </select>--%>
+<%--                </div>--%>
+<%--                <div class="col-sm-2">--%>
+<%--                    <select class="form-control" name="City" id="City">--%>
+<%--                        <option>==市===</option>--%>
+<%--                    </select>--%>
+<%--                </div>--%>
+<%--                <div class="col-sm-2">--%>
+<%--                    <select class="form-control" name="Village" id="Village">--%>
+<%--                        <option>==县/区===</option>--%>
+<%--                    </select>--%>
+<%--                </div>--%>
+<%--            </div>--%>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:order:bizServiceCharge:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
