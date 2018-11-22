@@ -118,9 +118,10 @@ public class SysRegionController extends BaseController {
 
 	@RequestMapping(value = "selectRegion")
 	@ResponseBody
-	public String selectRegion(String level, @RequestParam(required = false) Integer code) {
+	public List<SysRegion> selectRegion(String level, @RequestParam(required = false) Integer code) {
 		List<SysRegion> result = sysRegionService.findRegion(level,code);
-		return JsonUtil.generateData(result, "callback");
+		return result;
+//		return JsonUtil.generateData(result, "callback");
 	}
 
 
