@@ -124,10 +124,10 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
         bizMessageInfo.setBizStatus(BizMessageInfo.BizStatus.SEND_COMPLETE.getStatus());
 
         User user = new User();
-        if ("orderHeader".equals(option)) {
-            user.setId(userId);
-        } else {
+        if ("requestHeader".equals(option)) {
             user.setCompany(new Office(userId));
+        } else {
+            user.setId(userId);
         }
 
         List<User> list = userDao.findList(user);

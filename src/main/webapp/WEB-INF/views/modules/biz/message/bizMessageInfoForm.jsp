@@ -108,7 +108,7 @@
 				<input name="releaseTime" id="releaseTime" type="text" readonly="readonly"
 					   maxlength="20"
 					   class="input-medium Wdate required"
-					   value="<fmt:formatDate value="${bizMessageInfo.releaseTime}"  pattern="yyyy-MM-dd"/>"
+					   value="<fmt:formatDate value="${entity.releaseTime}"  pattern="yyyy-MM-dd"/>"
 					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
 					   placeholder="必填！"/>
 				<span class="help-inline"><font color="red">*</font></span>
@@ -120,10 +120,52 @@
 
 
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><input id="btnSave" class="btn btn-primary" type="button" value="保存暂不发送" onclick="btnSaveType('save')"/>&nbsp;</shiro:hasPermission>
-			<shiro:hasPermission name="biz:message:bizMessageInfo:edit"><input id="btnSaveAndSend" class="btn btn-primary" type="button" value="保存并发送" onclick="btnSaveType('saveAndSend')"/>&nbsp;</shiro:hasPermission>
+			<c:if test="${entity.src != 'detail'}">
+				<shiro:hasPermission name="biz:message:bizMessageInfo:edit">
+					<input id="btnSave" class="btn btn-primary" type="button" value="保存暂不发送" data-toggle="modal" data-target="#modalSave"/>&nbsp;
+
+					<input id="btnSaveAndSend" class="btn btn-primary" type="button" value="保存并发送" data-toggle="modal" data-target="#modalSave" />&nbsp;
+				</shiro:hasPermission>
+			</c:if>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+
+
+	<div class="modal fade" id="modalSave" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header" style="text-align: center;">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel" >提示</h4>
+				</div>
+				<div class="modal-body" style="text-align: center;">
+					是否发布此条站内信，一旦发布不可撤回！请谨慎！
+				</div>
+				<div class="modal-footer" style="text-align: center;">
+					<button type="button" onclick="btnSaveType('save')" class="btn btn-primary">保存暂不发送</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="SaveAndSend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header" style="text-align: center;">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabe2" >提示</h4>
+				</div>
+				<div class="modal-body" style="text-align: center;">
+					是否发布此条站内信，一旦发布不可撤回！请谨慎！
+				</div>
+				<div class="modal-footer" style="text-align: center;">
+					<button type="button" onclick="btnSaveType('saveAndSend')" class="btn btn-primary">保存并发送</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

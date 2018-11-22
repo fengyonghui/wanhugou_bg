@@ -59,7 +59,7 @@ public class BizMessageInfoController extends BaseController {
 	@RequiresPermissions("biz:message:bizMessageInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizMessageInfo bizMessageInfo, Model model) {
-		model.addAttribute("bizMessageInfo", bizMessageInfo);
+		model.addAttribute("entity", bizMessageInfo);
 		return "modules/biz/message/bizMessageInfoForm";
 	}
 

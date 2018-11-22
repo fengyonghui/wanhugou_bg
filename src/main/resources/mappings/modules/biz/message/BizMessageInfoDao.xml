@@ -95,9 +95,7 @@
 		<if test="bizStatus != null">
 			biz_status,
 		</if>
-		<if test="releaseTime != null">
 			release_time,
-		</if>
 			create_time,
 			create_id,
 			create_name,
@@ -115,9 +113,14 @@
 		<if test="bizStatus != null">
 			#{bizStatus},
 		</if>
-		<if test="releaseTime != null">
-			#{releaseTime},
-		</if>
+		<choose>
+			<when test="releaseTime !=null ">
+				#{releaseTime},
+			</when>
+			<otherwise>
+				NOW(),
+			</otherwise>
+		</choose>
 			NOW(),
 			#{createBy.id},
 			#{createBy.name},

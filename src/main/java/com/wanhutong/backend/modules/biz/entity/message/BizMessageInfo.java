@@ -68,6 +68,11 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 	 */
 	private List<Integer> companyIdTypeList;
 
+	/**
+	 * 编辑页面标识符
+	 */
+	private String src;
+
 	public BizMessageInfo() {
 		super();
 	}
@@ -236,5 +241,13 @@ public class BizMessageInfo extends DataEntity<BizMessageInfo> {
 
 	public void setCompanyIdTypeList(List<Integer> companyIdTypeList) {
 		this.companyIdTypeList = companyIdTypeList;
+	}
+
+	public String getSrc() {
+		return src;
+	}
+
+	public void setSrc(String src) {
+		this.src = src;
 	}
 }
