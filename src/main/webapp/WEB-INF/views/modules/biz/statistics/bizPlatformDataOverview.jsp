@@ -140,7 +140,12 @@
         <td>
             ${statisticsTotal.procurement}
         </td>
-
+        <td>
+            ${statisticsTotal.receiveTotal}
+        </td>
+        <td>
+            ${statisticsTotal.yieldRate}
+        </td>
         <td>
             ${statisticsTotal.jointOrderPlanAmountTotal}
         </td>
@@ -152,13 +157,6 @@
         </td>
         <td>
             ${statisticsTotal.purchaseOrderAmountTotal}
-        </td>
-
-        <td>
-            ${statisticsTotal.receiveTotal}
-        </td>
-        <td>
-            ${statisticsTotal.yieldRate}
         </td>
         <td>
             ${statisticsTotal.accumulatedSalesMonth}
