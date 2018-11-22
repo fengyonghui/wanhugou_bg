@@ -86,6 +86,19 @@ public class BizMessageInfoController extends BaseController {
 		addMessage(redirectAttributes, "保存站内信失败");
 		return "redirect:"+Global.getAdminPath()+"/biz/message/bizMessageInfo/?repage";
 	}
+
+	@RequiresPermissions("biz:message:bizMessageInfo:edit")
+	@RequestMapping(value = "send")
+	public String send(BizMessageInfo bizMessageInfo, Model model, RedirectAttributes redirectAttributes) {
+		try {
+			bizMessageInfoService.save(bizMessageInfo);
+			return "redirect:"+Global.getAdminPath()+"/biz/message/bizMessageInfo/?repage";
+		} catch (Exception e) {
+			logger.error("save message error", e);
+		}
+		addMessage(redirectAttributes, "保存站内信失败");
+		return "redirect:"+Global.getAdminPath()+"/biz/message/bizMessageInfo/?repage";
+	}
 	
 	@RequiresPermissions("biz:message:bizMessageInfo:edit")
 	@RequestMapping(value = "delete")

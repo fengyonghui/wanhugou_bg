@@ -23,6 +23,11 @@
 					}
 				}
 			});
+
+			var urlStatusVal = '${entity.urlStatus}';
+			if (urlStatusVal == 1) {
+			    $("#urlStatus").attr('checked', true);
+            }
 		});
 		
 		function btnSaveType(saveType) {
@@ -72,16 +77,16 @@
 		<div class="control-group">
 			<label class="control-label">选择发送用户：</label>
 			<div class="controls">
-				<input title="num" class="companyIdType" name="companyIdType" type="checkbox" value="${BizMessageCompanyTypeEnum.CONSUMER.type}" />全部零售商
+				<input title="num" class="companyIdType" name="companyIdType" id="consumerType" type="checkbox" value="${BizMessageCompanyTypeEnum.CONSUMER.type}" />全部零售商
 				&nbsp;&nbsp;
-				<input title="num" class="companyIdType" name="companyIdType" type="checkbox" value="${BizMessageCompanyTypeEnum.CONSIGNEE.type}" />全部代销商
+				<input title="num" class="companyIdType" name="companyIdType" id="consigneeType" type="checkbox" value="${BizMessageCompanyTypeEnum.CONSIGNEE.type}" />全部代销商
 				&nbsp;&nbsp;
-				<input title="num" class="companyIdType" name="companyIdType" type="checkbox" value="${BizMessageCompanyTypeEnum.PURCHASERS.type}" />全部经销商
+				<input title="num" class="companyIdType" name="companyIdType" id="purchasersType" type="checkbox" value="${BizMessageCompanyTypeEnum.PURCHASERS.type}" />全部经销商
 				&nbsp;&nbsp;
-				<input title="num" class="companyIdType" name="companyIdType" type="checkbox" value="${BizMessageCompanyTypeEnum.SUPPLY_CHAIN.type}" />全部供应商
+				<input title="num" class="companyIdType" name="companyIdType" id="supplyChainType" type="checkbox" value="${BizMessageCompanyTypeEnum.SUPPLY_CHAIN.type}" />全部供应商
 				&nbsp;&nbsp;
 
-				<input title="num" class="companyIdType" name="companyIdType" type="checkbox" value="${BizMessageCompanyTypeEnum.OTHER_TYPE.type}" />部分用户
+				<input title="num" class="companyIdType" name="companyIdType" id="otherType" type="checkbox" value="${BizMessageCompanyTypeEnum.OTHER_TYPE.type}" />部分用户
 				&nbsp;&nbsp;
 				<sys:treeselect id="company" name="companyId" value="${companyId}" labelName="company.name" labelValue="${company.id}"
 								title="公司" url="/sys/office/treeData?isAll=true" cssClass="input-small" allowClear="true"/>
@@ -120,11 +125,11 @@
 
 
 		<div class="form-actions">
-			<c:if test="${entity.src != 'detail'}">
+			<c:if test="${entity.str != 'detail'}">
 				<shiro:hasPermission name="biz:message:bizMessageInfo:edit">
 					<input id="btnSave" class="btn btn-primary" type="button" value="保存暂不发送" data-toggle="modal" data-target="#modalSave"/>&nbsp;
 
-					<input id="btnSaveAndSend" class="btn btn-primary" type="button" value="保存并发送" data-toggle="modal" data-target="#modalSave" />&nbsp;
+					<input id="btnSaveAndSend" class="btn btn-primary" type="button" value="保存并发送" data-toggle="modal" data-target="#SaveAndSend" />&nbsp;
 				</shiro:hasPermission>
 			</c:if>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
