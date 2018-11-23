@@ -161,6 +161,24 @@
             });
         }
 	</script>
+
+    <%--<style type="text/css">--%>
+        <%--*{margin:0;padding:0;}--%>
+        <%--body { font-size: 14px; line-height: 130%; padding: 60px }--%>
+        <%--#panel { width: 262px; border: 1px solid #0050D0 }--%>
+        <%--.head { padding: 5px; background: #96E555; cursor: pointer }--%>
+        <%--.content { padding: 10px; text-indent: 2em; border-top: 1px solid #0050D0;display:block; }--%>
+    <%--</style>--%>
+    <script type="text/javascript">
+        $(function(){
+            $("#header").click(function(){
+                $(this).next("div.controls").toggle();
+            });
+        });
+        function toggle(item) {
+            $("#"+item).toggle();
+        }
+    </script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -170,9 +188,10 @@
 	<form:form id="inputForm" modelAttribute="bizServiceCharge" action="${ctx}/biz/order/bizServiceCharge/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
-		<div class="control-group">
-			<label class="control-label" style="size: A3">发货路线：</label>
-			<div class="controls">
+		<div id="aa" class="control-group">
+            <%--<h5 id="header" class="header">隐藏</h5>--%>
+			<label id="header" class="control-label" style="size: A3">发货路线：</label>
+			<div id="bb" class="controls" style="background-color: #e8e8e8; width: 50%">
 				从
 				<select id="province" name="provinces" class="input-medium required">
 					<option>===省====</option>
@@ -183,6 +202,7 @@
 				<select id="region" name="regions" class="input-medium">
 					<option>===县/区====</option>
 				</select>
+				<br>
 				至
 				<select id="toProvince" name="toProvinces" class="input-medium required">
 					<option>===省====</option>
@@ -195,20 +215,22 @@
 				</select>
 				<span class="help-inline"><font color="red">*</font> </span>
 				<div>
+					&nbsp;
 					<table>
-						<tr><td>商品品类：拉杆箱</td></tr>
-						<tr><td rowspan="3">服务费</td><td>客户自提</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr><td>送货到家</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr><td>厂家直发</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr><td>商品品类：非拉杆箱</td></tr>
-						<tr><td rowspan="3">服务费</td><td>客户自提</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr><td>送货到家</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr><td>厂家直发</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr><td>是否开启&nbsp;<input type="radio"/>是</td></tr>
+						<tr style="height: 40px"><td>商品品类：拉杆箱</td><td></td><td><input type="checkbox" value=""/>联营订单<input type="checkbox" value=""/>代采订单<input type="checkbox" value=""/>零售订单</td></tr>
+						<tr style="height: 40px"><td rowspan="3" valign="top">服务费</td><td>客户自提</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
+						<tr style="height: 40px"><td>送货到家</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
+						<tr style="height: 40px"><td>厂家直发</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
+						<tr style="height: 40px"><td>商品品类：非拉杆箱</td><td></td><td><input type="checkbox" value=""/>联营订单<input type="checkbox" value=""/>代采订单<input type="checkbox" value=""/>零售订单</td></tr>
+						<tr style="height: 40px"><td rowspan="3" valign="top">服务费</td><td>客户自提</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
+						<tr style="height: 40px"><td>送货到家</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
+						<tr style="height: 40px"><td>厂家直发</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
+						<tr style="height: 40px"><td>是否开启&nbsp;<input type="checkbox"/>是</td><td></td><td align="right"></td></tr>
 					</table>
 				</div>
 			</div>
 		</div>
+		<div align="right"><input class="btn btn-primary" type="button" value="添加" onclick="toggle('bb')"/></div>
 		<%--<div class="form-group">--%>
 <%--                <div class="col-sm-2">--%>
 <%--                    <select class="form-control" name="Province" id="Province">--%>
@@ -231,5 +253,6 @@
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+	<script src="${ctxStatic}/bootstrap/2.3.1/docs/assets/js/bootstrap-collapse.js" type="text/javascript"></script>
 </body>
 </html>
