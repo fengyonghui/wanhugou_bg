@@ -111,9 +111,9 @@
 									<c:when test="${fns:getUser().getCompany().id == bizSkuTransfer.fromInv.customer.id && fns:hasRole(roleSet, RoleEnNameEnum.WAREHOUSESPECIALIST.state)}">
 										<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=audit">审核</a>
 									</c:when>
-									<c:otherwise>
+									<c:when test="${!fns:hasRole(roleSet, RoleEnNameEnum.WAREHOUSESPECIALIST.state)}">
 										<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=audit">审核</a>
-									</c:otherwise>
+									</c:when>
 								</c:choose>
 							</c:if>
 						</shiro:hasPermission>
