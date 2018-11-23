@@ -158,6 +158,7 @@ public class BizMessageInfoService extends CrudService<BizMessageInfoDao, BizMes
             User currentUser = UserUtils.getUser();
             bizMessageInfo.setCreateBy(currentUser);
             bizMessageInfo.setUpdateBy(currentUser);
+            bizMessageInfo.setReleaseTime(new Date());
             super.save(bizMessageInfo);
 
             int i = bizMessageUserDao.insertBatch(list, bizMessageInfo.getId(), DEFAULT_BIZ_STATUS);
