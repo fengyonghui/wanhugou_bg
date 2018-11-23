@@ -176,13 +176,13 @@
             $("#"+item).next("div.controls").toggle();
         }
         function add(item) {
-			$("#"+item).next("div.controls").toggle();
 			var num = parseInt(item.replace('header','')) + parseInt(1);
 			var sourceNode = $("#"+item); // 获得被克隆的节点对象
             $("#"+item).attr("onclick","add('"+num+"')");
-            var clonedNode = sourceNode.cloneNode(true);// 克隆节点
+            var clonedNode = sourceNode[0].cloneNode(true);// 克隆节点
             clonedNode.setAttribute("id", "header" + num); // 修改一下id 值，避免id 重复
-            sourceNode.nextNode.append(clonedNode);
+            sourceNode.after(clonedNode);
+            $("#"+item).next("div.controls").toggle();
         }
     </script>
 </head>
