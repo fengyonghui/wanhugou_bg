@@ -108,10 +108,10 @@
 										&& (fns:hasRole(roleSet, bizSkuTransfer.commonProcess.transferProcess.roleEnNameEnum) || fns:getUser().isAdmin())
 										}">
 								<c:choose>
-									<c:when test="${fns:getUser().getCompany().id == bizSkuTransfer.fromInv.customer.id && fns:hasRole(roleSet, RoleEnNameEnum.WAREHOUSESPECIALIST.state)}">
+									<c:when test="${fns:getUser().getCompany().id == bizSkuTransfer.fromInv.customer.id && fns:hasRole(roleSet, RoleEnNameEnum.WAREHOUSESPECIALIST)}">
 										<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=audit">审核</a>
 									</c:when>
-									<c:when test="${!fns:hasRole(roleSet, RoleEnNameEnum.WAREHOUSESPECIALIST.state)}">
+									<c:when test="${!(fns:hasRole(roleSet, RoleEnNameEnum.WAREHOUSESPECIALIST))}">
 										<a href="${ctx}/biz/inventory/bizSkuTransfer/form?id=${bizSkuTransfer.id}&str=audit">审核</a>
 									</c:when>
 								</c:choose>
