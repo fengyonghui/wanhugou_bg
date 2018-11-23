@@ -6,6 +6,10 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.sys.entity.DefaultProp;
+import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.service.DefaultPropService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +26,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.order.BizServiceCharge;
 import com.wanhutong.backend.modules.biz.service.order.BizServiceChargeService;
 
+import java.util.List;
+
 /**
  * 服务费--配送方式Controller
  * @author Tengfei.Zhang
@@ -33,6 +39,8 @@ public class BizServiceChargeController extends BaseController {
 
 	@Autowired
 	private BizServiceChargeService bizServiceChargeService;
+	@Autowired
+    private DefaultPropService defaultPropService;
 	
 	@ModelAttribute
 	public BizServiceCharge get(@RequestParam(required=false) Integer id) {
@@ -57,6 +65,8 @@ public class BizServiceChargeController extends BaseController {
 	@RequiresPermissions("biz:order:bizServiceCharge:view")
 	@RequestMapping(value = "form")
 	public String form(BizServiceCharge bizServiceCharge, Model model) {
+        model.addAttribute("variId",defaultPropService.getPropByKey("draw_bar_frame"));
+        model.addAttribute("serviceModeList",DictUtils.getDictList("service_cha"));
 		model.addAttribute("bizServiceCharge", bizServiceCharge);
 		return "modules/biz/order/bizServiceChargeForm";
 	}

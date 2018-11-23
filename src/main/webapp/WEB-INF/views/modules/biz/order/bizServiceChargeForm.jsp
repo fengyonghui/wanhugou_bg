@@ -171,12 +171,18 @@
     <%--</style>--%>
     <script type="text/javascript">
         $(function(){
-            $("#header").click(function(){
-                $(this).next("div.controls").toggle();
-            });
         });
         function toggle(item) {
-            $("#"+item).toggle();
+            $("#"+item).next("div.controls").toggle();
+        }
+        function add(item) {
+			$("#"+item).next("div.controls").toggle();
+			var num = parseInt(item.replace('header','')) + parseInt(1);
+			var sourceNode = $("#"+item); // 获得被克隆的节点对象
+            $("#"+item).attr("onclick","add('"+num+"')");
+            var clonedNode = sourceNode.cloneNode(true);// 克隆节点
+            clonedNode.setAttribute("id", "header" + num); // 修改一下id 值，避免id 重复
+            sourceNode.nextNode.append(clonedNode);
         }
     </script>
 </head>
@@ -188,66 +194,77 @@
 	<form:form id="inputForm" modelAttribute="bizServiceCharge" action="${ctx}/biz/order/bizServiceCharge/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
-		<div id="aa" class="control-group">
-            <%--<h5 id="header" class="header">隐藏</h5>--%>
-			<label id="header" class="control-label" style="size: A3">发货路线：</label>
-			<div id="bb" class="controls" style="background-color: #e8e8e8; width: 50%">
+		<div id="aa0" class="control-group">
+			<label id="header0" class="control-label" onclick="toggle(this.id)"><font size="3">发货路线：</font></label>
+			<div id="route0" class="controls" style="background-color: #e8e8e8; width: 50%">
 				从
-				<select id="province" name="provinces" class="input-medium required">
+				<select id="province0" name="provinces" class="input-medium required">
 					<option>===省====</option>
 				</select>
-				<select id="city" name="citys" class="input-medium required">
+				<select id="city0" name="citys" class="input-medium required">
 					<option>===市====</option>
 				</select>
-				<select id="region" name="regions" class="input-medium">
+				<select id="region0" name="regions" class="input-medium">
 					<option>===县/区====</option>
 				</select>
 				<br>
 				至
-				<select id="toProvince" name="toProvinces" class="input-medium required">
+				<select id="toProvince0" name="toProvinces" class="input-medium required">
 					<option>===省====</option>
 				</select>
-				<select id="toCity" name="toCitys" class="input-medium required">
+				<select id="toCity0" name="toCitys" class="input-medium required">
 					<option>===市====</option>
 				</select>
-				<select id="toRegion" name="toRegions" class="input-medium">
+				<select id="toRegion0" name="toRegions" class="input-medium">
 					<option>===县/区====</option>
 				</select>
 				<span class="help-inline"><font color="red">*</font> </span>
 				<div>
 					&nbsp;
 					<table>
-						<tr style="height: 40px"><td>商品品类：拉杆箱</td><td></td><td><input type="checkbox" value=""/>联营订单<input type="checkbox" value=""/>代采订单<input type="checkbox" value=""/>零售订单</td></tr>
-						<tr style="height: 40px"><td rowspan="3" valign="top">服务费</td><td>客户自提</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr style="height: 40px"><td>送货到家</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr style="height: 40px"><td>厂家直发</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr style="height: 40px"><td>商品品类：非拉杆箱</td><td></td><td><input type="checkbox" value=""/>联营订单<input type="checkbox" value=""/>代采订单<input type="checkbox" value=""/>零售订单</td></tr>
-						<tr style="height: 40px"><td rowspan="3" valign="top">服务费</td><td>客户自提</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr style="height: 40px"><td>送货到家</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr style="height: 40px"><td>厂家直发</td><td><input class="input-mini" type="number"/>元/支(元/套)</td></tr>
-						<tr style="height: 40px"><td>是否开启&nbsp;<input type="checkbox"/>是</td><td></td><td align="right"></td></tr>
+						<tr style="height: 40px">
+							<td>商品品类：拉杆箱<input name="variIds" value="${variId}" type="hidden"/></td>
+							<td></td>
+							<td>
+								<input name="torderTypes" type="checkbox" value=""/>联营订单<input name="torderTypes" type="checkbox" value=""/>代采订单<input name="torderTypes" type="checkbox" value=""/>零售订单
+							</td>
+						</tr>
+						<c:set var="flag" value="true"></c:set>
+						<c:forEach items="${serviceModeList}" var="serviceMode" varStatus="i">
+							<tr style="height: 40px">
+								<c:if test="${flag}">
+									<td rowspan="3" valign="top">服务费</td>
+								</c:if>
+								<td>${serviceModeList[i.index].label}<input name="serviceModes" value="${serviceModeList[i.index].value}" type="hidden"/></td>
+								<td><input name="servicePrices" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
+							</tr>
+							<c:set var="flag" value="false"></c:set>
+						</c:forEach>
+						<tr style="height: 40px">
+							<td>商品品类：非拉杆箱<input name="variIds" value="-1" type="hidden"/></td>
+							<td></td>
+							<td><input name="forderTypes" type="checkbox" value=""/>联营订单<input name="forderTypes" type="checkbox" value=""/>代采订单<input name="forderTypes" type="checkbox" value=""/>零售订单</td>
+						</tr>
+						<c:set var="flag" value="true"></c:set>
+						<c:forEach items="${serviceModeList}" var="serviceMode" varStatus="i">
+							<tr style="height: 40px">
+								<c:if test="${flag}">
+									<td rowspan="3" valign="top">服务费</td>
+								</c:if>
+								<td>${serviceModeList[i.index].label}<input name="serviceModes" value="${serviceModeList[i.index].value}" type="hidden"/></td>
+								<td><input name="servicePrices" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
+							</tr>
+							<c:set var="flag" value="false"></c:set>
+						</c:forEach>
+						<tr style="height: 40px">
+							<td>是否开启&nbsp;<input name="usables" type="checkbox" value="1"/>是</td>
+						</tr>
 					</table>
 				</div>
 			</div>
 		</div>
-		<div align="right"><input class="btn btn-primary" type="button" value="添加" onclick="toggle('bb')"/></div>
-		<%--<div class="form-group">--%>
-<%--                <div class="col-sm-2">--%>
-<%--                    <select class="form-control" name="Province" id="Province">--%>
-<%--                        <option>==省===</option>--%>
-<%--                    </select>--%>
-<%--                </div>--%>
-<%--                <div class="col-sm-2">--%>
-<%--                    <select class="form-control" name="City" id="City">--%>
-<%--                        <option>==市===</option>--%>
-<%--                    </select>--%>
-<%--                </div>--%>
-<%--                <div class="col-sm-2">--%>
-<%--                    <select class="form-control" name="Village" id="Village">--%>
-<%--                        <option>==县/区===</option>--%>
-<%--                    </select>--%>
-<%--                </div>--%>
-<%--            </div>--%>
+		<div align="right"><input class="btn btn-primary" type="button" value="添加" onclick="add('header0')"/></div>
+
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:order:bizServiceCharge:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
