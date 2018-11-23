@@ -88,8 +88,8 @@
 		LEFT JOIN common_process process ON process.id = a.process_id
 		LEFT JOIN biz_po_header po ON po.id = a.po_header_id AND po.status = 1
 		left join biz_po_order_req bpor on bpor.po_id = po.id AND bpor.status = 1
-		left join biz_order_header boh on bpor.so_id = boh.id and bpor.so_type = 1
-		left join biz_request_header brh on bpor.so_id = brh.id and bpor.so_type = 2
+		left join biz_order_header boh on bpor.so_id = boh.id and bpor.so_type = 1 AND boh.status = 1
+		left join biz_request_header brh on bpor.so_id = brh.id and bpor.so_type = 2 AND brh.status = 1
 	</sql>
     
 	<select id="get" resultType="BizPoPaymentOrder">

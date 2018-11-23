@@ -37,20 +37,20 @@ public class BizPlatformDataOverviewDto {
     /**
      * 月累计销量
      */
-    private BigDecimal accumulatedSalesMonth = BigDecimal.ZERO;
+    private BigDecimal accumulatedSalesMonth = new BigDecimal("0.00");
 
     /**
      * 月回款额
      */
-    private BigDecimal receiveTotal = BigDecimal.ZERO;
+    private BigDecimal receiveTotal = new BigDecimal("0.00");
 
     /**
-     * 新增用户计划
+     * 新增用户计划,计划开单会员量
      */
     private BigDecimal newUserPlan = BigDecimal.ZERO;
 
     /**
-     * 新增用户
+     * 新增用户，开单会员量
      */
     private BigDecimal newUser = BigDecimal.ZERO;
 
@@ -128,6 +128,26 @@ public class BizPlatformDataOverviewDto {
      * 用户ID
      */
     private Integer userId;
+
+    /**
+     * 月计划联营订单总额
+     */
+    private BigDecimal jointOrderPlanAmountTotal;
+
+    /**
+     * 月联营订单总额
+     */
+    private BigDecimal jointOrderAmountTotal;
+
+    /**
+     * 月计划代采订单总额
+     */
+    private BigDecimal purchaseOrderPlanAmountTotal;
+
+    /**
+     * 月代采订单总额
+     */
+    private BigDecimal purchaseOrderAmountTotal;
 
     public Integer getUserId() {
         return userId;
@@ -332,4 +352,37 @@ public class BizPlatformDataOverviewDto {
     public void setServiceCharge(BigDecimal serviceCharge) {
         this.serviceCharge = serviceCharge;
     }
+
+    public BigDecimal getJointOrderAmountTotal() {
+        return jointOrderAmountTotal;
+    }
+
+    public void setJointOrderAmountTotal(BigDecimal jointOrderAmountTotal) {
+        this.jointOrderAmountTotal = jointOrderAmountTotal;
+    }
+
+    public BigDecimal getPurchaseOrderAmountTotal() {
+        return purchaseOrderAmountTotal;
+    }
+
+    public void setPurchaseOrderAmountTotal(BigDecimal purchaseOrderAmountTotal) {
+        this.purchaseOrderAmountTotal = purchaseOrderAmountTotal;
+    }
+
+    public BigDecimal getJointOrderPlanAmountTotal() {
+        return jointOrderPlanAmountTotal;
+    }
+
+    public void setJointOrderPlanAmountTotal(BigDecimal jointOrderPlanAmountTotal) {
+        this.jointOrderPlanAmountTotal = jointOrderPlanAmountTotal;
+    }
+
+    public BigDecimal getPurchaseOrderPlanAmountTotal() {
+        return purchaseOrderPlanAmountTotal;
+    }
+
+    public void setPurchaseOrderPlanAmountTotal(BigDecimal purchaseOrderPlanAmountTotal) {
+        this.purchaseOrderPlanAmountTotal = purchaseOrderPlanAmountTotal;
+    }
+
 }

@@ -110,6 +110,8 @@ public class BizStatisticsPlatformController extends BaseController {
         }
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("date", date);
+        request.setAttribute("statisticsTotal", list.get("statisticsTotal").get(0));
+        list.remove("statisticsTotal");
         request.setAttribute("dataList", list);
         return "modules/biz/statistics/bizPlatformDataOverview";
     }

@@ -627,7 +627,7 @@ public class BizOrderHeaderController extends BaseController {
             }
             //供应商
             List<User> vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
-            if (CollectionUtils.isNotEmpty(vendUser)) {
+            if (CollectionUtils.isNotEmpty(vendUser) && vendUser.get(0) != null) {
                 model.addAttribute("vendUser", vendUser.get(0));
 //                entity.sellers.bizVendInfo.office.id
                 bizOrderHeader.setVendorId(vendUser.get(0).getVendor().getId());

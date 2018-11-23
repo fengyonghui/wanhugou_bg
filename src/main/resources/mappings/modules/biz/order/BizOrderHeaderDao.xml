@@ -3291,5 +3291,68 @@ FROM
 		WHERE ccc.center_id = #{centId}
 	</select>
 
+	<select id="getJoinPurchaseData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+		select
+		  accumulatedSalesMonth,
+		  joinSaleAmount,
+		  joinRemitAmount,
+		  purchaseSaleAmount,
+		  purchaseRemitAmount,
+	      validCustomerNum
+		from (
+			SELECT
+			  EXTRACT( YEAR_MONTH FROM create_time ) AS "ym" ,
+			  count(1) as "orderHeaderCount",
+			  sum( total_detail + total_exp+ oh.freight ) AS "accumulatedSalesMonth",
+			  sum(case when oh.order_type = 1 or oh.order_type = 8 then total_detail + total_exp+ oh.freight else 0 end) AS "joinSaleAmount",
+			  sum(case when oh.order_type = 1 or oh.order_type = 8 then receive_total else 0 end) AS "joinRemitAmount",
+			  sum(case when oh.order_type = 1 or oh.order_type = 8 then 0 else total_detail + total_exp+ oh.freight end) AS "purchaseSaleAmount",
+			  sum(case when oh.order_type = 1 or oh.order_type = 8 then 0 else receive_total end) AS "purchaseRemitAmount",
+			  count(distinct cust_id) as "validCustomerNum"
+			FROM
+			  biz_order_header oh
+			  left join (select order_id, sum((unit_price-buy_price)*ord_qty) as 'gm' from biz_order_detail group by order_id) t on oh.id = t.order_id
+			  left join sys_office so on so.id = oh.center_id
+			WHERE 1=1
+			  AND oh.status = 1
+			  AND receive_total > 10
+			  AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE ta.object_id = oh.cust_id AND ta.object_name = 'sys_office' )
+			  and center_id=#{centerId}
+			GROUP BY ym
+			ORDER BY center_id, ym) t
+		where ym=#{formatDate}
+	</select>
+
+	<select id="getJoinPurchaseDataSingle" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+		select
+			accumulatedSalesMonth,
+			joinSaleAmount,
+			joinRemitAmount,
+			purchaseSaleAmount,
+			purchaseRemitAmount,
+			validCustomerNum
+		from (
+			SELECT
+			EXTRACT( YEAR_MONTH FROM create_time ) AS "ym" ,
+			count(1) as "orderHeaderCount",
+			sum( total_detail + total_exp+ oh.freight ) AS "accumulatedSalesMonth",
+			sum(case when oh.order_type = 1 or oh.order_type = 8 then total_detail + total_exp+ oh.freight else 0 end) AS "joinSaleAmount",
+			sum(case when oh.order_type = 1 or oh.order_type = 8 then receive_total else 0 end) AS "joinRemitAmount",
+			sum(case when oh.order_type = 1 or oh.order_type = 8 then 0 else total_detail + total_exp+ oh.freight end) AS "purchaseSaleAmount",
+			sum(case when oh.order_type = 1 or oh.order_type = 8 then 0 else receive_total end) AS "purchaseRemitAmount",
+			count(distinct cust_id) as "validCustomerNum"
+			FROM
+			biz_order_header oh
+			left join (select order_id, sum((unit_price-buy_price)*ord_qty) as 'gm' from biz_order_detail group by order_id) t on oh.id = t.order_id
+			left join sys_office so on so.id = oh.center_id
+			WHERE 1=1
+			AND oh.status = 1
+			AND receive_total > 10
+			AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE ta.object_id = oh.cust_id AND ta.object_name = 'sys_office' )
+			and consultant_id=#{consultantId}
+			GROUP BY ym
+			ORDER BY center_id, ym) t
+		where ym=#{formatDate}
+	</select>
 
 </mapper>
