@@ -36,10 +36,10 @@
                     	if(item.mobileUrl == -1) {
                     		htmlList += '<li class="mui-table-view-cell mui-collapse menuBtn" indexNum = "'+ i+'" dataId="'+item.id+'">'+
 							'<a class="mui-navigate-right">'+ item.name + '</a>'+
-//							'<div class = "mui-collapse-content childData'+ i+'" id="saleQty_' +item.id+ '">'+
-//							'</div>'+    
-                            '<ul class = "mui-table-view app_color40 childData'+ i+'">'+
-                            '</ul>'+
+							'<div class = "mui-collapse-content childData'+ i+'" id="saleQty_' +item.id+ '">'+
+							'</div>'+    
+//                          '<ul class = "mui-table-view app_color40 childData'+ i+'">'+
+//                          '</ul>'+
 							'</li>'
                     	}
                     });
@@ -63,8 +63,8 @@
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
                                 if(item.mobileUrl){
-//                              	pHtmlList += '<p class="childMenu" purchid="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</p>'
-                                	pHtmlList += '<li class="mui-table-view-cell childMenu" purchid="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</li>'
+                                	pHtmlList += '<p class="childMenu" purchid="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</p>'
+//                              	pHtmlList += '<li class="mui-table-view-cell childMenu" purchid="'+item.id+'" mobileUrl="'+item.mobileUrl+'">'+ item.name+'</li>'
                                 	                             
                                 } 
                             });

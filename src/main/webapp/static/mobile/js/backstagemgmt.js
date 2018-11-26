@@ -42,6 +42,7 @@
                     url: "http://api.service.wanhutong.com/v2/wht/qrCode/"+loginName,
                     dataType: "json",
                     success: function(res){
+                    	console.log(res)
                     	if(res.status==1||res.status=='1'){
                     		var imgs = "<img src='" + res.data +"'>"
                     	    $('.codeBox').html(imgs);
