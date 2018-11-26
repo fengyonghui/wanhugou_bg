@@ -40,6 +40,10 @@ public class BizInventoryInfoService extends CrudService<BizInventoryInfoDao, Bi
 		}
 		return super.findList(bizInventoryInfo);
 	}
+
+	public List<BizInventoryInfo> findAllList(BizInventoryInfo bizInventoryInfo) {
+		return super.findList(bizInventoryInfo);
+	}
 	
 	public Page<BizInventoryInfo> findPage(Page<BizInventoryInfo> page, BizInventoryInfo bizInventoryInfo) {
 		User user =UserUtils.getUser();

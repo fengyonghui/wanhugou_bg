@@ -131,6 +131,11 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	private BizOpShelfSku bizOpShelfSku;
 
+	/**
+	 * 调拨的原仓库
+	 */
+	private Integer fromInv;
+
 	public BizSkuInfo() {
 		super();
 	}
@@ -493,5 +498,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setBizOpShelfSku(BizOpShelfSku bizOpShelfSku) {
 		this.bizOpShelfSku = bizOpShelfSku;
+	}
+
+	public Integer getFromInv() {
+		return fromInv;
+	}
+
+	public void setFromInv(Integer fromInv) {
+		this.fromInv = fromInv;
 	}
 }

@@ -59,6 +59,9 @@
 			<if test="ship != null and ship == 1">
 				LEFT JOIN biz_request_header br ON br.id = bi.request_header_id
 			</if>
+			<if test="ship != null and ship == 2">
+				LEFT JOIN biz_sku_transfer bst ON bst.id = bi.transfer_header_id
+			</if>
 		</if>
 		<if test="targetPage != null and targetPage =='logistics'">
 			<if test="orderNum != null and orderNum != ''">
@@ -97,6 +100,14 @@
 					<if test="dbName == 'oracle'">'%'||#{reqNo}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{reqNo}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{reqNo},'%')</if>
+				</if>
+			</if>
+			<if test="ship != null and ship == 2">
+				<if test="transferNo != null and transferNo != ''">
+					AND bst.transfer_no LIKE
+					<if test="dbName == 'oracle'">'%'||#{transferNo}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{transferNo}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{transferNo},'%')</if>
 				</if>
 			</if>
 			<if test="bizStatus != null">

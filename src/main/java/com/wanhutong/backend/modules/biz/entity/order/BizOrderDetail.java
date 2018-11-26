@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
 import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransferDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
@@ -86,6 +87,11 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
      * 用于发货传值
      */
     private List<BizRequestDetail> requestDetailList;
+
+    /**
+     * 用于发货传值
+     */
+    private List<BizSkuTransferDetail> transferDetailList;
 
     private BigDecimal salePrice;
 
@@ -457,5 +463,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setCommissionRatio(BigDecimal commissionRatio) {
         this.commissionRatio = commissionRatio;
+    }
+
+    public List<BizSkuTransferDetail> getTransferDetailList() {
+        return transferDetailList;
+    }
+
+    public void setTransferDetailList(List<BizSkuTransferDetail> transferDetailList) {
+        this.transferDetailList = transferDetailList;
     }
 }
