@@ -44,7 +44,12 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private String trackingNumber;		//物流单号
 
 	private String orderNum; //订单号
-	private String reqNo; //订单号
+	private String reqNo; //备货单号
+
+	/**
+	 * 调拨单号
+	 */
+	private String transferNo;
 
 	/**
 	 * 物流单页面标志
@@ -395,6 +400,11 @@ public class BizInvoice extends DataEntity<BizInvoice> {
          * 备货单发货
          */
 		RE(1),
+
+		/**
+		 * 调拨单发货
+		 */
+		TR(2),
 		;
 		private Integer ship;
 
@@ -439,5 +449,13 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 
 	public void setCreOrdLogistics(String creOrdLogistics) {
 		this.creOrdLogistics = creOrdLogistics;
+	}
+
+	public String getTransferNo() {
+		return transferNo;
+	}
+
+	public void setTransferNo(String transferNo) {
+		this.transferNo = transferNo;
 	}
 }
