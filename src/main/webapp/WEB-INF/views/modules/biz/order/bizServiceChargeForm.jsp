@@ -27,7 +27,6 @@
 	</script>
 	<script type="text/javascript">
         $(function () {
-
             //默认绑定省
             ProviceBind();
             //绑定事件
@@ -227,7 +226,7 @@
 			$("#"+item).parent().remove();
         }
         function Province(item) {
-			$("#"+item).html();
+			$("#"+item).html("");
             var str = "<option>===省====</option>";
             $.ajax({
                 type: "post",
