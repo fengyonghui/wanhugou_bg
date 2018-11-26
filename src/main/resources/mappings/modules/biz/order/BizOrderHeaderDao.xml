@@ -2279,7 +2279,7 @@ SELECT
 		AND ii.cust_id = so.id
 		GROUP BY ii.cust_id) AS stockAmount
 FROM  biz_order_header oh
-LEFT JOIN sys_office so on oh.center_id = so.id
+LEFT JOIN sys_office so on oh.center_id = so.id and so.type != 12
  LEFT JOIN sys_user u on oh.consultant_id = u.id
 	WHERE
 		NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
