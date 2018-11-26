@@ -31,19 +31,38 @@
             //默认绑定省
             ProviceBind();
             //绑定事件
-            $("#province").change( function () {
-                CityBind("from");
+			$("select[name='provinces']").each(function () {
+				$(this).change( function () {
+                    CityBind("from",this);
+                });
             });
-            $("#toProvince").change( function () {
-                CityBind("to");
+            // $("#province").change( function () {
+            //     CityBind("from");
+            // });
+            $("select[name='toProvinces']").each(function () {
+                $(this).change( function () {
+                    CityBind("to",this);
+                });
             });
-
-            $("#city").change(function () {
-                VillageBind("from");
+            // $("#toProvince").change( function () {
+            //     CityBind("to");
+            // });
+			$("select[name='citys']").each(function () {
+				$(this).change(function () {
+                    VillageBind("from",this);
+                });
             });
-            $("#toCity").change(function () {
-                VillageBind("to");
-            })
+            // $("#city").change(function () {
+            //     VillageBind("from");
+            // });
+            $("select[name='toCitys']").each(function () {
+                $(this).change(function () {
+                    VillageBind("to",this);
+                });
+            });
+            // $("#toCity").change(function () {
+            //     VillageBind("to");
+            // })
 
         });
         function Bind(str) {
@@ -54,8 +73,8 @@
         }
         function ProviceBind() {
             //清空下拉数据
-            $("#province").html("");
-            $("#toProvince").html("");
+			$("#province0").html("");
+			$("#toProvince0").html("");
 
             var str = "<option>===省====</option>";
             $.ajax({
@@ -70,8 +89,8 @@
                         str += "<option value=" + item.code + ">" + item.name + "</option>";
                     });
                     //将数据添加到省份这个下拉框里面
-                    $("#province").append(str);
-                    $("#toProvince").append(str);
+                    $("#province0").append(str);
+                    $("#toProvince0").append(str);
                 },
                 error: function () { alert("Error"); }
             });
@@ -80,22 +99,25 @@
 
 
         }
-        function CityBind(obj) {
-			var provice;
-			if (obj == 'from') {
-                provice = $("#province").attr("value");
-			} else {
-                provice = $("#toProvince").attr("value");
-			}
+        function CityBind(obj,item) {
+			// var provice;
+			// if (obj == 'from') {
+             //    provice = $("#province").attr("value");
+			// } else {
+             //    provice = $("#toProvince").attr("value");
+			// }
+            var provice = $(item).attr("value");
+            var id = $(item).attr("id");
+            var index = id.replace("province","");
             //判断省份这个下拉框选中的值是否为空
             if (provice == "") {
                 return;
             }
             if (obj == 'from') {
-                $("#city").html("");
+                $("#city"+index).html("");
 			}
             if (obj == 'to') {
-                $("#toCity").html("");
+                $("#toCity"+index).html("");
 			}
             var str = "<option>===市====</option>";
 
@@ -111,31 +133,34 @@
                     });
                     //将数据添加到省份这个下拉框里面
                     if (obj == 'from') {
-                        $("#city").append(str);
+                        $("#city"+index).append(str);
                     }
                     if (obj == 'to') {
-                        $("#toCity").append(str);
+                        $("#toCity"+index).append(str);
                     }
                 },
                 error: function () { alert("Error"); }
             });
         }
-        function VillageBind(obj) {
-            var city;
-            if (obj == 'from') {
-                city = $("#city").attr("value");
-			} else {
-                city = $("#toCity").attr("value");
-			}
+        function VillageBind(obj,item) {
+            // var city;
+            // if (obj == 'from') {
+             //    city = $("#city").attr("value");
+			// } else {
+             //    city = $("#toCity").attr("value");
+			// }
+            var city = $(item).attr("value");
+            var id = $(item).attr("id");
+            var index = id.replace("city");
             //判断市这个下拉框选中的值是否为空
             if (city == "") {
                 return;
             }
             if (obj == 'from') {
-                $("#region").html("");
+                $("#region"+index).html("");
             }
             if (obj == 'to') {
-                $("#toRegion").html("");
+                $("#toRegion"+index).html("");
             }
             var str = "<option>===县/区====</option>";
             //将市的ID拿到数据库进行查询，查询出他的下级进行绑定
@@ -151,10 +176,10 @@
                     });
                     //将数据添加到省份这个下拉框里面
                     if (obj == 'from') {
-                        $("#region").append(str);
+                        $("#region"+index).append(str);
                     }
                     if (obj == 'to') {
-                        $("#toRegion").append(str);
+                        $("#toRegion"+index).append(str);
                     }
                 },
                 error: function () { alert("Error"); }
@@ -170,19 +195,65 @@
         <%--.content { padding: 10px; text-indent: 2em; border-top: 1px solid #0050D0;display:block; }--%>
     <%--</style>--%>
     <script type="text/javascript">
-        $(function(){
-        });
         function toggle(item) {
             $("#"+item).next("div.controls").toggle();
         }
         function add(item) {
-			var num = parseInt(item.replace('header','')) + parseInt(1);
-			var sourceNode = $("#"+item); // 获得被克隆的节点对象
-            $("#"+item).attr("onclick","add('"+num+"')");
-            var clonedNode = sourceNode[0].cloneNode(true);// 克隆节点
-            clonedNode.setAttribute("id", "header" + num); // 修改一下id 值，避免id 重复
+            var n = item.replace('header','');
+            alert(n);
+            var num = parseInt(n) + parseInt(1);
+            var sourceNode = $("#"+item).parent(); // 获得被克隆的节点对象
+            var clonedNode = sourceNode.clone(true);// 克隆节点
+            clonedNode.find("#"+item).attr("id", "header" + num); // 修改一下id 值，避免id 重复
+			clonedNode.find("#province"+n).attr("id","province" + num);
+			clonedNode.find("#toProvince"+n).attr("id","toProvince" + num);
+			clonedNode.find("#city"+n).attr("id","city" + num);
+			clonedNode.find("#toCity"+n).attr("id","toCity" + num);
+			clonedNode.find("#region"+n).attr("id","region" + num);
+			clonedNode.find("#toRegion"+n).attr("id","toRegion" + num);
+            Province("province" + num);
+            Province("toProvince" + num);
             sourceNode.after(clonedNode);
             $("#"+item).next("div.controls").toggle();
+            // clonedNode.find("#"+item).next("div.controls").toggle();
+            $("#btnAdd").attr("onclick","add('header"+num+"')");
+            if (n == 0) {
+                $("#btnAdd").after("<input id=\"btnDel\" class=\"btn btn-primary\" type=\"button\" value=\"删除路线\" onclick=\"del('header1')\"/>");
+			} else {
+                $("#btnDel").attr("onclick","del('header"+num+"')");
+            }
+        }
+        function del(item) {
+            var n = item.replace('header','');
+            var num = (parseInt(n) - parseInt(1)) < 0 ? 0 : parseInt(n) - parseInt(1);
+            if (n > 1) {
+                $("#btnDel").attr("onclick","del('header"+num+"')");
+			} else {
+                $("#btnDel").remove();
+			}
+            $("#btnAdd").attr("onclick","add('header"+num+"')");
+			$("#"+item).parent().remove();
+        }
+        function Province(item) {
+			$("#"+item).html();
+            var str = "<option>===省====</option>";
+            $.ajax({
+                type: "post",
+                url: "${ctx}/sys/sysRegion/selectRegion",
+                data:{"level":"prov"},
+                async: false,
+                success: function (data) {
+                    console.info(data);
+                    //从服务器获取数据进行绑定
+                    $.each(data, function (i, item) {
+                        str += "<option value=" + item.code + ">" + item.name + "</option>";
+                    });
+                    //将数据添加到省份这个下拉框里面
+                    $("#"+item).append(str);
+                    $("#"+item).append(str);
+                },
+                error: function () { alert("Error"); }
+            });
         }
     </script>
 </head>
@@ -263,7 +334,10 @@
 				</div>
 			</div>
 		</div>
-		<div align="right"><input class="btn btn-primary" type="button" value="添加" onclick="add('header0')"/></div>
+		<div align="right">
+			<input id="btnAdd" class="btn btn-primary" type="button" value="添加路线" onclick="add('header0')"/>
+			<%--<input id="btnDel" class="btn btn-primary" type="button" value="删除路线" onclick="del('header0')"/>--%>
+		</div>
 
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:order:bizServiceCharge:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
