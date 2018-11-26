@@ -157,7 +157,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			bcgr.setInvInfo(bcgr.getInvInfo());
 			bcgr.setInvOldNum(invOldNum);
 			bcgr.setSkuInfo(bizSkuInfo);
-			bcgr.setVender(officeService.get(user.getCompany().getId()));
+			bcgr.setVender(bizRequestHeader.getFromOffice());
 			bcgr.setBizRequestHeader(bizRequestHeader);
 			bcgr.setOrderNum(bcgr.getOrderNum());
 			bcgr.setReceiveDate(new Date());
@@ -222,5 +222,20 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 				dao.updateSkuId(needSkuId,bizOrderDetail.getId());
 			}
 		}
+	}
+
+
+	/**
+	 * 根据入库单号查询入库次数
+	 * @param collectNo
+	 * @return
+	 */
+	public int findCountByNo(String collectNo) {
+		return dao.findCountByNo(collectNo);
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void saveOnly(BizCollectGoodsRecord bizCollectGoodsRecord) {
+		super.save(bizCollectGoodsRecord);
 	}
 }
