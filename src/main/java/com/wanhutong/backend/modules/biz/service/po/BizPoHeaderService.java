@@ -919,7 +919,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             if (nextMoneyRole != null) {
                 StringBuilder phone = new StringBuilder();
                 for (String s : nextMoneyRole.getRoleEnNameEnum()) {
-                    List<User> userList = systemService.findUser(new User(systemService.getRoleByEnname(s)));
+                    RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(s);
+                    User sendUser = new User(systemService.getRoleByEnname(roleEnNameEnum == null ? "" : roleEnNameEnum.getState()));
+                    List<User> userList = systemService.findUser(sendUser);
                     if (CollectionUtils.isNotEmpty(userList)) {
                         for (User u : userList) {
                             phone.append(u.getMobile()).append(",");
@@ -927,17 +929,60 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     }
                 }
 
-                if (StringUtils.isNotBlank(phone.toString()) && PoPayMentOrderTypeEnum.PO_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
-                    AliyunSmsClient.getInstance().sendSMS(
-                            SmsTemplateCode.PENDING_AUDIT_1.getCode(),
-                            phone.toString(),
-                            ImmutableMap.of("order", "采购单支付", "orderNum", bizPoHeader.getOrderNum()));
+                List<BizPoPaymentOrder> list = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+                BizPoPaymentOrder poPaymentOrder = list.get(0);
+                BizPoHeader poHeader = this.get(poPaymentOrder.getPoHeader().getId());
+
+                Byte soType = this.getBizPoOrderReqByPo(poHeader);
+                String orderStr = "";
+                String orderNum = "";
+                if (soType == Byte.parseByte("1")) {
+                    orderStr = "订单支付";
+                    orderNum = poPaymentOrder.getOrderNum();
+                } else {
+                    orderStr = "备货单支付";
+                    orderNum = poPaymentOrder.getReqNo();
                 }
-                if (StringUtils.isNotBlank(phone.toString()) && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+
+                AliyunSmsClient.getInstance().sendSMS(
+                        SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                        phone.toString(),
+                        ImmutableMap.of("order", orderStr, "orderNum", orderNum));
+
+//                if (StringUtils.isNotBlank(phone.toString()) && PoPayMentOrderTypeEnum.PO_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+//                    AliyunSmsClient.getInstance().sendSMS(
+//                            SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+//                            phone.toString(),
+//                            ImmutableMap.of("order", "采购单支付", "orderNum", bizPoHeader.getOrderNum()));
+//                }
+//                if (StringUtils.isNotBlank(phone.toString()) && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+//                    AliyunSmsClient.getInstance().sendSMS(
+//                            SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+//                            phone.toString(),
+//                            ImmutableMap.of("order", "备货单支付", "orderNum", bizRequestHeader.getReqNo()));
+//                }
+
+
+                if ("666".equals(String.valueOf(nextProcess.getCode()))) {
+                    RoleEnNameEnum.FINANCE.getState();
+                    User sendUser = new User(systemService.getRoleByEnname(RoleEnNameEnum.FINANCE.getState()));
+                    List<User> userList = systemService.findUser(sendUser);
+                    if (CollectionUtils.isNotEmpty(userList)) {
+                        for (User u : userList) {
+                            phone.append(u.getMobile()).append(",");
+                        }
+                    }
+
+                    if (soType == Byte.parseByte("1")) {
+                        orderStr = "订单付款";
+                    } else {
+                        orderStr = "备货单付款";
+                    }
+
                     AliyunSmsClient.getInstance().sendSMS(
                             SmsTemplateCode.PENDING_AUDIT_1.getCode(),
                             phone.toString(),
-                            ImmutableMap.of("order", "备货单支付", "orderNum", bizRequestHeader.getReqNo()));
+                            ImmutableMap.of("order", orderStr, "orderNum", orderNum));
                 }
 
             }

@@ -6,9 +6,12 @@ package com.wanhutong.backend.modules.biz.web.po;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
+import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -24,6 +27,7 @@ import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +73,8 @@ public class BizPoPaymentOrderController extends BaseController {
     private BizOrderHeaderService bizOrderHeaderService;
     @Autowired
     private CommonProcessService commonProcessService;
+    @Autowired
+    private SystemService systemService;
 
     @ModelAttribute
     public BizPoPaymentOrder get(@RequestParam(required = false) Integer id) {
@@ -545,11 +551,57 @@ public class BizPoPaymentOrderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
     @RequestMapping(value = "save")
     public String save(HttpServletRequest request, HttpServletResponse response, BizPoPaymentOrder bizPoPaymentOrder, Model model, RedirectAttributes redirectAttributes) {
+        Integer id = bizPoPaymentOrder.getId();
         if (!beanValidator(model, bizPoPaymentOrder)) {
             return form(request, response, bizPoPaymentOrder, model);
         }
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
         addMessage(redirectAttributes, "保存付款单成功");
+
+        if (id != null) {
+            List<BizPoPaymentOrder> list = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+            BizPoPaymentOrder poPaymentOrder = list.get(0);
+            BizPoHeader bizPoHeader = bizPoHeaderService.get(poPaymentOrder.getPoHeader().getId());
+
+
+            //自动发送短信通知审核第一个节点
+            StringBuilder phone = new StringBuilder();
+            PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
+            PaymentOrderProcessConfig.Process purchaseOrderProcess = null;
+            purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getDefaultProcessId());
+            List<PaymentOrderProcessConfig.MoneyRole> moneyRoleList = purchaseOrderProcess.getMoneyRole();
+            if (moneyRoleList != null && moneyRoleList.get(0) != null) {
+                String roleEnNameEnumStr = moneyRoleList.get(0).getRoleEnNameEnum().get(0);
+                RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(roleEnNameEnumStr);
+                User sendUser = new User(systemService.getRoleByEnname(roleEnNameEnum == null ? "" : roleEnNameEnum.getState()));
+                List<User> userList = systemService.findUser(sendUser);
+                if (CollectionUtils.isNotEmpty(userList)) {
+                    for (User u : userList) {
+                        phone.append(u.getMobile()).append(",");
+                    }
+                }
+
+                Byte soType = bizPoHeaderService.getBizPoOrderReqByPo(bizPoHeader);
+
+                String orderStr = "";
+                String orderNum = "";
+                if (soType == Byte.parseByte("1")) {
+                    orderStr = "订单支付";
+                    orderNum = poPaymentOrder.getOrderNum();
+
+                } else {
+                    orderStr = "备货单支付";
+                    orderNum = poPaymentOrder.getReqNo();
+                }
+
+                AliyunSmsClient.getInstance().sendSMS(
+                        SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                        phone.toString(),
+                        ImmutableMap.of("order", orderStr, "orderNum", orderNum));
+
+            }
+        }
+
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "&orderType=" + bizPoPaymentOrder.getOrderType();
     }
 
