@@ -47,35 +47,18 @@
 			            callback :function(){ 
 							//查询页面传过来的值
 							var nameTxts = '';
-							if(_this.userInfo.conName) {
-								nameTxts = decodeURIComponent(_this.userInfo.conName)
+							if(_this.userInfo.customerName) {
+								nameTxts = decodeURIComponent(_this.userInfo.customerName)
 							}else {
 								nameTxts = ''
 							}
 							if(_this.userInfo.orderNum==undefined){
 								_this.userInfo.orderNum="";
 							}
-							if(_this.userInfo.serllerName==undefined){
-								_this.userInfo.serllerName="";
-							}
-							if(_this.userInfo.serllerPhone==undefined){
-								_this.userInfo.serllerPhone="";
-							}
+							
 							if(_this.userInfo.commissionStatus==undefined){
 								_this.userInfo.commissionStatus="";
-							}	
-							if(_this.userInfo.customerPhone==undefined){
-								_this.userInfo.customerPhone="";
-							}
-							if(_this.userInfo.itemNo==undefined){
-								_this.userInfo.itemNo="";
-							}
-							if(_this.userInfo.customerName==undefined){
-								_this.userInfo.customerName="";
-							}
-							if(_this.userInfo.centersName==undefined){
-								_this.userInfo.centersName="";
-							}
+							}							
 							if(nameTxts==undefined){
 								nameTxts="";
 							}
@@ -92,26 +75,20 @@
 			                if(_this.userInfo.isFunc){
 		                	    //查询过来传的参数
 		                    	pager['size']= 20;
-		                    	pager['pageNo'] = 1;
-		                    	pager['targetPage'] = 'COMMISSION_ORDER';
+		                    	pager['pageNo'] = 1;		                    	
+		                    	pager['customerName'] = nameTxts;//代销商
 		                    	pager['orderNum'] = _this.userInfo.orderNum;//订单编号
-		                    	pager['serllerName'] = _this.userInfo.serllerName;//零售商名称
-		                    	pager['serllerPhone'] = _this.userInfo.serllerPhone;//零售商电话
-		                    	pager['commissionStatus'] = _this.userInfo.commissionStatus,//结佣状态
-		                    	pager['customer.phone'] =  _this.userInfo.customerPhone,//经销商电话
-		                    	pager['itemNo'] = _this.userInfo.itemNo,//商品货号
-		                    	pager['customer.id'] = _this.userInfo.customerName,//经销店名称
-		                    	pager['centersName'] = _this.userInfo.centersName,//采购中心
-		                    	pager['con.name'] = nameTxts,//客户专员
+		                    	pager['bizStatus'] = _this.userInfo.commissionStatus,//结佣状态
 		                    	pager['page.includeTestData'] = _this.userInfo.includeTestData;//测试数据
 		                    	getData(pager);
-		                    }else if(_this.userInfo.isFin){
+		                   }else if(_this.userInfo.isFin){
+		                    	//全部列表
 		                    	pager['size']= 20;
 			                    pager['pageNo'] = 1;
 			                    getData(pager);
 		                    }
 			                else{
-		                    	//直接进来的参数数据
+		                    	//单个列表
 		                    	pager['size']= 20;
 			                    pager['pageNo'] = 1;
 			                    pager['orderNum'] = _this.userInfo.orderNum;
@@ -308,7 +285,7 @@
 							_this.inHrefHtml();//确认支付金额
 						}else{
 							$('.mui-pull-bottom-pocket').html('');
-							$('#orderList').append('<p class="noneTxt">暂无数据</p>');
+							$('#commList').append('<p class="noneTxt">暂无数据</p>');
 							$('#OrdSechBtn').hide();
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}
@@ -568,9 +545,8 @@
 					mui.toast('子菜单不存在')
 				} else {
 					GHUTILS.OPENPAGE({
-						url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commListsearch.html",
+						url: "../../../html/orderMgmtHtml/commissionMgmtHtml/alreadlysearch.html",
 						extras:{
-							statu: true,
 						}
 					})
 				}

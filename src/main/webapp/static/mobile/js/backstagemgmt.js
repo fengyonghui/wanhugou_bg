@@ -40,6 +40,7 @@
 				$.ajax({
                     type: "GET",
                     url: "http://api.service.wanhutong.com/v2/wht/qrCode/"+loginName,
+//                  url: "http://hh.ngrok.xiaomiqiu.cn/v2/wht/qrCode/"+loginName,
                     dataType: "json",
                     success: function(res){
                     	console.log(res)

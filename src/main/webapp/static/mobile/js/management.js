@@ -76,8 +76,7 @@
 		                    	console.log(mobileUrls)
 		                    	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
 		                        	console.log('777')	
-		                        	$(this).attr('id','commission');
-		                        	
+		                        	$(this).attr('id','commission');		                        	
 		                        	var divHtmlList = '<ul class="mui-table-view cMenu" id=""></ul>';
 		                        	$('#commission').append(divHtmlList);
 		                        	
@@ -213,7 +212,7 @@
             $('#menuMaget').on('click','#commission',function(event){//menuBtn 
             	console.log(event)
 //            	event.stopPropagation();
-              	event.preventDefault();
+//            	event.preventDefault();
             	var url = $(this).attr('url');
 				var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');

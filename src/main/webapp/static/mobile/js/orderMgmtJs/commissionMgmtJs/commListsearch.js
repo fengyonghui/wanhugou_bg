@@ -20,10 +20,6 @@
 		pageInit: function() {
 			var _this = this;
 			_this.getData();			
-			_this.ajaxinvoiceStatus();//发票状态
-			_this.ajaxPoStatus();//业务状态
-			_this.ajaxcheckStatus();//审核状态
-//			console.log(_this.userInfo.statu)
 		},
 		getData: function() {
 			var _this = this;
@@ -42,15 +38,6 @@
 		sureSelect:function(){
 			var _this = this;
 				_this.selectOpen = false
-//				console.log($('#inSupply').val());
-//				console.log($('.hasoid').attr('id'));
-//				console.log($('#input_div_invoiceStatus').val());
-//				console.log($('#input_div_poStatus').val());
-//				console.log($('#input_div_orderStatus').val());
-//				console.log($('#input_div_poSchType').val());
-//				console.log($('#wait_pay').val());
-//				console.log($('#apply_pay').val());
-//console.log($('.inOrdNum').val());
 				GHUTILS.OPENPAGE({
 					url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commissionList.html",
 					extras: {
@@ -58,7 +45,7 @@
 						serllerName: $('.inOrdName').val(),//零售商名称
 						serllerPhone: $('.inOrdPhone').val(),//零售商电话
 						commissionStatus: $('#input_div_commissionStatus').val(),//结佣状态
-						customerPhone:$('#input_div_orderStatus').val(),//经销店电话
+						customerPhone:$('#inOrdPhone').val(),//经销店电话
 						itemNo:$('.inItemNum').val(),//商品货号
                         customerName:$('.hasoid').attr('id'),//经销店名称
                         centersName:$('.centersName').val(),//采购中心
@@ -82,7 +69,7 @@
 			var _this = this;
 			_this.ajaxSupplier();//供应商
 			$(newinput).on('focus', function() {
-				//$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show();
 				$(hideSpanAdd).show();
 				$(showSpanAdd).hide();
@@ -131,7 +118,7 @@
 			$('.input_div').html(htmlList)
 
 		},
-		//供应商
+		//经销店
 		ajaxSupplier: function() {
 			var _this = this;
 			var htmlSupplier = ''
@@ -139,7 +126,7 @@
 				type: 'GET',
 				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
-					type: 7
+					type: 6
 				},
 				dataType: 'json',
 				success: function(res) {
@@ -148,64 +135,6 @@
 						htmlSupplier += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '" name="' + item.name + '">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlSupplier)
-				}
-			});
-		},
-		//发票状态
-		ajaxinvoiceStatus: function() {
-			var _this = this;
-			var optHtml ='<option value="">请选择</option>';
-			var htmlinvoice = ''
-			$.ajax({
-				type: 'GET',
-				url: '/a/sys/dict/listData',
-				data: {type:'biz_order_invStatus'},
-				dataType: 'json',
-				success: function(res) {
-					$.each(res, function(i, item) {
-//						console.log(item)
-						htmlinvoice += '<option class="soption"  value="' + item.value + '">' + item.label + '</option>'
-					});
-					$('#input_div_invoiceStatus').html(optHtml+htmlinvoice);
-
-				}
-			});
-		},
-		//业务状态
-		ajaxPoStatus: function() {
-			var _this = this;
-			var optHtml ='<option value="">请选择</option>';
-			var htmlClass = '';
-			$.ajax({
-				type: 'GET',
-				url: '/a/sys/dict/listData',
-				data: {type:'biz_po_status'},
-				dataType: 'json',
-				success: function(res) {
-					$.each(res, function(i, item) {
-						htmlClass += '<option class="soption" value="' + item.value + '">' + item.label + '</option>'
-					});
-					$('#input_div_poStatus').html(optHtml+htmlClass)
-				}
-			});
-		},
-		//审核状态
-		ajaxcheckStatus: function() {
-			var _this = this;
-			var optHtml ='<option value="">请选择</option>';
-			var htmlClass = '';
-			$.ajax({
-				type: 'GET',
-				url: '/a/biz/po/bizPoHeader/listV2Data4Mobile',
-//				data: {type:'biz_po_status'},
-				dataType: 'json',
-				success: function(res) {
-//					console.log(res)
-					$.each(res.data.processList, function(i, item) {
-						console.log(item)
-						htmlClass += '<option class="soption" value="' + item.name + '">' + item.name + '</option>'
-					});
-					$('#input_div_orderStatus').html(optHtml+htmlClass)
 				}
 			});
 		},

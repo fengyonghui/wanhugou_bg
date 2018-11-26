@@ -10,26 +10,12 @@
 		init: function() {
 			this.pageInit(); //页面初始化
 			this.getData();//获取数据		
-			this.getPermissionList('biz:order:buyPrice:view','buyPriceFlag')//佣金权限
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
 		},
-		getPermissionList: function (markVal,flag) {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": markVal},
-                async:false,
-                success: function(res){
-                    _this.buyPriceFlag = res.data;
-                }
-            });
-        },
 		getData: function() {
 			var _this = this;
 			if(_this.userInfo.option == 'detail') {
@@ -49,7 +35,7 @@
                 },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	console.log(res)
                 	
 					var entity = res.data.entity;
 					var deadline = '';
@@ -149,20 +135,6 @@
 								$('#commFinal').val("(有尾款)");
 							}
 						}
-						if(ss.applyCommStatus == 'no') {
-							$('#commCheckStatus').val('待申请');//审核状态
-		                }
-						if(ss.applyCommStatus == 'yes' && ss.bizCommission.bizStatus == '0') {
-							if(ss.bizCommission.totalCommission == '0.00' && ss.bizCommission.paymentOrderProcess.name != '审批完成') {
-								$('#commCheckStatus').val('待确认支付金额');//审核状态
-		                    }
-							if(ss.bizCommission.totalCommission != '0.00') {
-								$('#commCheckStatus').val(ss.bizCommission.commonProcess.paymentOrderProcess.name);//审核状态
-		                    }
-		                }
-						if(ss.applyCommStatus == 'yes' && ss.bizCommission.bizStatus == '1') {
-							$('#commCheckStatus').val('已结佣');//审核状态
-		                }
 					});
 					/*审核流程*/
 					var lens = '';
@@ -208,6 +180,8 @@
 	                        }
 						});
 						$('#commCheckMenu').html(CheckHtmlList);
+					}else{
+						$('#commCheckMenu').parent().hide();
 					}
 					/*商品详情*/
 					if(res.data.orderHeaderList.length > 0) {

@@ -50,8 +50,14 @@
 							if(_this.userInfo.orderNum==undefined){
 								_this.userInfo.orderNum="";
 							}
+							var serllerName = '';
+							if(_this.userInfo.serllerName) {
+								serllerName = decodeURIComponent(_this.userInfo.serllerName)
+							}else {
+								serllerName = ''
+							}
 							if(_this.userInfo.serllerName==undefined){
-								_this.userInfo.serllerName="";
+								serllerName="";
 							}
 							if(_this.userInfo.serllerPhone==undefined){
 								_this.userInfo.serllerPhone="";
@@ -68,11 +74,17 @@
 							if(_this.userInfo.customerName==undefined){
 								_this.userInfo.customerName="";
 							}
-							if(_this.userInfo.centersName==undefined){
-								_this.userInfo.centersName="";
+							var nameTxt = '';
+							if(_this.userInfo.centersName) {
+								nameTxt = decodeURIComponent(_this.userInfo.centersName)
+							}else {
+								nameTxt = ''
 							}
 							if(nameTxts==undefined){
 								nameTxts="";
+							}
+							if(nameTxt==undefined){
+								nameTxt="";
 							}
 							if(_this.userInfo.includeTestData==undefined){
 								_this.userInfo.includeTestData="";
@@ -90,13 +102,13 @@
 		                    	pager['pageNo'] = 1;
 		                    	pager['targetPage'] = 'COMMISSION_ORDER';
 		                    	pager['orderNum'] = _this.userInfo.orderNum;//订单编号
-		                    	pager['serllerName'] = _this.userInfo.serllerName;//零售商名称
+		                    	pager['serllerName'] = serllerName;//零售商名称
 		                    	pager['serllerPhone'] = _this.userInfo.serllerPhone;//零售商电话
 		                    	pager['commissionStatus'] = _this.userInfo.commissionStatus,//结佣状态
 		                    	pager['customer.phone'] =  _this.userInfo.customerPhone,//经销商电话
 		                    	pager['itemNo'] = _this.userInfo.itemNo,//商品货号
 		                    	pager['customer.id'] = _this.userInfo.customerName,//经销店名称
-		                    	pager['centersName'] = _this.userInfo.centersName,//采购中心
+		                    	pager['centersName'] = nameTxt,//采购中心
 		                    	pager['con.name'] = nameTxts,//客户专员
 		                    	pager['page.includeTestData'] = _this.userInfo.includeTestData;//测试数据
 		                    	getData(pager);
@@ -162,7 +174,22 @@
 		                        		orderTypeTxt = items.label
 		                        	}
 	                            })
-
+                                //审核状态
+                                var checkTypeTxt = '';
+                                if(item.applyCommStatus == 'no'){
+                                	checkTypeTxt = '待申请';
+                                }
+                                if(item.applyCommStatus == 'yes' && item.bizCommission.bizStatus == '0'){
+                                	if(item.bizCommission.totalCommission == '0.00' && item.bizCommission.paymentOrderProcess.name != '审批完成'){
+                                		checkTypeTxt = '待确认支付金额';
+                                	}
+                                	if(item.totalCommission != '0.00'&&item.totalCommission != ''){
+                                		checkTypeTxt = item.commonProcess.paymentOrderProcess.name;
+                                	}
+                                }
+                                if(item.applyCommStatus == 'yes' && item.bizCommission.bizStatus == '1'){
+                                	checkTypeTxt = '已结佣';
+                                }
 								/*已结佣*/
 								/*申请结佣*/
 								var applyKnotBtn = '';
@@ -217,6 +244,10 @@
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+orderTypeTxt+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
+									'<label>审核状态:</label>' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkTypeTxt+' ">' +
+								'</div>' +
+								'<div class="mui-input-row">' +
 									'<label>经销店:</label>' +
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customer.name+' ">' +
 								'</div>' +
@@ -247,7 +278,7 @@
 								
 					}else{
 						$('.mui-pull-bottom-pocket').html('');
-						$('#orderList').append('<p class="noneTxt">暂无数据</p>');
+						$('#commList').append('<p class="noneTxt">暂无数据</p>');
 						mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 					}
 	                if(res.data.page.totalPage==pager.pageNo){		                	
