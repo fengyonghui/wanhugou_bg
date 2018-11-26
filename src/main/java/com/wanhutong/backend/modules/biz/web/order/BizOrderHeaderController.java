@@ -239,7 +239,7 @@ public class BizOrderHeaderController extends BaseController {
         originConfigMap.put("总经理", "总经理");
         originConfigMap.put("品类主管", "品类主管");
         originConfigMap.put("财务经理", "财务经理");
-        originConfigMap.put("完成", "完成");
+        originConfigMap.put("审批完成", "审批完成");
         originConfigMap.put("驳回", "驳回");
         originConfigMap.put("不需要审批", "不需要审批");
 

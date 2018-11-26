@@ -793,18 +793,7 @@
 		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
 		WHERE
 		boh.id = a.id
-		) AS "suplys",
-		(
-		SELECT
-		sum( od.buy_price * od.ord_qty )
-		FROM
-		biz_order_detail od
-		WHERE
-		od.STATUS = 1
-		AND od.order_id = a.id
-		GROUP BY
-		a.id
-		) AS "totalBuyPrice"
+		) AS "suplys"
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 
