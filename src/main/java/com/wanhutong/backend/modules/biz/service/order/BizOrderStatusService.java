@@ -108,4 +108,13 @@ public class BizOrderStatusService extends CrudService<BizOrderStatusDao, BizOrd
 		return bizOrderStatusDao.findCurrentStatus(orderId, orderType);
 	}
 
+	/**
+	 * 只查找状态表
+	 * @param bizOrderStatus
+	 * @return
+	 */
+	public List<BizOrderStatus> findStatusList(BizOrderStatus bizOrderStatus) {
+		return bizOrderStatusDao.findStatusList(bizOrderStatus);
+	}
+
 }
