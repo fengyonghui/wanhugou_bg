@@ -31,38 +31,18 @@
             //默认绑定省
             ProviceBind();
             //绑定事件
-			$("select[name='provinces']").each(function () {
-				$(this).change( function () {
-                    CityBind("from",this);
-                });
+			$("#province0").change( function () {
+				CityBind("from",this);
+			});
+			$("#toProvince0").change( function () {
+				CityBind("to",this);
+			});
+            $("#city0").change(function () {
+                VillageBind("from",this);
             });
-            // $("#province").change( function () {
-            //     CityBind("from");
-            // });
-            $("select[name='toProvinces']").each(function () {
-                $(this).change( function () {
-                    CityBind("to",this);
-                });
+            $("#toCity0").change(function () {
+                VillageBind("to",this);
             });
-            // $("#toProvince").change( function () {
-            //     CityBind("to");
-            // });
-			$("select[name='citys']").each(function () {
-				$(this).change(function () {
-                    VillageBind("from",this);
-                });
-            });
-            // $("#city").change(function () {
-            //     VillageBind("from");
-            // });
-            $("select[name='toCitys']").each(function () {
-                $(this).change(function () {
-                    VillageBind("to",this);
-                });
-            });
-            // $("#toCity").change(function () {
-            //     VillageBind("to");
-            // })
 
         });
         function Bind(str) {
@@ -100,18 +80,18 @@
 
         }
         function CityBind(obj,item) {
-			// var provice;
-			// if (obj == 'from') {
-             //    provice = $("#province").attr("value");
-			// } else {
-             //    provice = $("#toProvince").attr("value");
-			// }
             var provice = $(item).attr("value");
-            var id = $(item).attr("id");
-            var index = id.replace("province","");
             //判断省份这个下拉框选中的值是否为空
             if (provice == "") {
                 return;
+            }
+            var index;
+            var id = $(item).attr("id");
+            if (obj == 'from') {
+                index = id.replace('province','');
+            }
+            if (obj == 'to') {
+                index = id.replace('toProvince','');
             }
             if (obj == 'from') {
                 $("#city"+index).html("");
@@ -143,19 +123,19 @@
             });
         }
         function VillageBind(obj,item) {
-            // var city;
-            // if (obj == 'from') {
-             //    city = $("#city").attr("value");
-			// } else {
-             //    city = $("#toCity").attr("value");
-			// }
             var city = $(item).attr("value");
-            var id = $(item).attr("id");
-            var index = id.replace("city");
             //判断市这个下拉框选中的值是否为空
             if (city == "") {
                 return;
             }
+            var index;
+            var id = $(item).attr("id");
+            if (obj == 'from') {
+                index = id.replace('city','');
+            } else {
+                index = id.replace('toCity','');
+            }
+
             if (obj == 'from') {
                 $("#region"+index).html("");
             }
@@ -213,6 +193,18 @@
 			clonedNode.find("#toRegion"+n).attr("id","toRegion" + num);
             Province("province" + num);
             Province("toProvince" + num);
+            $("#province" + num).change( function () {
+                CityBind("from",this);
+            });
+            $("#toProvince" + num).change( function () {
+                CityBind("to",this);
+            });
+            $("#city" + num).change(function () {
+                VillageBind("from",this);
+            });
+            $("#toCity" + num).change(function () {
+                VillageBind("to",this);
+            });
             sourceNode.after(clonedNode);
             $("#"+item).next("div.controls").toggle();
             // clonedNode.find("#"+item).next("div.controls").toggle();
@@ -250,7 +242,6 @@
                     });
                     //将数据添加到省份这个下拉框里面
                     $("#"+item).append(str);
-                    $("#"+item).append(str);
                 },
                 error: function () { alert("Error"); }
             });
@@ -265,9 +256,9 @@
 	<form:form id="inputForm" modelAttribute="bizServiceCharge" action="${ctx}/biz/order/bizServiceCharge/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
-		<div id="aa0" class="control-group">
-			<label id="header0" class="control-label" onclick="toggle(this.id)"><font size="3">发货路线：</font></label>
-			<div id="route0" class="controls" style="background-color: #e8e8e8; width: 50%">
+		<div class="control-group">
+			<label id="header0" class="control-label" onclick="toggle(this.id)"><span style="opacity: 0.8;color: red;">折叠或展开</span><font size="3">发货路线：</font></label>
+			<div class="controls" style="background-color: #e8e8e8; width: 50%">
 				从
 				<select id="province0" name="provinces" class="input-medium required">
 					<option>===省====</option>
@@ -295,10 +286,6 @@
 					<table>
 						<tr style="height: 40px">
 							<td>商品品类：拉杆箱<input name="variIds" value="${variId}" type="hidden"/></td>
-							<td></td>
-							<td>
-								<input name="torderTypes" type="checkbox" value=""/>联营订单<input name="torderTypes" type="checkbox" value=""/>代采订单<input name="torderTypes" type="checkbox" value=""/>零售订单
-							</td>
 						</tr>
 						<c:set var="flag" value="true"></c:set>
 						<c:forEach items="${serviceModeList}" var="serviceMode" varStatus="i">
@@ -313,8 +300,6 @@
 						</c:forEach>
 						<tr style="height: 40px">
 							<td>商品品类：非拉杆箱<input name="variIds" value="-1" type="hidden"/></td>
-							<td></td>
-							<td><input name="forderTypes" type="checkbox" value=""/>联营订单<input name="forderTypes" type="checkbox" value=""/>代采订单<input name="forderTypes" type="checkbox" value=""/>零售订单</td>
 						</tr>
 						<c:set var="flag" value="true"></c:set>
 						<c:forEach items="${serviceModeList}" var="serviceMode" varStatus="i">
