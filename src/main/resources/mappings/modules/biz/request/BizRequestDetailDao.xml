@@ -363,10 +363,10 @@
 		LEFT JOIN biz_sku_info bsi ON bsi.id = a.sku_id
 		LEFT JOIN biz_product_info bpi ON bpi.id = bsi.prod_id
 		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsi.id
-		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id and bii.cust_id = rh.from_id
 		WHERE a.status = 1
 		AND rh.status = 1
-		AND rh.biz_status != 40
+		AND (rh.biz_status = 27 OR rh.biz_status = 30 OR rh.biz_status = 35 OR rh.biz_status = 37)
 		AND bis.status = 1
 		AND bii.cust_id = #{centerId}
 		AND bsi.id = #{skuId}

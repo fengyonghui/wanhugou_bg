@@ -111,9 +111,7 @@
 		            dataType:'json',
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
-		            success:function(res){
-		            	console.log(res)
-		            	
+		            success:function(res){		            	
 		            	var dataRow = res.data.roleSet;
 		            	/*当前用户信息*/
 						var userId = '';
@@ -148,140 +146,142 @@
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
                             	console.log(item);
-                            	
-                            	//订单号
-                            	var num="";
-                            	var href="";
-                            	if(item.orderNum!=""){
-                            		num=item.orderNum;
-//                          		href="../../html/inventoryMagmetHtml/inventoryDetails.html.html"
-                            	}
-                            	if(item.reqNo!=""){
-                            		num=item.reqNo;//备货单
-//                          		href=
-                            	}
-	                            //当前状态
-	                            var postatusTxt = '';
-	                            if(item.bizStatus == 0){
-	                            	postatusTxt = '未支付';
-	                            }else{
-	                            	postatusTxt = '已支付';
-	                            }
-	                            
-	                            $.each(postatus,function(i,items){
-		                        	if(item.bizStatus==items.value) {
-		                        		postatusTxt = items.label
-		                        	}
-	                            })
-	                            //单次支付审批状态
-	                            var paycheckTxt = '';
-	                            if(item.total == '0.00' && item.commonProcess.paymentOrderProcess.name != '审批完成'){
-	                            	paycheckTxt='待确认支付金额';
-	                            }
-	                            if(item.total != '0.00'){
-	                            	if(item.commonProcess.paymentOrderProcess){
-	                            		paycheckTxt=item.commonProcess.paymentOrderProcess.name;
-	                            	}else{
-	                            		paycheckTxt = '';
+                            	if(item.orderNum != '' || item.reqNo != ''){
+                            		//订单号
+	                            	var num="";
+	                            	var href="";
+	                            	if(item.orderNum!=""){
+	                            		num=item.orderNum;
+	//                          		href="../../html/inventoryMagmetHtml/inventoryDetails.html.html"
 	                            	}
-	                            	
-	                            }
-	                            //支付凭证
-	                            var mt = item;
-	                            //实际付款时间
-	                            var payTime="";
-	                            if(item.payTime){
-	                            	payTime= _this.formatDateTime(item.payTime);
-	                            }else{
-	                            	payTime="";
-	                            }
-	                            //最后付款时间
-	                            var deadline="";
-	                            if(item.deadline){
-	                            	deadline= _this.formatDateTime(item.deadline);
-	                            }else{
-	                            	deadline="";
-	                            }
-	                            //操作权限
-	                            var appCheckSucBtn = "";
-	                            var CheckSucBtnid = "";
-			                	var appCheckSuc = "";
-			                	var CheckSucid = "";
-					            if(item.poHeader.bizStatus != 10){
-					                if(_this.OrdFlaginfo==true){
-					                	if(item.total != '0.00'){
-					                		if(item.commonProcess.paymentOrderProcess.name != '驳回' &&item.commonProcess.paymentOrderProcess.name != '审批完成' && item.total != 0){
-					                			var appCheckSucBtn = "审核通过";
-					                			CheckSucBtnid = 'CheckSucBtnid';
-			                	                var appCheckSuc = "审核驳回";
-			                	                CheckSucid = 'CheckSucid';
-					                		}
-					                	}
-					                }
-					            }
-					            var Processcode="";
-					            if(item.commonProcess.paymentOrderProcess){
-					            	Processcode=item.commonProcess.paymentOrderProcess.code;
-					            }else{
-					            	Processcode="";
-					            }
-	                        	//详情
-	                        	var detail="";
-	                        	detail='详情'
-								orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
-										'<div class="mui-input-row">' +
-										    '<label>订单号:</label>' +
-											'<div class="numLists" style="margin-top:7px;" staordid="'+ item.requestId +'"  orderid="'+ item.orderId +'" ordernum="'+ item.orderNum +'" reqno="'+ item.reqNo +'">' +
-													num+
-										    '</div>' +
-
+	                            	if(item.reqNo!=""){
+	                            		num=item.reqNo;//备货单
+	//                          		href=
+	                            	}
+		                            //当前状态
+		                            var postatusTxt = '';
+		                            if(item.bizStatus == 0){
+		                            	postatusTxt = '未支付';
+		                            }else{
+		                            	postatusTxt = '已支付';
+		                            }
+		                            
+		                            $.each(postatus,function(i,items){
+			                        	if(item.bizStatus==items.value) {
+			                        		postatusTxt = items.label
+			                        	}
+		                            })
+		                            //单次支付审批状态
+		                            var paycheckTxt = '';
+		                            if(item.total == '0.00' && item.commonProcess.paymentOrderProcess.name != '审批完成'){
+		                            	paycheckTxt='待确认支付金额';
+		                            }
+		                            if(item.total != '0.00'){
+		                            	if(item.commonProcess.paymentOrderProcess){
+		                            		paycheckTxt=item.commonProcess.paymentOrderProcess.name;
+		                            	}else{
+		                            		paycheckTxt = '';
+		                            	}
+		                            	
+		                            }
+		                            //支付凭证
+		                            var mt = item;
+		                            //实际付款时间
+		                            var payTime="";
+		                            if(item.payTime){
+		                            	payTime= _this.formatDateTime(item.payTime);
+		                            }else{
+		                            	payTime="";
+		                            }
+		                            //最后付款时间
+		                            var deadline="";
+		                            if(item.deadline){
+		                            	deadline= _this.formatDateTime(item.deadline);
+		                            }else{
+		                            	deadline="";
+		                            }
+		                            //操作权限
+		                            var appCheckSucBtn = "";
+		                            var CheckSucBtnid = "";
+				                	var appCheckSuc = "";
+				                	var CheckSucid = "";
+						            if(item.poHeader.bizStatus != 10){
+						                if(_this.OrdFlaginfo==true){
+						                	if(item.total != '0.00'){
+						                		if(item.commonProcess.paymentOrderProcess.name != '驳回' &&item.commonProcess.paymentOrderProcess.name != '审批完成' && item.total != 0){
+						                			var appCheckSucBtn = "审核通过";
+						                			CheckSucBtnid = 'CheckSucBtnid';
+				                	                var appCheckSuc = "审核驳回";
+				                	                CheckSucid = 'CheckSucid';
+						                		}
+						                	}
+						                }
+						            }
+						            var Processcode="";
+						            if(item.commonProcess.paymentOrderProcess){
+						            	Processcode=item.commonProcess.paymentOrderProcess.code;
+						            }else{
+						            	Processcode="";
+						            }
+		                        	//详情
+		                        	var detail="";
+		                        	detail='详情'
+									orderHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
+											'<div class="mui-input-row">' +
+											    '<label>订单号:</label>' +
+												'<div class="numLists" style="margin-top:7px;" staordid="'+ item.requestId +'"  orderid="'+ item.orderId +'" ordernum="'+ item.orderNum +'" reqno="'+ item.reqNo +'">' +
+														num+
+											    '</div>' +
+	
+											'</div>' +
+										
+											'<div class="mui-input-row">' +
+												'<label>付款金额:</label>' +
+												'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.total.toFixed(2) +' ">' +
+											'</div>' +
+											'<div class="mui-input-row">' +
+												'<label>实际付款金额:</label>' +
+												'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+ item.payTotal.toFixed(2) +' ">' +
+											'</div>' +
+											'<div class="mui-input-row">' +
+												'<label>最后付款时间:</label>' +
+												'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+ deadline +' ">' +
+											'</div>' +
+											'<div class="mui-input-row">' +
+												'<label>实际付款时间:</label>' +
+												'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+ payTime +' ">' +
+											'</div>' +
+											'<div class="mui-input-row">' +
+												'<label>当前状态:</label>' +
+												'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+postatusTxt +' ">' +
+											'</div>' +
+											'<div class="mui-input-row">' +
+												'<label>审批状态:</label>' +
+												'<input type="text" class="mui-input-clear" id="paycheckSta" disabled="disabled" value=" '+ paycheckTxt +' ">' +
+											'</div>' +
+											'<div class="mui-input-row">' +
+												'<label>备注:</label>' +
+												'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+  item.remark+' ">' +
+											'</div>' +
+											'<div class="mui-input-row">' +
+												'<label>支付凭证:</label>' +
+												'<div class="imgLists">' +_this.photoShow(mt)+
+											    '</div>' +
+											'</div>' +
+											'<div class="app_color40 mui-row app_text_center operation">' +
+											'<div class="mui-col-xs-4 CheckSucBtnid" inListId="'+ item.id +'" curType="'+ Processcode +'" total="'+ item.total +'" orderType="'+ item.orderType +'">' +
+												'<div class="">'+appCheckSucBtn+'</div>' +
+											'</div>' +
+											'<div class="mui-col-xs-4 CheckSucid" inListId="'+ item.id +'" curType="'+ Processcode +'" total="'+ item.total +'" orderType="'+ item.orderType +'">' +
+												'<div class="">'+appCheckSuc+'</div>' +
+											'</div>' +
+											'<div class="mui-col-xs-4 orDetailBtn" inListId="'+ item.id +'">' +
+												'<div class="">'+detail+'</div>' +
+											'</div>' +
 										'</div>' +
-									
-										'<div class="mui-input-row">' +
-											'<label>付款金额:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.total.toFixed(2) +' ">' +
-										'</div>' +
-										'<div class="mui-input-row">' +
-											'<label>实际付款金额:</label>' +
-											'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+ item.payTotal.toFixed(2) +' ">' +
-										'</div>' +
-										'<div class="mui-input-row">' +
-											'<label>最后付款时间:</label>' +
-											'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+ deadline +' ">' +
-										'</div>' +
-										'<div class="mui-input-row">' +
-											'<label>实际付款时间:</label>' +
-											'<input type="text" class="mui-input-clear orderTypeTxt" disabled="disabled" value=" '+ payTime +' ">' +
-										'</div>' +
-										'<div class="mui-input-row">' +
-											'<label>当前状态:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+postatusTxt +' ">' +
-										'</div>' +
-										'<div class="mui-input-row">' +
-											'<label>审批状态:</label>' +
-											'<input type="text" class="mui-input-clear" id="paycheckSta" disabled="disabled" value=" '+ paycheckTxt +' ">' +
-										'</div>' +
-										'<div class="mui-input-row">' +
-											'<label>备注:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+  item.remark+' ">' +
-										'</div>' +
-										'<div class="mui-input-row">' +
-											'<label>支付凭证:</label>' +
-											'<div class="imgLists">' +_this.photoShow(mt)+
-										    '</div>' +
-										'</div>' +
-										'<div class="app_color40 mui-row app_text_center operation">' +
-										'<div class="mui-col-xs-4 CheckSucBtnid" inListId="'+ item.id +'" curType="'+ Processcode +'" total="'+ item.total +'" orderType="'+ item.orderType +'">' +
-											'<div class="">'+appCheckSucBtn+'</div>' +
-										'</div>' +
-										'<div class="mui-col-xs-4 CheckSucid" inListId="'+ item.id +'" curType="'+ Processcode +'" total="'+ item.total +'" orderType="'+ item.orderType +'">' +
-											'<div class="">'+appCheckSuc+'</div>' +
-										'</div>' +
-										'<div class="mui-col-xs-4 orDetailBtn" inListId="'+ item.id +'">' +
-											'<div class="">'+detail+'</div>' +
-										'</div>' +
-									'</div>' +
-									'</div>'
+										'</div>'
+                            	}
+                            	
 							});
 							$('#orderinfoList').append(orderHtmlList);
 							_this.stOrdHrefHtml();
