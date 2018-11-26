@@ -260,7 +260,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             this.savePoHeader(bizPoHeader);
         }
 
-        autoSavePaymentOrder(bizPoHeader.getId());
+        autoSavePaymentOrder(bizPoHeader.getId(), orderId, DO_ORDER_HEADER_TYPE);
 
         String poId = String.valueOf(bizPoHeader.getId());
 
@@ -1339,7 +1339,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> autoSavePaymentOrder(Integer poHeaderIdid){
+    public Pair<Boolean, String> autoSavePaymentOrder(Integer poHeaderIdid, Integer orderId, String orderType){
         BizPoHeader bizPoHeader = this.get(poHeaderIdid);
         Boolean prew = false;
         BigDecimal prewPayTotal = new BigDecimal(0);
@@ -1363,6 +1363,55 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         String mark = "newAudit";
         Pair<Boolean, String> result = this.startAudit(poHeaderIdid, prew, prewPayTotal, prewPayDeadline, auditType, desc, mark);
 
+        //短信通知财务，审核付采购单
+        StringBuilder phone = new StringBuilder();
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+        Byte soType = getBizPoOrderReqByPo(bizPoHeader);
+        Integer code = 0;
+        if ("oldAudit".equals(mark)) {
+            code = purchaseOrderProcessConfig.getDefaultProcessId();
+        } else {
+            if (soType == Byte.parseByte("1")) {
+                code = purchaseOrderProcessConfig.getOrderHeaderDefaultProcessId();
+            } else {
+                code = purchaseOrderProcessConfig.getDefaultNewProcessId();
+            }
+        }
+
+        String orderNum = "";
+        if ("1".equals(REQUEST_HEADER_TYPE)) {
+            BizRequestHeader requestHeader = bizRequestHeaderForVendorService.get(orderId);
+            orderNum = requestHeader.getReqNo();
+        } else if ("2".equals(DO_ORDER_HEADER_TYPE)) {
+            BizOrderHeader orderHeader = bizOrderHeaderService.get(orderId);
+            orderNum = orderHeader.getOrderNum();
+        }
+
+        com.wanhutong.backend.modules.config.parse.Process currentProcess = purchaseOrderProcessConfig.getProcessMap().get(code);
+        if (currentProcess.getRoleEnNameEnum() != null && currentProcess.getRoleEnNameEnum().get(0) != null) {
+            User sendUser=new User(systemService.getRoleByEnname(currentProcess.getRoleEnNameEnum().get(0).toLowerCase()));
+            List<User> userList = systemService.findUser(sendUser);
+            if (CollectionUtils.isNotEmpty(userList)) {
+                for (User u : userList) {
+                    phone.append(u.getMobile()).append(",");
+                }
+            }
+            if (StringUtils.isNotBlank(phone.toString())) {
+                String orderStr = "";
+                if (soType == Byte.parseByte("1")) {
+                    orderStr = "订单(订单支出信息)";
+                } else {
+                    orderStr = "备货清单(订单支出信息)";
+                }
+                AliyunSmsClient.getInstance().sendSMS(
+                        SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                        phone.toString(),
+                        ImmutableMap.of("order",orderStr, "orderNum", orderNum));
+            }
+        }
+
+
+
         //自动生成付款单
         bizPoHeader = this.get(poHeaderIdid);
         //应付金额
@@ -1372,6 +1421,31 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         Date deadlineDate = DateUtils.parseDate(deadLine);
         bizPoHeader.setPayDeadline(deadlineDate);
         Pair<Boolean, String> audit = this.genPaymentOrder(bizPoHeader);
+
+        //短信通知采销经理，付款单确认支付金额
+        StringBuilder phone2 = new StringBuilder();
+        User sendUser=new User(systemService.getRoleByEnname(RoleEnNameEnum.MARKETINGMANAGER.getState()));
+        List<User> userList = systemService.findUser(sendUser);
+        if (CollectionUtils.isNotEmpty(userList)) {
+            for (User u : userList) {
+                phone2.append(u.getMobile()).append(",");
+            }
+        }
+        if (StringUtils.isNotBlank(phone2.toString())) {
+            String orderStr = "";
+            if (soType == Byte.parseByte("1")) {
+                orderStr = "订单待确认支付金额";
+            } else {
+                orderStr = "备货清单待确认支付金额";
+            }
+
+            AliyunSmsClient.getInstance().sendSMS(
+                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                    phone2.toString(),
+                    ImmutableMap.of("order",orderStr, "orderNum", orderNum));
+        }
+
+
         return audit;
     }
 
@@ -1441,7 +1515,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     unitPrices = unitPrices.substring(0, unitPrices.length()-1);
                 }
 
-                result = this.autoSave(reqDetailIds,"", vendorId, unitPrices, ordQtys, lastPayDateVal);
+                result = this.autoSave(reqDetailIds,"", vendorId, unitPrices, ordQtys, lastPayDateVal, orderId, REQUEST_HEADER_TYPE);
             }
         } else if (DO_ORDER_HEADER_TYPE.equals(type)) {
             BizOrderHeader orderHeader = new BizOrderHeader();
@@ -1498,14 +1572,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     ordQtys = ordQtys.substring(0, ordQtys.length() - 1);
                     unitPrices = unitPrices.substring(0, unitPrices.length() - 1);
                 }
-                result = this.autoSave("",orderDetailIds, vendorId, unitPrices, ordQtys, lastPayDateVal);
+                result = this.autoSave("",orderDetailIds, vendorId, unitPrices, ordQtys, lastPayDateVal, orderId, DO_ORDER_HEADER_TYPE);
             }
         }
         return result;
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public Pair<Boolean, String> autoSave(String reqDetailIds, String orderDetailIds, String vendorId, String unitPrices, String ordQtys, String lastPayDateVal) throws ParseException {
+    public Pair<Boolean, String> autoSave(String reqDetailIds, String orderDetailIds, String vendorId, String unitPrices,
+                                          String ordQtys, String lastPayDateVal, Integer orderId, String orderType) throws ParseException {
         Office vendOffice = new Office();
         vendOffice.setId(Integer.parseInt(vendorId));
 
@@ -1562,7 +1637,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         this.savePoHeader(bizPoHeader);
 
         //采购单开启审核，同时自动生成付款单
-        Pair<Boolean, String> audit = this.autoSavePaymentOrder(poHeaderIdid);
+        Pair<Boolean, String> audit = this.autoSavePaymentOrder(poHeaderIdid, orderId, orderType);
         if (audit.getLeft().equals(Boolean.TRUE)) {
             String poId = String.valueOf(bizPoHeader.getId());
             return Pair.of(Boolean.TRUE, "采购单生成," + poId);

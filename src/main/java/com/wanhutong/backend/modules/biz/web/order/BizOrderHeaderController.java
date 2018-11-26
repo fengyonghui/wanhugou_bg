@@ -1853,17 +1853,23 @@ public class BizOrderHeaderController extends BaseController {
         originEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
         originEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
         List<CommonProcessEntity> originList = commonProcessService.findList(originEntity);
+        Integer code = 0;
+        StringBuilder phone = new StringBuilder();
+        com.wanhutong.backend.modules.config.parse.Process currentProcess = null;
         if (CollectionUtils.isEmpty(originList) || reGen) {
             originEntity.setCurrent(1);
             switch (orderPayProportionStatusEnum) {
                 case ZERO:
                     originEntity.setType(String.valueOf(originConfig.getZeroDefaultProcessId()));
+                    code = originConfig.getZeroDefaultProcessId();
                     break;
                 case FIFTH:
                     originEntity.setType(String.valueOf(originConfig.getFifthDefaultProcessId()));
+                    code = originConfig.getFifthDefaultProcessId();
                     break;
                 case ALL:
                     originEntity.setType(String.valueOf(originConfig.getAllDefaultProcessId()));
+                    code = originConfig.getAllDefaultProcessId();
                     break;
                 default:
                     break;
@@ -1872,8 +1878,10 @@ public class BizOrderHeaderController extends BaseController {
             if (CollectionUtils.isEmpty(list)) {
                 commonProcessService.updateCurrentByObject(bizOrderHeader.getId(), JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME, 0);
                 commonProcessService.save(originEntity);
-            }
 
+                //自动发送短信
+                currentProcess = originConfig.getProcessMap().get(code);
+            }
         }
 
         // 本地备货
@@ -1886,12 +1894,15 @@ public class BizOrderHeaderController extends BaseController {
             switch (orderPayProportionStatusEnum) {
                 case ZERO:
                     localEntity.setType(String.valueOf(localConfig.getZeroDefaultProcessId()));
+                    code = localConfig.getZeroDefaultProcessId();
                     break;
                 case FIFTH:
                     localEntity.setType(String.valueOf(localConfig.getFifthDefaultProcessId()));
+                    code = localConfig.getFifthDefaultProcessId();
                     break;
                 case ALL:
                     localEntity.setType(String.valueOf(localConfig.getAllDefaultProcessId()));
+                    code = localConfig.getAllDefaultProcessId();
                     break;
                 default:
                     break;
@@ -1900,8 +1911,29 @@ public class BizOrderHeaderController extends BaseController {
             if (CollectionUtils.isEmpty(list)) {
                 commonProcessService.updateCurrentByObject(bizOrderHeader.getId(), JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME, 0);
                 commonProcessService.save(localEntity);
+
+                //自动发送短信
+                currentProcess = localConfig.getProcessMap().get(code);
+            }
+        }
+
+        if (currentProcess != null && currentProcess.getRoleEnNameEnum() != null && currentProcess.getRoleEnNameEnum().get(0) != null) {
+            User sendUser = new User(systemService.getRoleByEnname(currentProcess.getRoleEnNameEnum().get(0).toLowerCase()));
+            //不根据采购中心区分渠道经理，所以注释掉该行
+            //sendUser.setCent(user.getCompany());
+            List<User> userList = systemService.findUser(sendUser);
+            if (CollectionUtils.isNotEmpty(userList)) {
+                for (User u : userList) {
+                    phone.append(u.getMobile()).append(",");
+                }
             }
 
+            if (StringUtils.isNotBlank(phone.toString())) {
+                AliyunSmsClient.getInstance().sendSMS(
+                        SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                        phone.toString(),
+                        ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
+            }
         }
     }
 
