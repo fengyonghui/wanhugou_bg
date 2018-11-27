@@ -45,7 +45,7 @@
 
         });
         function Bind(str) {
-            // alert($("#Province").html());
+            alert($("#Province").html());
             $("#Province").val(str);
 
 
@@ -79,7 +79,7 @@
 
         }
         function CityBind(obj,item) {
-            var provice = $(item).val();
+            var provice = $(item).attr("value");
             //判断省份这个下拉框选中的值是否为空
             if (provice == "") {
                 return;
@@ -122,7 +122,7 @@
             });
         }
         function VillageBind(obj,item) {
-            var city = $(item).val();
+            var city = $(item).attr("value");
             //判断市这个下拉框选中的值是否为空
             if (city == "") {
                 return;
@@ -177,81 +177,6 @@
         function toggle(item) {
             $("#"+item).next("div.controls").toggle();
         }
-        function add(item) {
-            var n = item.replace('header','');
-            // alert(n);
-            var num = parseInt(n) + parseInt(1);
-            var sourceNode = $("#"+item).parent(); // 获得被克隆的节点对象
-            var clonedNode = sourceNode.clone(true);// 克隆节点
-            clonedNode.find("#"+item).attr("id", "header" + num); // 修改一下id 值，避免id 重复
-			clonedNode.find("#province"+n).attr("id","province" + num);
-			clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].province.code");
-			clonedNode.find("#toProvince"+n).attr("id","toProvince" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].toProvince.code");
-			clonedNode.find("#city"+n).attr("id","city" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].city.code");
-			clonedNode.find("#toCity"+n).attr("id","toCity" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].toCity.code");
-			clonedNode.find("#region"+n).attr("id","region" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].region.code");
-			clonedNode.find("#toRegion"+n).attr("id","toRegion" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].toRegion.code");
-            Province("province" + num);
-            Province("toProvince" + num);
-            $("#province" + num).change( function () {
-                CityBind("from",this);
-            });
-            $("#toProvince" + num).change( function () {
-                CityBind("to",this);
-            });
-            $("#city" + num).change(function () {
-                VillageBind("from",this);
-            });
-            $("#toCity" + num).change(function () {
-                VillageBind("to",this);
-            });
-            sourceNode.after(clonedNode);
-            $("#"+item).next("div.controls").toggle();
-            $("#btnAdd").attr("onclick","add('header"+num+"')");
-            if (n == 0) {
-                $("#btnAdd").after("<input id=\"btnDel\" class=\"btn btn-primary\" type=\"button\" value=\"删除路线\" onclick=\"del('header1')\"/>");
-			} else {
-                $("#btnDel").attr("onclick","del('header"+num+"')");
-            }
-        }
-        function del(item) {
-            var n = item.replace('header','');
-            var num = (parseInt(n) - parseInt(1)) < 0 ? 0 : parseInt(n) - parseInt(1);
-            if (n > 1) {
-                $("#btnDel").attr("onclick","del('header"+num+"')");
-			} else {
-                $("#btnDel").remove();
-			}
-            $("#btnAdd").attr("onclick","add('header"+num+"')");
-			$("#"+item).parent().remove();
-        }
-        function Province(item) {
-            // alert(item);
-			$("#"+item).html("");
-            var str = "<option>===省====</option>";
-            $.ajax({
-                type: "post",
-                url: "${ctx}/sys/sysRegion/selectRegion",
-                data:{"level":"prov"},
-                async: false,
-                success: function (data) {
-                    console.info(data);
-                    //从服务器获取数据进行绑定
-                    $.each(data, function (i, item) {
-                        str += "<option value=" + item.code + ">" + item.name + "</option>";
-                    });
-                    //将数据添加到省份这个下拉框里面
-                    $("#"+item).append(str);
-                    console.info(str);
-                },
-                error: function () { alert("Error"); }
-            });
-        }
     </script>
 </head>
 <body>
@@ -266,27 +191,30 @@
 			<label id="header0" class="control-label" onclick="toggle(this.id)"><span style="opacity: 0.8;color: red;">折叠或展开</span><font size="3">发货路线：</font></label>
 			<div class="controls" style="background-color: #e8e8e8; width: 50%">
 				从
-				<select id="province0" name="serviceLineList[0].province.code" class="input-medium required">
+				<form:select id="province0" path="serviceLine.province.code" class="input-medium required">
 					<option>===省====</option>
-				</select>
-				<select id="city0" name="serviceLineList[0].city.code" class="input-medium required">
+				</form:select>
+				<form:select id="city0" path="serviceLine.city.code" class="input-medium required">
 					<option>===市====</option>
-				</select>
-				<select id="region0" name="serviceLineList[0].region.code" class="input-medium required">
+				</form:select>
+				<form:select id="region0" path="serviceLine.region.code" class="input-medium required">
 					<option>===县/区====</option>
-				</select>
+				</form:select>
 				<br>
 				至
-				<select id="toProvince0" name="serviceLineList[0].toProvince.code" class="input-medium required">
+				<form:select id="toProvince0" path="serviceLine.toProvince.code" class="input-medium required">
 					<option>===省====</option>
-				</select>
-				<select id="toCity0" name="serviceLineList[0].toCity.code" class="input-medium required">
+				</form:select>
+				<form:select id="toCity0" path="serviceLine.toCity.code" class="input-medium required">
 					<option>===市====</option>
-				</select>
-				<select id="toRegion0" name="serviceLineList[0].toRegion.code" class="input-medium required">
+				</form:select>
+				<form:select id="toRegion0" path="serviceLine.toRegion.code" class="input-medium required">
 					<option>===县/区====</option>
-				</select>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
+                <div class="control-group">
+                    <label class="control-label">商品品类</label>
+                </div>
 				<div>
 					&nbsp;
 					<table>
