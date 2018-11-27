@@ -167,6 +167,9 @@
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
 								console.log(item)
+								//订单号
+								var num="";
+								num=item.orderNum;
 								 //订单类型
 								var orderTypeTxt = '';
 	                            $.each(ass,function(i,items){
@@ -237,7 +240,9 @@
 							commHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 								'<div class="mui-input-row">' +
 									'<label>订单编号:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.orderNum+' ">' +
+									'<div id="" style="margin-top:7px;" class="numLists mui-input-clear" disabled="disabled" orderid="'+ item.id +'">' +
+											num+
+									'</div>' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>订单类型:</label>' +
@@ -320,9 +325,9 @@
                     _this.commEditFlag = res.data;
                 }
             });
-        },
+        },        
         ordHrefHtml: function() {
-        	var _this = this;
+        	var _this = this;        	
         	/*查询*/
 			$('.app_header').on('tap', '#OrdSechBtn', function() {
 				var url = $(this).attr('url');
@@ -337,7 +342,7 @@
 					})
 				}
 			});
-		/*首页*/
+		    /*首页*/
 			$('#nav').on('tap','.staHomePage', function() {
 				var url = $(this).attr('url');
 				GHUTILS.OPENPAGE({
@@ -350,6 +355,23 @@
         },
 		stOrdHrefHtml: function() {
 			var _this = this;
+			//详情链接
+        	$('.numLists').on('tap',function(){
+        		alert(1)
+               	var url = $(this).attr('url');
+                var orderid = $(this).attr('orderid');
+                if(orderid){
+            		GHUTILS.OPENPAGE({					
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordDetail.html",
+						extras: {
+							staOrdId: orderid,
+							orderDetails:'details',
+							statu:'',
+							source:'',
+						}
+					})
+            	}
+			}),
 			//未结佣
 			$('.noKnotBtn').on('tap', function() {
 				var url = $(this).attr('url');

@@ -647,9 +647,14 @@ body{font-size: 15px;color:#3b3b3b;}
 .commProportion div input {width: 45%;}
 /*佣金*/
 .commProportion div input.commNum {padding-left: 5px;border: 1px solid #ccc;width: 50px;height: 30px;border-radius: 5px;margin-top: 5px;margin-right:94px;}
-/*margin-right: 94px;*/
 .exampleTxt {padding: 15px;}
 .exampleTxt li {padding-top: 5px;}
+.mui-table-view-cell .childMenu.mui-active{background-color: #fff;margin-top: 1px;}
+#commission .cMenu{margin-bottom: -15px;margin-top:10px;}
+#commission .cMenu a{font-size: 14px;}
+.childMenu>a{font-size: 14px;padding:-2px 0;}
+.mui-table-view-cell.mui-collapse .mui-table-view .mui-table-view-cell{margin-left: -15px;}
+.mui-table-view-cell.mui-collapse .mui-table-view .mui-table-view-cell:after {right: 20px;color:#e8e8e8}
 /*======备货单======*/
 /*备货单审核、详情---商品信息图片*/
 .photoParent {position: absolute;top: 50%;margin-top: -13%;}
