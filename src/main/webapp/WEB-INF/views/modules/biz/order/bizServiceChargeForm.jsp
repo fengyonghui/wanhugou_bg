@@ -45,7 +45,7 @@
 
         });
         function Bind(str) {
-            alert($("#Province").html());
+            // alert($("#Province").html());
             $("#Province").val(str);
 
 
@@ -79,7 +79,7 @@
 
         }
         function CityBind(obj,item) {
-            var provice = $(item).attr("value");
+            var provice = $(item).val();
             //判断省份这个下拉框选中的值是否为空
             if (provice == "") {
                 return;
@@ -122,7 +122,7 @@
             });
         }
         function VillageBind(obj,item) {
-            var city = $(item).attr("value");
+            var city = $(item).val();
             //判断市这个下拉框选中的值是否为空
             if (city == "") {
                 return;
@@ -179,7 +179,7 @@
         }
         function add(item) {
             var n = item.replace('header','');
-            alert(n);
+            // alert(n);
             var num = parseInt(n) + parseInt(1);
             var sourceNode = $("#"+item).parent(); // 获得被克隆的节点对象
             var clonedNode = sourceNode.clone(true);// 克隆节点
@@ -233,7 +233,7 @@
 			$("#"+item).parent().remove();
         }
         function Province(item) {
-            alert(item);
+            // alert(item);
 			$("#"+item).html("");
             var str = "<option>===省====</option>";
             $.ajax({
