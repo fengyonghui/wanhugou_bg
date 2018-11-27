@@ -181,21 +181,24 @@
             var n = item.replace('header','');
             // alert(n);
             var num = parseInt(n) + parseInt(1);
+            console.log("-------------")
+            console.log(num)
+            console.log("-------------")
             var sourceNode = $("#"+item).parent(); // 获得被克隆的节点对象
             var clonedNode = sourceNode.clone(true);// 克隆节点
             clonedNode.find("#"+item).attr("id", "header" + num); // 修改一下id 值，避免id 重复
 			clonedNode.find("#province"+n).attr("id","province" + num);
-			clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].province.code");
+			clonedNode.find("#province"+num).attr("name","serviceLineList["+num+"].province.code");
 			clonedNode.find("#toProvince"+n).attr("id","toProvince" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].toProvince.code");
+            clonedNode.find("#toProvince"+num).attr("name","serviceLineList["+num+"].toProvince.code");
 			clonedNode.find("#city"+n).attr("id","city" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].city.code");
+            clonedNode.find("#city"+num).attr("name","serviceLineList["+num+"].city.code");
 			clonedNode.find("#toCity"+n).attr("id","toCity" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].toCity.code");
+            clonedNode.find("#toCity"+num).attr("name","serviceLineList["+num+"].toCity.code");
 			clonedNode.find("#region"+n).attr("id","region" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].region.code");
+            clonedNode.find("#region"+num).attr("name","serviceLineList["+num+"].region.code");
 			clonedNode.find("#toRegion"+n).attr("id","toRegion" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].toRegion.code");
+            clonedNode.find("#toRegion"+num).attr("name","serviceLineList["+num+"].toRegion.code");
             Province("province" + num);
             Province("toProvince" + num);
             $("#province" + num).change( function () {
