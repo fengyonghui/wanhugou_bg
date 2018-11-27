@@ -44,13 +44,11 @@
             });
 
         });
-        function Bind(str) {
-            alert($("#Province").html());
-            $("#Province").val(str);
 
-
-        }
         function ProviceBind() {
+            var province = $("#province").val();
+            alert(province);
+            var toProvince = $("#toProvince").val();
             //清空下拉数据
 			$("#province0").html("");
 			$("#toProvince0").html("");
@@ -65,11 +63,27 @@
                     console.info(data);
                     //从服务器获取数据进行绑定
                     $.each(data, function (i, item) {
-                        str += "<option value=" + item.code + ">" + item.name + "</option>";
+                        str += "<option value='" + item.code + "'";
+                        if (province == item.code) {
+                            str += "selected='selected'";
+						}
+						str += ">" + item.name + "</option>";
                     });
                     //将数据添加到省份这个下拉框里面
                     $("#province0").append(str);
+                    City("from");
+
+                    str = "<option>===省====</option>";
+                    $.each(data, function (i, item) {
+                        str += "<option value='" + item.code + "'";
+                        if (toProvince == item.code) {
+                            str += "selected='selected'";
+                        }
+                        str += ">" + item.name + "</option>";
+                    });
+                    //将数据添加到省份这个下拉框里面
                     $("#toProvince0").append(str);
+                    City("to");
                 },
                 error: function () { alert("Error"); }
             });
@@ -79,13 +93,13 @@
 
         }
         function CityBind(obj,item) {
-            var provice = $(item).attr("value");
+            var provice = $(item).val();
             //判断省份这个下拉框选中的值是否为空
             if (provice == "") {
                 return;
             }
-            var index;
             var id = $(item).attr("id");
+            var index;
             if (obj == 'from') {
                 index = id.replace('province','');
             }
@@ -99,7 +113,6 @@
                 $("#toCity"+index).html("");
 			}
             var str = "<option>===市====</option>";
-
             $.ajax({
                 type: "post",
                 url: "${ctx}/sys/sysRegion/selectRegion",
@@ -122,19 +135,21 @@
             });
         }
         function VillageBind(obj,item) {
-            var city = $(item).attr("value");
+            var region = $("#region").val();
+            var toRegion = $("#toRegion").val();
+            var city = $(item).val();
             //判断市这个下拉框选中的值是否为空
             if (city == "") {
                 return;
             }
-            var index;
             var id = $(item).attr("id");
+            var index;
             if (obj == 'from') {
                 index = id.replace('city','');
-            } else {
+            }
+            if (obj == 'to') {
                 index = id.replace('toCity','');
             }
-
             if (obj == 'from') {
                 $("#region"+index).html("");
             }
@@ -164,20 +179,122 @@
                 error: function () { alert("Error"); }
             });
         }
-	</script>
-
-    <%--<style type="text/css">--%>
-        <%--*{margin:0;padding:0;}--%>
-        <%--body { font-size: 14px; line-height: 130%; padding: 60px }--%>
-        <%--#panel { width: 262px; border: 1px solid #0050D0 }--%>
-        <%--.head { padding: 5px; background: #96E555; cursor: pointer }--%>
-        <%--.content { padding: 10px; text-indent: 2em; border-top: 1px solid #0050D0;display:block; }--%>
-    <%--</style>--%>
-    <script type="text/javascript">
-        function toggle(item) {
-            $("#"+item).next("div.controls").toggle();
+        function City(obj) {
+            var province = $("#province").val();
+            var toProvince = $("#toProvince").val();
+            var city = $("#city").val();
+            var toCity = $("#toCity").val();
+            alert(city);
+            if (obj == 'from') {
+                $("#city0").html("");
+            }
+            if (obj == 'to') {
+                $("#toCity0").html("");
+            }
+            var str = "<option>===市====</option>";
+            if (obj == 'from') {
+                $.ajax({
+                    type: "post",
+                    url: "${ctx}/sys/sysRegion/selectRegion",
+                    data: { "code":province,"level":"city"},
+                    async: false,
+                    success: function (data) {
+                        //将数据添加到省份这个下拉框里面
+						//从服务器获取数据进行绑定
+						$.each(data, function (i, item) {
+							str += "<option value='" + item.code;
+							if (city == item.code) {
+							    alert("==");
+								str += "' selected='selected";
+							}
+							str += "'>" + item.name + "</option>";
+						});
+						alert(str);
+						$("#city0").append(str);
+						Region(obj);
+                    },
+                    error: function () { alert("Error"); }
+                });
+			}
+            if (obj == 'to') {
+                $.ajax({
+                    type: "post",
+                    url: "${ctx}/sys/sysRegion/selectRegion",
+                    data: { "code":toProvince,"level":"city"},
+                    async: false,
+                    success: function (data) {
+                        //将数据添加到省份这个下拉框里面
+                        //从服务器获取数据进行绑定
+                        $.each(data, function (i, item) {
+                            str += "<option value='" + item.code + "'";
+                            if (toCity == item.code) {
+                                str += "selected='selected'";
+                            }
+                            str += ">" + item.name + "</option>";
+                        });
+                        $("#toCity0").append(str);
+                        Region(obj);
+                    },
+                    error: function () { alert("Error"); }
+                });
+            }
         }
-    </script>
+        function Region(obj) {
+            var city = $("#city").val();
+            var toCity = $("#toCity").val();
+            var region = $("#region").val();
+            var toRegion = $("#toRegion").val();
+            if (obj == 'from') {
+                $("#region0").html("");
+            }
+            if (obj == 'to') {
+                $("#toRegion0").html("");
+            }
+            var str = "<option>===市====</option>";
+            if (obj == 'from') {
+                $.ajax({
+                    type: "post",
+                    url: "${ctx}/sys/sysRegion/selectRegion",
+                    data: { "code":city,"level":"dist"},
+                    async: false,
+                    success: function (data) {
+                        //将数据添加到省份这个下拉框里面
+                        //从服务器获取数据进行绑定
+                        $.each(data, function (i, item) {
+                            str += "<option value='" + item.code + "'";
+                            if (region == item.code) {
+                                str += "selected='selected'";
+                            }
+                            str += ">" + item.name + "</option>";
+                        });
+                        $("#region0").append(str);
+                    },
+                    error: function () { alert("Error"); }
+                });
+            }
+            if (obj == 'to') {
+                $.ajax({
+                    type: "post",
+                    url: "${ctx}/sys/sysRegion/selectRegion",
+                    data: { "code":toCity,"level":"dist"},
+                    async: false,
+                    success: function (data) {
+                        //将数据添加到省份这个下拉框里面
+                        //从服务器获取数据进行绑定
+                        $.each(data, function (i, item) {
+                            str += "<option value='" + item.code + "'";
+                            if (toRegion == item.code) {
+                                str += "selected='selected'";
+                            }
+                            str += ">" + item.name + "</option>";
+                        });
+                        $("#toRegion0").append(str);
+                    },
+                    error: function () { alert("Error"); }
+                });
+            }
+        }
+	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -186,10 +303,16 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizServiceCharge" action="${ctx}/biz/order/bizServiceCharge/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input id="province" value="${bizServiceCharge.serviceLine.province.code}" type="hidden"/>
+		<input id="city" value="${bizServiceCharge.serviceLine.city.code}" type="hidden"/>
+		<input id="region" value="${bizServiceCharge.serviceLine.region.code}" type="hidden"/>
+		<input id="toProvince" value="${bizServiceCharge.serviceLine.toProvince.code}" type="hidden"/>
+		<input id="toCity" value="${bizServiceCharge.serviceLine.toCity.code}" type="hidden"/>
+		<input id="toRegion" value="${bizServiceCharge.serviceLine.toRegion.code}" type="hidden"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label id="header0" class="control-label" onclick="toggle(this.id)"><span style="opacity: 0.8;color: red;">折叠或展开</span><font size="3">发货路线：</font></label>
-			<div class="controls" style="background-color: #e8e8e8; width: 50%">
+			<label class="control-label">发货路线</label>
+			<div class="controls">
 				从
 				<form:select id="province0" path="serviceLine.province.code" class="input-medium required">
 					<option>===省====</option>
@@ -212,52 +335,32 @@
 					<option>===县/区====</option>
 				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
-                <div class="control-group">
-                    <label class="control-label">商品品类</label>
-                </div>
-				<div>
-					&nbsp;
-					<table>
-						<tr style="height: 40px">
-							<td>商品品类：拉杆箱<input name="" value="${variId}" type="hidden"/></td>
-						</tr>
-						<c:set var="flag" value="true"></c:set>
-						<c:forEach items="${serviceModeList}" var="serviceMode" varStatus="i">
-							<tr style="height: 40px">
-								<c:if test="${flag}">
-									<td rowspan="3" valign="top">服务费</td>
-								</c:if>
-								<td>${serviceModeList[i.index].label}<input name="" value="${serviceModeList[i.index].value}" type="hidden"/></td>
-								<td><input name="serviceLineList[0].chargeMap[${variId}_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
-							</tr>
-							<c:set var="flag" value="false"></c:set>
-						</c:forEach>
-						<tr style="height: 40px">
-							<td>商品品类：非拉杆箱<input name="" value="0" type="hidden"/></td>
-						</tr>
-						<c:set var="flag" value="true"></c:set>
-						<c:forEach items="${serviceModeList}" var="serviceMode" varStatus="i">
-							<tr style="height: 40px">
-								<c:if test="${flag}">
-									<td rowspan="3" valign="top">服务费</td>
-								</c:if>
-								<td>${serviceModeList[i.index].label}<input name="" value="${serviceModeList[i.index].value}" type="hidden"/></td>
-								<td><input name="serviceLineList[0].chargeMap[0_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
-							</tr>
-							<c:set var="flag" value="false"></c:set>
-						</c:forEach>
-						<tr style="height: 40px">
-							<td>是否开启&nbsp;<input name="serviceLineList[0].usable" type="checkbox" value="1"/>是</td>
-						</tr>
-					</table>
-				</div>
 			</div>
 		</div>
-		<div align="right">
-			<input id="btnAdd" class="btn btn-primary" type="button" value="添加路线" onclick="add('header0')"/>
-			<%--<input id="btnDel" class="btn btn-primary" type="button" value="删除路线" onclick="del('header0')"/>--%>
+		<div class="control-group">
+			<label class="control-label">商品品类</label>
+			<div class="controls">
+				<form:select path="varietyInfo.id" cssClass="input-medium required" itemLabel="${bizServiceCharge.varietyInfo.name}" itemValue="${bizServiceCharge.varietyInfo.id}">
+					<form:option value="0">非拉杆箱</form:option>
+					<form:option value="1">拉杆箱</form:option>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
 		</div>
-
+		<div class="control-group">
+			<label class="control-label">服务费</label>
+			<div class="controls">
+				<form:select path="serviceMode" cssClass="input-medium required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('service_cha')}" itemLabel="label" itemValue="value"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
+				<input name="servicePrice" value="${bizServiceCharge.servicePrice}" class="input-mini required" type="number" min="0"/>&nbsp;元/支(元/套)
+				<span class="help-inline"><font color="red">*</font> </span>&nbsp;&nbsp;
+				是否开启&nbsp;<input name="serviceLine.usable" type="checkbox" value="1"/>是&nbsp;<input name="serviceLine.usable" type="checkbox" value="0"/>否
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:order:bizServiceCharge:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

@@ -20,16 +20,22 @@
 		bsl.usable AS "serviceLine.usable",
 		bsl.province_id AS "serviceLine.province.id",
 		prov.name AS "serviceLine.province.name",
+		prov.code AS "serviceLine.province.code",
 		bsl.city_id AS "serviceLine.city.id",
 		city.name AS "serviceLine.city.name",
+		city.code AS "serviceLine.city.code",
 		bsl.region_id AS "serviceLine.region.id",
 		region.name AS "serviceLine.region.name",
+		region.code AS "serviceLine.region.code",
 		bsl.to_province_id AS "serviceLine.toProvince.id",
 		tprov.name AS "serviceLine.toProvince.name",
+		tprov.code AS "serviceLine.toProvince.code",
 		bsl.to_city_id AS "serviceLine.toCity.id",
 		tcity.name AS "serviceLine.toCity.name",
+		tcity.code AS "serviceLine.toCity.code",
 		bsl.to_region_id AS "serviceLine.toRegion.id",
-		tregion.name AS "serviceLine.toRegion.name"
+		tregion.name AS "serviceLine.toRegion.name",
+		tregion.code AS "serviceLine.toRegion.code"
 	</sql>
 	
 	<sql id="bizServiceChargeJoins">
