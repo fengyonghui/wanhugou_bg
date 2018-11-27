@@ -36,7 +36,11 @@
                 dataType: "json",
                 success: function(res){
                 	console.log(res)
-                	
+                	if(res.data.option=="applyKnot"){
+                		$('#changeTitle').html('申请结佣');
+                	}if(res.data.option=="detail"){
+                		$('#changeTitle').html('佣金详情');
+                	}
 					var entity = res.data.entity;
 					var deadline = '';
 					if(entity.deadline) {
@@ -193,8 +197,7 @@
 									var consigner = '';
 									if(zz.suplyis.name) {
 										consigner = zz.suplyis.name;
-									}
-		
+									}		
 									htmlCommodity += '<div class="mui-row app_bline commodity" id="commoditybox">' +
 			                    
 				                    '<div class="mui-row lineStyle">' +
@@ -262,8 +265,7 @@
 							}
 						});
 					}
-					$('#ommodity').html(htmlCommodity);
-					
+					$('#ommodity').html(htmlCommodity);					
 					_this.comPayMent();//申请付款					
                 }
             });
@@ -313,11 +315,13 @@
 	                success: function(rest){
 	                	if(rest.ret==true){		                		
 	                		mui.toast('保存成功！');
-	                		GHUTILS.OPENPAGE({
-							url:"../../../html/orderMgmtHtml/commissionMgmtHtml/commissionList.html",
-								extras: {
-								}
-							})
+	                		window.setTimeout(function(){
+					            GHUTILS.OPENPAGE({
+								url:"../../../html/orderMgmtHtml/commissionMgmtHtml/commissionList.html",
+									extras: {
+									}
+								})
+					        },300);	                		
 	                	}
 	                }	
 				})

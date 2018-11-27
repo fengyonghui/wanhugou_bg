@@ -77,14 +77,17 @@
 		                    	var mobileUrls = $(this).attr('mobileurl');
 		                    	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
 		                        	$(this).children('a').attr('class','mui-navigate-right');
-		                        	$(this).attr('id','commission');		                        	
-		                        	_this.ulThird();
+		                        	$(this).attr('id','commission');		                        			                        	
 		                        }
 		                    });
+		                    _this.ulThird();
                         }
                     })
                     
-                }                
+                }   
+//              $(this).css('background','pink');
+//              console.log($(this).parent('li'))
+//               $(this).parent('li').siblings('li').css('background','#fff');
                 var getUl=$(this).next('ul').children('li').length;
                 if(getUl==0){
                 	$(this).next('ul').css('display','none');
@@ -92,6 +95,7 @@
 	            if ($(this).next().css('display') == "none"||getUl==0) {
 	                $(this).next('ul').show(); 
 	                $(this).parent().siblings('li').children('ul').hide();
+//	                $(this).parent('li').siblings('li').css('background','#fff');
 	            }else{
 	                $(this).next('ul').hide();
 	                $(this).parent().siblings('li').children('ul').hide();
@@ -138,7 +142,7 @@
 //				}*/
 //				
 //			})
-//	             _this.hrefHtml();
+//	        _this.hrefHtml();
         },
         ulThird:function(){
         	var _this = this;
@@ -185,6 +189,7 @@
 	            var url = $(this).attr('url');
             	var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');
+				console.log(mobileUrl)
 				/*订单管理*/
                 if(url) {
                 	mui.toast('子菜单不存在')

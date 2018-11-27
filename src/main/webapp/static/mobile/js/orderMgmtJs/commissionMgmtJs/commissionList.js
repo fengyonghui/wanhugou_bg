@@ -337,7 +337,6 @@
 					GHUTILS.OPENPAGE({
 						url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commListsearch.html",
 						extras:{
-//							statu: myStatu,
 						}
 					})
 				}
@@ -347,8 +346,7 @@
 				var url = $(this).attr('url');
 				GHUTILS.OPENPAGE({
 					url: "../../../html/backstagemgmt.html",
-					extras: {
-						
+					extras: {						
 					}
 				})
 			})
@@ -357,7 +355,6 @@
 			var _this = this;
 			//详情链接
         	$('.numLists').on('tap',function(){
-        		alert(1)
                	var url = $(this).attr('url');
                 var orderid = $(this).attr('orderid');
                 if(orderid){
@@ -434,8 +431,7 @@
 				var orderIds = $(this).attr('orderIds');
 				var totalDetail = $(this).attr('totalDetail');
 				var totalCommission = $(this).attr('totalCommission');
-				var sellerId = $(this).attr('sellerId');
-				
+				var sellerId = $(this).attr('sellerId');				
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(orderIds == orderIds) {
@@ -456,8 +452,7 @@
 				var url = $(this).attr('url');
 				var orderIds = $(this).attr('orderIds');
 				var statu=$(this).attr('statu');
-				var source=$(this).attr('source');
-				
+				var source=$(this).attr('source');				
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(orderIds == orderIds) {
@@ -475,7 +470,6 @@
 					                    GHUTILS.OPENPAGE({
 											url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commissionList.html",
 											extras: {
-	//												inListId:inListId,
 											}
 										})
 					                },300);
@@ -509,7 +503,6 @@
 					                    GHUTILS.OPENPAGE({
 											url: "../../../html/orderMgmtHtml/commissionMgmtHtml/commissionList.html",
 											extras: {
-	//												inListId:inListId,
 											}
 										})
 					                },300);

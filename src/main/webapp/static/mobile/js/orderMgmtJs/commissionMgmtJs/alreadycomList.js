@@ -256,8 +256,8 @@
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.remark+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
-									'<label>支付凭证:</label>' +
-									'<div class="imgLists">' +_this.photoShow(item)+
+									'<label class="imgLabel app_fl">支付凭证:</label>' +
+									'<div class="imgLists app_fr">' +_this.photoShow(item)+
 									'</div>' +
 								'</div>' +
 								'<div class="app_color40 mui-row app_text_center content_part operation" id="check">' +
@@ -308,7 +308,7 @@
 			var imgs = '';
 			 if(item.imgList){
 				$.each(item.imgList,function (i, card) {
-                imgs = "<a href=\"" + card.imgServer + card.imgPath + '\" target=\"_blank\"><img width=\"100px\" src=\"' + card.imgServer + card.imgPath + "\"></a>"
+                imgs += "<a href="+ card.imgServer + card.imgPath +"  target='_blank'><img width='100px' src=" + card.imgServer + card.imgPath + "></a>"
                });
                return imgs;
             }else{
