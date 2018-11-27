@@ -108,6 +108,8 @@ public class BizRequestAllController {
     private CommonLocationService commonLocationService;
     @Autowired
     private SystemService systemService;
+    @Autowired
+    private BizSkuTransferDetailService bizSkuTransferDetailService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -504,10 +506,14 @@ public class BizRequestAllController {
                 }
                 if ("detail".equals(source)) {
                     List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInvReqByOrderDetailId(orderDetail.getId());
+                    List<BizSkuTransferDetail> transferDetailList = bizSkuTransferDetailService.findInvTransferByOrderDetailId(orderDetail.getId());
                     orderDetail.setRequestDetailList(requestDetailList);
+                    orderDetail.setTransferDetailList(transferDetailList);
                 } else {
                     List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInventorySkuByskuIdAndcentId(center.getId(), orderDetail.getSkuInfo().getId());
+                    List<BizSkuTransferDetail> transferDetailList = bizSkuTransferDetailService.findInventorySkuByskuIdAndcentId(center.getId(),orderDetail.getSkuInfo().getId());
                     orderDetail.setRequestDetailList(requestDetailList);
+                    orderDetail.setTransferDetailList(transferDetailList);
                 }
             }
         }

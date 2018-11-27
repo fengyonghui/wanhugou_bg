@@ -9,6 +9,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 订单状态修改日志DAO接口
@@ -27,4 +28,11 @@ public interface BizOrderStatusDao extends CrudDao<BizOrderStatus> {
     public int insertAfterBizStatusChanged(@Param("bizStatusTemp") Integer bizStatusTemp, @Param("createTime") Date createTime, @Param("updateTime") Date updateTime, @Param("orderTypeDesc") String orderTypeDesc, @Param("orderType") Integer orderType, @Param("id") Integer id);
 
     int findCurrentStatus(@Param("orderId") Integer orderId, @Param("orderType") Integer orderType);
+
+    /**
+     * 只查找状态表
+     * @param bizOrderStatus
+     * @return
+     */
+    List<BizOrderStatus> findStatusList(BizOrderStatus bizOrderStatus);
 }
