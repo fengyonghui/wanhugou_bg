@@ -71,13 +71,13 @@
                                 } 
                             });
                             $(".childData"+indexNum).html(pHtmlList);
-                            var sArr=$('.childData1 .childMenu');
+                            var sArr=$(".childData"+indexNum+'>'+'.childMenu');
 		                    console.log(sArr)
 		                    $.each(sArr, function(i, items) {
 		                    	var mobileUrls = $(this).attr('mobileurl');
 		                    	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
 		                        	$(this).children('a').attr('class','mui-navigate-right');
-		                        	$(this).attr('id','commission');		                        			                        	
+		                        	$(this).attr('id','commission');		                        			                      	
 		                        }
 		                    });
 		                    _this.ulThird();
@@ -85,9 +85,6 @@
                     })
                     
                 }   
-//              $(this).css('background','pink');
-//              console.log($(this).parent('li'))
-//               $(this).parent('li').siblings('li').css('background','#fff');
                 var getUl=$(this).next('ul').children('li').length;
                 if(getUl==0){
                 	$(this).next('ul').css('display','none');
@@ -95,7 +92,6 @@
 	            if ($(this).next().css('display') == "none"||getUl==0) {
 	                $(this).next('ul').show(); 
 	                $(this).parent().siblings('li').children('ul').hide();
-//	                $(this).parent('li').siblings('li').css('background','#fff');
 	            }else{
 	                $(this).next('ul').hide();
 	                $(this).parent().siblings('li').children('ul').hide();
@@ -147,9 +143,11 @@
         ulThird:function(){
         	var _this = this;
         	$('.childMenu>a').on('tap',function(){
+        		alert(1)
         		var url = $(this).attr('url');
 				var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');
+				console.log(mobileUrl)
                 if(url) {
                 	mui.toast('子菜单不存在')             	
                 }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml') {
@@ -160,6 +158,7 @@
                         data: {parentId:purchId},
                         dataType: "json",
                         success: function(res){
+                        	console.log(res)
                             var pHtmlLists = '';
                             $.each(res.data, function(i, ite) {
                                 if(ite.mobileUrl){

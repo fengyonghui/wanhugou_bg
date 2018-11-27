@@ -13,7 +13,6 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			//权限添加biz:order:bizOrderHeader:view biz:order:bizOrderHeader:edit
-			//
 			this.getPermissionList1('biz:order:sure:bizCommission','commOrdFlag')//确认支付金额
 			this.getPermissionList3('biz:order:bizCommission:audit','commEditFlag')//审核
 			this.getPermissionList2('biz:order:bizCommission:sure:pay','commAuditFlag')//确认付款
@@ -54,8 +53,7 @@
 							}
 							if(_this.userInfo.orderNum==undefined){
 								_this.userInfo.orderNum="";
-							}
-							
+							}							
 							if(_this.userInfo.commissionStatus==undefined){
 								_this.userInfo.commissionStatus="";
 							}							
@@ -128,8 +126,7 @@
 			                success: function(user){                 
 								userId = user.data.id
 			                }
-			            });
-			            
+			            });			            
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
 								console.log(item)
