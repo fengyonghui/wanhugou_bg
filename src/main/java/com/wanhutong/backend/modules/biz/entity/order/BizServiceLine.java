@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.entity.order;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.sys.entity.SysRegion;
 
+import java.util.Map;
+
 /**
  * 服务费物流线路Entity
  * @author Tengfei.Zhang
@@ -54,6 +56,11 @@ public class BizServiceLine extends DataEntity<BizServiceLine> {
 	 * 是否启用（0不启用，1启用），启用才可以正常使用
 	 */
 	private Byte usable;
+
+	/**
+	 * 页面传值
+	 */
+	private Map<String, Integer> chargeMap;
 
 	public BizServiceLine() {
 		super();
@@ -125,5 +132,13 @@ public class BizServiceLine extends DataEntity<BizServiceLine> {
 
 	public void setToRegion(SysRegion toRegion) {
 		this.toRegion = toRegion;
+	}
+
+	public Map<String, Integer> getChargeMap() {
+		return chargeMap;
+	}
+
+	public void setChargeMap(Map<String, Integer> chargeMap) {
+		this.chargeMap = chargeMap;
 	}
 }

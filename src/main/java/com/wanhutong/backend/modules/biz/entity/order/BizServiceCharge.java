@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 服务费--配送方式Entity
@@ -36,6 +37,11 @@ public class BizServiceCharge extends DataEntity<BizServiceCharge> {
 	 * 服务费
 	 */
 	private BigDecimal servicePrice;
+
+	/**
+	 * 页面传值
+	 */
+	private List<BizServiceLine> serviceLineList;
 
 	public BizServiceCharge() {
 		super();
@@ -75,5 +81,13 @@ public class BizServiceCharge extends DataEntity<BizServiceCharge> {
 
 	public void setServiceLine(BizServiceLine serviceLine) {
 		this.serviceLine = serviceLine;
+	}
+
+	public List<BizServiceLine> getServiceLineList() {
+		return serviceLineList;
+	}
+
+	public void setServiceLineList(List<BizServiceLine> serviceLineList) {
+		this.serviceLineList = serviceLineList;
 	}
 }

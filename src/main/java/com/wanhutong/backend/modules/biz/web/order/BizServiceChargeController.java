@@ -6,10 +6,12 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizServiceLine;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -77,8 +79,13 @@ public class BizServiceChargeController extends BaseController {
 		if (!beanValidator(model, bizServiceCharge)){
 			return form(bizServiceCharge, model);
 		}
+		List<BizServiceLine> serviceLineList = bizServiceCharge.getServiceLineList();
+		if (CollectionUtils.isEmpty(serviceLineList)) {
+			addMessage(redirectAttributes, "保存服务费设置失败");
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizServiceCharge/?repage";
+		}
 		bizServiceChargeService.save(bizServiceCharge);
-		addMessage(redirectAttributes, "保存服务费--配送方式成功");
+		addMessage(redirectAttributes, "保存服务费设置成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizServiceCharge/?repage";
 	}
 	

@@ -65,22 +65,26 @@
 				<th>创建人</th>
 				<th>创建时间</th>
 				<th>更新时间</th>
+				<th>是否开启</th>
 				<shiro:hasPermission name="biz:order:bizServiceCharge:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizServiceCharge" varStatus="index">
 			<tr>
-				td>${index + 1}</td>
+				<td>${index.index + 1}</td>
 				<td>${fns:getDictLabel(bizServiceCharge.serviceLine.orderType,'service_order_type','')}</td>
-				<td>${bizServiceCharge.serviceLine.region.name}</td>
-				<td>${bizServiceCharge.serviceLine.toRegion.name}</td>
-				<td>${bizServiceCharge.varietyInfo.name}</td>
+				<td>${bizServiceCharge.serviceLine.province.name}${bizServiceCharge.serviceLine.city.name}${bizServiceCharge.serviceLine.region.name}</td>
+				<td>${bizServiceCharge.serviceLine.toProvince.name}${bizServiceCharge.serviceLine.toCity.name}${bizServiceCharge.serviceLine.toRegion.name}</td>
+				<td>
+					${bizServiceCharge.varietyInfo.name == null ? '非拉杆箱' : bizServiceCharge.varietyInfo.name}
+				</td>
 				<td>${fns:getDictLabel(bizServiceCharge.serviceMode, 'service_cha', '')}</td>
 				<td><fmt:formatNumber value="${bizServiceCharge.servicePrice}" pattern="0.00"/></td>
-				<td>${bizServiceCharge.serviceLine.createBy.name}</td>
-				<td><fmt:formatDate value="${bizServiceCharge.serviceLine.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-				<td><fmt:formatDate value="${bizServiceCharge.serviceLine.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+				<td>${bizServiceCharge.createBy.name}</td>
+				<td><fmt:formatDate value="${bizServiceCharge.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+				<td><fmt:formatDate value="${bizServiceCharge.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+				<td>${bizServiceCharge.serviceLine.usable == 1 ? '是' : '否'}</td>
 				<shiro:hasPermission name="biz:order:bizServiceCharge:edit"><td>
     				<a href="${ctx}/biz/order/bizServiceCharge/form?id=${bizServiceCharge.id}">修改</a>
 					<a href="${ctx}/biz/order/bizServiceCharge/delete?id=${bizServiceCharge.id}" onclick="return confirmx('确认要删除该服务费--配送方式吗？', this.href)">删除</a>

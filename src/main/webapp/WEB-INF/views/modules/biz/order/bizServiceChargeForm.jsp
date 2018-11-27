@@ -151,7 +151,7 @@
                 success: function (data) {
                     //从服务器获取数据进行绑定
                     $.each(data, function (i, item) {
-                        str += "<option value=" + item.id + ">" + item.name + "</option>";
+                        str += "<option value=" + item.code + ">" + item.name + "</option>";
                     });
                     //将数据添加到省份这个下拉框里面
                     if (obj == 'from') {
@@ -183,6 +183,7 @@
             var num = parseInt(n) + parseInt(1);
             var sourceNode = $("#"+item).parent(); // 获得被克隆的节点对象
             var clonedNode = sourceNode.clone(true);// 克隆节点
+			// sourceNode.after(sourceNode.html());
             clonedNode.find("#"+item).attr("id", "header" + num); // 修改一下id 值，避免id 重复
 			clonedNode.find("#province"+n).attr("id","province" + num);
 			clonedNode.find("#toProvince"+n).attr("id","toProvince" + num);
@@ -190,6 +191,13 @@
 			clonedNode.find("#toCity"+n).attr("id","toCity" + num);
 			clonedNode.find("#region"+n).attr("id","region" + num);
 			clonedNode.find("#toRegion"+n).attr("id","toRegion" + num);
+			// $(".controls:last").find("#"+item).attr("id", "header" + num);
+			// $(".controls:last").find("#province"+n).attr("id","province" + num);
+			// $(".controls:last").find("#toProvince"+n).attr("id","toProvince" + num);
+			// $(".controls:last").find("#city"+n).attr("id","city" + num);
+			// $(".controls:last").find("#toCity"+n).attr("id","toCity" + num);
+			// $(".controls:last").find("#region"+n).attr("id","region" + num);
+			// $(".controls:last").find("#toRegion"+n).attr("id","toRegion" + num);
             Province("province" + num);
             Province("toProvince" + num);
             $("#province" + num).change( function () {
@@ -206,7 +214,6 @@
             });
             sourceNode.after(clonedNode);
             $("#"+item).next("div.controls").toggle();
-            // clonedNode.find("#"+item).next("div.controls").toggle();
             $("#btnAdd").attr("onclick","add('header"+num+"')");
             if (n == 0) {
                 $("#btnAdd").after("<input id=\"btnDel\" class=\"btn btn-primary\" type=\"button\" value=\"删除路线\" onclick=\"del('header1')\"/>");
@@ -226,6 +233,7 @@
 			$("#"+item).parent().remove();
         }
         function Province(item) {
+            alert(item);
 			$("#"+item).html("");
             var str = "<option>===省====</option>";
             $.ajax({
@@ -241,6 +249,7 @@
                     });
                     //将数据添加到省份这个下拉框里面
                     $("#"+item).append(str);
+                    console.info(str);
                 },
                 error: function () { alert("Error"); }
             });
@@ -259,24 +268,24 @@
 			<label id="header0" class="control-label" onclick="toggle(this.id)"><span style="opacity: 0.8;color: red;">折叠或展开</span><font size="3">发货路线：</font></label>
 			<div class="controls" style="background-color: #e8e8e8; width: 50%">
 				从
-				<select id="province0" name="provinces" class="input-medium required">
+				<select id="province0" name="serviceLineList[0].province.code" class="input-medium required">
 					<option>===省====</option>
 				</select>
-				<select id="city0" name="citys" class="input-medium required">
+				<select id="city0" name="serviceLineList[0].city.code" class="input-medium required">
 					<option>===市====</option>
 				</select>
-				<select id="region0" name="regions" class="input-medium">
+				<select id="region0" name="serviceLineList[0].region.code" class="input-medium">
 					<option>===县/区====</option>
 				</select>
 				<br>
 				至
-				<select id="toProvince0" name="toProvinces" class="input-medium required">
+				<select id="toProvince0" name="serviceLineList[0].toProvince.code" class="input-medium required">
 					<option>===省====</option>
 				</select>
-				<select id="toCity0" name="toCitys" class="input-medium required">
+				<select id="toCity0" name="serviceLineList[0].toCity.code" class="input-medium required">
 					<option>===市====</option>
 				</select>
-				<select id="toRegion0" name="toRegions" class="input-medium">
+				<select id="toRegion0" name="serviceLineList[0].toRegion.code" class="input-medium">
 					<option>===县/区====</option>
 				</select>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -284,7 +293,7 @@
 					&nbsp;
 					<table>
 						<tr style="height: 40px">
-							<td>商品品类：拉杆箱<input name="variIds" value="${variId}" type="hidden"/></td>
+							<td>商品品类：拉杆箱<input name="" value="${variId}" type="hidden"/></td>
 						</tr>
 						<c:set var="flag" value="true"></c:set>
 						<c:forEach items="${serviceModeList}" var="serviceMode" varStatus="i">
@@ -292,13 +301,13 @@
 								<c:if test="${flag}">
 									<td rowspan="3" valign="top">服务费</td>
 								</c:if>
-								<td>${serviceModeList[i.index].label}<input name="serviceModes" value="${serviceModeList[i.index].value}" type="hidden"/></td>
-								<td><input name="servicePrices" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
+								<td>${serviceModeList[i.index].label}<input name="" value="${serviceModeList[i.index].value}" type="hidden"/></td>
+								<td><input name="serviceLineList[0].chargeMap[${variId}_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
 							</tr>
 							<c:set var="flag" value="false"></c:set>
 						</c:forEach>
 						<tr style="height: 40px">
-							<td>商品品类：非拉杆箱<input name="variIds" value="-1" type="hidden"/></td>
+							<td>商品品类：非拉杆箱<input name="" value="0" type="hidden"/></td>
 						</tr>
 						<c:set var="flag" value="true"></c:set>
 						<c:forEach items="${serviceModeList}" var="serviceMode" varStatus="i">
@@ -306,13 +315,13 @@
 								<c:if test="${flag}">
 									<td rowspan="3" valign="top">服务费</td>
 								</c:if>
-								<td>${serviceModeList[i.index].label}<input name="serviceModes" value="${serviceModeList[i.index].value}" type="hidden"/></td>
-								<td><input name="servicePrices" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
+								<td>${serviceModeList[i.index].label}<input name="" value="${serviceModeList[i.index].value}" type="hidden"/></td>
+								<td><input name="serviceLineList[0].chargeMap[0_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
 							</tr>
 							<c:set var="flag" value="false"></c:set>
 						</c:forEach>
 						<tr style="height: 40px">
-							<td>是否开启&nbsp;<input name="usables" type="checkbox" value="1"/>是</td>
+							<td>是否开启&nbsp;<input name="serviceLineList[0].usable" type="checkbox" value="1"/>是</td>
 						</tr>
 					</table>
 				</div>
@@ -328,6 +337,8 @@
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+	<script type="text/javascript" src="${ctxStatic}/jquery/jquery-1.9.1-min.js"></script>
+	<script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
 	<script src="${ctxStatic}/bootstrap/2.3.1/docs/assets/js/bootstrap-collapse.js" type="text/javascript"></script>
 </body>
 </html>

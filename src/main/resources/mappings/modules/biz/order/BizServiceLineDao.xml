@@ -103,10 +103,9 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_service_line(
 			id,
-			sc_id,
 			order_type,
 			province_id,
 			city_id,
@@ -123,7 +122,6 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{serviceCharge.id},
 			#{orderType},
 			#{province.id},
 			#{city.id},
@@ -143,7 +141,6 @@
 	
 	<update id="update">
 		UPDATE biz_service_line SET 	
-			sc_id = #{serviceCharge.id},
 			order_type = #{orderType},
 			province_id = #{province.id},
 			city_id = #{city.id},

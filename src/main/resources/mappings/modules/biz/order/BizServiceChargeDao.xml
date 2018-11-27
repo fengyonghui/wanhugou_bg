@@ -11,6 +11,7 @@
 		a.service_price AS "servicePrice",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
+		u.name AS "createBy.name",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
@@ -40,6 +41,7 @@
 		LEFT JOIN sys_region tprov ON tprov.id = bsl.to_province_id
 		LEFT JOIN sys_region tcity ON tcity.id = bsl.to_city_id
 		LEFT JOIN sys_region tregion ON tregion.id = bsl.to_region_id
+		LEFT JOIN sys_user u ON u.id = a.create_id
 	</sql>
     
 	<select id="get" resultType="BizServiceCharge">
