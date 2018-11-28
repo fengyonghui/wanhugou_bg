@@ -1234,20 +1234,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			Pair<Boolean, String> audit = null;
 			audit = auditRe(request, response, id, currentType, auditType, description, createPo, lastPayDateVal);
 			if (audit.getLeft()) {
-				//自动发送站内信
-				BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(id);
-				String orderNum = bizRequestHeader.getReqNo();
-				String title = "";
-				String content = "";
-				if (auditType == 1) {
-					title = "备货单" + orderNum + "审核通过";
-					content = "您好，您的备货单" + orderNum + "审核通过";
-				} else {
-					title = "备货单" + orderNum + "审核不通过";
-					content = "您好，很抱歉，您的备货单" + orderNum + "审核不通过，原因是：" + description;
-				}
-				bizMessageInfoService.autoSendMessageInfo(title, content, bizRequestHeader.getFromOffice().getId(), "requestHeader");
-
 				return JsonUtil.generateData(audit.getRight(), null);
 			}
 			return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);

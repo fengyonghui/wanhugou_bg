@@ -19,9 +19,21 @@
 				submitHandler: function(form){
 				    var transferSku = $("#transferSku").find("tr").length;
 				    if (parseInt(transferSku) > parseInt(0)) {
-                        $("#btnSubmit").attr("disabled","disabled ");
-                        loading('正在提交，请稍等...');
-                        form.submit();
+				        var flag = true;
+                        $("input[name='transferNums']").each(function () {
+                            var transferNum = $(this).val();
+							var stockQty = $(this).parent().parent().find("input[name='stockQtys']").val();
+							if (parseInt(transferNum) > parseInt(stockQty)) {
+							    flag = false;
+							}
+                        });
+                        if (flag) {
+                            $("#btnSubmit").attr("disabled","disabled ");
+                            loading('正在提交，请稍等...');
+                            form.submit();
+						} else {
+                            alert("调拨数量不能大于原库存数");
+						}
 					}
 				},
 				errorContainer: "#messageBox",
@@ -72,6 +84,7 @@
 										"<td>"+skuInfo.name+"</td>" +
 										"<td>"+skuInfo.partNo+"</td>" +
 										"<td>"+skuInfo.itemNo+"</td>" +
+										"<td>"+skuInfo.stockQty+"<input type='hidden' name='stockQtys' value='"+skuInfo.stockQty+"'/></td>" +
 										"<td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='transferNum_"+skuInfo.id+"' value='' type='number' min='1'/></td>" +
 										"<td id='td_"+skuInfo.id+"'><a href='#' onclick='addItem("+skuInfo.id+")'>增加<a/></td>" +
 										"</tr>";
@@ -240,6 +253,7 @@
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品货号</th>
+						<th>原库存数</th>
 						<th>调拨数量</th>
 						<c:if test="${bizSkuTransfer.str ne 'detail' && bizSkuTransfer.str ne 'audit'}">
 							<th>操作</th>
@@ -255,6 +269,9 @@
 									<td>${transferDetail.skuInfo.name}</td>
 									<td>${transferDetail.skuInfo.partNo}</td>
 									<td>${transferDetail.skuInfo.itemNo}</td>
+									<td>${transferDetail.skuInfo.stockQty}
+										<input name="stockQtys" type="hidden" value="${transferDetail.skuInfo.stockQty}"/>
+									</td>
 									<td><input name="transferNums" type="number" min="1" class="input-mini" value="${transferDetail.transQty}"/></td>
 									<input name="skuIds" type="hidden" value="${transferDetail.skuInfo.id}"/>
 									<c:if test="${bizSkuTransfer.str ne 'detail' && bizSkuTransfer.str ne 'audit'}">
@@ -273,6 +290,7 @@
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品货号</th>
+						<th>原库存数</th>
 						<th>调拨数量</th>
 						<c:if test="${bizSkuTransfer.str ne 'detail' && bizSkuTransfer.str ne 'audit'}">
 							<th>操作</th>

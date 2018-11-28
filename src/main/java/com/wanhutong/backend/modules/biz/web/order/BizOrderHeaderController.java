@@ -1277,20 +1277,6 @@ public class BizOrderHeaderController extends BaseController {
             Pair<Boolean, String> audit = null;
             audit = auditFifty(request, response, id, currentType, auditType, description, createPo, lastPayDateVal);
             if (audit.getLeft()) {
-                //自动发送站内信
-                BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
-                String orderNum = bizOrderHeader.getOrderNum();
-                String title = "";
-                String content = "";
-                if (auditType == 1) {
-                    title = "订单" + orderNum + "审核通过";
-                    content = "您好，您的订单" + orderNum + "审核通过";
-                } else {
-                    title = "订单" + orderNum + "审核不通过";
-                    content = "您好，很抱歉，您的订单" + orderNum + "审核不通过，原因是：" + description;
-                }
-                bizMessageInfoService.autoSendMessageInfo(title, content, bizOrderHeader.getCustomer().getId(), "orderHeader");
-
                 return JsonUtil.generateData(audit.getRight(), null);
             }
             return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);
@@ -1759,8 +1745,8 @@ public class BizOrderHeaderController extends BaseController {
 
                     //同意发货成功，发送站内信
                     String orderNum = bizOrderHeader.getOrderNum();
-                    String title = "订单" + orderNum + "同意发货";
-                    String content = "您好，您的订单" + orderNum + "同意发货";
+                    String title = "订单" + orderNum + "审核通过";
+                    String content = "您好，您的订单" + orderNum + "审核通过";
                     bizMessageInfoService.autoSendMessageInfo(title, content, bizOrderHeader.getCustomer().getId(), "orderHeader");
                 }
             }
@@ -2913,20 +2899,6 @@ public class BizOrderHeaderController extends BaseController {
         try {
             Pair<Boolean, String> audit = doAudit(id, auditType, currentType, description, orderType, createPo, lastPayDateVal);
             if (audit.getLeft()) {
-                //自动发送站内信
-                BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
-                String orderNum = bizOrderHeader.getOrderNum();
-                String title = "";
-                String content = "";
-                if (auditType == 1) {
-                    title = "订单" + orderNum + "审核通过";
-                    content = "您好，您的订单" + orderNum + "审核通过";
-                } else {
-                    title = "订单" + orderNum + "审核不通过";
-                    content = "您好，很抱歉，您的订单" + orderNum + "审核不通过，原因是：" + description;
-                }
-                bizMessageInfoService.autoSendMessageInfo(title, content, bizOrderHeader.getCustomer().getId(), "orderHeader");
-
                 return JsonUtil.generateData(audit.getRight(), null);
             }
             return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, audit.getRight(), null);

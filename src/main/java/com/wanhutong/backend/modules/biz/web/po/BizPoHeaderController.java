@@ -665,36 +665,6 @@ public class BizPoHeaderController extends BaseController {
     public String audit(HttpServletRequest request, int id, String currentType, int auditType, String description) {
         Pair<Boolean, String> result = bizPoHeaderService.auditPo(id, currentType, auditType, description);
         if (result.getLeft()) {
-            //自动发送站内信
-            BizPoHeader bizPoHeader = new BizPoHeader();
-            bizPoHeader.setId(id);
-            List<BizPoHeader> bizPoHeaderList = bizPoHeaderService.findList(bizPoHeader);
-            if (CollectionUtils.isNotEmpty(bizPoHeaderList)) {
-                bizPoHeader = bizPoHeaderList.get(0);
-                String orderNum = "";
-                Integer custId = 0;
-                String option = "orderHeader";
-                if (bizPoHeader.getBizOrderHeader() != null) {
-                    orderNum = bizPoHeader.getBizOrderHeader().getOrderNum();
-                    custId = bizPoHeader.getBizOrderHeader().getCustomer().getId();
-                } else {
-                    orderNum = bizPoHeader.getBizRequestHeader().getReqNo();
-                    custId = bizPoHeader.getBizRequestHeader().getFromOffice().getId();
-                    option = "requetHeader";
-                }
-                String title = "";
-                String content = "";
-                if (auditType == 1) {
-                    title = "订单" + orderNum + "审核通过";
-                    content = "您好，您的订单" + orderNum + "审核通过";
-                } else {
-                    title = "订单" + orderNum + "审核不通过";
-                    content = "您好，很抱歉，您的订单" + orderNum + "审核不通过，原因是：" + description;
-                }
-                bizMessageInfoService.autoSendMessageInfo(title, content, custId, option);
-            }
-
-
             return JsonUtil.generateData(result, request.getParameter("callback"));
         }
         return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
