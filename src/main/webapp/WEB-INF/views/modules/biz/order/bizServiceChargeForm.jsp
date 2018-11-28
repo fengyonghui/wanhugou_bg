@@ -199,6 +199,10 @@
             clonedNode.find("#region"+num).attr("name","serviceLineList["+num+"].region.code");
 			clonedNode.find("#toRegion"+n).attr("id","toRegion" + num);
             clonedNode.find("#toRegion"+num).attr("name","serviceLineList["+num+"].toRegion.code");
+
+            clonedNode.find("#toRegion"+n).attr("id","toRegion" + num);
+            clonedNode.find("#toRegion"+num).attr("name","serviceLineList["+num+"].toRegion.code");
+
             Province("province" + num);
             Province("toProvince" + num);
             $("#province" + num).change( function () {
@@ -322,7 +326,7 @@
 							<c:set var="flag" value="false"></c:set>
 						</c:forEach>
 						<tr style="height: 40px">
-							<td>是否开启&nbsp;<input name="serviceLineList[0].usable" type="checkbox" value="1"/>是</td>
+							<td>是否开启&nbsp;<input id="usable0" name="serviceLineList[0].usable" type="checkbox" value="1"/>是</td>
 						</tr>
 					</table>
 				</div>
