@@ -62,7 +62,7 @@
 				data:{"level":"prov"},
                 async: false,
                 success: function (data) {
-                    console.info(data);
+                    // console.info(data);
                     //从服务器获取数据进行绑定
                     $.each(data, function (i, item) {
                         str += "<option value=" + item.code + ">" + item.name + "</option>";
@@ -179,11 +179,7 @@
         }
         function add(item) {
             var n = item.replace('header','');
-            // alert(n);
             var num = parseInt(n) + parseInt(1);
-            console.log("-------------")
-            console.log(num)
-            console.log("-------------")
             var sourceNode = $("#"+item).parent(); // 获得被克隆的节点对象
             var clonedNode = sourceNode.clone(true);// 克隆节点
             clonedNode.find("#"+item).attr("id", "header" + num); // 修改一下id 值，避免id 重复
@@ -200,8 +196,15 @@
 			clonedNode.find("#toRegion"+n).attr("id","toRegion" + num);
             clonedNode.find("#toRegion"+num).attr("name","serviceLineList["+num+"].toRegion.code");
 
-            clonedNode.find("#toRegion"+n).attr("id","toRegion" + num);
-            clonedNode.find("#toRegion"+num).attr("name","serviceLineList["+num+"].toRegion.code");
+            clonedNode.find("td[name='serviceModeTd']").each(function() {
+                var childInput = $(this).find("input");
+				var nameVal = childInput.attr('name');
+                nameVal = nameVal.replace('serviceLineList[' + n +']', 'serviceLineList[' + num +']');
+                childInput.attr("name", nameVal);
+            });
+
+            clonedNode.find("#usable"+n).attr("id","usable" + num);
+            clonedNode.find("#usable"+num).attr("name","serviceLineList["+num+"].usable");
 
             Province("province" + num);
             Province("toProvince" + num);
@@ -247,14 +250,14 @@
                 data:{"level":"prov"},
                 async: false,
                 success: function (data) {
-                    console.info(data);
+                    // console.info(data);
                     //从服务器获取数据进行绑定
                     $.each(data, function (i, item) {
                         str += "<option value=" + item.code + ">" + item.name + "</option>";
                     });
                     //将数据添加到省份这个下拉框里面
                     $("#"+item).append(str);
-                    console.info(str);
+                    // console.info(str);
                 },
                 error: function () { alert("Error"); }
             });
@@ -307,7 +310,7 @@
 									<td rowspan="3" valign="top">服务费</td>
 								</c:if>
 								<td>${serviceModeList[i.index].label}<input name="" value="${serviceModeList[i.index].value}" type="hidden"/></td>
-								<td><input name="serviceLineList[0].chargeMap[${variId}_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
+								<td name="serviceModeTd"><input name="serviceLineList[0].chargeMap[${variId}_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
 							</tr>
 							<c:set var="flag" value="false"></c:set>
 						</c:forEach>
@@ -321,7 +324,7 @@
 									<td rowspan="3" valign="top">服务费</td>
 								</c:if>
 								<td>${serviceModeList[i.index].label}<input name="" value="${serviceModeList[i.index].value}" type="hidden"/></td>
-								<td><input name="serviceLineList[0].chargeMap[0_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
+								<td name="serviceModeTd"><input name="serviceLineList[0].chargeMap[0_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
 							</tr>
 							<c:set var="flag" value="false"></c:set>
 						</c:forEach>
