@@ -59,7 +59,12 @@
 						$('#orNumDate').hide();
 					}  
 					var orshouldPay = bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight
-					$('#orpoNum').val(res.data.bizOrderHeader.orderNumber)//单号
+					//单号
+					var temp = "";
+					for(var i in res.data.orderSourceMap){
+					    temp = i;
+					}
+					$('#orpoNum').val(temp);
 					$('#ordtotal').val(bizPoHeader.totalDetail)//总价
 					$('#orshouldPay').val(orshouldPay)//应付金额
 					$('#orLastDa').val(_this.formatDateTime(bizPoHeader.lastPayDate))//最后付款时间

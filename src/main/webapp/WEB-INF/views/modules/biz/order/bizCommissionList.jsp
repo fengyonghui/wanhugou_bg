@@ -126,7 +126,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>id</th>
+				<th>序号</th>
 				<th>付款金额</th>
 				<th>实际付款金额</th>
 				<th>代销商</th>
@@ -142,10 +142,10 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizCommission">
+		<c:forEach items="${page.list}" var="bizCommission"  varStatus="state">
 			<tr>
 				<td>
-						${bizCommission.id}
+                        ${state.index+1}
 				</td>
 				<td>
 						${bizCommission.totalCommission}

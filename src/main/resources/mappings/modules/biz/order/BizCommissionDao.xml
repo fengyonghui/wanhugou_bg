@@ -185,7 +185,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				GROUP  BY a.id
+				ORDER BY updateDate DESC, id DESC
 			</otherwise>
 		</choose>
 	</select>

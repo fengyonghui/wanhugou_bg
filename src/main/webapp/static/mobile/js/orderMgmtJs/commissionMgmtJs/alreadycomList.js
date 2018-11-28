@@ -129,7 +129,6 @@
 			            });			            
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
-								console.log(item)
 								//实际付款时间
 	                            var payTime="";
 	                            if(item.payTime){
@@ -146,8 +145,7 @@
 	                            }
 								/*结佣详情*/
 								var commDetailBtn = '';
-								var commDetailBtnTxt = '详情';
-								
+								var commDetailBtnTxt = '详情';								
 								//审核
 								var sureCheckBtn = '';
 								var sureCheckBtnTxt = '';
@@ -162,8 +160,7 @@
 											noCheckBtnTxt = '审核驳回';
 										}
 									}									
-								}
-								
+								}								
 								//确认支付金额
 								var surePayMoneyTxt = '';
 								var surePayMoneyBtn = '';
@@ -186,8 +183,7 @@
 									if(item.commonProcess.paymentOrderProcess.name == '审批完成' && item.bizStatus == '1'){
 										surePayMoneyTxt = '支付完成';
 										surePayMoneyBtn = 'downPayMoneyBtn';
-									}
-									
+									}									
 								}
 								//详情
 								var detailBtn="detailBtn";
@@ -210,7 +206,7 @@
 									}else{
 										commissionStatus='';
 									}									
-								}
+								}								
 							commHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 							'<div class="mui-input-row">' +
 									'<label>ID:</label>' +
@@ -229,8 +225,8 @@
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customer.name+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
-									'<label>所属单号:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.orderNumsStr+' ">' +
+									'<label class="imgLabel app_fl">所属单号:</label>' +
+									'<input type="text" disabled class="mui-input-clear" value=" '+item.orderNumsStr+' " style="overflow-x:hidden;">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>最后付款时间:</label>' +
@@ -245,12 +241,12 @@
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+commissionBizStatus+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
-									'<label>单次支付审批状态:</label>' +
+									'<label>单次支付审批:</label>' +
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+commissionStatus+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>备注:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.remark+' ">' +
+									'<input style="overflow-x:hidden;" type="text" class="mui-input-clear" disabled="disabled" value=" '+item.remark+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label class="imgLabel app_fl">支付凭证:</label>' +
@@ -276,7 +272,7 @@
 							'</div>'
 
 							});
-							$('#commList').append(commHtmlList);
+							$('#commList').append(commHtmlList);					
 							_this.stOrdHrefHtml();	
 							_this.payMoneyHtml(res.data.page.list);//字体变颜色
 							_this.inHrefHtml();//确认支付金额

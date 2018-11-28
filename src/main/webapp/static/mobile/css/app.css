@@ -647,7 +647,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .exampleTxt {padding: 15px;}
 .exampleTxt li {padding-top: 5px;}
 .mui-table-view-cell .childMenu.mui-active{background-color: #fff;margin-top: 1px;}
-#commission{margin-bottom: -5px;}
+/*#commission{margin-bottom: -15px;}*/
 #commission .cMenu{margin-bottom: -15px;margin-top:10px;}
 #commission .cMenu a{font-size: 14px;}
 #commiss{margin-bottom: -15px;}
@@ -655,7 +655,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .inputrow{height:40px;line-height:40px;margin-left:15px;font-weight: bold;}
 .mui-table-view-cell.mui-collapse .mui-table-view .mui-table-view-cell{margin-left: -15px;}
 .mui-table-view-cell.mui-collapse .mui-table-view .mui-table-view-cell:after {right: 20px;color:#e8e8e8}
-.mui-input-row .imgLabel{width: 25%;margin-right:20px}
+.mui-input-row .imgLabel{width: 30%;margin-right:10px}
 .mui-input-row .imgLabels{width: 30%;margin-right:10px}
 .imgLists{width: 65%;}
 .imgLists img{margin-right:2px}
@@ -773,3 +773,14 @@ input[type="checkbox"].testCheckbox:checked {-webkit-appearance: none;background
 /*二维码图片*/
 .codeBox{width:200px;height:200px;position: absolute;top:50%;left:50%;margin-top:-100px;margin-left:-100px;}
 .codeBox img{width:100%;height:100%;}
+/*确认支付金额弹窗*/
+.paybox {text-align: center;}			
+.paybox label {display: inline-block;}	
+.payMoney{width: 300px;height: 300px;border-radius: 6px;background-color: #FFF;position: absolute;z-index: 105;left: 50%;top: 50%;margin-left: -150px;margin-top: -150px;}	
+.payMoneys input,.payMoneys textarea,.payMoney input,.payMoney textarea{display: block;width: 80%;text-align: center;margin: 5px auto;}			
+.btnbox {margin: 13px 30px;display: none;}			
+.tanchuang_wrap {width: 100%;height: 100%;position: absolute;left: 0px;top: 0px;z-index: 100;display: none;}			
+.lightbox {width: 100%;z-index: 101;height: 100%;background-color: #000000;filter:alpha(Opacity=20);-moz-opacity: 0.2;opacity: 0.2;position: absolute;top: 0px;left: 0px;}			
+.payMoneys {width: 300px;height: 340px;background-color: #FFF;position: absolute;z-index: 105;left: 50%;top: 50%;margin-left: -150px;margin-top: -170px;border-radius: 6px;}
+#payBtnsave{background: #40ABE9;color:#fff;width:100px;}
+#payBtnremove{background: #40ABE9;color:#fff;width:100px;float:right;}
