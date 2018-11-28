@@ -208,9 +208,9 @@
 									}									
 								}								
 							commHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
-							'<div class="mui-input-row">' +
-									'<label>ID:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.id+' ">' +
+							    '<div class="mui-input-row">' +
+									'<label class="imgLabel app_fl">所属单号:</label>' +
+									'<input type="text" disabled class="mui-input-clear" value=" '+item.orderNumsStr+' " style="overflow-x:hidden;">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>付款金额:</label>' +
@@ -224,10 +224,7 @@
 									'<label>代销商:</label>' +
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.customer.name+' ">' +
 								'</div>' +
-								'<div class="mui-input-row">' +
-									'<label class="imgLabel app_fl">所属单号:</label>' +
-									'<input type="text" disabled class="mui-input-clear" value=" '+item.orderNumsStr+' " style="overflow-x:hidden;">' +
-								'</div>' +
+								
 								'<div class="mui-input-row">' +
 									'<label>最后付款时间:</label>' +
 									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+deadline+' ">' +

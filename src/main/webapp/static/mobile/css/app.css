@@ -646,9 +646,12 @@ body{font-size: 15px;color:#3b3b3b;}
 .commProportion div font{font-weight: normal;color: #000;right: 70px;top: 25%;}
 .exampleTxt {padding: 15px;}
 .exampleTxt li {padding-top: 5px;}
-.mui-table-view-cell .childMenu.mui-active{background-color: #fff;margin-top: 1px;}
+.mui-table-view-cell.childMenu.mui-active{background-color: #fff;margin-top: 1px;}
+.mui-table-view-cell.mui-active {
+    background-color: #fff;
+}
 /*#commission{margin-bottom: -15px;}*/
-#commission .cMenu{margin-bottom: -15px;margin-top:10px;}
+/*#commission .cMenu{margin-bottom: -15px;margin-top:10px;}*/
 #commission .cMenu a{font-size: 14px;}
 #commiss{margin-bottom: -15px;}
 #menuMaget .menuBtn .childMenu>a{font-size: 14px;}

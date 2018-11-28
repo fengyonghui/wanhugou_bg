@@ -185,9 +185,10 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY updateDate DESC, id DESC
+				GROUP  BY a.id
 			</otherwise>
 		</choose>
+		ORDER BY updateDate DESC, id DESC
 	</select>
 	
 	<select id="findAllList" resultType="BizCommission">
