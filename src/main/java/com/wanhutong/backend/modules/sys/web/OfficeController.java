@@ -415,9 +415,9 @@ public class OfficeController extends BaseController {
         Pair<Boolean, String> result = officeService.upgradeAudit(id, applyForLevel, CommonProcessEntity.AuditType.parse(auditType), UserUtils.getUser(), desc);
 
         String titleName = "";
-        if (OfficeTypeEnum.CUSTOMER.getType().equals(applyForLevel)) {
+        if (Integer.valueOf(OfficeTypeEnum.CUSTOMER.getType()) == applyForLevel) {
             titleName = "采购商";
-        } else if (OfficeTypeEnum.COMMISSION_MERCHANT.getType().equals(applyForLevel)){
+        } else if (Integer.valueOf(OfficeTypeEnum.COMMISSION_MERCHANT.getType()) == applyForLevel){
             titleName = "代销商";
         }
 
