@@ -10,6 +10,7 @@
 		sku.name AS "skuInfo.name",
 		sku.item_no AS "skuInfo.itemNo",
 		sku.part_no AS "skuInfo.partNo",
+		bis.stock_qty AS "skuInfo.stockQty",
 		prod.img_url AS "skuInfo.productInfo.imgUrl",
 		prod.vendor_id AS "skuInfo.productInfo.vendorId",
 		prod.vendor_name AS "skuInfo.productInfo.vendorName",
@@ -33,6 +34,8 @@
 	<sql id="bizSkuTransferDetailJoins">
 		LEFT JOIN biz_sku_transfer bst ON bst.id = a.transfer_id
 		LEFT JOIN biz_sku_info sku ON sku.id = a.sku_id
+		LEFT JOIN biz_inventory_info bii ON bii.id = bst.from_inv
+		LEFT JOIN biz_inventory_sku bis ON bis.inv_id = bii.id AND sku.id = bis.sku_id
 		LEFT JOIN biz_product_info prod ON prod.id = sku.prod_id
 	</sql>
     
