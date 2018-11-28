@@ -9,8 +9,10 @@ import java.util.Map;
 
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizServiceLine;
+import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import com.wanhutong.backend.modules.sys.service.SysRegionService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +50,36 @@ public class BizServiceChargeService extends CrudService<BizServiceChargeDao, Bi
 	
 	@Transactional(readOnly = false)
 	public void save(BizServiceCharge bizServiceCharge) {
-//		if (bizServiceCharge)
+		if (bizServiceCharge.getId() != null) {
+			BizServiceLine serviceLine = bizServiceCharge.getServiceLine();
+			Byte usable = serviceLine.getUsable();
+			serviceLine.setUsable(null);
+			serviceLine.setProvince(sysRegionService.getByCode(serviceLine.getProvince().getCode()));
+			serviceLine.setCity(sysRegionService.getByCode(serviceLine.getCity().getCode()));
+			serviceLine.setRegion(sysRegionService.getByCode(serviceLine.getRegion().getCode()));
+			serviceLine.setToProvince(sysRegionService.getByCode(serviceLine.getToProvince().getCode()));
+			serviceLine.setToCity(sysRegionService.getByCode(serviceLine.getToCity().getCode()));
+			serviceLine.setToRegion(sysRegionService.getByCode(serviceLine.getToRegion().getCode()));
+			List<BizServiceLine> serviceLines = bizServiceLineService.findList(serviceLine);
+			if (CollectionUtils.isNotEmpty(serviceLines)) {
+				bizServiceCharge.setServiceLine(serviceLines.get(0));
+			}
+			if (CollectionUtils.isEmpty(serviceLines)) {
+				BizServiceLine bizServiceLine = new BizServiceLine();
+				bizServiceLine.setProvince(serviceLine.getProvince());
+				bizServiceLine.setCity(serviceLine.getCity());
+				bizServiceLine.setRegion(serviceLine.getRegion());
+				bizServiceLine.setToProvince(serviceLine.getToProvince());
+				bizServiceLine.setToCity(serviceLine.getToCity());
+				bizServiceLine.setToRegion(serviceLine.getToRegion());
+				bizServiceLine.setUsable(usable);
+				bizServiceLine.setOrderType((byte)1);
+				bizServiceLineService.save(bizServiceLine);
+				bizServiceCharge.setServiceLine(bizServiceLine);
+			}
+			super.save(bizServiceCharge);
+			return;
+		}
 		List<BizServiceLine> serviceLineList = bizServiceCharge.getServiceLineList();
 		for (BizServiceLine serviceLine : serviceLineList) {
 			//路线
@@ -79,7 +110,6 @@ public class BizServiceChargeService extends CrudService<BizServiceChargeDao, Bi
 				super.save(serviceCharge);
 			}
 		}
-//		super.save(bizServiceCharge);
 	}
 	
 	@Transactional(readOnly = false)

@@ -32,54 +32,49 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizServiceLine" action="${ctx}/biz/order/bizServiceLine/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<input id="province" value="${bizServiceCharge.serviceLine.province.code}" type="hidden"/>
+		<input id="city" value="${bizServiceCharge.serviceLine.city.code}" type="hidden"/>
+		<input id="region" value="${bizServiceCharge.serviceLine.region.code}" type="hidden"/>
+		<input id="toProvince" value="${bizServiceCharge.serviceLine.toProvince.code}" type="hidden"/>
+		<input id="toCity" value="${bizServiceCharge.serviceLine.toCity.code}" type="hidden"/>
+		<input id="toRegion" value="${bizServiceCharge.serviceLine.toRegion.code}" type="hidden"/>
+		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">服务费用ID：</label>
+			<label class="control-label">发货路线</label>
 			<div class="controls">
-				<form:input path="scId" htmlEscape="false" maxlength="11" class="input-xlarge required digits"/>
+				从
+				<form:select id="province0" path="serviceLine.province.code" class="input-medium required">
+					<option>===省====</option>
+				</form:select>
+				<form:select id="city0" path="serviceLine.city.code" class="input-medium required">
+					<option>===市====</option>
+				</form:select>
+				<form:select id="region0" path="serviceLine.region.code" class="input-medium required">
+					<option>===县/区====</option>
+				</form:select>
+				<br>
+				至
+				<form:select id="toProvince0" path="serviceLine.toProvince.code" class="input-medium required">
+					<option>===省====</option>
+				</form:select>
+				<form:select id="toCity0" path="serviceLine.toCity.code" class="input-medium required">
+					<option>===市====</option>
+				</form:select>
+				<form:select id="toRegion0" path="serviceLine.toRegion.code" class="input-medium required">
+					<option>===县/区====</option>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">订单类型：</label>
+			<label class="control-label">是否启用：</label>
 			<div class="controls">
-				<form:input path="orderType" htmlEscape="false" maxlength="2" class="input-xlarge required digits"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">省份：</label>
-			<div class="controls">
-				<form:input path="provinceId" htmlEscape="false" maxlength="6" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">城市：</label>
-			<div class="controls">
-				<form:input path="cityId" htmlEscape="false" maxlength="6" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">区域：</label>
-			<div class="controls">
-				<form:input path="regionId" htmlEscape="false" maxlength="6" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">是否启用（0不启用，1启用），启用才可以正常使用：</label>
-			<div class="controls">
-				<form:input path="usable" htmlEscape="false" maxlength="2" class="input-xlarge required digits"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">版本控制：</label>
-			<div class="controls">
-				<form:input path="uVersion" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<c:if test="${bizServiceLine.usable != 0}">
+					<font color="green">已启用</font>
+				</c:if>
+				<c:if test="${bizServiceLine.usable == 0}">
+					<form:radiobutton path="usable" value="${variId}"/>
+				</c:if>
 			</div>
 		</div>
 		<div class="form-actions">
@@ -87,5 +82,33 @@
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+
+	<div class="control-group">
+		<div class="controls">
+			<table>
+				<c:forEach items="${serviceChargeList}" var="serviceCharge">
+					<tr>
+						<td><c:if test="${varietyInfo.id == 0}">非拉杆箱</c:if></td>
+						<td>
+							<select name="serviceMode" class="input-medium required">
+								<option value="" label="请选择"/>
+								<c:forEach items="${fns:getDictList('service_cha')}" var="dict">
+									<option value="${dict.value}" label="${dict.label}"/>
+								</c:forEach>
+							</select>
+						</td>
+						<td>
+							<input name="servicePrice" value="${serviceCharge.servicePrice}" class="input-mini required" type="number" min="0"/>&nbsp;元/支(元/套)
+						</td>
+						<td>
+							<input type="hidden" name="chargeId" value="${serviceCharge.id}"/>
+							<a href="#" onclick="updateCharge(this)">修改</a>
+
+						</td>
+					</tr>
+				</c:forEach>
+			</table>
+		</div>
+	</div>
 </body>
 </html>

@@ -19,21 +19,18 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/order/bizServiceLine/">服务费物流线路列表</a></li>
-		<shiro:hasPermission name="biz:order:bizServiceLine:edit"><li><a href="${ctx}/biz/order/bizServiceLine/form">服务费物流线路添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="biz:order:bizServiceLine:edit"><li><a href="${ctx}/biz/order/bizServiceCharge/form">服务费物流线路添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizServiceLine" action="${ctx}/biz/order/bizServiceLine/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>订单类型：</label>
-				<form:select path="orderType" htmlEscape="false" class="input-medium">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('service_order_type')}" itemValue="value" itemLabel="label"/>
-				</form:select>
-			</li>
-			<li><label>分类：</label>
-				<form:input path="serviceCharge.varietyInfo.name" htmlEscape="false" class="input-medium"/>
-			</li>
+			<%--<li><label>订单类型：</label>--%>
+				<%--<form:select path="orderType" htmlEscape="false" class="input-medium">--%>
+					<%--<form:option value="" label="请选择"/>--%>
+					<%--<form:options items="${fns:getDictList('service_order_type')}" itemValue="value" itemLabel="label"/>--%>
+				<%--</form:select>--%>
+			<%--</li>--%>
 			<li><label>是否启用：</label>
 				<form:select path="usable" htmlEscape="false" class="input-mini">
 					<form:option value="" label="请选择"/>
@@ -50,12 +47,9 @@
 		<thead>
 			<tr>
 				<th>序号</th>
-				<th>类型</th>
 				<th>开始地</th>
 				<th>到达地</th>
-				<th>品类</th>
-				<th>服务方式</th>
-				<th>元/支(元/套)</th>
+				<th>是否开启</th>
 				<th>创建人</th>
 				<th>创建时间</th>
 				<th>更新时间</th>
@@ -65,13 +59,10 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizServiceLine" varStatus="index">
 			<tr>
-				<td>${index + 1}</td>
-				<td>${fns:getDictLabel(bizServiceLine.orderType,'service_order_type','')}</td>
+				<td>${index.index + 1}</td>
 				<td>${bizServiceLine.region.name}</td>
 				<td>${bizServiceLine.toRegion.name}</td>
-				<td>${bizServiceLine.serviceCharge.varietyInfo.name}</td>
-				<td>${fns:getDictLabel(bizServiceLine.serviceCharge.serviceMode, 'service_cha', '')}</td>
-				<td><fmt:formatNumber value="${bizServiceLine.serviceCharge.servicePrice}" pattern="0.00"/></td>
+				<td>${bizServiceLine.usable == 1 ? '是' : '否'}</td>
 				<td>${bizServiceLine.createBy.name}</td>
 				<td><fmt:formatDate value="${bizServiceLine.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<td><fmt:formatDate value="${bizServiceLine.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>

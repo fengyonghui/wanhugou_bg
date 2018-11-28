@@ -47,7 +47,6 @@
 
         function ProviceBind() {
             var province = $("#province").val();
-            alert(province);
             var toProvince = $("#toProvince").val();
             //清空下拉数据
 			$("#province0").html("");
@@ -184,7 +183,6 @@
             var toProvince = $("#toProvince").val();
             var city = $("#city").val();
             var toCity = $("#toCity").val();
-            alert(city);
             if (obj == 'from') {
                 $("#city0").html("");
             }
@@ -204,12 +202,10 @@
 						$.each(data, function (i, item) {
 							str += "<option value='" + item.code;
 							if (city == item.code) {
-							    alert("==");
 								str += "' selected='selected";
 							}
 							str += "'>" + item.name + "</option>";
 						});
-						alert(str);
 						$("#city0").append(str);
 						Region(obj);
                     },

@@ -179,7 +179,6 @@
         }
         function add(item) {
             var n = item.replace('header','');
-            alert(n);
             var num = parseInt(n) + parseInt(1);
             var sourceNode = $("#"+item).parent(); // 获得被克隆的节点对象
             var clonedNode = sourceNode.clone(true);// 克隆节点
@@ -231,7 +230,6 @@
 			$("#"+item).parent().remove();
         }
         function Province(item) {
-            alert(item);
 			$("#"+item).html("");
             var str = "<option>===省====</option>";
             $.ajax({
@@ -256,7 +254,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/order/bizServiceCharge/">服务费设置列表</a></li>
+		<li><a href="${ctx}/biz/order/bizServiceLine/">服务费设置列表</a></li>
 		<li class="active"><a href="${ctx}/biz/order/bizServiceCharge/form?id=${bizServiceCharge.id}">服务费设置方式<shiro:hasPermission name="biz:order:bizServiceCharge:edit">${not empty bizServiceCharge.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:order:bizServiceCharge:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizServiceCharge" action="${ctx}/biz/order/bizServiceCharge/save" method="post" class="form-horizontal">

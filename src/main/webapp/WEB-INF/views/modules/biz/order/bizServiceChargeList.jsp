@@ -32,7 +32,10 @@
 				</form:select>
 			</li>
 			<li><label>分类：</label>
-				<form:input path="varietyInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:select path="varietyInfo.id" htmlEscape="false" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('service_vari')}" itemLabel="label" itemValue="value"/>
+				</form:select>
 			</li>
 			<li><lable>服务方式：</lable>
 				<form:select path="serviceMode" class="input-mini" htmlEscape="false">

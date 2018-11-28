@@ -70,9 +70,6 @@ public class BizServiceChargeController extends BaseController {
         model.addAttribute("variId",defaultPropService.getPropByKey("draw_bar_frame"));
         model.addAttribute("serviceModeList",DictUtils.getDictList("service_cha"));
 		model.addAttribute("bizServiceCharge", bizServiceCharge);
-		if (bizServiceCharge.getId() != null) {
-			return "modules/biz/order/bizServiceChargeUpdateForm";
-		}
 		return "modules/biz/order/bizServiceChargeForm";
 	}
 
@@ -85,11 +82,11 @@ public class BizServiceChargeController extends BaseController {
 		List<BizServiceLine> serviceLineList = bizServiceCharge.getServiceLineList();
 		if (bizServiceCharge.getId() == null && CollectionUtils.isEmpty(serviceLineList)) {
 			addMessage(redirectAttributes, "保存服务费设置失败");
-			return "redirect:"+Global.getAdminPath()+"/biz/order/bizServiceCharge/?repage";
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizServiceLine/?repage";
 		}
 		bizServiceChargeService.save(bizServiceCharge);
 		addMessage(redirectAttributes, "保存服务费设置成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizServiceCharge/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizServiceLine/?repage";
 	}
 	
 	@RequiresPermissions("biz:order:bizServiceCharge:edit")
