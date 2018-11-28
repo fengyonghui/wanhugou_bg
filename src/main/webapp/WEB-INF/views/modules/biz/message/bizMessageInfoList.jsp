@@ -57,6 +57,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>序号</th>
 				<th>创建人</th>
 				<th>标题</th>
 				<th>内容</th>
@@ -67,8 +68,11 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizMessageInfo">
+		<c:forEach items="${page.list}" var="bizMessageInfo" varStatus="state">
 			<tr>
+				<td>
+						${state.index+1}
+				</td>
 				<td>
 					${bizMessageInfo.createName}
 				</td>

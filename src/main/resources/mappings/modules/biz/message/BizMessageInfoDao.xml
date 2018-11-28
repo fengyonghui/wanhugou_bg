@@ -66,9 +66,10 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY updateTime DESC, id DESC
+				GROUP  BY a.id
 			</otherwise>
 		</choose>
+		ORDER BY updateTime DESC, id DESC
 	</select>
 	
 	<select id="findAllList" resultType="BizMessageInfo">
