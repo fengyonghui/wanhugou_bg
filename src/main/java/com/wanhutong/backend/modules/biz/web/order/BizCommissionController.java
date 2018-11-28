@@ -116,7 +116,7 @@ public class BizCommissionController extends BaseController {
 	@ResponseBody
 	public String list4Mobile(BizCommission bizCommission, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Map<String, Object> resultMap = Maps.newHashMap();
-		Page<BizCommission> page = bizCommissionService.findPageForAllData(bizCommission.getPage(), bizCommission);
+		Page<BizCommission> page = bizCommissionService.findPageForAllData(new Page<BizCommission>(request, response), bizCommission);
 
 
 		List<BizCommission> bizCommissionList = page.getList();
