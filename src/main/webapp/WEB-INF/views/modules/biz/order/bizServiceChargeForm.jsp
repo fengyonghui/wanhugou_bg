@@ -45,7 +45,7 @@
 
         });
         function Bind(str) {
-            alert($("#Province").html());
+            // alert($("#Province").html());
             $("#Province").val(str);
 
 
@@ -79,7 +79,7 @@
 
         }
         function CityBind(obj,item) {
-            var provice = $(item).attr("value");
+            var provice = $(item).val();
             //判断省份这个下拉框选中的值是否为空
             if (provice == "") {
                 return;
@@ -122,7 +122,7 @@
             });
         }
         function VillageBind(obj,item) {
-            var city = $(item).attr("value");
+            var city = $(item).val();
             //判断市这个下拉框选中的值是否为空
             if (city == "") {
                 return;
@@ -184,17 +184,28 @@
             var clonedNode = sourceNode.clone(true);// 克隆节点
             clonedNode.find("#"+item).attr("id", "header" + num); // 修改一下id 值，避免id 重复
 			clonedNode.find("#province"+n).attr("id","province" + num);
-			clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].province.code");
+			clonedNode.find("#province"+num).attr("name","serviceLineList["+num+"].province.code");
 			clonedNode.find("#toProvince"+n).attr("id","toProvince" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].toProvince.code");
+            clonedNode.find("#toProvince"+num).attr("name","serviceLineList["+num+"].toProvince.code");
 			clonedNode.find("#city"+n).attr("id","city" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].city.code");
+            clonedNode.find("#city"+num).attr("name","serviceLineList["+num+"].city.code");
 			clonedNode.find("#toCity"+n).attr("id","toCity" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].toCity.code");
+            clonedNode.find("#toCity"+num).attr("name","serviceLineList["+num+"].toCity.code");
 			clonedNode.find("#region"+n).attr("id","region" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].region.code");
+            clonedNode.find("#region"+num).attr("name","serviceLineList["+num+"].region.code");
 			clonedNode.find("#toRegion"+n).attr("id","toRegion" + num);
-            clonedNode.find("#province"+n).attr("name","serviceLineList["+num+"].toRegion.code");
+            clonedNode.find("#toRegion"+num).attr("name","serviceLineList["+num+"].toRegion.code");
+
+            clonedNode.find("td[name='serviceModeTd']").each(function() {
+                var childInput = $(this).find("input");
+				var nameVal = childInput.attr('name');
+                nameVal = nameVal.replace('serviceLineList[' + n +']', 'serviceLineList[' + num +']');
+                childInput.attr("name", nameVal);
+            });
+
+            clonedNode.find("#usable"+n).attr("id","usable" + num);
+            clonedNode.find("#usable"+num).attr("name","serviceLineList["+num+"].usable");
+
             Province("province" + num);
             Province("toProvince" + num);
             $("#province" + num).change( function () {
@@ -298,7 +309,7 @@
 									<td rowspan="3" valign="top">服务费</td>
 								</c:if>
 								<td>${serviceModeList[i.index].label}<input name="" value="${serviceModeList[i.index].value}" type="hidden"/></td>
-								<td><input name="serviceLineList[0].chargeMap[${variId}_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
+								<td name="serviceModeTd"><input name="serviceLineList[0].chargeMap[${variId}_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
 							</tr>
 							<c:set var="flag" value="false"></c:set>
 						</c:forEach>
@@ -312,12 +323,12 @@
 									<td rowspan="3" valign="top">服务费</td>
 								</c:if>
 								<td>${serviceModeList[i.index].label}<input name="" value="${serviceModeList[i.index].value}" type="hidden"/></td>
-								<td><input name="serviceLineList[0].chargeMap[0_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
+								<td name="serviceModeTd"><input name="serviceLineList[0].chargeMap[0_${serviceModeList[i.index].value}]" class="input-mini required" type="number" min="0"/>元/支(元/套)</td>
 							</tr>
 							<c:set var="flag" value="false"></c:set>
 						</c:forEach>
 						<tr style="height: 40px">
-							<td>是否开启&nbsp;<input name="serviceLineList[0].usable" type="checkbox" value="1"/>是</td>
+							<td>是否开启&nbsp;<input id="usable0" name="serviceLineList[0].usable" type="checkbox" value="1"/>是</td>
 						</tr>
 					</table>
 				</div>
