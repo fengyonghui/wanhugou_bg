@@ -116,5 +116,22 @@ public class BizServiceChargeService extends CrudService<BizServiceChargeDao, Bi
 	public void delete(BizServiceCharge bizServiceCharge) {
 		super.delete(bizServiceCharge);
 	}
+
+	/**
+	 * 异步修改服务费
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public String updateServiceCharge(BizServiceCharge serviceCharge, Integer variId) {
+		if (serviceCharge.getServiceMode() == null || serviceCharge.getServicePrice() == null || serviceCharge.getId() == null || variId == null) {
+			return "error";
+		}
+		BizServiceCharge bizServiceCharge = get(serviceCharge.getId());
+		bizServiceCharge.setVarietyInfo(new BizVarietyInfo(variId));
+		bizServiceCharge.setServiceMode(serviceCharge.getServiceMode());
+		bizServiceCharge.setServicePrice(serviceCharge.getServicePrice());
+		super.save(bizServiceCharge);
+		return "ok";
+	}
 	
 }

@@ -68,14 +68,11 @@
 			<if test="varietyInfo != null and varietyInfo.id != null">
 				AND a.vari_id = #{varietyInfo.id}
 			</if>
-			<if test="serviceLine != null and serviceLine.id != null and service.id != ''">
+			<if test="serviceLine != null and serviceLine.id != null and serviceLine.id != ''">
 				AND a.line_id = #{serviceLine.id}
 			</if>
 			<if test="serviceMode != null">
 				AND a.service_mode = #{serviceMode}
-			</if>
-			<if test="serviceLine != null and serviceLine.id != null and serviceLine.id != ''">
-				AND a.line_id = #{serviceLine.id}
 			</if>
 			<if test="serviceLine != null">
 				<if test="serviceLine.orderType != null and serviceLine.orderType != ''">

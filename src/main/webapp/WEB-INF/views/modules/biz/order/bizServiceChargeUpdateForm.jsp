@@ -44,7 +44,6 @@
             });
 
         });
-
         function ProviceBind() {
             var province = $("#province").val();
             var toProvince = $("#toProvince").val();
@@ -86,10 +85,6 @@
                 },
                 error: function () { alert("Error"); }
             });
-
-
-
-
         }
         function CityBind(obj,item) {
             var provice = $(item).val();

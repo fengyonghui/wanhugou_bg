@@ -62,6 +62,11 @@ public class BizServiceLine extends DataEntity<BizServiceLine> {
 	 */
 	private Map<String, Integer> chargeMap;
 
+	/**
+	 * 页面判断 source = ‘detail’详情
+	 */
+	private String source;
+
 	public BizServiceLine() {
 		super();
 	}
@@ -140,5 +145,13 @@ public class BizServiceLine extends DataEntity<BizServiceLine> {
 
 	public void setChargeMap(Map<String, Integer> chargeMap) {
 		this.chargeMap = chargeMap;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 }

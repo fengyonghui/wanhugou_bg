@@ -6,6 +6,11 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizServiceCharge;
+import com.wanhutong.backend.modules.biz.service.order.BizServiceChargeService;
+import com.wanhutong.backend.modules.sys.service.DefaultPropService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +27,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.order.BizServiceLine;
 import com.wanhutong.backend.modules.biz.service.order.BizServiceLineService;
 
+import java.util.List;
+
 /**
  * 服务费物流线路Controller
  * @author Tengfei.Zhang
@@ -33,6 +40,10 @@ public class BizServiceLineController extends BaseController {
 
 	@Autowired
 	private BizServiceLineService bizServiceLineService;
+	@Autowired
+	private BizServiceChargeService bizServiceChargeService;
+	@Autowired
+	private DefaultPropService defaultPropService;
 	
 	@ModelAttribute
 	public BizServiceLine get(@RequestParam(required=false) Integer id) {
@@ -57,6 +68,14 @@ public class BizServiceLineController extends BaseController {
 	@RequiresPermissions("biz:order:bizServiceLine:view")
 	@RequestMapping(value = "form")
 	public String form(BizServiceLine bizServiceLine, Model model) {
+		BizServiceCharge bizServiceCharge = new BizServiceCharge();
+		bizServiceCharge.setServiceLine(new BizServiceLine(bizServiceLine.getId()));
+		List<BizServiceCharge> chargeList = bizServiceChargeService.findList(bizServiceCharge);
+		if (CollectionUtils.isNotEmpty(chargeList)) {
+			model.addAttribute("serviceChargeList",chargeList);
+		}
+		model.addAttribute("serviceChaDictList", DictUtils.getDictList("service_cha"));
+		model.addAttribute("variId",defaultPropService.getPropByKey("draw_bar_frame"));
 		model.addAttribute("bizServiceLine", bizServiceLine);
 		return "modules/biz/order/bizServiceLineForm";
 	}

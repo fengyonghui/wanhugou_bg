@@ -60,16 +60,21 @@
 		<c:forEach items="${page.list}" var="bizServiceLine" varStatus="index">
 			<tr>
 				<td>${index.index + 1}</td>
-				<td>${bizServiceLine.region.name}</td>
-				<td>${bizServiceLine.toRegion.name}</td>
+				<td>${bizServiceLine.province.name}${bizServiceLine.city.name}${bizServiceLine.region.name}</td>
+				<td>${bizServiceLine.toProvince.name}${bizServiceLine.toCity.name}${bizServiceLine.toRegion.name}</td>
 				<td>${bizServiceLine.usable == 1 ? '是' : '否'}</td>
 				<td>${bizServiceLine.createBy.name}</td>
 				<td><fmt:formatDate value="${bizServiceLine.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<td><fmt:formatDate value="${bizServiceLine.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-				<shiro:hasPermission name="biz:order:bizServiceLine:edit"><td>
-    				<a href="${ctx}/biz/order/bizServiceLine/form?id=${bizServiceLine.id}">修改</a>
-					<a href="${ctx}/biz/order/bizServiceLine/delete?id=${bizServiceLine.id}" onclick="return confirmx('确认要删除该服务费物流线路吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
+                <td>
+                    <shiro:hasPermission name="biz:order:bizServiceLine:view">
+                        <a href="${ctx}/biz/order/bizServiceLine/form?id=${bizServiceLine.id}&source=detail">详情</a>
+                        <shiro:hasPermission name="biz:order:bizServiceLine:edit">
+                            <a href="${ctx}/biz/order/bizServiceLine/form?id=${bizServiceLine.id}">修改</a>
+                            <a href="${ctx}/biz/order/bizServiceLine/delete?id=${bizServiceLine.id}" onclick="return confirmx('确认要删除该服务费物流线路吗？', this.href)">删除</a>
+                        </shiro:hasPermission>
+                    </shiro:hasPermission>
+                </td>
 			</tr>
 		</c:forEach>
 		</tbody>
