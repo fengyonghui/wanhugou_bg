@@ -94,6 +94,12 @@
 			biz_status = #{bizStatus}
 		WHERE id = #{id}
 	</update>
+
+	<update id="updateByMessageId">
+		UPDATE biz_message_user SET
+			status = 0
+		WHERE message_id = #{messageId}
+	</update>
 	
 	<update id="delete">
 		UPDATE biz_message_user SET
