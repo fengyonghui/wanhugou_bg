@@ -25,6 +25,7 @@ import com.wanhutong.backend.modules.biz.service.chat.BizChatRecordService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomerInfoService;
+import com.wanhutong.backend.modules.biz.service.message.BizMessageInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -32,6 +33,7 @@ import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
+import com.wanhutong.backend.modules.sys.dao.UserDao;
 import com.wanhutong.backend.modules.sys.entity.BuyerAdviser;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -107,6 +109,10 @@ public class OfficeController extends BaseController {
     private CommonImgService commonImgService;
     @Autowired
     private CommonProcessService commonProcessService;
+    @Autowired
+    private BizMessageInfoService bizMessageInfoService;
+    @Autowired
+    private UserDao userDao;
 
 
     @ModelAttribute("office")
@@ -407,13 +413,41 @@ public class OfficeController extends BaseController {
     @RequestMapping(value = "upgradeAudit")
     public String upgradeAudit(RedirectAttributes redirectAttributes, int id, int applyForLevel, int auditType, String desc) {
         Pair<Boolean, String> result = officeService.upgradeAudit(id, applyForLevel, CommonProcessEntity.AuditType.parse(auditType), UserUtils.getUser(), desc);
+
+        String titleName = "";
+        if (Integer.valueOf(OfficeTypeEnum.CUSTOMER.getType()) == applyForLevel) {
+            titleName = "采购商";
+        } else if (Integer.valueOf(OfficeTypeEnum.COMMISSION_MERCHANT.getType()) == applyForLevel){
+            titleName = "代销商";
+        }
+
         if (result.getLeft()) {
             addMessage(redirectAttributes, "审核成功!");
+
+            //自动发送站内信
+            String title = titleName + "审核通过";
+            String content = "您好，恭喜您，您的" + titleName + "申请审核通过";
+            saveMessageInfo(id, title, content);
         }else {
             addMessage(redirectAttributes, "审核失败!");
+
+            String title = titleName + "审核不通过";
+            String content = "您好，恭喜您，您的" + titleName + "申请审核不通过，原因是:" + desc;
+            saveMessageInfo(id, title, content);
         }
         return "redirect:" + adminPath + "/sys/office/purchasersList";
+    }
 
+    //审核代销商，采购商完成后，自动发送站内信
+    public void saveMessageInfo(Integer id, String title, String content) {
+        User user = new User();
+        Office office = officeService.get(id);
+        user.setOffice(office);
+        List<User> userList = userDao.findUserByOfficeId(user);
+        if (CollectionUtils.isNotEmpty(userList)) {
+            Integer uderId = userList.get(0).getId();
+            bizMessageInfoService.autoSendMessageInfo(title, content, uderId, "upgrade");
+        }
     }
 
     @RequiresPermissions("sys:office:edit")
