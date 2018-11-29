@@ -17,6 +17,7 @@ public class BizOrderStatus extends DataEntity<BizOrderStatus> {
 	private BizOrderHeader orderHeader;		// biz_order_detail
 	private Integer bizStatus;		// biz_order_header.biz_status
 	private Integer orderType;		//订单类型：0订单，1备货清单
+	private Integer orderId;
 
 	/**
 	 * 显示经销店
@@ -86,5 +87,13 @@ public class BizOrderStatus extends DataEntity<BizOrderStatus> {
 
 	public void setOffice(Office office) {
 		this.office = office;
+	}
+
+	public Integer getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
 	}
 }
