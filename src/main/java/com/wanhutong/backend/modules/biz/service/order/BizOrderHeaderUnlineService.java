@@ -12,6 +12,7 @@ import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderUnlineDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -52,6 +53,8 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 	private SystemService systemService;
 	@Autowired
 	private CommonImgService commonImgService;
+	@Autowired
+	private BizOrderPayService bizOrderPayService;
 
 	public BizOrderHeaderUnline get(Integer id) {
 		return super.get(id);
@@ -73,7 +76,7 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 	public void save(BizOrderHeaderUnline bizOrderHeaderUnline) {
 		super.save(bizOrderHeaderUnline);
 		BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderHeaderUnline.getOrderHeader().getId());
-        BigDecimal money = new BigDecimal(bizOrderHeader.getTotalDetail()+bizOrderHeader.getTotalExp()+bizOrderHeader.getFreight());
+		BigDecimal money = BigDecimal.valueOf(bizOrderHeader.getTotalDetail()+bizOrderHeader.getTotalExp()+bizOrderHeader.getFreight()).setScale(2, BigDecimal.ROUND_HALF_UP);
         if (bizOrderHeader.getBizStatus().equals(OrderHeaderBizStatusEnum.UNPAY.getState())) {
             if (money.compareTo(bizOrderHeaderUnline.getRealMoney())>=0) {
                 bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.INITIAL_PAY.getState());
@@ -90,6 +93,9 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 		bizOrderHeader.setReceiveTotal(bizOrderHeader.getReceiveTotal() + bizOrderHeaderUnline.getRealMoney().doubleValue());
 		bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 
+		//自动更新付款比例
+		bizOrderPayService.orderPayHandler(bizOrderHeader.getOrderNum(), String.valueOf(bizOrderHeader.getOrderType()));
+
 		/*用于 订单状态表 insert状态*/
 		if (money.compareTo(bizOrderHeaderUnline.getRealMoney())>=0) {
 			bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.INITIAL_PAY.getState());
@@ -97,7 +103,13 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 		if (money.compareTo(bizOrderHeaderUnline.getRealMoney())==0) {
 			bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
 		}
-		bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(),BizOrderStatusOrderTypeEnum.SELLORDER.getState(),bizOrderHeader.getId());
+
+		BizOrderStatus bizOrderStatus = new BizOrderStatus();
+		bizOrderStatus.setOrderHeader(bizOrderHeader);
+		bizOrderStatus.setOrderType(bizOrderHeader.getOrderType());
+		bizOrderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+		bizOrderStatusService.save(bizOrderStatus);
+		//bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(),BizOrderStatusOrderTypeEnum.SELLORDER.getState(),bizOrderHeader.getId());
 	}
 
 	/**

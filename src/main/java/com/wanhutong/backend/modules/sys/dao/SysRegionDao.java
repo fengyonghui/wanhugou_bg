@@ -6,6 +6,9 @@ package com.wanhutong.backend.modules.sys.dao;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.sys.entity.SysRegion;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 角色区域表DAO接口
@@ -22,5 +25,11 @@ public interface SysRegionDao extends CrudDao<SysRegion> {
      * @return
      */
     SysRegion queryOfficeProvinceById(Integer id);
+
+    /**
+     * 查询省市区
+     * @return
+     */
+    List<SysRegion> findRegion(@Param("level")String level, @Param("code")Integer code);
 	
 }
