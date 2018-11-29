@@ -482,7 +482,6 @@
 			$('.sureApplyMoneyBtn').on('tap', function() {
 				$('#tanchuang_pay').show();
 				var orderIds = $(this).attr('orderIds');
-//				console.log(inListId)
 				$.ajax({
 	                type: "GET",
 	                url: "/a/biz/order/bizCommission/form4Mobile",
@@ -507,7 +506,7 @@
 				                type: "get",
 				                url: "/a/biz/order/bizCommission/save4Mobile",
 				                dataType: "json",
-				                data: {id:resid},
+				                data: {id:resid,totalCommission:$('#totalMoney').val(),payTotal:$('#paymoney').val(),remark:$('#textxt').val()},
 				                async:false,
 				                success: function(res){				                   
 				                    if(res.ret==true||res.ret=='true'){
