@@ -34,7 +34,7 @@
                     	if(item.mobileUrl == -1) {
                     		htmlList += '<li class="mui-table-view-cell mui-collapse menuBtn" indexNum = "'+ i+'" dataId="'+item.id+'">'+
 							'<a class="mui-navigate-right" indexNum = "'+ i+'" dataId="'+item.id+'">'+ item.name + '</a>'+   
-                            '<ul class = "mui-table-view app_color40 childData'+ i+'">'+
+                            '<ul class = "mui-collapse-content app_color40 childData'+ i+'">'+
                             '</ul>'+
 							'</li>'
                     	}
@@ -44,7 +44,7 @@
                 }
             });
 		},
-		getData: function() {
+		getData: function() {			
 			var _this = this;
 			$('.menuBtn>a').on('tap',function(){ 
 				var dataId = $(this).attr('dataId');
@@ -63,16 +63,17 @@
 										'<a class="" purchid="'+item.id+'" mobileUrl="'+item.mobileUrl+'" style="color:#8f8f94">'+ item.name + '</a>'+   
 			                            '<ul class = "cMenu">'+
 			                            '</ul>'+
-							        '</li>'                               	                             
+							        '</li>' 
                                 } 
                             });
                             $(".childData"+indexNum).html(pHtmlList);
                             var sArr=$(".childData"+indexNum+'>'+'.childMenu');
+                            console.log(sArr)
 		                    $.each(sArr, function(i, items) {
 		                    	var mobileUrls = $(this).attr('mobileurl');
 		                    	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
 		                        	$(this).children('a').attr('class','mui-navigate-right');
-		                        	$(this).attr('id','commission');			                        	
+		                        	$(this).attr('id','commission');
 		                        }
 		                    });
 		                    _this.ulThird();
