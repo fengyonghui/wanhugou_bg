@@ -37,16 +37,7 @@
 		},
 		sureSelect:function(){
 			var _this = this;
-				_this.selectOpen = false
-//				console.log($('#inSupply').val());
-//				console.log($('.hasoid').attr('id'));
-//				console.log($('#input_div_invoiceStatus').val());
-//				console.log($('#input_div_poStatus').val());
-//				console.log($('#input_div_orderStatus').val());
-//				console.log($('#input_div_poSchType').val());
-//				console.log($('#wait_pay').val());
-				console.log($('#inOrdPhone').val());
-//console.log($('.inOrdNum').val());
+				_this.selectOpen = false			
 				GHUTILS.OPENPAGE({
 					url: "../../../html/orderMgmtHtml/commissionMgmtHtml/alreadlycomList.html",
 					extras: {
