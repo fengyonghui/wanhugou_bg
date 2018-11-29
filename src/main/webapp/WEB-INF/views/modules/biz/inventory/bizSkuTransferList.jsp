@@ -138,7 +138,14 @@
 					</c:if>
 					<c:if test="${source eq 'out' && bizSkuTransfer.bizStatus >= TransferStatusEnum.APPROVE.state && bizSkuTransfer.bizStatus <= TransferStatusEnum.OUTING_WAREHOUSE.state}">
 						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:outTreasury">
-							<a href="${ctx}/biz/inventory/bizSkuTransfer/outTreasuryForm?id=${bizSkuTransfer.id}&source=${source}">出库</a>
+							<c:choose>
+								<c:when test="${fns:hasRole(roleSet, RoleEnNameEnum.WAREHOUSESPECIALIST) && fns:getUser().getCompany().id == bizSkuTransfer.fromInv.customer.id}">
+									<a href="${ctx}/biz/inventory/bizSkuTransfer/outTreasuryForm?id=${bizSkuTransfer.id}&source=${source}">出库</a>
+								</c:when>
+								<c:when test="${!(fns:hasRole(roleSet, RoleEnNameEnum.WAREHOUSESPECIALIST))}">
+									<a href="${ctx}/biz/inventory/bizSkuTransfer/outTreasuryForm?id=${bizSkuTransfer.id}&source=${source}">出库</a>
+								</c:when>
+							</c:choose>
 						</shiro:hasPermission>
 					</c:if>
 					<c:if test="${source eq 'out'}">
@@ -146,7 +153,14 @@
 					</c:if>
 					<c:if test="${source eq 'in' && bizSkuTransfer.bizStatus >= TransferStatusEnum.ALREADY_OUT_WAREHOUSE.state && bizSkuTransfer.bizStatus <= TransferStatusEnum.INING_WAREHOUSE.state}">
 						<shiro:hasPermission name="biz:inventory:bizSkuTransfer:outTreasury">
-							<a href="${ctx}/biz/inventory/bizSkuTransfer/inTreasuryForm?id=${bizSkuTransfer.id}&source=${source}">入库</a>
+							<c:choose>
+								<c:when test="${fns:hasRole(roleSet, RoleEnNameEnum.WAREHOUSESPECIALIST) && fns:getUser().getCompany().id == bizSkuTransfer.toInv.customer.id}">
+									<a href="${ctx}/biz/inventory/bizSkuTransfer/inTreasuryForm?id=${bizSkuTransfer.id}&source=${source}">入库</a>
+								</c:when>
+								<c:when test="${!(fns:hasRole(roleSet, RoleEnNameEnum.WAREHOUSESPECIALIST))}">
+									<a href="${ctx}/biz/inventory/bizSkuTransfer/inTreasuryForm?id=${bizSkuTransfer.id}&source=${source}">入库</a>
+								</c:when>
+							</c:choose>
 						</shiro:hasPermission>
 					</c:if>
 					<c:if test="${source eq 'in'}">
