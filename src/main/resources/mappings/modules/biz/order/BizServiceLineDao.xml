@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizServiceLineDao">
+    
+	<sql id="bizServiceLineColumns">
+		a.id AS "id",
+		a.order_type AS "orderType",
+		a.province_id AS "province.id",
+		prov.name AS "province.name",
+		prov.code AS "province.code",
+		a.city_id AS "city.id",
+		city.name AS "city.name",
+		city.code AS "city.code",
+		a.region_id AS "region.id",
+		region.name AS "region.name",
+		region.code AS "region.code",
+		a.to_province_id AS "toProvince.id",
+		tprov.name AS "toProvince.name",
+		tprov.code AS "toProvince.code",
+		a.to_city_id AS "toCity.id",
+		tcity.name AS "toCity.name",
+		tcity.code AS "toCity.code",
+		a.to_region_id AS "toRegion.id",
+		tregion.name AS "toRegion.name",
+		tregion.code AS "toRegion.code",
+		a.usable AS "usable",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		u.name AS "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizServiceLineJoins">
+		LEFT JOIN sys_region prov ON prov.id = a.province_id
+		LEFT JOIN sys_region city ON city.id = a.city_id
+		LEFT JOIN sys_region region ON region.id = a.region_id
+		LEFT JOIN sys_region tprov ON tprov.id = a.to_province_id
+		LEFT JOIN sys_region tcity ON tcity.id = a.to_city_id
+		LEFT JOIN sys_region tregion ON tregion.id = a.to_region_id
+		LEFT JOIN sys_user u ON u.id = a.create_id
+	</sql>
+    
+	<select id="get" resultType="BizServiceLine">
+		SELECT 
+			<include refid="bizServiceLineColumns"/>
+		FROM biz_service_line a
+		<include refid="bizServiceLineJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizServiceLine">
+		SELECT 
+			<include refid="bizServiceLineColumns"/>
+		FROM biz_service_line a
+		<include refid="bizServiceLineJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="orderType != null and orderType != ''">
+				AND a.order_type = #{orderType}
+			</if>
+			<if test="province != null and province.id != null and province.id != ''">
+				AND a.province_id = #{province.id}
+			</if>
+			<if test="city != null and city.id != null and city.id != ''">
+				AND a.city_id = #{city.id}
+			</if>
+			<if test="region != null and region.id != null and region.id != ''">
+				AND a.region_id = #{region.id}
+			</if>
+			<if test="toProvince != null and toProvince.id != null and toProvince.id != ''">
+				AND a.to_province_id = #{toProvince.id}
+			</if>
+			<if test="toCity != null and toCity.id != null and toCity.id != ''">
+				AND a.to_city_id = #{toCity.id}
+			</if>
+			<if test="toRegion != null and toRegion.id != null and toRegion.id != ''">
+				AND a.to_region_id = #{toRegion.id}
+			</if>
+            <if test="province != null and province.code != null and province.code != ''">
+                AND prov.code = #{province.code}
+            </if>
+            <if test="city != null and city.code != null and city.code != ''">
+                AND city.code = #{city.code}
+            </if>
+            <if test="region != null and region.code != null and region.code != ''">
+                AND region.code = #{region.code}
+            </if>
+            <if test="toProvince != null and toProvince.code != null and toProvince.code != ''">
+                AND tprov.code = #{toProvince.code}
+            </if>
+            <if test="toCity != null and toCity.code != null and toCity.code != ''">
+                AND tcity.code = #{toCity.code}
+            </if>
+            <if test="toRegion != null and toRegion.code != null and toRegion.code != ''">
+                AND tregion.code = #{toRegion.code}
+            </if>
+			<if test="usable != null">
+				AND a.usable = #{usable}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+                ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizServiceLine">
+		SELECT 
+			<include refid="bizServiceLineColumns"/>
+		FROM biz_service_line a
+		<include refid="bizServiceLineJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_service_line(
+			id,
+			order_type,
+			province_id,
+			city_id,
+			region_id,
+			to_province_id,
+			to_city_id,
+			to_region_id,
+			usable,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{orderType},
+			#{province.id},
+			#{city.id},
+			#{region.id},
+			#{toProvince.id},
+			#{toCity.id},
+			#{toRegion.id},
+			#{usable},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_service_line SET 	
+			order_type = #{orderType},
+			province_id = #{province.id},
+			city_id = #{city.id},
+			region_id = #{region.id},
+			to_province_id = #{toProvince.id},
+			to_city_id = #{toCity.id},
+			to_region_id = #{toRegion.id},
+			usable = #{usable},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_service_line SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
