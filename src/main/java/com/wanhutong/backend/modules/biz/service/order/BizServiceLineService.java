@@ -43,12 +43,13 @@ public class BizServiceLineService extends CrudService<BizServiceLineDao, BizSer
 	@Transactional(readOnly = false)
 	public void save(BizServiceLine bizServiceLine) {
 		if (bizServiceLine.getId() == null) {
+		    super.save(bizServiceLine);
 			return;
 		}
 		BizServiceLine serviceLine = get(bizServiceLine.getId());
 		serviceLine.setProvince(sysRegionService.getByCode(bizServiceLine.getProvince().getCode()));
 		serviceLine.setCity(sysRegionService.getByCode(bizServiceLine.getCity().getCode()));
-		serviceLine.setToCity(sysRegionService.getByCode(bizServiceLine.getRegion().getCode()));
+		serviceLine.setRegion(sysRegionService.getByCode(bizServiceLine.getRegion().getCode()));
 		serviceLine.setToProvince(sysRegionService.getByCode(bizServiceLine.getToProvince().getCode()));
 		serviceLine.setToCity(sysRegionService.getByCode(bizServiceLine.getToCity().getCode()));
 		serviceLine.setToRegion(sysRegionService.getByCode(bizServiceLine.getToRegion().getCode()));

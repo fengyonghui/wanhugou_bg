@@ -358,9 +358,11 @@
 			<div class="controls">
 				<c:if test="${bizServiceLine.usable != 0}">
 					<font color="green">已启用</font>
+					<form:checkbox path="usable" value="0"/>不启用
 				</c:if>
 				<c:if test="${bizServiceLine.usable == 0}">
-					<form:checkbox path="usable" value="${variId}"/>是
+					<font color="red">不启用</font>
+					<form:checkbox path="usable" value="${variId}"/>启用
 				</c:if>
 			</div>
 		</div>

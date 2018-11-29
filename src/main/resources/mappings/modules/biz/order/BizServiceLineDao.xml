@@ -79,7 +79,25 @@
 			<if test="toRegion != null and toRegion.id != null and toRegion.id != ''">
 				AND a.to_region_id = #{toRegion.id}
 			</if>
-			<if test="usable != null and usable != ''">
+            <if test="province != null and province.code != null and province.code != ''">
+                AND prov.code = #{province.code}
+            </if>
+            <if test="city != null and city.code != null and city.code != ''">
+                AND city.code = #{city.code}
+            </if>
+            <if test="region != null and region.code != null and region.code != ''">
+                AND region.code = #{region.code}
+            </if>
+            <if test="toProvince != null and toProvince.code != null and toProvince.code != ''">
+                AND tprov.code = #{toProvince.code}
+            </if>
+            <if test="toCity != null and toCity.code != null and toCity.code != ''">
+                AND tcity.code = #{toCity.code}
+            </if>
+            <if test="toRegion != null and toRegion.code != null and toRegion.code != ''">
+                AND tregion.code = #{toRegion.code}
+            </if>
+			<if test="usable != null">
 				AND a.usable = #{usable}
 			</if>
 		</where>

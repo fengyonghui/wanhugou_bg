@@ -42,14 +42,7 @@
             $("#toCity0").change(function () {
                 VillageBind("to",this);
             });
-
         });
-        function Bind(str) {
-            // alert($("#Province").html());
-            $("#Province").val(str);
-
-
-        }
         function ProviceBind() {
             //清空下拉数据
 			$("#province0").html("");
@@ -73,10 +66,6 @@
                 },
                 error: function () { alert("Error"); }
             });
-
-
-
-
         }
         function CityBind(obj,item) {
             var provice = $(item).val();
