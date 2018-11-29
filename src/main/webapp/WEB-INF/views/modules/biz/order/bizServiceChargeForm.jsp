@@ -48,7 +48,7 @@
 			$("#province0").html("");
 			$("#toProvince0").html("");
 
-            var str = "<option>===省====</option>";
+            var str = "<option value=''>===省====</option>";
             $.ajax({
                 type: "post",
                 url: "${ctx}/sys/sysRegion/selectRegion",
@@ -87,7 +87,7 @@
             if (obj == 'to') {
                 $("#toCity"+index).html("");
 			}
-            var str = "<option>===市====</option>";
+            var str = "<option value=''>===市====</option>";
 
             $.ajax({
                 type: "post",
@@ -130,7 +130,7 @@
             if (obj == 'to') {
                 $("#toRegion"+index).html("");
             }
-            var str = "<option>===县/区====</option>";
+            var str = "<option value=''>===县/区====</option>";
             //将市的ID拿到数据库进行查询，查询出他的下级进行绑定
             $.ajax({
                 type: "post",
@@ -265,13 +265,13 @@
 			<div class="controls" style="background-color: #e8e8e8; width: 50%">
 				从
 				<select id="province0" name="serviceLineList[0].province.code" class="input-medium required">
-					<option>===省====</option>
+					<option value="">===省====</option>
 				</select>
 				<select id="city0" name="serviceLineList[0].city.code" class="input-medium required">
-					<option>===市====</option>
+					<option value="">===市====</option>
 				</select>
 				<select id="region0" name="serviceLineList[0].region.code" class="input-medium required">
-					<option>===县/区====</option>
+					<option value="">===县/区====</option>
 				</select>
 				<br>
 				至
