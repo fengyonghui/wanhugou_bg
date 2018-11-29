@@ -31,6 +31,7 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
+import com.wanhutong.backend.modules.biz.service.message.BizMessageInfoService;
 import com.wanhutong.backend.modules.biz.service.order.*;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
@@ -149,6 +150,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizCommissionOrderService bizCommissionOrderService;
     @Autowired
     private BizCommissionService bizCommissionService;
+    @Autowired
+    private BizMessageInfoService bizMessageInfoService;
 
 
     @ModelAttribute
@@ -1739,6 +1742,12 @@ public class BizOrderHeaderController extends BaseController {
                     } else {
                         genAuditProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE);
                     }
+
+                    //同意发货成功，发送站内信
+                    String orderNum = bizOrderHeader.getOrderNum();
+                    String title = "订单" + orderNum + "审核通过";
+                    String content = "您好，您的订单" + orderNum + "审核通过";
+                    bizMessageInfoService.autoSendMessageInfo(title, content, bizOrderHeader.getCustomer().getId(), "orderHeader");
                 }
             }
         } catch (Exception e) {

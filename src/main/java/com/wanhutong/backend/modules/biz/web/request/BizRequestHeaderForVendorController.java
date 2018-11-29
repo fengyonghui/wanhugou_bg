@@ -32,6 +32,7 @@ import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
+import com.wanhutong.backend.modules.biz.service.message.BizMessageInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.po.BizCompletePalnService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
@@ -145,6 +146,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	private CommonProcessService commonProcessService;
     @Autowired
     private SystemService systemService;
+	@Autowired
+	private BizMessageInfoService bizMessageInfoService;
 
 	public static final String REQUEST_HEADER_TABLE_NAME = "biz_request_header";
 	public static final String REQUEST_DETAIL_TABLE_NAME = "biz_request_detail";

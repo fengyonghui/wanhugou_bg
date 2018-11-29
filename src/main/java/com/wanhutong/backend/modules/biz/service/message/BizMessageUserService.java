@@ -43,5 +43,13 @@ public class BizMessageUserService extends CrudService<BizMessageUserDao, BizMes
 	public void delete(BizMessageUser bizMessageUser) {
 		super.delete(bizMessageUser);
 	}
+
+	/**
+	 * 根据messageId将所有数据逻辑删除
+	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void updateByMessageId(Integer messageId) {
+		dao.updateByMessageId(messageId);
+	}
 	
 }
