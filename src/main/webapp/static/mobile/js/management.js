@@ -61,7 +61,7 @@
                                 if(item.mobileUrl){
                                     pHtmlList += '<li class="mui-table-view-cell mui-collapse childMenu" mobileUrl="'+item.mobileUrl+'" purchid="'+item.id+'">'+
 										'<a class="" purchid="'+item.id+'" mobileUrl="'+item.mobileUrl+'" style="color:#8f8f94">'+ item.name + '</a>'+   
-			                            '<ul class = "cMenu">'+
+			                            '<ul class = "mui-collapse-content cMenu">'+
 			                            '</ul>'+
 							        '</li>' 
                                 } 

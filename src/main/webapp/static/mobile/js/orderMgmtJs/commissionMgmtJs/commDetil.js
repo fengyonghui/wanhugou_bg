@@ -193,6 +193,7 @@
 						$.each(res.data.orderHeaderList, function(zz,ll) {
 							if(ll.orderDetailList.length > 0) {
 								$.each(ll.orderDetailList, function(hh,zz) {
+									console.log(zz)
 									var totalMoney = zz.unitPrice * zz.ordQty;
 									var consigner = '';
 									if(zz.suplyis.name) {

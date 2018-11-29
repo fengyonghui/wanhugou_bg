@@ -42,7 +42,7 @@
                 },
                 dataType: "json",
                 success: function(res){
-//              	console.log(res)
+                	console.log(res)
 					var entity = res.data.entity;
 					$('#commTotalMoney').val(entity.payTotal);//佣金总金额
 					$('#commPayMoney').val(entity.totalCommission);//付款金额
@@ -67,7 +67,7 @@
 					if(res.data.auditList.length > 0) {
 						var CheckHtmlList = '';
 						$.each(res.data.auditList, function(dd,mm) {
-//							console.log(mm)
+							console.log(mm)
 							var step = dd + 1;
 							if(mm.current != 1) {
 	                            CheckHtmlList +='<li class="step_item">'+

@@ -647,7 +647,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .exampleTxt {padding: 15px;}
 .exampleTxt li {padding-top: 5px;}
 #commission .cMenu a{font-size: 14px;}
-#commiss{margin-bottom: -15px;}
+/*#commiss{margin-bottom: -15px;}*/
 #menuMaget .menuBtn .childMenu>a{font-size: 14px;}
 .inputrow{height:40px;line-height:40px;margin-left:15px;font-weight: bold;}
 .mui-table-view-cell.mui-collapse .mui-table-view .mui-table-view-cell:after {right: 20px;color:#e8e8e8}
