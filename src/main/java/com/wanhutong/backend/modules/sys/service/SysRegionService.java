@@ -51,5 +51,13 @@ public class SysRegionService extends CrudService<SysRegionDao, SysRegion> {
 
 		return sysRegions.size()>0?sysRegions.get(0):null;
 	}
+
+	/**
+	 * 查询省市区
+	 * @return
+	 */
+	public List<SysRegion> findRegion(String level, Integer code) {
+		return dao.findRegion(level,code);
+	}
 	
 }
