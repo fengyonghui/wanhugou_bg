@@ -44,10 +44,12 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -57,6 +59,7 @@ import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -161,6 +164,10 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
 
     @Override
     public Page<BizProductInfo> findPage(Page<BizProductInfo> page, BizProductInfo bizProductInfo) {
+        User user= UserUtils.getUser();
+        if(user.getCompany()!=null && StringUtils.isNotBlank(user.getCompany().getType())&&user.getCompany().getType().equals(OfficeTypeEnum.VENDOR.getType())){
+            bizProductInfo.setOffice(user.getCompany());
+        }
         bizProductInfo.setDataStatus("filter");
         return super.findPage(page, bizProductInfo);
     }
@@ -206,7 +213,10 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
 
         //保存产品图片
         saveCommonImg(bizProductInfo, copy);
-
+        String bannerVideo = bizProductInfo.getBannerVideo();
+        String detailVideo = bizProductInfo.getDetailVideo();
+        saveVideo(bizProductInfo.getId(), bannerVideo, ImgEnum.PRODUCT_MIAN_VIDEO);
+        saveVideo(bizProductInfo.getId(), detailVideo, ImgEnum.PRODUCT_DETAIL_VIDEO);
         //保存产品特有属性
         saveProdAttr(bizProductInfo,varietyInfo);
 
@@ -552,6 +562,65 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
             commonImg.setImgServer(DsConfig.getImgServer());
             commonImgService.save(commonImg);
         }
+    }
+
+    /**
+     * 保存视频
+     *
+     * @param id
+     * @param videos
+     * @param imgEnum
+     */
+    private void saveVideo(Integer id, String videos, ImgEnum imgEnum) {
+        if (StringUtils.isBlank(videos)) {
+            return;
+        }
+        String[] videoArr = videos.split(",");
+
+        List<CommonImg> commonImgs = getImgList(imgEnum.getCode(), id);
+
+        Set<String> existSet = new LinkedHashSet<>();
+        for (CommonImg c : commonImgs) {
+            existSet.add(c.getImgServer() + c.getImgPath());
+        }
+        Set<String> newSet = new LinkedHashSet<>(Arrays.asList(videoArr));
+
+        Set<String> result = new LinkedHashSet<>();
+        //差集，结果做删除操作
+        result.clear();
+        result.addAll(existSet);
+        result.removeAll(newSet);
+        for (String url : result) {
+            for (CommonImg c : commonImgs) {
+                if (url.equals(c.getImgServer() + c.getImgPath())) {
+                    c.setDelFlag("0");
+                    commonImgService.delete(c);
+                }
+            }
+        }
+
+        result.clear();
+        result.addAll(newSet);
+        result.removeAll(existSet);
+
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(id);
+        commonImg.setObjectName(imgEnum.getTableName());
+        commonImg.setImgType(imgEnum.getCode());
+
+        int index = 0;
+        for (String video : result) {
+            if (StringUtils.isNotBlank(video)) {
+                commonImg.setImgSort(index);
+                commonImg.setId(null);
+                commonImg.setImgPath(video.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY).replaceAll(DsConfig.getOldImgServer(), StringUtils.EMPTY));
+                commonImg.setImgServer(video.contains(DsConfig.getOldImgServer()) ? DsConfig.getOldImgServer() : DsConfig.getImgServer());
+                commonImgService.save(commonImg);
+                continue;
+            }
+            index ++;
+        }
+
     }
 
     /**

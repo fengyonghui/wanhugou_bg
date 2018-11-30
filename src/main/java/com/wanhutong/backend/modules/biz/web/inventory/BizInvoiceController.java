@@ -222,6 +222,7 @@ public class BizInvoiceController extends BaseController {
         if(bizInvoice.getId()!=null){
             String photos="";
             List<CommonImg> imgList=commonImgService.findList(commonImg);
+            model.addAttribute("imgList",imgList);
             for(CommonImg img:imgList){
                 photos+="|"+img.getImgServer()+img.getImgPath();
             }
@@ -306,6 +307,7 @@ public class BizInvoiceController extends BaseController {
         if(bizInvoice.getId()!=null){
             String photos="";
             List<CommonImg> imgList=commonImgService.findList(commonImg);
+            model.addAttribute("imgList",imgList);
             for(CommonImg img:imgList){
                 photos+="|"+img.getImgServer()+img.getImgPath();
             }
