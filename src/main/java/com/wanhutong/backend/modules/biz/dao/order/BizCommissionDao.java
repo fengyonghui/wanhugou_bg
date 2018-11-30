@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizCommission;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -29,4 +30,6 @@ public interface BizCommissionDao extends CrudDao<BizCommission> {
      * @return
      */
     List<CommonImg> getImgList(BizCommission bizCommission);
+
+    BizCommission findTotalCommission(@Param("orderId") Integer orderId);
 }

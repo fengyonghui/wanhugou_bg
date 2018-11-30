@@ -168,7 +168,7 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		} else {
 			purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getDefaultProcessId());
 		}
-
+		bizCommission.setTotalCommission(BigDecimal.ZERO);
 		CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
 		commonProcessEntity.setObjectId("0");
 		commonProcessEntity.setObjectName(BizCommissionService.DATABASE_TABLE_NAME);
@@ -352,7 +352,7 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 	 * @return
 	 */
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public String payOrder(Integer commId, String img, String remark) {
+	public String payOrder(Integer commId, String img, String remark, BigDecimal payTotal) {
 		// 当前流程
 		User user = UserUtils.getUser();
 		Role role = new Role();
@@ -389,6 +389,7 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 
 		bizCommission.setImgUrl(img);
 		bizCommission.setBizStatus(BizCommission.BizStatus.ALL_PAY.getStatus());
+		bizCommission.setPayTotal(payTotal);
 		bizCommission.setPayTime(new Date());
 		bizCommission.setRemark(remark);
 		this.save(bizCommission);
@@ -475,5 +476,9 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		}
 
 		return resultFlg;
+	}
+
+	public BizCommission findTotalCommission(Integer orderId) {
+		return dao.findTotalCommission(orderId);
 	}
 }
