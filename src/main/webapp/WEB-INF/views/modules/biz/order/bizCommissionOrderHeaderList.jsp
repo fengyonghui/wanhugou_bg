@@ -502,11 +502,11 @@
                     待申请
                 </c:if>
                 <c:if test="${orderHeader.applyCommStatus == 'yes' && orderHeader.bizCommission.bizStatus == '0'}">
-                    <c:if test="${orderHeader.bizCommission.totalCommission == '0.00' && orderHeader.bizCommission.paymentOrderProcess.name != '审批完成'}">
+                    <c:if test="${orderHeader.bizCommission.totalCommission == '0.00' && orderHeader.bizCommission.commonProcess.paymentOrderProcess.name != '审批完成'}">
                         待确认支付金额
                     </c:if>
-                    <c:if test="${bizCommission.totalCommission != '0.00'}">
-                        ${bizCommission.commonProcess.paymentOrderProcess.name}
+                    <c:if test="${orderHeader.bizCommission.totalCommission != '0.00'}">
+                        ${orderHeader.bizCommission.commonProcess.paymentOrderProcess.name}
                     </c:if>
                 </c:if>
                 <c:if test="${orderHeader.applyCommStatus == 'yes' && orderHeader.bizCommission.bizStatus == '1'}">
