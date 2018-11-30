@@ -159,13 +159,13 @@
                     if(totalExp < 0) {
                         var totalExpTemp = Math.abs(totalExp)
                         if (totalExpTemp > Number(freight)) {
-                            alert("调整金额不能大于运费");
+                            alert("服务费不能大于运费");
                             return;
                         }
                         console.log(totalExpTemp)
                         console.log(Number(totalDetail) * 0.015)
                         if (totalExpTemp > Number(totalDetail) * 0.015) {
-                            alert("调整金额不能大于商品总价的1.5%倍");
+                            alert("服务费不能大于商品总价的1.5%倍");
                             return;
                         }
                     }
@@ -559,13 +559,13 @@
                 if (totalExp < 0) {
                     var totalExpTemp = Math.abs(totalExp)
                     if (totalExpTemp > Number(freight)) {
-                        alert("调整金额不能大于运费");
+                        alert("服务费不能大于运费");
                         return;
                     }
                     console.log(totalExpTemp)
                     console.log(Number(totalDetail) * 0.015)
                     if (totalExpTemp > Number(totalDetail) * 0.015) {
-                        alert("调整金额不能大于商品总价的1.5%倍");
+                        alert("服务费不能大于商品总价的1.5%倍");
                         return;
                     }
                 }
@@ -1782,7 +1782,7 @@
         </div>
     </c:if>
     <div class="control-group">
-        <label class="control-label">调整金额：</label>
+        <label class="control-label">调整服务费：</label>
         <div class="controls">
             <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
             <span class="help-inline"><font color="red">*</font></span>
