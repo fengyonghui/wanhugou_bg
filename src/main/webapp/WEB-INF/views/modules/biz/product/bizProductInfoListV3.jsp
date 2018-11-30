@@ -88,6 +88,12 @@
 					   value="<fmt:formatDate value="${bizProductInfo.createDateEnd}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
+            <li><label>品类主管：</label>
+                <form:select about="choose" path="user.id" class="input-medium">
+                    <form:option value="" label="请选择"/>
+                    <form:options items="${usersList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+                </form:select>
+            </li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -119,6 +125,11 @@
 				<th>供应商</th>
 				<th>最低售价</th>
 				<th>最高售价</th>
+                <c:if test="${prodType == ProdTypeEnum.PROD.type}">
+                    <th>点击量</th>
+                    <th>下单量</th>
+                    <th>负责人</th>
+                </c:if>
 				<th>创建时间</th>
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -166,6 +177,36 @@
 				<td>
 					${bizProductInfo.maxPrice}
 				</td>
+            <c:if test="${prodType == ProdTypeEnum.PROD.type}">
+                <td>
+                    <c:if test="${bizProductInfo.prodVice !=0}">
+                        <a href="${ctx}/biz/product/bizProdViewLog/list?productInfo.id=${bizProductInfo.id}&prodChixkSource=prod_chickCount">
+                                ${bizProductInfo.prodVice}
+                        </a>
+                    </c:if>
+                    <c:if test="${bizProductInfo.prodVice ==0}">
+                        ${bizProductInfo.prodVice}
+                    </c:if>
+                </td>
+                <td>
+                    <c:if test="${bizProductInfo.orderCount !=0}">
+                        <c:choose>
+                            <c:when test="${bizProductInfo.skuItemNo !=null}">
+                                <%--<a href="${ctx}/biz/order/bizOrderHeader/list?skuChickCount=prodCick_count&itemNo=${bizProductInfo.skuItemNo}">--%>
+                                ${bizProductInfo.orderCount}
+                                <%--</a>--%>
+                            </c:when>
+                            <c:otherwise>${bizProductInfo.orderCount}</c:otherwise>
+                        </c:choose>
+                    </c:if>
+                    <c:if test="${bizProductInfo.orderCount ==0}">
+                        ${bizProductInfo.orderCount}
+                    </c:if>
+                </td>
+                <td>
+                        ${bizProductInfo.user.name}
+                </td>
+            </c:if>
 				<td>
 					<fmt:formatDate value="${bizProductInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
