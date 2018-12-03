@@ -44,9 +44,9 @@
                 }
             });
 		},
-		getData: function() {			
+		getData: function() {
 			var _this = this;
-			$('.menuBtn>a').on('tap',function(){ 
+			$('.menuBtn>a').on('tap',function(){ 				
 				var dataId = $(this).attr('dataId');
                 var indexNum = $(this).attr('indexNum');               
                 if(dataId){
@@ -68,7 +68,6 @@
                             });
                             $(".childData"+indexNum).html(pHtmlList);
                             var sArr=$(".childData"+indexNum+'>'+'.childMenu');
-                            console.log(sArr)
 		                    $.each(sArr, function(i, items) {
 		                    	var mobileUrls = $(this).attr('mobileurl');
 		                    	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
@@ -79,17 +78,28 @@
 		                    _this.ulThird();
                         }
                     })                   
-                }   
+                }  
+                //菜单收缩以及背景颜色控制
                 var getUl=$(this).next('ul').children('li').length;
                 if(getUl==0){
                 	$(this).next('ul').css('display','none');
                 }
-	            if ($(this).next().css('display') == "none"||getUl==0) {
-	                $(this).next('ul').show(); 
+	            if ($(this).next('ul').css('display') == "none") {
+	            	$(this).parent().css('background','#eee');
+	                $(this).parent().siblings('li').css('background','#fff');               
+	            }
+	            if ($(this).parent().css('background','#eee')&&$(this).next('ul').css('display') == "block") {
+	            	$(this).parent().css('background','#fff');             
+	            }
+	            if ($(this).next('ul').css('display') == "none"||getUl==0) {
+                    $(this).next('ul').css('display','block')
 	                $(this).parent().siblings('li').children('ul').hide();
 	            }else{
 	                $(this).next('ul').hide();
 	                $(this).parent().siblings('li').children('ul').hide();
+	            }
+	            if ($(this).next('ul').children('li').find('.cMenu').children('li').length>0) {
+                    $(this).next('ul').children('li').find('.cMenu').hide();
 	            }
 			})
         },
@@ -127,12 +137,13 @@
                         }
                    });
                 }
+                //三级菜单收缩控制
                 var getUll=$(this).next().find('li').length;
 	            if ($(this).next().css('display') == "none"||getUll==0) {
 	                $(this).next('ul').show();               
 	            }else{
 	                $(this).next('ul').hide();
-                }
+                }	            
 	            var url = $(this).attr('url');
             	var mobileUrl = $(this).attr('mobileUrl');
 				var purchId = $(this).attr('purchId');

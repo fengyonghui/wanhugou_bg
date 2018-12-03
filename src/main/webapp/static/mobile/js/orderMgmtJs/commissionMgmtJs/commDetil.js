@@ -51,7 +51,7 @@
 					$('#commCardNum').val(entity.customerInfo.cardNumber);//零售商卡号
 					$('#commName').val(entity.customerInfo.payee);//零售商收款人
 					$('#commOpenBank').val(entity.customerInfo.bankName);//零售商开户行
-					$('#commApplyNum').val(entity.totalCommission);//申请金额
+					$('#commApplyNum').val(entity.totalCommission.toFixed(2));//申请金额
 					$('#commLastDate').val(deadline);//最后付款时间
 					$('#commRemark').val(entity.remark);//备注
 					

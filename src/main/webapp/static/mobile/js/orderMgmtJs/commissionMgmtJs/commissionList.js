@@ -183,11 +183,11 @@
                                 	checkTypeTxt = '待申请';
                                 }
                                 if(item.applyCommStatus == 'yes' && item.bizCommission.bizStatus == '0'){
-                                	if(item.bizCommission.totalCommission == '0.00' && item.bizCommission.paymentOrderProcess.name != '审批完成'){
+                                	if(item.bizCommission.totalCommission == '0.00' && item.bizCommission.commonProcess.paymentOrderProcess.name != '审批完成'){
                                 		checkTypeTxt = '待确认支付金额';
-                                	}
-                                	if(item.totalCommission != '0.00'&&item.totalCommission != ''){
-                                		checkTypeTxt = item.commonProcess.paymentOrderProcess.name;
+                                	}                               	
+                                	if(item.bizCommission.totalCommission != '0.00'){                            		
+                                		checkTypeTxt = item.bizCommission.commonProcess.paymentOrderProcess.name;
                                 	}
                                 }
                                 if(item.applyCommStatus == 'yes' && item.bizCommission.bizStatus == '1'){

@@ -3,34 +3,18 @@
 		this.ws = null;
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
-		this.buyPriceFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
 			this.getData();//获取数据		
-			this.getPermissionList('biz:order:buyPrice:view','buyPriceFlag')//佣金权限
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
-//			_this.addRemark();
 		},
-		getPermissionList: function (markVal,flag) {
-            var _this = this;
-            $.ajax({
-                type: "GET",
-                url: "/a/sys/menu/permissionList",
-                dataType: "json",
-                data: {"marking": markVal},
-                async:false,
-                success: function(res){
-                    _this.buyPriceFlag = res.data;
-                }
-            });
-        },
 		getData: function() {
 			var _this = this;
 			$.ajax({
@@ -44,8 +28,8 @@
                 success: function(res){
                 	console.log(res)
 					var entity = res.data.entity;
-					$('#commTotalMoney').val(entity.payTotal);//佣金总金额
-					$('#commPayMoney').val(entity.totalCommission);//付款金额
+					$('#commTotalMoney').val(entity.totalCommission.toFixed(2));//佣金总金额
+					$('#commPayMoney').val(entity.totalCommission.toFixed(2));//付款金额
 					$('#commcardNumber').val(entity.customerInfo.cardNumber);//代销商卡号
 					$('#commName').val(entity.customerInfo.payee);//代销商收款人
 					$('#commBank').val(entity.customerInfo.bankName);//代销商开户行
@@ -103,101 +87,10 @@
 	                        }
 						});
 						$('#commCheckMenu').html(CheckHtmlList);
-					}					
-//					$('#ommodity').html(htmlCommodity);
-					_this.checkProcessHtml(res.data);				
+					}									
                 }
             });
-		},
-		checkProcessHtml:function(data){
-			var _this = this;
-			var auditLen = data.auditList.length;
-			if(auditLen > 0) {
-				var CheckHtmlList ='';
-				$.each(data.auditList, function(i, item) {
-					//状态
-					var ProcessName = '';
-					var step = i + 1;
-					var current = item.current;
-					if(current !== 1) {
-						if(item.objectName == 'ORDER_HEADER_SO_LOCAL') {
-							ProcessName = item.jointOperationLocalProcess.name
-						}
-						if(item.objectName == 'ORDER_HEADER_SO_ORIGIN') {
-							ProcessName = item.jointOperationOriginProcess.name
-						}
-						if(item.objectName == 'biz_po_header') {
-							ProcessName = item.purchaseOrderProcess.name
-						}
-						if(item.objectName == 'biz_order_header') {
-							if(data.entity2.payProportion == 1) {
-								ProcessName = item.doOrderHeaderProcessFifth.name
-							}
-							if(data.entity2.payProportion == 2) {
-								ProcessName = item.doOrderHeaderProcessAll.name
-							}
-						}
-						//处理人
-						var userName ="";
-						if(item.user){
-							userName = item.user.name;
-						}else{
-							userName = "";
-						}
-						//批注
-						var Description ="";
-						if(item.user){
-							Description = item.description;
-						}else{
-							Description = "";
-						}						
-						CheckHtmlList +='<li class="step_item">'+
-						'<div class="step_num">'+ step +' </div>'+
-						'<div class="step_num_txt">'+
-							'<div class="mui-input-row">'+
-								'<label>处理人:</label>'+
-								'<input type="text" value="'+ userName +'" class="mui-input-clear" disabled>'+
-						    '</div>'+
-							'<div class="mui-input-row">'+
-						        '<label>批注:</label>'+
-						        '<input type="text" value="'+ Description +'" class="mui-input-clear" disabled>'+
-						    	'<label>状态:</label>'+
-						        '<input type="text" value=" '+ ProcessName +' " class="mui-input-clear" disabled>'+
-						    '</div>'+
-						'</div>'+
-					'</li>'
-					}
-					if(current == 1) {
-						if(item.objectName == 'ORDER_HEADER_SO_LOCAL') {
-							ProcessName = item.jointOperationLocalProcess.name
-						}
-						if(item.objectName == 'ORDER_HEADER_SO_ORIGIN') {
-							ProcessName = item.jointOperationOriginProcess.name
-						}
-						if(item.objectName == 'biz_po_header') {
-							ProcessName = item.purchaseOrderProcess.name
-						}
-						if(item.objectName == 'biz_order_header') {
-							ProcessName = item.doOrderHeaderProcessFifth.name
-						}
-						CheckHtmlList +='<li class="step_item">'+
-						'<div class="step_num">'+ step +' </div>'+
-						'<div class="step_num_txt">'+
-							'<div class="mui-input-row">'+
-								'<label>当前状态:</label>'+
-								'<input type="text" value="'+ ProcessName +'" class="mui-input-clear" disabled>'+
-						   		'<label>时间:</label>'+
-						        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
-						    '</div>'+
-						'</div>'+
-					'</li>'
-					}
-				});
-				$("#staCheckMenu").html(CheckHtmlList);
-			}else{
-				$("#staCheckMenu").parent().hide();
-			}
-		},
+		},		
 		formatDateTime: function(unix) {
         	var _this = this;
 

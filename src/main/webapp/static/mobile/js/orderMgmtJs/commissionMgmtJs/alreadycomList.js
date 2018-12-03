@@ -164,12 +164,8 @@
 								//确认支付金额
 								var surePayMoneyTxt = '';
 								var surePayMoneyBtn = '';
-//								var sureApplyMoneyTxt="";
-//								var sureApplyMoneyBtn="";
 								if(_this.commOrdFlag == true) {																		
-									if(item.payTotal == '0.00'){
-//										sureApplyMoneyTxt="确认支付金额";
-//										sureApplyMoneyBtn="sureApplyMoneyBtn"
+									if(item.totalCommission == '0.00'){
                                         surePayMoneyTxt = '确认支付金额';
 										surePayMoneyBtn = 'sureApplyMoneyBtn';
 									}
@@ -214,11 +210,11 @@
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>付款金额:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.totalCommission+' ">' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.totalCommission.toFixed(2)+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>实际付款金额:</label>' +
-									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.payTotal+' ">' +
+									'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.payTotal.toFixed(2)+' ">' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 									'<label>代销商:</label>' +
@@ -361,7 +357,6 @@
         },
         comfirDialig: function() {
 			var _this = this;
-//			document.getElementById("inCheckBtns").addEventListener('tap', function() {
 			$('.noCheckBtn').on('tap', function(e) {
 				var commId = $(this).attr('commId');
 				var currentType= $(this).attr('code');
@@ -383,7 +378,6 @@
 					} else {}
 				})
 			});
-//			document.getElementById("inCheckBtn").addEventListener('tap', function(e) {
 			$('.sureCheckBtn').on('tap', function(e) {
 				e.detail.gesture.preventDefault(); 
 				var commId = $(this).attr('commId');
