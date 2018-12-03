@@ -203,6 +203,19 @@ public class BizCommissionController extends BaseController {
 			resultMap.put("entity", bizCommission);
 			return JsonUtil.generateData(resultMap, null);
 		}
+
+		String orderids = bizCommission.getOrderIds();
+		BigDecimal totalCommission = BigDecimal.ZERO;
+		if (StringUtils.isNotBlank(orderids)) {
+			String[] orderIdArr = orderids.split(",");
+			for (int i=0; i < orderIdArr.length; i++) {
+				String orderId = orderIdArr[i];
+				BizCommission bizCommissionTemp = bizCommissionService.findTotalCommission(Integer.valueOf(orderId));
+				totalCommission = totalCommission.add(bizCommissionTemp.getTotalCommission()).setScale(2, BigDecimal.ROUND_HALF_UP);
+			}
+		}
+		bizCommission.setTotalCommission(totalCommission);
+
 		model.addAttribute("entity", bizCommission);
 		resultMap.put("entity", bizCommission);
 		return JsonUtil.generateData(resultMap, null);
