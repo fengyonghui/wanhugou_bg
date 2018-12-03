@@ -18,6 +18,7 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdViewLog;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -25,20 +26,25 @@ import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
+import com.wanhutong.backend.modules.biz.service.product.BizProdViewLogService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.ProdTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.enums.TagInfoEnum;
 import com.wanhutong.backend.modules.enums.VarietyAttrEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeInfoV2Service;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
@@ -97,6 +103,10 @@ public class BizProductInfoV3Controller extends BaseController {
     private BizOpShelfSkuService bizOpShelfSkuService;
     @Autowired
     private BizInventorySkuService bizInventorySkuService;
+    @Autowired
+    private SystemService systemService;
+    @Autowired
+    private BizProdViewLogService bizProdViewLogService;
 
     @ModelAttribute
     public BizProductInfo get(@RequestParam(required = false) Integer id) {
@@ -135,6 +145,25 @@ public class BizProductInfoV3Controller extends BaseController {
     @RequestMapping(value = {"list", ""})
     public String list(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
         Page<BizProductInfo> page = bizProductInfoService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo);
+        BizProdViewLog prodViewLog = new BizProdViewLog();
+        for(int i=0;i<page.getList().size();i++){
+            prodViewLog.setProductInfo(page.getList().get(i));
+            List<BizProdViewLog> prodView = bizProdViewLogService.findProdView(prodViewLog);
+            page.getList().get(i).setOrderCount(prodView.size());
+            if(prodView.size()!=0){
+                page.getList().get(i).setProdVice(prodView.get(0).getProdChick());
+                page.getList().get(i).setSkuItemNo(prodView.get(0).getSkuItemNo());
+            }else{
+                page.getList().get(i).setProdVice(0);
+            }
+        }
+        //品类主管
+        Role role = new Role();
+        role.setName(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState());
+        User user = new User();
+        user.setRole(role);
+        List<User> users = systemService.userSelectCompany(user);
+        model.addAttribute("usersList", users);
         model.addAttribute("page", page);
         model.addAttribute("prodType",bizProductInfo.getProdType());
         return "modules/biz/product/bizProductInfoListV3";
@@ -153,6 +182,10 @@ public class BizProductInfoV3Controller extends BaseController {
             List<CommonImg> subImgList = commonImgService.findList(commonImg);
             commonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
             List<CommonImg> itemImgList = commonImgService.findList(commonImg);
+            commonImg.setImgType(ImgEnum.PRODUCT_MIAN_VIDEO.getCode());
+            List<CommonImg> bannerVideoList = commonImgService.findList(commonImg);
+            commonImg.setImgType(ImgEnum.PRODUCT_DETAIL_VIDEO.getCode());
+            List<CommonImg> detailVideoList = commonImgService.findList(commonImg);
             String photos = "";
             String photoDetails = "";
             String photoLists = "";
@@ -178,11 +211,17 @@ public class BizProductInfoV3Controller extends BaseController {
             if (!"".equals(photoLists)) {
                 bizProductInfo.setPhotoLists(photoLists);
             }
-            if (subImgList != null && !subImgList.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(subImgList)) {
                 model.addAttribute("detailsMap", detailsMap);
             }
-            if (imgList != null && !imgList.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(imgList)) {
                 model.addAttribute("photosMap", photosMap);
+            }
+            if (CollectionUtils.isNotEmpty(bannerVideoList)) {
+                model.addAttribute("bannerVideoList", bannerVideoList);
+            }
+            if (CollectionUtils.isNotEmpty(detailVideoList)) {
+                model.addAttribute("detailVideoList", detailVideoList);
             }
         }
 

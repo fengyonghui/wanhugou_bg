@@ -200,6 +200,24 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">物流信息图：</label>
+			<div class="controls">
+					<%--<img src="${imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/>--%>
+				<c:choose>
+					<c:when test="${bizInvoice.str == 'freight' || source == 'xq'}">
+						<c:forEach items="${imgList}" var="img">
+							<a href="${img.imgServer}${img.imgPath}" target="_blank"><img src="${img.imgServer}${img.imgPath}" style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></a>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<form:hidden path="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+						<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="true" maxWidth="100"
+									  maxHeight="100"/>
+					</c:otherwise>
+				</c:choose>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">验货员：</label>
 			<div class="controls">
 				<form:select about="choose" path="inspector.id" class="input-medium required">

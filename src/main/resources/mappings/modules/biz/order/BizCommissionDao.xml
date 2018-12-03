@@ -208,6 +208,22 @@
 			</otherwise>
 		</choose>
 	</select>
+
+	<select id="findTotalCommission" resultType="BizCommission">
+		select
+			sum(boh.commission) as 'totalCommission'
+		from
+			biz_commission a,
+			biz_commission_order bco,
+			biz_order_header boh
+		where 1=1
+			and a.status = 1
+			and bco.status = 1
+			and boh.status =1
+			and a.id=bco.comm_id
+			and bco.order_id=boh.id
+			and boh.id=#{orderId}
+	</select>
 	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_commission(

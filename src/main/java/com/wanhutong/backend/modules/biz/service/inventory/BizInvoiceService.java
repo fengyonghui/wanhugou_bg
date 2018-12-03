@@ -184,7 +184,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             invoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
             bizInvoiceDao.update(invoice);
             //保存图片
-//            saveCommonImg(bizInvoice);
+            saveCommonImg(bizInvoice);
         } else {
             // 取出当前用户所在机构，
             Office company = officeService.get(user.getCompany().getId());
@@ -199,7 +199,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE, company.getId(), 0, bizInvoice.getId()));
             super.save(bizInvoice);
             //保存图片
-//            saveCommonImg(bizInvoice);
+            saveCommonImg(bizInvoice);
         }
         //获取订单ID
         String orderHeaders = bizInvoice.getOrderHeaders();
