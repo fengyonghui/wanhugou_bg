@@ -453,7 +453,7 @@
 					}else{
 						$('.mui-pull-bottom-pocket').html('');
 						$('#orderList').append('<p class="noneTxt">暂无数据</p>');
-						$('#OrdSechBtn').hide();
+//						$('#OrdSechBtn').hide();
 						mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 					}
 	                if(res.data.page.totalPage==pager.pageNo){		                	
