@@ -37,6 +37,7 @@ public class OrderPayConsumer implements Runnable {
         MqttClient client = null;
         try {
             // 2.实例化mqtt客户端
+            LOGGER.info("instantiation MqttClient!");
             InetAddress addr = InetAddress.getLocalHost();
             String hostName = addr.getHostName();
             client = new MqttClient(HOST, CLIENT_ID + hostName);
