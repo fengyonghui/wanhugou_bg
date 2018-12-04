@@ -1426,10 +1426,10 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         }
 
         String orderNum = "";
-        if ("1".equals(REQUEST_HEADER_TYPE)) {
+        if (REQUEST_HEADER_TYPE.equals(orderType)) {
             BizRequestHeader requestHeader = bizRequestHeaderForVendorService.get(orderId);
             orderNum = requestHeader.getReqNo();
-        } else if ("2".equals(DO_ORDER_HEADER_TYPE)) {
+        } else if (DO_ORDER_HEADER_TYPE.equals(orderType)) {
             BizOrderHeader orderHeader = bizOrderHeaderService.get(orderId);
             orderNum = orderHeader.getOrderNum();
         }
