@@ -525,7 +525,10 @@
 		<include refid="bizSkuInfoColumns"/>
 		FROM biz_sku_info a
 		<include refid="bizSkuInfoJoins"/>
-		WHERE a.item_no = #{itemNo} AND prod_id = #{prodId}
+		WHERE
+		a.status = 1
+		AND a.item_no = #{itemNo}
+		AND prod_id = #{prodId}
 	</select>
 
 
@@ -738,7 +741,8 @@
 			prod.brand_id AS "productInfo.brandId",
 			prod.brand_name AS "productInfo.brandName",
 			prod.vendor_id AS "productInfo.office.id",
-			prod.vendor_name AS "productInfo.office.name"
+			prod.vendor_name AS "productInfo.office.name",
+			bis.stock_qty AS "stockQty"
 		FROM biz_sku_info a
 		JOIN biz_product_info prod ON a.prod_id = prod.id
 		JOIN biz_inventory_sku bis ON a.id = bis.sku_id

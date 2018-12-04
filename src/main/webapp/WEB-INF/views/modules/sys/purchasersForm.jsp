@@ -278,13 +278,13 @@
         <div class="control-group">
             <label class="control-label">代销商/经销商卡号:</label>
             <div class="controls">
-                <form:input path="bizCustomerInfo.cardNumber" htmlEscape="false" maxlength="50" cssClass="required"/>
+                <form:input path="bizCustomerInfo.cardNumber" htmlEscape="false" maxlength="50" />
             </div>
         </div>
         <div class="control-group">
             <label class="control-label">代销商/经销商开户行:</label>
             <div class="controls">
-                <form:input path="bizCustomerInfo.bankName" htmlEscape="false" maxlength="50" cssClass="required"/>
+                <form:input path="bizCustomerInfo.bankName" htmlEscape="false" maxlength="50" />
             </div>
         </div>
         <div class="control-group">
@@ -296,7 +296,7 @@
         <div class="control-group">
             <label class="control-label">代销商/经销商收款人身份证号:</label>
             <div class="controls">
-                <form:input path="bizCustomerInfo.idCardNumber" htmlEscape="false" maxlength="50" cssClass="required"/>
+                <form:input path="bizCustomerInfo.idCardNumber" htmlEscape="false" maxlength="50" />
             </div>
         </div>
     </c:if>

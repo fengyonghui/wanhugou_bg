@@ -250,6 +250,9 @@
 			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
 		</if>
+		<if test="id != null and id != ''">
+			AND a.id = #{id}
+		</if>
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
 		<choose>
@@ -770,6 +773,41 @@
 			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
 		</if>
+	</select>
+
+	<select id="findListByOfficeType" resultType="User">
+		SELECT
+			a.id,
+			a.company_id AS "company.id",
+			a.office_id AS "office.id",
+			a.login_name,
+			a.password,
+			a.no,
+			a.name,
+			a.email,
+			a.phone,
+			a.mobile,
+			a.user_type,
+			a.login_ip,
+			a.login_date,
+			a.remarks,
+			a.login_flag,
+			a.photo,
+			a.create_id AS "createBy.id",
+			a.create_date,
+			a.update_id AS "updateBy.id",
+			a.update_date,
+			a.status AS "delFlag"
+		FROM sys_user a
+			, sys_office so
+		WHERE 1 = 1
+			AND a.status = 1
+			AND so.id = a.office_id
+			AND
+		<foreach collection="companyIdTypeList" index="index" item="item" open="(" separator=" OR " close=")">
+			so.type = #{item}
+		</foreach>
+		GROUP BY a.id
 	</select>
 
 

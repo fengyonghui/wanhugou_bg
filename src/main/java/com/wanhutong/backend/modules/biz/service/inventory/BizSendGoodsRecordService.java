@@ -18,6 +18,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.message.BizMessageInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
@@ -72,6 +73,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
     private BizOrderStatusService bizOrderStatusService;
 	@Autowired
 	private BizSkuTransferDetailService bizSkuTransferDetailService;
+	@Autowired
+	private BizMessageInfoService bizMessageInfoService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BizSendGoodsRecordService.class);
 
@@ -221,6 +224,13 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
             if (status < OrderHeaderBizStatusEnum.SEND.getState()) {
                 bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.SELLORDER.getDesc(),BizOrderStatusOrderTypeEnum.SELLORDER.getState(),orderHeader.getId());
             }
+
+            //订单已发货，自动发送站内信
+			String orderNum = orderHeader.getOrderNum();
+			String title = "订单" + orderNum + "已发货";
+			String content = "您好，您的订单" + orderNum + "已发货";
+
+			bizMessageInfoService.autoSendMessageInfo(title, content, orderHeader.getCustomer().getId(), "orderHeader");
         }
 		return "ok";
 	}

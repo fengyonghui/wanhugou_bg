@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -94,6 +95,29 @@ public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuV2Dao, BizO
 	@Transactional(readOnly = false)
 	public void delete(BizOpShelfSku bizOpShelfSku) {
 		super.delete(bizOpShelfSku);
+		BizOpShelfSku opShelfSku = new BizOpShelfSku();
+		opShelfSku.setProductInfo(bizOpShelfSku.getProductInfo());
+		BizProductInfo productInfo = bizProductInfoService.get(bizOpShelfSku.getProductInfo());
+		List<BizOpShelfSku> opShelfSkus = findList(opShelfSku);
+		if (CollectionUtils.isNotEmpty(opShelfSkus)) {
+			int i = 0;
+			for (BizOpShelfSku shelfSku : opShelfSkus) {
+				if (bizOpShelfSku.getUnshelfTime() != null && bizOpShelfSku.getUnshelfTime().before(new Date())) {
+					continue;
+				}
+				if (i ++ == 0) {
+					productInfo.setMinPrice(shelfSku.getSalePrice());
+					productInfo.setMaxPrice(shelfSku.getSalePrice());
+				}
+				if (productInfo.getMinPrice() > shelfSku.getSalePrice()) {
+					productInfo.setMinPrice(shelfSku.getSalePrice());
+				}
+				if (productInfo.getMaxPrice() < shelfSku.getSalePrice()) {
+					productInfo.setMaxPrice(shelfSku.getSalePrice());
+				}
+			}
+			bizProductInfoService.saveProd(productInfo);
+		}
 	}
 
 	@Transactional(readOnly = false)

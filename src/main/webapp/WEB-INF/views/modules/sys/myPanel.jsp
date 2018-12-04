@@ -57,7 +57,7 @@
 <div class="contentMain">
     <ul class="htmlMenu">
         <shiro:hasAnyRoles
-                name="dept,p_center_manager,buyer,channel_manager,Channel Supervisor,General manager,selection_of_specialist,finance,financial_general_manager,finance_director">
+                name="dept,p_center_manager,buyer,channel_manager,Channel Supervisor,General manager,marketing_manager,finance,financial_general_manager,finance_director">
             <li>
                 <a onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/waitAudit">订单审核</a>
                 <c:if test="${waitAuditCount > 0}">
@@ -93,7 +93,7 @@
             </li>
         </shiro:hasAnyRoles>
         <shiro:hasAnyRoles
-                name="dept,selection_of_specialist">
+                name="dept,marketing_manager">
             <li>
                 <a onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/applyPayment">申请付款</a>
                 <c:if test="${applyPaymentCount > 0}">
@@ -111,7 +111,7 @@
             </li>
         </shiro:hasAnyRoles>
         <shiro:hasAnyRoles
-                name="dept,channel_manager,Channel Supervisor,selection_of_specialist,op_director">
+                name="dept,channel_manager,Channel Supervisor,marketing_manager,op_director">
             <li>
                 <a  onclick="return addTab($(this), true);" target="mainFrame" href="${ctx}/sys/myPanel/reAudit">备货单审核</a>
                 <c:if test="${reAuditCount > 0}">

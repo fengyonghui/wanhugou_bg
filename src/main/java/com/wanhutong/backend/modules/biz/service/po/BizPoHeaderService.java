@@ -353,9 +353,10 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             for (String orderDetailId : orderDetailArr) {
                 BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(orderDetailId));
                 BizSkuInfo skuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
-                if (bizOrderDetail.getOrderHeader() != null && bizOrderDetail.getOrderHeader().getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
-                    skuInfo.setBuyPrice(bizOrderDetail.getBuyPrice());
-                }
+                skuInfo.setBuyPrice(bizOrderDetail.getBuyPrice());
+//                if (bizOrderDetail.getOrderHeader() != null && bizOrderDetail.getOrderHeader().getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
+//                    skuInfo.setBuyPrice(bizOrderDetail.getBuyPrice());
+//                }
                 if (skuMap.containsKey(skuInfo.getId())) {
                     BizSkuInfo sku = skuMap.get(skuInfo.getId());
                     Integer ordQty = sku.getReqQty() + bizOrderDetail.getOrdQty() - bizOrderDetail.getSentQty();
@@ -374,6 +375,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             for (String reqDetailId : reqDetailArr) {
                 BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.parseInt(reqDetailId));
                 BizSkuInfo skuInfo = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
+                skuInfo.setBuyPrice(bizRequestDetail.getUnitPrice());
                 if (skuMap.containsKey(skuInfo.getId())) {
                     BizSkuInfo sku = skuMap.get(skuInfo.getId());
                     Integer reqQty = sku.getReqQty() + bizRequestDetail.getReqQty() - bizRequestDetail.getRecvQty();

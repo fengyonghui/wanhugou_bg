@@ -27,6 +27,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
+import com.wanhutong.backend.modules.biz.service.message.BizMessageInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
@@ -142,6 +143,8 @@ public class BizPoHeaderController extends BaseController {
     private BizCompletePalnService bizCompletePalnService;
     @Autowired
     private BizInvoiceService bizInvoiceService;
+    @Autowired
+    private BizMessageInfoService bizMessageInfoService;
 
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
     public static final String PO_HEADER_TABLE_NAME = "biz_po_header";

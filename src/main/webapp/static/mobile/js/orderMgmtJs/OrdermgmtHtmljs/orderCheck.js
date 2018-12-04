@@ -233,7 +233,7 @@
 					$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
 					$('#staRelNum').val(item.customer.name);
 					$('#staPototal').val(item.totalDetail.toFixed(2));
-					$('#staAdjustmentMoney').val(item.totalExp);
+					$('#staAdjustmentMoney').val(item.totalExp.toFixed(2));
 					$('#staFreight').val(item.freight.toFixed(2));
 					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staShouldPay').val(shouldPay.toFixed(2));
