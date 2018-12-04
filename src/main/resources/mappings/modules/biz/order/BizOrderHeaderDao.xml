@@ -559,6 +559,9 @@
 			<if test="mobileAuditStatus == 2">
 				AND a.biz_status NOT IN (0,5,10,45)
 			</if>
+			<if test="targetPage != null and targetPage == 'COMMISSION_ORDER'">
+				AND a.cust_id != 1
+			</if>
 			<!-- 列表时间查询 -->
 			<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
 				AND a.create_time &gt;= #{orderCreatStartTime}

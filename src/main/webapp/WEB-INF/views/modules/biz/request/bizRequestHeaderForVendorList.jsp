@@ -125,7 +125,7 @@
 <body>
 <ul class="nav nav-tabs">
 	<li class="active"><a href="${ctx}/biz/request/bizRequestHeaderForVendor/">备货清单列表</a></li>
-	<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><li><a href="${ctx}/biz/request/bizRequestHeaderForVendor/form">备货清单添加</a></li></shiro:hasPermission>
+	<li><a href="${ctx}/biz/request/bizRequestHeaderForVendor/form">备货清单添加</a></li>
 </ul>
 <form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/" method="post" class="breadcrumb form-search">
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
