@@ -16,26 +16,19 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizHeaderSchedulingDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
-import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
+import com.wanhutong.backend.modules.biz.entity.po.*;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
-import com.wanhutong.backend.modules.biz.service.message.BizMessageInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
-import com.wanhutong.backend.modules.biz.service.po.BizCompletePalnService;
-import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
-import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
-import com.wanhutong.backend.modules.biz.service.po.BizSchedulingPlanService;
+import com.wanhutong.backend.modules.biz.service.po.*;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
@@ -88,10 +81,10 @@ import java.util.stream.Collectors;
  * @version 2017-12-30
  */
 @Controller
-@RequestMapping(value = "${adminPath}/biz/po/bizPoHeader")
-public class BizPoHeaderController extends BaseController {
+@RequestMapping(value = "${adminPath}/biz/po/bizPoHeaderV2")
+public class BizPoHeaderControllerV2 extends BaseController {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderControllerV2.class);
 
     @Autowired
     private BizPoHeaderService bizPoHeaderService;
@@ -130,7 +123,7 @@ public class BizPoHeaderController extends BaseController {
     @Autowired
     private BizInvoiceService bizInvoiceService;
     @Autowired
-    private BizMessageInfoService bizMessageInfoService;
+    private BizPoPaymentOrderService bizPoPaymentOrderService;
 
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
     public static final String PO_HEADER_TABLE_NAME = "biz_po_header";
@@ -152,7 +145,39 @@ public class BizPoHeaderController extends BaseController {
                 Collections.reverse(commonProcessList);
                 entity.setCommonProcessList(commonProcessList);
             }
+            BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+            bizPoOrderReq.setPoHeader(entity);
+            List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+            Map<Integer, ArrayList<BizPoOrderReq>> map = new HashMap<>();
+            Map<String, Integer> mapSource = new HashMap<>();
+            for (BizPoOrderReq poOrderReq : poOrderReqList) {
+                if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())) {
+                    BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(poOrderReq.getSoId());
+                    String numKey = bizOrderHeader.getOrderNum();
+                    if (mapSource.containsKey(numKey)) {
+                        int count = mapSource.get(numKey);
+                        mapSource.remove(numKey);
+                        mapSource.put(numKey, count + 1);
+                    } else {
+                        mapSource.put(numKey, 1);
+                    }
 
+                } else if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())) {
+                    BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(poOrderReq.getSoId());
+                    String reqKey = bizRequestHeader.getReqNo();
+                    if (mapSource.containsKey(reqKey)) {
+                        int count = mapSource.get(reqKey);
+                        mapSource.remove(reqKey);
+                        mapSource.put(reqKey, count + 1);
+                    } else {
+                        mapSource.put(reqKey, 1);
+                    }
+
+                    }
+                }
+
+            entity.setOrderSourceMap(mapSource);
+            }
             BizPoDetail bizPoDetail = new BizPoDetail();
             bizPoDetail.setPoHeader(entity);
             List<BizPoDetail> poDetailList = bizPoDetailService.findList(bizPoDetail);
@@ -175,92 +200,12 @@ public class BizPoHeaderController extends BaseController {
 
                 poDetails.add(poDetail);
             }
+            BizPoPaymentOrder bizPoPaymentOrder=new BizPoPaymentOrder();
+            bizPoPaymentOrder.setPoHeaderId(id);
+           List<BizPoPaymentOrder> poPaymentOrderList= bizPoPaymentOrderService.findList(bizPoPaymentOrder);
             entity.setPoDetailList(poDetails);
-            BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
-            bizPoOrderReq.setPoHeader(entity);
-            List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
-            BizOrderDetail bizOrderDetail = new BizOrderDetail();
-            BizRequestDetail bizRequestDetail = new BizRequestDetail();
-            Map<Integer, ArrayList<BizPoOrderReq>> map = new HashMap<>();
-            Map<String, Integer> mapSource = new HashMap<>();
-            for (BizPoOrderReq poOrderReq : poOrderReqList) {
-                if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())) {
-                    BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(poOrderReq.getSoId());
-                    String numKey = bizOrderHeader.getOrderNum();
-                    if (mapSource.containsKey(numKey)) {
-                        int count = mapSource.get(numKey);
-                        mapSource.remove(numKey);
-                        mapSource.put(numKey, count + 1);
-                    } else {
-                        mapSource.put(numKey, 1);
-                    }
-                    poOrderReq.setOrderHeader(bizOrderHeader);
-                    bizOrderDetail.setOrderHeader(bizOrderHeader);
-                    bizOrderDetail.setLineNo(poOrderReq.getSoLineNo());
-                    List<BizOrderDetail> bizOrderDetailList = bizOrderDetailService.findList(bizOrderDetail);
-                    if (bizOrderDetailList != null && bizOrderDetailList.size() != 0) {
-                        BizOrderDetail orderDetail = bizOrderDetailList.get(0);
-                        Integer key = orderDetail.getSkuInfo().getId();
-                        if (map.containsKey(key)) {
-                            ArrayList<BizPoOrderReq> bizPoOrderReqList = map.get(key);
+            entity.setPoPaymentOrderList(poPaymentOrderList);
 
-                            map.remove(key);
-
-                            String orderNumStr = bizOrderHeader.getOrderNum();
-                            poOrderReq.setOrderNumStr(orderNumStr);
-                            bizPoOrderReqList.add(poOrderReq);
-                            map.put(orderDetail.getSkuInfo().getId(), bizPoOrderReqList);
-                        } else {
-                            ArrayList<BizPoOrderReq> bizPoOrderReqList = Lists.newArrayList();
-                            String orderNumStr = bizOrderHeader.getOrderNum();
-                            poOrderReq.setOrderNumStr(orderNumStr);
-                            bizPoOrderReqList.add(poOrderReq);
-                            map.put(orderDetail.getSkuInfo().getId(), bizPoOrderReqList);
-                        }
-
-                    }
-                } else if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())) {
-                    BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(poOrderReq.getSoId());
-                    String reqKey = bizRequestHeader.getReqNo();
-                    if (mapSource.containsKey(reqKey)) {
-                        int count = mapSource.get(reqKey);
-                        mapSource.remove(reqKey);
-                        mapSource.put(reqKey, count + 1);
-                    } else {
-                        mapSource.put(reqKey, 1);
-                    }
-                    poOrderReq.setRequestHeader(bizRequestHeader);
-                    bizRequestDetail.setRequestHeader(bizRequestHeader);
-                    bizRequestDetail.setLineNo(poOrderReq.getSoLineNo());
-                    List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
-                    if (requestDetailList != null && requestDetailList.size() != 0) {
-                        BizRequestDetail requestDetail = requestDetailList.get(0);
-                        Integer key = requestDetail.getSkuInfo().getId();
-                        if (map.containsKey(key)) {
-
-                            ArrayList<BizPoOrderReq> bizPoOrderReqList = map.get(key);
-                            map.remove(key);
-                            poOrderReq.setOrderNumStr(bizRequestHeader.getReqNo());
-                            bizPoOrderReqList.add(poOrderReq);
-                            map.put(requestDetail.getSkuInfo().getId(), bizPoOrderReqList);
-
-                        } else {
-                            String orderNumStr = bizRequestHeader.getReqNo();
-                            poOrderReq.setOrderNumStr(orderNumStr);
-                            ArrayList<BizPoOrderReq> bizPoOrderReqList = Lists.newArrayList();
-                            bizPoOrderReqList.add(poOrderReq);
-                            map.put(requestDetail.getSkuInfo().getId(), bizPoOrderReqList);
-                        }
-                    }
-                }
-
-                //	poOrderReqs.add(mapSource);
-            }
-            entity.setOrderSourceMap(mapSource);
-
-
-            entity.setOrderNumMap(map);
-        }
         if (entity == null) {
             entity = new BizPoHeader();
         }
@@ -296,7 +241,7 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        List<com.wanhutong.backend.modules.config.parse.Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+        List<Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
 
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("processList", processList);
@@ -336,10 +281,10 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        List<com.wanhutong.backend.modules.config.parse.Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
+        List<Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
 
         Set<String> processSet = Sets.newHashSet();
-        for (com.wanhutong.backend.modules.config.parse.Process process : processList) {
+        for (Process process : processList) {
             processSet.add(process.getName());
         }
 
@@ -382,10 +327,10 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        List<com.wanhutong.backend.modules.config.parse.Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
+        List<Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
 
         Set<String> processSet = Sets.newHashSet();
-        for (com.wanhutong.backend.modules.config.parse.Process process : processList) {
+        for (Process process : processList) {
             processSet.add(process.getName());
         }
 
@@ -430,7 +375,7 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        List<com.wanhutong.backend.modules.config.parse.Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+        List<Process> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
 
         List<Map<String, Object>> resultList = Lists.newArrayList();
         List<BizPoHeader> list = page.getList();
@@ -473,7 +418,7 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+            Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
@@ -528,7 +473,8 @@ public class BizPoHeaderController extends BaseController {
         model.addAttribute("bizOrderHeader", bizOrderHeader);
         model.addAttribute("type", type);
         model.addAttribute("prewStatus", prewStatus);
-        return "modules/biz/po/bizPoHeaderForm";
+        model.addAttribute("bizPoPaymentOrder",new BizPoPaymentOrder());
+        return "modules/biz/po/bizPoHeaderFormV2";
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:view")
@@ -545,7 +491,7 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+            Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 

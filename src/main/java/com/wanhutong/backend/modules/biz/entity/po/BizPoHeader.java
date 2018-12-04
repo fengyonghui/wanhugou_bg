@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.po;
 
+import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
@@ -10,14 +11,12 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-
-import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
  * 采购订单表Entity
@@ -60,6 +59,8 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private int isPrew;
 
 	private BizPoPaymentOrder bizPoPaymentOrder;
+
+	private List<BizPoPaymentOrder> poPaymentOrderList;
 
 	private Integer currentPaymentId;
 
@@ -664,5 +665,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setApplyPayment(Integer applyPayment) {
 		this.applyPayment = applyPayment;
+	}
+
+	public List<BizPoPaymentOrder> getPoPaymentOrderList() {
+		return poPaymentOrderList;
+	}
+
+	public void setPoPaymentOrderList(List<BizPoPaymentOrder> poPaymentOrderList) {
+		this.poPaymentOrderList = poPaymentOrderList;
 	}
 }

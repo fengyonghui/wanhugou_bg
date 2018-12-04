@@ -117,10 +117,10 @@
 					mui.toast("请输入登录名！")
 					return false;
 				}
-			    if(!(/^1[345678]\d{9}$/.test(phoneVal))){ 
-			        mui.toast("手机号码有误，请重新输入！");  
-			        return false; 
-			    } 
+			    if(!(/^1[345678]\d{9}$/.test(phoneVal))){
+			        mui.toast("手机号码有误，请重新输入！");
+			        return false;
+			    }
 				$.ajax({
 					type: "GET",
 					url: "/a/biz/custom/bizCustomCenterConsultant/save4mobile",

@@ -77,6 +77,8 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
      */
     private String option;
 
+    private String fromPage;
+
     public BizPoPaymentOrder() {
         super();
     }
@@ -244,6 +246,14 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     public void setReqNo(String reqNo) {
         this.reqNo = reqNo;
+    }
+
+    public String getFromPage() {
+        return fromPage;
+    }
+
+    public void setFromPage(String fromPage) {
+        this.fromPage = fromPage;
     }
 
     public Integer getPoHeaderBizStatus() {

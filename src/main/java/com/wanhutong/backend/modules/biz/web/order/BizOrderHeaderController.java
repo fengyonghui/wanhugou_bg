@@ -24,7 +24,6 @@ import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
-import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
@@ -57,12 +56,6 @@ import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -79,12 +72,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Controller
@@ -249,10 +242,27 @@ public class BizOrderHeaderController extends BaseController {
         originConfigMap.put("总经理", "总经理");
         originConfigMap.put("品类主管", "品类主管");
         originConfigMap.put("财务经理", "财务经理");
-        originConfigMap.put("完成", "完成");
+        originConfigMap.put("审批完成", "审批完成");
         originConfigMap.put("驳回", "驳回");
         originConfigMap.put("不需要审批", "不需要审批");
 
+        //支付申请单合并搜索条件审核状态
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
+
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(bizOrderHeader.getProcessTypeStr())) {
+            List<Process> processListTemp = purchaseOrderProcessConfig.getNameProcessMap().get(bizOrderHeader.getProcessTypeStr());
+            List<String> transform = processListTemp.stream().map(process -> String.valueOf(process.getCode())).collect(Collectors.toList());
+            bizOrderHeader.setProcessTypeList(transform);
+        }
+
+
+        Set<String> processSet = Sets.newHashSet();
+        for (com.wanhutong.backend.modules.config.parse.Process process : processList) {
+            processSet.add(process.getName());
+        }
+
+        model.addAttribute("processList", processSet);
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
@@ -382,11 +392,13 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         model.addAttribute("originConfigMap", originConfigMap);
-
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
         model.addAttribute("auditFithStatus", doOrderHeaderProcessFifthConfig.getAutProcessId());
         model.addAttribute("auditStatus", originConfig.getPayProcessId());
+
+        //付款单审核用
+        model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
         //判断是否为代销订单
         if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
             return "modules/biz/order/bizCommissionOrderHeaderList";
@@ -400,6 +412,15 @@ public class BizOrderHeaderController extends BaseController {
     @ResponseBody
     public String listData4mobile(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         Map<String, Object> resultMap = Maps.newHashMap();
+        //判断是否为代销订单
+        if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
+            //零售订单
+            bizOrderHeader.setOrderType(8);
+            //收货完成
+            bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.COMPLETE.getState());
+            //未结佣
+            //bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.NO_COMMISSSION.getComStatus());
+        }
         if (bizOrderHeader.getSkuChickCount() != null) {
             //商品下单量标识
             bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
@@ -419,7 +440,46 @@ public class BizOrderHeaderController extends BaseController {
         originConfigMap.put("驳回", "驳回");
         originConfigMap.put("不需要审批", "不需要审批");
 
+        //支付申请单合并搜索条件审核状态
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
+
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(bizOrderHeader.getProcessTypeStr())) {
+            List<Process> processListTemp = purchaseOrderProcessConfig.getNameProcessMap().get(bizOrderHeader.getProcessTypeStr());
+            List<String> transform = processListTemp.stream().map(process -> String.valueOf(process.getCode())).collect(Collectors.toList());
+            bizOrderHeader.setProcessTypeList(transform);
+        }
+
+        Set<String> processSet = Sets.newHashSet();
+        for (com.wanhutong.backend.modules.config.parse.Process process : processList) {
+            processSet.add(process.getName());
+        }
+        model.addAttribute("processList", processSet);
+        resultMap.put("processList", processSet);
+
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+        if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
+            List<BizOrderHeader> bizOrderHeaderList = page.getList();
+            List<BizOrderHeader> bizOrderHeaderListNew = new ArrayList<BizOrderHeader>();
+            if (CollectionUtils.isNotEmpty(bizOrderHeaderList)) {
+                for (BizOrderHeader orderHeader :bizOrderHeaderList) {
+                    BizCommissionOrder bizCommissionOrder = new BizCommissionOrder();
+                    String applyCommStatus = "no";
+                    bizCommissionOrder.setOrderId(orderHeader.getId());
+                    List<BizCommissionOrder> commissionOrderList = bizCommissionOrderService.findList(bizCommissionOrder);
+                    if (CollectionUtils.isNotEmpty(commissionOrderList)) {
+                        applyCommStatus = "yes";
+                        bizCommissionOrder = commissionOrderList.get(0);
+                        Integer commId = bizCommissionOrder.getCommId();
+                        BizCommission bizCommission = bizCommissionService.get(commId);
+                        orderHeader.setBizCommission(bizCommission);
+                    }
+                    orderHeader.setApplyCommStatus(applyCommStatus);
+                    bizOrderHeaderListNew.add(orderHeader);
+                }
+            }
+            page.setList(bizOrderHeaderListNew);
+        }
         model.addAttribute("page", page);
         resultMap.put("page", page);
         if (bizOrderHeader.getSource() != null) {
@@ -511,6 +571,9 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("auditFithStatus", doOrderHeaderProcessFifthConfig.getAutProcessId());
         model.addAttribute("auditStatus", originConfig.getPayProcessId());
 
+        //付款单审核用
+        model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
+
         resultMap.put("originConfigMap", originConfigMap);
         resultMap.put("roleSet", roleSet);
         resultMap.put("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
@@ -530,7 +593,8 @@ public class BizOrderHeaderController extends BaseController {
         resultMap.put("REFUNDING", OrderHeaderDrawBackStatusEnum.REFUNDING.getState());
         resultMap.put("REFUNDREJECT", OrderHeaderDrawBackStatusEnum.REFUNDREJECT.getState());
         resultMap.put("REFUNDED", OrderHeaderDrawBackStatusEnum.REFUNDED.getState());
-
+        resultMap.put("COMMISSION_ORDER", BizOrderTypeEnum.COMMISSION_ORDER.getState());
+        resultMap.put("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
 
         return JsonUtil.generateData(resultMap, request.getParameter("callback"));
     }
@@ -918,7 +982,7 @@ public class BizOrderHeaderController extends BaseController {
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
 
         String type = "1";
-        if (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721) {
+        if (bizOrderHeaderTwo.getSuplys() != null && (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721)) {
             type = "0";
         }
 
@@ -1234,6 +1298,7 @@ public class BizOrderHeaderController extends BaseController {
         resultMap.put("REFUNDING", OrderHeaderDrawBackStatusEnum.REFUNDING.getState());
         resultMap.put("PURCHASE_ORDER", BizOrderTypeEnum.PURCHASE_ORDER.getState());
         resultMap.put("ORDINARY_ORDER", BizOrderTypeEnum.ORDINARY_ORDER.getState());
+        resultMap.put("COMMISSION_ORDER", BizOrderTypeEnum.COMMISSION_ORDER.getState());
 
         return JsonUtil.generateData(resultMap, null);
     }

@@ -3,17 +3,19 @@
  */
 package com.wanhutong.backend.modules.biz.web.po;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
@@ -37,12 +39,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
-import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -104,6 +102,7 @@ public class BizPoPaymentOrderController extends BaseController {
         } else if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
             bizOrderHeaderService.get(poId);
         } else {
+            bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
             BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
             if (fromPage != null) {
                 switch (fromPage) {
@@ -118,6 +117,7 @@ public class BizPoPaymentOrderController extends BaseController {
                         List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
                         if (CollectionUtils.isNotEmpty(requestHeaderList)) {
                             model.addAttribute("requestHeader", requestHeaderList.get(0));
+                            model.addAttribute("headerNum", requestHeaderList.get(0).getReqNo());
                         }
                         break;
                     case "orderHeader":
@@ -131,6 +131,7 @@ public class BizPoPaymentOrderController extends BaseController {
                         List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
                         if (CollectionUtils.isNotEmpty(orderHeaderList)) {
                             model.addAttribute("orderHeader", orderHeaderList.get(0));
+                            model.addAttribute("headerNum", orderHeaderList.get(0).getOrderNum());
                         }
                         break;
                     default:
@@ -475,6 +476,7 @@ public class BizPoPaymentOrderController extends BaseController {
             }
         }
 
+        bizPoPaymentOrder.setFromPage(fromPage);
         model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
         return "modules/biz/po/bizPoPaymentOrderForm";
     }
@@ -550,8 +552,24 @@ public class BizPoPaymentOrderController extends BaseController {
         }
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
         addMessage(redirectAttributes, "保存付款单成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "&orderType=" + bizPoPaymentOrder.getOrderType();
+        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId()
+                + "&orderType=" + bizPoPaymentOrder.getOrderType() + "&fromPage=" + bizPoPaymentOrder.getFromPage();
     }
+
+
+//    @RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
+//    @RequestMapping(value = "save")
+//    @ResponseBody
+//    public String savePayment() {
+//        if (!beanValidator(model, bizPoPaymentOrder)) {
+//            return form(request, response, bizPoPaymentOrder, model);
+//        }
+//        bizPoPaymentOrderService.save(bizPoPaymentOrder);
+//        addMessage(redirectAttributes, "保存付款单成功");
+//        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId()
+//                + "&orderType=" + bizPoPaymentOrder.getOrderType() + "&fromPage=" + bizPoPaymentOrder.getFromPage();
+//    }
+
 
     @RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
     @RequestMapping(value = "save4Mobile")

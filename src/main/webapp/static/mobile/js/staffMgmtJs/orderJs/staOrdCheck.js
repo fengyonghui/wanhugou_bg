@@ -173,14 +173,49 @@
 						$('#staFinal').val("(有尾款)");
 					}					
 					$('#staPoordNum').val(item.orderNum);
+					if(res.data.orderType==8){
+						$('#customerName').html('零售用户'+'：');
+					}
+					if(res.data.orderType!=8){
+						$('#customerName').html('经销店名称'+'：');
+					}
 					$('#staRelNum').val(item.customer.name);
+					//结佣状态
+					if(res.data.orderType==res.data.COMMISSION_ORDER){
+						$('#commission').parent().show();
+					}else{
+						$('#commission').parent().hide();
+					}
+					var comStatusTxt = '';
+					$.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {
+		                	type:"biz_commission_status"
+		                },
+		                dataType: "json",
+		                success: function(res){
+		                	console.log(res)
+		                	$.each(res,function(i,itemss){
+		                		 if(itemss.value==item.commissionStatus){
+		                		 	  comStatusTxt = itemss.label
+		                		 }
+		                	})
+		                	$('#commission').val(comStatusTxt);
+						}
+					});
+					if(res.data.orderType!=8){
+						$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
+					}else{
+						$('#staCoin').parent().hide();
+					}
 					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp);
 					$('#staFreight').val(item.freight.toFixed(2));
-					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staShouldPay').val(shouldPay.toFixed(2));
 					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');
-					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
+					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
 					$('#staPoLastDaPerent').val(poLastDa);
 					$('#staServerPrice').val((item.totalExp + item.serviceFee+item.freight).toFixed(2));
 					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));
@@ -251,19 +286,19 @@
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
-	                    '<label>详情行号:</label>' + 
+	                    '<label>详情行号:</label>' +
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.lineNo + '" disabled></div></li></div>' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label>库存数量:</label>' +
-	                    '<input type="text" class="mui-input-clear" id="" value="' + data.invSkuNumMap[item.id] + '" disabled></div></li></div></div>' 
+	                    '<input type="text" class="mui-input-clear" id="" value="' + data.invSkuNumMap[item.id] + '" disabled></div></li></div></div>'
 					}else {
 						repertory = '<div class="mui-row lineStyle">' +
 	                    '<li class="mui-table-view-cell">' +
 	                    '<div class="mui-input-row ">' +
 	                    '<label class="commodityName">详情行号:</label>' +
-	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.lineNo + '" disabled></div></li></div>' 
+	                    '<input type="text" class="mui-input-clear commodityTxt" id="" value="' + item.lineNo + '" disabled></div></li></div>'
 					}
 					htmlCommodity += '<div class="mui-row app_bline commodity" id="' + item.id + '">' +
 						repertory +
@@ -278,7 +313,7 @@
 	                    '<div class="mui-input-row ">' +
 	                    '<label>商品出厂价:</label>' +
 	                    '<input type="text" class="mui-input-clear" id="" value="' + item.buyPrice + '" disabled></div></li></div></div>' +
-	                    
+
                     	 '<div class="mui-row">' +
 	                    '<div class="mui-col-sm-6 mui-col-xs-6">' +
 	                    '<li class="mui-table-view-cell">' +
@@ -350,7 +385,7 @@
 					}else{
 						$(x).hide();
 					}
-				})				
+				})
 			}
 		},
 		changePrice: function() {
@@ -514,14 +549,22 @@
 //					console.log(res)
 					if(res.data=='ok'){
 						mui.toast('发货成功!')
-						window.setTimeout(function(){
-			                GHUTILS.OPENPAGE({
-							url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+//						window.setTimeout(function(){
+//			                GHUTILS.OPENPAGE({
+//							url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
+//							extras: {
+//								staListId:stcheckIdTxt,
+//								}
+//							})
+//			            },800);
+                        window.setTimeout(function(){
+   			                GHUTILS.OPENPAGE({
+							url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 							extras: {
-								staListId:stcheckIdTxt,
+//								staListId:stcheckIdTxt,
 								}
 							})
-			            },800);						
+			            },800);
 					}
 				},
 				error: function (e) {

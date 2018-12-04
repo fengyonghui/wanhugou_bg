@@ -9,7 +9,7 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			this.pageInit(); //页面初始化			
+			this.pageInit(); //页面初始化
 			this.getPermissionList('biz:order:buyPrice:view','buyPriceFlag')//佣金权限
 			this.getPermissionList1('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
 			this.buyPrice(); //佣金
@@ -19,7 +19,7 @@
 		pageInit: function() {
 			var _this = this;
 			_this.getData();//获取数据
-		},		
+		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
             $.ajax({
@@ -88,15 +88,50 @@
 						$('#staPoRemark').val(w.comments);
 					})
 					var item = res.data.bizOrderHeader;
-					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staPoordNum').val(item.orderNum);
+					if(res.data.orderType==8){
+						$('#customerName').html('零售用户'+'：');
+					}
+					if(res.data.orderType!=8){
+						$('#customerName').html('经销店名称'+'：');
+					}
 					$('#staRelNum').val(item.customer.name);
+					//结佣状态
+					if(res.data.orderType==res.data.COMMISSION_ORDER){
+						$('#commission').parent().show();
+					}else{
+						$('#commission').parent().hide();
+					}
+					var comStatusTxt = '';
+					$.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {
+		                	type:"biz_commission_status"
+		                },
+		                dataType: "json",
+		                success: function(res){
+		                	console.log(res)
+		                	$.each(res,function(i,itemss){
+		                		 if(itemss.value==item.commissionStatus){
+		                		 	  comStatusTxt = itemss.label
+		                		 }
+		                	})
+		                	$('#commission').val(comStatusTxt);
+						}
+					})
+					if(res.data.orderType!=8){
+						$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
+					}else{
+						$('#staCoin').parent().hide();
+					}
 					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp);
 					$('#staFreight').val(item.freight.toFixed(2));
 					$('#staShouldPay').val(shouldPay.toFixed(2));
 					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');
-					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
+					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
 					$('#staPoLastDaPerent').val(poLastDa);
 					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));
 					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));
@@ -377,7 +412,7 @@
 					}else{
 						$(x).hide();
 					}
-				})	
+				})
 			}
 		},
 		formatDateTime: function(unix) {

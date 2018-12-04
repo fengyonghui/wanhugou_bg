@@ -38,6 +38,7 @@
 		<form:hidden path="id"/>
 		<form:hidden path="poHeaderId"/>
 		<form:hidden path="orderType"/>
+		<form:hidden path="fromPage"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">订单总金额：</label>

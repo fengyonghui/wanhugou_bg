@@ -3,6 +3,7 @@
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqFromTypeEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
 
 
 <html>
@@ -537,7 +538,8 @@
                     result = JSON.parse(result);
                     if(result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                        <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/";
                     }else {
                         alert(result.errmsg);
                     }
@@ -1006,7 +1008,8 @@
                                 result = JSON.parse(result);
                                 if(result.ret == true || result.ret == 'true') {
                                     alert('操作成功!');
-                                    window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                                    <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                                    window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=${entity.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=" + $("#id").val();
                                 }else {
                                     alert(result.errmsg);
                                 }
@@ -2076,7 +2079,9 @@
             type: 'get',
             success: function (result) {
                 if(result == '操作成功!') {
-                    window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                    <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                    window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + id + "&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}"
+                        + "&fromPage=requestHeader" + "&orderId=" + $("#id").val();
                 }
             },
             error: function (error) {

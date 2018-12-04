@@ -230,8 +230,41 @@
 						$('#staFinal').val("(有尾款)");
 					}					
 					$('#staPoordNum').val(item.orderNum);
-					$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
 					$('#staRelNum').val(item.customer.name);
+					if(res.data.orderType==8){
+						$('#customerName').html('零售用户'+'：');
+					}
+					if(res.data.orderType!=8){
+						$('#customerName').html('经销店名称'+'：');
+					}
+					//结佣状态
+					if(res.data.orderType==res.data.COMMISSION_ORDER){
+						$('#commission').parent().show();
+					}else{
+						$('#commission').parent().hide();
+					}
+					var comStatusTxt = '';
+					$.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {
+		                	type:"biz_commission_status"
+		                },
+		                dataType: "json",
+		                success: function(res){
+		                	$.each(res,function(i,itemss){
+		                		 if(itemss.value==item.commissionStatus){
+		                		 	  comStatusTxt = itemss.label 
+		                		 }
+		                	})
+		                	$('#commission').val(comStatusTxt);
+						}
+					})
+					if(res.data.orderType!=8){
+						$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
+					}else{
+						$('#staCoin').parent().hide();
+					}
 					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp.toFixed(2));
 					$('#staFreight').val(item.freight.toFixed(2));
@@ -257,13 +290,13 @@
 					if(res.data.bizOrderHeader.str == 'audit' && res.data.bizOrderHeader.bizPoHeader.commonProcessList != null && res.data.bizOrderHeader.bizPoHeader.commonProcessList.length > 0){
 						$('#currentTypes').val(res.data.bizOrderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.code)
 					}
-					if(str == "audit") {
-						//支出信息的审核
-						_this.comfirDialigs();
-					}else {
+//					if(str == "audit") {
+//						//支出信息的审核
+//						_this.comfirDialigs();
+//					}else {
 						//订单审核
 						_this.comfirDialig(res.data);//审核
-					}
+//					}
                 }
             });
 		},
@@ -621,87 +654,83 @@
 				})
 			});
 		},
-		comfirDialigs: function() {
-			var _this = this;
-			document.getElementById("rejectBtns").addEventListener('tap', function() {
-//				var id= $(this).attr('soId');
-//				var currentType= $('#currentType').val();
-				var id= $(this).attr('poids');
-				var currentType= $('#currentTypes').val();
-				var btnArray = ['取消', '确定'];
-				mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
-					if(a.index == 1) {
-						var rejectTxt = a.value;
-						if(a.value == '') {
-							mui.toast('驳货理由不能为空！')
-							return;
-						} else {
-							var btnArray = ['取消', '确定'];
-							mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
-								if(choice.index == 1) {
-									_this.payOutAudit(id,rejectTxt, 2,currentType)
-								} else {}
-							})
-						}
-					} else {}
-				})
-			});
-			document.getElementById("checkBtns").addEventListener('tap', function(e) {
-				e.detail.gesture.preventDefault();
-//				var id= $(this).attr('soId');
-//				var currentType= $('#currentType').val();
-				var id= $(this).attr('poid');
-				var currentType= $('#currentTypes').val();
-				var btnArray = ['取消', '确定'];
-				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
-					if(e.index == 1) {
-						var inText = e.value;
-						if(e.value == '') {
-							mui.toast('通过理由不能为空！')
-							return;
-						} else {
-							var btnArray = ['否', '是'];
-							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
-								if(choice.index == 1) {
-									_this.payOutAudit(id,inText, 1,currentType)
-								} else {}
-							})
-						}
-					} else {}
-				})
-			});
-		},
-		payOutAudit: function(id,inText, num,currentType) {
-			var _this = this;
-			$.ajax({
-				type: "GET",
-				url: "/a/biz/po/bizPoHeader/audit",
-				data: {
-					id: id,
-					currentType: currentType,
-					fromPage: 'orderHeader',
-					auditType: num,
-					description: inText
-				},
-				dataType: "json",
-				success: function(res) {
-					if(res.ret == true) {
-						mui.toast('操作成功!')
-						GHUTILS.OPENPAGE({
-							url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
-							extras: {}
-						})
-					}
-					if(res.ret == false) {
-						mui.toast(res.errmsg)
-					}
-				},
-				error: function(e) {
-					//服务器响应失败处理函数
-				}
-			});
-
-		},
+//		comfirDialigs: function() {
+//			var _this = this;
+//			document.getElementById("rejectBtns").addEventListener('tap', function() {
+//				var id= $(this).attr('poids');
+//				var currentType= $('#currentTypes').val();
+//				var btnArray = ['取消', '确定'];
+//				mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
+//					if(a.index == 1) {
+//						var rejectTxt = a.value;
+//						if(a.value == '') {
+//							mui.toast('驳货理由不能为空！')
+//							return;
+//						} else {
+//							var btnArray = ['取消', '确定'];
+//							mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
+//								if(choice.index == 1) {
+//									_this.payOutAudit(id,rejectTxt, 2,currentType)
+//								} else {}
+//							})
+//						}
+//					} else {}
+//				})
+//			});
+//			document.getElementById("checkBtns").addEventListener('tap', function(e) {
+//				e.detail.gesture.preventDefault();
+//				var id= $(this).attr('poid');
+//				var currentType= $('#currentTypes').val();
+//				var btnArray = ['取消', '确定'];
+//				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
+//					if(e.index == 1) {
+//						var inText = e.value;
+//						if(e.value == '') {
+//							mui.toast('通过理由不能为空！')
+//							return;
+//						} else {
+//							var btnArray = ['否', '是'];
+//							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
+//								if(choice.index == 1) {
+//									_this.payOutAudit(id,inText, 1,currentType)
+//								} else {}
+//							})
+//						}
+//					} else {}
+//				})
+//			});
+//		},
+//		payOutAudit: function(id,inText, num,currentType) {
+//			var _this = this;
+//			$.ajax({
+//				type: "GET",
+//				url: "/a/biz/po/bizPoHeader/audit",
+//				data: {
+//					id: id,
+//					currentType: currentType,
+//					fromPage: 'orderHeader',
+//					auditType: num,
+//					description: inText
+//				},
+//				dataType: "json",
+//				success: function(res) {
+//					if(res.ret == true) {
+//						mui.toast('操作成功!')
+//						GHUTILS.OPENPAGE({
+//							url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
+//							extras: {}
+//						})
+//					}
+//					if(res.ret == false) {
+//						mui.toast(res.errmsg)
+//					}
+//				},
+//				error: function(e) {
+//					//服务器响应失败处理函数
+//				}
+//			});
+//
+//		},
 		comfirDialig: function(data) {
 			var _this = this;
 			var id = data.entity2.bizPoHeader.id;
@@ -803,7 +832,7 @@
 										_this.afterAjaxData(data)
 									}
 									if(_this.checkResult == false) {
-//										console.log(ordType)sss
+										console.log(ordType)
 										if(ordType == 'JO') {
 											_this.auditJo(inText,1,createPo,data)
 										}
@@ -997,7 +1026,7 @@
                     if(result.ret == true || result.ret == 'true') {
                         mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
-							url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
+							url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 							extras: {}
 						})
                     }else {

@@ -22,7 +22,7 @@
 				<input type="text" class="mui-input-clear" id="staPoordNum" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label>经销店名称：</label>
+				<label id="customerName"></label>
 				<input type="text" class="mui-input-clear" id="staRelNum" disabled>
 			</div>
 			<div class="mui-input-row">
@@ -97,6 +97,10 @@
 				<input type="text" class="mui-input-clear doubleInput" id="staStatus" disabled>
 			</div>
 			<div class="mui-input-row">
+				<label>结佣状态：</label>
+				<input type="text" class="mui-input-clear" id="commission" disabled>
+			</div>
+			<div class="mui-input-row">
 				<label>收货人：</label>
 				<input type="text" class="mui-input-clear" id="staConsignee" disabled>
 			</div>
@@ -141,15 +145,11 @@
 			</div>-->
 			<div class="mui-input-row">
 				<div class="labelLf">状态流程：</div>
-				<ul class="flowPath" id="staEvoMenu">
-					
-				</ul>
+				<ul class="flowPath" id="staEvoMenu"></ul>
 			</div>
 			<div class="mui-input-row">
 				<div class="labelLf">审核流程：</div>
-				<ul class="" id="staCheckMenu">
-					
-				</ul>
+				<ul class="flowPath" id="staCheckMenu"></ul>
 			</div>
 			<div class="mui-input-row" id="inPaylistbox">
 				<div class="labelLf">支付信息：</div>
@@ -229,7 +229,6 @@
 				</div>
 				<div class="app_p15 app_f12" id="notes"></div>									
 			</div>
-			
 		</div>
 		<div class="clear"></div>
 		<input type="hidden" id="supplierId"/>
