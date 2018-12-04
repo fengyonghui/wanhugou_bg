@@ -351,6 +351,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void updateCommissionStatus(BizOrderHeader bizOrderHeader) {
+        super.save(bizOrderHeader);
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void saveCommonProcess(OrderPayProportionStatusEnum orderPayProportionStatusEnum, BizOrderHeader bizOrderHeader, boolean reGen){
         Integer code = null;
         //处理角色

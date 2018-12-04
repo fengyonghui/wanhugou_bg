@@ -85,6 +85,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
+		<li><a href="${ctx}/biz/order/bizOrderHeader?statu=${statu}&source=${source}&targetPage=COMMISSION_ORDER">佣金管理列表</a></li>
 		<li class="active"><a href="${ctx}/biz/order/bizCommission/">佣金付款表列表</a></li>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizCommission" action="${ctx}/biz/order/bizCommission/" method="post" class="breadcrumb form-search">
