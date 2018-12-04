@@ -41,9 +41,9 @@ public class OrderPayConsumer implements Runnable {
             InetAddress addr = InetAddress.getLocalHost();
             String hostName = addr.getHostName();
             client = new MqttClient(HOST, CLIENT_ID + hostName);
-            LOGGER.info("HOST：", HOST);
+            LOGGER.info("HOST：" + HOST);
             String clientId = CLIENT_ID + hostName;
-            LOGGER.info("clientId：", clientId);
+            LOGGER.info("clientId：" + clientId);
             // 3.连接
             client.connect(options);
             OrderPayCallback orderPayCallback = ServiceHelper.getService("orderPayCallback");
