@@ -58,7 +58,7 @@
                         success: function(res){
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
-                                if(item.mobileUrl){
+                                if(item.mobileUrl){                              	
                                     pHtmlList += '<li class="mui-table-view-cell mui-collapse childMenu" mobileUrl="'+item.mobileUrl+'" purchid="'+item.id+'">'+
 										'<a class="" purchid="'+item.id+'" mobileUrl="'+item.mobileUrl+'" style="color:#8f8f94">'+ item.name + '</a>'+   
 			                            '<ul class = "mui-collapse-content cMenu">'+
@@ -71,7 +71,7 @@
 		                    $.each(sArr, function(i, items) {
 		                    	var mobileUrls = $(this).attr('mobileurl');
 		                    	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
-		                        	$(this).children('a').attr('class','mui-navigate-right');
+		                        	$(this).children('a').attr('class','mui-navigate-right');                    	
 		                        	$(this).attr('id','commission');
 		                        }
 		                    });
