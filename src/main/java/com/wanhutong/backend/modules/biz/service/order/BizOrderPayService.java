@@ -2,7 +2,6 @@ package com.wanhutong.backend.modules.biz.service.order;
 
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
@@ -13,9 +12,10 @@ import com.wanhutong.backend.modules.enums.OrderPayProportionStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
-import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,11 +24,13 @@ import java.util.List;
 
 @Service
 public class BizOrderPayService extends CrudService<BizOrderHeaderDao, BizOrderHeader> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BizOrderPayService.class);
 
     @Autowired
     private CommonProcessService commonProcessService;
-    @Autowired
-    private BizOrderDetailService bizOrderDetailService;
+
+    //零售单
+    private static String RO_ORDER_TYPE = "7";
 
     public static final String DATABASE_TABLE_NAME = "biz_order_header";
     @Transactional(readOnly = false, rollbackFor = Exception.class)
@@ -36,36 +38,24 @@ public class BizOrderPayService extends CrudService<BizOrderHeaderDao, BizOrderH
         // 取订单
         BizOrderHeader bizOrderHeader = dao.getByOrderNum(orderNum);
 
-        Boolean suplyFlag = false;
-        BizOrderDetail bizOrderDetail = new BizOrderDetail();
-        bizOrderDetail.setOrderHeader(bizOrderHeader);
-        List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
-        if (CollectionUtils.isNotEmpty(orderDetailList)) {
-            for (BizOrderDetail orderDetail : orderDetailList) {
-                Office suplyis = orderDetail.getSuplyis();
-                if (suplyis == null || suplyis.getId() == null || suplyis.getId() == 0 || suplyis.getId() == 721) {
-                    suplyFlag = true;
-                }
-            }
-        }
-
         if (bizOrderHeader == null) {
             return Pair.of(Boolean.TRUE, "bizOrderHeader is null");
         }
         // 取当前支付比例
         OrderPayProportionStatusEnum proportionStatus = OrderPayProportionStatusEnum.parse(bizOrderHeader);
         if (proportionStatus == OrderPayProportionStatusEnum.ZERO) {
+            LOGGER.info("当前支付比例为0");
             return Pair.of(Boolean.TRUE, "proportionStatus is zero");
         }
         //订单类型为普通订单时
-        if (OrderTypeEnum.SO.getOrderType().equals(orderType)) {
+        if (OrderTypeEnum.SO.getOrderType().equals(orderType) || RO_ORDER_TYPE.equals(orderType)) {
             // 取当前审核状态
             CommonProcessEntity tempEntity = new CommonProcessEntity();
             tempEntity.setCurrent(1);
 
             int suplys = 1;
             String orderTableName = JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME;
-            if (suplyFlag) {
+            if (bizOrderHeader.getSuplys() == null || bizOrderHeader.getSuplys() == 0 || bizOrderHeader.getSuplys() == 721) {
                 suplys = 0;
                 orderTableName = JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME;
             }
