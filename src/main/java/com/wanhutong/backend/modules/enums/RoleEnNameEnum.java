@@ -51,6 +51,10 @@ public enum RoleEnNameEnum {
      */
     WAREHOUSESPECIALIST("warehouse_specialist", "仓储专员"),
     /**
+     * 库管经理
+     */
+    WAREHOUSE_MANAGER("Warehouse Manager","库管经理"),
+    /**
      * 品类主管
      */
     SELECTION_OF_SPECIALIST("selection_of_specialist", "品类主管"),

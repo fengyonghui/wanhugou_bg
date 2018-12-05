@@ -154,17 +154,44 @@
 	
 	<update id="update">
 		UPDATE biz_shop_cart SET
+		<if test="custType!=null">
 			cust_type = #{custType},
+		</if>
+		<if test="skuShelfinfo!=null and skuShelfinfo.id !=null ">
 			sku_shelf_id = #{skuShelfinfo.id},
+		</if>
+		<if test="office!=null and office.id !=null ">
 			office_id = #{office.id},
+		</if>
+		<if test="user!=null and user.id !=null ">
 			user_id = #{user.id},
+		</if>
+		<if test="skuQty!=null ">
 			sku_qty = #{skuQty},
-			create_time = #{createDate},
+		</if>
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
-	
+
+	<update id="updateShopCartByUserId">
+		UPDATE biz_shop_cart SET
+			status = #{status},
+			update_id = #{updateId},
+			update_time = NOW()
+		WHERE
+			user_id = #{userId}
+	</update>
+
+	<update id="updateCartSkuByUserId">
+		UPDATE biz_cart_sku SET
+			status = #{status},
+			update_id = #{updateId},
+			update_time = NOW()
+		WHERE
+			user_id = #{userId}
+	</update>
+
 	<update id="delete">
 		UPDATE biz_shop_cart SET 
 			status = #{delFlag}

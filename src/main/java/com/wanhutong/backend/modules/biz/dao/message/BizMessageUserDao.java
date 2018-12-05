@@ -21,5 +21,9 @@ public interface BizMessageUserDao extends CrudDao<BizMessageUser> {
 
     int insertBatch(@Param("userList")List<User> userList, @Param("messageId") Integer messageId, @Param("bizStatus") Integer bizStatus);
 
+    /**
+     * 根据messageId将所有数据逻辑删除
+     */
+    void updateByMessageId(@Param("messageId") Integer messageId);
 
 }

@@ -28,6 +28,7 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	private Integer invOldNum;		//收货之前的库存数
 	private BizSkuInfo skuInfo;		// 商品ID，biz_sku_info.id
 	private BizOrderHeader bizOrderHeader;		// 销售单ID，biz_order_header.id
+	private Byte orderType;		//类型 0：备货单；1：调拨单
 	private BizRequestHeader bizRequestHeader;	//备货单ID, biz_request_header.id
 	private String orderNum;		//订单号
 	private Integer receiveNum;		// 收货数量
@@ -90,6 +91,16 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	 * 备货单
 	 */
 	private BizRequestHeader requestHeader;
+
+	/**
+	 * 调拨单
+	 */
+	private BizSkuTransfer bizSkuTransfer;
+
+	/**
+	 * 调拨单详情
+	 */
+	private BizSkuTransferDetail transferDetail;
 
 	public BizCollectGoodsRecord() {
 		super();
@@ -321,5 +332,41 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 
 	public void setRequestHeader(BizRequestHeader requestHeader) {
 		this.requestHeader = requestHeader;
+	}
+
+	public Byte getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(Byte orderType) {
+		this.orderType = orderType;
+	}
+
+	public BizSkuTransfer getBizSkuTransfer() {
+		return bizSkuTransfer;
+	}
+
+	public void setBizSkuTransfer(BizSkuTransfer bizSkuTransfer) {
+		this.bizSkuTransfer = bizSkuTransfer;
+	}
+
+	public BizSkuTransferDetail getTransferDetail() {
+		return transferDetail;
+	}
+
+	public void setTransferDetail(BizSkuTransferDetail transferDetail) {
+		this.transferDetail = transferDetail;
+	}
+	public enum OrderType {
+		RE(0),
+		TR(1),
+		;
+		private Integer type;
+
+		OrderType(Integer type){this.type = type;}
+
+		public Integer getType() {
+			return type;
+		}
 	}
 }

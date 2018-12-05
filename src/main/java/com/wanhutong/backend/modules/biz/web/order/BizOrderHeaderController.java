@@ -31,6 +31,7 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
+import com.wanhutong.backend.modules.biz.service.message.BizMessageInfoService;
 import com.wanhutong.backend.modules.biz.service.order.*;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
@@ -149,6 +150,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizCommissionOrderService bizCommissionOrderService;
     @Autowired
     private BizCommissionService bizCommissionService;
+    @Autowired
+    private BizMessageInfoService bizMessageInfoService;
 
 
     @ModelAttribute
@@ -244,7 +247,7 @@ public class BizOrderHeaderController extends BaseController {
 
         originConfigMap.put("渠道经理", "渠道经理");
         originConfigMap.put("总经理", "总经理");
-        originConfigMap.put("品类主管", "品类主管");
+        originConfigMap.put("采销经理", "采销经理");
         originConfigMap.put("财务经理", "财务经理");
         originConfigMap.put("完成", "完成");
         originConfigMap.put("驳回", "驳回");
@@ -410,7 +413,7 @@ public class BizOrderHeaderController extends BaseController {
 
         originConfigMap.put("渠道经理", "渠道经理");
         originConfigMap.put("总经理", "总经理");
-        originConfigMap.put("品类主管", "品类主管");
+        originConfigMap.put("采销经理", "采销经理");
         originConfigMap.put("财务经理", "财务经理");
         originConfigMap.put("完成", "完成");
         originConfigMap.put("驳回", "驳回");
@@ -627,7 +630,7 @@ public class BizOrderHeaderController extends BaseController {
             }
             //供应商
             List<User> vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
-            if (CollectionUtils.isNotEmpty(vendUser)) {
+            if (CollectionUtils.isNotEmpty(vendUser) && vendUser.get(0) != null) {
                 model.addAttribute("vendUser", vendUser.get(0));
 //                entity.sellers.bizVendInfo.office.id
                 bizOrderHeader.setVendorId(vendUser.get(0).getVendor().getId());
@@ -852,6 +855,9 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
         model.addAttribute("createPo",createPo);
+        //展示库存数量
+        Map<Integer,Integer> invSkuNumMap = bizOrderHeaderService.getInvSkuNum(bizOrderHeader);
+        model.addAttribute("invSkuNumMap",invSkuNumMap);
 
         return "modules/biz/order/bizOrderHeaderForm";
     }
@@ -1216,6 +1222,9 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("createPo",createPo);
         resultMap.put("createPo", createPo);
         resultMap.put("PURCHASE_ORDER", BizOrderTypeEnum.PURCHASE_ORDER.getState());
+        //展示库存数量
+        Map<Integer,Integer> invSkuNumMap = bizOrderHeaderService.getInvSkuNum(bizOrderHeader);
+        resultMap.put("invSkuNumMap",invSkuNumMap);
 
         //页面常量值获取
         resultMap.put("SUPPLYING", OrderHeaderBizStatusEnum.SUPPLYING.getState());
@@ -1733,6 +1742,12 @@ public class BizOrderHeaderController extends BaseController {
                     } else {
                         genAuditProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE);
                     }
+
+                    //同意发货成功，发送站内信
+                    String orderNum = bizOrderHeader.getOrderNum();
+                    String title = "订单" + orderNum + "审核通过";
+                    String content = "您好，您的订单" + orderNum + "审核通过";
+                    bizMessageInfoService.autoSendMessageInfo(title, content, bizOrderHeader.getCustomer().getId(), "orderHeader");
                 }
             }
         } catch (Exception e) {
@@ -1847,17 +1862,23 @@ public class BizOrderHeaderController extends BaseController {
         originEntity.setObjectId(String.valueOf(bizOrderHeader.getId()));
         originEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
         List<CommonProcessEntity> originList = commonProcessService.findList(originEntity);
+        Integer code = 0;
+        StringBuilder phone = new StringBuilder();
+        com.wanhutong.backend.modules.config.parse.Process currentProcess = null;
         if (CollectionUtils.isEmpty(originList) || reGen) {
             originEntity.setCurrent(1);
             switch (orderPayProportionStatusEnum) {
                 case ZERO:
                     originEntity.setType(String.valueOf(originConfig.getZeroDefaultProcessId()));
+                    code = originConfig.getZeroDefaultProcessId();
                     break;
                 case FIFTH:
                     originEntity.setType(String.valueOf(originConfig.getFifthDefaultProcessId()));
+                    code = originConfig.getFifthDefaultProcessId();
                     break;
                 case ALL:
                     originEntity.setType(String.valueOf(originConfig.getAllDefaultProcessId()));
+                    code = originConfig.getAllDefaultProcessId();
                     break;
                 default:
                     break;
@@ -1866,8 +1887,10 @@ public class BizOrderHeaderController extends BaseController {
             if (CollectionUtils.isEmpty(list)) {
                 commonProcessService.updateCurrentByObject(bizOrderHeader.getId(), JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME, 0);
                 commonProcessService.save(originEntity);
-            }
 
+                //自动发送短信
+                currentProcess = originConfig.getProcessMap().get(code);
+            }
         }
 
         // 本地备货
@@ -1880,12 +1903,15 @@ public class BizOrderHeaderController extends BaseController {
             switch (orderPayProportionStatusEnum) {
                 case ZERO:
                     localEntity.setType(String.valueOf(localConfig.getZeroDefaultProcessId()));
+                    code = localConfig.getZeroDefaultProcessId();
                     break;
                 case FIFTH:
                     localEntity.setType(String.valueOf(localConfig.getFifthDefaultProcessId()));
+                    code = localConfig.getFifthDefaultProcessId();
                     break;
                 case ALL:
                     localEntity.setType(String.valueOf(localConfig.getAllDefaultProcessId()));
+                    code = localConfig.getAllDefaultProcessId();
                     break;
                 default:
                     break;
@@ -1894,8 +1920,29 @@ public class BizOrderHeaderController extends BaseController {
             if (CollectionUtils.isEmpty(list)) {
                 commonProcessService.updateCurrentByObject(bizOrderHeader.getId(), JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME, 0);
                 commonProcessService.save(localEntity);
+
+                //自动发送短信
+                currentProcess = localConfig.getProcessMap().get(code);
+            }
+        }
+
+        if (currentProcess != null && currentProcess.getRoleEnNameEnum() != null && currentProcess.getRoleEnNameEnum().get(0) != null) {
+            User sendUser = new User(systemService.getRoleByEnname(currentProcess.getRoleEnNameEnum().get(0).toLowerCase()));
+            //不根据采购中心区分渠道经理，所以注释掉该行
+            //sendUser.setCent(user.getCompany());
+            List<User> userList = systemService.findUser(sendUser);
+            if (CollectionUtils.isNotEmpty(userList)) {
+                for (User u : userList) {
+                    phone.append(u.getMobile()).append(",");
+                }
             }
 
+            if (StringUtils.isNotBlank(phone.toString())) {
+                AliyunSmsClient.getInstance().sendSMS(
+                        SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                        phone.toString(),
+                        ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
+            }
         }
     }
 
@@ -1946,6 +1993,12 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "orderHeaderExport", method = RequestMethod.POST)
     public String orderHeaderExportFile(BizOrderHeader bizOrderHeader, String cendExportbs, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        //判断当前用户是否拥有查看佣金的权限
+        Boolean permFlag = RoleUtils.hasPermission("biz:order:buyPrice:view");
+
+        //判断当前用户是否拥有查看结算价的权限
+        Boolean showUnitPriceFlag = RoleUtils.hasPermission("biz:order:unitPrice:view");
+
         try {
             DecimalFormat df = new DecimalFormat();
             BizOrderDetail orderDetail = new BizOrderDetail();
@@ -2000,7 +2053,9 @@ public class BizOrderHeaderController extends BaseController {
                             }
                             detailListData.add(detail.getUnitPrice() == null ? StringUtils.EMPTY : String.valueOf(detail.getUnitPrice()));
                             //隐藏结算价
-                            //detailListData.add(detail.getBuyPrice() == null ? StringUtils.EMPTY : String.valueOf(detail.getBuyPrice()));
+                            if (showUnitPriceFlag) {
+                                detailListData.add(detail.getBuyPrice() == null ? StringUtils.EMPTY : String.valueOf(detail.getBuyPrice()));
+                            }
                             detailListData.add(detail.getOrdQty() == null ? StringUtils.EMPTY : String.valueOf(detail.getOrdQty()));
                             //商品总价
                             double unitPrice = 0.0;
@@ -2092,7 +2147,9 @@ public class BizOrderHeaderController extends BaseController {
                     // 佣金
                     //                        orderHeader.totalDetail-orderHeader.totalBuyPrice
                     //隐藏佣金
-                    //rowData.add(df.format(total - buy));
+                    if (permFlag) {
+                        rowData.add(df.format(total - buy));
+                    }
                     Dict dictInv = new Dict();
                     dictInv.setDescription("发票状态");
                     dictInv.setType("biz_order_invStatus");
@@ -2146,7 +2203,9 @@ public class BizOrderHeaderController extends BaseController {
                                 }
                                 detailListData.add(d.getUnitPrice() == null ? StringUtils.EMPTY : String.valueOf(d.getUnitPrice()));
                                 //隐藏结算价
-                                //detailListData.add(d.getBuyPrice() == null ? StringUtils.EMPTY : String.valueOf(d.getBuyPrice()));
+                                if (showUnitPriceFlag) {
+                                    detailListData.add(d.getBuyPrice() == null ? StringUtils.EMPTY : String.valueOf(d.getBuyPrice()));
+                                }
                                 detailListData.add(d.getOrdQty() == null ? StringUtils.EMPTY : String.valueOf(d.getOrdQty()));
                                 //商品总价
                                 double unPri = 0.0;
@@ -2238,7 +2297,9 @@ public class BizOrderHeaderController extends BaseController {
                         // 佣金
 //                        orderHeader.totalDetail-orderHeader.totalBuyPrice
                         //隐藏佣金
-                        //rowData.add(df.format(total - buy));
+                        if (permFlag) {
+                            rowData.add(df.format(total - buy));
+                        }
                         Dict dictInv = new Dict();
                         dictInv.setDescription("发票状态");
                         dictInv.setType("biz_order_invStatus");
@@ -2281,14 +2342,24 @@ public class BizOrderHeaderController extends BaseController {
                     }
                 }
             }
+            String[] headers = null;
             //隐藏佣金
-//            String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
-//                    "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "佣金", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
-            String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
-                    "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
+            if (permFlag) {
+                headers = new String[]{"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
+                        "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "佣金", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
+            } else {
+                headers = new String[]{"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
+                        "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
+            }
+
             //隐藏结算价
-            //String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "商品结算价", "采购数量", "商品总价"};
-            String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "采购数量", "商品总价"};
+            String[] details = null;
+            if (showUnitPriceFlag) {
+                details = new String[]{"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "商品结算价", "采购数量", "商品总价"};
+            } else {
+                details = new String[]{"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "采购数量", "商品总价"};
+            }
+
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             eeu.exportExcel(workbook, 0, "订单数据", headers, data, fileName);

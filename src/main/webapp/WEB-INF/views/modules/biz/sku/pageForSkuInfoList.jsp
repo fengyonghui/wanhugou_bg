@@ -68,7 +68,9 @@
 				<th>商品名称</th>
 				<th>商品货号</th>
 				<!-- 隐藏结算价 -->
-				<%--<th>结算价</th>--%>
+				<shiro:hasPermission name="biz:order:unitPrice:view">
+					<th>结算价</th>
+				</shiro:hasPermission>
 				<th>(订单)销售价</th>
 				<th>订单数量</th>
 				<th>应付金额</th>
@@ -89,9 +91,11 @@
 						${bizSkuInfo.itemNo}
 				</td>
 				<!-- 隐藏结算价 -->
-				<%--<td>--%>
-						<%--${bizSkuInfo.orderDetail.buyPrice}--%>
-				<%--</td>--%>
+				<shiro:hasPermission name="biz:order:unitPrice:view">
+					<td>
+							${bizSkuInfo.orderDetail.buyPrice}
+					</td>
+				</shiro:hasPermission>
 				<td>
 						${bizSkuInfo.orderDetail.unitPrice}
 				</td>

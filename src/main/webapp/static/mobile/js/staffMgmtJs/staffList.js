@@ -182,7 +182,7 @@
 						}
 					})
 				}
-			}),
+			});
 		/*用户添加*/
 //			$('#nav').on('tap','.staAddBtn', function() {
 //				var url = $(this).attr('url');
@@ -202,7 +202,7 @@
 						
 					}
 				})
-			}),
+			});
 		/*关联经销店*/
 			$('.app_content').on('tap', '.staRelevanBtn', function() {
 				var url = $(this).attr('url');
@@ -219,7 +219,7 @@
 						}
 					})
 				}
-			}),
+			});
 		/*订单管理*/
             $('.app_content').on('tap','.staOrdBtn', function() {
 				var url = $(this).attr('url');

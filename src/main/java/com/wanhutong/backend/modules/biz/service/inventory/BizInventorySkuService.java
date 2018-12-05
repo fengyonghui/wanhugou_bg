@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.service.inventory;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
@@ -130,6 +131,11 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		} else {
 			super.save(bizInventorySku);
 		}
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void saveOnly(BizInventorySku bizInventorySku) {
+		super.save(bizInventorySku);
 	}
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
@@ -317,6 +323,12 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		requestHeader.setPage(page);
 		page.setList(bizRequestHeaderForVendorDao.inventoryPage(requestHeader));
 		return page;
+	}
+
+	public List<BizRequestHeader> inventory(BizRequestHeader requestHeader) {
+		User user = UserUtils.getUser();
+		requestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "cent","su"));
+		return bizRequestHeaderForVendorDao.inventoryPage(requestHeader);
 	}
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)

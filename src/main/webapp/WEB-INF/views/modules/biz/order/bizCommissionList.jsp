@@ -85,6 +85,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
+		<li><a href="${ctx}/biz/order/bizOrderHeader?statu=${statu}&source=${source}&targetPage=COMMISSION_ORDER">佣金管理列表</a></li>
 		<li class="active"><a href="${ctx}/biz/order/bizCommission/">佣金付款表列表</a></li>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizCommission" action="${ctx}/biz/order/bizCommission/" method="post" class="breadcrumb form-search">
@@ -186,14 +187,14 @@
 				</td>
 				<td>
 					<shiro:hasPermission name="biz:order:sure:bizCommission">
-						<c:if test="${bizCommission.payTotal == '0.00'}">
+						<c:if test="${bizCommission.totalCommission == '0.00'}">
 							<a href="${ctx}/biz/order/bizCommission/form?id=${bizCommission.id}">确认支付金额</a>
 						</c:if>
 					</shiro:hasPermission>
 
 					<shiro:hasPermission name="biz:order:bizCommission:audit">
 						<c:if test="${bizCommission.commonProcess.paymentOrderProcess.name != '驳回'}">
-							<c:if test="${bizCommission.payTotal != '0.00' && bizCommission.commonProcess.paymentOrderProcess.name != '审批完成' && bizCommission.totalCommission != 0}">
+							<c:if test="${bizCommission.payTotal == '0.00' && bizCommission.commonProcess.paymentOrderProcess.name != '审批完成' && bizCommission.totalCommission != 0}">
 								<a href="#" onclick="checkPass(${bizCommission.id}, ${bizCommission.commonProcess.paymentOrderProcess.code}, ${bizCommission.totalCommission})">审核通过</a>
 								<a href="#" onclick="checkReject(${bizCommission.id}, ${bizCommission.commonProcess.paymentOrderProcess.code}, ${bizCommission.totalCommission})">审核驳回</a>
 							</c:if>

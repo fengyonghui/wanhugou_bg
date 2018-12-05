@@ -9,10 +9,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.DateUtils;
-import com.wanhutong.backend.common.utils.Encodes;
-import com.wanhutong.backend.common.utils.JsonUtil;
-import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.*;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
@@ -35,6 +32,7 @@ import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
+import com.wanhutong.backend.modules.biz.service.message.BizMessageInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.po.BizCompletePalnService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
@@ -148,6 +146,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	private CommonProcessService commonProcessService;
     @Autowired
     private SystemService systemService;
+	@Autowired
+	private BizMessageInfoService bizMessageInfoService;
 
 	public static final String REQUEST_HEADER_TABLE_NAME = "biz_request_header";
 	public static final String REQUEST_DETAIL_TABLE_NAME = "biz_request_detail";
@@ -1094,6 +1094,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "requestHeaderExport")
 	public String requestHeaderExport(BizRequestHeader bizRequestHeader,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		//判断当前用户是否拥有查看结算价的权限
+		Boolean showUnitPriceFlag = RoleUtils.hasPermission("biz:order:unitPrice:view");
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String fileName = "备货清单" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
@@ -1181,7 +1183,9 @@ public class BizRequestHeaderForVendorController extends BaseController {
 								//商品属性，结算价
 								detailListData.add(String.valueOf(detail.getSkuInfo().getSkuPropertyInfos()));
 								//隐藏结算价
-								//detailListData.add(String.valueOf(detail.getSkuInfo().getBuyPrice()));
+								if (showUnitPriceFlag) {
+									detailListData.add(String.valueOf(detail.getSkuInfo().getBuyPrice()));
+								}
 							}else{
 								detailListData.add("");
 								detailListData.add("");
@@ -1199,8 +1203,12 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 			String[] headers = {"备货单号", "采购中心","期望收货时间", "备货商品数量", "备货商品总价","已收保证金","已到货数量", "备注", "业务状态","下单时间","申请人"};
 			//隐藏结算价
-			//String[] details = {"备货单号", "产品名称", "品牌名称", "商品名称","商品编码", "商品货号", "商品属性", "结算价", "申报数量","期望收货时间"};
-			String[] details = {"备货单号", "产品名称", "品牌名称", "商品名称","商品编码", "商品货号", "商品属性", "申报数量","期望收货时间"};
+			String[] details = null;
+			if (showUnitPriceFlag) {
+				details = new String[]{"备货单号", "产品名称", "品牌名称", "商品名称", "商品编码", "商品货号", "商品属性", "结算价", "申报数量", "期望收货时间"};
+			} else {
+				details = new String[]{"备货单号", "产品名称", "品牌名称", "商品名称", "商品编码", "商品货号", "商品属性", "申报数量", "期望收货时间"};
+			}
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
 			eeu.exportExcel(workbook, 0, "备货单数据", headers, data, fileName);

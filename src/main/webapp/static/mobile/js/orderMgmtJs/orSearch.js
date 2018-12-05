@@ -49,6 +49,7 @@
 //				console.log($('#input_div_poSchType').val());
 //				console.log($('#wait_pay').val());
 //				console.log($('#apply_pay').val());
+//console.log($('.inOrdNum').val());
 				GHUTILS.OPENPAGE({
 					url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
 					extras: {

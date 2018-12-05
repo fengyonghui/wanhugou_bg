@@ -55,12 +55,15 @@ import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -90,6 +93,8 @@ import java.util.Set;
 @Controller
 @RequestMapping(value = "${adminPath}/biz/inventory/bizInventorySku")
 public class BizInventorySkuController extends BaseController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BizInventorySkuController.class);
 
     @Autowired
     private BizInventorySkuService bizInventorySkuService;
@@ -661,6 +666,49 @@ public class BizInventorySkuController extends BaseController {
     @RequestMapping("correctOutQty")
     public void correctOutQty() {
         bizInventorySkuService.correctOutQty();
+    }
+
+    /**
+     * 用于备货单盘点导出
+     */
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping(value = "requestInventoryExport")
+    public String requestInventoryExport(BizRequestHeader requestHeader, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        String fileName = "备货单盘点数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+        List<List<String>> data = Lists.newArrayList();
+        List<BizRequestHeader> requestHeaderList = bizInventorySkuService.inventory(requestHeader);
+        if (CollectionUtils.isNotEmpty(requestHeaderList)) {
+            for (BizRequestHeader bizRequestHeader : requestHeaderList) {
+                List<String> rowList = Lists.newArrayList();
+                rowList.add(DictUtils.getDictLabel(bizRequestHeader.getHeaderType().toString(),"req_header_type","未知类型"));
+                rowList.add(bizRequestHeader.getInvInfo().getName() == null ? "" : bizRequestHeader.getInvInfo().getName());
+                rowList.add(bizRequestHeader.getFromOffice().getName() == null ? "" : bizRequestHeader.getFromOffice().getName());
+                rowList.add(DictUtils.getDictLabel(bizRequestHeader.getFromType().toString(),"req_from_type","未知"));
+                rowList.add(bizRequestHeader.getReqNo() == null ? "" : bizRequestHeader.getReqNo());
+                rowList.add(bizRequestHeader.getVendName() == null ? "" : bizRequestHeader.getVendName());
+                String processName = "";
+                if (bizRequestHeader.getInvCommonProcess() != null && bizRequestHeader.getInvCommonProcess().getType() != null) {
+                    processName = ConfigGeneral.INVENTORY_SKU_REQUEST_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getInvCommonProcess().getType())).getName();
+                }
+                rowList.add(processName);
+                data.add(rowList);
+            }
+        }
+        String[] toryHeads = {"类型", "仓库名称", "采购中心", "备货方", "备货单号", "供应商", "审核状态"};
+        ExportExcelUtils eeu = new ExportExcelUtils();
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        try {
+            eeu.exportExcel(workbook, 0, "备货单盘点数据", toryHeads, data, fileName);
+            response.reset();
+            response.setContentType("application/octet-stream; charset=utf-8");
+            response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
+            workbook.write(response.getOutputStream());
+            workbook.dispose();
+        } catch (Exception e) {
+            LOGGER.error("导出备货单盘点数据失败",e);
+            addMessage(redirectAttributes, "导出备货单盘点数据失败！失败信息：" + e.getMessage());
+        }
+        return "redirect:" + adminPath + "/biz/inventory/bizInventorySku/inventory";
     }
 
 

@@ -6,9 +6,12 @@ package com.wanhutong.backend.modules.biz.web.po;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
+import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -24,6 +27,7 @@ import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +73,8 @@ public class BizPoPaymentOrderController extends BaseController {
     private BizOrderHeaderService bizOrderHeaderService;
     @Autowired
     private CommonProcessService commonProcessService;
+    @Autowired
+    private SystemService systemService;
 
     @ModelAttribute
     public BizPoPaymentOrder get(@RequestParam(required = false) Integer id) {
@@ -253,7 +259,7 @@ public class BizPoPaymentOrderController extends BaseController {
         PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
         Map<String, String> configMap = Maps.newLinkedHashMap();
 
-        configMap.put("供货部", "供货部");
+        configMap.put("待总经理", "待总经理");
         configMap.put("财务总监", "财务总监");
         configMap.put("财务总经理", "财务总经理");
         configMap.put("完成", "完成");
@@ -269,7 +275,7 @@ public class BizPoPaymentOrderController extends BaseController {
         if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum())) {
             if (bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("SO") || bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("DO")) {
                 BizOrderHeader orderHeader = bizOrderHeaderService.getByOrderNum(bizPoPaymentOrder.getOrderNum());
-                if (orderHeader != null) {
+                if (orderHeader != null && orderHeader.getBizPoHeader() != null) {
                     bizPoPaymentOrder.setPoHeaderId(orderHeader.getBizPoHeader().getId());
                 }
             }
@@ -277,18 +283,92 @@ public class BizPoPaymentOrderController extends BaseController {
                 BizRequestHeader requestHeader = new BizRequestHeader();
                 requestHeader.setReqNo(bizPoPaymentOrder.getOrderNum());
                 List<BizRequestHeader> list = bizRequestHeaderForVendorService.findList(requestHeader);
-                if (CollectionUtils.isNotEmpty(list)) {
+                if (CollectionUtils.isNotEmpty(list) && list.get(0).getBizPoHeader() != null) {
                     bizPoPaymentOrder.setPoHeaderId(list.get(0).getBizPoHeader().getId());
                 }
             }
         }
 
-        Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+        Page<BizPoPaymentOrder> page = new Page<BizPoPaymentOrder>(request, response);
+        if (StringUtils.isBlank(bizPoPaymentOrder.getOrderNum())) {
+            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+        } else if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum()) && bizPoPaymentOrder.getPoHeaderId() != null) {
+            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+        }
+
         model.addAttribute("page", page);
         String orderId = request.getParameter("orderId");
         model.addAttribute("orderId", orderId);
         model.addAttribute("configMap", configMap);
         return "modules/biz/po/bizPoPaymentOrderListV2";
+    }
+
+    @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
+    @RequestMapping(value = {"listV2ForMobile"})
+    @ResponseBody
+    public String listV2ForMobile(BizPoPaymentOrder bizPoPaymentOrder, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Set<String> roleSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+            }
+        }
+        model.addAttribute("roleSet", roleSet);
+        resultMap.put("roleSet", roleSet);
+
+        PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
+        Map<String, String> configMap = Maps.newLinkedHashMap();
+
+        configMap.put("待总经理", "待总经理");
+        configMap.put("财务总监", "财务总监");
+        configMap.put("财务总经理", "财务总经理");
+        configMap.put("完成", "完成");
+        configMap.put("驳回", "驳回");
+
+
+        for(PaymentOrderProcessConfig.Process process : paymentOrderProcessConfig.getProcessList()) {
+            if (StringUtils.isNotBlank(bizPoPaymentOrder.getSelectAuditStatus()) && process.getName().contains(bizPoPaymentOrder.getSelectAuditStatus())) {
+                bizPoPaymentOrder.setAuditStatusCode(process.getCode());
+            }
+        }
+
+        if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum())) {
+            if (bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("SO") || bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("DO")) {
+                BizOrderHeader orderHeader = bizOrderHeaderService.getByOrderNum(bizPoPaymentOrder.getOrderNum());
+                if (orderHeader != null && orderHeader.getBizPoHeader() != null) {
+                    bizPoPaymentOrder.setPoHeaderId(orderHeader.getBizPoHeader().getId());
+                }
+            }
+            if (bizPoPaymentOrder.getOrderNum().toUpperCase().startsWith("RE")) {
+                BizRequestHeader requestHeader = new BizRequestHeader();
+                requestHeader.setReqNo(bizPoPaymentOrder.getOrderNum());
+                List<BizRequestHeader> list = bizRequestHeaderForVendorService.findList(requestHeader);
+                if (CollectionUtils.isNotEmpty(list) && list.get(0).getBizPoHeader() != null) {
+                    bizPoPaymentOrder.setPoHeaderId(list.get(0).getBizPoHeader().getId());
+                }
+            }
+        }
+
+        Page<BizPoPaymentOrder> page = new Page<BizPoPaymentOrder>(request, response);
+        if (StringUtils.isBlank(bizPoPaymentOrder.getOrderNum())) {
+            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+        } else if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum()) && bizPoPaymentOrder.getPoHeaderId() != null) {
+            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+        }
+        model.addAttribute("page", page);
+        String orderId = request.getParameter("orderId");
+        model.addAttribute("orderId", orderId);
+        model.addAttribute("configMap", configMap);
+
+        resultMap.put("page", page);
+        resultMap.put("orderId", orderId);
+        resultMap.put("configMap", configMap);
+
+        return JsonUtil.generateData(resultMap, null);
     }
 
     @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
@@ -433,14 +513,95 @@ public class BizPoPaymentOrderController extends BaseController {
         return "modules/biz/po/bizPoPaymentOrderFormV2";
     }
 
+    @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
+    @RequestMapping(value = "formV2ForMobile")
+    @ResponseBody
+    public String formV2ForMobile(BizPoPaymentOrder bizPoPaymentOrder, Model model) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        bizPoPaymentOrder = bizPoPaymentOrderService.get(bizPoPaymentOrder.getId());
+        if (bizPoPaymentOrder.getPoHeaderId() != null) {
+            BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoPaymentOrder.getPoHeaderId());
+            if (bizPoHeader != null) {
+                BigDecimal totalDetail = bizPoHeader.getTotalDetail() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalDetail());
+                BigDecimal totalExp = bizPoHeader.getTotalExp() == null ? BigDecimal.ZERO : new BigDecimal(bizPoHeader.getTotalExp());
+                BigDecimal totalDetailResult = totalDetail.add(totalExp);
+                DecimalFormat df = new DecimalFormat("#0.00");
+                model.addAttribute("totalDetailResult", df.format(totalDetailResult));
+                resultMap.put("totalDetailResult", df.format(totalDetailResult));
+            }
+        }
+
+        if (bizPoPaymentOrder.getId() != null) {
+            Integer processId = bizPoPaymentOrder.getProcessId();
+            CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+            commonProcessEntity.setObjectId(String.valueOf(bizPoPaymentOrder.getId()));
+            commonProcessEntity.setObjectName("biz_po_payment_order");
+            List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+            model.addAttribute("auditList", list);
+            model.addAttribute("processId", processId);
+
+            resultMap.put("auditList", list);
+            resultMap.put("processId", processId);
+        }
+        model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
+        resultMap.put("bizPoPaymentOrder", bizPoPaymentOrder);
+        return JsonUtil.generateData(resultMap, null);
+    }
+
     @RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
     @RequestMapping(value = "save")
     public String save(HttpServletRequest request, HttpServletResponse response, BizPoPaymentOrder bizPoPaymentOrder, Model model, RedirectAttributes redirectAttributes) {
+        Integer id = bizPoPaymentOrder.getId();
         if (!beanValidator(model, bizPoPaymentOrder)) {
             return form(request, response, bizPoPaymentOrder, model);
         }
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
         addMessage(redirectAttributes, "保存付款单成功");
+
+        if (id != null) {
+            List<BizPoPaymentOrder> list = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+            BizPoPaymentOrder poPaymentOrder = list.get(0);
+            BizPoHeader bizPoHeader = bizPoHeaderService.get(poPaymentOrder.getPoHeader().getId());
+
+
+            //自动发送短信通知审核第一个节点
+            StringBuilder phone = new StringBuilder();
+            PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
+            PaymentOrderProcessConfig.Process purchaseOrderProcess = null;
+            purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getDefaultProcessId());
+            List<PaymentOrderProcessConfig.MoneyRole> moneyRoleList = purchaseOrderProcess.getMoneyRole();
+            if (moneyRoleList != null && moneyRoleList.get(0) != null) {
+                String roleEnNameEnumStr = moneyRoleList.get(0).getRoleEnNameEnum().get(0);
+                RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(roleEnNameEnumStr);
+                User sendUser = new User(systemService.getRoleByEnname(roleEnNameEnum == null ? "" : roleEnNameEnum.getState()));
+                List<User> userList = systemService.findUser(sendUser);
+                if (CollectionUtils.isNotEmpty(userList)) {
+                    for (User u : userList) {
+                        phone.append(u.getMobile()).append(",");
+                    }
+                }
+
+                Byte soType = bizPoHeaderService.getBizPoOrderReqByPo(bizPoHeader);
+
+                String orderStr = "";
+                String orderNum = "";
+                if (soType == Byte.parseByte("1")) {
+                    orderStr = "订单支付";
+                    orderNum = poPaymentOrder.getOrderNum();
+
+                } else {
+                    orderStr = "备货单支付";
+                    orderNum = poPaymentOrder.getReqNo();
+                }
+
+                AliyunSmsClient.getInstance().sendSMS(
+                        SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                        phone.toString(),
+                        ImmutableMap.of("order", orderStr, "orderNum", orderNum));
+
+            }
+        }
+
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "&orderType=" + bizPoPaymentOrder.getOrderType();
     }
 

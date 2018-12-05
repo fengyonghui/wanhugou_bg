@@ -29,6 +29,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.message.BizMessageInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
@@ -123,6 +124,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
     private BizOrderStatusService bizOrderStatusService;
     @Autowired
     private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
+    @Autowired
+    private BizMessageInfoService bizMessageInfoService;
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
@@ -153,7 +156,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         return super.findPage(page, bizInvoice);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void save(BizInvoice bizInvoice) {
         boolean flagRequest = true;        //备货单完成状态
         boolean flagOrder = true;        //销售单完成状态
@@ -181,7 +184,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             invoice.setIsConfirm(BizInvoice.IsConfirm.YES.getIsConfirm());
             bizInvoiceDao.update(invoice);
             //保存图片
-//            saveCommonImg(bizInvoice);
+            saveCommonImg(bizInvoice);
         } else {
             // 取出当前用户所在机构，
             Office company = officeService.get(user.getCompany().getId());
@@ -196,7 +199,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE, company.getId(), 0, bizInvoice.getId()));
             super.save(bizInvoice);
             //保存图片
-//            saveCommonImg(bizInvoice);
+            saveCommonImg(bizInvoice);
         }
         //获取订单ID
         String orderHeaders = bizInvoice.getOrderHeaders();
@@ -430,6 +433,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         bizOrderHeaderService.saveOrderHeader(orderHeader);
                         /*用于 订单状态表 保存状态*/
                         bizOrderStatusService.saveOrderStatus(orderHeader);
+
+                        //发货成功，自动发送站内信
+                        this.autoSendMessageInfo(orderHeader);
                     }
                 }
 
@@ -1047,6 +1053,16 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
     public List<String> findDeliverNoByReqId (Integer requestId) {
         return bizInvoiceDao.findDeliverNoByReqId(requestId);
+    }
+
+
+    public void autoSendMessageInfo(BizOrderHeader orderHeader){
+        //订单已发货，自动发送站内信
+        String orderNum = orderHeader.getOrderNum();
+        String title = "订单" + orderNum + "已发货";
+        String content = "您好，您的订单" + orderNum + "已发货";
+
+        bizMessageInfoService.autoSendMessageInfo(title, content, orderHeader.getCustomer().getId(), "orderHeader");
     }
 
 }

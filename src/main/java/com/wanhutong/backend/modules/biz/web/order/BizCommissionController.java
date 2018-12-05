@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomerInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizCommissionOrder;
@@ -127,6 +128,18 @@ public class BizCommissionController extends BaseController {
 			model.addAttribute("entity", bizCommission);
 			return "modules/biz/order/bizCommissionDetail";
 		}
+
+		String orderids = bizCommission.getOrderIds();
+		BigDecimal totalCommission = BigDecimal.ZERO;
+		if (StringUtils.isNotBlank(orderids)) {
+			String[] orderIdArr = orderids.split(",");
+			for (int i=0; i < orderIdArr.length; i++) {
+				String orderId = orderIdArr[i];
+				BizCommission bizCommissionTemp = bizCommissionService.findTotalCommission(Integer.valueOf(orderId));
+				totalCommission = totalCommission.add(bizCommissionTemp.getTotalCommission()).setScale(2, BigDecimal.ROUND_HALF_UP);
+			}
+		}
+		bizCommission.setTotalCommission(totalCommission);
 		model.addAttribute("entity", bizCommission);
 		return "modules/biz/order/bizCommissionForm";
 	}
@@ -234,8 +247,8 @@ public class BizCommissionController extends BaseController {
 	@RequiresPermissions("biz:po:bizPoHeader:audit")
 	@RequestMapping(value = "payOrder")
 	@ResponseBody
-	public String payOrder(Integer commId, String img, String remark) {
-		return bizCommissionService.payOrder(commId, img, remark);
+	public String payOrder(Integer commId, String img, String remark, BigDecimal payTotal) {
+		return bizCommissionService.payOrder(commId, img, remark, payTotal);
 	}
 
 }

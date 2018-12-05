@@ -44,13 +44,15 @@
             </div>
         </div>
         <!-- 隐藏结算价 -->
-        <%--<div class="control-group">--%>
-            <%--<label class="control-label">结算价：</label>--%>
-            <%--<div class="controls">--%>
-                    <%--${bcgrList[0].skuInfo.buyPrice}--%>
-            <%--</div>--%>
-        <%--</div>--%>
-        <div class="control-group">
+        <shiro:hasPermission name="biz:order:unitPrice:view">
+            <div class="control-group">
+                <label class="control-label">结算价：</label>
+                <div class="controls">
+                        ${bcgrList[0].skuInfo.buyPrice}
+                </div>
+            </div>
+        </shiro:hasPermission>
+            <div class="control-group">
             <label class="control-label">图片：</label>
             <div class="controls">
                     <img src="${bcgrList[0].skuInfo.skuImgUrl}" width="80px" height="80px"/>

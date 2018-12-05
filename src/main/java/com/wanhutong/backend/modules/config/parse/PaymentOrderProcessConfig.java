@@ -64,9 +64,9 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
      */
     public Process getPassProcess(BigDecimal money, Process currentProcess) {
         for (MoneyRole moneyRole : currentProcess.getMoneyRole()) {
-           if (moneyRole.endMoney.compareTo(money) > 0 && moneyRole.startMoney.compareTo(money) <= 0) {
+            if (moneyRole.endMoney.compareTo(money) > 0 && moneyRole.startMoney.compareTo(money) <= 0) {
                 return processMap.get(moneyRole.getPassCode());
-           }
+            }
         }
         return null;
     }

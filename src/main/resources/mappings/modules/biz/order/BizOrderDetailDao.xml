@@ -687,4 +687,16 @@ GROUP BY
 		WHERE id = #{id}
 	</update>
 
+	<select id="getInvSkuNum" resultType="Integer">
+		SELECT sum(a.stock_qty)
+		FROM biz_inventory_sku a
+		LEFT JOIN biz_order_detail od ON od.sku_id = a.sku_id
+		LEFT JOIN biz_inventory_info bii ON bii.id = a.inv_id
+		WHERE
+			a.status = 1
+		AND bii.status = 1
+		AND od.id = #{orderDetailId}
+		AND bii.cust_id = #{centId}
+	</select>
+
 </mapper>

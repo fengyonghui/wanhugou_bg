@@ -109,4 +109,13 @@ LEFT JOIN sys_office AS office  ON oAddress.office_id = office.id
   WHERE office.id = #{officeId} AND oAddress.type = 2 limit 1
 	</select>
 
+	<select id="findRegion" resultType="SysRegion">
+		SELECT a.* FROM sys_region a
+		WHERE 1 = 1
+		AND a.level = #{level}
+		<if test="code != null">
+			AND a.pcode = #{code}
+		</if>
+	</select>
+
 </mapper>

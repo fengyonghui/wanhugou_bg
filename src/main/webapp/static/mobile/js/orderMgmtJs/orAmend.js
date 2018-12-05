@@ -4,6 +4,7 @@
 		this.userInfo = GHUTILS.parseUrlParam(window.location.href);
 		this.expTipNum = 0;
 		this.fromOfficeId="";
+		this.unitPriceFlag = false;
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -14,10 +15,25 @@
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 			this.hrefHtml('.newinput01', '.input_div01','#hideSpanAmend01','#showSpanAmend01');
+			this.getPermissionList('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
 		},
 		pageInit: function() {
 			var _this = this;
 		},
+		getPermissionList: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                	console.log(res.data)
+                    _this.unitPriceFlag = res.data;
+                }
+            });
+        },
 		getData: function() {
 			var _this = this;
 			$.ajax({
@@ -254,15 +270,22 @@
 							'<label>采购数量：</label>'+
 							'<input type="text" value="'+ item.ordQty +'" disabled>'+
 						'</div>'+
-//						隐藏结算价
-//						'<div class="mui-input-row">'+
-//							'<label>结算价：</label>'+
-//							'<input type="text" value="'+ item.unitPrice +'" disabled>'+
-//						'</div>'+
+						'<div class="mui-input-row" id="unitprice">'+
+							'<label>结算价：</label>'+
+							'<input type="text" value="'+ item.unitPrice +'" disabled>'+
+						'</div>'+
 					'</div>'+
 				'</li>'
 				});
-				$("#orCheckCommodity").html(htmlCommodity)
+				$("#orCheckCommodity").html(htmlCommodity);
+				var unitPriceList=$('#orCheckCommodity #unitprice');
+				$.each(unitPriceList,function(z,x){
+					if(_this.unitPriceFlag==true){
+						$(x).show();
+					}else{
+						$(x).hide();
+					}
+				})
 			}
 			if(data.bizPoHeader.poDetailList==null) {
 				console.log(data.bizPoHeader.poDetailList==null)

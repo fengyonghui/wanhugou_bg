@@ -38,6 +38,7 @@
 	<script type="text/javascript">
         function pay() {
             var commId = $("#id").val();
+            var payTotal = $("#payTotal").val();
 
             var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
             var img = "";
@@ -57,7 +58,7 @@
             $.ajax({
                 url: '${ctx}/biz/order/bizCommission/payOrder',
                 contentType: 'application/json',
-                data: {"commId": commId, "img": img, "remark":remark},
+                data: {"commId": commId, "img": img, "remark":remark, "payTotal" : payTotal},
                 type: 'get',
                 success: function (result) {
                     alert(result);
@@ -214,13 +215,13 @@
 			<div class="control-group">
 				<label class="control-label">总的待付款金额：</label>
 				<div class="controls">
-					<form:input path="totalCommission" readonly="true" htmlEscape="false" class="input-xlarge"/>
+					<input class="totalDetail" value="${entity.totalCommission}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label">付款金额：</label>
 				<div class="controls">
-					<form:input path="payTotal" htmlEscape="false" value="${bizCommission.totalCommission}" readonly="true" class="input-xlarge"/>
+					<form:input path="totalCommission" htmlEscape="false" value="${entity.totalCommission}" readonly="true" class="input-xlarge"/>
 					&nbsp;&nbsp;<span style="color: red">※:付款金额为总的待付金额，禁止禁止修改</span>
 				</div>
 			</div>

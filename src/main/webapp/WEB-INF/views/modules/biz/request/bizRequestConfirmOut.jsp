@@ -49,6 +49,7 @@
                     $("input[name='reqDetail'][checked='checked']").each(function () {
                         var orderDetailId = $(this).parent().parent().find("input[name='orderDetailId']").val();
                         var reqDetailId = $(this).parent().parent().find("input[name='reqDetailId']").val();
+                        var transferDetailId = $(this).parent().parent().find("input[name='transferDetailId']").val();
                         var invSkuId = $(this).parent().parent().find("input[name='invSkuId']").val();
                         var sentQty = $(this).parent().parent().find("input[name='sentQty']").val();
                         var uVersion = $(this).parent().parent().find("input[name='uVersion']").val();
@@ -62,7 +63,7 @@
                             sendMap[orderDetailId] = parseInt(stockQty);
                         }
                         // sumSentQty = parseInt(sumSentQty) + parseInt(sentQty);
-                        treasuryList[i] = createTreasury(orderDetailId,reqDetailId,invSkuId,sentQty,uVersion,sendNo);
+                        treasuryList[i] = createTreasury(orderDetailId,reqDetailId,transferDetailId,invSkuId,sentQty,uVersion,sendNo);
                         i = i + 1;
                     });
                     var stockFlag = true;
@@ -159,20 +160,6 @@
             });
         });
 
-
-        function checkout(obj) {
-            var reqQty = $("#reqQty"+obj).val();	//申报数量
-            var receiveNum = $("#receiveNum"+obj).val();		//收货数量
-            var recvQty = $("#recvQty"+obj).val();		//已收货数量
-            // var sendQty = $("#sendQty"+obj).val();		//已供货数量
-            var sum = parseInt(receiveNum) + parseInt(recvQty);
-            if (sum > reqQty){
-                alert("收货数太大，已超过申报数量，请重新调整收货数量！");
-                $("#sendNum"+obj).val(0);
-                return false;
-            }
-        }
-
         function checkOrdDetail(obj) {
             if ($(obj).attr("checked")=='checked') {
                 $(obj).attr("checked","checked");
@@ -199,10 +186,11 @@
             }
         }
 
-        function createTreasury(orderDetailId, reqDetailId, invSkuId, outQty,uVersion,sendNo) {
+        function createTreasury(orderDetailId, reqDetailId, transferDetailId, invSkuId, outQty,uVersion,sendNo) {
             var treasury = new Object();
             treasury.orderDetailId = orderDetailId;
             treasury.reqDetailId = reqDetailId;
+            treasury.transferDetailId = transferDetailId;
             treasury.invSkuId = invSkuId;
             treasury.outQty = outQty;
             treasury.sendNo = sendNo;
@@ -451,11 +439,46 @@
 									</tr>
 								</c:if>
 							</c:forEach>
+							<c:forEach items="${orderDetail.transferDetailList}" var="transferDetail">
+								<c:if test="${transferDetail.inQty - transferDetail.sentQty != 0 || source eq 'detail'}">
+									<tr>
+										<c:if test="${source ne 'detail'}">
+											<td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
+										</c:if>
+										<td>${transferDetail.transfer.transferNo}</td>
+										<td>${transferDetail.skuInfo.name}</td>
+										<td>${transferDetail.skuInfo.vendorName}</td>
+										<td>${transferDetail.skuInfo.itemNo}</td>
+										<td>${orderDetail.color}</td>
+										<td>${orderDetail.standard}</td>
+										<td>${fns:getDictLabel(transferDetail.inventorySku.invType,'inv_type','')}</td>
+										<td>${fns:getDictLabel(transferDetail.inventorySku.skuType,'inventory_sku_type','')}</td>
+										<td>${transferDetail.inQty}</td>
+										<td>${transferDetail.sentQty == null ? "0" : transferDetail.sentQty}</td>
+										<td>${transferDetail.inQty - transferDetail.sentQty}</td>
+										<input name="okQty" value="${transferDetail.inQty - transferDetail.sentQty}" type="hidden"/>
+										<input name="sQty" value="${orderDetail.sentQty}" type="hidden"/>
+										<input name="ordQty" value="${orderDetail.ordQty}" type="hidden"/>
+										<input name="orderDetailId" value="${orderDetail.id}" type="hidden"/>
+										<input name="transferDetailId" value="${transferDetail.id}" type="hidden"/>
+										<input name="invSkuId" value="${transferDetail.inventorySku.id}" type="hidden"/>
+										<input name="uVersion" value="${transferDetail.inventorySku.uVersion}" type="hidden"/>
+										<input name="stockQty" value="${transferDetail.inventorySku.stockQty}" type="hidden"/>
+										<td>${transferDetail.inventorySku.stockQty}</td>
+										<c:if test="${source ne 'detail'}">
+											<td><input type="text" name="sentQty" value="0"/></td>
+										</c:if>
+										<td>
+											${transferDetail.inventorySku.invInfo.name}
+										</td>
+									</tr>
+								</c:if>
+							</c:forEach>
 						</tbody>
 					</table>
 				</div>
+				<HR align=center width=100% color=#987cb9 SIZE=1>
 			</c:if>
-            <HR align=center width=100% color=#987cb9 SIZE=1>
         </c:forEach>
 	</div>
 

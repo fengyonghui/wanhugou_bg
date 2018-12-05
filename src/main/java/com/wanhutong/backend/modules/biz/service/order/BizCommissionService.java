@@ -20,6 +20,7 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.order.BizCommissionOrder;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
@@ -90,14 +91,18 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 
 	public static final String DATABASE_TABLE_NAME = "biz_commission";
 
+	//订单已结佣时，订单记录表中记录业务状态
+	public static final Integer COMMISSIONED_BIZ_STATUS = 50;
+
+
 	public BizCommission get(Integer id) {
 		return super.get(id);
 	}
-	
+
 	public List<BizCommission> findList(BizCommission bizCommission) {
 		return super.findList(bizCommission);
 	}
-	
+
 	public Page<BizCommission> findPage(Page<BizCommission> page, BizCommission bizCommission) {
 		return super.findPage(page, bizCommission);
 	}
@@ -164,7 +169,7 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		} else {
 			purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getDefaultProcessId());
 		}
-
+		bizCommission.setTotalCommission(BigDecimal.ZERO);
 		CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
 		commonProcessEntity.setObjectId("0");
 		commonProcessEntity.setObjectName(BizCommissionService.DATABASE_TABLE_NAME);
@@ -348,7 +353,7 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 	 * @return
 	 */
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public String payOrder(Integer commId, String img, String remark) {
+	public String payOrder(Integer commId, String img, String remark, BigDecimal payTotal) {
 		// 当前流程
 		User user = UserUtils.getUser();
 		Role role = new Role();
@@ -385,6 +390,7 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 
 		bizCommission.setImgUrl(img);
 		bizCommission.setBizStatus(BizCommission.BizStatus.ALL_PAY.getStatus());
+		bizCommission.setPayTotal(payTotal);
 		bizCommission.setPayTime(new Date());
 		bizCommission.setRemark(remark);
 		this.save(bizCommission);
@@ -400,9 +406,15 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 				orderIdStrs += String.valueOf(orderId) + ",";
 				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderId);
 				bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.COMMISSION_COMPLETE.getComStatus());
-				bizOrderHeaderService.save(bizOrderHeader);
+				bizOrderHeaderService.updateCommissionStatus(bizOrderHeader);
 
-				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getDesc(),BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getState(),orderId);
+				//bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getDesc(),BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getState(),orderId);
+				BizOrderStatus bizOrderStatus = new BizOrderStatus();
+				bizOrderStatus.setOrderHeader(bizOrderHeader);
+				bizOrderStatus.setBizStatus(COMMISSIONED_BIZ_STATUS);
+				bizOrderStatus.setOrderType(bizOrderHeader.getOrderType());
+				bizOrderStatusService.save(bizOrderStatus);
+				//bizOrderStatusService.insertAfterBizStatusChangedNew(COMMISSIONED_BIZ_STATUS,BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getDesc(),BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getState(),orderId);
 			}
 		}
 		if (orderIdStrs.length() > 0) {
@@ -470,5 +482,9 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 		}
 
 		return resultFlg;
+	}
+
+	public BizCommission findTotalCommission(Integer orderId) {
+		return dao.findTotalCommission(orderId);
 	}
 }

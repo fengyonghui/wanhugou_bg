@@ -10,6 +10,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.utils.RoleUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
@@ -492,6 +493,9 @@ public class BizSkuInfoController extends BaseController {
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "skuOrderExport")
 	public String skuOrderExport(BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		//判断当前用户是否拥有查看结算价的权限
+		Boolean showUnitPriceFlag = RoleUtils.hasPermission("biz:order:unitPrice:view");
+
 		Page<BizSkuInfo> page = bizSkuInfoService.findPageForSkuInfo(new Page<BizSkuInfo>(), bizSkuInfo);
 		List<BizSkuInfo> list = page.getList();
 		//列表数据
@@ -503,7 +507,9 @@ public class BizSkuInfoController extends BaseController {
 					skuList.add(skuInfo.getName() == null ? "未知" : skuInfo.getName());
                     skuList.add(skuInfo.getItemNo() == null ? "" : skuInfo.getItemNo());
 					//隐藏结算价
-                    //skuList.add(skuInfo.getOrderDetail().getBuyPrice() == null ? "" : skuInfo.getOrderDetail().getBuyPrice().toString());
+					if (showUnitPriceFlag) {
+						skuList.add(skuInfo.getOrderDetail().getBuyPrice() == null ? "" : skuInfo.getOrderDetail().getBuyPrice().toString());
+					}
                     skuList.add(skuInfo.getOrderDetail().getUnitPrice() == null ? "" : skuInfo.getOrderDetail().getUnitPrice().toString());
                     skuList.add(skuInfo.getOrderDetail().getOrdQty() == null ? "" : skuInfo.getOrderDetail().getOrdQty().toString());
                     skuList.add((skuInfo.getOrderDetail().getUnitPrice() == null || skuInfo.getOrderDetail().getOrdQty() == null) ? "" : String.valueOf(skuInfo.getOrderDetail().getUnitPrice() * skuInfo.getOrderDetail().getOrdQty()));
@@ -515,8 +521,12 @@ public class BizSkuInfoController extends BaseController {
                 }
             }
 			//隐藏结算价
-			//String headers[] = {"商品名称","商品货号","结算价","结算价","订单数量","应付金额","客户专员","订单号","采购中心","现有库存"};
-			String headers[] = {"商品名称","商品货号","(订单)销售价","订单数量","应付金额","客户专员","订单号","采购中心","现有库存"};
+			String[] headers = null;
+			if (showUnitPriceFlag) {
+				headers = new String[]{"商品名称", "商品货号", "结算价", "(订单)销售价", "订单数量", "应付金额", "客户专员", "订单号", "采购中心", "现有库存"};
+			} else {
+				headers = new String[]{"商品名称", "商品货号", "(订单)销售价", "订单数量", "应付金额", "客户专员", "订单号", "采购中心", "现有库存"};
+			}
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
 			String fileName = "商品订单" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";

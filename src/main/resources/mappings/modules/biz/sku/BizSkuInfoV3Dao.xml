@@ -525,7 +525,10 @@
 		<include refid="bizSkuInfoColumns"/>
 		FROM biz_sku_info a
 		<include refid="bizSkuInfoJoins"/>
-		WHERE a.item_no = #{itemNo} AND prod_id = #{prodId}
+		WHERE
+		a.status = 1
+		AND a.item_no = #{itemNo}
+		AND prod_id = #{prodId}
 	</select>
 
 
@@ -726,5 +729,55 @@
 		item_no = #{itemNo}
 		WHERE id = #{id}
 	</update>
+
+	<select id="findInvSkuList" resultType="BizSkuInfo">
+		SELECT
+			a.id AS "id",
+			a.name AS "name",
+			a.item_no AS "itemNo",
+			a.part_no AS "partNo",
+			a.prod_id AS "productInfo.id",
+			prod.img_url AS "productInfo.imgUrl",
+			prod.brand_id AS "productInfo.brandId",
+			prod.brand_name AS "productInfo.brandName",
+			prod.vendor_id AS "productInfo.office.id",
+			prod.vendor_name AS "productInfo.office.name",
+			bis.stock_qty AS "stockQty"
+		FROM biz_sku_info a
+		JOIN biz_product_info prod ON a.prod_id = prod.id
+		JOIN biz_inventory_sku bis ON a.id = bis.sku_id
+		JOIN biz_inventory_info bii ON bis.inv_id = bii.id
+		WHERE
+			1 = 1
+			AND a.status = 1
+			AND prod.status = 1
+			AND bis.status = 1
+			AND bii.status = 1
+			AND bii.id = #{fromInv}
+			<if test="name != null and name != ''">
+				AND a.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			</if>
+			<if test="itemNo != null and itemNo != ''">
+				AND a.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{itemNo}, '%')</if>
+			</if>
+			<if test="partNo != null and partNo != ''">
+				AND a.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{partNo}, '%')</if>
+			</if>
+			<if test="vendorName != null and vendorName != ''">
+				AND prod.vendor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{vendorName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{vendorName}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{vendorName}, '%')</if>
+			</if>
+	</select>
 
 </mapper>

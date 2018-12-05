@@ -13,6 +13,8 @@
 		a.month AS "month",
 		a.day AS "day",
 		a.amount AS "amount",
+		a.joint_order_amount AS "jointOrderAmount",
+		a.purchase_order_amount AS "purchaseOrderAmount",
 		a.new_user AS "newUser",
 		a.service_charge AS "serviceCharge",
 		a.status AS "delFlag",
@@ -113,7 +115,15 @@
 		year,
 		month,
 		day,
-		amount,
+		<if test="amount != null and amount != ''">
+			amount,
+		</if>
+		<if test="jointOrderAmount != null and jointOrderAmount != ''">
+			joint_order_amount,
+		</if>
+		<if test="purchaseOrderAmount != null and purchaseOrderAmount != ''">
+			purchase_order_amount,
+		</if>
 		status,
 		create_id,
 		create_time,
@@ -129,7 +139,15 @@
 		#{year},
 		#{month},
 		#{day},
-		#{amount},
+		<if test="amount != null and amount != ''">
+			#{amount},
+		</if>
+		<if test="jointOrderAmount != null and jointOrderAmount != ''">
+			#{jointOrderAmount},
+		</if>
+		<if test="purchaseOrderAmount != null and purchaseOrderAmount != ''">
+			#{purchaseOrderAmount},
+		</if>
 		#{delFlag},
 		#{createBy.id},
 		#{createDate},
@@ -148,7 +166,15 @@
 		`year` = #{year},
 		`month` = #{month},
 		`day` = #{day},
-		amount = #{amount},
+		<if test="amount != null and amount != ''">
+			amount = #{amount},
+		</if>
+		<if test="jointOrderAmount != null and jointOrderAmount != ''">
+			joint_order_amount = #{jointOrderAmount},
+		</if>
+		<if test="purchaseOrderAmount != null and purchaseOrderAmount != ''">
+			purchase_order_amount = #{purchaseOrderAmount},
+		</if>
 		new_user = #{newUser},
 		service_charge = #{serviceCharge},
 		update_id = #{updateBy.id},

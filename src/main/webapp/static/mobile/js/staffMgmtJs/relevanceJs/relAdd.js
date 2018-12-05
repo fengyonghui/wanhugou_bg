@@ -104,7 +104,7 @@
 			$('.staRelSave').on('tap','#staRelSaveBtn', function() {
 				var officeNameVal = $('#officeName').val();
 				var cosultasNameVal = $('#cosultasName').val();
-				var phoneVal = $('#phpneId').val();
+				var phoneVal = $('#phoneId').val();
 				if(officeNameVal == null || officeNameVal ==undefined || officeNameVal.trim() == ""){
 					mui.toast("请选择采购中心！")
 					return false;
@@ -117,11 +117,15 @@
 					mui.toast("请输入登录名！")
 					return false;
 				}
+			    if(!(/^1[345678]\d{9}$/.test(phoneVal))){ 
+			        mui.toast("手机号码有误，请重新输入！");  
+			        return false; 
+			    } 
 				$.ajax({
 					type: "GET",
 					url: "/a/biz/custom/bizCustomCenterConsultant/save4mobile",
 					data: {
-						 phone:$('#phpneId').val() ,
+						phone:phoneVal,
 						'centers.id':$('#centersId').val(),
 						'consultants.id':$('#consultantsId').val()
 					},
@@ -143,6 +147,10 @@
 						}else{							
 							mui.toast('关联失败，请输入正确内容！')
 						}
+					},
+					error: function(res) {
+//						console.log(res)
+						mui.toast("关联失败，请输入正确内容！");
 					}
 				});
 			})

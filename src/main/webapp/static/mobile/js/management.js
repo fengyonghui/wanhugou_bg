@@ -175,6 +175,22 @@
 					})
                 }
 			})
+            //支付申请列表
+            $('#menuMaget').on('click','.childMenu',function(){
+            	var url = $(this).attr('url');
+				var mobileUrl = $(this).attr('mobileUrl');
+				var purchId = $(this).attr('purchId');
+                if(url) {
+                	mui.toast('子菜单不存在')             	
+                }else if(mobileUrl == '/mobile/html/orderMgmtHtml/ApplicationList.html') {
+                	GHUTILS.OPENPAGE({
+						url: "../html/orderMgmtHtml/ApplicationList.html",
+						extras: {
+							purchId:purchId,
+						}
+					})
+                }
+			})
         /*会员管理*/
 //          $('#menuMaget').on('click','.childMenu',function(){
 //          	var url = $(this).attr('url');
