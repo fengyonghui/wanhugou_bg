@@ -312,7 +312,8 @@
 							<c:otherwise>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs&bizStatu=${bizStatu}&ship=${ship}">发货详情</a>--%>
 								<a href="${ctx}/biz/request/bizRequestAll/confirmOut?orderHeaderId=${orderHeader.id}&source=detail">出库详情</a>
-								<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SEND.state}">
+								<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SEND.state &&
+										(orderHeader.commonProcess.type == '666' || orderHeader.commonProcess.type == '777')}">
 									<a href="${ctx}/biz/request/bizRequestAll/confirmOut?orderHeaderId=${orderHeader.id}">出库</a>
 								</c:if>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=xs">发货</a>--%>
