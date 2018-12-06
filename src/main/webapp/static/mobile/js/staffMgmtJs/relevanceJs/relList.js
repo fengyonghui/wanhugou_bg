@@ -172,6 +172,19 @@
 					}
 				})
 			})
+			/*经销店添加*/
+			$('#nav').on('tap','.staRelAddBtn', function() {
+				var url = $(this).attr('url');
+		        var cosultasIdTxt=$('#cosultasId').val();
+		        var officeIdTxt=$('#officeId').val();
+				GHUTILS.OPENPAGE({
+					url: "../../../html/staffMgmtHtml/relevanceHtml/relAdd.html",
+					extras: {
+						cosultasIdTxt:cosultasIdTxt,
+						officeIdTxt:officeIdTxt
+					}
+				})
+			})
        },
 		stHrefHtml: function() {
 			var _this = this;
@@ -191,19 +204,7 @@
 				}
 			}),
 			
-		/*经销店添加*/
-			$('#nav').on('tap','.staRelAddBtn', function() {
-				var url = $(this).attr('url');
-		        var cosultasIdTxt=$('#cosultasId').val();
-		        var officeIdTxt=$('#officeId').val();
-				GHUTILS.OPENPAGE({
-					url: "../../../html/staffMgmtHtml/relevanceHtml/relAdd.html",
-					extras: {
-						cosultasIdTxt:cosultasIdTxt,
-						officeIdTxt:officeIdTxt
-					}
-				})
-			}),
+		
 		/*解除关联*/
             $('.content_part').on('tap','.staReMoveBtn',function(){
             	var url = $(this).attr('url');

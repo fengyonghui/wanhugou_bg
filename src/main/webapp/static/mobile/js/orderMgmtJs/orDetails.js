@@ -43,6 +43,7 @@
                 },
                 dataType: "json",
                 success: function(res){
+                	console.log(res)
 					/*业务状态*/
 					var bizPoHeader = res.data.bizPoHeader;
 					//申请金额，最后付款时间显示
@@ -59,7 +60,12 @@
 						$('#orNumDate').hide();
 					}  
 					var orshouldPay = bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight
-					$('#orpoNum').val(res.data.bizOrderHeader.orderNumber)//单号
+					//单号
+					var temp = "";
+					for(var i in res.data.orderSourceMap){
+					    temp = i;
+					}
+					$('#orpoNum').val(temp);
 					$('#ordtotal').val(bizPoHeader.totalDetail)//总价
 					$('#orshouldPay').val(orshouldPay)//应付金额
 					$('#orLastDa').val(_this.formatDateTime(bizPoHeader.lastPayDate))//最后付款时间
@@ -136,11 +142,15 @@
 			var htmlCommodity = '';
 			if(data.bizPoHeader.poDetailList) {
 				$.each(data.bizPoHeader.poDetailList, function(i, item) {
+					var temps = "";
+					for(var i in data.orderSourceMap){
+					    temps = i;
+					}
 				var outHtml = '';
 				if(data.bizPoHeader.id!=null) {
 					outHtml = '<div class="mui-input-row">'+
 								'<label>所属单号：</label>'+
-								'<input type="text" value="'+ data.bizOrderHeader.orderNumber +'" disabled>'+
+								'<input type="text" value="'+ temps +'" disabled>'+
 							'</div>'+
 							'<div class="mui-input-row">'+
 								'<label>已供货数量：</label>'+

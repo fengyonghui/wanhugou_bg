@@ -101,8 +101,8 @@
 			bvi.name as "varietyInfo.name"
 		FROM biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
-		LEFT JOIN biz_sku_info bsi ON brd.sku_id = bsi.id AND bsi.status=1
-		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id AND pi.status=1
+		LEFT JOIN biz_sku_info bsi ON brd.sku_id = bsi.id
+		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
 		<!-- 供应商id -->
 		<if test="vendorId !=null and vendorId != ''">
 			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id

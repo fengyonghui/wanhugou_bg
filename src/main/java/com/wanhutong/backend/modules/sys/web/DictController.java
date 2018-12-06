@@ -148,13 +148,25 @@ public class DictController extends BaseController {
 		return "modules/sys/commissionRatio";
 	}
 
+	@RequiresPermissions("sys:dict:commissionRatioView:view")
+	@RequestMapping(value = "commissionRatioView4Mobile")
+	@ResponseBody
+	public String commissionRatioView4Mobile(Dict dict, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		dict.setType("commission_ratio");
+		List<Dict> dictList = dictService.findList(dict);
+		if (CollectionUtils.isNotEmpty(dictList)) {
+			dict = dictList.get(0);
+			model.addAttribute("dict", dict);
+			resultMap.put("dict", dict);
+		}
+		return JsonUtil.generateData(resultMap, null);
+	}
+
 	@RequiresPermissions("sys:dict:commissionRatioSave:edit")
 	@RequestMapping(value = "commissionRatioSave")
 	@ResponseBody
 	public String commissionRatioSave(Dict dict, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, dict)){
-			return JsonUtil.generateData(Pair.of(false, "数据检查失败!"), null);
-		}
 		dictService.save(dict);
 		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
 	}

@@ -9,15 +9,15 @@
 		<meta http-equiv="Pragma" content="no-cache">
 		<meta http-equiv="Cache-control" content="no-cache">
 		<meta http-equiv="Cache" content="no-cache">
-		<title>订单列表</title>
+		<title>佣金付款表列表</title>
 		<link href="../../../css/mui.min.css" rel="stylesheet" />
-		<link href="../../../css/app.css?time=20181023" rel="stylesheet" />
+		<link href="../../../css/app.css?time=20181128" rel="stylesheet" />
 	</head>
 	<body>
 		<header class="app_header mui-bar mui-bar-nav">
 		    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
 		    <span id="OrdSechBtn" class="mui-icon mui-icon-search mui-pull-right app_cf"></span>
-		    <p class="app_cf app_nav_text_center" id="listName"></p>
+		    <p class="app_cf app_nav_text_center">佣金付款表列表</p>
 		</header>
 		<nav class="mui-bar mui-bar-tab footClass" id="nav">
 			<a class="mui-tab-item app_cf staHomePage">
@@ -27,19 +27,36 @@
 		</nav>
 		<div class="app_content mui-content mui-scroll-wrapper" id="refreshContainer">			
 			<div class="mui-scroll">
-				<ul class="mui-table-view mui-table-view-chevron" id="orderList">
-                        
+				<ul class="mui-table-view mui-table-view-chevron" id="commList">                        
                 </ul>
 			</div>
 		</div>
-		<input type="hidden" name="myStatu" id="myStatu"/>
-		<input type="hidden" name="statu" id="statu"/>
-		<input type="hidden" name="source" id="source"/>
-		<input type="hidden" name="flag" id="flag"/>
+		<div class="tanchuang_wrap" id="tanchuang_pay">
+			<div class="payMoneys">
+				<div class="paybox">
+					<label style="margin-top:5px;">总的待付款金额:</label>
+					<input class="mui-input-clear" type="text" id="totalMoney" disabled>
+				</div>
+				<div class="paybox">
+					<label>付款金额:</label>
+					<input class="mui-input-clear" type="text" id="paymoney" disabled>
+					<div class="app_cred">付款金额为总的待付金额，禁止修改</div>
+				</div>
+				<div class="paybox">
+					<label>备注:</label>
+					<textarea id="textxt"></textarea>
+				</div>
+				<div class="btnbox">
+					<button id="payBtnsave">保存</button>
+					<button id="payBtnremove">取消</button>
+				</div>
+			</div>
+			<div class="lightbox">
+			</div>
+		</div>
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/mui.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>
-		<script src="../../../js/orderMgmtJs/OrdermgmtHtmljs/orderList.js?time=20181203"></script>
-
+		<script src="../../../js/orderMgmtJs/commissionMgmtJs/alreadycomList.js?time=20181203"></script>
 	</body>
 </html>
