@@ -35,7 +35,7 @@
 			</li>
 			<li><label>品类：</label>
 				<form:select path="varietyInfo.id" class="input-medium">
-					<form:option value="" label=""/>
+					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getDictList('service_vari')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
@@ -60,16 +60,16 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizFreightConfig" varStatus="i">
 			<tr>
-				<td>${i.index}</td>
+				<td>${i.index + 1}</td>
 				<td>订单</td>
 				<td>${bizFreightConfig.office.name}</td>
-				<td>${bizFreightConfig.varietyInfo.name == null ? "非拉杆箱" : "bizFreightConfig.varietyInfo.name"}</td>
+				<td>${bizFreightConfig.varietyInfo.name == null ? "非拉杆箱" : bizFreightConfig.varietyInfo.name}</td>
 				<td>${bizFreightConfig.createBy.name}</td>
 				<td><fmt:formatDate value="${bizFreightConfig.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<td><fmt:formatDate value="${bizFreightConfig.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<shiro:hasPermission name="biz:order:bizFreightConfig:edit"><td>
-    				<a href="${ctx}/biz/order/bizFreightConfig/form?office.id=${bizFreightConfig.offfice.id}&varietyInfo.id=${bizFreightConfig.varietyInfo.id}">修改</a>
-					<a href="${ctx}/biz/order/bizFreightConfig/delete?office.id=${bizFreightConfig.offfice.id}&varietyInfo.id=${bizFreightConfig.varietyInfo.id}" onclick="return confirmx('确认要删除该服务费设置吗？', this.href)">删除</a>
+    				<a href="${ctx}/biz/order/bizFreightConfig/form?office.id=${bizFreightConfig.office.id}&varietyInfo.id=${bizFreightConfig.varietyInfo.id}">修改</a>
+					<a href="${ctx}/biz/order/bizFreightConfig/delete?office.id=${bizFreightConfig.office.id}&varietyInfo.id=${bizFreightConfig.varietyInfo.id}" onclick="return confirmx('确认要删除该服务费设置吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

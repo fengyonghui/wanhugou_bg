@@ -12,7 +12,7 @@
 		a.min_distance AS "minDistance",
 		a.max_distance AS "maxDistance",
 		a.fee_charge AS "feeCharge",
-		a.default AS "defValue",
+		a.default_status AS "defaultStatus",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		u.name AS "createBy.name",
@@ -46,7 +46,7 @@
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.office_id = #{office.id}
 			</if>
-			<if test="varietyInfo != null and varietyInfo.id != null and varietyInfo.id != ''">
+			<if test="varietyInfo != null and varietyInfo.id != null">
 				AND a.var_id = #{varietyInfo.id}
 			</if>
 		</where>
@@ -71,7 +71,7 @@
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.office_id = #{office.id}
 			</if>
-			<if test="varietyInfo != null and varietyInfo.id != null and varietyInfo.id != ''">
+			<if test="varietyInfo != null and varietyInfo.id != null">
 				AND a.var_id = #{varietyInfo.id}
 			</if>
 		</where>
@@ -80,6 +80,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY a.type
 			</otherwise>
 		</choose>
 	</select>
@@ -107,10 +108,16 @@
 			office_id,
 			type,
 			var_id,
-			min_distance,
-			max_distance,
+			<if test="minDistance != null and minDistance != ''">
+				min_distance,
+			</if>
+			<if test="maxDistance != null and maxDistance != ''">
+				max_distance,
+			</if>
 			fee_charge,
-			default,
+			<if test="defaultStatus != null">
+				default_status,
+			</if>
 			status,
 			create_id,
 			create_time,
@@ -122,10 +129,16 @@
 			#{office.id},
 			#{type},
 			#{varietyInfo.id},
-			#{minDistance},
-			#{maxDistance},
+			<if test="minDistance != null and minDistance != ''">
+				#{minDistance},
+			</if>
+			<if test="maxDistance != null and maxDistance != ''">
+				#{maxDistance},
+			</if>
 			#{feeCharge},
-			#{defValue},
+			<if test="defaultStatus != null">
+				#{defaultStatus},
+			</if>
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -140,10 +153,16 @@
 			office_id = #{office.id},
 			type = #{type},
 			var_id = #{varietyInfo.id},
-			min_distance = #{minDistance},
-			max_distance = #{maxDistance},
+			<if test="minDistance != null and minDistance != ''">
+				min_distance = #{minDistance},
+			</if>
+			<if test="maxDistance != null and maxDistance != ''">
+				max_distance = #{maxDistance},
+			</if>
 			fee_charge = #{feeCharge},
-			default = #{defValue},
+			<if test="defaultStatus != null">
+				default_status = #{defaultStatus},
+			</if>
 			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
@@ -156,5 +175,17 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<select id="findListByOfficeAndVari" resultType="BizFreightConfig">
+		SELECT
+		<include refid="bizFreightConfigColumns"/>
+		FROM biz_freight_config a
+		<include refid="bizFreightConfigJoins"/>
+		<where>
+			a.status = 1
+			AND a.office_id = #{centerId}
+			AND a.var_id = #{variId}
+		</where>
+	</select>
 	
 </mapper>

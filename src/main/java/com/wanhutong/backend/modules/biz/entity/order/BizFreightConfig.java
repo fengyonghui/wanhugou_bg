@@ -8,6 +8,7 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 服务费设置Entity
@@ -51,7 +52,12 @@ public class BizFreightConfig extends DataEntity<BizFreightConfig> {
 	/**
 	 * 1: 无法计算距离时，用此默认设置； 0：飞默认
 	 */
-	private Byte defValue;
+	private Byte defaultStatus;
+
+	/**
+	 * 用于页面传值
+	 */
+	private List<BizFreightConfig> freightConfigList;
 
 	public BizFreightConfig() {
 		super();
@@ -109,11 +115,19 @@ public class BizFreightConfig extends DataEntity<BizFreightConfig> {
 		this.feeCharge = feeCharge;
 	}
 
-	public Byte getDefValue() {
-		return defValue;
+	public Byte getDefaultStatus() {
+		return defaultStatus;
 	}
 
-	public void setDefValue(Byte defValue) {
-		this.defValue = defValue;
+	public void setDefaultStatus(Byte defaultStatus) {
+		this.defaultStatus = defaultStatus;
+	}
+
+	public List<BizFreightConfig> getFreightConfigList() {
+		return freightConfigList;
+	}
+
+	public void setFreightConfigList(List<BizFreightConfig> freightConfigList) {
+		this.freightConfigList = freightConfigList;
 	}
 }
