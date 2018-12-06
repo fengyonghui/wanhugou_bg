@@ -28,7 +28,7 @@ public enum RoleEnNameEnum {
     /**
      * 财务总经理
      */
-    FINANCIAL_GENERAL_MANAGER ("financial_general_manager ", "财务总经理"),
+    FINANCIAL_GENERAL_MANAGER ("financial_general_manager", "财务总经理"),
 
     /**
      * 财务总监
