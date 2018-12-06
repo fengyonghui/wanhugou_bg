@@ -127,19 +127,25 @@
 		                    	pager['waitShipments'] = _this.userInfo.waitShipments,//待发货
 								pager['waitOutput'] = _this.userInfo.waitOutput,//待出库
 		                    	pager['includeTestData'] = _this.userInfo.includeTestData;//测试数据
+		                    	if(statu == 'unline') {
+			                    	$('#myStatu').val(statu);
+			                    	$('#listName').html('线下支付订单列表');
+			                    }
+		                    	if(statu != 'unline') {
+			                    	$('#myStatu').val('');
+			                    	$('#listName').html('订单列表');
+			                    }
 		                    	getData(pager);
 		                    }else{
 		                    	//直接进来的参数数据
 		                    	pager['size']= 20;
 			                    pager['pageNo'] = 1;			                    
 			                    if(statu != 'unline') {
-//			                    	console.log(1)
 			                    	pager['statu'] = '';
 			                    	$('#myStatu').val('');
 			                    	$('#listName').html('订单列表');
 			                    }
 			                    if(statu == 'unline') {
-//			                    	console.log(2)
 			                    	pager['statu'] = statu;
 			                    	$('#myStatu').val(statu);
 			                    	$('#listName').html('线下支付订单列表');
@@ -159,7 +165,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		            	console.log(res)
+		            	console.log(res)
 		            	var dataRow = res.data.roleSet;
 		            	//订单类型
 		          	    $.ajax({
@@ -210,7 +216,7 @@
 											}
 										}
 									}
-									if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING) {
+									if((item.orderType == res.data.ORDINARY_ORDER||item.orderType == 8) && item.bizStatus >= res.data.SUPPLYING) {
 										if(objectName == 'ORDER_HEADER_SO_LOCAL') {
 											ProcessName = commonProcess.jointOperationLocalProcess.name
 										}
@@ -302,7 +308,7 @@
                                             	&& purchaseOrdName != '驳回'
                                             	&& purchaseOrdName != '审批完成'
                                             	&& (fileRole.length !=0 || fileRoles.length !=0 || userId==1)){
-                                                if(item.orderType == res.data.ORDINARY_ORDER && item.bizStatus >= res.data.SUPPLYING){
+                                                if((item.orderType == res.data.ORDINARY_ORDER||item.orderType==8)  && item.bizStatus >= res.data.SUPPLYING){
                                                     if(item.suplys == 0 ){
                                                      	staCheckBtnTxt="审核";
                                                      	ordCheckBtn = 'ordCheckBtn';
@@ -377,8 +383,7 @@
 	                                		staRecoveryBtnTxt ="恢复";
 	                                		ordRecoveryBtn = 'ordRecoveryBtn';
 	                                	}
-	                                }
-                                    
+	                                }                                    
 				                }
 	                        	var staCheckSucBtn = '';
 	                        	var staCheckSuc = '';
@@ -448,7 +453,7 @@
 					}else{
 						$('.mui-pull-bottom-pocket').html('');
 						$('#orderList').append('<p class="noneTxt">暂无数据</p>');
-						$('#OrdSechBtn').hide();
+//						$('#OrdSechBtn').hide();
 						mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 					}
 	                if(res.data.page.totalPage==pager.pageNo){		                	

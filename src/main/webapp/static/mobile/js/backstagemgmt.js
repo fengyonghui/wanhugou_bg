@@ -40,19 +40,22 @@
 				$.ajax({
                     type: "GET",
                     url: "http://api.service.wanhutong.com/v2/wht/qrCode/"+loginName,
+//                  url: "http://hh.ngrok.xiaomiqiu.cn/v2/wht/qrCode/"+loginName,
                     dataType: "json",
                     success: function(res){
+                    	console.log(res)
                     	if(res.status==1||res.status=='1'){
                     		var imgs = "<img src='" + res.data +"'>"
                     	    $('.codeBox').html(imgs);
                     	}else{
                     		$('.codeBox').html('');
-                    	}                   	
+                    	}
                     }
                 });
 			},
 			getData: function() {
 				var _this = this;
+
                 $.ajax({
                     type: "GET",
                     url: "/a/sys/menu/listData",
