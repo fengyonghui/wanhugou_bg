@@ -71,7 +71,7 @@
 		                    $.each(sArr, function(i, items) {
 		                    	var mobileUrls = $(this).attr('mobileurl');
 		                    	if(mobileUrls=='/mobile/html/orderMgmtHtml/commissionMgmtHtml'){
-		                        	$(this).children('a').attr('class','mui-navigate-right');                    	
+		                        	$(this).children('a').attr('class','mui-navigate-right');                   	
 		                        	$(this).attr('id','commission');
 		                        }
 		                    });
@@ -245,8 +245,8 @@
 				var purchId = $(this).attr('purchId');
 	            if(url) {
 	            	mui.toast('子菜单不存在')             	
-	            }else if(mobileUrl == 'mobile/html/orderMgmtHtml/commissionMgmtHtml/commissionList.html') {
-	            	
+	            }else if(mobileUrl == 'mobile/html/orderMgmtHtml/commissionMgmtHtml/commissionList.html'){ 
+	            	//佣金管理
 	            	GHUTILS.OPENPAGE({
 						url: "../html/orderMgmtHtml/commissionMgmtHtml/commissionList.html",
 						extras: {
@@ -254,6 +254,7 @@
 						}
 					})
 	            }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml/applyKnotList.html'){
+	            	//申请结佣
 	            	GHUTILS.OPENPAGE({
 						url: "../html/orderMgmtHtml/commissionMgmtHtml/alreadlycomList.html",
 						extras: {
@@ -262,6 +263,7 @@
 						}
 					})
 	            }else if(mobileUrl == '/mobile/html/orderMgmtHtml/commissionMgmtHtml/commProportion.html'){
+	            	//佣金比例设置
 	            	GHUTILS.OPENPAGE({
 						url: "../html/orderMgmtHtml/commissionMgmtHtml/commProportion.html",
 						extras: {
