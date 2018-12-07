@@ -156,7 +156,12 @@
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizInventorySku" varStatus="state">
-			<tr>
+			<c:if test="${bizInventorySku.delFlag != null && bizInventorySku.delFlag == 0}">
+				<tr style="text-decoration:line-through;">
+			</c:if>
+			<c:if test="${bizInventorySku.delFlag != null && bizInventorySku.delFlag == 1}">
+				<tr>
+			</c:if>
 				<td>${state.index+1}</td>
 				<td>
 					<%--<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}">--%>
@@ -230,6 +235,8 @@
 						<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 							<c:if test="${bizInventorySku.delFlag!=null && bizInventorySku.delFlag!=0}">
 								<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}&invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">修改</a>
+								<a href="${ctx}/biz/">拆分</a>
+								<a href="${ctx}/biz/">合并</a>
 								<a href="${ctx}/biz/inventory/bizInventorySku/delete?id=${bizInventorySku.id}&zt=${zt}"
 								   onclick="return confirmx('确认要删除该商品库存详情吗？', this.href)">删除</a>
 							</c:if>
