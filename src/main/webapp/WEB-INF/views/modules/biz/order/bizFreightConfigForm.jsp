@@ -26,36 +26,37 @@
 							type:"post",
 							url:"${ctx}/biz/order/bizFreightConfig/selectFreightConfig",
 							data:{"officeId":officeId,"variId":variId},
+                            async: false,
 							success:function (data) {
 								if (data == 'error') {
                                     alert("已经有了该采购中心和该品类的服务费");
 								    flag1 = false;
                                 }
-                                var flag = true;
-                                var flag2 = true;
-                                $("input[data-def='minDistance']").each(function () {
-                                    var minDistance = $(this).val();
-                                    var maxDistance = $(this).parent().find("input[data-def='maxDistance']").val();
-                                    var nextMinDistance = $(this).parent().parent().next().find("input[data-def='minDistance']").val();
-                                    if (parseFloat(minDistance) > parseFloat(maxDistance)) {
-                                        alert("同一行前面的公里数必须小于后面的公里数");
-                                        flag = false;
-                                        return false;
-                                    }
-                                    if (nextMinDistance != null && parseFloat(maxDistance) > parseFloat(nextMinDistance)) {
-                                        alert("前一行后面的公里数必须小于等于后一行的前面的公里数");
-                                        flag2 = false;
-                                        return false;
-                                    }
-                                });
-                                if (flag1 && flag && flag2) {
-                                    $Mask.AddLogo("正在加载");
-                                    loading('正在提交，请稍等...');
-                                    form.submit();
-                                }
                             }
 						});
 					}
+					var flag = true;
+                    var flag2 = true;
+					$("input[data-def='minDistance']").each(function () {
+					    var minDistance = $(this).val();
+						var maxDistance = $(this).parent().find("input[data-def='maxDistance']").val();
+						var nextMinDistance = $(this).parent().parent().next().find("input[data-def='minDistance']").val();
+						if (parseFloat(minDistance) > parseFloat(maxDistance)) {
+						    alert("同一行前面的公里数必须小于后面的公里数");
+						    flag = false;
+						    return false;
+						}
+						if (nextMinDistance != null && parseFloat(maxDistance) > parseFloat(nextMinDistance)) {
+						    alert("前一行后面的公里数必须小于等于后一行的前面的公里数");
+						    flag2 = false;
+						    return false;
+						}
+                    });
+                    if (flag1 && flag && flag2) {
+                        $Mask.AddLogo("正在加载");
+                        loading('正在提交，请稍等...');
+                        form.submit();
+                    }
 				},
 				errorContainer: "#messageBox",
 				errorPlacement: function(error, element) {
