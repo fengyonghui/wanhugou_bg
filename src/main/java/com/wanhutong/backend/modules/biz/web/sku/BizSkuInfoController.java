@@ -261,7 +261,11 @@ public class BizSkuInfoController extends BaseController {
 		List<BizSkuInfo> skuInfoList = new ArrayList<BizSkuInfo>();
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (BizInventorySku inventorySku : list) {
-				skuInfoList.add(inventorySku.getSkuInfo());
+				BizSkuInfo bizSkuInfo = inventorySku.getSkuInfo();
+				bizSkuInfo = bizSkuInfoService.get(bizSkuInfo.getId());
+				if (bizSkuInfo != null) {
+					skuInfoList.add(bizSkuInfo);
+				}
 			}
 		}
 		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findSkuListForProd(skuInfoList);
