@@ -159,6 +159,10 @@ public class BizPoPaymentOrderController extends BaseController {
             bizPoPaymentOrder.setPoHeaderId(poId);
         }
         Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+
+        //更新BizPoPaymentOrder审核按钮控制flag
+        bizPoPaymentOrderService.updateHasRole(page);
+
         model.addAttribute("page", page);
         String orderId = request.getParameter("orderId");
         model.addAttribute("orderId", orderId);
@@ -304,49 +308,8 @@ public class BizPoPaymentOrderController extends BaseController {
             page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
         }
 
-//        List<Callable<Pair<Boolean, String>>> tasks = new ArrayList<>();
-//        for (BizPoPaymentOrder b : page.getList()) {
-//            tasks.add(new Callable<Pair<Boolean, String>>() {
-//                @Override
-//                public Pair<Boolean, String> call() {
-//                    int currentType = b.getCommonProcess().getPaymentOrderProcess().getCode();
-//                    PaymentOrderProcessConfig.Process currentProcess = paymentOrderProcessConfig.getProcessMap().get(Integer.valueOf(currentType));
-//
-//                    List<PaymentOrderProcessConfig.MoneyRole> moneyRoleList = currentProcess.getMoneyRole();
-//                    PaymentOrderProcessConfig.MoneyRole moneyRole = null;
-//                    for (PaymentOrderProcessConfig.MoneyRole role : moneyRoleList) {
-//                        if (role.getEndMoney().compareTo(money) > 0 && role.getStartMoney().compareTo(money) <= 0) {
-//                            moneyRole = role;
-//                        }
-//                    }
-//                    if (moneyRole == null) {
-//                        return Pair.of(Boolean.FALSE,"操作失败,当前流程无审批人,请联系技术部!");
-//                    }
-//
-//                    boolean hasRole = false;
-//                    for (String s : moneyRole.getRoleEnNameEnum()) {
-//                        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(s);
-//                        Role role = new Role();
-//                        role.setEnname(roleEnNameEnum.getState());
-//                        if (user.getRoleList().contains(role)) {
-//                            hasRole = true;
-//                            break;
-//                        }
-//                    }
-//
-//                    if (!user.isAdmin() && !hasRole) {
-//                        return Pair.of(Boolean.FALSE,"操作失败,该用户没有权限!");
-//                    }
-//
-//                    return Pair.of(Boolean.TRUE, "操作成功");
-//                }
-//            });
-//        }
-//        try {
-//            ThreadPoolManager.getDefaultThreadPool().invokeAll(tasks);
-//        } catch (InterruptedException e) {
-//            LOGGER.error("init order list data error", e);
-//        }
+        //更新BizPoPaymentOrder审核按钮控制flag
+        bizPoPaymentOrderService.updateHasRole(page);
 
         model.addAttribute("page", page);
         String orderId = request.getParameter("orderId");
