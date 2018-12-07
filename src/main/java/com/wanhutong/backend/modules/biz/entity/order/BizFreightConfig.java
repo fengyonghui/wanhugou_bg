@@ -37,12 +37,12 @@ public class BizFreightConfig extends DataEntity<BizFreightConfig> {
 	/**
 	 * 距离采购中心的公里数。范围的最小值。
 	 */
-	private String minDistance;
+	private BigDecimal minDistance;
 
 	/**
 	 * 距离采购中心的公里数。范围的最大值。
 	 */
-	private String maxDistance;
+	private BigDecimal maxDistance;
 
 	/**
 	 * 运费
@@ -75,19 +75,19 @@ public class BizFreightConfig extends DataEntity<BizFreightConfig> {
 		this.office = office;
 	}
 	
-	public String getMinDistance() {
+	public BigDecimal getMinDistance() {
 		return minDistance;
 	}
 
-	public void setMinDistance(String minDistance) {
+	public void setMinDistance(BigDecimal minDistance) {
 		this.minDistance = minDistance;
 	}
 	
-	public String getMaxDistance() {
+	public BigDecimal getMaxDistance() {
 		return maxDistance;
 	}
 
-	public void setMaxDistance(String maxDistance) {
+	public void setMaxDistance(BigDecimal maxDistance) {
 		this.maxDistance = maxDistance;
 	}
 

@@ -44,8 +44,8 @@ public class BizFreightConfigService extends CrudService<BizFreightConfigDao, Bi
 		for (BizFreightConfig freightConfig : freightConfigList) {
 			Byte defaultStatus = freightConfig.getDefaultStatus();
 			BigDecimal feeCharge = freightConfig.getFeeCharge();
-			String minDistance = freightConfig.getMinDistance();
-			String maxDistance = freightConfig.getMaxDistance();
+			BigDecimal minDistance = freightConfig.getMinDistance();
+			BigDecimal maxDistance = freightConfig.getMaxDistance();
 			Byte type = freightConfig.getType();
 			if (freightConfig.getId() != null) {
 				freightConfig = get(freightConfig.getId());
