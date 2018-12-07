@@ -386,9 +386,11 @@
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
 		LEFT JOIN biz_op_shelf_sku boss ON boss.sku_id = si.id and boss.status=1
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
-		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id=a.cust_id
-		LEFT JOIN sys_office s on s.id=ccc.center_id
-		LEFT JOIN sys_user con ON con.id = ccc.consultant_id
+-- 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id=a.cust_id
+-- 		LEFT JOIN sys_office s on s.id=ccc.center_id
+-- 		LEFT JOIN sys_user con ON con.id = ccc.consultant_id
+		LEFT JOIN sys_office s on s.id=a.center_id
+		LEFT JOIN sys_user con ON con.id = a.consultant_id
 		<!-- 供应商id -->
 		<if test="vendorId !=null and vendorId != ''">
 			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
@@ -595,7 +597,7 @@
 				and od.suply_id = #{supplyId}
 			</if>
 			<if test="consultantId!=null">
-				and ccc.consultant_id = #{consultantId}
+				and a.consultant_id = #{consultantId}
 			</if>
 
 			<if test="centerId!=null">
