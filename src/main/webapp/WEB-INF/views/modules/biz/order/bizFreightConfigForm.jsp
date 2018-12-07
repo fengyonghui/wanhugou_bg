@@ -83,8 +83,25 @@
             $(obj).parent().parent().next().find("input[data-def='maxDistance']").attr("name","freightConfigList["+len+"].maxDistance");
             $(obj).parent().parent().next().find("input[data-def='maxDistance']").attr("name","freightConfigList["+len+"].maxDistance");
             $(obj).parent().parent().next().find("input[data-def='defaultStatus']").attr("name","freightConfigList["+len+"].defaultStatus");
-            $(obj).parent().parent().next().find("input[type='button']").attr("onclick","add(this,"+len+")");
+            $(obj).parent().parent().next().find("input[type='button']").first().attr("onclick","add(this,"+len+")");
+            if ($(obj).next().attr("value") != '删除') {
+                $(obj).parent().parent().next().find("td").last().append("<input type='button' class='btn' value='删除' onclick='delOne(this,"+len+")'/>");
+			}
+			if ($(obj).next().attr("value") == '删除') {
+                $(obj).parent().parent().next().find("input[type='button']").last().attr("onclick","delOne(this,"+len+")");
+			}
             $(obj).parent().parent().find("input[type='button']").remove();
+        }
+
+        function delOne(obj,len) {
+		    var typeLength = $("#typeLength").val();
+			var del = "<input type='button' class='btn' value='删除' onclick='delOne(this,"+(parseInt(len) - parseInt(1))+")'/>";
+			var add = "<input type='button' class='btn btn-primary' value='添加' onclick='add(this,"+(parseInt(len) - parseInt(1))+")'/>";
+			$(obj).parent().parent().prev().find("td").last().append(add);
+			if (len != typeLength) {
+                $(obj).parent().parent().prev().find("td").last().append(del);
+			}
+			$(obj).parent().parent().remove();
         }
 
         function checkOne(obj) {
@@ -165,6 +182,9 @@
 										<input data-def="defaultStatus" name="freightConfigList[${i.index}].defaultStatus" type="checkbox" value="1" <c:if test="${freight.defaultStatus == 1}">checked="checked"</c:if> onclick="checkOne(this)"/>
 										<c:if test="${i.index == fn:length(freightList) - 2}">
 										<input type="button" class="btn btn-primary" value="添加" onclick="add(this,${fn:length(freightList)} - 1)"/>
+											<c:if test="${fn:length(typeList) != fn:length(freightList)}">
+												<input type="button" class="btn" value="删除" onclick="delOne(this,${fn:length(freightList)} - 1)"/>
+											</c:if>
 										</c:if>
 									</td>
 								</c:if>

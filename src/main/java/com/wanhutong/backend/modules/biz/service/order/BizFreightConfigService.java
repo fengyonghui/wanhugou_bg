@@ -5,7 +5,9 @@ package com.wanhutong.backend.modules.biz.service.order;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.commons.collections.CollectionUtils;
@@ -40,6 +42,11 @@ public class BizFreightConfigService extends CrudService<BizFreightConfigDao, Bi
 	
 	@Transactional(readOnly = false)
 	public void save(BizFreightConfig bizFreightConfig) {
+		List<BizFreightConfig> freightConfigs = findListByOfficeAndVari(bizFreightConfig.getOffice().getId(), bizFreightConfig.getVarietyInfo().getId());
+		Set<Integer> idSet = Sets.newHashSet();
+		for (BizFreightConfig freightConfig : freightConfigs) {
+			idSet.add(freightConfig.getId());
+		}
 		List<BizFreightConfig> freightConfigList = bizFreightConfig.getFreightConfigList();
 		for (BizFreightConfig freightConfig : freightConfigList) {
 			Byte defaultStatus = freightConfig.getDefaultStatus();
@@ -47,7 +54,13 @@ public class BizFreightConfigService extends CrudService<BizFreightConfigDao, Bi
 			BigDecimal minDistance = freightConfig.getMinDistance();
 			BigDecimal maxDistance = freightConfig.getMaxDistance();
 			Byte type = freightConfig.getType();
+			if (defaultStatus == null && feeCharge == null && minDistance == null && maxDistance == null && type == null) {
+				continue;
+			}
 			if (freightConfig.getId() != null) {
+				if (idSet.contains(freightConfig.getId())) {
+					idSet.remove(freightConfig.getId());
+				}
 				freightConfig = get(freightConfig.getId());
 				freightConfig.setDefaultStatus(defaultStatus == null ? 0 : defaultStatus);
 				freightConfig.setFeeCharge(feeCharge);
@@ -58,6 +71,9 @@ public class BizFreightConfigService extends CrudService<BizFreightConfigDao, Bi
 			freightConfig.setOffice(bizFreightConfig.getOffice());
 			freightConfig.setVarietyInfo(bizFreightConfig.getVarietyInfo());
 			super.save(freightConfig);
+		}
+		for (Integer id : idSet) {
+			super.delete(new BizFreightConfig(id));
 		}
 	}
 	
