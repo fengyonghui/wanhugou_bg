@@ -68,6 +68,12 @@
         .addtotalExp{
             margin-top: 10px;
         }
+        .addTotalExp_inline {
+            margin-top: 20px;
+        }
+        .addTotalExp_inline_remove_button {
+            margin-top: 12px
+        }
     </style>
     <script type="text/javascript">
         <%--用于页面按下键盘Backspace键回退页面的问题--%>
@@ -628,6 +634,10 @@
             var totalExpDiv = $("#totalExpDiv");
             var addTotalExpHtml = "<br><input name='addTotalExp' class='input-xlarge addtotalExp required' type='text' value='0.0'>"
             totalExpDiv.append(addTotalExpHtml);
+        }
+
+        function removeExp() {
+            alert("----")
         }
     </script>
     <script type="text/javascript">
@@ -1808,19 +1818,11 @@
             </c:if>
             <div>
                 <input name="addTotalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">
-                <span class="help-inline"><font color="red">*</font></span>
-                <span>
-                    <a href="#" id="removeExp"> <span class="icon-minus-sign"/></a>
+                <span class="help-inline addTotalExp_inline"><font color="red">*</font></span>
+                <span class="help-inline addTotalExp_inline_remove_button">
+                    <a style="margin-top: 15px" href="javascript:void(0)" onclick="removeExp(this)"> <span class="icon-minus-sign"/></a>
                 </span>
             </div>
-            <div>
-                <input name="addTotalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">
-                <span class="help-inline"><font color="red">*</font></span>
-                <span>
-                    <a href="#" id="removeExp"> <span class="icon-minus-sign"/></a>
-                </span>
-            </div>
-
             <%--<br><input name="addTotalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">--%>
         </div>
     </div>
