@@ -7,6 +7,7 @@
 <head>
 	<title>商品上架管理</title>
 	<script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
+    <script type="application/javascript" src="${ctxStatic}/common/base.js?v=20181210"></script>
 	<script type="text/javascript">
         var opShelfType="";
         $(document).ready(function() {
@@ -576,10 +577,10 @@
 
                             t++;
                             $("#prodInfo2").append(tr_tds);
-                            $Mask.RemoveLogo();
-                            $Mask.RemoveContent();
                         });
                     }
+                    $Mask.RemoveLogo();
+                    $Mask.RemoveContent();
                 }
             })
 
