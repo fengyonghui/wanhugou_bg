@@ -497,7 +497,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
 
     public void saveProdImg(Integer imgType, BizProductInfo bizProductInfo, String[] photoArr, boolean copy) {
         if (bizProductInfo.getId() == null) {
-            log.error("Can't save product image without product ID!");
+            log.info("Can't save product image without product ID!");
             return;
         }
 
