@@ -517,6 +517,7 @@
 
         function centerOfficeChange(org) {
 			var officeId = $("#centerOfficeId").val();
+            $Mask.AddLogo("正在加载");
             $.ajax({
                 type:"post",
                 url:"${ctx}/biz/sku/bizSkuInfo/findSkuListByCustomer",
@@ -525,6 +526,8 @@
                     $("#prodInfo2").empty();
                     var data = JSON.parse(result).data;
                     if (data == '') {
+                        $Mask.RemoveLogo();
+                        $Mask.RemoveContent();
                         return false;
                     } else {
                         $.each(data.skuMap, function (keys, skuInfoList) {
@@ -573,7 +576,8 @@
 
                             t++;
                             $("#prodInfo2").append(tr_tds);
-
+                            $Mask.RemoveLogo();
+                            $Mask.RemoveContent();
                         });
                     }
                 }
