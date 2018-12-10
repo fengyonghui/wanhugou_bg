@@ -3,14 +3,21 @@
  */
 package com.wanhutong.backend.modules.biz.service.po;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
@@ -19,6 +26,7 @@ import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +55,8 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 	private CommonProcessService commonProcessService;
 	@Resource
 	private CommonImgService commonImgService;
+
+	private Lock lock = new ReentrantLock();
 
 	public static final String DATABASE_TABLE_NAME = "biz_po_payment_order";
 
@@ -193,5 +203,63 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 
 	public int findCount(BizPoPaymentOrder bizPoPaymentOrder) {
 		return dao.findCount(bizPoPaymentOrder);
+	}
+
+	/**
+	 * 更新BizPoPaymentOrder审核按钮控制flag
+	 * @param page
+	 * @return
+	 */
+	public void updateHasRole(Page<BizPoPaymentOrder> page) {
+		PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
+		User user = UserUtils.getUser();
+		List<Callable<Pair<Boolean, String>>> tasks = new ArrayList<>();
+		for (BizPoPaymentOrder b : page.getList()) {
+			tasks.add(new Callable<Pair<Boolean, String>>() {
+				@Override
+				public Pair<Boolean, String> call() {
+					boolean hasRole = false;
+					try {
+						lock.lock();
+						int currentType = b.getCommonProcess().getPaymentOrderProcess().getCode();
+						PaymentOrderProcessConfig.Process currentProcess = paymentOrderProcessConfig.getProcessMap().get(Integer.valueOf(currentType));
+						BigDecimal money = b.getTotal();
+						if (money.compareTo(BigDecimal.ZERO) > 0) {
+							List<PaymentOrderProcessConfig.MoneyRole> moneyRoleList = currentProcess.getMoneyRole();
+							PaymentOrderProcessConfig.MoneyRole moneyRole = null;
+							for (PaymentOrderProcessConfig.MoneyRole role : moneyRoleList) {
+								if (role.getEndMoney().compareTo(money) > 0 && role.getStartMoney().compareTo(money) <= 0) {
+									moneyRole = role;
+								}
+							}
+							if (user.isAdmin()) {
+								hasRole = true;
+							} else {
+								for (String s : moneyRole.getRoleEnNameEnum()) {
+									RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(s);
+									Role role = new Role();
+									role.setEnname(roleEnNameEnum.getState());
+									if (user.getRoleList().contains(role)) {
+										hasRole = true;
+										break;
+									}
+								}
+							}
+						}
+					} catch (Exception e) {
+						logger.error("多线程取订单列表失败", e);
+					} finally {
+						lock.unlock();
+					}
+					b.setHasRole(hasRole);
+					return Pair.of(Boolean.TRUE, "操作成功");
+				}
+			});
+		}
+		try {
+			ThreadPoolManager.getDefaultThreadPool().invokeAll(tasks);
+		} catch (InterruptedException e) {
+			LOGGER.error("init order list data error", e);
+		}
 	}
 }

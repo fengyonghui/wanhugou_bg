@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.sku;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.BaseEntity;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
@@ -34,7 +35,9 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -88,6 +91,8 @@ public class BizSkuInfoController extends BaseController {
 	private BizOpShelfSkuService bizOpShelfSkuService;
 	@Autowired
 	private BizOrderHeaderDao bizOrderHeaderDao;
+	@Autowired
+	private OfficeService officeService;
 
 
 
@@ -234,6 +239,57 @@ public class BizSkuInfoController extends BaseController {
 		return JsonUtil.generateData(map, null);
 
     }
+
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findSkuListByCustomer")
+	public String findSkuListByCustomer(Integer officeId) {
+		Map<String, Object> map = new HashMap<>();
+		BizInventorySku bizInventorySku = new BizInventorySku();
+		bizInventorySku.setDataStatus(BaseEntity.DEL_FLAG_NORMAL);
+		Office company = officeService.get(officeId);
+
+		//根据采购中心取出仓库
+		BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+		if (bizInventorySku.getInvInfo() != null) {
+			bizInventoryInfo = bizInventorySku.getInvInfo();
+		}
+		bizInventoryInfo.setCustomer(company);
+		bizInventorySku.setInvInfo(bizInventoryInfo);
+
+		List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
+		List<BizSkuInfo> skuInfoList = new ArrayList<BizSkuInfo>();
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (BizInventorySku inventorySku : list) {
+				BizSkuInfo bizSkuInfo = inventorySku.getSkuInfo();
+				bizSkuInfo = bizSkuInfoService.get(bizSkuInfo.getId());
+				if (bizSkuInfo != null) {
+					skuInfoList.add(bizSkuInfo);
+				}
+			}
+		}
+		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findSkuListForProd(skuInfoList);
+		List<BizVarietyFactor> varietyInfoList = bizVarietyFactorService.findList(new BizVarietyFactor());
+		Map<Integer, List<String>> factorMap = new HashMap<>();
+		for (BizVarietyFactor varietyFactor : varietyInfoList) {
+			Integer key = varietyFactor.getVarietyInfo().getId();
+
+			if (factorMap.containsKey(key)) {
+				List<String> stringList = factorMap.get(key);
+				stringList.add((varietyFactor.getServiceFactor().toString().length() < 2 ? "0" + varietyFactor.getServiceFactor() : varietyFactor.getServiceFactor()) + ":[" + varietyFactor.getMinQty() + "~" + varietyFactor.getMaxQty() + "]");
+				factorMap.remove(key);
+				factorMap.put(key, stringList);
+			} else {
+				List<String> lists = Lists.newArrayList();
+				lists.add((varietyFactor.getServiceFactor().toString().length() < 2 ? "0" + varietyFactor.getServiceFactor() : varietyFactor.getServiceFactor()) + ":[" + varietyFactor.getMinQty() + "~" + varietyFactor.getMaxQty() + "]");
+				factorMap.put(key, lists);
+			}
+		}
+		map.put("skuMap", listMap);
+		map.put("serviceFactor", factorMap);
+		return JsonUtil.generateData(map, null);
+	}
+
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSysBySku")
