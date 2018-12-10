@@ -65,6 +65,9 @@
             right: -8px;
             top: 0;
         }
+        .addtotalExp{
+            margin-top: 10px;
+        }
     </style>
     <script type="text/javascript">
         <%--用于页面按下键盘Backspace键回退页面的问题--%>
@@ -251,6 +254,10 @@
             });
             $("#updateMoney").click(function () {
                 updateMoney();
+            });
+
+            $("#addTotalExp").click(function () {
+                addTotalExp();
             });
 
             if ($("#id").val() != "" && $("#bizStatus").val() != "") {
@@ -614,6 +621,11 @@
                 <%--}--%>
                 <%--});--%>
             }
+        }
+    </script>
+    <script>
+        function addTotalExp() {
+
         }
     </script>
     <script type="text/javascript">
@@ -1785,10 +1797,18 @@
         <label class="control-label">调整服务费：</label>
         <div class="controls">
             <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
+
+
+
             <span class="help-inline"><font color="red">*</font></span>
             <c:if test="${bizOrderHeader.flag=='check_pending'}">
                 <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
             </c:if>
+            <c:if test="${bizOrderHeader.flag !='check_pending'}">
+                <a href="#" id="addTotalExp"> <span class="icon-plus-sign"/></a>
+            </c:if>
+            <br><input id="totalExp" name="totalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">
+            <br><input id="totalExp" name="totalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">
         </div>
     </div>
     <div class="control-group">
