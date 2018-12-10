@@ -112,7 +112,7 @@
                 $("#bizStatus").attr("disabled", "true");
                 $("#invStatus").attr("disabled", "true");
             }
-            if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state}) {
+            if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state} && !${fns:getUser().isAdmin()}) {
                 $("#totalExp").attr("disabled", "disabled");
             }
 

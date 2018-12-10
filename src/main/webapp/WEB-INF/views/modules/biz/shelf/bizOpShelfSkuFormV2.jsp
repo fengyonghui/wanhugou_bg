@@ -7,6 +7,7 @@
 <head>
 	<title>商品上架管理</title>
 	<script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
+    <script type="application/javascript" src="${ctxStatic}/common/base.js?v=20181210"></script>
 	<script type="text/javascript">
         var opShelfType="";
         $(document).ready(function() {
@@ -514,6 +515,76 @@
             $("#commission").remove();
             $("#commissions").remove();
         }
+
+        function centerOfficeChange(org) {
+			var officeId = $("#centerOfficeId").val();
+            $Mask.AddLogo("正在加载");
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/sku/bizSkuInfo/findSkuListByCustomer",
+                data:{"officeId": officeId},
+                success:function (result) {
+                    $("#prodInfo2").empty();
+                    var data = JSON.parse(result).data;
+                    if (data == '') {
+                        $Mask.RemoveLogo();
+                        $Mask.RemoveContent();
+                        return false;
+                    } else {
+                        $.each(data.skuMap, function (keys, skuInfoList) {
+
+                            var prodKeys = keys.split(",");
+                            var prodId = prodKeys[0];
+                            var prodUrl = prodKeys[2];
+                            var brandName = prodKeys[6];
+                            var varietyId = prodKeys[7];
+                            var varietyName = prodKeys[8];
+
+                            var flag = true;
+
+                            var tr_tds = "";
+                            var t = 0;
+
+                            var factorMap = data.serviceFactor;
+                            var factorStr = factorMap[varietyId];
+
+                            //  var factorArr=$(factorStr).split(",");
+                            var f = "";
+                            if (factorStr != undefined) {
+                                $.each(factorStr, function (i) {
+                                    f += factorStr[i] + "<br/>";
+                                });
+                            }
+
+                            $.each(skuInfoList, function (index, skuInfo) {
+
+                                tr_tds += "<tr class='" + prodId + "'>";
+                                tr_tds += "<td><input type='checkbox' value='" + skuInfo.id + "' title='shelfIds'/></td>";
+                                tr_tds += "<td>" + skuInfo.name + "</td><td>" + skuInfo.buyPrice + "</td><td>" + skuInfo.partNo + "</td><td>" + skuInfo.itemNo + "</td>" ;
+                                // "<td>" + skuInfo.skuPropertyInfos + "</td>";
+
+                                if (flag) {
+                                    tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + varietyName + "<br/>" + f + "</td>";
+                                    tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + brandName + "</td>";
+                                    tr_tds += "<td rowspan='" + skuInfoList.length + "'><img style='width: 160px;height: 160px' src='" + prodUrl + "' maxWidth='100' maxHeight='100'></td>"
+                                }
+
+                                tr_tds += "</tr>";
+                                if (skuInfoList.length > 1) {
+                                    flag = false;
+                                }
+                            });
+
+                            t++;
+                            $("#prodInfo2").append(tr_tds);
+                        });
+                    }
+                    $Mask.RemoveLogo();
+                    $Mask.RemoveContent();
+                }
+            })
+
+        }
 	</script>
 	<meta name="decorator" content="default"/>
 </head>
@@ -561,8 +632,8 @@
 		<label class="control-label">采购中心：</label>
 		<div class="controls">
 			<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
-							labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
-							title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
+							labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true" onchange="centerOfficeChange(this)"
+							title="采购中心" url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
 			</sys:treeselect>
 			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
