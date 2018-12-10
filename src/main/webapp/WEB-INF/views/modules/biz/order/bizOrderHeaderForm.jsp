@@ -625,7 +625,9 @@
     </script>
     <script>
         function addTotalExp() {
-
+            var totalExpDiv = $("#totalExpDiv");
+            var addTotalExpHtml = "<br><input name='addTotalExp' class='input-xlarge addtotalExp required' type='text' value='0.0'>"
+            totalExpDiv.append(addTotalExpHtml);
         }
     </script>
     <script type="text/javascript">
@@ -1795,11 +1797,8 @@
     </c:if>
     <div class="control-group">
         <label class="control-label">调整服务费：</label>
-        <div class="controls">
+        <div class="controls" id="totalExpDiv">
             <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
-
-
-
             <span class="help-inline"><font color="red">*</font></span>
             <c:if test="${bizOrderHeader.flag=='check_pending'}">
                 <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
@@ -1807,8 +1806,22 @@
             <c:if test="${bizOrderHeader.flag !='check_pending'}">
                 <a href="#" id="addTotalExp"> <span class="icon-plus-sign"/></a>
             </c:if>
-            <br><input id="totalExp" name="totalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">
-            <br><input id="totalExp" name="totalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">
+            <div>
+                <input name="addTotalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">
+                <span class="help-inline"><font color="red">*</font></span>
+                <span>
+                    <a href="#" id="removeExp"> <span class="icon-minus-sign"/></a>
+                </span>
+            </div>
+            <div>
+                <input name="addTotalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">
+                <span class="help-inline"><font color="red">*</font></span>
+                <span>
+                    <a href="#" id="removeExp"> <span class="icon-minus-sign"/></a>
+                </span>
+            </div>
+
+            <%--<br><input name="addTotalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">--%>
         </div>
     </div>
     <div class="control-group">
