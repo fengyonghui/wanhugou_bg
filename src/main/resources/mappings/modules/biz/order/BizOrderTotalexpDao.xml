@@ -122,7 +122,7 @@
 			#{type},
 			#{userId},
 			NOW(),
-			#{uVersion},
+			1,
 			#{userId},
 			NOW(),
 			${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}

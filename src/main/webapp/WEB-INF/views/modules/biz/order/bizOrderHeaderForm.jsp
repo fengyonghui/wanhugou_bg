@@ -678,13 +678,19 @@
                 return false;
             }
 
+            var orderId = $("#id").val();
             $.ajax({
                 url:"${ctx}/biz/order/bizOrderTotalexp/batchSave",
                 type:"get",
-                data: {"amountStr": amountStr},
+                data: {"amountStr": amountStr, "orderId": orderId},
                 contentType:"application/json;charset=utf-8",
-                success:function(data){
-
+                success:function(result){
+                    if (result == 'ok') {
+                        alert("修改服务费成功！")
+                        window.location.href="${ctx}/biz/order/bizOrderHeader/form?id=" + orderId + "&orderDetails=details&statu=${statu}&source=${source}";
+                    } else {
+                        alert("修改服务费失败！")
+                    }
                 }
             });
 
@@ -1865,9 +1871,11 @@
             <c:if test="${bizOrderHeader.flag=='check_pending'}">
                 <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
             </c:if>
+            <shiro:hasPermission name="biz:order:bizOrderTotalexp:edit">
             <c:if test="${bizOrderHeader.flag !='check_pending'}">
                 <a href="#" id="addTotalExp"> <span class="icon-plus-sign"/></a>
             </c:if>
+            </shiro:hasPermission>
             <%--<br><input name="addTotalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">--%>
         </div>
     </div>

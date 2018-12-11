@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -87,15 +88,23 @@ public class BizOrderTotalexpController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderTotalexp/?repage";
 	}
 
+	@RequiresPermissions("biz:order:bizOrderTotalexp:edit")
 	@RequestMapping(value = "batchSave")
 	@ResponseBody
-	public String batchSave(String amountStr) {
+	public String batchSave(String amountStr, Integer orderId) {
 		String[] amountArr = amountStr.split(",");
 		List<String> amountList = Arrays.asList(amountArr);
 
-
-
-		return "ok";
+		String result = "ok";
+		try {
+			if (CollectionUtils.isNotEmpty(amountList)) {
+				bizOrderTotalexpService.insertBatch(amountList, orderId);
+			}
+		} catch (Exception e) {
+			result = "error";
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 }
