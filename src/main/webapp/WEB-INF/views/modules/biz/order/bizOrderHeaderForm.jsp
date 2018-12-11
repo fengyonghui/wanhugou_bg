@@ -72,7 +72,10 @@
             margin-top: 20px;
         }
         .addTotalExp_inline_remove_button {
-            margin-top: 12px
+            margin-top: 12px;
+        }
+        #totalExpDivSaveDiv {
+            margin-top: 10px;
         }
     </style>
     <script type="text/javascript">
@@ -632,13 +635,62 @@
     <script>
         function addTotalExp() {
             var totalExpDiv = $("#totalExpDiv");
-            var addTotalExpHtml = "<br><input name='addTotalExp' class='input-xlarge addtotalExp required' type='text' value='0.0'>"
+            $("#totalExpDivSaveDiv").remove();
+
+            var addTotalExpHtml = "<div><input name='addTotalExp' class='input-xlarge addtotalExp required' type='text' value='0.0'>";
+            addTotalExpHtml += "<span class='help-inline addTotalExp_inline'><font color='red'>*</font></span>";
+            addTotalExpHtml += "<span class='help-inline addTotalExp_inline_remove_button'>";
+            addTotalExpHtml += "<a href='javascript:void(0)' onclick='removeExp(this)'> <span class='icon-minus-sign'/></a>";
+            addTotalExpHtml += "</span></div>"
+
             totalExpDiv.append(addTotalExpHtml);
+
+            var addTotalExpSaveButton = "<div id='totalExpDivSaveDiv'>";
+            addTotalExpSaveButton += "<input id='totalExpDivSave' class='btn btn-primary' type='button' onclick='saveOrderExp()' value='保存'/>&nbsp;</div>";
+
+            totalExpDiv.append(addTotalExpSaveButton);
         }
 
-        function removeExp() {
-            alert("----")
+        function removeExp(obj) {
+            obj.parentElement.parentElement.remove();
+
+            var addTotalExpList = $("input[name='addTotalExp']");
+
+            if (addTotalExpList.length == '0') {
+                $("#totalExpDivSaveDiv").remove();
+            }
         }
+
+        function saveOrderExp() {
+            var amountStr = "";
+            var saveFlag = true;
+            $("#totalExpDiv").find("input[name='addTotalExp']").each(function (index) {
+                var amount = $(this).val();
+                console.log(amount)
+                if (Number(amount) <= 0) {
+                    saveFlag = false;
+                    alert("第" + (index + 1)  + "个新增服务费为0，请修改后保存！");
+                    return false;
+                }
+                amountStr += amount + ",";
+            })
+            if (saveFlag == false) {
+                return false;
+            }
+
+            $.ajax({
+                url:"${ctx}/biz/order/bizOrderTotalexp/batchSave",
+                type:"get",
+                data: {"amountStr": amountStr},
+                contentType:"application/json;charset=utf-8",
+                success:function(data){
+
+                }
+            });
+
+
+        }
+
     </script>
     <script type="text/javascript">
         function checkPending(obj,prop) {
@@ -1816,13 +1868,6 @@
             <c:if test="${bizOrderHeader.flag !='check_pending'}">
                 <a href="#" id="addTotalExp"> <span class="icon-plus-sign"/></a>
             </c:if>
-            <div>
-                <input name="addTotalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">
-                <span class="help-inline addTotalExp_inline"><font color="red">*</font></span>
-                <span class="help-inline addTotalExp_inline_remove_button">
-                    <a style="margin-top: 15px" href="javascript:void(0)" onclick="removeExp(this)"> <span class="icon-minus-sign"/></a>
-                </span>
-            </div>
             <%--<br><input name="addTotalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">--%>
         </div>
     </div>

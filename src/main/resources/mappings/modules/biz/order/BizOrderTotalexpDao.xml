@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizOrderTotalexpDao">
+    
+	<sql id="bizOrderTotalexpColumns">
+		a.id AS "id",
+		a.order_id AS "orderId",
+		a.amount AS "amount",
+		a.type AS "type",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.status AS "delFlag"
+	</sql>
+	
+	<sql id="bizOrderTotalexpJoins">
+	</sql>
+    
+	<select id="get" resultType="BizOrderTotalexp">
+		SELECT 
+			<include refid="bizOrderTotalexpColumns"/>
+		FROM biz_order_totalexp a
+		<include refid="bizOrderTotalexpJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizOrderTotalexp">
+		SELECT 
+			<include refid="bizOrderTotalexpColumns"/>
+		FROM biz_order_totalexp a
+		<include refid="bizOrderTotalexpJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizOrderTotalexp">
+		SELECT 
+			<include refid="bizOrderTotalexpColumns"/>
+		FROM biz_order_totalexp a
+		<include refid="bizOrderTotalexpJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_order_totalexp(
+			id,
+			order_id,
+			amount,
+			type,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time,
+			status
+		) VALUES (
+			#{id},
+			#{orderId},
+			#{amount},
+			#{type},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_order_totalexp SET 	
+			order_id = #{orderId},
+			amount = #{amount},
+			type = #{type},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_order_totalexp SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<insert id="insertBatch">
+		insert into biz_order_totalexp (
+		order_id,
+		amount,
+		type,
+		create_id,
+		create_time,
+		u_version,
+		update_id,
+		update_time,
+		status
+		) VALUES
+		<foreach collection="amountList" index="index" item="item" open="(" separator="),(" close=")">
+			#{orderId},
+			#{item},
+			#{type},
+			#{userId},
+			NOW(),
+			#{uVersion},
+			#{userId},
+			NOW(),
+			${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		</foreach>
+	</insert>
+	
+</mapper>
