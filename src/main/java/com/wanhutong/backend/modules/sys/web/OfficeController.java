@@ -289,6 +289,62 @@ public class OfficeController extends BaseController {
     }
 
     @RequiresPermissions("sys:office:view")
+    @RequestMapping(value = "purchasersForm4Mobile")
+    @ResponseBody
+    public String purchasersForm4Mobile(Office office, Model model, String option) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        User user = UserUtils.getUser();
+        if (office.getParent() == null || office.getParent().getId() == null) {
+            if (OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())) {
+                office.setType(office.getType());
+                office.setParent(officeService.get(0));
+            } else {
+                office.setParent(user.getOffice());
+            }
+
+        }
+        if (office.getParent() != null) {
+            office.setParent(officeService.get(office.getParent().getId()));
+        }
+
+        if (office.getArea() == null) {
+            office.setArea(user.getOffice().getArea());
+        }
+        // 自动获取排序号
+        if (office.getId() == null && office.getParent() != null) {
+            int size = 0;
+            List<Office> list = officeService.findAll();
+            for (int i = 0; i < list.size(); i++) {
+                Office e = list.get(i);
+                if (e.getParent() != null && e.getParent().getId() != null
+                        && e.getParent().getId().equals(office.getParent().getId())) {
+                    size++;
+                }
+            }
+            office.setCode(office.getParent().getCode() + StringUtils.leftPad(String.valueOf(size > 0 ? size + 1 : 1), 3, "0"));
+        }
+//        BizCustCredit bizCustCredit = bizCustCreditService.get(office.getId());
+//        String b="0";
+//        if (bizCustCredit != null && !bizCustCredit.getDelFlag().equals(b)) {
+//            office.setLevel(bizCustCredit.getLevel());
+//        }
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+        commonProcessEntity.setObjectId(String.valueOf(office.getId()));
+        List<CommonProcessEntity> processList = commonProcessService.findList(commonProcessEntity);
+
+        model.addAttribute("office", office);
+        model.addAttribute("option", option);
+        model.addAttribute("processList", processList);
+
+        resultMap.put("office", office);
+        resultMap.put("option", option);
+        resultMap.put("processList", processList);
+        return JsonUtil.generateData(resultMap, null);
+    }
+
+    @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "supplierIndex")
     public String supplierIndex(Office office, Model model) {
         return "modules/sys/supplierIndex";
@@ -543,6 +599,59 @@ public class OfficeController extends BaseController {
             }
         }
         return "redirect:" + adminPath + "/sys/office/purchasersList";
+    }
+
+    @RequiresPermissions("sys:office:edit")
+    @RequestMapping(value = "purchaserSave4Mobile")
+    @ResponseBody
+    public String purchaserSave4Mobile(Office office, Model model, RedirectAttributes redirectAttributes, String option) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        String resultFlag = "true";
+        if (Global.isDemoMode()) {
+            addMessage(redirectAttributes, "演示模式，不允许操作！");
+            return "redirect:" + adminPath + "/sys/office/";
+        }
+        try {
+            officeService.save(office, null);
+            if (office.getChildDeptList() != null) {
+                Office childOffice = null;
+                for (String id : office.getChildDeptList()) {
+                    childOffice = new Office();
+                    childOffice.setName(DictUtils.getDictLabel(id, "sys_office_common", "未知"));
+                    childOffice.setParent(office);
+                    childOffice.setArea(office.getArea());
+                    childOffice.setType("2");
+                    childOffice.setGrade(String.valueOf(Integer.valueOf(office.getGrade()) + 1));
+                    childOffice.setUseable(Global.YES);
+                    officeService.save(childOffice);
+                }
+            }
+            addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
+
+            if ("upgrade".equals(option)) {
+                CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+                commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+                commonProcessEntity.setObjectId(String.valueOf(office.getId()));
+                commonProcessEntity.setCurrent(1);
+                commonProcessEntity.setType(office.getCommonProcess().getType());
+                commonProcessService.save(commonProcessEntity);
+                addMessage(redirectAttributes, "申请成功!");
+            }
+        } catch (Exception e) {
+            resultFlag = "false";
+            e.printStackTrace();
+        }
+
+        if(office.getSource()!=null && office.getSource().equals("chatRecordSave")){
+            try {
+                return "redirect:" + adminPath + "/biz/chat/bizChatRecord/form?office.id="+office.getId()+"&office.name="+
+                        URLEncoder.encode(office.getName(),"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                resultFlag = "false";
+                e.printStackTrace();
+            }
+        }
+        return resultFlag;
     }
 
     @RequiresPermissions("sys:office:view")
