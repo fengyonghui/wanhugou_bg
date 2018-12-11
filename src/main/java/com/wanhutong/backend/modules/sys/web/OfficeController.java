@@ -11,6 +11,7 @@ import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.supcan.treelist.cols.Col;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
@@ -189,6 +190,52 @@ public class OfficeController extends BaseController {
         }
         model.addAttribute("page", page);
         return "modules/sys/purchasersList";
+    }
+
+    @RequiresPermissions("sys:office:view")
+    @RequestMapping(value = "purchasersList4Mobile")
+    @ResponseBody
+    public String purchasersList4Mobile(Office office, String conn, Integer centers, Integer consultants, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        Office customer = new Office();
+
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (!user.isAdmin() && roleList.contains(role)) {
+            customer.setVendorId(user.getCompany().getId());
+            customer.setVendor("vendor");
+            model.addAttribute("vendor","vendor");
+            resultMap.put("vendor", "vendor");
+        }
+
+
+        String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
+        if (office.getParent()!=null && office.getParent().getId()!=null && office.getParent().getId()!=0) {
+            customer.setParent(office);
+        } else {
+            customer.setParentIds("%," + purchasersId + ",%");
+        }
+        if (office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
+            customer.setMoblieMoeny(office.getMoblieMoeny());
+        }
+        Page<Office> page = officeService.findPage(new Page<Office>(request, response), customer);
+        if (page.getList().size() == 0) {
+            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
+                //列表页输入2个条件查询时
+                Office officeUser = new Office();
+                officeUser.setQueryMemberGys(office.getName()+"");
+                officeUser.setMoblieMoeny(office.getMoblieMoeny());
+                page = officeService.findPage(new Page<Office>(request, response), officeUser);
+            } else {
+                //当点击子节点显示
+                page.getList().add(officeService.get(office.getId()));
+            }
+        }
+        model.addAttribute("page", page);
+        resultMap.put("page", page);
+        return JsonUtil.generateData(resultMap, null);
     }
 
     @RequiresPermissions("sys:office:view")
