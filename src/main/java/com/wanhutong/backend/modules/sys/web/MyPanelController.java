@@ -224,7 +224,7 @@ public class MyPanelController extends BaseController {
     @RequestMapping(value = {"ddck"})
     public String ddck(RedirectAttributes redirectModel) {
         redirectModel.addAttribute("previousPage", "myPanel");
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?waitOutput=1";
+        return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestAll/list?source=kc&bizStatu=0&ship=xs&needOut=1";
     }
 
     //        发货单入库
