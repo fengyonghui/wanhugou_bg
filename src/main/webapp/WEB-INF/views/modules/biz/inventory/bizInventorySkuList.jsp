@@ -36,6 +36,26 @@
         	return false;
         }
 	</script>
+	<script type="text/javascript">
+		function skuSplit(invSkuId) {
+			$.ajax({
+				type:"post",
+				url:"${ctx}/biz/inventory/bizInventorySku/checkSku",
+				data:{"id":invSkuId},
+				success:function (data) {
+					if (data == 'ok') {
+					    window.location.href = "${ctx}/biz/inventory/bizInventorySku/skuSplitForm?id=" + invSkuId;
+                    } else {
+					    alert(data);
+					    window.location.reload();
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+			});
+        }
+	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -47,6 +67,7 @@
 		</c:if>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/" method="post" class="breadcrumb form-search">
+		<form:hidden path="id"/>
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input id="zt" type="hidden" name="zt" value="${zt}"/>
@@ -235,8 +256,6 @@
 						<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 							<c:if test="${bizInventorySku.delFlag!=null && bizInventorySku.delFlag!=0}">
 								<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}&invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">修改</a>
-								<a href="${ctx}/biz/">拆分</a>
-								<a href="${ctx}/biz/">合并</a>
 								<a href="${ctx}/biz/inventory/bizInventorySku/delete?id=${bizInventorySku.id}&zt=${zt}"
 								   onclick="return confirmx('确认要删除该商品库存详情吗？', this.href)">删除</a>
 							</c:if>
@@ -244,6 +263,10 @@
 								<a href="${ctx}/biz/inventory/bizInventorySku/recovery?id=${bizInventorySku.id}&zt=${zt}"
 								   onclick="return confirmx('确认要恢复该商品库存详情吗？', this.href)">恢复</a>
 							</c:if>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="biz:inventory:bizInventorySku:split">
+							<a href="#" onclick="skuSplit(${bizInventorySku.id})">拆分</a>
+							<a href="${ctx}/biz/">合并</a>
 						</shiro:hasPermission>
 					</c:if>
 				</td>

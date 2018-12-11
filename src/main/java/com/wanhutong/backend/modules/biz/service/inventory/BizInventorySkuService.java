@@ -9,12 +9,14 @@ import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizInventorySkuDao;
+import com.wanhutong.backend.modules.biz.dao.inventory.BizSkuTransferDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestDetailDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
 import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV3Dao;
@@ -22,6 +24,9 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizInventorySkus;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransfer;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransferDetail;
 import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
@@ -31,14 +36,16 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV3Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
 import com.wanhutong.backend.modules.enums.InventorySkuTypeEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.TransferStatusEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.dao.OfficeDao;
@@ -58,6 +65,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +86,7 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
 	@Autowired
-	private BizSkuInfoService bizSkuInfoService;
+	private BizSkuInfoV3Service bizSkuInfoService;
 	@Autowired
 	private BizRequestHeaderForVendorDao bizRequestHeaderForVendorDao;
 	@Autowired
@@ -99,6 +107,12 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	private BizOrderStatusService bizOrderStatusService;
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+	private BizSkuTransferService transferService;
+	@Autowired
+	private BizSkuTransferDao transferDao;
+	@Autowired
+	private BizSkuTransferDetailService transferDetailService;
 
 	@Override
 	public BizInventorySku get(Integer id) {
@@ -604,4 +618,155 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	 * @return
 	 */
 	public Integer findInWarehouse(Integer id) {return bizInventorySkuDao.findInWarehouse(id);}
+
+	/**
+	 * 检查拆分的sku是否存在
+	 * @param bizInventorySku
+	 * @return
+	 */
+	public String checkSku(BizInventorySku bizInventorySku) {
+		String itemNo = bizInventorySku.getSkuInfo().getItemNo();
+		List<String> skuItemNoSplit = skuSplit(itemNo);
+		if (CollectionUtils.isEmpty(skuItemNoSplit)) {
+			return "该货号商品无法拆分";
+		}
+		for (String skuItemNo : skuItemNoSplit) {
+			BizSkuInfo skuInfo = new BizSkuInfo();
+			skuInfo.setItemNo(skuItemNo);
+			List<BizSkuInfo> bizSkuInfos = bizSkuInfoService.findList(skuInfo);
+			if (CollectionUtils.isEmpty(bizSkuInfos)) {
+				return "不存在货号为：" + skuItemNo + "的商品";
+			}
+		}
+		return "ok";
+	}
+
+	/**
+	 * 根据货号中的尺寸拆分商品货号
+	 * @param itemNo
+	 * @return
+	 */
+	public List<String> skuSplit(String itemNo) {
+		if (!itemNo.contains("/") || !itemNo.contains("-")) {
+			return null;
+		}
+		String before = itemNo.substring(0,itemNo.indexOf("/") + 1);
+		String middle = itemNo.substring(itemNo.indexOf("/") + 1,itemNo.lastIndexOf("/"));
+		String after = itemNo.substring(itemNo.lastIndexOf("/"));
+		middle = middle.replaceAll("\\(","").replaceAll("\\)","").replaceAll("套二","").replaceAll("套三","");
+		String size = middle.substring(0,middle.lastIndexOf("-") +  3);
+		String suffix = middle.substring(middle.lastIndexOf("-") + 3);
+		String[] sizeArr = size.split("-");
+		List<String> skuSplitList = Lists.newArrayList();
+		for (int i = 0; i < sizeArr.length; i ++) {
+			skuSplitList.add(before.concat(sizeArr[i]).concat(suffix).concat(after));
+		}
+		return skuSplitList;
+	}
+
+    /**
+     * 商品拆分
+     * @return
+     */
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
+	public String doSkuSplit(List<BizOutTreasuryEntity> skuSplitList) {
+		BizInventorySku inventorySku = new BizInventorySku();
+		String itemNo = "";//拆分前的货号
+		Integer splitNumSum = 0;//累计拆分数量
+		Integer oldOutStockNum = 0;//出库原库存数
+		Integer oldInStockNum = 0;//入库原库存数
+		BizRequestHeader requestHeader = new BizRequestHeader();
+		for (BizOutTreasuryEntity skuSplit : skuSplitList) {
+			Integer reqDetailId = skuSplit.getReqDetailId();
+			Integer splitNum = skuSplit.getOutQty();
+			Integer invSkuId = skuSplit.getInvSkuId();
+			Integer uVersion = skuSplit.getuVersion();
+			if (!uVersion.equals(get(invSkuId).getuVersion())) {
+				return "有其他人正在拆分，请刷新后查看";
+			}
+			bizRequestDetailService.updateOutQty(reqDetailId, (bizRequestDetailService.get(reqDetailId).getOutQty() == null ? 0 : bizRequestDetailService.get(reqDetailId).getOutQty()) + splitNum);
+			inventorySku = get(invSkuId);
+			requestHeader = bizRequestDetailService.get(reqDetailId).getRequestHeader();
+			itemNo = inventorySku.getSkuInfo().getItemNo();
+			splitNumSum += splitNum;
+		}
+		oldOutStockNum = inventorySku.getStockQty();
+		//减去原库存，生成库存变更记录
+		updateStockQty(inventorySku, inventorySku.getStockQty() - splitNumSum);
+		BizInventoryViewLog outLog = new BizInventoryViewLog();
+		outLog.setInvInfo(inventorySku.getInvInfo());
+		outLog.setInvType(inventorySku.getInvType());
+		outLog.setSkuInfo(inventorySku.getSkuInfo());
+		outLog.setStockQty(oldOutStockNum);
+		outLog.setStockChangeQty(-splitNumSum);
+		outLog.setNowStockQty(oldOutStockNum - splitNumSum);
+		outLog.setRequestHeader(requestHeader);
+		bizInventoryViewLogService.save(outLog);
+		//拆分货号，获取拆分后的商品,添加相应库存
+		List<String> splitItemNoList = skuSplit(itemNo);
+		for (String item : splitItemNoList) {
+			BizSkuInfo skuInfo = bizSkuInfoService.getSkuByItemNo(item);
+			BizInventorySku bizInventorySku = new BizInventorySku();
+			bizInventorySku.setSkuType(inventorySku.getSkuType());
+			bizInventorySku.setInvType(inventorySku.getInvType());
+			bizInventorySku.setSkuInfo(inventorySku.getSkuInfo());
+			bizInventorySku.setInvInfo(inventorySku.getInvInfo());
+			List<BizInventorySku> inventorySkus = findList(bizInventorySku);
+			//增加变更后的商品库存
+			if (CollectionUtils.isEmpty(inventorySkus)) {
+				BizInventorySku invSku = new BizInventorySku();
+				invSku.setInvInfo(inventorySku.getInvInfo());
+				invSku.setSkuInfo(skuInfo);
+				invSku.setInvType(inventorySku.getInvType());
+				invSku.setStockQty(splitNumSum);
+				invSku.setSkuType(inventorySku.getSkuType());
+				saveOnly(invSku);
+			}
+			if (CollectionUtils.isNotEmpty(inventorySkus)) {
+				if (BizInventorySku.DEL_FLAG_DELETE.equals(inventorySkus.get(0).getDelFlag())) {
+					updateStockQty(inventorySkus.get(0), splitNumSum);
+				}
+				if (BizInventorySku.DEL_FLAG_NORMAL.equals(inventorySkus.get(0).getDelFlag())) {
+					oldInStockNum = inventorySkus.get(0).getStockQty();
+					updateStockQty(inventorySkus.get(0), inventorySkus.get(0).getStockQty() + splitNumSum);
+				}
+			}
+			//生成库存变更记录
+			BizInventoryViewLog inLog = new BizInventoryViewLog();
+			inLog.setInvInfo(inventorySku.getInvInfo());
+			inLog.setInvType(inventorySku.getInvType());
+			inLog.setSkuInfo(skuInfo);
+			inLog.setStockQty(oldInStockNum);
+			inLog.setStockChangeQty(splitNumSum);
+			inLog.setNowStockQty(oldInStockNum + splitNumSum);
+			bizInventoryViewLogService.save(inLog);
+		}
+		//生成拆分单
+		BizSkuTransfer skuTransfer = new BizSkuTransfer();
+		int s = transferDao.findCountByToCent(inventorySku.getInvInfo().getId());
+		String transferNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.RES, inventorySku.getInvInfo().getCustomer().getId(), inventorySku.getInvInfo().getCustomer().getId(), s + 1);
+		skuTransfer.setTransferNo(transferNo);
+		skuTransfer.setFromInv(inventorySku.getInvInfo());
+		skuTransfer.setToInv(inventorySku.getInvInfo());
+		skuTransfer.setApplyer(UserUtils.getUser());
+		skuTransfer.setBizStatus(TransferStatusEnum.ALREADY_IN_WAREHOUSE.getState().byteValue());
+		skuTransfer.setRecvEta(new Date());
+		skuTransfer.setRemark("库存商品拆分");
+		transferService.save(skuTransfer);
+		for (String item : splitItemNoList) {
+			BizSkuInfo skuInfo = bizSkuInfoService.getSkuByItemNo(item);
+			BizSkuTransferDetail bizSkuTransferDetail = new BizSkuTransferDetail();
+			bizSkuTransferDetail.setTransfer(skuTransfer);
+			bizSkuTransferDetail.setSkuInfo(skuInfo);
+			bizSkuTransferDetail.setTransQty(splitNumSum);
+			bizSkuTransferDetail.setFromInvOp(UserUtils.getUser());
+			bizSkuTransferDetail.setFromInvOpTime(new Date());
+			bizSkuTransferDetail.setToInvOp(UserUtils.getUser());
+			bizSkuTransferDetail.setToInvOpTime(new Date());
+			bizSkuTransferDetail.setOutQty(splitNumSum);
+			bizSkuTransferDetail.setInQty(splitNumSum);
+			transferDetailService.save(bizSkuTransferDetail);
+		}
+		return "拆分完成";
+	}
 }

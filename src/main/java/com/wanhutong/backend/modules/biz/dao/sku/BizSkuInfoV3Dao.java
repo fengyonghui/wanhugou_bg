@@ -74,4 +74,11 @@ public interface BizSkuInfoV3Dao extends CrudDao<BizSkuInfo> {
      * @return
      */
    List<BizSkuInfo> findInvSkuList(BizSkuInfo skuInfo);
+
+    /**
+     * 根据货号查找商品
+     * @param itemNo
+     * @return
+     */
+   BizSkuInfo getSkuByItemNo(@Param("itemNo")String itemNo);
 }

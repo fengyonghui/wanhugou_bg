@@ -434,4 +434,13 @@ public class BizSkuInfoV3Service extends CrudService<BizSkuInfoV3Dao, BizSkuInfo
 		skuInfo.setFromInv(fromInv);
 		return dao.findInvSkuList(skuInfo);
 	}
+
+	/**
+	 * 根据货号查找商品
+	 * @param itemNo
+	 * @return
+	 */
+	public BizSkuInfo getSkuByItemNo(String itemNo) {
+		return bizSkuInfoDao.getSkuByItemNo(itemNo);
+	}
 }

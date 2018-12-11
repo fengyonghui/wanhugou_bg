@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventory;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
@@ -21,6 +22,7 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizInventorySkus;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
 import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
@@ -62,12 +64,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -76,7 +80,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -711,5 +717,37 @@ public class BizInventorySkuController extends BaseController {
         return "redirect:" + adminPath + "/biz/inventory/bizInventorySku/inventory";
     }
 
+    @ResponseBody
+    @RequestMapping(value = "checkSku")
+    public String checkSku(Integer id) {
+        BizInventorySku bizInventorySku = bizInventorySkuService.get(id);
+        return bizInventorySkuService.checkSku(bizInventorySku);
+    }
+
+    @RequestMapping(value = "skuSplitForm")
+    public String skuSplitForm(BizInventorySku inventorySku,Model model) {
+        List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInventorySkuByskuIdAndcentId(inventorySku.getInvInfo().getCustomer().getId(),inventorySku.getSkuInfo().getId());
+        model.addAttribute("inventorySku",inventorySku);
+        model.addAttribute("requestDetailList",requestDetailList);
+        return "modules/biz/inventory/skuSplitForm";
+    }
+
+    @ResponseBody
+    @RequiresPermissions("biz:inventory:bizInventorySku:split")
+    @RequestMapping(value = "skuSplit")
+    public String skuSplit(@RequestBody String data) {
+        try {
+            data = URLDecoder.decode(data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        JSONObject jsonObject = JsonUtil.parseJson(data);
+        String treasuryList = jsonObject.getString("treasuryList");
+        List<BizOutTreasuryEntity> skuSplitList = JsonUtil.parseArray(treasuryList,new TypeReference<List<BizOutTreasuryEntity>>() {});
+        if (CollectionUtils.isEmpty(skuSplitList)) {
+            return "error";
+        }
+        return bizInventorySkuService.doSkuSplit(skuSplitList);
+    }
 
 }
