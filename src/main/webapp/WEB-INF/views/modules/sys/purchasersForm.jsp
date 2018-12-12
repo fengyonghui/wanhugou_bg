@@ -18,6 +18,11 @@
             if (vendId==''){
                 $("#primaryPersonButton").attr("class","btn disabled");
             }
+
+            if ($("#option").val() == 'upgrade') {
+                $("#type").attr("disabled", "true");
+            }
+
             $("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
