@@ -90,7 +90,7 @@
 
             /* 全选 全不选 */
             $('#chAll').live('click',function(){
-                var choose=$("input[name='reqDetailId']");
+                var choose=$("input[name='reqDetail']");
                 if($(this).attr('checked')){
                     choose.attr('checked',true);
                 }else{
