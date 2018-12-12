@@ -687,7 +687,7 @@
                 success:function(result){
                     if (result == 'ok') {
                         alert("修改服务费成功！")
-                        window.location.href="${ctx}/biz/order/bizOrderHeader/form?id=" + orderId + "&orderDetails=details&statu=${statu}&source=${source}";
+                        window.location.href="${ctx}/biz/order/bizOrderHeader/form?id=" + orderId + "&orderDetails=details&modifyServiceCharge=modifyServiceCharge&statu=${statu}&source=${source}";
                     } else {
                         alert("修改服务费失败！")
                     }
@@ -1789,6 +1789,7 @@
     <input id="vendId" type="hidden" value="${entity.sellersId}"/>
     <input id="createPo" type="hidden" value="${createPo}"/>
     <input id="totalPayTotal" type="hidden" value="${totalPayTotal}"/>
+    <input type="hidden" name="modifyServiceCharge" value="${bizOrderHeader.modifyServiceCharge}"/>
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
@@ -1872,7 +1873,7 @@
                 <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
             </c:if>
             <shiro:hasPermission name="biz:order:bizOrderTotalexp:edit">
-            <c:if test="${bizOrderHeader.flag !='check_pending'}">
+            <c:if test="${bizOrderHeader.flag !='check_pending' && bizOrderHeader.modifyServiceCharge =='modifyServiceCharge'}">
                 <a href="#" id="addTotalExp"> <span class="icon-plus-sign"/></a>
             </c:if>
             </shiro:hasPermission>
