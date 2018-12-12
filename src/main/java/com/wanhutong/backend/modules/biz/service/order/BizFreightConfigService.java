@@ -79,12 +79,7 @@ public class BizFreightConfigService extends CrudService<BizFreightConfigDao, Bi
 	
 	@Transactional(readOnly = false)
 	public void delete(BizFreightConfig bizFreightConfig) {
-		List<BizFreightConfig> freightConfigs = findListByOfficeAndVari(bizFreightConfig.getOffice().getId(), bizFreightConfig.getVarietyInfo().getId());
-		if (CollectionUtils.isNotEmpty(freightConfigs)) {
-			for (BizFreightConfig freightConfig : freightConfigs) {
-				super.delete(freightConfig);
-			}
-		}
+		super.delete(bizFreightConfig);
 	}
 
 	/**

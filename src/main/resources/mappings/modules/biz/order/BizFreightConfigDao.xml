@@ -42,7 +42,9 @@
 		FROM biz_freight_config a
 		<include refid="bizFreightConfigJoins"/>
 		<where>
-			a.status = #{DEL_FLAG_NORMAL}
+			<if test="dataStatus==null">
+				AND a.status = #{DEL_FLAG_NORMAL}
+			</if>
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.office_id = #{office.id}
 			</if>
@@ -67,7 +69,9 @@
 		FROM biz_freight_config a
 		<include refid="bizFreightConfigJoins"/>
 		<where>
-			a.status = #{DEL_FLAG_NORMAL}
+			<if test="dataStatus==null">
+				AND a.status = #{DEL_FLAG_NORMAL}
+			</if>
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.office_id = #{office.id}
 			</if>
@@ -172,7 +176,7 @@
 	
 	<update id="delete">
 		UPDATE biz_freight_config SET 
-			status = #{DEL_FLAG_DELETE}
+			status = #{delFlag}
 		WHERE id = #{id}
 	</update>
 

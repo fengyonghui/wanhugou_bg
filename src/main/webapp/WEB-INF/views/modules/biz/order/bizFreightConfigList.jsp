@@ -26,12 +26,10 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>采购中心：</label>
-				<form:select path="office.id" class="input-medium">
-					<form:option value="" label="请选择"/>
-					<c:forEach items="${centerList}" var="center">
-						<form:option value="${center.id}" label="${center.name}"/>
-					</c:forEach>
-				</form:select>
+				<sys:treeselect id="office" name="office.id" value="${office.id}" labelName="office.name"
+								labelValue="${bizFreightConfig.office.name}"  notAllowSelectParent="true"
+								title="采购中心" url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge" dataMsgRequired="必填信息">
+				</sys:treeselect>
 			</li>
 			<li><label>品类：</label>
 				<form:select path="varietyInfo.id" class="input-medium">
@@ -59,7 +57,12 @@
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizFreightConfig" varStatus="i">
-			<tr>
+			<c:if test="${bizFreightConfig.delFlag!=null && bizFreightConfig.delFlag==0}">
+				<tr style="text-decoration:line-through;">
+			</c:if>
+			<c:if test="${bizFreightConfig.delFlag!=null && bizFreightConfig.delFlag==1}">
+				<tr>
+			</c:if>
 				<td>${i.index + 1}</td>
 				<td>订单</td>
 				<td>${bizFreightConfig.office.name}</td>
@@ -68,8 +71,13 @@
 				<td><fmt:formatDate value="${bizFreightConfig.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<td><fmt:formatDate value="${bizFreightConfig.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<shiro:hasPermission name="biz:order:bizFreightConfig:edit"><td>
-    				<a href="${ctx}/biz/order/bizFreightConfig/form?office.id=${bizFreightConfig.office.id}&varietyInfo.id=${bizFreightConfig.varietyInfo.id}">修改</a>
-					<a href="${ctx}/biz/order/bizFreightConfig/delete?office.id=${bizFreightConfig.office.id}&varietyInfo.id=${bizFreightConfig.varietyInfo.id}" onclick="return confirmx('确认要删除该服务费设置吗？', this.href)">删除</a>
+					<c:if test="${bizFreightConfig.delFlag!=null && bizFreightConfig.delFlag==1}">
+    					<a href="${ctx}/biz/order/bizFreightConfig/form?office.id=${bizFreightConfig.office.id}&varietyInfo.id=${bizFreightConfig.varietyInfo.id}&office.name=${bizFreightConfig.office.name}">修改</a>
+						<a href="${ctx}/biz/order/bizFreightConfig/delete?office.id=${bizFreightConfig.office.id}&varietyInfo.id=${bizFreightConfig.varietyInfo.id}" onclick="return confirmx('确认要删除该服务费设置吗？', this.href)">删除</a>
+					</c:if>
+					<c:if test="${bizFreightConfig.delFlag!=null && bizFreightConfig.delFlag==0}">
+						<a href="${ctx}/biz/order/bizFreightConfig/recovery?office.id=${bizFreightConfig.office.id}&varietyInfo.id=${bizFreightConfig.varietyInfo.id}" onclick="return confirmx('确认要恢复该服务费设置吗？', this.href)">恢复</a>
+					</c:if>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

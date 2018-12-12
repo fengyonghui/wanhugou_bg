@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -59,8 +60,8 @@ public class BizFreightConfigController extends BaseController {
 	@RequiresPermissions("biz:order:bizFreightConfig:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizFreightConfig bizFreightConfig, HttpServletRequest request, HttpServletResponse response, Model model) {
+		bizFreightConfig.setDataStatus(BizFreightConfig.DEL_FLAG_DELETE);
 		Page<BizFreightConfig> page = bizFreightConfigService.findPage(new Page<BizFreightConfig>(request, response), bizFreightConfig);
-		model.addAttribute("centerList",officeService.findListByType(OfficeTypeEnum.PURCHASINGCENTER.getType()));
 		model.addAttribute("page", page);
 		return "modules/biz/order/bizFreightConfigList";
 	}
@@ -76,7 +77,6 @@ public class BizFreightConfigController extends BaseController {
             model.addAttribute("freightList",freightList);
         }
 		model.addAttribute("typeList",DictUtils.getDictList("service_cha"));
-		model.addAttribute("centerList",officeService.findListByType(OfficeTypeEnum.PURCHASINGCENTER.getType()));
 		model.addAttribute("bizFreightConfig", bizFreightConfig);
 		return "modules/biz/order/bizFreightConfigForm";
 	}
@@ -95,7 +95,14 @@ public class BizFreightConfigController extends BaseController {
 	@RequiresPermissions("biz:order:bizFreightConfig:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizFreightConfig bizFreightConfig, RedirectAttributes redirectAttributes) {
-		bizFreightConfigService.delete(bizFreightConfig);
+		List<BizFreightConfig> freightConfigs = bizFreightConfigService.findListByOfficeAndVari(bizFreightConfig.getOffice().getId(), bizFreightConfig.getVarietyInfo().getId());
+		if (CollectionUtils.isEmpty(freightConfigs)) {
+			addMessage(redirectAttributes, "删除服务费设置失败");
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizFreightConfig/?repage";
+		}
+		for (BizFreightConfig freightConfig : freightConfigs) {
+			bizFreightConfigService.delete(freightConfig);
+		}
 		addMessage(redirectAttributes, "删除服务费设置成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizFreightConfig/?repage";
 	}
@@ -109,5 +116,22 @@ public class BizFreightConfigController extends BaseController {
         }
         return "error";
     }
+
+	@RequiresPermissions("biz:order:bizFreightConfig:edit")
+	@RequestMapping(value = "recovery")
+	public String recovery(BizFreightConfig bizFreightConfig, RedirectAttributes redirectAttributes) {
+		bizFreightConfig.setDataStatus(BizFreightConfig.DEL_FLAG_NORMAL);
+		List<BizFreightConfig> freightList = bizFreightConfigService.findFreightList(bizFreightConfig);
+		if (CollectionUtils.isEmpty(freightList)) {
+			addMessage(redirectAttributes, "恢复服务费设置失败");
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizFreightConfig/?repage";
+		}
+		for (BizFreightConfig freightConfig : freightList) {
+			freightConfig.setDelFlag(BizFreightConfig.DEL_FLAG_NORMAL);
+			bizFreightConfigService.delete(freightConfig);
+		}
+		addMessage(redirectAttributes, "恢复服务费设置成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizFreightConfig/?repage";
+	}
 
 }
