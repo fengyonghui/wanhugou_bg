@@ -639,7 +639,9 @@
                         </shiro:hasPermission>
                             <!-- 服务费调整 -->
                         <shiro:hasPermission name="biz:order:bizOrderTotalexp:edit">
-                            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&modifyServiceCharge=modifyServiceCharge&statu=${statu}&source=${source}">调整服务费</a>
+                            <c:if test="${orderHeader.bizStatus>= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+                                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&modifyServiceCharge=modifyServiceCharge&statu=${statu}&source=${source}">调整服务费</a>
+                            </c:if>
                         </shiro:hasPermission>
                         <shiro:hasPermission name="biz:order:bizOrderHeader:refund">
                         <!-- 退款增加 -->
