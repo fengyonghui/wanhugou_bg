@@ -133,12 +133,10 @@
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
-				<form:select id="officeId" path="office.id" class="input-medium required">
-					<form:option value="" label="请选择"/>
-					<c:forEach items="${centerList}" var="center">
-						<form:option value="${center.id}" label="${center.name}"/>
-					</c:forEach>
-				</form:select>
+				<sys:treeselect id="office" name="office.id" value="${office.id}" labelName="office.name"
+								labelValue="${bizFreightConfig.office.name}"  notAllowSelectParent="true"
+								title="采购中心" url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
+				</sys:treeselect>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -60,7 +61,6 @@ public class BizFreightConfigController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(BizFreightConfig bizFreightConfig, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizFreightConfig> page = bizFreightConfigService.findPage(new Page<BizFreightConfig>(request, response), bizFreightConfig);
-		model.addAttribute("centerList",officeService.findListByType(OfficeTypeEnum.PURCHASINGCENTER.getType()));
 		model.addAttribute("page", page);
 		return "modules/biz/order/bizFreightConfigList";
 	}
@@ -76,7 +76,6 @@ public class BizFreightConfigController extends BaseController {
             model.addAttribute("freightList",freightList);
         }
 		model.addAttribute("typeList",DictUtils.getDictList("service_cha"));
-		model.addAttribute("centerList",officeService.findListByType(OfficeTypeEnum.PURCHASINGCENTER.getType()));
 		model.addAttribute("bizFreightConfig", bizFreightConfig);
 		return "modules/biz/order/bizFreightConfigForm";
 	}
