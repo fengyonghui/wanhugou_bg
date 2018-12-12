@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
@@ -31,7 +32,10 @@ import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,9 +53,11 @@ import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 /**
  * 采购付款单Controller
@@ -62,6 +68,8 @@ import java.util.Set;
 @Controller
 @RequestMapping(value = "${adminPath}/biz/po/bizPoPaymentOrder")
 public class BizPoPaymentOrderController extends BaseController {
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BizPoPaymentOrderController.class);
 
     @Autowired
     private BizPoPaymentOrderService bizPoPaymentOrderService;
@@ -151,6 +159,10 @@ public class BizPoPaymentOrderController extends BaseController {
             bizPoPaymentOrder.setPoHeaderId(poId);
         }
         Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+
+        //更新BizPoPaymentOrder审核按钮控制flag
+        bizPoPaymentOrderService.updateHasRole(page);
+
         model.addAttribute("page", page);
         String orderId = request.getParameter("orderId");
         model.addAttribute("orderId", orderId);
@@ -295,6 +307,9 @@ public class BizPoPaymentOrderController extends BaseController {
         } else if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum()) && bizPoPaymentOrder.getPoHeaderId() != null) {
             page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
         }
+
+        //更新BizPoPaymentOrder审核按钮控制flag
+        bizPoPaymentOrderService.updateHasRole(page);
 
         model.addAttribute("page", page);
         String orderId = request.getParameter("orderId");
