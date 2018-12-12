@@ -21,7 +21,10 @@
                     var variId = $("#variId").val();
                     var length = $("input[data-def='id']").length;
                     var flag1 = true;
-                    if (length == 0) {
+                    var centerId = $("#centerId").val();
+                    var vId = $("#vId").val();
+                    console.info("officeId:"+officeId+",centerId:"+centerId+",variId:"+variId+",vId:"+vId);
+                    if (length == 0 || officeId != centerId || variId != vId) {
                         $.ajax({
 							type:"post",
 							url:"${ctx}/biz/order/bizFreightConfig/selectFreightConfig",
@@ -53,9 +56,11 @@
 						}
                     });
                     if (flag1 && flag && flag2) {
-                        $Mask.AddLogo("正在加载");
-                        loading('正在提交，请稍等...');
-                        form.submit();
+						if (window.confirm("确定要保存吗?")) {
+							$Mask.AddLogo("正在加载");
+							loading('正在提交，请稍等...');
+							form.submit();
+                        }
                     }
 				},
 				errorContainer: "#messageBox",
@@ -129,6 +134,8 @@
 	<form:form id="inputForm" modelAttribute="bizFreightConfig" action="${ctx}/biz/order/bizFreightConfig/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<input id="typeLength" type="hidden" value="${fn:length(typeList)}"/>
+		<input id="centerId" type="hidden" value="${bizFreightConfig.office.id}"/>
+		<input id="vId" type="hidden" value="${bizFreightConfig.varietyInfo.id}"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>

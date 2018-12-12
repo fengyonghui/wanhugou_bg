@@ -27,16 +27,11 @@
 							flag = true;
 						    var sentQty = $(this).parent().parent().find("input[name='sentQty']").val();
 						    var okQty = $(this).parent().parent().find("input[name='okQty']").val();
-						    var transQty = $(this).parent().parent().find("input[name='transQty']").val();
-						    var sQty = $(this).parent().parent().find("input[name='sQty']").val();
 						    if (sentQty == '' || sentQty == 0) {
                                 flag1 = false;
 							}
 							if (parseInt(sentQty) > parseInt(okQty)) {
 						        flag2 = false;
-							}
-							if (parseInt(transQty) - parseInt(sQty) < parseInt(sentQty)) {
-						        flag3 = false;
 							}
 						}
                     });
@@ -46,7 +41,10 @@
                     var stockQty = 0;
                     var map = {};
                     var sendMap = {};
+                    var needMap = {};
                     $("input[name='reqDetail'][checked='checked']").each(function () {
+                        var transQty = $(this).parent().parent().find("input[name='transQty']").val();
+                        var sQty = $(this).parent().parent().find("input[name='sQty']").val();
                         var transferDetailId = $(this).parent().parent().find("input[name='transferDetailId']").val();
                         var reqDetailId = $(this).parent().parent().find("input[name='reqDetailId']").val();
                         var invSkuId = $(this).parent().parent().find("input[name='invSkuId']").val();
@@ -60,6 +58,7 @@
                         } else {
                             map[transferDetailId] = parseInt(sentQty);
                             sendMap[transferDetailId] = parseInt(stockQty);
+                            needMap[transferDetailId] = parseInt(transQty) - parseInt(sQty);
                         }
                         // sumSentQty = parseInt(sumSentQty) + parseInt(sentQty);
                         treasuryList[i] = createTreasury(transferDetailId,reqDetailId,invSkuId,sentQty,uVersion,sendNo);
@@ -69,6 +68,9 @@
                     $.each(map,function (key, value) {
 						if (parseInt(value) > parseInt(sendMap[key])) {
 						    stockFlag = false;
+						}
+						if (parseInt(value) > parseInt(needMap[key])) {
+						    flag3 = false;
 						}
                     });
                     console.info(JSON.stringify(treasuryList));
