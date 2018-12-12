@@ -37,9 +37,9 @@
 	</sql>
 	
 	<sql id="bizInventorySkuJoins">
-		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id AND sku.status = 1
-		LEFT JOIN biz_product_info bpi ON bpi.id = sku.prod_id AND bpi.status = 1
-		LEFT JOIN biz_variety_info bvi ON bvi.id = bpi.vari_id AND bvi.status = 1
+		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
+		LEFT JOIN biz_product_info bpi ON bpi.id = sku.prod_id
+		LEFT JOIN biz_variety_info bvi ON bvi.id = bpi.vari_id
 		LEFT JOIN biz_inventory_info i ON a.inv_id = i.id AND i.status = 1
 		LEFT JOIN sys_office s ON i.cust_id = s.id AND s.status = 1
 		LEFT JOIN sys_user su ON a.create_id=su.id AND su.status = 1
