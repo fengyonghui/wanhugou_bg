@@ -541,6 +541,46 @@ public class OfficeController extends BaseController {
         return "redirect:" + adminPath + "/sys/office/purchasersList";
     }
 
+    @RequiresPermissions("sys:office:upgradeAudit")
+    @RequestMapping(value = "upgradeAudit4Mobile")
+    @ResponseBody
+    public String upgradeAudit4Mobile(RedirectAttributes redirectAttributes, int id, int applyForLevel, int auditType, String desc) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        String upResult = "true";
+
+        Pair<Boolean, String> result = null;
+        try {
+            result = officeService.upgradeAudit(id, applyForLevel, CommonProcessEntity.AuditType.parse(auditType), UserUtils.getUser(), desc);
+
+            String titleName = "";
+            if (Integer.valueOf(OfficeTypeEnum.CUSTOMER.getType()) == applyForLevel) {
+                titleName = "采购商";
+            } else if (Integer.valueOf(OfficeTypeEnum.COMMISSION_MERCHANT.getType()) == applyForLevel){
+                titleName = "代销商";
+            }
+
+            if (result.getLeft()) {
+                addMessage(redirectAttributes, "审核成功!");
+
+                //自动发送站内信
+                String title = titleName + "审核通过";
+                String content = "您好，恭喜您，您的" + titleName + "申请审核通过";
+                saveMessageInfo(id, title, content);
+            }else {
+                addMessage(redirectAttributes, "审核失败!");
+
+                String title = titleName + "审核不通过";
+                String content = "您好，恭喜您，您的" + titleName + "申请审核不通过，原因是:" + desc;
+                saveMessageInfo(id, title, content);
+            }
+        } catch (Exception e) {
+            upResult = "false";
+            e.printStackTrace();
+        }
+
+        return upResult;
+    }
+
     //审核代销商，采购商完成后，自动发送站内信
     public void saveMessageInfo(Integer id, String title, String content) {
         User user = new User();
