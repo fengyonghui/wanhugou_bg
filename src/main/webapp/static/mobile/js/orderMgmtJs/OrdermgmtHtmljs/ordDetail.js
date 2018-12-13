@@ -20,6 +20,7 @@
 		pageInit: function() {
 			var _this = this;
 			_this.addRemark();
+			_this.changeService();
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
@@ -60,6 +61,7 @@
 			var datas={};
 			var idd=_this.userInfo.staOrdId;
 			var orderDetails=_this.userInfo.orderDetails;
+			var modifyServiceCharge =_this.userInfo.modifyServiceCharge;
 			var statu=_this.userInfo.statu;
 			var source=_this.userInfo.source;
 			datas={
@@ -67,6 +69,11 @@
                 orderDetails: orderDetails,
                 statu:statu,
                 source:source
+			}
+			if((orderDetails==orderDetails||orderDetails=='orderDetails')&&(modifyServiceCharge==undefined||modifyServiceCharge=='undefined')){
+				$('#changeServiceBtn').hide();
+			}else{
+				$('#changeServiceBtn').show();
 			}
 			$.ajax({
                 type: "GET",
@@ -251,6 +258,33 @@
 					}	
                 }
             });
+		},
+		changeService: function() {
+			var _this = this;
+			var addTotalExpHtml ="";
+			$('#changeServiceBtn').on('tap', function() {
+	            var totalExpDiv = $("#totalExpDiv");
+	            $("#totalExpDivSaveDiv").remove();
+	
+	            var addTotalExpHtml = "<div><input name='addTotalExp' class='addTotalinp' type='text' value='0.0'>";
+	            addTotalExpHtml += "<span class='help-inline addTotalExp_inline'><font color='red'>*</font></span>";
+	            addTotalExpHtml += "<span class='mui-icon mui-icon-minus help-inline addTotalExp_inline_remove_button'>";
+	            addTotalExpHtml += "<a href='javascript:void(0)' onclick='removeExp(this)'> <span class='icon-minus-sign'/></a>";
+	            addTotalExpHtml += "</span></div>"
+	
+	            totalExpDiv.append(addTotalExpHtml);
+	
+	            var addTotalExpSaveButton = "<div id='totalExpDivSaveDiv' class='secSaveBtn'>";
+	            addTotalExpSaveButton += "
+//	            <input id='totalExpDivSave' class='btn btn-primary' type='button' onclick='saveOrderExp()' value='保存'/>&nbsp;</div>
+	            '<button id="secDetailBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">'+
+					        " 订单商品信息添加"+
+				'</button>'+
+	            "</div>"
+	            ";
+	            totalExpDiv.append(addTotalExpSaveButton);
+				
+			});
 		},
 		//添加备注
 		addRemark:function(){
