@@ -111,8 +111,10 @@ public class BizStatisticsPlatformService {
         return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, id, null);
     }
 
-    public List<BizOrderStatisticsDto> getJoinPurchaseData(Integer centerId, String formatDate) {
-        return bizOrderHeaderDao.getJoinPurchaseData(centerId, formatDate);
+    public List<BizOrderStatisticsDto> getJoinPurchaseData(Integer centerId, String startDate) {
+        String fromDate = startDate + "-01 00:00:00";
+        String endDate = startDate + "-13 23:59:59";
+        return bizOrderHeaderDao.getJoinPurchaseData(centerId, fromDate, endDate);
     }
 
     public List<BizOrderStatisticsDto> getJoinPurchaseDataSingle(Integer consultantId, String formatDate) {
@@ -273,7 +275,7 @@ public class BizStatisticsPlatformService {
                 bizOpPlan = planList.get(0);
             }
 
-            List<BizOrderStatisticsDto> joinPurchaseData = getJoinPurchaseData(o.getOfficeId(), dateStrArr[0] + dateStrArr[1]);
+            List<BizOrderStatisticsDto> joinPurchaseData = getJoinPurchaseData(o.getOfficeId(), dateStrArr[0] + "-" + dateStrArr[1]);
             BizOrderStatisticsDto joinPurchaseOrderData = new BizOrderStatisticsDto();
             if (CollectionUtils.isNotEmpty(joinPurchaseData)) {
                 joinPurchaseOrderData = joinPurchaseData.get(0);

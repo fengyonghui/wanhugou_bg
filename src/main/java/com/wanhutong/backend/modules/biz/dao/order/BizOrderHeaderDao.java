@@ -276,10 +276,11 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     /**
      * 用户平台订单统计 根据机构区分
      * @param centerId
-     * @param formatDate
+     * @param fromDate
+     * @param endDate
      * @return
      */
-    List<BizOrderStatisticsDto> getJoinPurchaseData(@Param("centerId") Integer centerId, @Param("formatDate") String formatDate);
+    List<BizOrderStatisticsDto> getJoinPurchaseData(@Param("centerId") Integer centerId, @Param("fromDate") String fromDate, @Param("endDate") String endDate);
 
 
     /**
