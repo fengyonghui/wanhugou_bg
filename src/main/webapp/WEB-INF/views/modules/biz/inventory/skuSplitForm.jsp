@@ -24,6 +24,7 @@
 				    var flag3 = true;
 				    var stockQty = 0;//总库存数
 				    var splitQtySum = 0;//累计拆分数量
+                    var treasuryList = new Array();
                     $("input[name='reqDetail'][checked='checked']").each(function (i) {
                         flag = true;
                         splitQtySum = parseInt(splitQtySum) + parseInt(splitQty);
@@ -62,13 +63,12 @@
                                 url:"${ctx}/biz/inventory/bizInventorySku/skuSplit",
                                 data:JSON.stringify(requestData),
                                 success:function (data) {
-                                    if (data=='ok') {
+                                    if (data=='error') {
+                                        alert("拆分失败，没有选择拆分数据");
+                                        window.location.href = "${ctx}/biz/inventory/bizInventorySku";
+                                    } else {
                                         alert("拆分成功");
                                         window.location.href = "${ctx}/biz/inventory/bizInventorySku";
-                                    } else if (data=='error') {
-                                        alert("拆分失败，没有选择拆分数据");
-                                    } else {
-                                        alert("其他人正在拆分，请刷新页面重新操作");
                                     }
                                 }
                             });
@@ -99,6 +99,14 @@
             });
 		});
 
+        function checkReqDetail(obj) {
+            if ($(obj).attr("checked")=='checked') {
+                $(obj).attr("checked","checked");
+            } else {
+                $(obj).removeAttr("checked");
+            }
+        }
+
         function createTreasury(reqDetailId,invSkuId,splitQty,uVersion) {
             var treasury = new Object();
             treasury.reqDetailId = reqDetailId;
@@ -111,7 +119,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/inventory/bizInventorySku/inventory">商品库存详情列表</a></li>
+		<li><a href="${ctx}/biz/inventory/bizInventorySku/">商品库存详情列表</a></li>
 		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku/skuSplitForm?id=${inventorySku.id}">商品库存拆分</a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/skuSplit" method="post" class="form-horizontal">

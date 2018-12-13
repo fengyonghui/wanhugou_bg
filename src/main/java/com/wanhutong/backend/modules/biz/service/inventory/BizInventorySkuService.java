@@ -711,7 +711,7 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			BizInventorySku bizInventorySku = new BizInventorySku();
 			bizInventorySku.setSkuType(inventorySku.getSkuType());
 			bizInventorySku.setInvType(inventorySku.getInvType());
-			bizInventorySku.setSkuInfo(inventorySku.getSkuInfo());
+			bizInventorySku.setSkuInfo(skuInfo);
 			bizInventorySku.setInvInfo(inventorySku.getInvInfo());
 			List<BizInventorySku> inventorySkus = findList(bizInventorySku);
 			//增加变更后的商品库存
@@ -754,7 +754,7 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		skuTransfer.setBizStatus(TransferStatusEnum.ALREADY_IN_WAREHOUSE.getState().byteValue());
 		skuTransfer.setRecvEta(new Date());
 		skuTransfer.setRemark("库存商品拆分");
-		transferService.save(skuTransfer);
+		transferService.saveOnly(skuTransfer);
 		for (String item : splitItemNoList) {
 			BizSkuInfo skuInfo = bizSkuInfoService.getSkuByItemNo(item);
 			BizSkuTransferDetail bizSkuTransferDetail = new BizSkuTransferDetail();
