@@ -245,16 +245,18 @@
 					<td>
 						<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-					<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
+					<td>
 						<c:choose>
 							<c:when test="${source=='gh'}">
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">详情</a>
 							</c:when>
 							<c:when test="${source=='sh'}">
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&bizStatu=${bizStatu}">备货详情</a>
+								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<c:if test="${requestHeader.bizStatus < ReqHeaderStatusEnum.COMPLETE.state}">
 									<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">入库</a>
 								</c:if>
+								</shiro:hasPermission>
 							</c:when>
 							<c:when test="${bizStatu=='1'}">
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&bizStatu=${bizStatu}">备货详情</a>
@@ -262,7 +264,7 @@
 							</c:when>
 						</c:choose>
 
-					</td></shiro:hasPermission>
+					</td>
 				</tr>
 			</c:forEach>
 		</c:if>
