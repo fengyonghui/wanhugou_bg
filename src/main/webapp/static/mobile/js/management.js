@@ -29,6 +29,7 @@
                 data: {parentId:_this.userInfo.idData},
                 dataType: "json",
                 success: function(res){
+                	console.log(res)
                     var htmlList = '';
                     $.each(res.data, function(i, item) {
                     	if(item.mobileUrl == -1) {
@@ -169,17 +170,17 @@
 						}
 					})
                 }
-                /*员工管理*/          
-                if(url) {
-                	mui.toast('子菜单不存在')
-                }else if(mobileUrl == '/mobile/html/staffMgmtHtml/staffList.html') {
-                	GHUTILS.OPENPAGE({
-						url: "../html/staffMgmtHtml/staffList.html",
-						extras: {
-							purchId:purchId,								
-						}
-					})
-                }
+//              /*员工管理*/          
+//              if(url) {
+//              	mui.toast('子菜单不存在')
+//              }else if(mobileUrl == '/mobile/html/staffMgmtHtml/staffList.html') {
+//              	GHUTILS.OPENPAGE({
+//						url: "../html/staffMgmtHtml/staffList.html",
+//						extras: {
+//							purchId:purchId,								
+//						}
+//					})
+//              }
                 /*采购单管理*/
                 if(url) {
                 	mui.toast('子菜单不存在')
@@ -188,6 +189,17 @@
 						url: "../html/purchaseMagmetHtml/purchase.html",
 						extras: {
 							purchId:purchId,
+						}
+					})
+                }
+                /*会员列表*/
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(mobileUrl == '/mobile/html/memberMgmtHtml/memberList.html') {
+                	GHUTILS.OPENPAGE({
+						url: "../html/memberMgmtHtml/memberList.html",
+						extras: {
+							purchId:purchId,								
 						}
 					})
                 }

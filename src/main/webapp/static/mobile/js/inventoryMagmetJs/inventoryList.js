@@ -71,6 +71,9 @@
 									}else {
 										nameTxt = ''
 									}
+									if(nameTxt==undefined){
+										nameTxt="";
+									}
 				            		if(_this.userInfo.fromType==undefined){
 										_this.userInfo.fromType="";
 									}
@@ -89,21 +92,6 @@
 				            		if(_this.userInfo.includeTestData==undefined){
 										_this.userInfo.includeTestData="";
 									}
-				            		var namePoTxts = '';
-									if(_this.userInfo.processTypeStr) {
-										namePoTxts = decodeURIComponent(_this.userInfo.processTypeStr)
-									}else {
-										namePoTxts = ''
-									}
-									if(_this.userInfo.poBizStatus==undefined){
-										_this.userInfo.poBizStatus="";
-									}
-									if(_this.userInfo.poSchType==undefined){
-										_this.userInfo.poSchType="";
-									}
-									if(_this.userInfo.poWaitPay==undefined){
-										_this.userInfo.poWaitPay="";
-									}
 				            		pager['size']= 20;
 			                    	pager['pageNo'] = 1;
 			                    	pager['reqNo'] = _this.userInfo.reqNo;//备货单号
@@ -113,10 +101,6 @@
 			                    	pager['bizStatus'] = _this.userInfo.bizStatusid;//业务状态
 			                    	pager['varietyInfo.id'] = _this.userInfo.varietyInfoid;//品类名称
 			                    	pager['process'] = _this.userInfo.process;//审核状态
-			                    	pager['poBizStatus'] = _this.userInfo.poBizStatus,//付款单业务状态
-									pager['processTypeStr'] = namePoTxts,//付款单审核状态
-									pager['poSchType'] = _this.userInfo.poSchType,//付款单排产状态
-									pager['poWaitPay'] = _this.userInfo.poWaitPay,//付款单待支付
 			                    	pager['includeTestData'] = _this.userInfo.includeTestData;//测试数据
 			                    	getData(pager);
 				            	}else{

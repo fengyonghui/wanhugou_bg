@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>机构添加</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/app.css?time=20181211" rel="stylesheet" />		
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center" id="changeHeader"></p>
+		</header>
+		<div class="mui-content mui-input-group">
+			<div class="mui-input-row">
+				<label>上级机构：</label>
+				<div class="pre">
+					<input class="newinput" type="text" placeholder="请选择经销店" value='' disabled>
+					<!--<span class="mui-icon mui-icon-arrowup hideSpan app_cb3" id="hideSpanAdd"></span>
+					<span class="mui-icon mui-icon-arrowdown showSpan app_cb3" id="showSpanAdd"></span>-->
+					<div class="input_div" style="display: none;"></div>					
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>归属区域：</label>
+				<div class="pre">
+					<input class="newinputs" type="text" placeholder="" value=''>
+					<span class="mui-icon mui-icon-arrowup hideSpan app_cb3" id="hideSpanAdds"></span>
+					<span class="mui-icon mui-icon-arrowdown showSpan app_cb3" id="showSpanAdds"></span>
+					<div class="input_divs" style="display: none;"></div>					
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>机构名称：</label>
+				<input type="text" id="memName" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>机构编码：</label>
+				<input type="text" id="memCode" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>机构类型：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="typeDiv"  disabled>
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row" style="display: none;" id="type">
+				<label>申请机构类型：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="typeDivs" disabled>
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>代销商/经销商卡号：</label>
+				<input type="text" id="cardNumber" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>代销商/经销商开户行：</label>
+				<input type="text" id="bankName" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>代销商/经销商收款人：</label>
+				<input type="text" id="payee" class="mui-input-clear">
+			</div>
+			<div class="mui-input-row">
+				<label>代销商/经销商收款人身份证号：</label>
+				<input type="text" id="idCardNumber" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>机构级别：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="officeGrade" disabled>
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>是否可用：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="yesNo" disabled>
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+				<div class="pre" style="color:red;">
+					“是”代表此账号允许登陆，“否”则表示此账号不允许登陆
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label>钱包账户：</label>
+				<div class="pre">
+					<select class="secStyle" name="" id="creditLevel" disabled>
+						<option value=""></option>
+					</select>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<div class="mui-input-row">
+				<label class="commodityName">主负责人：</label>
+	            <!--<div class="pre">-->
+					<input class="primaryPerson" type="text" placeholder="请选择主负责人" value='' disabled>
+					<!--<span class="mui-icon mui-icon-arrowup hideSpan app_cb3" id="hideAdd"></span>
+					<span class="mui-icon mui-icon-arrowdown showSpan app_cb3" id="showAdd"></span>-->
+					<!--<div class="input_div1" style="display: none;">	
+					</div>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>-->
+				<!--</div>-->
+				<!--<div class="secSaveBtn">
+					<button id="AddBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">
+					         添加新负责人
+				    </button>
+				</div>-->
+			</div>
+			<div class="mui-input-row">
+				<label>副负责人：</label>
+				<!--<div class="pre">-->
+					<input class="deputyPerson" type="text" placeholder="" value=''>
+					<!--<font>*</font>
+					<span class="mui-icon mui-icon-arrowup hideSpan app_cb3" id="hideSpanAdd"></span>
+					<span class="mui-icon mui-icon-arrowdown showSpan app_cb3" id="showSpanAdd"></span>
+					<div class="input_div" style="display: none;">
+
+					</div>
+					<input class="savedata" type="hidden" value=''>
+					<div style="clear:both"></div>-->
+				<!--</div>-->
+			</div>
+			<div class="mui-input-row">
+				<label>联系地址：</label>
+				<input type="text" id="memaddress" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>邮政编码：</label>
+				<input type="text" id="zipCode" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>负责人：</label>
+				<input type="text" id="master" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>电话：</label>
+				<input type="text" id="phone" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>传真：</label>
+				<input type="text" id="fax" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>邮箱：</label>
+				<input type="text" id="email" disabled>
+			</div>
+			<div class="mui-input-row remark">
+				<label>备注：</label>
+				<textarea id="remarks" name="" rows="" cols="" disabled></textarea>
+			</div>
+			<div class="mui-input-row">
+				<div class="labelLf">升级申请记录：</div>
+				<ul class="flowPath" id="staEvoMenu">
+					
+				</ul>
+			</div>
+		</div>
+		<div class="inSaveBtn"></div>
+		<div class="inSaveBtns"></div>
+		
+		<div class="clear"></div>
+
+		<script src="../../js/component/mui.min.js"></script>
+		<script src="../../js/component/zepto.min.js"></script>
+		<script src="../../js/component/GHutils.js"></script>
+		<script src="../../js/memberMgmtJs/memberApply.js?v=20181213"></script>
+	</body>
+
+</html>
+

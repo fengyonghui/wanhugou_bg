@@ -678,8 +678,8 @@ public class OfficeController extends BaseController {
                 addMessage(redirectAttributes, "申请成功!");
             }
         } catch (Exception e) {
-            resultFlag = "false";
             e.printStackTrace();
+            resultFlag = "false";
         }
 
         if(office.getSource()!=null && office.getSource().equals("chatRecordSave")){
