@@ -305,6 +305,7 @@ public class BizStatisticsPlatformService {
             //o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
             //o.setProcurement(o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()));
             if (o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()).compareTo(BigDecimal.ZERO) == 0) {
+                //旧数据问题处理
                 o.setProcurement(bizOpPlan.getAmount() == null ? new BigDecimal("0.00") : bizOpPlan.getAmount());
             } else {
                 o.setProcurement(o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()));
