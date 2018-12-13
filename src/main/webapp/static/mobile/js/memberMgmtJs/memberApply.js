@@ -23,7 +23,7 @@
 		pageInit: function() {
 			var _this = this;
 			_this.getData();
-			_this.ajaxtypeStatus();//机构类型			
+//			_this.ajaxtypeStatus();//机构类型			
 			_this.ajaxgradeStatus();//机构级别
             _this.ajaxyesnoStatus();//是否可用
             _this.ajaxcreditStatus();//钱包账户
@@ -81,7 +81,23 @@
 			        $('#memCode').val(res.data.office.code);//机构编码
 			        //机构类型
 	                var typestatus = res.data.office.type;
-                    $('#typeDiv option[value="' + typestatus + '"]').attr("selected",true);
+//                  $('#typeDiv option[value="' + typestatus + '"]').attr("selected",true);
+                    $.ajax({
+						type: 'GET',
+						url: '/a/sys/dict/listData',
+						data: {type:'sys_office_type'},
+						dataType: 'json',
+						async:false,
+						success: function(res) {
+							$.each(res,function(i,items){
+								console.log(items)
+	                        	if(typestatus==items.value) {
+	                        		$('#typeDiv').val(items.label);
+	                        		$('#typeDiv').attr("officeid",items.value);
+	                        	}
+                           })					        
+						}
+					});
                     if(res.data.option == 'upgradeAudit' || res.data.option == 'upgrade'){
                     	$('#type').show();
                     	if(res.data.option == 'upgradeAudit'){
@@ -276,8 +292,10 @@
         	var _this = this;
         	$('#payMentBtn').on('tap',function(){
 	            var Payee=$('#payee').val();
-	            var bizTypeVal = $("#typeDiv")[0].value; //机构类型
+	            var bizTypeVal = $('#typeDiv').attr("officeid"); //机构类型
+	            console.log(bizTypeVal)
 	            var bizTypesVal = $("#typeDivs")[0].value; //申请机构类型
+	            console.log(bizTypesVal)
 	            if($('.newinput').val()==''||$('.newinput').val()==null){
 	            	mui.toast("上级机构为必填项！");
 				    return;
@@ -619,23 +637,23 @@
 			});
 		},
 		//机构类型
-		ajaxtypeStatus: function() {
-			var _this = this;
-//			var optHtml ='<option value="">请选择</option>';
-			var htmlOrdstatus = '';
-			$.ajax({
-				type: 'GET',
-				url: '/a/sys/dict/listData',
-				data: {type:'sys_office_type'},
-				dataType: 'json',
-				success: function(res) {
-					$.each(res, function(i, item) {
-						htmlOrdstatus += '<option class="soption" value="' + item.value + '">' + item.label + '</option>'
-					});
-					$('#typeDiv').html(htmlOrdstatus);
-				}
-			});
-		},
+//		ajaxtypeStatus: function() {
+//			var _this = this;
+////			var optHtml ='<option value="">请选择</option>';
+//			var htmlOrdstatus = '';
+//			$.ajax({
+//				type: 'GET',
+//				url: '/a/sys/dict/listData',
+//				data: {type:'sys_office_type'},
+//				dataType: 'json',
+//				success: function(res) {
+//					$.each(res, function(i, item) {
+//						htmlOrdstatus += '<option class="soption" value="' + item.value + '">' + item.label + '</option>'
+//					});
+//					$('#typeDiv').html(htmlOrdstatus);
+//				}
+//			});
+//		},
 		//申请机构类型
 		ajaxtypesStatus: function(type) {
 			var _this = this;
