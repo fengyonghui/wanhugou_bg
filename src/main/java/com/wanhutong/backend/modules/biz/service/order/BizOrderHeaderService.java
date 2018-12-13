@@ -434,7 +434,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         if (!cancleFlag) {
             StringBuilder phone = new StringBuilder();
             User user=UserUtils.getUser();
-            User sendUser=new User(systemService.getRoleByEnname(roleEnNameEnum==null?"":roleEnNameEnum.toLowerCase()));
+            if (roleEnNameEnum != null) {
+                if ("MARKETINGMANAGER".equals(roleEnNameEnum)) {
+                    roleEnNameEnum = "MARKETING_MANAGER".toLowerCase();
+                }
+            } else {
+                roleEnNameEnum = "";
+            }
+            User sendUser=new User(systemService.getRoleByEnname(roleEnNameEnum));
             //不根据采购中心区分渠道经理，所以注释掉该行
             //sendUser.setCent(user.getCompany());
             List<User> userList = systemService.findUser(sendUser);

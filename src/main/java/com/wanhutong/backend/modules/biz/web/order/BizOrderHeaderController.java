@@ -3205,8 +3205,15 @@ public class BizOrderHeaderController extends BaseController {
         commonProcessService.save(nextProcessEntity);
 
         StringBuilder phone = new StringBuilder();
-
-        User sendUser=new User(systemService.getRoleByEnname(nextProcess.getRoleEnNameEnum()==null?"":nextProcess.getRoleEnNameEnum().toLowerCase()));
+        String roleEnNameEnumStr = nextProcess.getRoleEnNameEnum();
+        if (roleEnNameEnumStr != null) {
+            if ("MARKETINGMANAGER".equals(roleEnNameEnum)) {
+                roleEnNameEnumStr = "MARKETING_MANAGER".toLowerCase();
+            }
+        } else {
+            roleEnNameEnumStr = "";
+        }
+        User sendUser=new User(systemService.getRoleByEnname(roleEnNameEnumStr));
 
         List<User> userList = systemService.findUser(sendUser);
         if (CollectionUtils.isNotEmpty(userList)) {
