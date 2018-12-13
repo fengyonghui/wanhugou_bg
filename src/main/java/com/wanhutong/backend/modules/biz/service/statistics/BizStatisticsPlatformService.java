@@ -283,7 +283,7 @@ public class BizStatisticsPlatformService {
             //o.setNewUser(userStatisticDataByOfficeId == null ? BigDecimal.ZERO : BigDecimal.valueOf(userStatisticDataByOfficeId.getCount()));
             //o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
             BizOrderStatisticsDto serviceChargeDto = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonthOfficeId(sdfMonth.format(sDate) + "%", o.getOfficeId());
-            o.setServiceCharge(serviceChargeDto == null ? new BigDecimal("0.00") : serviceChargeDto.getProfitPrice());
+            o.setServiceCharge(serviceChargeDto == null ? new BigDecimal("0.00") : serviceChargeDto.getServiceCharge());
             o.setServiceChargePlan(bizOpPlan.getServiceCharge() == null ? new BigDecimal("0.00") : BigDecimal.valueOf(bizOpPlan.getServiceCharge()));
 
             //月计划联营订单总额
