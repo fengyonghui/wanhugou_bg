@@ -101,6 +101,7 @@ public class BizFreightConfigController extends BaseController {
 			return "redirect:"+Global.getAdminPath()+"/biz/order/bizFreightConfig/?repage";
 		}
 		for (BizFreightConfig freightConfig : freightConfigs) {
+			freightConfig.setDelFlag(BizFreightConfig.DEL_FLAG_DELETE);
 			bizFreightConfigService.delete(freightConfig);
 		}
 		addMessage(redirectAttributes, "删除服务费设置成功");
