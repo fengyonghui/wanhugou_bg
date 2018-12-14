@@ -967,7 +967,7 @@ public class BizOrderHeaderController extends BaseController {
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
 
         String type = "1";
-        if (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721) {
+        if (bizOrderHeaderTwo.getSuplys() != null && (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721)) {
             type = "0";
         }
 
@@ -1017,7 +1017,7 @@ public class BizOrderHeaderController extends BaseController {
             }
             //供应商
             List<User> vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
-            if (CollectionUtils.isNotEmpty(vendUser)) {
+            if (CollectionUtils.isNotEmpty(vendUser) && vendUser.get(0) != null) {
                 model.addAttribute("vendUser", vendUser.get(0));
                 resultMap.put("vendUser", vendUser.get(0));
                 bizOrderHeader.setVendorId(vendUser.get(0).getVendor().getId());

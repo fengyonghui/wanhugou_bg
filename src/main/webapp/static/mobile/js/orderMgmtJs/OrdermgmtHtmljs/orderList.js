@@ -7,7 +7,7 @@
 		this.staOrdauditFlag = "false";
 		this.staOrdsupplyFlag = "false";
 		this.staOrdeditFlag = "false";
-//		this.staTotalexpFlag = "false";
+		this.staTotalexpFlag = "false";
 		return this;
 	}
 	ACCOUNT.prototype = {
@@ -17,7 +17,7 @@
 			this.getPermissionList1('biz:order:bizOrderHeader:audit','staOrdauditFlag')//false审核
 			this.getPermissionList2('biz:order:bizOrderHeader:supplying','staOrdsupplyFlag')//false出库确认
 			this.getPermissionList3('biz:order:bizOrderHeader:edit','staOrdeditFlag')//修改、删除true
-//			this.getPermissionList4('biz:order:bizOrderTotalexp:edit','staTotalexpFlag')//服务费调整
+			this.getPermissionList4('biz:order:bizOrderTotalexp:edit','staTotalexpFlag')//服务费调整
 			this.pageInit(); //页面初始化
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
@@ -382,14 +382,15 @@
 	                                		ordRecoveryBtn = 'ordRecoveryBtn';
 	                                	}
 	                                }
-//	                                var ordTotalexpBtn = '';
-//	                                var staTotalexpTxt ="";
-//	                                if(_this.staTotalexpFlag==true){
-//	                                	if(item.bizStatus>= res.data.SUPPLYING){
-//	                                		staTotalexpTxt ="调整服务费";
-//	                                		ordTotalexpBtn = 'ordTotalexpBtn';
-//	                                	}
-//	                                }
+	                                //调整服务费
+	                                var ordTotalexpBtn = '';
+	                                var staTotalexpTxt ="";
+	                                if(_this.staTotalexpFlag==true){
+	                                	if(item.bizStatus>= res.data.SUPPLYING){
+	                                		staTotalexpTxt ="调整服务费";
+	                                		ordTotalexpBtn = 'ordTotalexpBtn';
+	                                	}
+	                                }
 				                }
 	                        	var staCheckSucBtn = '';
 	                        	var staCheckSuc = '';
@@ -447,11 +448,11 @@
 												staRecoveryBtnTxt +
 											'</div>'+
 										'</div>' +
-//										'<div class="app_color40 mui-row app_text_center content_part operation ">' +
-//											'<div class="'+ ordTotalexpBtn +'" staOrdId="'+ item.id +'">' +
-//												 staTotalexpTxt +
-//											'</div>'+
-//										'</div>' +
+										'<div class="app_color40 mui-row app_text_center content_part operation ">' +
+											'<div class="'+ ordTotalexpBtn +'" staOrdId="'+ item.id +'">' +
+												 staTotalexpTxt +
+											'</div>'+
+										'</div>' +
 									'</div>'
 
 								});
@@ -532,19 +533,19 @@
                 }
             });
         },
-//      getPermissionList4: function (markVal,flag) {
-//          var _this = this;
-//          $.ajax({
-//              type: "GET",
-//              url: "/a/sys/menu/permissionList",
-//              dataType: "json",
-//              data: {"marking": markVal},
-//              async:false,
-//              success: function(res){
-//                  _this.staTotalexpFlag= res.data;
-//              }
-//          });
-//      },
+        getPermissionList4: function (markVal,flag) {
+            var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/permissionList",
+                dataType: "json",
+                data: {"marking": markVal},
+                async:false,
+                success: function(res){
+                    _this.staTotalexpFlag= res.data;
+                }
+            });
+        },
         ordHrefHtml: function() {
         	var _this = this;
         	/*查询*/
@@ -631,27 +632,27 @@
 				}
 			}),
 			//调整服务费
-//			$('.content_part').on('tap', '.ordTotalexpBtn', function() {
-//				var url = $(this).attr('url');
-//				var staOrdId = $(this).attr('staOrdId');
-//				var orderDetail="details";
-//				var statu=$(this).attr('ordstatu');
-//				var source=$(this).attr('ordsource');
-//				if(url) {
-//					mui.toast('子菜单不存在')
-//				} else if(staOrdId == staOrdId) {
-//					GHUTILS.OPENPAGE({
-//						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordDetail.html",
-//						extras: {
-//							staOrdId: staOrdId,
-//							orderDetails:orderDetail,
-//							modifyServiceCharge:'modifyServiceCharge',
-//							statu:statu,
-//							source:source,
-//						}
-//					})
-//				}
-//			}),
+			$('.content_part').on('tap', '.ordTotalexpBtn', function() {
+				var url = $(this).attr('url');
+				var staOrdId = $(this).attr('staOrdId');
+				var orderDetail="details";
+				var statu=$(this).attr('ordstatu');
+				var source=$(this).attr('ordsource');
+				if(url) {
+					mui.toast('子菜单不存在')
+				} else if(staOrdId == staOrdId) {
+					GHUTILS.OPENPAGE({
+						url: "../../../html/orderMgmtHtml/OrdermgmtHtml/ordDetail.html",
+						extras: {
+							staOrdId: staOrdId,
+							orderDetails:orderDetail,
+							modifyServiceCharge:'modifyServiceCharge',
+							statu:statu,
+							source:source,
+						}
+					})
+				}
+			}),
 			//删除
 			$('.content_part').on('tap', '.ordDeleteBtn', function() {
 				var url = $(this).attr('url');
