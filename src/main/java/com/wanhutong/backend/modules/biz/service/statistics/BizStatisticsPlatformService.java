@@ -111,14 +111,12 @@ public class BizStatisticsPlatformService {
         return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, id, null);
     }
 
-    public List<BizOrderStatisticsDto> getJoinPurchaseData(Integer centerId, String startDate) {
-        String fromDate = startDate + "-01 00:00:00";
-        String endDate = startDate + "-13 23:59:59";
-        return bizOrderHeaderDao.getJoinPurchaseData(centerId, fromDate, endDate);
+    public List<BizOrderStatisticsDto> getJoinPurchaseData(Integer centerId, String startDate, String endDate) {
+        return bizOrderHeaderDao.getJoinPurchaseData(centerId, startDate, endDate);
     }
 
-    public List<BizOrderStatisticsDto> getJoinPurchaseDataSingle(Integer consultantId, String formatDate) {
-        return bizOrderHeaderDao.getJoinPurchaseDataSingle(consultantId, formatDate);
+    public List<BizOrderStatisticsDto> getJoinPurchaseDataSingle(Integer consultantId, String startDate, String endDate) {
+        return bizOrderHeaderDao.getJoinPurchaseDataSingle(consultantId, startDate, endDate);
     }
 
     public List<BizOrderStatisticsDto> orderStatisticDataByUser(String startDate, String endDate, String type, String centerType, String orderType, Integer userId) {
@@ -173,27 +171,27 @@ public class BizStatisticsPlatformService {
                 bizOpPlan = planList.get(0);
             }
 
-            List<BizOrderStatisticsDto> joinPurchaseData = getJoinPurchaseDataSingle(o.getUserId(), dateStrArr[0] + dateStrArr[1]);
+            List<BizOrderStatisticsDto> joinPurchaseData = getJoinPurchaseDataSingle(o.getUserId(), startDate, endDate + " 23:59:59");
             BizOrderStatisticsDto joinPurchaseOrderData = new BizOrderStatisticsDto();
             if (CollectionUtils.isNotEmpty(joinPurchaseData)) {
                 joinPurchaseOrderData = joinPurchaseData.get(0);
             }
 
             //月计划联营订单总额
-            o.setJointOrderPlanAmountTotal(bizOpPlan.getJointOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getJointOrderAmount());
+            o.setJointOrderPlanAmountTotal(bizOpPlan.getJointOrderAmount() == null ? new BigDecimal("0.00") : bizOpPlan.getJointOrderAmount());
             //月联营订单总额
-            o.setJointOrderAmountTotal(joinPurchaseOrderData.getJoinRemitAmount());
+            o.setJointOrderAmountTotal(joinPurchaseOrderData.getJoinRemitAmount() == null ? new BigDecimal("0.00") : joinPurchaseOrderData.getJoinRemitAmount());
             //月计划代采订单总额
-            o.setPurchaseOrderPlanAmountTotal(bizOpPlan.getPurchaseOrderAmount() == null ? BigDecimal.ZERO : bizOpPlan.getPurchaseOrderAmount());
+            o.setPurchaseOrderPlanAmountTotal(bizOpPlan.getPurchaseOrderAmount() == null ? new BigDecimal("0.00") : bizOpPlan.getPurchaseOrderAmount());
             //月采订单总额
-            o.setPurchaseOrderAmountTotal(joinPurchaseOrderData.getPurchaseRemitAmount());
+            o.setPurchaseOrderAmountTotal(joinPurchaseOrderData.getPurchaseRemitAmount()==null ? new BigDecimal("0.00") : joinPurchaseOrderData.getPurchaseRemitAmount());
 
             //月计划订单总额
             //o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
-            o.setProcurement(o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()));
+                o.setProcurement(o.getJointOrderPlanAmountTotal().add(o.getPurchaseOrderPlanAmountTotal()));
             o.setProcurementDay(
                     CollectionUtils.isEmpty(currentBizOrderStatisticsDtoList) ?
-                            BigDecimal.ZERO
+                            new BigDecimal("0.00")
                             : currentBizOrderStatisticsDtoList.get(0).getTotalMoney());
             // 库存金额
             o.setCurrentDate(endDate);
@@ -275,7 +273,7 @@ public class BizStatisticsPlatformService {
                 bizOpPlan = planList.get(0);
             }
 
-            List<BizOrderStatisticsDto> joinPurchaseData = getJoinPurchaseData(o.getOfficeId(), dateStrArr[0] + "-" + dateStrArr[1]);
+            List<BizOrderStatisticsDto> joinPurchaseData = getJoinPurchaseData(o.getOfficeId(), startDate, endDate + " 23:59:59");
             BizOrderStatisticsDto joinPurchaseOrderData = new BizOrderStatisticsDto();
             if (CollectionUtils.isNotEmpty(joinPurchaseData)) {
                 joinPurchaseOrderData = joinPurchaseData.get(0);
@@ -284,7 +282,8 @@ public class BizStatisticsPlatformService {
             BizUserStatisticsDto userStatisticDataByOfficeId = bizOrderHeaderDao.getValidUserStatisticDataByOfficeId(sdfMonth.format(sDate), o.getOfficeId());
             //o.setNewUser(userStatisticDataByOfficeId == null ? BigDecimal.ZERO : BigDecimal.valueOf(userStatisticDataByOfficeId.getCount()));
             //o.setNewUserPlan(bizOpPlan.getNewUser() == null ? BigDecimal.ZERO : BigDecimal.valueOf(bizOpPlan.getNewUser()));
-            BizOrderStatisticsDto serviceChargeDto = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonthOfficeId(sdfMonth.format(sDate) + "%", o.getOfficeId());
+            //BizOrderStatisticsDto serviceChargeDto = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonthOfficeId(sdfMonth.format(sDate) + "%", o.getOfficeId());
+            BizOrderStatisticsDto serviceChargeDto = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonthOfficeId(startDate, endDate + " 23:59:59", o.getOfficeId());
             o.setServiceCharge(serviceChargeDto == null ? new BigDecimal("0.00") : serviceChargeDto.getServiceCharge());
             o.setServiceChargePlan(bizOpPlan.getServiceCharge() == null ? new BigDecimal("0.00") : BigDecimal.valueOf(bizOpPlan.getServiceCharge()));
 
