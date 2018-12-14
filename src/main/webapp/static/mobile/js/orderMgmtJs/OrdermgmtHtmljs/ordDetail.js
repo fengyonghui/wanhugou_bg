@@ -20,7 +20,7 @@
 		pageInit: function() {
 			var _this = this;
 			_this.addRemark();
-//			_this.changeService();
+			_this.changeService();
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
@@ -61,22 +61,20 @@
 			var datas={};
 			var idd=_this.userInfo.staOrdId;
 			var orderDetails=_this.userInfo.orderDetails;
-//			var modifyServiceCharge =_this.userInfo.modifyServiceCharge;
+			var modifyServiceCharge =_this.userInfo.modifyServiceCharge;
 			var statu=_this.userInfo.statu;
 			var source=_this.userInfo.source;
-//			console.log(modifyServiceCharge)
 			datas={
-					id:idd,
-	                orderDetails: orderDetails,
-	                statu:statu,
-	                source:source
-				}
-//			if((orderDetails==orderDetails||orderDetails=='orderDetails')&&(modifyServiceCharge==undefined||modifyServiceCharge=='undefined')){
-//				$('#changeServiceBtn').hide();
-//			}else{
-//				$('#changeServiceBtn').show();
-//			}
-			
+				id:idd,
+                orderDetails: orderDetails,
+                statu:statu,
+                source:source
+			}
+			if((orderDetails==orderDetails||orderDetails=='orderDetails')&&(modifyServiceCharge==undefined||modifyServiceCharge=='undefined')){
+				$('#changeServiceBtn').hide();
+			}else{
+				$('#changeServiceBtn').show();
+			}
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/order/bizOrderHeader/form4Mobile",
@@ -261,6 +259,61 @@
                 }
             });
 		},
+		changeService: function() {
+			var _this = this;
+			var addTotalExpHtml ="";
+			var addTotalExpSaveButton = "";
+			$('#changeServiceBtn').on('tap', function() {
+	            var totalExpDiv = $("#totalExpDiv");
+	            $("#totalExpDivSaveDiv").remove();
+	            addTotalExpHtml = "<div style='padding-left:10px;'>"+
+	                "<input name='addTotalExp' class='addTotalinp' type='text' value='0.0'>"+
+		            "<span class='mui-icon mui-icon-trash removeExp'>"+
+		            "</span>"+
+	            "</div>"
+	            addTotalExpSaveButton = "<div id='totalExpDivSaveDiv' class='secSaveBtn'>"+
+	                    "<input id='totalExpDivSave' type='button' value='保存'/>"+
+	            "</div>"
+	            totalExpDiv.html(addTotalExpHtml+addTotalExpSaveButton);
+				_this.removeExp();
+				_this.SavetotalExp();
+			});
+		},
+		removeExp:function() {
+            $('.removeExp').on('tap', function() {
+            	$(this).parent().remove();
+            	$("#totalExpDivSaveDiv").remove();
+            })
+        },
+        SavetotalExp:function() {
+        	var _this = this;
+            $('#totalExpDivSave').on('tap', function() {
+                var TotalinpVal=$('.addTotalinp').val();
+                if(Number(TotalinpVal) <= 0){
+                    mui.toast("新增服务费不能为0，请修改后保存！");
+                    return false;
+                }
+	            var orderIds = $('#ordId').val();
+	            $.ajax({
+	                url:"/a/biz/order/bizOrderTotalexp/batchSave",
+	                type:"get",
+	                data: {"amountStr": TotalinpVal, "orderId":orderIds},
+	                contentType:"application/json;charset=utf-8",
+	                success:function(result){
+	                    if (result == 'ok') {
+	                        mui.toast("修改服务费成功！");
+	                        window.setTimeout(function(){
+			                    _this.getData();
+			                    $('.removeExp').parent().remove();
+			                    $('#totalExpDivSaveDiv').remove();
+			                },300);
+	                    } else {
+	                        mui.toast("修改服务费失败！");
+	                    }
+	                }
+	            });
+            })
+        },
 		//添加备注
 		addRemark:function(){
 			var _this = this;
@@ -294,27 +347,6 @@
 				})
 			});
 		},
-//		changeService: function() {
-//			var _this = this;
-//			var addTotalExpHtml ="";
-//			$('#changeServiceBtn').on('tap', function() {
-//	            var totalExpDiv = $("#totalExpDiv");
-//	            $("#totalExpDivSaveDiv").remove();
-//	
-//	            var addTotalExpHtml = "<div><input name='addTotalExp' class='input-xlarge addtotalExp required' type='text' value='0.0'>";
-//	            addTotalExpHtml += "<span class='help-inline addTotalExp_inline'><font color='red'>*</font></span>";
-//	            addTotalExpHtml += "<span class='help-inline addTotalExp_inline_remove_button'>";
-//	            addTotalExpHtml += "<a href='javascript:void(0)' onclick='removeExp(this)'> <span class='icon-minus-sign'/></a>";
-//	            addTotalExpHtml += "</span></div>"
-//	
-//	            totalExpDiv.append(addTotalExpHtml);
-//	
-//	            var addTotalExpSaveButton = "<div id='totalExpDivSaveDiv'>";
-//	            addTotalExpSaveButton += "<input id='totalExpDivSave' class='btn btn-primary' type='button' onclick='saveOrderExp()' value='保存'/>&nbsp;</div>";
-//	            totalExpDiv.append(addTotalExpSaveButton);
-//				
-//			});
-//		},
 		//供应商信息
 		supplier:function(supplierId){						
 			$.ajax({
