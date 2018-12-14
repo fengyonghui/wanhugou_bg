@@ -443,4 +443,12 @@ public class BizSkuInfoV3Service extends CrudService<BizSkuInfoV3Dao, BizSkuInfo
 	public BizSkuInfo getSkuByItemNo(String itemNo) {
 		return bizSkuInfoDao.getSkuByItemNo(itemNo);
 	}
+
+	public List<CommonImg> getImg(Integer objId, String objName, Integer imgType) {
+		CommonImg commonImg = new CommonImg();
+		commonImg.setObjectId(objId);
+		commonImg.setObjectName(objName);
+		commonImg.setImgType(imgType);
+		return commonImgService.findList(commonImg);
+	}
 }

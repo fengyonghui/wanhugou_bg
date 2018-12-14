@@ -55,6 +55,26 @@
                 }
 			});
         }
+
+        function skuMerge(invSkuId) {
+			$.ajax({
+                type:"post",
+                url:"${ctx}/biz/inventory/bizInventorySku/checkMergeSku",
+                data:{"id":invSkuId},
+                success:function (data) {
+                    if (data == 'merge_sku_one' || data == 'merge_sku_two') {
+                        alert(data);
+                        window.location.href = "${ctx}/biz/inventory/bizInventorySku/skuMergeForm?id=" + invSkuId + "&range=" + data;
+                    } else {
+                        alert(data);
+                        window.location.reload();
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+			});
+        }
 	</script>
 </head>
 <body>
@@ -266,7 +286,7 @@
 						</shiro:hasPermission>
 						<shiro:hasPermission name="biz:inventory:bizInventorySku:split">
 							<a href="#" onclick="skuSplit(${bizInventorySku.id})">拆分</a>
-							<a href="${ctx}/biz/">合并</a>
+							<a href="#" onclick="skuMerge(${bizInventorySku.id})">合并</a>
 						</shiro:hasPermission>
 					</c:if>
 				</td>

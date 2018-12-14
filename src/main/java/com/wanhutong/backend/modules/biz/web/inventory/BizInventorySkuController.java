@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.BaseEntity;
@@ -42,6 +43,7 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV3Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -59,6 +61,7 @@ import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
@@ -89,6 +92,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 商品库存详情Controller
@@ -107,7 +112,7 @@ public class BizInventorySkuController extends BaseController {
     @Autowired
     private BizInventoryInfoService bizInventoryInfoService;
     @Autowired
-    private BizSkuInfoV2Service bizSkuInfoService;
+    private BizSkuInfoV3Service bizSkuInfoService;
     @Autowired
     private SystemService systemService;
     @Autowired
@@ -748,6 +753,54 @@ public class BizInventorySkuController extends BaseController {
             return "error";
         }
         return bizInventorySkuService.doSkuSplit(skuSplitList);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "checkMergeSku")
+    public String checkMergeSku(Integer id) {
+        BizInventorySku bizInventorySku = bizInventorySkuService.get(id);
+        String itemNo = bizInventorySku.getSkuInfo().getItemNo();
+        String middle = itemNo.substring(itemNo.indexOf("/") + 1,itemNo.lastIndexOf("/"));
+        if (middle.contains("-") || middle.contains("*") || !middle.matches("[0-9]{2}.*")) {
+            return "该商品不属于单个尺寸的商品，不能合并";
+        }
+        List<Dict> mergeSkuOne = DictUtils.getDictList("merge_sku_one");
+        for (Dict dict : mergeSkuOne) {
+            if (middle.contains(dict.getValue())) {
+                return "merge_sku_one";
+            }
+        }
+        List<Dict> mergeSkuTwo = DictUtils.getDictList("merge_sku_two");
+        for (Dict dict : mergeSkuTwo) {
+            if (middle.contains(dict.getValue())) {
+                return "merge_sku_two";
+            }
+        }
+        return "该商品不在可合并范围，请联系系统管理员";
+    }
+
+    @RequestMapping(value = "skuMergeForm")
+    public String skuMergeForm(Integer id,Model model,String range) {
+        BizInventorySku inventorySku = get(id);
+        String itemNo = inventorySku.getSkuInfo().getItemNo();
+        String before = itemNo.substring(0,itemNo.indexOf("/") + 1);
+        String middle = itemNo.substring(itemNo.indexOf("/") + 1,itemNo.lastIndexOf("/"));
+        String after = itemNo.substring(itemNo.lastIndexOf("/"));
+        Map<Integer,List<BizRequestDetail>> reqMap = Maps.newHashMap();
+        List<Dict> dictList = DictUtils.getDictList(range);
+        for (Dict dict : dictList) {
+            String s = before.concat(dict.getValue()).concat(middle.substring(2)).concat(after);
+            BizSkuInfo sku = bizSkuInfoService.getSkuByItemNo(s);
+            if (sku != null) {
+                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInventorySkuByskuIdAndcentId(inventorySku.getInvInfo().getCustomer().getId(),sku.getId());
+                if (CollectionUtils.isNotEmpty(requestDetailList)) {
+                    reqMap.put(Integer.valueOf(dict.getValue()),requestDetailList);
+                }
+            }
+        }
+        model.addAttribute("reqMap",reqMap);
+        model.addAttribute("inventorySku",inventorySku);
+        return "modules/biz/inventory/skuMergeForm";
     }
 
 }
