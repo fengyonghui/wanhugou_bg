@@ -11,6 +11,7 @@ import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.supcan.treelist.cols.Col;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
@@ -192,6 +193,52 @@ public class OfficeController extends BaseController {
     }
 
     @RequiresPermissions("sys:office:view")
+    @RequestMapping(value = "purchasersList4Mobile")
+    @ResponseBody
+    public String purchasersList4Mobile(Office office, String conn, Integer centers, Integer consultants, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        Office customer = new Office();
+
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (!user.isAdmin() && roleList.contains(role)) {
+            customer.setVendorId(user.getCompany().getId());
+            customer.setVendor("vendor");
+            model.addAttribute("vendor","vendor");
+            resultMap.put("vendor", "vendor");
+        }
+
+
+        String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
+        if (office.getParent()!=null && office.getParent().getId()!=null && office.getParent().getId()!=0) {
+            customer.setParent(office);
+        } else {
+            customer.setParentIds("%," + purchasersId + ",%");
+        }
+        if (office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
+            customer.setMoblieMoeny(office.getMoblieMoeny());
+        }
+        Page<Office> page = officeService.findPage(new Page<Office>(request, response), customer);
+        if (page.getList().size() == 0) {
+            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
+                //列表页输入2个条件查询时
+                Office officeUser = new Office();
+                officeUser.setQueryMemberGys(office.getName()+"");
+                officeUser.setMoblieMoeny(office.getMoblieMoeny());
+                page = officeService.findPage(new Page<Office>(request, response), officeUser);
+            } else {
+                //当点击子节点显示
+                page.getList().add(officeService.get(office.getId()));
+            }
+        }
+        model.addAttribute("page", page);
+        resultMap.put("page", page);
+        return JsonUtil.generateData(resultMap, null);
+    }
+
+    @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "purchasersForm")
     public String purchasersForm(Office office, Model model, String option) {
         User user = UserUtils.getUser();
@@ -239,6 +286,62 @@ public class OfficeController extends BaseController {
         model.addAttribute("option", option);
         model.addAttribute("processList", processList);
         return "modules/sys/purchasersForm";
+    }
+
+    @RequiresPermissions("sys:office:view")
+    @RequestMapping(value = "purchasersForm4Mobile")
+    @ResponseBody
+    public String purchasersForm4Mobile(Office office, Model model, String option) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        User user = UserUtils.getUser();
+        if (office.getParent() == null || office.getParent().getId() == null) {
+            if (OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())) {
+                office.setType(office.getType());
+                office.setParent(officeService.get(0));
+            } else {
+                office.setParent(user.getOffice());
+            }
+
+        }
+        if (office.getParent() != null) {
+            office.setParent(officeService.get(office.getParent().getId()));
+        }
+
+        if (office.getArea() == null) {
+            office.setArea(user.getOffice().getArea());
+        }
+        // 自动获取排序号
+        if (office.getId() == null && office.getParent() != null) {
+            int size = 0;
+            List<Office> list = officeService.findAll();
+            for (int i = 0; i < list.size(); i++) {
+                Office e = list.get(i);
+                if (e.getParent() != null && e.getParent().getId() != null
+                        && e.getParent().getId().equals(office.getParent().getId())) {
+                    size++;
+                }
+            }
+            office.setCode(office.getParent().getCode() + StringUtils.leftPad(String.valueOf(size > 0 ? size + 1 : 1), 3, "0"));
+        }
+//        BizCustCredit bizCustCredit = bizCustCreditService.get(office.getId());
+//        String b="0";
+//        if (bizCustCredit != null && !bizCustCredit.getDelFlag().equals(b)) {
+//            office.setLevel(bizCustCredit.getLevel());
+//        }
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+        commonProcessEntity.setObjectId(String.valueOf(office.getId()));
+        List<CommonProcessEntity> processList = commonProcessService.findList(commonProcessEntity);
+
+        model.addAttribute("office", office);
+        model.addAttribute("option", option);
+        model.addAttribute("processList", processList);
+
+        resultMap.put("office", office);
+        resultMap.put("option", option);
+        resultMap.put("processList", processList);
+        return JsonUtil.generateData(resultMap, null);
     }
 
     @RequiresPermissions("sys:office:view")
@@ -438,6 +541,46 @@ public class OfficeController extends BaseController {
         return "redirect:" + adminPath + "/sys/office/purchasersList";
     }
 
+    @RequiresPermissions("sys:office:upgradeAudit")
+    @RequestMapping(value = "upgradeAudit4Mobile")
+    @ResponseBody
+    public String upgradeAudit4Mobile(RedirectAttributes redirectAttributes, int id, int applyForLevel, int auditType, String desc) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        String upResult = "true";
+
+        Pair<Boolean, String> result = null;
+        try {
+            result = officeService.upgradeAudit(id, applyForLevel, CommonProcessEntity.AuditType.parse(auditType), UserUtils.getUser(), desc);
+
+            String titleName = "";
+            if (Integer.valueOf(OfficeTypeEnum.CUSTOMER.getType()) == applyForLevel) {
+                titleName = "采购商";
+            } else if (Integer.valueOf(OfficeTypeEnum.COMMISSION_MERCHANT.getType()) == applyForLevel){
+                titleName = "代销商";
+            }
+
+            if (result.getLeft()) {
+                addMessage(redirectAttributes, "审核成功!");
+
+                //自动发送站内信
+                String title = titleName + "审核通过";
+                String content = "您好，恭喜您，您的" + titleName + "申请审核通过";
+                saveMessageInfo(id, title, content);
+            }else {
+                addMessage(redirectAttributes, "审核失败!");
+
+                String title = titleName + "审核不通过";
+                String content = "您好，恭喜您，您的" + titleName + "申请审核不通过，原因是:" + desc;
+                saveMessageInfo(id, title, content);
+            }
+        } catch (Exception e) {
+            upResult = "false";
+            e.printStackTrace();
+        }
+
+        return upResult;
+    }
+
     //审核代销商，采购商完成后，自动发送站内信
     public void saveMessageInfo(Integer id, String title, String content) {
         User user = new User();
@@ -496,6 +639,59 @@ public class OfficeController extends BaseController {
             }
         }
         return "redirect:" + adminPath + "/sys/office/purchasersList";
+    }
+
+    @RequiresPermissions("sys:office:edit")
+    @RequestMapping(value = "purchaserSave4Mobile")
+    @ResponseBody
+    public String purchaserSave4Mobile(Office office, Model model, RedirectAttributes redirectAttributes, String option) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        String resultFlag = "true";
+        if (Global.isDemoMode()) {
+            addMessage(redirectAttributes, "演示模式，不允许操作！");
+            return "redirect:" + adminPath + "/sys/office/";
+        }
+        try {
+            officeService.save(office, null);
+            if (office.getChildDeptList() != null) {
+                Office childOffice = null;
+                for (String id : office.getChildDeptList()) {
+                    childOffice = new Office();
+                    childOffice.setName(DictUtils.getDictLabel(id, "sys_office_common", "未知"));
+                    childOffice.setParent(office);
+                    childOffice.setArea(office.getArea());
+                    childOffice.setType("2");
+                    childOffice.setGrade(String.valueOf(Integer.valueOf(office.getGrade()) + 1));
+                    childOffice.setUseable(Global.YES);
+                    officeService.save(childOffice);
+                }
+            }
+            addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
+
+            if ("upgrade".equals(option)) {
+                CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+                commonProcessEntity.setObjectName(CUSTOMER_APPLY_LEVEL_OBJECT_NAME);
+                commonProcessEntity.setObjectId(String.valueOf(office.getId()));
+                commonProcessEntity.setCurrent(1);
+                commonProcessEntity.setType(office.getCommonProcess().getType());
+                commonProcessService.save(commonProcessEntity);
+                addMessage(redirectAttributes, "申请成功!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultFlag = "false";
+        }
+
+        if(office.getSource()!=null && office.getSource().equals("chatRecordSave")){
+            try {
+                return "redirect:" + adminPath + "/biz/chat/bizChatRecord/form?office.id="+office.getId()+"&office.name="+
+                        URLEncoder.encode(office.getName(),"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                resultFlag = "false";
+                e.printStackTrace();
+            }
+        }
+        return resultFlag;
     }
 
     @RequiresPermissions("sys:office:view")

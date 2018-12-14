@@ -967,7 +967,7 @@ public class BizOrderHeaderController extends BaseController {
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
 
         String type = "1";
-        if (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721) {
+        if (bizOrderHeaderTwo.getSuplys() != null && (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721)) {
             type = "0";
         }
 
@@ -1017,7 +1017,7 @@ public class BizOrderHeaderController extends BaseController {
             }
             //供应商
             List<User> vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
-            if (CollectionUtils.isNotEmpty(vendUser)) {
+            if (CollectionUtils.isNotEmpty(vendUser) && vendUser.get(0) != null) {
                 model.addAttribute("vendUser", vendUser.get(0));
                 resultMap.put("vendUser", vendUser.get(0));
                 bizOrderHeader.setVendorId(vendUser.get(0).getVendor().getId());
@@ -3205,20 +3205,27 @@ public class BizOrderHeaderController extends BaseController {
         commonProcessService.save(nextProcessEntity);
 
         StringBuilder phone = new StringBuilder();
-
-        User sendUser=new User(systemService.getRoleByEnname(nextProcess.getRoleEnNameEnum()==null?"":nextProcess.getRoleEnNameEnum().toLowerCase()));
-
-        List<User> userList = systemService.findUser(sendUser);
-        if (CollectionUtils.isNotEmpty(userList)) {
-            for (User u : userList) {
-                phone.append(u.getMobile()).append(",");
+        String roleEnNameEnumStr = nextProcess.getRoleEnNameEnum();
+        if (StringUtils.isNotBlank(roleEnNameEnumStr)) {
+            if ("MARKETINGMANAGER".equals(roleEnNameEnumStr)) {
+                roleEnNameEnumStr = "MARKETING_MANAGER".toLowerCase();
+            } else {
+                roleEnNameEnumStr = roleEnNameEnumStr.toLowerCase();
             }
-        }
-        if (StringUtils.isNotBlank(phone.toString())) {
-            AliyunSmsClient.getInstance().sendSMS(
-                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
-                    phone.toString(),
-                    ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
+
+            User sendUser=new User(systemService.getRoleByEnname(roleEnNameEnumStr));
+            List<User> userList = systemService.findUser(sendUser);
+            if (CollectionUtils.isNotEmpty(userList)) {
+                for (User u : userList) {
+                    phone.append(u.getMobile()).append(",");
+                }
+            }
+            if (StringUtils.isNotBlank(phone.toString())) {
+                AliyunSmsClient.getInstance().sendSMS(
+                        SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                        phone.toString(),
+                        ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
+            }
         }
 
         //自动生成采购单
