@@ -809,4 +809,5 @@ input[type="checkbox"].testCheckbox:checked {-webkit-appearance: none;background
 #payBtnremove{background: #40ABE9;color:#fff;width:100px;float:right;}
 
 input[type=text],.addTotalinp{width:80%;border:1px solid #8e8e8e;margin-top: 3px;}
-.removeExp{margin-left:10px}
+.removeExp{margin-left:20px}
+input[type=button], #totalExpDivSave{display:inline-block;width:100%;height:100%;background: #40ABE9;color:#fff;margin-bottom:-15px;}

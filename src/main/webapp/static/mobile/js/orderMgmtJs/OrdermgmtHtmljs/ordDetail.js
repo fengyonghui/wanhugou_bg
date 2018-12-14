@@ -264,16 +264,13 @@
 			var addTotalExpHtml ="";
 			$('#changeServiceBtn').on('tap', function() {
 	            var totalExpDiv = $("#totalExpDiv");
-	            $("#totalExpDivSaveDiv").remove();
-	
+	            $("#totalExpDivSaveDiv").remove();	
 	            var addTotalExpHtml = "<div style='padding-left:10px'><input name='addTotalExp' class='addTotalinp' type='text' value='0.0'>";
 //	            addTotalExpHtml += "<span class='help-inline addTotalExp_inline'><font color='red'>*</font></span>";
 	            addTotalExpHtml += "<span class='mui-icon mui-icon-minus removeExp help-inline addTotalExp_inline_remove_button'>";
 	            addTotalExpHtml += "<a href='javascript:void(0)' onclick='removeExp(this)'> <span class='icon-minus-sign'/></a>";
-	            addTotalExpHtml += "</span></div>"
-	
-	            totalExpDiv.append(addTotalExpHtml);
-	
+	            addTotalExpHtml += "</span></div>"	
+	            totalExpDiv.append(addTotalExpHtml);	
 	            var addTotalExpSaveButton = "<div id='totalExpDivSaveDiv' class='secSaveBtn'>";
 	            addTotalExpSaveButton += "<input id='totalExpDivSave' class='btn btn-primary' type='button' value='保存'/>&nbsp;</div>"
 	            totalExpDiv.append(addTotalExpSaveButton);
@@ -290,7 +287,8 @@
 	            }
             })
         },
-        SavetotalExp:function() {            
+        SavetotalExp:function() {  
+        	var _this = this;
             $('#totalExpDivSave').on('tap', function() {
             	var amountStr = "";
 	            var saveFlag = true;
@@ -306,23 +304,26 @@
 	            })
 	            if (saveFlag == false) {
 	                return false;
-	            }
-	
-	            var orderId = $("#id").val();
-//	            $.ajax({
-//	                url:"${ctx}/biz/order/bizOrderTotalexp/batchSave",
-//	                type:"get",
-//	                data: {"amountStr": amountStr, "orderId": orderId},
-//	                contentType:"application/json;charset=utf-8",
-//	                success:function(result){
-//	                    if (result == 'ok') {
-//	                        alert("修改服务费成功！")
-//	                        window.location.href="${ctx}/biz/order/bizOrderHeader/form?id=" + orderId + "&orderDetails=details&modifyServiceCharge=modifyServiceCharge&statu=${statu}&source=${source}";
-//	                    } else {
-//	                        alert("修改服务费失败！")
-//	                    }
-//	                }
-//	            });
+	            }	             
+	            var orderIds = $('#ordId').val();
+	            $.ajax({
+	                url:"/a/biz/order/bizOrderTotalexp/batchSave",
+	                type:"get",
+	                data: {"amountStr": amountStr, "orderId":orderIds},
+	                contentType:"application/json;charset=utf-8",
+	                success:function(result){
+	                    if (result == 'ok') {
+	                        mui.toast("修改服务费成功！");
+	                        window.setTimeout(function(){
+			                    _this.getData();
+			                    $('.removeExp').parent().remove();
+			                    $('#totalExpDivSaveDiv').remove();
+			                },300);
+	                    } else {
+	                        mui.toast("修改服务费失败！");
+	                    }
+	                }
+	            });
             })
         },
 		//添加备注
