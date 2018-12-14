@@ -262,18 +262,19 @@
 		changeService: function() {
 			var _this = this;
 			var addTotalExpHtml ="";
+			var addTotalExpSaveButton = "";
 			$('#changeServiceBtn').on('tap', function() {
 	            var totalExpDiv = $("#totalExpDiv");
 	            $("#totalExpDivSaveDiv").remove();
-	            var addTotalExpHtml = "<div style='padding-left:10px'><input name='addTotalExp' class='addTotalinp' type='text' value='0.0'>";
-//	            addTotalExpHtml += "<span class='help-inline addTotalExp_inline'><font color='red'>*</font></span>";
-	            addTotalExpHtml += "<span class='mui-icon mui-icon-minus removeExp help-inline addTotalExp_inline_remove_button'>";
-	            addTotalExpHtml += "<a href='javascript:void(0)' onclick='removeExp(this)'> <span class='icon-minus-sign'/></a>";
-	            addTotalExpHtml += "</span></div>"
-	            totalExpDiv.append(addTotalExpHtml);
-	            var addTotalExpSaveButton = "<div id='totalExpDivSaveDiv' class='secSaveBtn'>";
-	            addTotalExpSaveButton += "<input id='totalExpDivSave' class='btn btn-primary' type='button' value='保存'/>&nbsp;</div>"
-	            totalExpDiv.append(addTotalExpSaveButton);
+	            addTotalExpHtml = "<div style='padding-left:10px;'>"+
+	                "<input name='addTotalExp' class='addTotalinp' type='text' value='0.0'>"+
+		            "<span class='mui-icon mui-icon-trash removeExp'>"+
+		            "</span>"+
+	            "</div>"
+	            addTotalExpSaveButton = "<div id='totalExpDivSaveDiv' class='secSaveBtn'>"+
+	                    "<input id='totalExpDivSave' type='button' value='保存'/>"+
+	            "</div>"
+	            totalExpDiv.html(addTotalExpHtml+addTotalExpSaveButton);
 				_this.removeExp();
 				_this.SavetotalExp();
 			});
@@ -281,35 +282,22 @@
 		removeExp:function() {
             $('.removeExp').on('tap', function() {
             	$(this).parent().remove();
-	            var addTotalExpList = $("input[name='addTotalExp']");
-	            if (addTotalExpList.length == '0') {
-	                $("#totalExpDivSaveDiv").remove();
-	            }
+            	$("#totalExpDivSaveDiv").remove();
             })
         },
         SavetotalExp:function() {
         	var _this = this;
             $('#totalExpDivSave').on('tap', function() {
-            	var amountStr = "";
-	            var saveFlag = true;
-	            $("#totalExpDiv").find("input[name='addTotalExp']").each(function (index) {
-	                var amount = $(this).val();
-	                console.log(amount)
-	                if (Number(amount) <= 0) {
-	                    saveFlag = false;
-	                    alert("第" + (index + 1)  + "个新增服务费为0，请修改后保存！");
-	                    return false;
-	                }
-	                amountStr += amount + ",";
-	            })
-	            if (saveFlag == false) {
-	                return false;
-	            }
+                var TotalinpVal=$('.addTotalinp').val();
+                if(Number(TotalinpVal) <= 0){
+                    mui.toast("新增服务费不能为0，请修改后保存！");
+                    return false;
+                }
 	            var orderIds = $('#ordId').val();
 	            $.ajax({
 	                url:"/a/biz/order/bizOrderTotalexp/batchSave",
 	                type:"get",
-	                data: {"amountStr": amountStr, "orderId":orderIds},
+	                data: {"amountStr": TotalinpVal, "orderId":orderIds},
 	                contentType:"application/json;charset=utf-8",
 	                success:function(result){
 	                    if (result == 'ok') {
