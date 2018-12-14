@@ -264,13 +264,13 @@
 			var addTotalExpHtml ="";
 			$('#changeServiceBtn').on('tap', function() {
 	            var totalExpDiv = $("#totalExpDiv");
-	            $("#totalExpDivSaveDiv").remove();	
+	            $("#totalExpDivSaveDiv").remove();
 	            var addTotalExpHtml = "<div style='padding-left:10px'><input name='addTotalExp' class='addTotalinp' type='text' value='0.0'>";
 //	            addTotalExpHtml += "<span class='help-inline addTotalExp_inline'><font color='red'>*</font></span>";
 	            addTotalExpHtml += "<span class='mui-icon mui-icon-minus removeExp help-inline addTotalExp_inline_remove_button'>";
 	            addTotalExpHtml += "<a href='javascript:void(0)' onclick='removeExp(this)'> <span class='icon-minus-sign'/></a>";
-	            addTotalExpHtml += "</span></div>"	
-	            totalExpDiv.append(addTotalExpHtml);	
+	            addTotalExpHtml += "</span></div>"
+	            totalExpDiv.append(addTotalExpHtml);
 	            var addTotalExpSaveButton = "<div id='totalExpDivSaveDiv' class='secSaveBtn'>";
 	            addTotalExpSaveButton += "<input id='totalExpDivSave' class='btn btn-primary' type='button' value='保存'/>&nbsp;</div>"
 	            totalExpDiv.append(addTotalExpSaveButton);
@@ -278,16 +278,16 @@
 				_this.SavetotalExp();
 			});
 		},
-		removeExp:function() {            
+		removeExp:function() {
             $('.removeExp').on('tap', function() {
             	$(this).parent().remove();
-	            var addTotalExpList = $("input[name='addTotalExp']");	
+	            var addTotalExpList = $("input[name='addTotalExp']");
 	            if (addTotalExpList.length == '0') {
 	                $("#totalExpDivSaveDiv").remove();
 	            }
             })
         },
-        SavetotalExp:function() {  
+        SavetotalExp:function() {
         	var _this = this;
             $('#totalExpDivSave').on('tap', function() {
             	var amountStr = "";
@@ -304,7 +304,7 @@
 	            })
 	            if (saveFlag == false) {
 	                return false;
-	            }	             
+	            }
 	            var orderIds = $('#ordId').val();
 	            $.ajax({
 	                url:"/a/biz/order/bizOrderTotalexp/batchSave",

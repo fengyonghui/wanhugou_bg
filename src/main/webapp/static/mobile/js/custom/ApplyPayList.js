@@ -181,9 +181,9 @@
 									'<label>支付凭证：</label>' +
 									'<img src="' + imgPath + '"/>' +
 									'</div>' +
-									'<div class="payingCheckBtn app_p20">'+
-									    '<button type="submit" class="payCheckBtn mui-btn-blue">审核通过</button>'+
-										'<button type="submit" class="payRejectBtn mui-btn-blue">审核驳回</button>'+
+									'<div class="payingCheckBtn app_p20 app_pl25 app_pr25 checkBtn">'+
+									    '<button type="submit" class="payCheckBtn passBtn">审核通过</button>'+
+										'<button type="submit" class="payRejectBtn app_fr RejectBtn">审核驳回</button>'+
 									'</div>'+
 								'</div>'
 								}

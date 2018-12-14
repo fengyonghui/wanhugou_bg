@@ -24,10 +24,6 @@
 		},
 		pageInit: function() {
 			var _this = this;
-//			console.log(_this.staOrdFlag)
-//			console.log(_this.staOrdauditFlag)
-//			console.log(_this.staOrdsupplyFlag)
-//			console.log(_this.staOrdeditFlag)
 			var pager = {};//分页 
 		    var totalPage;//总页码
 		    pullRefresh(pager);//启用上拉下拉 
@@ -385,7 +381,7 @@
 	                                		staRecoveryBtnTxt ="恢复";
 	                                		ordRecoveryBtn = 'ordRecoveryBtn';
 	                                	}
-	                                } 
+	                                }
 	                                //调整服务费
 	                                var ordTotalexpBtn = '';
 	                                var staTotalexpTxt ="";
@@ -469,7 +465,6 @@
 					}else{
 						$('.mui-pull-bottom-pocket').html('');
 						$('#orderList').append('<p class="noneTxt">暂无数据</p>');
-//						$('#OrdSechBtn').hide();
 						mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 					}
 	                if(res.data.page.totalPage==pager.pageNo){		                	

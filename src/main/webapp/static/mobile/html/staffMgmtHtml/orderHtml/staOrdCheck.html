@@ -27,7 +27,7 @@
 				<input type="text" class="mui-input-clear" id="staPoordNum" disabled>
 			</div>
 			<div class="mui-input-row">
-				<label id="customeName">经销店名称：</label>
+				<label id="customerName">经销店名称：</label>
 				<input type="text" class="mui-input-clear" id="staRelNum" disabled>
 			</div>
 			<div class="mui-input-row">
@@ -48,6 +48,10 @@
 				<input type="text" class="mui-input-clear" id="staFreight" disabled>
 			</div>
 			<div class="mui-input-row">
+				<label>万户币抵扣：</label>
+				<input type="text" class="mui-input-clear" id="staCoin" disabled>
+			</div>
+			<div class="mui-input-row">
 				<label>应付金额：</label>
 				<input type="text" class="mui-input-clear" id="staShouldPay" disabled>
 			</div>
@@ -66,6 +70,30 @@
 				<input type="text" id="staCommission" class="mui-input-clear" disabled>
 			</div>
 			<div class="mui-input-row">
+				<label>供应商：</label>
+				<input type="text" class="mui-input-clear" id="insupplier" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商卡号：</label>
+				<input type="text" class="mui-input-clear" id="insupplierNum" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>收款人：</label>
+				<input type="text" class="mui-input-clear" id="insupplierMoney" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>开户行：</label>
+				<input type="text" class="mui-input-clear" id="insupplierBank" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>供应商合同：</label>
+				<div id="insuppliercontract"></div>									
+			</div>
+			<div class="mui-input-row">
+				<label>身份证：</label>
+				<div id="insuppliercardID"></div>	
+			</div>
+			<div class="mui-input-row">
 				<label>发票状态：</label>
 				<input type="text" id="staInvoice" class="mui-input-clear" disabled>
 			</div>
@@ -73,6 +101,10 @@
 				<label>业务状态：</label>
 				<input type="text" class="mui-input-clear doubleInput app_cred3" id="staFinal" disabled>
 				<input type="text" id="staStatus" class="mui-input-clear doubleInput" disabled>
+			</div>
+			<div class="mui-input-row">
+				<label>结佣状态：</label>
+				<input type="text" class="mui-input-clear" id="commission" disabled>
 			</div>
 			<div class="mui-input-row">
 				<label>收货人：</label>
@@ -168,7 +200,7 @@
 			<button id="rejectBtns" type="submit" class="mui-btn mui-btn-blue app_fr RejectBtn">不同意发货</button>
 		</div>
 		<div class="clear"></div>
-		
+		<input type="hidden" id="supplierId"/>
 		<input type="hidden" name="ordId" id="ordId"/>
 		<input type="hidden" name="flag" id="flag"/>
 		<input type="hidden" name="localSendIds" id="localSendIds"/>
@@ -179,6 +211,6 @@
 		<script src="../../../js/component/mui.min.js"></script>	
 		<script src="../../../js/component/zepto.min.js"></script>
 		<script src="../../../js/component/GHutils.js"></script>
-		<script src="../../../js/staffMgmtJs/orderJs/staOrdCheck.js?v=20181115"></script>
+		<script src="../../../js/staffMgmtJs/orderJs/staOrdCheck.js?v=20181211"></script>
 	</body>
 </html>
