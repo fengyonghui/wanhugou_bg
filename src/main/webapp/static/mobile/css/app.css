@@ -601,13 +601,14 @@ body{font-size: 15px;color:#3b3b3b;}
 
 /*红色 * 号，必填必选*/
 .mui-input-row font {color: red;position: absolute;right: 60px;top: 36%;font-size: 20px;}
-
+.mui-input-row .pre font {color: red;position: absolute;right: 45px;top: 36%;font-size: 20px;}
 
 /*模糊查询列表显示---查询页面和经销店添加公共样式*/
 /*background: url(./thumb.jpg) no-repeat scroll right center;*/
 .pre {margin-bottom: 0;padding-left: 0;float: right;width: 62%;}
 .newinput {width: 150px;padding: 2px 0px 2px 0px;margin-bottom: -1px;border: 1px solid #ccc;box-shadow: 0 1px 0 0 #eee inset;cursor: default;}
 .input_div {width: 150px;border: 1px solid #ddd;border-bottom: none;border-radius: 0 0 3px 3px;display: none;}
+.input_divs {width: 150px;border: 1px solid #ddd;border-bottom: none;border-radius: 0 0 3px 3px;display: none;}
 .hideSpan {position: absolute;right: 52px;top: 8px;border-radius: 13px;display: none;}
 .showSpan {position: absolute;right: 52px;top: 8px;border-radius: 13px;}
 .secStyle {margin: 5px 0;} 
@@ -615,6 +616,7 @@ body{font-size: 15px;color:#3b3b3b;}
 .soption {display: block;padding: 2px 5px;}
 .soption:hover {background: #f9f9f9;border-top: 1px dotted #ddd;border-bottom: 1px dotted #ddd;padding: 1px 5px;}
 .mui-input-row input.newinput {padding-left: 0;}
+.mui-input-row input.newinputs {padding-left: 0;}
 
 #inCheckAddMenu,#addCheckMen,#addDetailMen{padding-left:0;}
 
@@ -801,9 +803,15 @@ input[type="checkbox"].testCheckbox:checked {-webkit-appearance: none;background
 .paybox label {display: inline-block;}	
 .payMoney{width: 300px;height: 300px;border-radius: 6px;background-color: #FFF;position: absolute;z-index: 105;left: 50%;top: 50%;margin-left: -150px;margin-top: -150px;}	
 .payMoneys input,.payMoneys textarea,.payMoney input,.payMoney textarea{display: block;width: 80%;text-align: center;margin: 5px auto;}			
-.btnbox {margin: 13px 30px;display: none;}			
+.btnbox {margin: 13px 30px;display: none;}
+.btnboxs {margin: 13px 30px;}			
 .tanchuang_wrap {width: 100%;height: 100%;position: absolute;left: 0px;top: 0px;z-index: 100;display: none;}			
-.lightbox {width: 100%;z-index: 101;height: 100%;background-color: #000000;filter:alpha(Opacity=20);-moz-opacity: 0.2;opacity: 0.2;position: absolute;top: 0px;left: 0px;}			
+.lightbox {width: 100%;z-index: 101;height: 100%;background-color: #000000;filter:alpha(Opacity=20);-moz-opacity: 0.2;opacity: 0.2;position: absolute;top: 0px;left: 0px;}
 .payMoneys {width: 300px;height: 340px;background-color: #FFF;position: absolute;z-index: 105;left: 50%;top: 50%;margin-left: -150px;margin-top: -170px;border-radius: 6px;}
 #payBtnsave{background: #40ABE9;color:#fff;width:100px;}
 #payBtnremove{background: #40ABE9;color:#fff;width:100px;float:right;}
+
+#totalExpDiv input[type=text],.addTotalinp{width:80%;border:1px solid #8e8e8e;}
+.removeExp{margin-left:20px}
+input[type=button], #totalExpDivSave{display:inline-block;width:100%;height:100%;background: #40ABE9;color:#fff;}
+.mui-input-group input{border:none;}

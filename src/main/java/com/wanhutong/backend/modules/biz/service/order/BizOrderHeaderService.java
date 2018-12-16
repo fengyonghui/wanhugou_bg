@@ -399,7 +399,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public void saveCommonProcess(OrderPayProportionStatusEnum orderPayProportionStatusEnum, BizOrderHeader bizOrderHeader, boolean reGen){
+    public void saveCommonProcess(OrderPayProportionStatusEnum orderPayProportionStatusEnum, BizOrderHeader bizOrderHeader, boolean reGen, Boolean cancleFlag){
         Integer code = null;
         //处理角色
         String roleEnNameEnum = null;
@@ -431,23 +431,33 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             roleEnNameEnum = purchaseOrderProcess.getRoleEnNameEnum();
         }
 
-        StringBuilder phone = new StringBuilder();
-        User user=UserUtils.getUser();
-        User sendUser=new User(systemService.getRoleByEnname(roleEnNameEnum==null?"":roleEnNameEnum.toLowerCase()));
-        //不根据采购中心区分渠道经理，所以注释掉该行
-        sendUser.setCent(user.getCompany());
-        List<User> userList = systemService.findUser(sendUser);
-        if (CollectionUtils.isNotEmpty(userList)) {
-            for (User u : userList) {
-                phone.append(u.getMobile()).append(",");
-            }
-        }
+        if (!cancleFlag) {
+            StringBuilder phone = new StringBuilder();
+            User user=UserUtils.getUser();
+            if (StringUtils.isNotBlank(roleEnNameEnum)) {
+                if ("MARKETINGMANAGER".equals(roleEnNameEnum)) {
+                    roleEnNameEnum = "MARKETING_MANAGER".toLowerCase();
+                } else {
+                    roleEnNameEnum = roleEnNameEnum.toLowerCase();
+                }
 
-        if (StringUtils.isNotBlank(phone.toString())) {
-            AliyunSmsClient.getInstance().sendSMS(
-                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
-                    phone.toString(),
-                    ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
+                User sendUser=new User(systemService.getRoleByEnname(roleEnNameEnum));
+                //不根据采购中心区分渠道经理，所以注释掉该行
+                //sendUser.setCent(user.getCompany());
+                List<User> userList = systemService.findUser(sendUser);
+                if (CollectionUtils.isNotEmpty(userList)) {
+                    for (User u : userList) {
+                        phone.append(u.getMobile()).append(",");
+                    }
+                }
+
+                if (StringUtils.isNotBlank(phone.toString())) {
+                    AliyunSmsClient.getInstance().sendSMS(
+                            SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                            phone.toString(),
+                            ImmutableMap.of("order","代采清单(已同意发货)", "orderNum", bizOrderHeader.getOrderNum()));
+                }
+            }
         }
     }
 

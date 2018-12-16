@@ -27,16 +27,11 @@
 							flag = true;
 						    var sentQty = $(this).parent().parent().find("input[name='sentQty']").val();
 						    var okQty = $(this).parent().parent().find("input[name='okQty']").val();
-						    var ordQty = $(this).parent().parent().find("input[name='ordQty']").val();
-						    var sQty = $(this).parent().parent().find("input[name='sQty']").val();
 						    if (sentQty == '' || sentQty == 0) {
                                 flag1 = false;
 							}
 							if (parseInt(sentQty) > parseInt(okQty)) {
 						        flag2 = false;
-							}
-							if (parseInt(ordQty) - parseInt(sQty) < parseInt(sentQty)) {
-						        flag3 = false;
 							}
 						}
                     });
@@ -46,7 +41,10 @@
                     var stockQty = 0;
                     var map = {};
                     var sendMap = {};
+                    var needMap = {};
                     $("input[name='reqDetail'][checked='checked']").each(function () {
+                        var ordQty = $(this).parent().parent().find("input[name='ordQty']").val();
+                        var sQty = $(this).parent().parent().find("input[name='sQty']").val();
                         var orderDetailId = $(this).parent().parent().find("input[name='orderDetailId']").val();
                         var reqDetailId = $(this).parent().parent().find("input[name='reqDetailId']").val();
                         var transferDetailId = $(this).parent().parent().find("input[name='transferDetailId']").val();
@@ -61,6 +59,7 @@
                         } else {
                             map[orderDetailId] = parseInt(sentQty);
                             sendMap[orderDetailId] = parseInt(stockQty);
+                            needMap[orderDetailId] = (parseInt(ordQty) - parseInt(sQty));
                         }
                         // sumSentQty = parseInt(sumSentQty) + parseInt(sentQty);
                         treasuryList[i] = createTreasury(orderDetailId,reqDetailId,transferDetailId,invSkuId,sentQty,uVersion,sendNo);
@@ -70,6 +69,9 @@
                     $.each(map,function (key, value) {
 						if (parseInt(value) > parseInt(sendMap[key])) {
 						    stockFlag = false;
+						}
+						if (parseInt(value) > parseInt(needMap[key])) {
+						    flag3 = false;
 						}
                     });
                     console.info(JSON.stringify(treasuryList));
@@ -92,7 +94,7 @@
 					};
 
                     var requestData = {"treasuryList":treasuryList, "bizInvoiceStr": bizInvoiceStr};
-
+					console.info("flag:"+flag+",flag1:"+flag1+",flag2:"+flag2+",flag3:"+flag3);
                     if(window.confirm('你确定要出库吗？')){
                         if (!flag) {
                             alert("请勾选出库的备货单！");

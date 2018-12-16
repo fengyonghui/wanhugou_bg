@@ -21,8 +21,6 @@
 			var _this = this;
 			$('#puSearchBtn').on('tap', function() {
 				var options = $("#input_div_check option").eq($("#input_div_check").attr("selectedIndex"))
-//				console.log('----------------')
-//				console.log(options)
                 var ordNumVal = $(".ordNum").val(); 
                 var detaNumVal = $('.detaNum').val(); 
                 var newInputVal = $('.newinput').val();
@@ -44,11 +42,11 @@
                 	 return;
                 }
 				if(_this.selectOpen){
-						if($('.hasoid').attr('id')){
-							_this.sureSelect(options)
-						}else{
-							mui.toast('请选择匹配的选项')
-						}					
+					if($('.hasoid').attr('id')){
+						_this.sureSelect(options)
+					}else{
+						mui.toast('请选择匹配的选项')
+					}					
 				}else{
 					_this.sureSelect(options)					
 				}				
@@ -56,25 +54,24 @@
 		},
 		sureSelect:function(options){
 			var _this = this;
-				_this.selectOpen = false
+			_this.selectOpen = false
 			GHUTILS.OPENPAGE({
-						url: "../../html/purchaseMagmetHtml/purchase.html",
-						extras: {
-							orderNum: $('.ordNum').val(),
-							num: $('.detaNum').val(),
-							vendOffice: $('.hasoid').attr('id'),
-							commonProcess: options.val(),
-							isFunc: true
-						}
-					})
+				url: "../../html/purchaseMagmetHtml/purchase.html",
+				extras: {
+					orderNum: $('.ordNum').val(),
+					num: $('.detaNum').val(),
+					vendOffice: $('.hasoid').attr('id'),
+					commonProcess: options.val(),
+					isFunc: true
+				}
+			})
 		},
 		hrefHtml: function(newinput, input_div) {
 			var _this = this;
 			_this.ajaxGoodList()
 			_this.ajaxCheckStatus()
-
 			$(newinput).on('focus', function() {
-				//$(input_div).find('hasoid').removeClass('hasoid')
+				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).show()
 				$('#hideSpan').show()
 			})
@@ -83,17 +80,14 @@
 					_this.selectOpen = false
 				}else{
 					_this.selectOpen = true
-				}
-				
+				}				
 				_this.rendHtml(_this.datagood,$(this).val())
-			})
-			
+			})			
 			$('#hideSpan').on('click', function() {
 				$(input_div).find('hasoid').removeClass('hasoid')
 				$(input_div).hide()
 				$('#hideSpan').hide()
 			})
-
 			$(input_div).on('click', '.soption', function() {
 				$(this).addClass('hasoid').siblings().removeClass('hasoid')
 				$(newinput).val($(this).text())
@@ -109,11 +103,9 @@
 				$.each(data, function(i, item) {
 					if(item.name.indexOf(key) > -1) {
 						reult.push(item)
-
 					}
 				})
 			$.each(reult, function(i, item) {
-//				console.log(item)
 				htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 			});
 			$('.input_div').html(htmlList)
@@ -124,16 +116,14 @@
 			var htmlList = ''
 			$.ajax({
 				type: 'GET',
-				url: '/a/sys/office/queryTreeList',
+				url: '/a/sys/office/queryTreeListByPhone',
 				data: {
 					type: 7
 				},
 				dataType: 'json',
 				success: function(res) {
 					_this.datagood = res
-//					console.log(res)
 					$.each(res, function(i, item) {
-//						console.log(item)
 						htmlList += '<span class="soption" pId="' + item.pId + '" id="' + item.id + '" type="' + item.type + '" pIds="' + item.pIds + '">' + item.name + '</span>'
 					});
 					$('.input_div').html(htmlList)
@@ -150,9 +140,7 @@
 				data: {},
 				dataType: 'json',
 				success: function(res) {
-//					console.log(res)
 					$.each(res.data.processList, function(i, item) {
-//						console.log(item)
 						htmlCheck += '<option class="soption" value="' + item.code + '" roleEnNameEnum="' + item.roleEnNameEnum + '" passCode="' + item.passCode + '" rejectCode="' + item.rejectCode + '">' + item.name + '</option>'
 					});
 					$('#input_div_check').html(optHtml+htmlCheck)

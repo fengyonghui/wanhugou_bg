@@ -16,12 +16,9 @@
 			this.getPermissionList('biz:po:bizPoHeader:createPayOrder','payFlag')
 			this.getPermissionList('biz:po:bizPoHeader:audit','payListFlag')
 			this.getPermissionList('biz:po:bizPoHeader:view','detileFlag')
-			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
-			if(this.userInfo.isFunc){
-				this.seachFunc()
-			}else{
-				this.pageInit(); //页面初始化
-			}
+			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态		
+			this.pageInit(); //页面初始化
+			this.ordHrefHtml();
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function(){
@@ -36,7 +33,7 @@
 			            callback:function(){
 			                window.setTimeout(function(){
 			                    getData(pager);
-			                },500);
+			                },300);
 			            }
 			         },
 			        down : {
@@ -46,17 +43,38 @@
 			            contentover : "",
 			            contentrefresh : "正在加载...",
 			            callback :function(){ 
-			                    pager['size']= 10;//条数
-			                    pager['pageNo'] = 1;//页码      
-				                var f = document.getElementById("list");
-				                var childs = f.childNodes;
-				                for(var i = childs.length - 1; i >= 0; i--) {
-				                    f.removeChild(childs[i]);
-				                }
-//				                console.log('222')
-//				                console.log(pager)
-				                $('.mui-pull-caption-down').html('');				                
+			            	var f = document.getElementById("list");
+			                var childs = f.childNodes;
+			                for(var i = childs.length - 1; i >= 0; i--) {
+			                    f.removeChild(childs[i]);
+			                }
+			                $('.mui-pull-caption-down').html('');	
+			            	if(_this.userInfo.isFunc){
+			            		if(_this.userInfo.orderNum==undefined){
+								_this.userInfo.orderNum="";
+								}
+								if(_this.userInfo.num==undefined){
+									_this.userInfo.num="";
+								}							
+								if(_this.userInfo.vendOffice==undefined){
+									_this.userInfo.vendOffice="";
+								}
+								if(_this.userInfo.commonProcess==undefined){
+									_this.userInfo.commonProcess="";
+								}
+								pager['size']= 20;
+		                    	pager['pageNo'] = 1;
+		                    	pager['orderNum'] = _this.userInfo.orderNum;//采购单号
+		                    	pager['num'] = _this.userInfo.num;//订单编号
+		                    	pager['vendOffice.id'] = _this.userInfo.vendOffice;//供应商
+		                    	pager['commonProcess.type'] = _this.userInfo.commonProcess;//审核状态
+		                    	getData(pager);
+			            	}else{
+			            		pager['size']= 10;//条数
+			                    pager['pageNo'] = 1;//页码      				                			                
 				                getData(pager);
+			            	}
+			                    
 			            }
 			        }
 			    })
@@ -70,8 +88,13 @@
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
 		          	    console.log(res)
-		                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 		                var arrLen = res.data.resultList.length;
+		                if(arrLen <20){
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+						}else{
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+						}
 						var dataRow = res.data.roleSet;
                         if(arrLen > 0) {
 								$.each(res.data.resultList, function(i, item) {
@@ -156,8 +179,8 @@
 										'<div class="mui-col-xs-3">' +
 										'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
 										'</div>' +
-										'<div class="mui-col-xs-3 '+applyPayBtn+'">' +
-										'<li class="mui-table-view-cell" listId="' + item.id + '" poId="' + item.id + '">' + applyPay + '</li>' +
+										'<div class="mui-col-xs-3 '+applyPayBtn+'" listId="' + item.id + '" poid="' + item.id + '">' +
+										'<li class="mui-table-view-cell">' + applyPay + '</li>' +
 										'</div>' +
 										'<div class="mui-col-xs-4 '+payListBtn+'" listId="' + item.id + '">' +
 										'<li class="mui-table-view-cell">'+payList+'</li>' +
@@ -168,17 +191,15 @@
 										'</div>' +
 										'</div>'
 								});
-
 								$('#list').append(pHtmlList);
-								_this.hrefHtml()
+								_this.hrefHtml();
 						} else {
 								$('.mui-pull-caption').html('');
-							}
-						totalPage = res.data.page.count%pager.size!=0?
-		                parseInt(res.data.page.count/pager.size)+1:
-		                res.data.page.count/pager.size;
-		                if(totalPage==pager.pageNo){		                	
-			                mui('#refreshContainer').pullRefresh().endPullupToRefresh();
+								$('#list').append('<p class="noneTxt">暂无数据</p>');
+						        mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
+						}
+		                if(res.data.page.totalPage==pager.pageNo){		                	
+			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
 			            }else{
 			                pager.pageNo++;
 			                mui('#refreshContainer').pullRefresh().refresh(true);
@@ -208,9 +229,9 @@
                 }
             });
         },
-		hrefHtml: function() {
-			var _this = this;
-			/*查询*/
+        ordHrefHtml: function() {
+        	var _this = this;
+        	/*查询*/
 			$('.header').on('tap', '#search_btn', function() {
 				var url = $(this).attr('url');
 				if(url) {
@@ -225,11 +246,25 @@
 					})
 				}
 					
-			}),
+			});
+		    /*首页*/
+			$('#purchaseNav').on('tap','.inHomePage', function() {
+				var url = $(this).attr('url');
+				GHUTILS.OPENPAGE({
+					url: "../../html/backstagemgmt.html",
+					extras: {
+						
+					}
+				})
+			})
+        },
+		hrefHtml: function() {
+			var _this = this;			
 			/*申请付款*/
 			$('.content_part').on('tap', '.applyPayBtn', function() {
 				var url = $(this).attr('url');
-				var poId = $(this).attr('poId');
+				var poId = $(this).attr('poid');
+				console.log(poId)
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(poId == poId) {
@@ -305,16 +340,7 @@
 					})
 				}
 			})
-			/*首页*/
-			$('#purchaseNav').on('tap','.inHomePage', function() {
-				var url = $(this).attr('url');
-				GHUTILS.OPENPAGE({
-					url: "../../html/backstagemgmt.html",
-					extras: {
-						
-					}
-				})
-			})
+			
 		},
 		formatDateTime: function(unix) {
 			var now = new Date(parseInt(unix) * 1);
@@ -369,128 +395,7 @@
 				now = now.replace("-"); //  2014-7-6 07:17:43
 			}
 			return now;
-		},
-		seachFunc:function(){
-			var _this = this;
-			// 拼接HTML
-			var pHtmlList = '';
-			$.ajax({
-				type: 'GET',
-				url: '/a/biz/po/bizPoHeader/listData4Mobile',
-				data: {
-					pageNo: 1,
-					orderNum:_this.userInfo.orderNum,
-					num:_this.userInfo.num,
-					'vendOffice.id':_this.userInfo.vendOffice,
-					'commonProcess.type':_this.userInfo.commonProcess
-				},
-				dataType: 'json',
-				success: function(res) {
-					mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-					var arrLen = res.data.resultList.length;
-					var dataRow = res.data.roleSet;
-//							console.log(res)
-					if(arrLen > 0) {
-						$.each(res.data.resultList, function(i, item) {
-//									console.log(item)
-							var startBtn = '';
-							var classBtn = '';
-							var processName = '';
-						//开启审核   、   审核
-							if(item.process) {
-								processName = item.process.purchaseOrderProcess.name
-								var code = item.process.purchaseOrderProcess.code;
-								if(item.process.purchaseOrderProcess.roleEnNameEnum) {
-									var DataRoleGener = item.process.purchaseOrderProcess.roleEnNameEnum;
-									var fileRoleData =  dataRow.filter(v => DataRoleGener.includes(v));
-									if(item.process && fileRoleData.length>0 || dataRow[0]== 'DEPT' && code != 7 && code != -1) {
-										startBtn = '审核'
-										classBtn = 'shenHe'
-									}
-								}else {
-									startBtn = ''
-									classBtn = ''
-								}
-							} else {
-								startBtn = '开启审核'
-								classBtn = 'startShenhe'
-							}
-						//申请支付	
-							var bizStatus = item.bizStatus;
-							var payment = item.currentPaymentId;
-							var applyStatus = item.process.bizStatus;
-							var applyPay = '';
-							var applyPayBtn ='';
-							if(_this.payFlag == true) {
-								if((code == 7 && applyStatus == 1 && bizStatus == '部分支付') || (code == 7 && payment == '')) {
-									applyPay = '申请付款';
-									applyPayBtn = 'applyPayBtn'
-								} else {
-									applyPay = ''
-									applyPayBtn = ''
-								}
-							}
-						//支付申请列表
-							var payList = ''
-							var payListBtn = ''
-							if(_this.payListFlag == true) {
-								payList = '支付申请列表'
-								payListBtn = 'payListBtn'
-							}else {
-								payList = ''
-								payListBtn = ''
-							}
-						//详情
-							var detail = '';
-							var detailBtn = '';
-							if(_this.detileFlag == true ) {
-								detail = '详情'
-								detailBtn = 'detailBtn'
-							}else {
-								detail = ''
-								detailBtn = ''
-							}
-							pHtmlList += '<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">' +
-								'<div class="mui-input-row">' +
-								'<label>采购单号:</label>' +
-								'<input id="orderNum" name="orderNum" type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.orderNum + ' ">' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>供应商:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.vendOffice + ' ">' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>订单状态:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.bizStatus + ' ">' +
-								'</div>' +
-								'<div class="mui-input-row">' +
-								'<label>审核状态:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + processName + ' ">' +
-								'</div>' +
-								'<div class="app_color40 content_part mui-row app_text_center operation">' +
-								'<div class="mui-col-xs-3">' +
-								'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
-								'</div>' +
-								'<div class="mui-col-xs-3 '+applyPayBtn+'">' +
-								'<li class="mui-table-view-cell" listId="' + item.id + '" poId="' + item.id + '">' + applyPay + '</li>' +
-								'</div>' +
-								'<div class="mui-col-xs-4 '+payListBtn+'" listId="' + item.id + '">' +
-								'<li class="mui-table-view-cell">'+payList+'</li>' +
-								'</div>' +
-								'<div class="mui-col-xs-2 '+detailBtn+'" listId="' + item.id + '">' +
-								'<li class="mui-table-view-cell">'+detail+'</li>' +
-								'</div>' +
-								'</div>' +
-								'</div>'
-						});
-						$('#list').append(pHtmlList);
-					}else{
-						$('#list').append('<p class="noneTxt">暂无数据</p>');
-					}
-				}
-			});
-			_this.hrefHtml()
-		}
+		},		
 	}
 	$(function() {
 
