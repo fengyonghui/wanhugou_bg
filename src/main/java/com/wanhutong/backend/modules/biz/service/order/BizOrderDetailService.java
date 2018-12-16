@@ -75,7 +75,11 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
         String[] saleQtyArr = StringUtils.split(bizOrderDetail.getSaleQtys(), ",");//多个采购数量
         String[] shelfSkuArr = StringUtils.split(bizOrderDetail.getShelfSkus(), ",");//多个货架ID
         String[] nowPriceArr = StringUtils.split(bizOrderDetail.getNowPrices(),",");//多个代采订单的商品价格
-        String[] sentQtys = StringUtils.split(bizOrderDetail.getSentQtys(),",");////多个发货数量
+        String sentQtysStr = bizOrderDetail.getSentQtys();
+        if (StringUtils.isBlank(sentQtysStr)) {
+            sentQtysStr = "0";
+        }
+        String[] sentQtys = StringUtils.split(sentQtysStr,",");////多个发货数量
         int a = 0;
         if (bizOrderDetail.getOrderHeader() != null) {
             BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
