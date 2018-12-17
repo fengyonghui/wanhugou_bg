@@ -307,7 +307,8 @@
                             </c:if>
                             <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
                                 <td>${shelfSku.minQty}-${shelfSku.maxQty}</td>
-                                <td>${shelfSku.salePrice}</td>
+                                <%--<td>${shelfSku.salePrice}</td>--%>
+                                <td>${detail.unitPrice}</td>
                             </c:if>
                             <c:if test="${orderH.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
                                 <td>${detail.unitPrice}</td>
