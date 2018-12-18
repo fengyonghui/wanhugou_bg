@@ -18,62 +18,6 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-				    var flag = false;//是否有选中的选项
-				    var flag1 = true;
-				    var flag2 =true;
-				    var flag3 = true;
-				    var stockQty = 0;//总库存数
-				    var mergeQtySum = 0;//累计拆分数量
-                    var treasuryList = new Array();
-                    $("input[name='reqDetail'][checked='checked']").each(function (i) {
-                        flag = true;
-                        mergeQtySum = parseInt(mergeQtySum) + parseInt(mergeQty);
-                        var reqDetailId = $(this).parent().parent().find("input[name='reqDetailId']").val();//备货单详情ID
-                        var invSkuId = $(this).parent().parent().find("input[name='invSkuId']").val();//库存ID
-                        var mergeQty = $(this).parent().parent().find("input[name='mergeQty']").val();//拆分数量
-                        var okQty = $(this).parent().parent().find("input[name='okQty']").val();//可拆分数量
-                        var uVersion = $(this).parent().parent().find("input[name='uVersion']").val();//版本号
-						stockQty = $(this).parent().parent().find("input[name='stockQty']").val();//总库存数
-                        if (mergeQty == '' || mergeQty == 0) {
-                            alert("选中的拆分数量不能为空，也不能为0");
-                            flag1 = false;
-                        }
-                        if (parseInt(mergeQty) > parseInt(okQty)) {
-                            alert("拆分数量不能大于可拆分数量");
-                            flag2 = false;
-                        }
-                        treasuryList[i] = createTreasury(reqDetailId,invSkuId,mergeQty,uVersion);
-                    });
-                    console.info(JSON.stringify(treasuryList));
-                    if (parseInt(mergeQtySum) > parseInt(stockQty)) {
-                        alert("拆分总数量不能大于总库存数");
-                        flag3 = false;
-					}
-					if (!flag) {
-                        alert("请至少勾选一条备货单详情");
-                        return false;
-					}
-                    var requestData = {"treasuryList":treasuryList};
-                    if(window.confirm('你确定要拆分吗？')){
-                        if (flag && flag1 && flag2 && flag3) {
-                            $Mask.AddLogo("正在加载");
-                            $.ajax({
-                                type:"post",
-                                contentType: 'application/json;charset=utf-8',
-                                url:"${ctx}/biz/inventory/bizInventorySku/skuSplit",
-                                data:JSON.stringify(requestData),
-                                success:function (data) {
-                                    if (data=='error') {
-                                        alert("拆分失败，没有选择拆分数据");
-                                        window.location.href = "${ctx}/biz/inventory/bizInventorySku";
-                                    } else {
-                                        alert("拆分成功");
-                                        window.location.href = "${ctx}/biz/inventory/bizInventorySku";
-                                    }
-                                }
-                            });
-						}
-                    }
 					// loading('正在提交，请稍等...');
 					// form.submit();
 				},
@@ -115,6 +59,89 @@
             treasury.uVersion = uVersion;
             return treasury;
         }
+
+        function merge() {
+            var flag = false;//是否有选中的选项
+            var flag1 = true;//选中的内容是否为空或0
+            var flag2 =true;//合并数量是否大于可合并数量
+            var flag3 = true;//各个尺寸的合并数是否大于库存总数
+            var flag4 = true;//各个尺寸合并的数量是否相等
+			var mergeList = new Array();
+			var map = {};
+            $("input[name='reqKey']").each(function () {
+			    var mergeNum = 0; //累计合并数量
+                var stockQty = 0;//总库存数
+				var key = $(this).val();//尺寸
+                var treasuryList = new Array();
+                var index = 0;
+                $("#invReq").find("input[name='req_"+key+"']").each(function () {
+					if ($(this).parent().parent().find("input[name='reqDetail']").attr("checked") == 'checked') {
+                        flag = true;
+                        var mergeQty = $(this).parent().parent().find("input[name='mergeQty']").val();//合并数量
+                        var reqDetailId = $(this).parent().parent().find("input[name='reqDetailId']").val();//备货单详情ID
+                        var invSkuId = $(this).parent().parent().find("input[name='invSkuId']").val();//库存ID
+                        var okQty = $(this).parent().parent().find("input[name='okQty']").val();//可合并数量
+                        var uVersion = $(this).parent().parent().find("input[name='uVersion']").val();//版本号
+                        stockQty = $(this).parent().parent().find("input[name='stockQty']").val();//总库存数
+                        mergeNum = parseInt(mergeNum) + parseInt(mergeQty);
+                        if (mergeQty == '' || mergeQty == 0) {
+                            alert("选中的合并数量不能为空，也不能为0");
+                            flag1 = false;
+                        }
+                        if (parseInt(mergeQty) > parseInt(okQty)) {
+                            alert("合并数量不能大于可合并数量");
+                            flag2 = false;
+                        }
+                        treasuryList[index] = createTreasury(reqDetailId,invSkuId,mergeQty,uVersion);
+                        index = parseInt(index) + parseInt(1);
+					}
+                });
+                console.info("treasuryList:" + treasuryList);
+				map[key] = treasuryList;
+				if (mergeNum != 0) {
+					mergeList.push(mergeNum);
+				}
+                if (!flag) {
+                    alert("请至少勾选一条备货单详情");
+                    return false;
+                }
+				if (parseInt(mergeNum) > parseInt(stockQty)) {
+				    alert("每个尺寸合并的数量不能大于对应的总库存数");
+				    flag3 = false;
+				}
+            });
+            console.info("mergeList:" + mergeList);
+            for (var i=0; i < mergeList.length; i++) {
+                if (i != (parseInt(mergeList.length) - parseInt(1))) {
+                    if (mergeList[i] != mergeList[parseInt(i)+parseInt(1)]) {
+                        alert("各个尺寸选中的合并数量不相等");
+                        flag4 = false;
+                        break;
+                    }
+                }
+            }
+			console.info("flag:"+flag+",flag2:"+flag2+",flag3:"+flag3+",flag4:"+flag4);
+            console.info("map:" + JSON.stringify(map));
+            if(window.confirm('你确定要合并吗？')) {
+                if (flag && flag1 && flag2 && flag3 && flag4) {
+                    $Mask.AddLogo("正在加载");
+                    $.ajax({
+						type:"post",
+                        contentType: 'application/json',
+						url:"${ctx}/biz/inventory/bizInventorySku/skuMerge",
+						data:JSON.stringify(map),
+						success:function (data) {
+							alert(data);
+							window.location.href = "${ctx}/biz/inventory/bizInventorySku?zt=2";
+                        },
+                        error:function (data) {
+						    alert(data);
+							console.log(data);
+                        }
+					});
+                }
+            }
+        }
 	</script>
 </head>
 <body>
@@ -125,6 +152,7 @@
 	<form:form id="inputForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/skuSplit" method="post" class="form-horizontal">
 		<sys:message content="${message}"/>
         <form:hidden path="id"/>
+		<input id="invInfoId" type="hidden" value="${inventorySku.invInfo.id}"/>
 		<div class="control-group">
 			<label class="control-label">备货单信息：</label>
 			<div class="controls">
@@ -140,14 +168,16 @@
 						<th>备货方</th>
 						<th>备货单库存数量</th>
 						<th>已出库数量</th>
-						<th>可拆分数量</th>
+						<th>可合并数量</th>
 						<th>库存总数</th>
 						<th>所属仓库</th>
-						<th>拆分数量</th>
+						<th>合并数量</th>
 					</tr>
 					</thead>
 					<tbody id="invReq">
+						<input id="reqMap" type="hidden" value="${reqMap}"/>
 						<c:forEach items="${reqMap}" var="req">
+							<input name="reqKey" type="hidden" value="${req.key}"/>
 						<c:forEach items="${req.value}" var="requestDetail" varStatus="i">
 							<c:if test="${inventorySku.invInfo.id == requestDetail.inventorySku.invInfo.id}">
 							<tr>
@@ -163,7 +193,7 @@
 								<td>${requestDetail.recvQty - requestDetail.outQty}</td>
 								<td>${requestDetail.inventorySku.stockQty}</td>
 								<td>${requestDetail.inventorySku.invInfo.name}</td>
-								<td><input type="number" min="0" name="mergeQty" value="0" class="input-mini"/></td>
+								<td><input name="req_${req.key}" type="hidden" value="${req.key}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini"/></td>
 								<input name="okQty" value="${requestDetail.recvQty - requestDetail.outQty}" type="hidden"/>
 								<input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
 								<input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>
@@ -172,14 +202,14 @@
 							</tr>
 							</c:if>
 						</c:forEach>
-						<HR align=center width=100% color=#987cb9 SIZE=1>
+							<tr><td colspan="13"><HR align=center width=100% color=#987cb9 SIZE=1></td></tr>
 						</c:forEach>
 					</tbody>
 				</table>
 			</div>
 		</div>
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" onclick="merge()" value="合 并"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>

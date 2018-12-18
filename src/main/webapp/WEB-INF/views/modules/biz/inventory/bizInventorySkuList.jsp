@@ -63,7 +63,6 @@
                 data:{"id":invSkuId},
                 success:function (data) {
                     if (data == 'merge_sku_one' || data == 'merge_sku_two') {
-                        alert(data);
                         window.location.href = "${ctx}/biz/inventory/bizInventorySku/skuMergeForm?id=" + invSkuId + "&range=" + data;
                     } else {
                         alert(data);

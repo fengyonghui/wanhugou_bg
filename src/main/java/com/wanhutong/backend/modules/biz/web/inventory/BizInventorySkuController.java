@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventory;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -89,6 +90,7 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -801,6 +803,18 @@ public class BizInventorySkuController extends BaseController {
         model.addAttribute("reqMap",reqMap);
         model.addAttribute("inventorySku",inventorySku);
         return "modules/biz/inventory/skuMergeForm";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "skuMerge")
+    public String skuMerge(@RequestBody String data) {
+        LinkedHashMap<String,List<BizOutTreasuryEntity>> map = Maps.newLinkedHashMap();
+        JSONObject jsonObject = JsonUtil.parseJson(data);
+        for (Map.Entry<String,Object> entry : jsonObject.entrySet()) {
+            List<BizOutTreasuryEntity> parseArray = JsonUtil.parseArray(entry.getValue().toString(),new TypeReference<List<BizOutTreasuryEntity>>() {});
+            map.put(entry.getKey(),parseArray);
+        }
+        return bizInventorySkuService.skuMerge(map);
     }
 
 }

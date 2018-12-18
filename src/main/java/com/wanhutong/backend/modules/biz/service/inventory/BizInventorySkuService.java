@@ -69,6 +69,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -772,6 +774,173 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			transferDetailService.save(bizSkuTransferDetail);
 		}
 		return "拆分完成";
+	}
+
+	/**
+	 * 取map最后一个元素
+	 * @param map
+	 * @param <K>
+	 * @param <V>
+	 * @return
+	 */
+	public <K, V> Map.Entry<K, V> getTail(LinkedHashMap<K, V> map) {
+		Iterator<Map.Entry<K, V>> iterator = map.entrySet().iterator();
+		Map.Entry<K, V> tail = null;
+		while (iterator.hasNext()) {
+			tail = iterator.next();
+		}
+		return tail;
+	}
+
+	/**
+	 * 商品合并
+	 * @param map
+	 * @return
+	 */
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
+	public String skuMerge(LinkedHashMap<String,List<BizOutTreasuryEntity>> map) {
+		if (map.isEmpty() || map.size() < 2) {
+			return "没有选择合并的商品";
+		}
+		Map.Entry<String, List<BizOutTreasuryEntity>> tail = getTail(map);
+		String mergeSize = "";
+		for (String size : map.keySet()) {
+			if (!tail.getKey().equals(size)) {
+				mergeSize = mergeSize.concat(size).concat("-");
+			}
+			if (tail.getKey().equals(size)) {
+				mergeSize = mergeSize.concat(size);
+			}
+		}
+		String before = "";
+		String suffix = "";
+		String after = "";
+		for (Map.Entry<String,List<BizOutTreasuryEntity>> entry : map.entrySet()) {
+			for (BizOutTreasuryEntity entity : entry.getValue()) {
+				BizRequestDetail requestDetail = bizRequestDetailService.get(entity.getReqDetailId());
+				String itemNo = requestDetail.getSkuInfo().getItemNo();
+				before = itemNo.substring(0,itemNo.indexOf("/") + 1);
+				String middle = itemNo.substring(itemNo.indexOf("/") + 1,itemNo.lastIndexOf("/"));
+				after = itemNo.substring(itemNo.lastIndexOf("/"));
+				suffix = middle.substring(2);
+				break;
+			}
+		}
+		String mergeItemNo = before.concat(mergeSize).concat(suffix).concat(after);
+		BizSkuInfo mergeSku = bizSkuInfoService.getSkuByItemNo(mergeItemNo);
+		Integer mergeSumNum = 0;//合并总数
+		Integer skuType = 0;//合并商品的库存类型
+		Integer invType = 0;//合并商品的库存商品类型
+		BizInventoryInfo inventoryInfo = new BizInventoryInfo();//合并商品所属仓库
+		if (mergeSku == null) {
+			return "没有货号为:"+mergeItemNo+"的商品";
+		}
+		for(Map.Entry<String,List<BizOutTreasuryEntity>> entry : map.entrySet()) {
+			Integer size = Integer.valueOf(entry.getKey());
+			List<BizOutTreasuryEntity> treasuryList = entry.getValue();
+			if (CollectionUtils.isNotEmpty(treasuryList)) {
+				mergeSumNum = 0;//初始化合并总数
+				BizInventorySku bizInventorySku = new BizInventorySku();
+				BizRequestHeader requestHeader = new BizRequestHeader();
+				for (BizOutTreasuryEntity treasuryEntity : treasuryList) {
+					Integer reqDetailId = treasuryEntity.getReqDetailId();
+					Integer mergeNum = treasuryEntity.getOutQty();
+					Integer uVersion = treasuryEntity.getuVersion();
+					Integer invSkuId = treasuryEntity.getInvSkuId();
+					mergeSumNum += mergeNum;
+					BizRequestDetail requestDetail = bizRequestDetailService.get(reqDetailId);
+					requestHeader = requestDetail.getRequestHeader();
+					bizInventorySku = get(invSkuId);
+					skuType = bizInventorySku.getSkuType();
+					invType = bizInventorySku.getInvType();
+					inventoryInfo = bizInventorySku.getInvInfo();
+					if (!uVersion.equals(bizInventorySku.getuVersion())) {
+						return "有其他人正在操作库存，请稍后再进行操作";
+					}
+					if ((requestDetail.getOutQty() == null ? 0 : requestDetail.getOutQty()) + mergeNum > requestDetail.getRecvQty()) {
+						return "合并数量不能超过可合并数量";
+					}
+					if (bizInventorySku.getStockQty() < mergeNum) {
+						return "合并数量不能大于库存数";
+					}
+					bizRequestDetailService.updateOutQty(requestDetail.getId(),(requestDetail.getOutQty() == null ? 0 : requestDetail.getOutQty()) + mergeNum);
+				}
+				//原商品变更库存,生成记录
+				Integer oldOutStockNum = bizInventorySku.getStockQty();
+				updateStockQty(bizInventorySku,bizInventorySku.getStockQty() - mergeSumNum);
+				BizInventoryViewLog outLog = new BizInventoryViewLog();
+				outLog.setInvInfo(bizInventorySku.getInvInfo());
+				outLog.setInvType(bizInventorySku.getInvType());
+				outLog.setSkuInfo(bizInventorySku.getSkuInfo());
+				outLog.setStockQty(oldOutStockNum);
+				outLog.setStockChangeQty(-mergeSumNum);
+				outLog.setNowStockQty(oldOutStockNum - mergeSumNum);
+				outLog.setRequestHeader(requestHeader);
+				bizInventoryViewLogService.save(outLog);
+			}
+		}
+		//合并后的商品变更库存，生成记录
+		BizInventorySku bizInventorySku = new BizInventorySku();
+		bizInventorySku.setSkuType(skuType);
+		bizInventorySku.setInvType(invType);
+		bizInventorySku.setSkuInfo(mergeSku);
+		bizInventorySku.setInvInfo(inventoryInfo);
+		List<BizInventorySku> inventorySkus = findList(bizInventorySku);
+		//增加变更后的商品库存
+		if (CollectionUtils.isEmpty(inventorySkus)) {
+			BizInventorySku invSku = new BizInventorySku();
+			invSku.setInvInfo(inventoryInfo);
+			invSku.setSkuInfo(mergeSku);
+			invSku.setInvType(invType);
+			invSku.setStockQty(mergeSumNum);
+			invSku.setSkuType(skuType);
+			saveOnly(invSku);
+		}
+		Integer oldInStockNum = 0;
+		BizInventorySku inventorySku = new BizInventorySku();
+		if (CollectionUtils.isNotEmpty(inventorySkus)) {
+			inventorySku = inventorySkus.get(0);
+			if (BizInventorySku.DEL_FLAG_DELETE.equals(inventorySku.getDelFlag())) {
+				updateStockQty(inventorySkus.get(0), mergeSumNum);
+			}
+			if (BizInventorySku.DEL_FLAG_NORMAL.equals(inventorySku.getDelFlag())) {
+				oldInStockNum = inventorySku.getStockQty();
+				updateStockQty(inventorySku, inventorySku.getStockQty() + mergeSumNum);
+			}
+		}
+		//生成库存变更记录
+		BizInventoryViewLog inLog = new BizInventoryViewLog();
+		inLog.setInvInfo(inventoryInfo);
+		inLog.setInvType(invType);
+		inLog.setSkuInfo(mergeSku);
+		inLog.setStockQty(oldInStockNum);
+		inLog.setStockChangeQty(mergeSumNum);
+		inLog.setNowStockQty(oldInStockNum + mergeSumNum);
+		bizInventoryViewLogService.save(inLog);
+		//生成合并单
+		BizSkuTransfer skuTransfer = new BizSkuTransfer();
+		int s = transferDao.findCountByToCent(inventorySku.getInvInfo().getId());
+		String transferNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.REM, inventorySku.getInvInfo().getCustomer().getId(), inventorySku.getInvInfo().getCustomer().getId(), s + 1);
+		skuTransfer.setTransferNo(transferNo);
+		skuTransfer.setFromInv(inventorySku.getInvInfo());
+		skuTransfer.setToInv(inventorySku.getInvInfo());
+		skuTransfer.setApplyer(UserUtils.getUser());
+		skuTransfer.setBizStatus(TransferStatusEnum.ALREADY_IN_WAREHOUSE.getState().byteValue());
+		skuTransfer.setRecvEta(new Date());
+		skuTransfer.setRemark("库存商品合并");
+		transferService.saveOnly(skuTransfer);
+		BizSkuTransferDetail bizSkuTransferDetail = new BizSkuTransferDetail();
+		bizSkuTransferDetail.setTransfer(skuTransfer);
+		bizSkuTransferDetail.setSkuInfo(mergeSku);
+		bizSkuTransferDetail.setTransQty(mergeSumNum);
+		bizSkuTransferDetail.setFromInvOp(UserUtils.getUser());
+		bizSkuTransferDetail.setFromInvOpTime(new Date());
+		bizSkuTransferDetail.setToInvOp(UserUtils.getUser());
+		bizSkuTransferDetail.setToInvOpTime(new Date());
+		bizSkuTransferDetail.setOutQty(mergeSumNum);
+		bizSkuTransferDetail.setInQty(mergeSumNum);
+		transferDetailService.save(bizSkuTransferDetail);
+		return "合并成功";
 	}
 
 }
