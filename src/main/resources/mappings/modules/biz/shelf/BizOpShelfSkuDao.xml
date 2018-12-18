@@ -157,6 +157,9 @@
 				<if test="dbName == 'mssql'">'%'+#{opShelfInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{opShelfInfo.name},'%')</if>
 			</if>
+			<if test="orderDetailForm == 'orderDetailForm'">
+				AND (a.unshelf_time IS NULL or a.unshelf_time > NOW())
+			</if>
 
 			<if test="sqlMap != null and sqlMap.shelfSku != null and sqlMap.shelfSku != ''">
 				${sqlMap.shelfSku}
