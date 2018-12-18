@@ -429,6 +429,7 @@
     <form:hidden id="skuNameCopy" path="skuInfo.name"/>
     <form:hidden id="skuCodeCopy" path="skuInfo.partNo"/>
     <form:hidden id="itemNoCopy" path="skuInfo.itemNo"/>
+    <form:hidden id="orderDetailForm" path="orderDetailForm" value="orderDetailForm"/>
 </form:form>
 <form:form id="searchPurseForm" modelAttribute="bizSkuInfo" >
     <input type="hidden" id="bizSkuNameCopy" name="name" value="${name}"/>
