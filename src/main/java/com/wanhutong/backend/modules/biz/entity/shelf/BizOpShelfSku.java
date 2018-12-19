@@ -87,6 +87,11 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
      */
 	private BigDecimal commissionRatio;
 
+	/**
+	 * 订单详情搜索商品标识符
+	 */
+	private String orderDetailForm;
+
 	public BizOpShelfSku() {
 		super();
 	}
@@ -330,4 +335,12 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
     public void setCommissionRatio(BigDecimal commissionRatio) {
         this.commissionRatio = commissionRatio;
     }
+
+	public String getOrderDetailForm() {
+		return orderDetailForm;
+	}
+
+	public void setOrderDetailForm(String orderDetailForm) {
+		this.orderDetailForm = orderDetailForm;
+	}
 }

@@ -296,6 +296,7 @@
             <label class="control-label">代销商/经销商收款人:</label>
             <div class="controls">
                 <form:input path="bizCustomerInfo.payee" htmlEscape="false" maxlength="50" cssClass="required"/>
+                <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>
         <div class="control-group">
