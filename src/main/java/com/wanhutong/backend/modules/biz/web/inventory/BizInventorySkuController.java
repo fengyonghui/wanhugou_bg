@@ -25,6 +25,7 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransferDetail;
 import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
@@ -36,6 +37,7 @@ import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSkuTransferDetailService;
 import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
@@ -137,6 +139,8 @@ public class BizInventorySkuController extends BaseController {
     private BizPoHeaderService bizPoHeaderService;
     @Autowired
     private BizSendGoodsRecordService bizSendGoodsRecordService;
+    @Autowired
+    private BizSkuTransferDetailService bizSkuTransferDetailService;
 
     @ModelAttribute
     public BizInventorySku get(@RequestParam(required = false) Integer id) {
@@ -734,8 +738,10 @@ public class BizInventorySkuController extends BaseController {
     @RequestMapping(value = "skuSplitForm")
     public String skuSplitForm(BizInventorySku inventorySku,Model model) {
         List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInventorySkuByskuIdAndcentId(inventorySku.getInvInfo().getCustomer().getId(),inventorySku.getSkuInfo().getId());
+        List<BizSkuTransferDetail> transferDetailList = bizSkuTransferDetailService.findInventorySkuByskuIdAndcentId(inventorySku.getInvInfo().getCustomer().getId(),inventorySku.getSkuInfo().getId());
         model.addAttribute("inventorySku",inventorySku);
         model.addAttribute("requestDetailList",requestDetailList);
+        model.addAttribute("transferDetailList",transferDetailList);
         return "modules/biz/inventory/skuSplitForm";
     }
 
@@ -789,18 +795,24 @@ public class BizInventorySkuController extends BaseController {
         String middle = itemNo.substring(itemNo.indexOf("/") + 1,itemNo.lastIndexOf("/"));
         String after = itemNo.substring(itemNo.lastIndexOf("/"));
         Map<Integer,List<BizRequestDetail>> reqMap = Maps.newHashMap();
+        Map<Integer,List<BizSkuTransferDetail>> transMap = Maps.newHashMap();
         List<Dict> dictList = DictUtils.getDictList(range);
         for (Dict dict : dictList) {
             String s = before.concat(dict.getValue()).concat(middle.substring(2)).concat(after);
             BizSkuInfo sku = bizSkuInfoService.getSkuByItemNo(s);
             if (sku != null) {
                 List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInventorySkuByskuIdAndcentId(inventorySku.getInvInfo().getCustomer().getId(),sku.getId());
+                List<BizSkuTransferDetail> transferDetailList = bizSkuTransferDetailService.findInventorySkuByskuIdAndcentId(inventorySku.getInvInfo().getCustomer().getId(), sku.getId());
                 if (CollectionUtils.isNotEmpty(requestDetailList)) {
                     reqMap.put(Integer.valueOf(dict.getValue()),requestDetailList);
+                }
+                if (CollectionUtils.isNotEmpty(transferDetailList)) {
+                    transMap.put(Integer.valueOf(dict.getValue()),transferDetailList);
                 }
             }
         }
         model.addAttribute("reqMap",reqMap);
+        model.addAttribute("transMap",transMap);
         model.addAttribute("inventorySku",inventorySku);
         return "modules/biz/inventory/skuMergeForm";
     }

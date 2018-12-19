@@ -215,11 +215,12 @@
 		LEFT JOIN biz_sku_transfer bst ON bst.id = a.transfer_id
 		LEFT JOIN biz_sku_info bsi ON bsi.id = a.sku_id
 		LEFT JOIN biz_product_info bpi ON bpi.id = bsi.prod_id
-		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsi.id
-		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		LEFT JOIN biz_inventory_info bii ON bii.id = bst.to_inv
+		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsi.id and bis.inv_id = bii.id
 		WHERE a.status = 1
 		AND bst.status = 1
 		AND (bst.biz_status = 40 or bst.biz_status = 50)
+		AND a.sent_qty &lt; a.in_qty
 		AND bis.status = 1
 		AND bii.cust_id = #{centId}
 		AND bsi.id = #{skuId}

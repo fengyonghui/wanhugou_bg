@@ -29,6 +29,7 @@
                         flag = true;
                         splitQtySum = parseInt(splitQtySum) + parseInt(splitQty);
                         var reqDetailId = $(this).parent().parent().find("input[name='reqDetailId']").val();//备货单详情ID
+                        var transferDetailId = $(this).parent().parent().find("input[name='transferDetailId']").val();//调拨单详情ID
                         var invSkuId = $(this).parent().parent().find("input[name='invSkuId']").val();//库存ID
                         var splitQty = $(this).parent().parent().find("input[name='splitQty']").val();//拆分数量
                         var okQty = $(this).parent().parent().find("input[name='okQty']").val();//可拆分数量
@@ -42,7 +43,7 @@
                             alert("拆分数量不能大于可拆分数量");
                             flag2 = false;
                         }
-                        treasuryList[i] = createTreasury(reqDetailId,invSkuId,splitQty,uVersion);
+                        treasuryList[i] = createTreasury(reqDetailId,transferDetailId,invSkuId,splitQty,uVersion);
                     });
                     console.info(JSON.stringify(treasuryList));
                     if (parseInt(splitQtySum) > parseInt(stockQty)) {
@@ -65,10 +66,10 @@
                                 success:function (data) {
                                     if (data=='error') {
                                         alert("拆分失败，没有选择拆分数据");
-                                        window.location.href = "${ctx}/biz/inventory/bizInventorySku";
+                                        window.location.href = "${ctx}/biz/inventory/bizInventorySku?zt=2";
                                     } else {
                                         alert("拆分成功");
-                                        window.location.href = "${ctx}/biz/inventory/bizInventorySku";
+                                        window.location.href = "${ctx}/biz/inventory/bizInventorySku?zt=2";
                                     }
                                 }
                             });
@@ -107,9 +108,10 @@
             }
         }
 
-        function createTreasury(reqDetailId,invSkuId,splitQty,uVersion) {
+        function createTreasury(reqDetailId,transferDetailId,invSkuId,splitQty,uVersion) {
             var treasury = new Object();
             treasury.reqDetailId = reqDetailId;
+            treasury.transferDetailId = transferDetailId;
             treasury.invSkuId = invSkuId;
             treasury.outQty = splitQty;
             treasury.uVersion = uVersion;
@@ -119,7 +121,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/inventory/bizInventorySku/">商品库存详情列表</a></li>
+		<li><a href="${ctx}/biz/inventory/bizInventorySku?zt=2">商品库存详情列表</a></li>
 		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku/skuSplitForm?id=${inventorySku.id}">商品库存拆分</a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/skuSplit" method="post" class="form-horizontal">
@@ -132,7 +134,7 @@
 					<thead>
 					<tr>
 						<th><input id="chAll" name="reqDetails" type="checkbox"/></th>
-						<th>备货单号</th>
+						<th>备货单号/调拨单号</th>
 						<th>商品名称</th>
 						<th>供应商</th>
 						<th>商品货号</th>
@@ -162,13 +164,37 @@
 								<td>${requestDetail.recvQty - requestDetail.outQty}</td>
 								<td>${requestDetail.inventorySku.stockQty}</td>
 								<td>${requestDetail.inventorySku.invInfo.name}</td>
-								<td><input type="number" min="0" name="splitQty" value="0" class="input-mini"/></td>
+								<td><input type="number" min="0" name="splitQty" value="0" class="input-mini required"/></td>
 								<input name="okQty" value="${requestDetail.recvQty - requestDetail.outQty}" type="hidden"/>
 								<input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
 								<input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>
 								<input name="uVersion" value="${requestDetail.inventorySku.uVersion}" type="hidden"/>
 								<input name="stockQty" value="${requestDetail.inventorySku.stockQty}" type="hidden"/>
 							</tr>
+							</c:if>
+						</c:forEach>
+						<c:forEach items="${transferDetailList}" var="transferDetail">
+							<c:if test="${inventorySku.invInfo.id == transferDetail.inventorySku.invInfo.id}">
+								<tr>
+									<td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
+									<td>${transferDetail.transfer.transferNo}</td>
+									<td>${transferDetail.skuInfo.name}</td>
+									<td>${transferDetail.skuInfo.vendorName}</td>
+									<td>${transferDetail.skuInfo.itemNo}</td>
+									<td>${fns:getDictLabel(transferDetail.inventorySku.invType,'inv_type','')}</td>
+									<td>${fns:getDictLabel(transferDetail.inventorySku.skuType,'inventory_sku_type','')}</td>
+									<td>${transferDetail.inQty}</td>
+									<td>${transferDetail.sentQty == null ? "0" : transferDetail.sentQty}</td>
+									<td>${transferDetail.inQty - transferDetail.sentQty}</td>
+									<td>${transferDetail.inventorySku.stockQty}</td>
+									<td>${transferDetail.inventorySku.invInfo.name}</td>
+									<td><input type="number" min="0" name="splitQty" value="0" class="input-mini required"/></td>
+									<input name="okQty" value="${transferDetail.inQty - transferDetail.sentQty}" type="hidden"/>
+									<input name="transferDetailId" value="${transferDetail.id}" type="hidden"/>
+									<input name="invSkuId" value="${transferDetail.inventorySku.id}" type="hidden"/>
+									<input name="uVersion" value="${transferDetail.inventorySku.uVersion}" type="hidden"/>
+									<input name="stockQty" value="${transferDetail.inventorySku.stockQty}" type="hidden"/>
+								</tr>
 							</c:if>
 						</c:forEach>
 					</tbody>

@@ -684,15 +684,21 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		BizRequestHeader requestHeader = new BizRequestHeader();
 		for (BizOutTreasuryEntity skuSplit : skuSplitList) {
 			Integer reqDetailId = skuSplit.getReqDetailId();
+			Integer transferDetailId = skuSplit.getTransferDetailId();
 			Integer splitNum = skuSplit.getOutQty();
 			Integer invSkuId = skuSplit.getInvSkuId();
 			Integer uVersion = skuSplit.getuVersion();
 			if (!uVersion.equals(get(invSkuId).getuVersion())) {
 				return "有其他人正在拆分，请刷新后查看";
 			}
-			bizRequestDetailService.updateOutQty(reqDetailId, (bizRequestDetailService.get(reqDetailId).getOutQty() == null ? 0 : bizRequestDetailService.get(reqDetailId).getOutQty()) + splitNum);
+			if (reqDetailId != null) {
+				bizRequestDetailService.updateOutQty(reqDetailId, (bizRequestDetailService.get(reqDetailId).getOutQty() == null ? 0 : bizRequestDetailService.get(reqDetailId).getOutQty()) + splitNum);
+				requestHeader = bizRequestDetailService.get(reqDetailId).getRequestHeader();
+			}
+			if (transferDetailId != null) {
+				transferDetailService.updateSentQty(transferDetailId,transferDetailService.get(transferDetailId).getSentQty() + splitNum);
+			}
 			inventorySku = get(invSkuId);
-			requestHeader = bizRequestDetailService.get(reqDetailId).getRequestHeader();
 			itemNo = inventorySku.getSkuInfo().getItemNo();
 			splitNumSum += splitNum;
 		}
@@ -817,12 +823,23 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		String after = "";
 		for (Map.Entry<String,List<BizOutTreasuryEntity>> entry : map.entrySet()) {
 			for (BizOutTreasuryEntity entity : entry.getValue()) {
-				BizRequestDetail requestDetail = bizRequestDetailService.get(entity.getReqDetailId());
-				String itemNo = requestDetail.getSkuInfo().getItemNo();
-				before = itemNo.substring(0,itemNo.indexOf("/") + 1);
-				String middle = itemNo.substring(itemNo.indexOf("/") + 1,itemNo.lastIndexOf("/"));
-				after = itemNo.substring(itemNo.lastIndexOf("/"));
-				suffix = middle.substring(2);
+				String itemNo = "";
+				if (entity.getReqDetailId() != null) {
+					BizRequestDetail requestDetail = bizRequestDetailService.get(entity.getReqDetailId());
+					itemNo = requestDetail.getSkuInfo().getItemNo();
+					before = itemNo.substring(0,itemNo.indexOf("/") + 1);
+					String middle = itemNo.substring(itemNo.indexOf("/") + 1,itemNo.lastIndexOf("/"));
+					after = itemNo.substring(itemNo.lastIndexOf("/"));
+					suffix = middle.substring(2);
+				}
+				if (entity.getTransferDetailId() != null) {
+					BizSkuTransferDetail bizSkuTransferDetail = transferDetailService.get(entity.getTransferDetailId());
+					itemNo = bizSkuTransferDetail.getSkuInfo().getItemNo();
+					before = itemNo.substring(0,itemNo.indexOf("/") + 1);
+					String middle = itemNo.substring(itemNo.indexOf("/") + 1,itemNo.lastIndexOf("/"));
+					after = itemNo.substring(itemNo.lastIndexOf("/"));
+					suffix = middle.substring(2);
+				}
 				break;
 			}
 		}
@@ -836,20 +853,27 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			return "没有货号为:"+mergeItemNo+"的商品";
 		}
 		for(Map.Entry<String,List<BizOutTreasuryEntity>> entry : map.entrySet()) {
-			Integer size = Integer.valueOf(entry.getKey());
 			List<BizOutTreasuryEntity> treasuryList = entry.getValue();
 			if (CollectionUtils.isNotEmpty(treasuryList)) {
 				mergeSumNum = 0;//初始化合并总数
 				BizInventorySku bizInventorySku = new BizInventorySku();
 				BizRequestHeader requestHeader = new BizRequestHeader();
+				BizRequestDetail requestDetail = new BizRequestDetail();
+				BizSkuTransferDetail bizSkuTransferDetail = new BizSkuTransferDetail();
 				for (BizOutTreasuryEntity treasuryEntity : treasuryList) {
 					Integer reqDetailId = treasuryEntity.getReqDetailId();
+					Integer transferDetailId = treasuryEntity.getTransferDetailId();
 					Integer mergeNum = treasuryEntity.getOutQty();
 					Integer uVersion = treasuryEntity.getuVersion();
 					Integer invSkuId = treasuryEntity.getInvSkuId();
 					mergeSumNum += mergeNum;
-					BizRequestDetail requestDetail = bizRequestDetailService.get(reqDetailId);
-					requestHeader = requestDetail.getRequestHeader();
+					if (reqDetailId != null) {
+						requestDetail = bizRequestDetailService.get(reqDetailId);
+						requestHeader = requestDetail.getRequestHeader();
+					}
+					if (transferDetailId != null) {
+						bizSkuTransferDetail = transferDetailService.get(transferDetailId);
+					}
 					bizInventorySku = get(invSkuId);
 					skuType = bizInventorySku.getSkuType();
 					invType = bizInventorySku.getInvType();
@@ -857,13 +881,21 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 					if (!uVersion.equals(bizInventorySku.getuVersion())) {
 						return "有其他人正在操作库存，请稍后再进行操作";
 					}
-					if ((requestDetail.getOutQty() == null ? 0 : requestDetail.getOutQty()) + mergeNum > requestDetail.getRecvQty()) {
+					if (reqDetailId != null && (requestDetail.getOutQty() == null ? 0 : requestDetail.getOutQty()) + mergeNum > requestDetail.getRecvQty()) {
+						return "合并数量不能超过可合并数量";
+					}
+					if (transferDetailId != null && (bizSkuTransferDetail.getSentQty() == null ? 0 : bizSkuTransferDetail.getSentQty()) + mergeNum > bizSkuTransferDetail.getInQty()) {
 						return "合并数量不能超过可合并数量";
 					}
 					if (bizInventorySku.getStockQty() < mergeNum) {
 						return "合并数量不能大于库存数";
 					}
-					bizRequestDetailService.updateOutQty(requestDetail.getId(),(requestDetail.getOutQty() == null ? 0 : requestDetail.getOutQty()) + mergeNum);
+					if (transferDetailId != null) {
+						transferDetailService.updateSentQty(transferDetailId,(bizSkuTransferDetail.getSentQty() == null ? 0 : bizSkuTransferDetail.getSentQty()) + mergeNum);
+					}
+					if (reqDetailId != null) {
+						bizRequestDetailService.updateOutQty(reqDetailId, (requestDetail.getOutQty() == null ? 0 : requestDetail.getOutQty()) + mergeNum);
+					}
 				}
 				//原商品变更库存,生成记录
 				Integer oldOutStockNum = bizInventorySku.getStockQty();
