@@ -235,7 +235,9 @@ public class BizProductInfoV3Controller extends BaseController {
         attributeValue.setObjectName(AttributeInfoV2.Level.PRODUCT.getTableName());
         List<AttributeValueV2> attributeValueList = attributeValueV2Service.findList(attributeValue);
         for (AttributeValueV2 a : attributeValueList) {
-            bizProductInfo.setTextureStr(a.getValue());
+            if (VarietyAttrEnum.NOT_VARIETY_ATTR.contains(a.getAttributeInfo().getId())) {
+                bizProductInfo.setTextureStr(a.getValue());
+            }
         }
 
 
