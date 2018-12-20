@@ -112,11 +112,11 @@
 
 				<shiro:hasPermission name="biz:po:sure:bizPoPaymentOrder">
 					<c:if test="${fromPage == 'requestHeader' && bizPoPaymentOrder.total == '0.00' && (requestHeader == null || requestHeader.bizStatus < ReqHeaderStatusEnum.CLOSE.state)}">
-						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认支付金额</a>
+						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认aa支付金额</a>
 					</c:if>
 
 					<c:if test="${fromPage == 'orderHeader' && bizPoPaymentOrder.total == '0.00'}">
-						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认支付金额</a>
+						<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认bb支付金额</a>
 					</c:if>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
