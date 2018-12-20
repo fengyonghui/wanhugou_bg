@@ -650,6 +650,8 @@
             addTotalExpSaveButton += "<input id='totalExpDivSave' class='btn btn-primary' type='button' onclick='saveOrderExp()' value='保存'/>&nbsp;</div>";
 
             totalExpDiv.append(addTotalExpSaveButton);
+
+            $("#addTotalExp").hide();
         }
 
         function removeExp(obj) {
@@ -659,6 +661,7 @@
 
             if (addTotalExpList.length == '0') {
                 $("#totalExpDivSaveDiv").remove();
+                $("#addTotalExp").show();
             }
         }
 

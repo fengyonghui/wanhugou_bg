@@ -224,7 +224,7 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 						int currentType = b.getCommonProcess().getPaymentOrderProcess().getCode();
 						PaymentOrderProcessConfig.Process currentProcess = paymentOrderProcessConfig.getProcessMap().get(Integer.valueOf(currentType));
 						BigDecimal money = b.getTotal();
-						if (money.compareTo(BigDecimal.ZERO) > 0) {
+						if (currentType != 666 && currentType !=-1 && money.compareTo(BigDecimal.ZERO) > 0) {
 							List<PaymentOrderProcessConfig.MoneyRole> moneyRoleList = currentProcess.getMoneyRole();
 							PaymentOrderProcessConfig.MoneyRole moneyRole = null;
 							for (PaymentOrderProcessConfig.MoneyRole role : moneyRoleList) {
@@ -247,7 +247,7 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 							}
 						}
 					} catch (Exception e) {
-						logger.error("多线程取订单列表失败", e);
+						logger.error("多线程取付款单列表失败", e);
 					} finally {
 						lock.unlock();
 					}

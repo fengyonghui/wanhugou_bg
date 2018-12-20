@@ -51,11 +51,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
   /**
      * 按月获取订单的总金额和订单数量
      *
-     * @param month      月份
+     * @param startDate   起始日期
+     * @param endDate   起始日期
      * @param officeId   机构ID
      * @return 订单统计数据
      */
-    BizOrderStatisticsDto getValidOrderTotalAndCountByCreateTimeMonthOfficeId(@Param("month") String month, @Param("officeId") Integer officeId);
+    BizOrderStatisticsDto getValidOrderTotalAndCountByCreateTimeMonthOfficeId(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("officeId") Integer officeId);
 
     /**
      * 按月获取订单销售额相关的产品信息
@@ -279,19 +280,21 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     /**
      * 用户平台订单统计 根据机构区分
      * @param centerId
-     * @param formatDate
+     * @param startDate
+     * @param endDate
      * @return
      */
-    List<BizOrderStatisticsDto> getJoinPurchaseData(@Param("centerId") Integer centerId, @Param("formatDate") String formatDate);
+    List<BizOrderStatisticsDto> getJoinPurchaseData(@Param("centerId") Integer centerId, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
 
     /**
      * 个人计划跟踪 根据机构区分
      * @param consultantId
-     * @param formatDate
+     * @param startDate
+     * @param endDate
      * @return
      */
-    List<BizOrderStatisticsDto> getJoinPurchaseDataSingle(@Param("consultantId") Integer consultantId, @Param("formatDate") String formatDate);
+    List<BizOrderStatisticsDto> getJoinPurchaseDataSingle(@Param("consultantId") Integer consultantId, @Param("startDate") String startDate, @Param("endDate") String endDate);
     /**
      * 用户平台订单统计 所有数据, 不区分机构
      *

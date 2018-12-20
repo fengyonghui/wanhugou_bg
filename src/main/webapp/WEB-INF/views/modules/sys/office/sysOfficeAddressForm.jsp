@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OfficeTypeEnum" %>
 <html>
 <head>
 	<title>地址信息管理</title>
@@ -29,8 +30,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/sys/office/sysOfficeAddress/list?office.type=6">地址信息列表</a></li>
-		<li class="active"><a href="${ctx}/sys/office/sysOfficeAddress/form?id=${sysOfficeAddress.id}">地址信息<shiro:hasPermission name="sys:office:sysOfficeAddress:edit">${not empty sysOfficeAddress.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:office:sysOfficeAddress:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/sys/office/sysOfficeAddress/list?office.type=${sysOfficeAddress.office.type}&office.customerTypeTen=${sysOfficeAddress.office.customerTypeTen}&office.customerTypeEleven=${sysOfficeAddress.office.customerTypeEleven}&source=${sysOfficeAddress.office.source}">地址信息列表</a></li>
+		<li class="active"><a href="${ctx}/sys/office/sysOfficeAddress/form?id=${sysOfficeAddress.id}office.type=${sysOfficeAddress.office.type}&office.customerTypeTen=${sysOfficeAddress.office.customerTypeTen}&office.customerTypeEleven=${sysOfficeAddress.office.customerTypeEleven}&source=${sysOfficeAddress.office.source}">地址信息<shiro:hasPermission name="sys:office:sysOfficeAddress:edit">${not empty sysOfficeAddress.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:office:sysOfficeAddress:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 
 	<form:form id="inputForm" modelAttribute="sysOfficeAddress" action="${ctx}/sys/office/sysOfficeAddress/save" method="post" class="form-horizontal">
@@ -41,15 +42,20 @@
 		<form:hidden path="office.type"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">经销店名称：</label>
-			<div class="controls">
-				<sys:treeselect id="office" name="office.id" value="${entity.office.id}"  labelName="office.name"
-								labelValue="${entity.office.name}" notAllowSelectParent="true"
-								title="经销店"  url="/sys/office/queryTreeList?type=6"
-								cssClass="input-xlarge required"
-								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
+			<c:if test="${sysOfficeAddress.office.type == OfficeTypeEnum.CUSTOMER.type}">
+				<label class="control-label">经销店名称：</label>
+			</c:if>
+			<c:if test="${sysOfficeAddress.office.type != OfficeTypeEnum.CUSTOMER.type}">
+				<label class="control-label">采购中心：</label>
+			</c:if>
+				<div class="controls">
+					<sys:treeselect id="office" name="office.id" value="${entity.office.id}"  labelName="office.name"
+									labelValue="${entity.office.name}" notAllowSelectParent="true"
+									title="经销店"  url="/sys/office/queryTreeList?type=${sysOfficeAddress.office.type}&customerTypeTen=${sysOfficeAddress.office.customerTypeTen}&customerTypeEleven=${sysOfficeAddress.office.customerTypeEleven}&source=${sysOfficeAddress.office.source}"
+									cssClass="input-xlarge required"
+									allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">地址类型：</label>

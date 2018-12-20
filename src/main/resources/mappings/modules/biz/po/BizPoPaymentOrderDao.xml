@@ -117,6 +117,20 @@
 			<if test="poHeaderId != null and poHeaderId != ''">
 				AND a.po_header_id = #{poHeaderId}
 			</if>
+			<if test="orderNum != null and orderNum != ''">
+				AND (
+				boh.order_num
+					LIKE
+					<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+				OR brh.req_no
+					LIKE
+					<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+				)
+			</if>
 			<if test="total != null and total != ''">
 				AND a.total = #{total}
 			</if>
