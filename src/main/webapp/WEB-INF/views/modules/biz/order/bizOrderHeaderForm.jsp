@@ -66,6 +66,18 @@
             right: -8px;
             top: 0;
         }
+        .addtotalExp{
+            margin-top: 10px;
+        }
+        .addTotalExp_inline {
+            margin-top: 20px;
+        }
+        .addTotalExp_inline_remove_button {
+            margin-top: 12px;
+        }
+        #totalExpDivSaveDiv {
+            margin-top: 10px;
+        }
     </style>
     <script type="text/javascript">
         <%--用于页面按下键盘Backspace键回退页面的问题--%>
@@ -113,7 +125,7 @@
                 $("#bizStatus").attr("disabled", "true");
                 $("#invStatus").attr("disabled", "true");
             }
-            if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state}) {
+            if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state} && !${fns:getUser().isAdmin()}) {
                 $("#totalExp").attr("disabled", "disabled");
             }
 
@@ -252,6 +264,10 @@
             });
             $("#updateMoney").click(function () {
                 updateMoney();
+            });
+
+            $("#addTotalExp").click(function () {
+                addTotalExp();
             });
 
             if ($("#id").val() != "" && $("#bizStatus").val() != "") {
@@ -616,6 +632,72 @@
                 <%--});--%>
             }
         }
+    </script>
+    <script>
+        function addTotalExp() {
+            var totalExpDiv = $("#totalExpDiv");
+            $("#totalExpDivSaveDiv").remove();
+
+            var addTotalExpHtml = "<div><input name='addTotalExp' class='input-xlarge addtotalExp required' type='text' value='0.0'>";
+            addTotalExpHtml += "<span class='help-inline addTotalExp_inline'><font color='red'>*</font></span>";
+            addTotalExpHtml += "<span class='help-inline addTotalExp_inline_remove_button'>";
+            addTotalExpHtml += "<a href='javascript:void(0)' onclick='removeExp(this)'> <span class='icon-minus-sign'/></a>";
+            addTotalExpHtml += "</span></div>"
+
+            totalExpDiv.append(addTotalExpHtml);
+
+            var addTotalExpSaveButton = "<div id='totalExpDivSaveDiv'>";
+            addTotalExpSaveButton += "<input id='totalExpDivSave' class='btn btn-primary' type='button' onclick='saveOrderExp()' value='保存'/>&nbsp;</div>";
+
+            totalExpDiv.append(addTotalExpSaveButton);
+        }
+
+        function removeExp(obj) {
+            obj.parentElement.parentElement.remove();
+
+            var addTotalExpList = $("input[name='addTotalExp']");
+
+            if (addTotalExpList.length == '0') {
+                $("#totalExpDivSaveDiv").remove();
+            }
+        }
+
+        function saveOrderExp() {
+            var amountStr = "";
+            var saveFlag = true;
+            $("#totalExpDiv").find("input[name='addTotalExp']").each(function (index) {
+                var amount = $(this).val();
+                console.log(amount)
+                if (Number(amount) <= 0) {
+                    saveFlag = false;
+                    alert("第" + (index + 1)  + "个新增服务费为0，请修改后保存！");
+                    return false;
+                }
+                amountStr += amount + ",";
+            })
+            if (saveFlag == false) {
+                return false;
+            }
+
+            var orderId = $("#id").val();
+            $.ajax({
+                url:"${ctx}/biz/order/bizOrderTotalexp/batchSave",
+                type:"get",
+                data: {"amountStr": amountStr, "orderId": orderId},
+                contentType:"application/json;charset=utf-8",
+                success:function(result){
+                    if (result == 'ok') {
+                        alert("修改服务费成功！")
+                        window.location.href="${ctx}/biz/order/bizOrderHeader/form?id=" + orderId + "&orderDetails=details&modifyServiceCharge=modifyServiceCharge&statu=${statu}&source=${source}";
+                    } else {
+                        alert("修改服务费失败！")
+                    }
+                }
+            });
+
+
+        }
+
     </script>
     <script type="text/javascript">
         function checkPending(obj,prop) {
@@ -1712,6 +1794,7 @@
     <input id="vendId" type="hidden" value="${entity.sellersId}"/>
     <input id="createPo" type="hidden" value="${createPo}"/>
     <input id="totalPayTotal" type="hidden" value="${totalPayTotal}"/>
+    <input type="hidden" name="modifyServiceCharge" value="${bizOrderHeader.modifyServiceCharge}"/>
     <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
@@ -1788,12 +1871,18 @@
     </c:if>
     <div class="control-group">
         <label class="control-label">调整服务费：</label>
-        <div class="controls">
+        <div class="controls" id="totalExpDiv">
             <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
             <span class="help-inline"><font color="red">*</font></span>
             <c:if test="${bizOrderHeader.flag=='check_pending'}">
                 <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
             </c:if>
+            <shiro:hasPermission name="biz:order:bizOrderTotalexp:edit">
+            <c:if test="${bizOrderHeader.flag !='check_pending' && bizOrderHeader.modifyServiceCharge =='modifyServiceCharge'}">
+                <a href="#" id="addTotalExp"> <span class="icon-plus-sign"/></a>
+            </c:if>
+            </shiro:hasPermission>
+            <%--<br><input name="addTotalExp" class="input-xlarge addtotalExp required" type="text" value="0.0">--%>
         </div>
     </div>
     <div class="control-group">

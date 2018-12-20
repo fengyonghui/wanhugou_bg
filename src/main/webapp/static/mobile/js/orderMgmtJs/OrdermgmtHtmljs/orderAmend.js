@@ -222,9 +222,41 @@
 					var item = res.data.bizOrderHeader;
 					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staPoordNum').val(item.orderNum);//订单编号
-					$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
+					if(res.data.orderType==8){
+						$('#customerName').html('零售用户'+'：');
+					}
+					if(res.data.orderType!=8){
+						$('#customerName').html('经销店名称'+'：');
+					}
 					$('#staRelNum').val(item.customer.name);//经销店名称
-					
+					//结佣状态
+					if(res.data.orderType==8){
+						$('#commission').parent().show();
+					}else{
+						$('#commission').parent().hide();
+					}
+					var comStatusTxt = '';
+					$.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {
+		                	type:"biz_commission_status"
+		                },
+		                dataType: "json",
+		                success: function(res){
+		                	$.each(res,function(i,itemss){
+		                		if(itemss.value==item.commissionStatus){
+		                		 	comStatusTxt = itemss.label 
+		                		}
+		                	})
+		                	$('#commission').val(comStatusTxt);
+						}
+					})					
+					if(res.data.orderType!=8){
+						$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
+					}else{
+						$('#staCoin').parent().hide();
+					}										
 					$('#custId').val(item.customer.id);//经销店id
 					$('#invStatus').val(item.invStatus);//发票状态
 					$('#bizStatus').val(item.bizStatus);//业务状态

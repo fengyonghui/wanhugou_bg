@@ -85,6 +85,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
+		<li><a href="${ctx}/biz/order/bizOrderHeader?statu=${statu}&source=${source}&targetPage=COMMISSION_ORDER">佣金管理列表</a></li>
 		<li class="active"><a href="${ctx}/biz/order/bizCommission/">佣金付款表列表</a></li>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizCommission" action="${ctx}/biz/order/bizCommission/" method="post" class="breadcrumb form-search">
@@ -126,7 +127,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>id</th>
+				<th>序号</th>
 				<th>付款金额</th>
 				<th>实际付款金额</th>
 				<th>代销商</th>
@@ -142,10 +143,10 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizCommission">
+		<c:forEach items="${page.list}" var="bizCommission"  varStatus="state">
 			<tr>
 				<td>
-						${bizCommission.id}
+                        ${state.index+1}
 				</td>
 				<td>
 						${bizCommission.totalCommission}

@@ -79,6 +79,11 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     private String fromPage;
 
+    /**
+     * BizPoPaymentOrder审核按钮控制flag
+     */
+    private Boolean hasRole;
+
     public BizPoPaymentOrder() {
         super();
     }
@@ -286,5 +291,13 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     public void setOption(String option) {
         this.option = option;
+    }
+
+    public Boolean getHasRole() {
+        return hasRole;
+    }
+
+    public void setHasRole(Boolean hasRole) {
+        this.hasRole = hasRole;
     }
 }

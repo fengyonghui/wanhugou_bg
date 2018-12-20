@@ -101,6 +101,16 @@ public class MyPanelController extends BaseController {
             needPutawayCount = myPanelService.getNeedPutawayCount();
         }
 
+        //        采销经理：订单审核；申请付款；付款单审核；备货单审核；待排产；需上架商品
+        tempRole.setEnname(RoleEnNameEnum.MARKETINGMANAGER.getState());
+        if (userRoleList.contains(tempRole)) {
+            waitAuditCount = myPanelService.getOrderWaitAuditCount("采销经理");
+            waitSchedulingCount = myPanelService.getWaitSchedulingCount();
+            reAuditCount = myPanelService.getReAuditCount("2");
+            applyPaymentCount = myPanelService.getApplyPaymentCount();
+            needPutawayCount = myPanelService.getNeedPutawayCount();
+        }
+
 //        财务经理；财务总监；财务总经理：订单审核；备货单审核；
         tempRole.setEnname(RoleEnNameEnum.FINANCE.getState());
         if (userRoleList.contains(tempRole)) {
@@ -214,7 +224,7 @@ public class MyPanelController extends BaseController {
     @RequestMapping(value = {"ddck"})
     public String ddck(RedirectAttributes redirectModel) {
         redirectModel.addAttribute("previousPage", "myPanel");
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?waitOutput=1";
+        return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestAll/list?source=kc&bizStatu=0&ship=xs&needOut=1";
     }
 
     //        发货单入库
@@ -273,6 +283,11 @@ public class MyPanelController extends BaseController {
         }
 //        品类主管：订单审核；申请付款；付款单审核；备货单审核；待排产；需上架商品
         tempRole.setEnname(RoleEnNameEnum.SELECTION_OF_SPECIALIST.getState());
+        if (userRoleList.contains(tempRole)) {
+            return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor?process=2";
+        }
+        //        采销经理：订单审核；申请付款；付款单审核；备货单审核；待排产；需上架商品
+        tempRole.setEnname(RoleEnNameEnum.MARKETINGMANAGER.getState());
         if (userRoleList.contains(tempRole)) {
             return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor?process=2";
         }

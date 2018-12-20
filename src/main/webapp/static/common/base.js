@@ -286,6 +286,9 @@ usingNamespace("Base")["Mask"] =  {
     },
     RemoveLogo: function(){
         $(".loGo").remove();
+    },
+    RemoveContent: function () {
+        $(".loading-mask").remove();
     }
 };
 

@@ -62,6 +62,10 @@
 			var orderDetails=_this.userInfo.orderDetails;
 			var statu=_this.userInfo.statu;
 			var source=_this.userInfo.source;
+			console.log(idd)
+			console.log(orderDetails)
+			console.log(statu)
+			console.log(source)
 			datas={
 				id:idd,
                 orderDetails: orderDetails,
@@ -140,7 +144,7 @@
 					}
 					$('#staRelNum').val(item.customer.name);//经销店名称
 					//结佣状态
-					if(res.data.orderType==res.data.COMMISSION_ORDER){
+					if(res.data.orderType==8){
 						$('#commission').parent().show();
 					}else{
 						$('#commission').parent().hide();
@@ -155,9 +159,9 @@
 		                dataType: "json",
 		                success: function(res){
 		                	$.each(res,function(i,itemss){
-		                		 if(itemss.value==item.commissionStatus){
-		                		 	  comStatusTxt = itemss.label 
-		                		 }
+		                		if(itemss.value==item.commissionStatus){
+		                		 	comStatusTxt = itemss.label
+		                		}
 		                	})
 		                	$('#commission').val(comStatusTxt);
 						}
@@ -167,6 +171,7 @@
 					}else{
 						$('#staCoin').parent().hide();
 					}
+					$('#staRelNum').val(item.customer.name);//经销店名称
 					$('#staPototal').val(item.totalDetail.toFixed(2));//商品总价
 					$('#staAdjustmentMoney').val(item.totalExp);//调整金额
 					$('#staFreight').val(item.freight.toFixed(2));//运费

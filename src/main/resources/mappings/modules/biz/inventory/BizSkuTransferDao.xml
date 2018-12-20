@@ -10,6 +10,7 @@
 		outCent.id AS "fromInv.customer.id",
 		a.to_inv AS "toInv.id",
 		toInv.name AS "toInv.name",
+		inCent.id AS "toInv.customer.id",
 		a.apply_id AS "applyer.id",
 		apply.name AS "applyer.name",
 		a.biz_status AS "bizStatus",

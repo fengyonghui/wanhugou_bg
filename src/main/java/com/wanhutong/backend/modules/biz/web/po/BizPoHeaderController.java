@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.po;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -316,6 +317,22 @@ public class BizPoHeaderController extends BaseController {
         if (roleList.contains(role)) {
             bizPoHeader.setVendOffice(user.getCompany());
         }
+//        try {
+//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
+//            Date date = df.parse(filteringDate);
+//            bizPoHeader.setFilteringDate(date);
+//        } catch (ParseException e) {
+//            LOGGER.error("日期解析失败",e);
+//        }
+//
+//        String filteringDate = ConfigGeneral.SYSTEM_CONFIG.get().getFilteringDate();
+//        try {
+//            Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(filteringDate);
+//            bizPoHeader.setFilteringDate(parse);
+//        } catch (ParseException e) {
+//            LOGGER.error("po list parse data error", e);
+//        }
 
         PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
 
@@ -617,7 +634,6 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeaderMap.put("poDetailList", bizPoHeader.getPoDetailList());
         bizPoHeaderMap.put("bizPoPaymentOrder", bizPoHeader.getBizPoPaymentOrder());
 
-
         Map<String, Object> bizOrderHeaderMap = Maps.newHashMap();
         bizOrderHeaderMap.put("id",bizOrderHeader == null ? StringUtils.EMPTY : bizOrderHeader.getId());
         bizOrderHeaderMap.put("orderNumber", bizOrderHeader == null ? StringUtils.EMPTY :bizOrderHeader.getOrderNum());
@@ -626,10 +642,7 @@ public class BizPoHeaderController extends BaseController {
         resultMap.put("bizOrderHeader", bizOrderHeaderMap);
         resultMap.put("type", type);
         resultMap.put("prewStatus", prewStatus);
-
-        Map<String,Integer> orderSourceMap = bizPoHeader.getOrderSourceMap();
-        resultMap.put("orderSourceMap", orderSourceMap);
-
+        resultMap.put("orderSourceMap", bizPoHeader.getOrderSourceMap());
         return JsonUtil.generateData(resultMap, request.getParameter("callback"));
     }
 

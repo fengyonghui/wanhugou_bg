@@ -183,6 +183,7 @@
 			</c:if>
 			<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
 				<li class="active"><a href="${ctx}/biz/order/bizOrderHeader?statu=${statu}&source=${source}&targetPage=COMMISSION_ORDER">佣金管理列表</a></li>
+				<li><a href="${ctx}/biz/order/bizCommission/">佣金付款表列表</a></li>
 				<%--<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><li><a href="${ctx}/biz/order/bizOrderHeader/form">订单信息添加</a></li></shiro:hasPermission>--%>
 			</c:if>
 		</c:otherwise>

@@ -65,7 +65,9 @@
                             var attribute="";
                         }
                         trdatas+="<td>"+attribute+"</td>";
-                        trdatas+="<td><input type='hidden' id='maxQty_"+opShelfSku.id+"' value='"+opShelfSku.maxQty+"'/>"+opShelfSku.minQty+"-"+opShelfSku.maxQty+"</td>";
+                        trdatas+="<td><input type='hidden' id='maxQty_"+opShelfSku.id+"' value='"+opShelfSku.maxQty+"'/>";
+                        trdatas+="<input type='hidden' id='minQty_"+opShelfSku.id+"' value='"+opShelfSku.minQty+"'/>";
+                        trdatas+= opShelfSku.minQty+"-"+opShelfSku.maxQty+"</td>";
                         trdatas+="<td>"+opShelfSku.salePrice+"</td>";
                         trdatas+="<td><input type='number' class='input-mini' id='saleQty_"+opShelfSku.id+"' style='width:58px;' min='1' max='99999' /></td>";
                         trdatas+="<td id='td_"+opShelfSku.id+"'> <a href='#' onclick=\"addItem('"+opShelfSku.id+"')\">增加</a></td>";
@@ -131,11 +133,12 @@
         <%--var aa=$("#contentTable").append("<th>商品属性</th>").index()+4;//第4列位置--%>
           var saleQty= $("#saleQty_"+obj).val();
           var maxQty=$("#maxQty_"+obj).val();
+          var minQty=$("#minQty_"+obj).val();
               if(saleQty==''){
                   alert("请输入数量");
                   return;
               }
-              if(parseInt(saleQty)>parseInt(maxQty)){
+              if((parseInt(saleQty)>parseInt(maxQty)) || (parseInt(saleQty)<parseInt(minQty))){
                   alert("购买的数量与当前价格不符");
                   return;
               }

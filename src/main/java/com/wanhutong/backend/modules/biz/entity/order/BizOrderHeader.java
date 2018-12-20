@@ -303,6 +303,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private BizCommission bizCommission;
 
     /**
+     * 调整服务费标识符
+     */
+    private String modifyServiceCharge;
+
+    /**
      * 结佣状态0:未结佣， 1:已结佣
      */
     private Integer commissionStatus;
@@ -1255,6 +1260,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSerllerPhone(String serllerPhone) {
         this.serllerPhone = serllerPhone;
+    }
+
+    public String getModifyServiceCharge() {
+        return modifyServiceCharge;
+    }
+
+    public void setModifyServiceCharge(String modifyServiceCharge) {
+        this.modifyServiceCharge = modifyServiceCharge;
     }
 
     public Integer getPoBizStatus() {

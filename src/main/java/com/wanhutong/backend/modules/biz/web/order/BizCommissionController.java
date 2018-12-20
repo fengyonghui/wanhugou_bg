@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -44,6 +45,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizCommissionService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 佣金付款表Controller
@@ -84,7 +86,7 @@ public class BizCommissionController extends BaseController {
 	@RequiresPermissions("biz:order:bizCommission:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizCommission bizCommission, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizCommission> page = bizCommissionService.findPageForAllData(bizCommission.getPage(), bizCommission);
+		Page<BizCommission> page = bizCommissionService.findPageForAllData(new Page<BizCommission>(request, response), bizCommission);
 		model.addAttribute("page", page);
 
 		List<BizCommission> bizCommissionList = page.getList();
@@ -108,6 +110,41 @@ public class BizCommissionController extends BaseController {
 			}
 		}
 		return "modules/biz/order/bizCommissionList";
+	}
+
+	@RequiresPermissions("biz:order:bizCommission:view")
+	@RequestMapping(value = "list4Mobile")
+	@ResponseBody
+	public String list4Mobile(BizCommission bizCommission, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		Page<BizCommission> page = bizCommissionService.findPageForAllData(new Page<BizCommission>(request, response), bizCommission);
+
+
+		List<BizCommission> bizCommissionList = page.getList();
+		if (CollectionUtils.isNotEmpty(bizCommissionList)) {
+			for (BizCommission commission : bizCommissionList) {
+				String orderNums = "";
+				String orderIds = commission.getOrderIds();
+				if (orderIds != null && !orderIds.contains(",")) {
+					BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(Integer.valueOf(orderIds));
+					orderNums = bizOrderHeader.getOrderNum() + ",";
+				} else if (orderIds != null && orderIds.contains(",")) {
+					String[] orderIdArr = orderIds.split(",");
+					for (int i=0; i< orderIdArr.length; i++) {
+						BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(Integer.valueOf(orderIdArr[i]));
+						orderNums += bizOrderHeader.getOrderNum() + ",";
+					}
+				}
+				if (orderNums.length() > 0) {
+					commission.setOrderNumsStr(orderNums.substring(0, orderNums.length()-1));
+				}
+			}
+		}
+
+		model.addAttribute("page", page);
+		resultMap.put("page", page);
+
+		return JsonUtil.generateData(resultMap, null);
 	}
 
 	@RequiresPermissions("biz:order:bizCommission:view")
@@ -142,6 +179,46 @@ public class BizCommissionController extends BaseController {
 		bizCommission.setTotalCommission(totalCommission);
 		model.addAttribute("entity", bizCommission);
 		return "modules/biz/order/bizCommissionForm";
+	}
+
+	@RequiresPermissions("biz:order:bizCommission:view")
+	@RequestMapping(value = "form4Mobile")
+	@ResponseBody
+	public String form4Mobile(BizCommission bizCommission, Model model) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		String str = bizCommission.getStr();
+		if ("detail".equals(str)) {
+			List<CommonImg> imgList = bizCommissionService.getImgList(bizCommission);
+			bizCommission.setImgList(imgList);
+
+			//审核流程
+			CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+			commonProcessEntity.setObjectId(String.valueOf(bizCommission.getId()));
+			commonProcessEntity.setObjectName(BizCommissionService.DATABASE_TABLE_NAME);
+			List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+			model.addAttribute("auditList", list);
+			resultMap.put("auditList", list);
+
+			model.addAttribute("entity", bizCommission);
+			resultMap.put("entity", bizCommission);
+			return JsonUtil.generateData(resultMap, null);
+		}
+
+		String orderids = bizCommission.getOrderIds();
+		BigDecimal totalCommission = BigDecimal.ZERO;
+		if (StringUtils.isNotBlank(orderids)) {
+			String[] orderIdArr = orderids.split(",");
+			for (int i=0; i < orderIdArr.length; i++) {
+				String orderId = orderIdArr[i];
+				BizCommission bizCommissionTemp = bizCommissionService.findTotalCommission(Integer.valueOf(orderId));
+				totalCommission = totalCommission.add(bizCommissionTemp.getTotalCommission()).setScale(2, BigDecimal.ROUND_HALF_UP);
+			}
+		}
+		bizCommission.setTotalCommission(totalCommission);
+
+		model.addAttribute("entity", bizCommission);
+		resultMap.put("entity", bizCommission);
+		return JsonUtil.generateData(resultMap, null);
 	}
 
 	@RequiresPermissions("biz:order:bizCommission:view")
@@ -214,6 +291,83 @@ public class BizCommissionController extends BaseController {
 		return "modules/biz/order/bizCommissionOrderHeaderForm";
 	}
 
+	@RequiresPermissions("biz:order:bizCommission:view")
+	@RequestMapping(value = "applyCommissionForm4Mobile")
+	@ResponseBody
+	public String applyCommissionForm4Mobile(BizCommission bizCommission, Model model, String option) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		String orderIds = bizCommission.getOrderIds();
+		List<Integer> orderIdList = new ArrayList<Integer>();
+		if (orderIds != null && orderIds.length() > 0 && !orderIds.contains(",")) {
+			Integer orderId = Integer.valueOf(orderIds);
+			orderIdList.add(orderId);
+		} else if (orderIds != null && orderIds.length() > 0 && orderIds.contains(",")) {
+			String[] orderIdArr = orderIds.split(",");
+			for (int i=0; i<(orderIdArr.length); i++) {
+				orderIdList.add(Integer.valueOf(orderIdArr[i]));
+			}
+		}
+
+		List<BizOrderHeader> orderHeaderList = new ArrayList<BizOrderHeader>();
+		if (CollectionUtils.isNotEmpty(orderIdList)) {
+			for (Integer id : orderIdList) {
+				BizOrderHeader entity = bizOrderHeaderService.get(id);
+
+				BizOrderDetail bizOrderDetail = new BizOrderDetail();
+				bizOrderDetail.setOrderHeader(entity);
+				List<BizOrderDetail> bizOrderDetails = bizOrderDetailService.findList(bizOrderDetail);
+				List<BizOrderDetail> bizOrderDetailsNew = new ArrayList<BizOrderDetail>();
+				BigDecimal detailCommission = BigDecimal.ZERO;
+				if (CollectionUtils.isNotEmpty(bizOrderDetails)) {
+					for (BizOrderDetail orderDetail : bizOrderDetails) {
+						BigDecimal unitPrice = new BigDecimal(orderDetail.getUnitPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+						BigDecimal buyPrice = new BigDecimal(orderDetail.getBuyPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+						Integer ordQty = orderDetail.getOrdQty();
+						BigDecimal commissionRatio = orderDetail.getCommissionRatio();
+						if (commissionRatio == null || commissionRatio.compareTo(BigDecimal.ZERO) <= 0) {
+							commissionRatio = BigDecimal.ZERO;
+						}
+						detailCommission = (unitPrice.subtract(buyPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
+						orderDetail.setDetailCommission(detailCommission);
+
+						bizOrderDetailsNew.add(orderDetail);
+					}
+				}
+				entity.setOrderDetailList(bizOrderDetailsNew);
+				orderHeaderList.add(entity);
+			}
+
+			BizCommissionOrder bizCommissionOrder = new BizCommissionOrder();
+			bizCommissionOrder.setOrderId(orderIdList.get(0));
+			List<BizCommissionOrder> bizCommissionOrderList = bizCommissionOrderService.findListForCommonProcess(bizCommissionOrder);
+			if (CollectionUtils.isNotEmpty(bizCommissionOrderList)) {
+				BizCommission bizCommission1 = bizCommissionOrderList.get(0).getBizCommission();
+				if (bizCommission1 != null && bizCommission1.getId() != null) {
+					Integer commId = bizCommission1.getId();
+
+					//审核流程
+					CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+					commonProcessEntity.setObjectId(String.valueOf(commId));
+					commonProcessEntity.setObjectName(BizCommissionService.DATABASE_TABLE_NAME);
+					List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+					model.addAttribute("auditList", list);
+					resultMap.put("auditList", list);
+				}
+			}
+		}
+
+		model.addAttribute("option", option);
+		model.addAttribute("orderHeaderList", orderHeaderList);
+		resultMap.put("option", option);
+		resultMap.put("orderHeaderList", orderHeaderList);
+
+		BizCustomerInfo bizCustomerInfo = bizCustomerInfoService.getByOfficeId(bizCommission.getSellerId());
+		bizCommission.setCustomerInfo(bizCustomerInfo);
+		model.addAttribute("entity", bizCommission);
+		resultMap.put("entity", bizCommission);
+		return JsonUtil.generateData(resultMap, null);
+	}
+
 	@RequiresPermissions("biz:order:bizCommission:edit")
 	@RequestMapping(value = "save")
 	public String save(BizCommission bizCommission, Model model, RedirectAttributes redirectAttributes) {
@@ -223,6 +377,27 @@ public class BizCommissionController extends BaseController {
 		bizCommissionService.save(bizCommission);
 		addMessage(redirectAttributes, "保存佣金付款表成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizCommission/?repage";
+	}
+
+	@RequiresPermissions("biz:order:bizCommission:edit")
+	@RequestMapping(value = "save4Mobile")
+	@ResponseBody
+	public String save4Mobile(BizCommission bizCommission, Model model, RedirectAttributes redirectAttributes) {
+
+		if (!beanValidator(model, bizCommission)){
+			return form(bizCommission, model);
+		}
+		Map<String, Object> resultMap = Maps.newHashMap();
+		Boolean resultFlag = false;
+		try {
+			bizCommissionService.save(bizCommission);
+			addMessage(redirectAttributes, "保存佣金付款表成功");
+			resultFlag = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		resultMap.put("resultFlag", resultFlag);
+		return JsonUtil.generateData(resultMap, null);
 	}
 	
 	@RequiresPermissions("biz:order:bizCommission:edit")

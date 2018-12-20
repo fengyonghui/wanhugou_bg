@@ -126,6 +126,11 @@
             </li>
         </c:when>
         <c:otherwise>
+            <c:if test="${bizOrderHeader.flag eq 'check_pending'}">
+                <li class="active"><a
+                        href="${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">订单信息列表</a>
+                </li>
+            </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <li class="active"><a href="${ctx}/biz/order/bizOrderHeader?statu=${statu}&source=${source}">订单信息列表</a>
                 </li>
@@ -186,14 +191,25 @@
             <form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
         </li>
         <li><label>经销店名称：</label>
-            <sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"
-                            labelName="customer.name"
-                            labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
-                            title="经销店" url="/sys/office/queryTreeList?type=6"
-                            cssClass="input-medium required"
-                            allowClear="true" dataMsgRequired="必填信息"/>
-            <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
-            <input type="hidden" name="flag" value="${bizOrderHeader.flag}">
+            <c:if test="${bizOrderHeader.flag eq 'check_pending'}">
+                <sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"
+                                labelName="customer.name"
+                                labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
+                                title="经销店" url="/sys/office/queryTreeList?type=6"
+                                cssClass="input-medium required"
+                                allowClear="true" dataMsgRequired="必填信息"/>
+                <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
+                <input type="hidden" name="flag" value="${bizOrderHeader.flag}">
+            </c:if>
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"
+                                labelName="customer.name"
+                                labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
+                                title="经销店" url="/sys/office/queryTreeList?type=6"
+                                cssClass="input-medium required"
+                                allowClear="true" dataMsgRequired="必填信息"/>
+                <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">--%>
+            </c:if>
         </li>
         <li><label>采购中心：</label>
             <form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
@@ -308,7 +324,6 @@
                                 onclick="location.href='${ctx}/biz/product/bizProductInfoV2?prodType=1'"/></li>
     </c:if>
 </form:form>
-
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
     <thead>
@@ -438,9 +453,6 @@
                     </c:when>
                     <c:otherwise>
                         ${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
-
-
-
                         <a style="display: none">
                             <fmt:formatNumber type="number" var="total"
                                               value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight+orderHeader.serviceFee}"

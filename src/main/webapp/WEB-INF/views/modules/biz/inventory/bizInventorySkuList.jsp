@@ -156,7 +156,12 @@
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizInventorySku" varStatus="state">
-			<tr>
+			<c:if test="${bizInventorySku.delFlag!=null && bizInventorySku.delFlag==0}">
+				<tr style="text-decoration:line-through;">
+			</c:if>
+			<c:if test="${bizInventorySku.delFlag!=null && bizInventorySku.delFlag==1}">
+				<tr>
+			</c:if>
 				<td>${state.index+1}</td>
 				<td>
 					<%--<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}">--%>

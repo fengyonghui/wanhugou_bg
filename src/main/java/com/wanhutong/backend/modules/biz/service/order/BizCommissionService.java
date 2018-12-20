@@ -20,6 +20,7 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.order.BizCommissionOrder;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
@@ -405,10 +406,15 @@ public class BizCommissionService extends CrudService<BizCommissionDao, BizCommi
 				orderIdStrs += String.valueOf(orderId) + ",";
 				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderId);
 				bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.COMMISSION_COMPLETE.getComStatus());
-				bizOrderHeaderService.save(bizOrderHeader);
+				bizOrderHeaderService.updateCommissionStatus(bizOrderHeader);
 
 				//bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getDesc(),BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getState(),orderId);
-				bizOrderStatusService.insertAfterBizStatusChangedNew(COMMISSIONED_BIZ_STATUS,BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getDesc(),BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getState(),orderId);
+				BizOrderStatus bizOrderStatus = new BizOrderStatus();
+				bizOrderStatus.setOrderHeader(bizOrderHeader);
+				bizOrderStatus.setBizStatus(COMMISSIONED_BIZ_STATUS);
+				bizOrderStatus.setOrderType(bizOrderHeader.getOrderType());
+				bizOrderStatusService.save(bizOrderStatus);
+				//bizOrderStatusService.insertAfterBizStatusChangedNew(COMMISSIONED_BIZ_STATUS,BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getDesc(),BizOrderStatusOrderTypeEnum.COMMISSION_ORDER.getState(),orderId);
 			}
 		}
 		if (orderIdStrs.length() > 0) {

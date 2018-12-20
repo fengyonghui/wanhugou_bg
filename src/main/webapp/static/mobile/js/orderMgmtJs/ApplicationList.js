@@ -152,11 +152,9 @@
 	                            	var href="";
 	                            	if(item.orderNum!=""){
 	                            		num=item.orderNum;
-	//                          		href="../../html/inventoryMagmetHtml/inventoryDetails.html.html"
 	                            	}
 	                            	if(item.reqNo!=""){
 	                            		num=item.reqNo;//备货单
-	//                          		href=
 	                            	}
 		                            //当前状态
 		                            var postatusTxt = '';
@@ -264,8 +262,8 @@
 												'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+  item.remark+' ">' +
 											'</div>' +
 											'<div class="mui-input-row">' +
-												'<label>支付凭证:</label>' +
-												'<div class="imgLists">' +_this.photoShow(mt)+
+												'<label class="imgLabel app_fl">支付凭证:</label>' +
+												'<div  class="imgLists app_fr">' +_this.photoShow(mt)+
 											    '</div>' +
 											'</div>' +
 											'<div class="app_color40 mui-row app_text_center operation">' +

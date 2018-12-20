@@ -304,7 +304,7 @@
 					<td>
 						<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-					<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
+					<td>
 						<c:choose>
 							<c:when test="${source=='gh'}">
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}">详情</a>
@@ -312,13 +312,16 @@
 							<c:otherwise>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs&bizStatu=${bizStatu}&ship=${ship}">发货详情</a>--%>
 								<a href="${ctx}/biz/request/bizRequestAll/confirmOut?orderHeaderId=${orderHeader.id}&source=detail">出库详情</a>
-								<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SEND.state}">
+								<shiro:hasPermission name="biz:request:confirmOut:view">
+								<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SEND.state &&
+										(orderHeader.commonProcess.type == '666' || orderHeader.commonProcess.type == '777')}">
 									<a href="${ctx}/biz/request/bizRequestAll/confirmOut?orderHeaderId=${orderHeader.id}">出库</a>
 								</c:if>
+								</shiro:hasPermission>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=xs">发货</a>--%>
 							</c:otherwise>
 						</c:choose>
-					</td></shiro:hasPermission>
+					</td>
 				</tr>
 			</c:forEach>
 		</c:if>

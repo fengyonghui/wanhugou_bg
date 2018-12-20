@@ -3,11 +3,18 @@
  */
 package com.wanhutong.backend.modules.biz.web.po;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
+import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
@@ -26,10 +33,14 @@ import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,9 +54,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 /**
  * 采购付款单Controller
@@ -57,6 +70,8 @@ import java.util.Set;
 @RequestMapping(value = "${adminPath}/biz/po/bizPoPaymentOrder")
 public class BizPoPaymentOrderController extends BaseController {
 
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BizPoPaymentOrderController.class);
+
     @Autowired
     private BizPoPaymentOrderService bizPoPaymentOrderService;
     @Autowired
@@ -67,6 +82,8 @@ public class BizPoPaymentOrderController extends BaseController {
     private BizOrderHeaderService bizOrderHeaderService;
     @Autowired
     private CommonProcessService commonProcessService;
+    @Autowired
+    private SystemService systemService;
 
     @ModelAttribute
     public BizPoPaymentOrder get(@RequestParam(required = false) Integer id) {
@@ -146,6 +163,10 @@ public class BizPoPaymentOrderController extends BaseController {
             bizPoPaymentOrder.setPoHeaderId(poId);
         }
         Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+
+        //更新BizPoPaymentOrder审核按钮控制flag
+        bizPoPaymentOrderService.updateHasRole(page);
+
         model.addAttribute("page", page);
         String orderId = request.getParameter("orderId");
         model.addAttribute("orderId", orderId);
@@ -290,6 +311,9 @@ public class BizPoPaymentOrderController extends BaseController {
         } else if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum()) && bizPoPaymentOrder.getPoHeaderId() != null) {
             page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
         }
+
+        //更新BizPoPaymentOrder审核按钮控制flag
+        bizPoPaymentOrderService.updateHasRole(page);
 
         model.addAttribute("page", page);
         String orderId = request.getParameter("orderId");
@@ -547,15 +571,59 @@ public class BizPoPaymentOrderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
     @RequestMapping(value = "save")
     public String save(HttpServletRequest request, HttpServletResponse response, BizPoPaymentOrder bizPoPaymentOrder, Model model, RedirectAttributes redirectAttributes) {
+        Integer id = bizPoPaymentOrder.getId();
         if (!beanValidator(model, bizPoPaymentOrder)) {
             return form(request, response, bizPoPaymentOrder, model);
         }
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
         addMessage(redirectAttributes, "保存付款单成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId()
-                + "&orderType=" + bizPoPaymentOrder.getOrderType() + "&fromPage=" + bizPoPaymentOrder.getFromPage();
-    }
 
+        if (id != null) {
+            List<BizPoPaymentOrder> list = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+            BizPoPaymentOrder poPaymentOrder = list.get(0);
+            BizPoHeader bizPoHeader = bizPoHeaderService.get(poPaymentOrder.getPoHeader().getId());
+
+
+            //自动发送短信通知审核第一个节点
+            StringBuilder phone = new StringBuilder();
+            PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
+            PaymentOrderProcessConfig.Process purchaseOrderProcess = null;
+            purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getDefaultProcessId());
+            List<PaymentOrderProcessConfig.MoneyRole> moneyRoleList = purchaseOrderProcess.getMoneyRole();
+            if (moneyRoleList != null && moneyRoleList.get(0) != null) {
+                String roleEnNameEnumStr = moneyRoleList.get(0).getRoleEnNameEnum().get(0);
+                RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(roleEnNameEnumStr);
+                User sendUser = new User(systemService.getRoleByEnname(roleEnNameEnum == null ? "" : roleEnNameEnum.getState()));
+                List<User> userList = systemService.findUser(sendUser);
+                if (CollectionUtils.isNotEmpty(userList)) {
+                    for (User u : userList) {
+                        phone.append(u.getMobile()).append(",");
+                    }
+                }
+
+                Byte soType = bizPoHeaderService.getBizPoOrderReqByPo(bizPoHeader);
+
+                String orderStr = "";
+                String orderNum = "";
+                if (soType == Byte.parseByte("1")) {
+                    orderStr = "订单支付";
+                    orderNum = poPaymentOrder.getOrderNum();
+
+                } else {
+                    orderStr = "备货单支付";
+                    orderNum = poPaymentOrder.getReqNo();
+                }
+
+                AliyunSmsClient.getInstance().sendSMS(
+                        SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                        phone.toString(),
+                        ImmutableMap.of("order", orderStr, "orderNum", orderNum));
+
+            }
+        }
+
+        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "&orderType=" + bizPoPaymentOrder.getOrderType();
+    }
 
 //    @RequiresPermissions("biz:po:bizPoPaymentOrder:edit")
 //    @RequestMapping(value = "save")

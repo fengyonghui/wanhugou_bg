@@ -55,7 +55,7 @@
 						$('#orNumDate').show();
 						var orApplyNum = bizPoPaymentOrderId != '' ? bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal);
 						$('#orApplyNum').val(orApplyNum)//申请金额
-						$('#orNowDate').val(_this.formatDateTime(bizPoHeader.bizPoPaymentOrder.deadline));//本次申请付款时间
+						$('#orNowDate').val(_this.formatDateTime(bizPoHeader.bizPoPaymentOrder.deadline))//本次申请付款时间
 					}else {
 						$('#orNumDate').hide();
 					}  
@@ -112,7 +112,7 @@
 									'<label>批注:</label>'+
 							        '<textarea name="" rows="" cols="" disabled>'+ item.description +'</textarea>'+
 							    '</div>'+
-//								'<br />'+
+								'<br />'+
 								'<div class="mui-input-row">'+
 							        '<label>审批人:</label>'+
 							        '<input type="text" value="'+ item.user.name +'" disabled>'+
@@ -140,13 +140,12 @@
 		commodityHtml: function(data) {
 			var _this = this;
 			var htmlCommodity = '';
-			//所属单号
-			var temps = "";
-			for(var n in data.orderSourceMap){
-			    temps = n;
-			}
 			if(data.bizPoHeader.poDetailList) {
 				$.each(data.bizPoHeader.poDetailList, function(i, item) {
+					var temps = "";
+					for(var i in data.orderSourceMap){
+					    temps = i;
+					}
 				var outHtml = '';
 				if(data.bizPoHeader.id!=null) {
 					outHtml = '<div class="mui-input-row">'+

@@ -134,8 +134,13 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			if(bizInventorySkuService.findList(bizInventorySku) != null && bizInventorySkuService.findList(bizInventorySku).size() > 0){
 				List<BizInventorySku> bizInventorySkuList = bizInventorySkuService.findList(bizInventorySku);
 				BizInventorySku bizInventorySku1 = bizInventorySkuList.get(0);
-				invOldNum = bizInventorySku1.getStockQty();
-				bizInventorySku1.setStockQty(bizInventorySku1.getStockQty()+receiveNum);
+				if (BizInventorySku.DEL_FLAG_NORMAL.equals(bizInventorySku1.getDelFlag())) {
+					invOldNum = bizInventorySku1.getStockQty();
+					bizInventorySku1.setStockQty(bizInventorySku1.getStockQty()+receiveNum);
+				}
+				if (BizInventorySku.DEL_FLAG_DELETE.equals(bizInventorySku1.getDelFlag())) {
+					bizInventorySku1.setStockQty(receiveNum);
+				}
 				bizInventorySkuService.save(bizInventorySku1);
 			}
 			//库存没有该商品，增加该商品相应库存
