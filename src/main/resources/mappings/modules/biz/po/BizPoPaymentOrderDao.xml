@@ -14,6 +14,13 @@
 		<result column="processId" property="processId"/>
 		<result column="payTime" property="payTime"/>
 		<result column="remark" property="remark"/>
+
+
+		<result column="orderId" property="orderId"/>
+		<result column="orderNum" property="orderNum"/>
+		<result column="requestId" property="requestId"/>
+		<result column="reqNo" property="reqNo"/>
+
 		<result column="commonProcess.id" property="commonProcess.id"/>
 		<result column="commonProcess.objectName" property="commonProcess.objectName"/>
 		<result column="commonProcess.prevId" property="commonProcess.prevId"/>
@@ -66,6 +73,7 @@
 		a.process_id AS processId,
 		a.pay_time AS payTime,
 		a.remark AS remark,
+		a.status AS "delFlag",
 		po.id AS "poHeader.id",
 		po.biz_status AS "poHeader.bizStatus",
 		po.biz_status AS "poHeaderBizStatus",
@@ -110,6 +118,7 @@
 		<include refid="bizPoPaymentOrderJoins"/>
 		<where>
 			1=1
+			AND a.status = #{DEL_FLAG_NORMAL}
 			AND poprocess.type != -1
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
@@ -264,6 +273,12 @@
 		<!--DELETE FROM biz_po_payment_order-->
 		<!--WHERE id = #{id}-->
 	<!--</update>-->
+
+	<update id="delete">
+		UPDATE biz_po_payment_order SET
+		status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
 
 	<update id="updateProcessId">
 		UPDATE biz_po_payment_order SET
