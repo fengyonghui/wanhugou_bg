@@ -99,6 +99,11 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     private BigDecimal commissionRatio;
 
+    /**
+     * 用于采购数量时传递发货数量
+     */
+    private String sentQtys;
+
     public BizOrderDetail getOrderDaillist() {
         return orderDaillist;
     }
@@ -471,5 +476,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setTransferDetailList(List<BizSkuTransferDetail> transferDetailList) {
         this.transferDetailList = transferDetailList;
+    }
+
+    public String getSentQtys() {
+        return sentQtys;
+    }
+
+    public void setSentQtys(String sentQtys) {
+        this.sentQtys = sentQtys;
     }
 }

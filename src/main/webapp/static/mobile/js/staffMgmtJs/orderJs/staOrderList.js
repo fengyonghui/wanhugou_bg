@@ -10,7 +10,7 @@
 		init: function() {
 			//权限添加
 //			biz:order:bizOrderHeader:view		操作
-			this.getPermissionList('biz:order:bizOrderHeader:view','staOrdFlag')
+			this.getPermissionList('biz:order:bizOrderHeader:view','staOrdFlag');
 			this.staHrefHtml();
 			if(this.userInfo.isFunc){
 				this.seachFunc()
@@ -99,23 +99,23 @@
 	                        	}
                            })
                         	//审核
-//                      	var staCheckBtn = '';
-//                      	var staCheckBtnTxt = '';
-//			                if(_this.staOrdFlag == true) {
-//			                	if(item.bizStatus < 15) {
-//			                		staCheckBtn = 'waitCheckBtn'
-//			                		staCheckBtnTxt = "待审核"
-//			                	}
-//			                	if(item.bizStatus==45) {
-//			                		staCheckBtnTxt = "审核失败"
-//			                	}
-//			                	if(item.bizStatus==15) {
-//			                		staCheckBtnTxt = "审核成功"
-//			                	}
-//			                }
-//			                else {
-//			                	staCheckBtnTxt = ''
-//			                }
+                        	var staCheckBtn = '';
+                        	var staCheckBtnTxt = '';
+			                if(_this.staOrdFlag == true) {
+			                	if(item.bizStatus < 15) {
+			                		staCheckBtn = 'waitCheckBtn'
+			                		staCheckBtnTxt = "待审核"
+			                	}
+			                	if(item.bizStatus==45) {
+			                		staCheckBtnTxt = "审核失败"
+			                	}
+			                	if(item.bizStatus==15) {
+			                		staCheckBtnTxt = "审核成功"
+			                	}
+			                }
+			                else {
+			                	staCheckBtnTxt = ''
+			                }
                         	var staCheckSucBtn = '';
                         	var staCheckSuc = '';
 									staffHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
@@ -139,22 +139,11 @@
 											'<label>更新时间:</label>' +
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 										'</div>' +
-										//业务状态需要添加权限
-//										'<div class="mui-input-row">' +
-//											'<label>业务状态:</label>' +
-//											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
-//										'</div>' +
 										'<div class="app_color40 mui-row app_text_center content_part operation">' +
-//											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">出库确认</li>' +
-//											'</div>'+
-//											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
-//												'<li class="mui-table-view-cell">审核成功</li>' +
-//											'</div>'+
-											'<div class="mui-col-xs-12 staOrDetailBtn" staOrdId="'+ item.id +'">' +
+											'<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
+												'<li class="mui-table-view-cell">'+ staCheckBtnTxt +'</li>' +
+											'</div>'+
+											'<div class="mui-col-xs-6 staOrDetailBtn" staOrdId="'+ item.id +'">' +
 												'<li class="mui-table-view-cell">详情</li>' +
 											'</div>'+
 										'</div>' +
@@ -170,7 +159,6 @@
 						totalPage = res.data.page.count%pager.size!=0?
 		                parseInt(res.data.page.count/pager.size)+1:
 		                res.data.page.count/pager.size;
-//		                console.log(totalPage)
 		                if(totalPage==pager.pageNo){		                	
 			                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);			                
 			            }else{
@@ -208,29 +196,7 @@
 
 					}
 				})
-			})
-        },
-		stOrdHrefHtml: function() {
-			var _this = this;
-//			/*订单列表*/
-//			$('#nav').on('tap','.staOrdListBtn', function() {
-//				var url = $(this).attr('url');
-//				var staListIds = $('#consultantId').val();
-//				var staListIdTxts = $('#staListIdTxt').val();
-//				var conId = '';
-//				if(staListIdTxts) {
-//					conId = $('#staListIdTxt').val();
-//				}
-//				if(staListIds) {
-//					conId = $('#consultantId').val();
-//				}
-//				GHUTILS.OPENPAGE({
-//					url: "../../../html/staffMgmtHtml/orderHtml/staOrderList.html",
-//					extras: {
-//						staListId: conId,
-//					}
-//				})
-//			}),
+			});
 			/*查询*/
 			$('.app_header').on('tap', '#staOrdSechBtn', function() {
 				var url = $(this).attr('url');
@@ -253,9 +219,12 @@
 						}
 					})
 				}
-			}),
-		 /*待审核*/
-	       $('.content_part').on('tap', '.waitCheckBtn', function() {
+			})
+        },
+		stOrdHrefHtml: function() {
+			var _this = this;
+		    /*待审核*/
+	        $('.content_part').on('tap', '.waitCheckBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');//订单 ID
 				var flagTxt = $('#flag').val();
@@ -268,7 +237,6 @@
 				if(consultantIda) {
 					stcheckIdTxt = consultantIda
 				}
-//				console.log(staListIdTxts)
 				if(url) {
 					mui.toast('子菜单不存在')
 				} else if(staOrdId == staOrdId) {
@@ -282,8 +250,8 @@
 					})
 				}
 			}),
-		/*修改*/
-	       $('.content_part').on('tap', '.staOraAmendBtn', function() {
+		    /*修改*/
+	        $('.content_part').on('tap', '.staOraAmendBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
 				if(url) {
@@ -297,7 +265,7 @@
 					})
 				}
 			}),	
-		/*详情*/
+		    /*详情*/
 			$('.content_part').on('tap', '.staOrDetailBtn', function() {
 				var url = $(this).attr('url');
 				var staOrdId = $(this).attr('staOrdId');
@@ -369,7 +337,7 @@
 			}
 			return now;
 		},
-		//查询过来渲染页面:
+		//查询过来渲染页面:						
         seachFunc:function(){
             var _this = this;
             var pager = {};//分页
@@ -503,21 +471,10 @@
                                     '<label>更新时间:</label>' +
                                     '<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
                                     '</div>' +
-                                    //业务状态需要添加权限
-                                    //										'<div class="mui-input-row">' +
-                                    //											'<label>业务状态:</label>' +
-                                    //											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
-                                    //										'</div>' +
                                     '<div class="app_color40 mui-row app_text_center content_part operation">' +
                                     '<div class="mui-col-xs-6 '+staCheckBtn+'" staOrdId="'+ item.id +'">' +
                                     '<li class="mui-table-view-cell" id="flagid">'+ staCheckBtnTxt +'</li>' +
                                     '</div>'+
-                                    //											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
-                                    //												'<li class="mui-table-view-cell">出库确认</li>' +
-                                    //											'</div>'+
-                                    //											'<div class="mui-col-xs-3"  staOrdId="'+ item.id +'">' +
-                                    //												'<li class="mui-table-view-cell">审核成功</li>' +
-                                    //											'</div>'+
                                     '<div class="mui-col-xs-6 staOrDetailBtn" staOrdId="'+ item.id +'">' +
                                     '<li class="mui-table-view-cell">详情</li>' +
                                     '</div>'+
@@ -525,10 +482,9 @@
                                     '</div>'
                             });
                             $('#staOrdList').append(staffHtmlList);
-                            _this.stOrdHrefHtml()
+                            _this.stOrdHrefHtml();
                         }else{
                             $('#staOrdList').append('<p class="noneTxt">暂无数据</p>');
-                            $('#staOrdSechBtn').hide();
                         }
                         if(res.data.page.totalPage==pager.pageNo){
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);

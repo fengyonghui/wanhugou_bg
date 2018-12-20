@@ -75,6 +75,11 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
         String[] saleQtyArr = StringUtils.split(bizOrderDetail.getSaleQtys(), ",");//多个采购数量
         String[] shelfSkuArr = StringUtils.split(bizOrderDetail.getShelfSkus(), ",");//多个货架ID
         String[] nowPriceArr = StringUtils.split(bizOrderDetail.getNowPrices(),",");//多个代采订单的商品价格
+        String sentQtysStr = bizOrderDetail.getSentQtys();
+        if (StringUtils.isBlank(sentQtysStr)) {
+            sentQtysStr = "0";
+        }
+        String[] sentQtys = StringUtils.split(sentQtysStr,",");////多个发货数量
         int a = 0;
         if (bizOrderDetail.getOrderHeader() != null) {
             BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
@@ -83,6 +88,7 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                     for (int i = 0; i < skuIdArr.length; i++) {
                         Integer skuId = Integer.parseInt(skuIdArr[i].trim());//多个Sku商品ID
                         Integer ordQty = Integer.parseInt(saleQtyArr[i].trim());//多个采购数量
+                        Integer sendQty = Integer.parseInt(sentQtys[i].trim());//多个已发货数量
                         BizSkuInfo sku = bizSkuInfoService.get(skuId);
                         BizOrderDetail detailnew = new BizOrderDetail();
                         detailnew.setOrderHeader(bizOrderDetail.getOrderHeader());//order_header.id
@@ -116,7 +122,8 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                         detailnew.setUnitPrice(new BigDecimal(nowPriceArr[i].trim()).doubleValue());//单价
                         detailnew.setBuyPrice(detailnew.getUnitPrice());
                         detailnew.setOrdQty(ordQty);//采购数量
-                        detailnew.setSentQty(0);//发货数量默认0
+                        //detailnew.setSentQty(0);//发货数量默认0
+                        detailnew.setSentQty(sendQty);
                         detailnew.setSuplyis(new Office());
                         super.save(detailnew);
                     }
@@ -128,6 +135,7 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                 Integer skuId = Integer.parseInt(skuIdArr[i].trim());//多个Sku商品ID
                 Integer ordQty = Integer.parseInt(saleQtyArr[i].trim());//多个采购数量
                 Integer shelfSkuId = Integer.parseInt(shelfSkuArr[i].trim());//多个货架ID
+                Integer sendQty = Integer.parseInt(sentQtys[i].trim());//多个已发货数量
                 BizSkuInfo sku = bizSkuInfoService.get(skuId);
                 BizOpShelfSku opShelfSku = bizOpShelfSkuService.get(shelfSkuId);//查询商品
                 BizOrderDetail detailnew = new BizOrderDetail();
@@ -152,13 +160,15 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                 detailnew.setUnitPrice(opShelfSku.getSalePrice());//单价
                 detailnew.setBuyPrice(sku.getBuyPrice());
                 detailnew.setOrdQty(ordQty);//采购数量
-                detailnew.setSentQty(0);//发货数量默认0
+                //detailnew.setSentQty(0);//发货数量默认0
+                detailnew.setSentQty(sendQty);
                 if(opShelfSku!=null){
                     BizOpShelfInfo bizOpShelfInfo = bizOpShelfInfoService.get(opShelfSku.getOpShelfInfo().getId());//货架
                     if(bizOpShelfInfo!=null && bizOpShelfInfo.getType()==3){//type==3属于栏目类型 本地备货
                         detailnew.setSuplyis(opShelfSku.getCenterOffice());//采购中心
                     }else{
                         Office officeCenter=new Office();
+                        officeCenter.setId(Integer.valueOf(bizOrderDetail.getSuplyIds()));
                         detailnew.setSuplyis(officeCenter);//采购中心
                     }
                 }

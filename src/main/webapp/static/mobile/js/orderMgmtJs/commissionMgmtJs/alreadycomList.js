@@ -152,14 +152,16 @@
 								var noCheckBtn = '';
 								var noCheckBtnTxt = '';
 								if(_this.commEditFlag == true) {
-									if(item.commonProcess.paymentOrderProcess.name != '驳回'){
-										if(item.payTotal != '0.00' && item.commonProcess.paymentOrderProcess.name != '审批完成' && item.totalCommission != 0){
-											sureCheckBtnTxt="审核通过";
-											sureCheckBtn='sureCheckBtn';
-											noCheckBtn = 'noCheckBtn';
-											noCheckBtnTxt = '审核驳回';
+									if(item.commonProcess){
+										if(item.commonProcess.paymentOrderProcess.name != '驳回'){
+											if(item.payTotal != '0.00' && item.commonProcess.paymentOrderProcess.name != '审批完成' && item.totalCommission != 0){
+												sureCheckBtnTxt="审核通过";
+												sureCheckBtn='sureCheckBtn';
+												noCheckBtn = 'noCheckBtn';
+												noCheckBtnTxt = '审核驳回';
+											}
 										}
-									}									
+									}																		
 								}								
 								//确认支付金额
 								var surePayMoneyTxt = '';
@@ -172,14 +174,16 @@
 								}
 								//确认付款								
 								if(_this.commAuditFlag == true) {
-//									if(item.commonProcess.paymentOrderProcess.name == '审批完成' && item.bizStatus == '0'){
-//										surePayMoneyTxt = '确认付款';
-//								        surePayMoneyBtn = 'surePayMoneyBtn';
-//									}
-									if(item.commonProcess.paymentOrderProcess.name == '审批完成' && item.bizStatus == '1'){
-										surePayMoneyTxt = '支付完成';
-										surePayMoneyBtn = 'downPayMoneyBtn';
-									}									
+									if(item.commonProcess){
+//										if(item.commonProcess.paymentOrderProcess.name == '审批完成' && item.bizStatus == '0'){
+	//										surePayMoneyTxt = '确认付款';
+	//								        surePayMoneyBtn = 'surePayMoneyBtn';
+	//									}
+										if(item.commonProcess.paymentOrderProcess.name == '审批完成' && item.bizStatus == '1'){
+											surePayMoneyTxt = '支付完成';
+											surePayMoneyBtn = 'downPayMoneyBtn';
+										}
+								    }																	
 								}
 								//详情
 								var detailBtn="detailBtn";
@@ -202,7 +206,11 @@
 									}else{
 										commissionStatus='';
 									}									
-								}								
+								}
+								var Code= "";
+								if(item.commonProcess){
+									Code=item.commonProcess.paymentOrderProcess.code;
+								}
 							commHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 							    '<div class="mui-input-row">' +
 									'<label class="imgLabel app_fl">所属单号:</label>' +
@@ -247,10 +255,10 @@
 									'</div>' +
 								'</div>' +
 								'<div class="app_color40 mui-row app_text_center content_part operation" id="check">' +
-									'<div class="mui-col-xs-6 '+ sureCheckBtn +'" commId="'+ item.id +'" code="'+ item.commonProcess.paymentOrderProcess.code +'" money="'+ item.totalCommission +'">' +
+									'<div class="mui-col-xs-6 '+ sureCheckBtn +'" commId="'+ item.id +'" code="'+ Code.code +'" money="'+ item.totalCommission +'">' +
 										'<div class="">'+sureCheckBtnTxt +'</div>' +
 									'</div>' +
-									'<div class="mui-col-xs-6 '+ noCheckBtn  +'" commId="'+ item.id +'" code="'+ item.commonProcess.paymentOrderProcess.code +'" money="'+ item.totalCommission +'">' +
+									'<div class="mui-col-xs-6 '+ noCheckBtn  +'" commId="'+ item.id +'" code="'+ Code.code +'" money="'+ item.totalCommission +'">' +
 										'<div class="">'+ noCheckBtnTxt+'</div>' +
 									'</div>' +
 								'</div>' +
@@ -272,7 +280,6 @@
 						}else{
 							$('.mui-pull-bottom-pocket').html('');
 							$('#commList').append('<p class="noneTxt">暂无数据</p>');
-							$('#OrdSechBtn').hide();
 							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
 						}
 		                if(res.data.page.totalPage==pager.pageNo){		                	
@@ -343,10 +350,12 @@
         payMoneyHtml:function(data){
         	var _this = this;
         	$.each(data,function(m,n){
-        		if(_this.commAuditFlag == true) {						
-					if(n.commonProcess.paymentOrderProcess.name == '审批完成' && n.bizStatus == '1'){
-						$('.downPayMoneyBtn').css('color','#000');						
-					}					
+        		if(_this.commAuditFlag == true) {
+        			if(n.commonProcess){
+        				if(n.commonProcess.paymentOrderProcess.name == '审批完成' && n.bizStatus == '1'){
+							$('.downPayMoneyBtn').css('color','#000');						
+						}
+        			}										
 				} 
         	})
         },

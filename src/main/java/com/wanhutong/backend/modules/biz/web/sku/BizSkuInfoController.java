@@ -492,22 +492,28 @@ public class BizSkuInfoController extends BaseController {
 				bizOpShelfSku.setSkuInfo(bizSkuInfo);
 				List<BizOpShelfSku> opList = bizOpShelfSkuService.findList(bizOpShelfSku);
 				if(opList.size()!=0){
-					for (BizOpShelfSku opShelfSku : opList) {
-						if(!opShelfSku.getDelFlag().equals("0")){
-							sources="opSheSku";
-						}
-					}
+					//上下架表里存在就不能删除
+					sources="opSheSku";
+					//上下架表里存在，且上下架表中为未删除状态时才不能删除
+					//for (BizOpShelfSku opShelfSku : opList) {
+					//	if(!opShelfSku.getDelFlag().equals("0")){
+					//		sources="opSheSku";
+					//	}
+					//}
 				}
 				if(sources.equals("")){
 					BizInventorySku inventorySku = new BizInventorySku();
 					inventorySku.setSkuInfo(bizSkuInfo);
 					List<BizInventorySku> invenList = bizInventorySkuService.findList(inventorySku);
 					if(invenList.size()!=0){
-						for (BizInventorySku bizInventorySku : invenList) {
-							if(!bizInventorySku.getDelFlag().equals("0")){
-								sources="invSku";
-							}
-						}
+						//库存表里存在就不能删除
+						sources="invSku";
+						//库存表里存在，且库存表中为未删除状态时才不能删除
+						//for (BizInventorySku bizInventorySku : invenList) {
+						//	if(!bizInventorySku.getDelFlag().equals("0")){
+						//		sources="invSku";
+						//	}
+						//}
 					}
 				}
 				if(sources.equals("")){

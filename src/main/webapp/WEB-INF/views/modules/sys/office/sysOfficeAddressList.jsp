@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.OfficeTypeEnum" %>
 <html>
 <head>
 	<title>地址信息管理</title>
@@ -18,23 +19,33 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/sys/office/sysOfficeAddress/list?office.type=6">地址信息列表</a></li>
-		<shiro:hasPermission name="sys:office:sysOfficeAddress:edit"><li><a href="${ctx}/sys/office/sysOfficeAddress/form?office.type=6">地址信息添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/sys/office/sysOfficeAddress/list?office.type=${sysOfficeAddress.office.type}&office.customerTypeTen=${sysOfficeAddress.office.customerTypeTen}&office.customerTypeEleven=${sysOfficeAddress.office.customerTypeEleven}&office.source=${sysOfficeAddress.office.source}">地址信息列表</a></li>
+		<shiro:hasPermission name="sys:office:sysOfficeAddress:edit"><li><a href="${ctx}/sys/office/sysOfficeAddress/form?office.type=${sysOfficeAddress.office.type}&office.customerTypeTen=${sysOfficeAddress.office.customerTypeTen}&office.customerTypeEleven=${sysOfficeAddress.office.customerTypeEleven}&office.source=${sysOfficeAddress.office.source}">地址信息添加</a></li></shiro:hasPermission>
 	</ul>
-	<form:form id="searchForm" modelAttribute="sysOfficeAddress" action="${ctx}/sys/office/sysOfficeAddress/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="sysOfficeAddress" action="${ctx}/sys/office/sysOfficeAddress" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<form:hidden path="office.type"/>
+		<input name="office.type" type="hidden" value="${sysOfficeAddress.office.type}"/>
+		<input name="office.customerTypeTen" type="hidden" value="${sysOfficeAddress.office.customerTypeTen}"/>
+		<input name="office.customerTypeEleven" type="hidden" value="${sysOfficeAddress.office.customerTypeEleven}"/>
+		<input name="office.source" type="hidden" value="${sysOfficeAddress.office.source}"/>
+		<%--<form:hidden path="office.type"/>--%>
 		<ul class="ul-form">
-			<li><label>经销店名称：</label>
-				<sys:treeselect id="office" name="office.id" value="${sysOfficeAddress.office.id}"  labelName="office.name"
-								labelValue="${sysOfficeAddress.office.name}" notAllowSelectParent="true"
-								title="经销店"  url="/sys/office/queryTreeList?type=6&source=cgs"
-								cssClass="input-medium"
-								allowClear="true" dataMsgRequired="必填信息"/>
-			</li>
+			<c:if test="${sysOfficeAddress.office.type != OfficeTypeEnum.CUSTOMER.type}">
+				<li><label>采购中心：</label>
+			</c:if>
+			<c:if test="${sysOfficeAddress.office.type == OfficeTypeEnum.CUSTOMER.type}">
+				<li><label>经销店名称：</label>
+			</c:if>
+					<sys:treeselect id="office" name="office.id" value="${sysOfficeAddress.office.id}"  labelName="office.name"
+									labelValue="${sysOfficeAddress.office.name}" notAllowSelectParent="true"
+									title="经销店"  url="/sys/office/queryTreeList?type=${sysOfficeAddress.office.type}&customerTypeTen=${sysOfficeAddress.office.customerTypeTen}&customerTypeEleven=${sysOfficeAddress.office.customerTypeEleven}&source=${sysOfficeAddress.office.source}"
+									cssClass="input-medium"
+									allowClear="true" dataMsgRequired="必填信息"/>
+				</li>
+
 			<li><label>联系电话：</label>
-				<form:input path="con.mobile" htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="phone" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>

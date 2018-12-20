@@ -140,7 +140,7 @@
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
-				<sys:treeselect id="office" name="office.id" value="${office.id}" labelName="office.name"
+				<sys:treeselect id="office" name="office.id" value="${bizFreightConfig.office.id}" labelName="office.name"
 								labelValue="${bizFreightConfig.office.name}"  notAllowSelectParent="true"
 								title="采购中心" url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
 				</sys:treeselect>

@@ -23,7 +23,7 @@
                     $.ajax({
                         type:"post",
                         url:"${ctx}/biz/sku/bizSkuInfo/deleteSku",
-                        data:"id="+a+"&sign="+b+"&productInfo.prodType="+c,
+                        data:"id="+a+"&sign="+b+"&productInfo.prodType="+c+"&deleteCheck=deleteCheck",
                         success:function(data){
 							if(data=="opSheSku"){
 								alert("该商品sku在上下架存在，不能删除！ ");
