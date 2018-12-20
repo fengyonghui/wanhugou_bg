@@ -17,10 +17,7 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizHeaderSchedulingDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.po.BizCompletePaln;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
-import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
+import com.wanhutong.backend.modules.biz.entity.po.*;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -33,12 +30,10 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
-import com.wanhutong.backend.modules.biz.service.po.BizCompletePalnService;
-import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
-import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
-import com.wanhutong.backend.modules.biz.service.po.BizSchedulingPlanService;
+import com.wanhutong.backend.modules.biz.service.po.*;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
@@ -132,6 +127,11 @@ public class BizPoHeaderController extends BaseController {
     private BizInvoiceService bizInvoiceService;
     @Autowired
     private BizMessageInfoService bizMessageInfoService;
+    @Autowired
+    private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
+    @Autowired
+    private BizPoPaymentOrderService bizPoPaymentOrderService;
+
 
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
     public static final String PO_HEADER_TABLE_NAME = "biz_po_header";
@@ -479,7 +479,7 @@ public class BizPoHeaderController extends BaseController {
 
     @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = "form")
-    public String form(BizPoHeader bizPoHeader, Model model, String prewStatus, String type) {
+    public String form(BizPoHeader bizPoHeader, Model model,String prewStatus, String type,HttpServletRequest request,HttpServletResponse response,BizPoPaymentOrder bizPoPaymentOrder) {
         if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null && bizPoHeader.getDeliveryOffice().getId() != 0) {
             Office office = officeService.get(bizPoHeader.getDeliveryOffice().getId());
             if ("8".equals(office.getType())) {
@@ -545,6 +545,68 @@ public class BizPoHeaderController extends BaseController {
         model.addAttribute("bizOrderHeader", bizOrderHeader);
         model.addAttribute("type", type);
         model.addAttribute("prewStatus", prewStatus);
+
+        if(Objects.isNull(bizPoPaymentOrder)){
+            bizPoPaymentOrder=new BizPoPaymentOrder();
+        }
+        String fromPage = request.getParameter("fromPage");
+        model.addAttribute("fromPage", fromPage);
+        if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+            BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(bizPoHeader.getId());
+            //model.addAttribute("bizRequestHeader", bizRequestHeader);
+            bizPoPaymentOrder.setBizRequestHeader(bizRequestHeader);
+        } else if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+            bizOrderHeaderService.get(bizPoHeader.getId());
+        } else {
+            // BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
+            if (fromPage != null) {
+                switch (fromPage) {
+                    case "requestHeader":
+                        bizPoHeader.setFromPage("requestHeader");
+                        List<String> reqNoList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
+                        if (CollectionUtils.isNotEmpty(reqNoList)) {
+                            model.addAttribute("headerNum", reqNoList.get(0));
+                        }
+                        BizRequestHeader bizRequestHeader = new BizRequestHeader();
+                        bizRequestHeader.setBizPoHeader(bizPoHeader);
+                        List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
+                        if (CollectionUtils.isNotEmpty(requestHeaderList)) {
+                            model.addAttribute("requestHeader", requestHeaderList.get(0));
+                        }
+                        break;
+                    case "orderHeader":
+                        bizPoHeader.setFromPage("orderHeader");
+                        List<String> orderNumList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
+                        if (CollectionUtils.isNotEmpty(orderNumList)) {
+                            model.addAttribute("headerNum", orderNumList.get(0));
+                        }
+                        BizOrderHeader bizOrderHeader2 = new BizOrderHeader();
+                        bizOrderHeader2.setBizPoHeader(bizPoHeader);
+                        List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader2);
+                        if (CollectionUtils.isNotEmpty(orderHeaderList)) {
+                            model.addAttribute("orderHeader", orderHeaderList.get(0));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            // model.addAttribute("bizPoHeader", bizPoHeader);
+            bizPoPaymentOrder.setBizPoHeader(bizPoHeader);
+        }
+        if (bizPoHeader.getId() == null) {
+            bizPoPaymentOrder.setPoHeaderId(-1);
+        } else {
+            bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
+        }
+        Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+
+        //更新BizPoPaymentOrder审核按钮控制flag
+        bizPoPaymentOrderService.updateHasRole(page);
+        bizPoPaymentOrder.setPage(page);
+        String orderId = request.getParameter("orderId");
+        bizPoPaymentOrder.setOrderId(Integer.valueOf(orderId));
+        model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
         return "modules/biz/po/bizPoHeaderForm";
     }
 
@@ -682,7 +744,7 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if (!beanValidator(model, bizPoHeader)) {
-            return form(bizPoHeader, model, prewStatus, null);
+            return form(bizPoHeader, model, prewStatus, null,null,null,null);
         }
 
         Set<Integer> poIdSet = bizPoHeaderService.findPrewPoHeader(bizPoHeader);
@@ -787,7 +849,7 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if (!beanValidator(model, bizPoHeader)) {
-            return form(bizPoHeader, model, prewStatus, null);
+            return form(bizPoHeader, model, prewStatus, null,null,null,null);
         }
         bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
         bizPoHeaderService.savePoHeader(bizPoHeader);
@@ -807,7 +869,7 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if (!beanValidator(model, bizPoHeader)) {
-            return form(bizPoHeader, model, prewStatus, null);
+            return form(bizPoHeader, model, prewStatus, null,null,null,null);
         }
         bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
         bizPoHeaderService.savePoHeader(bizPoHeader);

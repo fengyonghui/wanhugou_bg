@@ -505,6 +505,17 @@
 
 			<!-- 订单支出信息合并 -->
 			<shiro:hasPermission name="biz:po:bizPoHeader:view">
+			<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">
+				<c:if test="${requestHeader != null}">
+					<c:if test="${requestHeader.bizPoHeader.currentPaymentId == null
+											&& requestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state
+											&& requestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state
+											&& (requestHeader.bizPoHeader.payTotal == null ? 0 : requestHeader.bizPoHeader.payTotal) < requestHeader.totalDetail
+											}">
+						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=createPay">申请qq付款</a>
+					</c:if>
+				</c:if>
+			</shiro:hasPermission>
 			<shiro:hasPermission name="biz:request:bizRequestHeader:view">
 				<%--<c:if test="${requestHeader.commonProcess.requestOrderProcess.name == '审核完成'}">--%>
 				<c:if test="${requestHeader.bizPoHeader.id != null}">
@@ -544,8 +555,8 @@
 					<a href="javascript:void(0);" onclick="cancel(${requestHeader.bizPoHeader.id});">付款单取消</a>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
-					<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&str=detail&fromPage=orderHeader">付款单详情</a>
-
+					<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&str=detail&fromPage=orderHeader">付款单详情</a>--%>
+					<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&str=detail&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${requestHeader.id}">付款单详情</a>
 					<!-- 排产，确认排产 -->
 					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>

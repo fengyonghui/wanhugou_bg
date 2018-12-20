@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.po;
 
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -79,10 +80,31 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     private String fromPage;
 
+    private BizRequestHeader bizRequestHeader;
+
+    private BizPoHeader bizPoHeader;
+
     /**
      * BizPoPaymentOrder审核按钮控制flag
      */
     private Boolean hasRole;
+
+    public BizRequestHeader getBizRequestHeader() {
+        return bizRequestHeader;
+    }
+
+    public void setBizRequestHeader(BizRequestHeader bizRequestHeader) {
+        this.bizRequestHeader = bizRequestHeader;
+    }
+
+    public BizPoHeader getBizPoHeader() {
+        return bizPoHeader;
+    }
+
+    public void setBizPoHeader(BizPoHeader bizPoHeader) {
+        this.bizPoHeader = bizPoHeader;
+    }
+
 
     public BizPoPaymentOrder() {
         super();
