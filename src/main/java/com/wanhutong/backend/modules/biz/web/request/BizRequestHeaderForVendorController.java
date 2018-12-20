@@ -571,7 +571,15 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 		model.addAttribute("roleChanne", roleName);
-
+		BizPoPaymentOrder poPaymentOrder = new BizPoPaymentOrder();
+		poPaymentOrder.setPoHeaderId(bizRequestHeader.getBizPoHeader().getId());
+		poPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
+		poPaymentOrder.setFromPage("requestHeader");
+		poPaymentOrder.setOrderId(bizRequestHeader.getId());
+		List<BizPoPaymentOrder> poPaymentOrderList = bizPoPaymentOrderService.findList(poPaymentOrder);
+		model.addAttribute("poPaymentOrderList",poPaymentOrderList);
+		model.addAttribute("poHeader",bizPoHeaderService.get(bizRequestHeader.getBizPoHeader().getId()));
+		model.addAttribute("fromPage",poPaymentOrder.getFromPage());
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
 		model.addAttribute("bizSkuInfo", new BizSkuInfo());

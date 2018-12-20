@@ -512,7 +512,7 @@
 											&& requestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state
 											&& (requestHeader.bizPoHeader.payTotal == null ? 0 : requestHeader.bizPoHeader.payTotal) < requestHeader.totalDetail
 											}">
-						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=createPay">申请qq付款</a>
+						<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=createPay">申请付款</a>
 					</c:if>
 				</c:if>
 			</shiro:hasPermission>
