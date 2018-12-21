@@ -624,17 +624,24 @@ public class BizOrderHeaderController extends BaseController {
                        HttpServletRequest request, HttpServletResponse response
     ) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
+        BizPoHeader bizPoHeader2 =bizPoHeaderService.get(bizOrderHeader.getBizPoHeader().getId());
+        model.addAttribute("bizPoHeader",bizPoHeader2);
+        //BizPoHeader bizPoHeader =bizOrderHeader.getBizPoHeader();
+        BizPoPaymentOrder bizPoPaymentOrder2 = new BizPoPaymentOrder();
+        bizPoPaymentOrder2.setPoHeaderId(bizOrderHeader.getBizPoHeader().getId());
+        bizPoPaymentOrder2.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
+        bizPoPaymentOrder2.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
+        Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder2);
+        //更新BizPoPaymentOrder审核按钮控制flag
+        bizPoPaymentOrderService.updateHasRole(page);
+        model.addAttribute("poPaymentOrderPage",page);
+        List<BizPoPaymentOrder> payList = page.getList();
         String str = bizOrderHeader.getStr();
         if ("pay".equals(str)) {
-            BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
-            bizPoPaymentOrder.setPoHeaderId(bizOrderHeader.getBizPoHeader().getId());
-            bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
-            bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
-            List<BizPoPaymentOrder> payList = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
             if (CollectionUtils.isNotEmpty(payList)) {
-                bizPoPaymentOrder = payList.get(0);
+                bizPoPaymentOrder2 = payList.get(0);
             }
-            bizOrderHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
+            bizOrderHeader.setBizPoPaymentOrder(bizPoPaymentOrder2);
         }
         if (bizOrderHeader.getSource() != null) {
             model.addAttribute("source", bizOrderHeader.getSource());

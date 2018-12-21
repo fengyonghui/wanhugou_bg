@@ -555,8 +555,8 @@
 					<a href="javascript:void(0);" onclick="cancel(${requestHeader.bizPoHeader.id});">付款单取消</a>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
-					<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&str=detail&fromPage=orderHeader">付款单详情</a>--%>
-					<a href="${ctx}/biz/po/bizPoHeader/form2?id=${requestHeader.bizPoHeader.id}&str=detail&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${requestHeader.id}">付款单详情</a>
+					<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&str=detail&fromPage=requestHeader">付款单详情</a>
+					<%--<a href="${ctx}/biz/po/bizPoHeader/form2?id=${requestHeader.bizPoHeader.id}&str=detail&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${requestHeader.id}">付款单详情</a>--%>
 					<!-- 排产，确认排产 -->
 					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 						<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${requestHeader.bizPoHeader.id}">排产</a>

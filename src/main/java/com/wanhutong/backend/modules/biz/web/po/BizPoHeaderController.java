@@ -477,140 +477,140 @@ public class BizPoHeaderController extends BaseController {
         return JsonUtil.generateData(resultMap, request.getParameter("callback"));
     }
 
-    @RequiresPermissions("biz:po:bizPoHeader:view")
-    @RequestMapping(value = "form2")
-    public String form2(BizPoHeader bizPoHeader, Model model,String prewStatus, String type,HttpServletRequest request,HttpServletResponse response) {
-        if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null && bizPoHeader.getDeliveryOffice().getId() != 0) {
-            Office office = officeService.get(bizPoHeader.getDeliveryOffice().getId());
-            if ("8".equals(office.getType())) {
-                bizPoHeader.setDeliveryStatus(0);
-            } else {
-                bizPoHeader.setDeliveryStatus(1);
-            }
-        }
-
-        if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
-            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
-        }
-
-        if (bizPoHeader.getVendOffice() != null && bizPoHeader.getVendOffice().getBizVendInfo() != null) {
-            CommonImg compactImg = new CommonImg();
-            compactImg.setImgType(ImgEnum.VEND_COMPACT.getCode());
-            compactImg.setObjectId(bizPoHeader.getVendOffice().getId());
-            compactImg.setObjectName(VEND_IMG_TABLE_NAME);
-            List<CommonImg> compactImgList = commonImgService.findList(compactImg);
-            model.addAttribute("compactImgList", compactImgList);
-
-            CommonImg identityCardImg = new CommonImg();
-            identityCardImg.setImgType(ImgEnum.VEND_IDENTITY_CARD.getCode());
-            identityCardImg.setObjectId(bizPoHeader.getVendOffice().getId());
-            identityCardImg.setObjectName(VEND_IMG_TABLE_NAME);
-            List<CommonImg> identityCardImgList = commonImgService.findList(identityCardImg);
-            model.addAttribute("identityCardImgList", identityCardImgList);
-
-        }
-
-        List<Role> roleList = UserUtils.getUser().getRoleList();
-        Set<String> roleSet = Sets.newHashSet();
-        for (Role r : roleList) {
-            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
-            if (parse != null) {
-                roleSet.add(parse.name());
-            }
-        }
-
-        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
-        bizPoOrderReq.setPoHeader(bizPoHeader);
-        List<BizPoOrderReq> bizPoOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
-        if (CollectionUtils.isNotEmpty(bizPoOrderReqs)) {
-            bizPoOrderReq = bizPoOrderReqs.get(0);
-        }
-        BizOrderHeader bizOrderHeader = null;
-        if (bizPoOrderReq != null) {
-            bizOrderHeader = bizOrderHeaderService.get(bizPoOrderReq.getSoId());
-        }
-
-        if (bizOrderHeader != null && 6 == bizOrderHeader.getOrderType()) {
-            CommonImg commonImg = new CommonImg();
-            commonImg.setObjectId(bizOrderHeader.getId());
-            commonImg.setObjectName(ImgEnum.ORDER_SKU_PHOTO.getTableName());
-            commonImg.setImgType(ImgEnum.ORDER_SKU_PHOTO.getCode());
-            List<CommonImg> photoOrderImgList = commonImgService.findList(commonImg);
-            model.addAttribute("photoOrderImgList", photoOrderImgList);
-        }
-
-        model.addAttribute("roleSet", roleSet);
-        model.addAttribute("bizPoHeader", bizPoHeader);
-        model.addAttribute("bizOrderHeader", bizOrderHeader);
-        model.addAttribute("type", type);
-        model.addAttribute("prewStatus", prewStatus);
-
-        BizPoPaymentOrder bizPoPaymentOrder=new BizPoPaymentOrder();
-        String fromPage = request.getParameter("fromPage");
-        model.addAttribute("fromPage", fromPage);
-        bizPoPaymentOrder.setFromPage(fromPage);
-        bizPoPaymentOrder.setDelFlag("1");
-        bizPoPaymentOrder.setIsNewRecord(false);
-        if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
-            BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(bizPoHeader.getId());
-            //model.addAttribute("bizRequestHeader", bizRequestHeader);
-            bizPoPaymentOrder.setBizRequestHeader(bizRequestHeader);
-        } else if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
-            bizOrderHeaderService.get(bizPoHeader.getId());
-        } else {
-            // BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
-            bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
-            if (fromPage != null) {
-                switch (fromPage) {
-                    case "requestHeader":
-                        bizPoHeader.setFromPage("requestHeader");
-                        List<String> reqNoList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
-                        if (CollectionUtils.isNotEmpty(reqNoList)) {
-                            model.addAttribute("headerNum", reqNoList.get(0));
-                        }
-                        BizRequestHeader bizRequestHeader = new BizRequestHeader();
-                        bizRequestHeader.setBizPoHeader(bizPoHeader);
-                        List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
-                        if (CollectionUtils.isNotEmpty(requestHeaderList)) {
-                            model.addAttribute("requestHeader", requestHeaderList.get(0));
-                        }
-                        break;
-                    case "orderHeader":
-                        bizPoHeader.setFromPage("orderHeader");
-                        List<String> orderNumList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
-                        if (CollectionUtils.isNotEmpty(orderNumList)) {
-                            model.addAttribute("headerNum", orderNumList.get(0));
-                        }
-                        BizOrderHeader bizOrderHeader2 = new BizOrderHeader();
-                        bizOrderHeader2.setBizPoHeader(bizPoHeader);
-                        List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader2);
-                        if (CollectionUtils.isNotEmpty(orderHeaderList)) {
-                            model.addAttribute("orderHeader", orderHeaderList.get(0));
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-            // model.addAttribute("bizPoHeader", bizPoHeader);
-            bizPoPaymentOrder.setBizPoHeader(bizPoHeader);
-        }
-        if (bizPoHeader.getId() == null) {
-            bizPoPaymentOrder.setPoHeaderId(-1);
-        } else {
-            bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
-        }
-        Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
-
-        //更新BizPoPaymentOrder审核按钮控制flag
-        bizPoPaymentOrderService.updateHasRole(page);
-        bizPoPaymentOrder.setPage(page);
-        String orderId = request.getParameter("orderId");
-        bizPoPaymentOrder.setOrderId(Integer.valueOf(orderId));
-        model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
-        return "modules/biz/po/bizPoHeaderForm";
-    }
+//    @RequiresPermissions("biz:po:bizPoHeader:view")
+//    @RequestMapping(value = "form2")
+//    public String form2(BizPoHeader bizPoHeader, Model model,String prewStatus, String type,HttpServletRequest request,HttpServletResponse response) {
+//        if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null && bizPoHeader.getDeliveryOffice().getId() != 0) {
+//            Office office = officeService.get(bizPoHeader.getDeliveryOffice().getId());
+//            if ("8".equals(office.getType())) {
+//                bizPoHeader.setDeliveryStatus(0);
+//            } else {
+//                bizPoHeader.setDeliveryStatus(1);
+//            }
+//        }
+//
+//        if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
+//            com.wanhutong.backend.modules.config.parse.Process purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+//            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+//        }
+//
+//        if (bizPoHeader.getVendOffice() != null && bizPoHeader.getVendOffice().getBizVendInfo() != null) {
+//            CommonImg compactImg = new CommonImg();
+//            compactImg.setImgType(ImgEnum.VEND_COMPACT.getCode());
+//            compactImg.setObjectId(bizPoHeader.getVendOffice().getId());
+//            compactImg.setObjectName(VEND_IMG_TABLE_NAME);
+//            List<CommonImg> compactImgList = commonImgService.findList(compactImg);
+//            model.addAttribute("compactImgList", compactImgList);
+//
+//            CommonImg identityCardImg = new CommonImg();
+//            identityCardImg.setImgType(ImgEnum.VEND_IDENTITY_CARD.getCode());
+//            identityCardImg.setObjectId(bizPoHeader.getVendOffice().getId());
+//            identityCardImg.setObjectName(VEND_IMG_TABLE_NAME);
+//            List<CommonImg> identityCardImgList = commonImgService.findList(identityCardImg);
+//            model.addAttribute("identityCardImgList", identityCardImgList);
+//
+//        }
+//
+//        List<Role> roleList = UserUtils.getUser().getRoleList();
+//        Set<String> roleSet = Sets.newHashSet();
+//        for (Role r : roleList) {
+//            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+//            if (parse != null) {
+//                roleSet.add(parse.name());
+//            }
+//        }
+//
+//        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+//        bizPoOrderReq.setPoHeader(bizPoHeader);
+//        List<BizPoOrderReq> bizPoOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
+//        if (CollectionUtils.isNotEmpty(bizPoOrderReqs)) {
+//            bizPoOrderReq = bizPoOrderReqs.get(0);
+//        }
+//        BizOrderHeader bizOrderHeader = null;
+//        if (bizPoOrderReq != null) {
+//            bizOrderHeader = bizOrderHeaderService.get(bizPoOrderReq.getSoId());
+//        }
+//
+//        if (bizOrderHeader != null && 6 == bizOrderHeader.getOrderType()) {
+//            CommonImg commonImg = new CommonImg();
+//            commonImg.setObjectId(bizOrderHeader.getId());
+//            commonImg.setObjectName(ImgEnum.ORDER_SKU_PHOTO.getTableName());
+//            commonImg.setImgType(ImgEnum.ORDER_SKU_PHOTO.getCode());
+//            List<CommonImg> photoOrderImgList = commonImgService.findList(commonImg);
+//            model.addAttribute("photoOrderImgList", photoOrderImgList);
+//        }
+//
+//        model.addAttribute("roleSet", roleSet);
+//        model.addAttribute("bizPoHeader", bizPoHeader);
+//        model.addAttribute("bizOrderHeader", bizOrderHeader);
+//        model.addAttribute("type", type);
+//        model.addAttribute("prewStatus", prewStatus);
+//
+//        BizPoPaymentOrder bizPoPaymentOrder=new BizPoPaymentOrder();
+//        String fromPage = request.getParameter("fromPage");
+//        model.addAttribute("fromPage", fromPage);
+//        bizPoPaymentOrder.setFromPage(fromPage);
+//        bizPoPaymentOrder.setDelFlag("1");
+//        bizPoPaymentOrder.setIsNewRecord(false);
+//        if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+//            BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(bizPoHeader.getId());
+//            //model.addAttribute("bizRequestHeader", bizRequestHeader);
+//            bizPoPaymentOrder.setBizRequestHeader(bizRequestHeader);
+//        } else if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+//            bizOrderHeaderService.get(bizPoHeader.getId());
+//        } else {
+//            // BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
+//            bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
+//            if (fromPage != null) {
+//                switch (fromPage) {
+//                    case "requestHeader":
+//                        bizPoHeader.setFromPage("requestHeader");
+//                        List<String> reqNoList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
+//                        if (CollectionUtils.isNotEmpty(reqNoList)) {
+//                            model.addAttribute("headerNum", reqNoList.get(0));
+//                        }
+//                        BizRequestHeader bizRequestHeader = new BizRequestHeader();
+//                        bizRequestHeader.setBizPoHeader(bizPoHeader);
+//                        List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
+//                        if (CollectionUtils.isNotEmpty(requestHeaderList)) {
+//                            model.addAttribute("requestHeader", requestHeaderList.get(0));
+//                        }
+//                        break;
+//                    case "orderHeader":
+//                        bizPoHeader.setFromPage("orderHeader");
+//                        List<String> orderNumList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
+//                        if (CollectionUtils.isNotEmpty(orderNumList)) {
+//                            model.addAttribute("headerNum", orderNumList.get(0));
+//                        }
+//                        BizOrderHeader bizOrderHeader2 = new BizOrderHeader();
+//                        bizOrderHeader2.setBizPoHeader(bizPoHeader);
+//                        List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader2);
+//                        if (CollectionUtils.isNotEmpty(orderHeaderList)) {
+//                            model.addAttribute("orderHeader", orderHeaderList.get(0));
+//                        }
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//            // model.addAttribute("bizPoHeader", bizPoHeader);
+//            bizPoPaymentOrder.setBizPoHeader(bizPoHeader);
+//        }
+//        if (bizPoHeader.getId() == null) {
+//            bizPoPaymentOrder.setPoHeaderId(-1);
+//        } else {
+//            bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
+//        }
+//        Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+//
+//        //更新BizPoPaymentOrder审核按钮控制flag
+//        bizPoPaymentOrderService.updateHasRole(page);
+//        bizPoPaymentOrder.setPage(page);
+//        String orderId = request.getParameter("orderId");
+//        bizPoPaymentOrder.setOrderId(Integer.valueOf(orderId));
+//        model.addAttribute("bizPoPaymentOrder", bizPoPaymentOrder);
+//        return "modules/biz/po/bizPoHeaderForm";
+//    }
     @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = "form")
     public String form(BizPoHeader bizPoHeader, Model model, String prewStatus, String type) {
