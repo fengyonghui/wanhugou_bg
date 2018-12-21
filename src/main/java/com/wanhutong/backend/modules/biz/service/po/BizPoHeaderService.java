@@ -1706,7 +1706,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
         bizPoPaymentOrder.setPoHeaderId(poHeaderId);
 
-        List<BizPoPaymentOrder> list = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
+        List<BizPoPaymentOrder> list = bizPoPaymentOrderService.findListByIdOrPoID(bizPoPaymentOrder);
+
         if (CollectionUtils.isNotEmpty(list)) {
             for (BizPoPaymentOrder poPaymentOrder : list) {
                 bizPoPaymentOrderService.delete(poPaymentOrder);

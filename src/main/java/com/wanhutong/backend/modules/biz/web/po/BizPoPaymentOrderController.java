@@ -159,15 +159,6 @@ public class BizPoPaymentOrderController extends BaseController {
             bizPoPaymentOrder.setPoHeaderId(poId);
         }
         Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
-        List<BizPoPaymentOrder> list = bizPoPaymentOrderService.findList(bizPoPaymentOrder);
-
-        Integer poHeaderId = poId;
-        BizPoHeader bizPoHeader1 = bizPoHeaderService.get(poHeaderId);
-
-        //将采购单对应的所有付款单status设为0
-        BizPoPaymentOrder bizPoPaymentOrder1 = new BizPoPaymentOrder();
-        bizPoPaymentOrder1.setPoHeaderId(poHeaderId);
-        List<BizPoPaymentOrder> list1 = bizPoPaymentOrderService.findList(bizPoPaymentOrder1);
 
         //更新BizPoPaymentOrder审核按钮控制flag
         bizPoPaymentOrderService.updateHasRole(page);

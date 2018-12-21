@@ -14,7 +14,7 @@
 		<result column="processId" property="processId"/>
 		<result column="payTime" property="payTime"/>
 		<result column="remark" property="remark"/>
-
+		<result column="delFlag" property="delFlag"/>
 
 		<result column="orderId" property="orderId"/>
 		<result column="orderNum" property="orderNum"/>
@@ -293,6 +293,25 @@
 		LEFT JOIN biz_po_order_req bpor ON bpor.po_id = bph.id AND bpor.so_type = 2 AND bpor.status=1
 		WHERE bpor.so_id = #{reqId}
 		GROUP BY a.id
+	</select>
+
+	<select id="findListByIdOrPoID" resultMap="bizPoPaymentOrderMaps">
+		SELECT
+		<include refid="bizPoPaymentOrderColumns"/>
+		FROM biz_po_payment_order a
+		<include refid="bizPoPaymentOrderJoins"/>
+		<where>
+			1=1
+			AND a.status = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="poHeaderId != null and poHeaderId != ''">
+				AND a.po_header_id = #{poHeaderId}
+			</if>
+		</where>
+		group by a.id
+		ORDER BY a.id desc
 	</select>
 
 
