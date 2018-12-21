@@ -35,7 +35,7 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>仓库：</label>
-				<form:input path="invInfo.name" htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="invInfo.name" htmlEscape="false" class="input-medium"/>
 			</li>
 			<li><label>备货单号：</label>
 				<form:input path="requestHeader.reqNo" htmlEscape="false" class="input-medium"/>
@@ -46,8 +46,11 @@
 					<form:options items="${fns:getDictList('req_from_type')}" itemLabel="label" itemValue="value"/>
 				</form:select>
 			</li>
-			<li><label>商品：</label>
-				<form:input path="skuInfo.name" htmlEscape="false" maxlength="20" class="input-medium"/>
+			<li><label>商品名称：</label>
+				<form:input path="skuInfo.name" htmlEscape="false" class="input-medium"/>
+			</li>
+			<li><label>商品货号：</label>
+				<form:input path="skuInfo.itemNo" htmlEscape="false" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
@@ -65,7 +68,8 @@
 				<th>采购中心</th>
 				<th>备货方</th>
 				<th>库存类型</th>
-				<th>商品</th>
+				<th>商品名称</th>
+				<th>商品货号</th>
 				<th>原库存数量</th>
 				<th>现库存数量</th>
 				<th>改变数量</th>
@@ -97,6 +101,9 @@
 				</td>
 				<td>
 					${bizInventoryViewLog.skuInfo.name}
+				</td>
+				<td>
+					${bizInventoryViewLog.skuInfo.itemNo}
 				</td>
 				<td>
 					${bizInventoryViewLog.stockQty}
