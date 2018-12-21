@@ -90,17 +90,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -557,8 +547,20 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				}
 				model.addAttribute("totalPayTotal", totalPayTotal);
 			}
+			if(!Objects.isNull(bizRequestHeader.getBizPoHeader())){
+				BizPoPaymentOrder poPaymentOrder = new BizPoPaymentOrder();
+				poPaymentOrder.setPoHeaderId(bizRequestHeader.getBizPoHeader().getId());
+				poPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
+				poPaymentOrder.setFromPage("requestHeader");
+				poPaymentOrder.setOrderId(bizRequestHeader.getId());
+				Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), poPaymentOrder);
+				//更新BizPoPaymentOrder审核按钮控制flag
+				bizPoPaymentOrderService.updateHasRole(page);
+				model.addAttribute("poPaymentOrderPage",page);
+				model.addAttribute("bizPoHeader",bizPoHeaderService.get(bizRequestHeader.getBizPoHeader().getId()));
+				model.addAttribute("fromPage",poPaymentOrder.getFromPage());
+			}
 		}
-
 		User userAdmin = UserUtils.getUser();
 		//渠道部角色
 		List<Role> roleList = userAdmin.getRoleList();
@@ -571,17 +573,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 		model.addAttribute("roleChanne", roleName);
-		BizPoPaymentOrder poPaymentOrder = new BizPoPaymentOrder();
-		poPaymentOrder.setPoHeaderId(bizRequestHeader.getBizPoHeader().getId());
-		poPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
-		poPaymentOrder.setFromPage("requestHeader");
-		poPaymentOrder.setOrderId(bizRequestHeader.getId());
-		Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), poPaymentOrder);
-		//更新BizPoPaymentOrder审核按钮控制flag
-		bizPoPaymentOrderService.updateHasRole(page);
-		model.addAttribute("poPaymentOrderPage",page);
-		model.addAttribute("bizPoHeader",bizPoHeaderService.get(bizRequestHeader.getBizPoHeader().getId()));
-		model.addAttribute("fromPage",poPaymentOrder.getFromPage());
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
 		model.addAttribute("bizSkuInfo", new BizSkuInfo());
