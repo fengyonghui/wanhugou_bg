@@ -435,7 +435,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "form")
-	public String form(BizRequestHeader bizRequestHeader, Model model) {
+	public String form(BizRequestHeader bizRequestHeader, Model model, HttpServletRequest request, HttpServletResponse response) {
 		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
 		if (bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getId() == null) {
 			List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
@@ -576,9 +576,11 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		poPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
 		poPaymentOrder.setFromPage("requestHeader");
 		poPaymentOrder.setOrderId(bizRequestHeader.getId());
-		List<BizPoPaymentOrder> poPaymentOrderList = bizPoPaymentOrderService.findList(poPaymentOrder);
-		model.addAttribute("poPaymentOrderList",poPaymentOrderList);
-		model.addAttribute("poHeader",bizPoHeaderService.get(bizRequestHeader.getBizPoHeader().getId()));
+		Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), poPaymentOrder);
+		//更新BizPoPaymentOrder审核按钮控制flag
+		bizPoPaymentOrderService.updateHasRole(page);
+		model.addAttribute("poPaymentOrderPage",page);
+		model.addAttribute("bizPoHeader",bizPoHeaderService.get(bizRequestHeader.getBizPoHeader().getId()));
 		model.addAttribute("fromPage",poPaymentOrder.getFromPage());
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
@@ -961,9 +963,9 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "save")
-	public String save(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes) {
+	public String save(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
 		if (!beanValidator(model, bizRequestHeader)){
-			return form(bizRequestHeader, model);
+			return form(bizRequestHeader, model, request, response);
 		}
 		if (bizRequestHeader.getId() != null) {
 			BizPoHeader bizPoHeader = new BizPoHeader();
@@ -1120,14 +1122,14 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 	@RequiresPermissions("biz:request:bizRequestHeader:createPayOrder")
 	@RequestMapping(value = "saveRequest")
-	public String saveRequest(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes, String type) {
+	public String saveRequest(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes, String type, HttpServletRequest request, HttpServletResponse response) {
 		if ("createPay".equalsIgnoreCase(type)) {
 			String msg = bizRequestHeaderForVendorService.genPaymentOrder(bizRequestHeader).getRight();
 			addMessage(redirectAttributes, msg);
 			return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";
 		}
 		if (!beanValidator(model, bizRequestHeader)) {
-			return form(bizRequestHeader, model);
+			return form(bizRequestHeader, model, request, response);
 		}
 		addMessage(redirectAttributes, "保存备货单成功");
 		return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";

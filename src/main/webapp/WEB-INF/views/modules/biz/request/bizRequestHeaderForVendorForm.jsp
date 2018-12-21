@@ -1800,7 +1800,7 @@
 			</tr>
 			</thead>
 			<tbody>
-			<c:forEach items="${poPaymentOrderList}" var="bizPoPaymentOrder">
+			<c:forEach items="${poPaymentOrderPage.list}" var="bizPoPaymentOrder">
 				<tr>
 					<td>
 							${bizPoPaymentOrder.id}
@@ -1861,18 +1861,19 @@
 						<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
 							<shiro:hasPermission name="biz:po:payment:sure:pay">
 								<c:if test="${bizPoPaymentOrder.orderType == 1 && bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id
-						&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
-						&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
-						}">
+										&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
+										&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
+										}">
 									<c:if test="${fromPage != null && fromPage == 'requestHeader'}">
 										<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认aa付款</a>
 									</c:if>
-									<c:if test="${fromPage != null && fromPage == 'orderHeader'}">
-										<a href="${ctx}/biz/order/bizOrderHeader/form?bizPoHeader.id=${bizPoHeader.id}&id=${orderId}&str=pay">确认bb付款</a>
-										<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>--%>
-									</c:if>
-									<c:if test="${fromPage == null}">
-										<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认ccc付款</a>
+								</c:if>
+							</shiro:hasPermission>
+							<!-- 驳回的单子再次开启审核 -->
+							<shiro:hasPermission name="biz:po:bizPoHeader:startAuditAfterReject">
+								<c:if test="${bizPoHeader.commonProcess.type == -1}">
+									<c:if test="${bizPoHeader.bizRequestHeader != null}">
+										<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=startAudit">开启审核</a>
 									</c:if>
 								</c:if>
 							</shiro:hasPermission>
@@ -2255,6 +2256,85 @@
             }
         });
         return false;
+    }
+
+    function checkPass2(poPayId, currentType, money,type) {
+        var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+        var submit = function (v, h, f) {
+            if ($String.isNullOrBlank(f.description)) {
+                jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                return false;
+            }
+            top.$.jBox.confirm("确认审核通过吗？", "系统提示", function (v1, h1, f1) {
+                if (v1 == "ok") {
+                    audit2(1, f.description, poPayId, currentType, money,type);
+                }
+            }, {buttonsFocus: 1});
+            return true;
+        };
+
+        jBox(html, {
+            title: "请输入通过理由:", submit: submit, loaded: function (h) {
+            }
+        });
+
+    }
+
+    function checkReject2(poPayId, currentType, money,type) {
+        var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
+        var submit = function (v, h, f) {
+            if ($String.isNullOrBlank(f.description)) {
+                jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                return false;
+            }
+            top.$.jBox.confirm("确认驳回该流程吗？", "系统提示", function (v1, h1, f1) {
+                if (v1 == "ok") {
+                    audit2(2, f.description, poPayId, currentType, money,type);
+                }
+            }, {buttonsFocus: 1});
+            return true;
+        };
+
+        jBox(html, {
+            title: "请输入驳回理由:", submit: submit, loaded: function (h) {
+            }
+        });
+
+    }
+
+    function audit2(auditType, description, poPayId, currentType, money,type) {
+        var poHeaderId = $("#poHeaderId").val();
+        var orderType = $("#orderType").val();
+        var fromPage = $("#fromPage").val();
+        $.ajax({
+            url: '${ctx}/biz/po/bizPoHeader/auditPay',
+            contentType: 'application/json',
+            data: {"poPayId": poPayId, "currentType": currentType, "auditType": auditType, "description": description, "money": money},
+            type: 'get',
+            success: function (result) {
+                result = JSON.parse(result);
+                if(result.ret == true || result.ret == 'true') {
+                    alert('操作成功!');
+                    if('${fromPage != null}') {
+                        <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                        <%--window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + poHeaderId + "&orderType=" + orderType + "&fromPage=" + fromPage;--%>
+                        if (fromPage == "orderHeader") {
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader/";
+                        }
+                        if (fromPage == "requestHeader") {
+                            window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
+                        }
+                    } else {
+                        window.location.href = "${ctx}/biz/po/bizPoHeader";
+                    }
+                }else {
+                    alert(result.errmsg);
+                }
+            },
+            error: function (error) {
+                console.info(error);
+            }
+        });
     }
 </script>
 </body>
