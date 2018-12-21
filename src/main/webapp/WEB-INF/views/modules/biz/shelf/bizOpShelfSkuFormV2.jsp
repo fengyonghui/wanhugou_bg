@@ -363,7 +363,7 @@
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
                 success:function (data) {
                     opShelfType = data.type;
-                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>'){
+                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>' || data.type=='<%=BizOpShelfInfoEnum.EXCLUSIVE_OFF.getLocal() %>'){
                         $("#PurchaseID").css("display","block");
 
                         $("#centerOfficeName").prop("disabled", "disabled")
@@ -418,7 +418,7 @@
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
                 success:function (data) {
-                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>'){
+                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>' || data.type=='<%=BizOpShelfInfoEnum.EXCLUSIVE_OFF.getLocal() %>'){
                         $("#PurchaseID").css("display","block");
                         if (opShelfType != data.type) {
                             $("#centerOfficeName").prop("disabled", false)
@@ -460,7 +460,7 @@
                         // if (retail = 'first1') {
                         //     notSellOff();
                         // }
-						if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.local}){
+						if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.local} || data.type==${BizOpShelfInfoEnum.EXCLUSIVE_OFF.local}){
                             if (type != 0 && type != data.type) {
                                 alert("平台商品和本地商品和代销不能同时选择");
                                 opshelf.removeAttr("checked");
