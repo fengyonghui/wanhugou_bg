@@ -3577,7 +3577,14 @@
                     <%--<a onclick="checkReject(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.type})">审核驳回</a>--%>
                     <%--</c:if>--%>
                 </shiro:hasPermission>
-
+                <!-- 驳回的单子再次开启审核 -->
+                <shiro:hasPermission name="biz:po:bizPoHeader:startAuditAfterReject">
+                    <c:if test="${bizPoHeader.commonProcess.type == -1}">
+                        <c:if test="${bizPoHeader.bizRequestHeader != null}">
+                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=startAudit">开启审核</a>
+                        </c:if>
+                    </c:if>
+                </shiro:hasPermission>
                 <shiro:hasPermission name="biz:po:sure:bizPoPaymentOrder">
                     <c:if test="${fromPage == 'requestHeader' && bizPoPaymentOrder.total == '0.00' && (requestHeader == null || requestHeader.bizStatus < ReqHeaderStatusEnum.CLOSE.state)}">
                         <a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认aa支付金额</a>
