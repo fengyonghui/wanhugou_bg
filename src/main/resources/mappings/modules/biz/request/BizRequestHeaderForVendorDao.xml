@@ -26,6 +26,7 @@
 		su.name AS "createBy.name",
 		a.update_time AS "updateDate",
 		a.header_type AS "headerType",
+		a.inventory_remark AS "inventoryRemark",
 		sum(req_qty) as "reqQtys",
 		sum(recv_qty) as "recvQtys",
 		sum(brd.out_qty) AS "outQtys",
@@ -314,6 +315,9 @@
 		<if test="bizStatus!=null">
 			biz_status,
 		</if>
+		<if test="inventoryRemark != null and inventoryRemark != ''">
+			inventory_remark,
+		</if>
 			status,
 			create_id,
 			create_time,
@@ -340,6 +344,9 @@
 			#{remark},
 		<if test="bizStatus!=null">
 			#{bizStatus},
+		</if>
+		<if test="inventoryRemark != null and inventoryRemark != ''">
+			#{inventoryRemark},
 		</if>
 			#{delFlag},
 			#{createBy.id},
@@ -370,9 +377,12 @@
 				recv_total	=  #{recvTotal},
 			</if>
 			remark = #{remark},
-		<if test="bizStatus!=null">
-			biz_status = #{bizStatus},
-		</if>
+			<if test="bizStatus!=null">
+				biz_status = #{bizStatus},
+			</if>
+			<if test="inventoryRemark != null and inventoryRemark != ''">
+				inventory_remark = #{inventoryRemark},
+			</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate},

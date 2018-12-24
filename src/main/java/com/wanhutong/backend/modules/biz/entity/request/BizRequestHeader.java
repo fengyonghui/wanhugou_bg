@@ -242,6 +242,7 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 */
 	private Integer needIn;
 
+	private String inventoryRemark;
 
 	public BizRequestHeader() {
 		super();
@@ -845,5 +846,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setOutQtys(Integer outQtys) {
 		this.outQtys = outQtys;
+	}
+
+	public String getInventoryRemark() {
+		return inventoryRemark;
+	}
+
+	public void setInventoryRemark(String inventoryRemark) {
+		this.inventoryRemark = inventoryRemark;
 	}
 }
