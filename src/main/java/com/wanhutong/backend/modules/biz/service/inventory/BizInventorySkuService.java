@@ -31,6 +31,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
@@ -99,6 +100,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	private BizOrderStatusService bizOrderStatusService;
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+	private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
 
 	@Override
 	public BizInventorySku get(Integer id) {
@@ -333,6 +336,11 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void inventorySave(BizRequestHeader requestHeader) {
+		if (StringUtils.isNotBlank(requestHeader.getInventoryRemark())) {
+			BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(requestHeader.getId());
+			bizRequestHeader.setInventoryRemark(requestHeader.getInventoryRemark());
+			bizRequestHeaderForVendorService.saveInfo(bizRequestHeader);
+		}
 		//发起盘点记录
 		BizOrderStatus bizOrderStatus = new BizOrderStatus();
 		bizOrderStatus.setOrderHeader(new BizOrderHeader(requestHeader.getId()));

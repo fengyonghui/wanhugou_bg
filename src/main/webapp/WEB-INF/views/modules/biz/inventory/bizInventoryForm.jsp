@@ -101,6 +101,14 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">备注：</label>
+			<div class="controls">
+				<%--<input type= name="inventoryRemark" readonly="readonly" value="${requestHeader.inventoryRemark}"/>--%>
+				<textarea name="inventoryRemark" id="inventoryRemark" maxlength="200"
+						  class="input-xlarge">${requestHeader.inventoryRemark}</textarea>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">商品信息：</label>
 			<div class="controls">
 				<table id="contentTable"  class="table table-striped table-bordered table-condensed">
