@@ -220,7 +220,7 @@
 		WHERE a.status = 1
 		AND bst.status = 1
 		AND (bst.biz_status = 40 or bst.biz_status = 50)
-		AND a.sent_qty &lt; a.in_qty
+		AND (a.sent_qty IS NULL OR a.sent_qty &lt; a.in_qty)
 		AND bis.status = 1
 		AND bii.cust_id = #{centId}
 		AND bsi.id = #{skuId}

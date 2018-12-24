@@ -371,7 +371,7 @@
 			or rh.biz_status = 30
 			or rh.biz_status = 35
 			or rh.biz_status = 37)
-		AND a.out_qty &lt; a.recv_qty
+		AND (a.out_qty IS NULL OR a.out_qty &lt; a.recv_qty)
 		AND bis.status = 1
 		AND bii.cust_id = #{centerId}
 		AND bsi.id = #{skuId}
