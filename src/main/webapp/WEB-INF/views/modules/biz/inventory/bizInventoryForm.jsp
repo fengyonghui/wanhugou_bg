@@ -23,17 +23,17 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-				    var i = 0;
+				    var i = "";
 				    $("#invReq").find("input[name='reqDetailId']").each(function () {
 				        var reqDetailId = $(this).val();
 						var actualQty = $(this).parent().find("input[name='actualQtys']").val();
-						if (actualQty != 0 && actualQty != '') {
+						if (actualQty != '') {
                             var html = "<input name='invReqDetail' value='" + reqDetailId + "-" + actualQty +"' type='hidden'/>";
+                            i = i + actualQty;
 						}
 						$(this).append(html);
-						i = parseInt(i) + parseInt(actualQty);
                     });
-				    if (i == 0) {
+				    if (i == "") {
 				        alert("请至少添加一条实际库存");
 				        return false;
 					} else {
@@ -142,7 +142,7 @@
 								    <td>${requestDetail.sumSendNum == null ? 0 : requestDetail.sumSendNum}</td>
                                 </c:if>
 								<c:if test="${source == null}">
-                                	<td><input id="${v.index}" name="actualQtys" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini required"/></td>
+                                	<td><input id="${v.index}" name="actualQtys" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini"/></td>
 								</c:if>
 								<c:if test="${source != null}">
 									<td>${requestDetail.actualQty}</td>

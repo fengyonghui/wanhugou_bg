@@ -773,6 +773,11 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             }
         }
 
+        //采购单审核驳回的时候，需要重新提付款申请
+        if (auditType == CommonProcessEntity.AuditType.REJECT.getCode()) {
+            updatePoPayment(id);
+        }
+
         try {
             StringBuilder phone = new StringBuilder();
             for (String s : nextProcess.getRoleEnNameEnum()) {
@@ -1690,6 +1695,24 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             return Pair.of(Boolean.TRUE, "采购单生成," + poId);
         }
         return Pair.of(Boolean.FALSE, "自动生成付款单失败");
+    }
+
+    //清楚现有的支付申请列表数据
+    public void updatePoPayment(int poHeaderId) {
+        //清空采购单中currentPaymentId
+        BizPoHeader bizPoHeader = this.get(poHeaderId);
+        this.updatePaymentOrderId(poHeaderId, null);
+        //将采购单对应的所有付款单status设为0
+        BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+        bizPoPaymentOrder.setPoHeaderId(poHeaderId);
+
+        List<BizPoPaymentOrder> list = bizPoPaymentOrderService.findListByIdOrPoID(bizPoPaymentOrder);
+
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (BizPoPaymentOrder poPaymentOrder : list) {
+                bizPoPaymentOrderService.delete(poPaymentOrder);
+            }
+        }
     }
 
 }

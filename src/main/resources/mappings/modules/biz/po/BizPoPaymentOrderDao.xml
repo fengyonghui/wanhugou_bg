@@ -14,6 +14,13 @@
 		<result column="processId" property="processId"/>
 		<result column="payTime" property="payTime"/>
 		<result column="remark" property="remark"/>
+		<result column="delFlag" property="delFlag"/>
+
+		<result column="orderId" property="orderId"/>
+		<result column="orderNum" property="orderNum"/>
+		<result column="requestId" property="requestId"/>
+		<result column="reqNo" property="reqNo"/>
+
 		<result column="commonProcess.id" property="commonProcess.id"/>
 		<result column="commonProcess.objectName" property="commonProcess.objectName"/>
 		<result column="commonProcess.prevId" property="commonProcess.prevId"/>
@@ -66,6 +73,7 @@
 		a.process_id AS processId,
 		a.pay_time AS payTime,
 		a.remark AS remark,
+		a.status AS "delFlag",
 		po.id AS "poHeader.id",
 		po.biz_status AS "poHeader.bizStatus",
 		po.biz_status AS "poHeaderBizStatus",
@@ -110,12 +118,27 @@
 		<include refid="bizPoPaymentOrderJoins"/>
 		<where>
 			1=1
+			AND a.status = #{DEL_FLAG_NORMAL}
 			AND poprocess.type != -1
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
 			</if>
 			<if test="poHeaderId != null and poHeaderId != ''">
 				AND a.po_header_id = #{poHeaderId}
+			</if>
+			<if test="orderNum != null and orderNum != ''">
+				AND (
+				boh.order_num
+					LIKE
+					<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+				OR brh.req_no
+					LIKE
+					<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+				)
 			</if>
 			<if test="total != null and total != ''">
 				AND a.total = #{total}
@@ -251,6 +274,12 @@
 		<!--WHERE id = #{id}-->
 	<!--</update>-->
 
+	<update id="delete">
+		UPDATE biz_po_payment_order SET
+		status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
 	<update id="updateProcessId">
 		UPDATE biz_po_payment_order SET
 		process_id  = #{processId}
@@ -264,6 +293,25 @@
 		LEFT JOIN biz_po_order_req bpor ON bpor.po_id = bph.id AND bpor.so_type = 2 AND bpor.status=1
 		WHERE bpor.so_id = #{reqId}
 		GROUP BY a.id
+	</select>
+
+	<select id="findListByIdOrPoID" resultMap="bizPoPaymentOrderMaps">
+		SELECT
+		<include refid="bizPoPaymentOrderColumns"/>
+		FROM biz_po_payment_order a
+		<include refid="bizPoPaymentOrderJoins"/>
+		<where>
+			1=1
+			AND a.status = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="poHeaderId != null and poHeaderId != ''">
+				AND a.po_header_id = #{poHeaderId}
+			</if>
+		</where>
+		group by a.id
+		ORDER BY a.id desc
 	</select>
 
 

@@ -302,11 +302,12 @@ public class BizPoPaymentOrderController extends BaseController {
         }
 
         Page<BizPoPaymentOrder> page = new Page<BizPoPaymentOrder>(request, response);
-        if (StringUtils.isBlank(bizPoPaymentOrder.getOrderNum())) {
-            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
-        } else if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum()) && bizPoPaymentOrder.getPoHeaderId() != null) {
-            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
-        }
+        page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+//        if (StringUtils.isBlank(bizPoPaymentOrder.getOrderNum())) {
+//            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+//        } else if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum()) && bizPoPaymentOrder.getPoHeaderId() != null) {
+//            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+//        }
 
         //更新BizPoPaymentOrder审核按钮控制flag
         bizPoPaymentOrderService.updateHasRole(page);
@@ -369,11 +370,16 @@ public class BizPoPaymentOrderController extends BaseController {
         }
 
         Page<BizPoPaymentOrder> page = new Page<BizPoPaymentOrder>(request, response);
-        if (StringUtils.isBlank(bizPoPaymentOrder.getOrderNum())) {
-            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
-        } else if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum()) && bizPoPaymentOrder.getPoHeaderId() != null) {
-            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
-        }
+        page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+//        if (StringUtils.isBlank(bizPoPaymentOrder.getOrderNum())) {
+//            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+//        } else if (StringUtils.isNotBlank(bizPoPaymentOrder.getOrderNum()) && bizPoPaymentOrder.getPoHeaderId() != null) {
+//            page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+//        }
+
+        //更新BizPoPaymentOrder审核按钮控制flag
+        bizPoPaymentOrderService.updateHasRole(page);
+
         model.addAttribute("page", page);
         String orderId = request.getParameter("orderId");
         model.addAttribute("orderId", orderId);

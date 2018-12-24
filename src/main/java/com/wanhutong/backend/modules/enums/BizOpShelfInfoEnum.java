@@ -23,6 +23,11 @@ public enum BizOpShelfInfoEnum {
      * 代销
      */
     SELL_OFF(5),
+
+    /**
+     * 专属货架
+     */
+    EXCLUSIVE_OFF(6),
     ;
 
     private Integer local;
