@@ -47,6 +47,7 @@
                 var toPayTotal=$("#toPayTotal").val();
                 var payTotal = $("#payTotal").val();
                 var payDeadline = $("#payDeadline").val();
+                var loginName = $("#loginName").val();
                 if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                      alert("请输入申请金额!");
                      return false;

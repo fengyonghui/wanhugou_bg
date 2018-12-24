@@ -1884,6 +1884,7 @@
                                 <%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizRequestHeader.id}&str=pay">确认付款</a>--%>
                                 <%--</c:if>--%>
                             </shiro:hasPermission>
+                            <a href="${ctx}/biz/po/bizPoPaymentOrder/formV2?id=${bizPoPaymentOrder.id}">详情</a>
                         </td>
                     </tr>
                 </c:forEach>

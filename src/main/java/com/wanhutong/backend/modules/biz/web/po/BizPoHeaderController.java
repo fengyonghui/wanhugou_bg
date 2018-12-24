@@ -305,6 +305,7 @@ public class BizPoHeaderController extends BaseController {
         model.addAttribute("page", page);
         model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
         return "modules/biz/po/bizPoHeaderList";
+
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:view")
