@@ -391,7 +391,7 @@
 				</td>
 				<td>${requestHeader.recvQtys}</td>
 				<td>${requestHeader.outQtys}</td>
-				<td>
+				<td style="width:150px;word-wrap:break-word;word-break:break-all;">
 					${requestHeader.remark}
 				</td>
 				<td>

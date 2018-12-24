@@ -242,6 +242,7 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 */
 	private Integer needIn;
 
+	private String inventoryRemark;
 	/**
 	 * 订单支出信息合并 搜索 业务状态
 	 * @return
@@ -940,5 +941,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setApplyPayment(Integer applyPayment) {
 		this.applyPayment = applyPayment;
+	}
+
+	public String getInventoryRemark() {
+		return inventoryRemark;
+	}
+
+	public void setInventoryRemark(String inventoryRemark) {
+		this.inventoryRemark = inventoryRemark;
 	}
 }

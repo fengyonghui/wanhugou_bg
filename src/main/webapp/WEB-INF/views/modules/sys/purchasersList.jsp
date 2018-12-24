@@ -89,6 +89,7 @@
 					<th>联系人电话</th>
 				</c:if>
 				<th>机构类型</th>
+				<th>注册时间</th>
 				<th>备注</th>
 			<shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr>
 		</thead>
@@ -112,6 +113,9 @@
 				<td>
                     ${fns:getDictLabel(off.type, 'sys_office_type', '未知状态')}
                 </td>
+				<td>
+					<fmt:formatDate value="${off.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
 				<td>${off.remarks}</td>
                 <td>
 					<shiro:hasPermission name="sys:office:view">
