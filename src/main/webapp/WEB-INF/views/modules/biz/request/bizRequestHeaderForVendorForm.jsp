@@ -1843,8 +1843,8 @@
                                     <c:if test="${bizPoPaymentOrder.total != '0.00'}">
                                         <c:if test="${bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成' && bizPoPaymentOrder.total != 0}">
                                             <%--&& (fns:hasRole(roleSet, bizPoPaymentOrder.commonProcess.paymentOrderProcess.moneyRole.roleEnNameEnum))--%>
-                                            <a href="#" onclick="checkPass2(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核aaa通过</a>
-                                            <a href="#" onclick="checkReject2(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核aaa驳回</a>
+                                            <a href="#" onclick="checkPass2(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核通过</a>
+                                            <a href="#" onclick="checkReject2(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核驳回</a>
                                         </c:if>
                                     </c:if>
                                 </c:if>
@@ -1856,7 +1856,7 @@
 
                             <shiro:hasPermission name="biz:po:sure:bizPoPaymentOrder">
                                 <c:if test="${bizPoPaymentOrder.total == '0.00'}">
-                                    <a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${entity.bizPoHeader.id}&fromPage=${fromPage}">确认aaa支付金额</a>
+                                    <a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${entity.bizPoHeader.id}&requestId=${id}&fromPage=${fromPage}">确认aaa支付金额</a>
                                 </c:if>
                             </shiro:hasPermission>
                             <shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
@@ -2188,8 +2188,9 @@
             success: function (result) {
                 if(result == '操作成功!') {
                     <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
-                    window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + id + "&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}"
-                        + "&fromPage=requestHeader" + "&orderId=" + $("#id").val();
+                    <%--window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + id + "&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}"--%>
+                        <%--+ "&fromPage=requestHeader" + "&orderId=" + $("#id").val();--%>
+                    window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                 }
             },
             error: function (error) {
@@ -2317,13 +2318,13 @@
                 result = JSON.parse(result);
                 if(result.ret == true || result.ret == 'true') {
                     alert('操作成功!');
-                    if('${fromPage != null}') {
+                    if(${fromPage != null}) {
                         <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
                         <%--window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + poHeaderId + "&orderType=" + orderType + "&fromPage=" + fromPage;--%>
-                        if (fromPage == "orderHeader") {
-                            window.location.href = "${ctx}/biz/order/bizOrderHeader/";
+                        if (${fromPage == "orderHeader"}) {
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader";
                         }
-                        if (fromPage == "requestHeader") {
+                        if (${fromPage == "requestHeader"}) {
                             window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
                         }
                     } else {

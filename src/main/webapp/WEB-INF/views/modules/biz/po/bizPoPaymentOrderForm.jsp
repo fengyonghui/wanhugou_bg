@@ -37,6 +37,7 @@
 	<form:form id="inputForm" modelAttribute="bizPoPaymentOrder" action="${ctx}/biz/po/bizPoPaymentOrder/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<form:hidden path="poHeaderId"/>
+		<form:hidden path="requestId"/>
 		<form:hidden path="orderType"/>
 		<form:hidden path="fromPage"/>
 		<sys:message content="${message}"/>

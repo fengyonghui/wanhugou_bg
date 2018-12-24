@@ -532,12 +532,12 @@
 					</c:if>
 				</shiro:hasPermission>
 
-				<!-- 支付申请列表获取 -->
-				<c:if test="${bizPoHeader.commonProcess.type != -1}">
-					<shiro:hasPermission name="biz:po:pay:list">
-						<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${requestHeader.id}">付款单列表</a>
-					</shiro:hasPermission>
-				</c:if>
+				<%--<!-- 支付申请列表获取 -->--%>
+				<%--<c:if test="${bizPoHeader.commonProcess.type != -1}">--%>
+					<%--<shiro:hasPermission name="biz:po:pay:list">--%>
+						<%--<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${requestHeader.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${requestHeader.id}">付款单列表</a>--%>
+					<%--</shiro:hasPermission>--%>
+				<%--</c:if>--%>
 
 				<!-- 驳回的单子再次开启审核 -->
 				<shiro:hasPermission name="biz:po:bizPoHeader:startAuditAfterReject">
@@ -555,7 +555,7 @@
 					<a href="javascript:void(0);" onclick="cancel(${requestHeader.bizPoHeader.id});">付款单取消</a>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
-					<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&str=detail&fromPage=requestHeader">付款单详情</a>
+					<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${requestHeader.bizPoHeader.id}&str=detail&fromPage=requestHeader">付款单详情</a>--%>
 					<%--<a href="${ctx}/biz/po/bizPoHeader/form2?id=${requestHeader.bizPoHeader.id}&str=detail&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${requestHeader.id}">付款单详情</a>--%>
 					<!-- 排产，确认排产 -->
 					<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
