@@ -1856,7 +1856,7 @@
 
                             <shiro:hasPermission name="biz:po:sure:bizPoPaymentOrder">
                                 <c:if test="${bizPoPaymentOrder.total == '0.00'}">
-                                    <a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${entity.bizPoHeader.id}&requestId=${id}&fromPage=${fromPage}">确认aaa支付金额</a>
+                                    <a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${entity.bizPoHeader.id}&requestId=${id}&fromPage=${fromPage}">确认支付金额</a>
                                 </c:if>
                             </shiro:hasPermission>
                             <shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
@@ -1866,7 +1866,7 @@
                                             && bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
                                             }">
                                         <c:if test="${fromPage != null && fromPage == 'requestHeader'}">
-                                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认aa付款</a>
+                                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?bizPoHeader.id=${bizPoHeader.id}&str=pay">确认付款</a>
                                         </c:if>
                                     </c:if>
                                 </shiro:hasPermission>
