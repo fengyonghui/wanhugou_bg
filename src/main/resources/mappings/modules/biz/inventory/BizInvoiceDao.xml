@@ -331,5 +331,16 @@
 		LEFT JOIN biz_detail_invoice bdi ON bdi.invoice_id = bi.id
 		WHERE bdi.request_header_id = #{requestId}
 	</select>
+
+	<select id="findOrderHeaderByInvoiceId" resultType="BizOrderHeader">
+		select
+		  bo.order_num
+		from biz_invoice a
+		LEFT JOIN biz_detail_invoice bi ON bi.invoice_id = a.id
+		LEFT JOIN biz_order_header bo ON bo.id = bi.order_header_id
+		where a.status = 1
+		and a.id=#{invoiceId}
+		group by bo.id
+	</select>
 	
 </mapper>
