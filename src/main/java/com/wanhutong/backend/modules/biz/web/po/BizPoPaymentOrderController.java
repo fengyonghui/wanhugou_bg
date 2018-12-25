@@ -627,9 +627,14 @@ public class BizPoPaymentOrderController extends BaseController {
 
             }
         }
-
+        if(bizPoPaymentOrder.getRequestId()!=null){
+            return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/list";
+        }
+        else {
+            return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list";
+        }
         //return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoPaymentOrder/?repage&poId=" + bizPoPaymentOrder.getPoHeaderId() + "&orderType=" + bizPoPaymentOrder.getOrderType();
-        return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/form?id=" + bizPoPaymentOrder.getRequestId() + "&str=detail";
+       // return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/form?id=" + bizPoPaymentOrder.getRequestId() + "&str=detail";
 
     }
 

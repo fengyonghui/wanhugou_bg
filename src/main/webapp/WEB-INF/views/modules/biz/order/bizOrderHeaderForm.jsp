@@ -835,8 +835,9 @@
                     alert(result);
                     if (result == '操作成功!') {
                         <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
-                        window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + id + "&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}"
-                            + "&fromPage=orderHeader" + "&orderId=" + $("#id").val();
+                        <%--window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + id + "&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}"--%>
+                            <%--+ "&fromPage=orderHeader" + "&orderId=" + $("#id").val();--%>
+                        window.location.href = "${ctx}/biz/order/bizOrderHeader/list";
                     }
                 },
                 error: function (error) {
@@ -864,7 +865,7 @@
 
             var paymentApplyRemark = $("#paymentApplyRemark").val();
 
-            window.location.href = "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal
+                       window.location.href = "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal
                 + "&payDeadline=" + payDeadline + "&fromPage=orderHeader" + "&paymentApplyRemark=" + paymentApplyRemark;
 
             <%--$("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader");--%>
@@ -1809,18 +1810,9 @@
                     result = JSON.parse(result);
                     if(result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        if('${fromPage != null}') {
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list";
                             <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
                             <%--window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + poHeaderId + "&orderType=" + orderType + "&fromPage=" + fromPage;--%>
-                            if (${fromPage == "orderHeader"}) {
-                                window.location.href = "${ctx}/biz/order/bizOrderHeader/";
-                            }
-                            if (${fromPage == "requestHeader"}) {
-                                window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor";
-                            }
-                        } else {
-                            window.location.href = "${ctx}/biz/po/bizPoHeader";
-                        }
                     }else {
                         alert(result.errmsg);
                     }
@@ -2936,14 +2928,14 @@
                     </c:if>
 
                     <c:if test="${entity.str == 'pay'}">
-                        <input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
-                    </c:if>
+            <input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
+        </c:if>
 
-                    <c:if test="${entity.str == 'createPay'}">
-                        <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary"
-                               value="申请付款"/>
-                    </c:if>
-                </shiro:hasPermission>
+            <c:if test="${entity.str == 'createPay'}">
+                <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary"
+                       value="申请付款"/>
+            </c:if>
+        </shiro:hasPermission>
 
                 <c:if test="${entity.str == 'startAudit'}">
                     <input type="button" onclick="startAudit()" class="btn btn-primary" value="开启审核"/>
@@ -3596,7 +3588,7 @@
 						&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
 						&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 						}">
-                                <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
+                                <a href="${ctx}/biz/order/bizOrderHeader/form?bizPoHeader.id=${bizPoHeader.id}&id=${bizOrderHeader.id}&str=pay">确认付款</a>
                         </c:if>
                     </shiro:hasPermission>
                     <%--<c:if test="${bizPoPaymentOrder.type == PoPayMentOrderTypeEnum.REQ_TYPE.type && bizPoPaymentOrder.id == bizRequestHeader.bizPoPaymentOrder.id--%>
