@@ -39,6 +39,7 @@
             <form:input path="user.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
         </li>
         <li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+        <li class="btns"><input class="btn btn-primary" type="button" value="返回货架列表" onclick="window.location='${ctx}/biz/shelf/bizOpShelfInfo/'" /></li>
         <li class="clearfix"></li>
     </ul>
 </form:form>
@@ -81,9 +82,9 @@
     <%--</c:forEach>--%>
     </tbody>
 </table>
-<div style="padding: 5px 0px 5px 15px;">
-<input class="btn btn-primary" type="submit" value="返回货架列表" onclick="window.location='${ctx}/biz/shelf/bizOpShelfInfo/'"/>
-</div>
+<%--<div style="padding: 5px 0px 5px 15px;">--%>
+<%--<input class="btn btn-primary" type="submit" value="返回货架列表" onclick="window.location='${ctx}/biz/shelf/bizOpShelfInfo/'"/>--%>
+<%--</div>--%>
 <div class="pagination">${bizShelfUserList}</div>
 </body>
 </html>

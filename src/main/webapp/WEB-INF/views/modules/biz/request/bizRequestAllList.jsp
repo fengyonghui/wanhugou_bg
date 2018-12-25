@@ -94,12 +94,22 @@
 						<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>
 				</li>
-                <li><label>需要入库</label>
+                <li><label>需要入库：</label>
                     <form:select path="needIn" cssClass="input-mini">
                         <form:option value="" label="请选择"/>
                         <form:option value="1" label="是"/>
                     </form:select>
                 </li>
+				<li><label>收货时间：</label>
+					<input name="recvEtaStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						   value="${bizRequestHeader.recvEtaStartTime}"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+					至
+					<input name="recvEtaEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						   value="${bizRequestHeader.recvEtaEndTime}"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				</li>
+
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 				<li class="btns">
 					<%--备货单收货--%>
@@ -146,12 +156,21 @@
 										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
 				</li>
-                <li><label>需要出库</label>
+                <li><label>需要出库：</label>
                     <form:select path="needOut" cssClass="input-mini">
                         <form:option value="" label="请选择"/>
                         <form:option value="1" label="是"/>
                     </form:select>
                 </li>
+				<li><label>收货时间：</label>
+					<input name="needOutStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						   value="${bizOrderHeader.needOutStartTime}"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+					至
+					<input name="needOutEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						   value="${needOutStartTime.needOutEndTime}"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 				<li class="btns">
 					<%--订单出库--%>

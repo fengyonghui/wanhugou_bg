@@ -755,7 +755,7 @@
 		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 	</div>
-	<<input type="hidden" value="${hasUnderPriceRole}" id="hasUnderPriceRole">
+	<input type="hidden" value="${hasUnderPriceRole}" id="hasUnderPriceRole">
 </form:form>
 <c:if test="${bizOpShelfSkuList.size() > 0 }">
 	<div class="control-group">

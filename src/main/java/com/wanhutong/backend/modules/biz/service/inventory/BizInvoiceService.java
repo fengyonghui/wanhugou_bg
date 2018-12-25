@@ -156,6 +156,10 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         return super.findPage(page, bizInvoice);
     }
 
+    public List<BizOrderHeader> findOrderHeaderByInvoiceId(Integer invoiceId) {
+        return dao.findOrderHeaderByInvoiceId(invoiceId);
+    }
+
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void save(BizInvoice bizInvoice) {
         boolean flagRequest = true;        //备货单完成状态

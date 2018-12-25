@@ -153,8 +153,11 @@
 		FROM
 		sys_user a
 		<include refid="userJoins"/>
-		WHERE o.parent_ids
-		LIKE
+		left join sys_user_role sur on sur.user_id=a.id
+		left join sys_role sr on sr.id=sur.role_id
+		WHERE 1=1
+		AND sr.enname = 'selection_of_specialist'
+		AND o.parent_ids LIKE
 		<if test="dbName == 'oracle'">('%,'||#{id}||',%')</if>
 		<if test="dbName == 'mssql'">('%,'+#{id}+',%')</if>
 		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>

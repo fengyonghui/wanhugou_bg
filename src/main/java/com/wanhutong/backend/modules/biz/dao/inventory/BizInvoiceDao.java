@@ -27,4 +27,11 @@ public interface BizInvoiceDao extends CrudDao<BizInvoice> {
     List<BizOrderDetail> findLogisticsDetail(BizInvoice bizInvoice);
 
     List<String> findDeliverNoByReqId(@Param("requestId") Integer requestId);
+
+    /**
+     * 通过发货单id获取对应订单列表
+     * @param invoiceId
+     * @return
+     */
+    List<BizOrderHeader> findOrderHeaderByInvoiceId(@Param("invoiceId") Integer invoiceId);
 }
