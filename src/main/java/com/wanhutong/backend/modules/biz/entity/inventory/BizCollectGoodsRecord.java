@@ -102,6 +102,16 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	 */
 	private BizSkuTransferDetail transferDetail;
 
+	/**
+	 * 收货开始时间
+	 */
+	private Date receiveStartTime;
+
+	/**
+	 * 收货结束时间
+	 */
+	private Date receiveEndTime;
+
 	public BizCollectGoodsRecord() {
 		super();
 	}
@@ -368,5 +378,21 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 		public Integer getType() {
 			return type;
 		}
+	}
+
+	public Date getReceiveStartTime() {
+		return receiveStartTime;
+	}
+
+	public void setReceiveStartTime(Date receiveStartTime) {
+		this.receiveStartTime = receiveStartTime;
+	}
+
+	public Date getReceiveEndTime() {
+		return receiveEndTime;
+	}
+
+	public void setReceiveEndTime(Date receiveEndTime) {
+		this.receiveEndTime = receiveEndTime;
 	}
 }

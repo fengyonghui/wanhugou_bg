@@ -61,6 +61,16 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	 */
 	private BizSkuTransfer bizSkuTransfer;
 
+	/**
+	 * 供货开始时间
+	 */
+	private Date sendStartTime;
+
+	/**
+	 * 供货结束时间
+	 */
+	private Date sendEndTime;
+
 	public BizSendGoodsRecord() {
 		super();
 	}
@@ -254,5 +264,21 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 
 	public void setBizSkuTransfer(BizSkuTransfer bizSkuTransfer) {
 		this.bizSkuTransfer = bizSkuTransfer;
+	}
+
+	public Date getSendStartTime() {
+		return sendStartTime;
+	}
+
+	public void setSendStartTime(Date sendStartTime) {
+		this.sendStartTime = sendStartTime;
+	}
+
+	public Date getSendEndTime() {
+		return sendEndTime;
+	}
+
+	public void setSendEndTime(Date sendEndTime) {
+		this.sendEndTime = sendEndTime;
 	}
 }

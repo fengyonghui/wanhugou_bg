@@ -155,6 +155,12 @@
 			<if test="name != null and name != ''">
 				AND  pi.vendor_name = #{name}
 			</if>
+			<if test="recvEtaStartTime !=null and recvEtaStartTime !=''">
+				AND a.update_time <![CDATA[ >= #{recvEtaStartTime} ]]>
+				<if test="recvEtaEndTime !=null and recvEtaEndTime!=''">
+					AND a.update_time <![CDATA[ <= #{recvEtaEndTime} ]]>
+				</if>
+			</if>
 
 			<if test="page != null and page.includeTestData != true">
 				AND NOT EXISTS(
