@@ -156,9 +156,9 @@
 				AND  pi.vendor_name = #{name}
 			</if>
 			<if test="recvEtaStartTime !=null and recvEtaStartTime !=''">
-				AND a.recv_eta <![CDATA[ >= #{recvEtaStartTime} ]]>
+				AND a.update_time <![CDATA[ >= #{recvEtaStartTime} ]]>
 				<if test="recvEtaEndTime !=null and recvEtaEndTime!=''">
-					AND a.recv_eta <![CDATA[ <= #{recvEtaEndTime} ]]>
+					AND a.update_time <![CDATA[ <= #{recvEtaEndTime} ]]>
 				</if>
 			</if>
 

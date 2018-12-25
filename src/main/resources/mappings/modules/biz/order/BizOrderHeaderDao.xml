@@ -577,6 +577,12 @@
                     AND a.update_time &lt;= #{orderUpdaEndTime}
 				</if>
 			</if>
+			<if test="needOutStartTime !=null and needOutStartTime !=''">
+				AND a.update_time &gt;= #{needOutStartTime}
+				<if test="needOutEndTime!=null and needOutEndTime!=''">
+					AND a.update_time &lt;= #{needOutEndTime}
+				</if>
+			</if>
 			<!-- end -->
 			<if test="bizType !=null and bizType!=''">
 				AND a.biz_type=#{bizType}
