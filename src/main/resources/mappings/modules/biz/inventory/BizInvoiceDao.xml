@@ -93,6 +93,12 @@
 					<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 				</if>
+				<if test="sendDateStartTime != null and sendDateStartTime != ''">
+					AND a.send_time &gt;= #{sendDateStartTime}
+					<if test="sendDateEndTime != null and sendDateEndTime != ''">
+						AND a.send_time &lt;= #{sendDateEndTime}
+					</if>
+				</if>
 			</if>
 			<if test="ship != null and ship == 1">
 				<if test="reqNo != null and reqNo != ''">

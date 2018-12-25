@@ -71,6 +71,15 @@
 			<li><label>发货人：</label>
 				<form:input path="carrier" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
+			<li><label>发货时间：</label>
+				<input name="sendDateStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizInvoice.sendDateStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				至
+				<input name="sendDateEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizInvoice.sendDateEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="invoiceExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>

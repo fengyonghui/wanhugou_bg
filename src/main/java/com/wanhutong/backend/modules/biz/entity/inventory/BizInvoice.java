@@ -106,6 +106,16 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 
 	private String creOrdLogistics;
 
+	/**
+	 * 发货时间区间起始
+	 */
+	private Date sendDateStartTime;
+
+	/**
+	 * 发货时间区间终止
+	 */
+	private Date sendDateEndTime;
+
 
 	public BizInvoice() {
 		super();
@@ -457,5 +467,21 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 
 	public void setTransferNo(String transferNo) {
 		this.transferNo = transferNo;
+	}
+
+	public Date getSendDateStartTime() {
+		return sendDateStartTime;
+	}
+
+	public void setSendDateStartTime(Date sendDateStartTime) {
+		this.sendDateStartTime = sendDateStartTime;
+	}
+
+	public Date getSendDateEndTime() {
+		return sendDateEndTime;
+	}
+
+	public void setSendDateEndTime(Date sendDateEndTime) {
+		this.sendDateEndTime = sendDateEndTime;
 	}
 }
