@@ -94,12 +94,24 @@
 						<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>
 				</li>
-                <li><label>需要入库</label>
+                <li><label>需要入库：</label>
                     <form:select path="needIn" cssClass="input-mini">
                         <form:option value="" label="请选择"/>
                         <form:option value="1" label="是"/>
                     </form:select>
                 </li>
+				<li><label>收货时间：</label>
+					<input name="recvEtaStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						   value="${bizRequestHeader.recvEtaStartTime}"
+						   <%--value="<fmt:formatDate value="${bizRequestHeader.recvEtaStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"--%>
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+					至
+					<input name="recvEtaEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						   value="${bizRequestHeader.recvEtaEndTime}"
+						   <%--value="<fmt:formatDate value="${bizRequestHeader.recvEtaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"--%>
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				</li>
+
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 				<li class="btns">
 					<%--备货单收货--%>

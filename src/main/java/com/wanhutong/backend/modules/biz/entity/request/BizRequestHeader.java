@@ -244,6 +244,16 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	private String inventoryRemark;
 
+	/**
+	 * 期望收货开始时间
+	 */
+	private String recvEtaStartTime;
+
+	/**
+	 * 期望收货结束时间
+	 */
+	private String recvEtaEndTime;
+
 	public BizRequestHeader() {
 		super();
 	}
@@ -854,5 +864,21 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setInventoryRemark(String inventoryRemark) {
 		this.inventoryRemark = inventoryRemark;
+	}
+
+	public String getRecvEtaStartTime() {
+		return recvEtaStartTime;
+	}
+
+	public void setRecvEtaStartTime(String recvEtaStartTime) {
+		this.recvEtaStartTime = recvEtaStartTime;
+	}
+
+	public String getRecvEtaEndTime() {
+		return recvEtaEndTime;
+	}
+
+	public void setRecvEtaEndTime(String recvEtaEndTime) {
+		this.recvEtaEndTime = recvEtaEndTime;
 	}
 }
