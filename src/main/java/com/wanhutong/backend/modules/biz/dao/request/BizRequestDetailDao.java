@@ -42,6 +42,11 @@ public interface BizRequestDetailDao extends CrudDao<BizRequestDetail> {
      */
     Integer findRecvTotal(@Param("centId") Integer centId, @Param("skuId") Integer skuId);
 
+    /**
+     * 修改已出库数量
+     * @param id
+     * @param outQty
+     */
     void updateOutQty(@Param("id") int id, @Param("outQty") int outQty);
 
     List<BizRequestDetail> findListByCentIdAndSkuId(@Param("centId") Integer centId, @Param("skuId") Integer skuId);

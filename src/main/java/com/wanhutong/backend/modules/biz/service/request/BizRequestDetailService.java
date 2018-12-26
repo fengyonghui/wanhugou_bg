@@ -108,4 +108,13 @@ public class BizRequestDetailService extends CrudService<BizRequestDetailDao, Bi
 	public List<BizRequestDetail> findInvReqByTransferDetailId(Integer transferDetailId) {
 		return dao.findInvReqByTransferDetailId(transferDetailId);
 	}
+
+	/**
+	 * 修改已出库数量
+	 * @param reqDetailId
+	 * @param outQty
+	 */
+	public void updateOutQty(Integer reqDetailId, Integer outQty) {
+		bizRequestDetailDao.updateOutQty(reqDetailId,outQty);
+	}
 }

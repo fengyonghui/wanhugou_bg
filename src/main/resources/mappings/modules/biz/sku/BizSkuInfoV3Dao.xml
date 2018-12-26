@@ -780,4 +780,14 @@
 			</if>
 	</select>
 
+	<select id="getSkuByItemNo" resultType="BizSkuInfo">
+		SELECT
+		<include refid="bizSkuInfoColumns"/>
+		FROM biz_sku_info a
+		<include refid="bizSkuInfoJoins"/>
+		WHERE
+		a.status = 1
+		AND a.item_no = #{itemNo}
+	</select>
+
 </mapper>
