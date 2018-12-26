@@ -99,7 +99,7 @@
 			<if test="dataStatus==null">
 				AND a.status = #{DEL_FLAG_NORMAL}
 			</if>
-			<if test="bizVarietyInfo != '' and bizVarietyInfo != null and  bizVarietyInfo.name != ''">
+			<if test="bizVarietyInfo != null and bizVarietyInfo.name != null and  bizVarietyInfo.name != ''">
 				AND vi.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{bizVarietyInfo.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{bizVarietyInfo.name}+'%'</if>

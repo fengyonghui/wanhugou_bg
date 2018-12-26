@@ -93,6 +93,12 @@
 					<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 				</if>
+				<if test="sendDateStartTime != null and sendDateStartTime != ''">
+					AND a.send_time &gt;= #{sendDateStartTime}
+					<if test="sendDateEndTime != null and sendDateEndTime != ''">
+						AND a.send_time &lt;= #{sendDateEndTime}
+					</if>
+				</if>
 			</if>
 			<if test="ship != null and ship == 1">
 				<if test="reqNo != null and reqNo != ''">
@@ -324,6 +330,17 @@
 		FROM biz_invoice bi
 		LEFT JOIN biz_detail_invoice bdi ON bdi.invoice_id = bi.id
 		WHERE bdi.request_header_id = #{requestId}
+	</select>
+
+	<select id="findOrderHeaderByInvoiceId" resultType="BizOrderHeader">
+		select
+		  bo.order_num
+		from biz_invoice a
+		LEFT JOIN biz_detail_invoice bi ON bi.invoice_id = a.id
+		LEFT JOIN biz_order_header bo ON bo.id = bi.order_header_id
+		where a.status = 1
+		and a.id=#{invoiceId}
+		group by bo.id
 	</select>
 	
 </mapper>

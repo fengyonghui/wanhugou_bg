@@ -30,8 +30,11 @@
 			<include refid="bizShelfUserColumns"/>
 		FROM biz_shelf_user a
 		<include refid="bizShelfUserJoins"/>
+		LEFT JOIN sys_user_role sur ON sur.user_id = u3.id
+		LEFT JOIN sys_role sr ON sr.id = sur.role_id
 		<where>
             a.status = #{DEL_FLAG_NORMAL}
+			AND sr.enname = 'selection_of_specialist'
 			<if test="shelfInfo != null and shelfInfo.id != null and shelfInfo.id != ''">
 				AND a.shelf_id = #{shelfInfo.id}
 			</if>

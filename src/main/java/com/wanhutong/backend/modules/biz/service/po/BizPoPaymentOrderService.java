@@ -206,6 +206,15 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 	}
 
 	/**
+	 * 根据poId获取采购单列表
+	 * @param bizPoPaymentOrder
+	 * @return
+	 */
+	public List<BizPoPaymentOrder> findListByIdOrPoID(BizPoPaymentOrder bizPoPaymentOrder) {
+		return dao.findListByIdOrPoID(bizPoPaymentOrder);
+	}
+
+	/**
 	 * 更新BizPoPaymentOrder审核按钮控制flag
 	 * @param page
 	 * @return
