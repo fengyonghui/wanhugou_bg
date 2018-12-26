@@ -309,6 +309,119 @@ public class BizPoHeaderController extends BaseController {
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:view")
+    @RequestMapping(value = {"listV3"})
+    public String listV3(BizPoHeader bizPoHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (roleList.contains(role)) {
+            bizPoHeader.setVendOffice(user.getCompany());
+        }
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+
+        if (StringUtils.isNotBlank(bizPoHeader.getProcessTypeStr())) {
+            List<Process> processList = purchaseOrderProcessConfig.getNameProcessMap().get(bizPoHeader.getProcessTypeStr());
+            List<String> transform = processList.stream().map(process -> String.valueOf(process.getCode())).collect(Collectors.toList());
+            bizPoHeader.setProcessTypeList(transform);
+        }
+
+        //Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<BizPoHeader>(request, response), bizPoHeader);
+        List<BizPoHeader> listBizPoHeader = bizPoHeaderService.findList(bizPoHeader);
+        Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
+            }
+        }
+
+        List<com.wanhutong.backend.modules.config.parse.Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
+
+        Set<String> processSet = Sets.newHashSet();
+        for (com.wanhutong.backend.modules.config.parse.Process process : processList) {
+            processSet.add(process.getName());
+        }
+
+        model.addAttribute("roleSet", roleSet);
+        model.addAttribute("processList", processSet);
+        model.addAttribute("roleEnNameSet", roleEnNameSet);
+        model.addAttribute("listBizPoHeader", listBizPoHeader);
+        model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
+
+//                <a href="${ctx}/biz/po/bizPoPaymentOrder/listV2?" +
+//                "poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}" +
+//                "&fromPage=orderHeader&" +
+//                "orderId=${bizPoHeader.bizOrderHeader.id}">支付申请列表</a>
+
+            String fromPage = request.getParameter("fromPage");
+            model.addAttribute("fromPage", fromPage);
+            BizPoPaymentOrder  bizPoPaymentOrder=new BizPoPaymentOrder();
+            String orderId = request.getParameter("orderId");
+            bizPoPaymentOrder.setOrderId(Integer.valueOf(orderId));
+            Integer poId=bizPoHeader.getId();
+            if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+                BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(poId);
+                model.addAttribute("bizRequestHeader", bizRequestHeader);
+            } else if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+                bizOrderHeaderService.get(poId);
+            } else {
+                bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
+                BizPoHeader bizPoHeader2 = bizPoHeaderService.get(poId);
+                if (fromPage != null) {
+                    switch (fromPage) {
+                        case "requestHeader":
+                            bizPoHeader2.setFromPage("requestHeader");
+                            List<String> reqNoList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader2);
+                            if (CollectionUtils.isNotEmpty(reqNoList)) {
+                                model.addAttribute("headerNum", reqNoList.get(0));
+                            }
+                            BizRequestHeader bizRequestHeader = new BizRequestHeader();
+                            bizRequestHeader.setBizPoHeader(bizPoHeader);
+                            List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
+                            if (CollectionUtils.isNotEmpty(requestHeaderList)) {
+                                model.addAttribute("requestHeader", requestHeaderList.get(0));
+                                model.addAttribute("headerNum", requestHeaderList.get(0).getReqNo());
+                            }
+                            break;
+                        case "orderHeader":
+                            bizPoHeader.setFromPage("orderHeader");
+                            List<String> orderNumList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
+                            if (CollectionUtils.isNotEmpty(orderNumList)) {
+                                model.addAttribute("headerNum", orderNumList.get(0));
+                            }
+                            BizOrderHeader bizOrderHeader = new BizOrderHeader();
+                            bizOrderHeader.setBizPoHeader(bizPoHeader);
+                            List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
+                            if (CollectionUtils.isNotEmpty(orderHeaderList)) {
+                                model.addAttribute("orderHeader", orderHeaderList.get(0));
+                                model.addAttribute("headerNum", orderHeaderList.get(0).getOrderNum());
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                model.addAttribute("bizPoHeader", bizPoHeader);
+            }
+            if (poId == null) {
+                bizPoPaymentOrder.setPoHeaderId(-1);
+            } else {
+                bizPoPaymentOrder.setPoHeaderId(poId);
+            }
+            Page<BizPoPaymentOrder> page2 = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+
+            //更新BizPoPaymentOrder审核按钮控制flag
+            bizPoPaymentOrderService.updateHasRole(page2);
+
+            model.addAttribute("pagePoPaymentOrder", page2);
+            model.addAttribute("orderId", orderId);
+        return "modules/biz/po/bizPoHeaderListV3";
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = {"listV2"})
     public String listV2(BizPoHeader bizPoHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         User user = UserUtils.getUser();
