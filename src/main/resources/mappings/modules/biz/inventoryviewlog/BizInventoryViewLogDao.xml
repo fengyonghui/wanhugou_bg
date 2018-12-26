@@ -45,6 +45,7 @@
 	<select id="findList" resultType="BizInventoryViewLog">
 		SELECT 
 			<include refid="bizInventoryViewLogColumns"/>
+			,rh.req_no
 		FROM biz_inventory_view_log a
 		<include refid="bizInventoryViewLogJoins"/>
 		<where>
@@ -75,6 +76,12 @@
 				<if test="dbName == 'oracle'">'%'||#{skuInfo.itemNo}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{skuInfo.itemNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.itemNo},'%')</if>
+			</if>
+			<if test="createStartTime !=null and createStartTime !=''">
+				AND a.create_time <![CDATA[ >= #{createStartTime} ]]>
+				<if test="createEndTime !=null and createEndTime!=''">
+					AND a.create_time <![CDATA[ <= #{createEndTime} ]]>
+				</if>
 			</if>
 			<if test="sqlMap != null and sqlMap.viewLog != null and sqlMap.viewLog != ''">
 				${sqlMap.viewLog}

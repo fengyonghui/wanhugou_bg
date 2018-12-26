@@ -46,7 +46,7 @@
 			<li><label>备货单号：</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
-			<li><label>创建日期：</label>
+			<li><label>收货时间：</label>
 				<input name="receiveStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					   value="<fmt:formatDate value="${bizCollectGoodsRecord.receiveStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
