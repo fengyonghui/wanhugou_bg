@@ -162,7 +162,7 @@
                         <form:option value="1" label="是"/>
                     </form:select>
                 </li>
-				<li><label>收货时间：</label>
+				<li><label>出库时间：</label>
 					<input name="needOutStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 						   value="${bizOrderHeader.needOutStartTime}"
 						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>

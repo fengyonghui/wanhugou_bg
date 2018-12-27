@@ -63,7 +63,7 @@
 					<form:input path="invInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 				</li>
 			</c:if>
-			<li><label>收货时间：</label>
+			<li><label>出库时间：</label>
 				<input name="sendStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 						value="<fmt:formatDate value="${bizSendGoodsRecord.sendStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
