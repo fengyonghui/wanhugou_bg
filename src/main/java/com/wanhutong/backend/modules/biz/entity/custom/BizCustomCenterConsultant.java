@@ -44,6 +44,11 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 	 */
 	private Integer orderCount;
 
+	/**
+	 * 批量移除经销店时，经销店id字符串
+	 */
+	private String custIds;
+
 	public BizCustomCenterConsultant() {
 		super();
 	}
@@ -130,5 +135,13 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 
 	public void setOrderCount(Integer orderCount) {
 		this.orderCount = orderCount;
+	}
+
+	public String getCustIds() {
+		return custIds;
+	}
+
+	public void setCustIds(String custIds) {
+		this.custIds = custIds;
 	}
 }

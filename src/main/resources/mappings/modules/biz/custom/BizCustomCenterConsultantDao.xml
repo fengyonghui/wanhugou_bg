@@ -265,4 +265,13 @@
 		) AS t group by t.`consultants.id`
 	</select>
 
+	<update id="deleteBatch">
+		UPDATE biz_custom_center_consultant set status = 0
+		WHERE cust_id in
+		<foreach item="item" index="index" collection="custIdList" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+
+	</update>
+
 </mapper>
