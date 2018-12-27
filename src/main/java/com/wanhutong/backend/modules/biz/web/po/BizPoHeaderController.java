@@ -308,7 +308,7 @@ public class BizPoHeaderController extends BaseController {
 
     }
 
-    @RequiresPermissions("biz:po:bizPoHeader:view")
+    @RequiresPermissions("biz:po:bizPoHeader2:view")
     @RequestMapping(value = {"listV3"})
     public String listV3(BizPoHeader bizPoHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         User user = UserUtils.getUser();

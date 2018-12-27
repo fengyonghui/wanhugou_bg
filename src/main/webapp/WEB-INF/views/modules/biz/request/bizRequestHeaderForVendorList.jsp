@@ -504,9 +504,11 @@
 				</shiro:hasPermission>
 
 			<!-- 订单支出信息合并 -->
-			<shiro:hasPermission name="biz:po:bizPoHeader:view">
+			<shiro:hasPermission name="biz:po:bizPoHeader2:view">
+                <c:if test="${requestHeader.bizPoHeader!= null}">
 				<a href="${ctx}/biz/po/bizPoHeader/listV3?id=${requestHeader.bizPoHeader.id}&fromPage=requestHeader&orderId=${requestHeader.id}">付款单</a>
-			<%--<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">--%>
+                </c:if>
+                <%--<shiro:hasPermission name="biz:request:bizRequestHeader:createPayOrder">--%>
 				<%--<c:if test="${requestHeader != null}">--%>
 					<%--<c:if test="${requestHeader.bizPoHeader.currentPaymentId == null--%>
 											<%--&& requestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state--%>

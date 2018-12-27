@@ -627,7 +627,7 @@
 					</shiro:hasPermission>
 
 					<!-- 订单支出信息合并 -->
-                    <shiro:hasPermission name="biz:po:bizPoHeader:view">
+                    <shiro:hasPermission name="biz:po:bizPoHeader2:view">
                     <c:if test="${bizOrderHeader.flag != 'check_pending'}">
 					<shiro:hasPermission name="biz:order:bizOrderHeader:view">
 						<%--<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成' || orderHeader.commonProcess.jointOperationOriginProcess.name == '审批完成'}">--%>
