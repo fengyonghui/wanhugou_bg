@@ -55,9 +55,11 @@
                 alert("请选择经销店！");
                 return
             }
-            var consultantId = $("#consultantId").val();
-            window.location.href = "${ctx}/biz/custom/bizCustomCenterConsultant/deleteBatch?custIds=" + custIds
-                + "&consultants.id=" + consultantId;
+            if (confirm("确定批量移除吗？")) {
+                var consultantId = $("#consultantId").val();
+                window.location.href = "${ctx}/biz/custom/bizCustomCenterConsultant/deleteBatch?custIds=" + custIds
+                    + "&consultants.id=" + consultantId;
+            }
         }
 
     </script>
