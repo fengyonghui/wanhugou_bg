@@ -40,19 +40,18 @@
     <c:forEach items="${listBizPoHeader}" var="bizPoHeader" varStatus="state">
         <tr>
             <td>${state.index+1}</td>
-            <td><a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">
+            <td>
                 <c:choose>
                     <c:when test="${bizPoHeader.bizOrderHeader != null}">
-                        ${bizPoHeader.bizOrderHeader.orderNum}
+                        <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoHeader.bizOrderHeader.id}&orderDetails=details">${bizPoHeader.bizOrderHeader.orderNum}</a>
                     </c:when>
                     <c:otherwise>
-                        ${bizPoHeader.bizRequestHeader.reqNo}
+                        <a href="${ctx}/biz/request/bizRequestHeader/form?id=${bizPoHeader.bizRequestHeader.id}&str=detail">${bizPoHeader.bizRequestHeader.reqNo}</a>
                     </c:otherwise>
                 </c:choose>
                 <c:if test="">
 
                 </c:if>
-
             </a></td>
             <td>
                     ${bizPoHeader.vendOffice.name}
@@ -155,18 +154,18 @@
                                 </c:choose>
                             </c:if>
                         </shiro:hasPermission>
-                        <c:if test="${bizPoHeader.commonProcess.type != -1}">
-                            <c:if test="${bizPoHeader.bizOrderHeader != null}">
-                                <shiro:hasPermission name="biz:po:pay:list">
-                                    <a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${bizPoHeader.bizOrderHeader.id}">支付申请列表</a>
-                                </shiro:hasPermission>
-                            </c:if>
-                            <c:if test="${bizPoHeader.bizRequestHeader != null}">
-                                <shiro:hasPermission name="biz:po:pay:list">
-                                    <a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${bizPoHeader.bizRequestHeader.id}">支付申请列表</a>
-                                </shiro:hasPermission>
-                            </c:if>
-                        </c:if>
+                        <%--<c:if test="${bizPoHeader.commonProcess.type != -1}">--%>
+                            <%--<c:if test="${bizPoHeader.bizOrderHeader != null}">--%>
+                                <%--<shiro:hasPermission name="biz:po:pay:list">--%>
+                                    <%--<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${bizPoHeader.bizOrderHeader.id}">支付申请列表</a>--%>
+                                <%--</shiro:hasPermission>--%>
+                            <%--</c:if>--%>
+                            <%--<c:if test="${bizPoHeader.bizRequestHeader != null}">--%>
+                                <%--<shiro:hasPermission name="biz:po:pay:list">--%>
+                                    <%--<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${bizPoHeader.bizRequestHeader.id}">支付申请列表</a>--%>
+                                <%--</shiro:hasPermission>--%>
+                            <%--</c:if>--%>
+                        <%--</c:if>--%>
                         <!-- 驳回的单子再次开启审核 -->
                         <shiro:hasPermission name="biz:po:bizPoHeader:startAuditAfterReject">
                             <c:if test="${bizPoHeader.commonProcess.type == -1}">
@@ -205,7 +204,7 @@
 <c:if test="${listBizPoHeader.get(0).commonProcess.type != -1 && (listBizPoHeader.get(0).bizOrderHeader != null||listBizPoHeader.get(0).bizRequestHeader != null)}">
     <c:if test="${pagePoPaymentOrder.list != null && fn:length(pagePoPaymentOrder.list) > 0}">
     <shiro:hasPermission name="biz:po:pay:list">
-    <span>当前支付申请信息</span>
+    <span>支付申请信息列表</span>
     <table id="contentTable2" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>

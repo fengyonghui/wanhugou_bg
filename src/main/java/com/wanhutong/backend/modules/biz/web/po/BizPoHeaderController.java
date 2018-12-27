@@ -361,6 +361,7 @@ public class BizPoHeaderController extends BaseController {
             BizPoPaymentOrder  bizPoPaymentOrder=new BizPoPaymentOrder();
             String orderId = request.getParameter("orderId");
             bizPoPaymentOrder.setOrderId(Integer.valueOf(orderId));
+            bizPoPaymentOrder.setFromPage(fromPage);
             Integer poId=bizPoHeader.getId();
             if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
                 BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(poId);
@@ -795,6 +796,7 @@ public class BizPoHeaderController extends BaseController {
         model.addAttribute("prewStatus", prewStatus);
         return "modules/biz/po/bizPoHeaderForm";
     }
+
     @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = "form4Mobile")
     @ResponseBody
