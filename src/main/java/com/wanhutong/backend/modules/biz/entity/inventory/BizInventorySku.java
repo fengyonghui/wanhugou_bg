@@ -53,6 +53,11 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 
 	private String inventoryAgeDate;
 
+	/**
+	 * 根据采购中心获取库存商品标识
+	 */
+	private String fromCompanyStr;
+
 	public BizInventorySku() {
 		super();
 	}
@@ -222,5 +227,13 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 		public Integer getInvType() {
 			return invType;
 		}
+	}
+
+	public String getFromCompanyStr() {
+		return fromCompanyStr;
+	}
+
+	public void setFromCompanyStr(String fromCompanyStr) {
+		this.fromCompanyStr = fromCompanyStr;
 	}
 }

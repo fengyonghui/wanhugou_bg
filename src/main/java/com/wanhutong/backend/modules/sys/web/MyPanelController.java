@@ -318,6 +318,7 @@ public class MyPanelController extends BaseController {
     public String needPutaway(RedirectAttributes redirectModel) {
         redirectModel.addAttribute("previousPage", "myPanel");
         return "redirect:" + Global.getAdminPath() + "/biz/sku/bizSkuInfo/list?notPutaway=1&productInfo.prodType=1";
+        //return "redirect:" + Global.getAdminPath() + "/biz/shelf/bizOpShelfSkuV2/form?shelfSign=0&previousPage=myPanel";
     }
 
     //        备货单待发货
