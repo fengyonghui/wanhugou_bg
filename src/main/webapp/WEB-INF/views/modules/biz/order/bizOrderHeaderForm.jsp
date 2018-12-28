@@ -1836,11 +1836,11 @@
         <c:if test="${empty bizOrderHeader.clientModify}">
             <li><a href="${ctx}/biz/order/bizOrderHeader?source=${source}">订单信息列表</a></li>
         </c:if>
-        <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
-            <li>
-                <a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizOrderHeader.consultantId}&source=${source}">订单信息列表</a>
-            </li>
-        </c:if>
+        <%--<c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">--%>
+            <%--<li>--%>
+                <%--<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizOrderHeader.consultantId}&source=${source}">订单信息列表</a>--%>
+            <%--</li>--%>
+        <%--</c:if>--%>
     </c:if>
 
     <li class="active">
@@ -1864,6 +1864,13 @@
                         name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
                         name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a>
             </c:if>
+        </c:if>
+    </li>
+    <li class="unactive">
+        <c:if test="${entity.orderDetails eq 'details'}">
+            <shiro:hasPermission name="biz:po:bizPoHeader:view">
+                <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizOrderHeader.bizPoHeader.id}&str=detail&fromPage=orderHeader&orderId=${bizOrderHeader.id}">采购单详情</a>
+            </shiro:hasPermission>
         </c:if>
     </li>
 </ul>
@@ -2110,52 +2117,6 @@
             </div>
         </div>
     </c:if>
-
-    <div class="control-group">
-        <label class="control-label">排产状态：</label>
-        <div class="controls">
-            <input type="text" disabled="disabled"
-                   value="${fns:getDictLabel(entity.bizPoHeader.poSchType, 'poSchType', '未排产')}" htmlEscape="false"
-                   maxlength="30" class="input-xlarge "/>
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label">订单状态：</label>
-        <div class="controls">
-            <input type="text" disabled="disabled"
-                   value="${fns:getDictLabel(entity.bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}" htmlEscape="false"
-                   maxlength="30" class="input-xlarge "/>
-        </div>
-    </div>
-    <%--<div class="control-group">--%>
-        <%--<label class="control-label">备注：</label>--%>
-        <%--<div class="controls">--%>
-            <%--<form:textarea path="remark" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-        <%--</div>--%>
-    <%--</div>--%>
-        <%--<div class="control-group">--%>
-            <%--<label class="control-label">交货地点：</label>--%>
-            <%--<div class="controls">--%>
-                <%--<form:radiobutton id="deliveryStatus0" path="deliveryStatus" onclick="choose2(this)" value="0"/>采购中心--%>
-                <%--<form:radiobutton id="deliveryStatus1" path="deliveryStatus" checked="true" onclick="choose2(this)"--%>
-                                  <%--value="1"/>供应商--%>
-            <%--</div>--%>
-        <%--</div>--%>
-    <%--<c:if test="${entity.str == 'audit'}">--%>
-        <%--<c:if test="${createPo == 'yes'}">--%>
-            <%--entity.xxx--%>
-        <%--</c:if>--%>
-    <%--</c:if>--%>
-    <div class="control-group">
-        <label class="control-label">订单总价：</label>
-        <div class="controls">
-            <input type="text" disabled="disabled" value="${entity.bizPoHeader.totalDetail}" htmlEscape="false"
-                   maxlength="30" class="input-xlarge "/>
-        </div>
-    </div>
-
-
-
     <!-- 隐藏佣金 -->
     <shiro:hasPermission name="biz:order:buyPrice:view">
         <c:if test="${source ne 'vendor'}">
@@ -3084,8 +3045,98 @@
         </div>
 
     </c:if>
+</form:form>
+<form:form id="inputForm2" modelAttribute="bizOrderHeader.bizPoHeader"
+            class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label">采购单总价：</label>
+        <div class="controls">
+            <input type="text" disabled="disabled" value="${bizPoHeader.totalDetail}" htmlEscape="false"
+                   maxlength="30" class="input-xlarge "/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">采购单应付金额：</label>
+        <div class="controls">
+            <input type="text" disabled="disabled"
+                   value="${bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight}" htmlEscape="false"
+                   maxlength="30" class="input-xlarge "/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">最后付款时间：</label>
+        <div class="controls">
+            <input name="lastPayDate" type="text" readonly="readonly" maxlength="20"
+                   class="input-medium Wdate required"
+                   value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
 
-
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">交货地点：</label>
+        <div class="controls">
+            <form:radiobutton id="deliveryStatus0" path="deliveryStatus" onclick="choose2(this)" value="0"/>采购中心
+            <form:radiobutton id="deliveryStatus1" path="deliveryStatus" checked="true" onclick="choose2(this)"
+                              value="1"/>供应商
+        </div>
+    </div>
+    <div class="control-group" id="buyCenterId" style="display:none">
+        <label class="control-label">采购中心：</label>
+        <div class="controls">
+            <sys:treeselect id="deliveryOffice" name="deliveryOffice.id" value="${bizPoHeader.deliveryOffice.id}"
+                            labelName="deliveryOffice.name"
+                            labelValue="${bizPoHeader.deliveryOffice.name}" notAllowSelectParent="true"
+                            title="采购中心"
+                            url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex"
+                            cssClass="input-xlarge " dataMsgRequired="必填信息">
+            </sys:treeselect>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">采购单备注：</label>
+        <div class="controls">
+            <form:textarea path="remark" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">采购单状态：</label>
+        <div class="controls">
+            <input type="text" disabled="disabled"
+                   value="${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}" htmlEscape="false"
+                   maxlength="30" class="input-xlarge "/>
+        </div>
+    </div>
+    <c:if test="${fn:length(poAuditList) > 0}">
+        <div class="control-group">
+            <label class="control-label">采购单审批流程：</label>
+            <div class="controls help_wrap">
+                <div class="help_step_box fa">
+                    <c:forEach items="${poAuditList}" var="v" varStatus="stat">
+                        <c:if test="${!stat.last}" >
+                            <div class="help_step_item">
+                                <div class="help_step_left"></div>
+                                <div class="help_step_num">${stat.index + 1}</div>
+                                批注:${v.description}<br/><br/>
+                                审批人:${v.user.name}<br/>
+                                <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                <div class="help_step_right"></div>
+                            </div>
+                        </c:if>
+                        <c:if test="${stat.last}">
+                            <div class="help_step_item help_step_set">
+                                <div class="help_step_left"></div>
+                                <div class="help_step_num">${stat.index + 1}</div>
+                                当前状态:${v.purchaseOrderProcess.name}<br/><br/>
+                                    ${v.user.name}<br/>
+                                <div class="help_step_right"></div>
+                            </div>
+                        </c:if>
+                    </c:forEach>
+                </div>
+            </div>
+        </div>
+    </c:if>
 </form:form>
 
 <%--详情列表--%>
@@ -3097,7 +3148,7 @@
         <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
             <th>货架名称</th>
         </c:if>
-        <th>商品名称</th>
+        <th>商品333名称</th>
         <th>商品编号</th>
         <th>商品货号</th>
         <%--<th>已生成的采购单</th>--%>
@@ -3232,16 +3283,16 @@
         <div class="control-group">
             <label class="control-label">排产类型：</label>
             <div class="controls" id="schedulingPlanRadio">
-                <form:radiobutton id="deliveryStatus0" path="entity.bizPoHeader.schedulingType" checked="true"
+                <form:radiobutton id="deliveryStatus2" path="entity.bizPoHeader.schedulingType" checked="true"
                                   onclick="choose(this)" value="0"/>按订单排产
-                <form:radiobutton id="deliveryStatus1" path="entity.bizPoHeader.schedulingType" onclick="choose(this)"
+                <form:radiobutton id="deliveryStatus3" path="entity.bizPoHeader.schedulingType" onclick="choose(this)"
                                   value="1"/>按商品排产
             </div>
         </div>
         <div class="control-group" id="stockGoods_schedu">
             <label class="control-label">采购商品：</label>
             <div class="controls">
-                <table id="contentTable" class="table table-striped table-bordered table-condensed">
+                <table id="contentTable3" class="table table-striped table-bordered table-condensed">
                     <thead>
                     <tr>
                         <th>详情行号</th>

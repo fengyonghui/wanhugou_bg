@@ -625,6 +625,16 @@ public class BizOrderHeaderController extends BaseController {
     ) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
         if(!Objects.isNull(bizOrderHeader.getBizPoHeader())) {
+            BizPoHeader  bizPoHeader=bizOrderHeader.getBizPoHeader();
+            if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null && bizPoHeader.getDeliveryOffice().getId() != 0) {
+                Office office = officeService.get(bizPoHeader.getDeliveryOffice().getId());
+                if ("8".equals(office.getType())) {
+                    bizPoHeader.setDeliveryStatus(0);
+                } else {
+                    bizPoHeader.setDeliveryStatus(1);
+                }
+            }
+            bizOrderHeader.setBizPoHeader(bizPoHeader);
             BizPoHeader bizPoHeader2 = bizPoHeaderService.get(bizOrderHeader.getBizPoHeader().getId());
             model.addAttribute("bizPoHeader", bizPoHeader2);
             //BizPoHeader bizPoHeader =bizOrderHeader.getBizPoHeader();
@@ -920,6 +930,7 @@ public class BizOrderHeaderController extends BaseController {
         List<CommonProcessEntity> currentList = commonProcessService.findList(commonProcessEntity);
 
         request.setAttribute("id", bizOrderHeader.getId());
+        request.setAttribute("poAuditList", poAuditList);
         request.setAttribute("auditList", list);
         request.setAttribute("currentAuditStatus", CollectionUtils.isNotEmpty(currentList) ? currentList.get(0) : new CommonProcessEntity());
         request.setAttribute("type", type);
