@@ -162,6 +162,7 @@ public class BizOpShelfSkuController extends BaseController {
 		if(emptyName==true && emptyPart==true && emptyItemNo==true){
 			System.out.println("为空 不查询sku商品");
 		}else {
+			bizOpShelfSku.setSkuDeleteFlag("true");
 			list = bizOpShelfSkuService.findList(bizOpShelfSku);
 		}
 		if(list!=null){
@@ -199,6 +200,7 @@ public class BizOpShelfSkuController extends BaseController {
 		if(emptyName==true && emptyPart==true && emptyItemNo==true){
 			System.out.println("为空 不查询sku商品");
 		}else {
+			bizOpShelfSku.setSkuDeleteFlag("true");
 			list = bizOpShelfSkuService.findList(bizOpShelfSku);
 		}
 		if(list!=null){

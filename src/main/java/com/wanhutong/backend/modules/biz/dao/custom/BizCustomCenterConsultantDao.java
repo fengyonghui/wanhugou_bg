@@ -36,4 +36,10 @@ public interface BizCustomCenterConsultantDao extends CrudDao<BizCustomCenterCon
      * @return
      */
     List<BizCustomCenterConsultant> consultantOrderList(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("purchasingId") Integer purchasingId);
+
+    /**
+     * 批量移除经销店
+     * @param custIdList
+     */
+    void deleteBatch(@Param("custIdList") List<String> custIdList);
 }

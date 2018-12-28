@@ -8,6 +8,8 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 
+import java.util.Date;
+
 /**
  * 库存盘点记录Entity
  * @author zx
@@ -33,6 +35,16 @@ public class BizInventoryViewLog extends DataEntity<BizInventoryViewLog> {
 	private Integer nowStockQty;
 	//备货单信息
 	private BizRequestHeader requestHeader;
+
+	/**
+	 * 盘点时间开始时间
+	 */
+	private Date createStartTime;
+
+	/**
+	 * 盘点时间结束时间
+	 */
+	private Date createEndTime;
 	
 	public BizInventoryViewLog() {
 		super();
@@ -96,5 +108,21 @@ public class BizInventoryViewLog extends DataEntity<BizInventoryViewLog> {
 
 	public void setRequestHeader(BizRequestHeader requestHeader) {
 		this.requestHeader = requestHeader;
+	}
+
+	public Date getCreateStartTime() {
+		return createStartTime;
+	}
+
+	public void setCreateStartTime(Date createStartTime) {
+		this.createStartTime = createStartTime;
+	}
+
+	public Date getCreateEndTime() {
+		return createEndTime;
+	}
+
+	public void setCreateEndTime(Date createEndTime) {
+		this.createEndTime = createEndTime;
 	}
 }

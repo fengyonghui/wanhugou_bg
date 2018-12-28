@@ -141,11 +141,16 @@ public class BizInvoiceController extends BaseController {
                         String orderNums = "";
                         if (CollectionUtils.isNotEmpty(orderHeaderList)){
                             for (BizOrderHeader bizOrderHeader : orderHeaderList) {
+                                if (bizOrderHeader == null || bizOrderHeader.getOrderNum() == null) {
+                                    continue;
+                                }
                                 String orderNum = bizOrderHeader.getOrderNum();
                                 orderNums += orderNum + ",";
                             }
                         }
-                        b.setOrderHeaders(orderNums.substring(0, orderNums.length()-1));
+                        if (StringUtils.isNotBlank(orderNums)) {
+                            b.setOrderHeaders(orderNums.substring(0, orderNums.length()-1));
+                        }
                     } catch (Exception e) {
                         logger.error("多线程给发货单添加订单号失败", e);
                     } finally {
