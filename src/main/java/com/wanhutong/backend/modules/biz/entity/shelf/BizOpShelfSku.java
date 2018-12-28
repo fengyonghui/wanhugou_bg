@@ -112,6 +112,11 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 		return shelfTime;
 	}
 
+	/**
+	 * 商品已删除标识符
+	 */
+	private String skuDeleteFlag;
+
 	public void setShelfTime(Date shelfTime) {
 		this.shelfTime = shelfTime;
 	}
@@ -347,6 +352,14 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 
 	public void setOrderDetailForm(String orderDetailForm) {
 		this.orderDetailForm = orderDetailForm;
+	}
+
+	public String getSkuDeleteFlag() {
+		return skuDeleteFlag;
+	}
+
+	public void setSkuDeleteFlag(String skuDeleteFlag) {
+		this.skuDeleteFlag = skuDeleteFlag;
 	}
 
 	@Override
