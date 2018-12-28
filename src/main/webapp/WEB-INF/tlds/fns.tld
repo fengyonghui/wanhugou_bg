@@ -103,6 +103,19 @@
     <function-signature>java.lang.Object getCache(java.lang.String, java.lang.Object)</function-signature>
     <example>${fns:getCache(cacheName, defaultValue)}</example>  
   </function>
+
+
+ <function>
+  <description>
+    Tests if an input string contains the specified substring.
+  </description>
+  <name>containsKey</name>
+  <function-class>com.wanhutong.backend.modules.sys.utils.MapUtils</function-class>
+  <function-signature>boolean containsKey(java.util.Map,java.lang.Integer)</function-signature>
+  <example>
+    &lt;c:if test="${fns:containsKey(map,key)}">
+  </example>
+</function>
 	
   <!-- DictUtils -->
   <function>
