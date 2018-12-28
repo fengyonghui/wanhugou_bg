@@ -47,7 +47,7 @@
                         <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoHeader.bizOrderHeader.id}&orderDetails=details">${bizPoHeader.bizOrderHeader.orderNum}</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="${ctx}/biz/request/bizRequestHeader/form?id=${bizPoHeader.bizRequestHeader.id}&str=detail">${bizPoHeader.bizRequestHeader.reqNo}</a>
+                        <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=detail">${bizPoHeader.bizRequestHeader.reqNo}</a>
                     </c:otherwise>
                 </c:choose>
                 <c:if test="">
