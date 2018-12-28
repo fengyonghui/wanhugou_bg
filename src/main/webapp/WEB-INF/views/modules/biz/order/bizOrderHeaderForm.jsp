@@ -3046,6 +3046,7 @@
 
     </c:if>
 </form:form>
+<shiro:hasAnyPermissions name="biz:po:bizPoHeader2:view">
 <form:form id="inputForm2" modelAttribute="bizOrderHeader.bizPoHeader"
             class="form-horizontal">
     <div class="control-group">
@@ -3138,7 +3139,7 @@
         </div>
     </c:if>
 </form:form>
-
+</shiro:hasAnyPermissions >
 <%--详情列表--%>
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
@@ -3148,7 +3149,7 @@
         <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
             <th>货架名称</th>
         </c:if>
-        <th>商品333名称</th>
+        <th>商品名称</th>
         <th>商品编号</th>
         <th>商品货号</th>
         <%--<th>已生成的采购单</th>--%>
