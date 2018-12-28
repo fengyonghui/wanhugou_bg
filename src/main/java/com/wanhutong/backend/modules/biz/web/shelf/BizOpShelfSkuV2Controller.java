@@ -240,6 +240,10 @@ public class BizOpShelfSkuV2Controller extends BaseController {
         }
 
 		addMessage(redirectAttributes, "保存商品上架成功");
+        //跳回我的面板，需上架商品
+		//if ("myPanel".equals(bizOpShelfSkus.getPreviousPage())) {
+		//	return "redirect:" + Global.getAdminPath() + "/biz/shelf/bizOpShelfSkuV2/form?shelfSign=0&previousPage=myPanel";
+		//}
 		if(bizOpShelfSkus.getShelfSign()==0){
 			return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSkuV2/?repage";
 		}

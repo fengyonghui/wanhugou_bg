@@ -436,8 +436,8 @@
 
         function needPutawayForMyPanel() {
             var previousPageVal = $("#previousPage").val();
-            if (previousPageVal != 'myPanel') {
-                var officeId = $("#centerOfficeId").val();
+            console.log(previousPageVal)
+            if (previousPageVal == 'myPanel') {
                 $Mask.AddLogo("正在加载");
                 $.ajax({
                     type:"post",
@@ -674,7 +674,7 @@
     <c:set var="id" value="${bizOpShelfSku.id}"/>
 	<form:hidden path="shelfSign"/>
 	<input id="commissionRatio" type="hidden" value="${commissionRatio}"/>
-	<input id="previousPage" type="hidden" value="${bizOpShelfSku.previousPage}"/>
+	<input id="previousPage" name="previousPage" type="hidden" value="${bizOpShelfSku.previousPage}"/>
 	<%--<input type="hidden" id="opShelfId" value="${bizOpShelfSku.opShelfInfo.id}"/>--%>
 	<%--<form:hidden id="shelfId" path="opShelfInfo.id"/>--%>
 	<sys:message content="${message}"/>

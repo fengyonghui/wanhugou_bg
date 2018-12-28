@@ -295,31 +295,6 @@ public class BizSkuInfoController extends BaseController {
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "needPutawayForMyPanel")
 	public String needPutawayForMyPanel(BizSkuInfo bizSkuInfo) {
-//		Map<String, Object> map = new HashMap<>();
-//		BizInventorySku bizInventorySku = new BizInventorySku();
-//		bizInventorySku.setDataStatus(BaseEntity.DEL_FLAG_NORMAL);
-//		Office company = officeService.get(officeId);
-//
-//		//根据采购中心取出仓库
-//		BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
-//		if (bizInventorySku.getInvInfo() != null) {
-//			bizInventoryInfo = bizInventorySku.getInvInfo();
-//		}
-//		bizInventoryInfo.setCustomer(company);
-//		bizInventorySku.setInvInfo(bizInventoryInfo);
-//		bizInventorySku.setFromCompanyStr("FromCompanyStr");
-//
-//		List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
-//		List<BizSkuInfo> skuInfoList = new ArrayList<BizSkuInfo>();
-//		if (CollectionUtils.isNotEmpty(list)) {
-//			for (BizInventorySku inventorySku : list) {
-//				BizSkuInfo bizSkuInfo = inventorySku.getSkuInfo();
-//				bizSkuInfo = bizSkuInfoService.get(bizSkuInfo.getId());
-//				if (bizSkuInfo != null) {
-//					skuInfoList.add(bizSkuInfo);
-//				}
-//			}
-//		}
 		Map<String, Object> map = new HashMap<>();
 		List<BizSkuInfo> skuInfoList = bizSkuInfoService.findList(bizSkuInfo);
 
