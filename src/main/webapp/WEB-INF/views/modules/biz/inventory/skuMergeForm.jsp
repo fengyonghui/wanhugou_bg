@@ -177,9 +177,9 @@
 					</tr>
 					</thead>
 					<tbody id="invReq">
-						<c:forEach items="${reqMap}" var="req">
-							<input name="reqKey" type="hidden" value="${req.key}"/>
-                            <c:forEach items="${req.value}" var="requestDetail" varStatus="i">
+						<c:forEach items="${sizeList}" var="req">
+							<input name="reqKey" type="hidden" value="${req}"/>
+                            <c:forEach items="${reqMap[req]}" var="requestDetail" varStatus="i">
                                 <c:if test="${inventorySku.invInfo.id == requestDetail.inventorySku.invInfo.id}">
                                 <tr>
                                     <td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
@@ -194,7 +194,7 @@
                                     <td>${requestDetail.recvQty - requestDetail.outQty}</td>
                                     <td>${requestDetail.inventorySku.stockQty}</td>
                                     <td>${requestDetail.inventorySku.invInfo.name}</td>
-                                    <td><input name="req_${req.key}" type="hidden" value="${req.key}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini"/></td>
+                                    <td><input name="req_${req}" type="hidden" value="${req}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini"/></td>
                                     <input name="okQty" value="${requestDetail.recvQty - requestDetail.outQty}" type="hidden"/>
                                     <input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
                                     <input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>
@@ -203,7 +203,7 @@
                                 </tr>
                                 </c:if>
                             </c:forEach>
-                            <c:forEach items="${transMap[req.key]}" var="transferDetail" varStatus="i">
+                            <c:forEach items="${transMap[req]}" var="transferDetail" varStatus="i">
                                 <c:if test="${inventorySku.invInfo.id == transferDetail.inventorySku.invInfo.id}">
                                     <tr>
                                         <td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
@@ -218,7 +218,7 @@
                                         <td>${transferDetail.inQty - transferDetail.sentQty}</td>
                                         <td>${transferDetail.inventorySku.stockQty}</td>
                                         <td>${transferDetail.inventorySku.invInfo.name}</td>
-                                        <td><input name="req_${req.key}" type="hidden" value="${req.key}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini required"/></td>
+                                        <td><input name="req_${req}" type="hidden" value="${req}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini required"/></td>
                                         <input name="okQty" value="${transferDetail.inQty - transferDetail.sentQty}" type="hidden"/>
                                         <input name="transferDetailId" value="${transferDetail.id}" type="hidden"/>
                                         <input name="invSkuId" value="${transferDetail.inventorySku.id}" type="hidden"/>

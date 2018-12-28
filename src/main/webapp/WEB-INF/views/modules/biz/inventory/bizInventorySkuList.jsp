@@ -223,7 +223,7 @@
 					${bizInventorySku.skuInfo.buyPrice}
 				</td>
 				<td>
-					${bizInventorySku.skuInfo.buyPrice * bizInventorySku.stockQty}
+					<fmt:formatNumber value="${bizInventorySku.skuInfo.buyPrice * bizInventorySku.stockQty}" pattern="0.00"/>
 				</td>
 				<td>
 					${bizInventorySku.skuInfo.variety.name}
