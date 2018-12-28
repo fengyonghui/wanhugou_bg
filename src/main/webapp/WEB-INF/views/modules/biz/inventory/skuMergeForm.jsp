@@ -134,7 +134,7 @@
 						data:JSON.stringify(map),
 						success:function (data) {
 							alert(data);
-							window.location.href = "${ctx}/biz/inventory/bizInventorySku?zt=2";
+							window.location.href = "${ctx}/biz/inventory/bizInventorySku?zt=1";
                         },
                         error:function (data) {
 						    alert(data);
@@ -148,7 +148,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/inventory/bizInventorySku?zt=2">商品库存详情列表</a></li>
+		<li><a href="${ctx}/biz/inventory/bizInventorySku?zt=1">商品库存详情列表</a></li>
 		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku/skuSplitForm?id=${inventorySku.id}">商品库存拆分</a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/skuSplit" method="post" class="form-horizontal">
@@ -177,9 +177,9 @@
 					</tr>
 					</thead>
 					<tbody id="invReq">
-						<c:forEach items="${reqMap}" var="req">
-							<input name="reqKey" type="hidden" value="${req.key}"/>
-                            <c:forEach items="${req.value}" var="requestDetail" varStatus="i">
+						<c:forEach items="${sizeList}" var="req">
+							<input name="reqKey" type="hidden" value="${req}"/>
+                            <c:forEach items="${reqMap[req]}" var="requestDetail" varStatus="i">
                                 <c:if test="${inventorySku.invInfo.id == requestDetail.inventorySku.invInfo.id}">
                                 <tr>
                                     <td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
@@ -194,7 +194,7 @@
                                     <td>${requestDetail.recvQty - requestDetail.outQty}</td>
                                     <td>${requestDetail.inventorySku.stockQty}</td>
                                     <td>${requestDetail.inventorySku.invInfo.name}</td>
-                                    <td><input name="req_${req.key}" type="hidden" value="${req.key}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini"/></td>
+                                    <td><input name="req_${req}" type="hidden" value="${req}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini"/></td>
                                     <input name="okQty" value="${requestDetail.recvQty - requestDetail.outQty}" type="hidden"/>
                                     <input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
                                     <input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>
@@ -203,7 +203,7 @@
                                 </tr>
                                 </c:if>
                             </c:forEach>
-                            <c:forEach items="${transMap[req.key]}" var="transferDetail" varStatus="i">
+                            <c:forEach items="${transMap[req]}" var="transferDetail" varStatus="i">
                                 <c:if test="${inventorySku.invInfo.id == transferDetail.inventorySku.invInfo.id}">
                                     <tr>
                                         <td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
@@ -218,7 +218,7 @@
                                         <td>${transferDetail.inQty - transferDetail.sentQty}</td>
                                         <td>${transferDetail.inventorySku.stockQty}</td>
                                         <td>${transferDetail.inventorySku.invInfo.name}</td>
-                                        <td><input name="req_${req.key}" type="hidden" value="${req.key}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini required"/></td>
+                                        <td><input name="req_${req}" type="hidden" value="${req}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini required"/></td>
                                         <input name="okQty" value="${transferDetail.inQty - transferDetail.sentQty}" type="hidden"/>
                                         <input name="transferDetailId" value="${transferDetail.id}" type="hidden"/>
                                         <input name="invSkuId" value="${transferDetail.inventorySku.id}" type="hidden"/>
@@ -234,7 +234,7 @@
 			</div>
 		</div>
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" onclick="merge()" value="合 并"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:inventory:bizInventorySku:split"><input id="btnSubmit" class="btn btn-primary" type="submit" onclick="merge()" value="合 并"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>

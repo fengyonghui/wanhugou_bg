@@ -223,7 +223,7 @@
 					${bizInventorySku.skuInfo.buyPrice}
 				</td>
 				<td>
-					${bizInventorySku.skuInfo.buyPrice * bizInventorySku.stockQty}
+					<fmt:formatNumber value="${bizInventorySku.skuInfo.buyPrice * bizInventorySku.stockQty}" pattern="0.00"/>
 				</td>
 				<td>
 					${bizInventorySku.skuInfo.variety.name}
@@ -283,11 +283,11 @@
 								   onclick="return confirmx('确认要恢复该商品库存详情吗？', this.href)">恢复</a>
 							</c:if>
 						</shiro:hasPermission>
-						<shiro:hasPermission name="biz:inventory:bizInventorySku:split">
-							<a href="#" onclick="skuSplit(${bizInventorySku.id})">拆分</a>
-							<a href="#" onclick="skuMerge(${bizInventorySku.id})">合并</a>
-						</shiro:hasPermission>
 					</c:if>
+					<shiro:hasPermission name="biz:inventory:bizInventorySku:split">
+						<a href="#" onclick="skuSplit(${bizInventorySku.id})">拆分</a>
+						<a href="#" onclick="skuMerge(${bizInventorySku.id})">合并</a>
+					</shiro:hasPermission>
 				</td>
 			</tr>
 		</c:forEach>

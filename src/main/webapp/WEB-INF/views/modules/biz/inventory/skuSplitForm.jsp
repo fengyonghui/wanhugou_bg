@@ -66,10 +66,10 @@
                                 success:function (data) {
                                     if (data=='error') {
                                         alert("拆分失败，没有选择拆分数据");
-                                        window.location.href = "${ctx}/biz/inventory/bizInventorySku?zt=2";
+                                        window.location.href = "${ctx}/biz/inventory/bizInventorySku?zt=1";
                                     } else {
                                         alert("拆分成功");
-                                        window.location.href = "${ctx}/biz/inventory/bizInventorySku?zt=2";
+                                        window.location.href = "${ctx}/biz/inventory/bizInventorySku?zt=1";
                                     }
                                 }
                             });
@@ -121,7 +121,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/inventory/bizInventorySku?zt=2">商品库存详情列表</a></li>
+		<li><a href="${ctx}/biz/inventory/bizInventorySku?zt=1">商品库存详情列表</a></li>
 		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku/skuSplitForm?id=${inventorySku.id}">商品库存拆分</a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/skuSplit" method="post" class="form-horizontal">
@@ -202,7 +202,7 @@
 			</div>
 		</div>
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:inventory:bizInventorySku:split"><input id="btnSubmit" class="btn btn-primary" type="submit" value="拆 分"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>

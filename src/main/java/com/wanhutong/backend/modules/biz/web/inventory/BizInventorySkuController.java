@@ -825,7 +825,9 @@ public class BizInventorySkuController extends BaseController {
         Map<Integer,List<BizRequestDetail>> reqMap = Maps.newHashMap();
         Map<Integer,List<BizSkuTransferDetail>> transMap = Maps.newHashMap();
         List<Dict> dictList = DictUtils.getDictList(range);
+        List<Integer> sizeList = Lists.newArrayList();
         for (Dict dict : dictList) {
+            sizeList.add(Integer.valueOf(dict.getValue()));
             String s = before.concat(dict.getValue()).concat(middle.substring(2)).concat(after);
             BizSkuInfo sku = bizSkuInfoService.getSkuByItemNo(s);
             if (sku != null) {
@@ -842,6 +844,7 @@ public class BizInventorySkuController extends BaseController {
         model.addAttribute("reqMap",reqMap);
         model.addAttribute("transMap",transMap);
         model.addAttribute("inventorySku",inventorySku);
+        model.addAttribute("sizeList",sizeList);
         return "modules/biz/inventory/skuMergeForm";
     }
 
