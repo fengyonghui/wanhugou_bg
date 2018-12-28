@@ -1042,7 +1042,7 @@
 				</shiro:hasPermission>
 		</li>
 	</ul><br/>
-	<sh id="inputForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<input type="hidden" value="${entity.bizPoPaymentOrder.id}" id="paymentOrderId"/>
 		<input id="poHeaderId" type="hidden" value="${entity.bizPoHeader.id}"/>
