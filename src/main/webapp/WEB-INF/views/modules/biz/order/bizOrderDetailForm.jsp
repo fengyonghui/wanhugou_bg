@@ -262,7 +262,7 @@
     <form:hidden path="orderHeader.clientModify"/>
     <form:hidden path="orderHeader.consultantId"/>
     <form:hidden path="detailFlag"/>
-    <form:hidden path="suplyIds" value="${detail.suplyis.id}"/>
+    <form:hidden path="suplyIds" value="${bizOrderDetail.suplyis.id}"/>
     <sys:message content="${message}"/>
     <div class="control-group">
         <label class="control-label">选择商品：</label>
