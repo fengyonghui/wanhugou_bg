@@ -61,7 +61,6 @@
 		a.marketing_date AS "marketingDate",
 		a.vari_id AS "bizVarietyInfo.id",
 		vi.code AS "bizVarietyInfo.code",
-		vi.name AS "bizVarietyInfo.name",
 		a.min_price AS "minPrice",
 		a.max_price AS "maxPrice",
 		a.item_no AS "itemNo",
