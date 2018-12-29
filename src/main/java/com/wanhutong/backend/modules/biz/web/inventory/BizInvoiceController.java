@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.common.utils.*;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
@@ -40,6 +41,7 @@ import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -64,6 +66,9 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 发货单Controller
@@ -76,6 +81,8 @@ public class BizInvoiceController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BizInvoiceController.class);
     private static final Logger LOGISTICS_LOGGER = LoggerFactory.getLogger("logistics");
+
+    private Lock lock = new ReentrantLock();
 
 	@Autowired
 	private BizInvoiceService bizInvoiceService;
@@ -123,6 +130,42 @@ public class BizInvoiceController extends BaseController {
 //	    bizInvoice.setBizStatus(Integer.parseInt(bizStatu));
 //	    bizInvoice.setShip(Integer.parseInt(ship));
         Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
+        List<Callable<Pair<Boolean, String>>> tasks = new ArrayList<>();
+        for (BizInvoice b : page.getList()) {
+            tasks.add(new Callable<Pair<Boolean, String>>() {
+                @Override
+                public Pair<Boolean, String> call() {
+                    try {
+                        //lock.lock();
+                        List<BizOrderHeader> orderHeaderList = bizInvoiceService.findOrderHeaderByInvoiceId(b.getId());
+                        String orderNums = "";
+                        if (CollectionUtils.isNotEmpty(orderHeaderList)){
+                            for (BizOrderHeader bizOrderHeader : orderHeaderList) {
+                                if (bizOrderHeader == null || bizOrderHeader.getOrderNum() == null) {
+                                    continue;
+                                }
+                                String orderNum = bizOrderHeader.getOrderNum();
+                                orderNums += orderNum + ",";
+                            }
+                        }
+                        if (StringUtils.isNotBlank(orderNums)) {
+                            b.setOrderHeaders(orderNums.substring(0, orderNums.length()-1));
+                        }
+                    } catch (Exception e) {
+                        logger.error("多线程给发货单添加订单号失败", e);
+                    } finally {
+                        //lock.unlock();
+                    }
+                    return Pair.of(Boolean.TRUE, "操作成功");
+                }
+            });
+        }
+        try {
+            ThreadPoolManager.getDefaultThreadPool().invokeAll(tasks);
+        } catch (InterruptedException e) {
+            LOGGER.error("init order list data error", e);
+        }
+
         model.addAttribute("page", page);
         model.addAttribute("targetPage", bizInvoice.getTargetPage() == null ? "" : bizInvoice.getTargetPage());
 //		model.addAttribute("ship",ship);

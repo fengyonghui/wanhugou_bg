@@ -12,6 +12,7 @@
                 submitHandler: function(form){
                     if(window.confirm('你确定要收货吗？')){
                         // alert("确定");
+                        $Mask.AddLogo("正在加载");
                         form.submit();
                         return true;
                         loading('正在提交，请稍等...');

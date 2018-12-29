@@ -2083,7 +2083,7 @@
                 <input id="payTotal" name="planPay" type="text"
                        <c:if test="${entity.str == 'audit' || entity.str == 'pay'}">readonly</c:if>
                        value="${entity.bizPoPaymentOrder.id != null ?
-                           entity.bizPoPaymentOrder.total : (entity.totalDetail-(entity.bizPoHeader.payTotal == null ? 0 : entity.bizPoHeader.payTotal))}"
+                           entity.bizPoPaymentOrder.total : (entity.bizPoHeader.totalDetail-(entity.bizPoHeader.payTotal == null ? 0 : entity.bizPoHeader.payTotal))}"
                        htmlEscape="false" maxlength="30" class="input-xlarge"/>
             </div>
         </div>

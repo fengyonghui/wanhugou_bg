@@ -132,6 +132,16 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String locationAddress;
 
     /**
+     * 出库开始时间
+     */
+    private String needOutStartTime;
+
+    /**
+     * 出库结束时间
+     */
+    private String needOutEndTime;
+
+    /**
      * 客户专员、会员搜索 查看订单开始下单时间与该采购商订单总金额，品类主管 管理 的商品统计
      * */
     private Double userOfficeReceiveTotal;
@@ -1268,6 +1278,22 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setModifyServiceCharge(String modifyServiceCharge) {
         this.modifyServiceCharge = modifyServiceCharge;
+    }
+
+    public String getNeedOutStartTime() {
+        return needOutStartTime;
+    }
+
+    public void setNeedOutStartTime(String needOutStartTime) {
+        this.needOutStartTime = needOutStartTime;
+    }
+
+    public String getNeedOutEndTime() {
+        return needOutEndTime;
+    }
+
+    public void setNeedOutEndTime(String needOutEndTime) {
+        this.needOutEndTime = needOutEndTime;
     }
 
     public Integer getPoBizStatus() {

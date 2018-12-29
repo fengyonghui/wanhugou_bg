@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +78,7 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 	}
 	
 	@Transactional(readOnly = false)
+	@Override
 	public void delete(BizCustomCenterConsultant bizCustomCenterConsultant) {
 		super.delete(bizCustomCenterConsultant);
 	}
@@ -92,4 +94,8 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 		return page;
 	}
 
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void deleteBatch(List<String> custIdList) {
+		dao.deleteBatch(custIdList);
+	}
 }

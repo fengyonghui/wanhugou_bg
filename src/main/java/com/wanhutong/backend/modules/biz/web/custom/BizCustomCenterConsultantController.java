@@ -50,7 +50,9 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -484,6 +486,16 @@ public class BizCustomCenterConsultantController extends BaseController {
             logger.error("删除客户专员失败", e);
         }
         return JsonUtil.generateData(message, null);
+    }
+
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:edit")
+    @RequestMapping(value = "deleteBatch")
+    public String deleteBatch(BizCustomCenterConsultant bizCustomCenterConsultant, RedirectAttributes redirectAttributes) {
+        String str = "";
+        String[] custIdArr = bizCustomCenterConsultant.getCustIds().split(",");
+        List<String> custIdList = Arrays.asList(custIdArr);
+        bizCustomCenterConsultantService.deleteBatch(custIdList);
+        return "redirect:"+Global.getAdminPath()+"/biz/custom/bizCustomCenterConsultant/list?consultants.id="+bizCustomCenterConsultant.getConsultants().getId();
     }
 
 }

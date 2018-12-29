@@ -434,4 +434,21 @@ public class BizSkuInfoV3Service extends CrudService<BizSkuInfoV3Dao, BizSkuInfo
 		skuInfo.setFromInv(fromInv);
 		return dao.findInvSkuList(skuInfo);
 	}
+
+	/**
+	 * 根据货号查找商品
+	 * @param itemNo
+	 * @return
+	 */
+	public BizSkuInfo getSkuByItemNo(String itemNo) {
+		return bizSkuInfoDao.getSkuByItemNo(itemNo);
+	}
+
+	public List<CommonImg> getImg(Integer objId, String objName, Integer imgType) {
+		CommonImg commonImg = new CommonImg();
+		commonImg.setObjectId(objId);
+		commonImg.setObjectName(objName);
+		commonImg.setImgType(imgType);
+		return commonImgService.findList(commonImg);
+	}
 }

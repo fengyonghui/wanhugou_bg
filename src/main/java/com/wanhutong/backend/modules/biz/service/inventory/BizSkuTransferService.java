@@ -199,6 +199,11 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
 			bizSkuTransferDetailService.save(bizSkuTransferDetail);
 		}
 	}
+
+	@Transactional(readOnly = false)
+	public void saveOnly(BizSkuTransfer transfer) {
+	    super.save(transfer);
+    }
 	
 	@Transactional(readOnly = false)
 	public void delete(BizSkuTransfer bizSkuTransfer) {

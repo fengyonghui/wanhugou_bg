@@ -160,6 +160,9 @@
 			<if test="orderDetailForm == 'orderDetailForm'">
 				AND (a.unshelf_time IS NULL or a.unshelf_time > NOW())
 			</if>
+			<if test="skuDeleteFlag == 'true'">
+				AND bsi.status = #{DEL_FLAG_NORMAL}
+			</if>
 
 			<if test="sqlMap != null and sqlMap.shelfSku != null and sqlMap.shelfSku != ''">
 				${sqlMap.shelfSku}

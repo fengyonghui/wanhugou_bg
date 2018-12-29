@@ -315,7 +315,8 @@
 
 	<update id="updateStockQty">
 		UPDATE biz_inventory_sku SET
-		stock_qty = #{stockQty}
+		stock_qty = #{stockQty},
+		status = 1
 		WHERE id = #{id}
 	</update>
 
