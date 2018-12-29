@@ -173,81 +173,81 @@ public class BizPoPaymentOrderController extends BaseController {
         return "modules/biz/po/bizPoPaymentOrderList";
     }
 
-    @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
-    @RequestMapping(value = {"listV2", ""})
-    public void list2(BizPoPaymentOrder bizPoPaymentOrder, HttpServletRequest request, HttpServletResponse response, Model model, Integer poId) {
-        User user = UserUtils.getUser();
-        List<Role> roleList = user.getRoleList();
-        Set<String> roleSet = Sets.newHashSet();
-        for (Role r : roleList) {
-            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
-            if (parse != null) {
-                roleSet.add(parse.name());
-            }
-        }
-        model.addAttribute("roleSet", roleSet);
-
-        String fromPage = request.getParameter("fromPage");
-        model.addAttribute("fromPage", fromPage);
-        if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
-            BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(poId);
-            model.addAttribute("bizRequestHeader", bizRequestHeader);
-        } else if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
-            bizOrderHeaderService.get(poId);
-        } else {
-            bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
-            BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
-            if (fromPage != null) {
-                switch (fromPage) {
-                    case "requestHeader":
-                        bizPoHeader.setFromPage("requestHeader");
-                        List<String> reqNoList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
-                        if (CollectionUtils.isNotEmpty(reqNoList)) {
-                            model.addAttribute("headerNum", reqNoList.get(0));
-                        }
-                        BizRequestHeader bizRequestHeader = new BizRequestHeader();
-                        bizRequestHeader.setBizPoHeader(bizPoHeader);
-                        List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
-                        if (CollectionUtils.isNotEmpty(requestHeaderList)) {
-                            model.addAttribute("requestHeader", requestHeaderList.get(0));
-                            model.addAttribute("headerNum", requestHeaderList.get(0).getReqNo());
-                        }
-                        break;
-                    case "orderHeader":
-                        bizPoHeader.setFromPage("orderHeader");
-                        List<String> orderNumList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
-                        if (CollectionUtils.isNotEmpty(orderNumList)) {
-                            model.addAttribute("headerNum", orderNumList.get(0));
-                        }
-                        BizOrderHeader bizOrderHeader = new BizOrderHeader();
-                        bizOrderHeader.setBizPoHeader(bizPoHeader);
-                        List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
-                        if (CollectionUtils.isNotEmpty(orderHeaderList)) {
-                            model.addAttribute("orderHeader", orderHeaderList.get(0));
-                            model.addAttribute("headerNum", orderHeaderList.get(0).getOrderNum());
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-            model.addAttribute("bizPoHeader", bizPoHeader);
-        }
-        if (poId == null) {
-            bizPoPaymentOrder.setPoHeaderId(-1);
-        } else {
-            bizPoPaymentOrder.setPoHeaderId(poId);
-        }
-        Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
-
-        //更新BizPoPaymentOrder审核按钮控制flag
-        bizPoPaymentOrderService.updateHasRole(page);
-
-        model.addAttribute("page", page);
-        String orderId = request.getParameter("orderId");
-        model.addAttribute("orderId", orderId);
-        //return "modules/biz/po/bizPoHeaderListV3";
-    }
+//    @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
+//    @RequestMapping(value = {"listV2", ""})
+//    public void list2(BizPoPaymentOrder bizPoPaymentOrder, HttpServletRequest request, HttpServletResponse response, Model model, Integer poId) {
+//        User user = UserUtils.getUser();
+//        List<Role> roleList = user.getRoleList();
+//        Set<String> roleSet = Sets.newHashSet();
+//        for (Role r : roleList) {
+//            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+//            if (parse != null) {
+//                roleSet.add(parse.name());
+//            }
+//        }
+//        model.addAttribute("roleSet", roleSet);
+//
+//        String fromPage = request.getParameter("fromPage");
+//        model.addAttribute("fromPage", fromPage);
+//        if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.REQ_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+//            BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(poId);
+//            model.addAttribute("bizRequestHeader", bizRequestHeader);
+//        } else if (bizPoPaymentOrder.getOrderType() != null && PoPayMentOrderTypeEnum.ORDER_TYPE.getType().equals(bizPoPaymentOrder.getOrderType())) {
+//            bizOrderHeaderService.get(poId);
+//        } else {
+//            bizPoPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
+//            BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
+//            if (fromPage != null) {
+//                switch (fromPage) {
+//                    case "requestHeader":
+//                        bizPoHeader.setFromPage("requestHeader");
+//                        List<String> reqNoList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
+//                        if (CollectionUtils.isNotEmpty(reqNoList)) {
+//                            model.addAttribute("headerNum", reqNoList.get(0));
+//                        }
+//                        BizRequestHeader bizRequestHeader = new BizRequestHeader();
+//                        bizRequestHeader.setBizPoHeader(bizPoHeader);
+//                        List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
+//                        if (CollectionUtils.isNotEmpty(requestHeaderList)) {
+//                            model.addAttribute("requestHeader", requestHeaderList.get(0));
+//                            model.addAttribute("headerNum", requestHeaderList.get(0).getReqNo());
+//                        }
+//                        break;
+//                    case "orderHeader":
+//                        bizPoHeader.setFromPage("orderHeader");
+//                        List<String> orderNumList = bizPoHeaderService.getOrderNumOrReqNoByPoId(bizPoHeader);
+//                        if (CollectionUtils.isNotEmpty(orderNumList)) {
+//                            model.addAttribute("headerNum", orderNumList.get(0));
+//                        }
+//                        BizOrderHeader bizOrderHeader = new BizOrderHeader();
+//                        bizOrderHeader.setBizPoHeader(bizPoHeader);
+//                        List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
+//                        if (CollectionUtils.isNotEmpty(orderHeaderList)) {
+//                            model.addAttribute("orderHeader", orderHeaderList.get(0));
+//                            model.addAttribute("headerNum", orderHeaderList.get(0).getOrderNum());
+//                        }
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//            model.addAttribute("bizPoHeader", bizPoHeader);
+//        }
+//        if (poId == null) {
+//            bizPoPaymentOrder.setPoHeaderId(-1);
+//        } else {
+//            bizPoPaymentOrder.setPoHeaderId(poId);
+//        }
+//        Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder);
+//
+//        //更新BizPoPaymentOrder审核按钮控制flag
+//        bizPoPaymentOrderService.updateHasRole(page);
+//
+//        model.addAttribute("page", page);
+//        String orderId = request.getParameter("orderId");
+//        model.addAttribute("orderId", orderId);
+//        //return "modules/biz/po/bizPoHeaderListV3";
+//    }
 
     @RequiresPermissions("biz:po:bizPoPaymentOrder:view")
     @RequestMapping(value = "listData4MobileNew")
