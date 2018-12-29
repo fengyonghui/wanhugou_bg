@@ -337,7 +337,10 @@ public class BizOrderHeaderController extends BaseController {
                            b.setCommonProcess(list.get(list.size() - 1));
                        }
 
-                       if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                       if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list)
+                               && b.getBizStatus() >= OrderHeaderBizStatusEnum.SUPPLYING.getState()
+                               && !OrderHeaderBizStatusEnum.CANCLE.getState().equals(b.getBizStatus())
+                               && !OrderHeaderBizStatusEnum.DELETE.getState().equals(b.getBizStatus())) {
                            OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                            //b.setPayProportion(orderPayProportionStatusEnum.getState());
                            bizOrderHeaderService.saveOrderHeader(b);
@@ -349,7 +352,9 @@ public class BizOrderHeaderController extends BaseController {
                        commonProcessEntityTemp.setObjectId(String.valueOf(b.getId()));
                        commonProcessEntityTemp.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
                        list = commonProcessService.findList(commonProcessEntityTemp);
-                       if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                       if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= OrderHeaderBizStatusEnum.SUPPLYING.getState()
+                               && !OrderHeaderBizStatusEnum.CANCLE.getState().equals(b.getBizStatus())
+                               && !OrderHeaderBizStatusEnum.DELETE.getState().equals(b.getBizStatus())) {
                            OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                            Integer state = orderPayProportionStatusEnum.getState();
                            if (state > 0) {
@@ -529,7 +534,10 @@ public class BizOrderHeaderController extends BaseController {
                             b.setCommonProcess(list.get(list.size() - 1));
                         }
 
-                        if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                        if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list)
+                                && b.getBizStatus() >= OrderHeaderBizStatusEnum.SUPPLYING.getState()
+                                && !OrderHeaderBizStatusEnum.CANCLE.getState().equals(b.getBizStatus())
+                                && !OrderHeaderBizStatusEnum.DELETE.getState().equals(b.getBizStatus())) {
                             OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                             //b.setPayProportion(orderPayProportionStatusEnum.getState());
                             bizOrderHeaderService.saveOrderHeader(b);
@@ -541,7 +549,9 @@ public class BizOrderHeaderController extends BaseController {
                         commonProcessEntityTemp.setObjectId(String.valueOf(b.getId()));
                         commonProcessEntityTemp.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
                         list = commonProcessService.findList(commonProcessEntityTemp);
-                        if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                        if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= OrderHeaderBizStatusEnum.SUPPLYING.getState()
+                                && !OrderHeaderBizStatusEnum.CANCLE.getState().equals(b.getBizStatus())
+                                && !OrderHeaderBizStatusEnum.DELETE.getState().equals(b.getBizStatus())) {
                             OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                             Integer state = orderPayProportionStatusEnum.getState();
                             if (state > 0) {
