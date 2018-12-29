@@ -54,11 +54,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * 采购付款单Controller
@@ -607,7 +605,10 @@ public class BizPoPaymentOrderController extends BaseController {
             CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
             commonProcessEntity.setObjectId(String.valueOf(bizPoPaymentOrder.getId()));
             commonProcessEntity.setObjectName("biz_po_payment_order");
+            BizPoPaymentOrder bizPoPaymentOrder2 = bizPoPaymentOrderService.get(bizPoPaymentOrder.getId());
+            Date createDate=bizPoPaymentOrder2.getCreateDate();
             List<CommonProcessEntity> list = commonProcessService.findList(commonProcessEntity);
+            list = list.stream().filter(t -> t.getCreateTime().compareTo(createDate)>=0).collect(Collectors.toList());
             model.addAttribute("auditList", list);
             model.addAttribute("processId", processId);
         }

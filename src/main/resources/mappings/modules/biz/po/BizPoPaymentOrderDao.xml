@@ -15,6 +15,7 @@
 		<result column="payTime" property="payTime"/>
 		<result column="remark" property="remark"/>
 		<result column="delFlag" property="delFlag"/>
+		<result column="createDate" property="createDate"/>
 
 		<result column="orderId" property="orderId"/>
 		<result column="orderNum" property="orderNum"/>
@@ -74,6 +75,7 @@
 		a.pay_time AS payTime,
 		a.remark AS remark,
 		a.status AS "delFlag",
+		a.create_time AS createDate,
 		po.id AS "poHeader.id",
 		po.biz_status AS "poHeader.bizStatus",
 		po.biz_status AS "poHeaderBizStatus",
