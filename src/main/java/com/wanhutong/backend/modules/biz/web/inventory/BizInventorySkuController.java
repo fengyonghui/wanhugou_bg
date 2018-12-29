@@ -45,7 +45,6 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV3Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
@@ -64,7 +63,6 @@ import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
@@ -92,12 +90,11 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 商品库存详情Controller
@@ -852,10 +849,10 @@ public class BizInventorySkuController extends BaseController {
     @RequestMapping(value = "skuMerge")
     public String skuMerge(@RequestBody String data) {
         LinkedHashMap<String,List<BizOutTreasuryEntity>> map = Maps.newLinkedHashMap();
-        JSONObject jsonObject = JsonUtil.parseJson(data);
-        for (Map.Entry<String,Object> entry : jsonObject.entrySet()) {
-            List<BizOutTreasuryEntity> parseArray = JsonUtil.parseArray(entry.getValue().toString(),new TypeReference<List<BizOutTreasuryEntity>>() {});
-            map.put(entry.getKey(),parseArray);
+        HashMap maps=  JSONObject.parseObject(data,LinkedHashMap.class);
+        for (Object entry : maps.entrySet()) {
+            List<BizOutTreasuryEntity> parseArray = JsonUtil.parseArray(((Map.Entry)entry).getValue().toString(),new TypeReference<List<BizOutTreasuryEntity>>() {});
+            map.put((String) ((Map.Entry)entry).getKey(),parseArray);
         }
         return bizInventorySkuService.skuMerge(map);
     }
