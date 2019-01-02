@@ -256,6 +256,7 @@ public class BizSkuInfoController extends BaseController {
 		}
 		bizInventoryInfo.setCustomer(company);
 		bizInventorySku.setInvInfo(bizInventoryInfo);
+		bizInventorySku.setFromCompanyStr("FromCompanyStr");
 
 		List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
 		List<BizSkuInfo> skuInfoList = new ArrayList<BizSkuInfo>();
@@ -268,6 +269,35 @@ public class BizSkuInfoController extends BaseController {
 				}
 			}
 		}
+		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findSkuListForProd(skuInfoList);
+		List<BizVarietyFactor> varietyInfoList = bizVarietyFactorService.findList(new BizVarietyFactor());
+		Map<Integer, List<String>> factorMap = new HashMap<>();
+		for (BizVarietyFactor varietyFactor : varietyInfoList) {
+			Integer key = varietyFactor.getVarietyInfo().getId();
+
+			if (factorMap.containsKey(key)) {
+				List<String> stringList = factorMap.get(key);
+				stringList.add((varietyFactor.getServiceFactor().toString().length() < 2 ? "0" + varietyFactor.getServiceFactor() : varietyFactor.getServiceFactor()) + ":[" + varietyFactor.getMinQty() + "~" + varietyFactor.getMaxQty() + "]");
+				factorMap.remove(key);
+				factorMap.put(key, stringList);
+			} else {
+				List<String> lists = Lists.newArrayList();
+				lists.add((varietyFactor.getServiceFactor().toString().length() < 2 ? "0" + varietyFactor.getServiceFactor() : varietyFactor.getServiceFactor()) + ":[" + varietyFactor.getMinQty() + "~" + varietyFactor.getMaxQty() + "]");
+				factorMap.put(key, lists);
+			}
+		}
+		map.put("skuMap", listMap);
+		map.put("serviceFactor", factorMap);
+		return JsonUtil.generateData(map, null);
+	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "needPutawayForMyPanel")
+	public String needPutawayForMyPanel(BizSkuInfo bizSkuInfo) {
+		Map<String, Object> map = new HashMap<>();
+		List<BizSkuInfo> skuInfoList = bizSkuInfoService.findList(bizSkuInfo);
+
 		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findSkuListForProd(skuInfoList);
 		List<BizVarietyFactor> varietyInfoList = bizVarietyFactorService.findList(new BizVarietyFactor());
 		Map<Integer, List<String>> factorMap = new HashMap<>();
