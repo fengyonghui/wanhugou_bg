@@ -282,6 +282,9 @@
                         $.each(data,function(index,item) {
                             console.info(item)
                             if (item.bvFactorList != undefined && retail != 1) {
+                                if (item.bvFactorList == "" || item.bvFactorList == null) {
+									alert(item.name + "未设置阶梯价，不能上架！")
+                                }
 								$.each(item.bvFactorList,function(index,bvFactor){
 									htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
 										"<td><input about='shQtys"+item.id+"' name='shelfQtys' value='1000' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
