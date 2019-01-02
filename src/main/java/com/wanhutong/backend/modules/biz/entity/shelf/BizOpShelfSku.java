@@ -92,6 +92,11 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	 */
 	private String orderDetailForm;
 
+	/**
+	 * 上层页面标识符
+	 */
+	private String previousPage;
+
 	public BizOpShelfSku() {
 		super();
 	}
@@ -355,5 +360,15 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 
 	public void setSkuDeleteFlag(String skuDeleteFlag) {
 		this.skuDeleteFlag = skuDeleteFlag;
+	}
+
+	@Override
+	public String getPreviousPage() {
+		return previousPage;
+	}
+
+	@Override
+	public void setPreviousPage(String previousPage) {
+		this.previousPage = previousPage;
 	}
 }
