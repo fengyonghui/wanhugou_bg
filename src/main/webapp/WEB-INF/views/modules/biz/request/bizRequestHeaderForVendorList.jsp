@@ -208,7 +208,7 @@
 		<th>付款比例</th>
 		<th>已到货数量</th>
 		<th>已卖出数量</th>
-		<th>备注</th>
+		<th style="width:8%;word-wrap:break-word;word-break:break-all;">备注</th>
 		<th>业务状态</th>
 		<th>审核状态</th>
 		<th>下单时间</th>
@@ -256,7 +256,7 @@
 				</td>
 				<td>${requestHeader.recvQtys}</td>
 				<td>${requestHeader.outQtys}</td>
-				<td style="width:150px;word-wrap:break-word;word-break:break-all;">
+				<td>
 					${requestHeader.remark}
 				</td>
 				<td>
