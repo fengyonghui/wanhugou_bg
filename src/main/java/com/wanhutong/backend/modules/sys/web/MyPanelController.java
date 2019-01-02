@@ -314,7 +314,7 @@ public class MyPanelController extends BaseController {
     }
 
     /**
-     * 需上架商品:商品未删除，对应商品未删除，产品类行为自营商品，库存中库存数量大于0，不存在于任何一个未删除的货架
+     * 需上架商品:产品未删除，对应商品未删除，产品类行为自营商品，库存中库存数量大于0，不存在于任何一个未删除的货架
      * @param redirectModel
      * @return
      */

@@ -715,7 +715,7 @@
 			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>
-	<c:if test="${bizOpShelfSku.previousPage != 'myPanel'}">
+	<%--<c:if test="${bizOpShelfSku.previousPage != 'myPanel'}">--%>
 		<div class="control-group">
 			<label class="control-label">选择商品：</label>
 			<div class="controls">
@@ -738,7 +738,7 @@
 
 			</div>
 		</div>
-	</c:if>
+	<%--</c:if>--%>
 	<div class="control-group">
 		<label class="control-label">上架商品：</label>
 		<div class="controls">
