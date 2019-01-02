@@ -928,6 +928,7 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		bizInventorySku.setInvInfo(inventoryInfo);
 		List<BizInventorySku> inventorySkus = findList(bizInventorySku);
 		//增加变更后的商品库存
+		BizInventorySku inventorySku = new BizInventorySku();
 		if (CollectionUtils.isEmpty(inventorySkus)) {
 			BizInventorySku invSku = new BizInventorySku();
 			invSku.setInvInfo(inventoryInfo);
@@ -936,9 +937,9 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			invSku.setStockQty(mergeSumNum);
 			invSku.setSkuType(skuType);
 			saveOnly(invSku);
+			inventorySku = invSku;
 		}
 		Integer oldInStockNum = 0;
-		BizInventorySku inventorySku = new BizInventorySku();
 		if (CollectionUtils.isNotEmpty(inventorySkus)) {
 			inventorySku = inventorySkus.get(0);
 			if (BizInventorySku.DEL_FLAG_DELETE.equals(inventorySku.getDelFlag())) {

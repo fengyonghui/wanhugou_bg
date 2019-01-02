@@ -73,10 +73,15 @@
 			    var mergeNum = 0; //累计合并数量
                 var stockQty = 0;//总库存数
 				var key = $(this).val();//尺寸
+                var key2 = "";
                 var treasuryList = new Array();
                 var index = 0;
                 $("#invReq").find("input[name='req_"+key+"']").each(function () {
+                    if ($(this).parent().parent().find("input[name='reqDetail']").attr("checked") == undefined) {
+                        return;
+                    }
 					if ($(this).parent().parent().find("input[name='reqDetail']").attr("checked") == 'checked') {
+                        key2 = key;
                         flag = true;
                         var mergeQty = $(this).parent().parent().find("input[name='mergeQty']").val();//合并数量
                         var reqDetailId = $(this).parent().parent().find("input[name='reqDetailId']").val();//备货单详情ID
@@ -99,19 +104,22 @@
 					}
                 });
                 console.info("treasuryList:" + treasuryList);
-				map[key] = treasuryList;
+                if (key2 != "") {
+				    map[key2] = treasuryList;
+                }
 				if (mergeNum != 0) {
 					mergeList.push(mergeNum);
 				}
-                if (!flag) {
-                    alert("请至少勾选一条备货单详情");
-                    return false;
-                }
+
 				if (parseInt(mergeNum) > parseInt(stockQty)) {
 				    alert("每个尺寸合并的数量不能大于对应的总库存数");
 				    flag3 = false;
 				}
             });
+            if (!flag) {
+                alert("请至少勾选一条备货单详情");
+                return false;
+            }
             console.info("mergeList:" + mergeList);
             for (var i=0; i < mergeList.length; i++) {
                 if (i != (parseInt(mergeList.length) - parseInt(1))) {
@@ -177,9 +185,11 @@
 					</tr>
 					</thead>
 					<tbody id="invReq">
-						<c:forEach items="${reqMap}" var="req">
-							<input name="reqKey" type="hidden" value="${req.key}"/>
-                            <c:forEach items="${req.value}" var="requestDetail" varStatus="i">
+						<c:forEach items="${sizeList}" var="req">
+                            <c:if test="${fns:containsKey(reqMap, req) || fns:containsKey(transMap, req)}">
+							    <input name="reqKey" type="hidden" value="${req}"/>
+                            </c:if>
+                            <c:forEach items="${reqMap[req]}" var="requestDetail" varStatus="i">
                                 <c:if test="${inventorySku.invInfo.id == requestDetail.inventorySku.invInfo.id}">
                                 <tr>
                                     <td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
@@ -194,7 +204,7 @@
                                     <td>${requestDetail.recvQty - requestDetail.outQty}</td>
                                     <td>${requestDetail.inventorySku.stockQty}</td>
                                     <td>${requestDetail.inventorySku.invInfo.name}</td>
-                                    <td><input name="req_${req.key}" type="hidden" value="${req.key}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini"/></td>
+                                    <td><input name="req_${req}" type="hidden" value="${req}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini"/></td>
                                     <input name="okQty" value="${requestDetail.recvQty - requestDetail.outQty}" type="hidden"/>
                                     <input name="reqDetailId" value="${requestDetail.id}" type="hidden"/>
                                     <input name="invSkuId" value="${requestDetail.inventorySku.id}" type="hidden"/>
@@ -203,7 +213,7 @@
                                 </tr>
                                 </c:if>
                             </c:forEach>
-                            <c:forEach items="${transMap[req.key]}" var="transferDetail" varStatus="i">
+                            <c:forEach items="${transMap[req]}" var="transferDetail" varStatus="i">
                                 <c:if test="${inventorySku.invInfo.id == transferDetail.inventorySku.invInfo.id}">
                                     <tr>
                                         <td><input name="reqDetail" type="checkbox" onclick="checkReqDetail(this)"/></td>
@@ -218,7 +228,7 @@
                                         <td>${transferDetail.inQty - transferDetail.sentQty}</td>
                                         <td>${transferDetail.inventorySku.stockQty}</td>
                                         <td>${transferDetail.inventorySku.invInfo.name}</td>
-                                        <td><input name="req_${req.key}" type="hidden" value="${req.key}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini required"/></td>
+                                        <td><input name="req_${req}" type="hidden" value="${req}"/><input type="number" min="0" name="mergeQty" value="0" class="input-mini required"/></td>
                                         <input name="okQty" value="${transferDetail.inQty - transferDetail.sentQty}" type="hidden"/>
                                         <input name="transferDetailId" value="${transferDetail.id}" type="hidden"/>
                                         <input name="invSkuId" value="${transferDetail.inventorySku.id}" type="hidden"/>
@@ -227,7 +237,9 @@
                                     </tr>
                                 </c:if>
                             </c:forEach>
-							<tr><td colspan="13"><HR align=center width=100% color=#987cb9 SIZE=1></td></tr>
+                            <c:if test="${reqMap[req] != null || transMap[req] != null}">
+							    <tr><td colspan="13"><HR align=center width=100% color=#987cb9 SIZE=1></td></tr>
+                            </c:if>
 						</c:forEach>
 					</tbody>
 				</table>
