@@ -131,6 +131,9 @@
 				and a.sku_id = r.sku_id group by
 				r.sku_id )
 			</if>
+			<if test="fromCompanyStr != null and fromCompanyStr != ''">
+				AND a.stock_qty > 0
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
