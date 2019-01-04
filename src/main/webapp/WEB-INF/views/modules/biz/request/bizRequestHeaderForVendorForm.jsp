@@ -1788,223 +1788,225 @@
             </div>
 		</c:if>
 		<shiro:hasAnyPermissions name="biz:po:bizPoHeader2:view">
-		<div class="form-actions">
-			<label class="control-label">付款单信息：</label>
-		</div>
-			<form:form id="inputForm2" modelAttribute="bizRequestHeader.bizPoHeader"
-				   class="form-horizontal">
-			<div class="control-group">
-				<label class="control-label">采购单总价：</label>
-				<div class="controls">
-					<input type="text" disabled="disabled" value="${bizPoHeader.totalDetail}" htmlEscape="false"
-						   maxlength="30" class="input-xlarge "/>
-				</div>
-			</div>
-			<%--<div class="control-group">--%>
-			<%--<label class="control-label">交易费用：</label>--%>
-			<%--<div class="controls">--%>
-			<%--<form:input path="totalExp"  htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-			<%--</div>--%>
-			<%--</div>--%>
+            <c:if test="${bizRequestHeader.bizPoHeader!=null}">
+                <div class="form-actions">
+                    <label>付款单信息：</label>
+                </div>
+                <form:form id="inputForm2" modelAttribute="bizRequestHeader.bizPoHeader"
+                       class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label">采购单总价：</label>
+                    <div class="controls">
+                        <input type="text" disabled="disabled" value="${bizPoHeader.totalDetail}" htmlEscape="false"
+                               maxlength="30" class="input-xlarge "/>
+                    </div>
+                </div>
+                <%--<div class="control-group">--%>
+                <%--<label class="control-label">交易费用：</label>--%>
+                <%--<div class="controls">--%>
+                <%--<form:input path="totalExp"  htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+                <%--</div>--%>
+                <%--</div>--%>
 
-			<%--<div class="control-group">--%>
-			<%--<label class="control-label">运费：</label>--%>
-			<%--<div class="controls">--%>
-			<%--<form:input path="freight"  htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-			<%--</div>--%>
-			<%--</div>--%>
+                <%--<div class="control-group">--%>
+                <%--<label class="control-label">运费：</label>--%>
+                <%--<div class="controls">--%>
+                <%--<form:input path="freight"  htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+                <%--</div>--%>
+                <%--</div>--%>
 
-			<div class="control-group">
-				<label class="control-label">应付金额：</label>
-				<div class="controls">
-					<input type="text" disabled="disabled"
-						   value="${bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight}" htmlEscape="false"
-						   maxlength="30" class="input-xlarge "/>
-				</div>
-			</div>
+                <div class="control-group">
+                    <label class="control-label">应付金额：</label>
+                    <div class="controls">
+                        <input type="text" disabled="disabled"
+                               value="${bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight}" htmlEscape="false"
+                               maxlength="30" class="input-xlarge "/>
+                    </div>
+                </div>
 
 
-			<div class="control-group">
-				<label class="control-label">最后付款时间：</label>
-				<div class="controls">
-					<input name="lastPayDate" type="text" readonly="readonly" maxlength="20"
-						   class="input-medium Wdate required"
-						   value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
-						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
+                <div class="control-group">
+                    <label class="control-label">最后付款时间：</label>
+                    <div class="controls">
+                        <input name="lastPayDate" disabled="disabled" type="text" readonly="readonly" maxlength="20"
+                               class="input-medium Wdate required"
+                               value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
+                               onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
 
-				</div>
-			</div>
+                    </div>
+                </div>
 
-			<%--<div class="control-group">--%>
-				<%--<label class="control-label">交货地点：</label>--%>
-				<%--<div class="controls">--%>
-					<%--<form:radiobutton id="deliveryStatus0" path="deliveryStatus" onclick="choose(this)" value="0"/>采购中心--%>
-					<%--<form:radiobutton id="deliveryStatus1" path="deliveryStatus" checked="true" onclick="choose(this)"--%>
-									  <%--value="1"/>供应商--%>
-				<%--</div>--%>
-			<%--</div>--%>
-			<%--<div class="control-group" id="buyCenterId" style="display:none">--%>
-				<%--<label class="control-label">采购中心：</label>--%>
-				<%--<div class="controls">--%>
-					<%--<sys:treeselect id="deliveryOffice" name="deliveryOffice.id" value="${bizPoHeader.deliveryOffice.id}"--%>
-									<%--labelName="deliveryOffice.name"--%>
-									<%--labelValue="${bizPoHeader.deliveryOffice.name}" notAllowSelectParent="true"--%>
-									<%--title="采购中心"--%>
-									<%--url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex"--%>
-									<%--cssClass="input-xlarge " dataMsgRequired="必填信息">--%>
-					<%--</sys:treeselect>--%>
-				<%--</div>--%>
-			<%--</div>--%>
-			<div class="control-group">
-				<label class="control-label">备注：</label>
-				<div class="controls">
-					<form:textarea path="remark" disabled="disabled"  readonly="readonly" htmlEscape="false" maxlength="30" class="input-xlarge "/>
-				</div>
-			</div>
+                <%--<div class="control-group">--%>
+                    <%--<label class="control-label">交货地点：</label>--%>
+                    <%--<div class="controls">--%>
+                        <%--<form:radiobutton id="deliveryStatus0" path="deliveryStatus" onclick="choose(this)" value="0"/>采购中心--%>
+                        <%--<form:radiobutton id="deliveryStatus1" path="deliveryStatus" checked="true" onclick="choose(this)"--%>
+                                          <%--value="1"/>供应商--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <%--<div class="control-group" id="buyCenterId" style="display:none">--%>
+                    <%--<label class="control-label">采购中心：</label>--%>
+                    <%--<div class="controls">--%>
+                        <%--<sys:treeselect id="deliveryOffice" name="deliveryOffice.id" value="${bizPoHeader.deliveryOffice.id}"--%>
+                                        <%--labelName="deliveryOffice.name"--%>
+                                        <%--labelValue="${bizPoHeader.deliveryOffice.name}" notAllowSelectParent="true"--%>
+                                        <%--title="采购中心"--%>
+                                        <%--url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex"--%>
+                                        <%--cssClass="input-xlarge " dataMsgRequired="必填信息">--%>
+                        <%--</sys:treeselect>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <div class="control-group">
+                    <label class="control-label">备注：</label>
+                    <div class="controls">
+                        <form:textarea path="remark" disabled="true"  readonly="readonly" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                    </div>
+                </div>
 
-			<%--<div class="control-group">--%>
-			<%--<label class="control-label">发票状态：</label>--%>
-			<%--<div class="controls">--%>
-			<%--<input type="text" disabled="disabled" value="${fns:getDictLabel(bizPoHeader.invStatus, 'biz_order_invStatus', '未知类型')}" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-			<%--</div>--%>
-			<%--</div>--%>
+                <%--<div class="control-group">--%>
+                <%--<label class="control-label">发票状态：</label>--%>
+                <%--<div class="controls">--%>
+                <%--<input type="text" disabled="disabled" value="${fns:getDictLabel(bizPoHeader.invStatus, 'biz_order_invStatus', '未知类型')}" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+                <%--</div>--%>
+                <%--</div>--%>
 
-			<div class="control-group">
-				<label class="control-label">订单状态：</label>
-				<div class="controls">
-					<input type="text" disabled="disabled"
-						   value="${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}" htmlEscape="false"
-						   maxlength="30" class="input-xlarge "/>
-				</div>
-			</div>
-			<c:if test="${fn:length(photoOrderImgList) > 0}">
-				<div class="control-group">
-					<label class="control-label">订单图片：</label>
-					<div class="controls">
-						<c:forEach items="${photoOrderImgList}" var="v">
-							<a target="_blank" href="${v.imgServer}${v.imgPath}"><img style="width: 100px" src="${v.imgServer}${v.imgPath}"></a>
-						</c:forEach>
-					</div>
-				</div>
-			</c:if>
-			<c:if test="${bizPoHeader.bizPoPaymentOrder.id != null || type == 'createPay'}">
-				<div class="control-group">
-					<label class="control-label">申请金额：</label>
-					<div class="controls">
-						<input  name="planPay" type="text"
-							   <c:if test="${type == 'audit' || type == 'pay'}">readonly</c:if>
-							   value="${bizPoHeader.bizPoPaymentOrder.id != null ?
-                           bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal)}"
-							   htmlEscape="false" maxlength="30" class="input-xlarge"/>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">本次申请付款时间：</label>
-					<div class="controls">
-						<input name="payDeadline"  type="text" readonly="readonly" maxlength="20"
-							   class="input-medium Wdate required"
-							   value="<fmt:formatDate value="${bizPoHeader.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
-								<c:if test="${type == 'createPay'}"> onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"</c:if>
-							   placeholder="必填！"/>
-					</div>
-				</div>
-			</c:if>
-			<c:if test="${type == 'startAudit'}">
-				<div class="control-group">
-					<label class="control-label">是否同时提交支付申请：</label>
-					<div class="controls">
-						<input name="meanwhilePayOrder" id="meanwhilePayOrderRadioFalse" type="radio" onclick="showTimeTotal(false);" checked/>否
-						<input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" />是
-					</div>
-				</div>
-				<div class="control-group prewTimeTotal" style="display: none;">
-					<label class="control-label">最后付款时间：</label>
-					<div class="controls">
-						<input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"
-							   class="input-medium Wdate required"
-							   value="<fmt:formatDate value="${bizPoHeader.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
-							   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
-							   placeholder="必填！"/>
-					</div>
-				</div>
-				<div class="control-group prewTimeTotal" style="display: none;">
-					<label class="control-label">申请金额：</label>
-					<div class="controls">
-						<input name="prewPayTotal" id="prewPayTotal" type="text"
-							   value="${bizPoHeader.bizPoPaymentOrder.id != null ?
-                           bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal)}"
-							   maxlength="20" placeholder="必填！"/>
-					</div>
-				</div>
-			</c:if>
-			<c:if test="${type == 'pay'}">
-				<div class="control-group">
-					<label class="control-label">实际付款金额：</label>
-					<div class="controls">
-						<input  name="payTotal" type="text"
-							   value="${bizPoHeader.bizPoPaymentOrder.payTotal}"
-							   htmlEscape="false" maxlength="30" class="input-xlarge "/>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">上传付款凭证：
-						<p style="opacity: 0.5;">点击图片删除</p>
-					</label>
+                <div class="control-group">
+                    <label class="control-label">订单状态：</label>
+                    <div class="controls">
+                        <input type="text" disabled="disabled"
+                               value="${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}" htmlEscape="false"
+                               maxlength="30" class="input-xlarge "/>
+                    </div>
+                </div>
+                <c:if test="${fn:length(photoOrderImgList) > 0}">
+                    <div class="control-group">
+                        <label class="control-label">订单图片：</label>
+                        <div class="controls">
+                            <c:forEach items="${photoOrderImgList}" var="v">
+                                <a target="_blank" href="${v.imgServer}${v.imgPath}"><img style="width: 100px" src="${v.imgServer}${v.imgPath}"></a>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </c:if>
+                <c:if test="${bizPoHeader.bizPoPaymentOrder.id != null || type == 'createPay'}">
+                    <div class="control-group">
+                        <label class="control-label">申请金额：</label>
+                        <div class="controls">
+                            <input  name="planPay" type="text"
+                                   <c:if test="${type == 'audit' || type == 'pay'}">readonly</c:if>
+                                   value="${bizPoHeader.bizPoPaymentOrder.id != null ?
+                               bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal)}"
+                                   htmlEscape="false" maxlength="30" class="input-xlarge"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">本次申请付款时间：</label>
+                        <div class="controls">
+                            <input name="payDeadline"  type="text" readonly="readonly" maxlength="20"
+                                   class="input-medium Wdate required"
+                                   value="<fmt:formatDate value="${bizPoHeader.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+                                    <c:if test="${type == 'createPay'}"> onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"</c:if>
+                                   placeholder="必填！"/>
+                        </div>
+                    </div>
+                </c:if>
+                <c:if test="${type == 'startAudit'}">
+                    <div class="control-group">
+                        <label class="control-label">是否同时提交支付申请：</label>
+                        <div class="controls">
+                            <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioFalse" type="radio" onclick="showTimeTotal(false);" checked/>否
+                            <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" />是
+                        </div>
+                    </div>
+                    <div class="control-group prewTimeTotal" style="display: none;">
+                        <label class="control-label">最后付款时间：</label>
+                        <div class="controls">
+                            <input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"
+                                   class="input-medium Wdate required"
+                                   value="<fmt:formatDate value="${bizPoHeader.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+                                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
+                                   placeholder="必填！"/>
+                        </div>
+                    </div>
+                    <div class="control-group prewTimeTotal" style="display: none;">
+                        <label class="control-label">申请金额：</label>
+                        <div class="controls">
+                            <input name="prewPayTotal" id="prewPayTotal" type="text"
+                                   value="${bizPoHeader.bizPoPaymentOrder.id != null ?
+                               bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal)}"
+                                   maxlength="20" placeholder="必填！"/>
+                        </div>
+                    </div>
+                </c:if>
+                <c:if test="${type == 'pay'}">
+                    <div class="control-group">
+                        <label class="control-label">实际付款金额：</label>
+                        <div class="controls">
+                            <input  name="payTotal" type="text"
+                                   value="${bizPoHeader.bizPoPaymentOrder.payTotal}"
+                                   htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">上传付款凭证：
+                            <p style="opacity: 0.5;">点击图片删除</p>
+                        </label>
 
-					<div class="controls">
-						<input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" multiple="multiple" id="payImg"/>
-					</div>
-					<div >
-						<img src="${bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
-					</div>
-				</div>
-			</c:if>
+                        <div class="controls">
+                            <input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" multiple="multiple" id="payImg"/>
+                        </div>
+                        <div >
+                            <img src="${bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
+                        </div>
+                    </div>
+                </c:if>
 
-			<c:if test="${type == 'audit' && bizPoHeader.commonProcess.id != null}">
-				<div class="control-group">
-					<label class="control-label">审核状态：</label>
-					<div class="controls">
-						<input type="text" disabled="disabled"
-							   value="${purchaseOrderProcess.name}" htmlEscape="false"
-							   maxlength="30" class="input-xlarge "/>
-						<input  type="hidden" disabled="disabled"
-							   value="${purchaseOrderProcess.code}" htmlEscape="false"
-							   maxlength="30" class="input-xlarge "/>
-					</div>
-				</div>
-			</c:if>
+                <c:if test="${type == 'audit' && bizPoHeader.commonProcess.id != null}">
+                    <div class="control-group">
+                        <label class="control-label">审核状态：</label>
+                        <div class="controls">
+                            <input type="text" disabled="disabled"
+                                   value="${purchaseOrderProcess.name}" htmlEscape="false"
+                                   maxlength="30" class="input-xlarge "/>
+                            <input  type="hidden" disabled="disabled"
+                                   value="${purchaseOrderProcess.code}" htmlEscape="false"
+                                   maxlength="30" class="input-xlarge "/>
+                        </div>
+                    </div>
+                </c:if>
 
-			<c:if test="${fn:length(bizPoHeader.commonProcessList) > 0}">
-				<div class="control-group">
-					<label class="control-label">审批流程：</label>
-					<div class="controls help_wrap">
-						<div class="help_step_box fa">
-							<c:forEach items="${bizPoHeader.commonProcessList}" var="v" varStatus="stat">
-								<c:if test="${!stat.last}" >
-									<div class="help_step_item">
-										<div class="help_step_left"></div>
-										<div class="help_step_num">${stat.index + 1}</div>
-										批注:${v.description}<br/><br/>
-										审批人:${v.user.name}<br/>
-										<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-										<div class="help_step_right"></div>
-									</div>
-								</c:if>
-								<c:if test="${stat.last}">
-									<div class="help_step_item help_step_set">
-										<div class="help_step_left"></div>
-										<div class="help_step_num">${stat.index + 1}</div>
-										当前状态:${v.purchaseOrderProcess.name}<br/><br/>
-											${v.user.name}<br/>
-										<div class="help_step_right"></div>
-									</div>
-								</c:if>
-							</c:forEach>
-						</div>
-					</div>
-				</div>
-			</c:if>
-		</form:form>
+                <c:if test="${fn:length(bizPoHeader.commonProcessList) > 0}">
+                    <div class="control-group">
+                        <label class="control-label">审批流程：</label>
+                        <div class="controls help_wrap">
+                            <div class="help_step_box fa">
+                                <c:forEach items="${bizPoHeader.commonProcessList}" var="v" varStatus="stat">
+                                    <c:if test="${!stat.last}" >
+                                        <div class="help_step_item">
+                                            <div class="help_step_left"></div>
+                                            <div class="help_step_num">${stat.index + 1}</div>
+                                            批注:${v.description}<br/><br/>
+                                            审批人:${v.user.name}<br/>
+                                            <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                            <div class="help_step_right"></div>
+                                        </div>
+                                    </c:if>
+                                    <c:if test="${stat.last}">
+                                        <div class="help_step_item help_step_set">
+                                            <div class="help_step_left"></div>
+                                            <div class="help_step_num">${stat.index + 1}</div>
+                                            当前状态:${v.purchaseOrderProcess.name}<br/><br/>
+                                                ${v.user.name}<br/>
+                                            <div class="help_step_right"></div>
+                                        </div>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+            </form:form>
+            </c:if>
 		<!--付款单-->
         <c:if test="${poPaymentOrderPage.list != null && fn:length(poPaymentOrderPage.list) > 0}">
             <table id="contentTable3" class="table table-striped table-bordered table-condensed">

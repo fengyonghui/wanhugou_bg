@@ -17,7 +17,7 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li class="active"><a href="${ctx}/biz/po/bizPoHeader/listV3">订单支出信息</a></li>
+    <li class="active"><a href="${ctx}/biz/po/bizPoHeader/listV3">付款单</a></li>
 </ul>
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">

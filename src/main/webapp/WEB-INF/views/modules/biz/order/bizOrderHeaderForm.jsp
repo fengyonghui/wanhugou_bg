@@ -739,10 +739,12 @@
                     success: function (commis) {
                         if (commis == "ok") {
                             alert(" 同意发货 ");
-                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
+                           // window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list";
                         } else {
                             alert(" 发货失败 ");
-                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
+                            //window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list";
                         }
                     }
                 });
@@ -3047,6 +3049,7 @@
     </c:if>
 </form:form>
 <shiro:hasAnyPermissions name="biz:po:bizPoHeader2:view">
+ <c:if test="${bizOrderHeader.bizPoHeader!=null}">
 <div class="form-actions">
     <label class="control-label">付款单信息：</label>
 </div>
@@ -3070,7 +3073,7 @@
     <div class="control-group">
         <label class="control-label">最后付款时间：</label>
         <div class="controls">
-            <input name="lastPayDate" type="text" readonly="readonly" maxlength="20"
+            <input name="lastPayDate" type="text" disabled="disabled" readonly="readonly" maxlength="20"
                    class="input-medium Wdate required"
                    value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
@@ -3080,15 +3083,15 @@
     <div class="control-group">
         <label class="control-label">交货地点：</label>
         <div class="controls">
-            <form:radiobutton id="deliveryStatus0" path="deliveryStatus" onclick="choose2(this)" value="0"/>采购中心
-            <form:radiobutton id="deliveryStatus1" path="deliveryStatus" checked="true" onclick="choose2(this)"
+            <form:radiobutton disabled="true" id="deliveryStatus0" path="deliveryStatus" onclick="choose2(this)" value="0"/>采购中心
+            <form:radiobutton disabled="true" id="deliveryStatus1" path="deliveryStatus" checked="true" onclick="choose2(this)"
                               value="1"/>供应商
         </div>
     </div>
     <div class="control-group" id="buyCenterId" style="display:none">
         <label class="control-label">采购中心：</label>
         <div class="controls">
-            <sys:treeselect id="deliveryOffice" name="deliveryOffice.id" value="${bizPoHeader.deliveryOffice.id}"
+            <sys:treeselect disabled="true" id="deliveryOffice" name="deliveryOffice.id" value="${bizPoHeader.deliveryOffice.id}"
                             labelName="deliveryOffice.name"
                             labelValue="${bizPoHeader.deliveryOffice.name}" notAllowSelectParent="true"
                             title="采购中心"
@@ -3100,7 +3103,7 @@
     <div class="control-group">
         <label class="control-label">采购单备注：</label>
         <div class="controls">
-            <form:textarea path="remark" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+            <form:textarea disabled="true" path="remark" htmlEscape="false" maxlength="30" class="input-xlarge "/>
         </div>
     </div>
     <div class="control-group">
@@ -3142,6 +3145,7 @@
         <%--</div>--%>
     <%--</c:if>--%>
 </form:form>
+ </c:if>
 </shiro:hasAnyPermissions >
 <%--详情列表--%>
 <sys:message content="${message}"/>
@@ -3199,10 +3203,10 @@
                 <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
                     ${bizOrderDetail.skuName}
                 </c:if>
-                <c:if test="${empty entity.orderNoEditable || empty entity.orderDetails || empty bizOrderHeader.flag}">
-                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
-                            ${bizOrderDetail.skuName}</a>
-                </c:if>
+                <%--<c:if test="${empty entity.orderNoEditable || empty entity.orderDetails || empty bizOrderHeader.flag}">--%>
+                    <%--<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">--%>
+                            <%--${bizOrderDetail.skuName}</a>--%>
+                <%--</c:if>--%>
             </td>
             <td>
                     ${bizOrderDetail.partNo}

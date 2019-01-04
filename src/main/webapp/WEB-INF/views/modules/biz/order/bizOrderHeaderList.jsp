@@ -495,7 +495,6 @@
 					<c:if test="${(orderHeader.orderType == BizOrderTypeEnum.ORDINARY_ORDER.state || orderHeader.orderType == BizOrderTypeEnum.COMMISSION_ORDER.state) &&
 				 			orderHeader.bizStatus >= OrderHeaderBizStatusEnum.SUPPLYING.state}">
 						<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_LOCAL'}">
-                            222
                             ${orderHeader.commonProcess.jointOperationLocalProcess.name}
 						</c:if>
 						<c:if test="${orderHeader.commonProcess.objectName == 'ORDER_HEADER_SO_ORIGIN'}">
