@@ -181,10 +181,10 @@
 							title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-medium required" dataMsgRequired="必填信息">
 			</sys:treeselect>
 		</li>
-		<li><label>备货方：</label>
-			<form:select path="fromType" class="input-medium">
+		<li><label>品类名称：</label>
+			<form:select id="varietyInfoId" about="choose" path="varietyInfo.id" class="input-medium">
 				<form:option value="" label="请选择"/>
-				<form:options items="${fns:getDictList('req_from_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				<form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 			</form:select>
 		</li>
 		<li><span><label>期望收货时间：</label></span>
@@ -198,7 +198,7 @@
 				<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</form:select>
 		</li>
-		<li><label>审核状态</label>
+		<li><label>审核状态：</label>
 			<form:select class="input-medium" path="process">
 				<%--<option value="">请选择</option>--%>
 				<%--<c:forEach items="${requestMap}" var="req">--%>
@@ -208,10 +208,10 @@
 				<form:options items="${requestMap}" htmlEscape="false"/>
 			</form:select>
 		</li>
-		<li><label>品类名称：</label>
-			<form:select id="varietyInfoId" about="choose" path="varietyInfo.id" class="input-medium">
+		<li><label>备货方：</label>
+			<form:select path="fromType" class="input-medium">
 				<form:option value="" label="请选择"/>
-				<form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				<form:options items="${fns:getDictList('req_from_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 			</form:select>
 		</li>
 		<li class="clearfix"></li>
@@ -223,6 +223,12 @@
 	</div>
 	<ul class="ul-form">
 		<!-- 订单支出信息合并 搜索 -->
+		<li><label style="width: 120px;">付款单待支付：</label>
+			<form:select path="poWaitPay" class="input-medium">
+				<form:option value="" label="请选择"/>
+				<form:option value="1" label="是"/>
+			</form:select>
+		</li>
 		<li><label style="width: 120px;">付款单业务状态：</label>
 			<form:select path="poBizStatus" class="input-medium">
 				<form:option value="" label="请选择"/>
@@ -241,12 +247,6 @@
 				<form:option value="" label="请选择"/>
 				<form:options items="${fns:getDictList('poSchType')}" itemLabel="label" itemValue="value"
 							  htmlEscape="false"/>
-			</form:select>
-		</li>
-		<li><label style="width: 120px;">付款单待支付：</label>
-			<form:select path="poWaitPay" class="input-medium">
-				<form:option value="" label="请选择"/>
-				<form:option value="1" label="是"/>
 			</form:select>
 		</li>
 		<li class="clearfix"></li>

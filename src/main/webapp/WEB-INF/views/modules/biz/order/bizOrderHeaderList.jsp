@@ -190,7 +190,7 @@
             <label>商品货号：</label>
             <form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
         </li>
-        <li><label>经销店名称：</label>
+        <li><label>经销店：</label>
             <c:if test="${bizOrderHeader.flag eq 'check_pending'}">
                 <sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"
                                 labelName="customer.name"
@@ -214,26 +214,8 @@
         <li><label>采购中心：</label>
             <form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
         </li>
-        <li><label>创建日期：</label>
-            <input name="orderCreatStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-                   value="<fmt:formatDate value="${bizOrderHeader.orderCreatStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-            至
-            <input name="orderCreatEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-                   value="<fmt:formatDate value="${bizOrderHeader.orderCreatEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-        </li>
         <li><label>客户专员：</label>
             <form:input path="con.name" htmlEscape="false" maxlength="100" class="input-medium"/>
-        </li>
-        <li><label>更新日期：</label>
-            <input name="orderUpdaStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-                   value="<fmt:formatDate value="${bizOrderHeader.orderUpdaStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-            至
-            <input name="orderUpdaEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-                   value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
         </li>
         <li><label>待同意发货:</label>
             <form:select path="mobileAuditStatus" class="input-medium">
@@ -261,6 +243,7 @@
                 <%--<form:options items="${fns:getDictList('biz_commission_status')}" itemLabel="label" itemValue="value"--%>
                               <%--htmlEscape="false"/></form:select>--%>
         <%--</li>--%>
+
         <c:if test="${statu == 'unline'}">
             <li><label>审核状态:</label>
                 <form:select path="examine" class="input-medium">
@@ -270,39 +253,56 @@
                 </form:select>
             </li>
         </c:if>
+        <li><label>创建日期：</label>
+            <input name="orderCreatStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+                   value="<fmt:formatDate value="${bizOrderHeader.orderCreatStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+            至
+            <input name="orderCreatEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+                   value="<fmt:formatDate value="${bizOrderHeader.orderCreatEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+        </li>
+        <li><label>更新日期：</label>
+            <input name="orderUpdaStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+                   value="<fmt:formatDate value="${bizOrderHeader.orderUpdaStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+            至
+            <input name="orderUpdaEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+                   value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+        </li>
         <li class="clearfix"></li>
     </ul>
     <c:if test="${bizOrderHeader.flag != 'check_pending'}">
     <br>
-    <%--<div class="control-group">--%>
-        <%--<label class="control-label">付款单搜索：</label>--%>
-    <%--</div>--%>
+    <div class="control-group">
+        <label class="control-label">付款单搜索：</label>
+    </div>
     <ul class="ul-form">
         <!-- 订单支出信息合并 搜索 -->
+        <li><label style="width: 120px;">付款单待支付：</label>
+            <form:select path="poWaitPay" class="input-medium">
+                <form:option value="" label="请选择"/>
+                <form:option value="1" label="是"/>
+            </form:select>
+        </li>
         <li><label style="width: 120px;">付款单业务状态：</label>
             <form:select path="poBizStatus" class="input-medium">
                 <form:option value="" label="请选择"/>
                 <form:options items="${fns:getDictList('biz_po_status')}" itemLabel="label" itemValue="value"
                               htmlEscape="false"/></form:select>
         </li>
-
-        <%--<li><label style="width: 120px;">付款单审核状态：</label>--%>
-            <%--<form:select path="processTypeStr" class="input-medium">--%>
-                <%--<form:option value="" label="请选择"/>--%>
-                <%--<form:options items="${processList}" htmlEscape="false"/>--%>
-            <%--</form:select>--%>
-        <%--</li>--%>
-        <%--<li><label style="width: 120px;">付款单排产状态：</label>--%>
-            <%--<form:select path="poSchType" class="input-medium">--%>
-                <%--<form:option value="" label="请选择"/>--%>
-                <%--<form:options items="${fns:getDictList('poSchType')}" itemLabel="label" itemValue="value"--%>
-                              <%--htmlEscape="false"/>--%>
-            <%--</form:select>--%>
-        <%--</li>--%>
-        <li><label style="width: 120px;">付款单待支付：</label>
-            <form:select path="poWaitPay" class="input-medium">
+        <li><label style="width: 120px;">付款单审核状态：</label>
+            <form:select path="processTypeStr" class="input-medium">
                 <form:option value="" label="请选择"/>
-                <form:option value="1" label="是"/>
+                <form:options items="${processList}" htmlEscape="false"/>
+            </form:select>
+        </li>
+        <li><label style="width: 120px;">付款单排产状态：</label>
+            <form:select path="poSchType" class="input-medium">
+                <form:option value="" label="请选择"/>
+                <form:options items="${fns:getDictList('poSchType')}" itemLabel="label" itemValue="value"
+                              htmlEscape="false"/>
             </form:select>
         </li>
         <li class="clearfix"></li>

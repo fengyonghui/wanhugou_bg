@@ -1788,7 +1788,10 @@
             </div>
 		</c:if>
 		<shiro:hasAnyPermissions name="biz:po:bizPoHeader2:view">
-		<form:form id="inputForm2" modelAttribute="bizRequestHeader.bizPoHeader"
+		<div class="form-actions">
+			<label class="control-label">付款单信息：</label>
+		</div>
+			<form:form id="inputForm2" modelAttribute="bizRequestHeader.bizPoHeader"
 				   class="form-horizontal">
 			<div class="control-group">
 				<label class="control-label">采购单总价：</label>

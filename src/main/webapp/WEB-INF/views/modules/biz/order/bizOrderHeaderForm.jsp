@@ -3047,6 +3047,9 @@
     </c:if>
 </form:form>
 <shiro:hasAnyPermissions name="biz:po:bizPoHeader2:view">
+<div class="form-actions">
+    <label class="control-label">付款单信息：</label>
+</div>
 <form:form id="inputForm2" modelAttribute="bizOrderHeader.bizPoHeader"
             class="form-horizontal">
     <div class="control-group">
@@ -3108,36 +3111,36 @@
                    maxlength="30" class="input-xlarge "/>
         </div>
     </div>
-    <c:if test="${fn:length(poAuditList) > 0}">
-        <div class="control-group">
-            <label class="control-label">采购单审批流程：</label>
-            <div class="controls help_wrap">
-                <div class="help_step_box fa">
-                    <c:forEach items="${poAuditList}" var="v" varStatus="stat">
-                        <c:if test="${!stat.last}" >
-                            <div class="help_step_item">
-                                <div class="help_step_left"></div>
-                                <div class="help_step_num">${stat.index + 1}</div>
-                                批注:${v.description}<br/><br/>
-                                审批人:${v.user.name}<br/>
-                                <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-                                <div class="help_step_right"></div>
-                            </div>
-                        </c:if>
-                        <c:if test="${stat.last}">
-                            <div class="help_step_item help_step_set">
-                                <div class="help_step_left"></div>
-                                <div class="help_step_num">${stat.index + 1}</div>
-                                当前状态:${v.purchaseOrderProcess.name}<br/><br/>
-                                    ${v.user.name}<br/>
-                                <div class="help_step_right"></div>
-                            </div>
-                        </c:if>
-                    </c:forEach>
-                </div>
-            </div>
-        </div>
-    </c:if>
+    <%--<c:if test="${fn:length(poAuditList) > 0}">--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">采购单审批流程：</label>--%>
+            <%--<div class="controls help_wrap">--%>
+                <%--<div class="help_step_box fa">--%>
+                    <%--<c:forEach items="${poAuditList}" var="v" varStatus="stat">--%>
+                        <%--<c:if test="${!stat.last}" >--%>
+                            <%--<div class="help_step_item">--%>
+                                <%--<div class="help_step_left"></div>--%>
+                                <%--<div class="help_step_num">${stat.index + 1}</div>--%>
+                                <%--批注:${v.description}<br/><br/>--%>
+                                <%--审批人:${v.user.name}<br/>--%>
+                                <%--<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
+                                <%--<div class="help_step_right"></div>--%>
+                            <%--</div>--%>
+                        <%--</c:if>--%>
+                        <%--<c:if test="${stat.last}">--%>
+                            <%--<div class="help_step_item help_step_set">--%>
+                                <%--<div class="help_step_left"></div>--%>
+                                <%--<div class="help_step_num">${stat.index + 1}</div>--%>
+                                <%--当前状态:${v.purchaseOrderProcess.name}<br/><br/>--%>
+                                    <%--${v.user.name}<br/>--%>
+                                <%--<div class="help_step_right"></div>--%>
+                            <%--</div>--%>
+                        <%--</c:if>--%>
+                    <%--</c:forEach>--%>
+                <%--</div>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+    <%--</c:if>--%>
 </form:form>
 </shiro:hasAnyPermissions >
 <%--详情列表--%>
