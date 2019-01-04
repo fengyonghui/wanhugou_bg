@@ -2180,6 +2180,17 @@ public class BizOrderHeaderController extends BaseController {
                     }
                     rowData.add(order.getTotalExp() == null ? StringUtils.EMPTY : String.valueOf(order.getTotalExp()));
                     rowData.add(order.getFreight() == null ? StringUtils.EMPTY : String.valueOf(order.getFreight()));
+                    //是否万户通发货
+                    if (order.getBizOrderLogistics().getLogisticsLines() != null) {
+                        if (order.getBizOrderLogistics().getLogisticsLines().equals(BizOrderLogisticsEnum.CUSTOMER_PICK_UP.getDesc())
+                                || order.getBizOrderLogistics().getLogisticsLines().equals(BizOrderLogisticsEnum.DELIVER_HOME.getDesc())) {
+                            rowData.add("是");
+                        } else {
+                            rowData.add("否");
+                        }
+                    } else {
+                        rowData.add(StringUtils.EMPTY);
+                    }
                     double total = 0.0;
                     double exp = 0.0;
                     double fre = 0.0;
@@ -2415,10 +2426,10 @@ public class BizOrderHeaderController extends BaseController {
             String[] headers = null;
             //隐藏佣金
             if (permFlag) {
-                headers = new String[]{"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
+                headers = new String[]{"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费", "是否万户通发货",
                         "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "佣金", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
             } else {
-                headers = new String[]{"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
+                headers = new String[]{"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费", "是否万户通发货",
                         "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
             }
 

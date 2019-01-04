@@ -1902,6 +1902,12 @@
             </c:if>
         </div>
     </div>
+    <div class="control-group">
+        <label class="control-label">发货线路：</label>
+        <div class="controls">
+            <input type="text" value="${bizOrderHeader.bizOrderLogistics.logisticsLines}" disabled="true" class="input-xlarge">
+        </div>
+    </div>
     <c:if test="${entity.orderType != 8}">
         <div class="control-group">
             <label class="control-label">万户币抵扣：</label>

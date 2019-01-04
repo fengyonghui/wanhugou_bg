@@ -682,22 +682,18 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
     public void creOrdLogisticsForOrder(Integer orderCode, String orderNum, String receivername, String receiverphone,
                                         String receiverdetailedaddress, Integer goodsquantity, String logisticsOrderCode, String sentGoodsCode) {
 
-        List<BizOrderLogistics> orderLogisticsList = new ArrayList<BizOrderLogistics>();
+        BizOrderLogistics orderLogistics = new BizOrderLogistics();
         BizOrderHeader orderHeader = new BizOrderHeader();
         orderHeader.setId(orderCode);
         List<BizOrderHeader> orderHeaderList = bizOrderHeaderService.findList(orderHeader);
         if (CollectionUtils.isNotEmpty(orderHeaderList)) {
             orderHeader = orderHeaderList.get(0);
-            orderLogisticsList = orderHeader.getBizOrderLogisticsList();
+            orderLogistics = orderHeader.getBizOrderLogistics();
         }
 
-        String logisticsLinesCode = null;
-        String stopPointCode = null;
-        if (CollectionUtils.isNotEmpty(orderLogisticsList)) {
-            BizOrderLogistics orderLogistics = orderLogisticsList.get(0);
-            logisticsLinesCode = orderLogistics.getLogisticsLinesCode();
-            stopPointCode = orderLogistics.getStopPointCode();
-        }
+        String logisticsLinesCode = orderLogistics == null ? null : orderLogistics.getLogisticsLinesCode();
+        String stopPointCode = orderLogistics == null ? null : orderLogistics.getStopPointCode();
+
         User user = UserUtils.getUser();
         String creator = user.getLoginName();
         String senderphoneTemp = "";
