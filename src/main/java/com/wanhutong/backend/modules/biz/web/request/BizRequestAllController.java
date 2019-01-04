@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.*;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderComment;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
@@ -22,6 +23,7 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.*;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderCommentService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
@@ -110,6 +112,8 @@ public class BizRequestAllController {
     private SystemService systemService;
     @Autowired
     private BizSkuTransferDetailService bizSkuTransferDetailService;
+    @Autowired
+    private BizOrderCommentService bizOrderCommentService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -370,6 +374,11 @@ public class BizRequestAllController {
         }
         model.addAttribute("bizRequestHeader", requestHeader);
         model.addAttribute("bizOrderHeader", orderHeader);
+        //对应订单备注
+        BizOrderComment bizOrderComment = new BizOrderComment();
+        bizOrderComment.setOrder(bizOrderHeader);
+        List<BizOrderComment> commentList = bizOrderCommentService.findList(bizOrderComment);
+        model.addAttribute("commentList", commentList);
         model.addAttribute("reqDetailList", reqDetailList);
         model.addAttribute("ordDetailList", ordDetailList);
         model.addAttribute("source", source);

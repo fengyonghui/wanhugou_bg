@@ -120,7 +120,19 @@
 				</c:if>
 				<td>${bizInvoice.trackingNumber}</td>
 				<c:if test="${bizInvoice.ship==0}">
-					<td>${bizInvoice.orderHeaders}</td>
+					<%--<td>${bizInvoice.orderHeaders}</td>--%>
+					<td>
+						<c:forEach items="${orderMap[bizInvoice.id]}" var="orderIdNumList" varStatus="orderState">
+							<c:forEach items="${orderIdNumList}" var="orderIdNumMap" >
+							<c:if test="${orderState.last != true}">
+								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderIdNumMap.key}&orderDetails=details&statu=">${orderIdNumMap.value}</a>，
+							</c:if>
+							<c:if test="${orderState.last == true}">
+								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderIdNumMap.key}&orderDetails=details&statu=">${orderIdNumMap.value}</a>
+							</c:if>
+							</c:forEach>
+						</c:forEach>
+					</td>
 				</c:if>
 				<td>${bizInvoice.freight}</td>
 				<td>${bizInvoice.valuePrice}</td>

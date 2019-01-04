@@ -65,7 +65,9 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -130,23 +132,29 @@ public class BizInvoiceController extends BaseController {
 //	    bizInvoice.setBizStatus(Integer.parseInt(bizStatu));
 //	    bizInvoice.setShip(Integer.parseInt(ship));
         Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
+        Map<Integer, List<Map<Integer, String>>> orderMap = new HashMap<Integer, List<Map<Integer, String>>>();
         List<Callable<Pair<Boolean, String>>> tasks = new ArrayList<>();
         for (BizInvoice b : page.getList()) {
             tasks.add(new Callable<Pair<Boolean, String>>() {
                 @Override
                 public Pair<Boolean, String> call() {
                     try {
-                        //lock.lock();
+                        lock.lock();
                         List<BizOrderHeader> orderHeaderList = bizInvoiceService.findOrderHeaderByInvoiceId(b.getId());
                         String orderNums = "";
                         if (CollectionUtils.isNotEmpty(orderHeaderList)){
+                            List<Map<Integer, String>> orderIdNumMapList = new ArrayList<Map<Integer, String>>();
                             for (BizOrderHeader bizOrderHeader : orderHeaderList) {
                                 if (bizOrderHeader == null || bizOrderHeader.getOrderNum() == null) {
                                     continue;
                                 }
                                 String orderNum = bizOrderHeader.getOrderNum();
                                 orderNums += orderNum + ",";
+                                Map<Integer, String> orderIdNumMap = new HashMap<Integer, String>();
+                                orderIdNumMap.put(bizOrderHeader.getId(), bizOrderHeader.getOrderNum());
+                                orderIdNumMapList.add(orderIdNumMap);
                             }
+                            orderMap.put(b.getId(), orderIdNumMapList);
                         }
                         if (StringUtils.isNotBlank(orderNums)) {
                             b.setOrderHeaders(orderNums.substring(0, orderNums.length()-1));
@@ -154,7 +162,7 @@ public class BizInvoiceController extends BaseController {
                     } catch (Exception e) {
                         logger.error("多线程给发货单添加订单号失败", e);
                     } finally {
-                        //lock.unlock();
+                        lock.unlock();
                     }
                     return Pair.of(Boolean.TRUE, "操作成功");
                 }
@@ -166,6 +174,8 @@ public class BizInvoiceController extends BaseController {
             LOGGER.error("init order list data error", e);
         }
 
+
+        model.addAttribute("orderMap", orderMap);
         model.addAttribute("page", page);
         model.addAttribute("targetPage", bizInvoice.getTargetPage() == null ? "" : bizInvoice.getTargetPage());
 //		model.addAttribute("ship",ship);
