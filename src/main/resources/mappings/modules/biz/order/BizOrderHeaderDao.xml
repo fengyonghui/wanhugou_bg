@@ -2334,6 +2334,7 @@ LEFT JOIN sys_office so on oh.center_id = so.id and so.type != 12
         count(1)                                             AS orderCount,
         sum(oh.total_detail + oh.total_exp + oh.freight)     AS accumulatedSalesMonth,
         sum(receive_total)                                   AS receiveTotal,
+        SUM(total_exp + service_fee + freight) AS serviceCharge,
         (SELECT sum(detail1.buy_price * detail1.ord_qty)
         FROM biz_order_header AS header1
         LEFT JOIN sys_office AS office1 ON header1.center_id = office1.id
