@@ -802,7 +802,7 @@
             var id = $("#poHeaderId").val();
             var paymentOrderId = $("#paymentOrderId").val();
             var payTotal = $("#truePayTotal").val();
-
+            var payAppTotal = $("#payTotal").val();
             var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
             var img = "";
             if (mainImg.length >= 2) {
@@ -813,6 +813,10 @@
 
             if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                 alert("错误提示:请输入支付金额");
+                return false;
+            }
+            if (Number(payTotal) > Number(payAppTotal)) {
+                alert("错误提示:支付金额不大于申请金额");
                 return false;
             }
             if ($String.isNullOrBlank(img)) {
@@ -853,10 +857,15 @@
         function saveMon(type) {
             if (type == 'createPay') {
                 var payTotal = $("#payTotal").val();
+                var payTotalDetail = $("#payTotalDetail").val();
                 var payDeadline = $("#payDeadline").val();
                 var id = $("#poHeaderId").val();
                 if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                     alert("请输入申请金额!");
+                    return false;
+                }
+                if (Number(payTotal) > Number(payTotalDetail)) {
+                    alert("申请金额不大于剩余应付金额!");
                     return false;
                 }
                 if ($String.isNullOrBlank(payDeadline)) {
@@ -2079,6 +2088,11 @@
     </div>
 
     <c:if test="${entity.bizPoPaymentOrder.id != null || entity.str == 'createPay'}">
+                <input id="payTotalDetail" name="planPayTotalDetail" type="hidden"
+                       <c:if test="${entity.str == 'audit' || entity.str == 'pay'}">readonly</c:if>
+                       value="${entity.bizPoPaymentOrder.id != null ?
+                           entity.bizPoPaymentOrder.total : (entity.bizPoHeader.totalDetail-(entity.bizPoHeader.payTotal == null ? 0 : entity.bizPoHeader.payTotal))}"
+                       htmlEscape="false" maxlength="30" class="input-xlarge"/>
         <div class="control-group">
             <label class="control-label">申请金额：</label>
             <div class="controls">
@@ -3080,26 +3094,26 @@
 
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">交货地点：</label>
-        <div class="controls">
-            <form:radiobutton disabled="true" id="deliveryStatus0" path="deliveryStatus" onclick="choose2(this)" value="0"/>采购中心
-            <form:radiobutton disabled="true" id="deliveryStatus1" path="deliveryStatus" checked="true" onclick="choose2(this)"
-                              value="1"/>供应商
-        </div>
-    </div>
-    <div class="control-group" id="buyCenterId" style="display:none">
-        <label class="control-label">采购中心：</label>
-        <div class="controls">
-            <sys:treeselect disabled="true" id="deliveryOffice" name="deliveryOffice.id" value="${bizPoHeader.deliveryOffice.id}"
-                            labelName="deliveryOffice.name"
-                            labelValue="${bizPoHeader.deliveryOffice.name}" notAllowSelectParent="true"
-                            title="采购中心"
-                            url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex"
-                            cssClass="input-xlarge " dataMsgRequired="必填信息">
-            </sys:treeselect>
-        </div>
-    </div>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">交货地点：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<form:radiobutton disabled="true" id="deliveryStatus0" path="deliveryStatus" onclick="choose2(this)" value="0"/>采购中心--%>
+            <%--<form:radiobutton disabled="true" id="deliveryStatus1" path="deliveryStatus" checked="true" onclick="choose2(this)"--%>
+                              <%--value="1"/>供应商--%>
+        <%--</div>--%>
+    <%--</div>--%>
+    <%--<div class="control-group" id="buyCenterId" style="display:none">--%>
+        <%--<label class="control-label">采购中心：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<sys:treeselect disabled="true" id="deliveryOffice" name="deliveryOffice.id" value="${bizPoHeader.deliveryOffice.id}"--%>
+                            <%--labelName="deliveryOffice.name"--%>
+                            <%--labelValue="${bizPoHeader.deliveryOffice.name}" notAllowSelectParent="true"--%>
+                            <%--title="采购中心"--%>
+                            <%--url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex"--%>
+                            <%--cssClass="input-xlarge " dataMsgRequired="必填信息">--%>
+            <%--</sys:treeselect>--%>
+        <%--</div>--%>
+    <%--</div>--%>
     <div class="control-group">
         <label class="control-label">采购单备注：</label>
         <div class="controls">

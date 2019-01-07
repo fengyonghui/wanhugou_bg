@@ -20,6 +20,7 @@
     <li class="active"><a href="${ctx}/biz/po/bizPoHeader/listV3">付款单</a></li>
 </ul>
 <sys:message content="${message}"/>
+<input id="fromPage" name="fromPage" type="hidden" value="${fromPage}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
     <thead>
     <tr>
@@ -107,7 +108,7 @@
 												&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 												&& (bizPoHeader.payTotal == null ? 0 : bizPoHeader.payTotal) < bizPoHeader.bizOrderHeader.totalDetail
 												}">
-                                            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoHeader.bizOrderHeader.id}&str=createPay">申请付款</a>
+                                            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoHeader.bizOrderHeader.id}&str=createPay">申请11付款</a>
                                         </c:if>
                                     </c:if>
                                 </shiro:hasPermission>
@@ -116,9 +117,9 @@
                                         <c:if test="${bizPoHeader.currentPaymentId == null
 												&& bizPoHeader.bizRequestHeader.bizStatus >= ReqHeaderStatusEnum.APPROVE.state
 												&& bizPoHeader.bizRequestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state
-												&& (bizPoHeader.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : bizPoHeader.payTotal) < bizPoHeader.bizRequestHeader.totalDetail
+												&& bizPoHeader.payTotal < bizPoHeader.bizRequestHeader.totalDetail
 												}">
-                                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=createPay">申请付款</a>
+                                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=createPay">申请22付款</a>
                                         </c:if>
                                     </c:if>
                                 </shiro:hasPermission>
@@ -130,7 +131,7 @@
 											&& fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
 											&& bizPoHeader.payTotal < (bizPoHeader.totalDetail+bizPoHeader.totalExp)
 											}">
-                                        <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
+                                        <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请33付款</a>
                                     </c:if>
                                 </shiro:hasPermission>
                             </c:otherwise>
@@ -157,18 +158,18 @@
                                 </c:choose>
                             </c:if>
                         </shiro:hasPermission>
-                        <%--<c:if test="${bizPoHeader.commonProcess.type != -1}">--%>
-                            <%--<c:if test="${bizPoHeader.bizOrderHeader != null}">--%>
-                                <%--<shiro:hasPermission name="biz:po:pay:list">--%>
-                                    <%--<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${bizPoHeader.bizOrderHeader.id}">支付申请列表</a>--%>
-                                <%--</shiro:hasPermission>--%>
-                            <%--</c:if>--%>
-                            <%--<c:if test="${bizPoHeader.bizRequestHeader != null}">--%>
-                                <%--<shiro:hasPermission name="biz:po:pay:list">--%>
-                                    <%--<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${bizPoHeader.bizRequestHeader.id}">支付申请列表</a>--%>
-                                <%--</shiro:hasPermission>--%>
-                            <%--</c:if>--%>
-                        <%--</c:if>--%>
+                        <c:if test="${bizPoHeader.commonProcess.type != -1}">
+                            <c:if test="${bizPoHeader.bizOrderHeader != null}">
+                                <shiro:hasPermission name="biz:po:pay:list">
+                                    <a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=${bizPoHeader.bizOrderHeader.id}">支付申请列表</a>
+                                </shiro:hasPermission>
+                            </c:if>
+                            <c:if test="${bizPoHeader.bizRequestHeader != null}">
+                                <shiro:hasPermission name="biz:po:pay:list">
+                                    <a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=requestHeader&orderId=${bizPoHeader.bizRequestHeader.id}">支付申请列表</a>
+                                </shiro:hasPermission>
+                            </c:if>
+                        </c:if>
                         <!-- 驳回的单子再次开启审核 -->
                         <shiro:hasPermission name="biz:po:bizPoHeader:startAuditAfterReject">
                             <c:if test="${bizPoHeader.commonProcess.type == -1}">
@@ -267,8 +268,8 @@
                         <c:if test="${bizPoPaymentOrder.total != '0.00'}">
                         <c:if test="${bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成' && bizPoPaymentOrder.total != 0}">
                         <%--&& (fns:hasRole(roleSet, bizPoPaymentOrder.commonProcess.paymentOrderProcess.moneyRole.roleEnNameEnum))--%>
-                        <a href="#" onclick="checkPass2(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核通过</a>
-                        <a href="#" onclick="checkReject2(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核驳回</a>
+                        <a href="#" onclick="checkPass2(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核pp通过</a>
+                        <a href="#" onclick="checkReject2(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核oo驳回</a>
                         </c:if>
                         </c:if>
                         </c:if>
@@ -399,7 +400,7 @@
     function audit2(auditType, description, poPayId, currentType, money,type) {
         var poHeaderId = $("#poHeaderId").val();
         var orderType = $("#orderType").val();
-        var fromPage = $("#fromPage").val();
+        var fromPage =  $("#fromPage").val();
         $.ajax({
             url: '${ctx}/biz/po/bizPoHeader/auditPay',
             contentType: 'application/json',
@@ -409,7 +410,11 @@
                 result = JSON.parse(result);
                 if(result.ret == true || result.ret == 'true') {
                     alert('操作成功!');
-                    window.location.href = "${ctx}/biz/order/bizOrderHeader/list";
+                    if(fromPage == "requestHeader"){
+                        window.location.href = "${ctx}/biz/request/bizRequestHeaderForVendor/list";
+                    }else{
+                        window.location.href = "${ctx}/biz/order/bizOrderHeader/list";
+                    }
                     <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
                     <%--window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + poHeaderId + "&orderType=" + orderType + "&fromPage=" + fromPage;--%>
                 }else {

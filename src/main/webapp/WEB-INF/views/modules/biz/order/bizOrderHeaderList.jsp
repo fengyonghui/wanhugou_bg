@@ -275,9 +275,6 @@
     </ul>
     <c:if test="${bizOrderHeader.flag != 'check_pending'}">
     <br>
-    <div class="control-group">
-        <label class="control-label">付款单搜索：</label>
-    </div>
     <ul class="ul-form">
         <!-- 订单支出信息合并 搜索 -->
         <li><label style="width: 120px;">付款单待支付：</label>

@@ -10,9 +10,14 @@
 			$("#inputForm").validate({
 				submitHandler: function(form){
                     var totalVal = $("#total").val();
+                    var totalDetail = $("#totalDetail").val();
                     if ($String.isNullOrBlank(totalVal) || Number(totalVal) <= 0) {
                         alert("付款金额输入不正确，请重新输入！");
 						return;
+                    }
+                    if (Number(totalVal) > Number(totalDetail)) {
+                        alert("付款金额输入不正确，请重新输入！");
+                        return;
                     }
                     loading('正在提交，请稍等...');
 					form.submit();
@@ -44,7 +49,7 @@
 		<div class="control-group">
 			<label class="control-label">订单总金额：</label>
 			<div class="controls">
-				<input class="totalDetail" value="${totalDetailResult}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
+				<input id="totalDetail"  class="totalDetail" value="${totalDetailResult}" htmlEscape="false" disabled="disabled" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">

@@ -553,10 +553,15 @@
         function saveMon(type) {
             if (type == 'createPay') {
                 var payTotal = $("#payTotal").val();
+                var payDetailTotal = $("#payDetailTotal").val();
                 var payDeadline = $("#payDeadline").val();
                 var id = $("#poHeaderId").val();
                 if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                     alert("请输入申请金额!");
+                    return false;
+                }
+                if (Number(payTotal) > Number(payDetailTotal)) {
+                    alert("申请金额不大于剩余支付金额!");
                     return false;
                 }
                 if ($String.isNullOrBlank(payDeadline)) {
@@ -1143,6 +1148,11 @@
 			</div>
 		</div>
 		<c:if test="${entity.bizPoPaymentOrder.id != null || entity.str == 'createPay'}">
+                    <input id="payDetailTotal" name="planDetailPay" type="hidden"
+                           <c:if test="${entity.str == 'audit' || entity.str == 'pay'}">readonly</c:if>
+                           value="${entity.bizPoPaymentOrder.id != null ?
+                           entity.bizPoPaymentOrder.total : (entity.totalDetail-(entity.bizPoHeader.payTotal == null ? 0 : entity.bizPoHeader.payTotal))}"
+                           htmlEscape="false" maxlength="30" class="input-xlarge"/>
 			<div class="control-group">
 				<label class="control-label">申请金额：</label>
 				<div class="controls">
@@ -2342,6 +2352,7 @@
         var id = $("#poHeaderId").val();
         var paymentOrderId = $("#paymentOrderId").val();
         var payTotal = $("#truePayTotal").val();
+        var payAppTotal = $("#payTotal").val();
 
         var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
         var img = "";
@@ -2351,6 +2362,10 @@
 
         if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
             alert("错误提示:请输入支付金额");
+            return false;
+        }
+        if (Number(payTotal) > Number(payAppTotal)) {
+            alert("错误提示:支付金额不大于申请金额");
             return false;
         }
         if ($String.isNullOrBlank(img)) {
