@@ -334,6 +334,7 @@
 
 	<select id="findOrderHeaderByInvoiceId" resultType="BizOrderHeader">
 		select
+		  bo.id,
 		  bo.order_num
 		from biz_invoice a
 		LEFT JOIN biz_detail_invoice bi ON bi.invoice_id = a.id

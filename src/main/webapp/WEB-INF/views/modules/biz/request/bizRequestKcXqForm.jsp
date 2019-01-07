@@ -6,6 +6,19 @@
 <head>
 	<title>备货清单收货</title>
 	<meta name="decorator" content="default"/>
+	<style type="text/css">
+		#remark, #flip, #addRemark {
+			margin: 0px;
+			padding: 5px;
+			text-align: center;
+			background: #e5eecc;
+			border: solid 1px #c3c3c3;
+		}
+
+		#remark {
+			height: 120px;
+		}
+	</style>
 	<script type="text/javascript">
         $(document).ready(function() {
             //$("#name").focus();
@@ -235,11 +248,21 @@
 		</div>
 	</div>
 
-	<div class="control-group">
-		<label class="control-label">备注：</label>
-		<div class="controls">
+	<%--<div class="control-group">--%>
+		<%--<label class="control-label">备注：</label>--%>
+		<%--<div class="controls">--%>
 
-			<textarea  class="input-xlarge " readonly="readonly">${bizOrderHeader.orderComment.comments}</textarea>
+			<%--<textarea  class="input-xlarge " readonly="readonly">${bizOrderHeader.orderComment.comments}</textarea>--%>
+		<%--</div>--%>
+	<%--</div>--%>
+	<div class="control-group">
+		<label class="control-label">备&nbsp;注：</label>
+		<div id="remark" class="controls"
+			 style="margin-left: 16px; overflow:auto; float:left;text-align: left; width: 400px;">
+			<c:forEach items="${commentList}" var="comment">
+				<p class="box">${comment.comments}<br>${comment.createBy.name}&nbsp;&nbsp;<fmt:formatDate
+						value="${comment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></>
+			</c:forEach>
 		</div>
 	</div>
 

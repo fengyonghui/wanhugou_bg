@@ -36,6 +36,21 @@
 			$("#searchForm").submit();
         	return false;
         }
+        
+        function checkProcess(invoiceId) {
+            $.ajax({
+                type: "post",
+                url: "${ctx}/biz/inventory/bizInvoice/checkProcess",
+                data: {"invoiceId": invoiceId},
+                success: function (data) {
+                    if (data == "审核完成") {
+                        window.location.href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=" + invoiceId + "&str=audit&creOrdLogistics=yes";
+                    } else {
+                        alert("该发货单对应的备货单未审核完成！")
+                    }
+                }
+            });
+        }
 	</script>
 </head>
 <body>
@@ -120,7 +135,19 @@
 				</c:if>
 				<td>${bizInvoice.trackingNumber}</td>
 				<c:if test="${bizInvoice.ship==0}">
-					<td>${bizInvoice.orderHeaders}</td>
+					<%--<td>${bizInvoice.orderHeaders}</td>--%>
+					<td>
+						<c:forEach items="${orderMap[bizInvoice.id]}" var="orderIdNumList" varStatus="orderState">
+							<c:forEach items="${orderIdNumList}" var="orderIdNumMap" >
+							<c:if test="${orderState.last != true}">
+								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderIdNumMap.key}&orderDetails=details&statu=">${orderIdNumMap.value}</a>，
+							</c:if>
+							<c:if test="${orderState.last == true}">
+								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderIdNumMap.key}&orderDetails=details&statu=">${orderIdNumMap.value}</a>
+							</c:if>
+							</c:forEach>
+						</c:forEach>
+					</td>
 				</c:if>
 				<td>${bizInvoice.freight}</td>
 				<td>${bizInvoice.valuePrice}</td>
@@ -159,7 +186,7 @@
 					<c:if test="${bizInvoice.ship==1}">
 						<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
                             <c:if test="${bizInvoice.isConfirm == 0}">
-							    <a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&str=audit&creOrdLogistics=yes">确认发货单</a>
+							    <a href="javascript:void(0);" onclick="checkProcess(${bizInvoice.id})">确认发货单</a>
                             </c:if>
 							<c:if test="${bizInvoice.freight == '0.00'}">
                             	<a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&str=freight">添加运费</a>

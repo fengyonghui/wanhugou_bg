@@ -133,6 +133,15 @@ public class User extends DataEntity<User> {
 		this.loginFlag = loginFlag;
 	}
 
+	/**
+	 * 系统设置->用户列表页，搜索条件
+	 */
+	private String searchName;
+	private String searchMobile;
+	private String searchLoginName;
+
+	private String searchScr;
+
 	@SupCol(isUnique="true", isHide="true")
 	@ExcelField(title="ID", type=1, align=2, sort=1)
 	public Integer getId() {
@@ -483,5 +492,37 @@ public class User extends DataEntity<User> {
 				varityList.add(bizVarietyInfo);
 			}
 		}
+	}
+
+	public String getSearchName() {
+		return searchName;
+	}
+
+	public void setSearchName(String searchName) {
+		this.searchName = searchName;
+	}
+
+	public String getSearchMobile() {
+		return searchMobile;
+	}
+
+	public void setSearchMobile(String searchMobile) {
+		this.searchMobile = searchMobile;
+	}
+
+	public String getSearchLoginName() {
+		return searchLoginName;
+	}
+
+	public void setSearchLoginName(String searchLoginName) {
+		this.searchLoginName = searchLoginName;
+	}
+
+	public String getSearchScr() {
+		return searchScr;
+	}
+
+	public void setSearchScr(String searchScr) {
+		this.searchScr = searchScr;
 	}
 }

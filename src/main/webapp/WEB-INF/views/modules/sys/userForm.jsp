@@ -75,6 +75,13 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/save" method="post" class="form-horizontal">
 		<form:hidden id="userId" path="id"/>
+		<form:hidden id="company.searchCompanyId" path="company.searchCompanyId" value="${user.company.searchCompanyId}"/>
+		<form:hidden id="company.searchCompanyName" path="company.searchCompanyName" value="${user.company.searchCompanyName}"/>
+		<form:hidden id="office.searchOfficeId" path="office.searchOfficeId" value="${user.office.searchOfficeId}"/>
+		<form:hidden id="office.searchOfficeName" path="office.searchOfficeName" value="${user.office.searchOfficeName}"/>
+		<form:hidden id="searchName" path="searchName" value="${user.searchName}"/>
+		<form:hidden id="searchMobile" path="searchMobile" value="${user.searchMobile}"/>
+		<form:hidden id="searchLoginName" path="searchLoginName" value="${user.searchLoginName}"/>
 		<form:hidden path="conn"/>
 		<input type="hidden" id="photo" name="photo" value=""/>
 		<sys:message content="${message}"/>

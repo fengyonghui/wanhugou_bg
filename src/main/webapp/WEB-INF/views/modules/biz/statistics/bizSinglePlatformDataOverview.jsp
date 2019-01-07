@@ -49,6 +49,7 @@
         <th>月联营订单总额</th>
         <th>月计划代采订单总额</th>
         <th>月代采订单总额</th>
+        <th>个人服务费</th>
         <th>月销售量统计</th>
         <th>日销售额(元)</th>
         <th>达成率</th>
@@ -82,6 +83,9 @@
             </td>
             <td>
                     ${item.purchaseOrderAmountTotal}
+            </td>
+            <td>
+                    ${item.serviceCharge}
             </td>
             <td>
                     ${item.receiveTotal}
