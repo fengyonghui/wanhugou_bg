@@ -28,8 +28,11 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizPhotoOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
@@ -110,6 +113,8 @@ public class BizInvoiceController extends BaseController {
     private BizPhotoOrderHeaderService bizPhotoOrderHeaderService;
     @Autowired
     private CommonImgService commonImgService;
+    @Autowired
+    private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
 
     private static final String DEF_EN_NAME = "shipper";
 
@@ -818,5 +823,28 @@ public class BizInvoiceController extends BaseController {
         }
         JsonUtil.generateErrorData(-1,"运单信息请求失败",null);
         return null;
+    }
+
+    /**
+     * 确认发货单时，先check发货单对应的备货单是否审核完毕
+     * @param invoiceId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "checkProcess")
+    public String checkProcess(Integer invoiceId) {
+        BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
+        bizDetailInvoice.setInvoice(new BizInvoice(invoiceId));
+        List<BizDetailInvoice> list = bizDetailInvoiceService.findList(bizDetailInvoice);
+
+        if (CollectionUtils.isNotEmpty(list)) {
+            bizDetailInvoice = list.get(0);
+            BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(bizDetailInvoice.getRequestHeader().getId());
+            String processType = bizRequestHeader.getCommonProcess().getType();
+            RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+                    ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+            return requestOrderProcess.getName();
+        }
+        return  "";
     }
 }

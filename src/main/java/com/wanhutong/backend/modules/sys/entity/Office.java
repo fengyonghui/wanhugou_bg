@@ -113,6 +113,15 @@ public class Office extends TreeEntity<Office> {
 	 */
 	private String vendor;
 
+	/**
+	 * 系统设置->用户列表页，搜索条件
+	 */
+	private Integer searchCompanyId;
+	private String searchCompanyName;
+
+	private Integer searchOfficeId;
+	private String searchOfficeName;
+
 	public User getUser() {
 		return user;
 	}
@@ -479,5 +488,37 @@ public class Office extends TreeEntity<Office> {
 
 	public void setTypes(List<String> types) {
 		this.types = types;
+	}
+
+	public Integer getSearchCompanyId() {
+		return searchCompanyId;
+	}
+
+	public void setSearchCompanyId(Integer searchCompanyId) {
+		this.searchCompanyId = searchCompanyId;
+	}
+
+	public String getSearchCompanyName() {
+		return searchCompanyName;
+	}
+
+	public void setSearchCompanyName(String searchCompanyName) {
+		this.searchCompanyName = searchCompanyName;
+	}
+
+	public Integer getSearchOfficeId() {
+		return searchOfficeId;
+	}
+
+	public void setSearchOfficeId(Integer searchOfficeId) {
+		this.searchOfficeId = searchOfficeId;
+	}
+
+	public String getSearchOfficeName() {
+		return searchOfficeName;
+	}
+
+	public void setSearchOfficeName(String searchOfficeName) {
+		this.searchOfficeName = searchOfficeName;
 	}
 }
