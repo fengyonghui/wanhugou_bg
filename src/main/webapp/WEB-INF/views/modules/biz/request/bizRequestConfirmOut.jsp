@@ -399,9 +399,7 @@
 							<th>已出库数量</th>
 							<th>可出库数量</th>
 							<th>库存总数</th>
-							<c:if test="${source ne 'detail'}">
-								<th>本次出库数量</th>
-							</c:if>
+							<th>本次出库数量</th>
 							<th>出库仓库</th>
 						</tr>
 						</thead>
@@ -434,6 +432,9 @@
 										<td>${requestDetail.inventorySku.stockQty}</td>
 										<c:if test="${source ne 'detail'}">
 											<td><input type="text" name="sentQty" value="0"/></td>
+										</c:if>
+										<c:if test="${source eq 'detail'}">
+											<td>${requestDetail.invOrderReq.outQty}</td>
 										</c:if>
 										<td>
 											${requestDetail.inventorySku.invInfo.name}
