@@ -85,7 +85,7 @@
 				<form:input path="productInfo.name" htmlEscape="false"  class="input-medium" maxlength="20px"/>
 			</li>
 			<li><label>商品货号：</label>
-				<form:input path="skuInfo.itemNo" htmlEscape="false"  class="input-medium"/>
+				<form:input path="skuInfo.searchItemNo" htmlEscape="false"  class="input-medium"/>
 			</li>
 			<li><label>供应商：</label>
 				<form:input path="productInfo.vendorName" htmlEscape="false"  class="input-medium"/>
@@ -231,7 +231,7 @@
 
                 <shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
 					<c:if test="${bizOpShelfSku.delFlag!=null && bizOpShelfSku.delFlag!=0}">
-						<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?id=${bizOpShelfSku.id}">修改</a>
+						<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?id=${bizOpShelfSku.id}&skuInfo.searchItemNo=${searchItemNo}">修改</a>
 						<c:choose>
 							<c:when test="${bizOpShelfSku.udshelf eq '上架'}">
 								<a href="#" onclick="UpShelf(${bizOpShelfSku.id})">上架</a>

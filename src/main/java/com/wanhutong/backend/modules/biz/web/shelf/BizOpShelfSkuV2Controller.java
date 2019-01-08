@@ -93,6 +93,11 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	public String list(BizOpShelfSku bizOpShelfSku, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizOpShelfSku> page = bizOpShelfSkuV2Service.findPage(new Page<BizOpShelfSku>(request, response), bizOpShelfSku);
 		model.addAttribute("page", page);
+		String searchItemNo = null;
+		if (bizOpShelfSku != null && bizOpShelfSku.getSkuInfo() != null) {
+			searchItemNo = bizOpShelfSku.getSkuInfo().getSearchItemNo();
+			model.addAttribute("searchItemNo", searchItemNo);
+		}
 		return "modules/biz/shelf/bizOpShelfSkuListV2";
 	}
 

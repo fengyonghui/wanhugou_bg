@@ -146,6 +146,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	 */
 	private String deleteCheck;
 
+	private String searchItemNo;
+
 	public BizSkuInfo() {
 		super();
 	}
@@ -532,5 +534,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setDeleteCheck(String deleteCheck) {
 		this.deleteCheck = deleteCheck;
+	}
+
+	public String getSearchItemNo() {
+		return searchItemNo;
+	}
+
+	public void setSearchItemNo(String searchItemNo) {
+		this.searchItemNo = searchItemNo;
 	}
 }
