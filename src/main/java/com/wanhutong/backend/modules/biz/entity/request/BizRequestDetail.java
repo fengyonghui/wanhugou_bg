@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.request;
 
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryOrderRequest;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
@@ -114,6 +115,11 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	 * 前一天的出库数量
 	 */
 	private Integer sumSendNum;
+
+	/**
+	 * 出库关系
+	 */
+	private BizInventoryOrderRequest invOrderReq;
 
 	public BizRequestDetail() {
 		super();
@@ -379,5 +385,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setSumSendNum(Integer sumSendNum) {
 		this.sumSendNum = sumSendNum;
+	}
+
+	public BizInventoryOrderRequest getInvOrderReq() {
+		return invOrderReq;
+	}
+
+	public void setInvOrderReq(BizInventoryOrderRequest invOrderReq) {
+		this.invOrderReq = invOrderReq;
 	}
 }
