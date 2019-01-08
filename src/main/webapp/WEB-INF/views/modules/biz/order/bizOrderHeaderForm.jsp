@@ -3431,10 +3431,23 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" id="myModalLabel">发货方式</h4>
             </div>
-            <div id="lianYing" class="modal-body">
-                本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>
-                产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>
-            </div>
+            <c:choose>
+                <c:when test="${logisticsLinesFlag == true || logisticsLinesFlag == 'true'}">
+                    <div id="lianYing" class="modal-body" style="color: red;">
+                        该订单的发货线路为“产地直发”，因此只能选择产地直发！
+                    </div>
+                    <div id="lianYing" class="modal-body">
+                        本地备货:<input name="localOriginType" value="1" type="radio" readonly="readonly" disabled="disabled"/>
+                        产地直发:<input name="localOriginType" value="0" checked type="radio" readonly="readonly"/>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div id="lianYing" class="modal-body">
+                        本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>
+                        产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>
+                    </div>
+                </c:otherwise>
+            </c:choose>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state},'lianYing')" class="btn btn-primary">确认</button>

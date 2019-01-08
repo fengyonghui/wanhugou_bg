@@ -19,6 +19,7 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
+import com.wanhutong.backend.modules.biz.entity.logistic.BizOrderLogistics;
 import com.wanhutong.backend.modules.biz.entity.order.*;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
@@ -799,6 +800,16 @@ public class BizOrderHeaderController extends BaseController {
             bizOrderHeader.setDrawBack(bizDrawBack);
         }
         model.addAttribute("entity", bizOrderHeader);
+        //判断订单是否是产地直发
+        boolean logisticsLinesFlag = false;
+        if (bizOrderHeader != null && bizOrderHeader.getBizOrderLogistics() != null) {
+            BizOrderLogistics bizOrderLogistics = bizOrderHeader.getBizOrderLogistics();
+            String logisticsLines = bizOrderLogistics.getLogisticsLines();
+            if (logisticsLines != null && !"".equals(logisticsLines) && logisticsLines.contains(BizOrderLogisticsEnum.DIRECT_MANUFACTURERS.getDesc())) {
+                logisticsLinesFlag = true;
+            }
+        }
+        model.addAttribute("logisticsLinesFlag", logisticsLinesFlag);
         model.addAttribute("ordDetailList", ordDetailList);
         model.addAttribute("statusList", statusList);
         model.addAttribute("orderNumMap", orderNumMap);
