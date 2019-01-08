@@ -144,7 +144,15 @@
 				AND  a.recv_eta BETWEEN ${startDate} AND ${endDate}
 			</if>
 			<if test="bizStatus != null and bizStatus != -1">
-				AND a.biz_status = #{bizStatus}
+				<if test="bizStatus == 50">
+					AND a.biz_status=25 AND a.total_detail != a.recv_total
+				</if>
+				<if test="bizStatus == 55">
+					AND a.biz_status=30 AND a.total_detail != a.recv_total
+				</if>
+				<if test="bizStatus != 50 and bizStatus != 55">
+					AND a.biz_status=#{bizStatus}
+				</if>
 			</if>
 			<if test="bizStatusStart !=null and bizStatusEnd !=null">
 				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}

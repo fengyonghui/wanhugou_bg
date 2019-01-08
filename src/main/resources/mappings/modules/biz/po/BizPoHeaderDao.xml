@@ -132,16 +132,8 @@
 			<if test="invStatus != null and invStatus != ''">
 				AND a.inv_status = #{invStatus}
 			</if>
-			<if test="bizStatus != null and bizStatus != 8 and bizStatus != 9 ">
+			<if test="bizStatus != null">
 				AND a.biz_status = #{bizStatus}
-			</if>
-			<if test="bizStatus == 8">
-				AND a.biz_status = 0
-				AND (oh.biz_status =20 OR rh.biz_status = 20)
-			</if>
-			<if test="bizStatus == 9">
-				AND a.biz_status = 0
-				AND (oh.biz_status =25 OR rh.biz_status = 25)
 			</if>
 			<if test="plateformInfo != null and plateformInfo.id !=null and  plateformInfo.id != ''">
 				AND a.plateform_id = #{plateformInfo.id}

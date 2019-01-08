@@ -1690,8 +1690,16 @@
 			<if test="receiveTotal != null and receiveTotal != ''">
 				AND a.receive_total = #{receiveTotal}
 			</if>
-			<if test="bizStatus !=null">
-				AND a.biz_status=#{bizStatus}
+			<if test="bizStatus !=null ">
+				<if test="bizStatus == 70">
+				  AND a.biz_status=20 AND a.receive_total != (a.total_detail + a.total_exp)
+				</if>
+				<if test="bizStatus == 75">
+				  AND a.biz_status=25 AND a.receive_total != (a.total_detail + a.total_exp)
+				</if>
+				<if test="bizStatus != 70 and bizStatus != 75">
+					AND a.biz_status=#{bizStatus}
+				</if>
 			</if>
 			<if test="mobileAuditStatus == 0">
 				AND a.biz_status IN (0,5,10)
