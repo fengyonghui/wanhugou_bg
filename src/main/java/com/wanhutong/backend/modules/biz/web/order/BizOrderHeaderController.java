@@ -2181,7 +2181,7 @@ public class BizOrderHeaderController extends BaseController {
                     rowData.add(order.getTotalExp() == null ? StringUtils.EMPTY : String.valueOf(order.getTotalExp()));
                     rowData.add(order.getFreight() == null ? StringUtils.EMPTY : String.valueOf(order.getFreight()));
                     //是否万户通发货
-                    if (order.getBizOrderLogistics().getLogisticsLines() != null) {
+                    if (order.getBizOrderLogistics() != null && order.getBizOrderLogistics().getLogisticsLines() != null) {
                         if (order.getBizOrderLogistics().getLogisticsLines().equals(BizOrderLogisticsEnum.CUSTOMER_PICK_UP.getDesc())
                                 || order.getBizOrderLogistics().getLogisticsLines().equals(BizOrderLogisticsEnum.DELIVER_HOME.getDesc())) {
                             rowData.add("是");
@@ -2189,7 +2189,7 @@ public class BizOrderHeaderController extends BaseController {
                             rowData.add("否");
                         }
                     } else {
-                        rowData.add(StringUtils.EMPTY);
+                        rowData.add("否");
                     }
                     double total = 0.0;
                     double exp = 0.0;
@@ -2340,6 +2340,17 @@ public class BizOrderHeaderController extends BaseController {
                         }
                         rowData.add(order.getTotalExp() == null ? StringUtils.EMPTY : String.valueOf(order.getTotalExp()));
                         rowData.add(order.getFreight() == null ? StringUtils.EMPTY : String.valueOf(order.getFreight()));
+                        //是否万户通发货
+                        if (order.getBizOrderLogistics() != null && order.getBizOrderLogistics().getLogisticsLines() != null) {
+                            if (order.getBizOrderLogistics().getLogisticsLines().equals(BizOrderLogisticsEnum.CUSTOMER_PICK_UP.getDesc())
+                                    || order.getBizOrderLogistics().getLogisticsLines().equals(BizOrderLogisticsEnum.DELIVER_HOME.getDesc())) {
+                                rowData.add("是");
+                            } else {
+                                rowData.add("否");
+                            }
+                        } else {
+                            rowData.add("否");
+                        }
                         //应付金额
                         double total = 0.0;
                         double exp = 0.0;
