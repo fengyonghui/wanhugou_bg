@@ -35,6 +35,11 @@ public class BizInventoryOrderRequest extends DataEntity<BizInventoryOrderReques
 	 * 调拨单详情
 	 */
 	private BizSkuTransferDetail transferDetail;
+
+	/**
+	 * 出库数量
+	 */
+	private Integer outQty;
 	
 	public BizInventoryOrderRequest() {
 		super();
@@ -74,5 +79,13 @@ public class BizInventoryOrderRequest extends DataEntity<BizInventoryOrderReques
 
 	public void setTransferDetail(BizSkuTransferDetail transferDetail) {
 		this.transferDetail = transferDetail;
+	}
+
+	public Integer getOutQty() {
+		return outQty;
+	}
+
+	public void setOutQty(Integer outQty) {
+		this.outQty = outQty;
 	}
 }

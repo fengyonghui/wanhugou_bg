@@ -394,6 +394,7 @@
 			bis.u_version AS "uVersion",
 			a.recv_qty AS "recvQty",
 			a.out_qty AS "outQty",
+			bior.out_qty AS "invOrderReq.outQty",
 			bis.stock_qty AS "inventorySku.stockQty"
 			FROM biz_request_detail a
 			LEFT JOIN biz_request_header rh ON rh.id = a.header_id
