@@ -242,6 +242,20 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "form")
 	public String form(User user, Model model,String flag) {
+		if (user.getCompany() != null) {
+			Office searchCompany = user.getCompany();
+			Integer searchCompanyId = searchCompany.getSearchCompanyId();
+			String searchCompanyName = searchCompany.getSearchCompanyName();
+			model.addAttribute("searchCompanyId",searchCompanyId);
+			model.addAttribute("searchCompanyName",searchCompanyName);
+		}
+		if (user.getOffice() != null) {
+			Office searchOffice = user.getOffice();
+			Integer searchOfficeId = searchOffice.getSearchOfficeId();
+			String searchOfficeName = searchOffice.getSearchOfficeName();
+			model.addAttribute("searchOfficeId",searchOfficeId);
+			model.addAttribute("searchOfficeName",searchOfficeName);
+		}
 		if (user.getId() != null) {
 			CommonImg commonImg = new CommonImg();
 			commonImg.setObjectId(user.getId());
@@ -431,9 +445,12 @@ public class UserController extends BaseController {
 		redirectAttributes.addAttribute("company.searchCompanyName", user.getCompany().getSearchCompanyName());
 		redirectAttributes.addAttribute("office.searchOfficeId", user.getOffice().getSearchOfficeId());
 		redirectAttributes.addAttribute("office.searchOfficeName", user.getOffice().getSearchOfficeName());
+		redirectAttributes.addAttribute("searchName", user.getSearchName());
+		redirectAttributes.addAttribute("searchMobile", user.getSearchMobile());
+		redirectAttributes.addAttribute("searchLoginName", user.getSearchLoginName());
+		redirectAttributes.addAttribute("searchScr", "saveUser");
 
-		return "redirect:" + adminPath + "/sys/user/list?repage&searchName=" + user.getSearchName() +
-				"&searchMobile=" + user.getSearchMobile() + "&searchLoginName=" + user.getSearchLoginName() + "&searchScr=saveUser";
+		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
 
 	@RequiresPermissions("sys:user:edit")
