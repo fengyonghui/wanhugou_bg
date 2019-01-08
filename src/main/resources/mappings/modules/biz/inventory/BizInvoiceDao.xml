@@ -95,9 +95,9 @@
 				</if>
 				<if test="sendDateStartTime != null and sendDateStartTime != ''">
 					AND a.send_time &gt;= #{sendDateStartTime}
-					<if test="sendDateEndTime != null and sendDateEndTime != ''">
-						AND a.send_time &lt;= #{sendDateEndTime}
-					</if>
+				</if>
+				<if test="sendDateEndTime != null and sendDateEndTime != ''">
+					AND a.send_time &lt;= #{sendDateEndTime}
 				</if>
 			</if>
 			<if test="ship != null and ship == 1">

@@ -95,9 +95,9 @@
 			</if>
 			<if test="receiveStartTime !=null and receiveStartTime !=''">
 				AND a.receive_time <![CDATA[ >= #{receiveStartTime} ]]>
-				<if test="receiveEndTime !=null and receiveEndTime!=''">
-					AND a.receive_time <![CDATA[ <= #{receiveEndTime} ]]>
-				</if>
+			</if>
+			<if test="receiveEndTime !=null and receiveEndTime!=''">
+				AND a.receive_time <![CDATA[ <= #{receiveEndTime} ]]>
 			</if>
 			<if test="sqlMap != null and sqlMap.collectGoodsRecord != null and sqlMap.collectGoodsRecord != ''">
 				${sqlMap.collectGoodsRecord}

@@ -570,21 +570,21 @@
 			<!-- 列表时间查询 -->
 			<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
 				AND a.create_time &gt;= #{orderCreatStartTime}
-				<if test="orderCreatEndTime!=null and orderCreatEndTime!=''">
-                    AND a.create_time &lt;= #{orderCreatEndTime}
-				</if>
+			</if>
+			<if test="orderCreatEndTime!=null and orderCreatEndTime!=''">
+				AND a.create_time &lt;= #{orderCreatEndTime}
 			</if>
 			<if test="orderUpdaStartTime !=null and orderUpdaStartTime !=''">
 				AND a.update_time &gt;= #{orderUpdaStartTime}
-				<if test="orderUpdaEndTime!=null and orderUpdaEndTime!=''">
-                    AND a.update_time &lt;= #{orderUpdaEndTime}
-				</if>
+			</if>
+			<if test="orderUpdaEndTime!=null and orderUpdaEndTime!=''">
+				AND a.update_time &lt;= #{orderUpdaEndTime}
 			</if>
 			<if test="needOutStartTime !=null and needOutStartTime !=''">
 				AND a.update_time &gt;= #{needOutStartTime}
-				<if test="needOutEndTime!=null and needOutEndTime!=''">
-					AND a.update_time &lt;= #{needOutEndTime}
-				</if>
+			</if>
+			<if test="needOutEndTime!=null and needOutEndTime!=''">
+				AND a.update_time &lt;= #{needOutEndTime}
 			</if>
 			<!-- end -->
 			<if test="bizType !=null and bizType!=''">

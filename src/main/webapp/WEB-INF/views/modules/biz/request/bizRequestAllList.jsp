@@ -168,7 +168,7 @@
 						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 					至
 					<input name="needOutEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-						   value="${needOutStartTime.needOutEndTime}"
+						   value="${bizOrderHeader.needOutEndTime}"
 						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>

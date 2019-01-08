@@ -79,9 +79,9 @@
 			</if>
 			<if test="createStartTime !=null and createStartTime !=''">
 				AND a.create_time <![CDATA[ >= #{createStartTime} ]]>
-				<if test="createEndTime !=null and createEndTime!=''">
-					AND a.create_time <![CDATA[ <= #{createEndTime} ]]>
-				</if>
+			</if>
+			<if test="createEndTime !=null and createEndTime!=''">
+				AND a.create_time <![CDATA[ <= #{createEndTime} ]]>
 			</if>
 			<if test="sqlMap != null and sqlMap.viewLog != null and sqlMap.viewLog != ''">
 				${sqlMap.viewLog}
