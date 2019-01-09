@@ -94,6 +94,7 @@
 					</c:forEach>
 				</td>
 				<td>
+				<a href="${ctx}/biz/po/bizPoPaymentOrder/formV2?id=${bizPoPaymentOrder.id}">详情</a>
 				<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:audit">
 					<c:if test="${bizPoPaymentOrder.hasRole == true}">
 					<c:if test="${bizPoPaymentOrder.total != '0.00'}">
