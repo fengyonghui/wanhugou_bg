@@ -1044,11 +1044,11 @@
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/biz/request/bizRequestHeaderForVendor/">备货清单列表</a></li>
 		<li class="active"><a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizRequestHeader.id}">备货清单<shiro:hasPermission name="biz:request:bizRequestHeader:edit">${not empty bizRequestHeader.str?'详情':(not empty bizRequestHeader.id?'修改':'添加')}</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission></a></li>
-		<li class="unactive">
+		<%--<li class="unactive">
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizRequestHeader.bizPoHeader.id}&str=detail&fromPage=requestHeader&orderId=${bizRequestHeader.id}">采购单详情</a>
 				</shiro:hasPermission>
-		</li>
+		</li>--%>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>

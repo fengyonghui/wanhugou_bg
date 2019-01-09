@@ -1877,13 +1877,13 @@
             </c:if>
         </c:if>
     </li>
-    <li class="unactive">
+    <%--<li class="unactive">
         <c:if test="${entity.orderDetails eq 'details'}">
             <shiro:hasPermission name="biz:po:bizPoHeader:view">
                 <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizOrderHeader.bizPoHeader.id}&str=detail&fromPage=orderHeader&orderId=${bizOrderHeader.id}">采购单详情</a>
             </shiro:hasPermission>
         </c:if>
-    </li>
+    </li>--%>
 </ul>
 <br/>
 <form:form id="inputForm" modelAttribute="bizOrderHeader"
