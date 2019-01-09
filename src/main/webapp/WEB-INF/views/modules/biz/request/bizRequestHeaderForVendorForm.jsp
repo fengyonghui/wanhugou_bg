@@ -558,14 +558,17 @@
                 var id = $("#poHeaderId").val();
                 if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                     alert("请输入申请金额!");
+                    document.getElementById("payDeadline").focus();
                     return false;
                 }
                 if (Number(payTotal) > Number(payDetailTotal)) {
                     alert("申请金额不大于剩余支付金额!");
+                    document.getElementById("payDeadline").focus();
                     return false;
                 }
                 if ($String.isNullOrBlank(payDeadline)) {
                     alert("请选择本次申请付款时间!");
+                    document.getElementById("payDeadline").focus();
                     return false;
                 }
             }
@@ -1171,6 +1174,7 @@
 						   value="<fmt:formatDate value="${entity.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
 							<c:if test="${entity.str == 'createPay'}"> onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"</c:if>
 						   placeholder="必填！"/>
+					<span class="help-inline"><font color="red">*</font> </span>
 				</div>
 			</div>
 			<!-- 申请付款备注 -->
@@ -1188,6 +1192,7 @@
 					<input id="truePayTotal" name="payTotal" type="text"
 						   value="${entity.bizPoHeader.bizPoPaymentOrder.payTotal}"
 						   htmlEscape="false" maxlength="30" class="input-xlarge "/>
+					<span class="help-inline"><font color="red">*</font> </span>
 				</div>
 			</div>
 			<div class="control-group">
@@ -1197,6 +1202,7 @@
 
 				<div class="controls">
 					<input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" multiple="multiple" id="payImg"/>
+					<span class="help-inline"><font color="red">*</font> </span>
 				</div>
 				<div id="payImgDiv">
 					<img src="${entity.bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
@@ -2359,17 +2365,19 @@
         for (var i = 0; i < mainImg.length; i ++) {
             img += $(mainImg[i]).attr("src") + ",";
         }
-
         if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
             alert("错误提示:请输入支付金额");
+            document.getElementById("truePayTotal").focus();
             return false;
         }
         if (Number(payTotal) > Number(payAppTotal)) {
             alert("错误提示:支付金额不大于申请金额");
+            document.getElementById("truePayTotal").focus();
             return false;
         }
-        if ($String.isNullOrBlank(img)) {
+        if ($String.isNullOrBlank(img)||img==",") {
             alert("错误提示:请上传支付凭证");
+            document.getElementById("payImg").focus();
             return false;
         }
 
