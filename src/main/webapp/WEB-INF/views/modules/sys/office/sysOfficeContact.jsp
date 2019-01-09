@@ -18,6 +18,11 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
+		<li><a href="${ctx}/sys/office/purchasersList">机构列表</a></li>
+		<li><a
+				href="${ctx}/sys/office/purchasersForm?id=${office.id}&parent.id=${office.parent.id}">机构<shiro:hasPermission
+				name="sys:office:edit">${not empty office.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
+				name="sys:office:edit">查看</shiro:lacksPermission></a></li>
 		<li class="active"><a href="${ctx}/sys/user/contact">联系人列表</a></li>
 	</ul>
 	<form:form id="searchForm" modelAttribute="user" action="${ctx}/sys/user/contact" method="post" class="breadcrumb form-search">
@@ -49,6 +54,7 @@
 					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true});"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns"><input type="button" class="btn" onclick="window.history.go(-1);" value="返回"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
