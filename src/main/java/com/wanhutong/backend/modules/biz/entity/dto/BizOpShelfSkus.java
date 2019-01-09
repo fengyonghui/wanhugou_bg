@@ -58,6 +58,11 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 	 */
 	private String marketPrices;
 
+    /**
+     * 产品上下架管理页面搜索用【商品货号】保持
+     */
+	private String searchItemNo;
+
 
 	public BizOpShelfSkus() {
 		super();
@@ -218,4 +223,12 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 	public void setMarketPrices(String marketPrices) {
 		this.marketPrices = marketPrices;
 	}
+
+    public String getSearchItemNo() {
+        return searchItemNo;
+    }
+
+    public void setSearchItemNo(String searchItemNo) {
+        this.searchItemNo = searchItemNo;
+    }
 }

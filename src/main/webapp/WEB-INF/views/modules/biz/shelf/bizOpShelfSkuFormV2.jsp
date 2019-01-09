@@ -674,7 +674,7 @@
 </ul><br/>
 <form:form id="inputForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSkuV2/save" method="post" class="form-horizontal">
 	<form:hidden path="id"/>
-	<form:hidden path="skuInfo.searchItemNo" value="${skuInfo.searchItemNo}"/>
+	<form:hidden path="searchItemNo" value="${searchItemNo}"/>
     <c:set var="id" value="${bizOpShelfSku.id}"/>
 	<form:hidden path="shelfSign"/>
 	<input id="commissionRatio" type="hidden" value="${commissionRatio}"/>
