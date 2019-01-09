@@ -101,9 +101,9 @@
 				</if>
 				<if test="sendDateStartTime != null and sendDateStartTime != ''">
 					AND a.send_time &gt;= #{sendDateStartTime}
-					<if test="sendDateEndTime != null and sendDateEndTime != ''">
-						AND a.send_time &lt;= #{sendDateEndTime}
-					</if>
+				</if>
+				<if test="sendDateEndTime != null and sendDateEndTime != ''">
+					AND a.send_time &lt;= #{sendDateEndTime}
 				</if>
 			</if>
 			<if test="ship != null and ship == 1">
@@ -340,6 +340,7 @@
 
 	<select id="findOrderHeaderByInvoiceId" resultType="BizOrderHeader">
 		select
+		  bo.id,
 		  bo.order_num
 		from biz_invoice a
 		LEFT JOIN biz_detail_invoice bi ON bi.invoice_id = a.id

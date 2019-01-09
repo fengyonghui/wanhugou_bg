@@ -8,6 +8,7 @@
 		a.order_detail_id AS "orderDetail.id",
 		a.request_detail_id AS "requestDetail.id",
 		a.transfer_detail_id AS "transferDetail.id",
+		a.out_qty AS "outQty",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -85,6 +86,7 @@
 			<if test="transferDetail != null and transferDetail.id != null and transferDetail.id != ''">
 				transfer_detail_id,
 			</if>
+			out_qty,
 			status,
 			create_id,
 			create_time,
@@ -103,6 +105,7 @@
 		<if test="transferDetail != null and transferDetail.id != null and transferDetail.id != ''">
 			#{transferDetail.id},
 		</if>
+			#{outQty},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -124,6 +127,7 @@
 		<if test="transferDetail != null and transferDetail.id != null and transferDetail.id != ''">
 			transfer_detail_id = #{transferDetail.id},
 		</if>
+			out_qty = #{outQty},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

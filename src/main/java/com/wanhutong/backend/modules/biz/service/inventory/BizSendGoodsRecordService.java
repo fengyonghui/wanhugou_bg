@@ -189,10 +189,11 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			if (bizSkuTransferDetail != null) {
 				ior.setTransferDetail(bizSkuTransferDetail);
 			}
-			List<BizInventoryOrderRequest> iorList = bizInventoryOrderRequestService.findList(ior);
-			if (CollectionUtils.isEmpty(iorList)) {
+			ior.setOutQty(outQty);
+//			List<BizInventoryOrderRequest> iorList = bizInventoryOrderRequestService.findList(ior);
+//			if (CollectionUtils.isEmpty(iorList)) {
 				bizInventoryOrderRequestService.save(ior);
-			}
+//			}
 		}
 //		if (!bizOrderDetail.getOrdQty().equals(bizOrderDetail.getSentQty())) {
 //			orderFlag = false;

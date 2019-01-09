@@ -264,7 +264,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private BigDecimal scoreMoney;
 
-    private List<BizOrderLogistics> bizOrderLogisticsList;
+    private BizOrderLogistics bizOrderLogistics;
 
     /**
      * 待发货
@@ -364,6 +364,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * @return
      */
     private Integer applyPayment;
+
+    private Integer logisticsLinesSelected;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -1144,14 +1146,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.scoreMoney = scoreMoney;
     }
 
-    public List<BizOrderLogistics> getBizOrderLogisticsList() {
-        return bizOrderLogisticsList;
-    }
-
-    public void setBizOrderLogisticsList(List<BizOrderLogistics> bizOrderLogisticsList) {
-        this.bizOrderLogisticsList = bizOrderLogisticsList;
-    }
-
     public Integer getWaitShipments() {
         return waitShipments;
     }
@@ -1342,6 +1336,22 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setApplyPayment(Integer applyPayment) {
         this.applyPayment = applyPayment;
+    }
+
+    public BizOrderLogistics getBizOrderLogistics() {
+        return bizOrderLogistics;
+    }
+
+    public void setBizOrderLogistics(BizOrderLogistics bizOrderLogistics) {
+        this.bizOrderLogistics = bizOrderLogistics;
+    }
+
+    public Integer getLogisticsLinesSelected() {
+        return logisticsLinesSelected;
+    }
+
+    public void setLogisticsLinesSelected(Integer logisticsLinesSelected) {
+        this.logisticsLinesSelected = logisticsLinesSelected;
     }
 }
 

@@ -120,6 +120,14 @@
 			</association>
 		</association>
 
+		<association property="bizOrderLogistics" javaType="BizOrderLogistics" column="bizOrderLogistics.id">
+			<id property="id" column="bizOrderLogistics.id" />
+			<result property="orderId" column="bizOrderLogistics.orderId" />
+			<result property="logisticsLines" column="bizOrderLogistics.logisticsLines" />
+			<result property="logisticsLinesCode" column="bizOrderLogistics.logisticsLinesCode" />
+			<result property="stopPointCode" column="bizOrderLogistics.stopPointCode" />
+		</association>
+
 		<collection property="orderDetailList" ofType="BizOrderDetail">
 			<id property="id" column="orderDetailList.id" />
 			<result property="ordQty" column="orderDetailList.ordQty" />
@@ -143,14 +151,6 @@
 				<result property="name" column="orderDetailList.vendor.name"/>
 			</association>
 		</collection>
-
-		<collection property="bizOrderLogisticsList" ofType="BizOrderLogistics">
-			<id property="id" column="bizOrderLogisticsList.id" />
-			<result property="orderId" column="bizOrderLogisticsList.orderId" />
-			<result property="logisticsLinesCode" column="bizOrderLogisticsList.logisticsLinesCode" />
-			<result property="stopPointCode" column="bizOrderLogisticsList.stopPointCode" />
-		</collection>
-
 
 	</resultMap>
 
@@ -375,8 +375,8 @@
 	<select id="get" resultType="BizOrderHeader">
 		SELECT
 		<include refid="bizOrderHeaderColumns"/>
-		,
-		(SELECT SUM(bod.suply_id)
+		,bol.logistics_lines AS "bizOrderLogistics.logisticsLines"
+		,(SELECT SUM(bod.suply_id)
 		FROM biz_order_detail bod
 		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
 		WHERE boh.id = a.id) AS "suplys"
@@ -417,8 +417,9 @@
 		boss.sale_price AS "orderDetailList.skuInfo.bizOpShelfSku.salePrice",
 		boss.commission_ratio AS "orderDetailList.skuInfo.bizOpShelfSku.commissionRatio",
 		pi.vendor_name AS "orderDetailList.vendor.name",
-		bol.logistics_lines_code AS "bizOrderLogisticsList.logisticsLinesCode",
-		bol.stop_point_code AS "bizOrderLogisticsList.stopPointCode",
+		bol.logistics_lines_code AS "bizOrderLogistics.logisticsLinesCode",
+		bol.stop_point_code AS "bizOrderLogistics.stopPointCode",
+		bol.logistics_lines AS "bizOrderLogistics.logisticsLines",
 		(SELECT SUM(bod.suply_id)
 		FROM biz_order_detail bod
 		LEFT JOIN biz_order_header boh ON boh.id = bod.order_id
@@ -445,9 +446,11 @@
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
 		LEFT JOIN biz_op_shelf_sku boss ON boss.sku_id = si.id and boss.status=1
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
--- 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id=a.cust_id
--- 		LEFT JOIN sys_office s on s.id=ccc.center_id
--- 		LEFT JOIN sys_user con ON con.id = ccc.consultant_id
+		<!--
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id=a.cust_id
+ 		LEFT JOIN sys_office s on s.id=ccc.center_id
+ 		LEFT JOIN sys_user con ON con.id = ccc.consultant_id
+		-->
 		LEFT JOIN sys_office s on s.id=a.center_id
 		LEFT JOIN sys_user con ON con.id = a.consultant_id
 		<!-- 供应商id -->
@@ -627,21 +630,21 @@
 			<!-- 列表时间查询 -->
 			<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
 				AND a.create_time &gt;= #{orderCreatStartTime}
-				<if test="orderCreatEndTime!=null and orderCreatEndTime!=''">
-                    AND a.create_time &lt;= #{orderCreatEndTime}
-				</if>
+			</if>
+			<if test="orderCreatEndTime!=null and orderCreatEndTime!=''">
+				AND a.create_time &lt;= #{orderCreatEndTime}
 			</if>
 			<if test="orderUpdaStartTime !=null and orderUpdaStartTime !=''">
 				AND a.update_time &gt;= #{orderUpdaStartTime}
-				<if test="orderUpdaEndTime!=null and orderUpdaEndTime!=''">
-                    AND a.update_time &lt;= #{orderUpdaEndTime}
-				</if>
+			</if>
+			<if test="orderUpdaEndTime!=null and orderUpdaEndTime!=''">
+				AND a.update_time &lt;= #{orderUpdaEndTime}
 			</if>
 			<if test="needOutStartTime !=null and needOutStartTime !=''">
 				AND a.update_time &gt;= #{needOutStartTime}
-				<if test="needOutEndTime!=null and needOutEndTime!=''">
-					AND a.update_time &lt;= #{needOutEndTime}
-				</if>
+			</if>
+			<if test="needOutEndTime!=null and needOutEndTime!=''">
+				AND a.update_time &lt;= #{needOutEndTime}
 			</if>
 			<!-- end -->
 			<if test="bizType !=null and bizType!=''">
@@ -732,15 +735,17 @@
 
 			<if test="waitShipments != null and waitShipments == 1">
 				AND (a.biz_status = 19 or a.biz_status = 18
---                 or
--- 					(
--- 						(SELECT SUM(bod.suply_id)
--- 						FROM
--- 						biz_order_detail bod
--- 						LEFT
--- 						JOIN biz_order_header boh ON boh.id = bod.order_id
--- 						WHERE boh.id = a.id) = 0 and a.biz_status = 15
--- 					)
+                <!--
+                or
+					(
+						(SELECT SUM(bod.suply_id)
+						FROM
+						biz_order_detail bod
+						LEFT
+						JOIN biz_order_header boh ON boh.id = bod.order_id
+						WHERE boh.id = a.id) = 0 and a.biz_status = 15
+					)
+                -->
 				)
 			</if>
 			<if test="waitOutput != null and waitOutput == 1">
@@ -752,6 +757,27 @@
 				JOIN biz_order_header boh ON boh.id = bod.order_id
 				WHERE boh.id = a.id) != 0
 				and (a.order_num like 'SO%' or a.order_num like 'RO%')
+			</if>
+			<if test="logisticsLinesSelected != null and logisticsLinesSelected == 1">
+				AND (bol.logistics_lines
+				LIKE
+				<if test="dbName == 'oracle'">'%客户自提%'</if>
+				<if test="dbName == 'mssql'">'%客户自提%'</if>
+				<if test="dbName == 'mysql'">concat('%','客户自提','%')</if>
+				or bol.logistics_lines
+				LIKE
+				<if test="dbName == 'oracle'">'%送货到家%'</if>
+				<if test="dbName == 'mssql'">'%送货到家%'</if>
+				<if test="dbName == 'mysql'">concat('%','送货到家','%')</if>
+				)
+			</if>
+			<if test="logisticsLinesSelected != null and logisticsLinesSelected == 2">
+				AND (bol.logistics_lines
+				LIKE
+				<if test="dbName == 'oracle'">'%厂家直发%'</if>
+				<if test="dbName == 'mssql'">'%厂家直发%'</if>
+				<if test="dbName == 'mysql'">concat('%','厂家直发','%')</if>
+				)
 			</if>
 			<if test="bizPoHeader !=null and bizPoHeader.id != null and bizPoHeader.id != ''">
 				AND  bph.id = ${bizPoHeader.id}
@@ -3141,6 +3167,7 @@ LEFT JOIN sys_office so on oh.center_id = so.id and so.type != 12
         count(1)                                             AS orderCount,
         sum(oh.total_detail + oh.total_exp + oh.freight)     AS accumulatedSalesMonth,
         sum(receive_total)                                   AS receiveTotal,
+        SUM(total_exp + service_fee + freight) AS serviceCharge,
         (SELECT sum(detail1.buy_price * detail1.ord_qty)
         FROM biz_order_header AS header1
         LEFT JOIN sys_office AS office1 ON header1.center_id = office1.id

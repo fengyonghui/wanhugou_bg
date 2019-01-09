@@ -99,7 +99,7 @@
 						title="公司" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&customerTypeThirteen=${OfficeTypeEnum.NETWORK.type}&source=officeConnIndex" cssClass="input-small" allowClear="true"/>
 			</c:if>
 			<c:if test="${empty user.conn}">
-				<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
+				<sys:treeselect id="company" name="company.searchCompanyId" value="${user.company.searchCompanyId}" labelName="company.searchCompanyName" labelValue="${user.company.searchCompanyName}"
 						title="公司" url="/sys/office/treeData" cssClass="input-small" allowClear="true"/>
 			</c:if>
 		</c:if>
@@ -113,7 +113,7 @@
 			<c:if test="${empty user.conn}">
 				<input type="hidden" name="company.type" value="">
 			</c:if>
-		<li><label>登录名：</label><form:input path="loginName" htmlEscape="false" maxlength="50" class="input-medium"/></li>
+		<li><label>登录名：</label><form:input path="searchLoginName" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<li class="clearfix"></li>
 		<c:if test="${fns:getUser().isAdmin()}">
 			<li><label>归属部门：</label>
@@ -122,13 +122,13 @@
 						title="部门" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&customerTypeThirteen=${OfficeTypeEnum.NETWORK.type}&source=officeConnIndex" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</c:if>
 			<c:if test="${empty user.conn}">
-				<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
+				<sys:treeselect id="office" name="office.searchOfficeId" value="${user.office.searchOfficeId}" labelName="office.searchOfficeName" labelValue="${user.office.searchOfficeName}"
 								title="部门" url="/sys/office/treeData" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</c:if>
 			</li>
 		</c:if>
-		<li><label>姓&nbsp;&nbsp;&nbsp;名：</label><form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/></li>
-		<li><label>手&nbsp;&nbsp;&nbsp;机：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class="input-medium"/></li>
+		<li><label>姓&nbsp;&nbsp;&nbsp;名：</label><form:input path="searchName" htmlEscape="false" maxlength="50" class="input-medium"/></li>
+		<li><label>手&nbsp;&nbsp;&nbsp;机：</label><form:input path="searchMobile" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
 			<li><label>日期：</label>
 				<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
@@ -188,7 +188,10 @@
 			<td>${bizUser.delFlag == 1 ? '正常' : '删除'}</td>
 			<shiro:hasPermission name="sys:user:edit"><td>
 				<c:if test="${bizUser.delFlag==1}">
-					<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
+					<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}
+								&searchName=${user.searchName}&searchMobile=${user.searchMobile}&searchLoginName=${user.searchLoginName}
+								&company.searchCompanyId=${user.company.searchCompanyId}&company.searchCompanyName=${user.company.searchCompanyName}
+								&office.searchOfficeId=${user.office.searchOfficeId}&office.searchOfficeName=${user.office.searchOfficeName}">修改</a>
 					<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
 					<%--<a  data-toggle="modal" data-target="#exampleModal" onclick="genUserCode(${bizUser.id})">生成二维码</a>--%>
 					<a data-toggle="modal" onclick="genUserCode(${bizUser.id})" data-id="${requestHeader.id}" data-target="#myModal">生成二维码</a>
