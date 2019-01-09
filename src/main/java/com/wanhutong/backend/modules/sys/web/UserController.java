@@ -113,6 +113,10 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(User user, HttpServletRequest request, HttpServletResponse response, Model model,Date ordrHeaderStartTime,Date orderHeaderEedTime) {
+		//用户保存后，重定向到list页面清空归属公司type
+		if ("saveUser".equals(user.getSearchScr()) && user.getCompany() != null) {
+			user.getCompany().setType(null);
+		}
 		if (user.getCompany() != null && user.getCompany().getSource() != null && "officeConnIndex".equals(user.getCompany().getSource())) {
 			//属于客户专员左边点击菜单查询
 			Office queryOffice = officeService.get(user.getCompany().getId());
@@ -238,6 +242,20 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "form")
 	public String form(User user, Model model,String flag) {
+		if (user.getCompany() != null) {
+			Office searchCompany = user.getCompany();
+			Integer searchCompanyId = searchCompany.getSearchCompanyId();
+			String searchCompanyName = searchCompany.getSearchCompanyName();
+			model.addAttribute("searchCompanyId",searchCompanyId);
+			model.addAttribute("searchCompanyName",searchCompanyName);
+		}
+		if (user.getOffice() != null) {
+			Office searchOffice = user.getOffice();
+			Integer searchOfficeId = searchOffice.getSearchOfficeId();
+			String searchOfficeName = searchOffice.getSearchOfficeName();
+			model.addAttribute("searchOfficeId",searchOfficeId);
+			model.addAttribute("searchOfficeName",searchOfficeName);
+		}
 		if (user.getId() != null) {
 			CommonImg commonImg = new CommonImg();
 			commonImg.setObjectId(user.getId());
@@ -344,8 +362,18 @@ public class UserController extends BaseController {
 			return "redirect:" + adminPath + "/sys/user/list?repage";
 		}
 		// 修正引用赋值问题，不知道为何，Company和Office引用的一个实例地址，修改了一个，另外一个跟着修改。
-		user.setCompany(new Office(Integer.valueOf(request.getParameter("company.id"))));
-		user.setOffice(new Office(Integer.valueOf(request.getParameter("office.id"))));
+		//user.setCompany(new Office(Integer.valueOf(request.getParameter("company.id"))));
+		Office company = new Office(Integer.valueOf(request.getParameter("company.id")));
+		company.setSearchCompanyId(user.getCompany().getSearchCompanyId());
+		company.setSearchCompanyName(user.getCompany().getSearchCompanyName());
+		user.setCompany(company);
+
+		//user.setOffice(new Office(Integer.valueOf(request.getParameter("office.id"))));
+		Office department = new Office(Integer.valueOf(request.getParameter("office.id")));
+		department.setSearchOfficeId(user.getOffice().getSearchOfficeId());
+		department.setSearchOfficeName(user.getOffice().getSearchOfficeName());
+		user.setOffice(department);
+
 		// 如果新密码为空，则不更换密码
 		if (StringUtils.isNotBlank(user.getNewPassword())) {
 			user.setPassword(SystemService.entryptPassword(user.getNewPassword()));
@@ -412,6 +440,16 @@ public class UserController extends BaseController {
 			//跳回会员搜索
 			return "redirect:" + adminPath + "/sys/user/contact";
 		}
+
+		redirectAttributes.addAttribute("company.searchCompanyId", user.getCompany().getSearchCompanyId());
+		redirectAttributes.addAttribute("company.searchCompanyName", user.getCompany().getSearchCompanyName());
+		redirectAttributes.addAttribute("office.searchOfficeId", user.getOffice().getSearchOfficeId());
+		redirectAttributes.addAttribute("office.searchOfficeName", user.getOffice().getSearchOfficeName());
+		redirectAttributes.addAttribute("searchName", user.getSearchName());
+		redirectAttributes.addAttribute("searchMobile", user.getSearchMobile());
+		redirectAttributes.addAttribute("searchLoginName", user.getSearchLoginName());
+		redirectAttributes.addAttribute("searchScr", "saveUser");
+
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
 

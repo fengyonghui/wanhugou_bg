@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.common.utils.*;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
@@ -27,8 +28,11 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizPhotoOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
@@ -40,6 +44,7 @@ import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -63,7 +68,12 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 发货单Controller
@@ -76,6 +86,8 @@ public class BizInvoiceController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BizInvoiceController.class);
     private static final Logger LOGISTICS_LOGGER = LoggerFactory.getLogger("logistics");
+
+    private Lock lock = new ReentrantLock();
 
 	@Autowired
 	private BizInvoiceService bizInvoiceService;
@@ -101,6 +113,8 @@ public class BizInvoiceController extends BaseController {
     private BizPhotoOrderHeaderService bizPhotoOrderHeaderService;
     @Autowired
     private CommonImgService commonImgService;
+    @Autowired
+    private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
 
     private static final String DEF_EN_NAME = "shipper";
 
@@ -123,6 +137,50 @@ public class BizInvoiceController extends BaseController {
 //	    bizInvoice.setBizStatus(Integer.parseInt(bizStatu));
 //	    bizInvoice.setShip(Integer.parseInt(ship));
         Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
+        Map<Integer, List<Map<Integer, String>>> orderMap = new HashMap<Integer, List<Map<Integer, String>>>();
+        List<Callable<Pair<Boolean, String>>> tasks = new ArrayList<>();
+        for (BizInvoice b : page.getList()) {
+            tasks.add(new Callable<Pair<Boolean, String>>() {
+                @Override
+                public Pair<Boolean, String> call() {
+                    try {
+                        lock.lock();
+                        List<BizOrderHeader> orderHeaderList = bizInvoiceService.findOrderHeaderByInvoiceId(b.getId());
+                        String orderNums = "";
+                        if (CollectionUtils.isNotEmpty(orderHeaderList)){
+                            List<Map<Integer, String>> orderIdNumMapList = new ArrayList<Map<Integer, String>>();
+                            for (BizOrderHeader bizOrderHeader : orderHeaderList) {
+                                if (bizOrderHeader == null || bizOrderHeader.getOrderNum() == null) {
+                                    continue;
+                                }
+                                String orderNum = bizOrderHeader.getOrderNum();
+                                orderNums += orderNum + ",";
+                                Map<Integer, String> orderIdNumMap = new HashMap<Integer, String>();
+                                orderIdNumMap.put(bizOrderHeader.getId(), bizOrderHeader.getOrderNum());
+                                orderIdNumMapList.add(orderIdNumMap);
+                            }
+                            orderMap.put(b.getId(), orderIdNumMapList);
+                        }
+                        if (StringUtils.isNotBlank(orderNums)) {
+                            b.setOrderHeaders(orderNums.substring(0, orderNums.length()-1));
+                        }
+                    } catch (Exception e) {
+                        logger.error("多线程给发货单添加订单号失败", e);
+                    } finally {
+                        lock.unlock();
+                    }
+                    return Pair.of(Boolean.TRUE, "操作成功");
+                }
+            });
+        }
+        try {
+            ThreadPoolManager.getDefaultThreadPool().invokeAll(tasks);
+        } catch (InterruptedException e) {
+            LOGGER.error("init order list data error", e);
+        }
+
+
+        model.addAttribute("orderMap", orderMap);
         model.addAttribute("page", page);
         model.addAttribute("targetPage", bizInvoice.getTargetPage() == null ? "" : bizInvoice.getTargetPage());
 //		model.addAttribute("ship",ship);
@@ -765,5 +823,28 @@ public class BizInvoiceController extends BaseController {
         }
         JsonUtil.generateErrorData(-1,"运单信息请求失败",null);
         return null;
+    }
+
+    /**
+     * 确认发货单时，先check发货单对应的备货单是否审核完毕
+     * @param invoiceId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "checkProcess")
+    public String checkProcess(Integer invoiceId) {
+        BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
+        bizDetailInvoice.setInvoice(new BizInvoice(invoiceId));
+        List<BizDetailInvoice> list = bizDetailInvoiceService.findList(bizDetailInvoice);
+
+        if (CollectionUtils.isNotEmpty(list)) {
+            bizDetailInvoice = list.get(0);
+            BizRequestHeader bizRequestHeader = bizRequestHeaderForVendorService.get(bizDetailInvoice.getRequestHeader().getId());
+            String processType = bizRequestHeader.getCommonProcess().getType();
+            RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+                    ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+            return requestOrderProcess.getName();
+        }
+        return  "";
     }
 }

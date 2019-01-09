@@ -63,6 +63,15 @@
 					<form:input path="invInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 				</li>
 			</c:if>
+			<li><label>出库时间：</label>
+				<input name="sendStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						value="<fmt:formatDate value="${bizSendGoodsRecord.sendStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				至
+				<input name="sendEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						value="<fmt:formatDate value="${bizSendGoodsRecord.sendEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>

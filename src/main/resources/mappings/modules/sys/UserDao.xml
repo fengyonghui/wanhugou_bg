@@ -153,8 +153,11 @@
 		FROM
 		sys_user a
 		<include refid="userJoins"/>
-		WHERE o.parent_ids
-		LIKE
+		left join sys_user_role sur on sur.user_id=a.id
+		left join sys_role sr on sr.id=sur.role_id
+		WHERE 1=1
+		AND sr.enname = 'selection_of_specialist'
+		AND o.parent_ids LIKE
 		<if test="dbName == 'oracle'">('%,'||#{id}||',%')</if>
 		<if test="dbName == 'mssql'">('%,'+#{id}+',%')</if>
 		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
@@ -199,6 +202,12 @@
 			<if test="dbName == 'mssql'">'%,'+#{company.id}+',%')</if>
 			<if test="dbName == 'mysql'">CONCAT('%,', #{company.id}, ',%'))</if>
 		</if>
+		<if test="company != null and company.searchCompanyId != null and company.searchCompanyId != ''">
+			AND (c.id = #{company.searchCompanyId} OR c.parent_ids LIKE
+			<if test="dbName == 'oracle'">'%,'||#{company.searchCompanyId}||',%')</if>
+			<if test="dbName == 'mssql'">'%,'+#{company.searchCompanyId}+',%')</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{company.searchCompanyId}, ',%'))</if>
+		</if>
 		<if test="cent != null and cent.id != null and cent.id != ''">
 			AND c.id = #{cent.id}
 		</if>
@@ -207,6 +216,12 @@
 			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if>
 			<if test="dbName == 'mssql'">'%'+#{mobile}+'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if>
+		</if>
+		<if test="searchMobile != null and searchMobile != ''">
+			AND a.mobile LIKE
+			<if test="dbName == 'oracle'">'%'||#{searchMobile}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{searchMobile}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{searchMobile}, '%')</if>
 		</if>
 		<!-- 用户列表查询所有 -->
 		<if test="company != null and company.parentIds != null and company.parentIds != ''">
@@ -233,6 +248,12 @@
 			<if test="dbName == 'mssql'">'%,'+#{office.id}+',%')</if>
 			<if test="dbName == 'mysql'">CONCAT('%,', #{office.id}, ',%'))</if>
 		</if>
+		<if test="office != null and office.searchOfficeId != null and office.searchOfficeId != ''">
+			AND (o.id = #{office.searchOfficeId} OR o.parent_ids LIKE
+			<if test="dbName == 'oracle'">'%,'||#{office.searchOfficeId}||',%')</if>
+			<if test="dbName == 'mssql'">'%,'+#{office.searchOfficeId}+',%')</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{office.searchOfficeId}, ',%'))</if>
+		</if>
 
 		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
 		<if test="!currentUser.admin">
@@ -244,11 +265,23 @@
 			<if test="dbName == 'mssql'">'%'+#{loginName}+'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{loginName}, '%')</if>
 		</if>
+		<if test="searchLoginName != null and searchLoginName != ''">
+			AND a.login_name like
+			<if test="dbName == 'oracle'">'%'||#{searchLoginName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{searchLoginName}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{searchLoginName}, '%')</if>
+		</if>
 		<if test="name != null and name != ''">
 			AND a.name like
 			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+		</if>
+		<if test="searchName != null and searchName != ''">
+			AND a.name like
+			<if test="dbName == 'oracle'">'%'||#{searchName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{searchName}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{searchName}, '%')</if>
 		</if>
 		<if test="id != null and id != ''">
 			AND a.id = #{id}

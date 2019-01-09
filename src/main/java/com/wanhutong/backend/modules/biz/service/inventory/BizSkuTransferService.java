@@ -199,6 +199,11 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
 			bizSkuTransferDetailService.save(bizSkuTransferDetail);
 		}
 	}
+
+	@Transactional(readOnly = false)
+	public void saveOnly(BizSkuTransfer transfer) {
+	    super.save(transfer);
+    }
 	
 	@Transactional(readOnly = false)
 	public void delete(BizSkuTransfer bizSkuTransfer) {
@@ -407,10 +412,11 @@ public class BizSkuTransferService extends CrudService<BizSkuTransferDao, BizSku
             ior.setInvSku(inventorySku);
             ior.setTransferDetail(transferDetail);
             ior.setRequestDetail(bizRequestDetail);
-            List<BizInventoryOrderRequest> iorList = bizInventoryOrderRequestService.findList(ior);
-            if (CollectionUtils.isEmpty(iorList)) {
+            ior.setOutQty(outQty);
+//            List<BizInventoryOrderRequest> iorList = bizInventoryOrderRequestService.findList(ior);
+//            if (CollectionUtils.isEmpty(iorList)) {
                 bizInventoryOrderRequestService.save(ior);
-            }
+//            }
         }
         //是否出库完成
         BizSkuTransferDetail transferDetail = new BizSkuTransferDetail();

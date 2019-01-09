@@ -9,6 +9,7 @@
 		a.inv_type AS "invType",
 		a.sku_id AS "skuInfo.id",
 		bsi.name AS  "skuInfo.name",
+		bsi.item_no AS  "skuInfo.itemNo",
 		a.stock_qty AS "stockQty",
 		a.stock_change_qty AS "stockChangeQty",
 		a.now_stock_qty as "nowStockQty",
@@ -44,6 +45,7 @@
 	<select id="findList" resultType="BizInventoryViewLog">
 		SELECT 
 			<include refid="bizInventoryViewLogColumns"/>
+			,rh.req_no
 		FROM biz_inventory_view_log a
 		<include refid="bizInventoryViewLogJoins"/>
 		<where>
@@ -63,11 +65,23 @@
 			<if test="requestHeader != null and requestHeader.fromType != null and requestHeader.fromType != ''">
 				AND rh.from_type = #{requestHeader.fromType}
 			</if>
-			<if test="skuInfo != null and skuInfo != '' and skuInfo.name != '' ">
+			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != '' ">
 				AND bsi.name  LIKE
 					<if test="dbName == 'oracle'">'%'||#{skuInfo.name}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{skuInfo.name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
+			</if>
+			<if test="skuInfo != null and skuInfo.itemNo != null and skuInfo.itemNo != '' ">
+				AND bsi.item_no  LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.itemNo},'%')</if>
+			</if>
+			<if test="createStartTime !=null and createStartTime !=''">
+				AND a.create_time <![CDATA[ >= #{createStartTime} ]]>
+			</if>
+			<if test="createEndTime !=null and createEndTime!=''">
+				AND a.create_time <![CDATA[ <= #{createEndTime} ]]>
 			</if>
 			<if test="sqlMap != null and sqlMap.viewLog != null and sqlMap.viewLog != ''">
 				${sqlMap.viewLog}

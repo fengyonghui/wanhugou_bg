@@ -51,7 +51,7 @@
                         trdatas+= "<tr id='"+opShelfSku.id+"'>";
                         trdatas+="<td>"+opShelfSku.opShelfInfo.name+"</td>";
                         trdatas+="<td>"+opShelfSku.centerOffice.name+"</td>"
-                        trdatas+="<td>"+opShelfSku.skuInfo.name+"</td>";
+                        trdatas+="<td id='skuInfoName_"+ opShelfSku.id  + "'>"+opShelfSku.skuInfo.name+"</td>";
                         trdatas+="<td>"+opShelfSku.skuInfo.partNo+"</td>";
                         trdatas+="<td>"+opShelfSku.skuInfo.itemNo+"</td>";
                         var arr=opShelfSku.skuValueList;
@@ -64,8 +64,10 @@
                         }else{
                             var attribute="";
                         }
-                        trdatas+="<td>"+attribute+"</td>";
-                        trdatas+="<td><input type='hidden' id='maxQty_"+opShelfSku.id+"' value='"+opShelfSku.maxQty+"'/>"+opShelfSku.minQty+"-"+opShelfSku.maxQty+"</td>";
+                        trdatas+="<td id='attribute_" + opShelfSku.id +  "'>"+attribute+"</td>";
+                        trdatas+="<td id='saleInterval_" + opShelfSku.id +"'><input type='hidden' id='maxQty_"+opShelfSku.id+"' value='"+opShelfSku.maxQty+"'/>";
+                        trdatas+="<input type='hidden' id='minQty_"+opShelfSku.id+"' value='"+opShelfSku.minQty+"'/>";
+                        trdatas+= opShelfSku.minQty+"-"+opShelfSku.maxQty+"</td>";
                         trdatas+="<td>"+opShelfSku.salePrice+"</td>";
                         trdatas+="<td><input type='number' class='input-mini' id='saleQty_"+opShelfSku.id+"' style='width:58px;' min='1' max='99999' /></td>";
                         trdatas+="<td id='td_"+opShelfSku.id+"'> <a href='#' onclick=\"addItem('"+opShelfSku.id+"')\">增加</a></td>";
@@ -98,7 +100,7 @@
                         var trdatas='';
                         $.each(data,function (index,skuInfo) {
                             trdatas+= "<tr id='"+skuInfo.id+"'>";
-                            trdatas+="<td>"+skuInfo.name+"</td>";
+                            trdatas+="<td id='skuInfoName_" + skuInfo.id  + "'>"+skuInfo.name+"</td>";
                             trdatas+="<td>"+skuInfo.partNo+"</td>";
                             trdatas+="<td>"+skuInfo.itemNo+"</td>";
                             var arr=skuInfo.attrValueList;
@@ -115,7 +117,7 @@
                                 var attribute="";
                             }
                             trdatas+="<td>"+attribute+"</td>";
-                            trdatas+="<td><input type='number' class='input-mini' id='nowPrice_"+skuInfo.id+"' style='width:58px;' /></td>";
+                            trdatas+="<td id='nowPriceHtml_" + skuInfo.id + "'><input type='number' class='input-mini' id='nowPrice_"+skuInfo.id+"' style='width:58px;' /></td>";
                             trdatas+="<td><input type='number' class='input-mini' id='saleQty_"+skuInfo.id+"' style='width:58px;' min='1' max='99999' /></td>";
                             trdatas+="<td id='td_"+skuInfo.id+"'> <a href='#' onclick=\"addItemTwo('"+skuInfo.id+"')\">增加</a></td>";
                             trdatas+="<input type='hidden' id='orderDetaIds_"+skuInfo.id+"' value='"+skuInfo.id+"'>";
@@ -131,16 +133,30 @@
         <%--var aa=$("#contentTable").append("<th>商品属性</th>").index()+4;//第4列位置--%>
           var saleQty= $("#saleQty_"+obj).val();
           var maxQty=$("#maxQty_"+obj).val();
+          var minQty=$("#minQty_"+obj).val();
               if(saleQty==''){
                   alert("请输入数量");
                   return;
               }
-              if(parseInt(saleQty)>parseInt(maxQty)){
+              if((parseInt(saleQty)>parseInt(maxQty)) || (parseInt(saleQty)<parseInt(minQty))){
                   alert("购买的数量与当前价格不符");
                   return;
               }
             $("#td_"+obj).html("<a href='#' onclick=\"removeItem('"+obj+"')\">移除</a>");
             var trHtml=$("#"+obj);
+
+            if (${orderH.bizStatus>=15 && orderH.bizStatus!=45}) {
+                var addAttributeHtml = "<td id='suplyisName_" + obj + "'>${detail.suplyis.name}</td>"
+                var skuInfoNameHtml = $(trHtml).find("#skuInfoName_" + obj);
+                skuInfoNameHtml.before(addAttributeHtml)
+            }
+
+            if (${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state || orderH.bizStatus==OrderHeaderBizStatusEnum.APPROVE.state}) {
+                var addsendQtyHtml = "<td id='sendQtyTd_" + obj +"'><input type='number' class='input-mini' id='sendQty_"+obj+"' name='sentQtys' style='width:58px;' /></td>"
+                var saleIntervalHtml = $(trHtml).find("#saleInterval_" + obj);
+                saleIntervalHtml.before(addsendQtyHtml);
+            }
+
             $("#prodInfo").append(trHtml);
             $("#prodInfo").find($("#saleQty_"+obj)).attr("name","saleQtys");
             $("#prodInfo").find($("#saleQty_"+obj)).attr("readonly","readonly");
@@ -152,6 +168,18 @@
             <%--var aa=$("#contentTable").append("<th>商品属性</th>").index()+4;//第4列位置--%>
             $("#td_"+obj).html("<a href='#' onclick=\"removeItemTwo('"+obj+"')\">移除</a>");
             var trHtml=$("#"+obj);
+
+            if (${orderH.bizStatus>=15 && orderH.bizStatus!=45}) {
+                var addAttributeHtml = "<td id='suplyisName_" + obj + "'>供货部</td>"
+                var skuInfoNameHtml = $(trHtml).find("#skuInfoName_" + obj);
+                skuInfoNameHtml.before(addAttributeHtml)
+            }
+            if (${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state || orderH.bizStatus==OrderHeaderBizStatusEnum.APPROVE.state}) {
+                var addsendQtyHtml = "<td id='sendQtyTd_" + obj + "'><input type='number' class='input-mini' id='sendQty_"+obj+"' name='sentQtys' style='width:58px;' /></td>"
+                var nowPriceHtml = $(trHtml).find("#nowPriceHtml_" + obj);
+                nowPriceHtml.before(addsendQtyHtml);
+            }
+
             $("#prodInfo").append(trHtml);
             $("#prodInfo").find($("#saleQty_"+obj)).attr("name","saleQtys");
             $("#prodInfo").find($("#saleQty_"+obj)).attr("readonly","readonly");
@@ -162,6 +190,16 @@
         function removeItem(obj) {
             $("#td_"+obj).html("<a href='#' onclick=\"addItem('"+obj+"')\">增加</a>");
             var trHtml=$("#"+obj);
+
+            if (${orderH.bizStatus>=15 && orderH.bizStatus!=45}) {
+                $("td").remove("#suplyisName_" + obj)
+            }
+
+            if (${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state || orderH.bizStatus==OrderHeaderBizStatusEnum.APPROVE.state}) {
+                $("td").remove("#sendQtyTd_" + obj)
+            }
+
+
             $("#prodInfo2").append(trHtml);
             $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("name");
             $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("readonly");
@@ -171,6 +209,15 @@
         function removeItemTwo(obj) {
             $("#td_"+obj).html("<a href='#' onclick=\"addItemTwo('"+obj+"')\">增加</a>");
             var trHtml=$("#"+obj);
+
+            if (${orderH.bizStatus>=15 && orderH.bizStatus!=45}) {
+                $("td").remove("#suplyisName_" + obj)
+            }
+
+            if (${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state || orderH.bizStatus==OrderHeaderBizStatusEnum.APPROVE.state}) {
+                $("td").remove("#sendQtyTd_" + obj)
+            }
+
             $("#prodInfo2").append(trHtml);
             $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("name");
             $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("readonly");
@@ -215,6 +262,7 @@
     <form:hidden path="orderHeader.clientModify"/>
     <form:hidden path="orderHeader.consultantId"/>
     <form:hidden path="detailFlag"/>
+    <form:hidden path="suplyIds" value="${bizOrderDetail.suplyis.id}"/>
     <sys:message content="${message}"/>
     <div class="control-group">
         <label class="control-label">选择商品：</label>
@@ -269,10 +317,14 @@
                         <th>货架名称</th>
                         <th>采购中心</th>
                     </c:if>
+                    <c:if test="${orderH.bizStatus>=15 && orderH.bizStatus!=45}">
+                        <th>发货方</th>
+                    </c:if>
                     <th>商品名称</th>
                     <th>商品编码</th>
                     <th>商品货号</th>
                     <th>商品属性</th>
+
                     <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state || orderH.bizStatus==OrderHeaderBizStatusEnum.APPROVE.state}">
                         <th>已发货数量</th>
                     </c:if>
@@ -291,7 +343,19 @@
                                 <td>${detail.shelfInfo.opShelfInfo.name}</td>
                                 <td>${detail.shelfInfo.centerOffice.name}</td>
                             </c:if>
-                            <td>${detail.skuName}</td>
+                            <c:if test="${orderH.bizStatus>=15 && orderH.bizStatus!=45}">
+                                <td>
+                                    <c:if test="${orderH.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+                                        供货部
+                                    </c:if>
+                                    <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                                        ${detail.suplyis.name}
+                                    </c:if>
+                                </td>
+                            </c:if>
+                            <td>
+                                 ${detail.skuName}
+                            </td>
                             <td>${detail.partNo}</td>
                             <td>${detail.skuInfo.itemNo}</td>
                             <td>
@@ -304,7 +368,8 @@
                             </c:if>
                             <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
                                 <td>${shelfSku.minQty}-${shelfSku.maxQty}</td>
-                                <td>${shelfSku.salePrice}</td>
+                                <%--<td>${shelfSku.salePrice}</td>--%>
+                                <td>${detail.unitPrice}</td>
                             </c:if>
                             <c:if test="${orderH.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
                                 <td>${detail.unitPrice}</td>
@@ -359,6 +424,7 @@
     <form:hidden id="skuNameCopy" path="skuInfo.name"/>
     <form:hidden id="skuCodeCopy" path="skuInfo.partNo"/>
     <form:hidden id="itemNoCopy" path="skuInfo.itemNo"/>
+    <form:hidden id="orderDetailForm" path="orderDetailForm" value="orderDetailForm"/>
 </form:form>
 <form:form id="searchPurseForm" modelAttribute="bizSkuInfo" >
     <input type="hidden" id="bizSkuNameCopy" name="name" value="${name}"/>

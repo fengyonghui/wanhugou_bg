@@ -132,6 +132,16 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String locationAddress;
 
     /**
+     * 出库开始时间
+     */
+    private String needOutStartTime;
+
+    /**
+     * 出库结束时间
+     */
+    private String needOutEndTime;
+
+    /**
      * 客户专员、会员搜索 查看订单开始下单时间与该采购商订单总金额，品类主管 管理 的商品统计
      * */
     private Double userOfficeReceiveTotal;
@@ -254,7 +264,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private BigDecimal scoreMoney;
 
-    private List<BizOrderLogistics> bizOrderLogisticsList;
+    private BizOrderLogistics bizOrderLogistics;
 
     /**
      * 待发货
@@ -303,6 +313,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private BizCommission bizCommission;
 
     /**
+     * 调整服务费标识符
+     */
+    private String modifyServiceCharge;
+
+    /**
      * 结佣状态0:未结佣， 1:已结佣
      */
     private Integer commissionStatus;
@@ -310,6 +325,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String applyCommStatus;
 
     private String commSign;
+
+    private Integer logisticsLinesSelected;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -1090,14 +1107,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.scoreMoney = scoreMoney;
     }
 
-    public List<BizOrderLogistics> getBizOrderLogisticsList() {
-        return bizOrderLogisticsList;
-    }
-
-    public void setBizOrderLogisticsList(List<BizOrderLogistics> bizOrderLogisticsList) {
-        this.bizOrderLogisticsList = bizOrderLogisticsList;
-    }
-
     public Integer getWaitShipments() {
         return waitShipments;
     }
@@ -1216,6 +1225,46 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSerllerPhone(String serllerPhone) {
         this.serllerPhone = serllerPhone;
+    }
+
+    public String getModifyServiceCharge() {
+        return modifyServiceCharge;
+    }
+
+    public void setModifyServiceCharge(String modifyServiceCharge) {
+        this.modifyServiceCharge = modifyServiceCharge;
+    }
+
+    public String getNeedOutStartTime() {
+        return needOutStartTime;
+    }
+
+    public void setNeedOutStartTime(String needOutStartTime) {
+        this.needOutStartTime = needOutStartTime;
+    }
+
+    public String getNeedOutEndTime() {
+        return needOutEndTime;
+    }
+
+    public void setNeedOutEndTime(String needOutEndTime) {
+        this.needOutEndTime = needOutEndTime;
+    }
+
+    public BizOrderLogistics getBizOrderLogistics() {
+        return bizOrderLogistics;
+    }
+
+    public void setBizOrderLogistics(BizOrderLogistics bizOrderLogistics) {
+        this.bizOrderLogistics = bizOrderLogistics;
+    }
+
+    public Integer getLogisticsLinesSelected() {
+        return logisticsLinesSelected;
+    }
+
+    public void setLogisticsLinesSelected(Integer logisticsLinesSelected) {
+        this.logisticsLinesSelected = logisticsLinesSelected;
     }
 }
 

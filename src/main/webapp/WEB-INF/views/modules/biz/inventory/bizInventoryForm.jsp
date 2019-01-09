@@ -23,17 +23,17 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-				    var i = 0;
+				    var i = "";
 				    $("#invReq").find("input[name='reqDetailId']").each(function () {
 				        var reqDetailId = $(this).val();
 						var actualQty = $(this).parent().find("input[name='actualQtys']").val();
-						if (actualQty != 0 && actualQty != '') {
+						if (actualQty != '') {
                             var html = "<input name='invReqDetail' value='" + reqDetailId + "-" + actualQty +"' type='hidden'/>";
+                            i = i + actualQty;
 						}
 						$(this).append(html);
-						i = parseInt(i) + parseInt(actualQty);
                     });
-				    if (i == 0) {
+				    if (i == "") {
 				        alert("请至少添加一条实际库存");
 				        return false;
 					} else {
@@ -101,6 +101,14 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">备注：</label>
+			<div class="controls">
+				<%--<input type= name="inventoryRemark" readonly="readonly" value="${requestHeader.inventoryRemark}"/>--%>
+				<textarea name="inventoryRemark" id="inventoryRemark" maxlength="200"
+						  class="input-xlarge">${requestHeader.inventoryRemark}</textarea>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">商品信息：</label>
 			<div class="controls">
 				<table id="contentTable"  class="table table-striped table-bordered table-condensed">
@@ -142,7 +150,7 @@
 								    <td>${requestDetail.sumSendNum == null ? 0 : requestDetail.sumSendNum}</td>
                                 </c:if>
 								<c:if test="${source == null}">
-                                	<td><input id="${v.index}" name="actualQtys" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini required"/></td>
+                                	<td><input id="${v.index}" name="actualQtys" title="${v.index}" value="${requestDetail.actualQty}" type="number" class="input-mini"/></td>
 								</c:if>
 								<c:if test="${source != null}">
 									<td>${requestDetail.actualQty}</td>

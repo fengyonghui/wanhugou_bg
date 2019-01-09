@@ -224,7 +224,7 @@ public class MyPanelController extends BaseController {
     @RequestMapping(value = {"ddck"})
     public String ddck(RedirectAttributes redirectModel) {
         redirectModel.addAttribute("previousPage", "myPanel");
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?waitOutput=1";
+        return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestAll/list?source=kc&bizStatu=0&ship=xs&needOut=1";
     }
 
     //        发货单入库
@@ -313,11 +313,16 @@ public class MyPanelController extends BaseController {
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/listV2?waitPay=1";
     }
 
-    //        需上架商品
+    /**
+     * 需上架商品:产品未删除，对应商品未删除，产品类行为自营商品，库存中库存数量大于0，不存在于任何一个未删除的货架
+     * @param redirectModel
+     * @return
+     */
     @RequestMapping(value = {"needPutaway"})
     public String needPutaway(RedirectAttributes redirectModel) {
         redirectModel.addAttribute("previousPage", "myPanel");
-        return "redirect:" + Global.getAdminPath() + "/biz/sku/bizSkuInfo/list?notPutaway=1&productInfo.prodType=1";
+        //return "redirect:" + Global.getAdminPath() + "/biz/sku/bizSkuInfo/list?notPutaway=1&productInfo.prodType=1";
+        return "redirect:" + Global.getAdminPath() + "/biz/shelf/bizOpShelfSkuV2/form?shelfSign=0";
     }
 
     //        备货单待发货

@@ -87,6 +87,16 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
      */
 	private BigDecimal commissionRatio;
 
+	/**
+	 * 订单详情搜索商品标识符
+	 */
+	private String orderDetailForm;
+
+	/**
+	 * 上层页面标识符
+	 */
+	private String previousPage;
+
 	public BizOpShelfSku() {
 		super();
 	}
@@ -101,6 +111,11 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	public Date getShelfTime() {
 		return shelfTime;
 	}
+
+	/**
+	 * 商品已删除标识符
+	 */
+	private String skuDeleteFlag;
 
 	public void setShelfTime(Date shelfTime) {
 		this.shelfTime = shelfTime;
@@ -330,4 +345,30 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
     public void setCommissionRatio(BigDecimal commissionRatio) {
         this.commissionRatio = commissionRatio;
     }
+
+	public String getOrderDetailForm() {
+		return orderDetailForm;
+	}
+
+	public void setOrderDetailForm(String orderDetailForm) {
+		this.orderDetailForm = orderDetailForm;
+	}
+
+	public String getSkuDeleteFlag() {
+		return skuDeleteFlag;
+	}
+
+	public void setSkuDeleteFlag(String skuDeleteFlag) {
+		this.skuDeleteFlag = skuDeleteFlag;
+	}
+
+	@Override
+	public String getPreviousPage() {
+		return previousPage;
+	}
+
+	@Override
+	public void setPreviousPage(String previousPage) {
+		this.previousPage = previousPage;
+	}
 }

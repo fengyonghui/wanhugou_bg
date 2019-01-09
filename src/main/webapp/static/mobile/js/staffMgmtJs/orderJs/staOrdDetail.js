@@ -65,6 +65,19 @@
                 },
                 dataType: "json",
                 success: function(res){
+                	//调取供应商信息
+                	if(res.data.entity2){
+                		var officeId = res.data.entity2.sellersId;
+                	    $('#supplierId').val(officeId);
+                	    _this.supplier($('#supplierId').val());
+                	}else{
+                		$('#insupplier').parent().hide();//供应商
+						$('#insupplierNum').parent().hide();//供应商卡号
+						$('#insupplierMoney').parent().hide();//供应商收款人
+						$('#insupplierBank').parent().hide();//供应商开户行
+						$('#insuppliercontract').parent().hide();//供应商合同
+					    $('#insuppliercardID').parent().hide();//供应商身份证
+                	} 
 					$('#firstPart').val(res.data.entity2.customer.name);
 					$('#firstPrincipal').val(res.data.custUser.name);
 					$('#firstMobile').val(res.data.custUser.mobile);
@@ -88,15 +101,55 @@
 						$('#staPoRemark').val(w.comments);
 					})
 					var item = res.data.bizOrderHeader;
-					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
+//					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee;
+					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staPoordNum').val(item.orderNum);
-					$('#staRelNum').val(item.customer.name);
+					if(res.data.orderType==8){
+						$('#customerName').html('零售用户'+'：');
+					}
+					if(res.data.orderType!=8){
+						$('#customerName').html('经销店名称'+'：');
+					}
+					$('#staRelNum').val(item.customer.name);//经销店名称
+					//结佣状态
+					if(res.data.orderType==8){
+						$('#commission').parent().show();
+					}else{
+						$('#commission').parent().hide();
+					}
+					var comStatusTxt = '';
+					$.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {
+		                	type:"biz_commission_status"
+		                },
+		                dataType: "json",
+		                success: function(res){
+		                	$.each(res,function(i,itemss){
+		                		if(itemss.value==item.commissionStatus){
+		                		 	comStatusTxt = itemss.label 
+		                		}
+		                	})
+		                	$('#commission').val(comStatusTxt);
+						}
+					})					
+					if(res.data.orderType!=8){
+						$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
+					}else{
+						$('#staCoin').parent().hide();
+					}
+//					$('#staRelNum').val(item.customer.name);
 					$('#staPototal').val(item.totalDetail.toFixed(2));
 					$('#staAdjustmentMoney').val(item.totalExp);
 					$('#staFreight').val(item.freight.toFixed(2));
 					$('#staShouldPay').val(shouldPay.toFixed(2));
 					$('#staPoLastDa').val('('+ item.receiveTotal.toFixed(2) + ')');
-					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
+//					var poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee))*100).toFixed(2)+'%';
+                    var poLastDa = 0;
+					if(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney != 0) {
+						poLastDa = ((item.receiveTotal/(item.totalDetail+item.totalExp+item.freight+item.serviceFee-item.scoreMoney))*100).toFixed(2)+'%';
+					}
 					$('#staPoLastDaPerent').val(poLastDa);
 					$('#staServerPrice').val((item.totalExp + item.serviceFee + item.freight).toFixed(2));
 					$('#staCommission').val((item.totalDetail - item.totalBuyPrice).toFixed(2));
@@ -144,7 +197,7 @@
 						}
 					})
 					var total = item.totalDetail+item.totalExp+item.freight
-					if(total > item.receiveTotal && item.bizStatus!=10 && item.bizStatus!=35 && item.bizStatus!=40 && item.bizStatus!=45 && item.bizStatus!=60) {
+					if(total > (item.receiveTotal+item.scoreMoney) && item.bizStatus!=10 && item.bizStatus!=35 && item.bizStatus!=40 && item.bizStatus!=45 && item.bizStatus!=60) {
 						$('#staFinal').val("(有尾款)");
 					}
 					//注意事项
@@ -159,6 +212,62 @@
                 }
             });
 		},
+		//供应商信息
+		supplier:function(supplierId){						
+			$.ajax({
+                type: "GET",
+                url: "/a/biz/order/bizOrderHeader/selectVendInfo",
+                data: {vendorId:supplierId},		                
+                dataType: "json",
+                success: function(rest){
+                	if(rest){
+                		if(rest.vendName){
+                			$('#insupplier').val(rest.vendName);//供应商
+                		}else{
+                			$('#insupplier').parent().hide();//供应商
+                		}
+                		if(rest.cardNumber){
+                			$('#insupplierNum').val(rest.cardNumber);//供应商卡号
+                		}else{
+                			$('#insupplierNum').parent().hide();//供应商卡号
+                		}
+						if(rest.payee){
+                			$('#insupplierMoney').val(rest.payee);//供应商收款人
+                		}else{
+                			$('#insupplierMoney').parent().hide();//供应商收款人
+                		}
+						if(rest.bankName){
+                			$('#insupplierBank').val(rest.bankName);//供应商开户行
+                		}else{
+                			$('#insupplierBank').parent().hide();//供应商收款人
+                		}						
+						//供应商合同
+						if(rest.compactImgList != undefined){
+							$.each(rest.compactImgList,function (m, n) {
+                                $("#insuppliercontract").append("<a href=\"" + n.imgServer + n.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + n.imgServer + n.imgPath + "\"></a>");
+                            });
+						}else{
+							$('#insuppliercontract').parent().hide();
+						}
+						//供应商身份证
+						if (rest.identityCardImgList != undefined) {
+                        $.each(rest.identityCardImgList,function (i, card) {
+                            $("#insuppliercardID").append("<a href=\"" + card.imgServer + card.imgPath + "\" target=\"_blank\"><img width=\"100px\" src=\"" + card.imgServer + card.imgPath + "\"></a>");
+                           });
+                        }else{
+                        	$('#insuppliercardID').parent().hide();
+                        }
+                	}else{
+                		$('#insupplier').parent().hide();//供应商
+						$('#insupplierNum').parent().hide();//供应商卡号
+						$('#insupplierMoney').parent().hide();//供应商收款人
+						$('#insupplierBank').parent().hide();//供应商开户行
+						$('#insuppliercontract').parent().hide();//供应商合同
+						$('#insuppliercardID').parent().hide();//供应商身份证
+                	}
+				}
+			});
+		}, 
 		//状态流程
 		statusListHtml:function(data){
 			var _this = this;

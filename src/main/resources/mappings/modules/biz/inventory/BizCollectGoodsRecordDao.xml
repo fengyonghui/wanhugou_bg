@@ -93,6 +93,12 @@
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 			</if>
+			<if test="receiveStartTime !=null and receiveStartTime !=''">
+				AND a.receive_time <![CDATA[ >= #{receiveStartTime} ]]>
+			</if>
+			<if test="receiveEndTime !=null and receiveEndTime!=''">
+				AND a.receive_time <![CDATA[ <= #{receiveEndTime} ]]>
+			</if>
 			<if test="sqlMap != null and sqlMap.collectGoodsRecord != null and sqlMap.collectGoodsRecord != ''">
 				${sqlMap.collectGoodsRecord}
 			</if>

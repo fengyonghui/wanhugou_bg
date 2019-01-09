@@ -111,6 +111,11 @@ public class BizOrderStatisticsDto {
      */
     private BigDecimal validCustomerNum = BigDecimal.ZERO;
 
+    /**
+     * 服务费
+     */
+    private BigDecimal serviceCharge;
+
 
     public BigDecimal getUnivalence() {
         if (orderCount <= 0) {
@@ -141,8 +146,7 @@ public class BizOrderStatisticsDto {
 
     public BigDecimal getProfitPrice() {
         //马强的计算方法
-        //return totalMoney.subtract(buyPrice);
-        return profitPrice;
+        return totalMoney.subtract(buyPrice);
     }
 
     public void setProfitPrice(BigDecimal profitPrice) {
@@ -299,5 +303,13 @@ public class BizOrderStatisticsDto {
 
     public void setValidCustomerNum(BigDecimal validCustomerNum) {
         this.validCustomerNum = validCustomerNum;
+    }
+
+    public BigDecimal getServiceCharge() {
+        return serviceCharge;
+    }
+
+    public void setServiceCharge(BigDecimal serviceCharge) {
+        this.serviceCharge = serviceCharge;
     }
 }

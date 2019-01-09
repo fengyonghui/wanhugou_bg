@@ -9,6 +9,12 @@
 <head>
 	<title>备货清单管理</title>
 	<meta name="decorator" content="default"/>
+	<style>
+		.table_text_center tr th {
+			text-align: center;
+			vertical-align:middle;
+		}
+	</style>
 	<script type="text/javascript">
         $(document).ready(function() {
             $("#buttonExport").click(function(){
@@ -125,7 +131,7 @@
 <body>
 <ul class="nav nav-tabs">
 	<li class="active"><a href="${ctx}/biz/request/bizRequestHeaderForVendor/">备货清单列表</a></li>
-	<li><a href="${ctx}/biz/request/bizRequestHeaderForVendor/form">备货清单添加</a></li>
+	<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><li><a href="${ctx}/biz/request/bizRequestHeaderForVendor/form">备货清单添加</a></li></shiro:hasPermission>
 </ul>
 <form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeaderForVendor/" method="post" class="breadcrumb form-search">
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -192,23 +198,23 @@
 	</ul>
 </form:form>
 <sys:message content="${message}"/>
-<table id="contentTable" class="table table-striped table-bordered table-condensed">
+<table id="contentTable" class="table table-striped table-bordered table-condensed table_text_center">
 	<thead>
 	<tr>
 		<td>序号</td>
 		<th>备货单号</th>
 		<th>类型</th>
 		<th>采购中心</th>
-		<th>期望收货时间</th>
+		<th>期望收货<br>时间</th>
 		<th>备货方</th>
 		<th>供应商</th>
-		<th>备货商品数量</th>
-		<th>备货商品总价</th>
-		<th>已收保证金</th>
+		<th>备货商品<br>数量</th>
+		<th>备货商品<br>总价</th>
+		<th>已收<br>保证金</th>
 		<th>付款比例</th>
-		<th>已到货数量</th>
-		<th>已卖出数量</th>
-		<th>备注</th>
+		<th>已到货<br>数量</th>
+		<th>已卖出<br>数量</th>
+		<th style="width:10%;word-wrap:break-word;word-break:break-all;">备注</th>
 		<th>业务状态</th>
 		<th>审核状态</th>
 		<th>下单时间</th>

@@ -80,7 +80,7 @@
 	                    }
 	                    var orderTypes="";
 			            var purchaserId="";
-	                    if(res.data.bizOrderDetail.orderType==1){
+	                    if(res.data.bizOrderDetail.orderType==1||res.data.bizOrderDetail.orderType==8){
 	                    	$('.buttonCont .addSkuButton').attr('id',res.data.detail.shelfInfo.id);
 			            	var url= "/a/biz/shelf/bizOpShelfSku/findOpShelfSku4Mobile",
 			            	orderTypes=res.data.bizOrderDetail.orderType;
@@ -120,7 +120,7 @@
                 	return;
                 }
                 var datas={};
-                if(orderTypes==1){
+                if(orderTypes==1||orderTypes==8){
                 	datas={
                 		'skuInfo.itemNo': itemNo,
                 	}
@@ -248,7 +248,7 @@
 				                    '<li class="mui-table-view-cell app_bline3">'+ 
 				                    '<div class="mui-input-row ">'+ 
 				                    '<label>数量区间:</label>'+ 
-				                    '<input type="text" class="mui-input-clear" max="' +maxQty+ '" id="maxQty_' +skuInfo.id+ '" value="'  +(minQty+maxQty) + '" disabled></div></li></div></div>'+
+				                    '<input type="text" class="mui-input-clear" max="' +maxQty+ '" min="' +minQty+ '" id="maxQty_' +skuInfo.id+ '" value="'  +(minQty+maxQty) + '" disabled></div></li></div></div>'+
 			                   
 				                    '<div class="mui-row  inAddFont">'+ 
 				                    '<div class="mui-col-sm-6 mui-col-xs-6">'+ 
@@ -301,12 +301,9 @@
 	      			mui.toast("请输入采购数量");
 	                 return;
 	      		}
-	      		if(saleQty<=0){
-	      			mui.toast("请输入一个最小为 1 的值");
-	                return;
-	      		}
 	      		var maxQty=$("#maxQty_"+reqQtyId).attr('max');
-	            if(parseInt(saleQty)>parseInt(maxQty)){
+	      		var minQty=$("#maxQty_"+reqQtyId).attr('min');
+	            if((parseInt(saleQty)>parseInt(maxQty))||(parseInt(saleQty)<parseInt(minQty))){
 	            	mui.toast("购买的数量与当前销售数量区间不符");
 	                 return;
 	            }

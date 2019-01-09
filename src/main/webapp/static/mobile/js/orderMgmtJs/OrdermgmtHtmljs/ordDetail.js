@@ -20,6 +20,7 @@
 		pageInit: function() {
 			var _this = this;
 			_this.addRemark();
+			_this.changeService();
 		},
 		getPermissionList: function (markVal,flag) {
             var _this = this;
@@ -60,17 +61,19 @@
 			var datas={};
 			var idd=_this.userInfo.staOrdId;
 			var orderDetails=_this.userInfo.orderDetails;
+			var modifyServiceCharge =_this.userInfo.modifyServiceCharge;
 			var statu=_this.userInfo.statu;
 			var source=_this.userInfo.source;
-			console.log(idd)
-			console.log(orderDetails)
-			console.log(statu)
-			console.log(source)
 			datas={
 				id:idd,
                 orderDetails: orderDetails,
                 statu:statu,
                 source:source
+			}
+			if((orderDetails==orderDetails||orderDetails=='orderDetails')&&(modifyServiceCharge==undefined||modifyServiceCharge=='undefined')){
+				$('#changeServiceBtn').hide();
+			}else{
+				$('#changeServiceBtn').show();
 			}
 			$.ajax({
                 type: "GET",
@@ -136,7 +139,41 @@
 					var item = res.data.bizOrderHeader;
 					var shouldPay = item.totalDetail + item.totalExp + item.freight + item.serviceFee-item.scoreMoney;
 					$('#staPoordNum').val(item.orderNum);//订单编号
-					$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
+					if(res.data.orderType==8){
+						$('#customerName').html('零售用户'+'：');
+					}
+					if(res.data.orderType!=8){
+						$('#customerName').html('经销店名称'+'：');
+					}
+					$('#staRelNum').val(item.customer.name);//经销店名称
+					//结佣状态
+					if(res.data.orderType==8){
+						$('#commission').parent().show();
+					}else{
+						$('#commission').parent().hide();
+					}
+					var comStatusTxt = '';
+					$.ajax({
+		                type: "GET",
+		                url: "/a/sys/dict/listData",
+		                data: {
+		                	type:"biz_commission_status"
+		                },
+		                dataType: "json",
+		                success: function(res){
+		                	$.each(res,function(i,itemss){
+		                		if(itemss.value==item.commissionStatus){
+		                		 	comStatusTxt = itemss.label 
+		                		}
+		                	})
+		                	$('#commission').val(comStatusTxt);
+						}
+					})					
+					if(res.data.orderType!=8){
+						$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
+					}else{
+						$('#staCoin').parent().hide();
+					}
 					$('#staRelNum').val(item.customer.name);//经销店名称
 					$('#staPototal').val(item.totalDetail.toFixed(2));//商品总价
 					$('#staAdjustmentMoney').val(item.totalExp);//调整金额
@@ -222,6 +259,61 @@
                 }
             });
 		},
+		changeService: function() {
+			var _this = this;
+			var addTotalExpHtml ="";
+			var addTotalExpSaveButton = "";
+			$('#changeServiceBtn').on('tap', function() {
+	            var totalExpDiv = $("#totalExpDiv");
+	            $("#totalExpDivSaveDiv").remove();
+	            addTotalExpHtml = "<div style='padding-left:10px;'>"+
+	                "<input name='addTotalExp' class='addTotalinp' type='text' value='0.0'>"+
+		            "<span class='mui-icon mui-icon-trash removeExp'>"+
+		            "</span>"+
+	            "</div>"
+	            addTotalExpSaveButton = "<div id='totalExpDivSaveDiv' class='secSaveBtn'>"+
+	                    "<input id='totalExpDivSave' type='button' value='保存'/>"+
+	            "</div>"
+	            totalExpDiv.html(addTotalExpHtml+addTotalExpSaveButton);
+				_this.removeExp();
+				_this.SavetotalExp();
+			});
+		},
+		removeExp:function() {
+            $('.removeExp').on('tap', function() {
+            	$(this).parent().remove();
+            	$("#totalExpDivSaveDiv").remove();
+            })
+        },
+        SavetotalExp:function() {
+        	var _this = this;
+            $('#totalExpDivSave').on('tap', function() {
+                var TotalinpVal=$('.addTotalinp').val();
+                if(Number(TotalinpVal) <= 0){
+                    mui.toast("新增服务费不能为0，请修改后保存！");
+                    return false;
+                }
+	            var orderIds = $('#ordId').val();
+	            $.ajax({
+	                url:"/a/biz/order/bizOrderTotalexp/batchSave",
+	                type:"get",
+	                data: {"amountStr": TotalinpVal, "orderId":orderIds},
+	                contentType:"application/json;charset=utf-8",
+	                success:function(result){
+	                    if (result == 'ok') {
+	                        mui.toast("修改服务费成功！");
+	                        window.setTimeout(function(){
+			                    _this.getData();
+			                    $('.removeExp').parent().remove();
+			                    $('#totalExpDivSaveDiv').remove();
+			                },300);
+	                    } else {
+	                        mui.toast("修改服务费失败！");
+	                    }
+	                }
+	            });
+            })
+        },
 		//添加备注
 		addRemark:function(){
 			var _this = this;

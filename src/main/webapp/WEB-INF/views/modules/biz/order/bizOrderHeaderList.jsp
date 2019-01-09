@@ -4,6 +4,7 @@
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderDrawBackStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderPayProportionStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.BizOrderLogisticsEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
@@ -209,7 +210,7 @@
                    value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
         </li>
-        <li><label>待同意发货:</label>
+        <li><label>待同意发货：</label>
             <form:select path="mobileAuditStatus" class="input-medium">
                 <form:option value="">请选择</form:option>
                 <form:option value="0">待审核</form:option>
@@ -217,13 +218,13 @@
                 <form:option value="2">其他</form:option>
             </form:select>
         </li>
-        <li><label>待发货</label>
+        <li><label>待发货：</label>
             <form:select path="waitShipments" class="input-medium">
                 <form:option value="" label="请选择"/>
                 <form:option value="1" label="是"/>
             </form:select>
         </li>
-        <li><label>待出库</label>
+        <li><label>待出库：</label>
             <form:select path="waitOutput" class="input-medium">
                 <form:option value="" label="请选择"/>
                 <form:option value="1" label="是"/>
@@ -235,8 +236,15 @@
                 <%--<form:options items="${fns:getDictList('biz_commission_status')}" itemLabel="label" itemValue="value"--%>
                               <%--htmlEscape="false"/></form:select>--%>
         <%--</li>--%>
+        <li><label>万户通发货：</label>
+            <form:select path="logisticsLinesSelected" class="input-medium">
+                <form:option value="" label="请选择"/>
+                <form:option value="1" label="是"/>
+                <form:option value="2" label="否"/>
+            </form:select>
+        </li>
         <c:if test="${statu == 'unline'}">
-            <li><label>审核状态:</label>
+            <li><label>审核状态：</label>
                 <form:select path="examine" class="input-medium">
                     <form:option value="0">请选择</form:option>
                     <form:option value="1">审核完成</form:option>
@@ -282,6 +290,7 @@
         <th>商品总价</th>
         <th>调整金额</th>
         <th>运费</th>
+        <th>是否万户通发货</th>
         <th>万户币抵扣</th>
         <th>应付金额</th>
         <c:if test="${source ne 'vendor'}">
@@ -364,6 +373,17 @@
             <td><font color="#848484">
                 <fmt:formatNumber type="number" value="${orderHeader.freight}" pattern="0.00"/>
             </font></td>
+            <td>
+                <c:choose>
+                    <c:when test="${orderHeader.bizOrderLogistics.logisticsLines == BizOrderLogisticsEnum.CUSTOMER_PICK_UP.desc
+                                    || orderHeader.bizOrderLogistics.logisticsLines == BizOrderLogisticsEnum.DELIVER_HOME.desc}">
+                        是
+                    </c:when>
+                    <c:otherwise>
+                        否
+                    </c:otherwise>
+                </c:choose>
+            </td>
             <td><font color="#848484"><%--==null?0.00:orderHeader.scoreMoney--%>
                 <fmt:formatNumber type="number" value="${orderHeader.scoreMoney}" pattern="0.00"/>
             </font></td>
@@ -636,6 +656,12 @@
                         <a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}&statu=${statu}&source=${source}"
                            onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
                         </c:if>
+                        </shiro:hasPermission>
+                            <!-- 服务费调整 -->
+                        <shiro:hasPermission name="biz:order:bizOrderTotalexp:edit">
+                            <c:if test="${orderHeader.bizStatus>= OrderHeaderBizStatusEnum.SUPPLYING.state}">
+                                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&modifyServiceCharge=modifyServiceCharge&statu=${statu}&source=${source}">调整服务费</a>
+                            </c:if>
                         </shiro:hasPermission>
                         <shiro:hasPermission name="biz:order:bizOrderHeader:refund">
                         <!-- 退款增加 -->

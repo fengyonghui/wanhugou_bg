@@ -3,7 +3,10 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventory;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.BaseEntity;
@@ -21,6 +24,8 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizInventorySkus;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizOutTreasuryEntity;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSkuTransferDetail;
 import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
@@ -32,6 +37,7 @@ import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSkuTransferDetailService;
 import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
@@ -39,7 +45,7 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderForVendorService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV3Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.InventorySkuRequestProcessConfig;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -62,12 +68,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -76,10 +84,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,7 +113,7 @@ public class BizInventorySkuController extends BaseController {
     @Autowired
     private BizInventoryInfoService bizInventoryInfoService;
     @Autowired
-    private BizSkuInfoV2Service bizSkuInfoService;
+    private BizSkuInfoV3Service bizSkuInfoService;
     @Autowired
     private SystemService systemService;
     @Autowired
@@ -124,6 +136,8 @@ public class BizInventorySkuController extends BaseController {
     private BizPoHeaderService bizPoHeaderService;
     @Autowired
     private BizSendGoodsRecordService bizSendGoodsRecordService;
+    @Autowired
+    private BizSkuTransferDetailService bizSkuTransferDetailService;
 
     @ModelAttribute
     public BizInventorySku get(@RequestParam(required = false) Integer id) {
@@ -676,7 +690,9 @@ public class BizInventorySkuController extends BaseController {
     public String requestInventoryExport(BizRequestHeader requestHeader, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         String fileName = "备货单盘点数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
         List<List<String>> data = Lists.newArrayList();
+        List<List<String>> detailData = Lists.newArrayList();
         List<BizRequestHeader> requestHeaderList = bizInventorySkuService.inventory(requestHeader);
+
         if (CollectionUtils.isNotEmpty(requestHeaderList)) {
             for (BizRequestHeader bizRequestHeader : requestHeaderList) {
                 List<String> rowList = Lists.newArrayList();
@@ -692,13 +708,39 @@ public class BizInventorySkuController extends BaseController {
                 }
                 rowList.add(processName);
                 data.add(rowList);
+                BizRequestDetail requestDetail = new BizRequestDetail();
+                requestDetail.setRequestHeader(bizRequestHeader);
+                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(requestDetail);
+                if (CollectionUtils.isNotEmpty(requestDetailList)) {
+                    for (BizRequestDetail bizRequestDetail : requestDetailList){
+                        List<String> detailRowList = Lists.newArrayList();
+                        detailRowList.add(bizRequestHeader.getReqNo());
+                        detailRowList.add(bizRequestDetail.getSkuInfo().getVendorName());
+                        BizSkuInfo skuInfo = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
+                        String variName = bizProductInfoService.get(skuInfo.getProductInfo().getId()).getBizVarietyInfo().getName();
+                        detailRowList.add(variName == null ? "" : variName);
+                        detailRowList.add(bizRequestDetail.getSkuInfo().getItemNo());
+                        List<AttributeValueV2> sizeList = bizSkuInfoService.getSkuProperty(bizRequestDetail.getSkuInfo().getId(), "biz_sku_info", "尺寸");
+                        detailRowList.add(CollectionUtils.isEmpty(sizeList) ? "" : sizeList.get(0).getValue());
+                        List<AttributeValueV2> colorList = bizSkuInfoService.getSkuProperty(bizRequestDetail.getSkuInfo().getId(), "biz_sku_info", "颜色");
+                        detailRowList.add(CollectionUtils.isEmpty(colorList) ? "" : colorList.get(0).getValue());
+                        detailRowList.add("个/套");
+                        detailRowList.add(bizRequestDetail.getSkuInfo().getBuyPrice().toString());
+                        detailRowList.add(String.valueOf(bizRequestDetail.getRecvQty() - (bizRequestDetail.getOutQty() == null ? 0 : bizRequestDetail.getOutQty())));
+                        detailRowList.add(String.valueOf(bizRequestDetail.getSkuInfo().getBuyPrice() * bizRequestDetail.getRecvQty() - (bizRequestDetail.getOutQty() == null ? 0 : bizRequestDetail.getOutQty())));
+                        detailRowList.add("");
+                        detailData.add(detailRowList);
+                    }
+                }
             }
         }
         String[] toryHeads = {"类型", "仓库名称", "采购中心", "备货方", "备货单号", "供应商", "审核状态"};
+        String[] detailHeads = {"备货单号","供应商","品类","货号","规格","颜色","单位","单价","盘点数量","盘点金额","备注"};
         ExportExcelUtils eeu = new ExportExcelUtils();
         SXSSFWorkbook workbook = new SXSSFWorkbook();
         try {
             eeu.exportExcel(workbook, 0, "备货单盘点数据", toryHeads, data, fileName);
+            eeu.exportExcel2(workbook,1,"备货单商品详情数据",detailHeads,detailData,fileName);
             response.reset();
             response.setContentType("application/octet-stream; charset=utf-8");
             response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
@@ -711,5 +753,108 @@ public class BizInventorySkuController extends BaseController {
         return "redirect:" + adminPath + "/biz/inventory/bizInventorySku/inventory";
     }
 
+    @ResponseBody
+    @RequestMapping(value = "checkSku")
+    public String checkSku(Integer id) {
+        BizInventorySku bizInventorySku = bizInventorySkuService.get(id);
+        return bizInventorySkuService.checkSku(bizInventorySku);
+    }
+
+    @RequestMapping(value = "skuSplitForm")
+    public String skuSplitForm(BizInventorySku inventorySku,Model model) {
+        List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInventorySkuByskuIdAndcentId(inventorySku.getInvInfo().getCustomer().getId(),inventorySku.getSkuInfo().getId());
+        List<BizSkuTransferDetail> transferDetailList = bizSkuTransferDetailService.findInventorySkuByskuIdAndcentId(inventorySku.getInvInfo().getCustomer().getId(),inventorySku.getSkuInfo().getId());
+        model.addAttribute("inventorySku",inventorySku);
+        model.addAttribute("requestDetailList",requestDetailList);
+        model.addAttribute("transferDetailList",transferDetailList);
+        return "modules/biz/inventory/skuSplitForm";
+    }
+
+    @ResponseBody
+    @RequiresPermissions("biz:inventory:bizInventorySku:split")
+    @RequestMapping(value = "skuSplit")
+    public String skuSplit(@RequestBody String data) {
+        try {
+            data = URLDecoder.decode(data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        JSONObject jsonObject = JsonUtil.parseJson(data);
+        String treasuryList = jsonObject.getString("treasuryList");
+        List<BizOutTreasuryEntity> skuSplitList = JsonUtil.parseArray(treasuryList,new TypeReference<List<BizOutTreasuryEntity>>() {});
+        if (CollectionUtils.isEmpty(skuSplitList)) {
+            return "error";
+        }
+        return bizInventorySkuService.doSkuSplit(skuSplitList);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "checkMergeSku")
+    public String checkMergeSku(Integer id) {
+        BizInventorySku bizInventorySku = bizInventorySkuService.get(id);
+        String itemNo = bizInventorySku.getSkuInfo().getItemNo();
+        String middle = itemNo.substring(itemNo.indexOf("/") + 1,itemNo.lastIndexOf("/"));
+        if (middle.contains("-") || middle.contains("*") || !middle.matches("[0-9]{2}.*")) {
+            return "该商品不属于单个尺寸的商品，不能合并";
+        }
+        List<Dict> mergeSkuOne = DictUtils.getDictList("merge_sku_one");
+        for (Dict dict : mergeSkuOne) {
+            if (middle.contains(dict.getValue())) {
+                return "merge_sku_one";
+            }
+        }
+        List<Dict> mergeSkuTwo = DictUtils.getDictList("merge_sku_two");
+        for (Dict dict : mergeSkuTwo) {
+            if (middle.contains(dict.getValue())) {
+                return "merge_sku_two";
+            }
+        }
+        return "该商品不在可合并范围，请联系系统管理员";
+    }
+
+    @RequestMapping(value = "skuMergeForm")
+    public String skuMergeForm(Integer id,Model model,String range) {
+        BizInventorySku inventorySku = get(id);
+        String itemNo = inventorySku.getSkuInfo().getItemNo();
+        String before = itemNo.substring(0,itemNo.indexOf("/") + 1);
+        String middle = itemNo.substring(itemNo.indexOf("/") + 1,itemNo.lastIndexOf("/"));
+        String after = itemNo.substring(itemNo.lastIndexOf("/"));
+        Map<Integer,List<BizRequestDetail>> reqMap = Maps.newHashMap();
+        Map<Integer,List<BizSkuTransferDetail>> transMap = Maps.newHashMap();
+        List<Dict> dictList = DictUtils.getDictList(range);
+        List<Integer> sizeList = Lists.newArrayList();
+        for (Dict dict : dictList) {
+            sizeList.add(Integer.valueOf(dict.getValue()));
+            String s = before.concat(dict.getValue()).concat(middle.substring(2)).concat(after);
+            BizSkuInfo sku = bizSkuInfoService.getSkuByItemNo(s);
+            if (sku != null) {
+                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findInventorySkuByskuIdAndcentId(inventorySku.getInvInfo().getCustomer().getId(),sku.getId());
+                List<BizSkuTransferDetail> transferDetailList = bizSkuTransferDetailService.findInventorySkuByskuIdAndcentId(inventorySku.getInvInfo().getCustomer().getId(), sku.getId());
+                if (CollectionUtils.isNotEmpty(requestDetailList)) {
+                    reqMap.put(Integer.valueOf(dict.getValue()),requestDetailList);
+                }
+                if (CollectionUtils.isNotEmpty(transferDetailList)) {
+                    transMap.put(Integer.valueOf(dict.getValue()),transferDetailList);
+                }
+            }
+        }
+        model.addAttribute("reqMap",reqMap);
+        model.addAttribute("transMap",transMap);
+        model.addAttribute("inventorySku",inventorySku);
+        model.addAttribute("sizeList",sizeList);
+        return "modules/biz/inventory/skuMergeForm";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "skuMerge")
+    public String skuMerge(@RequestBody String data) {
+        LinkedHashMap<String,List<BizOutTreasuryEntity>> map = Maps.newLinkedHashMap();
+        HashMap maps=  JSONObject.parseObject(data,LinkedHashMap.class);
+        for (Object entry : maps.entrySet()) {
+            List<BizOutTreasuryEntity> parseArray = JsonUtil.parseArray(((Map.Entry)entry).getValue().toString(),new TypeReference<List<BizOutTreasuryEntity>>() {});
+            map.put((String) ((Map.Entry)entry).getKey(),parseArray);
+        }
+        return bizInventorySkuService.skuMerge(map);
+    }
 
 }

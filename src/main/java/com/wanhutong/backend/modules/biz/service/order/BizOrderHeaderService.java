@@ -10,6 +10,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -20,6 +21,7 @@ import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.order.*;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
@@ -57,12 +59,14 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Service
@@ -273,7 +277,46 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         } else if (!user.isAdmin() && enNameList.contains(RoleEnNameEnum.SUPPLY_CHAIN.getState())) {
             bizOrderHeader.getSqlMap().put("order",BaseService.dataScopeFilter(user,"vend","su"));
         }
-        return super.findPage(page, bizOrderHeader);
+
+        Page<BizOrderHeader> pageTemp = super.findPage(page, bizOrderHeader);
+
+        List<Callable<Pair<Boolean, String>>> tasks = new ArrayList<>();
+        for (BizOrderHeader b : page.getList()) {
+            tasks.add(new Callable<Pair<Boolean, String>>() {
+                @Override
+                public Pair<Boolean, String> call() {
+                    BizPoHeader bizPoHeader = new BizPoHeader();
+                    bizPoHeader.setBizOrderHeader(b);
+
+                    List<CommonProcessEntity> list = null;
+                    if (b.getOrderNum().startsWith("SO") || b.getOrderNum().startsWith("RO")) {
+                        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+                        commonProcessEntity.setObjectId(String.valueOf(b.getId()));
+                        commonProcessEntity.setObjectName(JointOperationOrderProcessLocalConfig.ORDER_TABLE_NAME);
+
+                        if (b.getSuplys() == null || b.getSuplys() == 0 || b.getSuplys() == 721) {
+                            commonProcessEntity.setObjectName(JointOperationOrderProcessOriginConfig.ORDER_TABLE_NAME);
+                        }
+
+                        list = commonProcessService.findList(commonProcessEntity);
+
+                        if (CollectionUtils.isNotEmpty(list)) {
+                            b.setCommonProcess(list.get(list.size() - 1));
+                        }
+
+                    }
+                    return Pair.of(Boolean.TRUE, "操作成功");
+                }
+            });
+        }
+        try {
+            ThreadPoolManager.getDefaultThreadPool().invokeAll(tasks);
+        } catch (InterruptedException e) {
+            log.error("init order list data error", e);
+        }
+
+
+        return pageTemp;
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
@@ -356,7 +399,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public void saveCommonProcess(OrderPayProportionStatusEnum orderPayProportionStatusEnum, BizOrderHeader bizOrderHeader, boolean reGen){
+    public void saveCommonProcess(OrderPayProportionStatusEnum orderPayProportionStatusEnum, BizOrderHeader bizOrderHeader, boolean reGen, Boolean cancleFlag){
         Integer code = null;
         //处理角色
         String roleEnNameEnum = null;
@@ -388,23 +431,33 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             roleEnNameEnum = purchaseOrderProcess.getRoleEnNameEnum();
         }
 
-        StringBuilder phone = new StringBuilder();
-        User user=UserUtils.getUser();
-        User sendUser=new User(systemService.getRoleByEnname(roleEnNameEnum==null?"":roleEnNameEnum.toLowerCase()));
-        //不根据采购中心区分渠道经理，所以注释掉该行
-        sendUser.setCent(user.getCompany());
-        List<User> userList = systemService.findUser(sendUser);
-        if (CollectionUtils.isNotEmpty(userList)) {
-            for (User u : userList) {
-                phone.append(u.getMobile()).append(",");
-            }
-        }
+        if (!cancleFlag) {
+            StringBuilder phone = new StringBuilder();
+            User user=UserUtils.getUser();
+            if (StringUtils.isNotBlank(roleEnNameEnum)) {
+                if ("MARKETINGMANAGER".equals(roleEnNameEnum)) {
+                    roleEnNameEnum = "MARKETING_MANAGER".toLowerCase();
+                } else {
+                    roleEnNameEnum = roleEnNameEnum.toLowerCase();
+                }
 
-        if (StringUtils.isNotBlank(phone.toString())) {
-            AliyunSmsClient.getInstance().sendSMS(
-                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
-                    phone.toString(),
-                    ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
+                User sendUser=new User(systemService.getRoleByEnname(roleEnNameEnum));
+                //不根据采购中心区分渠道经理，所以注释掉该行
+                //sendUser.setCent(user.getCompany());
+                List<User> userList = systemService.findUser(sendUser);
+                if (CollectionUtils.isNotEmpty(userList)) {
+                    for (User u : userList) {
+                        phone.append(u.getMobile()).append(",");
+                    }
+                }
+
+                if (StringUtils.isNotBlank(phone.toString())) {
+                    AliyunSmsClient.getInstance().sendSMS(
+                            SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                            phone.toString(),
+                            ImmutableMap.of("order","代采清单(已同意发货)", "orderNum", bizOrderHeader.getOrderNum()));
+                }
+            }
         }
     }
 

@@ -36,6 +36,45 @@
         	return false;
         }
 	</script>
+	<script type="text/javascript">
+		function skuSplit(invSkuId) {
+			$.ajax({
+				type:"post",
+				url:"${ctx}/biz/inventory/bizInventorySku/checkSku",
+				data:{"id":invSkuId},
+				success:function (data) {
+					if (data == 'ok') {
+					    window.location.href = "${ctx}/biz/inventory/bizInventorySku/skuSplitForm?id=" + invSkuId;
+                    } else {
+					    alert(data);
+					    window.location.reload();
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+			});
+        }
+
+        function skuMerge(invSkuId) {
+			$.ajax({
+                type:"post",
+                url:"${ctx}/biz/inventory/bizInventorySku/checkMergeSku",
+                data:{"id":invSkuId},
+                success:function (data) {
+                    if (data == 'merge_sku_one' || data == 'merge_sku_two') {
+                        window.location.href = "${ctx}/biz/inventory/bizInventorySku/skuMergeForm?id=" + invSkuId + "&range=" + data;
+                    } else {
+                        alert(data);
+                        window.location.reload();
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+			});
+        }
+	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -47,6 +86,7 @@
 		</c:if>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/" method="post" class="breadcrumb form-search">
+		<form:hidden path="id"/>
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input id="zt" type="hidden" name="zt" value="${zt}"/>
@@ -156,7 +196,12 @@
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizInventorySku" varStatus="state">
-			<tr>
+			<c:if test="${bizInventorySku.delFlag != null && bizInventorySku.delFlag == 0}">
+				<tr style="text-decoration:line-through;">
+			</c:if>
+			<c:if test="${bizInventorySku.delFlag != null && bizInventorySku.delFlag == 1}">
+				<tr>
+			</c:if>
 				<td>${state.index+1}</td>
 				<td>
 					<%--<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}">--%>
@@ -178,7 +223,7 @@
 					${bizInventorySku.skuInfo.buyPrice}
 				</td>
 				<td>
-					${bizInventorySku.skuInfo.buyPrice * bizInventorySku.stockQty}
+					<fmt:formatNumber value="${bizInventorySku.skuInfo.buyPrice * bizInventorySku.stockQty}" pattern="0.00"/>
 				</td>
 				<td>
 					${bizInventorySku.skuInfo.variety.name}
@@ -239,6 +284,10 @@
 							</c:if>
 						</shiro:hasPermission>
 					</c:if>
+					<shiro:hasPermission name="biz:inventory:bizInventorySku:split">
+						<a href="#" onclick="skuSplit(${bizInventorySku.id})">拆分</a>
+						<a href="#" onclick="skuMerge(${bizInventorySku.id})">合并</a>
+					</shiro:hasPermission>
 				</td>
 			</tr>
 		</c:forEach>

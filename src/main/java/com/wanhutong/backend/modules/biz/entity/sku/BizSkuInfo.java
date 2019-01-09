@@ -141,6 +141,11 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	 */
 	private Integer stockQty;
 
+	/**
+	 * 删除商品时标识符
+	 */
+	private String deleteCheck;
+
 	public BizSkuInfo() {
 		super();
 	}
@@ -519,5 +524,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setStockQty(Integer stockQty) {
 		this.stockQty = stockQty;
+	}
+
+	public String getDeleteCheck() {
+		return deleteCheck;
+	}
+
+	public void setDeleteCheck(String deleteCheck) {
+		this.deleteCheck = deleteCheck;
 	}
 }

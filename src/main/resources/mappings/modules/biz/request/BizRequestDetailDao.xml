@@ -272,9 +272,10 @@
 			bpor.so_type=2 AND bpor.status = 1
 			LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1 AND ph.is_prew = 0
 		</if>
-		LEFT JOIN biz_inventory_sku bis on bis.sku_id=a.sku_id and bis.status=1
-		LEFT JOIN biz_inventory_info bii on bii.id=bis.inv_id and bii.status=1
-		and bii.cust_id=reheader.from_id
+		LEFT JOIN biz_inventory_info bii ON bii.cust_id = reheader.from_id
+		AND bii. STATUS = 1
+		LEFT JOIN biz_inventory_sku bis ON bis.inv_id = bii.id AND bis.sku_id = a.sku_id
+		AND bis. STATUS = 1
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<!--<if test="poheaderSource!=null and poheaderSource!=''">-->
@@ -362,14 +363,15 @@
 		LEFT JOIN biz_request_header rh ON rh.id = a.header_id
 		LEFT JOIN biz_sku_info bsi ON bsi.id = a.sku_id
 		LEFT JOIN biz_product_info bpi ON bpi.id = bsi.prod_id
-		LEFT JOIN biz_inventory_sku bis ON bis.sku_id = bsi.id
-		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id AND bii.cust_id = rh.from_id
+		LEFT JOIN biz_inventory_info bii ON bii.cust_id = rh.from_id
+		LEFT JOIN biz_inventory_sku bis ON bii.id = bis.inv_id AND bis.sku_id = bsi.id
 		WHERE a.status = 1
 		AND rh.status = 1
 		AND(rh.biz_status = 27
 			or rh.biz_status = 30
 			or rh.biz_status = 35
 			or rh.biz_status = 37)
+		AND (a.out_qty IS NULL OR a.out_qty &lt; a.recv_qty)
 		AND bis.status = 1
 		AND bii.cust_id = #{centerId}
 		AND bsi.id = #{skuId}
@@ -392,6 +394,7 @@
 			bis.u_version AS "uVersion",
 			a.recv_qty AS "recvQty",
 			a.out_qty AS "outQty",
+			bior.out_qty AS "invOrderReq.outQty",
 			bis.stock_qty AS "inventorySku.stockQty"
 			FROM biz_request_detail a
 			LEFT JOIN biz_request_header rh ON rh.id = a.header_id

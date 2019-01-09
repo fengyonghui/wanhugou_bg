@@ -327,11 +327,14 @@ public class BizOrderHeaderController extends BaseController {
                            b.setCommonProcess(list.get(list.size() - 1));
                        }
 
-                       if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                       if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list)
+                               && b.getBizStatus() >= OrderHeaderBizStatusEnum.SUPPLYING.getState()
+                               && !OrderHeaderBizStatusEnum.CANCLE.getState().equals(b.getBizStatus())
+                               && !OrderHeaderBizStatusEnum.DELETE.getState().equals(b.getBizStatus())) {
                            OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                            //b.setPayProportion(orderPayProportionStatusEnum.getState());
                            bizOrderHeaderService.saveOrderHeader(b);
-                           genAuditProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
+                           genAuditProcess(orderPayProportionStatusEnum, b, Boolean.FALSE, Boolean.FALSE);
                        }
                    }
                    if (b.getOrderNum().startsWith("DO")) {
@@ -339,11 +342,13 @@ public class BizOrderHeaderController extends BaseController {
                        commonProcessEntityTemp.setObjectId(String.valueOf(b.getId()));
                        commonProcessEntityTemp.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
                        list = commonProcessService.findList(commonProcessEntityTemp);
-                       if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                       if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= OrderHeaderBizStatusEnum.SUPPLYING.getState()
+                               && !OrderHeaderBizStatusEnum.CANCLE.getState().equals(b.getBizStatus())
+                               && !OrderHeaderBizStatusEnum.DELETE.getState().equals(b.getBizStatus())) {
                            OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                            Integer state = orderPayProportionStatusEnum.getState();
                            if (state > 0) {
-                               bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
+                               bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, b, Boolean.FALSE, Boolean.FALSE);
                            }
                        }
 
@@ -400,6 +405,15 @@ public class BizOrderHeaderController extends BaseController {
     @ResponseBody
     public String listData4mobile(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         Map<String, Object> resultMap = Maps.newHashMap();
+        //判断是否为代销订单
+        if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
+            //零售订单
+            bizOrderHeader.setOrderType(8);
+            //收货完成
+            bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.COMPLETE.getState());
+            //未结佣
+            //bizOrderHeader.setCommissionStatus(OrderHeaderCommissionStatusEnum.NO_COMMISSSION.getComStatus());
+        }
         if (bizOrderHeader.getSkuChickCount() != null) {
             //商品下单量标识
             bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
@@ -420,6 +434,46 @@ public class BizOrderHeaderController extends BaseController {
         originConfigMap.put("不需要审批", "不需要审批");
 
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+        if ("COMMISSION_ORDER".equals(bizOrderHeader.getTargetPage())){
+            List<BizOrderHeader> bizOrderHeaderList = page.getList();
+            List<BizOrderHeader> bizOrderHeaderListNew = new ArrayList<BizOrderHeader>();
+            if (CollectionUtils.isNotEmpty(bizOrderHeaderList)) {
+                for (BizOrderHeader orderHeader :bizOrderHeaderList) {
+                    BizCommissionOrder bizCommissionOrder = new BizCommissionOrder();
+                    String applyCommStatus = "no";
+                    bizCommissionOrder.setOrderId(orderHeader.getId());
+                    List<BizCommissionOrder> commissionOrderList = bizCommissionOrderService.findList(bizCommissionOrder);
+                    if (CollectionUtils.isNotEmpty(commissionOrderList)) {
+                        applyCommStatus = "yes";
+                        bizCommissionOrder = commissionOrderList.get(0);
+                        Integer commId = bizCommissionOrder.getCommId();
+                        BizCommission bizCommission = bizCommissionService.get(commId);
+                        orderHeader.setBizCommission(bizCommission);
+                    }
+                    orderHeader.setApplyCommStatus(applyCommStatus);
+//                    BigDecimal commission = BigDecimal.ZERO;
+//                    List<BizOrderDetail> orderDetails = orderHeader.getOrderDetailList();
+//                    if (CollectionUtils.isNotEmpty(orderDetails)) {
+//                        BigDecimal detailCommission = BigDecimal.ZERO;
+//                        for (BizOrderDetail orderDetail : orderDetails) {
+//                            BizOpShelfSku bizOpShelfSku = orderDetail.getSkuInfo().getBizOpShelfSku();
+//                            BigDecimal orgPrice = new BigDecimal(bizOpShelfSku.getOrgPrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+//                            BigDecimal salePrice = new BigDecimal(bizOpShelfSku.getSalePrice()).setScale(0, BigDecimal.ROUND_HALF_UP);
+//                            Integer ordQty = orderDetail.getOrdQty();
+//                            BigDecimal commissionRatio = bizOpShelfSku.getCommissionRatio();
+//                            if (commissionRatio == null || commissionRatio.compareTo(BigDecimal.ZERO) <= 0) {
+//                                commissionRatio = BigDecimal.ZERO;
+//                            }
+//                            detailCommission = (salePrice.subtract(orgPrice)).multiply(BigDecimal.valueOf(ordQty)).multiply(commissionRatio).divide(BigDecimal.valueOf(100));
+//                            commission = commission.add(detailCommission);
+//                        }
+//                    }
+//                    orderHeader.setCommission(commission);
+                    bizOrderHeaderListNew.add(orderHeader);
+                }
+            }
+            page.setList(bizOrderHeaderListNew);
+        }
         model.addAttribute("page", page);
         resultMap.put("page", page);
         if (bizOrderHeader.getSource() != null) {
@@ -451,11 +505,14 @@ public class BizOrderHeaderController extends BaseController {
                             b.setCommonProcess(list.get(list.size() - 1));
                         }
 
-                        if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                        if (CollectionUtils.isEmpty(poList) && CollectionUtils.isEmpty(list)
+                                && b.getBizStatus() >= OrderHeaderBizStatusEnum.SUPPLYING.getState()
+                                && !OrderHeaderBizStatusEnum.CANCLE.getState().equals(b.getBizStatus())
+                                && !OrderHeaderBizStatusEnum.DELETE.getState().equals(b.getBizStatus())) {
                             OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                             //b.setPayProportion(orderPayProportionStatusEnum.getState());
                             bizOrderHeaderService.saveOrderHeader(b);
-                            genAuditProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
+                            genAuditProcess(orderPayProportionStatusEnum, b, Boolean.FALSE, Boolean.FALSE);
                         }
                     }
                     if (b.getOrderNum().startsWith("DO")) {
@@ -463,11 +520,13 @@ public class BizOrderHeaderController extends BaseController {
                         commonProcessEntityTemp.setObjectId(String.valueOf(b.getId()));
                         commonProcessEntityTemp.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
                         list = commonProcessService.findList(commonProcessEntityTemp);
-                        if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= 15) {
+                        if (CollectionUtils.isEmpty(list) && b.getBizStatus() >= OrderHeaderBizStatusEnum.SUPPLYING.getState()
+                                && !OrderHeaderBizStatusEnum.CANCLE.getState().equals(b.getBizStatus())
+                                && !OrderHeaderBizStatusEnum.DELETE.getState().equals(b.getBizStatus())) {
                             OrderPayProportionStatusEnum orderPayProportionStatusEnum = OrderPayProportionStatusEnum.parse(b);
                             Integer state = orderPayProportionStatusEnum.getState();
                             if (state > 0) {
-                                bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, b, Boolean.FALSE);
+                                bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, b, Boolean.FALSE, Boolean.FALSE);
                             }
                         }
 
@@ -918,7 +977,7 @@ public class BizOrderHeaderController extends BaseController {
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
 
         String type = "1";
-        if (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721) {
+        if (bizOrderHeaderTwo.getSuplys() != null && (bizOrderHeaderTwo.getSuplys() == 0 || bizOrderHeaderTwo.getSuplys() == 721)) {
             type = "0";
         }
 
@@ -968,7 +1027,7 @@ public class BizOrderHeaderController extends BaseController {
             }
             //供应商
             List<User> vendUser = bizOrderHeaderService.findVendUserV2(bizOrderHeader.getId());
-            if (CollectionUtils.isNotEmpty(vendUser)) {
+            if (CollectionUtils.isNotEmpty(vendUser) && vendUser.get(0) != null) {
                 model.addAttribute("vendUser", vendUser.get(0));
                 resultMap.put("vendUser", vendUser.get(0));
                 bizOrderHeader.setVendorId(vendUser.get(0).getVendor().getId());
@@ -1338,16 +1397,20 @@ public class BizOrderHeaderController extends BaseController {
             bizOrderHeader.getPlatformInfo().setId(6);
         }
         String statuPath = request.getParameter("statuPath");
+        Boolean cancleFlag = false;
+        if (OrderHeaderBizStatusEnum.CANCLE.getState().equals(bizOrderHeader.getBizStatus())) {
+            cancleFlag = true;
+        }
         if (bizOrderHeader.getId() != null) {
             OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader);
             if (bizOrderHeader.getOrderNum().startsWith("DO")) {
                 if (OrderPayProportionStatusEnum.ALL == statusEnum || OrderPayProportionStatusEnum.FIFTH == statusEnum) {
-                    bizOrderHeaderService.saveCommonProcess(statusEnum, bizOrderHeader, Boolean.TRUE);
+                    bizOrderHeaderService.saveCommonProcess(statusEnum, bizOrderHeader, Boolean.TRUE, cancleFlag);
                 }
             }
 
             if (bizOrderHeader.getOrderNum().startsWith("SO")) {
-                genAuditProcess(statusEnum, bizOrderHeader, Boolean.TRUE);
+                genAuditProcess(statusEnum, bizOrderHeader, Boolean.TRUE, cancleFlag);
             }
 
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
@@ -1398,16 +1461,20 @@ public class BizOrderHeaderController extends BaseController {
             bizOrderHeader.getPlatformInfo().setId(6);
         }
         String statuPath = request.getParameter("statuPath");
+        Boolean cancleFlag = false;
+        if (OrderHeaderBizStatusEnum.CANCLE.getState().equals(bizOrderHeader.getBizStatus())) {
+            cancleFlag = true;
+        }
         if (bizOrderHeader.getId() != null) {
             OrderPayProportionStatusEnum statusEnum = OrderPayProportionStatusEnum.parse(bizOrderHeader);
             if (bizOrderHeader.getOrderNum().startsWith("DO")) {
                 if (OrderPayProportionStatusEnum.ALL == statusEnum || OrderPayProportionStatusEnum.FIFTH == statusEnum) {
-                    bizOrderHeaderService.saveCommonProcess(statusEnum, bizOrderHeader, Boolean.TRUE);
+                    bizOrderHeaderService.saveCommonProcess(statusEnum, bizOrderHeader, Boolean.TRUE, cancleFlag);
                 }
             }
 
             if (bizOrderHeader.getOrderNum().startsWith("SO")) {
-                genAuditProcess(statusEnum, bizOrderHeader, Boolean.TRUE);
+                genAuditProcess(statusEnum, bizOrderHeader, Boolean.TRUE, cancleFlag);
             }
 
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
@@ -1738,9 +1805,9 @@ public class BizOrderHeaderController extends BaseController {
                 }
                 if ("ok".equals(commis)) {
                     if (BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
-                        bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE);
+                        bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE, Boolean.FALSE);
                     } else {
-                        genAuditProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE);
+                        genAuditProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE, Boolean.FALSE);
                     }
 
                     //同意发货成功，发送站内信
@@ -1834,9 +1901,9 @@ public class BizOrderHeaderController extends BaseController {
                 }
                 if ("ok".equals(commis)) {
                     if (BizOrderTypeEnum.PURCHASE_ORDER.getState().equals(bizOrderHeader.getOrderType())) {
-                        bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE);
+                        bizOrderHeaderService.saveCommonProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE, Boolean.FALSE);
                     } else {
-                        genAuditProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE);
+                        genAuditProcess(orderPayProportionStatusEnum, bizOrderHeader, Boolean.FALSE, Boolean.FALSE);
                     }
                 }
             }
@@ -1853,7 +1920,7 @@ public class BizOrderHeaderController extends BaseController {
      * @param orderPayProportionStatusEnum
      * @param bizOrderHeader
      */
-    private void genAuditProcess(OrderPayProportionStatusEnum orderPayProportionStatusEnum, BizOrderHeader bizOrderHeader, boolean reGen) {
+    private void genAuditProcess(OrderPayProportionStatusEnum orderPayProportionStatusEnum, BizOrderHeader bizOrderHeader, boolean reGen, boolean cancleFlag) {
         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
         JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
 
@@ -1926,24 +1993,27 @@ public class BizOrderHeaderController extends BaseController {
             }
         }
 
-        if (currentProcess != null && currentProcess.getRoleEnNameEnum() != null && currentProcess.getRoleEnNameEnum().get(0) != null) {
-            User sendUser = new User(systemService.getRoleByEnname(currentProcess.getRoleEnNameEnum().get(0).toLowerCase()));
-            //不根据采购中心区分渠道经理，所以注释掉该行
-            //sendUser.setCent(user.getCompany());
-            List<User> userList = systemService.findUser(sendUser);
-            if (CollectionUtils.isNotEmpty(userList)) {
-                for (User u : userList) {
-                    phone.append(u.getMobile()).append(",");
+        if (!cancleFlag) {
+            if (currentProcess != null && currentProcess.getRoleEnNameEnum() != null && currentProcess.getRoleEnNameEnum().get(0) != null) {
+                User sendUser = new User(systemService.getRoleByEnname(currentProcess.getRoleEnNameEnum().get(0).toLowerCase()));
+                //不根据采购中心区分渠道经理，所以注释掉该行
+                //sendUser.setCent(user.getCompany());
+                List<User> userList = systemService.findUser(sendUser);
+                if (CollectionUtils.isNotEmpty(userList)) {
+                    for (User u : userList) {
+                        phone.append(u.getMobile()).append(",");
+                    }
+                }
+
+                if (StringUtils.isNotBlank(phone.toString())) {
+                    AliyunSmsClient.getInstance().sendSMS(
+                            SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                            phone.toString(),
+                            ImmutableMap.of("order","联营订单", "orderNum", bizOrderHeader.getOrderNum()));
                 }
             }
-
-            if (StringUtils.isNotBlank(phone.toString())) {
-                AliyunSmsClient.getInstance().sendSMS(
-                        SmsTemplateCode.PENDING_AUDIT_1.getCode(),
-                        phone.toString(),
-                        ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
-            }
         }
+
     }
 
     @ResponseBody
@@ -2110,6 +2180,17 @@ public class BizOrderHeaderController extends BaseController {
                     }
                     rowData.add(order.getTotalExp() == null ? StringUtils.EMPTY : String.valueOf(order.getTotalExp()));
                     rowData.add(order.getFreight() == null ? StringUtils.EMPTY : String.valueOf(order.getFreight()));
+                    //是否万户通发货
+                    if (order.getBizOrderLogistics() != null && order.getBizOrderLogistics().getLogisticsLines() != null) {
+                        if (order.getBizOrderLogistics().getLogisticsLines().equals(BizOrderLogisticsEnum.CUSTOMER_PICK_UP.getDesc())
+                                || order.getBizOrderLogistics().getLogisticsLines().equals(BizOrderLogisticsEnum.DELIVER_HOME.getDesc())) {
+                            rowData.add("是");
+                        } else {
+                            rowData.add("否");
+                        }
+                    } else {
+                        rowData.add("否");
+                    }
                     double total = 0.0;
                     double exp = 0.0;
                     double fre = 0.0;
@@ -2259,6 +2340,17 @@ public class BizOrderHeaderController extends BaseController {
                         }
                         rowData.add(order.getTotalExp() == null ? StringUtils.EMPTY : String.valueOf(order.getTotalExp()));
                         rowData.add(order.getFreight() == null ? StringUtils.EMPTY : String.valueOf(order.getFreight()));
+                        //是否万户通发货
+                        if (order.getBizOrderLogistics() != null && order.getBizOrderLogistics().getLogisticsLines() != null) {
+                            if (order.getBizOrderLogistics().getLogisticsLines().equals(BizOrderLogisticsEnum.CUSTOMER_PICK_UP.getDesc())
+                                    || order.getBizOrderLogistics().getLogisticsLines().equals(BizOrderLogisticsEnum.DELIVER_HOME.getDesc())) {
+                                rowData.add("是");
+                            } else {
+                                rowData.add("否");
+                            }
+                        } else {
+                            rowData.add("否");
+                        }
                         //应付金额
                         double total = 0.0;
                         double exp = 0.0;
@@ -2345,10 +2437,10 @@ public class BizOrderHeaderController extends BaseController {
             String[] headers = null;
             //隐藏佣金
             if (permFlag) {
-                headers = new String[]{"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
+                headers = new String[]{"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费", "是否万户通发货",
                         "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "佣金", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
             } else {
-                headers = new String[]{"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费",
+                headers = new String[]{"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品结算总价", "调整金额", "运费", "是否万户通发货",
                         "应付金额", "已收货款", "尾款信息", "积分抵扣", "服务费", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
             }
 
@@ -3145,20 +3237,27 @@ public class BizOrderHeaderController extends BaseController {
         commonProcessService.save(nextProcessEntity);
 
         StringBuilder phone = new StringBuilder();
-
-        User sendUser=new User(systemService.getRoleByEnname(nextProcess.getRoleEnNameEnum()==null?"":nextProcess.getRoleEnNameEnum().toLowerCase()));
-
-        List<User> userList = systemService.findUser(sendUser);
-        if (CollectionUtils.isNotEmpty(userList)) {
-            for (User u : userList) {
-                phone.append(u.getMobile()).append(",");
+        String roleEnNameEnumStr = nextProcess.getRoleEnNameEnum();
+        if (StringUtils.isNotBlank(roleEnNameEnumStr)) {
+            if ("MARKETINGMANAGER".equals(roleEnNameEnumStr)) {
+                roleEnNameEnumStr = "MARKETING_MANAGER".toLowerCase();
+            } else {
+                roleEnNameEnumStr = roleEnNameEnumStr.toLowerCase();
             }
-        }
-        if (StringUtils.isNotBlank(phone.toString())) {
-            AliyunSmsClient.getInstance().sendSMS(
-                    SmsTemplateCode.PENDING_AUDIT_1.getCode(),
-                    phone.toString(),
-                    ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
+
+            User sendUser=new User(systemService.getRoleByEnname(roleEnNameEnumStr));
+            List<User> userList = systemService.findUser(sendUser);
+            if (CollectionUtils.isNotEmpty(userList)) {
+                for (User u : userList) {
+                    phone.append(u.getMobile()).append(",");
+                }
+            }
+            if (StringUtils.isNotBlank(phone.toString())) {
+                AliyunSmsClient.getInstance().sendSMS(
+                        SmsTemplateCode.PENDING_AUDIT_1.getCode(),
+                        phone.toString(),
+                        ImmutableMap.of("order","代采清单", "orderNum", bizOrderHeader.getOrderNum()));
+            }
         }
 
         //自动生成采购单

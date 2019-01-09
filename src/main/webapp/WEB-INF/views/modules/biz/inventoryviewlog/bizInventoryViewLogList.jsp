@@ -35,7 +35,7 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>仓库：</label>
-				<form:input path="invInfo.name" htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="invInfo.name" htmlEscape="false" class="input-medium"/>
 			</li>
 			<li><label>备货单号：</label>
 				<form:input path="requestHeader.reqNo" htmlEscape="false" class="input-medium"/>
@@ -46,8 +46,20 @@
 					<form:options items="${fns:getDictList('req_from_type')}" itemLabel="label" itemValue="value"/>
 				</form:select>
 			</li>
-			<li><label>商品：</label>
-				<form:input path="skuInfo.name" htmlEscape="false" maxlength="20" class="input-medium"/>
+			<li><label>商品名称：</label>
+				<form:input path="skuInfo.name" htmlEscape="false" class="input-medium"/>
+			</li>
+			<li><label>商品货号：</label>
+				<form:input path="skuInfo.itemNo" htmlEscape="false" class="input-medium"/>
+			</li>
+			<li><label>盘点时间：</label>
+				<input name="createStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizInventoryViewLog.createStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				至
+				<input name="createEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizInventoryViewLog.createEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
@@ -61,15 +73,16 @@
 				<td>序号</td>
 				<th>盘点日期</th>
 				<th>盘点人</th>
+				<th>备货单号</th>
 				<th>仓库名称</th>
 				<th>采购中心</th>
 				<th>备货方</th>
 				<th>库存类型</th>
-				<th>商品</th>
+				<th>商品名称</th>
+				<th>商品货号</th>
 				<th>原库存数量</th>
 				<th>现库存数量</th>
 				<th>改变数量</th>
-				<th>备货单号</th>
 				<shiro:hasPermission name="biz:inventoryviewlog:bizInventoryViewLog:view"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -82,6 +95,9 @@
 				</td>
 				<td>
 						${bizInventoryViewLog.createBy.name}
+				</td>
+				<td>
+						${bizInventoryViewLog.requestHeader.reqNo}
 				</td>
 				<td>
 					${bizInventoryViewLog.invInfo.name}
@@ -99,6 +115,9 @@
 					${bizInventoryViewLog.skuInfo.name}
 				</td>
 				<td>
+					${bizInventoryViewLog.skuInfo.itemNo}
+				</td>
+				<td>
 					${bizInventoryViewLog.stockQty}
 				</td>
 				<td>
@@ -106,9 +125,6 @@
 				</td>
 				<td>
 					${bizInventoryViewLog.stockChangeQty}
-				</td>
-				<td>
-					${bizInventoryViewLog.requestHeader.reqNo}
 				</td>
 
 				<shiro:hasPermission name="biz:inventoryviewlog:bizInventoryViewLog:view"><td>

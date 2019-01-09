@@ -94,12 +94,22 @@
 						<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>
 				</li>
-                <li><label>需要入库</label>
+                <li><label>需要入库：</label>
                     <form:select path="needIn" cssClass="input-mini">
                         <form:option value="" label="请选择"/>
                         <form:option value="1" label="是"/>
                     </form:select>
                 </li>
+				<li><label>收货时间：</label>
+					<input name="recvEtaStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						   value="${bizRequestHeader.recvEtaStartTime}"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+					至
+					<input name="recvEtaEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						   value="${bizRequestHeader.recvEtaEndTime}"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				</li>
+
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 				<li class="btns">
 					<%--备货单收货--%>
@@ -146,12 +156,21 @@
 										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
 				</li>
-                <li><label>需要出库</label>
+                <li><label>需要出库：</label>
                     <form:select path="needOut" cssClass="input-mini">
                         <form:option value="" label="请选择"/>
                         <form:option value="1" label="是"/>
                     </form:select>
                 </li>
+				<li><label>出库时间：</label>
+					<input name="needOutStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						   value="${bizOrderHeader.needOutStartTime}"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+					至
+					<input name="needOutEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+						   value="${bizOrderHeader.needOutEndTime}"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 				<li class="btns">
 					<%--订单出库--%>
@@ -245,16 +264,18 @@
 					<td>
 						<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-					<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
+					<td>
 						<c:choose>
 							<c:when test="${source=='gh'}">
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">详情</a>
 							</c:when>
 							<c:when test="${source=='sh'}">
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&bizStatu=${bizStatu}">备货详情</a>
+								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<c:if test="${requestHeader.bizStatus < ReqHeaderStatusEnum.COMPLETE.state}">
 									<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}">入库</a>
 								</c:if>
+								</shiro:hasPermission>
 							</c:when>
 							<c:when test="${bizStatu=='1'}">
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh&bizStatu=${bizStatu}">备货详情</a>
@@ -262,7 +283,7 @@
 							</c:when>
 						</c:choose>
 
-					</td></shiro:hasPermission>
+					</td>
 				</tr>
 			</c:forEach>
 		</c:if>
@@ -304,7 +325,7 @@
 					<td>
 						<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-					<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
+					<td>
 						<c:choose>
 							<c:when test="${source=='gh'}">
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}">详情</a>
@@ -312,13 +333,16 @@
 							<c:otherwise>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs&bizStatu=${bizStatu}&ship=${ship}">发货详情</a>--%>
 								<a href="${ctx}/biz/request/bizRequestAll/confirmOut?orderHeaderId=${orderHeader.id}&source=detail">出库详情</a>
-								<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SEND.state}">
+								<shiro:hasPermission name="biz:request:confirmOut:view">
+								<c:if test="${orderHeader.bizStatus < OrderHeaderBizStatusEnum.SEND.state &&
+										(orderHeader.commonProcess.type == '666' || orderHeader.commonProcess.type == '777')}">
 									<a href="${ctx}/biz/request/bizRequestAll/confirmOut?orderHeaderId=${orderHeader.id}">出库</a>
 								</c:if>
+								</shiro:hasPermission>
 								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=xs">发货</a>--%>
 							</c:otherwise>
 						</c:choose>
-					</td></shiro:hasPermission>
+					</td>
 				</tr>
 			</c:forEach>
 		</c:if>

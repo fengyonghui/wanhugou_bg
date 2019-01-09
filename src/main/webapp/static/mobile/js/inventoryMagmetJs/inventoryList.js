@@ -24,11 +24,7 @@
 //			this.getPermissionList('biz:requestHeader:pay','payFlag')
 			this.getPermissionList3('biz:request:bizRequestHeader:audit','checkFlag')
 //			this.getPermissionList('biz:request:bizRequestHeader:delete','cancelFlag')
-			if(this.userInfo.isFunc){
-				this.seachFunc()
-			}else{
-				this.pageInit(); //页面初始化
-			}
+			this.pageInit(); //页面初始化
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
@@ -65,8 +61,54 @@
 				                for(var i = childs.length - 1; i >= 0; i--) {
 				                    f.removeChild(childs[i]);
 				                }
-				                $('.mui-pull-caption-down').html('');				                
-				                getData(pager);
+				                if(_this.userInfo.isFunc){
+				            		if(_this.userInfo.reqNo==undefined){
+										_this.userInfo.reqNo="";
+									}
+				            		var nameTxt = '';
+									if(_this.userInfo.name) {
+										nameTxt = decodeURIComponent(_this.userInfo.name)
+									}else {
+										nameTxt = ''
+									}
+									if(nameTxt==undefined){
+										nameTxt="";
+									}
+				            		if(_this.userInfo.fromType==undefined){
+										_this.userInfo.fromType="";
+									}
+				            		if(_this.userInfo.fromOffice==undefined){
+										_this.userInfo.fromOffice="";
+									}
+				            		if(_this.userInfo.bizStatusid==undefined){
+										_this.userInfo.bizStatusid="";
+									}
+				            		if(_this.userInfo.varietyInfoid==undefined){
+										_this.userInfo.varietyInfoid="";
+									}
+				            		if(_this.userInfo.process==undefined){
+										_this.userInfo.process="";
+									}
+				            		if(_this.userInfo.includeTestData==undefined){
+										_this.userInfo.includeTestData="";
+									}
+				            		pager['size']= 20;
+			                    	pager['pageNo'] = 1;
+			                    	pager['reqNo'] = _this.userInfo.reqNo;//备货单号
+			                    	pager['name'] = nameTxt;//供应商
+			                    	pager['fromType'] = _this.userInfo.fromType;//备货方
+			                    	pager['fromOffice.id'] = _this.userInfo.fromOffice;//采购中心
+			                    	pager['bizStatus'] = _this.userInfo.bizStatusid;//业务状态
+			                    	pager['varietyInfo.id'] = _this.userInfo.varietyInfoid;//品类名称
+			                    	pager['process'] = _this.userInfo.process;//审核状态
+			                    	pager['includeTestData'] = _this.userInfo.includeTestData;//测试数据
+			                    	getData(pager);
+				            	}else{
+				            		pager['size']= 20;
+				                    pager['pageNo'] = 1;				                
+					                $('.mui-pull-caption-down').html('');				                
+					                getData(pager);
+				            	}
 			            }
 			        }
 			    })
@@ -396,7 +438,7 @@
         },
 		inHrefHtml: function() {
 			var _this = this;
-		/*详情*/
+		    /*详情*/
 			$('#list').on('tap', '.inDetailBtn', function() {
 				var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
@@ -411,7 +453,7 @@
 					})
 				}
 			})
-		/*修改*/
+		    /*修改*/
             $('#list').on('tap','.inAmendBtn', function() {
 				var url = $(this).attr('url');
                 var reqId = $(this).attr('inListId');
@@ -437,7 +479,7 @@
 //						})
 //					}
 //				}),
-        /* 审核*/
+            /* 审核*/
             $('#list').on('tap','.inCheckBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
@@ -454,7 +496,7 @@
 					})
                 }
 			})
-		/*取消*/	
+		    /*取消*/	
             $('#list').on('tap','.inCancelBtn',function(){
             	var url = $(this).attr('url');
 				var inListId = $(this).attr('inListId');
@@ -540,266 +582,9 @@
 				now = now.replace("-"); //  2014-7-6 07:17:43
 			}
 			return now;
-		},
-		seachFunc:function(){
-			var _this = this;
-			var inPHtmlList = '';
-			//解码
-			var nameTxt = '';
-			if(_this.userInfo.name) {
-				nameTxt = decodeURIComponent(_this.userInfo.name)
-			}else {
-				nameTxt = ''
-			}
-			
-			$.ajax({
-				type: 'GET',
-				url: '/a/biz/request/bizRequestHeaderForVendor/list4MobileNew',
-				data: {
-					pageNo: 1,
-					reqNo:_this.userInfo.reqNo,
-					name:nameTxt,
-					fromType:_this.userInfo.fromType,
-					'fromOffice.id':_this.userInfo.fromOffice,
-					bizStatus:_this.userInfo.bizStatusid,
-					'varietyInfo.id':_this.userInfo.varietyInfoid,
-					includeTestData: _this.userInfo.includeTestData,
-					process:_this.userInfo.process
-				},
-				dataType: 'json',
-				success: function(res) {
-					console.log(res)
-		            var returnData = res.data.page.list;
-		            var dataRow = res.data.roleSet;
-					var arrLen = res.data.page.list.length; 
-					if(arrLen <20 ){
-						mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true);
-					}else{
-						mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-					}
-					/*当前用户信息*/
-					var userId = '';
-					$.ajax({
-		                type: "GET",
-		                url: "/a/getUser",
-		                dataType: "json",
-		                async:false,
-		                success: function(user){                 
-				            console.log(user)
-							userId = user.data.id
-		                }
-		            });	
-					//备货方:
-					var arrbss = [];
-					var stock = '';
-					$.ajax({
-		                type: "GET",
-		                url: "/a/sys/dict/listData",
-		                dataType: "json",
-		                data: {type: "req_from_type"},
-		                async:false,
-		                success: function(bss){                 
-							arrbss = bss
-		                }
-		            });	
-					/*业务状态*/
-					var arrass = [];
-					var bizstatusTxt = '';
-					$.ajax({
-		                type: "GET",
-		                url: "/a/sys/dict/listData",
-		                dataType: "json",
-		                data: {type: "biz_req_status"},
-		                async:false,
-		                success: function(ass){                 
-				            arrass = ass
-		                }
-		            });
-                    if(arrLen > 0) {
-						$.each(returnData, function(i, item) {
-							$.each(arrbss, function(b, bs) {
-								if(bs.value==item.fromType) {
-									stock = bs.label
-								}
-							})
-							$.each(arrass, function(a, as) {
-				               	if(as.value==item.bizStatus) {
-				               		bizstatusTxt = as.label
-				               	}
-			               	});
-							/*审核按钮*/	
-							var inCheck = '';
-							var inCheckBtn='';
-							if(_this.checkFlag == true) {
-								var requestOrderProcess = '';
-								if(item.commonProcess.requestOrderProcess) {
-									requestOrderProcess = item.commonProcess.requestOrderProcess
-								}
-								var purchaseOrderProcess = '';
-								if(item.bizPoHeader) {
-									purchaseOrderProcess = item.bizPoHeader.commonProcess.purchaseOrderProcess
-								}
-								var DataRoleGener = '';
-								if(item.commonProcess) {
-									DataRoleGener = requestOrderProcess.roleEnNameEnum;
-								}
-								var fileRoleData = dataRow.filter(v => DataRoleGener.includes(v));
-								if(item.commonProcess && fileRoleData.length>0 && requestOrderProcess.name != '驳回') {
-									inCheck = '审核'
-									inCheckBtn='inCheckBtn'
-								}else {
-									inCheck = ''
-									inCheckBtn=''
-								}
-							}
-							//取消、修改、付款
-//							var inPay = '';
-//							var inPayBtn = '';
-							var inAmend = '';
-							var inAmendBtn = '';
-							var inCancel = '';
-							var inCancelBtn = '';
-							if(_this.cancelAmendPayFlag == true){
-								if(userId == 1) {
-									/*修改按钮*/
-	//								requestHeader.delFlag!=null && requestHeader.delFlag!=0
-									if(item.delFlag!=null && item.delFlag!=0) {
-										inAmend = '修改'
-										inAmendBtn = 'inAmendBtn'
-										/*删除*/
-										/*恢复*/
-										/*取消按钮*/
-										if(item.bizStatus !=40) {
-											inCancel = '取消'
-											inCancelBtn = 'inCancelBtn'
-										}else {
-											inCancel = ''
-											inCancelBtn = ''
-										}
-									}else {
-										inAmendBtn = ''
-										inAmend = ''
-									}
-								}
-								if(userId != 1 && item.bizStatus < 4 ||(requestOrderProcess.name == '驳回' && userId == item.createBy.id) ||(purchaseOrderProcess.name == '驳回' && userId == item.createBy.id)) {
-									inAmend = '修改'
-									inAmendBtn = 'inAmendBtn'
-									/*删除按钮*/	
-	//										if(_this.cancelFlag == true) {
-	//										}else {
-	//										}
-									inCancel = '取消'
-									inCancelBtn = 'inCancelBtn'
-								}
-								/*付款按钮*/
-//								if(_this.payFlag == true) {
-//	//									<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
-//									if(item.bizStatus !=40 && item.totalDetail != item.recvTotal) {
-//										inPay = '付款'
-//										inPayBtn = 'inPayBtn'
-//									}else {
-//										inPay = ''
-//										inPayBtn = ''
-//									}								
-//								}
-							}
-						//详情
-							var inDetail = '';
-							var inDetailBtn = '';
-							if(_this.detileFlag == true) {
-								inDetail = '详情'
-								inDetailBtn = 'inDetailBtn'
-							}else {
-								inDetail = ''
-								inDetailBtn = ''
-							}
-						/*品类名称*/	
-							var varietyInfoName = '';
-							if(item.varietyInfo.name) {
-								varietyInfoName = item.varietyInfo.name
-							}else {
-								varietyInfoName = ''
-							}
-						/*审核状态*/		
-							var checkStatus = '';
-							if(requestOrderProcess) {
-								if(requestOrderProcess.name != '审核完成') {
-									checkStatus = requestOrderProcess.name
-								}
-								if(requestOrderProcess.name == '审核完成') {
-									checkStatus = '订单支出信息审核'
-								}
-							}
-						inPHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
-							'<div class="mui-input-row">' +
-								'<label>备货单号:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.reqNo+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>业务状态:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+bizstatusTxt+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>审核状态:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>备货方:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+stock+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>供应商:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+ item.name +' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>下单时间:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.createDate)+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>品类名称:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+varietyInfoName+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>申请人:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.createBy.name+' ">' +
-							'</div>' +
-							'<div class="mui-input-row">' +
-								'<label>更新时间:</label>' +
-								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
-							'</div>' +
-							'<div class="app_color40 mui-row app_text_center operation">' +
-								'<div class="mui-col-xs-2">' +
-									'<li class="mui-table-view-cell" ></li>' +
-								'</div>'+
-								'<div class="mui-col-xs-2 '+inDetailBtn+'" inListId="'+ item.id +'">' +
-									'<li class="mui-table-view-cell" >'+inDetail+'</li>' +
-								'</div>' +
-								'<div class="mui-col-xs-2 '+inAmendBtn+'" inListId="'+ item.id +'">' +
-									'<li class="mui-table-view-cell">'+inAmend+'</li>' +
-								'</div>' +
-								'<div class="mui-col-xs-2 '+inCancelBtn+'" inListId="'+ item.id +'">' +
-									'<li class="mui-table-view-cell"> '+inCancel+'</li>' +
-								'</div>'+
-								'<div class="mui-col-xs-2"  inListId="'+ item.id +'">' +
-									'<li class="mui-table-view-cell"></li>' +
-								'</div>'+
-								'<div class="mui-col-xs-2 '+inCheckBtn+'" inListId="'+ item.id +'"  bizStatus="'+item.bizStatus+'">' +
-									'<li class="mui-table-view-cell">'+ inCheck +'</li>' +
-								'</div>'+
-							'</div>' +
-						'</div>'
-						});
-						$('#list').append(inPHtmlList);
-					}else{
-						$('#list').append('<p class="noneTxt">暂无数据</p>');
-					}
-				}
-			});
-		_this.inHrefHtml()	
-		}
+		}		
 	}
 	$(function() {
-
 		var ac = new ACCOUNT();
 		ac.init();
 	});

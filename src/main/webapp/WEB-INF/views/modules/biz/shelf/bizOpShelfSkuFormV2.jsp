@@ -7,6 +7,7 @@
 <head>
 	<title>商品上架管理</title>
 	<script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
+    <script type="application/javascript" src="${ctxStatic}/common/base.js?v=20181210"></script>
 	<script type="text/javascript">
         var opShelfType="";
         $(document).ready(function() {
@@ -15,6 +16,7 @@
                 $("#tbody").append("<c:set var='retail' value='1'/>");
                 $("#tbody").append("<input id='retail' type='hidden' value='1'/>");
 			}
+            needPutawayForMyPanel();
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
@@ -280,6 +282,9 @@
                         $.each(data,function(index,item) {
                             console.info(item)
                             if (item.bvFactorList != undefined && retail != 1) {
+                                if (item.bvFactorList == "" || item.bvFactorList == null) {
+									alert(item.name + "未设置阶梯价，不能上架！")
+                                }
 								$.each(item.bvFactorList,function(index,bvFactor){
 									htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
 										"<td><input about='shQtys"+item.id+"' name='shelfQtys' value='1000' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
@@ -362,7 +367,7 @@
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
                 success:function (data) {
                     opShelfType = data.type;
-                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>'){
+                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>' || data.type=='<%=BizOpShelfInfoEnum.EXCLUSIVE_OFF.getLocal() %>'){
                         $("#PurchaseID").css("display","block");
 
                         $("#centerOfficeName").prop("disabled", "disabled")
@@ -417,7 +422,7 @@
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
                 success:function (data) {
-                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>'){
+                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>' || data.type=='<%=BizOpShelfInfoEnum.EXCLUSIVE_OFF.getLocal() %>'){
                         $("#PurchaseID").css("display","block");
                         if (opShelfType != data.type) {
                             $("#centerOfficeName").prop("disabled", false)
@@ -431,6 +436,79 @@
                 }
             });
 		}
+
+        function needPutawayForMyPanel() {
+            var previousPageVal = $("#previousPage").val();
+            console.log(previousPageVal)
+            if (previousPageVal == 'myPanel') {
+                $Mask.AddLogo("正在加载");
+                $.ajax({
+                    type:"post",
+                    url:"${ctx}/biz/sku/bizSkuInfo/needPutawayForMyPanel",
+                    data:{"notPutaway": 1, "productInfo.prodType":1},
+                    success:function (result) {
+                        $("#prodInfo2").empty();
+                        var data = JSON.parse(result).data;
+                        if (data == '') {
+                            $Mask.RemoveLogo();
+                            $Mask.RemoveContent();
+                            return false;
+                        } else {
+                            $.each(data.skuMap, function (keys, skuInfoList) {
+
+                                var prodKeys = keys.split(",");
+                                var prodId = prodKeys[0];
+                                var prodUrl = prodKeys[2];
+                                var brandName = prodKeys[6];
+                                var varietyId = prodKeys[7];
+                                var varietyName = prodKeys[8];
+
+                                var flag = true;
+
+                                var tr_tds = "";
+                                var t = 0;
+
+                                var factorMap = data.serviceFactor;
+                                var factorStr = factorMap[varietyId];
+
+                                //  var factorArr=$(factorStr).split(",");
+                                var f = "";
+                                if (factorStr != undefined) {
+                                    $.each(factorStr, function (i) {
+                                        f += factorStr[i] + "<br/>";
+                                    });
+                                }
+
+                                $.each(skuInfoList, function (index, skuInfo) {
+
+                                    tr_tds += "<tr class='" + prodId + "'>";
+                                    tr_tds += "<td><input type='checkbox' value='" + skuInfo.id + "' title='shelfIds'/></td>";
+                                    tr_tds += "<td>" + skuInfo.name + "</td><td>" + skuInfo.buyPrice + "</td><td>" + skuInfo.partNo + "</td><td>" + skuInfo.itemNo + "</td>" ;
+                                    // "<td>" + skuInfo.skuPropertyInfos + "</td>";
+
+                                    if (flag) {
+                                        tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + varietyName + "<br/>" + f + "</td>";
+                                        tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + brandName + "</td>";
+                                        tr_tds += "<td rowspan='" + skuInfoList.length + "'><img style='width: 160px;height: 160px' src='" + prodUrl + "' maxWidth='100' maxHeight='100'></td>"
+                                    }
+
+                                    tr_tds += "</tr>";
+                                    if (skuInfoList.length > 1) {
+                                        flag = false;
+                                    }
+                                });
+
+                                t++;
+                                $("#prodInfo2").append(tr_tds);
+                            });
+                        }
+                        $Mask.RemoveLogo();
+                        $Mask.RemoveContent();
+                    }
+                })
+            }
+        }
+
 	</script>
 	<script type="text/javascript">
         function selectedColum(){
@@ -459,7 +537,7 @@
                         // if (retail = 'first1') {
                         //     notSellOff();
                         // }
-						if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.local}){
+						if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.local} || data.type==${BizOpShelfInfoEnum.EXCLUSIVE_OFF.local}){
                             if (type != 0 && type != data.type) {
                                 alert("平台商品和本地商品和代销不能同时选择");
                                 opshelf.removeAttr("checked");
@@ -514,6 +592,78 @@
             $("#commission").remove();
             $("#commissions").remove();
         }
+
+        function centerOfficeChange(org) {
+            var previousPageVal = $("#previousPage").val();
+            if (previousPageVal != 'myPanel') {
+                var officeId = $("#centerOfficeId").val();
+                $Mask.AddLogo("正在加载");
+                $.ajax({
+                    type:"post",
+                    url:"${ctx}/biz/sku/bizSkuInfo/findSkuListByCustomer",
+                    data:{"officeId": officeId},
+                    success:function (result) {
+                        $("#prodInfo2").empty();
+                        var data = JSON.parse(result).data;
+                        if (data == '') {
+                            $Mask.RemoveLogo();
+                            $Mask.RemoveContent();
+                            return false;
+                        } else {
+                            $.each(data.skuMap, function (keys, skuInfoList) {
+
+                                var prodKeys = keys.split(",");
+                                var prodId = prodKeys[0];
+                                var prodUrl = prodKeys[2];
+                                var brandName = prodKeys[6];
+                                var varietyId = prodKeys[7];
+                                var varietyName = prodKeys[8];
+
+                                var flag = true;
+
+                                var tr_tds = "";
+                                var t = 0;
+
+                                var factorMap = data.serviceFactor;
+                                var factorStr = factorMap[varietyId];
+
+                                //  var factorArr=$(factorStr).split(",");
+                                var f = "";
+                                if (factorStr != undefined) {
+                                    $.each(factorStr, function (i) {
+                                        f += factorStr[i] + "<br/>";
+                                    });
+                                }
+
+                                $.each(skuInfoList, function (index, skuInfo) {
+
+                                    tr_tds += "<tr class='" + prodId + "'>";
+                                    tr_tds += "<td><input type='checkbox' value='" + skuInfo.id + "' title='shelfIds'/></td>";
+                                    tr_tds += "<td>" + skuInfo.name + "</td><td>" + skuInfo.buyPrice + "</td><td>" + skuInfo.partNo + "</td><td>" + skuInfo.itemNo + "</td>" ;
+                                    // "<td>" + skuInfo.skuPropertyInfos + "</td>";
+
+                                    if (flag) {
+                                        tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + varietyName + "<br/>" + f + "</td>";
+                                        tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + brandName + "</td>";
+                                        tr_tds += "<td rowspan='" + skuInfoList.length + "'><img style='width: 160px;height: 160px' src='" + prodUrl + "' maxWidth='100' maxHeight='100'></td>"
+                                    }
+
+                                    tr_tds += "</tr>";
+                                    if (skuInfoList.length > 1) {
+                                        flag = false;
+                                    }
+                                });
+
+                                t++;
+                                $("#prodInfo2").append(tr_tds);
+                            });
+                        }
+                        $Mask.RemoveLogo();
+                        $Mask.RemoveContent();
+                    }
+                })
+			}
+        }
 	</script>
 	<meta name="decorator" content="default"/>
 </head>
@@ -527,6 +677,7 @@
     <c:set var="id" value="${bizOpShelfSku.id}"/>
 	<form:hidden path="shelfSign"/>
 	<input id="commissionRatio" type="hidden" value="${commissionRatio}"/>
+	<input id="previousPage" name="previousPage" type="hidden" value="${bizOpShelfSku.previousPage}"/>
 	<%--<input type="hidden" id="opShelfId" value="${bizOpShelfSku.opShelfInfo.id}"/>--%>
 	<%--<form:hidden id="shelfId" path="opShelfInfo.id"/>--%>
 	<sys:message content="${message}"/>
@@ -561,35 +712,36 @@
 		<label class="control-label">采购中心：</label>
 		<div class="controls">
 			<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
-							labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
-							title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
+							labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true" onchange="centerOfficeChange(this)"
+							title="采购中心" url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
 			</sys:treeselect>
 			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>
+	<%--<c:if test="${bizOpShelfSku.previousPage != 'myPanel'}">--%>
+		<div class="control-group">
+			<label class="control-label">选择商品：</label>
+			<div class="controls">
+				<ul class="inline ul-form">
+					<li><label>品牌名称：</label>
+						<input id="prodBrandName" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
+					</li>
+					<li><label>商品名称：</label>
+						<input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
+					</li>
+					<li><label>商品编码：</label>
+						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+					</li>
+					<li><label>商品货号：</label>
+						<input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+					</li>
+					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
+					<li class="clearfix"></li>
+				</ul>
 
-	<div class="control-group">
-		<label class="control-label">选择商品：</label>
-		<div class="controls">
-			<ul class="inline ul-form">
-				<li><label>品牌名称：</label>
-					<input id="prodBrandName" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
-				</li>
-				<li><label>商品名称：</label>
-					<input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
-				</li>
-				<li><label>商品编码：</label>
-					<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
-				</li>
-				<li><label>商品货号：</label>
-					<input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
-				</li>
-				<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
-				<li class="clearfix"></li>
-			</ul>
-
+			</div>
 		</div>
-	</div>
+	<%--</c:if>--%>
 	<div class="control-group">
 		<label class="control-label">上架商品：</label>
 		<div class="controls">
@@ -684,7 +836,7 @@
 		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 	</div>
-	<<input type="hidden" value="${hasUnderPriceRole}" id="hasUnderPriceRole">
+	<input type="hidden" value="${hasUnderPriceRole}" id="hasUnderPriceRole">
 </form:form>
 <c:if test="${bizOpShelfSkuList.size() > 0 }">
 	<div class="control-group">
