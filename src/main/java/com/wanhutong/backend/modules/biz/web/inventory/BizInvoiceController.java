@@ -35,11 +35,14 @@ import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONObject;
@@ -56,6 +59,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -74,6 +78,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static com.wanhutong.backend.modules.sys.utils.DictUtils.getDictList;
 
 /**
  * 发货单Controller
@@ -115,6 +121,8 @@ public class BizInvoiceController extends BaseController {
     private CommonImgService commonImgService;
     @Autowired
     private BizRequestHeaderForVendorService bizRequestHeaderForVendorService;
+    @Autowired
+    private OfficeService officeService;
 
     private static final String DEF_EN_NAME = "shipper";
 
@@ -247,6 +255,9 @@ public class BizInvoiceController extends BaseController {
 			model.addAttribute("bizRequestHeader",new BizRequestHeader());
 		    return "modules/biz/inventory/bizInvoiceRequestForm";
         }
+        //获取集货地点列表
+        List<Dict> collLocateList = getOfficeList(user);
+        model.addAttribute("collLocateList", collLocateList);
 		return "modules/biz/inventory/bizInvoiceForm";
 	}
 
@@ -344,6 +355,9 @@ public class BizInvoiceController extends BaseController {
         if (photoFlag) {
             return "modules/biz/inventory/bizDeliverGoodsDeForm";
         } else {
+            //获取集货地点列表
+            List<Dict> collLocateList = getOfficeList(user);
+            model.addAttribute("collLocateList", collLocateList);
             return "modules/biz/inventory/bizInvoiceDeForm";
         }
     }
@@ -846,5 +860,38 @@ public class BizInvoiceController extends BaseController {
             return requestOrderProcess.getName();
         }
         return  "";
+    }
+
+    public List<Dict> getOfficeList(User user) {
+        List<Dict> collLocateList = getDictList("coll_locate");
+        if (user.getCompany() != null && !user.isAdmin()) {
+            Office office = officeService.get(user.getCompany().getId());
+            String type = office.getType();
+            if (office !=null && office.getId() != null && (OfficeTypeEnum.PURCHASINGCENTER.getType().equals(type)
+                    || OfficeTypeEnum.WITHCAPITAL.getType().equals(type)
+                    || OfficeTypeEnum.NETWORKSUPPLY.getType().equals(type)
+                    || OfficeTypeEnum.NETWORK.getType().equals(type))) {
+                Dict dict  = new Dict();
+                dict.setValue(String.valueOf(office.getId()));
+                dict.setLabel(office.getName());
+                collLocateList.add(dict);
+            }
+        } else if (user.isAdmin()) {
+            List<Office> listByType = officeService.findListByTypeList(Lists.newArrayList(
+                    OfficeTypeEnum.PURCHASINGCENTER.getType(),
+                    OfficeTypeEnum.WITHCAPITAL.getType(),
+                    OfficeTypeEnum.NETWORKSUPPLY.getType(),
+                    OfficeTypeEnum.NETWORK.getType()
+            ));
+            if (CollectionUtils.isNotEmpty(listByType)) {
+                for (Office officeTemp :listByType) {
+                    Dict dict  = new Dict();
+                    dict.setValue(String.valueOf(officeTemp.getId()));
+                    dict.setLabel(officeTemp.getName());
+                    collLocateList.add(dict);
+                }
+            }
+        }
+        return collLocateList;
     }
 }

@@ -355,6 +355,15 @@
         <%--</div>--%>
     <%--</c:if>--%>
     <div class="control-group">
+        <label class="control-label">集货地点：</label>
+        <div class="controls">
+            <form:select path="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">
+                <form:option value="" label="请选择"/>
+                <form:options items="${collLocateList}" itemValue="value" itemLabel="label"/>
+            </form:select>
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label">发货时间：</label>
         <div class="controls">
             <input name="sendDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
