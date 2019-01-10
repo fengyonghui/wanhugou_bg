@@ -387,7 +387,7 @@ public class BizSkuTransferController extends BaseController {
 //				"inspectRemark":inspectRemark,
 			bizInvoice.setRemarks(bizInvoiceJson.getString("inspectRemark"));
 //				"collLocate":collLocate,
-			bizInvoice.setCollLocate(bizInvoiceJson.getByte("collLocate"));
+			bizInvoice.setCollLocate(bizInvoiceJson.getInteger("collLocate"));
 //				"sendDate":sendDate,
 			bizInvoice.setSendDate(simpleDateFormat.parse(bizInvoiceJson.getString("sendDate")));
 //				"settlementStatus":settlementStatus
