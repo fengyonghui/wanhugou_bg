@@ -656,12 +656,12 @@
                         <c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
                         <a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">
                             </c:if>
-                            <c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 || orderHeader.bizStatus==10}">
-                                待审核
-                                <c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
-                                    <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}&source=${source}">修改</a>
-                                </c:if>
-                            </c:if>
+                            <%--<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 || orderHeader.bizStatus==10}">--%>
+                                <%--待审核--%>
+                                <%--<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">--%>
+                                    <%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}&source=${source}">修改</a>--%>
+                                <%--</c:if>--%>
+                            <%--</c:if>--%>
                             <c:if test="${orderHeader.bizStatus==OrderHeaderBizStatusEnum.UNAPPROVE.state}">
                                 审核失败
                                 <c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state && fns:getUser().isAdmin()}">
@@ -691,6 +691,22 @@
                         </c:when>
                         <c:otherwise>
                         <c:if test="${orderHeader.bizStatus != OrderHeaderBizStatusEnum.CANCLE.state}">
+                            <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+                            <c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+                            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=check_pending&consultantId=${bizOrderHeader.consultantId}&source=${source}">
+                                </c:if>
+                                <c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+                                <a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">
+                                    </c:if>
+                                    <c:if test="${fns:getUser().id == orderHeader.consultantId || fns:getUser().isAdmin()}">
+                                    <c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 || orderHeader.bizStatus==10}">
+                                    待审核
+                                    <c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+                                        <%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}&source=${source}">修改</a>--%>
+                                    </c:if>
+                                    </c:if>
+                                    </c:if>
+                                    </shiro:hasPermission>
                         <c:if test="${statu == 'unline' || fns:getUser().isAdmin()}">
                         <a href="${ctx}/biz/order/bizOrderHeaderUnline?orderHeader.id=${orderHeader.id}">支付流水</a>
                         </c:if>
