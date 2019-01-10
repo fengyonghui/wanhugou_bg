@@ -822,6 +822,9 @@
 	<select id="findListNew" resultMap="orderHeaderResult">
 		SELECT
 		<include refid="bizOrderHeaderColumnsNew"/>,
+		bol.logistics_lines_code AS "bizOrderLogistics.logisticsLinesCode",
+		bol.stop_point_code AS "bizOrderLogistics.stopPointCode",
+		bol.logistics_lines AS "bizOrderLogistics.logisticsLines",
 		(
 		SELECT
 		SUM( bod.suply_id )
@@ -863,7 +866,7 @@
 		LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.id AND bpor.status = 1 AND bpor.so_type = 1
 		LEFT JOIN biz_po_header bph ON bph.id = bpor.po_id AND bph.status = 1
 		LEFT JOIN common_process cp ON cp.id = bph.process_id
-
+		LEFT JOIN biz_order_logistics bol ON bol.order_id = a.id AND bol.status = 1 AND bol.logistic_status=1
 		<choose>
 			<when test="source != null and source == 'vendor'">
 				LEFT JOIN sys_office vend ON vend.id = pi.vendor_id
@@ -874,9 +877,32 @@
 			</otherwise>
 		</choose>
 		LEFT JOIN biz_vend_info vendi ON vendi.office_id = vend.id
-
+		<if test="poSchType != null">
+			LEFT JOIN biz_scheduling_plan bslp ON bslp.object_id = bph.id AND bslp.object_name='biz_po_header'
+		</if>
 
 		<where> 1=1 and a.order_type !=4
+			<if test="logisticsLinesSelected != null and logisticsLinesSelected == 1">
+				AND (bol.logistics_lines
+				LIKE
+				<if test="dbName == 'oracle'">'%客户自提%'</if>
+				<if test="dbName == 'mssql'">'%客户自提%'</if>
+				<if test="dbName == 'mysql'">concat('%','客户自提','%')</if>
+				or bol.logistics_lines
+				LIKE
+				<if test="dbName == 'oracle'">'%送货到家%'</if>
+				<if test="dbName == 'mssql'">'%送货到家%'</if>
+				<if test="dbName == 'mysql'">concat('%','送货到家','%')</if>
+				)
+			</if>
+			<if test="logisticsLinesSelected != null and logisticsLinesSelected == 2">
+				AND (bol.logistics_lines
+				LIKE
+				<if test="dbName == 'oracle'">'%厂家直发%'</if>
+				<if test="dbName == 'mssql'">'%厂家直发%'</if>
+				<if test="dbName == 'mysql'">concat('%','厂家直发','%')</if>
+				)
+			</if>
 			<if test="(originCode !=null and originCode != '') or (localCode !=null and localCode != '') or (doFifthCode != null and doFifthCode != '') ">
 				and (
 				<if test="originCode !=null and originCode != ''">
