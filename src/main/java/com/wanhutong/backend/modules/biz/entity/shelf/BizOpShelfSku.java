@@ -97,6 +97,8 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	 */
 	private String previousPage;
 
+	private String searchItemNo;
+
 	public BizOpShelfSku() {
 		super();
 	}
@@ -370,5 +372,13 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	@Override
 	public void setPreviousPage(String previousPage) {
 		this.previousPage = previousPage;
+	}
+
+	public String getSearchItemNo() {
+		return searchItemNo;
+	}
+
+	public void setSearchItemNo(String searchItemNo) {
+		this.searchItemNo = searchItemNo;
 	}
 }
