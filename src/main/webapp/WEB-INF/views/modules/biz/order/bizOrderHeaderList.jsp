@@ -512,9 +512,8 @@
 							<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name != '审批完成'}">
 								${orderHeader.commonProcess.doOrderHeaderProcessFifth.name}
 							</c:if>
-							<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审核完成'}">
+							<c:if test="${orderHeader.commonProcess.doOrderHeaderProcessFifth.name == '审批完成'}">
 								<%--订单支出信息审核--%>
-
                                 ${orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name}
 							</c:if>
 						</c:if>
@@ -528,7 +527,7 @@
 							<c:if test="${orderHeader.commonProcess.jointOperationOriginProcess.name != '审批完成'}">
 								${orderHeader.commonProcess.jointOperationOriginProcess.name}
 							</c:if>
-							<c:if test="${orderHeader.commonProcess.jointOperationOriginProcess.name == '审核完成'}">
+							<c:if test="${orderHeader.commonProcess.jointOperationOriginProcess.name == '审批完成'}">
 								<%--订单支出信息审核--%>
                                 ${orderHeader.bizPoHeader.commonProcess.purchaseOrderProcess.name}
 							</c:if>
