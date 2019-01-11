@@ -69,5 +69,9 @@ public class BizOpShelfInfoService extends CrudService<BizOpShelfInfoDao, BizOpS
 	public void delete(BizOpShelfInfo bizOpShelfInfo) {
 		super.delete(bizOpShelfInfo);
 	}
+
+	public List<BizOpShelfInfo> getShelfNames(Integer skuId) {
+		return dao.getShelfNames(skuId);
+	}
 	
 }

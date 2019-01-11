@@ -123,5 +123,17 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<select id="getShelfNames" resultType="BizOpShelfInfo">
+		SELECT
+		<include refid="bizOpShelfInfoColumns"/>
+		FROM biz_op_shelf_info a
+			join biz_op_shelf_sku bos on bos.shelf_id=a.id
+			join biz_sku_info bsi on bsi.id = bos.sku_id
+			LEFT JOIN sys_user suu ON suu.id = a.update_id
+		WHERE a.status =1
+			and bsi.id=#{skuId}
+			GROUP BY a.id
+	</select>
 	
 </mapper>
