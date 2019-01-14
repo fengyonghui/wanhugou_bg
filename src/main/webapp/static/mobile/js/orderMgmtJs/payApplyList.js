@@ -82,7 +82,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
-//		          	    console.log(res)
+		          	    console.log(res)
 			            var returnData = res.data.page.list;
 			            var dataRow = res.data.roleSet;
 						var arrLen = res.data.page.list.length; 
@@ -130,7 +130,6 @@
 								var inChecks ="";
 								if(_this.checkFlag == true){	
 									if(item.total != '0.00'){
-										console.log(item.commonProcess.paymentOrderProcess.name)
 										if(item.id == res.data.bizPoHeader.bizPoPaymentOrder.id && item.commonProcess.paymentOrderProcess.name != '审批完成' && item.total != 0){
 											inCheck ="审核通过";
 											inChecks ="审核驳回";
@@ -166,7 +165,12 @@
 									paymentOrderProcess="待确认支付金额";
 								}
 								if(item.total != '0.00'){
-									paymentOrderProcess=item.commonProcess.paymentOrderProcess.name
+									if(item.commonProcess.paymentOrderProcess){
+										paymentOrderProcess=item.commonProcess.paymentOrderProcess.name
+									}else{
+										paymentOrderProcess="";
+									}
+									
 								}
 								var mt = item;
 								inPayHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
@@ -218,10 +222,10 @@
 //										'</div>' +
 //									'</div>' +
 									'<div class="app_color40 mui-row app_text_center operation">' +
-										'<div class="mui-col-xs-6 inCheckBtn" id="inCheckBtn" inListId="'+ item.id +'" curType="'+ item.commonProcess.paymentOrderProcess.code +'" total="'+ item.total +'" orderType="'+ item.orderType +'">' +
+										'<div class="mui-col-xs-6 inCheckBtn" id="inCheckBtn" inListId="'+ item.id +'" curType="'+ item.commonProcess.paymentOrderProcess.code +'" total="'+ item.total +'" orderType="'+ item.orderType +'" fromPage="'+ res.data.fromPage +'">' +
 											'<div class="">'+inCheck+'</div>' +
 										'</div>' +
-										'<div class="mui-col-xs-6 inCheckBtns"  id="inCheckBtns" inListId="'+ item.id +'" curType="'+ item.commonProcess.paymentOrderProcess.code +'" total="'+ item.total +'" orderType="'+ item.orderType +'">' +
+										'<div class="mui-col-xs-6 inCheckBtns"  id="inCheckBtns" inListId="'+ item.id +'" curType="'+ item.commonProcess.paymentOrderProcess.code +'" total="'+ item.total +'" orderType="'+ item.orderType +'" fromPage="'+ res.data.fromPage +'">' +
 											'<div class="">'+inChecks+'</div>' +
 										'</div>' +
 									'</div>' +
@@ -326,13 +330,10 @@
 			var _this = this;
 			document.getElementById("inCheckBtns").addEventListener('tap', function() {
 				var inListId = $(this).attr('inlistid');
-//				console.log(inListId);
 				var auditType= $(this).attr('ordertype');
-//				console.log(auditType);
 				var money= $(this).attr('total');
-//				console.log(money);
 				var currentType= $(this).attr('curtype');
-//				console.log(currentType);
+				var fromPage= $(this).attr('fromPage');
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
 					if(choice.index == 1) {
@@ -343,7 +344,7 @@
 								if(a.value == '') {
 									mui.toast('驳货理由不能为空！')
 								} else {
-									_this.rejectData(rejectTxt,2,inListId,money,currentType)
+									_this.rejectData(rejectTxt,2,inListId,money,currentType,fromPage)
 								}
 							} else {}
 						})
@@ -351,15 +352,12 @@
 				})
 			});
 			document.getElementById("inCheckBtn").addEventListener('tap', function(e) {
-				e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了                
+				e.detail.gesture.preventDefault();                 
 				var inListId = $(this).attr('inlistid');
-//				console.log(inListId)
 				var auditType= $(this).attr('ordertype');
-//				console.log(auditType);
 				var money= $(this).attr('total');
-//				console.log(money);
 				var currentType= $(this).attr('curtype');
-//				console.log(currentType);
+				var fromPage= $(this).attr('fromPage');
 				var btnArray = ['取消', '确定'];
 				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
 					if(e.index == 1) {
@@ -371,7 +369,7 @@
 							var btnArray = ['否', '是'];
 							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
 								if(choice.index == 1) {
-									_this.ajaxData(inText,1,inListId,money,currentType)
+									_this.ajaxData(inText,1,inListId,money,currentType,fromPage)
 								} else {}
 							})
 						}
@@ -380,7 +378,7 @@
 			});
 		},
 		//审核通过
-		ajaxData: function(inText,num,inListId,money,currentType) {
+		ajaxData: function(inText,num,inListId,money,currentType,fromPage) {
 			var _this = this;
 			$.ajax({
 				type: "GET",
@@ -394,15 +392,24 @@
 				},
 				dataType: "json",
 				success: function(res) {
-//					console.log(res)
 					if(res.ret == true) {
 						mui.toast(res.data.right);
-						window.setTimeout(function(){
-			                GHUTILS.OPENPAGE({
-								url: "../orderMgmtHtml/orderpaymentinfo.html",
-								extras: {}
-							})
-			            },300);						
+						if(fromPage=="requestHeader"){
+							window.setTimeout(function(){
+				                GHUTILS.OPENPAGE({
+									url: "../inventoryMagmetHtml/inventoryList.html",
+									extras: {}
+								})
+				            },300);
+						}
+						if(fromPage=="orderHeader"){
+							window.setTimeout(function(){
+				                GHUTILS.OPENPAGE({
+									url: "../orderMgmtHtml/OrdermgmtHtml/orderList.html",
+									extras: {}
+								})
+				            },300);
+						}												
 					}
 					if(res.ret == false) {
 						mui.toast(res.errmsg)
@@ -414,7 +421,7 @@
 			});
 
 		},
-		rejectData: function(rejectTxt,num,inListId,money,currentType) {
+		rejectData: function(rejectTxt,num,inListId,money,currentType,fromPage) {
 			var _this = this;
 			$.ajax({
 				type: "GET",
@@ -432,12 +439,22 @@
 						mui.toast(res.data.right);
 						$('app_color40 .inCheckBtn').find('div').css('display','none');
 						$('app_color40 .inCheckBtns').find('div').css('display','none');
-						window.setTimeout(function(){
-			                GHUTILS.OPENPAGE({
-								url: "../orderMgmtHtml/orderpaymentinfo.html",
-								extras: {}
-							})
-			            },300);
+			            if(fromPage=="requestHeader"){
+							window.setTimeout(function(){
+				                GHUTILS.OPENPAGE({
+									url: "../inventoryMagmetHtml/inventoryList.html",
+									extras: {}
+								})
+				            },300);
+						}
+						if(fromPage=="orderHeader"){
+							window.setTimeout(function(){
+				                GHUTILS.OPENPAGE({
+									url: "../orderMgmtHtml/OrdermgmtHtml/orderList.html",
+									extras: {}
+								})
+				            },300);
+						}
 					}
 					if(res.ret == false) {
 						mui.toast(res.errmsg)
@@ -454,7 +471,7 @@
 				var inListId = $(this).attr('inListId');
 //				console.log(inListId)
 				var frompage = $(this).attr('frompage');
-//				console.log(frompage)
+				console.log(frompage)
 //				console.log(_this.userInfo.staOrdId)
 				$.ajax({
 	                type: "GET",

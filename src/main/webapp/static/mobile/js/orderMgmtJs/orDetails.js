@@ -59,16 +59,16 @@
 					}else {
 						$('#orNumDate').hide();
 					}  
-					var orshouldPay = bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight
+					var orshouldPay = bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight;
 					//单号
 					var temp = "";
 					for(var i in res.data.orderSourceMap){
 					    temp = i;
 					}
 					$('#orpoNum').val(temp);
-					$('#ordtotal').val(bizPoHeader.totalDetail)//总价
-					$('#orshouldPay').val(orshouldPay)//应付金额
-					$('#orLastDa').val(_this.formatDateTime(bizPoHeader.lastPayDate))//最后付款时间
+					$('#ordtotal').val(bizPoHeader.totalDetail);//总价
+					$('#orshouldPay').val(orshouldPay);//应付金额
+					$('#orLastDa').val(_this.formatDateTime(bizPoHeader.lastPayDate));//最后付款时间
 					//交货地点
 					if(bizPoHeader.deliveryStatus==0 || bizPoHeader.deliveryStatus == ''){
 						$('#fromType1').attr('checked','checked');

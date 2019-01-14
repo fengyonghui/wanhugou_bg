@@ -127,10 +127,12 @@
                     if(res.data.bizRequestHeader.fromType==1){
 						$('#fromType1').attr('checked','checked');
 						$('#fromType2').removeAttr('checked');
+//						$('#fromType1').css('background-color','#ccc');
 					}
 					if(res.data.bizRequestHeader.fromType==2){
 						$('#fromType1').removeAttr('checked');
-						$('#fromType2').attr('checked','checked');						
+						$('#fromType2').attr('checked','checked');
+//						$('#fromType2').css('background-color','#ccc');
 					}	            	
 					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name);//采购中心
 					$('#inPototal').val(res.data.bizRequestHeader.totalMoney.toFixed(2));//应付金额
