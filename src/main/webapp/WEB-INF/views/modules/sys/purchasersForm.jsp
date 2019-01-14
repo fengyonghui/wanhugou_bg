@@ -183,6 +183,7 @@
             href="${ctx}/sys/office/purchasersForm?id=${office.id}&parent.id=${office.parent.id}">机构<shiro:hasPermission
             name="sys:office:edit">${not empty office.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
             name="sys:office:edit">查看</shiro:lacksPermission></a></li>
+    <li ><a href="${ctx}/sys/user/contact">联系人列表</a></li>
 </ul>
 <br/>
 <form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/purchaserSave?option=${option}" method="post" class="form-horizontal">

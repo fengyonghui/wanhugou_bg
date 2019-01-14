@@ -254,7 +254,7 @@
 		                success: function(res){
 		                	$.each(res,function(i,itemss){
 		                		 if(itemss.value==item.commissionStatus){
-		                		 	  comStatusTxt = itemss.label 
+		                		 	  comStatusTxt = itemss.label
 		                		 }
 		                	})
 		                	$('#commission').val(comStatusTxt);

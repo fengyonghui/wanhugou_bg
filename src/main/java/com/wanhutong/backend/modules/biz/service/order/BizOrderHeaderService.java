@@ -27,9 +27,7 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
-import com.wanhutong.backend.modules.config.parse.DoOrderHeaderProcessFifthConfig;
-import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessLocalConfig;
-import com.wanhutong.backend.modules.config.parse.JointOperationOrderProcessOriginConfig;
+import com.wanhutong.backend.modules.config.parse.*;
 import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
@@ -185,12 +183,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         JointOperationOrderProcessOriginConfig originConfig = ConfigGeneral.JOINT_OPERATION_ORIGIN_CONFIG.get();
         JointOperationOrderProcessLocalConfig localConfig = ConfigGeneral.JOINT_OPERATION_LOCAL_CONFIG.get();
         DoOrderHeaderProcessFifthConfig doOrderHeaderProcessFifthConfig = ConfigGeneral.DO_ORDER_HEADER_PROCESS_FIFTH_CONFIG.get();
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
 
         String selectAuditStatus = bizOrderHeader.getSelectAuditStatus();
         if (StringUtils.isNotBlank(selectAuditStatus)) {
             List<String> originConfigValue = Lists.newArrayList();
             List<String> localConfigValue = Lists.newArrayList();
             List<String> doFifthConfigValue = Lists.newArrayList();
+            List<String> poFifthConfigValue = Lists.newArrayList();
 
             //////////////////////////////////////////////////////////////////
             for (Process process : originConfig.getProcessList()) {
@@ -211,9 +211,20 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 }
             }
 
+            for (Process process : purchaseOrderProcessConfig.getProcessList()) {
+                if (process.getName().contains(selectAuditStatus)) {
+
+                    poFifthConfigValue.add(String.valueOf(process.getCode()));
+                }
+            }
+
+
+
+
             bizOrderHeader.setOriginCode(CollectionUtils.isEmpty(originConfigValue) ? null : originConfigValue);
             bizOrderHeader.setLocalCode(CollectionUtils.isEmpty(localConfigValue) ? null : localConfigValue);
             bizOrderHeader.setDoFifthCode(CollectionUtils.isEmpty(doFifthConfigValue) ? null : doFifthConfigValue);
+            bizOrderHeader.setPoAuditCode(CollectionUtils.isEmpty(poFifthConfigValue) ? null : poFifthConfigValue);
         }
 
         User user = UserUtils.getUser();
@@ -225,7 +236,10 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 page.setList(bizOrderHeaderDao.findListNotCompleteAudit(bizOrderHeader));
                 return page;
             }else {
-                return super.findPage(page, bizOrderHeader);
+                bizOrderHeader.setPage(page);
+                page.setList(bizOrderHeaderDao.findListNew(bizOrderHeader));
+                return  page;
+               // return super.findPage(page, bizOrderHeader);
             }
 
         } else {
@@ -253,7 +267,12 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             } else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
-            return super.findPage(page, bizOrderHeader);
+
+            bizOrderHeader.setPage(page);
+            page.setList(bizOrderHeaderDao.findListNew(bizOrderHeader));
+            return  page;
+
+          //  return super.findPage(page, bizOrderHeader);
         }
     }
 

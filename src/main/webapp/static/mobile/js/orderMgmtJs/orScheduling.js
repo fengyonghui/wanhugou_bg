@@ -12,8 +12,8 @@
 	}
 	ACCOUNT.prototype = {
 		init: function() {
-			//biz:po:bizPoHeader:addScheduling		biz:po:bizPoHeader:saveScheduling	保存、批量保存	
-			this.getPermissionList('biz:po:bizPoHeader:addScheduling','outSaveFlag')	
+			//biz:po:bizPoHeader:addScheduling		biz:po:bizPoHeader:saveScheduling	保存、批量保存
+			this.getPermissionList('biz:po:bizPoHeader:addScheduling','outSaveFlag')
 			this.getPermissionList('biz:po:bizPoHeader:saveScheduling','inSsaveFlag')
 			this.getPermissionList1('biz:order:unitPrice:view','unitPriceFlag')//结算价权限
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
@@ -142,6 +142,17 @@
 							}
 						})
 	            		$(".saveBtnPt").html(htmlSave)
+	            		if(_this.outSaveFlag == true) {
+							if(_this.inSsaveFlag == true) {
+								$(".saveBtnPt").html(htmlSave);
+							}else {
+								$('#purchAddBtn').hide();
+								$('#purchAddCont').parent().hide();
+							}
+						}else {
+							$('#purchAddBtn').hide();
+							$('#purchAddCont').parent().hide();
+						}
 		            }
                 	_this.showContent(res);
                 }
@@ -166,9 +177,18 @@
 				$(".inputRadio").attr("disabled", true);
 			}
 			if(data.data.detailHeaderFlg == false && data.data.detailSchedulingFlg == false) {
-				$('#chedulingStatus').val('未排产');
+				if($('#purchOrdQty').val() == 0) {
+					$('#chedulingStatus').val('采购商品无申报数量！');
+					$(".inputRadio").attr("disabled", true);
+					$('#purchAddBtn').hide();
+					$('.saveBtnPt').hide();
+					$('#purchSchedRecord').parent().hide();
+					$('#purchAddCont').parent().hide();
+				}else {
+					$('#chedulingStatus').val('未排产');
+					_this.btnshow(data);
+				}
 				$('.schedCommd').hide();
-				_this.btnshow(data);
 			}
 			_this.saveSchedul(data);
 		},
@@ -192,7 +212,6 @@
 				})
 				$('#purchSchedRecord').html(htmlPurchPlans);
 			}
-			console.log(a.data.bizPoHeader)
 			if(a.data.bizPoHeader.poSchType == 2) {
 				$('#purchAddCont').parent().remove();
 				$('#chedulingStatus').val('排产完成');
@@ -228,8 +247,21 @@
 					'<label>总金额：</label>'+
 					'<input type="text" class="mui-input-clear" value="'+ item.ordQty * item.unitPrice +'" disabled>'+
 				'</div></div></li>'
-			htmlSave = '<button id="saveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+                htmlSave = '<button id="saveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">保存</button>'
 			});
+    		$("#orSchedPurch").html(htmlPurch)
+
+    		if(_this.outSaveFlag == true) {
+				if(_this.inSsaveFlag == true) {
+					$(".saveBtnPt").html(htmlSave);
+				}else {
+					$('#purchAddBtn').hide();
+					$('#purchAddCont').parent().hide();
+				}
+			}else {
+				$('#purchAddBtn').hide();
+				$('#purchAddCont').parent().hide();
+			}
     		$("#orSchedPurch").html(htmlPurch);
     		var unitPriceList=$('#orSchedPurch #unitprice');
 			$.each(unitPriceList,function(z,x){
@@ -277,21 +309,26 @@
 					chedulingStatus = '排产完成'
 					comdAddBtns = ''
 					comdPlans = ''
+					$('.saveBtnPt').hide();
 				}else {
-					comdAddBtns = '<button type="submit" class="commdAddBtn schedull app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
-					'<button type="submit" commdPurchId="'+item.id+'" id="singleAddBtn_'+ item.id+'" class="singleAddBtn schedulr app_btn_search mui-btn-blue mui-btn-block">保存</button>'
+					if(_this.outSaveFlag == true) {
+						if(_this.inSsaveFlag == true) {
+							comdAddBtns = '<button type="submit" class="commdAddBtn schedull app_btn_search  mui-btn-blue mui-btn-block">添加排产计划</button>'+
+							'<button type="submit" commdPurchId="'+item.id+'" id="singleAddBtn_'+ item.id+'" class="singleAddBtn schedulr app_btn_search mui-btn-blue mui-btn-block">保存</button>'
 
-					comdPlans = '<div class="mui-row plan">'+
-					'<div class="labelLf">排产计划：</div>'+
-					'<div class="mui-row app_f13 commdAddPlan" id="'+ item.id+'">'+
-						'<div class="mui-row app_bline commdPlan" name="'+ item.id +'">'+
-							'<div class="mui-input-row">'+
-								'<label>完成日期：</label>'+
-								'<input type="date" name="'+ item.id +'_date" class="commdDate"></div>'+
-							'<div class="mui-input-row">'+
-								'<label>排产数量：</label>'+
-								'<input type="text" name="'+ item.id +'_value" class="commdNum mui-input-clear"></div></div>'+
-				'</div></div>'
+							comdPlans = '<div class="mui-row plan">'+
+								'<div class="labelLf">排产计划：</div>'+
+								'<div class="mui-row app_f13 commdAddPlan" id="'+ item.id+'">'+
+									'<div class="mui-row app_bline commdPlan" name="'+ item.id +'">'+
+										'<div class="mui-input-row">'+
+											'<label>完成日期：</label>'+
+											'<input type="date" name="'+ item.id +'_date" class="commdDate"></div>'+
+										'<div class="mui-input-row">'+
+											'<label>排产数量：</label>'+
+											'<input type="text" name="'+ item.id +'_value" class="commdNum mui-input-clear"></div></div>'+
+							'</div></div>'
+						}
+					}
 				}
 				if(waiteNum == item.ordQty) {
 					chedulingStatus = '未排产'
@@ -352,6 +389,13 @@
 				var commdItemId = item.id;
 				_this.commdEverySave(commdItemId)
 			});
+    		$("#orSchedCommd").html(htmlCommodity)
+    		htmlAllSave = '<button id="allSaveBtn" type="submit" class="app_btn_search mui-btn-blue mui-btn-block">批量保存</button>'
+    		if(_this.outSaveFlag == true) {
+				if(_this.inSsaveFlag == true) {
+					$(".saveBtnPt").html(htmlAllSave)
+				}
+			}
     		$("#orSchedCommd").html(htmlCommodity);
     		var unitPriceLists=$('#orSchedCommd #unitprice');
 			$.each(unitPriceLists,function(z,x){
@@ -383,6 +427,7 @@
 			$('#chedulingStatus').val('未排产');
 			$('input[type=radio]').on('change', function() {
 				if(this.checked && this.value == 0) {
+
 					$('.schedPurch').show();
 					$('.schedCommd').hide();
 					_this.purchContent(data);
@@ -540,10 +585,16 @@
 	                datatype:"json",
 	                type: 'post',
 	                success: function (result) {
-//	                	console.log(result)
 	                    if(result == true) {
-	                       GHUTILS.OPENPAGE({
-								url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+	                    	var urlTxt = '';
+	                    	if(_this.userInfo.source == 'orderList') {
+	                    		urlTxt = "../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html";
+	                    	}
+	                    	if(_this.userInfo.source == 'inventoryList') {
+	                    		urlTxt = "../../html/inventoryMagmetHtml/inventoryList.html";
+	                    	}
+	                        GHUTILS.OPENPAGE({
+								url: urlTxt,
 								extras: {
 
 								}
@@ -644,10 +695,17 @@
                     type: 'post',
                     success: function (result) {
                         if(result == true) {
-                            GHUTILS.OPENPAGE({
-								url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+                            var urlTxt = '';
+	                    	if(_this.userInfo.source == 'orderList') {
+	                    		urlTxt = "../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html";
+	                    	}
+	                    	if(_this.userInfo.source == 'inventoryList') {
+	                    		urlTxt = "../../html/inventoryMagmetHtml/inventoryList.html";
+	                    	}
+	                        GHUTILS.OPENPAGE({
+								url: urlTxt,
 								extras: {
-									
+
 								}
 							})
                         }

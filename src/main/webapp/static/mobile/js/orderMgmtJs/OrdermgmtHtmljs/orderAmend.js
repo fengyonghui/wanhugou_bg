@@ -124,6 +124,26 @@
                 data:datas,
                 dataType: "json",
                 success: function(res){
+                	console.log(res)
+                	/*当前用户信息*/
+					var userId = '';
+					$.ajax({
+		                type: "GET",
+		                url: "/a/getUser",
+		                dataType: "json",
+		                async:false,
+		                success: function(user){  
+							userId = user.data.id							
+		                }
+		            });
+		            if(userId!=1){
+		            	$('#staInvoice').attr("disabled", true);
+		            	$('#staInvoice').parent().next('font').hide();
+		            	$('#inputDivAmend').attr("disabled",true);
+		            	$('#inputDivAmend').parent().next('font').hide();
+		            	$('#staDateilAddress').attr("disabled", true);
+		            	$('#staDateilAddress').siblings('font').hide();
+		            }
                 	var strTxt = res.data.bizOrderHeader.str;
                 	var entitys=res.data.bizOrderHeader;
                 	var payMentCont = '';
@@ -410,7 +430,7 @@
 				                        if (resule.ret== true || resule.ret == 'true') {
 				                            mui.toast("本次申请付款成功！");
 				                          	GHUTILS.OPENPAGE({
-				                                url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
+				                                url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 				                                extras: {
 				                                }
 				                            })
@@ -462,7 +482,7 @@
 					                        if (result.ret == true || result.ret == 'true') {
 					                            mui.toast("开启审核成功！");
 					                          	GHUTILS.OPENPAGE({
-					                                url: "../../../html/orderMgmtHtml/orderpaymentinfo.html",
+					                                url: "../../../html/orderMgmtHtml/OrdermgmtHtml/orderList.html",
 					                                extras: {
 					                                }
 					                            })

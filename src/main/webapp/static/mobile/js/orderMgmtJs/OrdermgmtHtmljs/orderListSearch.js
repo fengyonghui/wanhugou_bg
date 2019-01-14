@@ -22,7 +22,9 @@
 			_this.getData();
 			_this.ajaxorderStatus();//订单状态
 			_this.ajaxcheckStatus();//审核状态
-
+            _this.ajaxPoStatus();//付款单业务状态
+            _this.ajaxPocheckStatus();//付款单审核状态
+            _this.ajaxpoSchTypeStatus();//付款单排产状态
 		},
 		getData: function() {
 			var _this = this;
@@ -43,7 +45,7 @@
 			var statuTxt = '';
 			var status = _this.userInfo.statu;
 			console.log(status)
-			if(status == 'undefined' || status == ''||status == undefined) {
+			if(status == 'undefined' || status == undefined || status == '') {
 //				console.log(1)
 				statuTxt = '';
 			}else {
@@ -66,6 +68,10 @@
 					mobileAuditStatus: $('#input_div_waitchkStatus').val(),//待同意发货
 					waitShipments: $('#input_div_waitsendgoods').val(),//待发货
 					waitOutput: $('#input_div_outbound').val(),//待出库
+					poBizStatus:$('#input_div_poStatus').val(),//付款单业务状态
+					processTypeStr:$('#input_div_orderStatus').val(),//付款单审核状态
+					poSchType:$('#input_div_poSchType').val(),//付款单排产状态
+					poWaitPay:$('#wait_pay').val(),//付款单待支付
 					includeTestData: _this.includeTestData,//测试数据
 					statu: statuTxt,
 					isFunc: true
@@ -190,7 +196,61 @@
 				}
 			});
 		},
-},	
+		//付款单业务状态
+		ajaxPoStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlClass = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/dict/listData',
+				data: {type:'biz_po_status'},
+				dataType: 'json',
+				success: function(res) {
+					$.each(res, function(i, item) {
+						htmlClass += '<option class="soption" value="' + item.value + '">' + item.label + '</option>'
+					});
+					$('#input_div_poStatus').html(optHtml+htmlClass)
+				}
+			});
+		},
+		//付款单审核状态
+		ajaxPocheckStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlClass = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/biz/order/bizOrderHeader/listData4mobile',
+				dataType: 'json',
+				success: function(res) {
+					$.each(res.data.processList, function(i, item) {
+						console.log(item)
+						htmlClass += '<option class="soption" value="' + item + '">' + item + '</option>'
+					});
+					$('#input_div_orderStatus').html(optHtml+htmlClass)
+				}
+			});
+		},
+		//付款单排产状态
+		ajaxpoSchTypeStatus: function() {
+			var _this = this;
+			var optHtml ='<option value="">请选择</option>';
+			var htmlClass = '';
+			$.ajax({
+				type: 'GET',
+				url: '/a/sys/dict/listData',
+				data: {type:'poSchType'},
+				dataType: 'json',
+				success: function(res) {
+					$.each(res, function(i, item) {
+						htmlClass += '<option class="soption" value="' + item.value + '">' + item.label + '</option>'
+					});
+					$('#input_div_poSchType').html(optHtml+htmlClass)
+				}
+			});
+		},
+},
 	$(function() {
 		var ac = new ACCOUNT();
 		ac.init();
