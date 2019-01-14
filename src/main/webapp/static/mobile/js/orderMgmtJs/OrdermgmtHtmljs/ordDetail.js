@@ -64,6 +64,10 @@
 			var modifyServiceCharge =_this.userInfo.modifyServiceCharge;
 			var statu=_this.userInfo.statu;
 			var source=_this.userInfo.source;
+			console.log(idd)
+			console.log(orderDetails)
+			console.log(statu)
+			console.log(source)
 			datas={
 				id:idd,
                 orderDetails: orderDetails,
@@ -163,12 +167,12 @@
 		                success: function(res){
 		                	$.each(res,function(i,itemss){
 		                		if(itemss.value==item.commissionStatus){
-		                		 	comStatusTxt = itemss.label 
+		                		 	comStatusTxt = itemss.label
 		                		}
 		                	})
 		                	$('#commission').val(comStatusTxt);
 						}
-					})					
+					})
 					if(res.data.orderType!=8){
 						$('#staCoin').val(item.scoreMoney.toFixed(2));//万户币抵扣
 					}else{
