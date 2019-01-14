@@ -49,6 +49,11 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 	 */
 	private String custIds;
 
+	/**
+	 * 经销店添加页面，通过手机号关联经销店
+	 */
+	private String officeMobile;// 登录名
+
 	public BizCustomCenterConsultant() {
 		super();
 	}
@@ -143,5 +148,13 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 
 	public void setCustIds(String custIds) {
 		this.custIds = custIds;
+	}
+
+	public String getOfficeMobile() {
+		return officeMobile;
+	}
+
+	public void setOfficeMobile(String officeMobile) {
+		this.officeMobile = officeMobile;
 	}
 }

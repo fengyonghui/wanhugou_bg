@@ -142,6 +142,11 @@ public class User extends DataEntity<User> {
 
 	private String searchScr;
 
+	/**
+	 * 经销店添加页面，通过手机号关联经销店
+	 */
+	private String officeMobile;// 登录名
+
 	@SupCol(isUnique="true", isHide="true")
 	@ExcelField(title="ID", type=1, align=2, sort=1)
 	public Integer getId() {
@@ -524,5 +529,13 @@ public class User extends DataEntity<User> {
 
 	public void setSearchScr(String searchScr) {
 		this.searchScr = searchScr;
+	}
+
+	public String getOfficeMobile() {
+		return officeMobile;
+	}
+
+	public void setOfficeMobile(String officeMobile) {
+		this.officeMobile = officeMobile;
 	}
 }
