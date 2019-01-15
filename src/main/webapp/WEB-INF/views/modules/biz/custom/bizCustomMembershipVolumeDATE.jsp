@@ -38,19 +38,49 @@
 				alert("请选择客户专员")
 				return false;
 			}
-			$.ajax({
-				url:"${ctx}/biz/custom/bizCustomCenterConsultant/save",
-				data:$("#inputForm").serialize(),
-				type:"POST",
-				dataType:'json',
-				success:function(data){
-					<%----%>
-                    window.location.href = "${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id="+$("#adviserId").val()+"&conn=connIndex&office.id="+$("#bcID").val();
-					},
-				error:function(er){
-					alert("关联失败");
-				}
-			});
+
+			var customsId = $("#customsId").val();
+			var officeMobile = $("#officeMobile").val().trim();
+
+			if (customsId == "" && officeMobile == "") {
+                alert("请选择经销店或者输入经销店手机号！")
+                return false;
+			}
+
+			var resultFlag = "false";
+			if (customsId != "" && officeMobile != "") {
+                $.ajax({
+                    url:"${ctx}/biz/custom/bizCustomCenterConsultant/checkCustoms",
+                    data:{"customs.id": customsId, "officeMobile": officeMobile},
+                    type:"POST",
+                    dataType:'json',
+                    async: false,
+                    success:function(data){
+                        resultFlag = data;
+                    }
+                });
+			} else {
+                resultFlag = "true";
+            }
+
+			if (resultFlag == true || resultFlag == "true") {
+                $.ajax({
+                    url:"${ctx}/biz/custom/bizCustomCenterConsultant/save",
+                    data:$("#inputForm").serialize(),
+                    type:"POST",
+                    dataType:'json',
+                    success:function(data){
+                        if (data == "1") {
+                            window.location.href = "${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id="+$("#adviserId").val()+"&conn=connIndex&office.id="+$("#bcID").val();
+                        } else {
+                            alert("关联经销店失败！")
+                        }
+                    },
+                    error:function(er){
+                        alert("关联经销店失败！");
+                    }
+                });
+            }
 		}
 
 	</script>
@@ -75,6 +105,12 @@
             <input type="text" name="conn" value="${user.conn}" style="display:none">
         </div>
     </div>
+	<div class="control-group">
+		<label class="control-label">经销店手机号：</label>
+		<div class="controls">
+			<form:input path="officeMobile" id="officeMobile" htmlEscape="false" maxlength="30" class="input-xlarge"/>
+		</div>
+	</div>
 	<div class="control-group">
 		<label class="control-label">采购中心:</label>
 		<div class="controls">
