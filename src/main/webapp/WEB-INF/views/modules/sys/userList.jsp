@@ -236,7 +236,9 @@
 					<td>${bizUser.userOrder.orderCount}</td>
 					<td>${bizUser.userOrder.userOfficeReceiveTotal}</td>
 					<td>
-						${bizUser.userOrder.officeCount}
+						<a href="${ctx}/sys/office/purchasersList?user.id=${bizUser.id}&officeCount=officeCount">
+								${bizUser.userOrder.officeCount}
+						</a>
 					</td>
 				</c:if>
 				<shiro:hasPermission name="sys:user:edit"><td>

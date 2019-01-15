@@ -419,8 +419,9 @@ public class BizCustomCenterConsultantController extends BaseController {
     @RequestMapping(value = "save")
     @ResponseBody
     public String save(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
+        String result = "0";
         if(bizCustomCenterConsultant == null || bizCustomCenterConsultant.getCustoms() == null || bizCustomCenterConsultant.getConsultants() == null){
-            return "0";
+            return result;
         }
 //		BizCustomCenterConsultant BCC = bizCustomCenterConsultantService.get(bizCustomCenterConsultant.getCustoms().getId());
 //		if(BCC!=null && BCC.getDelFlag().equals(1)){
@@ -428,8 +429,27 @@ public class BizCustomCenterConsultantController extends BaseController {
 //		}else{
 //            bizCustomCenterConsultant.setIsNewRecord(false);//不是新记录,update
 //        }
-        bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
-        return "1";
+
+        String officeMobile = bizCustomCenterConsultant.getOfficeMobile();
+        Office customs = bizCustomCenterConsultant.getCustoms();
+        Integer companyId = null;
+        if (customs != null && customs.getId() != null) {
+            bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
+            result = "1";
+        } else {
+            User user = systemService.getUserByLoginName(officeMobile);
+            if (user != null) {
+                Office company = user.getCompany();
+                if (company != null) {
+                    companyId = company.getId();
+                    customs.setId(companyId);
+                    bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
+                    result = "1";
+                }
+            }
+        }
+
+        return result;
     }
 
     //    保存状态给 officeController
@@ -496,6 +516,34 @@ public class BizCustomCenterConsultantController extends BaseController {
         List<String> custIdList = Arrays.asList(custIdArr);
         bizCustomCenterConsultantService.deleteBatch(custIdList);
         return "redirect:"+Global.getAdminPath()+"/biz/custom/bizCustomCenterConsultant/list?consultants.id="+bizCustomCenterConsultant.getConsultants().getId();
+    }
+
+
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
+    @RequestMapping(value = "checkCustoms")
+    @ResponseBody
+    public String checkCustoms(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
+        String officeMobile = bizCustomCenterConsultant.getOfficeMobile();
+        String resultFlag = "false";
+        Integer companyId = null;
+        if (StringUtils.isNotBlank(officeMobile)) {
+            User user = systemService.getUserByLoginName(officeMobile);
+            Office company = user.getCompany();
+            if (company != null) {
+                companyId = company.getId();
+            }
+        }
+        BizCustomCenterConsultant bcc = bizCustomCenterConsultantService.get(bizCustomCenterConsultant.getCustoms().getId());
+        Integer custId = null;
+        if(bcc !=null){
+            custId = bcc.getCustoms().getId();
+        }
+
+        if (companyId !=null && custId != null && companyId.equals(custId)) {
+            resultFlag = "true";
+        }
+
+        return resultFlag;
     }
 
 }
