@@ -146,6 +146,11 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	 */
 	private String deleteCheck;
 
+	/**
+	 * 商品已上货架名称
+	 */
+	private String shelfNames;
+
 	public BizSkuInfo() {
 		super();
 	}
@@ -532,5 +537,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setDeleteCheck(String deleteCheck) {
 		this.deleteCheck = deleteCheck;
+	}
+
+	public String getShelfNames() {
+		return shelfNames;
+	}
+
+	public void setShelfNames(String shelfNames) {
+		this.shelfNames = shelfNames;
 	}
 }

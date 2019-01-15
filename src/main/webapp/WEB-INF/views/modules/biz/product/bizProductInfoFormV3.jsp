@@ -74,6 +74,7 @@
 <form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoV3/save" method="post"
            class="form-horizontal">
     <form:hidden path="id" id="id"/>
+    <form:hidden path="searchItemNo" id="searchItemNo"/>
     <form:hidden path="prodType"/>
     <input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
     <sys:message content="${message}"/>

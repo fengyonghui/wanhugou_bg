@@ -166,6 +166,9 @@ public class BizProductInfoV3Controller extends BaseController {
         model.addAttribute("usersList", users);
         model.addAttribute("page", page);
         model.addAttribute("prodType",bizProductInfo.getProdType());
+        //保持搜索框产品货号
+        String searchItemNo = bizProductInfo.getSearchItemNo();
+        model.addAttribute("searchItemNo", searchItemNo);
         return "modules/biz/product/bizProductInfoListV3";
     }
 
@@ -177,6 +180,8 @@ public class BizProductInfoV3Controller extends BaseController {
         commonImg.setObjectId(bizProductInfo.getId());
         commonImg.setObjectName("biz_product_info");
         if (bizProductInfo.getId() != null) {
+            String searchItemNo = bizProductInfo.getSearchItemNo();
+            model.addAttribute("searchItemNo", searchItemNo);
             List<CommonImg> imgList = commonImgService.findList(commonImg);
             commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());
             List<CommonImg> subImgList = commonImgService.findList(commonImg);
@@ -539,6 +544,8 @@ public class BizProductInfoV3Controller extends BaseController {
         }
         bizProductInfoService.save(bizProductInfo);
         addMessage(redirectAttributes, "保存产品信息表成功");
+
+        redirectAttributes.addAttribute("searchItemNo", bizProductInfo.getSearchItemNo());
         return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV3/?repage&prodType="+bizProductInfo.getProdType();
     }
 

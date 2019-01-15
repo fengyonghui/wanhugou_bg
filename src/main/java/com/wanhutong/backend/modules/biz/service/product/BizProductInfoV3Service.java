@@ -26,6 +26,7 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
@@ -40,6 +41,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuV2Service;
+import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
@@ -75,6 +77,7 @@ import java.net.URLDecoder;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -140,6 +143,8 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
     private BizInventorySkuService bizInventorySkuService;
     @Autowired
     private BizInventoryViewLogService bizInventoryViewLogService;
+    @Autowired
+    private BizVarietyFactorService bizVarietyFactorService;
 
     /**
      * 材质ID 临时解决文案 需优化
@@ -149,6 +154,8 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
     private static final Integer COLOR_ATTR_ID = 3;
     public static final String PRODUCT_TABLE = "biz_product_info";
     public static final String SKU_TABLE = "biz_sku_info";
+
+    public static final Integer COMMISSION_SHELF_TYPE = 5;
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
@@ -359,6 +366,39 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                 }
             }
 
+
+            //联动更新已上架商品的出厂价和销售价，零售货架的商品只更新出厂价
+            for (BizSkuInfo skuInfo : newSkuList) {
+                BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+                bizOpShelfSku.setSkuInfo(new BizSkuInfo(skuInfo.getId()));
+                List<BizOpShelfSku> bizOpShelfSkuList = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
+                if (CollectionUtils.isNotEmpty(bizOpShelfSkuList)) {
+                    for (BizOpShelfSku opShelfSku : bizOpShelfSkuList) {
+                        if (opShelfSku.getOrgPrice().compareTo(skuInfo.getBuyPrice()) != 0) {
+                            //更新已上架商品的出厂价
+                            opShelfSku.setOrgPrice(skuInfo.getBuyPrice());
+                            //更新已上架商品的销售单价
+                            BizVarietyFactor bizVarietyFactor = new BizVarietyFactor();
+                            bizVarietyFactor.setVarietyInfo(new BizVarietyInfo(bizProductInfo.getBizVarietyInfo().getId()));
+                            List<BizVarietyFactor> bvFactorList = bizVarietyFactorService.findList(bizVarietyFactor);
+                            if (!COMMISSION_SHELF_TYPE.equals(opShelfSku.getOpShelfInfo().getType())) {
+                                if (CollectionUtils.isNotEmpty(bvFactorList)) {
+                                    for (BizVarietyFactor varietyFactor : bvFactorList) {
+                                        if (opShelfSku.getMinQty().equals(varietyFactor.getMinQty()) && opShelfSku.getMaxQty().equals(varietyFactor.getMaxQty())) {
+                                            Double salePrice = skuInfo.getBuyPrice() * (1 + varietyFactor.getServiceFactor() / 100);
+                                            BigDecimal price = new BigDecimal(salePrice).setScale(0, BigDecimal.ROUND_HALF_UP);
+                                            opShelfSku.setSalePrice(price.doubleValue());
+                                        }
+                                    }
+                                } else {
+                                    opShelfSku.setSalePrice(skuInfo.getBuyPrice());
+                                }
+                            }
+                            bizOpShelfSkuV2Service.save(opShelfSku);
+                        }
+                    }
+                }
+            }
         }
 
 

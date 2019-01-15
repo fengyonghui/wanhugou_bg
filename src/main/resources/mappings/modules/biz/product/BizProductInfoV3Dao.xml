@@ -128,6 +128,12 @@
 				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
 			</if>
+			<if test="searchItemNo != null and searchItemNo != ''">
+				AND a.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{searchItemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{searchItemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{searchItemNo},'%')</if>
+			</if>
 			<if test="itemNoComplete != null and itemNoComplete != ''">
 				AND a.item_no = #{itemNoComplete}
 			</if>
