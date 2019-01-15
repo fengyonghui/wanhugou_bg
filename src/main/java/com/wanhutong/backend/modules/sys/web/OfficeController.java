@@ -181,16 +181,18 @@ public class OfficeController extends BaseController {
             customer.setUser(office.getUser());
         }
         Page<Office> page = officeService.findPage(new Page<Office>(request, response), customer);
-        if (page.getList().size() == 0) {
-            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
-                //列表页输入2个条件查询时
-                Office officeUser = new Office();
-                officeUser.setQueryMemberGys(office.getName()+"");
-                officeUser.setMoblieMoeny(office.getMoblieMoeny());
-                page = officeService.findPage(new Page<Office>(request, response), officeUser);
-            } else {
-                //当点击子节点显示
-                page.getList().add(officeService.get(office.getId()));
+        if (!"officeCount".equals(customer.getOfficeCount())) {
+            if (page.getList().size() == 0) {
+                if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
+                    //列表页输入2个条件查询时
+                    Office officeUser = new Office();
+                    officeUser.setQueryMemberGys(office.getName()+"");
+                    officeUser.setMoblieMoeny(office.getMoblieMoeny());
+                    page = officeService.findPage(new Page<Office>(request, response), officeUser);
+                } else {
+                    //当点击子节点显示
+                    page.getList().add(officeService.get(office.getId()));
+                }
             }
         }
         model.addAttribute("page", page);
