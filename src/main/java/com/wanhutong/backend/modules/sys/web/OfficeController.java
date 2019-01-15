@@ -175,6 +175,11 @@ public class OfficeController extends BaseController {
         if (office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
             customer.setMoblieMoeny(office.getMoblieMoeny());
         }
+        //客户专员当月新增会员列表显示
+        if (office != null && "officeCount".equals(office.getOfficeCount())) {
+            customer.setOfficeCount("officeCount");
+            customer.setUser(office.getUser());
+        }
         Page<Office> page = officeService.findPage(new Page<Office>(request, response), customer);
         if (page.getList().size() == 0) {
             if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {

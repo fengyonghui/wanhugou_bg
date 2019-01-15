@@ -122,6 +122,8 @@ public class Office extends TreeEntity<Office> {
 	private Integer searchOfficeId;
 	private String searchOfficeName;
 
+	private String officeCount;
+
 	public User getUser() {
 		return user;
 	}
@@ -520,5 +522,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setSearchOfficeName(String searchOfficeName) {
 		this.searchOfficeName = searchOfficeName;
+	}
+
+	public String getOfficeCount() {
+		return officeCount;
+	}
+
+	public void setOfficeCount(String officeCount) {
+		this.officeCount = officeCount;
 	}
 }

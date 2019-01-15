@@ -236,10 +236,9 @@
 					<td>${bizUser.userOrder.orderCount}</td>
 					<td>${bizUser.userOrder.userOfficeReceiveTotal}</td>
 					<td>
-						<%--<a href="${ctx}/biz/chat/bizChatRecord/list?user.id=${bizUser.id}&office.parent.id=7&office.type=6&source=purchaser">--%>
-								<%--${bizUser.userOrder.officeCount}--%>
-						<%--</a>--%>
-							${bizUser.userOrder.officeCount}
+						<a href="${ctx}/sys/office/purchasersList?user.id=${bizUser.id}&officeCount=officeCount">
+								${bizUser.userOrder.officeCount}
+						</a>
 					</td>
 				</c:if>
 				<shiro:hasPermission name="sys:user:edit"><td>
