@@ -127,6 +127,14 @@
 	<select id="getShelfNames" resultType="BizOpShelfInfo">
 		SELECT
 		<include refid="bizOpShelfInfoColumns"/>
+		,(select min(boss.sale_price)  from
+			biz_op_shelf_sku boss
+			JOIN biz_sku_info bsii ON bsii.id=boss.sku_id
+			JOIN biz_op_shelf_info bosi ON bosi.id = boss.shelf_id
+			where boss.status = 1
+				and bsii.id = #{skuId}
+				AND bosi.type != 5
+			)as shelfMinSalePrice
 		FROM biz_op_shelf_info a
 			join biz_op_shelf_sku bos on bos.shelf_id=a.id
 			join biz_sku_info bsi on bsi.id = bos.sku_id

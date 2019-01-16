@@ -136,6 +136,8 @@
                                 if (showUnitPriceFlag == true || showUnitPriceFlag == "true") {
                                     tr_tds+= "<td>"+skuInfo.buyPrice+"</td>";
                                 }
+                                //已上货架，最低销售价
+                                tr_tds+= "<td>"+skuInfo.shelfMinSalePrice +"</td>";
                                 tr_tds+= "<td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>";
 
 								if(flag){
@@ -1320,6 +1322,9 @@
 					<shiro:hasPermission name="biz:order:unitPrice:view">
 						<th>结算价</th>
 					</shiro:hasPermission>
+					<c:if test="${entity.str!='detail' && entity.str!='audit'}">
+						<th>最低销售价</th>
+					</c:if>
 					<th>申报数量</th>
 
 					<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
@@ -1421,6 +1426,7 @@
                         <shiro:hasPermission name="biz:order:unitPrice:view">
 							<th>结算价</th>
                         </shiro:hasPermission>
+						<th>最低销售价</th>
 							<%--<th>商品类型</th>--%>
 						<th>申报数量</th>
 							<%--<th>已收货数量</th>--%>
