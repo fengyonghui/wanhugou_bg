@@ -44,6 +44,7 @@ import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.wanhutong.backend.common.persistence.BaseEntity.DEL_FLAG_NORMAL;
@@ -1090,5 +1092,28 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
         return Pair.of(Boolean.TRUE, "操作成功!");
 
+    }
+
+    public List<Office> queryTreeList(String type, String source) {
+        List<Office> list = null;
+        if (StringUtils.isNotBlank(type)) {
+            String defType = type;
+            String[] split = type.split(",");
+            if (ArrayUtils.isNotEmpty(split)) {
+                defType = split[0];
+            }
+            if (source != null && source.equals("officeConnIndex")) {
+                //属于客户专员查询采购中心方法
+                list = this.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(defType));
+            } else {
+                if (ArrayUtils.isNotEmpty(split) && split.length > 1) {
+                    list = this.findListByTypeList(Arrays.asList(split));
+                }else {
+                    list = this.filerOffice(null, source, OfficeTypeEnum.stateOf(defType));
+                }
+            }
+        }
+
+        return list;
     }
 }
