@@ -902,24 +902,7 @@ public class OfficeController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "queryTreeList")
     public List<Map<String, Object>> getImgTreeList(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes) {
-        List<Office> list = null;
-        if (StringUtils.isNotBlank(type)) {
-            String defType = type;
-            String[] split = type.split(",");
-            if (ArrayUtils.isNotEmpty(split)) {
-                defType = split[0];
-            }
-            if (source != null && source.equals("officeConnIndex")) {
-                //属于客户专员查询采购中心方法
-                list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(defType));
-            } else {
-                if (ArrayUtils.isNotEmpty(split) && split.length > 1) {
-                    list = officeService.findListByTypeList(Arrays.asList(split));
-                }else {
-                    list = officeService.filerOffice(null, source, OfficeTypeEnum.stateOf(defType));
-                }
-            }
-        }
+        List<Office> list = officeService.queryTreeList(type, source);
         if (list == null || list.size() == 0) {
             addMessage(redirectAttributes, "列表不存在");
         }

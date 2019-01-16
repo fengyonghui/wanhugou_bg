@@ -1204,7 +1204,7 @@
 		<if test="waitPay == 1 or waitPay == '1'">
 			having sum(bppo.total - bppo.pay_total) > 0
 		</if>
-		ORDER BY updateDate DESC
+        ORDER BY createDate DESC
 	</select>
 
 
@@ -1585,7 +1585,7 @@
 		<if test="waitPay == 1 or waitPay == '1'">
 			having sum(bppo.total - bppo.pay_total) > 0
 		</if>
-		ORDER BY updateDate DESC
+        ORDER BY createDate DESC
 	</select>
 
 
