@@ -151,6 +151,11 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	 */
 	private String shelfNames;
 
+	/**
+	 * 已上货架，最低销售价
+	 */
+	private String shelfMinSalePrice;
+
 	public BizSkuInfo() {
 		super();
 	}
@@ -545,5 +550,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setShelfNames(String shelfNames) {
 		this.shelfNames = shelfNames;
+	}
+
+	public String getShelfMinSalePrice() {
+		return shelfMinSalePrice;
+	}
+
+	public void setShelfMinSalePrice(String shelfMinSalePrice) {
+		this.shelfMinSalePrice = shelfMinSalePrice;
 	}
 }

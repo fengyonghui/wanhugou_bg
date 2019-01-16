@@ -40,6 +40,11 @@ public class BizOpShelfInfo extends DataEntity<BizOpShelfInfo> {
 		super(id);
 	}
 
+	/**
+	 * 已上货架，最低销售价
+	 */
+	private String shelfMinSalePrice;
+
 	@Length(min=1, max=50, message="货架名称长度必须介于 1 和 50 之间")
 	public String getName() {
 		return name;
@@ -111,5 +116,13 @@ public class BizOpShelfInfo extends DataEntity<BizOpShelfInfo> {
 
 	public void setType(Integer type) {
 		this.type = type;
+	}
+
+	public String getShelfMinSalePrice() {
+		return shelfMinSalePrice;
+	}
+
+	public void setShelfMinSalePrice(String shelfMinSalePrice) {
+		this.shelfMinSalePrice = shelfMinSalePrice;
 	}
 }

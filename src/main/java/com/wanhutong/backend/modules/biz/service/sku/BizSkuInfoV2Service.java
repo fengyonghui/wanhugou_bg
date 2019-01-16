@@ -102,42 +102,6 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	public Map<String, List<BizSkuInfo>> findListForProd(BizSkuInfo bizSkuInfo) {
 		List<BizSkuInfo> skuInfoList=super.findList(bizSkuInfo);
 		Map<String,List<BizSkuInfo>> listMap= findSkuListForProd(skuInfoList);
-
-//		Map<BizProductInfo,List<BizSkuInfo>> map=new HashMap<BizProductInfo,List<BizSkuInfo>>();
-//		Map<String,List<BizSkuInfo>> listMap=new HashMap<String, List<BizSkuInfo>>();
-//		for(BizSkuInfo skuInfo:skuInfoList){
-//			BizSkuInfo info=findListProd(skuInfo);
-//			if(skuInfo.getSkuType()!=null && SkuTypeEnum.stateOf(skuInfo.getSkuType())!=null){
-//				info.setSkuTypeName(SkuTypeEnum.stateOf(skuInfo.getSkuType()).getName());
-//			}
-//
-//			BizProductInfo bizProductInfo=info.getProductInfo();
-//			if(map.containsKey(bizProductInfo)){
-//				List<BizSkuInfo> skuInfos = map.get(bizProductInfo);
-//				map.remove(bizProductInfo);
-//				skuInfos.add(info);
-//				map.put(bizProductInfo,skuInfos);
-//			}
-//			else {
-//				List<BizSkuInfo>infoList=new ArrayList<BizSkuInfo>();
-//				infoList.add(info);
-//				map.put(bizProductInfo,infoList);
-//			}
-//		}
-//		for(BizProductInfo productInfo :map.keySet()) {
-//			String sKey="";
-//			if(productInfo.getOffice()==null){
-//				 sKey = productInfo.getId()+","+productInfo.getName()+","+productInfo.getImgUrl()+","+productInfo.getCateNames()+","
-//						+productInfo.getProdCode()+","+null+","+productInfo.getBrandName()+","+productInfo.getBizVarietyInfo().getId()+","+productInfo.getBizVarietyInfo().getName();
-//
-//			}else {
-//				 sKey = productInfo.getId()+","+productInfo.getName()+","+productInfo.getImgUrl()+","+productInfo.getCateNames()+","
-//						+productInfo.getProdCode()+","+productInfo.getOffice().getName()+","+productInfo.getBrandName()+","+productInfo.getBizVarietyInfo().getId()+","+productInfo.getBizVarietyInfo().getName();
-//
-//			}
-//			listMap.put(sKey,map.get(productInfo));
-//		}
-
 		return listMap;
 	}
 
@@ -216,14 +180,18 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		//商品已上货架名称
 		List<BizOpShelfInfo> shlfNamesList = bizOpShelfInfoService.getShelfNames(skuInfo.getId());
 		String shelfNames = "";
+		String shelfMinSalePrice = "";
 		if (CollectionUtils.isNotEmpty(shlfNamesList)) {
 			for (BizOpShelfInfo opShelfInfo : shlfNamesList) {
 				shelfNames += opShelfInfo.getName() + ",";
+				//已上货架，最低销售价
+				shelfMinSalePrice = opShelfInfo.getShelfMinSalePrice();
 			}
 		}
 		if (shelfNames.contains(",")) {
 			skuInfo.setShelfNames(shelfNames.substring(0, shelfNames.lastIndexOf(",")));
 		}
+		skuInfo.setShelfMinSalePrice(shelfMinSalePrice);
 		return skuInfo;
 
 	}
