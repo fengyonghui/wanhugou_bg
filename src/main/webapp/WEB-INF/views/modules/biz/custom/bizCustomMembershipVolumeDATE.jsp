@@ -47,8 +47,8 @@
                 return false;
 			}
 
-			var resultFlag = "false";
-			if (customsId != "" && officeMobile != "") {
+			var resultFlag = "0";
+			if (officeMobile != "") {
                 $.ajax({
                     url:"${ctx}/biz/custom/bizCustomCenterConsultant/checkCustoms",
                     data:{"customs.id": customsId, "officeMobile": officeMobile},
@@ -60,10 +60,25 @@
                     }
                 });
 			} else {
-                resultFlag = "true";
+                resultFlag = "3";
             }
 
-			if (resultFlag == true || resultFlag == "true") {
+            if (resultFlag == "0") {
+                alert("输入手机号不正确！")
+                return false;
+            }
+
+			if (resultFlag == "1") {
+                alert("该手机号对应经销店已被别的客户专员关联！")
+                return false;
+            }
+
+            if (resultFlag == "2") {
+                alert("已选经销店和对应手机号不匹配，请重新选择！")
+                return false;
+            }
+
+            if (resultFlag == "3") {
                 $.ajax({
                     url:"${ctx}/biz/custom/bizCustomCenterConsultant/save",
                     data:$("#inputForm").serialize(),

@@ -443,6 +443,7 @@ public class BizCustomCenterConsultantController extends BaseController {
                 if (company != null) {
                     companyId = company.getId();
                     customs.setId(companyId);
+                    bizCustomCenterConsultant.setCustoms(customs);
                     bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
                     result = "1";
                 }
@@ -519,31 +520,59 @@ public class BizCustomCenterConsultantController extends BaseController {
     }
 
 
+    /**
+     *
+     * @param bizCustomCenterConsultant
+     * @param request
+     * @param response
+     * @param model
+     * @return 0:输入手机号不正确，1：该手机号对应经销店已被别的客户专员关联 2：已选经销店和对应手机号不匹配 3:正常
+     */
     @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
     @RequestMapping(value = "checkCustoms")
     @ResponseBody
     public String checkCustoms(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
         String officeMobile = bizCustomCenterConsultant.getOfficeMobile();
-        String resultFlag = "false";
         Integer companyId = null;
         if (StringUtils.isNotBlank(officeMobile)) {
+            Integer companyIdTemp = null;
             User user = systemService.getUserByLoginName(officeMobile);
-            Office company = user.getCompany();
+            Office company = (user == null ? null :user.getCompany());
             if (company != null) {
-                companyId = company.getId();
+                companyIdTemp = company.getId();
+            }
+
+            if (companyIdTemp == null) {
+                return "0";
+            } else {
+                //如果经销店手机号不为空时，判断对应经销店是否已被别的客户专员关联
+                List<Office> officeList = officeService.queryTreeList(OfficeTypeEnum.CUSTOMER.getType(), "con");
+                if (CollectionUtils.isNotEmpty(officeList)) {
+                    for (Office office : officeList) {
+                        Integer officeId = office.getId();
+                        if (officeId.equals(companyIdTemp)) {
+                            companyId = officeId;
+                        }
+                    }
+                }
             }
         }
-        BizCustomCenterConsultant bcc = bizCustomCenterConsultantService.get(bizCustomCenterConsultant.getCustoms().getId());
+
+        if (companyId == null) {
+             return "1";
+        }
+
         Integer custId = null;
-        if(bcc !=null){
-            custId = bcc.getCustoms().getId();
+        if (bizCustomCenterConsultant.getCustoms().getId() != null) {
+            BizCustomCenterConsultant bcc = bizCustomCenterConsultantService.get(bizCustomCenterConsultant.getCustoms().getId());
+            if(bcc !=null){
+                custId = bcc.getCustoms().getId();
+            }
         }
-
-        if (companyId !=null && custId != null && companyId.equals(custId)) {
-            resultFlag = "true";
+        if (custId != null && !companyId.equals(custId)) {
+            return "2";
         }
-
-        return resultFlag;
+        return "3";
     }
 
 }
