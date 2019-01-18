@@ -220,7 +220,7 @@
 												&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 												&& (bizPoHeader.payTotal == null ? 0 : bizPoHeader.payTotal) < bizPoHeader.bizOrderHeader.totalDetail
 												}">
-                                            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoHeader.bizOrderHeader.id}&str=createPay">申请11付款</a>
+                                            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizPoHeader.bizOrderHeader.id}&str=createPay">申请付款</a>
                                         </c:if>
                                     </c:if>
                                 </shiro:hasPermission>
@@ -231,7 +231,7 @@
 												&& bizPoHeader.bizRequestHeader.bizStatus < ReqHeaderStatusEnum.VEND_ALL_PAY.state
 												&& (bizPoHeader.bizRequestHeader.bizPoHeader.payTotal == null ? 0 : bizPoHeader.payTotal) < bizPoHeader.bizRequestHeader.totalDetail
 												}">
-                                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=createPay">申请22付款</a>
+                                            <a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=createPay">申请付款</a>
                                         </c:if>
                                     </c:if>
                                 </shiro:hasPermission>
