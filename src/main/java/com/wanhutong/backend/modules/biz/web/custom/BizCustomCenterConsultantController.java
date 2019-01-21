@@ -419,8 +419,9 @@ public class BizCustomCenterConsultantController extends BaseController {
     @RequestMapping(value = "save")
     @ResponseBody
     public String save(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
+        String result = "0";
         if(bizCustomCenterConsultant == null || bizCustomCenterConsultant.getCustoms() == null || bizCustomCenterConsultant.getConsultants() == null){
-            return "0";
+            return result;
         }
 //		BizCustomCenterConsultant BCC = bizCustomCenterConsultantService.get(bizCustomCenterConsultant.getCustoms().getId());
 //		if(BCC!=null && BCC.getDelFlag().equals(1)){
@@ -428,8 +429,28 @@ public class BizCustomCenterConsultantController extends BaseController {
 //		}else{
 //            bizCustomCenterConsultant.setIsNewRecord(false);//不是新记录,update
 //        }
-        bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
-        return "1";
+
+        String officeMobile = bizCustomCenterConsultant.getOfficeMobile();
+        Office customs = bizCustomCenterConsultant.getCustoms();
+        Integer companyId = null;
+        if (customs != null && customs.getId() != null) {
+            bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
+            result = "1";
+        } else {
+            User user = systemService.getUserByLoginName(officeMobile);
+            if (user != null) {
+                Office company = user.getCompany();
+                if (company != null) {
+                    companyId = company.getId();
+                    customs.setId(companyId);
+                    bizCustomCenterConsultant.setCustoms(customs);
+                    bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
+                    result = "1";
+                }
+            }
+        }
+
+        return result;
     }
 
     //    保存状态给 officeController
@@ -496,6 +517,62 @@ public class BizCustomCenterConsultantController extends BaseController {
         List<String> custIdList = Arrays.asList(custIdArr);
         bizCustomCenterConsultantService.deleteBatch(custIdList);
         return "redirect:"+Global.getAdminPath()+"/biz/custom/bizCustomCenterConsultant/list?consultants.id="+bizCustomCenterConsultant.getConsultants().getId();
+    }
+
+
+    /**
+     *
+     * @param bizCustomCenterConsultant
+     * @param request
+     * @param response
+     * @param model
+     * @return 0:输入手机号不正确，1：该手机号对应经销店已被别的客户专员关联 2：已选经销店和对应手机号不匹配 3:正常
+     */
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
+    @RequestMapping(value = "checkCustoms")
+    @ResponseBody
+    public String checkCustoms(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
+        String officeMobile = bizCustomCenterConsultant.getOfficeMobile();
+        Integer companyId = null;
+        if (StringUtils.isNotBlank(officeMobile)) {
+            Integer companyIdTemp = null;
+            User user = systemService.getUserByLoginName(officeMobile);
+            Office company = (user == null ? null :user.getCompany());
+            if (company != null) {
+                companyIdTemp = company.getId();
+            }
+
+            if (companyIdTemp == null) {
+                return "0";
+            } else {
+                //如果经销店手机号不为空时，判断对应经销店是否已被别的客户专员关联
+                List<Office> officeList = officeService.queryTreeList(OfficeTypeEnum.CUSTOMER.getType(), "con");
+                if (CollectionUtils.isNotEmpty(officeList)) {
+                    for (Office office : officeList) {
+                        Integer officeId = office.getId();
+                        if (officeId.equals(companyIdTemp)) {
+                            companyId = officeId;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (companyId == null) {
+             return "1";
+        }
+
+        Integer custId = null;
+        if (bizCustomCenterConsultant.getCustoms().getId() != null) {
+            BizCustomCenterConsultant bcc = bizCustomCenterConsultantService.get(bizCustomCenterConsultant.getCustoms().getId());
+            if(bcc !=null){
+                custId = bcc.getCustoms().getId();
+            }
+        }
+        if (custId != null && !companyId.equals(custId)) {
+            return "2";
+        }
+        return "3";
     }
 
 }

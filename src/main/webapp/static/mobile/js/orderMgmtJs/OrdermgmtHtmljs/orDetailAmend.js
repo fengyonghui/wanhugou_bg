@@ -90,7 +90,7 @@
 			            	$('.addSkuButton').attr('id',res.data.skuInfo.id);
 			            	var url= "/a/biz/sku/bizSkuInfo/findPurseSkuList4Mobile",
 			            	purchaserId=res.data.customer.id;
-			            	orderTypes=res.data.bizOrderDetail.orderType;
+			            	orderTypes=res.data.bizOrderDetail.orderType; 
 			            	_this.searchSkuHtml(url,purchaserId,orderTypes);
 			            }
                 	}	                

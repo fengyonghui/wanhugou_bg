@@ -259,6 +259,7 @@
 		            type:'get',
 		            headers:{'Content-Type':'application/json'},
 		            success:function(res){
+		            	console.log(res)
 		            	var dataRow = res.data.roleSet;
 		            	/*当前用户信息*/
 						var userId = '';
@@ -292,6 +293,7 @@
                         var that=this;
                         if(arrLen > 0) {
                             $.each(res.data.page.list, function(i, item) {
+                            	console.log(item)
 								//订单/备货单号								
                                 var poNumTxt="";  
                                 var itemId="";

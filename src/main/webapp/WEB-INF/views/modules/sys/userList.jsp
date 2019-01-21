@@ -236,14 +236,16 @@
 					<td>${bizUser.userOrder.orderCount}</td>
 					<td>${bizUser.userOrder.userOfficeReceiveTotal}</td>
 					<td>
-						${bizUser.userOrder.officeCount}
+						<a href="${ctx}/sys/office/purchasersList?user.id=${bizUser.id}&officeCount=officeCount">
+								${bizUser.userOrder.officeCount}
+						</a>
 					</td>
 				</c:if>
 				<shiro:hasPermission name="sys:user:edit"><td>
 					<c:if test="${user.conn != null}">
 						<c:if test="${user.conn eq 'connIndex'}">
 							<a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bizUser.id}&conn=${user.conn}&office.id=${bizUser.office.id}">关联经销店</a>
-							<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizUser.id}">订单管理</a>
+							<%--<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizUser.id}">订单管理</a>--%>
 						</c:if>
 						<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
 						<a href="${ctx}/sys/user/delete?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>

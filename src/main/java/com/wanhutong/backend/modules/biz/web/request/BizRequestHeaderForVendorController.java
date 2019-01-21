@@ -45,6 +45,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.biz.web.order.BizOrderHeaderController;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.Process;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.VendorRequestOrderProcessConfig;
@@ -89,17 +90,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 备货清单Controller
@@ -275,6 +267,23 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		} else if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && poMap.get(bizRequestHeader.getProcess()) != null){
 			bizRequestHeader.setPoCode(poMap.get(bizRequestHeader.getProcess()));
 		}*/
+
+		//支付申请单合并搜索条件审核状态
+		PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+		List<com.wanhutong.backend.modules.config.parse.Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
+
+		if (org.apache.commons.lang3.StringUtils.isNotBlank(bizRequestHeader.getProcessTypeStr())) {
+			List<Process> processListTemp = purchaseOrderProcessConfig.getNameProcessMap().get(bizRequestHeader.getProcessTypeStr());
+			List<String> transform = processListTemp.stream().map(process -> String.valueOf(process.getCode())).collect(Collectors.toList());
+			bizRequestHeader.setProcessTypeList(transform);
+		}
+
+		Set<String> processSet = Sets.newHashSet();
+		for (com.wanhutong.backend.modules.config.parse.Process process : processList) {
+			processSet.add(process.getName());
+		}
+		model.addAttribute("processList", processSet);
+
 		String dataFrom = "biz_request_bizRequestHeader";
 		bizRequestHeader.setDataFrom(dataFrom);
 		Page<BizRequestHeader> page = bizRequestHeaderForVendorService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
@@ -352,6 +361,24 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		} else if (StringUtils.isNotBlank(bizRequestHeader.getProcess()) && poMap.get(bizRequestHeader.getProcess()) != null){
 			bizRequestHeader.setPoCode(poMap.get(bizRequestHeader.getProcess()));
 		}*/
+
+		//支付申请单合并搜索条件审核状态
+		PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+		List<com.wanhutong.backend.modules.config.parse.Process> processList = purchaseOrderProcessConfig.getShowFilterProcessList();
+
+		if (org.apache.commons.lang3.StringUtils.isNotBlank(bizRequestHeader.getProcessTypeStr())) {
+			List<Process> processListTemp = purchaseOrderProcessConfig.getNameProcessMap().get(bizRequestHeader.getProcessTypeStr());
+			List<String> transform = processListTemp.stream().map(process -> String.valueOf(process.getCode())).collect(Collectors.toList());
+			bizRequestHeader.setProcessTypeList(transform);
+		}
+
+		Set<String> processSet = Sets.newHashSet();
+		for (com.wanhutong.backend.modules.config.parse.Process process : processList) {
+			processSet.add(process.getName());
+		}
+		model.addAttribute("processList", processSet);
+		resultMap.put("processList",processSet);
+
 		String dataFrom = "biz_request_bizRequestHeader";
 		bizRequestHeader.setDataFrom(dataFrom);
 		Page<BizRequestHeader> page = bizRequestHeaderForVendorService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
@@ -398,7 +425,7 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "form")
-	public String form(BizRequestHeader bizRequestHeader, Model model) {
+	public String form(BizRequestHeader bizRequestHeader, Model model, HttpServletRequest request, HttpServletResponse response) {
 		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
 		if (bizRequestHeader.getBizPoHeader() != null && bizRequestHeader.getId() == null) {
 			List<BizRequestHeader> requestHeaderList = bizRequestHeaderForVendorService.findList(bizRequestHeader);
@@ -520,8 +547,20 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				}
 				model.addAttribute("totalPayTotal", totalPayTotal);
 			}
+			if(!Objects.isNull(bizRequestHeader.getBizPoHeader())){
+				BizPoPaymentOrder poPaymentOrder = new BizPoPaymentOrder();
+				poPaymentOrder.setPoHeaderId(bizRequestHeader.getBizPoHeader().getId());
+				poPaymentOrder.setOrderType(PoPayMentOrderTypeEnum.PO_TYPE.getType());
+				poPaymentOrder.setFromPage("requestHeader");
+				poPaymentOrder.setOrderId(bizRequestHeader.getId());
+				Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), poPaymentOrder);
+				//更新BizPoPaymentOrder审核按钮控制flag
+				bizPoPaymentOrderService.updateHasRole(page);
+				model.addAttribute("poPaymentOrderPage",page);
+				model.addAttribute("bizPoHeader",bizPoHeaderService.get(bizRequestHeader.getBizPoHeader().getId()));
+				model.addAttribute("fromPage",poPaymentOrder.getFromPage());
+			}
 		}
-
 		User userAdmin = UserUtils.getUser();
 		//渠道部角色
 		List<Role> roleList = userAdmin.getRoleList();
@@ -534,7 +573,6 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			}
 		}
 		model.addAttribute("roleChanne", roleName);
-
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
 		model.addAttribute("bizSkuInfo", new BizSkuInfo());
@@ -916,9 +954,9 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "save")
-	public String save(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes) {
+	public String save(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
 		if (!beanValidator(model, bizRequestHeader)){
-			return form(bizRequestHeader, model);
+			return form(bizRequestHeader, model, request, response);
 		}
 		if (bizRequestHeader.getId() != null) {
 			BizPoHeader bizPoHeader = new BizPoHeader();
@@ -1075,14 +1113,14 @@ public class BizRequestHeaderForVendorController extends BaseController {
 
 	@RequiresPermissions("biz:request:bizRequestHeader:createPayOrder")
 	@RequestMapping(value = "saveRequest")
-	public String saveRequest(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes, String type) {
+	public String saveRequest(BizRequestHeader bizRequestHeader, Model model, RedirectAttributes redirectAttributes, String type, HttpServletRequest request, HttpServletResponse response) {
 		if ("createPay".equalsIgnoreCase(type)) {
 			String msg = bizRequestHeaderForVendorService.genPaymentOrder(bizRequestHeader).getRight();
 			addMessage(redirectAttributes, msg);
 			return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";
 		}
 		if (!beanValidator(model, bizRequestHeader)) {
-			return form(bizRequestHeader, model);
+			return form(bizRequestHeader, model, request, response);
 		}
 		addMessage(redirectAttributes, "保存备货单成功");
 		return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestHeaderForVendor/?repage";

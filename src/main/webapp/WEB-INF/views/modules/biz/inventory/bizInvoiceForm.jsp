@@ -279,7 +279,7 @@
 			<div class="controls">
 				<form:select path="collLocate" htmlEscape="false" maxlength="30" class="input-xlarge required">
 					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('coll_locate')}" itemValue="value" itemLabel="label"/>
+					<form:options items="${collLocateList}" itemValue="value" itemLabel="label"/>
 				</form:select>
 			</div>
 		</div>

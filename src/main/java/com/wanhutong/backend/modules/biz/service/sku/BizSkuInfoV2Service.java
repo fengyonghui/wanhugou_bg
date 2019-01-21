@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.service.sku;
 
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
@@ -14,10 +15,12 @@ import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV2Dao;
 import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV3Dao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
@@ -32,6 +35,7 @@ import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +70,8 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	private BizOpShelfSkuService bizOpShelfSkuService;
 	@Autowired
 	private DefaultPropService defaultPropService;
+	@Autowired
+	private BizOpShelfInfoService bizOpShelfInfoService;
 
 	protected Logger log = LoggerFactory.getLogger(BizSkuInfoV2Service.class);
 
@@ -96,42 +102,6 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	public Map<String, List<BizSkuInfo>> findListForProd(BizSkuInfo bizSkuInfo) {
 		List<BizSkuInfo> skuInfoList=super.findList(bizSkuInfo);
 		Map<String,List<BizSkuInfo>> listMap= findSkuListForProd(skuInfoList);
-
-//		Map<BizProductInfo,List<BizSkuInfo>> map=new HashMap<BizProductInfo,List<BizSkuInfo>>();
-//		Map<String,List<BizSkuInfo>> listMap=new HashMap<String, List<BizSkuInfo>>();
-//		for(BizSkuInfo skuInfo:skuInfoList){
-//			BizSkuInfo info=findListProd(skuInfo);
-//			if(skuInfo.getSkuType()!=null && SkuTypeEnum.stateOf(skuInfo.getSkuType())!=null){
-//				info.setSkuTypeName(SkuTypeEnum.stateOf(skuInfo.getSkuType()).getName());
-//			}
-//
-//			BizProductInfo bizProductInfo=info.getProductInfo();
-//			if(map.containsKey(bizProductInfo)){
-//				List<BizSkuInfo> skuInfos = map.get(bizProductInfo);
-//				map.remove(bizProductInfo);
-//				skuInfos.add(info);
-//				map.put(bizProductInfo,skuInfos);
-//			}
-//			else {
-//				List<BizSkuInfo>infoList=new ArrayList<BizSkuInfo>();
-//				infoList.add(info);
-//				map.put(bizProductInfo,infoList);
-//			}
-//		}
-//		for(BizProductInfo productInfo :map.keySet()) {
-//			String sKey="";
-//			if(productInfo.getOffice()==null){
-//				 sKey = productInfo.getId()+","+productInfo.getName()+","+productInfo.getImgUrl()+","+productInfo.getCateNames()+","
-//						+productInfo.getProdCode()+","+null+","+productInfo.getBrandName()+","+productInfo.getBizVarietyInfo().getId()+","+productInfo.getBizVarietyInfo().getName();
-//
-//			}else {
-//				 sKey = productInfo.getId()+","+productInfo.getName()+","+productInfo.getImgUrl()+","+productInfo.getCateNames()+","
-//						+productInfo.getProdCode()+","+productInfo.getOffice().getName()+","+productInfo.getBrandName()+","+productInfo.getBizVarietyInfo().getId()+","+productInfo.getBizVarietyInfo().getName();
-//
-//			}
-//			listMap.put(sKey,map.get(productInfo));
-//		}
-
 		return listMap;
 	}
 
@@ -206,6 +176,22 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		}
 
 		skuInfo.setProductInfo(bizProductInfo);
+
+		//商品已上货架名称
+		List<BizOpShelfInfo> shlfNamesList = bizOpShelfInfoService.getShelfNames(skuInfo.getId());
+		String shelfNames = "";
+		String shelfMinSalePrice = "";
+		if (CollectionUtils.isNotEmpty(shlfNamesList)) {
+			for (BizOpShelfInfo opShelfInfo : shlfNamesList) {
+				shelfNames += opShelfInfo.getName() + ",";
+				//已上货架，最低销售价
+				shelfMinSalePrice = opShelfInfo.getShelfMinSalePrice();
+			}
+		}
+		if (shelfNames.contains(",")) {
+			skuInfo.setShelfNames(shelfNames.substring(0, shelfNames.lastIndexOf(",")));
+		}
+		skuInfo.setShelfMinSalePrice(shelfMinSalePrice);
 		return skuInfo;
 
 	}

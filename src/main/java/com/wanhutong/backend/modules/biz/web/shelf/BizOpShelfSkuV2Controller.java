@@ -93,6 +93,7 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	public String list(BizOpShelfSku bizOpShelfSku, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizOpShelfSku> page = bizOpShelfSkuV2Service.findPage(new Page<BizOpShelfSku>(request, response), bizOpShelfSku);
 		model.addAttribute("page", page);
+		model.addAttribute("searchItemNo", bizOpShelfSku.getSearchItemNo());
 		return "modules/biz/shelf/bizOpShelfSkuListV2";
 	}
 
@@ -104,6 +105,9 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 			model.addAttribute("bizOpShelfSku", bizOpShelfSku1);
 			List<BizOpShelfSku> bizOpShelfSkuList = bizOpShelfSkuV2Service.findShelfSkuList(bizOpShelfSku1);
 			model.addAttribute("bizOpShelfSkuList", bizOpShelfSkuList);
+
+			String searchItemNo = bizOpShelfSku.getSearchItemNo();
+			model.addAttribute("searchItemNo", searchItemNo);
 		} else {
 			model.addAttribute("bizOpShelfSku", bizOpShelfSku);
 		}
@@ -245,6 +249,7 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		//	return "redirect:" + Global.getAdminPath() + "/biz/shelf/bizOpShelfSkuV2/form?shelfSign=0&previousPage=myPanel";
 		//}
 		if(bizOpShelfSkus.getShelfSign()==0){
+			redirectAttributes.addAttribute("searchItemNo", bizOpShelfSkus.getSearchItemNo());
 			return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSkuV2/?repage";
 		}
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfInfo/form?id=" + bizOpShelfSkus.getOpShelfInfo().getId() ;

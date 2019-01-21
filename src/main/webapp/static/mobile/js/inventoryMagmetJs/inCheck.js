@@ -215,10 +215,12 @@
 					if(res.data.bizRequestHeader.fromType == 1) {
 						$('#fromType1').attr('checked', 'checked');
 						$('#fromType2').removeAttr('checked');
+//						$('#fromType1').css('background-color','#ccc');
 					}
 					if(res.data.bizRequestHeader.fromType == 2) {
 						$('#fromType1').removeAttr('checked');
 						$('#fromType2').attr('checked', 'checked');
+//						$('#fromType2').css('background-color','#ccc');
 					}
 					$('#inOrordNum').val(res.data.bizRequestHeader.fromOffice.name); //采购中心
 					if(res.data.bizRequestHeader.totalMoney){
@@ -804,7 +806,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					_this.checkResult = res.ret
                     if(_this.checkResult == true || _this.checkResult == 'true') {
 						if($('#createPo').val() == 'yes') {
@@ -861,7 +863,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret == true) {
 						mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
@@ -941,7 +943,7 @@
 					if(res.ret == true) {
 						mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
-							url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+							url: "../../html/inventoryMagmetHtml/inventoryList.html",
 							extras: {}
 						})
 					}
@@ -972,7 +974,7 @@
 					if(res.ret == true) {
 						mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({
-							url: "../../html/orderMgmtHtml/orderpaymentinfo.html",
+							url: "../../html/inventoryMagmetHtml/inventoryList.html",
 							extras: {}
 						})
 					}
@@ -1365,8 +1367,8 @@
 		},
 		batchSave: function(schedulingType,poId,vndm) {
 			var _this = this;
-//			console.log(vn)
-			var skuInfoIdListList = vn.data.skuInfoIdListListJson;
+//			console.log(vndm)
+			var skuInfoIdListList = vndm.data.skuInfoIdListListJson;
             var params = new Array();
             var totalSchedulingNum = 0;
             var totalOriginalNum = 0;
@@ -1447,6 +1449,7 @@
                 alert("排产量总和太大，请重新输入!")
                 return false
             }
+            console.log(params)
             $.ajax({
                 url: '/a/biz/po/bizPoHeader/batchSaveSchedulingPlan',
                 contentType: 'application/json',
@@ -1454,6 +1457,7 @@
                 datatype:"json",
                 type: 'post',
                 success: function (result) {
+                	console.log(result)
                 	if(result == true || result == 'true') {
                 		mui.toast('操作成功!')
 						GHUTILS.OPENPAGE({

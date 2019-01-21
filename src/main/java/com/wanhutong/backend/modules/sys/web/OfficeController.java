@@ -175,17 +175,24 @@ public class OfficeController extends BaseController {
         if (office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
             customer.setMoblieMoeny(office.getMoblieMoeny());
         }
+        //客户专员当月新增会员列表显示
+        if (office != null && "officeCount".equals(office.getOfficeCount())) {
+            customer.setOfficeCount("officeCount");
+            customer.setUser(office.getUser());
+        }
         Page<Office> page = officeService.findPage(new Page<Office>(request, response), customer);
-        if (page.getList().size() == 0) {
-            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
-                //列表页输入2个条件查询时
-                Office officeUser = new Office();
-                officeUser.setQueryMemberGys(office.getName()+"");
-                officeUser.setMoblieMoeny(office.getMoblieMoeny());
-                page = officeService.findPage(new Page<Office>(request, response), officeUser);
-            } else {
-                //当点击子节点显示
-                page.getList().add(officeService.get(office.getId()));
+        if (!"officeCount".equals(customer.getOfficeCount())) {
+            if (page.getList().size() == 0) {
+                if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
+                    //列表页输入2个条件查询时
+                    Office officeUser = new Office();
+                    officeUser.setQueryMemberGys(office.getName()+"");
+                    officeUser.setMoblieMoeny(office.getMoblieMoeny());
+                    page = officeService.findPage(new Page<Office>(request, response), officeUser);
+                } else {
+                    //当点击子节点显示
+                    page.getList().add(officeService.get(office.getId()));
+                }
             }
         }
         model.addAttribute("page", page);
@@ -895,24 +902,7 @@ public class OfficeController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "queryTreeList")
     public List<Map<String, Object>> getImgTreeList(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes) {
-        List<Office> list = null;
-        if (StringUtils.isNotBlank(type)) {
-            String defType = type;
-            String[] split = type.split(",");
-            if (ArrayUtils.isNotEmpty(split)) {
-                defType = split[0];
-            }
-            if (source != null && source.equals("officeConnIndex")) {
-                //属于客户专员查询采购中心方法
-                list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(defType));
-            } else {
-                if (ArrayUtils.isNotEmpty(split) && split.length > 1) {
-                    list = officeService.findListByTypeList(Arrays.asList(split));
-                }else {
-                    list = officeService.filerOffice(null, source, OfficeTypeEnum.stateOf(defType));
-                }
-            }
-        }
+        List<Office> list = officeService.queryTreeList(type, source);
         if (list == null || list.size() == 0) {
             addMessage(redirectAttributes, "列表不存在");
         }

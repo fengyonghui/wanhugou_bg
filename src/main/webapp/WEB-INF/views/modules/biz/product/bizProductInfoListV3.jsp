@@ -74,7 +74,7 @@
 				<form:input id="cpPc" path="prodCode" htmlEscape="false" maxlength="10" class="input-small"/>
 			</li>
 			<li><label>产品货号：</label>
-				<form:input id="cpIn" path="itemNo" htmlEscape="false" maxlength="50" class="input-medium"/>
+				<form:input id="cpIn" path="searchItemNo" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li><label>品牌名称：</label>
 				<form:input id="cpBr" path="brandName" htmlEscape="false" maxlength="50" class="input-medium"/>
@@ -213,7 +213,7 @@
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit">
 					<td>
 						<c:if test="${bizProductInfo.delFlag!=null && bizProductInfo.delFlag==1}">
-							<a href="${ctx}/biz/product/bizProductInfoV3/form?id=${bizProductInfo.id}&prodType=${prodType}">修改</a>
+							<a href="${ctx}/biz/product/bizProductInfoV3/form?id=${bizProductInfo.id}&prodType=${prodType}&searchItemNo=${fns:urlEncode(searchItemNo)}">修改</a>
 
 							<a href="${ctx}/biz/product/bizProductInfoV3/copy?id=${bizProductInfo.id}&prodType=${prodType}">复制</a>
 							<%--<a href="${ctx}/biz/product/bizProductInfoV3/delete?id=${bizProductInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>--%>

@@ -55,6 +55,7 @@
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/sys/office/purchasersList">机构列表</a></li>
 		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/purchasersForm?parent.id=${office.id}&type=6&source=add_prim">机构添加</a></li></shiro:hasPermission>
+        <shiro:hasPermission name="sys:user:view"><li><a href="${ctx}/sys/user/contact">会员搜索</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="office" action="${ctx}/sys/office/purchasersList" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -74,6 +75,9 @@
 			</c:if>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
+			<c:if test="${office.officeCount == 'officeCount'}">
+				<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/></li>
+			</c:if>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
@@ -138,6 +142,7 @@
 						<a href="${ctx}/sys/office/recovery?id=${off.id}&source=purchListDelete" onclick="return confirmx('要恢复该机构及所有子机构项吗？', this.href)">恢复</a>
 					</c:if>
 				</shiro:hasPermission>
+                    <a href="${ctx}/sys/office/sysOfficeAddress?office.type=6&office.id=${off.id}">地址信息</a>
 					<c:if test="${off.type==15 || off.type==16}">
 						<c:if test="${off.commonProcess.type==null}">
 							<shiro:hasPermission name="sys:office:upgrade">

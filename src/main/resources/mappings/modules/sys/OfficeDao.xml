@@ -381,6 +381,9 @@
 		FROM sys_office a
 		<include refid="officeJoins"/>
 		LEFT join sys_user sua on sua.company_id=a.id and sua.status =1 and a.primary_person=sua.id
+		<if test="officeCount !=null and officeCount == 'officeCount'">
+			LEFT JOIN sys_user su ON su.id = ccc.consultant_id
+		</if>
 		<where>
 			1 = 1
 
@@ -422,6 +425,25 @@
 			</if>
 			<if test="centerId !=null ">
 				and ccc.center_id = #{centerId}
+			</if>
+			<if test="officeCount !=null and officeCount == 'officeCount'">
+				AND a.status = #{DEL_FLAG_NORMAL}
+				and su.id=#{user.id}
+				AND DATE_FORMAT(ccc.update_time, '%Y%m') = DATE_FORMAT(CURDATE(), '%Y%m')
+				AND ccc.cust_id = ANY (
+					SELECT s1.id
+					FROM sys_office s1, sys_user u1
+					WHERE (s1.id = u1.company_id
+						AND NOT EXISTS (
+						SELECT 1
+						FROM sys_test_account ta
+						WHERE ccc.cust_id = ta.object_id
+						AND ta.object_name = 'sys_office'
+						)
+						AND s1.type = 6
+						AND s1.STATUS = 1
+						AND u1.STATUS = 1)
+						)
 			</if>
 		</where>
 		<!-- 数据范围过滤 -->

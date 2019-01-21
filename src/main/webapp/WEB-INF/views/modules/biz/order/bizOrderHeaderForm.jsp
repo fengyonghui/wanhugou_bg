@@ -5,6 +5,7 @@
 <%@ page import="com.wanhutong.backend.modules.enums.BizOrderTypeEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderPayProportionStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.PoPayMentOrderTypeEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 <html>
@@ -738,10 +739,12 @@
                     success: function (commis) {
                         if (commis == "ok") {
                             alert(" 同意发货 ");
-                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
+                           // window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list";
                         } else {
                             alert(" 发货失败 ");
-                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
+                            //window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list";
                         }
                     }
                 });
@@ -799,7 +802,7 @@
             var id = $("#poHeaderId").val();
             var paymentOrderId = $("#paymentOrderId").val();
             var payTotal = $("#truePayTotal").val();
-
+            var payAppTotal = $("#payTotal").val();
             var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
             var img = "";
             if (mainImg.length >= 2) {
@@ -810,10 +813,17 @@
 
             if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                 alert("错误提示:请输入支付金额");
+                document.getElementById("truePayTotal").focus();
+                return false;
+            }
+            if (Number(payTotal) > Number(payAppTotal)) {
+                alert("错误提示:支付金额不大于申请金额");
+                document.getElementById("truePayTotal").focus();
                 return false;
             }
             if ($String.isNullOrBlank(img)) {
                 alert("错误提示:请上传支付凭证");
+                document.getElementById("payImg").focus();
                 return false;
             }
 
@@ -833,7 +843,10 @@
                 success: function (result) {
                     alert(result);
                     if (result == '操作成功!') {
-                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                        <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                        <%--window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + id + "&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}"--%>
+                            <%--+ "&fromPage=orderHeader" + "&orderId=" + $("#id").val();--%>
+                        window.location.href = "${ctx}/biz/order/bizOrderHeader/list";
                     }
                 },
                 error: function (error) {
@@ -847,21 +860,29 @@
         function saveMon(type) {
             if (type == 'createPay') {
                 var payTotal = $("#payTotal").val();
+                var payTotalDetail = $("#payTotalDetail").val();
                 var payDeadline = $("#payDeadline").val();
                 var id = $("#poHeaderId").val();
                 if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                     alert("请输入申请金额!");
+                    document.getElementById("payDeadline").focus();
+                    return false;
+                }
+                if (Number(payTotal) > Number(payTotalDetail)) {
+                    alert("申请金额不大于剩余应付金额!");
+                    document.getElementById("payDeadline").focus();
                     return false;
                 }
                 if ($String.isNullOrBlank(payDeadline)) {
                     alert("请选择本次申请付款时间!");
+                    document.getElementById("payDeadline").focus();
                     return false;
                 }
             }
 
             var paymentApplyRemark = $("#paymentApplyRemark").val();
 
-            window.location.href = "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal
+                       window.location.href = "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&planPay=" + payTotal
                 + "&payDeadline=" + payDeadline + "&fromPage=orderHeader" + "&paymentApplyRemark=" + paymentApplyRemark;
 
             <%--$("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeaderReq/savePoHeader?type=" + type + "&id=" + id + "&fromPage=orderHeader");--%>
@@ -1215,7 +1236,8 @@
                     result = JSON.parse(result);
                     if (result.ret == true || result.ret == 'true') {
                         alert('操作成功!');
-                        window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                        <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                        window.location.href = "${ctx}/biz/order/bizOrderHeader/";
                     } else {
                         alert(result.errmsg);
                     }
@@ -1709,7 +1731,8 @@
                                 result = JSON.parse(result);
                                 if (result.ret == true || result.ret == 'true') {
                                     alert('操作成功!');
-                                    window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";
+                                    <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                                    window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=${entity.bizPoHeader.id}&type=${PoPayMentOrderTypeEnum.PO_TYPE.type}&fromPage=orderHeader&orderId=" + $("#id").val();
                                 } else {
                                     alert(result.errmsg);
                                 }
@@ -1730,6 +1753,92 @@
 
 
         }
+        var deliveryStatus = $("#deliveryStatus").val();
+
+        if (deliveryStatus == 0) {
+            $("input[name='deliveryStatus']").attr("checked", false)
+            $("#deliveryStatus0").attr("checked", true);
+        }
+
+
+        function choose2(obj) {
+            if ($(obj).val() == 0) {
+                $("#buyCenterId").show();
+            } else {
+                $("#buyCenterId").hide();
+            }
+
+        }
+
+        function checkPass2(poPayId, currentType, money,type) {
+            var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+            var submit = function (v, h, f) {
+                if ($String.isNullOrBlank(f.description)) {
+                    jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                    return false;
+                }
+                top.$.jBox.confirm("确认审核通过吗？", "系统提示", function (v1, h1, f1) {
+                    if (v1 == "ok") {
+                        audit2(1, f.description, poPayId, currentType, money,type);
+                    }
+                }, {buttonsFocus: 1});
+                return true;
+            };
+
+            jBox(html, {
+                title: "请输入通过理由:", submit: submit, loaded: function (h) {
+                }
+            });
+
+        }
+
+        function checkReject2(poPayId, currentType, money,type) {
+            var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
+            var submit = function (v, h, f) {
+                if ($String.isNullOrBlank(f.description)) {
+                    jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                    return false;
+                }
+                top.$.jBox.confirm("确认驳回该流程吗？", "系统提示", function (v1, h1, f1) {
+                    if (v1 == "ok") {
+                        audit2(2, f.description, poPayId, currentType, money,type);
+                    }
+                }, {buttonsFocus: 1});
+                return true;
+            };
+
+            jBox(html, {
+                title: "请输入驳回理由:", submit: submit, loaded: function (h) {
+                }
+            });
+
+        }
+
+        function audit2(auditType, description, poPayId, currentType, money,type) {
+            var poHeaderId = $("#poHeaderId").val();
+            var orderType = $("#orderType").val();
+            var fromPage = $("#fromPage").val();
+            $.ajax({
+                url: '${ctx}/biz/po/bizPoHeader/auditPay',
+                contentType: 'application/json',
+                data: {"poPayId": poPayId, "currentType": currentType, "auditType": auditType, "description": description, "money": money},
+                type: 'get',
+                success: function (result) {
+                    result = JSON.parse(result);
+                    if(result.ret == true || result.ret == 'true') {
+                        alert('操作成功!');
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list";
+                            <%--window.location.href = "${ctx}/biz/po/bizPoHeader/listV2";--%>
+                            <%--window.location.href = "${ctx}/biz/po/bizPoPaymentOrder/list?poId=" + poHeaderId + "&orderType=" + orderType + "&fromPage=" + fromPage;--%>
+                    }else {
+                        alert(result.errmsg);
+                    }
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
 
     </script>
 </head>
@@ -1744,11 +1853,11 @@
         <c:if test="${empty bizOrderHeader.clientModify}">
             <li><a href="${ctx}/biz/order/bizOrderHeader?source=${source}">订单信息列表</a></li>
         </c:if>
-        <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
-            <li>
-                <a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizOrderHeader.consultantId}&source=${source}">订单信息列表</a>
-            </li>
-        </c:if>
+        <%--<c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">--%>
+            <%--<li>--%>
+                <%--<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizOrderHeader.consultantId}&source=${source}">订单信息列表</a>--%>
+            <%--</li>--%>
+        <%--</c:if>--%>
     </c:if>
 
     <li class="active">
@@ -1774,6 +1883,13 @@
             </c:if>
         </c:if>
     </li>
+    <%--<li class="unactive">
+        <c:if test="${entity.orderDetails eq 'details'}">
+            <shiro:hasPermission name="biz:po:bizPoHeader:view">
+                <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizOrderHeader.bizPoHeader.id}&str=detail&fromPage=orderHeader&orderId=${bizOrderHeader.id}">采购单详情</a>
+            </shiro:hasPermission>
+        </c:if>
+    </li>--%>
 </ul>
 <br/>
 <form:form id="inputForm" modelAttribute="bizOrderHeader"
@@ -1984,6 +2100,11 @@
     </div>
 
     <c:if test="${entity.bizPoPaymentOrder.id != null || entity.str == 'createPay'}">
+                <input id="payTotalDetail" name="planPayTotalDetail" type="hidden"
+                       <c:if test="${entity.str == 'audit' || entity.str == 'pay'}">readonly</c:if>
+                       value="${entity.bizPoPaymentOrder.id != null ?
+                           entity.bizPoPaymentOrder.total : (entity.bizPoHeader.totalDetail-(entity.bizPoHeader.payTotal == null ? 0 : entity.bizPoHeader.payTotal))}"
+                       htmlEscape="false" maxlength="30" class="input-xlarge"/>
         <div class="control-group">
             <label class="control-label">申请金额：</label>
             <div class="controls">
@@ -2002,6 +2123,7 @@
                        value="<fmt:formatDate value="${entity.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
                         <c:if test="${entity.str == 'createPay'}"> onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"</c:if>
                        placeholder="必填！"/>
+                <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>
 
@@ -2024,7 +2146,6 @@
             </div>
         </div>
     </c:if>
-
     <!-- 隐藏佣金 -->
     <shiro:hasPermission name="biz:order:buyPrice:view">
         <c:if test="${source ne 'vendor'}">
@@ -2139,6 +2260,7 @@
                     <input id="truePayTotal" name="payTotal" type="text"
                            value="${entity.bizPoHeader.bizPoPaymentOrder.payTotal}"
                            htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                    <span class="help-inline"><font color="red">*</font> </span>
                 </div>
             </div>
             <div class="control-group">
@@ -2149,6 +2271,7 @@
                 <div class="controls">
                     <input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片"
                            multiple="multiple" id="payImg"/>
+                    <span class="help-inline"><font color="red">*</font> </span>
                 </div>
                 <div id="payImgDiv">
                     <img src="${entity.bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px'
@@ -2253,19 +2376,19 @@
             </c:if>
         </shiro:hasPermission>
 
-        <div class="control-group">
-            <label class="control-label">备&nbsp;注：</label>
-            <div id="remark" class="controls"
-                 style="margin-left: 16px; overflow:auto; float:left;text-align: left; width: 400px;">
-                <c:forEach items="${commentList}" var="comment">
-                    <p class="box">${comment.comments}<br>${comment.createBy.name}&nbsp;&nbsp;<fmt:formatDate
-                            value="${comment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></>
-                </c:forEach>
-            </div>
-                <%--<span id="flip">全部备注</span>&nbsp;&nbsp;--%>
-            <input id="addRemark" class="btn" type="button" value="增加备注" onclick="saveRemark()"/>
-                <%--<span id="addRemark" onclick="saveRemark()">增加备注</span>--%>
-        </div>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">备&nbsp;注：</label>--%>
+            <%--<div id="remark" class="controls"--%>
+                 <%--style="margin-left: 16px; overflow:auto; float:left;text-align: left; width: 400px;">--%>
+                <%--<c:forEach items="${commentList}" var="comment">--%>
+                    <%--<p class="box">${comment.comments}<br>${comment.createBy.name}&nbsp;&nbsp;<fmt:formatDate--%>
+                            <%--value="${comment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></>--%>
+                <%--</c:forEach>--%>
+            <%--</div>--%>
+                <%--&lt;%&ndash;<span id="flip">全部备注</span>&nbsp;&nbsp;&ndash;%&gt;--%>
+            <%--<input id="addRemark" class="btn" type="button" value="增加备注" onclick="saveRemark()"/>--%>
+                <%--&lt;%&ndash;<span id="addRemark" onclick="saveRemark()">增加备注</span>&ndash;%&gt;--%>
+        <%--</div>--%>
     </c:if>
 
     <c:if test="${photosMap != null && photosMap.size()>0 }">
@@ -2461,7 +2584,7 @@
                             <button id="cancel40" type="button" class="btn btn-arrow-right">已删除</button>
                         </div>
                     </div>
-                </div>
+            </div>
                 <div id="already_delete" style="display:none;width: 29%;">
                     <div style="float:left;width: 90px;">
                         <div style="padding-bottom: 1px;float: right">
@@ -2797,14 +2920,14 @@
                     </c:if>
 
                     <c:if test="${entity.str == 'pay'}">
-                        <input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
-                    </c:if>
+            <input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
+        </c:if>
 
-                    <c:if test="${entity.str == 'createPay'}">
-                        <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary"
-                               value="申请付款"/>
-                    </c:if>
-                </shiro:hasPermission>
+            <c:if test="${entity.str == 'createPay'}">
+                <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary"
+                       value="申请付款"/>
+            </c:if>
+        </shiro:hasPermission>
 
                 <c:if test="${entity.str == 'startAudit'}">
                     <input type="button" onclick="startAudit()" class="btn btn-primary" value="开启审核"/>
@@ -2953,10 +3076,106 @@
         </div>
 
     </c:if>
-
-
 </form:form>
+<shiro:hasAnyPermissions name="biz:po:bizPoHeader2:view">
+ <c:if test="${bizOrderHeader.bizPoHeader!=null}">
+<div class="form-actions">
+    <label class="control-label">付款单信息：</label>
+</div>
+<form:form id="inputForm2" modelAttribute="bizOrderHeader.bizPoHeader"
+            class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label">采购单总价：</label>
+        <div class="controls">
+            <input type="text" disabled="disabled" value="${bizPoHeader.totalDetail}" htmlEscape="false"
+                   maxlength="30" class="input-xlarge "/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">采购单应付金额：</label>
+        <div class="controls">
+            <input type="text" disabled="disabled"
+                   value="${bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight}" htmlEscape="false"
+                   maxlength="30" class="input-xlarge "/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">最后付款时间：</label>
+        <div class="controls">
+            <input name="lastPayDate" type="text" disabled="disabled" readonly="readonly" maxlength="20"
+                   class="input-medium Wdate required"
+                   value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
 
+        </div>
+    </div>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">交货地点：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<form:radiobutton disabled="true" id="deliveryStatus0" path="deliveryStatus" onclick="choose2(this)" value="0"/>采购中心--%>
+            <%--<form:radiobutton disabled="true" id="deliveryStatus1" path="deliveryStatus" checked="true" onclick="choose2(this)"--%>
+                              <%--value="1"/>供应商--%>
+        <%--</div>--%>
+    <%--</div>--%>
+    <%--<div class="control-group" id="buyCenterId" style="display:none">--%>
+        <%--<label class="control-label">采购中心：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<sys:treeselect disabled="true" id="deliveryOffice" name="deliveryOffice.id" value="${bizPoHeader.deliveryOffice.id}"--%>
+                            <%--labelName="deliveryOffice.name"--%>
+                            <%--labelValue="${bizPoHeader.deliveryOffice.name}" notAllowSelectParent="true"--%>
+                            <%--title="采购中心"--%>
+                            <%--url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex"--%>
+                            <%--cssClass="input-xlarge " dataMsgRequired="必填信息">--%>
+            <%--</sys:treeselect>--%>
+        <%--</div>--%>
+    <%--</div>--%>
+    <div class="control-group">
+        <label class="control-label">采购单备注：</label>
+        <div class="controls">
+            <form:textarea disabled="true" path="remark" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">采购单状态：</label>
+        <div class="controls">
+            <input type="text" disabled="disabled"
+                   value="${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}" htmlEscape="false"
+                   maxlength="30" class="input-xlarge "/>
+        </div>
+    </div>
+    <%--<c:if test="${fn:length(poAuditList) > 0}">--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">采购单审批流程：</label>--%>
+            <%--<div class="controls help_wrap">--%>
+                <%--<div class="help_step_box fa">--%>
+                    <%--<c:forEach items="${poAuditList}" var="v" varStatus="stat">--%>
+                        <%--<c:if test="${!stat.last}" >--%>
+                            <%--<div class="help_step_item">--%>
+                                <%--<div class="help_step_left"></div>--%>
+                                <%--<div class="help_step_num">${stat.index + 1}</div>--%>
+                                <%--批注:${v.description}<br/><br/>--%>
+                                <%--审批人:${v.user.name}<br/>--%>
+                                <%--<fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
+                                <%--<div class="help_step_right"></div>--%>
+                            <%--</div>--%>
+                        <%--</c:if>--%>
+                        <%--<c:if test="${stat.last}">--%>
+                            <%--<div class="help_step_item help_step_set">--%>
+                                <%--<div class="help_step_left"></div>--%>
+                                <%--<div class="help_step_num">${stat.index + 1}</div>--%>
+                                <%--当前状态:${v.purchaseOrderProcess.name}<br/><br/>--%>
+                                    <%--${v.user.name}<br/>--%>
+                                <%--<div class="help_step_right"></div>--%>
+                            <%--</div>--%>
+                        <%--</c:if>--%>
+                    <%--</c:forEach>--%>
+                <%--</div>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+    <%--</c:if>--%>
+</form:form>
+ </c:if>
+</shiro:hasAnyPermissions >
 <%--详情列表--%>
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
@@ -3013,16 +3232,10 @@
                 <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
                     ${bizOrderDetail.skuName}
                 </c:if>
-                <c:if test="${empty entity.orderNoEditable || empty entity.orderDetails || empty bizOrderHeader.flag}">
-                    <c:if test="${empty entity.orderNoEditable && empty entity.orderDetails && empty bizOrderHeader.flag && empty bizOrderHeader.clientModify}">
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
-                                ${bizOrderDetail.skuName}</a>
-                    </c:if>
-                    <c:if test="${not empty bizOrderHeader.clientModify && bizOrderHeader.clientModify eq 'client_modify'}">
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
-                                ${bizOrderDetail.skuName}</a>
-                    </c:if>
-                </c:if>
+                <%--<c:if test="${empty entity.orderNoEditable || empty entity.orderDetails || empty bizOrderHeader.flag}">--%>
+                    <%--<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">--%>
+                            <%--${bizOrderDetail.skuName}</a>--%>
+                <%--</c:if>--%>
             </td>
             <td>
                     ${bizOrderDetail.partNo}
@@ -3107,16 +3320,16 @@
         <div class="control-group">
             <label class="control-label">排产类型：</label>
             <div class="controls" id="schedulingPlanRadio">
-                <form:radiobutton id="deliveryStatus0" path="entity.bizPoHeader.schedulingType" checked="true"
+                <form:radiobutton id="deliveryStatus2" path="entity.bizPoHeader.schedulingType" checked="true"
                                   onclick="choose(this)" value="0"/>按订单排产
-                <form:radiobutton id="deliveryStatus1" path="entity.bizPoHeader.schedulingType" onclick="choose(this)"
+                <form:radiobutton id="deliveryStatus3" path="entity.bizPoHeader.schedulingType" onclick="choose(this)"
                                   value="1"/>按商品排产
             </div>
         </div>
         <div class="control-group" id="stockGoods_schedu">
             <label class="control-label">采购商品：</label>
             <div class="controls">
-                <table id="contentTable" class="table table-striped table-bordered table-condensed">
+                <table id="contentTable3" class="table table-striped table-bordered table-condensed">
                     <thead>
                     <tr>
                         <th>详情行号</th>
@@ -3375,6 +3588,110 @@
         </div>
     </div>
 </c:if>
+<c:if test="${poPaymentOrderPage.list != null && fn:length(poPaymentOrderPage.list) > 0}">
+    <table id="contentTable4" class="table table-striped table-bordered table-condensed">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>付款金额</th>
+        <th>实际付款金额</th>
+        <th>最后付款时间</th>
+        <th>实际付款时间</th>
+        <th>当前状态</th>
+        <th>单次支付审批状态</th>
+        <th>备注</th>
+        <th>支付凭证</th>
+        <shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit"><th>操作</th></shiro:hasPermission>
+    </tr>
+    </thead>
+    <tbody>
+    <c:forEach items="${poPaymentOrderPage.list}" var="bizPoPaymentOrder">
+        <tr>
+            <td>
+                    ${bizPoPaymentOrder.id}
+            </td>
+            <td>
+                    ${bizPoPaymentOrder.total}
+            </td>
+            <td>
+                    ${bizPoPaymentOrder.payTotal}
+            </td>
+            <td>
+                <fmt:formatDate value="${bizPoPaymentOrder.deadline}" pattern="yyyy-MM-dd HH:mm:ss"/>
+            </td>
+            <td>
+                <fmt:formatDate value="${bizPoPaymentOrder.payTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+            </td>
+            <td>
+                    ${bizPoPaymentOrder.bizStatus == 0 ? '未支付' : '已支付'}
+            </td>
+            <td>
+                <c:if test="${bizPoPaymentOrder.total == '0.00' && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成'}">
+                    待确认支付金额
+                </c:if>
+                <c:if test="${bizPoPaymentOrder.total != '0.00'}">
+                    ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.name}
+                </c:if>
+            </td>
+            <td>
+                    ${bizPoPaymentOrder.remark}
+            </td>
+            <td>
+                <c:forEach items="${bizPoPaymentOrder.imgList}" var="v">
+                    <a target="_blank" href="${v.imgServer}${v.imgPath}"><img style="width: 100px" src="${v.imgServer}${v.imgPath}"/></a>
+                </c:forEach>
+            </td>
+            <td>
+                <%--<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:audit">--%>
+                    <%--<c:if test="${bizPoPaymentOrder.hasRole == true}">--%>
+                        <%--<c:if test="${bizPoPaymentOrder.total != '0.00'}">--%>
+                            <%--<c:if test="${bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成' && bizPoPaymentOrder.total != 0}">--%>
+                                <%--&lt;%&ndash;&& (fns:hasRole(roleSet, bizPoPaymentOrder.commonProcess.paymentOrderProcess.moneyRole.roleEnNameEnum))&ndash;%&gt;--%>
+                                <%--<a href="#" onclick="checkPass2(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核通过</a>--%>
+                                <%--<a href="#" onclick="checkReject2(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.orderType})">审核驳回</a>--%>
+                            <%--</c:if>--%>
+                        <%--</c:if>--%>
+                    <%--</c:if>--%>
+                    <%--&lt;%&ndash;<c:if test="${bizPoPaymentOrder.id == bizRequestHeader.bizPoPaymentOrder.id && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成'}">&ndash;%&gt;--%>
+                    <%--&lt;%&ndash;<a onclick="checkPass(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.type})">审核通过</a>&ndash;%&gt;--%>
+                    <%--&lt;%&ndash;<a onclick="checkReject(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total},${bizPoPaymentOrder.type})">审核驳回</a>&ndash;%&gt;--%>
+                    <%--&lt;%&ndash;</c:if>&ndash;%&gt;--%>
+                <%--</shiro:hasPermission>--%>
+                <%--<!-- 驳回的单子再次开启审核 -->--%>
+                <%--<shiro:hasPermission name="biz:po:bizPoHeader:startAuditAfterReject">--%>
+                    <%--<c:if test="${bizPoHeader.commonProcess.type == -1}">--%>
+                        <%--<c:if test="${bizPoHeader.bizRequestHeader != null}">--%>
+                            <%--<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizPoHeader.bizRequestHeader.id}&str=startAudit">开启审核</a>--%>
+                        <%--</c:if>--%>
+                    <%--</c:if>--%>
+                <%--</shiro:hasPermission>--%>
+                <%--<shiro:hasPermission name="biz:po:sure:bizPoPaymentOrder">--%>
+                    <%--<c:if test="${bizPoPaymentOrder.total == '0.00'}">--%>
+                        <%--<a href="${ctx}/biz/po/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}&poHeaderId=${bizPoHeader.id}&fromPage=${fromPage}">确认支付金额</a>--%>
+                    <%--</c:if>--%>
+                <%--</shiro:hasPermission>--%>
+                <%--<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">--%>
+                    <%--<shiro:hasPermission name="biz:po:payment:sure:pay">--%>
+                        <%--<c:if test="${bizPoPaymentOrder.orderType == PoPayMentOrderTypeEnum.PO_TYPE.type && bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id--%>
+						<%--&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'--%>
+						<%--&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'--%>
+						<%--}">--%>
+                                <%--<a href="${ctx}/biz/order/bizOrderHeader/form?bizPoHeader.id=${bizPoHeader.id}&id=${bizOrderHeader.id}&str=pay">确认付款</a>--%>
+                        <%--</c:if>--%>
+                    <%--</shiro:hasPermission>--%>
+                    <%--&lt;%&ndash;<c:if test="${bizPoPaymentOrder.type == PoPayMentOrderTypeEnum.REQ_TYPE.type && bizPoPaymentOrder.id == bizRequestHeader.bizPoPaymentOrder.id&ndash;%&gt;--%>
+                    <%--&lt;%&ndash;&& bizRequestHeader.commonProcess.vendRequestOrderProcess.name == '审批完成'&ndash;%&gt;--%>
+                    <%--&lt;%&ndash;&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'}">&ndash;%&gt;--%>
+                    <%--&lt;%&ndash;<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${bizRequestHeader.id}&str=pay">确认付款</a>&ndash;%&gt;--%>
+                    <%--&lt;%&ndash;</c:if>&ndash;%&gt;--%>
+                <%--</shiro:hasPermission>--%>
+                <a href="${ctx}/biz/po/bizPoPaymentOrder/formV2?id=${bizPoPaymentOrder.id}">详情</a>
+            </td>
+        </tr>
+    </c:forEach>
+    </tbody>
+</table>
+</c:if>
 
 
 <div class="form-actions">
@@ -3431,10 +3748,23 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" id="myModalLabel">发货方式</h4>
             </div>
-            <div id="lianYing" class="modal-body">
-                本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>
-                产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>
-            </div>
+            <c:choose>
+                <c:when test="${logisticsLinesFlag == true || logisticsLinesFlag == 'true'}">
+                    <div id="lianYing" class="modal-body" style="color: red;">
+                        该订单的发货线路为“产地直发”，因此只能选择产地直发！
+                    </div>
+                    <div id="lianYing" class="modal-body">
+                        本地备货:<input name="localOriginType" value="1" type="radio" readonly="readonly" disabled="disabled"/>
+                        产地直发:<input name="localOriginType" value="0" checked type="radio" readonly="readonly"/>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div id="lianYing" class="modal-body">
+                        本地备货:<input name="localOriginType" value="1" checked type="radio" readonly="readonly"/>
+                        产地直发:<input name="localOriginType" value="0" type="radio" readonly="readonly"/>
+                    </div>
+                </c:otherwise>
+            </c:choose>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state},'lianYing')" class="btn btn-primary">确认</button>

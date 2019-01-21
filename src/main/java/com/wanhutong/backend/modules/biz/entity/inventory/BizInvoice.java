@@ -72,7 +72,7 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	/**
 	 * 集货地点
 	 * */
-	private Byte collLocate;
+	private Integer collLocate;
 
 	/**
 	 * 验货时间
@@ -337,11 +337,11 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 		this.inspectDate = inspectDate;
 	}
 
-	public Byte getCollLocate() {
+	public Integer getCollLocate() {
 		return collLocate;
 	}
 
-	public void setCollLocate(Byte collLocate) {
+	public void setCollLocate(Integer collLocate) {
 		this.collLocate = collLocate;
 	}
 

@@ -131,6 +131,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private String source;
 
+	private String searchItemNo;
+
 	public String getItemNoComplete() {
 		return itemNoComplete;
 	}
@@ -612,5 +614,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setViewCount(Integer viewCount) {
 		this.viewCount = viewCount;
+	}
+
+	public String getSearchItemNo() {
+		return searchItemNo;
+	}
+
+	public void setSearchItemNo(String searchItemNo) {
+		this.searchItemNo = searchItemNo;
 	}
 }
